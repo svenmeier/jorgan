@@ -64,6 +64,10 @@ public class ChannelPool {
     pools.put(deviceName, this);
   }
 
+  public String getDeviceName() {
+      return deviceName;
+  }
+  
   /**
    * Create a channel.
    * 

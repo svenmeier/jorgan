@@ -46,22 +46,24 @@ public class SoundSourcePlayer extends Player {
   protected void openImpl() {
     SoundSource soundSource = (SoundSource)getElement();
 
+    PlayerProblem errorDevice    = new PlayerProblem(PlayerProblem.ERROR, "device", soundSource.getDevice()); 
+    PlayerProblem errorType      = new PlayerProblem(PlayerProblem.ERROR, "type", soundSource.getType()); 
+    PlayerProblem errorParameter = new PlayerProblem(PlayerProblem.ERROR, "type.parameter", soundSource.getSamples()); 
+
+    removeProblem(errorDevice);
+    removeProblem(errorType);
+    removeProblem(errorParameter);
+
     if (soundSource.getDevice() != null) {
-      PlayerProblem errorDevice = new PlayerProblem(PlayerProblem.ERROR, "device", soundSource.getDevice()); 
-      PlayerProblem errorType   = new PlayerProblem(PlayerProblem.ERROR, "type", soundSource.getType()); 
       try {
         factory = SoundFactory.instance(soundSource.getDevice(), soundSource.getType());
-        factory.setBank(soundSource.getBank());
-        factory.setSamples(soundSource.getSamples());
-        
-        removeProblem(errorDevice);
-        removeProblem(errorType);
+        factory.init(soundSource.getBank(), soundSource.getSamples());
       } catch (MidiUnavailableException ex) {
-        addProblem   (errorDevice);
-        removeProblem(errorType);
-      } catch (IllegalArgumentException ex) {
-        addProblem   (errorType);
-        removeProblem(errorDevice);
+        addProblem(errorDevice);
+      } catch (SoundFactoryParameterException ex) {
+        addProblem(errorParameter);
+      } catch (SoundFactoryException ex) {
+        addProblem(errorType);
       }
     }
   }

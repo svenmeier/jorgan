@@ -20,10 +20,10 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.*;
 import jorgan.gui.construct.editor.DataEditor;
+import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.OutDeviceEditor;
 import jorgan.gui.construct.editor.PositiveNumberEditor;
 import jorgan.gui.construct.editor.SoundFactoryTypeEditor;
-import jorgan.gui.construct.editor.StringEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.SoundSource}.
@@ -37,6 +37,6 @@ public class SoundSourceBeanInfo extends ElementBeanInfo {
         add("device", SoundSource.class, OutDeviceEditor.class);
         add("type", SoundSource.class, SoundFactoryTypeEditor.class);
         add("bank", SoundSource.class, DataEditor.class);
-        add("samples", SoundSource.class, StringEditor.class);
+        add("samples", SoundSource.class, FileEditor.class);
     }
 }
