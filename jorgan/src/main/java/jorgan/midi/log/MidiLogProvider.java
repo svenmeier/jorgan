@@ -16,24 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi;
+package jorgan.midi.log;
 
 import javax.sound.midi.*;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.sound.midi.merge.*;
+import jorgan.sound.midi.Loopback;
 
 /**
- * The provider of <code>MidiMerger</code> devices.
+ * The provider of a <code>Log</code> device.
  * 
- * @see soundx.midi.merge.MidiMerger
+ * @see soundx.midi.Loopback
  */
-public class MidiMergerProvider extends MidiDeviceProvider {
+public class MidiLogProvider extends MidiDeviceProvider {
 
   /**
    * The name of this device.
    */
-  public static final String DEVICE_NAME = "jOrgan Midi Merger";
+  public static final String DEVICE_NAME = "jOrgan Midi Log";
 
   /**
    * The device info for this providers device.
@@ -41,9 +41,9 @@ public class MidiMergerProvider extends MidiDeviceProvider {
   private static final Info info = new Info();
   
   /**
-   * The device.
+   * The used loopback.
    */
-  private static MidiMerger midiMerger;
+  private static Loopback loopback;
 
   public MidiDevice.Info[] getDeviceInfo() {
 
@@ -51,14 +51,8 @@ public class MidiMergerProvider extends MidiDeviceProvider {
   }
   
   public MidiDevice getDevice(MidiDevice.Info info) {
-    if (MidiMergerProvider.info == info) {
-      if (midiMerger == null) {
-        midiMerger = new MidiMerger(info);         
-      }
-      if (!midiMerger.isOpen()) {
-        midiMerger.setMergeInputs(Configuration.instance().getInputs());
-      }
-      return midiMerger;
+    if (MidiLogProvider.info == info) {        
+      return getLoopback();
     }
 
     return null;
@@ -70,7 +64,19 @@ public class MidiMergerProvider extends MidiDeviceProvider {
   protected static class Info extends MidiDevice.Info {
 
     public Info() {
-      super(DEVICE_NAME, "jOrgan", "Midi-Merger of jOrgan", "1.0");
+      super(DEVICE_NAME, "jOrgan", "Midi Log of jOrgan", "1.0");
     }
   }
+  
+  /**
+   * Get the loopback for this device.
+   * 
+   * @return    the lookback
+   */
+  public static Loopback getLoopback() {
+    if (loopback == null) {
+      loopback = new Loopback(info, true, false);
+    }
+    return loopback;
+  }  
 }

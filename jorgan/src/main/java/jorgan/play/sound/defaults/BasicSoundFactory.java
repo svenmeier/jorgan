@@ -23,7 +23,8 @@ import javax.sound.midi.*;
 import jorgan.sound.midi.Channel;
 import jorgan.sound.midi.ChannelPool;
 
-import jorgan.play.Configuration;
+import jorgan.midi.Configuration;
+
 import jorgan.play.sound.SoundFactory;
 import jorgan.play.sound.Sound;
 

@@ -33,6 +33,9 @@ public class SwingMidiConfigPanel extends ConfigurationPanel {
    */
   private JLabel maxLabel = new JLabel();
   private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 50));
+  private JLabel numbersLabel = new JLabel();
+  private JRadioButton numbersDecRadioButton = new JRadioButton();
+  private JRadioButton numbersHexRadioButton = new JRadioButton();
   
   /**
    * Create this panel.
@@ -41,11 +44,22 @@ public class SwingMidiConfigPanel extends ConfigurationPanel {
     setLayout(new GridBagLayout());
     setName(resources.getString("config.swing.midi.name"));
 
-    maxLabel.setText(resources.getString("config.swing.midi.midiLogMax"));
+    maxLabel.setText(resources.getString("config.swing.midi.max"));
     add(maxLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
     
-    add(maxSpinner, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));    
+    add(maxSpinner, new GridBagConstraints(1, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));    
   
+    numbersLabel.setText(resources.getString("config.swing.midi.numbers"));
+    add(numbersLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+    
+    ButtonGroup group = new ButtonGroup();
+    group.add(numbersDecRadioButton);
+    numbersDecRadioButton.setText(resources.getString("config.swing.midi.numbersDec"));
+    add(numbersDecRadioButton, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));    
+    group.add(numbersHexRadioButton);
+    numbersHexRadioButton.setText(resources.getString("config.swing.midi.numbersHex"));
+    add(numbersHexRadioButton, new GridBagConstraints(2, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));    
+
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
 
@@ -56,6 +70,9 @@ public class SwingMidiConfigPanel extends ConfigurationPanel {
     Configuration config = (Configuration)getConfiguration();
 
     maxSpinner.setValue(new Integer(config.getMidiLogMax()));
+    
+    numbersDecRadioButton.setSelected(!config.getMidiLogHex());
+    numbersHexRadioButton.setSelected(config.getMidiLogHex());
   }
 
   /**
@@ -65,5 +82,7 @@ public class SwingMidiConfigPanel extends ConfigurationPanel {
     Configuration config = (Configuration)getConfiguration();
 
     config.setMidiLogMax(((Integer)maxSpinner.getValue()).intValue());
+    
+    config.setMidiLogHex(numbersHexRadioButton.isSelected());
   }  
 }

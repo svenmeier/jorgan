@@ -18,79 +18,45 @@
  */
 package jorgan.midi;
 
-import java.util.*;
 import java.util.prefs.*;
-
-import jorgan.sound.midi.merge.*;
 
 import jorgan.config.prefs.*;
 
 public class Configuration extends PreferencesConfiguration {
 
-  private static final Configuration instance = new Configuration();
+  private static final boolean SEND_ALL_NOTES_OFF = false;
 
-  private List inputs;
+  private static Configuration sharedInstance = new Configuration(true);
+
+  private boolean sendAllNotesOff;
   
+  private Configuration(boolean sharedFlag) {
+    addChild(jorgan.midi.merge.Configuration.instance());
+  }
+
   public Configuration() {
+    addChild(new jorgan.midi.merge.Configuration());
   }
   
   protected void restore(Preferences prefs) {
-    inputs = new ArrayList();
-    for (int i = 0; ; i++) {
-      MergeInput input = getMergeInput(prefs, "input[" + i + "]", null);
-      if (input == null) {
-        break;
-      } else {
-        inputs.add(input);
-      }
-    }
+    sendAllNotesOff = prefs.getBoolean("sendAllNotesOff", SEND_ALL_NOTES_OFF);
   }
 
   protected void backup(Preferences prefs) {
-    for (int i = 0; ; i++) {
-      String key = "input[" + i + "]";
-      if (prefs.get(key, null) == null) {
-        break ;
-      }
-      prefs.remove(key);
-    }
-    for (int i = 0; i < inputs.size(); i++) {
-      putMergeInput(prefs, "input[" + i + "]", (MergeInput)inputs.get(i));
-    }
+    prefs.putBoolean("sendAllNotesOff", sendAllNotesOff);
   }
 
-  public List getInputs() {
-    return Collections.unmodifiableList(inputs);
-  }
-  
-  public void setInputs(List inputs) {
-    this.inputs = new ArrayList(inputs);
+  public boolean getSendAllNotesOff() {
+      return sendAllNotesOff;
+    }
+
+  public void setSendAllNotesOff(boolean sendAllNotesOff) {
+    this.sendAllNotesOff = sendAllNotesOff;
     
     fireConfigurationChanged();
   }
-  
-  protected static MergeInput getMergeInput(Preferences prefs, String key, MergeInput def) {
-    String input = prefs.get(key, null);
-    if (input != null) {
-      try {
-        int colon = input.indexOf(':');
-
-        int    channel = Integer.parseInt(input.substring(0, colon));
-        String device  = input.substring(colon + 1); 
-
-        return new MergeInput(device, channel);
-      } catch (Exception ex) {
-        // use default
-      }
-    }
-    return def;
-  }
-
-  protected static void putMergeInput(Preferences prefs, String key, MergeInput input) {
-    prefs.put(key, input.getChannel() + ":" + input.getDevice());
-  }
 
   public static Configuration instance() {
-    return instance;
+    return sharedInstance;
   }
 }

@@ -41,7 +41,6 @@ public class PlayConfigPanel extends ConfigurationPanel {
   private JCheckBox warnPistonWithoutMessageCheckBox = new JCheckBox();
 
   private JCheckBox releaseDevicesCheckBox = new JCheckBox();
-  private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
   public PlayConfigPanel() {
     setLayout(new GridBagLayout());
@@ -81,9 +80,6 @@ public class PlayConfigPanel extends ConfigurationPanel {
     releaseDevicesCheckBox.setText(resources.getString("config.play.releaseDevicesWhenDeactivated"));
     add(releaseDevicesCheckBox, new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
     
-    sendAllNotesOffCheckBox.setText(resources.getString("config.play.sendAllNotesOff"));
-    add(sendAllNotesOffCheckBox, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
-
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
 
@@ -104,7 +100,6 @@ public class PlayConfigPanel extends ConfigurationPanel {
     warnPistonWithoutMessageCheckBox   .setSelected(config.getWarnPistonWithoutMessage());
 
     releaseDevicesCheckBox.setSelected(config.getReleaseDevicesWhenDeactivated());
-    sendAllNotesOffCheckBox.setSelected(config.getSendAllNotesOff());
   }
 
   /**
@@ -124,6 +119,5 @@ public class PlayConfigPanel extends ConfigurationPanel {
     config.setWarnPistonWithoutMessage    (warnPistonWithoutMessageCheckBox    .isSelected());
 
     config.setReleaseDevicesWhenDeactivated(releaseDevicesCheckBox.isSelected());
-    config.setSendAllNotesOff(sendAllNotesOffCheckBox.isSelected());
   }
 }

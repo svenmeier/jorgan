@@ -38,7 +38,6 @@ public class Configuration extends PreferencesConfiguration {
   private static final boolean WARN_PISTON_WITHOUT_MESSAGE     = false;
 
   private static final boolean RELEASE_DEVICES_WHEN_DEACTIVATED = false;
-  private static final boolean SEND_ALL_NOTES_OFF               = false;
 
   private static Configuration sharedInstance = new Configuration();
 
@@ -53,7 +52,6 @@ public class Configuration extends PreferencesConfiguration {
   private boolean warnPistonWithoutMessage;
 
   private boolean releaseDevicesWhenDeactivated;
-  private boolean sendAllNotesOff;
 
   protected void restore(Preferences prefs) {
     warnKeyboardWithoutDevice    = prefs.getBoolean("warnKeyboardWithoutDevice"   , WARN_KEYBOARD_WITHOUT_DEVICE);
@@ -67,7 +65,6 @@ public class Configuration extends PreferencesConfiguration {
     warnPistonWithoutMessage     = prefs.getBoolean("warnPistonWithoutMessage"    , WARN_PISTON_WITHOUT_MESSAGE);;
 
     releaseDevicesWhenDeactivated = prefs.getBoolean("releaseDevicesWhenDeactivated", RELEASE_DEVICES_WHEN_DEACTIVATED);
-    sendAllNotesOff               = prefs.getBoolean("sendAllNotesOff",               SEND_ALL_NOTES_OFF);
   }
 
   protected void backup(Preferences prefs) {
@@ -82,7 +79,6 @@ public class Configuration extends PreferencesConfiguration {
     prefs.putBoolean("warnPistonWithoutMessage"    , warnPistonWithoutMessage);;
 
     prefs.putBoolean("releaseDevicesWhenDeactivated", releaseDevicesWhenDeactivated);
-    prefs.putBoolean("sendAllNotesOff"              , sendAllNotesOff);
   }
 
   public boolean getWarnConsoleWithoutDevice() {
@@ -123,10 +119,6 @@ public class Configuration extends PreferencesConfiguration {
 
   public boolean getReleaseDevicesWhenDeactivated() {
     return releaseDevicesWhenDeactivated;
-  }
-
-  public boolean getSendAllNotesOff() {
-    return sendAllNotesOff;
   }
 
   public void setWarnConsoleWithoutDevice(boolean warnConsoleWithoutDevice) {
@@ -185,12 +177,6 @@ public class Configuration extends PreferencesConfiguration {
 
   public void setReleaseDevicesWhenDeactivated(boolean releaseDevicesWhenDeactivated) {
     this.releaseDevicesWhenDeactivated = releaseDevicesWhenDeactivated;
-    
-    fireConfigurationChanged();
-  }
-
-  public void setSendAllNotesOff(boolean sendAllNotesOff) {
-    this.sendAllNotesOff = sendAllNotesOff;
     
     fireConfigurationChanged();
   }

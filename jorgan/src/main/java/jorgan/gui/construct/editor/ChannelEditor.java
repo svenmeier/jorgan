@@ -25,7 +25,7 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.sound.midi.*;
 
-import jorgan.midi.*;
+import jorgan.sound.midi.ShortMessageRecorder;
 import jorgan.disposition.*;
 
 /**

@@ -29,7 +29,7 @@ import javax.swing.*;
 import javax.sound.midi.*;
 
 import jorgan.disposition.*;
-import jorgan.midi.*;
+import jorgan.sound.midi.ShortMessageRecorder;
 
 /**
  * PropertyEditor for a message property.
