@@ -20,12 +20,16 @@ package jorgan.util;
 
 import java.io.*; 
 import java.net.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Collection of utility methods supporting the installation of an
  * application.
  */
 public class Installation {
+
+  private static Logger logger = Logger.getLogger(Installation.class.getName());
 
   /**
    * Test is the current running program is installed.
@@ -38,10 +42,9 @@ public class Installation {
   public static boolean isInstalled(Class clazz) {
     try {
       URL classUrl = getClassURL(clazz);
-    
       return "jar".equals(classUrl.getProtocol());
     } catch (Exception ex) {
-      // fall through
+      logger.log(Level.FINE, "testing class URL for jar protocoll failed", ex);
     }
     return false;   
   }
@@ -69,7 +72,7 @@ public class Installation {
     
         return jarFile.getParentFile();
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "detecting install directory failed", ex);
       }
     }
     
@@ -83,6 +86,7 @@ public class Installation {
    * @return the URL this class was loaded from
    */
   private static URL getClassURL(Class clazz) {
-    return clazz.getResource("/" + clazz.getName().replace('.', '/'));
+    String resourceName = "/" + clazz.getName().replace('.', '/') + ".class";
+    return clazz.getResource(resourceName);
   }
 }
