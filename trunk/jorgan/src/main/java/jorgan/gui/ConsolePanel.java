@@ -425,7 +425,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
     viewsByElement.put(element, view);
     views.add(view);
     view.setConsolePanel(this);
-    view.changeUpdate(null);
     
     repaint();
     revalidate();

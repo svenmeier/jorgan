@@ -105,16 +105,12 @@ public class PistonView extends View {
 
     Piston piston = getPiston();
 
-    Character shortcut = piston.getShortcut();
-    if (shortcut != null && ev.getKeyCode() != KeyEvent.VK_CONTROL) {
-      char character = shortcut.charValue();
-      if (character == Character.toUpperCase(ev.getKeyChar()) ||
-          character == (char)ev.getKeyCode()                 ) {
-        if ((ev.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
-          piston.get();
-        } else {
-          piston.set();        
-        }
+    Shortcut shortcut = piston.getShortcut();
+    if (shortcut != null && shortcut.match(ev)) {
+      if ((ev.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
+        piston.get();
+      } else {
+        piston.set();        
       }
     }
   } 

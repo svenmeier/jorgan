@@ -35,7 +35,7 @@ public class Configuration extends PreferencesConfiguration {
   private static final boolean   DISABLE_SCREENSAVER      = true;
   private static final Rectangle FRAME_BOUNDS             = null;
   private static final int       FRAME_STATE              = JFrame.NORMAL;
-  private static final String    DOCKABLES                = "SLICE[SLICE[DOCK[!REFERENCES,!PROPERTIES],DOCK[!ELEMENTS],3,0.5],SLICE[DOCK[!KEYBOARD,!MIDI_LOG,!PROBLEMS],BRIDGE[!CONSOLES],3,0.25],2,0.25]";  
+  private static final String    DOCKABLES                = "SLICE[SLICE[DOCK[false,!REFERENCES,!PROPERTIES],DOCK[false,!ELEMENTS],3,0.5],SLICE[DOCK[false,!KEYBOARD,!MIDI_LOG,!PROBLEMS],BRIDGE[!CONSOLES],3,0.25],2,0.25]";  
   
   private static Configuration sharedInstance = new Configuration(true);
 

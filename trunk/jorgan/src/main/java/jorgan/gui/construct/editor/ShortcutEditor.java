@@ -19,19 +19,22 @@
 package jorgan.gui.construct.editor;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
+
 import javax.swing.*;
-import javax.swing.text.*;
+
+import jorgan.disposition.Shortcut;
 
 /**
  * PropertyEditor for a shortcut property.
  */
 public class ShortcutEditor extends CustomEditor {
 
-  private JTextField textField = new JTextField(new ShortcutDocument(), "", 1);
+  private ShortcutField shortcutField = new ShortcutField();
 
   public String format(Object value) {
 
-    Character shortcut = (Character)value;
+    Shortcut shortcut = (Shortcut)value;
 
     if (shortcut == null) {
       return "";
@@ -42,33 +45,56 @@ public class ShortcutEditor extends CustomEditor {
 
   public Component getCustomEditor(Object value) {
 
-    Character shortcut = (Character)value;
-    if (shortcut == null){
-      textField.setText("");
-    } else {
-      textField.setText(shortcut.toString());
-    }
+    shortcutField.setShortcut((Shortcut)value);
 
-    return textField;
+    return shortcutField;
   }
 
   public Object getEditedValue() {
-    String text = textField.getText();
-    if ("".equals(text)) {
-      return null;
-    } else {
-      return new Character(text.charAt(0));
-    }
+    return shortcutField.getShortcut();
   }
-
-  private class ShortcutDocument extends PlainDocument {
-    public void insertString(int offs, String str, AttributeSet a) throws BadLocationException {
-      if (str.length() > 0) {
-        str = str.toUpperCase().substring(0, 1);
-      }
+  
+  private class ShortcutField extends JTextField implements KeyEventDispatcher {
+     
+    private Shortcut shortcut;
     
-      remove(0, getLength());
-      super.insertString(0, str, a);
+    public ShortcutField() {
+      setEditable(false);
+    }
+    
+    public void addNotify() {
+        super.addNotify();
+        
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(this);
+    }
+      
+    public void removeNotify() {       
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventDispatcher(this);
+        
+        super.removeNotify();
+    }
+      
+    public void setShortcut(Shortcut shortcut) {
+      this.shortcut = shortcut;
+      
+      if (shortcut == null){
+        setText("");
+      } else {
+        setText(shortcut.toString());
+      }
+    }
+    
+    public Shortcut getShortcut() {
+      return shortcut;
+    }
+    
+    public boolean dispatchKeyEvent(KeyEvent e) {
+      if (e.getID() == KeyEvent.KEY_PRESSED) {
+        setShortcut(Shortcut.createShortCut(e));            
+        return true;
+      }                
+
+      return false;
     }
   }
 }
