@@ -137,7 +137,7 @@ public abstract class View {
     ConsoleReference reference = (ConsoleReference)console.getReference(element);
     x = reference.getX();
     y = reference.getY();
-    
+        
     if (style == null) {
       nameBreaks = breakNonStyleName(name); 
     } else {
@@ -151,7 +151,7 @@ public abstract class View {
     }
     repaint();
   }
-
+  
   protected void repaint() {
     consolePanel.repaintView(this);
   }
