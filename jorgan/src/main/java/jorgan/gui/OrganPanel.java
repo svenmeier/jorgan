@@ -340,6 +340,14 @@ public class OrganPanel extends JPanel {
     consoleDockables.put(console, dockable);
   }
   
+  protected void updateConsoleDockable(Console console) {
+    DefaultDockable dockable = (DefaultDockable)consoleDockables.get(console);
+
+    dockable.setName(ElementUtils.getElementName(console));
+    
+    inner.putDockable(console, dockable);
+  }
+  
   protected void removeConsoleDockable(Console console) {
     Dockable dockable = (Dockable)consoleDockables.get(console);
     
@@ -424,11 +432,11 @@ public class OrganPanel extends JPanel {
           outer.putDockable("REFERENCES", null);
           outer.putDockable("PROPERTIES", null);
           
+          selectionModel.clear();
+
           if (playing && !play.isOpen()) {
             play.open();
           }
-
-          selectionModel.clear();
         }
 
         Iterator iterator = consoleDockables.values().iterator();
@@ -509,6 +517,14 @@ public class OrganPanel extends JPanel {
    */
   private class InternalOrganListener extends OrganAdapter {
 
+    public void elementChanged(OrganEvent event) {
+      jorgan.disposition.Element element = event.getElement();
+
+      if (element instanceof Console) {
+        updateConsoleDockable((Console)element);
+      }
+    }
+    
     public void elementAdded(OrganEvent event) {
 
       jorgan.disposition.Element element = event.getElement();
