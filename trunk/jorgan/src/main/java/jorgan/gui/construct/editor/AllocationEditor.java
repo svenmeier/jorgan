@@ -22,19 +22,17 @@ import java.beans.*;
 import java.util.ResourceBundle;
 
 /**
- * Property editor for a pitch property.
+ * Property editor for an allocation property.
  */
-public class PitchEditor extends PropertyEditorSupport {
+public class AllocationEditor extends PropertyEditorSupport {
 
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
   private String[] tags;
 
-  public PitchEditor() {
-    tags = new String[]{resources.getString("construct.editor.pitch.dynamic"),
-                        resources.getString("construct.editor.pitch.constant"),
-                        resources.getString("construct.editor.pitch.highest"),
-                        resources.getString("construct.editor.pitch.lowest")};   
+  public AllocationEditor() {
+    tags = new String[]{resources.getString("construct.editor.allocation.firstAvailable"),
+                        resources.getString("construct.editor.allocation.allAvailable")};   
   }
 
   public String[] getTags() {
@@ -59,6 +57,6 @@ public class PitchEditor extends PropertyEditorSupport {
         return;
       }
     }
-    throw new IllegalArgumentException("unkown pitch");
+    throw new IllegalArgumentException("unkown allocation");
   }
 }

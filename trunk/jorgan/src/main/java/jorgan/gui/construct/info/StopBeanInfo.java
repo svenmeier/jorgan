@@ -19,6 +19,7 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.*;
+import jorgan.gui.construct.editor.AllocationEditor;
 import jorgan.gui.construct.editor.DataEditor;
 
 /**
@@ -30,6 +31,7 @@ public class StopBeanInfo extends KeyableBeanInfo {
         super.registerProperties();
 
         add("program", Stop.class, DataEditor.class);
+        add("allocation", Stop.class, AllocationEditor.class);
         add("volume", Stop.class, DataEditor.class);
         add("pan", Stop.class, DataEditor.class);
         add("bend", Stop.class, DataEditor.class);
