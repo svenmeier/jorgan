@@ -49,14 +49,9 @@ public class OrganPlay  {
   private Map players = new HashMap();
 
   /**
-   * The listener to changes of the organ.
+   * The handler of organ and configuration events.
    */
-  private OrganListener organListener = new InternalOrganListener();
-  
-  /**
-   * The listener to changes of the configuration.
-   */
-  private ConfigurationListener configurationListener = new InternalConfigurationListener();
+  private EventHandler eventHandler = new EventHandler();
   
   /**
    * All registered playerListeners.
@@ -73,13 +68,13 @@ public class OrganPlay  {
   public OrganPlay(Organ organ) {
     this.organ = organ;
 
-    organ.addOrganListener(organListener);
+    organ.addOrganListener(eventHandler);
 
     for (int e = 0; e < organ.getElementCount(); e++) {
         createPlayer(organ.getElement(e));
     }
 
-    Configuration.instance().addConfigurationListener(configurationListener);
+    Configuration.instance().addConfigurationListener(eventHandler);
   }
 
   public Organ getOrgan() {
@@ -96,10 +91,10 @@ public class OrganPlay  {
 
   public void dispose() {
 
-    organ.removeOrganListener(organListener);
+    organ.removeOrganListener(eventHandler);
     organ = null;
 
-    Configuration.instance().removeConfigurationListener(configurationListener);
+    Configuration.instance().removeConfigurationListener(eventHandler);
     
     listeners.clear();
   }
@@ -152,14 +147,25 @@ public class OrganPlay  {
     }
   }
 
-  protected void fireInput() {
+  /**
+   * Mark input to be notified to listeners on next call to
+   * {@link #flushIO()}.
+   */
+  protected void markInput() {
     input = true;
   }
   
-  protected void fireOutput() {
+  /**
+   * Mark output to be notified to listeners on next call to
+   * {@link #flushIO()}.
+   */
+  protected void markOutput() {
     output = true;
   }
-     
+
+  /**
+   * Flush possible input and output to registered listeners.
+   */
   private void flushIO() {
     if (input || output) {
       if (listeners != null) {
@@ -312,7 +318,7 @@ public class OrganPlay  {
           if (status != ShortMessage.ACTIVE_SENSING &&
               status != ShortMessage.TIMING_CLOCK) {
 
-            fireInput();
+            markInput();
 
             player.input(shortMessage);
 
@@ -323,20 +329,7 @@ public class OrganPlay  {
     };
   }
 
-  private class InternalConfigurationListener implements ConfigurationListener {
-
-    public void configurationChanged(ConfigurationEvent ev) {
-      Iterator iterator = players.values().iterator();
-      while (iterator.hasNext()) {
-        Player player = (Player)iterator.next();
-        player.elementChanged(null);
-      }
-    }
-    
-    public void configurationBackup(ConfigurationEvent event) { }
-  }
-
-  private class InternalOrganListener extends OrganAdapter {
+  private class EventHandler extends OrganAdapter implements ConfigurationListener {
 
     public void elementChanged(OrganEvent event) {
       assertNoLock();
@@ -364,5 +357,15 @@ public class OrganPlay  {
 
       flushIO();
     }
+    
+    public void configurationChanged(ConfigurationEvent ev) {
+        Iterator iterator = players.values().iterator();
+        while (iterator.hasNext()) {
+          Player player = (Player)iterator.next();
+          player.elementChanged(null);
+        }
+      }
+      
+    public void configurationBackup(ConfigurationEvent event) { }
   }
 }
