@@ -358,10 +358,12 @@ public class ElementsPanel extends JPanel {
       super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       
       setIcon(elementIcon);
-      if (play.hasErrors(element)) {
-        setIcon(errorIcon);
-      } else if (play.hasWarnings(element)) {
-        setIcon(warningIcon);
+      if (play != null) {
+        if (play.hasErrors(element)) {
+          setIcon(errorIcon);
+        } else if (play.hasWarnings(element)) {
+          setIcon(warningIcon);
+        }
       }
       
       return this;

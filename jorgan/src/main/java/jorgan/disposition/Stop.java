@@ -27,6 +27,27 @@ public class Stop extends Keyable {
   public static final int DEFAULT_VOLUME    = 100;
   public static final int DEFAULT_BEND      = 64;
 
+  /**
+   * Allocate a sound on the first referenced {@link SoundSource}
+   * that is available.
+   */
+  public static final int ALLOCATION_FIRST_AVAILABLE = 0;
+  
+  /**
+   * Allocate a sound on each referenced {@link SoundSource}
+   * that is available.
+   */
+  public static final int ALLOCATION_ALL_AVAILABLE = 1;
+
+  /**
+   * How should a sound be allocated.
+   * 
+   * @see #ALLOCATION_FIRST 
+   * @see #ALLOCATION_ALL 
+   * @see #ALLOCATION_PITCH 
+   */
+  private int allocation = ALLOCATION_FIRST_AVAILABLE;
+
   private int program = 0;
 
   private int pan = DEFAULT_PAN;
@@ -39,6 +60,10 @@ public class Stop extends Keyable {
     return SoundEffect.class.isAssignableFrom(clazz) || SoundSource.class.isAssignableFrom(clazz);
   }
 
+  public int getAllocation() {
+      return allocation;
+  }
+  
   public int getProgram() {
     return program;
   }
@@ -55,6 +80,15 @@ public class Stop extends Keyable {
     return volume;
   }
 
+  public void setAllocation(int allocation) {
+     if (allocation != ALLOCATION_FIRST_AVAILABLE &&  allocation != ALLOCATION_ALL_AVAILABLE) {
+       throw new IllegalArgumentException("allocation '" + allocation + "'");
+     }
+     this.allocation = allocation;
+
+     fireElementChanged(true);
+  }
+  
   public void setProgram(int program) {
   	if (program < 0 || program > 127) {
   		throw new IllegalArgumentException("program '" + program + "'");

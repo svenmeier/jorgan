@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<slice position="3" weight="0.0">
+  <dock minimized="false">
+    <dockable key="KEYBOARD" null="true"/>
+  </dock>
+  <slice position="2" weight="0.25">
+    <slice position="1" weight="0.5">
+      <dock minimized="false">
+        <dockable key="ELEMENTS" null="false"/>
+      </dock>
+      <dock minimized="false">
+        <dockable key="REFERENCES" null="false"/>
+        <dockable key="PROPERTIES" null="false"/>
+      </dock>
+    </slice>
+    <slice position="3" weight="0.25">
+      <dock minimized="false">
+        <dockable key="MIDI_LOG" null="true"/>
+        <dockable key="PROBLEMS" null="false"/>
+      </dock>
+      <bridge key="CONSOLES" null="false"/>
+    </slice>
+  </slice>
+</slice>

@@ -35,7 +35,7 @@ public class Configuration extends PreferencesConfiguration {
   private static final boolean   DISABLE_SCREENSAVER      = true;
   private static final Rectangle FRAME_BOUNDS             = null;
   private static final int       FRAME_STATE              = JFrame.NORMAL;
-  private static final String    DOCKABLES                = "SLICE[SLICE[DOCK[false,!REFERENCES,!PROPERTIES],DOCK[false,!ELEMENTS],3,0.5],SLICE[DOCK[false,!KEYBOARD,!MIDI_LOG,!PROBLEMS],BRIDGE[!CONSOLES],3,0.25],2,0.25]";  
+  private static final String    DOCKING                  = null;  
   
   private static Configuration sharedInstance = new Configuration(true);
 
@@ -44,7 +44,7 @@ public class Configuration extends PreferencesConfiguration {
   private boolean   disableScreenSaver;
   private Rectangle frameBounds;
   private int       frameState;
-  private String    dockables;
+  private String    docking;
 
   private Configuration(boolean sharedFlag) {
     addChild(jorgan.gui.console.Configuration.instance());
@@ -64,7 +64,7 @@ public class Configuration extends PreferencesConfiguration {
     disableScreenSaver          = prefs.getBoolean(       "disableScreenSaver"  , DISABLE_SCREENSAVER);
     frameBounds                 = getRectangle    (prefs, "frameBounds"         , FRAME_BOUNDS);
     frameState                  = prefs.getInt    (       "frameState"          , FRAME_STATE);
-    dockables                   = prefs.get       (       "dockables"           , DOCKABLES);
+    docking                     = prefs.get       (       "docking"             , DOCKING);
   }
 
   protected void backup(Preferences prefs) {
@@ -73,7 +73,7 @@ public class Configuration extends PreferencesConfiguration {
     prefs.putBoolean(       "disableScreenSaver"  , disableScreenSaver);
     putRectangle    (prefs, "frameBounds"         , frameBounds);
     prefs.putInt    (       "frameState"          , frameState);
-    prefs.put       (       "dockables"           , dockables);
+    prefs.put       (       "docking"             , docking);
   }
 
   public boolean getUseSystemLookAndFeel() {
@@ -96,8 +96,8 @@ public class Configuration extends PreferencesConfiguration {
     return frameState;
   }
 
-  public String getDockables() {
-    return dockables;
+  public String getDocking() {
+    return docking;
   }
 
   public void setFrameBounds(Rectangle rectangle) {
@@ -112,8 +112,8 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
-  public void setDockables(String dockables) {
-    this.dockables = dockables;
+  public void setDocking(String docking) {
+    this.docking = docking;
     
     fireConfigurationChanged();
   }
