@@ -85,7 +85,7 @@ public class ConsolePlayer extends Player {
     }
   }
 
-  protected void filter(ShortMessage message) {
+  protected void input(ShortMessage message) {
     Console console = (Console)getElement();
 
     for (int r = 0; r < console.getReferencesCount(); r++) {
@@ -93,7 +93,7 @@ public class ConsolePlayer extends Player {
       
       Player player = getOrganPlay().getPlayer(reference.getElement());
       if (player != null) {
-          player.messageReceived(message);
+        player.messageReceived(message);
       }
     }
   }     
