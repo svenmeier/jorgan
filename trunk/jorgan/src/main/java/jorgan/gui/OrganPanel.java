@@ -20,7 +20,11 @@ package jorgan.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -63,7 +67,7 @@ import swingx.docking.DefaultDockable;
 import swingx.docking.Dockable;
 import swingx.docking.DockingPane;
 import swingx.docking.border.Eclipse3Border;
-import swingx.docking.persistence.DefaultPersister;
+import swingx.docking.persistence.XMLPersister;
 
 /**
  * Panel for display and editing of an organ.
@@ -151,8 +155,6 @@ public class OrganPanel extends JPanel {
    */
   private DockingPane inner = new DockingPane();
   
-  private OrganPanelPersister persister;
-
   private ElementPropertiesPanel propertiesPanel = new ElementPropertiesPanel();
   private ElementsPanel          elementsPanel   = new ElementsPanel();
   private ReferencesPanel        referencesPanel = new ReferencesPanel();
@@ -187,14 +189,9 @@ public class OrganPanel extends JPanel {
     outer.setDockBorder(new Eclipse3Border());
     add(outer, BorderLayout.CENTER);   
 
-    persister = new OrganPanelPersister(); 
-    try {
-      persister.loadFromString(Configuration.instance().getDockables());
-    } catch (IOException ex) {
-      // keep standard docking
-    }
-    
     setSelectionModel(new ElementSelectionModel());
+    
+    loadDocking();
   }
 
   public void addNotify() {
@@ -208,7 +205,7 @@ public class OrganPanel extends JPanel {
   public void removeNotify() {
     Configuration.instance().removeConfigurationListener(configurationListener);
     
-    configurationListener.flushToConfiguration();
+    saveDocking();
 
     super.removeNotify();
   }
@@ -444,22 +441,40 @@ public class OrganPanel extends JPanel {
         }
     }
   }
+
+  public void loadDocking() {
+    try {
+      Reader reader = new StringReader(Configuration.instance().getDocking());
+      OrganPanelPersister persister = new OrganPanelPersister(reader); 
+      persister.load();
+    } catch (Exception keepStandardDocking) {
+      try {
+        Reader reader = new InputStreamReader(getClass().getResourceAsStream("docking.xml"));
+        OrganPanelPersister persister = new OrganPanelPersister(reader); 
+        persister.load();
+      } catch (Exception error) {
+        throw new Error("unable to load standard docking");
+      }
+    }      
+  }
+
+  public void saveDocking() {
+    try {
+      Writer writer = new StringWriter();
+      OrganPanelPersister persister = new OrganPanelPersister(writer);
+      persister.save();
+      Configuration.instance().setDocking(writer.toString());
+    } catch (Exception ignore) {
+    }
+  }
   
   private class InternalConfigurationListener implements ConfigurationListener {
 
     public void configurationChanged(ConfigurationEvent ev) { }
     
     public void configurationBackup(ConfigurationEvent event) {
-      flushToConfiguration();
-    }
-    
-    public void flushToConfiguration() {
-      try {
-        Configuration.instance().setDockables(persister.saveToString());
-      } catch (IOException ex) {
-        // nothing we can do about it
-      }
-    }
+      saveDocking();
+    }    
   }
 
   /**
@@ -659,9 +674,12 @@ public class OrganPanel extends JPanel {
     }
   }
   
-  private class OrganPanelPersister extends DefaultPersister {
-    public OrganPanelPersister() {
-        super(outer);
+  private class OrganPanelPersister extends XMLPersister {
+    public OrganPanelPersister(Reader reader) {
+      super(outer, reader);
+    }
+    public OrganPanelPersister(Writer writer) {
+      super(outer, writer);
     }
     
     protected JComponent resolveComponent(Object key) {

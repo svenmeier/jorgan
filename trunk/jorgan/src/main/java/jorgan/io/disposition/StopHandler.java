@@ -59,6 +59,12 @@ public class StopHandler extends KeyableHandler {
           stop.setProgram(getInteger());
         }
       };
+    } else if ("allocation".equals(qName)) {
+        new IntegerHandler(getReader()) {
+          public void finished() {
+            stop.setAllocation(getInteger());
+          }
+        };
     } else if ("velocity".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
@@ -91,10 +97,11 @@ public class StopHandler extends KeyableHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "program"  , stop.getProgram  ()).start();
-    new IntegerHandler(getWriter(), "velocity" , stop.getVelocity ()).start();
-    new IntegerHandler(getWriter(), "volume"   , stop.getVolume   ()).start();
-    new IntegerHandler(getWriter(), "pan"      , stop.getPan      ()).start();
-    new IntegerHandler(getWriter(), "bend"     , stop.getBend     ()).start();
+    new IntegerHandler(getWriter(), "program"   , stop.getProgram   ()).start();
+    new IntegerHandler(getWriter(), "allocation", stop.getAllocation()).start();
+    new IntegerHandler(getWriter(), "velocity"  , stop.getVelocity  ()).start();
+    new IntegerHandler(getWriter(), "volume"    , stop.getVolume    ()).start();
+    new IntegerHandler(getWriter(), "pan"       , stop.getPan       ()).start();
+    new IntegerHandler(getWriter(), "bend"      , stop.getBend      ()).start();
   }
 }

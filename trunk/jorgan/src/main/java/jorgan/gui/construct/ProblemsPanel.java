@@ -21,8 +21,9 @@ package jorgan.gui.construct;
 import java.text.MessageFormat;
 import java.util.*;
 import java.awt.BorderLayout;
-import java.awt.event.MouseAdapter;
+import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -63,16 +64,15 @@ public class ProblemsPanel extends JPanel {
    */
   private ElementSelectionModel selectionModel;
 
-  /**
-   * The handler of selection changes.
-   */
-  private SelectionHandler selectionHandler = new SelectionHandler();
-
   private JTable table = new JTable();
   
   private ProblemsModel problemsModel = new ProblemsModel();
   
   private List rows = new ArrayList();
+  
+  private JPopupMenu popup = new JPopupMenu();
+  
+  private GotoAction gotoAction = new GotoAction();
   
   /**
    * Create a tree panel.
@@ -82,7 +82,7 @@ public class ProblemsPanel extends JPanel {
     setLayout(new BorderLayout());
 
     table.setModel(problemsModel);
-    table.addMouseListener(selectionHandler);
+    table.addMouseListener(gotoAction);
     table.setGridColor(getBackground());
     
     Map iconMap = new HashMap();
@@ -94,6 +94,8 @@ public class ProblemsPanel extends JPanel {
     scrollPane.setBorder(new EmptyBorder(0,0,0,0));
     scrollPane.getViewport().setBackground(table.getBackground());
     add(scrollPane, BorderLayout.CENTER);
+    
+    popup.add(gotoAction);
     
     setSelectionModel(new ElementSelectionModel());
   }
@@ -147,25 +149,6 @@ public class ProblemsPanel extends JPanel {
     this.selectionModel = selectionModel;
   }  
   
-  /**
-   * The handler of element selection.
-   */
-  private class SelectionHandler extends MouseAdapter {
-    
-    public void mouseClicked(MouseEvent e) {
-      
-      if (e.getClickCount() == 2) {
-        if (table.getSelectedRowCount() == 1) {
-          int index = table.getSelectedRow();
-
-          Row row = (Row)rows.get(index);
-
-          selectionModel.setSelectedElement(row.getElement(), row.getProblem().getProperty());
-        }    
-      }
-    }
-  }
-
   private class ProblemsModel extends AbstractTableModel implements PlayListener {
 
     private String[] columns = new String[]{" ", "Description", "Element"};
@@ -269,4 +252,55 @@ public class ProblemsPanel extends JPanel {
              row.problem.equals(this.problem);
     }
   }
+  
+  private class GotoAction extends AbstractAction implements MouseListener {
+
+    public GotoAction() {
+      putValue(Action.NAME             , resources.getString("problems.action.goto.name"));
+      putValue(Action.SHORT_DESCRIPTION, resources.getString("problems.action.goto.description"));
+      putValue(Action.SMALL_ICON       , new ImageIcon(ProblemsPanel.class.getResource("/jorgan/gui/img/goto.gif")));
+   }
+
+    public void actionPerformed(ActionEvent ev) {
+      activateGoto();
+    }
+
+    public void activateGoto() {
+      int index = table.getSelectedRow();
+
+      Row row = (Row)rows.get(index);
+
+      selectionModel.setSelectedElement(row.getElement(), row.getProblem().getProperty());
+    }
+    
+    public void mouseClicked(MouseEvent e) {
+      if (e.getClickCount() == 2) {
+        if (table.getSelectedRowCount() == 1) {
+          activateGoto();
+        }    
+      }
+    }
+    
+    public void mouseEntered(MouseEvent e) { }
+    
+    public void mouseExited(MouseEvent e) { }
+
+    public void mousePressed(MouseEvent e) {
+        checkPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e) {
+        checkPopup(e);
+    }
+    
+    public void checkPopup(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        int index = table.rowAtPoint(e.getPoint());
+        if (index != -1) {
+          table.setRowSelectionInterval(index, index);
+          popup.show(table, e.getX(), e.getY());
+        }
+      }
+    }
+  }    
 }
