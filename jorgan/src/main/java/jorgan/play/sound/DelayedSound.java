@@ -183,7 +183,7 @@ public class DelayedSound extends SoundWrapper {
             }
           }        
         } catch (InterruptedException ex) {
-          // ignore
+          throw new Error("unexpected interruption", ex);
         }
       }
     }

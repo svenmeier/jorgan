@@ -23,6 +23,8 @@ import java.awt.Toolkit;
 import java.io.*;
 import java.net.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.*;
 import javax.swing.*;
 
@@ -33,6 +35,8 @@ import jorgan.util.*;
  * Manager of skins.
  */
 public class SkinManager implements ISkinManager {
+    
+  private static final Logger logger = Logger.getLogger(SkinManager.class.getName());
 
   /**
    * The name of the system property to specify the path to load skins from.
@@ -87,7 +91,7 @@ public class SkinManager implements ISkinManager {
             skinSourcesByName.put(skinSource.getSkinName(), skinSource);
           }
         } catch (IOException ex) {
-          // ignore
+          logger.log(Level.FINE, "failed to load skin '" + entry + "'", ex);
         }
       }
     }
@@ -184,7 +188,7 @@ public class SkinManager implements ISkinManager {
     try {
       tracker.waitForAll();
     } catch (InterruptedException e) {
-      // ignore
+      throw new Error("unexpected interruption");
     }
     boolean error = tracker.isErrorAny();
     tracker.removeImage(image);

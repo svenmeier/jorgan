@@ -776,7 +776,7 @@ public class OrganFrame extends JFrame implements UI {
       try {
         wait();
       } catch (InterruptedException ex) {
-        // ignore
+        throw new Error("unexpected interruption", ex);
       }        
     }
 

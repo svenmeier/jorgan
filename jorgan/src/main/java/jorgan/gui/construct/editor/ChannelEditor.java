@@ -101,7 +101,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor, A
       JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
       editor.commitEdit();
     } catch (ParseException ex) {
-      // ignore
+      // invalid format so keep previous value
     }
 
     return new Integer(((Integer)spinner.getValue()).intValue() - 1);

@@ -69,4 +69,12 @@ public abstract class DeviceWrapper implements MidiDevice {
     public Transmitter getTransmitter() throws MidiUnavailableException {
         return device.getTransmitter();
     }
+    
+//    public List getReceivers() {
+//        return device.getReceivers();
+//    }
+    
+//    public List getTransmitters() {
+//        return device.getTransmitters();
+//    }
 }

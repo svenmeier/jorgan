@@ -35,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -56,11 +58,15 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
+import jorgan.gui.OrganPanel;
+
 /**
  * A panel for editing of bean properties.
  */
 public class PropertiesPanel extends JPanel {
 
+  private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
+    
   protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
   
   private static final Object[] EMPTY_ARGUMENTS = new Object[0];
@@ -280,7 +286,7 @@ public class PropertiesPanel extends JPanel {
            
           return value; 
         } catch (Exception ex) {
-          // silently ignore;
+          logger.log(Level.FINER, "unable to get property value", ex);
         }
         return null;
       }
@@ -302,7 +308,7 @@ public class PropertiesPanel extends JPanel {
           Object bean = beans.get(b);
           method.invoke(bean, new Object[]{aValue});
         } catch (Exception ex) {
-          // silently ignore;
+          logger.log(Level.FINER, "unable to set property value", ex);
         }
       }
     }
@@ -378,7 +384,7 @@ public class PropertiesPanel extends JPanel {
             editor.setAsText((String)comboBox.getSelectedItem());
           }
         } catch (IllegalArgumentException ex) {
-          // silently ignore
+          logger.log(Level.FINER, "unable to get value", ex);
         }
       }
       return editor.getValue();

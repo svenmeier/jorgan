@@ -194,13 +194,13 @@ public abstract class Player {
 
   protected void fireInput() {
     if (organPlay != null) {
-      organPlay.fireInput();
+      organPlay.markInput();
     }
   }
 
   protected void fireOutput() {
     if (organPlay != null) {
-      organPlay.fireOutput();
+      organPlay.markOutput();
     }
   }  
 }

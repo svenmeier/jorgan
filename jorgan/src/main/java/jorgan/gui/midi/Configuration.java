@@ -20,6 +20,8 @@ package jorgan.gui.midi;
 
 import java.util.*;
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
@@ -28,6 +30,8 @@ import jorgan.config.prefs.*;
  * Configuration of the swing package.
  */
 public class Configuration extends PreferencesConfiguration {
+    
+  private static Logger logger = Logger.getLogger(Configuration.class.getName());
 
   private static final int     MIDI_LOG_MAX = 500;
   private static final boolean MIDI_LOG_HEX = false;
@@ -86,7 +90,7 @@ public class Configuration extends PreferencesConfiguration {
 
         return new Rectangle(x, y, w, h);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "rectangle parsing failed", ex);
       }
     }
     return def;
@@ -111,7 +115,7 @@ public class Configuration extends PreferencesConfiguration {
 
         return new Point(x, y);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "point parsing failed", ex);
       }
     }
     return def;

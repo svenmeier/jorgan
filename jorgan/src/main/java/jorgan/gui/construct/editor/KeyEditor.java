@@ -80,7 +80,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor, Actio
       JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
       editor.commitEdit();
     } catch (ParseException ex) {
-      // ignore
+      // invalid format so keep previous value
     }
 
     return spinner.getValue();

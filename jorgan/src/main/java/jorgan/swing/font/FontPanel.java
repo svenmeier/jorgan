@@ -19,17 +19,20 @@
 package jorgan.swing.font;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.awt.*;
 import javax.swing.*;
 
 import jorgan.swing.EditableList;
-
 
 /**
  * A panel for a font selection.
  */ 
 class FontPanel extends JPanel {
 
+  private static Logger logger = Logger.getLogger(FontPanel.class.getName());
+    
   /**
    * The resource bundle.
    */
@@ -90,7 +93,7 @@ class FontPanel extends JPanel {
       
       font = new Font(family, style, size); 
     } catch (Exception ex) {
-      // fall through
+      logger.log(Level.FINE, "font construction failed", ex);
     }
     return font;
   }

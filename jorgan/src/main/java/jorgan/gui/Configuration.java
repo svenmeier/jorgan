@@ -20,6 +20,8 @@ package jorgan.gui;
 
 import java.util.*;
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.*;
 import javax.swing.*;
 
@@ -29,6 +31,8 @@ import jorgan.config.prefs.*;
  * Configuration of the swing package.
  */
 public class Configuration extends PreferencesConfiguration {
+
+  private static Logger logger = Logger.getLogger(Configuration.class.getName());
 
   private static final boolean   USE_SYSTEM_LOOK_AND_FEEL = true;
   private static final boolean   SHOW_ABOUT_ON_STARTUP    = true;
@@ -149,7 +153,7 @@ public class Configuration extends PreferencesConfiguration {
 
         return new Rectangle(x, y, w, h);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "rectangle parsing failed", ex);
       }
     }
     return def;
