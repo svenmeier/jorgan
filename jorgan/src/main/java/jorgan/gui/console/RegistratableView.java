@@ -118,13 +118,9 @@ public class RegistratableView extends View {
 
     Registratable registratable = getRegistratable();
 
-    Character shortcut = registratable.getShortcut();
-    if (shortcut != null) {
-      char character = shortcut.charValue(); 
-      if (character == Character.toUpperCase(ev.getKeyChar()) ||
-          character == (char)ev.getKeyCode()                 ) {
-        registratable.setOn(!registratable.isOn());
-      }
+    Shortcut shortcut = registratable.getShortcut();
+    if (shortcut != null && shortcut.match(ev)) {
+      registratable.setOn(!registratable.isOn());
     }
   } 
 

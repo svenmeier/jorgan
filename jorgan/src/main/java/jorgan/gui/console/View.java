@@ -35,6 +35,7 @@ import jorgan.gui.ConsolePanel;
 import jorgan.disposition.Active;
 import jorgan.disposition.Console;
 import jorgan.disposition.ConsoleReference;
+import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.*;
 import jorgan.skin.*;
 
@@ -365,15 +366,15 @@ public abstract class View {
     }
     
     if (Configuration.instance().getShowShortcut() && element instanceof Active) { 
-      Character character = ((Active)element).getShortcut();
+      Shortcut shortcut = ((Active)element).getShortcut();
 
-      if (character != null) {
+      if (shortcut != null) {
         Color color = Configuration.instance().getShortcutColor(); 
         Font  font  = Configuration.instance().getShortcutFont(); 
         g.setColor(color);
         g.setFont (font);
         
-        String string = "" + character; 
+        String string = shortcut.toString(); 
         g.drawString(string, 0, 0 + font.getSize());
       }
     }

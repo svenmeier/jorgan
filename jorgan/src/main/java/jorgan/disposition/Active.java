@@ -20,16 +20,13 @@ package jorgan.disposition;
 
 public abstract class Active extends Element {
 
-  private Character shortcut;
+  private Shortcut shortcut;
 
-  public Character getShortcut() {
+  public Shortcut getShortcut() {
       return shortcut;
     }
     
-  public void setShortcut(Character shortcut) {
-    if (shortcut != null) {
-      shortcut = new Character(Character.toUpperCase(shortcut.charValue()));
-    }
+  public void setShortcut(Shortcut shortcut) {
     this.shortcut = shortcut;
 
     fireElementChanged(true);

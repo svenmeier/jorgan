@@ -87,7 +87,7 @@ public class Conversion {
       
     in.reset();
 
-    String header = new String(bytes, 0, offset, "UTF-8");
+    String header = new String(bytes, "UTF-8");
 
     return header;
   }
