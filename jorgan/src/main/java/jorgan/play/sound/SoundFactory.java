@@ -63,20 +63,15 @@ public abstract class SoundFactory {
   }
   
   /**
-   * Set the bank of this soundFactory.
+   * Initialize this soundFactory.
+   * <br>
+   * @TOOO This method should be generalized to work with different sound producers.
    * 
-   * @param bank      bank
+   * @param bank    bank
+   * @param samples samples
    */
-  public void setBank(int bank) {
-  	this.bank = bank;
-  }
-
-  /**
-   * Set the samples of this soundFactory.
-   * 
-   * @param samples		samples
-   */
-  public void setSamples(String samples) {
+  public void init(int bank, String samples) throws SoundFactoryException {
+  	this.bank    = bank;
   	this.samples = samples;
   }
 
@@ -167,14 +162,14 @@ public abstract class SoundFactory {
    * @return              sound factory
    * @throws MidiUnavailableException if device is not available
    */
-  public static SoundFactory instance(String deviceName, String type) throws MidiUnavailableException {
+  public static SoundFactory instance(String deviceName, String type) throws MidiUnavailableException, SoundFactoryException {
     
     SoundFactory factory = getProvider(type).createSoundFactory(deviceName);
 
     return factory;
   }
 
-  private static SoundFactoryProvider getProvider(String type) {
+  private static SoundFactoryProvider getProvider(String type) throws SoundFactoryException {
 
     Iterator providers = getProviders();
     
@@ -185,7 +180,7 @@ public abstract class SoundFactory {
         return provider;
       }
     }
-    throw new IllegalArgumentException(type);
+    throw new SoundFactoryException(type);
   }
 
   private static Iterator getProviders() {

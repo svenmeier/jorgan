@@ -81,5 +81,7 @@ public class SoundSource extends Element {
   
   public void setSamples(String samples) {
   	this.samples = samples;
+    
+    fireElementChanged(true);
   }
 }

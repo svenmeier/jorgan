@@ -37,7 +37,7 @@ public class BasicSoundFactory extends SoundFactory {
   /**
    * The pool of channels used by this factory.
    */
-  private ChannelPool pool;
+  protected ChannelPool pool;
   
   public BasicSoundFactory(ChannelPool pool) throws MidiUnavailableException {
     if (pool == null) {
@@ -119,7 +119,6 @@ public class BasicSoundFactory extends SoundFactory {
     /**
      * Set the program of the sound.
      * 
-     * @param bank      bank
      * @param program   program
      */
     public void setProgram(int program) {
