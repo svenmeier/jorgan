@@ -1,0 +1,38 @@
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+package jorgan.gui.construct.info;
+
+import jorgan.disposition.*;
+import jorgan.gui.construct.editor.BooleanEditor;
+import jorgan.gui.construct.editor.MessageEditor;
+
+/**
+ * BeanInfo for {@link jorgan.disposition.Registratable}.
+ */
+public class RegistratableBeanInfo extends ActiveBeanInfo {
+
+    protected void registerProperties() {
+        super.registerProperties();
+
+        add("inverse", Registratable.class, BooleanEditor.class);
+        add("onMessage", Registratable.class, MessageEditor.class);
+        add("offMessage", Registratable.class, MessageEditor.class);
+        add("on", Registratable.class, BooleanEditor.class);
+    }
+}
