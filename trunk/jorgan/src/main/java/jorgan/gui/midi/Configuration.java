@@ -29,8 +29,8 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static final int       MIDI_LOG_MAX      = 500;
-  private static final boolean   MIDI_LOG_HEX      = false;
+  private static final int     MIDI_LOG_MAX = 500;
+  private static final boolean MIDI_LOG_HEX = false;
   
   private static Configuration sharedInstance = new Configuration(true);
 
@@ -44,8 +44,8 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void restore(Preferences prefs) {
-    midiLogMax       = prefs.getInt    (       "midiLogMax"      , MIDI_LOG_MAX);
-    midiLogHex       = prefs.getBoolean(       "midiLogHex"      , MIDI_LOG_HEX);
+    midiLogMax = prefs.getInt    ("midiLogMax", MIDI_LOG_MAX);
+    midiLogHex = prefs.getBoolean("midiLogHex", MIDI_LOG_HEX);
   }
 
   protected void backup(Preferences prefs) {

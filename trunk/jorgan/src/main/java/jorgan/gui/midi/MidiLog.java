@@ -48,7 +48,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.midi.MidiLogProvider;
+import jorgan.config.ConfigurationEvent;
+import jorgan.config.ConfigurationListener;
+import jorgan.midi.log.MidiLogProvider;
 
 import jorgan.sound.midi.KeyFormat;
 
@@ -149,9 +151,24 @@ public class MidiLog extends JPanel {
     table.addMouseListener(handler);
     
     max = Configuration.instance().getMidiLogMax();
+    hex = Configuration.instance().getMidiLogHex();
     
     setTransmitter(MidiLogProvider.getLoopback().loopbackTransmitter);
   }
+  
+  public void addNotify() {
+      super.addNotify();
+
+      Configuration configuration = Configuration.instance();
+      configuration.addConfigurationListener(model);
+    }
+    
+    
+    public void removeNotify() {
+      Configuration.instance().removeConfigurationListener(model);
+      
+      super.removeNotify();
+    }
   
   private void prepareColumn(int index, int width, int align) {
     TableColumn column = table.getColumnModel().getColumn(index); 
@@ -269,7 +286,7 @@ public class MidiLog extends JPanel {
     }
   }
   
-  private class MessagesModel extends AbstractTableModel {
+  private class MessagesModel extends AbstractTableModel implements ConfigurationListener {
 
     private String[] names = new String[]{"Status", "Data 1", "Data 2", "Channel", "Note", "Event"};
     
@@ -304,6 +321,12 @@ public class MidiLog extends JPanel {
           return message.getEvent();
       }
       return null;
+    }
+    
+    public void configurationBackup(ConfigurationEvent event) { }
+    
+    public void configurationChanged(ConfigurationEvent event) {
+      setHex(Configuration.instance().getMidiLogHex());
     }
   }
   

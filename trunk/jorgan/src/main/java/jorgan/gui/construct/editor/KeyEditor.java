@@ -26,7 +26,7 @@ import javax.swing.*;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.sound.midi.*;
 
-import jorgan.midi.*;
+import jorgan.sound.midi.ShortMessageRecorder;
 import jorgan.disposition.*;
 
 /**

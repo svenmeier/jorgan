@@ -52,6 +52,7 @@ public class OrganShell implements UI {
 
     List commands = new ArrayList();
     commands.add(new HelpCommand());
+    commands.add(new EncodingCommand());
     commands.add(new OpenCommand());
     commands.add(new RecentCommand());
     commands.add(new SaveCommand());
@@ -232,6 +233,40 @@ public class OrganShell implements UI {
     }
   }
 
+  /**
+   * The command to show/change current encoding.
+   */
+  private class EncodingCommand extends AbstractCommand {
+    public String getPrefix() {
+      return "command.encoding";
+    }
+    public void execute(String param) {
+      String defaultEncoding = System.getProperty("file.encoding");
+          
+      if (param != null) {
+        try {
+          interpreter.setEncoding(param);
+          
+          if (defaultEncoding.equalsIgnoreCase(param)) {
+            Configuration.instance().setUseDefaultEncoding(true);
+          } else {
+            Configuration.instance().setEncoding(param);
+            Configuration.instance().setUseDefaultEncoding(false);
+          }
+          Configuration.instance().backup();
+        } catch (UnsupportedEncodingException ex) {
+          showMessage("command.encoding.unsupported", new Object[]{param});
+          return;
+        }
+      }
+      if (Configuration.instance().getUseDefaultEncoding()) {
+        showMessage("command.encoding.default", new Object[]{defaultEncoding});
+      } else {
+        showMessage("command.encoding.current", new Object[]{Configuration.instance().getEncoding()});            
+      }
+    }
+  }
+  
   /**
    * The command to show recent dispositions and opening a recent disposition.
    */

@@ -92,7 +92,7 @@ public class ConfigurationTreePanel extends JPanel {
         cardPanel.addCard(new SwingConstructConfigPanel(), jorgan.gui.construct.Configuration.class);
         cardPanel.addCard(new SwingMidiConfigPanel(), jorgan.gui.midi.Configuration.class);
         cardPanel.addCard(new MidiConfigPanel()     , jorgan.midi.Configuration.class);
-        cardPanel.addCard(new MidiConfigPanel()    , jorgan.midi.Configuration.class);
+        cardPanel.addCard(new MidiMergeConfigPanel(), jorgan.midi.merge.Configuration.class);
         cardPanel.addCard(new PlayConfigPanel()     , jorgan.play.Configuration.class);
         cardPanel.addCard(new IOConfigPanel()       , jorgan.io.Configuration.class);
         cardPanel.addCard(new ShellConfigPanel()    , jorgan.shell.Configuration.class);

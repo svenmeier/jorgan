@@ -16,11 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi;
+package jorgan.sound.midi;
 
 import javax.sound.midi.*;
-
-import jorgan.sound.midi.*;
 
 /**
  * Recorder of a shortMessage.
