@@ -70,9 +70,13 @@ public class Swell extends Active implements SoundEffect {
   }
 
   public void setPosition(int position) {
-    this.position = Math.max(0, Math.min(127, position));
+    // a swell may be frequently updated so
+    // change position only if needed
+    if (this.position != position) {
+      this.position = Math.max(0, Math.min(127, position));
 
-    fireElementChanged(false);
+      fireElementChanged(false);
+    }
   }
 
   public int getPosition() {
