@@ -31,6 +31,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -73,6 +75,8 @@ import swingx.docking.persistence.XMLPersister;
  * Panel for display and editing of an organ.
  */
 public class OrganPanel extends JPanel {
+    
+  private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 	
   private static final String KEY_CONSOLES = "CONSOLES";
   private static final String KEY_PROBLEMS = "PROBLEMS";
@@ -472,7 +476,8 @@ public class OrganPanel extends JPanel {
       OrganPanelPersister persister = new OrganPanelPersister(writer);
       persister.save();
       Configuration.instance().setDocking(writer.toString());
-    } catch (Exception ignore) {
+    } catch (Exception ex) {
+      logger.log(Level.FINE, "unable to save docking", ex);
     }
   }
   

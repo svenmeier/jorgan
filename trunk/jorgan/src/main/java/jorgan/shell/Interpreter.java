@@ -124,7 +124,7 @@ public class Interpreter {
         }
       }
     } catch (IOException ex) {
-      // fall through
+      throw new Error("unexpected", ex);
     }
   }
 

@@ -103,7 +103,7 @@ public class AboutPanel extends JPanel {
     try {
       Thread.sleep(4000);
     } catch (InterruptedException ex) {
-      // ignore
+      throw new Error("unexpected interruption", ex);
     }
 
     window.dispose();

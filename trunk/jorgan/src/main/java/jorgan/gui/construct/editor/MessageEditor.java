@@ -94,10 +94,10 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor, A
         int data1  = "*".equals(token1) ? -1 : Integer.parseInt(token1);
         int data2  = "*".equals(token2) ? -1 : Integer.parseInt(token2);
 
-        message= new Message(status, data1, data2);
+        message = new Message(status, data1, data2);
       }
     } catch (Exception ex) {
-      // ignore
+      // invalid format results in null message
     }
 
     return message;

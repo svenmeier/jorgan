@@ -20,6 +20,8 @@ package jorgan.gui.console;
 
 import java.util.*;
 import java.awt.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
@@ -28,6 +30,8 @@ import jorgan.config.prefs.*;
  * Configuration of the view package.
  */
 public class Configuration extends PreferencesConfiguration {
+
+  private static Logger logger = Logger.getLogger(Configuration.class.getName());
 
   private static final boolean INTERPOLATE     = false;
   private static final boolean SHOW_SHORTCUT   = true;  
@@ -209,7 +213,7 @@ public class Configuration extends PreferencesConfiguration {
   
         return new Font(name, style, size);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "font parsing failed", ex);
       }
     }
     return def;
@@ -235,7 +239,7 @@ public class Configuration extends PreferencesConfiguration {
 
         return new Color(r, g, b);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "color parsing failed", ex);
       }
     }
     return def;

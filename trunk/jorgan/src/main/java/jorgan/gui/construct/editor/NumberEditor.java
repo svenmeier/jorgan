@@ -62,7 +62,7 @@ public class NumberEditor extends CustomEditor {
       JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
       editor.commitEdit();
     } catch (ParseException ex) {
-      // ignore
+      // invalid value so keep previous value
     }
 
     return spinner.getValue();

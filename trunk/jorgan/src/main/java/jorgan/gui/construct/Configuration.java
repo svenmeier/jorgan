@@ -20,6 +20,8 @@ package jorgan.gui.construct;
 
 import java.awt.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
@@ -29,6 +31,8 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
 
+  private static Logger logger = Logger.getLogger(Configuration.class.getName());
+  
   private static final int     GRID                 = 10;  
   private static final Color   COLOR                = Color.blue;
 
@@ -79,7 +83,7 @@ public class Configuration extends PreferencesConfiguration {
 
         return new Color(r, g, b);
       } catch (Exception ex) {
-        // fall through
+        logger.log(Level.FINE, "color parsing failed", ex);
       }
     }
     return def;
