@@ -1,0 +1,43 @@
+jOrgan Troubleshooting Guide
+
+Q1 - What should I do with downloaded zip files?
+A1 - A zip file is a compressed collection of other files. You have to use a zip program like WinZip to extract these files to an arbitrary location of your computer. On Windows the directory 'c:\Program Files\jOrgan' should be appropriate, further answers will refer to this directory with <jOrgan-installation-directory>.
+
+Q2 - WinZip complains that jOrgan-xy.zip is corrupted.
+A2 - In jOrgan-xy.zip you'll find all files (see A3) that are needed to run jOrgan. Please download the zip file once again.
+
+Q3 - When I double-click the file jOrgan.jar, I am asked what to do with that file.
+A3 - jOrgan runs on Windows, Linux and Os X. To be able to support all these operation systems jOrgan is based on a Java Runtime Environment (JRE). Please make sure that you have a JRE installed on your computer, this will enable you to use many other programs written in Java (see http://www.java.com).
+
+Q4 - I double-click the file jOrgan.jar but nothing happens.
+A4 - Verify that a 1.4.1 compatible (or newer) JRE is installed. Open a command shell and enter 'java -version' to see your current Java version (output should look similar):
+	java version "1.5.0"
+	Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0-b64)
+	Java HotSpot(TM) Client VM (build 1.5.0-b64, mixed mode)	
+
+Q5 - My Java version is sufficient but still nothing happens.
+A5 - Please ensure that you've extracted (see A1) all files contained in jOrgan-xy.zip to the correct location:
+	/<jOrgan-installation-directory>
+	   jOrgan.jar
+	   /lib
+	      swingx.jar
+	      spin.jar
+	   /docs
+	      gpl.txt
+
+Q6 - The menu item to show the online help of jOrgan is disabled.
+A6 - [Online help is currently under development and will hopefully be published December 2004] Online help is avialable as a separate download. Please ensure that you've extracted (see A1) all files contained in jOrgan-xy-help.zip to the correct location:
+	/<jOrgan-installation-directory>
+	   /help
+	      help.jar
+	   /lib
+	      jh.jar
+
+Q7 - I'm not able to select a skin for the console of my organ.
+A7 - Skins are avialable as separate downloads, e.g. skin-classic-xy.zip. Please ensure that you've extracted (see A1) the contained zip file to the correct location:
+	/<jOrgan-installation-directory>
+	   /skins
+	      classic.zip
+
+Q8 - Where do I find answers to further questions?
+A8 - Please consult the online help (see A6) or post your questions on http://jorgan.sourceforge.net/forum.

@@ -1,0 +1,19 @@
+The team behind jOrgan (sorted by last name) :
+
+    Programming:
+      . Sven Meier <sven@meiers.net>
+
+    Contributors :
+      . Sörfõzõ Bence <sfbence@egon.gyaloglo.hu> (theatre skin)
+
+    Translators :
+      . Crew Glazjev <thorgeir@tut.by> (Russian translation)
+      . Giacomo Mazzullo <giacmazz@tiscalinet.it> (Italian translation)
+      . Kristian Skordal Thorsen <kristian.thorsen@bigfoot.com> (Norwegian translation)
+
+    User Feedback and Food for Thought :
+      . Graham Harrison <fg.harrison@virgin.net>
+      . Michael Kainberger <exlibris@aon.at>
+      . Don M. McDonald <don@fnords.org>
+      . Bruce Miles <bruce@gbmuk.fsnet.co.uk>
+      . and many others!!!
