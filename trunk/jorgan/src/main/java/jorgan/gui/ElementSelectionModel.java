@@ -1,0 +1,268 @@
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+package jorgan.gui;
+
+import java.util.*;
+
+import jorgan.disposition.*;
+import jorgan.gui.event.*;
+
+public class ElementSelectionModel {
+
+  private List listeners = new ArrayList();
+  
+  private ArrayList history = new ArrayList();
+  private int historyIndex;
+  
+  /**
+   * The currently selected elements.
+   */
+  private List selectedElements = new ArrayList();
+  
+  private String property;
+
+  public ElementSelectionModel() {
+    clear();
+  }
+  
+  public void clear() {
+    history.clear();
+    historyIndex = 0;
+    
+    selectedElements.clear();
+    
+    fireStateChanged();
+  }
+  
+  public void clear(Element element) {
+    selectedElements.remove(element);
+    
+    int index = history.indexOf(element);
+    if (index != -1) {
+      history.remove(element);
+      if (historyIndex > index) {
+        historyIndex--;
+      }
+    }
+    
+    fireStateChanged();
+  }
+  
+  public String getSelectedProperty() {
+    return property;
+  }
+  
+  /**
+   * Is an element selected.
+   */
+  public boolean isElementSelected() {
+    return selectedElements.size() > 0;
+  }
+  
+  /**
+   * Get the count of selected elements.
+   */
+  public int getSelectionCount() {
+    return selectedElements.size();
+  }
+  
+  public boolean isSelected(Element element) {
+    return selectedElements.contains(element);
+  }
+  
+  /**
+   * Get the currently selected elements.
+   *
+   * @return  the currently selected elements
+   */
+  public java.util.List getSelectedElements() {
+    return Collections.unmodifiableList(selectedElements);
+  }
+
+  /**
+   * Get the currently selected element.
+   *
+   * @return  the currently selected element
+   */
+  public Element getSelectedElement() {
+    if (selectedElements.size() == 1) {
+      return (Element)selectedElements.get(0);
+    } else {
+      return null;
+    }
+  }
+
+  /**
+   * Set the element to be selected.
+   *
+   * @param element   element to select
+   */
+  public void setSelectedElement(Element element) {
+
+    setSelectedElement(element, null);
+  }
+  
+  /**
+   * Set the element and property to be selected.
+   *
+   * @param element   element to select
+   * @param property  property to select
+   */
+  public void setSelectedElement(Element element, String property) {
+    
+    this.property = property;
+
+    cutHistory(element);
+
+    selectedElements.clear();   
+    if (element != null) {        
+      selectedElements.add(element);
+    }
+    fireStateChanged();
+  }
+  
+  private void cutHistory(Element element) {
+    if (historyIndex < history.size()) {
+      if (history.get(historyIndex) == element) {
+        return;
+      }
+      historyIndex++;
+    }
+    while (historyIndex < history.size()) {
+      history.remove(history.size() - 1);
+    }
+    if (element != null) {        
+      history.add(historyIndex, element);
+    }
+  }
+  
+  public boolean hasPrevious() {
+    return historyIndex > 0;
+  }
+  
+  public void previous() {
+    if (historyIndex > 0) {
+      historyIndex--;
+
+      property = null;
+      
+      Element element = (Element)history.get(historyIndex);
+      selectedElements.clear();
+      selectedElements.add(element);
+
+      fireStateChanged();
+    }
+  }
+  
+  public boolean hasNext() {
+    return historyIndex < history.size() - 1;
+  }
+
+  public void next() {
+    if (historyIndex < history.size() - 1) {
+      historyIndex++;
+      
+      property = null;
+
+      Element element = (Element)history.get(historyIndex);
+      selectedElements.clear();
+      selectedElements.add(element);
+
+      fireStateChanged();
+    }
+  }
+
+  /**
+   * Set the elements to be selected.
+   *
+   * @param elements   elements to select
+   */
+  public void setSelectedElements(List elements) {
+    property = null;
+
+    selectedElements.clear();
+    selectedElements.addAll(elements);
+  
+    fireStateChanged();
+  }
+
+  /**
+   * Remove an element from being selected.
+   *
+   * @param element   element to remove
+   */
+  public void removeSelectedElement(Element element) {
+
+    if (selectedElements.contains(element)) {
+      property = null;
+
+      selectedElements.remove(element);
+
+      fireStateChanged();
+    }
+  }
+
+  /**
+   * Add an element to be selected.
+   *
+   * @param element   element to add
+   */
+  public void addSelectedElement(Element element) {
+    if (element == null) {
+      throw new IllegalArgumentException("cannot add null element to selected elements");
+    }
+    
+    property = null;
+
+    cutHistory(element);
+
+    if (!selectedElements.contains(element)) {
+      selectedElements.add(element);
+    }    
+    fireStateChanged();
+  }
+ 
+  /**
+   * Add a listener to selections.
+   *
+   * @param listener    listener to add
+   */
+  public void addSelectionListener(ElementSelectionListener listener) {
+    listeners.add(listener);
+  }
+
+  /**
+   * Remove a listener to selections.
+   *
+   * @param listener    listener to remove
+   */
+  public void removeSelectionListener(ElementSelectionListener listener) {
+    listeners.remove(listener);
+  }
+
+  /**
+   * Fire a change to all registered change listeners.
+   */
+  protected void fireStateChanged() {
+    for (int l = 0; l < listeners.size(); l++) {
+      ElementSelectionListener listener = (ElementSelectionListener) listeners.get(l);
+      listener.selectionChanged(new ElementSelectionEvent(this));
+    }
+  }
+}
