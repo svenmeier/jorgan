@@ -4,11 +4,10 @@
 
     <property file="./build.properties"/>
 
-    <target name="dist" description="Set up the distribution" depends="distProgram, distSource, distHelp" />
+    <target name="dist" description="Set up the distribution" depends="distProgram, distSource" />
 
     <target name="clean" description="Cleanup directories">
         <delete dir="./build"/>
-        <delete dir="./help"/>
         <delete dir="./dist"/>
     </target>
 
@@ -47,8 +46,7 @@
         </jar>
 
         <mkdir dir="./dist/marshal/lib" />
-        <copy file="./lib/swingx.jar" todir="./dist/marshal/lib" />
-        <copy file="./lib/spin.jar" todir="./dist/marshal/lib" />
+        <copy file="./lib/*" todir="./dist/marshal/lib" />
 
         <mkdir dir="./dist/marshal/docs" />
         <copy todir="./dist/marshal/docs">
@@ -71,61 +69,7 @@
 
         <zip basedir="." destfile="./dist/jOrgan-${jorgan.version}-src.zip">
         	<exclude name="build/**/*"/>
-        	<exclude name="help/**/*"/>
         	<exclude name="dist/**/*"/>
         </zip>
-    </target>
-
-    <target name="buildHelp" description="Set up the help distribution" depends="clean" >
-        <mkdir dir="./help" />
-
-    	<java fork="false" classpath="${saxon.path}/saxon.jar" classname="com.icl.saxon.StyleSheet">
-    		<arg value="./docs/help/help.xml" />
-    		<arg value="${docbook.path}/javahelp/javahelp.xsl" />
-    		<arg value="base.dir=./help/" />
-    	</java>
-    	
-    	<java fork="false" classpath="${saxon.path}/saxon.jar" classname="com.icl.saxon.StyleSheet">
-    		<arg value="./docs/help/de/help.xml" />
-    		<arg value="${docbook.path}/javahelp/javahelp.xsl" />
-    		<arg value="base.dir=./help/de/" />
-    	</java>
-    </target>
-    	
-    <target name="distHelp" description="Set up the help distribution" depends="clean, buildHelp" >
-    	<mkdir dir="./dist/marshal/lib" />
-        <copy file="./lib/jh.jar" todir="./dist/marshal/lib" />
-        
-        <mkdir dir="./dist/marshal/help" />
-    	
-        <jar destfile="./dist/marshal/help/help.zip">
-            <fileset dir="./help">
-                <include name="*"/>
-                <include name="img/*"/>
-            </fileset>
-        </jar>
-
-        <jar destfile="./dist/marshal/help/help_de.zip">
-            <fileset dir="./help/de">
-                <include name="*"/>
-                <include name="img/*"/>
-            </fileset>
-        </jar>
-
-        <zip destfile="./dist/jOrgan-${jorgan.version}-help.zip">
-        	<fileset dir="./dist/marshal" >
-        		<include name="help/help.zip"/>
-        		<include name="lib/*"/>
-        	</fileset>
-        </zip>	
-    	
-        <zip destfile="./dist/jOrgan-${jorgan.version}-help_de.zip">
-        	<fileset dir="./dist/marshal" >
-        		<include name="help/help_de.zip"/>
-        		<include name="lib/*"/>
-        	</fileset>
-        </zip>	
-
-        <delete dir="./dist/marshal" />
     </target>
 </project>

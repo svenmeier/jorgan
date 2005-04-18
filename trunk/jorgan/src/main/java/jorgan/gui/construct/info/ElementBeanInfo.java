@@ -63,10 +63,9 @@ public class ElementBeanInfo extends SimpleBeanInfo {
     try {
       PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 
-      String prefix = PROPERTY_RESOURCE_PREFIX + propertyAndClassWithoutPackage(clazz, name);
+      String key = PROPERTY_RESOURCE_PREFIX + propertyAndClassWithoutPackage(clazz, name);
       
-      descriptor.setDisplayName     (resources.getString(prefix + ".displayName"));
-      descriptor.setShortDescription(resources.getString(prefix + ".shortDescription"));
+      descriptor.setDisplayName(resources.getString(key));
 
       if (editor != null) {
         descriptor.setPropertyEditorClass(editor);
