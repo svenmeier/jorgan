@@ -45,10 +45,10 @@ public abstract class KeyableHandler extends RegistratableHandler {
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("pitch".equals(qName)) {
+    if ("action".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
-          getKeyable().setPitch(getInteger());
+          getKeyable().setAction(getInteger());
         }
       };
     } else if ("transpose".equals(qName) || "shift".equals(qName)) {
@@ -65,7 +65,7 @@ public abstract class KeyableHandler extends RegistratableHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "pitch"    , getKeyable().getPitch()).start();
+    new IntegerHandler(getWriter(), "action"   , getKeyable().getAction()).start();
     new IntegerHandler(getWriter(), "transpose", getKeyable().getTranspose()).start();
   }
 }

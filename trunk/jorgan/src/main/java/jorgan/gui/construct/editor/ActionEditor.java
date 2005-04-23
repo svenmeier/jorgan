@@ -22,19 +22,22 @@ import java.beans.*;
 import java.util.ResourceBundle;
 
 /**
- * Property editor for a pitch property.
+ * Property editor for an action property of a <code>Keyable</code>.
  */
-public class PitchEditor extends PropertyEditorSupport {
+public class ActionEditor extends PropertyEditorSupport {
 
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
   private String[] tags;
 
-  public PitchEditor() {
-    tags = new String[]{resources.getString("construct.editor.pitch.dynamic"),
-                        resources.getString("construct.editor.pitch.constant"),
-                        resources.getString("construct.editor.pitch.highest"),
-                        resources.getString("construct.editor.pitch.lowest")};   
+  public ActionEditor() {
+    tags = new String[]{resources.getString("construct.editor.action.straight"),
+                        resources.getString("construct.editor.action.constant"),
+                        resources.getString("construct.editor.action.highest"),
+                        resources.getString("construct.editor.action.lowest"),   
+                        resources.getString("construct.editor.action.sustain"),
+                        resources.getString("construct.editor.action.sostenuto"),
+                        resources.getString("construct.editor.action.inverse")};   
   }
 
   public String[] getTags() {
@@ -59,6 +62,6 @@ public class PitchEditor extends PropertyEditorSupport {
         return;
       }
     }
-    throw new IllegalArgumentException("unkown pitch");
+    throw new IllegalArgumentException("unkown action");
   }
 }

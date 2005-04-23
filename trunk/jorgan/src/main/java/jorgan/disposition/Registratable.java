@@ -24,7 +24,6 @@ package jorgan.disposition;
 public abstract class Registratable extends Active {
 
   private boolean   on;
-  private boolean   inverse;
   private Message   onMessage;
   private Message   offMessage;
 
@@ -38,18 +37,6 @@ public abstract class Registratable extends Active {
 
   public boolean isOn() {
     return on;
-  }
-
-  public void setInverse(boolean inverse) {
-    if (this.inverse != inverse) {
-      this.inverse = inverse;
-
-      fireElementChanged(false);
-    }
-  }
-
-  public boolean isInverse() {
-    return inverse;
   }
 
   public Message getOnMessage() {

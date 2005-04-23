@@ -80,7 +80,7 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
       Variation variation = (Variation)getElement();
 
       int program = this.program;
-      if (variation.isOn() ^ variation.isInverse()) {
+      if (variation.isOn()) {
         program = (program + variation.getProgram()) % 128;          
       }
 
