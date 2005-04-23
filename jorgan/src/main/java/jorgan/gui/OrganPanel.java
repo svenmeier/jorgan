@@ -264,6 +264,7 @@ public class OrganPanel extends JPanel {
     elementsPanel.setSelectionModel(selectionModel);
     referencesPanel.setSelectionModel(selectionModel);
     problemsPanel.setSelectionModel(selectionModel);
+    instructionPanel.setSelectionModel(selectionModel);
     Iterator iterator = consoleDockables.values().iterator();
     while (iterator.hasNext()) {
       Dockable consoleDockable = (Dockable)iterator.next();
