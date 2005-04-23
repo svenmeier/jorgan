@@ -20,31 +20,83 @@ package jorgan.gui.construct;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.IOException;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import jorgan.disposition.Element;
+import jorgan.docs.Documents;
+import jorgan.gui.ElementSelectionModel;
+import jorgan.gui.event.ElementSelectionEvent;
+import jorgan.gui.event.ElementSelectionListener;
+
 /**
  * Panel for instructions for the currently selected element.
  */
 public class InstructionPanel extends JPanel {
 
-    private JEditorPane editor = new JEditorPane(); 
-    private JScrollPane scrollPane = new JScrollPane();
+  private JEditorPane editor = new JEditorPane(); 
+  private JScrollPane scrollPane = new JScrollPane();
 
-    public InstructionPanel() {
-        super(new BorderLayout());
+  /**
+   * The handler of selection changes.
+   */
+  private SelectionHandler selectionHandler = new SelectionHandler();
+
+  /**
+   * The model for selection.
+   */
+  private ElementSelectionModel selectionModel;
+    
+  public InstructionPanel() {
+    super(new BorderLayout());
         
-        editor.setEditable(false);
-        editor.setForeground(Color.BLACK);
-        editor.setBackground(new Color(255, 255, 225));
-        editor.setContentType("text/html");
-        
-        scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-        scrollPane.setViewportView(editor);
-        
-        add(scrollPane);
+    editor.setEditable(false);
+    editor.setForeground(Color.BLACK);
+    editor.setBackground(new Color(255, 255, 225));
+    editor.setContentType("text/html");
+    
+    scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+    scrollPane.setViewportView(editor);
+    
+    add(scrollPane);
+  }
+
+  public void setSelectionModel(ElementSelectionModel selectionModel) {
+    if (selectionModel == null) {
+      throw new IllegalArgumentException("selectionModel must not be null");
     }
+
+    // only null if called from constructor
+    if (this.selectionModel != null) {
+      this.selectionModel.removeSelectionListener(selectionHandler);
+    }
+
+    this.selectionModel = selectionModel;
+
+    selectionModel.addSelectionListener(selectionHandler);        
+  }
+      
+    
+  /**
+   * The handler of selections.
+   */
+  private class SelectionHandler implements ElementSelectionListener {
+
+    public void selectionChanged(ElementSelectionEvent ev) {
+      if (selectionModel.getSelectionCount() == 1) {
+        Element element = selectionModel.getSelectedElement();
+        try {
+          editor.setPage(Documents.getInstance().getInstruction(element.getClass()));
+        } catch (IOException ex) {
+          editor.setDocument(editor.getEditorKit().createDefaultDocument());
+        }
+      } else {
+        editor.getEditorKit().createDefaultDocument();
+      }
+    }
+  }
 }

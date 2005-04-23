@@ -18,26 +18,19 @@
  */
 package jorgan.gui.help;
 
-import java.io.File;
 import java.net.*;
-import java.util.Locale;
 
 import javax.swing.*;
 
 import javax.help.*;
 
-import jorgan.util.Installation;
+import jorgan.docs.Documents;
 
 /**
  * Help for jOrgan.
  */
 public class Help {
-  
-  /**
-   * Is help available.
-   */
-  private static Boolean available;
-  
+
   /**
    * The help set.
    */
@@ -55,54 +48,9 @@ public class Help {
    * the file './docs/help.zip' relative to the installation directory,
    * otherwise an empty helpSet is used.
    * 
-   * @see jorgan.util.Installation#getInstallDirectory()
+   * @see jorgan.docs.Documents#getHelp()
    */
   public Help() {
-
-    if (isAvailable()) {
-      set = new HelpSet();
-
-      File installDir = Installation.getInstallDirectory(getClass());
-      File helpDir    = new File(installDir, "help");
-      if (helpDir.exists() && helpDir.isDirectory()) {
-        try {
-          Locale locale = Locale.getDefault();
-          
-          String localeSuffix = locale.toString();
-          while (true) {
-            File helpZip = new File(helpDir, "help_" + localeSuffix + ".zip");
-            if (helpZip.exists() && helpZip.isFile()) {
-              URL url = new URL("jar:" + helpZip.toURL() + "!/jhelpset.hs");
-
-              set = new HelpSet(getClass().getClassLoader(), url);
-
-              break;
-            }
-            
-            File helpFile = new File(new File(helpDir, localeSuffix), "jhelpset.hs");
-            if (helpFile.exists()) {
-              set = new HelpSet(getClass().getClassLoader(), helpFile.toURL());
-              break;
-            }
-           
-            if (localeSuffix.length() == 0) {
-              break; 
-            } else {
-              int index = localeSuffix.lastIndexOf('_');
-              if (index == -1) {
-                localeSuffix = "";
-              } else {
-                localeSuffix = localeSuffix.substring(0, index);
-              }
-            }
-          }
-        } catch (Exception e) {
-          // keep empty help set
-        }
-      }
-
-      broker = set.createHelpBroker();
-    }
   }
   
   /**
@@ -111,9 +59,7 @@ public class Help {
    * @param displayed   should helpBroker be displayed
    */
   public void setDisplayed(boolean displayed) {
-    if (isAvailable()) {
-      broker.setDisplayed(displayed);  
-    }
+      getBroker().setDisplayed(displayed);  
   }
   
   /**
@@ -123,44 +69,33 @@ public class Help {
    * @param helpID      ID of help topic
    */
   public void enableHelpKey(JRootPane rootPane, String helpID) {
-    if (isAvailable()) {
-      broker.enableHelpKey(rootPane, helpID, set);
-    }
+    getBroker().enableHelpKey(rootPane, helpID, set);
   }
 
   public void enableHelpOnButton(JButton button, String helpID) {
-    if (isAvailable()) {
-      broker.enableHelpOnButton(button, helpID, set);
-    }
+    getBroker().enableHelpOnButton(button, helpID, set);
   }
   
   public void enableHelpOnMenuItem(JMenuItem menuItem, String helpID) {
-    if (isAvailable()) {
-      broker.enableHelpOnButton(menuItem, helpID, set);
-    }
+    getBroker().enableHelpOnButton(menuItem, helpID, set);
   }
   
   public static void setHelpIDString(JComponent component, String helpID) {
-    if (isAvailable()) {
-      CSH.setHelpIDString(component, helpID);
-    }
+    CSH.setHelpIDString(component, helpID);
   }
-
-  /**
-   * Is help available - decided by the existence of JavaHelp classes.
-   *  
-   * @return    <code>true</code> if help is available
-   */
-  public static boolean isAvailable() {
-    if (available == null) {
+  
+  protected HelpBroker getBroker() {
+    if (broker == null) {
+      set = new HelpSet();
+           
       try {
-        Class.forName("javax.help.CSH");
-
-        available = Boolean.TRUE;
-      } catch (ClassNotFoundException ex) {
-        available = Boolean.FALSE;
+        URL url = Documents.getInstance().getHelp();
+        set = new HelpSet(getClass().getClassLoader(), url);
+      } catch (Exception e) {
+       // keep empty help set
       }
+      broker = set.createHelpBroker();
     }
-    return available.booleanValue();
-  }   
+    return broker;
+  }
 }

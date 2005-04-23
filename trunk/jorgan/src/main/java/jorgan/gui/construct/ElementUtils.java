@@ -18,17 +18,14 @@
  */
 package jorgan.gui.construct;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.ResourceBundle;
 
 import jorgan.disposition.Element;
+import jorgan.docs.Documents;
 
 public class ElementUtils {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private static Map typeNames = new HashMap();
   
   public static String getElementName(Element element) {
 
@@ -54,20 +51,6 @@ public class ElementUtils {
   
   public static String getTypeName(Class clazz) {
 
-    String typeName = (String)typeNames.get(clazz);
-    if(typeName == null) {
-      String className = clazz.getName();
-      
-      int packageIndex = className.lastIndexOf('.');
-
-      className = Character.toLowerCase(className.charAt(packageIndex + 1)) + 
-                  className.substring(packageIndex + 2);
-                    
-      typeName = resources.getString("construct.type." + className);
-      
-      typeNames.put(clazz, typeName);      
-    }
-    
-    return typeName;
+    return Documents.getInstance().getDisplayName(clazz);
   }
 }

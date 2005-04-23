@@ -22,6 +22,7 @@ import java.util.*;
 import java.beans.*;
 
 import jorgan.disposition.*;
+import jorgan.docs.Documents;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.editor.StyleEditor;
 
@@ -30,10 +31,6 @@ import jorgan.gui.construct.editor.StyleEditor;
  */
 public class ElementBeanInfo extends SimpleBeanInfo {
 
-  private static final String PROPERTY_RESOURCE_PREFIX = "construct.property.";
-  
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
   private List descriptors = new ArrayList();
 
   public final PropertyDescriptor[] getPropertyDescriptors() {
@@ -63,39 +60,15 @@ public class ElementBeanInfo extends SimpleBeanInfo {
     try {
       PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 
-      String key = PROPERTY_RESOURCE_PREFIX + propertyAndClassWithoutPackage(clazz, name);
-      
-      descriptor.setDisplayName(resources.getString(key));
+      descriptor.setDisplayName(Documents.getInstance().getDisplayName(clazz, name));
 
       if (editor != null) {
         descriptor.setPropertyEditorClass(editor);
       }
+
       descriptors.add(descriptor);
     } catch (Exception ex) {
       throw new Error(ex);
     }
-  }
-  
-  public static String classWithoutPackage(Class clazz) {
-    String name = clazz.getName();
-      
-    int index = name.lastIndexOf('.');
-    if (index != -1) {
-      name = name.substring(index + 1);
-    }
-      
-    name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
-      
-    return name;
-  }
-  
-  public static String propertyAndClassWithoutPackage(Class clazz, String property) {
-      String name = classWithoutPackage(clazz);
-
-      if (property != null) {
-        name = name + "." + property;
-      }
-        
-      return name;
-    }
+  }  
 }

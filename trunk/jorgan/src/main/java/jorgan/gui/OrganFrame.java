@@ -651,8 +651,6 @@ public class OrganFrame extends JFrame implements UI {
     public HelpAction() {
       putValue(Action.NAME             , resources.getString("action.help.name"));
       putValue(Action.SHORT_DESCRIPTION, resources.getString("action.help.description"));
-
-      setEnabled(Help.isAvailable());
     }
 
     public void actionPerformed(ActionEvent ev) {

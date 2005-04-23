@@ -27,16 +27,12 @@ import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 
 import javax.swing.*;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.*;
 import jorgan.gui.ElementSelectionModel;
 import jorgan.gui.construct.editor.ElementAwareEditor;
-import jorgan.gui.construct.info.ElementBeanInfo;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
-import jorgan.gui.help.Help;
 import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
 
@@ -66,7 +62,6 @@ public class ElementPropertiesPanel extends JPanel {
     
     ElementCustomizer customizer = new ElementCustomizer();
     propertiesPanel.setBeanCustomizer(customizer);
-    propertiesPanel.addChangeListener(customizer);
     add(propertiesPanel, BorderLayout.CENTER);
   }
 
@@ -96,7 +91,7 @@ public class ElementPropertiesPanel extends JPanel {
     }
   }
   
-  private class ElementCustomizer extends DefaultBeanCustomizer implements ChangeListener {
+  private class ElementCustomizer extends DefaultBeanCustomizer {
 
     public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
         Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
@@ -113,19 +108,6 @@ public class ElementPropertiesPanel extends JPanel {
         }
         
         return editor;
-    }
-      
-    public void stateChanged(ChangeEvent e) {
-      
-      Class  beanClass = propertiesPanel.getBeanClass();
-      String property  = propertiesPanel.getProperty();
-      
-      if (beanClass == null) {
-        Help.setHelpIDString(ElementPropertiesPanel.this, null);
-      } else {
-        String idString = ElementBeanInfo.propertyAndClassWithoutPackage(beanClass, property);
-        Help.setHelpIDString(ElementPropertiesPanel.this, idString);
-      }
     }
   }
 }
