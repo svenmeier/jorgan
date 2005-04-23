@@ -23,10 +23,13 @@ package jorgan.disposition;
  */
 public abstract class Keyable extends Registratable {
 
-  public static final int PITCH_DYNAMIC  = 0;
-  public static final int PITCH_CONSTANT = 1;
-  public static final int PITCH_HIGHEST  = 2;
-  public static final int PITCH_LOWEST   = 3;
+  public static final int ACTION_STRAIGHT         = 0;
+  public static final int ACTION_PITCH_CONSTANT   = 1;
+  public static final int ACTION_PITCH_HIGHEST    = 2;
+  public static final int ACTION_PITCH_LOWEST     = 3;
+  public static final int ACTION_SUSTAIN          = 4;
+  public static final int ACTION_SOSTENUTO        = 5;
+  public static final int ACTION_INVERSE          = 6;
   
   public static final int DEFAULT_TRANSPOSE = 0;
 
@@ -34,7 +37,7 @@ public abstract class Keyable extends Registratable {
 
   private int velocity = DEFAULT_VELOCITY;
 
-  private int pitch = PITCH_DYNAMIC;
+  private int action = ACTION_STRAIGHT;
   
   private int transpose = DEFAULT_TRANSPOSE;
 
@@ -42,15 +45,15 @@ public abstract class Keyable extends Registratable {
     return transpose;
   }
 
-  public int getPitch() {
-    return pitch;
+  public int getAction() {
+    return action;
   }
   
-  public void setPitch(int pitch) {
-      if (pitch != PITCH_DYNAMIC && pitch != PITCH_CONSTANT && pitch != PITCH_HIGHEST && pitch != PITCH_LOWEST) {
-        throw new IllegalArgumentException("pitch '" + pitch + "'");
+  public void setAction(int action) {
+      if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
+        throw new IllegalArgumentException("pitch '" + action + "'");
       }
-      this.pitch = pitch;
+      this.action = action;
 
       fireElementChanged(true);
   }

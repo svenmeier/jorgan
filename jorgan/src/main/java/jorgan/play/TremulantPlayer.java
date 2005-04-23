@@ -72,7 +72,7 @@ public class TremulantPlayer extends RegistratablePlayer implements SoundEffectP
     private void flush() {
       Tremulant tremulant = (Tremulant)getElement();
 
-      if (tremulant.isOn() ^ tremulant.isInverse()) {
+      if (tremulant.isOn()) {
         sound.setModulation(tremulant.getAmplitude(), tremulant.getFrequency());
       } else {
         sound.setModulation(0, 0);

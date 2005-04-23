@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 import jorgan.disposition.*;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.NumberEditor;
-import jorgan.gui.construct.editor.PitchEditor;
+import jorgan.gui.construct.editor.ActionEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.
@@ -31,7 +31,7 @@ public class KeyableBeanInfo extends RegistratableBeanInfo {
     protected void registerProperties() {
         super.registerProperties();
 
-        add("pitch", Keyable.class, PitchEditor.class);
+        add("action", Keyable.class, ActionEditor.class);
         add("velocity", Keyable.class, DataEditor.class);
         add("transpose", Keyable.class, NumberEditor.class);
     }

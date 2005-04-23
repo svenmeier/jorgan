@@ -51,12 +51,6 @@ public abstract class RegistratableHandler extends ActiveHandler {
           getRegistratable().setOn(getBoolean());
         }
       };
-    } else if ("inverse".equals(qName)) {
-        new BooleanHandler(getReader()) {
-          public void finished() {
-            getRegistratable().setInverse(getBoolean());
-          }
-        };
     } else if ("onMessage".equals(qName)) {
       new MessageHandler(getReader()) {
         public void finished() {
@@ -79,9 +73,6 @@ public abstract class RegistratableHandler extends ActiveHandler {
 
     if (getRegistratable().isOn()) {
       new BooleanHandler(getWriter(), "on").start();
-    }
-    if (getRegistratable().isInverse()) {
-      new BooleanHandler(getWriter(), "inverse").start();
     }
     if (getRegistratable().getOnMessage() != null) {
       new MessageHandler(getWriter(), "onMessage", getRegistratable().getOnMessage()).start();

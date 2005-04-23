@@ -30,7 +30,6 @@ public class RegistratableBeanInfo extends ActiveBeanInfo {
     protected void registerProperties() {
         super.registerProperties();
 
-        add("inverse", Registratable.class, BooleanEditor.class);
         add("onMessage", Registratable.class, MessageEditor.class);
         add("offMessage", Registratable.class, MessageEditor.class);
         add("on", Registratable.class, BooleanEditor.class);
