@@ -266,7 +266,7 @@ public class OrganFrame extends JFrame implements UI {
    * Stop.
    */
   public void stop() {
-    if (closeOrgan()) {
+    if (canCloseOrgan()) {
       organPanel.setPlaying(false);
       
       Configuration.instance().setFrameState(getExtendedState());
@@ -288,6 +288,9 @@ public class OrganFrame extends JFrame implements UI {
   private void setOrgan(Organ organ, File file) {
     statusBar.setStatus(null);
 
+    if (organPanel.getOrgan() != null) {
+        organPanel.getOrgan().removeOrganListener((OrganListener)Spin.over(saveAction));
+    }
     organ.addOrganListener((OrganListener)Spin.over(saveAction));
 
     organPanel.setOrgan(organ);
@@ -304,7 +307,7 @@ public class OrganFrame extends JFrame implements UI {
    */
   public void newOrgan() {
 
-    if (closeOrgan()) {
+    if (canCloseOrgan()) {
       Organ organ = new Organ();
      
       organ.addElement(new Console());
@@ -330,7 +333,7 @@ public class OrganFrame extends JFrame implements UI {
    * @param file  file to open organ from
    */
   public void openOrgan(File file) {
-    if (closeOrgan()) {
+    if (canCloseOrgan()) {
       try {
         DispositionReader reader = new DispositionReader(new FileInputStream(file));
 
@@ -352,6 +355,14 @@ public class OrganFrame extends JFrame implements UI {
     }
   }
 
+  public void saveOrgan() {
+    if (file == null) {
+      saveOrganAs();
+    } else {
+      saveOrgan(file);
+     }
+  }
+  
   /**
    * Save the current organ to the given file.
    *
@@ -394,25 +405,23 @@ public class OrganFrame extends JFrame implements UI {
   }
 
   /**
-   * Close the current organ.
+   * Can the current organ be closed.
    *
-   * @return      <code>true</code> if organ was closed
+   * @return      <code>true</code> if organ can be closed
    */
-  public boolean closeOrgan() {
-    if (saveAction.mustConfirmChanges()) {
-      int option = JOptionPane.showConfirmDialog(this,
-                                                 resources.getString("action.save.edited"),
-                                                 "jOrgan", JOptionPane.YES_NO_CANCEL_OPTION);
-      if (option == JOptionPane.CANCEL_OPTION) {
-        return false;
-      } else if (option == JOptionPane.YES_OPTION) {
-        if (file == null) {
-          saveOrganAs();
-        } else {
-          saveOrgan(file);
+  public boolean canCloseOrgan() {
+    if (saveAction.hasChanges()){
+      if (saveAction.confirmChanges()) {
+        int option = JOptionPane.showConfirmDialog(this,
+                                                   resources.getString("action.save.edited"),
+                                                   "jOrgan", JOptionPane.YES_NO_CANCEL_OPTION);
+        if (option == JOptionPane.CANCEL_OPTION) {
+          return false;
+        } else if (option == JOptionPane.NO_OPTION) {
+          return true;
         }
       }
-      organPanel.getOrgan().removeOrganListener((OrganListener)Spin.over(saveAction));
+      saveOrgan();
     }
 
     return true;
@@ -562,16 +571,17 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      if (file == null) {
-        saveOrganAs();
-      } else {
-        saveOrgan(file);
-      }
+      saveOrgan();
     }
-    
-    public boolean mustConfirmChanges() {
+
+    public boolean hasChanges() {
       return dispositionChanges ||
-             (registrationChanges && jorgan.io.Configuration.instance().getConfirmRegistrationChanges());
+             registrationChanges && jorgan.io.Configuration.instance().getRegistrationChanges() != jorgan.io.Configuration.REGISTRATION_CHANGES_IGNORE;
+    }
+
+    public boolean confirmChanges() {        
+      return dispositionChanges ||
+             jorgan.io.Configuration.instance().getRegistrationChanges() == jorgan.io.Configuration.REGISTRATION_CHANGES_CONFIRM;
     }
 
     public void clearChanges() {
