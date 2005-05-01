@@ -15,6 +15,7 @@
     </slice>
     <slice position="3" weight="0.25">
       <dock minimized="false">
+        <dockable key="INSTRUCTIONS" null="true"/>
         <dockable key="MIDI_LOG" null="true"/>
         <dockable key="PROBLEMS" null="false"/>
       </dock>

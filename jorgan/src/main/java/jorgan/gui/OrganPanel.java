@@ -97,8 +97,8 @@ public class OrganPanel extends JPanel {
   private static final Icon problemsIcon =
     new ImageIcon(OrganPanel.class.getResource("img/problems.gif"));
 
-  private static final Icon instructionIcon =
-      new ImageIcon(OrganPanel.class.getResource("img/instruction.gif"));
+  private static final Icon instructionsIcon =
+      new ImageIcon(OrganPanel.class.getResource("img/instructions.gif"));
 
   private static final Icon keyboardIcon =
     new ImageIcon(OrganPanel.class.getResource("img/keyboard.gif"));
@@ -162,23 +162,23 @@ public class OrganPanel extends JPanel {
    */
   private DockingPane inner = new DockingPane();
   
-  private ElementPropertiesPanel propertiesPanel = new ElementPropertiesPanel();
-  private ElementsPanel          elementsPanel   = new ElementsPanel();
-  private ReferencesPanel        referencesPanel = new ReferencesPanel();
-  private ProblemsPanel          problemsPanel   = new ProblemsPanel();
-  private InstructionPanel       instructionPanel= new InstructionPanel();
-  private KeyboardPane           keyboardPane    = new KeyboardPane();
-  private MidiLog                midiLog         = new MidiLog();
-  private MidiMonitor            midiMonitor     = new MidiMonitor();
+  private ElementPropertiesPanel propertiesPanel   = new ElementPropertiesPanel();
+  private ElementsPanel          elementsPanel     = new ElementsPanel();
+  private ReferencesPanel        referencesPanel   = new ReferencesPanel();
+  private ProblemsPanel          problemsPanel     = new ProblemsPanel();
+  private InstructionsPanel      instructionsPanel = new InstructionsPanel();
+  private KeyboardPane           keyboardPane      = new KeyboardPane();
+  private MidiLog                midiLog           = new MidiLog();
+  private MidiMonitor            midiMonitor       = new MidiMonitor();
 
-  private Dockable elementsDockable   = new DefaultDockable(elementsPanel   , resources.getString("dock.elements"   ), elementsIcon); 
-  private Dockable referencesDockable = new DefaultDockable(referencesPanel , resources.getString("dock.references" ), referencesIcon); 
-  private Dockable propertiesDockable = new DefaultDockable(propertiesPanel , resources.getString("dock.properties" ), propertiesIcon);
-  private Dockable instructionDockable= new DefaultDockable(instructionPanel, resources.getString("dock.instruction"), instructionIcon);
-  private Dockable problemsDockable   = new DefaultDockable(problemsPanel   , resources.getString("dock.problems"   ), problemsIcon);
-  private Dockable keyboardDockable   = new DefaultDockable(keyboardPane    , resources.getString("dock.keyboard"   ), keyboardIcon);
-  private Dockable midiLogDockable    = new DefaultDockable(midiLog         , resources.getString("dock.log"        ), logIcon);
-  private Map      consoleDockables   = new HashMap(); 
+  private Dockable elementsDockable     = new DefaultDockable(elementsPanel    , resources.getString("dock.elements"    ), elementsIcon); 
+  private Dockable referencesDockable   = new DefaultDockable(referencesPanel  , resources.getString("dock.references"  ), referencesIcon); 
+  private Dockable propertiesDockable   = new DefaultDockable(propertiesPanel  , resources.getString("dock.properties"  ), propertiesIcon);
+  private Dockable instructionsDockable = new DefaultDockable(instructionsPanel, resources.getString("dock.instructions"), instructionsIcon);
+  private Dockable problemsDockable     = new DefaultDockable(problemsPanel    , resources.getString("dock.problems"    ), problemsIcon);
+  private Dockable keyboardDockable     = new DefaultDockable(keyboardPane     , resources.getString("dock.keyboard"    ), keyboardIcon);
+  private Dockable midiLogDockable      = new DefaultDockable(midiLog          , resources.getString("dock.log"         ), logIcon);
+  private Map      consoleDockables     = new HashMap(); 
 
   private BackAction     backAction     = new BackAction();
   private ForwardAction  forwardAction  = new ForwardAction();
@@ -264,7 +264,7 @@ public class OrganPanel extends JPanel {
     elementsPanel.setSelectionModel(selectionModel);
     referencesPanel.setSelectionModel(selectionModel);
     problemsPanel.setSelectionModel(selectionModel);
-    instructionPanel.setSelectionModel(selectionModel);
+    instructionsPanel.setSelectionModel(selectionModel);
     Iterator iterator = consoleDockables.values().iterator();
     while (iterator.hasNext()) {
       Dockable consoleDockable = (Dockable)iterator.next();
@@ -434,15 +434,15 @@ public class OrganPanel extends JPanel {
             play.close();
           }
 
-          outer.putDockable("ELEMENTS"   , elementsDockable);
-          outer.putDockable("REFERENCES" , referencesDockable);
-          outer.putDockable("PROPERTIES" , propertiesDockable);
-          outer.putDockable("INSTRUCTION", instructionDockable);
+          outer.putDockable("ELEMENTS"    , elementsDockable);
+          outer.putDockable("REFERENCES"  , referencesDockable);
+          outer.putDockable("PROPERTIES"  , propertiesDockable);
+          outer.putDockable("INSTRUCTIONS", instructionsDockable);
         } else {
-          outer.putDockable("ELEMENTS"   , null);
-          outer.putDockable("REFERENCES" , null);
-          outer.putDockable("PROPERTIES" , null);
-          outer.putDockable("INSTRUCTION", null);
+          outer.putDockable("ELEMENTS"    , null);
+          outer.putDockable("REFERENCES"  , null);
+          outer.putDockable("PROPERTIES"  , null);
+          outer.putDockable("INSTRUCTIONS", null);
           
           selectionModel.clear();
 

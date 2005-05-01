@@ -27,6 +27,8 @@ import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.*;
 import jorgan.gui.ElementSelectionModel;
@@ -62,6 +64,7 @@ public class ElementPropertiesPanel extends JPanel {
     
     ElementCustomizer customizer = new ElementCustomizer();
     propertiesPanel.setBeanCustomizer(customizer);
+    propertiesPanel.addChangeListener(selectionHandler);
     add(propertiesPanel, BorderLayout.CENTER);
   }
 
@@ -83,11 +86,30 @@ public class ElementPropertiesPanel extends JPanel {
   /**
    * The handler of selections.
    */
-  private class SelectionHandler implements ElementSelectionListener {
+  private class SelectionHandler implements ElementSelectionListener, ChangeListener {
 
+    private boolean updatingSelection = false;
+    
     public void selectionChanged(ElementSelectionEvent ev) {
-      propertiesPanel.setBeans(selectionModel.getSelectedElements());
-      propertiesPanel.setProperty(selectionModel.getSelectedProperty());
+      if (!updatingSelection) {
+        updatingSelection = true;
+        
+        propertiesPanel.setBeans(selectionModel.getSelectedElements());
+        propertiesPanel.setProperty(selectionModel.getSelectedProperty());
+
+        updatingSelection = false;
+      }
+    }
+    
+    public void stateChanged(ChangeEvent e) {
+      if (!updatingSelection) {
+        updatingSelection = true;
+      
+        String property = propertiesPanel.getProperty();
+        selectionModel.setSelectedProperty(property);
+
+        updatingSelection = false;
+      }
     }
   }
   

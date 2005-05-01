@@ -211,7 +211,7 @@ public class PropertiesPanel extends JPanel {
    * @param beans   list of beans to get common superclass for
    * @return        common superclass
    */
-  private Class getCommonClass(java.util.List beans) {
+  public static Class getCommonClass(java.util.List beans) {
     Class commonClass = null;
     for (int b = 0; b < beans.size(); b++) {
       Object bean = beans.get(b);
@@ -314,17 +314,19 @@ public class PropertiesPanel extends JPanel {
     }
     
     public void valueChanged(ListSelectionEvent e) {
-      if (descriptors != null) {
+      if (descriptors != null && descriptors.length > 0) {
+        if (e.getSource() == table.getColumnModel().getSelectionModel()) {
           if (table.getSelectedColumn() == 0) {
-              table.getColumnModel().getSelectionModel().setSelectionInterval(1, 1);
-            }
-            
-            int row = table.getSelectedRow();
-            if (row == -1) {
-              setProperty(null);
-            } else {
-              setProperty(descriptors[row].getName());
-            }
+            table.getColumnModel().getSelectionModel().setSelectionInterval(1, 1);
+          }
+        } else {
+          int row = table.getSelectedRow();
+          if (row == -1) {
+            setProperty(null);
+          } else {
+            setProperty(descriptors[row].getName());
+          }
+        }            
       }
     }
   }

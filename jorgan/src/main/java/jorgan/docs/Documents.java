@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import jorgan.disposition.Element;
 import jorgan.util.Installation;
 
 public class Documents {
@@ -57,12 +58,41 @@ public class Documents {
         return getDisplayNames().getProperty(key, property);
     }
     
-    public URL getInstruction(Class clazz) {
-        URL url = (URL)instructions.get(clazz);
+    public URL getInstructions(Class clazz) {
+        String key = classWithoutPackage(clazz) + ".html";
+
+        URL url = (URL)instructions.get(key);
         if (url == null) {
-            url = locate("instruction", classWithoutPackage(clazz) + ".html");
-            instructions.put(clazz, url);
+            url = locate("instructions", key);
+            instructions.put(key, url);
         }       
+        return url;
+    }
+
+    public URL getInstructions(Class clazz, String property) {
+        String key = classWithoutPackage(clazz) + "." + property + ".html";
+
+        URL url = (URL)instructions.get(key);
+        if (url == null) {
+            while (url == null) {
+                url = locate("instructions", key);
+                if (url != null) {
+                    try {
+                        InputStream stream = url.openStream();
+                        stream.close();
+                        break;
+                    } catch (IOException ex) {
+                    }
+                }
+                if (Element.class == clazz) {
+                    break;
+                } else {
+                    clazz = clazz.getSuperclass();
+                }
+                key = classWithoutPackage(clazz) + "." + property + ".html";
+            }
+            instructions.put(key, url);
+        }
         return url;
     }
 
@@ -75,7 +105,7 @@ public class Documents {
         if (displayNames == null) {
             displayNames = new Properties();
 
-            URL url = locate("instruction", "displayNames.properties");
+            URL url = locate("instructions", "displayNames.properties");
             if (url != null) {
                 try {
                     InputStream in = url.openStream();
