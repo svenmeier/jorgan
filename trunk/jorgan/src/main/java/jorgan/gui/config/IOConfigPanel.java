@@ -33,7 +33,11 @@ public class IOConfigPanel extends ConfigurationPanel {
   private JCheckBox recentOpenOnStartupCheckBox = new JCheckBox();
   private JLabel recentMaxLabel = new JLabel();
   private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-  private JCheckBox confirmRegistrationChangesCheckBox = new JCheckBox();
+  private JPanel changesPanel = new JPanel();
+  private ButtonGroup changesGroup = new ButtonGroup();
+  private JRadioButton confirmChangesRadioButton = new JRadioButton();
+  private JRadioButton saveChangesRadioButton = new JRadioButton();
+  private JRadioButton ignoreChangesRadioButton = new JRadioButton();
 
   public IOConfigPanel() {
     setLayout(new GridBagLayout());
@@ -52,18 +56,41 @@ public class IOConfigPanel extends ConfigurationPanel {
 
       recentsPanel.add(recentMaxSpinner, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
-    confirmRegistrationChangesCheckBox.setText(resources.getString("config.io.confirmRegistrationChanges"));
-    add(confirmRegistrationChangesCheckBox, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+    changesPanel.setLayout(new GridBagLayout());
+    changesPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.io.changes")));
+    add(changesPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
+      
+      confirmChangesRadioButton.getModel().setGroup(changesGroup);
+      confirmChangesRadioButton.setText(resources.getString("config.io.changesConfirm"));
+      changesPanel.add(confirmChangesRadioButton, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
+      saveChangesRadioButton.getModel().setGroup(changesGroup);
+      saveChangesRadioButton.setText(resources.getString("config.io.changesSave"));
+      changesPanel.add(saveChangesRadioButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+
+      ignoreChangesRadioButton.getModel().setGroup(changesGroup);
+      ignoreChangesRadioButton.setText(resources.getString("config.io.changesIgnore"));
+      changesPanel.add(ignoreChangesRadioButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+      
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
 
   public void read() {
     Configuration config = (Configuration)getConfiguration();
 
-    recentOpenOnStartupCheckBox       .setSelected(config.getRecentOpenOnStartup());
-    recentMaxSpinner                  .setValue(new Integer(config.getRecentMax()));
-    confirmRegistrationChangesCheckBox.setSelected(config.getConfirmRegistrationChanges());
+    recentOpenOnStartupCheckBox.setSelected(config.getRecentOpenOnStartup());
+    recentMaxSpinner           .setValue(new Integer(config.getRecentMax()));
+    switch (config.getRegistrationChanges()) {
+      case Configuration.REGISTRATION_CHANGES_CONFIRM:
+        confirmChangesRadioButton  .setSelected(true);
+        break;
+      case Configuration.REGISTRATION_CHANGES_SAVE:
+        saveChangesRadioButton  .setSelected(true);
+        break;
+      case Configuration.REGISTRATION_CHANGES_IGNORE:
+        ignoreChangesRadioButton  .setSelected(true);
+        break;
+    }
   }
 
   /**
@@ -74,6 +101,12 @@ public class IOConfigPanel extends ConfigurationPanel {
 
     config.setRecentOpenOnStartup       (recentOpenOnStartupCheckBox.isSelected());
     config.setRecentMax                 (((Integer)recentMaxSpinner.getValue()).intValue());
-    config.setConfirmRegistrationChanges(confirmRegistrationChangesCheckBox.isSelected());
+    if (confirmChangesRadioButton.isSelected()) {
+      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_CONFIRM);
+    } else if (saveChangesRadioButton.isSelected()) {
+      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_SAVE);
+    } else if (ignoreChangesRadioButton.isSelected()) {
+      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_IGNORE);
+    }
   }
 }

@@ -30,9 +30,13 @@ import jorgan.util.Installation;
  */
 public class Configuration extends PreferencesConfiguration {
 
+  public static final int REGISTRATION_CHANGES_CONFIRM = 0; 
+  public static final int REGISTRATION_CHANGES_SAVE    = 1;
+  public static final int REGISTRATION_CHANGES_IGNORE  = 2; 
+  
   private static final boolean RECENT_OPEN_ON_STARTUP = false;
   private static final int     RECENT_MAX = 4;
-  private static final boolean CONFIRM_REGISTRATION_CHANGES = true;
+  private static final int     REGISTRATION_CHANGES = REGISTRATION_CHANGES_CONFIRM;
 
   private static Configuration sharedInstance = new Configuration();
 
@@ -40,13 +44,13 @@ public class Configuration extends PreferencesConfiguration {
   private int     recentMax;
   private File    recentDirectory;
   private List    recentFiles;
-  private boolean confirmRegistrationChanges;
+  private int     registrationChanges;
 
   protected void restore(Preferences prefs) {
-    confirmRegistrationChanges = prefs.getBoolean("confirmRegistrationChanges", CONFIRM_REGISTRATION_CHANGES);
-    recentOpenOnStartup        = prefs.getBoolean("recentOpenOnStartup"       , RECENT_OPEN_ON_STARTUP);
-    recentMax                  = prefs.getInt    ("recentMax"                 , RECENT_MAX);
-    recentDirectory            = getFile(prefs,   "recentDirectory"           , RECENT_DIRECTORY());
+    registrationChanges = prefs.getInt    ("registrationChanges", REGISTRATION_CHANGES);
+    recentOpenOnStartup = prefs.getBoolean("recentOpenOnStartup", RECENT_OPEN_ON_STARTUP);
+    recentMax           = prefs.getInt    ("recentMax"          , RECENT_MAX);
+    recentDirectory     = getFile(prefs,   "recentDirectory"    , RECENT_DIRECTORY());
     recentFiles = new ArrayList();
     for (int r = 0; ; r++) {
       File def = (r == 0) ? RECENT_FILE() : null;
@@ -60,10 +64,10 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean("confirmRegistrationChanges", confirmRegistrationChanges);
-    prefs.putBoolean("recentOpenOnStartup"       , recentOpenOnStartup);
-    prefs.putInt    ("recentMax"                 , recentMax);
-    putFile(prefs,   "recentDirectory"           , recentDirectory);
+    prefs.putInt    ("registrationChanges", registrationChanges);
+    prefs.putBoolean("recentOpenOnStartup", recentOpenOnStartup);
+    prefs.putInt    ("recentMax"          , recentMax);
+    putFile(prefs,   "recentDirectory"    , recentDirectory);
     for (int r = 0; ; r++) {
       String key = "recentFiles[" + r + "]";
       if (prefs.get(key, null) == null) {
@@ -76,12 +80,15 @@ public class Configuration extends PreferencesConfiguration {
     }
   }
 
-  public boolean getConfirmRegistrationChanges() {
-    return confirmRegistrationChanges;
+  public int getRegistrationChanges() {
+    return registrationChanges;
   }
 
-  public void setConfirmRegistrationChanges(boolean showAboutOnStartup) {
-    this.confirmRegistrationChanges = showAboutOnStartup;
+  public void setRegistrationChanges(int registrationChanges) {
+    if (registrationChanges < REGISTRATION_CHANGES_CONFIRM && registrationChanges > REGISTRATION_CHANGES_CONFIRM) {
+        throw new IllegalArgumentException("unknown registration change '" + registrationChanges + "'");
+    }
+    this.registrationChanges = registrationChanges;
     
     fireConfigurationChanged();
   }
