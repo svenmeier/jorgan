@@ -68,6 +68,15 @@ public class ElementSelectionModel {
     return property;
   }
   
+  public void setSelectedProperty(String property) {
+      if (this.property == null && property != null ||
+          this.property != null && !this.property.equals(property)) {
+
+          this.property = property;
+          
+          fireStateChanged();
+      }
+  }
   /**
    * Is an element selected.
    */

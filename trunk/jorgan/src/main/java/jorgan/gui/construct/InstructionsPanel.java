@@ -21,22 +21,23 @@ package jorgan.gui.construct;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.io.IOException;
+import java.net.URL;
 
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import jorgan.disposition.Element;
 import jorgan.docs.Documents;
 import jorgan.gui.ElementSelectionModel;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
+import jorgan.swing.beans.PropertiesPanel;
 
 /**
  * Panel for instructions for the currently selected element.
  */
-public class InstructionPanel extends JPanel {
+public class InstructionsPanel extends JPanel {
 
   private JEditorPane editor = new JEditorPane(); 
   private JScrollPane scrollPane = new JScrollPane();
@@ -51,7 +52,7 @@ public class InstructionPanel extends JPanel {
    */
   private ElementSelectionModel selectionModel;
     
-  public InstructionPanel() {
+  public InstructionsPanel() {
     super(new BorderLayout());
         
     editor.setEditable(false);
@@ -87,16 +88,22 @@ public class InstructionPanel extends JPanel {
   private class SelectionHandler implements ElementSelectionListener {
 
     public void selectionChanged(ElementSelectionEvent ev) {
-      if (selectionModel.getSelectionCount() == 1) {
-        Element element = selectionModel.getSelectedElement();
+      if (selectionModel.isElementSelected()) {
+        Class   clazz    = PropertiesPanel.getCommonClass(selectionModel.getSelectedElements());
+        String  property = selectionModel.getSelectedProperty();
         try {
-          editor.setPage(Documents.getInstance().getInstruction(element.getClass()));
+          URL url;
+          if (property == null) {
+             url = Documents.getInstance().getInstructions(clazz);
+          } else {
+             url = Documents.getInstance().getInstructions(clazz, property);
+          }
+          editor.setPage(url);
+          return;
         } catch (IOException ex) {
-          editor.setDocument(editor.getEditorKit().createDefaultDocument());
         }
-      } else {
-        editor.getEditorKit().createDefaultDocument();
       }
+      editor.setDocument(editor.getEditorKit().createDefaultDocument());
     }
   }
 }
