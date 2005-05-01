@@ -117,11 +117,15 @@ public abstract class View {
    */
   public void changeUpdate(OrganEvent event) {
 
-    String name = element.getName();
-    if ("".equals(name)) {
-      name = resources.getString("element.emptyName");                  
-    }
+    // issure repaint so old location gets cleared in case
+    // of a new position or size
+    repaint();
 
+    if (event != null && !event.isDispositionChange()) {
+      // nothing else to do in case of a registration change
+      return;
+    }
+    
     style = null;
     Console console = consolePanel.getConsole();
     if (console != null && console.getSkin() != null) {
@@ -131,14 +135,14 @@ public abstract class View {
       }
     }
 
-    // issure repaint so old location gets cleared
-    if (size != null) {
-      repaint();
-    }
     ConsoleReference reference = (ConsoleReference)console.getReference(element);
     x = reference.getX();
     y = reference.getY();
         
+    String name = element.getName();
+    if ("".equals(name)) {
+      name = resources.getString("element.emptyName");                  
+    }
     if (style == null) {
       nameBreaks = breakNonStyleName(name); 
     } else {
@@ -150,11 +154,14 @@ public abstract class View {
     } else {
       size = getStyleSize();
     }
+    
     repaint();
   }
   
   protected void repaint() {
-    consolePanel.repaintView(this);
+    if (size != null) {
+      consolePanel.repaintView(this);
+    }
   }
 
   /**
