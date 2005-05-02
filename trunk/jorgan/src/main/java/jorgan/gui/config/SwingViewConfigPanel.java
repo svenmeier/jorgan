@@ -23,6 +23,13 @@ import javax.swing.*;
 import java.awt.event.*;
 import javax.swing.border.*;
 
+import jorgan.disposition.Coupler;
+import jorgan.disposition.Label;
+import jorgan.disposition.Piston;
+import jorgan.disposition.Stop;
+import jorgan.disposition.Tremulant;
+import jorgan.disposition.Variation;
+import jorgan.docs.Documents;
 import jorgan.gui.console.Configuration;
 import jorgan.swing.font.*;
 import jorgan.swing.color.*;
@@ -87,27 +94,27 @@ public class SwingViewConfigPanel extends ConfigurationPanel {
     fontsPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.view.font")));
     add(fontsPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
 
-      labelFontLabel.setText(resources.getString("config.view.font.label"));
+      labelFontLabel.setText(Documents.getInstance().getDisplayName(Label.class));
       fontsPanel.add(labelFontLabel,    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(labelFontSelector,   new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      pistonFontLabel.setText(resources.getString("config.view.font.piston"));
+      pistonFontLabel.setText(Documents.getInstance().getDisplayName(Piston.class));
       fontsPanel.add(pistonFontLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(pistonFontSelector,   new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      stopFontLabel.setText(resources.getString("config.view.font.stop"));
+      stopFontLabel.setText(Documents.getInstance().getDisplayName(Stop.class));
       fontsPanel.add(stopFontLabel,    new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(stopFontSelector,   new GridBagConstraints(1, 3, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      couplerFontLabel.setText(resources.getString("config.view.font.coupler"));
+      couplerFontLabel.setText(Documents.getInstance().getDisplayName(Coupler.class));
       fontsPanel.add(couplerFontLabel,    new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(couplerFontSelector,   new GridBagConstraints(1, 4, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      tremulantFontLabel.setText(resources.getString("config.view.font.tremulant"));
+      tremulantFontLabel.setText(Documents.getInstance().getDisplayName(Tremulant.class));
       fontsPanel.add(tremulantFontLabel,    new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(tremulantFontSelector,   new GridBagConstraints(1, 5, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      variationFontLabel.setText(resources.getString("config.view.font.variation"));
+      variationFontLabel.setText(Documents.getInstance().getDisplayName(Variation.class));
       fontsPanel.add(variationFontLabel,    new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(variationFontSelector,   new GridBagConstraints(1, 6, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
