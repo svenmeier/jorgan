@@ -97,6 +97,17 @@ public class ElementsSelectionPanel extends JPanel {
     noneAction.setEnabled(!elements.isEmpty());
   }
   
+  public void setSelectedElements(List elements) {
+    for (int e = 0; e < elements.size(); e++) {
+      Element element = (Element)elements.get(e);
+      
+      int index = elements.indexOf(element);
+      if (index != -1) {
+        elementsList.addSelectionInterval(index, index);
+      }
+    }
+  }
+  
   public List getSelectedElements() {
 
     return Arrays.asList(elementsList.getSelectedValues()); 
@@ -131,24 +142,23 @@ public class ElementsSelectionPanel extends JPanel {
   
   private class AllAction extends AbstractAction {
 
-      public AllAction() {
-        putValue(Action.NAME, resources.getString("construct.create.references.elements.all"));
-      }
-
-      public void actionPerformed(ActionEvent ev) {
-        elementsList.setSelectionInterval(0, elementsList.getModel().getSize() - 1);
-      }
+    public AllAction() {
+      putValue(Action.NAME, resources.getString("construct.create.references.elements.all"));
     }
+
+    public void actionPerformed(ActionEvent ev) {
+      elementsList.setSelectionInterval(0, elementsList.getModel().getSize() - 1);
+    }
+  }
       
-    private class NoneAction extends AbstractAction {
+  private class NoneAction extends AbstractAction {
 
-      public NoneAction() {
-        putValue(Action.NAME, resources.getString("construct.create.references.elements.none"));
-      }
-    
-      public void actionPerformed(ActionEvent ev) {
-          elementsList.clearSelection();
-      }
+    public NoneAction() {
+      putValue(Action.NAME, resources.getString("construct.create.references.elements.none"));
     }
     
+    public void actionPerformed(ActionEvent ev) {
+      elementsList.clearSelection();
+    }
+  }   
 }
