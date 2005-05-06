@@ -26,8 +26,6 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.disposition.Element;
-
 /**
  * A panel for an element.
  */
@@ -84,24 +82,29 @@ public class ElementCreationPanel extends JPanel {
     typeList.setModel(new TypeListModel());  
   }
   
-  public Element getElement() {
-
-    String name  = nameTextField.getText();
-    int    index = typeList.getSelectedIndex();
-    
-    if (index != -1 && !"".equals(name)) {
-      try {
-        Element element = (Element)elementClasses[index].newInstance();
-        
-        element.setName(name);
-        
-        return element;
-      } catch (Exception ex) {
+  public void setElementClass(Class elementClass) {
+    for (int c = 0; c < elementClasses.length; c++) {
+      if (elementClasses[c] == elementClass) {
+        typeList.setSelectedIndex(c);
+        return;
       }
     }
-    return null; 
   }
   
+  public Class getElementClass() {
+    int index = typeList.getSelectedIndex();
+      
+    if (index == -1) {
+      return null;
+    } else {
+      return elementClasses[index];
+    }
+  }
+  
+  public String getElementName() {
+    return nameTextField.getText();
+  }
+
   private class TypeListModel extends AbstractListModel {
     
     public int getSize() {

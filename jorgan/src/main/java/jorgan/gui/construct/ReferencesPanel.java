@@ -213,7 +213,7 @@ public class ReferencesPanel extends JPanel {
           }
         }
       } else {       
-        Iterator iterator = element.getReferrer();
+        Iterator iterator = element.referrer();
         while (iterator.hasNext()) {
           Element referrer = (Element)iterator.next();
 

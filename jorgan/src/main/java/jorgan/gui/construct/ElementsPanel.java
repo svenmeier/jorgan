@@ -380,7 +380,11 @@ public class ElementsPanel extends JPanel {
 
     public void actionPerformed(ActionEvent ev) {
         if (organ != null) {
-          CreateElementWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ElementsPanel.this), organ);
+          Element prototype = null;
+          if (selectionModel.getSelectionCount() == 1) {
+            prototype = selectionModel.getSelectedElement();
+          }
+          CreateElementWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ElementsPanel.this), organ, prototype);
         }
     }
   }

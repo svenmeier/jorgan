@@ -39,6 +39,8 @@ public class CreateElementWizard extends BasicWizard {
   protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
   
   private Organ organ;
+  
+  private Element prototype;
 
   private Element element;
 
@@ -48,8 +50,9 @@ public class CreateElementWizard extends BasicWizard {
   /**
    * Create a new wizard.
    */    
-  public CreateElementWizard(Organ organ) {
-    this.organ = organ;
+  public CreateElementWizard(Organ organ, Element prototype) {
+    this.organ     = organ;
+    this.prototype = prototype;
     
     addPage(new ElementPage());
     addPage(new ReferencesToPage());
@@ -97,6 +100,9 @@ public class CreateElementWizard extends BasicWizard {
     public ElementPage() {
       
       elementPanel.setElementClasses(organ.getElementClasses());
+      if (prototype != null) {
+        elementPanel.setElementClass(prototype.getClass());
+      }
 
       elementPanel.addPropertyChangeListener(this);
     }
@@ -114,7 +120,20 @@ public class CreateElementWizard extends BasicWizard {
     }
     
     public void propertyChange(PropertyChangeEvent evt) {
-      element = elementPanel.getElement();
+      Class  elementClass = elementPanel.getElementClass();
+      String elementName  = elementPanel.getElementName();
+      
+      try {
+        if (prototype != null && prototype.getClass() == elementClass) {
+          element = (Element)prototype.clone();
+        } else {
+          element = (Element)elementClass.newInstance();
+        }
+      
+        element.setName(elementName);
+      } catch (Exception ex) {
+        throw new Error(ex);
+      }  
       
       super.propertyChange(evt);
     }
@@ -144,6 +163,18 @@ public class CreateElementWizard extends BasicWizard {
       List elements = new ArrayList();
       elements.add(element);
       elementsSelectionPanel.setElements(organ.getReferenceToCandidates(elements));
+      
+      referencesTo = new ArrayList();
+      if (prototype != null) {
+        if (prototype.getClass() == element.getClass()) {
+          List references = prototype.getReferences();
+          for (int r = 0; r < references.size(); r++) {
+            Reference reference = (Reference)references.get(r);
+            referencesTo.add(reference.getElement());
+          }
+          elementsSelectionPanel.setSelectedElements(referencesTo);
+        }
+      }
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -177,6 +208,17 @@ public class CreateElementWizard extends BasicWizard {
       List elements = new ArrayList();
       elements.add(element);
       elementsSelectionPanel.setElements(organ.getReferencedFromCandidates(elements));
+
+      referencedFrom = new ArrayList();
+      if (prototype != null) {
+        if (prototype.getClass() == element.getClass()) {
+          Iterator iterator = prototype.referrer();
+          while (iterator.hasNext()) {
+            referencedFrom.add(iterator.next());
+          }
+          elementsSelectionPanel.setSelectedElements(referencedFrom);
+        }
+      }
     }
 
     public void propertyChange(PropertyChangeEvent evt) {
@@ -189,16 +231,17 @@ public class CreateElementWizard extends BasicWizard {
   /**
    * Show an element creation wizard in a dialog.
    * 
-   * @param owner   owner of dialog
-   * @param organ   organ to add created element into
+   * @param owner     owner of dialog
+   * @param organ     organ to add created element into
+   * @param prototype element to use as prototype
    */ 
-  public static void showInDialog(Frame owner, Organ organ) {
+  public static void showInDialog(Frame owner, Organ organ, Element prototype) {
 
     WizardDialog dialog = new WizardDialog(owner);
         
     dialog.setTitle(resources.getString("construct.create.element.title"));  
     
-    dialog.setWizard(new CreateElementWizard(organ));
+    dialog.setWizard(new CreateElementWizard(organ, prototype));
     
     dialog.start();
     

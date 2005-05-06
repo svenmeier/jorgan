@@ -305,7 +305,7 @@ public abstract class Element implements Cloneable, Serializable {
     return filtered;
   }
   
-  public Iterator getReferrer() {
+  public Iterator referrer() {
     return referrer.iterator();
   }
 
