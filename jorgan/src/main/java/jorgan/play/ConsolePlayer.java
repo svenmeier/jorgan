@@ -51,7 +51,7 @@ public class ConsolePlayer extends Player {
     if (device != null) {
       PlayerProblem errorDevice = new PlayerProblem(PlayerProblem.ERROR, "device", device); 
       try {
-        in = PooledDevice.getMidiDevice(device, false);
+        in = DevicePool.getMidiDevice(device, false);
         in.open();
 
         transmitter = in.getTransmitter();

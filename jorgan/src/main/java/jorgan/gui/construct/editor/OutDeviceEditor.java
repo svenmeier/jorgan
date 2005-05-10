@@ -31,7 +31,7 @@ public class OutDeviceEditor extends PropertyEditorSupport {
 
   public String[] getTags() {
     if (tags == null) {
-      String[] deviceNames = PooledDevice.getMidiDeviceNames(true);
+      String[] deviceNames = DevicePool.getMidiDeviceNames(true);
 
       tags = new String[1 + deviceNames.length];
 

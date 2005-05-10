@@ -30,7 +30,7 @@ public class InDeviceEditor extends PropertyEditorSupport {
   private String[] tags;
 
   public InDeviceEditor() {
-    String[] deviceNames = PooledDevice.getMidiDeviceNames(false);
+    String[] deviceNames = DevicePool.getMidiDeviceNames(false);
 
     tags = new String[1 + deviceNames.length];
 

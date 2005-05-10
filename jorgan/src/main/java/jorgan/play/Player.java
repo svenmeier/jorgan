@@ -68,7 +68,7 @@ public abstract class Player {
   }
 
   protected Object getLock() {
-    return getOrganPlay().LOCK;
+    return getOrganPlay().IO_LOCK;
   }
 
   /**
@@ -192,13 +192,13 @@ public abstract class Player {
     return element;
   }
 
-  protected void fireInput() {
+  protected void markInput() {
     if (organPlay != null) {
       organPlay.markInput();
     }
   }
 
-  protected void fireOutput() {
+  protected void markOutput() {
     if (organPlay != null) {
       organPlay.markOutput();
     }

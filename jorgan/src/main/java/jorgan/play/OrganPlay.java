@@ -36,7 +36,7 @@ import jorgan.sound.midi.BugFix;
  */
 public class OrganPlay  {
 
-  public final Object LOCK = new Object();
+  public final Object IO_LOCK = new Object();
   
   private boolean output = false;
   private boolean input  = false;
@@ -100,7 +100,7 @@ public class OrganPlay  {
   }
 
   protected void firePlayerAdded(Player player) {
-    assertNoLock();
+    assertNoIOLock();
 
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement());
@@ -112,7 +112,7 @@ public class OrganPlay  {
   }
 
   protected void firePlayerRemoved(Player player) {
-    assertNoLock();
+    assertNoIOLock();
     
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement());
@@ -124,7 +124,7 @@ public class OrganPlay  {
   }
 
   protected void fireProblemAdded(Player player, PlayerProblem problem) {
-    assertNoLock();
+    assertNoIOLock();
     
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
@@ -136,7 +136,7 @@ public class OrganPlay  {
   }
 
   protected void fireProblemRemoved(Player player, PlayerProblem problem) {
-    assertNoLock();
+    assertNoIOLock();
     
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
@@ -179,9 +179,9 @@ public class OrganPlay  {
     }
   }
 
-  private void assertNoLock() {
-    if (Thread.holdsLock(LOCK)) {
-      throw new Error("illegal hold of lock");
+  private void assertNoIOLock() {
+    if (Thread.holdsLock(IO_LOCK)) {
+      throw new Error("illegal hold of IO lock");
     };
   }
   
@@ -332,7 +332,7 @@ public class OrganPlay  {
   private class EventHandler extends OrganAdapter implements ConfigurationListener {
 
     public void elementChanged(OrganEvent event) {
-      assertNoLock();
+      assertNoIOLock();
       
       Player player = getPlayer(event.getElement());
       if (player != null) {
@@ -343,7 +343,7 @@ public class OrganPlay  {
     }
 
     public void elementAdded(OrganEvent event) {
-      assertNoLock();
+      assertNoIOLock();
 
       createPlayer(event.getElement());
 
@@ -351,7 +351,7 @@ public class OrganPlay  {
     }
 
     public void elementRemoved(OrganEvent event) {
-      assertNoLock();
+      assertNoIOLock();
 
       dropPlayer(event.getElement());
 

@@ -110,7 +110,7 @@ public class SwellPlayer extends Player implements SoundEffectPlayer {
         sound.setCutoff(swell.getCutoff() + (swell.getPosition() * (127 - swell.getCutoff()) / 127));
       } 
 
-      fireOutput();
+      markOutput();
     }
   }
 }
