@@ -24,31 +24,13 @@ import javax.sound.midi.*;
 /**
  * Helper for lookup of devices.
  */
-public class PooledDevice extends DeviceWrapper {
+public class DevicePool {
 
-  private static Map pooledDevices = new HashMap();
+  private static Map sharedDevices = new HashMap();
   
-  private int opened;
-      
-  protected PooledDevice(MidiDevice device) {
-    super(device);
+  private DevicePool() {
   }
       
-  public void open() throws MidiUnavailableException {
-      if (opened == 0) {
-          super.open();
-      }
-      opened++;
-  }
-
-  public void close() {
-      opened--;
-          
-      if (opened == 0) {
-          super.close();
-      }
-  }
-
   /**
    * Get a device by name.
    *
@@ -62,26 +44,26 @@ public class PooledDevice extends DeviceWrapper {
 
     DeviceKey key = new DeviceKey(name, out);
     
-    MidiDevice device = (MidiDevice)pooledDevices.get(key);
-    if (device == null) {
+    SharedDevice sharedDevice = (SharedDevice)sharedDevices.get(key);
+    if (sharedDevice == null) {
         MidiDevice[] devices = getMidiDevices(out);
 
         for (int d = 0; d < devices.length; d++) {
           if (name.equals(devices[d].getDeviceInfo().getName())) {
-            device = new PooledDevice(devices[d]);
+            sharedDevice = new SharedDevice(devices[d]);
 
-            pooledDevices.put(key, device);
+            sharedDevices.put(key, sharedDevice);
             
             break;
           }
         }
     }    
 
-    if (device == null) {
+    if (sharedDevice == null) {
         throw new MidiUnavailableException(name);
     }
 
-    return device;
+    return new ProxyDevice(sharedDevice);
   }
 
   /**
@@ -136,7 +118,57 @@ public class PooledDevice extends DeviceWrapper {
     return names;
   }
 
-  private static class DeviceKey {
+  private static class ProxyDevice extends DeviceWrapper {
+    private boolean open = false;
+
+    private ProxyDevice(MidiDevice device) {
+        super(device);
+    }
+
+    public void close() {
+        assertOpen();
+       
+        super.close();
+
+        open = false;
+    }
+
+    public void open() throws MidiUnavailableException {
+        assertClosed();
+
+        super.open();
+        
+        open = true;
+    }
+
+    public boolean isOpen() {
+        return open;
+    }
+
+    public Receiver getReceiver() throws MidiUnavailableException {
+        assertOpen();
+        return super.getReceiver();
+    }
+
+    public Transmitter getTransmitter() throws MidiUnavailableException {
+        assertOpen();
+        return super.getTransmitter();
+    }
+
+    protected void assertOpen() throws IllegalStateException {
+        if (!open) {
+            throw new IllegalStateException("not open");
+        }
+    }
+
+    protected void assertClosed() throws IllegalStateException {
+        if (open) {
+            throw new IllegalStateException("open");
+        }
+    }
+}
+
+private static class DeviceKey {
 
     private String deviceName;
     private boolean out;
@@ -161,5 +193,28 @@ public class PooledDevice extends DeviceWrapper {
     public int hashCode() {
         return deviceName.hashCode();
     }
-  }  
+  }
+  
+  private static class SharedDevice extends DeviceWrapper {
+    private int openCount;
+ 
+    public SharedDevice(MidiDevice device) {
+      super(device);
+    }
+    
+    public void open() throws MidiUnavailableException {
+      if (openCount == 0) {
+        super.open();
+      }
+      openCount++;
+    }
+
+    public void close() {
+      openCount--;
+              
+      if (openCount == 0) {
+        super.close();
+      }
+    }
+  }
 }

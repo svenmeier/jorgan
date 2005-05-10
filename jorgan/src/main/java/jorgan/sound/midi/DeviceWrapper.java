@@ -26,10 +26,10 @@ import javax.sound.midi.Transmitter;
 /**
  * A wrapper of a device.
  */
-public abstract class DeviceWrapper implements MidiDevice {
+public class DeviceWrapper implements MidiDevice {
 
     private MidiDevice device;
-
+    
     public DeviceWrapper(MidiDevice device) {
         this.device = device;
     }
