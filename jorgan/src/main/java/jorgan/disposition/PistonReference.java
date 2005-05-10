@@ -36,5 +36,9 @@ public class PistonReference extends Reference {
   public boolean isOn() {
     return on;
   }
+
+  public Registratable getRegistratable() {
+    return (Registratable)getElement();
+  }
 }
 
