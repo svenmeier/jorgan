@@ -36,7 +36,7 @@ public abstract class ShortMessageRecorder {
    */
   public ShortMessageRecorder(String deviceName) throws MidiUnavailableException {
 
-    device = PooledDevice.getMidiDevice(deviceName, false);
+    device = DevicePool.getMidiDevice(deviceName, false);
 
     device.open();
 

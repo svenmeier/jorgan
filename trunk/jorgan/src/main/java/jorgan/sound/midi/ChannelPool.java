@@ -59,15 +59,11 @@ public class ChannelPool {
   protected ChannelPool(String deviceName) throws MidiUnavailableException {
 
     this.deviceName = deviceName;
-    this.device     = PooledDevice.getMidiDevice(deviceName, true);
+    this.device     = DevicePool.getMidiDevice(deviceName, true);
 
     pools.put(deviceName, this);
   }
 
-  public String getDeviceName() {
-      return deviceName;
-  }
-  
   /**
    * Create a channel.
    * 
@@ -126,6 +122,10 @@ public class ChannelPool {
     }
   }
 
+  public String getDeviceName() {
+      return deviceName;
+  } 
+  
   /**
    * A channel implementation.
    */
