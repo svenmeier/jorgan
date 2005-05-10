@@ -51,7 +51,7 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
         VariationSound sound = (VariationSound)sounds.get(s);
         sound.flush();
         
-        fireOutput();
+        markOutput();
       }
     }
   }

@@ -94,7 +94,7 @@ public class StopPlayer extends KeyablePlayer {
         sound.setPitchBend(stop.getBend());
       }
 
-      fireOutput();
+      markOutput();
 
       super.activate();
     }
@@ -115,7 +115,7 @@ public class StopPlayer extends KeyablePlayer {
         
       sound.noteOn(pitch, velocity);        
 
-      fireOutput();
+      markOutput();
     }
   }
   
@@ -128,7 +128,7 @@ public class StopPlayer extends KeyablePlayer {
       sound.stop();
       sound = null;
 
-      fireOutput();
+      markOutput();
     }
     
     removeProblem(programWarning(stop.getProgram()));
@@ -153,7 +153,7 @@ public class StopPlayer extends KeyablePlayer {
     if (sound != null) {
       sound.noteOff(pitch);
       
-      fireOutput();
+      markOutput();
     }
   }
   

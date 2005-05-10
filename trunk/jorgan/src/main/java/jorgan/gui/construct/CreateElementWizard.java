@@ -122,18 +122,20 @@ public class CreateElementWizard extends BasicWizard {
     public void propertyChange(PropertyChangeEvent evt) {
       Class  elementClass = elementPanel.getElementClass();
       String elementName  = elementPanel.getElementName();
-      
-      try {
-        if (prototype != null && prototype.getClass() == elementClass) {
-          element = (Element)prototype.clone();
-        } else {
-          element = (Element)elementClass.newInstance();
-        }
-      
-        element.setName(elementName);
-      } catch (Exception ex) {
-        throw new Error(ex);
-      }  
+
+      if (elementClass != null && elementName != null) {
+        try {
+          if (prototype != null && prototype.getClass() == elementClass) {
+            element = (Element)prototype.clone();
+          } else {
+            element = (Element)elementClass.newInstance();
+          }
+            
+          element.setName(elementName);
+        } catch (Exception ex) {
+          throw new Error(ex);
+        }  
+      }
       
       super.propertyChange(evt);
     }

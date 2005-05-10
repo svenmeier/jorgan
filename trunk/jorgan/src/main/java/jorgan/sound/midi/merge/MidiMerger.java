@@ -22,7 +22,7 @@ import java.util.*;
 
 import javax.sound.midi.*;
 
-import jorgan.sound.midi.PooledDevice;
+import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.Loopback;
 
 
@@ -110,7 +110,7 @@ public class MidiMerger extends Loopback {
      */
     public MergeReceiver(String device, int channel) throws MidiUnavailableException {
   
-      this.device = PooledDevice.getMidiDevice(device, false);
+      this.device = DevicePool.getMidiDevice(device, false);
       this.device.open();
       
       transmitter = this.device.getTransmitter();
