@@ -24,7 +24,7 @@ import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
 
-import jorgan.sound.midi.PooledDevice;
+import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.merge.MergeInput;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
@@ -101,7 +101,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 
     // create inputs for all devices (excluding MidiMerger)
     allInputs.clear();   
-    String[] devices = PooledDevice.getMidiDeviceNames(false);
+    String[] devices = DevicePool.getMidiDeviceNames(false);
     for (int d = 0; d< devices.length; d++) {
       if (!MidiMergerProvider.DEVICE_NAME.equals(devices[d])) {
         allInputs.add(new MergeInput(devices[d]));
