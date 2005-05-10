@@ -58,10 +58,22 @@ public class Piston extends Active {
     for (int e = 0; e < getReferencesCount(); e++) {
       PistonReference reference = (PistonReference)getReference(e);
       
-      Registratable registratable = (Registratable)reference.getElement();
+      Registratable registratable = reference.getRegistratable();
 
-      registratable.setOn(reference.isOn());
+      if (!reference.isOn()) {
+        registratable.setOn(false);
+      }
     }
+    
+    for (int e = 0; e < getReferencesCount(); e++) {
+        PistonReference reference = (PistonReference)getReference(e);
+        
+        Registratable registratable = reference.getRegistratable();
+
+        if (reference.isOn()) {
+          registratable.setOn(true);
+        }
+      }
   }
 
   public void set() {
