@@ -70,7 +70,7 @@ public class SkinManager implements ISkinManager {
   
   public void initializeSkíns() {
 
-    File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY, Installation.getInstallDirectory(getClass()) + "/skins"));
+    File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY, Bootstrap.getDirectory() + "/skins"));
     if (skinsDir.exists()) {
       String[] entries = skinsDir.list();
       for (int e = 0; e < entries.length; e++) {

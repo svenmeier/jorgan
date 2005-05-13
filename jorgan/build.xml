@@ -35,18 +35,28 @@
     <target name="distProgram" description="Set up the program distribution" depends="clean, buildProgram" >
         <mkdir dir="./dist/marshal" />
 
-    	<jar destfile="./dist/marshal/jOrgan.jar">
+       	<jar destfile="./dist/marshal/jorgan.jar">
             <fileset dir="./build">
-                <include name="**/*"/>
+                <include name="jorgan/util/Bootstrap.class"/>
             </fileset>
-		    <manifest>
-		      	<attribute name="Main-class" value="jorgan.App" />
-		      	<attribute name="Class-Path" value="./lib/swingx.jar ./lib/spin.jar ./lib/jh.jar ./lib/creative.jar ./lib/content.jar" />
-		    </manifest>
+            <manifest>
+                <attribute name="Main-class" value="jorgan.util.Bootstrap" />
+                <attribute name="Bootstrap-classpath" value="./lib" />
+                <attribute name="Bootstrap-class" value="jorgan.App" />
+            </manifest>
         </jar>
 
         <mkdir dir="./dist/marshal/lib" />
-        <copy file="./lib/*" todir="./dist/marshal/lib" />
+    	<jar destfile="./dist/marshal/lib/core.jar">
+            <fileset dir="./build">
+                <include name="**/*"/>
+            </fileset>
+        </jar>
+        <copy todir="./dist/marshal/lib">
+        	<fileset dir="./lib">
+        		<include name="*.jar"/>
+        	</fileset>
+        </copy>
 
         <mkdir dir="./dist/marshal/docs" />
         <copy todir="./dist/marshal/docs">
