@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
-import jorgan.util.Installation;
+import jorgan.util.Bootstrap;
 
 /**
  * Configuration of the IO package.
@@ -191,7 +191,7 @@ public class Configuration extends PreferencesConfiguration {
   }
   
   protected File RECENT_DIRECTORY() {
-    return new File(Installation.getInstallDirectory(getClass()), "dispositions");    
+    return new File(Bootstrap.getDirectory(), "dispositions");    
   }
   
   /**

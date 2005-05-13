@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import jorgan.disposition.Element;
-import jorgan.util.Installation;
+import jorgan.util.Bootstrap;
 
 public class Documents {
 
@@ -120,7 +120,7 @@ public class Documents {
     
     private URL locate(String bundleName, String fileName) {
         
-        File docsDir = new File(System.getProperty(DOCS_PATH_PROPERTY, Installation.getInstallDirectory(getClass()) + "/docs"));
+        File docsDir = new File(System.getProperty(DOCS_PATH_PROPERTY, Bootstrap.getDirectory() + "/docs"));
         if (docsDir.exists() && docsDir.isDirectory()) {
           try {
             String localeSuffix = Locale.getDefault().toString();
