@@ -81,6 +81,9 @@ public class CardPanel extends JPanel {
   public void addCard(Component card, Object constraint) {
 
     this.add(card, constraint);
+    
+    revalidate();
+    repaint();
   }
 
   /**
