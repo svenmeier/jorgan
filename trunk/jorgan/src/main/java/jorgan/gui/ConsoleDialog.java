@@ -20,29 +20,35 @@ package jorgan.gui;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ResourceBundle;
 
 import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
+import jorgan.gui.construct.ElementUtils;
+import jorgan.swing.CardPanel;
 
 /**
  * JDialog subclass to show a console <em>full screen</em>.
  */
 public class ConsoleDialog extends JDialog {
 
-  /**
-   * The scrollpane to contain the viewPanel.
-   */
-  private JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 
-
+  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    
   /**
    * The handler of scrolling.
    */
-  private ScrollHandler scrollHandler = new ScrollHandler();
+  private MouseHandler scrollHandler = new MouseHandler();
 
-  private ConsolePanel consolePanel = new ConsolePanel();
-    
+  private JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 
+
+  private CardPanel cardPanel = new CardPanel();
+  
+  private JPopupMenu popup = new JPopupMenu();
+  
+  private ButtonGroup group = new ButtonGroup();
+  
   /**
    * Create a dialog.
    */
@@ -57,48 +63,80 @@ public class ConsoleDialog extends JDialog {
 
     scrollPane.setBorder(null);
     getContentPane().add(scrollPane);
+    scrollPane.setViewportView(cardPanel);
+    
+    popup.add(new CloseAction());
+  }
+
+  /**
+   * Add a console to be shown in <em>full screen</em>.
+   */
+  public void addConsole(final Console console) {
+    
+    ConsolePanel consolePanel = new ConsolePanel();
+    consolePanel.setConsole(console);
 
     consolePanel.addMouseListener      (scrollHandler);
     consolePanel.addMouseMotionListener(scrollHandler);
-    scrollPane.setViewportView(consolePanel);
+    
+    cardPanel.addCard(consolePanel, console);
+    
+    final JCheckBoxMenuItem check = new JCheckBoxMenuItem(ElementUtils.getElementName(console));
+    check.getModel().setGroup(group);
+    check.setSelected(true);
+    check.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if (check.isSelected()) {
+          cardPanel.selectCard(console);
+        }
+      }
+    });
+    if (cardPanel.getComponentCount() == 1) {
+      popup.addSeparator();
+    }    
+    popup.add(check);
   }
 
   /**
-   * Set the console to shown in <em>full screen</em>.
+   * The handler for mouse events.
    */
-  public void setConsole(Console console) {
-    
-    consolePanel.setConsole(console);
-    
-    setTitle(console.getName());
-  }
-
-  /**
-   * The handler for scrolling.
-   */
-  private class ScrollHandler extends MouseInputAdapter implements ActionListener {
+  private class MouseHandler extends MouseInputAdapter implements ActionListener {
 
     private Timer timer;
 
     private int deltaX;
     private int deltaY;
 
-    public ScrollHandler() {
+    public MouseHandler() {
       timer = new Timer(50, this);
     }
 
+    public void mousePressed(MouseEvent e) {
+      checkPopup(e);
+    }
+    
+    public void mouseReleased(MouseEvent e) {
+      checkPopup(e);
+    }
+    
+    protected void checkPopup(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        popup.show(e.getComponent(), e.getX(), e.getY());
+      }
+    }
+    
     public void mouseExited(MouseEvent e) {
       if (timer.isRunning()) {
         timer.stop();
       }
     }
 
-    public void mouseDragged(MouseEvent e) {
-      mouseMoved(e);
-    }
-    
     public void mouseMoved(MouseEvent e) {
       
+      if (popup.isVisible()) {
+        return;
+      }
+          
       Rectangle rect = scrollPane.getViewport().getViewRect();
 
       int x = e.getX() - (rect.x + rect.width/2); 
@@ -126,28 +164,45 @@ public class ConsoleDialog extends JDialog {
     }
   }
   
-  public static ConsoleDialog showConsole(JFrame owner, Console console) {
-      
-    String screen = console.getScreen();
-    if (screen != null) {
-      GraphicsConfiguration configuration = null;
-      if (!"".equals(screen)) {
-        GraphicsEnvironment   environment = GraphicsEnvironment.getLocalGraphicsEnvironment();    
-        GraphicsDevice[] devices = environment.getScreenDevices();    
-          for (int d = 0; d < devices.length; d++) {
-          if (devices[d].getIDstring().equals(screen)) {
-            configuration = devices[d].getDefaultConfiguration();
-          }
-        }
-      }    
+  private class CloseAction extends AbstractAction {
 
-      ConsoleDialog dialog = new ConsoleDialog(owner, configuration);      
-      dialog.setConsole(console);
-      dialog.setVisible(true);
-        
-      return dialog;
-    }  else {
-      return null;
+    public CloseAction() {
+      putValue(Action.NAME             , resources.getString("fullScreen.action.close.name"));
+      putValue(Action.SHORT_DESCRIPTION, resources.getString("fullScreen.action.close.description"));
+          
+      getRootPane().getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
+      getRootPane().getActionMap().put(this, this);
     }
+    
+    public void actionPerformed(ActionEvent ev) {
+      ConsoleDialog.this.setVisible(false);
+    }
+  }
+  
+  public static ConsoleDialog create(JFrame owner, String screen) {
+  
+    if (screen == null) {
+      throw new IllegalArgumentException("screen must not be null");
+    }
+    
+    GraphicsConfiguration configuration = null;
+    GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();    
+    GraphicsDevice[]    devices     = environment.getScreenDevices();    
+    for (int d = 0; d < devices.length; d++) {
+      if (devices[d].getIDstring().equals(screen)) {
+        configuration = devices[d].getDefaultConfiguration();
+      }
+    }
+
+    ConsoleDialog dialog = new ConsoleDialog(owner, configuration);      
+        
+    return dialog;
+  }
+  
+  public static String getDefaultSceen() {
+    GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();    
+    GraphicsDevice      device      = environment.getDefaultScreenDevice();
+    
+    return device.getIDstring();
   }
 }
