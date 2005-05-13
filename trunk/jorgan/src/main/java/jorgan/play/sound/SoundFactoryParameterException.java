@@ -24,14 +24,20 @@ package jorgan.play.sound;
 public class SoundFactoryParameterException extends SoundFactoryException {
     
   private String name;
+  private Object value;
   
   public SoundFactoryParameterException(String type, String name, Object value) {
     super(type);
     
-    this.name = name;
+    this.name  = name;
+    this.value = value;
   }
   
   public String getName() {
     return name;
+  }
+  
+  public Object getValue() {
+    return value;
   }
 }

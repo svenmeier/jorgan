@@ -48,7 +48,7 @@ public class SoundSourcePlayer extends Player {
 
     PlayerProblem errorDevice    = new PlayerProblem(PlayerProblem.ERROR, "device", soundSource.getDevice()); 
     PlayerProblem errorType      = new PlayerProblem(PlayerProblem.ERROR, "type", soundSource.getType()); 
-    PlayerProblem errorParameter = new PlayerProblem(PlayerProblem.ERROR, "type.parameter", soundSource.getSamples()); 
+    PlayerProblem errorParameter = new PlayerProblem(PlayerProblem.ERROR, "type.parameter", null); 
 
     removeProblem(errorDevice);
     removeProblem(errorType);
@@ -61,7 +61,7 @@ public class SoundSourcePlayer extends Player {
       } catch (MidiUnavailableException ex) {
         addProblem(errorDevice);
       } catch (SoundFactoryParameterException ex) {
-        addProblem(errorParameter);
+        addProblem(new PlayerProblem(PlayerProblem.ERROR, "type.parameter", ex.getValue()));
       } catch (SoundFactoryException ex) {
         addProblem(errorType);
       }

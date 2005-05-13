@@ -121,7 +121,7 @@ public class DevicePool {
   private static class ProxyDevice extends DeviceWrapper {
     private boolean open = false;
 
-    private ProxyDevice(MidiDevice device) {
+    private ProxyDevice(SharedDevice device) {
         super(device);
     }
 
@@ -166,9 +166,9 @@ public class DevicePool {
             throw new IllegalStateException("open");
         }
     }
-}
+  }
 
-private static class DeviceKey {
+  private static class DeviceKey {
 
     private String deviceName;
     private boolean out;
