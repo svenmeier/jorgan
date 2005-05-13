@@ -16,58 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.sound.defaults;
+package jorgan.play.sound.basic;
 
 import javax.sound.midi.*;
 
 import jorgan.sound.midi.Channel;
 import jorgan.sound.midi.ChannelPool;
 
-import jorgan.midi.Configuration;
-
-import jorgan.play.sound.SoundFactory;
+import jorgan.play.sound.ChanneledSoundFactory;
 import jorgan.play.sound.Sound;
 
 /**
  * An implementation of a sound factory that should work for most MIDI
  * devices.
  */
-public class BasicSoundFactory extends SoundFactory {
+public class BasicSoundFactory extends ChanneledSoundFactory {
 
-  /**
-   * The pool of channels used by this factory.
-   */
-  protected ChannelPool pool;
-  
   public BasicSoundFactory(ChannelPool pool) throws MidiUnavailableException {
-    if (pool == null) {
-        throw new IllegalArgumentException("pool must not be null");
-    }
-      
-    this.pool = pool;
-      
-    pool.open();
+    super(pool);
   }
   
-  protected int[] getBlockedChannels() {
-    return new int[0];
-  }
-
-  /**
-   * Factory method.
-   *
-   * @return         sound
-   */
-  public Sound createSound() {
-    Channel channel = pool.createChannel(getBlockedChannels());
-
-    if (channel != null) {
-      return createSoundImpl(channel);
-    } else {
-      return null;
-    }
-  }
-
   /**
    * Factory method.
    *
@@ -79,22 +47,10 @@ public class BasicSoundFactory extends SoundFactory {
   }
 
   /**
-   * Close this factory.
-   */
-  public void close() {
-    pool.close();
-  }
-
-  /**
    * Basic implementation of a sound.
    */
-  public class BasicSound extends AbstractSound {
-
-    /**
-     * The MIDI channel of this sound.
-     */
-    private Channel channel;
-    
+  public class BasicSound extends ChannelSound {
+   
     /**
      * Create a new sound.
      *
@@ -102,19 +58,12 @@ public class BasicSoundFactory extends SoundFactory {
      */
     public BasicSound(Channel channel) {
 
-      this.channel = channel;
+      super(channel);
       
       sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_RESET_ALL, UNUSED_DATA);
 
       sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB, bank % 128);
     }
-
-    protected void sendMessage(int command, int data1, int data2) {
-        if (channel == null) {
-            throw new IllegalStateException("already stopped");
-        }
-        channel.sendMessage(command, data1, data2);
-    }    
 
     /**
      * Set the program of the sound.
@@ -150,23 +99,6 @@ public class BasicSoundFactory extends SoundFactory {
      */
     public void setVolume(int volume) {
       sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_VOLUME, volume);
-    }
-
-    /**
-     * Stop this sound.
-     */
-    public void stop() {
-
-      if (Configuration.instance().getSendAllNotesOff()) {
-        sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_ALL_NOTES_OFF, UNUSED_DATA);
-      }
-
-      if (channel != null) {
-        channel.release();
-        channel = null;
-      }
-
-      super.stop();
     }
 
     /**

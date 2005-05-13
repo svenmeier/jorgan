@@ -24,6 +24,13 @@ package jorgan.sound.midi;
 public interface Channel {
 
   /**
+   * Get the MIDI number of this channel (1 - 16).
+   * 
+   * @return MIDI number
+   */
+  public int getNumber();
+  
+  /**
    * Send a MIDI message.
    *
    * @param command   command
