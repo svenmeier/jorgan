@@ -22,6 +22,8 @@ import java.awt.BorderLayout;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -30,8 +32,10 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
@@ -43,7 +47,6 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -699,53 +702,63 @@ public class OrganFrame extends JFrame implements UI {
   /**
    * The action that initiates full screen.
    */
-  private class FullScreenAction extends AbstractAction {
+  private class FullScreenAction extends AbstractAction implements ComponentListener {
     
     private ScreenSaverDisabler disabler = new ScreenSaverDisabler();
     
-    private List dialogs = new ArrayList();
+    private Map dialogs = new HashMap();
     
     public FullScreenAction() {
       putValue(Action.NAME             , resources.getString("action.fullScreen.name"));
       putValue(Action.SHORT_DESCRIPTION, resources.getString("action.fullScreen.description"));
       
-      install(getRootPane());
-    }
-    
-    private void install(JRootPane rootPane) {
-      rootPane.getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
-      rootPane.getActionMap().put(this, this);
+      getRootPane().getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
+      getRootPane().getActionMap().put(this, this);
     }
     
     public void actionPerformed(ActionEvent ev) {
       if (dialogs.isEmpty()) {
         organPanel.setConstructing(false);
 
-        if (Configuration.instance().getDisableScreenSaver()) {
-          disabler.disable(true);
-        }
+        disabler.disable(Configuration.instance().getDisableScreenSaver());
         
         List consoles = organPanel.getOrgan().getCandidates(Console.class);
         for (int c = 0; c < consoles.size(); c++) {
-          ConsoleDialog dialog = ConsoleDialog.showConsole(OrganFrame.this, (Console)consoles.get(c));
-          if (dialog != null) {
-            install(dialog.getRootPane());
-            dialogs.add(dialog);
+          Console console = (Console)consoles.get(c);
+          String  screen  = console.getScreen(); 
+          if (screen == null) {
+            continue;
           }
-        }
-      } else {
-        for (int d = 0; d < dialogs.size(); d++) {
-          ConsoleDialog dialog = (ConsoleDialog)dialogs.get(d);
-          dialog.setVisible(false);
-          dialog.dispose();
-        }
-        dialogs.clear();
+          if (Console.DEFAULT_SCREEN.equals(screen)) {
+            screen = ConsoleDialog.getDefaultSceen();
+          }
 
-        if (Configuration.instance().getDisableScreenSaver()) {
-          disabler.disable(false);
+          ConsoleDialog dialog = (ConsoleDialog)dialogs.get(screen);
+          if (dialog == null) {
+            dialog = ConsoleDialog.create(OrganFrame.this, screen);
+            dialogs.put(screen, dialog);
+          }
+          dialog.addConsole(console);
+          dialog.addComponentListener(this);
+          dialog.setVisible(true);
         }
       }
     }
+    public void componentHidden(ComponentEvent e) {
+      Iterator iterator = dialogs.values().iterator();
+      while (iterator.hasNext()) {
+        ConsoleDialog dialog = (ConsoleDialog)iterator.next();
+        dialog.setVisible(false);
+        dialog.dispose();
+      }
+      dialogs.clear();
+      
+      disabler.disable(false);
+    }
+    
+    public void componentMoved(ComponentEvent e) { }
+    public void componentResized(ComponentEvent e) { }
+    public void componentShown(ComponentEvent e) { }
   }
 
   /**
