@@ -60,35 +60,35 @@ public class Configuration extends PreferencesConfiguration {
   private Font    variationFont;
 
   protected void restore(Preferences prefs) {
-    interpolate    = prefs.getBoolean("interpolate", INTERPOLATE);
+    interpolate    = getBoolean(prefs, "interpolate", INTERPOLATE);
 
-    showShortcut   = prefs.getBoolean("showShortcut", SHOW_SHORTCUT);
-    shortcutColor  = getColor(prefs, "shortcutColor", SHORTCUT_COLOR);
-    shortcutFont   = getFont (prefs, "shortcutFont"   , SHORTCUT_FONT);
+    showShortcut   = getBoolean(prefs, "showShortcut", SHOW_SHORTCUT);
+    shortcutColor  = getColor  (prefs, "shortcutColor", SHORTCUT_COLOR);
+    shortcutFont   = getFont   (prefs, "shortcutFont"   , SHORTCUT_FONT);
 
-    labelFont      = getFont(prefs, "labelFont"      , LABEL_FONT);
-    stopFont       = getFont(prefs, "stopFont"       , STOP_FONT);
-    couplerFont    = getFont(prefs, "couplerFont"    , COUPLER_FONT);
-    pistonFont     = getFont(prefs, "pistonFont"     , PISTON_FONT);
-    swellFont      = getFont(prefs, "swellFont"      , SWELL_FONT);
-    tremulantFont  = getFont(prefs, "tremulantFont"  , TREMULANT_FONT);
-    variationFont  = getFont(prefs, "variationFont"  , VARIATION_FONT);
+    labelFont      = getFont   (prefs, "labelFont"      , LABEL_FONT);
+    stopFont       = getFont   (prefs, "stopFont"       , STOP_FONT);
+    couplerFont    = getFont   (prefs, "couplerFont"    , COUPLER_FONT);
+    pistonFont     = getFont   (prefs, "pistonFont"     , PISTON_FONT);
+    swellFont      = getFont   (prefs, "swellFont"      , SWELL_FONT);
+    tremulantFont  = getFont   (prefs, "tremulantFont"  , TREMULANT_FONT);
+    variationFont  = getFont   (prefs, "variationFont"  , VARIATION_FONT);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean("interpolate", interpolate);
+    putBoolean(prefs, "interpolate", interpolate);
 
-    prefs.putBoolean("showShortcut", showShortcut);
-    putColor(prefs, "shortcutColor", shortcutColor);
-    putFont (prefs, "shortcutFont" , shortcutFont);
+    putBoolean(prefs, "showShortcut", showShortcut);
+    putColor  (prefs, "shortcutColor", shortcutColor);
+    putFont   (prefs, "shortcutFont" , shortcutFont);
 
-    putFont(prefs, "labelFont"     , labelFont);
-    putFont(prefs, "stopFont"      , stopFont);
-    putFont(prefs, "couplerFont"   , couplerFont);
-    putFont(prefs, "pistonFont"    , pistonFont);
-    putFont(prefs, "swellFont"     , swellFont);
-    putFont(prefs, "tremulantFont" , tremulantFont);
-    putFont(prefs, "variationFont" , variationFont);
+    putFont   (prefs, "labelFont"     , labelFont);
+    putFont   (prefs, "stopFont"      , stopFont);
+    putFont   (prefs, "couplerFont"   , couplerFont);
+    putFont   (prefs, "pistonFont"    , pistonFont);
+    putFont   (prefs, "swellFont"     , swellFont);
+    putFont   (prefs, "tremulantFont" , tremulantFont);
+    putFont   (prefs, "variationFont" , variationFont);
   }
 
   public boolean getInterpolate() {

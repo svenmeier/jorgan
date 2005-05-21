@@ -60,7 +60,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
   /**
    * The organ of the edited console.
    */
-  private Organ organ;
+  private OrganSession session;
 
   /**
    * The edited console.
@@ -92,11 +92,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
    */
   private jorgan.disposition.Element pressedElement;
 
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
-  
   /**
    * The currently selected elements.
    */
@@ -210,8 +205,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
     });
     menu.add(hideMenuItem);
 
-    setSelectionModel(new ElementSelectionModel());
-    
     setConstructing(false);
   }
 
@@ -264,16 +257,21 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
     int grid = jorgan.gui.construct.Configuration.instance().getGrid(); 
 
-    int increment;      
+    int newViewPos;
     if (direction > 0) {
-      int temp = viewPos + grid;
-      increment = (temp - (temp % grid)) - viewPos;
+      newViewPos = viewPos + grid;
     } else {
-      int temp = viewPos - 1;
-      increment = viewPos - (temp - (temp % grid)); 
+      newViewPos = viewPos - 1;
     }
     
-    return viewToScreen(increment);
+    // snap new view position to grid
+    newViewPos = newViewPos - (newViewPos % grid);
+    
+    int viewIncrement = Math.abs(viewPos - newViewPos);
+    
+    // Ensure an increment of at least 1, since translation to screen
+    // can make view increment irrelevant.
+    return Math.max(1, viewToScreen(viewIncrement));
   }
   
   public void setZoom(double zoom) {
@@ -289,19 +287,24 @@ public class ConsolePanel extends JComponent implements Scrollable {
     return zoom;
   }
   
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
+  public void setOrgan(OrganSession session) {
+    if (this.session != null) {
+      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(organListener));
+      this.session.getSelectionModel().removeSelectionListener(selectionListener);
+
+      jorgan.gui.console.Configuration.instance().removeConfigurationListener(configListener);
+      jorgan.gui.construct.Configuration.instance().removeConfigurationListener(configListener);
     }
 
-    // only null if called from constructor
-    if (this.selectionModel != null) {
-      this.selectionModel.removeSelectionListener(selectionListener);
-    }
-
-    this.selectionModel = selectionModel;
+    this.session = session;
     
-    selectionModel.addSelectionListener(selectionListener);
+    if (this.session != null) {
+      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(organListener));
+      this.session.getSelectionModel().addSelectionListener(selectionListener);
+
+      jorgan.gui.console.Configuration.instance().addConfigurationListener(configListener);
+      jorgan.gui.construct.Configuration.instance().addConfigurationListener(configListener);
+    }
   }
   
   public void scrollElementToVisible(jorgan.disposition.Element element) {
@@ -371,37 +374,25 @@ public class ConsolePanel extends JComponent implements Scrollable {
    * @param console console to be edited
    */
   public void setConsole(Console console) {
-    if (this.console != null) {
-      organ.removeOrganListener((OrganListener)Spin.over(organListener));
-      organ = null;
-      
+    if (this.console != null) {       
+      setZoom(1.0d);
+
       for (int v = views.size() - 1; v >= 0; v--) {
         View view = (View)views.get(v);
         
         dropView(view.getElement());
       }
-      
-      jorgan.gui.console.Configuration.instance().removeConfigurationListener(configListener);
-      jorgan.gui.construct.Configuration.instance().removeConfigurationListener(configListener);
-      
-      setZoom(1.0d);
     }
 
     this.console = console;
 
     if (console != null) {
       setZoom(console.getZoom());
-
-      jorgan.gui.console.Configuration.instance().addConfigurationListener(configListener);
-      jorgan.gui.construct.Configuration.instance().addConfigurationListener(configListener);
       
       for (int r = 0; r < console.getReferencesCount(); r++) {
         createView(console.getReference(r).getElement());
       }
       viewComparator.sort(views);
-      
-      organ = console.getOrgan();
-      organ.addOrganListener((OrganListener)Spin.over(organListener));      
     }
   }
 
@@ -736,14 +727,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
       if (isMultiSelect(e)) {
         if (pressedElement != null) {
-          selectionModel.addSelectedElement(pressedElement);
+          session.getSelectionModel().addSelectedElement(pressedElement);
         }
       } else {
         if (pressedElement == null) {
-          selectionModel.setSelectedElement(null);
+          session.getSelectionModel().setSelectedElement(null);
         } else {
           if (!selectedElements.contains(pressedElement)) {
-            selectionModel.setSelectedElement(pressedElement);
+            session.getSelectionModel().setSelectedElement(pressedElement);
           }
         }
       }
@@ -787,7 +778,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
             elements.add(view.getElement());
           }
         }
-        selectionModel.setSelectedElements(elements);
+        session.getSelectionModel().setSelectedElements(elements);
       } else {
         mouseTo = e.getPoint();
 
@@ -841,7 +832,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     public void mouseClicked(MouseEvent e) {
       if (pressedElement != null) {
         if (isMultiSelect(e) && wasSelected) {
-          selectionModel.removeSelectedElement(pressedElement);
+          session.getSelectionModel().removeSelectedElement(pressedElement);
         }
       }
     }
@@ -1037,7 +1028,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
   private class InternalElementSelectionListener implements ElementSelectionListener {
     public void selectionChanged(ElementSelectionEvent ev) {
 
-      List newElements = selectionModel.getSelectedElements();
+      List newElements = session.getSelectionModel().getSelectedElements();
       
       for (int e = 0; e < newElements.size(); e++) {
           jorgan.disposition.Element element = (jorgan.disposition.Element)newElements.get(e);

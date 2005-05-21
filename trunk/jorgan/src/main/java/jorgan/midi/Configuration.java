@@ -39,11 +39,11 @@ public class Configuration extends PreferencesConfiguration {
   }
   
   protected void restore(Preferences prefs) {
-    sendAllNotesOff = prefs.getBoolean("sendAllNotesOff", SEND_ALL_NOTES_OFF);
+    sendAllNotesOff = getBoolean(prefs, "sendAllNotesOff", SEND_ALL_NOTES_OFF);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean("sendAllNotesOff", sendAllNotesOff);
+    putBoolean(prefs, "sendAllNotesOff", sendAllNotesOff);
   }
 
   public boolean getSendAllNotesOff() {

@@ -48,6 +48,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -104,7 +105,7 @@ public class PropertiesPanel extends JPanel {
       table.setModel(model);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       table.setSurrendersFocusOnKeystroke(true);
-//      table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);            
+      table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);            
       PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
       PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
       table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
@@ -138,9 +139,6 @@ public class PropertiesPanel extends JPanel {
     }
   }
   public void setBean(Object bean) {
-    if (this.beans.size() == 1 && this.beans.get(0) == bean) {
-      return;
-    }
     setBeans(new ArrayList(beans));
   }
   
@@ -331,7 +329,7 @@ public class PropertiesPanel extends JPanel {
     }
   }
 
-  private class PropertyCellEditor extends AbstractCellEditor implements TableCellEditor {
+  private class PropertyCellEditor extends AbstractCellEditor implements TableCellEditor, Runnable {
 
     private PropertyEditor editor;
 
@@ -361,22 +359,40 @@ public class PropertiesPanel extends JPanel {
       editor = editors[row];
       editor.setValue(value);
 
+      Component component;
       if (editor.supportsCustomEditor()) {
-        return editor.getCustomEditor();
+        component = editor.getCustomEditor();
       } else {
         String[] tags = editor.getTags();
         if (tags == null) {
           textField.setText(editor.getAsText());
           textField.selectAll();
-          return textField;
+          component = textField;
         } else {
           comboBox.setModel(new DefaultComboBoxModel(tags));
           comboBox.setSelectedItem(editor.getAsText());
-          return comboBox;
+          component = comboBox;
         }
       }
+      
+      SwingUtilities.invokeLater(this);
+      
+      return component;
     }
 
+    /**
+     * Client property 'terminateEditOnFocusLost' may lead to a
+     * corrupted display of editor in the table.
+     * This method (invoked via SwingUtilities.invokeLater()) will
+     * issue an additional repaint if the table is still editing.
+     */
+    public void run() {
+      Component component = table.getEditorComponent();
+      if (component != null) {
+        component.repaint();
+      }
+    }
+    
     public Object getCellEditorValue() {
       if (!editor.supportsCustomEditor()) {
         try {

@@ -36,7 +36,7 @@ import spin.Spin;
 
 import jorgan.disposition.*;
 import jorgan.disposition.event.*;
-import jorgan.gui.ElementSelectionModel;
+import jorgan.gui.OrganSession;
 import jorgan.gui.event.*;
 
 /**
@@ -64,7 +64,7 @@ public class ReferencesPanel extends JPanel {
   /**
    * The edited organ.
    */
-  private Organ organ;
+  private OrganSession session;
 
   private List elements = new ArrayList();
   
@@ -76,11 +76,6 @@ public class ReferencesPanel extends JPanel {
    */
   private SelectionHandler selectionHandler = new SelectionHandler();
 
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
-  
   private AddAction addAction = new AddAction();
   private RemoveAction removeAction = new RemoveAction();
 
@@ -145,7 +140,7 @@ public class ReferencesPanel extends JPanel {
             Reference reference = (Reference)references.get(index); 
             Element   element   = reference.getElement();
             
-            selectionModel.setSelectedElement(element);
+            session.getSelectionModel().setSelectedElement(element);
           }
         }
       }
@@ -154,39 +149,28 @@ public class ReferencesPanel extends JPanel {
     JScrollPane scrollPane = new JScrollPane(list);
     scrollPane.setBorder(new EmptyBorder(0,0,0,0));
     add(scrollPane, BorderLayout.CENTER);
-
-    setSelectionModel(new ElementSelectionModel());
   }
   
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
-    }
-
-    if (this.selectionModel != null) {
-      this.selectionModel.removeSelectionListener(selectionHandler);
-    }
-
-    this.selectionModel = selectionModel;
-
-    selectionModel.addSelectionListener(selectionHandler);
-  }
-
   /**
    * Set the organ to be edited.
    *
    * @param organ organ to be edited
    */
-  public void setOrgan(Organ organ) {
-    if (this.organ != null) {
-      this.organ.removeOrganListener((OrganListener)Spin.over(referencesModel));
+  public void setOrgan(OrganSession session) {
+    if (this.session != null) {
+      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(referencesModel));
+      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
     }
 
-    this.organ = organ;
+    this.session = session;
         
-    if (organ != null) {
-      organ.addOrganListener((OrganListener)Spin.over(referencesModel));
-    }    
+    if (this.session != null) {
+      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(referencesModel));
+      this.session.getSelectionModel().addSelectionListener(selectionHandler);
+    }
+    
+    elements.clear();
+    updateReferences();    
   }
 
   private void updateReferences() {
@@ -256,7 +240,7 @@ public class ReferencesPanel extends JPanel {
    public void selectionChanged(ElementSelectionEvent ev) {
   
      elements.clear();
-     elements.addAll(selectionModel.getSelectedElements());
+     elements.addAll(session.getSelectionModel().getSelectedElements());
      updateReferences();
    }
 
@@ -453,7 +437,7 @@ public class ReferencesPanel extends JPanel {
 
     public void actionPerformed(ActionEvent ev) {
       if (elements.size() > 0) {
-       CreateReferencesWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ReferencesPanel.this), organ, elements);
+       CreateReferencesWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ReferencesPanel.this), session.getOrgan(), elements);
       }
     }
 

@@ -30,8 +30,13 @@ import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import spin.Spin;
+
 import jorgan.disposition.*;
-import jorgan.gui.ElementSelectionModel;
+import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.OrganListener;
+import jorgan.gui.OrganSession;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -52,10 +57,7 @@ public class ElementPropertiesPanel extends JPanel {
    */
   private SelectionHandler selectionHandler = new SelectionHandler();
 
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
+  private OrganSession session;
 
   private PropertiesPanel propertiesPanel = new PropertiesPanel();
   
@@ -68,47 +70,70 @@ public class ElementPropertiesPanel extends JPanel {
     add(propertiesPanel, BorderLayout.CENTER);
   }
 
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
+  public void setOrgan(OrganSession session) {
+    if (this.session != null) {
+      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
+      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(selectionHandler));
     }
 
-    // only null if called from constructor
-    if (this.selectionModel != null) {
-      this.selectionModel.removeSelectionListener(selectionHandler);
+    this.session = session;
+
+    if (this.session != null) {
+      this.session.getSelectionModel().addSelectionListener(selectionHandler);
+      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(selectionHandler));
     }
-
-    this.selectionModel = selectionModel;
-
-    selectionModel.addSelectionListener(selectionHandler);     
   }
     
   /**
    * The handler of selections.
    */
-  private class SelectionHandler implements ElementSelectionListener, ChangeListener {
+  private class SelectionHandler extends OrganAdapter implements ElementSelectionListener, ChangeListener {
 
-    private boolean updatingSelection = false;
+    private boolean updatingProperties = false;
     
     public void selectionChanged(ElementSelectionEvent ev) {
-      if (!updatingSelection) {
-        updatingSelection = true;
-        
-        propertiesPanel.setBeans(selectionModel.getSelectedElements());
-        propertiesPanel.setProperty(selectionModel.getSelectedProperty());
-
-        updatingSelection = false;
-      }
+      updateProperties();
     }
     
     public void stateChanged(ChangeEvent e) {
-      if (!updatingSelection) {
-        updatingSelection = true;
+      if (!updatingProperties) {
+        updatingProperties = true;
       
         String property = propertiesPanel.getProperty();
-        selectionModel.setSelectedProperty(property);
+        session.getSelectionModel().setSelectedProperty(property);
 
-        updatingSelection = false;
+        updatingProperties = false;
+      }
+    }
+    
+    public void elementChanged(OrganEvent event) {
+      if (propertiesPanel.getBeans().contains(event.getElement())) {
+        updateProperties();
+      }
+    }
+    
+    public void referenceAdded(OrganEvent event) {
+      List beans = propertiesPanel.getBeans(); 
+      if (beans.contains(event.getElement()) || beans.contains(event.getReference().getElement())) {
+        updateProperties();
+      }
+    }
+    
+    public void referenceRemoved(OrganEvent event) {
+        List beans = propertiesPanel.getBeans(); 
+        if (beans.contains(event.getElement()) || beans.contains(event.getReference().getElement())) {
+          updateProperties();
+        }
+      }
+      
+    private void updateProperties() {
+      if (!updatingProperties) {
+        updatingProperties = true;
+            
+        propertiesPanel.setBeans(session.getSelectionModel().getSelectedElements());
+        propertiesPanel.setProperty(session.getSelectionModel().getSelectedProperty());
+
+        updatingProperties = false;
       }
     }
   }

@@ -119,9 +119,9 @@ public class OrganFrame extends JFrame implements UI {
   private File file;
 
   /**
-   * The model for selection.
+   * The organ session.
    */
-  private ElementSelectionModel selectionModel = new ElementSelectionModel();
+  private OrganSession session = new OrganSession();
 
   /**
    * The listener to changes to the configuration.
@@ -177,22 +177,28 @@ public class OrganFrame extends JFrame implements UI {
     }
     getContentPane().add(statusBar, BorderLayout.SOUTH);
 
-    organPanel.setSelectionModel(selectionModel);
     getContentPane().add(organPanel, BorderLayout.CENTER);
 
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
+      private boolean released;
+      
       public void windowClosing(WindowEvent ev) {
         stop();
       }
       
       public void windowActivated(WindowEvent e) {
-        organPanel.setPlaying(true);
+        if (released) {
+          session.getPlay().open();
+        }
       }
 
       public void windowDeactivated(WindowEvent e) {
         if (jorgan.play.Configuration.instance().getReleaseDevicesWhenDeactivated()) {
-          organPanel.setPlaying(false);
+          if (!released && session.getPlay().isOpen()) {
+            session.getPlay().close();
+            released = true;
+          }
         }
       } 
     });
@@ -201,10 +207,11 @@ public class OrganFrame extends JFrame implements UI {
   }
 
   /**
-   * Update the title.
+   * Set the file of the current organ.
    */
-  private void updateTitle() {
+  private void setFile(File file) {
 
+    this.file = file;
     if (file == null) {
       setTitle(TITEL_SUFFIX);
     } else {
@@ -270,7 +277,9 @@ public class OrganFrame extends JFrame implements UI {
    */
   public void stop() {
     if (canCloseOrgan()) {
-      organPanel.setPlaying(false);
+      if (session.getPlay().isOpen()) {
+        session.getPlay().close();
+      }
       
       Configuration.instance().setFrameState(getExtendedState());
       Configuration.instance().setFrameBounds(getBounds());  
@@ -286,23 +295,22 @@ public class OrganFrame extends JFrame implements UI {
    * Set the organ edited by this frame.
    * 
    * @param organ   organ to be edited
-   * @param file    file of organ, may be <code>null</code>
    */
-  private void setOrgan(Organ organ, File file) {
+  private void setOrgan(OrganSession session) {
     statusBar.setStatus(null);
 
-    if (organPanel.getOrgan() != null) {
-        organPanel.getOrgan().removeOrganListener((OrganListener)Spin.over(saveAction));
+    if (this.session != null) {
+      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(saveAction));
     }
-    organ.addOrganListener((OrganListener)Spin.over(saveAction));
+    
+    this.session = session;
 
-    organPanel.setOrgan(organ);
-
-    this.file = file;
-
+    if (this.session != null) {
+      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(saveAction));
+    }
     saveAction.clearChanges();
 
-    updateTitle();
+    organPanel.setOrgan(session);
   }
 
   /**
@@ -311,11 +319,9 @@ public class OrganFrame extends JFrame implements UI {
   public void newOrgan() {
 
     if (canCloseOrgan()) {
-      Organ organ = new Organ();
-     
-      organ.addElement(new Console());
-
-      setOrgan(organ, null);
+      setFile(null);
+      
+      setOrgan(new OrganSession());
     }
   }
 
@@ -323,10 +329,12 @@ public class OrganFrame extends JFrame implements UI {
    * Open an organ.
    */
   public void openOrgan() {
-    JFileChooser chooser = new JFileChooser(jorgan.io.Configuration.instance().getRecentDirectory());
-    chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
-    if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-      openOrgan(chooser.getSelectedFile());
+    if (canCloseOrgan()) {
+      JFileChooser chooser = new JFileChooser(jorgan.io.Configuration.instance().getRecentDirectory());
+      chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
+      if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+        openOrgan(chooser.getSelectedFile());
+      }
     }
   }
 
@@ -336,33 +344,33 @@ public class OrganFrame extends JFrame implements UI {
    * @param file  file to open organ from
    */
   public void openOrgan(File file) {
-    if (canCloseOrgan()) {
-      try {
-        DispositionReader reader = new DispositionReader(new FileInputStream(file));
+    try {
+      DispositionReader reader = new DispositionReader(new FileInputStream(file));
 
-        Organ organ = (Organ)reader.read();
+      Organ organ = (Organ)reader.read();
 
-        jorgan.io.Configuration.instance().addRecentFile(file);
-
-        setOrgan(organ, file);
-
-        return;
-      } catch (XMLFormatException ex) {
-        ex.printStackTrace();
+      jorgan.io.Configuration.instance().addRecentFile(file);
         
-        showException("action.open.exception.invalid", new String[]{file.getName()}, ex);
-      } catch (IOException ex) {
-        showException("action.open.exception", new String[]{file.getName()}, ex);
-      }
-      jorgan.io.Configuration.instance().removeRecentFile(file);
+      setFile(file);
+
+      setOrgan(new OrganSession(organ));
+
+      return;
+    } catch (XMLFormatException ex) {
+      ex.printStackTrace();
+        
+      showException("action.open.exception.invalid", new String[]{file.getName()}, ex);
+    } catch (IOException ex) {
+      showException("action.open.exception", new String[]{file.getName()}, ex);
     }
+    jorgan.io.Configuration.instance().removeRecentFile(file);
   }
 
-  public void saveOrgan() {
+  public boolean saveOrgan() {
     if (file == null) {
-      saveOrganAs();
+      return saveOrganAs();
     } else {
-      saveOrgan(file);
+      return saveOrgan(file);
      }
   }
   
@@ -371,40 +379,42 @@ public class OrganFrame extends JFrame implements UI {
    *
    * @param file  file to save organ to
    */
-  public void saveOrgan(File file) {
+  public boolean saveOrgan(File file) {
     try {
       DispositionWriter writer = new DispositionWriter(new FileOutputStream(file));
-      writer.write(organPanel.getOrgan());
+      writer.write(session.getOrgan());
 
       jorgan.io.Configuration.instance().addRecentFile(file);
 
-      this.file = file;
+      setFile(file);
 
       saveAction.clearChanges();
 
       showStatus("action.save.confirm", new Object[0]);
-
-      updateTitle();
     } catch (Exception ex) {
       ex.printStackTrace();
       
       showException("action.save.exception", new String[]{file.getName()}, ex);
-    }
+      
+      return false;
+    }   
+    return true;
   }
 
   /**
    * Save the current organ.
    */
-  public void saveOrganAs() {
+  public boolean saveOrganAs() {
     JFileChooser chooser = new JFileChooser(jorgan.io.Configuration.instance().getRecentDirectory());
     chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
     if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
       File file = jorgan.io.DispositionFileFilter.addSuffix(chooser.getSelectedFile());
       if (!file.exists() ||
           JOptionPane.showConfirmDialog(OrganFrame.this, resources.getString("action.saveAs.replace"), "jOrgan", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-        saveOrgan(file);
+        return saveOrgan(file);
       }
     }
+    return false;
   }
 
   /**
@@ -424,7 +434,7 @@ public class OrganFrame extends JFrame implements UI {
           return true;
         }
       }
-      saveOrgan();
+      return saveOrgan();
     }
 
     return true;
@@ -462,18 +472,19 @@ public class OrganFrame extends JFrame implements UI {
     }
     setExtendedState(Configuration.instance().getFrameState());
 
-    updateTitle();
     updateMenu();
 
     setVisible(true);
 
-    if (file != null) {
-      SwingUtilities.invokeLater(new Runnable() {
-        public void run() {
+    SwingUtilities.invokeLater(new Runnable() {
+      public void run() {
+        if (file == null) {
+          setFile(null);        
+        } else {
           openOrgan(file);
         }
-      });
-    }
+      }
+    });
 
     exitAction.waitForStop();
   }
@@ -536,7 +547,9 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      openOrgan(new File((String)getValue(Action.SHORT_DESCRIPTION)));
+      if (canCloseOrgan()) {
+        openOrgan(new File((String)getValue(Action.SHORT_DESCRIPTION)));
+      }
     }
   }
 
@@ -681,7 +694,7 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      ImportWizard.showInDialog(OrganFrame.this, organPanel.getOrgan());
+      ImportWizard.showInDialog(OrganFrame.this, session.getOrgan());
     }
   }
 
@@ -722,7 +735,7 @@ public class OrganFrame extends JFrame implements UI {
 
         disabler.disable(Configuration.instance().getDisableScreenSaver());
         
-        List consoles = organPanel.getOrgan().getCandidates(Console.class);
+        List consoles = session.getOrgan().getCandidates(Console.class);
         for (int c = 0; c < consoles.size(); c++) {
           Console console = (Console)consoles.get(c);
           String  screen  = console.getScreen(); 

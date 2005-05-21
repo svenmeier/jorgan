@@ -36,9 +36,8 @@ import swingx.list.DnDList;
 
 import jorgan.disposition.*;
 import jorgan.disposition.event.*;
-import jorgan.gui.ElementSelectionModel;
+import jorgan.gui.OrganSession;
 import jorgan.gui.event.*;
-import jorgan.play.*;
 import jorgan.play.event.*;
 
 /**
@@ -72,23 +71,16 @@ public class ElementsPanel extends JPanel {
   /**
    * The edited organ.
    */
-  private Organ organ;
+  private OrganSession session;
 
   /**
    * The handler of selection changes.
    */
   private SelectionHandler selectionHandler = new SelectionHandler();
 
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
-  
   private AddAction addAction = new AddAction();
   private RemoveAction removeAction = new RemoveAction();
 
-  private OrganPlay play;
-  
   private DnDList list = new DnDList();
   
   private JToolBar toolBar = new JToolBar();
@@ -117,7 +109,7 @@ public class ElementsPanel extends JPanel {
     
     alphabetButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
-        setOrgan(organ);
+        setOrgan(session);
       }
     });
     toolBar.add(alphabetButton);
@@ -133,28 +125,10 @@ public class ElementsPanel extends JPanel {
     scrollPane.setBorder(new EmptyBorder(0,0,0,0));
     add(scrollPane, BorderLayout.CENTER);
 
-    setSelectionModel(new ElementSelectionModel());
   }
-  
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
-    }
-
-    // only null if called from constructor
-    if (this.selectionModel != null) {
-      this.selectionModel.removeSelectionListener(selectionHandler);
-    }
-
-    this.selectionModel = selectionModel;
-
-    selectionModel.addSelectionListener(selectionHandler);
-    
-    removeAction.update();
-  }
-  
-  public Organ getOrgan() {
-    return organ;
+   
+  public OrganSession getOrgan() {
+    return session;
   }
   
   /**
@@ -162,40 +136,32 @@ public class ElementsPanel extends JPanel {
    *
    * @param organ organ to be edited
    */
-  public void setOrgan(Organ organ) {
+  public void setOrgan(OrganSession session) {
     
-    if (this.organ != null) {
-      this.organ.removeOrganListener((OrganListener)Spin.over(elementsModel));
+    if (this.session != null) {
+      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(elementsModel));
+      this.session.getPlay().removePlayerListener((PlayListener)Spin.over(elementsModel));
+      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
 
-      int removed = elements.size();
-      
+      int removed = elements.size();     
       elements = new ArrayList();
-      
       elementsModel.fireRemoved(removed);
     }
 
-    this.organ = organ;
+    this.session = session;
 
-    if (organ != null) {
-      organ.addOrganListener((OrganListener)Spin.over(elementsModel));
+    if (this.session != null) {
+      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(elementsModel));
+      this.session.getPlay().addPlayerListener((PlayListener)Spin.over(elementsModel));
+      this.session.getSelectionModel().addSelectionListener(selectionHandler);
   
-      elements = organ.getElements();
+      elements = this.session.getOrgan().getElements();
       Collections.sort(elements, new ElementComparator(alphabetButton.isSelected()));
 
       elementsModel.fireAdded(elements.size());
     }
-  }
-  
-  public void setPlay(OrganPlay play) {
-    if (this.play != null) {
-      this.play.removePlayerListener(elementsModel);
-    }
     
-    this.play = play;
-    
-    if (this.play != null) {
-      this.play.addPlayerListener(elementsModel);
-    }
+    removeAction.update();      
   }
   
   /**
@@ -203,42 +169,46 @@ public class ElementsPanel extends JPanel {
    */
   private class SelectionHandler implements ElementSelectionListener, ListSelectionListener {
 
-    public void selectionChanged(ElementSelectionEvent ev) {
-      list.removeListSelectionListener(this);
-         
-      list.clearSelection();
-      
-      java.util.List selectedElements = selectionModel.getSelectedElements();    
-      for (int e = 0; e < selectedElements.size(); e++) {
-        Element element = (Element)selectedElements.get(e);
+    private boolean updatingSelection = false;
     
-        int index = elements.indexOf(element);
-        if (index != -1) {
+    public void selectionChanged(ElementSelectionEvent ev) {
+      if (!updatingSelection) {
+        updatingSelection = true;
+          
+        list.clearSelection();
+       
+        java.util.List selectedElements = session.getSelectionModel().getSelectedElements();    
+        for (int e = 0; e < selectedElements.size(); e++) {
+          Element element = (Element)selectedElements.get(e);
+     
+          int index = elements.indexOf(element);
+          if (index != -1) {
             list.addSelectionInterval(index, index);
-        
+         
             if (e == 0) {
               list.scrollRectToVisible(list.getCellBounds(index, index));
             }
+          }
         }
-      }
 
-      list.addListSelectionListener(this);
+        updatingSelection = false;
+      }
       
       removeAction.update();
     }
         
     public void valueChanged(ListSelectionEvent e) {
-      if (!e.getValueIsAdjusting()) {
-        selectionModel.removeSelectionListener(this);
+      if (!e.getValueIsAdjusting() && !updatingSelection) {
+        updatingSelection = true;
 
         Object[] values = list.getSelectedValues();
         if (values.length == 1) {
-          selectionModel.setSelectedElement((Element)values[0]);
+          session.getSelectionModel().setSelectedElement((Element)values[0]);
         }else {
-          selectionModel.setSelectedElements(Arrays.asList(values));
+          session.getSelectionModel().setSelectedElements(Arrays.asList(values));
         }
         
-        selectionModel.addSelectionListener(this);
+        updatingSelection = false;
       }
 
       removeAction.update();
@@ -261,11 +231,7 @@ public class ElementsPanel extends JPanel {
     }
     
     public int getSize() {
-      if (organ == null) {
-        return 0;
-      } else {
-        return elements.size();
-      }
+      return elements.size();
     }
 
     protected void insertElementAt(Object element, int index) {
@@ -358,10 +324,11 @@ public class ElementsPanel extends JPanel {
       super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       
       setIcon(elementIcon);
-      if (play != null) {
-        if (play.hasErrors(element)) {
+      
+      if (session != null) {
+        if (session.getPlay().hasErrors(element)) {
           setIcon(errorIcon);
-        } else if (play.hasWarnings(element)) {
+        } else if (session.getPlay().hasWarnings(element)) {
           setIcon(warningIcon);
         }
       }
@@ -379,12 +346,12 @@ public class ElementsPanel extends JPanel {
    }
 
     public void actionPerformed(ActionEvent ev) {
-        if (organ != null) {
+        if (session != null) {
           Element prototype = null;
-          if (selectionModel.getSelectionCount() == 1) {
-            prototype = selectionModel.getSelectedElement();
+          if (session.getSelectionModel().getSelectionCount() == 1) {
+            prototype = session.getSelectionModel().getSelectedElement();
           }
-          CreateElementWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ElementsPanel.this), organ, prototype);
+          CreateElementWizard.showInDialog((JFrame)SwingUtilities.getWindowAncestor(ElementsPanel.this), session.getOrgan(), prototype);
         }
     }
   }
@@ -398,15 +365,15 @@ public class ElementsPanel extends JPanel {
    }
 
     public void actionPerformed(ActionEvent ev) {
-      List selectedElements = selectionModel.getSelectedElements();
+      List selectedElements = session.getSelectionModel().getSelectedElements();
         
       for (int e = selectedElements.size() - 1; e >= 0; e--) {
-        organ.removeElement((Element)selectedElements.get(e));
+        session.getOrgan().removeElement((Element)selectedElements.get(e));
       }
     }
     
     public void update() {
-      setEnabled(selectionModel.isElementSelected());
+      setEnabled(session != null && session.getSelectionModel().isElementSelected());
     }
   }
 }

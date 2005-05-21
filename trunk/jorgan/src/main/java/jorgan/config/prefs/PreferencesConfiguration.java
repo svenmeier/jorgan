@@ -89,4 +89,32 @@ public abstract class PreferencesConfiguration extends AbstractConfiguration {
   public void reset() {
     restore(new ResetPreferences());
   }
+  
+  protected static void put(Preferences prefs, String key, String value) {
+    if (value == null) {
+      prefs.remove(key);
+    } else {
+      prefs.put(key, value);
+    }
+  }
+
+  protected static void putInt(Preferences prefs, String key, int value) {
+    prefs.putInt(key, value);
+  }
+
+  protected static void putBoolean(Preferences prefs, String key, boolean value) {
+    prefs.putBoolean(key, value);
+  }
+  
+  protected static String get(Preferences prefs, String key, String defaultValue) {
+    return prefs.get(key, defaultValue);
+  }
+
+  protected static int getInt(Preferences prefs, String key, int defaultValue) {
+    return prefs.getInt(key, defaultValue);
+  }
+
+  protected static boolean getBoolean(Preferences prefs, String key, boolean defaultValue) {
+    return prefs.getBoolean(key, defaultValue);
+  }
 }
