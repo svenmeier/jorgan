@@ -23,6 +23,7 @@ import java.awt.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.*;
+
 import javax.swing.*;
 
 import jorgan.config.prefs.*;
@@ -39,7 +40,8 @@ public class Configuration extends PreferencesConfiguration {
   private static final boolean   DISABLE_SCREENSAVER      = true;
   private static final Rectangle FRAME_BOUNDS             = null;
   private static final int       FRAME_STATE              = JFrame.NORMAL;
-  private static final String    DOCKING                  = null;  
+  private static final String    PLAY_DOCKING             = null;  
+  private static final String    CONSTRUCT_DOCKING        = null;  
   
   private static Configuration sharedInstance = new Configuration(true);
 
@@ -48,7 +50,8 @@ public class Configuration extends PreferencesConfiguration {
   private boolean   disableScreenSaver;
   private Rectangle frameBounds;
   private int       frameState;
-  private String    docking;
+  private String    playDocking;
+  private String    constructDocking;
 
   private Configuration(boolean sharedFlag) {
     addChild(jorgan.gui.console.Configuration.instance());
@@ -63,21 +66,23 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void restore(Preferences prefs) {
-    useSystemLookAndFeel        = prefs.getBoolean(       "useSystemLookAndFeel", USE_SYSTEM_LOOK_AND_FEEL);
-    showAboutOnStartup          = prefs.getBoolean(       "showAboutOnStartup"  , SHOW_ABOUT_ON_STARTUP);
-    disableScreenSaver          = prefs.getBoolean(       "disableScreenSaver"  , DISABLE_SCREENSAVER);
-    frameBounds                 = getRectangle    (prefs, "frameBounds"         , FRAME_BOUNDS);
-    frameState                  = prefs.getInt    (       "frameState"          , FRAME_STATE);
-    docking                     = prefs.get       (       "docking"             , DOCKING);
+    useSystemLookAndFeel        = getBoolean  (prefs, "useSystemLookAndFeel", USE_SYSTEM_LOOK_AND_FEEL);
+    showAboutOnStartup          = getBoolean  (prefs, "showAboutOnStartup"  , SHOW_ABOUT_ON_STARTUP);
+    disableScreenSaver          = getBoolean  (prefs, "disableScreenSaver"  , DISABLE_SCREENSAVER);
+    frameBounds                 = getRectangle(prefs, "frameBounds"         , FRAME_BOUNDS);
+    frameState                  = getInt      (prefs, "frameState"          , FRAME_STATE);
+    playDocking                 = get         (prefs, "playDocking"         , PLAY_DOCKING);
+    constructDocking            = get         (prefs, "constructDocking"    , CONSTRUCT_DOCKING);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean(       "useSystemLookAndFeel", useSystemLookAndFeel);
-    prefs.putBoolean(       "showAboutOnStartup"  , showAboutOnStartup);
-    prefs.putBoolean(       "disableScreenSaver"  , disableScreenSaver);
-    putRectangle    (prefs, "frameBounds"         , frameBounds);
-    prefs.putInt    (       "frameState"          , frameState);
-    prefs.put       (       "docking"             , docking);
+    putBoolean  (prefs, "useSystemLookAndFeel", useSystemLookAndFeel);
+    putBoolean  (prefs, "showAboutOnStartup"  , showAboutOnStartup);
+    putBoolean  (prefs, "disableScreenSaver"  , disableScreenSaver);
+    putRectangle(prefs, "frameBounds"         , frameBounds);
+    putInt      (prefs, "frameState"          , frameState);
+    put         (prefs, "playDocking"         , playDocking);
+    put         (prefs, "constructDocking"    , constructDocking);
   }
 
   public boolean getUseSystemLookAndFeel() {
@@ -100,8 +105,12 @@ public class Configuration extends PreferencesConfiguration {
     return frameState;
   }
 
-  public String getDocking() {
-    return docking;
+  public String getPlayDocking() {
+    return playDocking;
+  }
+
+  public String getConstructDocking() {
+    return constructDocking;
   }
 
   public void setFrameBounds(Rectangle rectangle) {
@@ -116,11 +125,17 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
-  public void setDocking(String docking) {
-    this.docking = docking;
+  public void setPlayDocking(String docking) {
+    this.playDocking = docking;
     
     fireConfigurationChanged();
   }
+
+  public void setConstructDocking(String docking) {
+      this.constructDocking = docking;
+      
+      fireConfigurationChanged();
+    }
 
   public void setUseSystemLookAndFeel(boolean useSystemLookAndFeel) {
     this.useSystemLookAndFeel = useSystemLookAndFeel;
@@ -140,7 +155,7 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
-  public static Rectangle getRectangle(Preferences prefs, String key, Rectangle def) {
+  protected static Rectangle getRectangle(Preferences prefs, String key, Rectangle def) {
     String rectangle = prefs.get(key, null);
     if (rectangle != null) {
       try {
@@ -159,7 +174,7 @@ public class Configuration extends PreferencesConfiguration {
     return def;
   }
 
-  public static void putRectangle(Preferences prefs, String key, Rectangle rectangle) {
+  protected static void putRectangle(Preferences prefs, String key, Rectangle rectangle) {
     if (rectangle == null) {
       prefs.remove(key);
     } else {

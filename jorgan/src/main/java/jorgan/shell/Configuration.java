@@ -36,17 +36,13 @@ public class Configuration extends PreferencesConfiguration {
   private String  encoding;
 
   protected void restore(Preferences prefs) {
-    useDefaultEncoding = prefs.getBoolean("useDefaultEncoding", USE_ENCODING);
-    encoding           = prefs.get       ("encoding"          , ENCODING);
+    useDefaultEncoding = getBoolean(prefs, "useDefaultEncoding", USE_ENCODING);
+    encoding           = get       (prefs, "encoding"          , ENCODING);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean("useDefaultEncoding", useDefaultEncoding);
-    if (encoding == null) {
-      prefs.remove("encoding");
-    } else {
-      prefs.put("encoding", encoding);
-    }
+    putBoolean(prefs, "useDefaultEncoding", useDefaultEncoding);
+    put       (prefs, "encoding", encoding);
   }
 
   public boolean getUseDefaultEncoding() {

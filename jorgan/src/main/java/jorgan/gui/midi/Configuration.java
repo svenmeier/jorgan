@@ -48,13 +48,13 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void restore(Preferences prefs) {
-    midiLogMax = prefs.getInt    ("midiLogMax", MIDI_LOG_MAX);
-    midiLogHex = prefs.getBoolean("midiLogHex", MIDI_LOG_HEX);
+    midiLogMax = getInt    (prefs, "midiLogMax", MIDI_LOG_MAX);
+    midiLogHex = getBoolean(prefs, "midiLogHex", MIDI_LOG_HEX);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putInt    (       "midiLogMax"      , midiLogMax);
-    prefs.putBoolean(       "midiLogHex"      , midiLogHex);
+    putInt    (prefs, "midiLogMax", midiLogMax);
+    putBoolean(prefs, "midiLogHex", midiLogHex);
   }
 
   public int getMidiLogMax() {

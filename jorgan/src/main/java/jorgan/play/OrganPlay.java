@@ -237,6 +237,10 @@ public class OrganPlay  {
   }
   
   public void close() {
+    if (!open) {
+      throw new IllegalStateException("not open");
+    }
+    
     Iterator iterator = players.values().iterator();
     while (iterator.hasNext()) {
       Player player = (Player)iterator.next();

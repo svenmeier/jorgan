@@ -47,10 +47,10 @@ public class Configuration extends PreferencesConfiguration {
   private int     registrationChanges;
 
   protected void restore(Preferences prefs) {
-    registrationChanges = prefs.getInt    ("registrationChanges", REGISTRATION_CHANGES);
-    recentOpenOnStartup = prefs.getBoolean("recentOpenOnStartup", RECENT_OPEN_ON_STARTUP);
-    recentMax           = prefs.getInt    ("recentMax"          , RECENT_MAX);
-    recentDirectory     = getFile(prefs,   "recentDirectory"    , RECENT_DIRECTORY());
+    registrationChanges = getInt    (prefs, "registrationChanges", REGISTRATION_CHANGES);
+    recentOpenOnStartup = getBoolean(prefs, "recentOpenOnStartup", RECENT_OPEN_ON_STARTUP);
+    recentMax           = getInt    (prefs, "recentMax"          , RECENT_MAX);
+    recentDirectory     = getFile   (prefs,   "recentDirectory"    , RECENT_DIRECTORY());
     recentFiles = new ArrayList();
     for (int r = 0; ; r++) {
       File def = (r == 0) ? RECENT_FILE() : null;
@@ -64,10 +64,10 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putInt    ("registrationChanges", registrationChanges);
-    prefs.putBoolean("recentOpenOnStartup", recentOpenOnStartup);
-    prefs.putInt    ("recentMax"          , recentMax);
-    putFile(prefs,   "recentDirectory"    , recentDirectory);
+    putInt    (prefs, "registrationChanges", registrationChanges);
+    putBoolean(prefs, "recentOpenOnStartup", recentOpenOnStartup);
+    putInt    (prefs, "recentMax"          , recentMax);
+    putFile   (prefs,   "recentDirectory"    , recentDirectory);
     for (int r = 0; ; r++) {
       String key = "recentFiles[" + r + "]";
       if (prefs.get(key, null) == null) {

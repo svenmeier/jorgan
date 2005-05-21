@@ -29,7 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import jorgan.docs.Documents;
-import jorgan.gui.ElementSelectionModel;
+import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.beans.PropertiesPanel;
@@ -47,10 +47,7 @@ public class InstructionsPanel extends JPanel {
    */
   private SelectionHandler selectionHandler = new SelectionHandler();
 
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
+  private OrganSession session;
     
   public InstructionsPanel() {
     super(new BorderLayout());
@@ -66,19 +63,16 @@ public class InstructionsPanel extends JPanel {
     add(scrollPane);
   }
 
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
+  public void setOrgan(OrganSession session) {
+    if (this.session != null) {
+      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
     }
 
-    // only null if called from constructor
-    if (this.selectionModel != null) {
-      this.selectionModel.removeSelectionListener(selectionHandler);
+    this.session = session;
+
+    if (this.session != null) {
+      this.session.getSelectionModel().addSelectionListener(selectionHandler);        
     }
-
-    this.selectionModel = selectionModel;
-
-    selectionModel.addSelectionListener(selectionHandler);        
   }
       
     
@@ -88,9 +82,9 @@ public class InstructionsPanel extends JPanel {
   private class SelectionHandler implements ElementSelectionListener {
 
     public void selectionChanged(ElementSelectionEvent ev) {
-      if (selectionModel.isElementSelected()) {
-        Class   clazz    = PropertiesPanel.getCommonClass(selectionModel.getSelectedElements());
-        String  property = selectionModel.getSelectedProperty();
+      if (session.getSelectionModel().isElementSelected()) {
+        Class   clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
+        String  property = session.getSelectionModel().getSelectedProperty();
         try {
           URL url;
           if (property == null) {

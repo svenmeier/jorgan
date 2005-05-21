@@ -97,33 +97,41 @@ public class OrganShell implements UI {
     try {
       DispositionReader reader = new DispositionReader(new FileInputStream(file));
 
-      organ = (Organ)reader.read();
+      Organ organ = (Organ)reader.read();
 
       this.file = file;
 
       jorgan.io.Configuration.instance().addRecentFile(file);
+      
+      setOrgan(organ);
 
       showMessage("command.open.confirm", new Object[]{DispositionFileFilter.removeSuffix(file)});
 
-      if (organPlay != null) {
-        organPlay.close();
-        organPlay.dispose();
-        organPlay = null;
-      }
-      
+    } catch (XMLFormatException ex) {
+      showMessage("command.open.exception.invalid", new String[]{file.getName()});
+    } catch (IOException ex) {
+      showMessage("command.open.exception", new String[]{file.getName()});
+    }
+  }
+  
+  public void setOrgan(Organ organ) {
+    if (organPlay != null) {
+      organPlay.close();
+      organPlay.dispose();
+      organPlay = null;
+    }
+
+    this.organ = organ;
+
+    if (organ != null) {
       organPlay = new OrganPlay(organ);
       organPlay.addPlayerListener(playerListener);
 
       for (int e = 0; e < organ.getElementCount(); e++) {
         showElementStatus(organ.getElement(e));      
       }
-      
+            
       organPlay.open();
-
-    } catch (XMLFormatException ex) {
-      showMessage("command.open.exception.invalid", new String[]{file.getName()});
-    } catch (IOException ex) {
-      showMessage("command.open.exception", new String[]{file.getName()});
     }
   }
 

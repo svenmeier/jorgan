@@ -42,12 +42,12 @@ public class Configuration extends PreferencesConfiguration {
   private Color   color;
 
   protected void restore(Preferences prefs) {
-    grid  = prefs.getInt("grid", GRID);
+    grid  = getInt  (prefs, "grid", GRID);
     color = getColor(prefs, "color", COLOR);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putInt("grid", grid);
+    putInt  (prefs, "grid", grid);
     putColor(prefs, "color", color);
   }
 

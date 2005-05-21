@@ -54,29 +54,29 @@ public class Configuration extends PreferencesConfiguration {
   private boolean releaseDevicesWhenDeactivated;
 
   protected void restore(Preferences prefs) {
-    warnKeyboardWithoutDevice    = prefs.getBoolean("warnKeyboardWithoutDevice"   , WARN_KEYBOARD_WITHOUT_DEVICE);
-    warnConsoleWithoutDevice     = prefs.getBoolean("warnConsoleWithoutDevice"    , WARN_CONSOLE_WITHOUT_DEVICE);
-    warnSoundSourceWithoutDevice = prefs.getBoolean("warnSoundSourceWithoutDevice", WARN_SOUNDSOURCE_WITHOUT_DEVICE);
-    warnStopWithoutMessage       = prefs.getBoolean("warnStopWithoutMessage"      , WARN_STOP_WITHOUT_MESSAGE);;
-    warnCouplerWithoutMessage    = prefs.getBoolean("warnCouplerWithoutMessage"   , WARN_COUPLER_WITHOUT_MESSAGE);;
-    warnTremulantWithoutMessage  = prefs.getBoolean("warnTremulantWithoutMessage" , WARN_TREMULANT_WITHOUT_MESSAGE);;
-    warnSwellWithoutMessage      = prefs.getBoolean("warnSwellWithoutMessage"     , WARN_SWELL_WITHOUT_MESSAGE);;
-    warnVariationWithoutMessage  = prefs.getBoolean("warnVariationWithoutMessage" , WARN_VARIATION_WITHOUT_MESSAGE);;
-    warnPistonWithoutMessage     = prefs.getBoolean("warnPistonWithoutMessage"    , WARN_PISTON_WITHOUT_MESSAGE);;
+    warnKeyboardWithoutDevice    = getBoolean(prefs, "warnKeyboardWithoutDevice"   , WARN_KEYBOARD_WITHOUT_DEVICE);
+    warnConsoleWithoutDevice     = getBoolean(prefs, "warnConsoleWithoutDevice"    , WARN_CONSOLE_WITHOUT_DEVICE);
+    warnSoundSourceWithoutDevice = getBoolean(prefs, "warnSoundSourceWithoutDevice", WARN_SOUNDSOURCE_WITHOUT_DEVICE);
+    warnStopWithoutMessage       = getBoolean(prefs, "warnStopWithoutMessage"      , WARN_STOP_WITHOUT_MESSAGE);;
+    warnCouplerWithoutMessage    = getBoolean(prefs, "warnCouplerWithoutMessage"   , WARN_COUPLER_WITHOUT_MESSAGE);;
+    warnTremulantWithoutMessage  = getBoolean(prefs, "warnTremulantWithoutMessage" , WARN_TREMULANT_WITHOUT_MESSAGE);;
+    warnSwellWithoutMessage      = getBoolean(prefs, "warnSwellWithoutMessage"     , WARN_SWELL_WITHOUT_MESSAGE);;
+    warnVariationWithoutMessage  = getBoolean(prefs, "warnVariationWithoutMessage" , WARN_VARIATION_WITHOUT_MESSAGE);;
+    warnPistonWithoutMessage     = getBoolean(prefs, "warnPistonWithoutMessage"    , WARN_PISTON_WITHOUT_MESSAGE);;
 
-    releaseDevicesWhenDeactivated = prefs.getBoolean("releaseDevicesWhenDeactivated", RELEASE_DEVICES_WHEN_DEACTIVATED);
+    releaseDevicesWhenDeactivated = getBoolean(prefs, "releaseDevicesWhenDeactivated", RELEASE_DEVICES_WHEN_DEACTIVATED);
   }
 
   protected void backup(Preferences prefs) {
-    prefs.putBoolean("warnConsoleWithoutDevice"    , warnConsoleWithoutDevice);
-    prefs.putBoolean("warnKeyboadWithoutDevice"    , warnKeyboardWithoutDevice);
-    prefs.putBoolean("warnSoundSourceWithoutDevice", warnSoundSourceWithoutDevice);
-    prefs.putBoolean("warnStopWithoutMessage"      , warnStopWithoutMessage);;
-    prefs.putBoolean("warnCouplerWithoutMessage"   , warnCouplerWithoutMessage);;
-    prefs.putBoolean("warnTremulantWithoutMessage" , warnTremulantWithoutMessage);;
-    prefs.putBoolean("warnSwellWithoutMessage"     , warnSwellWithoutMessage);;
-    prefs.putBoolean("warnVariationWithoutMessage" , warnVariationWithoutMessage);;
-    prefs.putBoolean("warnPistonWithoutMessage"    , warnPistonWithoutMessage);;
+    putBoolean(prefs, "warnConsoleWithoutDevice"    , warnConsoleWithoutDevice);
+    putBoolean(prefs, "warnKeyboadWithoutDevice"    , warnKeyboardWithoutDevice);
+    putBoolean(prefs, "warnSoundSourceWithoutDevice", warnSoundSourceWithoutDevice);
+    putBoolean(prefs, "warnStopWithoutMessage"      , warnStopWithoutMessage);;
+    putBoolean(prefs, "warnCouplerWithoutMessage"   , warnCouplerWithoutMessage);;
+    putBoolean(prefs, "warnTremulantWithoutMessage" , warnTremulantWithoutMessage);;
+    putBoolean(prefs, "warnSwellWithoutMessage"     , warnSwellWithoutMessage);;
+    putBoolean(prefs, "warnVariationWithoutMessage" , warnVariationWithoutMessage);;
+    putBoolean(prefs, "warnPistonWithoutMessage"    , warnPistonWithoutMessage);;
 
     prefs.putBoolean("releaseDevicesWhenDeactivated", releaseDevicesWhenDeactivated);
   }

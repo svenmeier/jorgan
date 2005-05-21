@@ -31,8 +31,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Collection of utility methods supporting the installation of an
- * application.
+ * Collection of utility methods supporting the boostrapping of an application.
  */
 public class Bootstrap {
 
@@ -46,7 +45,8 @@ public class Bootstrap {
   private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
 
   /**
-   * Test is the current running program is bootstrapped.
+   * Test is the current running program is bootstrapped, i.e. it was started through
+   * the main method of this class.
    * 
    * @return    <code>true</code> if bootstrapped
    */
@@ -61,7 +61,6 @@ public class Bootstrap {
    * user working directory</em> (as denoted by the system property
    * <code>user.dir<code>) is returned instead.
    * 
-   * @param  clazz  class to check
    * @return        the bootstrap directory
    * @see
    */
@@ -77,22 +76,26 @@ public class Bootstrap {
    * user working directory</em> (as denoted by the system property
    * <code>user.dir<code>) is returned instead.
    * 
-   * @param  clazz  class to check
+   * @param  clazz  class to get bootstrap directory for
    * @return        the bootstrap directory
    * @see
    */
   public static File getDirectory(Class clazz) {
     if (isBootstrapped()) {
-      try {
+      try {         
+        // jar:file:/C:/Program Files/FooMatic/./lib/foo.jar!/foo/Bar.class
         JarURLConnection jarCon = (JarURLConnection)getClassURL(clazz).openConnection();
 
+        // file:/C:/Program Files/FooMatic/./lib/foo.jar
         URL jarUrl = jarCon.getJarFileURL();
     
-        File jarFile = new File(URLDecoder.decode(jarUrl.getPath(), "UTF-8"));
-    
+        // /C:/Program Files/FooMatic/./lib/foo.jar
+        File jarFile = new File(URLDecoder.decode(jarUrl.getPath(), "UTF-8"));   
+        
+        // /C:/Program Files/FooMatic/./lib
         return jarFile.getParentFile();
       } catch (Exception ex) {
-        logger.log(Level.FINE, "detecting install directory failed", ex);
+        logger.log(Level.FINE, "detecting bootstrap directory failed", ex);
       }
     }
     

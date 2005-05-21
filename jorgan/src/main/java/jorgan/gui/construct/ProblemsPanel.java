@@ -29,14 +29,16 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 
+import spin.Spin;
+
 import jorgan.swing.table.IconTableCellRenderer;
 
 import jorgan.play.*;
 import jorgan.play.event.*;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.gui.ElementSelectionModel;
 import jorgan.gui.OrganPanel;
+import jorgan.gui.OrganSession;
 
 /**
  * Panel shows the problems.
@@ -57,12 +59,7 @@ public class ProblemsPanel extends JPanel {
   private static final Icon errorIcon =
     new ImageIcon(OrganPanel.class.getResource("img/error.gif"));
 
-  private OrganPlay play;
-  
-  /**
-   * The model for selection.
-   */
-  private ElementSelectionModel selectionModel;
+  private OrganSession session;
 
   private JTable table = new JTable();
   
@@ -96,23 +93,21 @@ public class ProblemsPanel extends JPanel {
     add(scrollPane, BorderLayout.CENTER);
     
     popup.add(gotoAction);
-    
-    setSelectionModel(new ElementSelectionModel());
   }
   
-  public void setPlay(OrganPlay play) {
-    if (this.play != null) {
-      this.play.removePlayerListener(problemsModel);
+  public void setOrgan(OrganSession session) {
+    if (this.session != null) {
+      this.session.getPlay().removePlayerListener((PlayListener)Spin.over(problemsModel));
       
       rows.clear();
     }
     
-    this.play = play;
+    this.session = session;
     
-    if (this.play != null) {
-      this.play.addPlayerListener(problemsModel);
+    if (this.session != null) {
+      this.session.getPlay().addPlayerListener((PlayListener)Spin.over(problemsModel));
 
-      Organ organ = play.getOrgan();
+      Organ organ = this.session.getOrgan();
       for (int e = 0; e < organ.getElementCount(); e++) {
         addProblems(organ.getElement(e));
       }
@@ -123,7 +118,7 @@ public class ProblemsPanel extends JPanel {
 
   private void addProblems(Element element) {
 
-    List problems = play.getProblems(element);
+    List problems = session.getPlay().getProblems(element);
     if (problems != null) {
       for (int p = 0; p < problems.size(); p++) {
         rows.add(new Row(element, (PlayerProblem)problems.get(p)));
@@ -141,14 +136,6 @@ public class ProblemsPanel extends JPanel {
     }
   }
 
-  public void setSelectionModel(ElementSelectionModel selectionModel) {
-    if (selectionModel == null) {
-      throw new IllegalArgumentException("selectionModel must not be null");
-    }
-
-    this.selectionModel = selectionModel;
-  }  
-  
   private class ProblemsModel extends AbstractTableModel implements PlayListener {
 
     private String[] columns = new String[]{" ", "Description", "Element"};
@@ -270,7 +257,7 @@ public class ProblemsPanel extends JPanel {
 
       Row row = (Row)rows.get(index);
 
-      selectionModel.setSelectedElement(row.getElement(), row.getProblem().getProperty());
+      session.getSelectionModel().setSelectedElement(row.getElement(), row.getProblem().getProperty());
     }
     
     public void mouseClicked(MouseEvent e) {

@@ -189,7 +189,7 @@ public abstract class ChannelPool {
         }
 
         public int getNumber() {
-          return channel;
+          return channel + 1;
         }
         
         /**
