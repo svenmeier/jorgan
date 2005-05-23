@@ -162,7 +162,7 @@ public class Bootstrap {
     StringTokenizer tokens = new StringTokenizer(classpath, ",", false);
     List urls = new ArrayList();
     while (tokens.hasMoreTokens()) {
-      File file = new File(tokens.nextToken());
+      File file = new File(getDirectory(), tokens.nextToken());
       if (file.exists()) {
         if (file.isDirectory()) {
           File[] files = file.listFiles();
