@@ -48,6 +48,9 @@ public class InstructionsPanel extends JPanel {
   private SelectionHandler selectionHandler = new SelectionHandler();
 
   private OrganSession session;
+  
+  private Class  clazz;
+  private String property;
     
   public InstructionsPanel() {
     super(new BorderLayout());
@@ -73,24 +76,30 @@ public class InstructionsPanel extends JPanel {
     if (this.session != null) {
       this.session.getSelectionModel().addSelectionListener(selectionHandler);        
     }
-  }
-      
     
-  /**
-   * The handler of selections.
-   */
-  private class SelectionHandler implements ElementSelectionListener {
+    updateInstructions(null, null);
+  }
 
-    public void selectionChanged(ElementSelectionEvent ev) {
-      if (session.getSelectionModel().isElementSelected()) {
-        Class   clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
-        String  property = session.getSelectionModel().getSelectedProperty();
+  public void setVisible(boolean visible) {
+    super.setVisible(visible);
+    
+    if (visible) {
+      updateInstructions(clazz, property);
+    }
+  }
+  
+  protected void updateInstructions(Class clazz, String property) {
+    this.clazz    = clazz;
+    this.property = property;
+
+    if (isShowing()) {
+      if (clazz != null) {
         try {
           URL url;
           if (property == null) {
-             url = Documents.getInstance().getInstructions(clazz);
+            url = Documents.getInstance().getInstructions(clazz);
           } else {
-             url = Documents.getInstance().getInstructions(clazz, property);
+            url = Documents.getInstance().getInstructions(clazz, property);
           }
           editor.setPage(url);
           return;
@@ -98,6 +107,21 @@ public class InstructionsPanel extends JPanel {
         }
       }
       editor.setDocument(editor.getEditorKit().createDefaultDocument());
+    }
+  }
+      
+  /**
+   * The handler of selections.
+   */
+  private class SelectionHandler implements ElementSelectionListener {
+
+    public void selectionChanged(ElementSelectionEvent ev) {
+      if (session.getSelectionModel().isElementSelected()) {
+        Class  clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
+        String property = session.getSelectionModel().getSelectedProperty();
+        
+        updateInstructions(clazz, property);
+      }
     }
   }
 }
