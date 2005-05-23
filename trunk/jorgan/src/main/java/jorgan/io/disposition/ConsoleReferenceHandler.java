@@ -22,7 +22,7 @@ import java.io.IOException;
 
 import org.xml.sax.*;
 
-import jorgan.disposition.ConsoleReference;
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.xml.*;
@@ -67,14 +67,14 @@ public class ConsoleReferenceHandler extends ReferenceHandler {
   public void children() throws IOException {
     super.children();
 
-    ConsoleReference reference = (ConsoleReference)getReference(); 
+    Console.LocationReference reference = (Console.LocationReference)getReference(); 
 
     new IntegerHandler(getWriter(), "x", reference.getX()).start();
     new IntegerHandler(getWriter(), "y", reference.getY()).start();
   }
 
   protected Reference createReference(Element element) {
-    ConsoleReference reference = new ConsoleReference(element); 
+    Console.LocationReference reference = new Console.LocationReference(element); 
     
     reference.setX(x);
     reference.setY(y);
