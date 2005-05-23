@@ -23,7 +23,7 @@ import java.io.IOException;
 import org.xml.sax.*;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.PistonReference;
+import jorgan.disposition.Piston;
 import jorgan.disposition.Reference;
 import jorgan.xml.*;
 import jorgan.xml.handler.BooleanHandler;
@@ -60,14 +60,14 @@ public class PistonReferenceHandler extends ReferenceHandler {
   public void children() throws IOException {
     super.children();
 
-    PistonReference reference = (PistonReference)getReference(); 
+    Piston.RegistrationReference reference = (Piston.RegistrationReference)getReference(); 
     if (reference.isOn()) {
       new BooleanHandler(getWriter(), "on").start();
     }
   }
 
   protected Reference createReference(Element element) {
-    PistonReference reference = new PistonReference(element);
+    Piston.RegistrationReference reference = new Piston.RegistrationReference(element);
     
     reference.setOn(on);
      
