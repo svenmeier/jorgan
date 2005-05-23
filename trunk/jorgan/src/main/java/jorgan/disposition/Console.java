@@ -51,7 +51,7 @@ public class Console extends Element {
   }
 
   protected Reference createReference(Element element) {
-    return new ConsoleReference(element);
+    return new LocationReference(element);
   }
   
   public String getDevice() {
@@ -102,11 +102,40 @@ public class Console extends Element {
   }
 
   public void setLocation(Element element, int x, int y) {
-    ConsoleReference reference = (ConsoleReference)getReference(element);
+    LocationReference reference = (LocationReference)getReference(element);
     
     reference.setX(x);
     reference.setY(y);
     
     fireReferenceChanged(reference, true);
+  }
+  
+  /**
+   * A reference of a console to another element.
+   */
+  public static class LocationReference extends Reference {
+
+    private int x;
+    private int y;
+    
+    public LocationReference(Element element) {
+      super(element);  
+    }
+    
+    public int getX() {
+      return x;
+    }
+
+    public int getY() {
+      return y;
+    }
+
+    public void setX(int i) {
+      x = i;
+    }
+
+    public void setY(int i) {
+      y = i;
+    }
   }
 }

@@ -34,7 +34,6 @@ import java.awt.geom.AffineTransform;
 import jorgan.gui.ConsolePanel;
 import jorgan.disposition.Active;
 import jorgan.disposition.Console;
-import jorgan.disposition.ConsoleReference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.*;
 import jorgan.skin.*;
@@ -135,7 +134,7 @@ public abstract class View {
       }
     }
 
-    ConsoleReference reference = (ConsoleReference)console.getReference(element);
+    Console.LocationReference reference = (Console.LocationReference)console.getReference(element);
     x = reference.getX();
     y = reference.getY();
         
