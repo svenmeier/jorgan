@@ -137,7 +137,7 @@ public class ElementSelectionModel {
     
     this.property = property;
 
-    cutHistory(element);
+    updateHistory(element);
 
     selectedElements.clear();   
     if (element != null) {        
@@ -146,18 +146,28 @@ public class ElementSelectionModel {
     fireStateChanged();
   }
   
-  private void cutHistory(Element element) {
-    if (historyIndex < history.size()) {
-      if (history.get(historyIndex) == element) {
-        return;
-      }
-      historyIndex++;
-    }
-    while (historyIndex < history.size()) {
+  private void updateHistory(Element element) {
+    while (historyIndex < history.size() - 1) {
       history.remove(history.size() - 1);
     }
-    if (element != null) {        
-      history.add(historyIndex, element);
+    
+    if (element == null) {
+        if (historyIndex != history.size()) {
+            historyIndex++;
+        }
+    } else {
+        if (historyIndex == history.size()) {
+            if (historyIndex > 0 && history.get(historyIndex - 1) == element) {
+                historyIndex--;
+            } else {
+                history.add(historyIndex, element);
+            }
+        } else {
+            if (history.get(historyIndex) != element) {
+                historyIndex++;
+                history.add(historyIndex, element);
+            }
+        }
     }
   }
   
@@ -222,6 +232,10 @@ public class ElementSelectionModel {
       property = null;
 
       selectedElements.remove(element);
+      
+      if (selectedElements.isEmpty()) {
+          updateHistory(null);
+      }
 
       fireStateChanged();
     }
@@ -239,7 +253,7 @@ public class ElementSelectionModel {
     
     property = null;
 
-    cutHistory(element);
+    updateHistory(element);
 
     if (!selectedElements.contains(element)) {
       selectedElements.add(element);
