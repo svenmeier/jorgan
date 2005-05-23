@@ -105,7 +105,7 @@ public class PropertiesPanel extends JPanel {
       table.setModel(model);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
       table.setSurrendersFocusOnKeystroke(true);
-      table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);            
+//      table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);            
       PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
       PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
       table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);

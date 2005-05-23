@@ -30,7 +30,7 @@ public class Piston extends Active {
   }
 
   protected Reference createReference(Element element) {
-    return new PistonReference(element);
+    return new RegistrationReference(element);
   }
   
   public boolean isFixed() {
@@ -56,7 +56,7 @@ public class Piston extends Active {
   public void get() {
 
     for (int e = 0; e < getReferencesCount(); e++) {
-      PistonReference reference = (PistonReference)getReference(e);
+      RegistrationReference reference = (RegistrationReference)getReference(e);
       
       Registratable registratable = reference.getRegistratable();
 
@@ -66,7 +66,7 @@ public class Piston extends Active {
     }
     
     for (int e = 0; e < getReferencesCount(); e++) {
-        PistonReference reference = (PistonReference)getReference(e);
+        RegistrationReference reference = (RegistrationReference)getReference(e);
         
         Registratable registratable = reference.getRegistratable();
 
@@ -79,7 +79,7 @@ public class Piston extends Active {
   public void set() {
 
     for (int e = 0; e < getReferencesCount(); e++) {
-      PistonReference reference = (PistonReference)getReference(e);
+      RegistrationReference reference = (RegistrationReference)getReference(e);
       
       Registratable registratable = (Registratable)reference.getElement();
 
@@ -107,5 +107,29 @@ public class Piston extends Active {
     this.getMessage = message;
 
     fireElementChanged(true);
-  }  
+  }
+  
+  /**
+   * A reference of a piston to another element.
+   */
+  public static class RegistrationReference extends Reference {
+
+    private boolean on;
+    
+    public RegistrationReference(Element element) {
+      super(element);  
+    }
+    
+    public void setOn(boolean on) {
+      this.on = on;
+    }
+    
+    public boolean isOn() {
+      return on;
+    }
+
+    public Registratable getRegistratable() {
+      return (Registratable)getElement();
+    }
+  }
 }

@@ -366,6 +366,8 @@ public class OrganPanel extends JPanel {
             session.getPlay().close();
           }
         } else {
+          session.getSelectionModel().setSelectedElement(null);
+          
           if (!session.getPlay().isOpen()) {
             session.getPlay().open();
           }
