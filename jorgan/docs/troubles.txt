@@ -20,18 +20,22 @@ A5 - Please ensure that you've extracted (see A1) all files contained in jOrgan-
 	/<jOrgan-installation-directory>
 	   jOrgan.jar
 	   /lib
+              core.jar
 	      swingx.jar
 	      spin.jar
+              jh.jar
 	   /docs
 	      gpl.txt
+              authors.txt
+              troubles.txt
 
-Q6 - The menu item to show the online help of jOrgan is disabled.
-A6 - [Online help is currently under development and will hopefully be published December 2004] Online help is avialable as a separate download. Please ensure that you've extracted (see A1) all files contained in jOrgan-xy-help.zip to the correct location:
+Q6 - jOrgan show an empty online help and the instructions tab stays empty.
+A6 - [Online help is currently under development and will hopefully be published Mai 2005]
+Online help and instrucations are avialable as separate downloads. Please ensure that you've extracted (see A1) all files contained in jOrgan-xy-docs.zip to the correct location:
 	/<jOrgan-installation-directory>
-	   /help
-	      help.jar
-	   /lib
-	      jh.jar
+	   /docs
+	      help.zip
+              instructions.zip
 
 Q7 - I'm not able to select a skin for the console of my organ.
 A7 - Skins are avialable as separate downloads, e.g. skin-classic-xy.zip. Please ensure that you've extracted (see A1) the contained zip file to the correct location:
@@ -39,5 +43,12 @@ A7 - Skins are avialable as separate downloads, e.g. skin-classic-xy.zip. Please
 	   /skins
 	      classic.zip
 
-Q8 - Where do I find answers to further questions?
-A8 - Please consult the online help (see A6) or post your questions on http://jorgan.sourceforge.net/forum.
+Q8 - jOrgan doesn't support my expander, sound card or sampler.
+A8 - Extensions for special SoundSources are avialable as separate downloads, e.g. sound-creative-xy.zip. Please ensure that you've extracted (see A1) the contained zip file to the correct location:
+	/<jOrgan-installation-directory>
+	   /lib
+	      creative.jar
+              creative.dll
+
+Q9 - Where do I find answers to further questions?
+A9 - Please consult the online help (see A6) or post your questions on http://jorgan.sourceforge.net/forum.
