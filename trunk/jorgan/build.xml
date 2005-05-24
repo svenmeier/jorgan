@@ -41,7 +41,7 @@
             </fileset>
             <manifest>
                 <attribute name="Main-class" value="jorgan.util.Bootstrap" />
-                <attribute name="Bootstrap-classpath" value="./lib" />
+                <attribute name="Bootstrap-classpath" value="lib" />
                 <attribute name="Bootstrap-class" value="jorgan.App" />
             </manifest>
         </jar>
