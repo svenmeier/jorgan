@@ -98,7 +98,6 @@ public class PropertiesPanel extends JPanel {
     scrollPane.getViewport().setBackground(Color.white);
     add(scrollPane, BorderLayout.CENTER);
 
-      table.getTableHeader().setVisible(false);
       table.setIntercellSpacing(new Dimension(0,0));
       table.setShowHorizontalLines(false);
       table.setShowVerticalLines(false);
@@ -112,11 +111,11 @@ public class PropertiesPanel extends JPanel {
       table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
       table.getColumnModel().getColumn(1).setCellEditor(new PropertyCellEditor());
       table.setRowHeight(nameRenderer.getPreferredSize().height);
-      table.getTableHeader().setPreferredSize(new Dimension(8, 8));
+      table.getTableHeader().setPreferredSize(new Dimension(0, 0));
       table.getColumnModel().getSelectionModel().addListSelectionListener(model);
       table.getSelectionModel().addListSelectionListener(model);
       ToolTipManager.sharedInstance().registerComponent(table);
-      scrollPane.getViewport().add(table, null);
+      scrollPane.setViewportView(table);
   }
 
   public void setBeanCustomizer(BeanCustomizer customizer) {

@@ -19,11 +19,14 @@
 package jorgan.gui.construct;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ResourceBundle;
 
 import javax.swing.JEditorPane;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
@@ -39,8 +42,12 @@ import jorgan.swing.beans.PropertiesPanel;
  */
 public class InstructionsPanel extends JPanel {
 
+  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+
   private JEditorPane editor = new JEditorPane(); 
   private JScrollPane scrollPane = new JScrollPane();
+  
+  private JLabel label = new JLabel();
 
   /**
    * The handler of selection changes.
@@ -49,21 +56,22 @@ public class InstructionsPanel extends JPanel {
 
   private OrganSession session;
   
-  private Class  clazz;
-  private String property;
-    
   public InstructionsPanel() {
     super(new BorderLayout());
+    
+    setOpaque(false);
+    
+    addHierarchyListener(selectionHandler);
         
+    label.setText(resources.getString("construct.instructions.failure"));
+    label.setHorizontalAlignment(JLabel.LEFT);
+    label.setVerticalAlignment(JLabel.TOP);
+    
     editor.setEditable(false);
-    editor.setForeground(Color.BLACK);
-    editor.setBackground(new Color(255, 255, 225));
     editor.setContentType("text/html");
     
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setViewportView(editor);
-    
-    add(scrollPane);
   }
 
   public void setOrgan(OrganSession session) {
@@ -76,52 +84,62 @@ public class InstructionsPanel extends JPanel {
     if (this.session != null) {
       this.session.getSelectionModel().addSelectionListener(selectionHandler);        
     }
-    
-    updateInstructions(null, null);
   }
 
-  public void setVisible(boolean visible) {
-    super.setVisible(visible);
-    
-    if (visible) {
-      updateInstructions(clazz, property);
-    }
-  }
-  
   protected void updateInstructions(Class clazz, String property) {
-    this.clazz    = clazz;
-    this.property = property;
-
-    if (isShowing()) {
-      if (clazz != null) {
-        try {
-          URL url;
-          if (property == null) {
-            url = Documents.getInstance().getInstructions(clazz);
-          } else {
-            url = Documents.getInstance().getInstructions(clazz, property);
-          }
-          editor.setPage(url);
-          return;
-        } catch (IOException ex) {
+    if (clazz != null) {
+      try {
+        URL url;
+        if (property == null) {
+          url = Documents.getInstance().getInstructions(clazz);
+        } else {
+          url = Documents.getInstance().getInstructions(clazz, property);
         }
+        editor.setPage(url);
+          
+        remove(label);
+        add(scrollPane);
+        revalidate();
+        repaint();
+        return;
+      } catch (IOException ex) {
       }
-      editor.setDocument(editor.getEditorKit().createDefaultDocument());
     }
+    remove(scrollPane);
+    add(label);
+    revalidate();
+    repaint();
   }
       
   /**
    * The handler of selections.
    */
-  private class SelectionHandler implements ElementSelectionListener {
+  private class SelectionHandler implements ElementSelectionListener, HierarchyListener {
 
+    private Class  clazz;
+    private String property;
+        
     public void selectionChanged(ElementSelectionEvent ev) {
       if (session.getSelectionModel().isElementSelected()) {
-        Class  clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
-        String property = session.getSelectionModel().getSelectedProperty();
+        clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
+        property = session.getSelectionModel().getSelectedProperty();
         
-        updateInstructions(clazz, property);
+        if (isShowing()) {
+          flush();
+        }
       }
+    }
+    
+    public void hierarchyChanged(HierarchyEvent e) {
+      if (clazz != null && isShowing()) {
+        flush();
+      }
+    }
+    
+    protected void flush() {
+      updateInstructions(clazz, property);
+      this.clazz    = null;
+      this.property = null;
     }
   }
 }

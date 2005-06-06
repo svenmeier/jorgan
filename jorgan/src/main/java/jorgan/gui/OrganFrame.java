@@ -138,7 +138,6 @@ public class OrganFrame extends JFrame implements UI {
   private ImportAction        importAction        = new ImportAction();
   private ExitAction          exitAction          = new ExitAction();
   private FullScreenAction    fullScreenAction    = new FullScreenAction();
-  private SkinsAction         skinsAction         = new SkinsAction();
   private ConfigurationAction configurationAction = new ConfigurationAction();
   private HelpAction          helpAction          = new HelpAction();
   private AboutAction         aboutAction         = new AboutAction();
@@ -253,8 +252,6 @@ public class OrganFrame extends JFrame implements UI {
       for (int a = 0; a < actions.size(); a++) {
         viewMenu.add((Action)actions.get(a));
       }
-      viewMenu.addSeparator();
-      viewMenu.add(skinsAction);
       if (!tweakMac.isTweaked()) {
         viewMenu.addSeparator();
         viewMenu.add(configurationAction);
@@ -359,9 +356,9 @@ public class OrganFrame extends JFrame implements UI {
     } catch (XMLFormatException ex) {
       ex.printStackTrace();
         
-      showException("action.open.exception.invalid", new String[]{file.getName()}, ex);
+      showMessage("action.open.exception.invalid", new String[]{file.getName()});
     } catch (IOException ex) {
-      showException("action.open.exception", new String[]{file.getName()}, ex);
+      showMessage("action.open.exception", new String[]{file.getName()});
     }
     jorgan.io.Configuration.instance().removeRecentFile(file);
   }
@@ -394,7 +391,7 @@ public class OrganFrame extends JFrame implements UI {
     } catch (Exception ex) {
       ex.printStackTrace();
       
-      showException("action.save.exception", new String[]{file.getName()}, ex);
+      showMessage("action.save.exception", new String[]{file.getName()});
       
       return false;
     }   
@@ -497,13 +494,12 @@ public class OrganFrame extends JFrame implements UI {
   }
 
   /**
-   * Show an exception.
+   * Show a message.
    *
-   * @param message   message of exception
+   * @param message   identifier of message
    * @param args      arguments of message
-   * @param exception the exception
    */
-  protected void showException(String message, Object[] args, Exception exception) {
+  protected void showMessage(String message, Object[] args) {
 
     message = MessageFormat.format(resources.getString(message), args);
 
@@ -680,7 +676,11 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      help.setDisplayed(true);
+      if (help.isAvailable()) {
+        help.setDisplayed(true);
+      } else {
+        showMessage("action.help.failure", new String[0]);
+      }
     }
   }
 
@@ -732,9 +732,7 @@ public class OrganFrame extends JFrame implements UI {
     public void actionPerformed(ActionEvent ev) {
       if (dialogs.isEmpty()) {
         organPanel.setConstructing(false);
-
-        disabler.disable(Configuration.instance().getDisableScreenSaver());
-        
+       
         List consoles = session.getOrgan().getCandidates(Console.class);
         for (int c = 0; c < consoles.size(); c++) {
           Console console = (Console)consoles.get(c);
@@ -749,11 +747,18 @@ public class OrganFrame extends JFrame implements UI {
           ConsoleDialog dialog = (ConsoleDialog)dialogs.get(screen);
           if (dialog == null) {
             dialog = ConsoleDialog.create(OrganFrame.this, screen);
+            dialog.setOrgan(session);
             dialogs.put(screen, dialog);
           }
           dialog.addConsole(console);
           dialog.addComponentListener(this);
           dialog.setVisible(true);
+        }
+        
+        if (dialogs.isEmpty()) {
+            showMessage("action.fullScreen.failure", new Object[0]);
+        } else {
+            disabler.disable(Configuration.instance().getDisableScreenSaver());
         }
       }
     }
@@ -763,6 +768,7 @@ public class OrganFrame extends JFrame implements UI {
         ConsoleDialog dialog = (ConsoleDialog)iterator.next();
         dialog.setVisible(false);
         dialog.dispose();
+        dialog.setOrgan(null);
       }
       dialogs.clear();
       
@@ -772,21 +778,6 @@ public class OrganFrame extends JFrame implements UI {
     public void componentMoved(ComponentEvent e) { }
     public void componentResized(ComponentEvent e) { }
     public void componentShown(ComponentEvent e) { }
-  }
-
-  /**
-   * The action that initiates skins.
-   */
-  private class SkinsAction extends AbstractAction {
-
-    public SkinsAction() {
-      putValue(Action.NAME             , resources.getString("action.skins.name"));
-      putValue(Action.SHORT_DESCRIPTION, resources.getString("action.skins.description"));
-      setEnabled(false);
-    }
-
-    public void actionPerformed(ActionEvent ev) {
-    }
   }
 
   /**
