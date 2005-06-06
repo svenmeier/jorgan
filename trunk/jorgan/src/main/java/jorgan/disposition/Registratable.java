@@ -30,7 +30,7 @@ public abstract class Registratable extends Active {
   public void setOn(boolean on) {
     if (this.on != on) {
       this.on = on;
-
+      
       fireElementChanged(false);
     }
   }

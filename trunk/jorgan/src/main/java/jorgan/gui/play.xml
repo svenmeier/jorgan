@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<slice position="3" weight="0.0">
-  <dock>
-    <dockable key="keyboard" null="true"/>
-  </dock>
-  <slice position="3" weight="0.25">
+<docking>
+  <slice orientation="3" weight="0.0">
     <dock>
-      <dockable key="midiLog" null="true"/>
-      <dockable key="problems" null="true"/>
+      <dockable key="keyboard" null="true"/>
     </dock>
-    <bridge key="consoles"/>
+    <slice orientation="3" weight="0.25">
+      <dock>
+        <dockable key="midiLog" null="true"/>
+        <dockable key="problems" null="true"/>
+      </dock>
+      <bridge key="consoles"/>
+    </slice>
   </slice>
-</slice>
+</docking>

@@ -334,8 +334,9 @@ public abstract class View {
 
   protected void paintStyle(Graphics2D g) {
     jorgan.disposition.Element element = getElement();
-    
+
     State state = style.getState(getStateIndex());
+    
     jorgan.skin.Image image = state.getImage();
     if (image != null) {
       Point location = image.getLocation();

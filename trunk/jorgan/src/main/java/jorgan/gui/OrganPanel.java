@@ -64,6 +64,7 @@ import jorgan.gui.midi.MidiLog;
 import jorgan.gui.midi.MidiMonitor;
 import spin.Spin;
 import swingx.docking.DefaultDockable;
+import swingx.docking.Dock;
 import swingx.docking.Dockable;
 import swingx.docking.DockingPane;
 import swingx.docking.border.Eclipse3Border;
@@ -84,6 +85,7 @@ public class OrganPanel extends JPanel {
   private static final String KEY_REFERENCES   = "references";
   private static final String KEY_PROPERTIES   = "properties";
   private static final String KEY_INSTRUCTIONS = "instructions";
+  private static final String KEY_SKINS        = "skins";
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
@@ -121,12 +123,12 @@ public class OrganPanel extends JPanel {
   /*
    * The outer dockingPane that holds all views.
    */
-  private DockingPane outer = new DockingPane();
+  private DockingPane outer = new BordererDockingPane();
 
   /*
    * The innter dockingPane that holds all consoles.
    */
-  private DockingPane inner = new DockingPane();
+  private DockingPane inner = new BordererDockingPane();
   
   private ElementPropertiesPanel propertiesPanel   = new ElementPropertiesPanel();
   private ElementsPanel          elementsPanel     = new ElementsPanel();
@@ -144,6 +146,7 @@ public class OrganPanel extends JPanel {
   private ActionDockable referencesDockable   = new ActionDockable(KEY_REFERENCES  , referencesPanel); 
   private ActionDockable propertiesDockable   = new ActionDockable(KEY_PROPERTIES  , propertiesPanel);
   private ActionDockable instructionsDockable = new ActionDockable(KEY_INSTRUCTIONS, instructionsPanel);
+  private ActionDockable skinsDockable        = new ActionDockable(KEY_SKINS       , null);
 
   private Map consoleDockables = new HashMap(); 
 
@@ -156,10 +159,7 @@ public class OrganPanel extends JPanel {
   public OrganPanel() {
     setLayout(new BorderLayout());
 
-    inner.setDockBorder(new Eclipse3Border());
-
     outer.setBorder(new EmptyBorder(2, 2, 2, 2));
-    outer.setDockBorder(new Eclipse3Border());
     add(outer, BorderLayout.CENTER);   
 
     setOrgan(new OrganSession());
@@ -168,6 +168,7 @@ public class OrganPanel extends JPanel {
     referencesDockable.setEnabled(false); 
     propertiesDockable.setEnabled(false);
     instructionsDockable.setEnabled(false);       
+    skinsDockable.setEnabled(false);       
     
     loadDocking();
   }
@@ -215,6 +216,7 @@ public class OrganPanel extends JPanel {
     actions.add(propertiesDockable);
     actions.add(referencesDockable);
     actions.add(instructionsDockable);
+    actions.add(skinsDockable);
 
     return actions;
   }
@@ -661,5 +663,13 @@ public class OrganPanel extends JPanel {
       }
       return null;
     }
-  } 
+  }
+  
+  private class BordererDockingPane extends DockingPane {
+    protected Dock createDock() {
+        Dock dock = super.createDock();
+        dock.setBorder(new Eclipse3Border());
+        return dock;
+    }
+  }
 }

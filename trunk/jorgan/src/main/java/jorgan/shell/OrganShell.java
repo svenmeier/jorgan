@@ -226,7 +226,7 @@ public class OrganShell implements UI {
         Command command = interpreter.getCommand(param);
         interpreter.writeln(command.getLongDescription());
       } else {
-        showMessage("command.help.commands", new Object[0]);
+        showMessage("command.help.header", new Object[0]);
         int length = 0;
         for (int c = 0; c < interpreter.getCommandCount(); c++) {
           Command command = interpreter.getCommand(c);
@@ -237,6 +237,7 @@ public class OrganShell implements UI {
           String name = pad(command.getName(), length);
           showMessage("command.help.list", new Object[]{name, command.getDescription()});
         }
+        showMessage("command.help.footer", new Object[0]);
       }
     }
   }
@@ -362,13 +363,13 @@ public class OrganShell implements UI {
     protected abstract String getPrefix();
 
     public String getName() {
-      return resources.getString(getPrefix() + ".name");
+      return MessageFormat.format(resources.getString(getPrefix() + ".name"), new Object[0]);
     }
     public String getDescription() {
-      return resources.getString(getPrefix() + ".description");
+      return MessageFormat.format(resources.getString(getPrefix() + ".description"), new Object[0]);
     }
     public String getLongDescription() {
-      return resources.getString(getPrefix() + ".longDescription");
+      return MessageFormat.format(resources.getString(getPrefix() + ".longDescription"), new Object[0]);
     }
 
     public abstract void execute(String param);

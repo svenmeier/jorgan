@@ -31,6 +31,8 @@ import jorgan.docs.Documents;
  */
 public class Help {
 
+  private boolean available;
+  
   /**
    * The help set.
    */
@@ -51,6 +53,12 @@ public class Help {
    * @see jorgan.docs.Documents#getHelp()
    */
   public Help() {
+  }
+  
+  public boolean isAvailable() {
+      getBroker();
+      
+      return available;
   }
   
   /**
@@ -91,8 +99,9 @@ public class Help {
       try {
         URL url = Documents.getInstance().getHelp();
         set = new HelpSet(getClass().getClassLoader(), url);
+        available = true;
       } catch (Exception e) {
-       // keep empty help set
+        available = false;
       }
       broker = set.createHelpBroker();
     }

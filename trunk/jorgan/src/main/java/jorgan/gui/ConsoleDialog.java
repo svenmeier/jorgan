@@ -37,9 +37,9 @@ public class ConsoleDialog extends JDialog {
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
     
   /**
-   * The handler of scrolling.
+   * The handler of mouse events.
    */
-  private MouseHandler scrollHandler = new MouseHandler();
+  private MouseHandler mouseHandler = new MouseHandler();
 
   private JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_NEVER, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER); 
 
@@ -48,6 +48,8 @@ public class ConsoleDialog extends JDialog {
   private JPopupMenu popup = new JPopupMenu();
   
   private ButtonGroup group = new ButtonGroup();
+  
+  private OrganSession session;
   
   /**
    * Create a dialog.
@@ -58,26 +60,32 @@ public class ConsoleDialog extends JDialog {
     setUndecorated(true);
     setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-    // cover whole screen (including windows start bar)
-    setBounds(new Rectangle(Toolkit.getDefaultToolkit().getScreenSize()));
+    Rectangle bounds = getGraphicsConfiguration().getBounds();
+    setBounds(bounds);
 
     scrollPane.setBorder(null);
     getContentPane().add(scrollPane);
     scrollPane.setViewportView(cardPanel);
     
+    popup.addSeparator();
     popup.add(new CloseAction());
   }
 
+  public void setOrgan(OrganSession session) {
+     this.session = session;
+  }
+    
   /**
    * Add a console to be shown in <em>full screen</em>.
    */
   public void addConsole(final Console console) {
     
     ConsolePanel consolePanel = new ConsolePanel();
+    consolePanel.setOrgan(session);
     consolePanel.setConsole(console);
 
-    consolePanel.addMouseListener      (scrollHandler);
-    consolePanel.addMouseMotionListener(scrollHandler);
+    consolePanel.addMouseListener      (mouseHandler);
+    consolePanel.addMouseMotionListener(mouseHandler);
     
     cardPanel.addCard(consolePanel, console);
     
@@ -91,10 +99,7 @@ public class ConsoleDialog extends JDialog {
         }
       }
     });
-    if (cardPanel.getComponentCount() == 1) {
-      popup.addSeparator();
-    }    
-    popup.add(check);
+    popup.add(check, 0);
   }
 
   /**
