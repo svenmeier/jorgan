@@ -239,9 +239,10 @@ public class ElementsPanel extends JPanel {
 
     protected void removeElement(Object element) {
     }
+
+    public void outputProduced() { }
     
-    public void io(boolean input, boolean output) {
-    }
+    public void inputAccepted() { }
 
     public void playerAdded(PlayEvent ev) { }
   

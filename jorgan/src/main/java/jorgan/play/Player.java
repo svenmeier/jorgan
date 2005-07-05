@@ -67,10 +67,6 @@ public abstract class Player {
     return organPlay;
   }
 
-  protected Object getLock() {
-    return getOrganPlay().IO_LOCK;
-  }
-
   /**
    * Test is this player is open.
    *
@@ -170,6 +166,18 @@ public abstract class Player {
     }
   }
 
+  protected void fireInputAccepted() {
+    if (organPlay != null) {
+      organPlay.fireInputAccepted();
+    }
+  }
+
+  protected void fireOutputProduced() {
+    if (organPlay != null) {
+        organPlay.fireOutputProduced();
+    }
+  }
+
   public boolean hasWarnings() {
     return warningCount > 0;
   }
@@ -191,16 +199,4 @@ public abstract class Player {
   public Element getElement() {
     return element;
   }
-
-  protected void markInput() {
-    if (organPlay != null) {
-      organPlay.markInput();
-    }
-  }
-
-  protected void markOutput() {
-    if (organPlay != null) {
-      organPlay.markOutput();
-    }
-  }  
 }

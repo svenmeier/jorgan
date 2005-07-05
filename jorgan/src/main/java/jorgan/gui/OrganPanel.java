@@ -61,7 +61,6 @@ import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.midi.KeyboardPane;
 import jorgan.gui.midi.MidiLog;
-import jorgan.gui.midi.MidiMonitor;
 import spin.Spin;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
@@ -137,7 +136,7 @@ public class OrganPanel extends JPanel {
   private InstructionsPanel      instructionsPanel = new InstructionsPanel();
   private KeyboardPane           keyboardPane      = new KeyboardPane();
   private MidiLog                midiLog           = new MidiLog();
-  private MidiMonitor            midiMonitor       = new MidiMonitor();
+  private PlayMonitor            playMonitor       = new PlayMonitor();
 
   private ActionDockable problemsDockable     = new ActionDockable(KEY_PROBLEMS    , problemsPanel);
   private ActionDockable keyboardDockable     = new ActionDockable(KEY_KEYBOARD    , keyboardPane);
@@ -202,7 +201,7 @@ public class OrganPanel extends JPanel {
   public List getStatusBarWidgets() {
     List widgets = new ArrayList();
     
-    widgets.add(midiMonitor);
+    widgets.add(playMonitor);
     
     return widgets;
   }
@@ -446,13 +445,12 @@ public class OrganPanel extends JPanel {
    */
   private class InternalPlayerListener implements PlayListener {  
 
-    public void io(boolean input, boolean output) {
-      if (input) {
-        midiMonitor.input();
-      }
-      if (output) {
-        midiMonitor.output();
-      }
+    public void inputAccepted() {
+      playMonitor.input();
+    }
+    
+    public void outputProduced() {
+      playMonitor.output();
     }
 
     public void playerAdded(PlayEvent ev) { }

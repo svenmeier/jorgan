@@ -18,10 +18,7 @@
  */
 package jorgan.gui;
 
-import java.util.*;
 import java.awt.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import javax.swing.*;
@@ -32,8 +29,6 @@ import jorgan.config.prefs.*;
  * Configuration of the swing package.
  */
 public class Configuration extends PreferencesConfiguration {
-
-  private static Logger logger = Logger.getLogger(Configuration.class.getName());
 
   private static final boolean   USE_SYSTEM_LOOK_AND_FEEL = true;
   private static final boolean   SHOW_ABOUT_ON_STARTUP    = true;
@@ -153,33 +148,6 @@ public class Configuration extends PreferencesConfiguration {
     this.disableScreenSaver = disableScreenSaver;
     
     fireConfigurationChanged();
-  }
-
-  protected static Rectangle getRectangle(Preferences prefs, String key, Rectangle def) {
-    String rectangle = prefs.get(key, null);
-    if (rectangle != null) {
-      try {
-        StringTokenizer tokens = new StringTokenizer(rectangle, ",");
-
-        int x = Integer.parseInt(tokens.nextToken().trim());
-        int y = Integer.parseInt(tokens.nextToken().trim());
-        int w = Integer.parseInt(tokens.nextToken().trim());
-        int h = Integer.parseInt(tokens.nextToken().trim());
-
-        return new Rectangle(x, y, w, h);
-      } catch (Exception ex) {
-        logger.log(Level.FINE, "rectangle parsing failed", ex);
-      }
-    }
-    return def;
-  }
-
-  protected static void putRectangle(Preferences prefs, String key, Rectangle rectangle) {
-    if (rectangle == null) {
-      prefs.remove(key);
-    } else {
-      prefs.put(key, rectangle.x + ", " + rectangle.y + ", " + rectangle.width + ", " + rectangle.height);
-    }
   }
 
   /**

@@ -461,7 +461,6 @@ public class OrganFrame extends JFrame implements UI {
 
     // realize first so changing state has effect
     pack();
-
     jorgan.io.Configuration.instance().addConfigurationListener(configurationListener);
     Rectangle rect = Configuration.instance().getFrameBounds();
     if (rect != null) {
@@ -839,5 +838,7 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     Toolkit.getDefaultToolkit().setDynamicLayout(true);
+    
+    Spin.setDefaultOverWait(false);
   }
 }

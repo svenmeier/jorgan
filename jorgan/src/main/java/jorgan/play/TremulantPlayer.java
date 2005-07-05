@@ -77,7 +77,7 @@ public class TremulantPlayer extends RegistratablePlayer implements SoundEffectP
       } else {
         sound.setModulation(0, 0);
       }
-      markOutput();
+      fireOutputProduced();
     }
 
     public void stop() {

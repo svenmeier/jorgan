@@ -93,12 +93,10 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     pitch += keyable.getTranspose();
 
     if (pitch >= 0 && pitch <= 127) {
-      synchronized (getLock()) {
-        if (pressedKeys[pitch] == 0) {
-          action.activateKey(pitch, velocity);
-        }
-        pressedKeys[pitch]++;
+      if (pressedKeys[pitch] == 0) {
+        action.activateKey(pitch, velocity);
       }
+      pressedKeys[pitch]++;
     }
   }
 
@@ -107,11 +105,9 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
 
     pitch += keyable.getTranspose();
     if (pitch >= 0 && pitch <= 127) {
-      synchronized (getLock()) {
-        pressedKeys[pitch]--;
-        if (pressedKeys[pitch] == 0) {
-          action.deactivateKey(pitch);
-        }
+      pressedKeys[pitch]--;
+      if (pressedKeys[pitch] == 0) {
+        action.deactivateKey(pitch);
       }
     }
   }
@@ -158,21 +154,17 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     public void activate() {
       KeyablePlayer.this.activate();
 
-      synchronized (getLock()) {
-        for (int p = 0; p < pressedKeys.length; p++) {
-          if (pressedKeys[p] > 0) {
-            KeyablePlayer.this.activateKey(p, ACTIVATE_VELOCITY);
-          }
+      for (int p = 0; p < pressedKeys.length; p++) {
+        if (pressedKeys[p] > 0) {
+          KeyablePlayer.this.activateKey(p, ACTIVATE_VELOCITY);
         }
       }
     }
 
     public void deactivate() {
-      synchronized (getLock()) {
-        for (int p = 0; p < pressedKeys.length; p++) {
-          if (pressedKeys[p] > 0) {
-            KeyablePlayer.this.deactivateKey(p);
-          }
+      for (int p = 0; p < pressedKeys.length; p++) {
+        if (pressedKeys[p] > 0) {
+          KeyablePlayer.this.deactivateKey(p);
         }
       }
 
@@ -214,20 +206,16 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     public void activate() {
       KeyablePlayer.this.activate();
 
-      synchronized (getLock()) {
-        int highest = getHighestPitch();
-        if (highest != -1) {
-          KeyablePlayer.this.activateKey(highest, ACTIVATE_VELOCITY);
-        }
+      int highest = getHighestPitch();
+      if (highest != -1) {
+        KeyablePlayer.this.activateKey(highest, ACTIVATE_VELOCITY);
       }
     }
     
     public void deactivate() {
-      synchronized (getLock()) {
-        int highest = getHighestPitch();
-        if (highest != -1) {
-          KeyablePlayer.this.deactivateKey(highest);
-        }
+      int highest = getHighestPitch();
+      if (highest != -1) {
+        KeyablePlayer.this.deactivateKey(highest);
       }
 
       KeyablePlayer.this.deactivate();
@@ -271,20 +259,16 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     public void activate() {
       KeyablePlayer.this.activate();
 
-      synchronized (getLock()) {
-        int lowest = getLowestPitch();
-        if (lowest != -1) {
-          KeyablePlayer.this.activateKey(lowest, ACTIVATE_VELOCITY);
-        }
+      int lowest = getLowestPitch();
+      if (lowest != -1) {
+        KeyablePlayer.this.activateKey(lowest, ACTIVATE_VELOCITY);
       }
     }
     
     public void deactivate() {
-      synchronized (getLock()) {
-        int lowest = getLowestPitch();
-        if (lowest != -1) {
-          KeyablePlayer.this.deactivateKey(lowest);
-        }
+      int lowest = getLowestPitch();
+      if (lowest != -1) {
+        KeyablePlayer.this.deactivateKey(lowest);
       }
 
       KeyablePlayer.this.deactivate();
@@ -324,22 +308,16 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     public void activate() {
       KeyablePlayer.this.activate();
 
-      synchronized (getLock()) {     
-        if (hasPitch()) {
-          Keyable keyable = (Keyable)getElement();
-
-          KeyablePlayer.this.activateKey(60 + keyable.getTranspose(), ACTIVATE_VELOCITY);
-        }
+      if (hasPitch()) {
+        Keyable keyable = (Keyable)getElement();
+        KeyablePlayer.this.activateKey(60 + keyable.getTranspose(), ACTIVATE_VELOCITY);
       }
     }
       
     public void deactivate() {
-      synchronized (getLock()) {
-        if (hasPitch()) {
-          Keyable keyable = (Keyable)getElement();
-
-          KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
-        }
+      if (hasPitch()) {
+        Keyable keyable = (Keyable)getElement();
+        KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
       }
 
       KeyablePlayer.this.deactivate();
@@ -382,19 +360,15 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
     }
 
     public void activate() {
-      synchronized (getLock()) {
-        for (int k = 0; k < pressedKeys.length; k++) {
-          stuckKeys[k] = pressedKeys[k] > 0;
-        }
+      for (int k = 0; k < pressedKeys.length; k++) {
+        stuckKeys[k] = pressedKeys[k] > 0;
       }
     }
 
     public void deactivate() {
-      synchronized (getLock()) {
-        for (int k = 0; k < pressedKeys.length; k++) {
-          if (stuckKeys[k] && pressedKeys[k] == 0) {
-            KeyablePlayer.this.deactivateKey(k);
-          }
+      for (int k = 0; k < pressedKeys.length; k++) {
+        if (stuckKeys[k] && pressedKeys[k] == 0) {
+          KeyablePlayer.this.deactivateKey(k);
         }
       }
     }

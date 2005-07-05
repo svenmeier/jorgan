@@ -19,9 +19,6 @@
 package jorgan.gui.construct;
 
 import java.awt.*;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
@@ -31,10 +28,8 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static Logger logger = Logger.getLogger(Configuration.class.getName());
-  
-  private static final int     GRID                 = 10;  
-  private static final Color   COLOR                = Color.blue;
+  private static final int     GRID  = 10;  
+  private static final Color   COLOR = Color.blue;
 
   private static Configuration sharedInstance = new Configuration();
 
@@ -69,32 +64,6 @@ public class Configuration extends PreferencesConfiguration {
     this.color = color;
     
     fireConfigurationChanged();
-  }
-
-  public static Color getColor(Preferences prefs, String key, Color def) {
-    String color = prefs.get(key, null);
-    if (color != null) {
-      try {
-        StringTokenizer tokens = new StringTokenizer(color, ",");
-
-        int r = Integer.parseInt(tokens.nextToken().trim());
-        int g = Integer.parseInt(tokens.nextToken().trim());
-        int b = Integer.parseInt(tokens.nextToken().trim());
-
-        return new Color(r, g, b);
-      } catch (Exception ex) {
-        logger.log(Level.FINE, "color parsing failed", ex);
-      }
-    }
-    return def;
-  }
-
-  public static void putColor(Preferences prefs, String key, Color color) {
-    if (color == null) {
-      prefs.remove(key);
-    } else {
-      prefs.put(key, color.getRed() + ", " + color.getGreen() + ", " + color.getBlue());
-    }
   }
 
   /**

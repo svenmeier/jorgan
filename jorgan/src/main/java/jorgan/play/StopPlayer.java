@@ -55,55 +55,53 @@ public class StopPlayer extends KeyablePlayer {
 
     boolean silentSound = false;
     
-    synchronized(getLock()) {
-      for (int r = 0; r < stop.getReferencesCount(); r++) {
-        Element element = stop.getReference(r).getElement();
+    for (int r = 0; r < stop.getReferencesCount(); r++) {
+      Element element = stop.getReference(r).getElement();
             
-        if (element instanceof SoundSource) {
-          SoundSourcePlayer soundSourcePlayer = (SoundSourcePlayer)getOrganPlay().getPlayer(element);
+      if (element instanceof SoundSource) {
+        SoundSourcePlayer soundSourcePlayer = (SoundSourcePlayer)getOrganPlay().getPlayer(element);
               
-          sound = soundSourcePlayer.createSound(stop.getProgram());
-          if (sound != null) {
-            break;
-          }
+        sound = soundSourcePlayer.createSound(stop.getProgram());
+        if (sound != null) {
+          break;
         }
       }
-      
-      if (sound == null) {
-        sound = new SilentSound();
-        
-        silentSound = true;
-      }
-      
-      for (int r = 0; r < stop.getReferencesCount(); r++) {
-        Element element = stop.getReference(r).getElement();
-          
-        if (element instanceof SoundEffect) {
-          SoundEffectPlayer soundEffectPlayer = (SoundEffectPlayer)getOrganPlay().getPlayer(element);
-         
-          sound = soundEffectPlayer.effectSound(sound);
-        }
-      }
-
-      sound.setProgram(stop.getProgram());
-      sound.setVolume(stop.getVolume());
-      if (stop.getPan() != 64) {
-        sound.setPan(stop.getPan());
-      }
-      if (stop.getBend() != 64) {
-        sound.setPitchBend(stop.getBend());
-      }
-
-      markOutput();
-
-      super.activate();
     }
-    
+      
+    if (sound == null) {
+      sound = new SilentSound();
+        
+      silentSound = true;
+    }
+      
+    for (int r = 0; r < stop.getReferencesCount(); r++) {
+      Element element = stop.getReference(r).getElement();
+          
+      if (element instanceof SoundEffect) {
+        SoundEffectPlayer soundEffectPlayer = (SoundEffectPlayer)getOrganPlay().getPlayer(element);
+         
+        sound = soundEffectPlayer.effectSound(sound);
+      }
+    }
+
+    sound.setProgram(stop.getProgram());
+    sound.setVolume(stop.getVolume());
+    if (stop.getPan() != 64) {
+      sound.setPan(stop.getPan());
+    }
+    if (stop.getBend() != 64) {
+      sound.setPitchBend(stop.getBend());
+    }
+
+    fireOutputProduced();
+
     if (silentSound) {
       addProblem(programWarning(stop.getProgram()));
     } else {
       removeProblem(programWarning(stop.getProgram()));
     }
+
+    super.activate();    
   }
 
   protected void activateKey(int pitch, int velocity) {
@@ -115,21 +113,19 @@ public class StopPlayer extends KeyablePlayer {
         
       sound.noteOn(pitch, velocity);        
 
-      markOutput();
+      fireOutputProduced();
     }
   }
   
   protected void deactivate() {
+    super.deactivate();
+
     Stop stop = (Stop)getElement();
 
-    synchronized(getLock()) {
-      super.deactivate();
+    sound.stop();
+    sound = null;
 
-      sound.stop();
-      sound = null;
-
-      markOutput();
-    }
+    fireOutputProduced();
     
     removeProblem(programWarning(stop.getProgram()));
   }
@@ -153,7 +149,7 @@ public class StopPlayer extends KeyablePlayer {
     if (sound != null) {
       sound.noteOff(pitch);
       
-      markOutput();
+      fireOutputProduced();
     }
   }
   
