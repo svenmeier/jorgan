@@ -40,12 +40,18 @@ public abstract class RegistratablePlayer extends Player {
       Message offMessage = registratable.getOffMessage();
       if (offMessage != null &&
           offMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+
+        fireInputAccepted();
+        
         registratable.setOn(false);
       }
     } else {
       Message onMessage = registratable.getOnMessage();
       if (onMessage != null &&
           onMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+
+        fireInputAccepted();
+
         registratable.setOn(true);
       }
     }

@@ -167,7 +167,9 @@ public class ProblemsPanel extends JPanel {
       return null;
     }
 
-    public void io(boolean input, boolean output) { }
+    public void inputAccepted() { }
+
+    public void outputProduced() { }
 
     public void playerAdded(PlayEvent ev) {
       

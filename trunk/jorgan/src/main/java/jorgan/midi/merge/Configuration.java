@@ -69,7 +69,7 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
   
-  protected static MergeInput getMergeInput(Preferences prefs, String key, MergeInput def) {
+  protected MergeInput getMergeInput(Preferences prefs, String key, MergeInput def) {
     String input = prefs.get(key, null);
     if (input != null) {
       try {
@@ -86,7 +86,7 @@ public class Configuration extends PreferencesConfiguration {
     return def;
   }
 
-  protected static void putMergeInput(Preferences prefs, String key, MergeInput input) {
+  protected void putMergeInput(Preferences prefs, String key, MergeInput input) {
     prefs.put(key, input.getChannel() + ":" + input.getDevice());
   }
 

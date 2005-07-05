@@ -70,7 +70,7 @@ public class KeyboardPlayer extends Player {
   }
 
   protected void closeImpl() {
-    if (transmitter != null) {
+    if (in != null) {
       transmitter.close();
       in.close();
 
@@ -115,10 +115,13 @@ public class KeyboardPlayer extends Player {
           } else {
             keyUp(pitch);
           }
+          fireInputAccepted();
         } else {
           if (command == ShortMessage.NOTE_OFF ||
               command == ShortMessage.NOTE_ON && velocity == 0) {
             keyUp(pitch);
+
+            fireInputAccepted();
           }
         }
       }

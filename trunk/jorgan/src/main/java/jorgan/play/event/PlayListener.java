@@ -31,5 +31,7 @@ public interface PlayListener {
 
   public void problemRemoved(PlayEvent ev);
 
-  public void io(boolean input, boolean output);
+  public void inputAccepted();
+  
+  public void outputProduced();
 }

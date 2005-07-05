@@ -18,10 +18,7 @@
  */
 package jorgan.gui.console;
 
-import java.util.*;
 import java.awt.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
@@ -30,8 +27,6 @@ import jorgan.config.prefs.*;
  * Configuration of the view package.
  */
 public class Configuration extends PreferencesConfiguration {
-
-  private static Logger logger = Logger.getLogger(Configuration.class.getName());
 
   private static final boolean INTERPOLATE     = false;
   private static final boolean SHOW_SHORTCUT   = true;  
@@ -199,58 +194,6 @@ public class Configuration extends PreferencesConfiguration {
     this.variationFont = variationFont;
     
     fireConfigurationChanged();
-  }
-
-  public static Font getFont(Preferences prefs, String key, Font def) {
-    String font = prefs.get(key, null);
-    if (font != null) {
-      try {
-        StringTokenizer tokens = new StringTokenizer(font, ",");
-  
-        String name  = tokens.nextToken().trim();
-        int    style = Integer.parseInt(tokens.nextToken().trim());
-        int    size  = Integer.parseInt(tokens.nextToken().trim());
-  
-        return new Font(name, style, size);
-      } catch (Exception ex) {
-        logger.log(Level.FINE, "font parsing failed", ex);
-      }
-    }
-    return def;
-  }
-
-  public static void putFont(Preferences prefs, String key, Font font) {
-    if (font == null) {
-      prefs.remove(key);
-    } else {
-      prefs.put(key, font.getName() + ", " + font.getStyle() + ", " + font.getSize());
-    }
-  }
-
-  public static Color getColor(Preferences prefs, String key, Color def) {
-    String color = prefs.get(key, null);
-    if (color != null) {
-      try {
-        StringTokenizer tokens = new StringTokenizer(color, ",");
-
-        int r = Integer.parseInt(tokens.nextToken().trim());
-        int g = Integer.parseInt(tokens.nextToken().trim());
-        int b = Integer.parseInt(tokens.nextToken().trim());
-
-        return new Color(r, g, b);
-      } catch (Exception ex) {
-        logger.log(Level.FINE, "color parsing failed", ex);
-      }
-    }
-    return def;
-  }
-
-  public static void putColor(Preferences prefs, String key, Color color) {
-    if (color == null) {
-      prefs.remove(key);
-    } else {
-      prefs.put(key, color.getRed() + ", " + color.getGreen() + ", " + color.getBlue());
-    }
   }
 
   /**

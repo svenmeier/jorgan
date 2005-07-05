@@ -380,7 +380,9 @@ public class OrganShell implements UI {
    */
   private class InternalPlayerListener implements PlayListener {
 
-    public void io(boolean input, boolean output) { }
+    public void inputAccepted() { }
+
+    public void outputProduced() { }
 
     public void playerAdded(PlayEvent ev) { }
   

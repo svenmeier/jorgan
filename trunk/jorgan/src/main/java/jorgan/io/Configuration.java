@@ -170,22 +170,6 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
-  protected static File getFile(Preferences prefs, String key, File def) {
-    String file = prefs.get(key, null);
-    if (file != null) {
-      return new File(file);
-    }
-    return def;
-  }
-
-  protected static void putFile(Preferences prefs, String key, File file) {
-    if (file == null) {
-      prefs.remove(key);
-    } else {
-      prefs.put(key, file.getPath());
-    }
-  }
-
   protected File RECENT_FILE() {
     return new File(RECENT_DIRECTORY(), "Example.disposition");    
   }

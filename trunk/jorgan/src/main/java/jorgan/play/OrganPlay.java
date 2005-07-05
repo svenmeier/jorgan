@@ -36,11 +36,8 @@ import jorgan.sound.midi.BugFix;
  */
 public class OrganPlay  {
 
-  public final Object IO_LOCK = new Object();
+  private final Object LOCK = new Object();
   
-  private boolean output = false;
-  private boolean input  = false;
-
   private boolean open;
   
   /**
@@ -100,8 +97,6 @@ public class OrganPlay  {
   }
 
   protected void firePlayerAdded(Player player) {
-    assertNoIOLock();
-
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement());
       for (int l = 0; l < listeners.size(); l++) {
@@ -112,8 +107,6 @@ public class OrganPlay  {
   }
 
   protected void firePlayerRemoved(Player player) {
-    assertNoIOLock();
-    
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement());
       for (int l = 0; l < listeners.size(); l++) {
@@ -124,8 +117,6 @@ public class OrganPlay  {
   }
 
   protected void fireProblemAdded(Player player, PlayerProblem problem) {
-    assertNoIOLock();
-    
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
       for (int l = 0; l < listeners.size(); l++) {
@@ -136,8 +127,6 @@ public class OrganPlay  {
   }
 
   protected void fireProblemRemoved(Player player, PlayerProblem problem) {
-    assertNoIOLock();
-    
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
       for (int l = 0; l < listeners.size(); l++) {
@@ -148,43 +137,29 @@ public class OrganPlay  {
   }
 
   /**
-   * Mark input to be notified to listeners on next call to
-   * {@link #flushIO()}.
+   * Fire input.
    */
-  protected void markInput() {
-    input = true;
-  }
-  
-  /**
-   * Mark output to be notified to listeners on next call to
-   * {@link #flushIO()}.
-   */
-  protected void markOutput() {
-    output = true;
-  }
-
-  /**
-   * Flush possible input and output to registered listeners.
-   */
-  private void flushIO() {
-    if (input || output) {
-      if (listeners != null) {
-        for (int l = 0; l < listeners.size(); l++) {
-          PlayListener listener = (PlayListener)listeners.get(l);
-          listener.io(input, output);
-        }      
-      }
-      output = false;
-      input  = false;
+  protected void fireInputAccepted() {
+    if (listeners != null) {
+      for (int l = 0; l < listeners.size(); l++) {
+        PlayListener listener = (PlayListener)listeners.get(l);
+        listener.inputAccepted();
+      }      
     }
   }
 
-  private void assertNoIOLock() {
-    if (Thread.holdsLock(IO_LOCK)) {
-      throw new Error("illegal hold of IO lock");
-    };
+  /**
+   * Fire output.
+   */
+  protected void fireOutputProduced() {
+    if (listeners != null) {
+      for (int l = 0; l < listeners.size(); l++) {
+        PlayListener listener = (PlayListener)listeners.get(l);
+        listener.outputProduced();
+      }      
+    }
   }
-  
+
   protected Player getPlayer(Element element) {
     return (Player)players.get(element);
   }
@@ -219,16 +194,18 @@ public class OrganPlay  {
   public void open() {
     open = true;
 
-    Iterator iterator = players.values().iterator();
-    while (iterator.hasNext()) {
-      Player player = (Player)iterator.next();
-      player.open();
-    }
-    
-    iterator = players.values().iterator();
-    while (iterator.hasNext()) {
-      Player player = (Player)iterator.next();
-      player.elementChanged(null);
+    synchronized(LOCK) {
+      Iterator iterator = players.values().iterator();
+      while (iterator.hasNext()) {
+        Player player = (Player)iterator.next();
+        player.open();
+      }
+        
+      iterator = players.values().iterator();
+      while (iterator.hasNext()) {
+        Player player = (Player)iterator.next();
+        player.elementChanged(null);
+      }
     }
   }
   
@@ -241,10 +218,12 @@ public class OrganPlay  {
       throw new IllegalStateException("not open");
     }
     
-    Iterator iterator = players.values().iterator();
-    while (iterator.hasNext()) {
-      Player player = (Player)iterator.next();
-      player.close();
+    synchronized(LOCK) {
+      Iterator iterator = players.values().iterator();
+      while (iterator.hasNext()) {
+        Player player = (Player)iterator.next();
+        player.close();
+      }
     }
     
     open = false;
@@ -322,11 +301,9 @@ public class OrganPlay  {
           if (status != ShortMessage.ACTIVE_SENSING &&
               status != ShortMessage.TIMING_CLOCK) {
 
-            markInput();
-
-            player.input(shortMessage);
-
-            flushIO();
+            synchronized(LOCK) {
+              player.input(shortMessage);
+            }
           }
         }
       }
@@ -335,40 +312,36 @@ public class OrganPlay  {
 
   private class EventHandler extends OrganAdapter implements ConfigurationListener {
 
-    public void elementChanged(OrganEvent event) {
-      assertNoIOLock();
-      
-      Player player = getPlayer(event.getElement());
-      if (player != null) {
-        player.elementChanged(event);
+    public void elementChanged(OrganEvent event) {     
+      synchronized(LOCK) {
+        Player player = getPlayer(event.getElement());
+        if (player != null) {
+          player.elementChanged(event);
+        }
       }
-      
-      flushIO();
     }
 
     public void elementAdded(OrganEvent event) {
-      assertNoIOLock();
-
-      createPlayer(event.getElement());
-
-      flushIO();
+      synchronized(LOCK) {
+        createPlayer(event.getElement());
+      }
     }
 
     public void elementRemoved(OrganEvent event) {
-      assertNoIOLock();
-
-      dropPlayer(event.getElement());
-
-      flushIO();
+      synchronized(LOCK) {
+        dropPlayer(event.getElement());
+      }
     }
     
     public void configurationChanged(ConfigurationEvent ev) {
+      synchronized(LOCK) {
         Iterator iterator = players.values().iterator();
         while (iterator.hasNext()) {
           Player player = (Player)iterator.next();
           player.elementChanged(null);
         }
       }
+    }
       
     public void configurationBackup(ConfigurationEvent event) { }
   }

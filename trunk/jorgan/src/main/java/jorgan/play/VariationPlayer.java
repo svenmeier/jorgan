@@ -50,8 +50,6 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
       for (int s = 0; s < sounds.size(); s++) {
         VariationSound sound = (VariationSound)sounds.get(s);
         sound.flush();
-        
-        markOutput();
       }
     }
   }
@@ -85,6 +83,8 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
       }
 
       sound.setProgram(program);
+      
+      fireOutputProduced();
     }
 
     public void stop() {

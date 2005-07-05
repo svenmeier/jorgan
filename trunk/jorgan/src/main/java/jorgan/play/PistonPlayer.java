@@ -42,6 +42,9 @@ public class PistonPlayer extends Player {
     Message setMessage = piston.getSetMessage();
     if (setMessage != null                   &&
         setMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+        
+      fireInputAccepted();
+      
       if (piston.isSetWithGet()) {
         armed = true;
         return;
@@ -52,6 +55,9 @@ public class PistonPlayer extends Player {
     Message getMessage = piston.getGetMessage();
     if (getMessage != null                   &&
         getMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+
+      fireInputAccepted();
+
       if (piston.isSetWithGet() && armed) {
         piston.set();
       } else {
