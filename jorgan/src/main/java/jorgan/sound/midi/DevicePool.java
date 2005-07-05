@@ -42,30 +42,37 @@ public class DevicePool {
    */
   public static MidiDevice getMidiDevice(String name, boolean out) throws MidiUnavailableException {
 
-    DeviceKey key = new DeviceKey(name, out);
-    
-    SharedDevice sharedDevice = (SharedDevice)sharedDevices.get(key);
-    if (sharedDevice == null) {
-        MidiDevice[] devices = getMidiDevices(out);
-
-        for (int d = 0; d < devices.length; d++) {
-          if (name.equals(devices[d].getDeviceInfo().getName())) {
-            sharedDevice = new SharedDevice(devices[d]);
-
-            sharedDevices.put(key, sharedDevice);
-            
-            break;
-          }
-        }
-    }    
-
-    if (sharedDevice == null) {
-        throw new MidiUnavailableException(name);
-    }
+    SharedDevice sharedDevice = getSharedDevice(name, out);
 
     return new ProxyDevice(sharedDevice);
   }
 
+  private static SharedDevice getSharedDevice(String name, boolean out) throws MidiUnavailableException {
+
+      DeviceKey key = new DeviceKey(name, out);
+      
+      SharedDevice sharedDevice = (SharedDevice)sharedDevices.get(key);
+      if (sharedDevice == null) {
+          MidiDevice[] devices = getMidiDevices(out);
+
+          for (int d = 0; d < devices.length; d++) {
+            if (name.equals(devices[d].getDeviceInfo().getName())) {
+              sharedDevice = new SharedDevice(devices[d]);
+
+              sharedDevices.put(key, sharedDevice);
+              
+              break;
+            }
+          }
+      }
+
+      if (sharedDevice == null) {
+          throw new MidiUnavailableException(name);
+      }
+      
+      return sharedDevice;
+  }
+  
   /**
    * Get all devices that support midi-out or midi-in.
    *
@@ -118,6 +125,26 @@ public class DevicePool {
     return names;
   }
 
+  public static void addLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
+      SharedDevice device = getSharedDevice(name, out);
+
+      if (out) {
+        device.outLoggers.add(logger);
+      } else {
+        device.inLoggers.add(logger);
+      }
+  }
+  
+  public static void removeLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
+      SharedDevice device = getSharedDevice(name, out);
+
+      if (out) {
+        device.outLoggers.remove(logger);
+      } else {
+        device.inLoggers.remove(logger);
+      }
+  }
+  
   private static class ProxyDevice extends DeviceWrapper {
     private boolean open = false;
 
@@ -196,6 +223,10 @@ public class DevicePool {
   }
   
   private static class SharedDevice extends DeviceWrapper {
+      
+    private List inLoggers = new ArrayList();
+    private List outLoggers = new ArrayList();
+    
     private int openCount;
  
     public SharedDevice(MidiDevice device) {
@@ -205,15 +236,53 @@ public class DevicePool {
     public void open() throws MidiUnavailableException {
       if (openCount == 0) {
         super.open();
+        
+        for (int l = 0; l < inLoggers.size(); l++) {
+          ((MidiLogger)inLoggers.get(l)).opened();
+        }
+        for (int l = 0; l < outLoggers.size(); l++) {
+          ((MidiLogger)outLoggers.get(l)).opened();
+        }
       }
       openCount++;
     }
 
+    public Receiver getReceiver() throws MidiUnavailableException {
+      return new ReceiverWrapper(super.getReceiver()) {
+        public void send(MidiMessage message, long timeStamp) {
+          super.send(message, timeStamp);
+                
+          for (int l = 0; l < outLoggers.size(); l++) {
+            ((MidiLogger)outLoggers.get(l)).log(message);
+          }
+        }
+      };
+    }
+    
+    public Transmitter getTransmitter() throws MidiUnavailableException {
+        return new TransmitterWrapper(super.getTransmitter()) {
+          protected void send(MidiMessage message, long timeStamp) {
+            super.send(message, timeStamp);
+            
+            for (int l = 0; l < inLoggers.size(); l++) {
+              ((MidiLogger)inLoggers.get(l)).log(message);
+            }
+          }
+        };
+    }
+    
     public void close() {
       openCount--;
               
       if (openCount == 0) {
         super.close();
+        
+        for (int l = 0; l < inLoggers.size(); l++) {
+          ((MidiLogger)inLoggers.get(l)).closed();
+        }
+        for (int l = 0; l < outLoggers.size(); l++) {
+          ((MidiLogger)outLoggers.get(l)).closed();
+        }
       }
     }
   }

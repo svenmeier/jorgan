@@ -25,24 +25,23 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.Transmitter;
-import javax.swing.JCheckBoxMenuItem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JLabel;
-import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -50,9 +49,10 @@ import javax.swing.table.TableColumn;
 
 import jorgan.config.ConfigurationEvent;
 import jorgan.config.ConfigurationListener;
-import jorgan.midi.log.MidiLogProvider;
 
+import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
+import jorgan.sound.midi.MidiLogger;
 
 
 /**
@@ -69,9 +69,9 @@ public class MidiLog extends JPanel {
                                                 new Color(240, 255, 240),
                                                 new Color(240, 255, 255),
                                                 new Color(240, 240, 255),
-                                                new Color(240, 240, 255),
-                                                new Color(240, 240, 255),
-                                                new Color(240, 240, 255)
+                                                new Color(255, 240, 255),
+                                                new Color(255, 255, 240),
+                                                new Color(240, 240, 240)
                                                };
 
   private static final String[] channelEvents = new String[]{
@@ -108,30 +108,85 @@ public class MidiLog extends JPanel {
    */
   private int max = 256;
 
-  /**
-   * Should data be displayed in hex. 
-   */
-  private boolean hex = true;
+  private MidiLogger logger = new InternalMidiLogger();
   
-  private Transmitter transmitter;
-  
-  private Receiver receiver = new LogReceiver();
+  private String deviceName;
+  private boolean out;
 
   private List messages = new ArrayList();
 
   private JScrollPane scrollPane = new JScrollPane();
   
   private JTable table = new JTable();
-
-  private JPopupMenu popupMenu;
-  private JCheckBoxMenuItem hexMenuItem;
-  private JMenuItem clearMenuItem;
+  
+  private JToolBar toolBar = new JToolBar();
+  
+  private ButtonGroup baseGroup = new ButtonGroup();
+  
+  private JButton filterButton = new JButton();
+  private JToggleButton hexButton = new JToggleButton();
+  private JToggleButton decButton = new JToggleButton();
+  private JToggleButton scrollLockButton = new JToggleButton();
+  private JButton clearButton = new JButton();
   
   private MessagesModel model = new MessagesModel();
 
   public MidiLog() {
     setLayout(new BorderLayout());
 
+    toolBar.setRollover(true);
+    toolBar.setFloatable(false);
+    add(toolBar, BorderLayout.NORTH);
+    
+    filterButton.setToolTipText(resources.getString("log.filter"));
+    filterButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/filter.gif")));
+    filterButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+        }
+    });
+    toolBar.add(filterButton);
+    
+    toolBar.addSeparator();
+
+    hexButton.setToolTipText(resources.getString("log.hexadecimal"));
+    hexButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/hexadecimal.gif")));
+    hexButton.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+            model.fireTableDataChanged();
+        }
+    });
+    hexButton.setSelected(Configuration.instance().getMidiLogHex());    
+    baseGroup.add(hexButton);
+    toolBar.add(hexButton);
+    
+    decButton.setToolTipText(resources.getString("log.decimal"));
+    decButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/decimal.gif")));
+    decButton.addItemListener(new ItemListener() {
+        public void itemStateChanged(ItemEvent e) {
+            model.fireTableDataChanged();
+        }
+    });  
+    decButton.setSelected(!Configuration.instance().getMidiLogHex());    
+    baseGroup.add(decButton);
+    toolBar.add(decButton);
+    
+    toolBar.addSeparator();
+
+    scrollLockButton.setToolTipText(resources.getString("log.scrollLock"));
+    scrollLockButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/scrollLock.gif")));
+    toolBar.add(scrollLockButton);
+    
+    toolBar.addSeparator();
+
+    clearButton.setToolTipText(resources.getString("log.clear"));
+    clearButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/clear.gif")));
+    clearButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+            clear();
+        }
+    });    
+    toolBar.add(clearButton);
+    
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);    
     scrollPane.getViewport().setBackground(table.getBackground());
@@ -147,13 +202,7 @@ public class MidiLog extends JPanel {
     prepareColumn(4, 10, SwingConstants.RIGHT);
     prepareColumn(5, 100, SwingConstants.LEFT);
 
-    MouseHandler handler = new MouseHandler(); 
-    table.addMouseListener(handler);
-    
     max = Configuration.instance().getMidiLogMax();
-    hex = Configuration.instance().getMidiLogHex();
-    
-    setTransmitter(MidiLogProvider.getLoopback().loopbackTransmitter);
   }
   
   public void addNotify() {
@@ -164,11 +213,32 @@ public class MidiLog extends JPanel {
     }
     
     
-    public void removeNotify() {
-      Configuration.instance().removeConfigurationListener(model);
+  public void removeNotify() {
+    Configuration.instance().removeConfigurationListener(model);
       
-      super.removeNotify();
-    }
+    super.removeNotify();
+  }
+  
+  public void setDevice(String deviceName, boolean out) {
+      if (this.deviceName != null) {
+          try {
+              DevicePool.removeLogger(logger, this.deviceName, this.out);
+          } catch (MidiUnavailableException ex) {
+              throw new Error();
+          }
+      }
+      
+      this.deviceName = deviceName;
+      this.out        = out;
+      
+      if (this.deviceName != null) {
+          try {
+              DevicePool.addLogger(logger, deviceName, out);
+          } catch (MidiUnavailableException ex) {
+              throw new Error();
+          }
+      }
+  }
   
   private void prepareColumn(int index, int width, int align) {
     TableColumn column = table.getColumnModel().getColumn(index); 
@@ -177,26 +247,12 @@ public class MidiLog extends JPanel {
     column.setPreferredWidth(width);
   }
   
-  public void setTransmitter(Transmitter transmitter) {
-    this.transmitter = transmitter;
-    
-    transmitter.setReceiver(receiver);
-  }
-  
-  public Transmitter getTransmitter() {
-    return transmitter;
-  }
-
   public boolean getHex() {
-    return hex;
+    return hexButton.isSelected();
   }
   
   public void setHex(boolean hex) {
-    if (this.hex != hex) {
-      this.hex = hex;
-      
-      model.fireTableDataChanged();
-    }
+    hexButton.setSelected(hex);
   }
   
   public void clear() {
@@ -205,83 +261,32 @@ public class MidiLog extends JPanel {
     model.fireTableDataChanged();
   }
   
-  protected void showPopup(int x, int y) {
-      if (popupMenu == null) {
-          popupMenu = createPopup();
-      }
+  private class InternalMidiLogger implements MidiLogger {
 
-      hexMenuItem.setSelected(hex);      
-        
-      popupMenu.show(table, x, y);    
-  }
-
-  protected JPopupMenu createPopup() {
-      JPopupMenu popupMenu = new JPopupMenu();
-
-      hexMenuItem = new JCheckBoxMenuItem(resources.getString("log.hex"));
-      hexMenuItem.addItemListener(new ItemListener() {
-          public void itemStateChanged(ItemEvent e) {
-              setHex(hexMenuItem.isSelected());
-          }
-      });
-      popupMenu.add(hexMenuItem);
-
-      popupMenu.addSeparator();
-
-      clearMenuItem = new JMenuItem(resources.getString("log.clear"));
-      clearMenuItem.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent e) {
-              clear();
-          }
-      });
-      popupMenu.add(clearMenuItem);
-        
-      return popupMenu;
-  }
-
-  /**
-   * The receiver registered to set transmitters.
-   * 
-   * @see #setTransmitter(javax.sound.midi.Transmitter)
-   */
-  private class LogReceiver implements Receiver, Runnable {
-
-    private List tempMessages = new ArrayList();
-    
-    public void close() {
+    public void opened() {
     }
 
-    public synchronized void send(MidiMessage message, long timeStamp) {
-      if (tempMessages.size() == 0) {
-        SwingUtilities.invokeLater(this);
-      }
-
-      tempMessages.add(new Message(message.getMessage(), message.getLength(), timeStamp));     
+    public void closed() {
     }
-    
-    public synchronized void run() {
 
-      if (tempMessages.size() > 0) {
-        int firstRow = messages.size();
-      
-        messages.addAll(tempMessages);
+    public void log(MidiMessage message) {
+      messages.add(new Message(message.getMessage(), message.getLength()));     
 
-        tempMessages.clear();
+      int row = messages.size() - 1;
       
-        int lastRow = messages.size() - 1;
-      
-        model.fireTableRowsInserted(firstRow, lastRow);
+      model.fireTableRowsInserted(row, row);
         
-        table.scrollRectToVisible(table.getCellRect(lastRow, 0, true));
+      if (!scrollLockButton.isSelected()) {
+        table.scrollRectToVisible(table.getCellRect(row, 0, true));
+      }
         
-        int over = messages.size() - max;
-        if (over > 0) { 
-            for (int m = 0; m < over; m++) {
-                messages.remove(0);
-            }
+      int over = messages.size() - max;
+      if (over > 0) { 
+          for (int m = 0; m < over; m++) {
+              messages.remove(0);
+          }
             
-            model.fireTableRowsDeleted(0, over - 1);
-        }
+          model.fireTableRowsDeleted(0, over - 1);
       }
     }
   }
@@ -335,7 +340,7 @@ public class MidiLog extends JPanel {
     private byte[] data;
     private int    length;
     
-    public Message(byte[] data, int length, long timestamp) {
+    public Message(byte[] data, int length) {
         
       this.data      = data;
       this.length    = length;
@@ -401,7 +406,7 @@ public class MidiLog extends JPanel {
     }
     
     private String format(int value) {
-      return Integer.toString(value, hex ? 16 : 10); 
+      return Integer.toString(value, getHex() ? 16 : 10); 
     }    
   }
   
@@ -427,20 +432,10 @@ public class MidiLog extends JPanel {
     }
   }
   
-  private class MouseHandler extends MouseAdapter {
-        
-      public void mousePressed(MouseEvent e) {
-          showPopup(e);
-      }
-
-      public void mouseReleased(MouseEvent e) {
-          showPopup(e);        
-      }
-
-      private void showPopup(MouseEvent e) {
-          if (e.isPopupTrigger()) {
-              MidiLog.this.showPopup(e.getX(), e.getY());
-          }
-      }
+  protected void chooseDevice() {
+      JDialog dialog = new JDialog();
+      
+      MidiFilterPanel chooser = new MidiFilterPanel();
+      dialog.getContentPane().add(chooser);
   }
 }

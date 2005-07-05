@@ -1,3 +1,2 @@
 jorgan.midi.KeyboardProvider
 jorgan.midi.merge.MidiMergerProvider
-jorgan.midi.log.MidiLogProvider

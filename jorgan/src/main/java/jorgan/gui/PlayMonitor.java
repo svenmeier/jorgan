@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.midi;
+package jorgan.gui;
 
 import java.util.ResourceBundle;
 import java.awt.*;
@@ -27,13 +27,13 @@ import javax.swing.*;
 /**
  * Panel that displays input and output. 
  */
-public class MidiMonitor extends JPanel {
+public class PlayMonitor extends JPanel {
 
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
-  private static Icon noneIcon = new ImageIcon(MidiMonitor.class.getResource("/jorgan/gui/img/none.gif"));
-  private static Icon inIcon   = new ImageIcon(MidiMonitor.class.getResource("/jorgan/gui/img/in.gif"));
-  private static Icon outIcon  = new ImageIcon(MidiMonitor.class.getResource("/jorgan/gui/img/out.gif"));
+  private static Icon noneIcon = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/none.gif"));
+  private static Icon inIcon   = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/in.gif"));
+  private static Icon outIcon  = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/out.gif"));
 
   private JLabel inLabel = new JLabel();
   private JLabel outLabel = new JLabel();
@@ -41,7 +41,7 @@ public class MidiMonitor extends JPanel {
   private Timer inTimer;
   private Timer outTimer;
 
-  public MidiMonitor() {
+  public PlayMonitor() {
     setLayout(new GridLayout(0, 2));
 
     add(inLabel, null);
