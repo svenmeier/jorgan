@@ -34,7 +34,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -42,17 +42,18 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.config.ConfigurationEvent;
-import jorgan.config.ConfigurationListener;
+import jorgan.midi.log.Configuration;
 
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MidiLogger;
+import jorgan.swing.StandardDialog;
 
 
 /**
@@ -103,15 +104,11 @@ public class MidiLog extends JPanel {
                                                 "SYSTEM_RESET"           // 0xff
                                                };
 
-  /**
-   * Maximum message count. 
-   */
-  private int max = 256;
-
   private MidiLogger logger = new InternalMidiLogger();
   
   private String deviceName;
-  private boolean out;
+  private boolean deviceOut;
+  private boolean open;
 
   private List messages = new ArrayList();
 
@@ -121,11 +118,15 @@ public class MidiLog extends JPanel {
   
   private JToolBar toolBar = new JToolBar();
   
-  private ButtonGroup baseGroup = new ButtonGroup();
+  private JPanel messagesPanel = new JPanel();
+  private JLabel messagesLabel = new JLabel();
   
-  private JButton filterButton = new JButton();
+  private ButtonGroup baseGroup = new ButtonGroup();
   private JToggleButton hexButton = new JToggleButton();
   private JToggleButton decButton = new JToggleButton();
+  
+  private JButton deviceButton = new JButton();
+
   private JToggleButton scrollLockButton = new JToggleButton();
   private JButton clearButton = new JButton();
   
@@ -138,13 +139,14 @@ public class MidiLog extends JPanel {
     toolBar.setFloatable(false);
     add(toolBar, BorderLayout.NORTH);
     
-    filterButton.setToolTipText(resources.getString("log.filter"));
-    filterButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/filter.gif")));
-    filterButton.addActionListener(new ActionListener() {
+    deviceButton.setToolTipText(resources.getString("log.device"));
+    deviceButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/filter.gif")));
+    deviceButton.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent e) {
+            selectDevice();
         }
     });
-    toolBar.add(filterButton);
+    toolBar.add(deviceButton);
     
     toolBar.addSeparator();
 
@@ -155,7 +157,7 @@ public class MidiLog extends JPanel {
             model.fireTableDataChanged();
         }
     });
-    hexButton.setSelected(Configuration.instance().getMidiLogHex());    
+    hexButton.setSelected(true);    
     baseGroup.add(hexButton);
     toolBar.add(hexButton);
     
@@ -166,7 +168,6 @@ public class MidiLog extends JPanel {
             model.fireTableDataChanged();
         }
     });  
-    decButton.setSelected(!Configuration.instance().getMidiLogHex());    
     baseGroup.add(decButton);
     toolBar.add(decButton);
     
@@ -186,11 +187,16 @@ public class MidiLog extends JPanel {
         }
     });    
     toolBar.add(clearButton);
+
+    messagesPanel.setLayout(new BorderLayout());
+    add(messagesPanel, BorderLayout.CENTER);
+    
+    messagesPanel.add(messagesLabel, BorderLayout.NORTH);
     
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);    
     scrollPane.getViewport().setBackground(table.getBackground());
-    add(scrollPane, BorderLayout.CENTER);
+    messagesPanel.add(scrollPane, BorderLayout.CENTER);
     
     table.setModel(model);
     scrollPane.setViewportView(table);
@@ -201,43 +207,69 @@ public class MidiLog extends JPanel {
     prepareColumn(3, 10, SwingConstants.RIGHT);
     prepareColumn(4, 10, SwingConstants.RIGHT);
     prepareColumn(5, 100, SwingConstants.LEFT);
-
-    max = Configuration.instance().getMidiLogMax();
+    
+    setDevice(null, false);
   }
   
-  public void addNotify() {
-      super.addNotify();
-
-      Configuration configuration = Configuration.instance();
-      configuration.addConfigurationListener(model);
-    }
-    
-    
-  public void removeNotify() {
-    Configuration.instance().removeConfigurationListener(model);
-      
-    super.removeNotify();
-  }
+  private DeviceSelectionPanel selectionPanel;
   
+  protected void selectDevice() {
+      StandardDialog dialog = new StandardDialog((JFrame)SwingUtilities.getWindowAncestor(this));
+      dialog.addCancelAction();
+      dialog.addOKAction(true);
+      dialog.setTitle(resources.getString("log.select.title"));
+      dialog.setDescription(resources.getString("log.select.description"));
+      if (selectionPanel == null) {
+          selectionPanel = new DeviceSelectionPanel();
+      }
+      dialog.setContent(selectionPanel);
+      selectionPanel.setDevice(deviceName, deviceOut);
+      dialog.start();
+
+      if (!dialog.wasCanceled()) {
+          setDevice(selectionPanel.getDeviceName(), selectionPanel.getDeviceOut());
+      }
+  }
+
   public void setDevice(String deviceName, boolean out) {
-      if (this.deviceName != null) {
-          try {
-              DevicePool.removeLogger(logger, this.deviceName, this.out);
-          } catch (MidiUnavailableException ex) {
-              throw new Error();
+      if (this.deviceName == null && deviceName != null ||
+          this.deviceName != null && !this.deviceName.equals(deviceName) ||
+          this.deviceOut != out) {
+
+          if (this.deviceName != null) {
+              try {
+                  DevicePool.removeLogger(logger, this.deviceName, this.deviceOut);
+              } catch (MidiUnavailableException ex) {
+                  throw new Error();
+              }
           }
-      }
-      
-      this.deviceName = deviceName;
-      this.out        = out;
-      
-      if (this.deviceName != null) {
-          try {
-              DevicePool.addLogger(logger, deviceName, out);
-          } catch (MidiUnavailableException ex) {
-              throw new Error();
+          
+          this.deviceName = deviceName;
+          this.deviceOut  = out;          
+          
+          if (this.deviceName != null) {
+              try {
+                  open = DevicePool.addLogger(logger, deviceName, out);
+              } catch (MidiUnavailableException ex) {
+                  this.deviceName = null;
+              }
           }
+
+          clear();
       }
+      updateMessagesLabel();
+  }
+  
+  protected void updateMessagesLabel() {
+      String text;
+      if (deviceName == null) {
+          text = resources.getString("log.header.noDevice");
+      } else {
+          text = deviceName + ", " +
+                 (deviceOut ? "out" : "in") + ", " +
+                 (open ? resources.getString("log.header.open") : resources.getString("log.header.closed")); 
+      }
+      messagesLabel.setText(text);
   }
   
   private void prepareColumn(int index, int width, int align) {
@@ -245,14 +277,6 @@ public class MidiLog extends JPanel {
 
     column.setCellRenderer(new MessageCellRenderer(align));
     column.setPreferredWidth(width);
-  }
-  
-  public boolean getHex() {
-    return hexButton.isSelected();
-  }
-  
-  public void setHex(boolean hex) {
-    hexButton.setSelected(hex);
   }
   
   public void clear() {
@@ -264,9 +288,15 @@ public class MidiLog extends JPanel {
   private class InternalMidiLogger implements MidiLogger {
 
     public void opened() {
+        open = true;
+        
+        updateMessagesLabel();
     }
 
     public void closed() {
+        open = false;
+        
+        updateMessagesLabel();
     }
 
     public void log(MidiMessage message) {
@@ -280,7 +310,7 @@ public class MidiLog extends JPanel {
         table.scrollRectToVisible(table.getCellRect(row, 0, true));
       }
         
-      int over = messages.size() - max;
+      int over = messages.size() - Configuration.instance().getMax();
       if (over > 0) { 
           for (int m = 0; m < over; m++) {
               messages.remove(0);
@@ -291,7 +321,7 @@ public class MidiLog extends JPanel {
     }
   }
   
-  private class MessagesModel extends AbstractTableModel implements ConfigurationListener {
+  private class MessagesModel extends AbstractTableModel {
 
     private String[] names = new String[]{"Status", "Data 1", "Data 2", "Channel", "Note", "Event"};
     
@@ -326,12 +356,6 @@ public class MidiLog extends JPanel {
           return message.getEvent();
       }
       return null;
-    }
-    
-    public void configurationBackup(ConfigurationEvent event) { }
-    
-    public void configurationChanged(ConfigurationEvent event) {
-      setHex(Configuration.instance().getMidiLogHex());
     }
   }
   
@@ -406,7 +430,7 @@ public class MidiLog extends JPanel {
     }
     
     private String format(int value) {
-      return Integer.toString(value, getHex() ? 16 : 10); 
+      return Integer.toString(value, hexButton.isSelected() ? 16 : 10); 
     }    
   }
   
@@ -430,12 +454,5 @@ public class MidiLog extends JPanel {
                     
         return label;
     }
-  }
-  
-  protected void chooseDevice() {
-      JDialog dialog = new JDialog();
-      
-      MidiFilterPanel chooser = new MidiFilterPanel();
-      dialog.getContentPane().add(chooser);
   }
 }

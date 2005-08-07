@@ -35,9 +35,9 @@ import jorgan.swing.font.*;
 import jorgan.swing.color.*;
 
 /**
- * A panel for the {@link jorgan.swing.view.Configuration}.
+ * A panel for the {@link jorgan.gui.view.Configuration}.
  */
-public class SwingViewConfigPanel extends ConfigurationPanel {
+public class GUIViewConfigPanel extends ConfigurationPanel {
 
   private JCheckBox interpolateCheckBox = new JCheckBox();
   private JPanel shortcutsPanel = new JPanel();
@@ -61,7 +61,7 @@ public class SwingViewConfigPanel extends ConfigurationPanel {
   private FontSelector tremulantFontSelector = new FontSelector();
   private FontSelector variationFontSelector = new FontSelector();
 
-  public SwingViewConfigPanel() {
+  public GUIViewConfigPanel() {
     setLayout(new GridBagLayout());
 
     setName(resources.getString("config.view.name"));

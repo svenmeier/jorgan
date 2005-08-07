@@ -54,6 +54,7 @@ public class OrganShell implements UI {
     commands.add(new HelpCommand());
     commands.add(new EncodingCommand());
     commands.add(new OpenCommand());
+    commands.add(new CloseCommand());
     commands.add(new RecentCommand());
     commands.add(new SaveCommand());
     commands.add(new ExitCommand());
@@ -191,6 +192,25 @@ public class OrganShell implements UI {
         return;
       }
       openOrgan(new File(param));
+    }
+  }
+
+  /**
+   * The command for closing of a disposition.
+   */
+  private class CloseCommand extends AbstractCommand {
+    public String getPrefix() {
+      return "command.close";
+    }
+    public void execute(String param) {
+      if (file == null) {
+        showMessage("command.close.file", new Object[0]);
+        return;
+      }
+      file = null;
+      setOrgan(null);
+
+      showMessage("command.close.confirm", new Object[0]);
     }
   }
 

@@ -125,7 +125,7 @@ public class DevicePool {
     return names;
   }
 
-  public static void addLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
+  public static boolean addLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
       SharedDevice device = getSharedDevice(name, out);
 
       if (out) {
@@ -133,6 +133,8 @@ public class DevicePool {
       } else {
         device.inLoggers.add(logger);
       }
+      
+      return device.isOpen();
   }
   
   public static void removeLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {

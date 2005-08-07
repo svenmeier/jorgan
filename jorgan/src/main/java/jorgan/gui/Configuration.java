@@ -51,13 +51,11 @@ public class Configuration extends PreferencesConfiguration {
   private Configuration(boolean sharedFlag) {
     addChild(jorgan.gui.console.Configuration.instance());
     addChild(jorgan.gui.construct.Configuration.instance());
-    addChild(jorgan.gui.midi.Configuration.instance());
   }
 
   public Configuration() {
     addChild(new jorgan.gui.console.Configuration());
     addChild(new jorgan.gui.construct.Configuration());
-    addChild(new jorgan.gui.midi.Configuration());
   }
 
   protected void restore(Preferences prefs) {
