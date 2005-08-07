@@ -36,8 +36,10 @@ import jorgan.sound.midi.BugFix;
  */
 public class OrganPlay  {
 
-  private final Object LOCK = new Object();
+  private final Object CHANGE_LOCK = new Object();
   
+  private final Object RECEIVER_LOCK = new Object();
+
   private boolean open;
   
   /**
@@ -192,9 +194,11 @@ public class OrganPlay  {
   }
   
   public void open() {
-    open = true;
+    if (open) {
+      throw new IllegalStateException("already open");
+    }
 
-    synchronized(LOCK) {
+    synchronized (CHANGE_LOCK) {
       Iterator iterator = players.values().iterator();
       while (iterator.hasNext()) {
         Player player = (Player)iterator.next();
@@ -207,6 +211,10 @@ public class OrganPlay  {
         player.elementChanged(null);
       }
     }
+    
+    synchronized (RECEIVER_LOCK) {
+      open = true;
+    }
   }
   
   public boolean isOpen() {
@@ -218,15 +226,17 @@ public class OrganPlay  {
       throw new IllegalStateException("not open");
     }
     
-    synchronized(LOCK) {
+    synchronized (RECEIVER_LOCK) {
+      open = false;
+    }
+    
+    synchronized(CHANGE_LOCK) {      
       Iterator iterator = players.values().iterator();
       while (iterator.hasNext()) {
         Player player = (Player)iterator.next();
         player.close();
       }
-    }
-    
-    open = false;
+    }    
   }
 
   protected void createPlayer(Element element) {
@@ -294,15 +304,17 @@ public class OrganPlay  {
       public void close() { }
 
       public void send(MidiMessage message, long timestamp) {
-        if (message instanceof ShortMessage) {
-          ShortMessage shortMessage = (ShortMessage)message;
+        synchronized (RECEIVER_LOCK) {
+          if (open && message instanceof ShortMessage) {
+            ShortMessage shortMessage = (ShortMessage)message;
 
-          int status = BugFix.getStatus(shortMessage);
-          if (status != ShortMessage.ACTIVE_SENSING &&
-              status != ShortMessage.TIMING_CLOCK) {
+            int status = BugFix.getStatus(shortMessage);
+            if (status != ShortMessage.ACTIVE_SENSING &&
+                status != ShortMessage.TIMING_CLOCK) {
 
-            synchronized(LOCK) {
-              player.input(shortMessage);
+              synchronized(CHANGE_LOCK) {
+                player.input(shortMessage);
+              }
             }
           }
         }
@@ -313,7 +325,7 @@ public class OrganPlay  {
   private class EventHandler extends OrganAdapter implements ConfigurationListener {
 
     public void elementChanged(OrganEvent event) {     
-      synchronized(LOCK) {
+      synchronized(CHANGE_LOCK) {
         Player player = getPlayer(event.getElement());
         if (player != null) {
           player.elementChanged(event);
@@ -322,19 +334,19 @@ public class OrganPlay  {
     }
 
     public void elementAdded(OrganEvent event) {
-      synchronized(LOCK) {
+      synchronized(CHANGE_LOCK) {
         createPlayer(event.getElement());
       }
     }
 
     public void elementRemoved(OrganEvent event) {
-      synchronized(LOCK) {
+      synchronized(CHANGE_LOCK) {
         dropPlayer(event.getElement());
       }
     }
     
     public void configurationChanged(ConfigurationEvent ev) {
-      synchronized(LOCK) {
+      synchronized(CHANGE_LOCK) {
         Iterator iterator = players.values().iterator();
         while (iterator.hasNext()) {
           Player player = (Player)iterator.next();

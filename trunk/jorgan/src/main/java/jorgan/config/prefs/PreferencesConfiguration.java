@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import java.util.prefs.*;
 
 import jorgan.config.AbstractConfiguration;
-import jorgan.gui.midi.Configuration;
+import jorgan.midi.log.Configuration;
 
 /**
  * Abstract base class for configurations that can backup to / restore from

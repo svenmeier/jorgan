@@ -20,6 +20,7 @@ package jorgan.swing;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.ResourceBundle;
 
 import javax.swing.*;
 
@@ -28,8 +29,13 @@ import jorgan.swing.border.*;
 /**
  * A standard dialog.
  */
-public abstract class StandardDialog extends JDialog {
+public class StandardDialog extends JDialog {
 
+  /**
+   * The resource bundle.
+   */
+  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+  
   /**
    * The panel holding the description of the content.
    */
@@ -44,6 +50,8 @@ public abstract class StandardDialog extends JDialog {
    * The panel holding the buttons.
    */
   private ButtonPane buttonPane = new ButtonPane();
+  
+  private boolean canceled = false;
 
   /**
    * Constructor.
@@ -62,7 +70,7 @@ public abstract class StandardDialog extends JDialog {
     setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     addWindowListener(new WindowAdapter() {
       public void windowClosing(WindowEvent ev) {
-        stop();
+        cancel();
       }
     });
   }
@@ -104,6 +112,40 @@ public abstract class StandardDialog extends JDialog {
   }
   
   /**
+   * Add an action for OK.
+   */
+  public void addOKAction() {
+    addAction(new OKAction(), false);    
+  }
+
+  /**
+   * Add an action for cancel.
+   */
+  public void addCancelAction() {
+    addAction(new CancelAction(), false);    
+  }
+
+  /**
+   * Add an action for OK.
+   * 
+   * @param isDefault  should the button of the action be the
+   *                   default action
+   */
+  public void addOKAction(boolean isDefault) {
+    addAction(new OKAction(), isDefault);    
+  }
+
+  /**
+   * Add an action for cancel.
+   * 
+   * @param isDefault  should the button of the action be the
+   *                   default action
+   */
+  public void addCancelAction(boolean isDefault) {
+    addAction(new CancelAction(), isDefault);    
+  }
+
+  /**
    * Add an action.
    * 
    * @param action    action to add
@@ -116,14 +158,14 @@ public abstract class StandardDialog extends JDialog {
    * Add an action and optionally set its button as the default button of
    * this dialog.
    *  
-   * @param action        action to add
-   * @param defaultAction should the button of the action be the
-   *                      default action
+   * @param action     action to add
+   * @param isDefault  should the button of the action be the
+   *                   default action
    */
-  public void addAction(Action action, boolean defaultAction) {
+  public void addAction(Action action, boolean isDefault) {
     JButton button = buttonPane.add(action);
     
-    if (defaultAction) {    
+    if (isDefault) {    
       getRootPane().setDefaultButton(button);
     }
   }
@@ -134,13 +176,20 @@ public abstract class StandardDialog extends JDialog {
     setVisible(true);
   }
 
-  public void stop() {
-    cancel();
-
+  public void cancel() {
+    canceled = true;
+    
     setVisible(false);
   }
-  
-  public void cancel() {
+
+  public void ok() {
+    canceled = false;
+      
+    setVisible(false);
+  }
+
+  public boolean wasCanceled() {
+    return canceled;
   }
   
   /**
@@ -163,7 +212,7 @@ public abstract class StandardDialog extends JDialog {
       getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "CANCEL");
       getActionMap().put("CANCEL", new AbstractAction() {
         public void actionPerformed(ActionEvent e) {
-          stop();
+          cancel();
         }
       });
     }
@@ -306,4 +355,26 @@ public abstract class StandardDialog extends JDialog {
       }
     }
   }
+  
+  private class CancelAction extends AbstractAction {
+
+    public CancelAction() {
+      putValue(Action.NAME, resources.getString("dialog.cancel"));
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+      cancel();
+    }
+  }
+  
+  private class OKAction extends AbstractAction {
+
+    public OKAction() {
+      putValue(Action.NAME, resources.getString("dialog.ok"));
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+      ok();
+    }
+  }    
 }

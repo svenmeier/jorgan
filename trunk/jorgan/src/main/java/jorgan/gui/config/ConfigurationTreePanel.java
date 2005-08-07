@@ -60,7 +60,6 @@ public class ConfigurationTreePanel extends JPanel {
     tree.setShowsRootHandles(true);
     tree.setModel(new ConfigurationTreeModel());
     tree.setCellRenderer(new ConfigurationRenderer());
-    tree.setRootVisible(false);
     tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     tree.addTreeSelectionListener(new TreeSelectionListener() {
       public void valueChanged(TreeSelectionEvent ev) {
@@ -87,10 +86,10 @@ public class ConfigurationTreePanel extends JPanel {
       contentPanel.add(cardPanel, BorderLayout.CENTER);
 
         cardPanel.addCard(new JOrganConfigPanel()   , jorgan.Configuration.class);
-        cardPanel.addCard(new SwingConfigPanel()    , jorgan.gui.Configuration.class);
-        cardPanel.addCard(new SwingViewConfigPanel()     , jorgan.gui.console.Configuration.class);
-        cardPanel.addCard(new SwingConstructConfigPanel(), jorgan.gui.construct.Configuration.class);
-        cardPanel.addCard(new SwingMidiConfigPanel(), jorgan.gui.midi.Configuration.class);
+        cardPanel.addCard(new GUIConfigPanel()    , jorgan.gui.Configuration.class);
+        cardPanel.addCard(new GUIViewConfigPanel()     , jorgan.gui.console.Configuration.class);
+        cardPanel.addCard(new GUIConstructConfigPanel(), jorgan.gui.construct.Configuration.class);
+        cardPanel.addCard(new MidiLogConfigPanel(), jorgan.midi.log.Configuration.class);
         cardPanel.addCard(new MidiConfigPanel()     , jorgan.midi.Configuration.class);
         cardPanel.addCard(new MidiMergeConfigPanel(), jorgan.midi.merge.Configuration.class);
         cardPanel.addCard(new PlayConfigPanel()     , jorgan.play.Configuration.class);
@@ -111,9 +110,10 @@ public class ConfigurationTreePanel extends JPanel {
     }
   }
 
-  public void setConfiguration(AbstractConfiguration configuration) {
+  public void setConfiguration(AbstractConfiguration configuration, boolean showRoot) {
     this.configuration = configuration;
 
+    tree.setRootVisible(showRoot);
     tree.setModel(new ConfigurationTreeModel());
 
     showConfiguration(configuration);

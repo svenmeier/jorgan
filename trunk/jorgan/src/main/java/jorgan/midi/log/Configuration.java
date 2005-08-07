@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.midi;
+package jorgan.midi.log;
 
 import java.util.prefs.*;
 
@@ -27,13 +27,11 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
     
-  private static final int     MIDI_LOG_MAX = 500;
-  private static final boolean MIDI_LOG_HEX = false;
+  private static final int MAX    = 500;
   
   private static Configuration sharedInstance = new Configuration(true);
 
-  private int       midiLogMax;
-  private boolean   midiLogHex;
+  private int max;
 
   private Configuration(boolean sharedFlag) {
   }
@@ -42,31 +40,19 @@ public class Configuration extends PreferencesConfiguration {
   }
 
   protected void restore(Preferences prefs) {
-    midiLogMax = getInt    (prefs, "midiLogMax", MIDI_LOG_MAX);
-    midiLogHex = getBoolean(prefs, "midiLogHex", MIDI_LOG_HEX);
+    max = getInt(prefs, "max"   , MAX);
   }
 
   protected void backup(Preferences prefs) {
-    putInt    (prefs, "midiLogMax", midiLogMax);
-    putBoolean(prefs, "midiLogHex", midiLogHex);
+    putInt    (prefs, "max", max);
   }
 
-  public int getMidiLogMax() {
-    return midiLogMax;
+  public int getMax() {
+    return max;
   }
   
-  public boolean getMidiLogHex() {
-    return midiLogHex;
-  }
-  
-  public void setMidiLogMax(int midiLogMax) {
-    this.midiLogMax = midiLogMax;
-    
-    fireConfigurationChanged();
-  }
-  
-  public void setMidiLogHex(boolean midiLogHex){
-    this.midiLogHex = midiLogHex;
+  public void setMax(int max) {
+    this.max = max;
     
     fireConfigurationChanged();
   }

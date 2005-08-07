@@ -25,16 +25,16 @@ import jorgan.gui.construct.Configuration;
 import jorgan.swing.color.*;
 
 /**
- * A panel for the {@link jorgan.swing.construct.Configuration}.
+ * A panel for the {@link jorgan.gui.construct.Configuration}.
  */
-public class SwingConstructConfigPanel extends ConfigurationPanel {
+public class GUIConstructConfigPanel extends ConfigurationPanel {
 
   private JLabel gridLabel = new JLabel();
   private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 256, 1)); 
   private JLabel        colorLabel = new JLabel();
   private ColorSelector colorSelector = new ColorSelector();
 
-  public SwingConstructConfigPanel() {
+  public GUIConstructConfigPanel() {
     setLayout(new GridBagLayout());
 
     setName(resources.getString("config.construct.name"));

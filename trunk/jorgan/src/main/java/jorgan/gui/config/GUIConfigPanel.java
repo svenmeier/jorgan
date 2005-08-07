@@ -24,15 +24,15 @@ import javax.swing.*;
 import jorgan.gui.Configuration;
 
 /**
- * A panel for the {@link jorgan.swing.Configuration}.
+ * A panel for the {@link jorgan.gui.Configuration}.
  */
-public class SwingConfigPanel extends ConfigurationPanel {
+public class GUIConfigPanel extends ConfigurationPanel {
 
   private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
   private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
   private JCheckBox disableScreenSaverCheckBox = new JCheckBox();
 
-  public SwingConfigPanel() {
+  public GUIConfigPanel() {
     setLayout(new GridBagLayout());
 
     setName(resources.getString("config.swing.name"));

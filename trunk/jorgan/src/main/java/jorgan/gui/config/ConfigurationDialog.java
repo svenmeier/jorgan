@@ -19,7 +19,8 @@
 package jorgan.gui.config;
 
 import java.util.*;
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.*;
 import javax.swing.*;
 
@@ -47,7 +48,7 @@ public class ConfigurationDialog extends StandardDialog {
   /**
    * Constructor.
    */
-  public ConfigurationDialog(Frame owner) {
+  private ConfigurationDialog(JFrame owner, AbstractConfiguration configuration, boolean showRoot) {
     super(owner);
 
     setTitle(resources.getString("config.title"));
@@ -55,20 +56,15 @@ public class ConfigurationDialog extends StandardDialog {
     setContent(configTreePanel);
 
     addAction(okAction, true);
-    addAction(cancelAction);    
-  }
+    addAction(cancelAction);
 
-  public void setConfiguration(AbstractConfiguration configuration) {
     this.configuration = configuration;
-     
-    if (configuration != null) {
-      configuration.backup();
+    configuration.backup();
 
-      try {
-        configTreePanel.setConfiguration((AbstractConfiguration)configuration.getClass().newInstance());
-      } catch (Exception ex) {
-        throw new Error("unable to create configuration '" + configuration.getClass() + "'");
-      }
+    try {
+      configTreePanel.setConfiguration((AbstractConfiguration)configuration.getClass().newInstance(), showRoot);
+    } catch (Exception ex) {
+      throw new Error("unable to create configuration '" + configuration.getClass() + "'");
     }
   }
 
@@ -98,5 +94,16 @@ public class ConfigurationDialog extends StandardDialog {
     public void actionPerformed(ActionEvent ev) {
       setVisible(false);
     }
+  }
+  
+  public static ConfigurationDialog create(Component owner, AbstractConfiguration configuration, boolean showRoot) {
+    Window window;
+    if (owner instanceof JFrame) {
+        window = (JFrame)owner;
+    } else {
+        window = SwingUtilities.getWindowAncestor(owner);
+    }
+    
+    return new ConfigurationDialog((JFrame)window, configuration, showRoot);
   }
 }

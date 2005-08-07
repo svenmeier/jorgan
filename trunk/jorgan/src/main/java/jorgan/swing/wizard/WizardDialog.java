@@ -33,12 +33,11 @@ public class WizardDialog extends StandardDialog {
   /**
    * The resource bundle.
    */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
 
   private Action previousAction = new PreviousAction();
   private Action nextAction     = new NextAction();
   private Action finishAction   = new FinishAction();
-  private Action cancelAction   = new CancelAction();
   
   private WizardListener listener = new InternalWizardListener();
   
@@ -55,7 +54,7 @@ public class WizardDialog extends StandardDialog {
     addAction(previousAction);
     addAction(nextAction);
     addAction(finishAction, true);
-    addAction(cancelAction);
+    addCancelAction();
     
     setWizard(new BasicWizard());       
   }
@@ -107,17 +106,6 @@ public class WizardDialog extends StandardDialog {
     }
   }
 
-  private class CancelAction extends AbstractAction {
-
-    public CancelAction() {
-      putValue(Action.NAME, resources.getString("wizard.cancel"));
-    }
-
-    public void actionPerformed(ActionEvent ev) {
-      setVisible(false);
-    }
-  }
-  
   private class InternalWizardListener implements WizardListener {
     public void wizardChanged() {
       Page current = wizard.getCurrentPage();
@@ -144,11 +132,11 @@ public class WizardDialog extends StandardDialog {
     }
      
     public void wizardCanceled() {
-      setVisible(false);
+      cancel();
     }
     
     public void wizardFinished() {
-      setVisible(false);
+      ok();
     }
   }
 }

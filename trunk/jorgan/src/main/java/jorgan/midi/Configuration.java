@@ -32,10 +32,12 @@ public class Configuration extends PreferencesConfiguration {
   
   private Configuration(boolean sharedFlag) {
     addChild(jorgan.midi.merge.Configuration.instance());
+    addChild(jorgan.midi.log.Configuration.instance());
   }
 
   public Configuration() {
     addChild(new jorgan.midi.merge.Configuration());
+    addChild(new jorgan.midi.log.Configuration());
   }
   
   protected void restore(Preferences prefs) {
