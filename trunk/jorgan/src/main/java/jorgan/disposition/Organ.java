@@ -33,10 +33,13 @@ public class Organ {
                                                SoundSource.class,
                                                Stop.class,
                                                Coupler.class,
-                                               Piston.class,
+                                               Combination.class,
                                                Swell.class,
                                                Tremulant.class,
-                                               Variation.class}; 
+                                               Variation.class,
+                                               Sequence.class,
+                                               Activator.class,
+                                               Crescendo.class}; 
   
   /**
    * Registered listeners.

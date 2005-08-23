@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.DataEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Variation}.
  */
-public class VariationBeanInfo extends RegistratableBeanInfo {
+public class VariationBeanInfo extends ActivateableBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

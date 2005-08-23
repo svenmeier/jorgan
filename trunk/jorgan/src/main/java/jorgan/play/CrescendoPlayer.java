@@ -16,41 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.play;
+
+import jorgan.disposition.*;
 
 /**
- * A variation.
+ * A player for a crescendo.
  */
-public class Variation extends Activateable implements SoundEffect {
+public class CrescendoPlayer extends SliderPlayer {
 
-  private int program = 0;
-  private int bank    = 0;
-
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
-    }
-
-    this.program = program;
-
-    fireElementChanged(true);
-  }
-
-  public int getProgram() {
-    return program;
-  }
-
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
-
-    this.bank = bank;
-
-    fireElementChanged(true);
-  }
-
-  public int getBank() {
-    return bank;
+  public CrescendoPlayer(Crescendo crescendo) {
+    super(crescendo);
   }
 }

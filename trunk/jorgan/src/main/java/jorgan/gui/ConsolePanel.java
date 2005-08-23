@@ -403,12 +403,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
   private void createView(jorgan.disposition.Element element) {
     View view = null;
 
-    if (element instanceof Registratable) {
-      view = new RegistratableView((Registratable)element);   
-    } else if (element instanceof Swell) {
-      view = new SwellView((Swell)element);   
-    } else if (element instanceof Piston) {
-      view = new PistonView((Piston)element);   
+    if (element instanceof Activateable) {
+      view = new ActivateableView((Activateable)element);   
+    } else if (element instanceof Slider) {
+      view = new SliderView((Slider)element);   
+    } else if (element instanceof Combination) {
+      view = new CombinationView((Combination)element);   
+    } else if (element instanceof Sequence) {
+        view = new SequenceView((Sequence)element);   
     } else {
       view = new OtherView(element);
     }

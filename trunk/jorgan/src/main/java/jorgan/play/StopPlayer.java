@@ -156,18 +156,18 @@ public class StopPlayer extends KeyablePlayer {
   public void elementChanged(OrganEvent event) {
     Stop stop = (Stop)getElement();
       
-    if (stop.getOnMessage() == null &&
+    if (stop.getActivateMessage() == null &&
         Configuration.instance().getWarnStopWithoutMessage()) {
-      addProblem(onMessageWarning(stop.getOnMessage()));
+      addProblem(onMessageWarning(stop.getActivateMessage()));
     } else {
-      removeProblem(onMessageWarning(stop.getOnMessage()));
+      removeProblem(onMessageWarning(stop.getActivateMessage()));
     }
 
-    if (stop.getOffMessage() == null &&
+    if (stop.getDeactivateMessage() == null &&
         Configuration.instance().getWarnStopWithoutMessage()) {
-      addProblem(offMessageWarning(stop.getOffMessage()));
+      addProblem(offMessageWarning(stop.getDeactivateMessage()));
     } else {
-      removeProblem(offMessageWarning(stop.getOffMessage()));
+      removeProblem(offMessageWarning(stop.getDeactivateMessage()));
     }
 
     super.elementChanged(event);

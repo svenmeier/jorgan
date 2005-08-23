@@ -82,4 +82,19 @@
         	<exclude name="dist/**/*"/>
         </zip>
     </target>
+
+    <target name="run" description="Run application" >
+    	<java classname="jorgan.App" fork="true">
+    		<sysproperty key="user.language" value="en"/>
+    		<sysproperty key="jorgan.skins.path" value="../skins"/>
+    		<sysproperty key="jorgan.creative.library.path" value="../sounds/creative/build/native/win32"/>
+     		<sysproperty key="jorgan.docs.path" value="../docs/build"/>
+    		<classpath path="build" />
+    		<classpath>
+                <fileset dir="./lib">
+    	            <include name="*" />
+                </fileset>
+    		</classpath>
+    	</java>
+    </target>
 </project>

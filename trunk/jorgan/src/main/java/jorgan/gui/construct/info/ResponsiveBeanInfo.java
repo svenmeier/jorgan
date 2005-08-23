@@ -22,13 +22,13 @@ import jorgan.disposition.*;
 import jorgan.gui.construct.editor.ShortcutEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Active}.
+ * BeanInfo for {@link jorgan.disposition.Responsive}.
  */                                       
-public class ActiveBeanInfo extends ElementBeanInfo {
+public class ResponsiveBeanInfo extends ElementBeanInfo {
 
   protected void registerProperties() {
     super.registerProperties();
 
-    add("shortcut", Active.class, ShortcutEditor.class);
+    add("shortcut", Responsive.class, ShortcutEditor.class);
   }  
 }

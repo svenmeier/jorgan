@@ -19,19 +19,19 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.*;
-import jorgan.gui.construct.editor.BooleanEditor;
+import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.MessageEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Registratable}.
+ * BeanInfo for {@link jorgan.disposition.Slider}.
  */
-public class RegistratableBeanInfo extends ActiveBeanInfo {
+public class SliderBeanInfo extends ResponsiveBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();
 
-        add("onMessage", Registratable.class, MessageEditor.class);
-        add("offMessage", Registratable.class, MessageEditor.class);
-        add("on", Registratable.class, BooleanEditor.class);
+        add("message", Slider.class, MessageEditor.class);
+        add("position", Slider.class, DataEditor.class);
+        add("threshold", Slider.class, DataEditor.class);
     }
 }

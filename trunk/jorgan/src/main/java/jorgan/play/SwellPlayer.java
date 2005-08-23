@@ -19,9 +19,6 @@
 package jorgan.play;
 
 import java.util.*;
-import javax.sound.midi.ShortMessage;
-
-import jorgan.sound.midi.BugFix;
 
 import jorgan.disposition.*;
 import jorgan.disposition.event.*;
@@ -30,7 +27,7 @@ import jorgan.play.sound.*;
 /**
  * A player for a swell.
  */
-public class SwellPlayer extends Player implements SoundEffectPlayer {
+public class SwellPlayer extends SliderPlayer implements SoundEffectPlayer {
 
   private List sounds = new ArrayList();
 
@@ -38,32 +35,13 @@ public class SwellPlayer extends Player implements SoundEffectPlayer {
     super(swell);
   }
 
-  public void messageReceived(ShortMessage shortMessage) {
-    Swell swell = (Swell)getElement();
-
-    Message message = swell.getMessage();
-    if (message != null &&
-        message.match(BugFix.getStatus(shortMessage), shortMessage.getData1(), shortMessage.getData2())) {
-
-      if (message.getData1() == -1) {
-        swell.setPosition(shortMessage.getData1());
-      } else if (message.getData2() == -1) {
-        swell.setPosition(shortMessage.getData2());
-      } 
-    }
+  protected void closeImpl() {
+    sounds.clear();
   }
 
   public void elementChanged(OrganEvent event) {
-    Swell swell = (Swell)getElement();
+    super.elementChanged(event);
     
-    PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
-    if (swell.getMessage() == null &&
-        Configuration.instance().getWarnSwellWithoutMessage()) {
-      addProblem(problem);
-    } else {
-      removeProblem(problem);
-    }
-
     if (isOpen()) {
       for (int s = 0; s < sounds.size(); s++) {
         SwellSound sound = (SwellSound)sounds.get(s);
@@ -80,6 +58,9 @@ public class SwellPlayer extends Player implements SoundEffectPlayer {
   private class SwellSound extends SoundWrapper {
     
     private int volume = 127;
+    
+    private int oldVolume = -1;
+    private int oldCutoff = -1;
     
     public SwellSound(Sound sound) {
       super(sound);
@@ -102,15 +83,31 @@ public class SwellPlayer extends Player implements SoundEffectPlayer {
     private void flush() {
       Swell swell = (Swell)getElement();
 
-      sound.setVolume((swell.getVolume() + (swell.getPosition() * (127 - swell.getVolume()) / 127)) * volume / 127);
+      boolean output = false;
+      
+      int newVolume = (swell.getVolume() + (swell.getPosition() * (127 - swell.getVolume()) / 127)) * volume / 127;
+      if (newVolume != oldVolume) {
+        sound.setVolume(newVolume);
+        oldVolume = newVolume;
+        
+        output = true;
+      }
 
       // Change cutoff only if lower than max value, so user can choose to not use
       // this feature in case of soundfonts with preset cutoff values.
       if (swell.getCutoff() < 127) {
-        sound.setCutoff(swell.getCutoff() + (swell.getPosition() * (127 - swell.getCutoff()) / 127));
-      } 
+        int newCutoff = swell.getCutoff() + (swell.getPosition() * (127 - swell.getCutoff()) / 127);
+        if (newCutoff != oldCutoff) {
+          sound.setCutoff(newCutoff);
+          oldCutoff = newCutoff;
 
-      fireOutputProduced();
+          output = true;
+        }
+      } 
+      
+      if (output) {
+        fireOutputProduced();
+      }
     }
   }
 }

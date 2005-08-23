@@ -16,46 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.io.disposition;
 
-/**
- * Abstract base class for registratable elements.
- */
-public abstract class Registratable extends Active {
+import org.xml.sax.*;
 
-  private boolean   on;
-  private Message   onMessage;
-  private Message   offMessage;
+import jorgan.disposition.*;
+import jorgan.xml.*;
 
-  public void setOn(boolean on) {
-    if (this.on != on) {
-      this.on = on;
-      
-      fireElementChanged(false);
-    }
+public class CrescendoHandler extends SliderHandler {
+
+  private Crescendo crescendo;
+
+  public CrescendoHandler(AbstractReader reader, Attributes attributes) {
+    super(reader, attributes);
+
+    crescendo = new Crescendo();
   }
 
-  public boolean isOn() {
-    return on;
+  public CrescendoHandler(AbstractWriter writer, String tag, Crescendo crescendo) {
+    super(writer, tag);
+
+    this.crescendo = crescendo;
   }
 
-  public Message getOnMessage() {
-    return onMessage;
+  public Crescendo getCrescendo() {
+    return crescendo;
   }
 
-  public Message getOffMessage() {
-    return offMessage;
-  }
-
-  public void setOnMessage(Message message) {
-    this.onMessage = message;
-
-    fireElementChanged(true);
-  }
-
-  public void setOffMessage(Message message) {
-    this.offMessage = message;
-
-    fireElementChanged(true);
+  protected Slider getSlider() {
+    return getCrescendo();
   }
 }

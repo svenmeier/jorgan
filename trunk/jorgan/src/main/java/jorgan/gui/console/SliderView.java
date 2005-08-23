@@ -24,9 +24,9 @@ import java.awt.event.*;
 import jorgan.disposition.*;
 
 /**
- * A view for a swell.
+ * A view for a slider.
  */
-public class SwellView extends View {
+public class SliderView extends View {
 
   private static final int HEIGHT = 13;
   private static final int WIDTH  = 80;
@@ -36,18 +36,28 @@ public class SwellView extends View {
   private int     oldX;
   private int     oldY;
 
-  public SwellView(Swell swell) {
-    super(swell);
+  public SliderView(Slider slider) {
+    super(slider);
   }
     
+  protected Slider getSlider() {
+    return (Slider)getElement();
+  }
+  
   protected int getStateIndex() {
-    Swell swell = (Swell)getElement();
+    Slider slider = (Slider)getElement();
 
-    return swell.getPosition() * style.getStateCount() / 128; 
+    return slider.getPosition() * style.getStateCount() / 128; 
   }
 
   protected Font getNonStyleFont() {
-    return Configuration.instance().getSwellFont();  
+    Font font = null;
+    if (getSlider() instanceof Swell) {
+      font = Configuration.instance().getSwellFont();
+    } else if (getSlider() instanceof Crescendo) {
+      font = Configuration.instance().getCrescendoFont();
+    }
+    return font;  
   }
 
   protected Dimension getNonStyleSize() {
@@ -72,14 +82,14 @@ public class SwellView extends View {
   }
   
   private void paintSwell(Graphics2D g, int x, int y, int width, int height) {
-    Swell swell = (Swell)getElement();
+    Slider slider = (Slider)getElement();
 
     g.drawRect(x, y, width - 1, height - 1);
     if (pressed) {
       g.drawRect(x + 1, y + 1, width - 3, height - 3);
     }
     
-    int delta = (width - 2*3) * swell.getPosition() / 127;
+    int delta = (width - 2*3) * slider.getPosition() / 127;
     g.fillRect(x + 3, y + 3, delta, height - 2*3);
   }
   
@@ -99,12 +109,12 @@ public class SwellView extends View {
   public void released(int x, int y, MouseEvent ev) {
     pressed = false; 
 
-    // issue repaint since swell is actually not changed
+    // issue repaint since slider is actually not changed
     repaint();
   }
 
   public void dragged(int x, int y, MouseEvent ev) {
-    Swell swell = (Swell)getElement();
+    Slider slider = (Slider)getElement();
 
     int delta;
     if (!isStyled()) {
@@ -117,7 +127,7 @@ public class SwellView extends View {
       }
     }
 
-    swell.setPosition(swell.getPosition() + delta);
+    slider.setPosition(slider.getPosition() + delta);
                 
     oldX = x;
     oldY = y;

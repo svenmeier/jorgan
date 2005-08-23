@@ -24,11 +24,11 @@ import java.awt.event.*;
 import jorgan.disposition.*;
 
 /**
- * A view that shows a piston.
+ * A view that shows a combination.
  *
- * @see jorgan.disposition.Piston
+ * @see jorgan.disposition.Combination
  */
-public class PistonView extends View {
+public class SequenceView extends View {
  
   private static final int PADDING = 1;
   private static final int H_INSET = 8;
@@ -36,12 +36,12 @@ public class PistonView extends View {
 
   private boolean pressed = false;
   
-  public PistonView(Piston piston) {
-    super(piston);
+  public SequenceView(Sequence sequence) {
+    super(sequence);
   }
 
-  protected Piston getPiston() {
-    return (Piston)getElement();
+  protected Sequence getSequence() {
+    return (Sequence)getElement();
   }
   
   protected Dimension getNonStyleSize() {
@@ -59,14 +59,14 @@ public class PistonView extends View {
     Dimension size = getNonStyleSize();
     
     g.setColor(Color.black);
-    paintPiston(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
+    paintSequence(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
 
     g.setColor(Color.black);
     g.setFont(getNonStyleFont());
     paintName(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
   }
 
-  private void paintPiston(Graphics2D g, int x, int y, int width, int height) {  
+  private void paintSequence(Graphics2D g, int x, int y, int width, int height) {  
     g.drawRect(x, y, width - 1, height - 1);
     if (pressed) {
       g.drawRect(x + 1, y + 1, width - 3, height - 3);
@@ -80,37 +80,35 @@ public class PistonView extends View {
   public void pressed(int x, int y, MouseEvent ev) {
     pressed = true;
 
-    Piston piston = getPiston();
+    Sequence sequence = getSequence();
 
     if ((ev.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) == 0) {
-      piston.get();
+      sequence.next();
     } else {
-      if (!piston.isFixed()) {
-        piston.set();
-      }
+      sequence.previous();
     }
 
-    // issue repaint since piston is actually not changed
+    // issue repaint since sequence is actually not changed
     repaint();
   }
   
   public void released(int x, int y, MouseEvent ev) {
     pressed = false;
 
-    // issue repaint since piston is actually not changed
+    // issue repaint since combination is actually not changed
     repaint();
   }
   
   public void pressed(KeyEvent ev) {
 
-    Piston piston = getPiston();
+    Sequence sequence = getSequence();
 
-    Shortcut shortcut = piston.getShortcut();
+    Shortcut shortcut = sequence.getShortcut();
     if (shortcut != null && shortcut.match(ev)) {
       if ((ev.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
-        piston.get();
+        sequence.next();
       } else {
-        piston.set();        
+        sequence.previous();        
       }
     }
   } 
@@ -120,7 +118,7 @@ public class PistonView extends View {
   }
     
   protected Font getNonStyleFont() {
-    return Configuration.instance().getPistonFont();  
+    return Configuration.instance().getSequenceFont();  
   }
 }
 

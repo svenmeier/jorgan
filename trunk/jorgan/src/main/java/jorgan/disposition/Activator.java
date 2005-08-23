@@ -19,38 +19,11 @@
 package jorgan.disposition;
 
 /**
- * A variation.
+ * An activator.
  */
-public class Variation extends Activateable implements SoundEffect {
+public class Activator extends Activateable {
 
-  private int program = 0;
-  private int bank    = 0;
-
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
-    }
-
-    this.program = program;
-
-    fireElementChanged(true);
-  }
-
-  public int getProgram() {
-    return program;
-  }
-
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
-
-    this.bank = bank;
-
-    fireElementChanged(true);
-  }
-
-  public int getBank() {
-    return bank;
-  }
+  protected boolean canReference(Class clazz) {
+    return Activateable.class.isAssignableFrom(clazz);  
+  }    
 }

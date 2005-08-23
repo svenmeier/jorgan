@@ -22,34 +22,35 @@ import java.io.IOException;
 
 import org.xml.sax.*;
 
+import jorgan.disposition.Combination;
 import jorgan.disposition.Element;
-import jorgan.disposition.Piston;
 import jorgan.disposition.Reference;
+import jorgan.disposition.Sequence;
 import jorgan.xml.*;
 import jorgan.xml.handler.BooleanHandler;
 
 /**
  * A handler for references to another object.
  */
-public class PistonReferenceHandler extends ReferenceHandler {
+public class SequenceReferenceHandler extends ReferenceHandler {
 
-  private boolean on;
+  private boolean current;
   
-  public PistonReferenceHandler(AbstractReader reader, Attributes attributes) {
+  public SequenceReferenceHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
   }
 
-  public PistonReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
+  public SequenceReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
     super(writer, tag, reference);
   }
 
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("on".equals(qName)) {
+    if ("current".equals(qName)) {
       new BooleanHandler(getReader()) {
         public void finished() {
-          on = getBoolean();
+          current = getBoolean();
         }
       };
     } else {
@@ -60,16 +61,16 @@ public class PistonReferenceHandler extends ReferenceHandler {
   public void children() throws IOException {
     super.children();
 
-    Piston.RegistrationReference reference = (Piston.RegistrationReference)getReference(); 
-    if (reference.isOn()) {
-      new BooleanHandler(getWriter(), "on").start();
+    Sequence.SequenceReference reference = (Sequence.SequenceReference)getReference(); 
+    if (reference.isCurrent()) {
+      new BooleanHandler(getWriter(), "current").start();
     }
   }
 
   protected Reference createReference(Element element) {
-    Piston.RegistrationReference reference = new Piston.RegistrationReference(element);
+    Sequence.SequenceReference reference = new Sequence.SequenceReference((Combination)element);
     
-    reference.setOn(on);
+    reference.setCurrent(current);
      
     return reference;  
   }

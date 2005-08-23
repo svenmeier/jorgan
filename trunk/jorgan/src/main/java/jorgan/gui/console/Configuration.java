@@ -35,10 +35,13 @@ public class Configuration extends PreferencesConfiguration {
   private static final Font    LABEL_FONT      = new Font("Arial", Font.BOLD  , 14);
   private static final Font    STOP_FONT       = new Font("Arial", Font.PLAIN , 12);
   private static final Font    COUPLER_FONT    = new Font("Arial", Font.ITALIC, 12);
-  private static final Font    PISTON_FONT     = new Font("Arial", Font.PLAIN , 12);
+  private static final Font    COMBINATION_FONT= new Font("Arial", Font.PLAIN , 12);
+  private static final Font    SEQUENCE_FONT   = new Font("Arial", Font.PLAIN , 12);
   private static final Font    SWELL_FONT      = new Font("Arial", Font.PLAIN , 12);
+  private static final Font    CRESCENDO_FONT  = new Font("Arial", Font.PLAIN , 12);
   private static final Font    TREMULANT_FONT  = new Font("Arial", Font.ITALIC, 12);
   private static final Font    VARIATION_FONT  = new Font("Arial", Font.ITALIC, 12);
+  private static final Font    ACTIVATOR_FONT  = new Font("Arial", Font.PLAIN , 12);
   
   private static Configuration sharedInstance = new Configuration();
 
@@ -49,10 +52,13 @@ public class Configuration extends PreferencesConfiguration {
   private Font    labelFont;
   private Font    stopFont;
   private Font    couplerFont;
-  private Font    pistonFont;
+  private Font    combinationFont;
+  private Font    sequenceFont;
   private Font    swellFont;
+  private Font    crescendoFont;
   private Font    tremulantFont;
   private Font    variationFont;
+  private Font    activatorFont;
 
   protected void restore(Preferences prefs) {
     interpolate    = getBoolean(prefs, "interpolate", INTERPOLATE);
@@ -64,10 +70,13 @@ public class Configuration extends PreferencesConfiguration {
     labelFont      = getFont   (prefs, "labelFont"      , LABEL_FONT);
     stopFont       = getFont   (prefs, "stopFont"       , STOP_FONT);
     couplerFont    = getFont   (prefs, "couplerFont"    , COUPLER_FONT);
-    pistonFont     = getFont   (prefs, "pistonFont"     , PISTON_FONT);
+    combinationFont= getFont   (prefs, "combinationFont", COMBINATION_FONT);
+    sequenceFont   = getFont   (prefs, "sequenceFont"   , SEQUENCE_FONT);
     swellFont      = getFont   (prefs, "swellFont"      , SWELL_FONT);
+    crescendoFont  = getFont   (prefs, "crescendoFont"  , CRESCENDO_FONT);
     tremulantFont  = getFont   (prefs, "tremulantFont"  , TREMULANT_FONT);
     variationFont  = getFont   (prefs, "variationFont"  , VARIATION_FONT);
+    activatorFont  = getFont   (prefs, "activatorFont"  , ACTIVATOR_FONT);
   }
 
   protected void backup(Preferences prefs) {
@@ -80,10 +89,13 @@ public class Configuration extends PreferencesConfiguration {
     putFont   (prefs, "labelFont"     , labelFont);
     putFont   (prefs, "stopFont"      , stopFont);
     putFont   (prefs, "couplerFont"   , couplerFont);
-    putFont   (prefs, "pistonFont"    , pistonFont);
+    putFont   (prefs, "combinationFont", combinationFont);
+    putFont   (prefs, "sequenceFont"  , sequenceFont);
     putFont   (prefs, "swellFont"     , swellFont);
+    putFont   (prefs, "crescendoFont" , crescendoFont);
     putFont   (prefs, "tremulantFont" , tremulantFont);
     putFont   (prefs, "variationFont" , variationFont);
+    putFont   (prefs, "activatorFont" , activatorFont);
   }
 
   public boolean getInterpolate() {
@@ -114,13 +126,21 @@ public class Configuration extends PreferencesConfiguration {
     return couplerFont;
   }
 
-  public Font getPistonFont() {
-    return pistonFont;
+  public Font getCombinationFont() {
+    return combinationFont;
   }
+
+  public Font getSequenceFont() {
+      return sequenceFont;
+    }
 
   public Font getSwellFont() {
     return swellFont;
   }
+
+  public Font getCrescendoFont() {
+      return crescendoFont;
+    }
 
   public Font getTremulantFont() {
     return tremulantFont;
@@ -128,6 +148,10 @@ public class Configuration extends PreferencesConfiguration {
 
   public Font getVariationFont() {
     return variationFont;
+  }
+
+  public Font getActivatorFont() {
+    return activatorFont;
   }
 
   public void setInterpolate(boolean interpolate) {
@@ -172,15 +196,27 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
-  public void setPistonFont(Font pistonFont) {
-    this.pistonFont = pistonFont;
+  public void setCombinationFont(Font combinationFont) {
+    this.combinationFont = combinationFont;
     
+    fireConfigurationChanged();
+  }
+
+  public void setSequenceFont(Font sequenceFont) {
+    this.sequenceFont = sequenceFont;
+      
     fireConfigurationChanged();
   }
 
   public void setSwellFont(Font swellFont) {
     this.swellFont = swellFont;
 
+    fireConfigurationChanged();
+  }
+
+  public void setCrescendoFont(Font crescendoFont) {
+    this.crescendoFont = crescendoFont;
+        
     fireConfigurationChanged();
   }
 
@@ -193,6 +229,12 @@ public class Configuration extends PreferencesConfiguration {
   public void setVariationFont(Font variationFont) {
     this.variationFont = variationFont;
     
+    fireConfigurationChanged();
+  }
+
+  public void setActivatorFont(Font activatorFont) {
+    this.activatorFont = activatorFont;
+      
     fireConfigurationChanged();
   }
 

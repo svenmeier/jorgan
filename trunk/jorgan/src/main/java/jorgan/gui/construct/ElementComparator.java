@@ -41,7 +41,7 @@ public class ElementComparator implements Comparator {
     types.add(Swell.class);
     types.add(Tremulant.class);
     types.add(Variation.class);
-    types.add(Piston.class);
+    types.add(Combination.class);
   }
   
   private boolean alphabet;

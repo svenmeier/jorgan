@@ -18,51 +18,39 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
 import org.xml.sax.*;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Combination;
+import jorgan.disposition.Reference;
+import jorgan.disposition.Activateable;
 import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import jorgan.xml.handler.BooleanHandler;
 
-public class TremulantHandler extends ActivateableHandler {
+/**
+ * A handler for references to another object.
+ */
+public class CombinationReferenceHandler extends ReferenceHandler {
 
-  private Tremulant tremulant;
-
-  public TremulantHandler(AbstractReader reader, Attributes attributes) {
+  private boolean active;
+  
+  public CombinationReferenceHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
-
-    tremulant = new Tremulant();
   }
 
-  public TremulantHandler(AbstractWriter writer, String tag, Tremulant tremulant) {
-    super(writer, tag);
-
-    this.tremulant = tremulant;
-  }
-
-  public Tremulant getTremulant() {
-    return tremulant;
-  }
-
-  protected Activateable getActivateable() {
-    return getTremulant();
+  public CombinationReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
+    super(writer, tag, reference);
   }
 
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("frequency".equals(qName)) {
-      new IntegerHandler(getReader()) {
+    if ("active".equals(qName)) {
+      new BooleanHandler(getReader()) {
         public void finished() {
-          tremulant.setFrequency(getInteger());
-        }
-      };
-    } else if ("amplitude".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          tremulant.setAmplitude(getInteger());
+          active = getBoolean();
         }
       };
     } else {
@@ -73,7 +61,17 @@ public class TremulantHandler extends ActivateableHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "frequency", tremulant.getFrequency()).start();
-    new IntegerHandler(getWriter(), "amplitude", tremulant.getAmplitude()).start();
+    Combination.CombinationReference reference = (Combination.CombinationReference)getReference(); 
+    if (reference.isActive()) {
+      new BooleanHandler(getWriter(), "active").start();
+    }
+  }
+
+  protected Reference createReference(Element element) {
+    Combination.CombinationReference reference = new Combination.CombinationReference((Activateable)element);
+    
+    reference.setOn(active);
+     
+    return reference;  
   }
 }
