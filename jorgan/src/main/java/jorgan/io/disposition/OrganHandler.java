@@ -77,12 +77,18 @@ public class OrganHandler extends Handler {
          organ.addElement(getSoundSource());
         }
       };
-    } else if ("piston".equals(qName)) {
-      new PistonHandler(getReader(), attributes) {
+    } else if ("combination".equals(qName)) {
+      new CombinationHandler(getReader(), attributes) {
         public void finished() {
-          organ.addElement(getPiston());
+          organ.addElement(getCombination());
         }
       };
+    } else if ("sequence".equals(qName)) {
+        new SequenceHandler(getReader(), attributes) {
+          public void finished() {
+            organ.addElement(getSequence());
+          }
+        };
     } else if ("tremulant".equals(qName)) {
       new TremulantHandler(getReader(), attributes) {
         public void finished() {
@@ -95,6 +101,18 @@ public class OrganHandler extends Handler {
           organ.addElement(getSwell());
         }
       };
+    } else if ("crescendo".equals(qName)) {
+        new CrescendoHandler(getReader(), attributes) {
+          public void finished() {
+            organ.addElement(getCrescendo());
+          }
+        };
+    } else if ("activator".equals(qName)) {
+        new ActivatorHandler(getReader(), attributes) {
+          public void finished() {
+            organ.addElement(getActivator());
+          }
+        };
     } else if ("variation".equals(qName)) {
       new VariationHandler(getReader(), attributes) {
         public void finished() {
@@ -147,17 +165,26 @@ public class OrganHandler extends Handler {
       if (element instanceof Swell) {
         new SwellHandler(getWriter(), "swell", (Swell)element).start();
       }
+      if (element instanceof Crescendo) {
+        new CrescendoHandler(getWriter(), "crescendo", (Crescendo)element).start();
+      }
       if (element instanceof Variation) {
         new VariationHandler(getWriter(), "variation", (Variation)element).start();
       }
-      if (element instanceof Piston) {
-        new PistonHandler(getWriter(), "piston", (Piston)element).start();
+      if (element instanceof Combination) {
+        new CombinationHandler(getWriter(), "combination", (Combination)element).start();
       }
+      if (element instanceof Sequence) {
+          new SequenceHandler(getWriter(), "sequence", (Sequence)element).start();
+        }
       if (element instanceof Stop) {
         new StopHandler(getWriter(), "stop", (Stop)element).start();
       }
       if (element instanceof Coupler) {
         new CouplerHandler(getWriter(), "coupler", (Coupler)element).start();
+      }
+      if (element instanceof Activator) {
+        new ActivatorHandler(getWriter(), "activator", (Activator)element).start();
       }
     }
   }

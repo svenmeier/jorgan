@@ -39,7 +39,7 @@ public abstract class ActiveHandler extends ElementHandler {
     return getActive();
   }
 
-  protected abstract Active getActive();
+  protected abstract Responsive getActive();
   
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {   

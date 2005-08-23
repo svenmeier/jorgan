@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A keyable.
  */
-public abstract class Keyable extends Registratable {
+public abstract class Keyable extends Activateable {
 
   public static final int ACTION_STRAIGHT         = 0;
   public static final int ACTION_PITCH_CONSTANT   = 1;

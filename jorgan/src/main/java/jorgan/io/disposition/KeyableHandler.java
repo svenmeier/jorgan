@@ -26,7 +26,7 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public abstract class KeyableHandler extends RegistratableHandler {
+public abstract class KeyableHandler extends ActivateableHandler {
 
   public KeyableHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
@@ -38,7 +38,7 @@ public abstract class KeyableHandler extends RegistratableHandler {
 
   protected abstract Keyable getKeyable();
 
-  protected Registratable getRegistratable() {
+  protected Activateable getActivateable() {
     return getKeyable();
   }
 

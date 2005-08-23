@@ -25,7 +25,7 @@ import javax.swing.border.*;
 
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Label;
-import jorgan.disposition.Piston;
+import jorgan.disposition.Combination;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Tremulant;
 import jorgan.disposition.Variation;
@@ -49,17 +49,17 @@ public class GUIViewConfigPanel extends ConfigurationPanel {
   
   private JPanel fontsPanel = new JPanel();
   private JLabel labelFontLabel = new JLabel();
-  private JLabel pistonFontLabel = new JLabel();
+  private JLabel combinationFontLabel = new JLabel();
   private JLabel stopFontLabel = new JLabel();
   private JLabel couplerFontLabel = new JLabel();
   private JLabel tremulantFontLabel = new JLabel();
   private JLabel variationFontLabel = new JLabel();
-  private FontSelector labelFontSelector  = new FontSelector();
-  private FontSelector pistonFontSelector    = new FontSelector();
-  private FontSelector stopFontSelector      = new FontSelector();
-  private FontSelector couplerFontSelector   = new FontSelector();
-  private FontSelector tremulantFontSelector = new FontSelector();
-  private FontSelector variationFontSelector = new FontSelector();
+  private FontSelector labelFontSelector       = new FontSelector();
+  private FontSelector combinationFontSelector = new FontSelector();
+  private FontSelector stopFontSelector        = new FontSelector();
+  private FontSelector couplerFontSelector     = new FontSelector();
+  private FontSelector tremulantFontSelector   = new FontSelector();
+  private FontSelector variationFontSelector   = new FontSelector();
 
   public GUIViewConfigPanel() {
     setLayout(new GridBagLayout());
@@ -98,9 +98,9 @@ public class GUIViewConfigPanel extends ConfigurationPanel {
       fontsPanel.add(labelFontLabel,    new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       fontsPanel.add(labelFontSelector,   new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-      pistonFontLabel.setText(Documents.getInstance().getDisplayName(Piston.class));
-      fontsPanel.add(pistonFontLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-      fontsPanel.add(pistonFontSelector,   new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
+      combinationFontLabel.setText(Documents.getInstance().getDisplayName(Combination.class));
+      fontsPanel.add(combinationFontLabel,    new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+      fontsPanel.add(combinationFontSelector,   new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
       stopFontLabel.setText(Documents.getInstance().getDisplayName(Stop.class));
       fontsPanel.add(stopFontLabel,    new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
@@ -133,7 +133,7 @@ public class GUIViewConfigPanel extends ConfigurationPanel {
     shortcutFontSelector.setEnabled       (config.getShowShortcut());
 
     labelFontSelector    .setSelectedFont(config.getLabelFont());
-    pistonFontSelector   .setSelectedFont(config.getPistonFont());
+    combinationFontSelector   .setSelectedFont(config.getCombinationFont());
     stopFontSelector     .setSelectedFont(config.getStopFont());
     couplerFontSelector  .setSelectedFont(config.getCouplerFont());
     tremulantFontSelector.setSelectedFont(config.getTremulantFont());
@@ -153,7 +153,7 @@ public class GUIViewConfigPanel extends ConfigurationPanel {
     config.setShortcutFont(shortcutFontSelector.getSelectedFont());
 
     config.setLabelFont    (labelFontSelector .getSelectedFont());
-    config.setPistonFont   (pistonFontSelector   .getSelectedFont());
+    config.setCombinationFont   (combinationFontSelector   .getSelectedFont());
     config.setStopFont     (stopFontSelector     .getSelectedFont());
     config.setCouplerFont  (couplerFontSelector  .getSelectedFont());
     config.setTremulantFont(tremulantFontSelector.getSelectedFont());

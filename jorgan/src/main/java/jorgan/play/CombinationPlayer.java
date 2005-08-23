@@ -26,42 +26,42 @@ import jorgan.disposition.*;
 import jorgan.disposition.event.*;
 
 /**
- * A player for a piston.
+ * A player for a combination.
  */
-public class PistonPlayer extends Player {
+public class CombinationPlayer extends Player {
 
   private boolean armed = false;
 
-  public PistonPlayer(Piston piston) {
-    super(piston);
+  public CombinationPlayer(Combination combination) {
+    super(combination);
   }
 
   public void messageReceived(ShortMessage message) {
-    Piston piston = (Piston)getElement();
+    Combination combination = (Combination)getElement();
 
-    Message setMessage = piston.getSetMessage();
+    Message setMessage = combination.getCaptureMessage();
     if (setMessage != null                   &&
         setMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
         
       fireInputAccepted();
       
-      if (piston.isSetWithGet()) {
+      if (combination.isCaptureWithRecall()) {
         armed = true;
         return;
       } else {
-        piston.set();
+        combination.capture();
       }
     }
-    Message getMessage = piston.getGetMessage();
+    Message getMessage = combination.getRecallMessage();
     if (getMessage != null                   &&
         getMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
 
       fireInputAccepted();
 
-      if (piston.isSetWithGet() && armed) {
-        piston.set();
+      if (combination.isCaptureWithRecall() && armed) {
+        combination.capture();
       } else {
-        piston.get();
+        combination.recall();
       }
     }
 
@@ -69,32 +69,32 @@ public class PistonPlayer extends Player {
   }
 
   public void set() {
-    Piston piston = (Piston)getElement();
+    Combination combination = (Combination)getElement();
 
-    piston.set();
+    combination.capture();
   }
 
   public void get() {
-    Piston piston = (Piston)getElement();
+    Combination combination = (Combination)getElement();
 
-    piston.get();
+    combination.recall();
   }
 
   public void elementChanged(OrganEvent event) {
 
-    Piston piston = (Piston)getElement();
+    Combination combination = (Combination)getElement();
     
     PlayerProblem warnGetMessage = new PlayerProblem(PlayerProblem.WARNING, "getMessage", null); 
-    if (piston.getGetMessage() == null &&
-        Configuration.instance().getWarnPistonWithoutMessage()) {
+    if (combination.getRecallMessage() == null &&
+        Configuration.instance().getWarnCombinationWithoutMessage()) {
       addProblem(warnGetMessage);
     } else {
       removeProblem(warnGetMessage);
     }
     
     PlayerProblem warnSetMessage = new PlayerProblem(PlayerProblem.WARNING, "setMessage", null); 
-    if (piston.getSetMessage() == null &&
-        Configuration.instance().getWarnPistonWithoutMessage()) {
+    if (combination.getCaptureMessage() == null &&
+        Configuration.instance().getWarnCombinationWithoutMessage()) {
       addProblem(warnSetMessage);
     } else {
       removeProblem(warnSetMessage);

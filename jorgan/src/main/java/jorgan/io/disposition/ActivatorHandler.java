@@ -16,41 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.io.disposition;
 
-/**
- * A variation.
- */
-public class Variation extends Activateable implements SoundEffect {
+import org.xml.sax.*;
 
-  private int program = 0;
-  private int bank    = 0;
+import jorgan.disposition.*;
+import jorgan.xml.*;
 
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
-    }
+public class ActivatorHandler extends ActivateableHandler {
 
-    this.program = program;
+  private Activator activator;
 
-    fireElementChanged(true);
+  public ActivatorHandler(AbstractReader reader, Attributes attributes) {
+    super(reader, attributes);
+
+    activator = new Activator();
   }
 
-  public int getProgram() {
-    return program;
+  public ActivatorHandler(AbstractWriter writer, String tag, Activator activator) {
+    super(writer, tag);
+
+    this.activator = activator;
   }
 
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
-
-    this.bank = bank;
-
-    fireElementChanged(true);
+  public Activator getActivator() {
+    return activator;
   }
 
-  public int getBank() {
-    return bank;
+  protected Activateable getActivateable() {
+    return getActivator();
   }
 }

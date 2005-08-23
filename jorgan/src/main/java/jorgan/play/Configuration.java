@@ -34,8 +34,9 @@ public class Configuration extends PreferencesConfiguration {
   private static final boolean WARN_COUPLER_WITHOUT_MESSAGE    = false;
   private static final boolean WARN_TREMULANT_WITHOUT_MESSAGE  = false;
   private static final boolean WARN_SWELL_WITHOUT_MESSAGE      = false;
+  private static final boolean WARN_CRESCENDO_WITHOUT_MESSAGE  = false;
   private static final boolean WARN_VARIATION_WITHOUT_MESSAGE  = false;
-  private static final boolean WARN_PISTON_WITHOUT_MESSAGE     = false;
+  private static final boolean WARN_COMBINATION_WITHOUT_MESSAGE= false;
 
   private static final boolean RELEASE_DEVICES_WHEN_DEACTIVATED = false;
 
@@ -48,8 +49,9 @@ public class Configuration extends PreferencesConfiguration {
   private boolean warnCouplerWithoutMessage;
   private boolean warnTremulantWithoutMessage;
   private boolean warnSwellWithoutMessage;
+  private boolean warnCrescendoWithoutMessage;
   private boolean warnVariationWithoutMessage;
-  private boolean warnPistonWithoutMessage;
+  private boolean warnCombinationWithoutMessage;
 
   private boolean releaseDevicesWhenDeactivated;
 
@@ -61,22 +63,24 @@ public class Configuration extends PreferencesConfiguration {
     warnCouplerWithoutMessage    = getBoolean(prefs, "warnCouplerWithoutMessage"   , WARN_COUPLER_WITHOUT_MESSAGE);;
     warnTremulantWithoutMessage  = getBoolean(prefs, "warnTremulantWithoutMessage" , WARN_TREMULANT_WITHOUT_MESSAGE);;
     warnSwellWithoutMessage      = getBoolean(prefs, "warnSwellWithoutMessage"     , WARN_SWELL_WITHOUT_MESSAGE);;
+    warnCrescendoWithoutMessage  = getBoolean(prefs, "warnCrescendoWithoutMessage" , WARN_CRESCENDO_WITHOUT_MESSAGE);;
     warnVariationWithoutMessage  = getBoolean(prefs, "warnVariationWithoutMessage" , WARN_VARIATION_WITHOUT_MESSAGE);;
-    warnPistonWithoutMessage     = getBoolean(prefs, "warnPistonWithoutMessage"    , WARN_PISTON_WITHOUT_MESSAGE);;
+    warnCombinationWithoutMessage= getBoolean(prefs, "warnCombinationWithoutMessage"    , WARN_COMBINATION_WITHOUT_MESSAGE);;
 
     releaseDevicesWhenDeactivated = getBoolean(prefs, "releaseDevicesWhenDeactivated", RELEASE_DEVICES_WHEN_DEACTIVATED);
   }
 
   protected void backup(Preferences prefs) {
-    putBoolean(prefs, "warnConsoleWithoutDevice"    , warnConsoleWithoutDevice);
-    putBoolean(prefs, "warnKeyboadWithoutDevice"    , warnKeyboardWithoutDevice);
-    putBoolean(prefs, "warnSoundSourceWithoutDevice", warnSoundSourceWithoutDevice);
-    putBoolean(prefs, "warnStopWithoutMessage"      , warnStopWithoutMessage);;
-    putBoolean(prefs, "warnCouplerWithoutMessage"   , warnCouplerWithoutMessage);;
-    putBoolean(prefs, "warnTremulantWithoutMessage" , warnTremulantWithoutMessage);;
-    putBoolean(prefs, "warnSwellWithoutMessage"     , warnSwellWithoutMessage);;
-    putBoolean(prefs, "warnVariationWithoutMessage" , warnVariationWithoutMessage);;
-    putBoolean(prefs, "warnPistonWithoutMessage"    , warnPistonWithoutMessage);;
+    putBoolean(prefs, "warnConsoleWithoutDevice"     , warnConsoleWithoutDevice);
+    putBoolean(prefs, "warnKeyboadWithoutDevice"     , warnKeyboardWithoutDevice);
+    putBoolean(prefs, "warnSoundSourceWithoutDevice" , warnSoundSourceWithoutDevice);
+    putBoolean(prefs, "warnStopWithoutMessage"       , warnStopWithoutMessage);;
+    putBoolean(prefs, "warnCouplerWithoutMessage"    , warnCouplerWithoutMessage);;
+    putBoolean(prefs, "warnTremulantWithoutMessage"  , warnTremulantWithoutMessage);;
+    putBoolean(prefs, "warnSwellWithoutMessage"      , warnSwellWithoutMessage);;
+    putBoolean(prefs, "warnCrescendoWithoutMessage"  , warnCrescendoWithoutMessage);;
+    putBoolean(prefs, "warnVariationWithoutMessage"  , warnVariationWithoutMessage);;
+    putBoolean(prefs, "warnCombinationWithoutMessage", warnCombinationWithoutMessage);;
 
     prefs.putBoolean("releaseDevicesWhenDeactivated", releaseDevicesWhenDeactivated);
   }
@@ -109,12 +113,16 @@ public class Configuration extends PreferencesConfiguration {
     return warnSwellWithoutMessage;
   }
 
+  public boolean getWarnCrescendoWithoutMessage() {
+    return warnCrescendoWithoutMessage;
+  }
+
   public boolean getWarnVariationWithoutMessage() {
     return warnVariationWithoutMessage;
   }
 
-  public boolean getWarnPistonWithoutMessage() {
-    return warnPistonWithoutMessage;
+  public boolean getWarnCombinationWithoutMessage() {
+    return warnCombinationWithoutMessage;
   }
 
   public boolean getReleaseDevicesWhenDeactivated() {
@@ -163,14 +171,20 @@ public class Configuration extends PreferencesConfiguration {
     fireConfigurationChanged();
   }
 
+  public void setWarnCrescendoWithoutMessage(boolean warnCrescendoWithoutMessage) {
+    this.warnCrescendoWithoutMessage = warnCrescendoWithoutMessage;
+      
+    fireConfigurationChanged();
+  }
+
   public void setWarnVariationWithoutMessage(boolean warnVariationWithoutMessage) {
     this.warnVariationWithoutMessage = warnVariationWithoutMessage;
 
     fireConfigurationChanged();
   }
 
-  public void setWarnPistonWithoutMessage(boolean warnPistonWithoutMessage) {
-    this.warnPistonWithoutMessage = warnPistonWithoutMessage;
+  public void setWarnCombinationWithoutMessage(boolean warnCombinationWithoutMessage) {
+    this.warnCombinationWithoutMessage = warnCombinationWithoutMessage;
     
     fireConfigurationChanged();
   }

@@ -19,38 +19,47 @@
 package jorgan.disposition;
 
 /**
- * A variation.
+ * A slider.
  */
-public class Variation extends Activateable implements SoundEffect {
+public abstract class Slider extends Responsive {
 
-  private int program = 0;
-  private int bank    = 0;
+  private Message message;
 
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
+  private int position = 127;
+  
+  private int threshold = 0;
+  
+  public Message getMessage() {
+    return message;
+  }
+
+  public void setMessage(Message message) {
+    if (message != null && !message.hasWildcard()) {
+      message = new Message(message.getStatus(), message.getData1(), -1);
     }
-
-    this.program = program;
+    this.message = message;
 
     fireElementChanged(true);
   }
 
-  public int getProgram() {
-    return program;
+  public void setPosition(int position) {
+    this.position = Math.max(0, Math.min(127, position));
+
+    fireElementChanged(false);
   }
 
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
+  public int getPosition() {
+    return position;
+  }
 
-    this.bank = bank;
 
+  public int getThreshold() {
+    return threshold;
+  }
+    
+  public void setThreshold(int granularity) {
+    this.threshold = granularity;
+    
     fireElementChanged(true);
-  }
-
-  public int getBank() {
-    return bank;
   }
 }

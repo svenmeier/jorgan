@@ -26,41 +26,41 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public abstract class RegistratableHandler extends ActiveHandler {
+public abstract class ActivateableHandler extends ActiveHandler {
 
-  public RegistratableHandler(AbstractReader reader, Attributes attributes) {
+  public ActivateableHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
   }
 
-  public RegistratableHandler(AbstractWriter writer, String tag) {
+  public ActivateableHandler(AbstractWriter writer, String tag) {
     super(writer, tag);
   }
 
-  protected abstract Registratable getRegistratable();
+  protected abstract Activateable getActivateable();
   
-  protected Active getActive() {
-    return getRegistratable();
+  protected Responsive getActive() {
+    return getActivateable();
   }
 
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("on".equals(qName)) {
+    if ("active".equals(qName)) {
       new BooleanHandler(getReader()) {
         public void finished() {
-          getRegistratable().setOn(getBoolean());
+          getActivateable().setActive(getBoolean());
         }
       };
-    } else if ("onMessage".equals(qName)) {
+    } else if ("activateMessage".equals(qName)) {
       new MessageHandler(getReader()) {
         public void finished() {
-          getRegistratable().setOnMessage(getMessage());
+          getActivateable().setActivateMessage(getMessage());
         }
       };
-    } else if ("offMessage".equals(qName)) {
+    } else if ("deactivateMessage".equals(qName)) {
       new MessageHandler(getReader()) {
         public void finished() {
-          getRegistratable().setOffMessage(getMessage());
+          getActivateable().setDeactivateMessage(getMessage());
         }
       };
     } else {
@@ -71,14 +71,14 @@ public abstract class RegistratableHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
-    if (getRegistratable().isOn()) {
-      new BooleanHandler(getWriter(), "on").start();
+    if (getActivateable().isActive()) {
+      new BooleanHandler(getWriter(), "active").start();
     }
-    if (getRegistratable().getOnMessage() != null) {
-      new MessageHandler(getWriter(), "onMessage", getRegistratable().getOnMessage()).start();
+    if (getActivateable().getActivateMessage() != null) {
+      new MessageHandler(getWriter(), "activateMessage", getActivateable().getActivateMessage()).start();
     }
-    if (getRegistratable().getOffMessage() != null) {
-      new MessageHandler(getWriter(), "offMessage", getRegistratable().getOffMessage()).start();
+    if (getActivateable().getDeactivateMessage() != null) {
+      new MessageHandler(getWriter(), "deactivateMessage", getActivateable().getDeactivateMessage()).start();
     }
   }
 }

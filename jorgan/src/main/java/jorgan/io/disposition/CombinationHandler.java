@@ -26,28 +26,28 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public class PistonHandler extends ActiveHandler {
+public class CombinationHandler extends ActiveHandler {
 
-  private Piston piston;
+  private Combination combination;
 
-  public PistonHandler(AbstractReader reader, Attributes attributes) {
+  public CombinationHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
 
-    piston = new Piston();
+    combination = new Combination();
   }
 
-  public PistonHandler(AbstractWriter writer, String tag, Piston piston) {
+  public CombinationHandler(AbstractWriter writer, String tag, Combination combination) {
     super(writer, tag);
 
-    this.piston = piston;
+    this.combination = combination;
   }
 
-  public Piston getPiston() {
-    return piston;
+  public Combination getCombination() {
+    return combination;
   }
 
-  public Active getActive() {
-    return getPiston();
+  public Responsive getActive() {
+    return getCombination();
   }
 
   public void startElement(String uri, String localName,
@@ -56,25 +56,25 @@ public class PistonHandler extends ActiveHandler {
     if ("fixed".equals(qName)) {
       new BooleanHandler(getReader()) {
         public void finished() {
-          piston.setFixed(getBoolean());
+          combination.setFixed(getBoolean());
         }
       };
-    } else if ("setWithGet".equals(qName)) {
+    } else if ("captureWithRecall".equals(qName)) {
       new BooleanHandler(getReader()) {
         public void finished() {
-          piston.setSetWithGet(getBoolean());
+          combination.setCaptureWithRecall(getBoolean());
         }
       };
-    } else if ("getMessage".equals(qName)) {
+    } else if ("recallMessage".equals(qName)) {
       new MessageHandler(getReader()) {
         public void finished() {
-          piston.setGetMessage(getMessage());
+          combination.setRecallMessage(getMessage());
         }
       };
-    } else if ("setMessage".equals(qName)) {
+    } else if ("captureMessage".equals(qName)) {
       new MessageHandler(getReader()) {
         public void finished() {
-          piston.setSetMessage(getMessage());
+          combination.setCaptureMessage(getMessage());
         }
       };
     } else {
@@ -85,29 +85,29 @@ public class PistonHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
-    if (piston.isFixed()) {
+    if (combination.isFixed()) {
       new BooleanHandler(getWriter(), "fixed").start();
     }
-    if (piston.isSetWithGet()) {
-      new BooleanHandler(getWriter(), "setWithGet").start();
+    if (combination.isCaptureWithRecall()) {
+      new BooleanHandler(getWriter(), "captureWithRecall").start();
     }
-    if (piston.getGetMessage() != null) {
-      new MessageHandler(getWriter(), "getMessage", piston.getGetMessage()).start();
+    if (combination.getRecallMessage() != null) {
+      new MessageHandler(getWriter(), "recallMessage", combination.getRecallMessage()).start();
     }
-    if (piston.getSetMessage() != null) {
-      new MessageHandler(getWriter(), "setMessage", piston.getSetMessage()).start();
+    if (combination.getCaptureMessage() != null) {
+      new MessageHandler(getWriter(), "captureMessage", combination.getCaptureMessage()).start();
     }
   }
   
   protected ReferenceHandler createReferenceHandler(AbstractReader reader, Attributes attributes) {
-    return new PistonReferenceHandler(reader, attributes) {
+    return new CombinationReferenceHandler(reader, attributes) {
       public void finished() {
-        getActive().addReference(getReference());
+        getCombination().addReference(getReference());
       }
     };
   }
 
   protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    return new PistonReferenceHandler(writer, tag, reference);
+    return new CombinationReferenceHandler(writer, tag, reference);
   }
 }

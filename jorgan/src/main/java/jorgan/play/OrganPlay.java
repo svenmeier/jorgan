@@ -251,6 +251,9 @@ public class OrganPlay  {
     if (element instanceof Console) {
       player = new ConsolePlayer((Console)element);
     }
+    if (element instanceof Activator) {
+      player = new ActivatorPlayer((Activator)element);
+    }
     if (element instanceof Stop) {
       player = new StopPlayer((Stop)element);
     }
@@ -260,14 +263,17 @@ public class OrganPlay  {
     if (element instanceof Swell) {
       player = new SwellPlayer((Swell)element);
     }
+    if (element instanceof Crescendo) {
+      player = new CrescendoPlayer((Crescendo)element);
+    }
     if (element instanceof Tremulant) {
       player = new TremulantPlayer((Tremulant)element);
     }
     if (element instanceof Variation) {
       player = new VariationPlayer((Variation)element);
     }
-    if (element instanceof Piston) {
-      player = new PistonPlayer((Piston)element);
+    if (element instanceof Combination) {
+      player = new CombinationPlayer((Combination)element);
     }
 
     if (player != null) {

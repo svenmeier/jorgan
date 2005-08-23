@@ -26,7 +26,7 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public class VariationHandler extends RegistratableHandler {
+public class VariationHandler extends ActivateableHandler {
 
   private Variation variation;
 
@@ -46,7 +46,7 @@ public class VariationHandler extends RegistratableHandler {
     return variation;
   }
 
-  protected Registratable getRegistratable() {
+  protected Activateable getActivateable() {
     return getVariation();
   }
 

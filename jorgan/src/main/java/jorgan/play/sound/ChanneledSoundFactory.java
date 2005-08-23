@@ -80,6 +80,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
    */
   public void close() {
     pool.close();
+    pool = null;
   }
 
   /**
@@ -108,6 +109,9 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
     protected void sendMessage(int command, int data1, int data2) {
         if (channel == null) {
             throw new IllegalStateException("already stopped");
+        }
+        if (pool == null) {
+            throw new IllegalStateException("factory already closed");
         }
         channel.sendMessage(command, data1, data2);
     }    

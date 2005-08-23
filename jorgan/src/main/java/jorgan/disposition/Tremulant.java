@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A tremulant.
  */
-public class Tremulant extends Registratable implements SoundEffect {
+public class Tremulant extends Activateable implements SoundEffect {
 
   private int frequency = 64;
   private int amplitude = 64;

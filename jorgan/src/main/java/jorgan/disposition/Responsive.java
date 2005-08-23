@@ -18,39 +18,17 @@
  */
 package jorgan.disposition;
 
-/**
- * A variation.
- */
-public class Variation extends Activateable implements SoundEffect {
+public abstract class Responsive extends Element {
 
-  private int program = 0;
-  private int bank    = 0;
+  private Shortcut shortcut;
 
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
+  public Shortcut getShortcut() {
+      return shortcut;
     }
-
-    this.program = program;
+    
+  public void setShortcut(Shortcut shortcut) {
+    this.shortcut = shortcut;
 
     fireElementChanged(true);
-  }
-
-  public int getProgram() {
-    return program;
-  }
-
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
-
-    this.bank = bank;
-
-    fireElementChanged(true);
-  }
-
-  public int getBank() {
-    return bank;
   }
 }

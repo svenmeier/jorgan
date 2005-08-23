@@ -26,43 +26,41 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public class TremulantHandler extends ActivateableHandler {
+public abstract class SliderHandler extends ActiveHandler {
 
-  private Tremulant tremulant;
-
-  public TremulantHandler(AbstractReader reader, Attributes attributes) {
+  public SliderHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
-
-    tremulant = new Tremulant();
   }
 
-  public TremulantHandler(AbstractWriter writer, String tag, Tremulant tremulant) {
+  public SliderHandler(AbstractWriter writer, String tag) {
     super(writer, tag);
-
-    this.tremulant = tremulant;
   }
 
-  public Tremulant getTremulant() {
-    return tremulant;
-  }
+  protected abstract Slider getSlider();
 
-  protected Activateable getActivateable() {
-    return getTremulant();
+  protected Responsive getActive() {
+    return getSlider();
   }
 
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("frequency".equals(qName)) {
+    if ("position".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
-          tremulant.setFrequency(getInteger());
+          getSlider().setPosition(getInteger());
         }
       };
-    } else if ("amplitude".equals(qName)) {
+    } else if ("message".equals(qName)) {
+      new MessageHandler(getReader()) {
+        public void finished() {
+          getSlider().setMessage(getMessage());
+        }
+      };
+    } else if ("threshold".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
-          tremulant.setAmplitude(getInteger());
+          getSlider().setThreshold(getInteger());
         }
       };
     } else {
@@ -73,7 +71,10 @@ public class TremulantHandler extends ActivateableHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "frequency", tremulant.getFrequency()).start();
-    new IntegerHandler(getWriter(), "amplitude", tremulant.getAmplitude()).start();
+    new IntegerHandler(getWriter(), "position", getSlider().getPosition()).start();
+    new IntegerHandler(getWriter(), "threshold", getSlider().getThreshold()).start();
+    if (getSlider().getMessage() != null) {
+      new MessageHandler(getWriter(), "message" , getSlider().getMessage()).start();
+    }
   }
 }

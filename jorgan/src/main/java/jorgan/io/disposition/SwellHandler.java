@@ -26,7 +26,7 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.*;
 
-public class SwellHandler extends ActiveHandler {
+public class SwellHandler extends SliderHandler {
 
   private Swell swell;
 
@@ -46,7 +46,7 @@ public class SwellHandler extends ActiveHandler {
     return swell;
   }
 
-  protected Active getActive() {
+  protected Slider getSlider() {
     return getSwell();
   }
 
@@ -65,18 +65,6 @@ public class SwellHandler extends ActiveHandler {
           swell.setCutoff(getInteger());
         }
       };
-    } else if ("position".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          swell.setPosition(getInteger());
-        }
-      };
-    } else if ("message".equals(qName)) {
-      new MessageHandler(getReader()) {
-        public void finished() {
-          swell.setMessage(getMessage());
-        }
-      };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -85,11 +73,7 @@ public class SwellHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "volume"  , swell.getVolume()).start();
-    new IntegerHandler(getWriter(), "cutoff"  , swell.getCutoff()).start();
-    new IntegerHandler(getWriter(), "position", swell.getPosition()).start();
-    if (swell.getMessage() != null) {
-      new MessageHandler(getWriter(), "message" , swell.getMessage()).start();
-    }
+    new IntegerHandler(getWriter(), "volume"     , swell.getVolume()).start();
+    new IntegerHandler(getWriter(), "cutoff"     , swell.getCutoff()).start();
   }
 }

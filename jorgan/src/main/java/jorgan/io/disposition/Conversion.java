@@ -18,10 +18,12 @@ import jorgan.xml.XMLFormatException;
 public class Conversion {
     
   private static Conversion[] conversions = new Conversion[]{
-	  new Conversion("<organ>"                                    , "convert1.0To2.0-beta.xsl"),
-	  new Conversion("<organ *version=\"(2.0-beta.*|2.0-RC1)\" *>", "convert2.0-betaTo2.0.xsl"),
-	  new Conversion("<organ *version=\"2.0\" *>"                 , "convert2.0To2.1-beta.xsl"),
-      new Conversion("<organ *version=\"2.1-beta.*\" *>"          , "convert2.1-betaTo2.1.xsl")
+	  new Conversion("<organ>"                                        , "convert1.0To2.0-beta.xsl"),
+	  new Conversion("<organ *version=\"(2\\.0-beta.*|2\\.0-RC1)\" *>", "convert2.0-betaTo2.0.xsl"),
+	  new Conversion("<organ *version=\"2\\.0\" *>"                   , "convert2.0To2.1-beta.xsl"),
+      new Conversion("<organ *version=\"2\\.1-beta.*\" *>"            , "convert2.1-betaTo2.1.xsl"),
+      new Conversion("<organ *version=\"2\\.1.*\" *>"                 , "convert2.1To2.2-beta.xsl"),
+      new Conversion("<organ *version=\"2\\.2-beta.*\" *>"            , "convert2.2-betaTo2.2.xsl")
   };
 
   private String pattern;

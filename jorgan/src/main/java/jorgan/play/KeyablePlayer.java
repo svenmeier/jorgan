@@ -24,7 +24,7 @@ import jorgan.disposition.event.*;
 /**
  * A player for a keyable.
  */
-public abstract class KeyablePlayer extends RegistratablePlayer {
+public abstract class KeyablePlayer extends ActivateablePlayer {
 
   private static final int ACTIVATE_VELOCITY = 0;
   
@@ -70,6 +70,8 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
   }
 
   protected void closeImpl() {
+    super.closeImpl();
+    
     action = null;
       
     for (int p = 0; p < pressedKeys.length; p++) {
@@ -114,15 +116,15 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
 
   public void elementChanged(OrganEvent event) {   
     if (isOpen()) {
-      action.changed((Keyable)getElement());
+      action.changed();
     }
   }
   
   private class Action {
     protected boolean activated = false;
   
-    public void changed(Keyable keyable) {
-      if (shouldActivate(keyable)) {
+    public void changed() {
+      if (shouldActivate()) {
         if (!activated) {
           activated = true;
           activate();
@@ -135,8 +137,8 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
       }  
     }
 
-    protected boolean shouldActivate(Keyable keyable) {
-      return keyable.isOn();
+    protected boolean shouldActivate() {
+      return isActive();
     }
 
     public void activateKey(int pitch, int velocity) {
@@ -173,8 +175,8 @@ public abstract class KeyablePlayer extends RegistratablePlayer {
   }
   
   private class InverseAction extends Action {
-    protected boolean shouldActivate(Keyable keyable) {
-      return !keyable.isOn();
+    protected boolean shouldActivate() {
+      return !isActive();
     }
   }
 

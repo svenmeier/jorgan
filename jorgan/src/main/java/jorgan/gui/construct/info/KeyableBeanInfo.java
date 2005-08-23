@@ -26,7 +26,7 @@ import jorgan.gui.construct.editor.ActionEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.
  */
-public class KeyableBeanInfo extends RegistratableBeanInfo {
+public class KeyableBeanInfo extends ActivateableBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

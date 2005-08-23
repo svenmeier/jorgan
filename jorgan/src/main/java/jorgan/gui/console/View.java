@@ -32,7 +32,7 @@ import java.awt.event.*;
 import java.awt.geom.AffineTransform;
 
 import jorgan.gui.ConsolePanel;
-import jorgan.disposition.Active;
+import jorgan.disposition.Responsive;
 import jorgan.disposition.Console;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.*;
@@ -372,8 +372,8 @@ public abstract class View {
       }
     }
     
-    if (Configuration.instance().getShowShortcut() && element instanceof Active) { 
-      Shortcut shortcut = ((Active)element).getShortcut();
+    if (Configuration.instance().getShowShortcut() && element instanceof Responsive) { 
+      Shortcut shortcut = ((Responsive)element).getShortcut();
 
       if (shortcut != null) {
         Color color = Configuration.instance().getShortcutColor(); 

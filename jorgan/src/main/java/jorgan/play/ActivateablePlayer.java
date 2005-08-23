@@ -25,34 +25,60 @@ import jorgan.sound.midi.BugFix;
 import jorgan.disposition.*;
 
 /**
- * An abstract base class for players that control registratable elements.
+ * An abstract base class for players that control regactivateable elements.
  */
-public abstract class RegistratablePlayer extends Player {
+public abstract class ActivateablePlayer extends Player {
 
-  public RegistratablePlayer(Registratable registratable) {
-    super(registratable);
+  private int activationCount = 0;
+  
+  public ActivateablePlayer(Activateable activateable) {
+    super(activateable);
   }
 
+  protected void closeImpl() {
+    super.closeImpl();
+    
+    activationCount = 0;
+  }
+  
+  public void activated() {
+    activationCount++;     
+    
+    elementChanged(null);
+  }
+  
+  public void deactivated() {
+    activationCount--;
+    
+    elementChanged(null);
+  }
+  
+  protected boolean isActive() {
+    Activateable activateable = (Activateable)getElement();
+    
+    return activationCount > 0 || activateable.isActive();
+  }
+  
   public void messageReceived(ShortMessage message) {
-    Registratable registratable = (Registratable)getElement();
+    Activateable activateable = (Activateable)getElement();
 
-    if (registratable.isOn()) {
-      Message offMessage = registratable.getOffMessage();
+    if (activateable.isActive()) {
+      Message offMessage = activateable.getDeactivateMessage();
       if (offMessage != null &&
           offMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
 
         fireInputAccepted();
         
-        registratable.setOn(false);
+        activateable.setActive(false);
       }
     } else {
-      Message onMessage = registratable.getOnMessage();
+      Message onMessage = activateable.getActivateMessage();
       if (onMessage != null &&
           onMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
 
         fireInputAccepted();
 
-        registratable.setOn(true);
+        activateable.setActive(true);
       }
     }
   }

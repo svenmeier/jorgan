@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.DataEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Tremulant}.
  */
-public class TremulantBeanInfo extends RegistratableBeanInfo {
+public class TremulantBeanInfo extends ActivateableBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

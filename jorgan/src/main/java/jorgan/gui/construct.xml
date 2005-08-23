@@ -1,27 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<docking>
-  <slice orientation="3" weight="0.0">
-    <dock>
-      <dockable key="keyboard" null="true"/>
-    </dock>
-    <slice orientation="2" weight="0.25">
-      <slice orientation="1" weight="0.5">
+<dockingPane>
+    <docking x="0" y="0" width="200" height="200">
+      <slice orientation="3" weight="0.0">
         <dock>
-          <dockable key="elements"/>
+          <dockable key="keyboard" null="true"/>
         </dock>
-        <dock>
-          <dockable key="references"/>
-          <dockable key="properties" selected="true"/>
-        </dock>
+        <slice orientation="2" weight="0.25">
+          <slice orientation="1" weight="0.5">
+            <dock>
+              <dockable key="elements"/>
+            </dock>
+            <dock>
+              <dockable key="references"/>
+              <dockable key="properties" selected="true"/>
+            </dock>
+          </slice>
+          <slice orientation="3" weight="0.25">
+            <dock>
+              <dockable key="instructions"/>
+              <dockable key="midiLog" null="true"/>
+              <dockable key="problems" selected="true"/>
+            </dock>
+            <bridge key="consoles"/>
+          </slice>
+        </slice>
       </slice>
-      <slice orientation="3" weight="0.25">
-        <dock>
-          <dockable key="instructions"/>
-          <dockable key="midiLog" null="true"/>
-          <dockable key="problems" selected="true"/>
-        </dock>
-        <bridge key="consoles"/>
-      </slice>
-    </slice>
-  </slice>
-</docking>
+    </docking>
+</dockingPane>

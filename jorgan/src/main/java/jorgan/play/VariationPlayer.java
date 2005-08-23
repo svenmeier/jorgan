@@ -27,7 +27,7 @@ import jorgan.play.sound.*;
 /**
  * A player for an variation.
  */
-public class VariationPlayer extends RegistratablePlayer implements SoundEffectPlayer {
+public class VariationPlayer extends ActivateablePlayer implements SoundEffectPlayer {
 
   private List sounds = new ArrayList();
 
@@ -35,11 +35,17 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
     super(variation);
   }
 
+  protected void closeImpl() {
+    super.closeImpl();
+    
+    sounds.clear();
+  }
+  
   public void elementChanged(OrganEvent event) {
     Variation variation = (Variation)getElement();
     
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null);
-    if ((variation.getOnMessage() == null || variation.getOffMessage() == null) &&
+    if ((variation.getActivateMessage() == null || variation.getDeactivateMessage() == null) &&
         Configuration.instance().getWarnVariationWithoutMessage()) {
       addProblem(problem);
     } else {
@@ -78,7 +84,7 @@ public class VariationPlayer extends RegistratablePlayer implements SoundEffectP
       Variation variation = (Variation)getElement();
 
       int program = this.program;
-      if (variation.isOn()) {
+      if (isActive()) {
         program = (program + variation.getProgram()) % 128;          
       }
 

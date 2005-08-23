@@ -27,7 +27,7 @@ import jorgan.play.sound.*;
 /**
  * A player for a tremulant.
  */
-public class TremulantPlayer extends RegistratablePlayer implements SoundEffectPlayer {
+public class TremulantPlayer extends ActivateablePlayer implements SoundEffectPlayer {
 
   private List sounds = new ArrayList();
 
@@ -35,11 +35,17 @@ public class TremulantPlayer extends RegistratablePlayer implements SoundEffectP
     super(tremulant);
   }
 
+  protected void closeImpl() {
+    super.closeImpl();
+    
+    sounds.clear();
+  }
+  
   public void elementChanged(OrganEvent event) {
     Tremulant tremulant = (Tremulant)getElement();
     
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
-    if ((tremulant.getOnMessage() == null || tremulant.getOffMessage() == null) &&
+    if ((tremulant.getActivateMessage() == null || tremulant.getDeactivateMessage() == null) &&
         Configuration.instance().getWarnTremulantWithoutMessage()) {
       addProblem(problem);
     } else {
@@ -72,7 +78,7 @@ public class TremulantPlayer extends RegistratablePlayer implements SoundEffectP
     private void flush() {
       Tremulant tremulant = (Tremulant)getElement();
 
-      if (tremulant.isOn()) {
+      if (isActive()) {
         sound.setModulation(tremulant.getAmplitude(), tremulant.getFrequency());
       } else {
         sound.setModulation(0, 0);

@@ -18,17 +18,30 @@
  */
 package jorgan.disposition;
 
-public abstract class Active extends Element {
+/**
+ * A crescendo.
+ */
+public class Crescendo extends Slider {
 
-  private Shortcut shortcut;
+  protected boolean canReference(Class clazz) {
+    return Activateable.class.isAssignableFrom(clazz);  
+  }
 
-  public Shortcut getShortcut() {
-      return shortcut;
-    }
+  public void setPosition(int position) {
+    super.setPosition(position);
+
+    if (getReferencesCount() > 0) {
+      int current = (getPosition() * getReferencesCount() / 128);
     
-  public void setShortcut(Shortcut shortcut) {
-    this.shortcut = shortcut;
+      Reference reference = getReference(current);
+      ((Activateable)reference.getElement()).setActive(true);
 
-    fireElementChanged(true);
+      for (int r = 0; r < getReferencesCount(); r++) {
+        reference = getReference(r);
+        if (r != current) {
+          ((Activateable)reference.getElement()).setActive(false);
+        }
+      }
+    }
   }
 }

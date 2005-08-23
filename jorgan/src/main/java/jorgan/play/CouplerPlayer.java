@@ -32,7 +32,7 @@ public class CouplerPlayer extends KeyablePlayer {
     Coupler coupler = (Coupler)getElement();
     
     PlayerProblem warnOnMessage  = new PlayerProblem(PlayerProblem.WARNING, "onMessage" , null); 
-    if (coupler.getOnMessage() == null &&
+    if (coupler.getActivateMessage() == null &&
         Configuration.instance().getWarnCouplerWithoutMessage()) {
       addProblem(warnOnMessage);
     } else {
@@ -40,7 +40,7 @@ public class CouplerPlayer extends KeyablePlayer {
     }
 
     PlayerProblem warnOffMessage = new PlayerProblem(PlayerProblem.WARNING, "offMessage", null); 
-    if (coupler.getOffMessage() == null &&
+    if (coupler.getDeactivateMessage() == null &&
         Configuration.instance().getWarnCouplerWithoutMessage()) {
       addProblem(warnOffMessage);
     } else {

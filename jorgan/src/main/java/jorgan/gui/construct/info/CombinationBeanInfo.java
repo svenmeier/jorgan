@@ -23,16 +23,16 @@ import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.MessageEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Piston}.
+ * BeanInfo for {@link jorgan.disposition.Combination}.
  */
-public class PistonBeanInfo extends ActiveBeanInfo {
+public class CombinationBeanInfo extends ResponsiveBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();
 
-        add("fixed", Piston.class, BooleanEditor.class);
-        add("setWithGet", Piston.class, BooleanEditor.class);
-        add("getMessage", Piston.class, MessageEditor.class);
-        add("setMessage", Piston.class, MessageEditor.class);
+        add("fixed", Combination.class, BooleanEditor.class);
+        add("captureWithRecall", Combination.class, BooleanEditor.class);
+        add("recallMessage", Combination.class, MessageEditor.class);
+        add("captureMessage", Combination.class, MessageEditor.class);
     }
 }

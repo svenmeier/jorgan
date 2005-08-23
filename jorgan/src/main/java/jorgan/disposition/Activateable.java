@@ -19,38 +19,43 @@
 package jorgan.disposition;
 
 /**
- * A variation.
+ * Abstract base class for an activateable elements.
  */
-public class Variation extends Activateable implements SoundEffect {
+public abstract class Activateable extends Responsive {
 
-  private int program = 0;
-  private int bank    = 0;
+  private boolean active;
+  private Message activateMessage;
+  private Message deactivateMessage;
 
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
+  public void setActive(boolean active) {
+    if (this.active != active) {
+      this.active = active;
+      
+      fireElementChanged(false);
     }
+  }
 
-    this.program = program;
+  public boolean isActive() {
+    return active;
+  }
+
+  public Message getActivateMessage() {
+    return activateMessage;
+  }
+
+  public Message getDeactivateMessage() {
+    return deactivateMessage;
+  }
+
+  public void setActivateMessage(Message message) {
+    this.activateMessage = message;
 
     fireElementChanged(true);
   }
 
-  public int getProgram() {
-    return program;
-  }
-
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
-    }
-
-    this.bank = bank;
+  public void setDeactivateMessage(Message message) {
+    this.deactivateMessage = message;
 
     fireElementChanged(true);
-  }
-
-  public int getBank() {
-    return bank;
   }
 }

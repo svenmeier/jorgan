@@ -24,26 +24,26 @@ import java.awt.event.*;
 import jorgan.disposition.*;
 
 /**
- * A view for a registratable.
+ * A view for an activateable.
  */
-public class RegistratableView extends View {
+public class ActivateableView extends View {
 
   private static final int SIZE  = 13;
   private static final int INSET = 4;
   
   private boolean pressed = false;
 
-  public RegistratableView(Registratable registratable) {
+  public ActivateableView(Activateable registratable) {
     super(registratable);
   }
 
-  protected Registratable getRegistratable() {
-    return (Registratable)getElement();
+  protected Activateable getActivateable() {
+    return (Activateable)getElement();
   }
   
   protected Font getNonStyleFont() {
     Font font = null;
-    if (getRegistratable() instanceof Stop) {
+    if (getActivateable() instanceof Stop) {
       font = Configuration.instance().getStopFont();
     } else if (getElement() instanceof Coupler) {
       font = Configuration.instance().getCouplerFont();
@@ -51,6 +51,8 @@ public class RegistratableView extends View {
       font = Configuration.instance().getTremulantFont();
     } else if (getElement() instanceof Variation) {
       font = Configuration.instance().getVariationFont();
+    } else if (getElement() instanceof Activator) {
+        font = Configuration.instance().getActivatorFont();
     }
     return font;
   }
@@ -77,14 +79,14 @@ public class RegistratableView extends View {
   }
 
   private void paintRegistratable(Graphics2D g, int x, int y, int width, int height) {  
-    Registratable registratable = getRegistratable();
+    Activateable activateable = getActivateable();
 
     g.drawRect(x, y, width - 1, height - 1);
     if (pressed) {
       g.drawRect(x + 1, y + 1, width - 3, height - 3);
     }
 
-    if (registratable.isOn()) {
+    if (activateable.isActive()) {
       g.drawLine(x + 3, y + 5, x + 3, y + 7);
       g.drawLine(x + 4, y + 6, x + 4, y + 8);
       g.drawLine(x + 5, y + 7, x + 5, y + 9);
@@ -102,32 +104,32 @@ public class RegistratableView extends View {
   public void pressed(int x, int y, MouseEvent ev) {
     pressed = true;
 
-    Registratable registratable = getRegistratable();
+    Activateable activateable = getActivateable();
 
-    registratable.setOn(!registratable.isOn());
+    activateable.setActive(!activateable.isActive());
   } 
 
   public void released(int x, int y, MouseEvent ev) {
     pressed = false;
 
-    // issue repaint since registratable is actually not changed
+    // issue repaint since activateable is actually not changed
     repaint();
   }
   
   public void pressed(KeyEvent ev) {
 
-    Registratable registratable = getRegistratable();
+    Activateable activateable = getActivateable();
 
-    Shortcut shortcut = registratable.getShortcut();
+    Shortcut shortcut = activateable.getShortcut();
     if (shortcut != null && shortcut.match(ev)) {
-      registratable.setOn(!registratable.isOn());
+      activateable.setActive(!activateable.isActive());
     }
   } 
 
   protected int getStateIndex() {
 
-    Registratable registratable = getRegistratable();
+    Activateable activateable = getActivateable();
 
-    return Math.min(style.getStateCount() - 1, registratable.isOn() ? 1 : 0);
+    return Math.min(style.getStateCount() - 1, activateable.isActive() ? 1 : 0);
   }
 }

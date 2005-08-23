@@ -37,8 +37,9 @@ public class PlayConfigPanel extends ConfigurationPanel {
   private JCheckBox warnCouplerWithoutMessageCheckBox = new JCheckBox();
   private JCheckBox warnTremulantWithoutMessageCheckBox = new JCheckBox();
   private JCheckBox warnSwellWithoutMessageCheckBox = new JCheckBox();
+  private JCheckBox warnCrescendoWithoutMessageCheckBox = new JCheckBox();
   private JCheckBox warnVariationWithoutMessageCheckBox = new JCheckBox();
-  private JCheckBox warnPistonWithoutMessageCheckBox = new JCheckBox();
+  private JCheckBox warnCombinationWithoutMessageCheckBox = new JCheckBox();
 
   private JCheckBox releaseDevicesCheckBox = new JCheckBox();
 
@@ -71,14 +72,17 @@ public class PlayConfigPanel extends ConfigurationPanel {
       warnSwellWithoutMessageCheckBox.setText(resources.getString("config.play.warnSwellWithoutMessage"));
       warningPanel.add(warnSwellWithoutMessageCheckBox, new GridBagConstraints(0, 10, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
-      warnVariationWithoutMessageCheckBox.setText(resources.getString("config.play.warnVariationWithoutMessage"));
-      warningPanel.add(warnVariationWithoutMessageCheckBox, new GridBagConstraints(0, 11, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+      warnCrescendoWithoutMessageCheckBox.setText(resources.getString("config.play.warnCrescendoWithoutMessage"));
+      warningPanel.add(warnCrescendoWithoutMessageCheckBox, new GridBagConstraints(0, 11, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
-      warnPistonWithoutMessageCheckBox.setText(resources.getString("config.play.warnPistonWithoutMessage"));
-      warningPanel.add(warnPistonWithoutMessageCheckBox, new GridBagConstraints(0, 12, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+      warnVariationWithoutMessageCheckBox.setText(resources.getString("config.play.warnVariationWithoutMessage"));
+      warningPanel.add(warnVariationWithoutMessageCheckBox, new GridBagConstraints(0, 12, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+
+      warnCombinationWithoutMessageCheckBox.setText(resources.getString("config.play.warnCombinationWithoutMessage"));
+      warningPanel.add(warnCombinationWithoutMessageCheckBox, new GridBagConstraints(0, 13, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
     releaseDevicesCheckBox.setText(resources.getString("config.play.releaseDevicesWhenDeactivated"));
-    add(releaseDevicesCheckBox, new GridBagConstraints(0, 13, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
+    add(releaseDevicesCheckBox, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
     
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
@@ -89,15 +93,16 @@ public class PlayConfigPanel extends ConfigurationPanel {
   public void read() {
     Configuration config = (Configuration)getConfiguration();
 
-    warnKeyboardWithoutDeviceCheckBox  .setSelected(config.getWarnKeyboardWithoutDevice());
-    warnConsoleWithoutDeviceCheckBox   .setSelected(config.getWarnConsoleWithoutDevice());
+    warnKeyboardWithoutDeviceCheckBox   .setSelected(config.getWarnKeyboardWithoutDevice());
+    warnConsoleWithoutDeviceCheckBox    .setSelected(config.getWarnConsoleWithoutDevice());
     warnSoundSourceWithoutDeviceCheckBox.setSelected(config.getWarnSoundSourceWithoutDevice());
-    warnStopWithoutMessageCheckBox     .setSelected(config.getWarnStopWithoutMessage());
-    warnCouplerWithoutMessageCheckBox  .setSelected(config.getWarnCouplerWithoutMessage());
-    warnTremulantWithoutMessageCheckBox.setSelected(config.getWarnTremulantWithoutMessage());
-    warnSwellWithoutMessageCheckBox    .setSelected(config.getWarnSwellWithoutMessage());
-    warnVariationWithoutMessageCheckBox.setSelected(config.getWarnVariationWithoutMessage());
-    warnPistonWithoutMessageCheckBox   .setSelected(config.getWarnPistonWithoutMessage());
+    warnStopWithoutMessageCheckBox      .setSelected(config.getWarnStopWithoutMessage());
+    warnCouplerWithoutMessageCheckBox   .setSelected(config.getWarnCouplerWithoutMessage());
+    warnTremulantWithoutMessageCheckBox .setSelected(config.getWarnTremulantWithoutMessage());
+    warnSwellWithoutMessageCheckBox     .setSelected(config.getWarnSwellWithoutMessage());
+    warnCrescendoWithoutMessageCheckBox .setSelected(config.getWarnCrescendoWithoutMessage());
+    warnVariationWithoutMessageCheckBox .setSelected(config.getWarnVariationWithoutMessage());
+    warnCombinationWithoutMessageCheckBox.setSelected(config.getWarnCombinationWithoutMessage());
 
     releaseDevicesCheckBox.setSelected(config.getReleaseDevicesWhenDeactivated());
   }
@@ -108,15 +113,16 @@ public class PlayConfigPanel extends ConfigurationPanel {
   public void write() {
     Configuration config = (Configuration)getConfiguration();
 
-    config.setWarnKeyboardWithoutDevice   (warnKeyboardWithoutDeviceCheckBox   .isSelected());
-    config.setWarnConsoleWithoutDevice    (warnConsoleWithoutDeviceCheckBox    .isSelected());
-    config.setWarnSoundSourceWithoutDevice(warnSoundSourceWithoutDeviceCheckBox.isSelected());
-    config.setWarnStopWithoutMessage      (warnStopWithoutMessageCheckBox      .isSelected());
-    config.setWarnCouplerWithoutMessage   (warnCouplerWithoutMessageCheckBox   .isSelected());
-    config.setWarnTremulantWithoutMessage (warnTremulantWithoutMessageCheckBox .isSelected());
-    config.setWarnSwellWithoutMessage     (warnSwellWithoutMessageCheckBox     .isSelected());
-    config.setWarnVariationWithoutMessage (warnVariationWithoutMessageCheckBox .isSelected());
-    config.setWarnPistonWithoutMessage    (warnPistonWithoutMessageCheckBox    .isSelected());
+    config.setWarnKeyboardWithoutDevice    (warnKeyboardWithoutDeviceCheckBox    .isSelected());
+    config.setWarnConsoleWithoutDevice     (warnConsoleWithoutDeviceCheckBox     .isSelected());
+    config.setWarnSoundSourceWithoutDevice (warnSoundSourceWithoutDeviceCheckBox .isSelected());
+    config.setWarnStopWithoutMessage       (warnStopWithoutMessageCheckBox       .isSelected());
+    config.setWarnCouplerWithoutMessage    (warnCouplerWithoutMessageCheckBox    .isSelected());
+    config.setWarnTremulantWithoutMessage  (warnTremulantWithoutMessageCheckBox  .isSelected());
+    config.setWarnSwellWithoutMessage      (warnSwellWithoutMessageCheckBox      .isSelected());
+    config.setWarnCrescendoWithoutMessage  (warnCrescendoWithoutMessageCheckBox  .isSelected());
+    config.setWarnVariationWithoutMessage  (warnVariationWithoutMessageCheckBox  .isSelected());
+    config.setWarnCombinationWithoutMessage(warnCombinationWithoutMessageCheckBox.isSelected());
 
     config.setReleaseDevicesWhenDeactivated(releaseDevicesCheckBox.isSelected());
   }
