@@ -49,13 +49,13 @@ public class StopPlayer extends KeyablePlayer {
     removeProblem(programWarning(stop.getProgram()));
   }
   
-  protected void activate() {
+  protected void activated() {
 
     Stop stop = (Stop)getElement();
 
     boolean silentSound = false;
     
-    for (int r = 0; r < stop.getReferencesCount(); r++) {
+    for (int r = 0; r < stop.getReferenceCount(); r++) {
       Element element = stop.getReference(r).getElement();
             
       if (element instanceof SoundSource) {
@@ -74,7 +74,7 @@ public class StopPlayer extends KeyablePlayer {
       silentSound = true;
     }
       
-    for (int r = 0; r < stop.getReferencesCount(); r++) {
+    for (int r = 0; r < stop.getReferenceCount(); r++) {
       Element element = stop.getReference(r).getElement();
           
       if (element instanceof SoundEffect) {
@@ -101,7 +101,7 @@ public class StopPlayer extends KeyablePlayer {
       removeProblem(programWarning(stop.getProgram()));
     }
 
-    super.activate();    
+    super.activated();    
   }
 
   protected void activateKey(int pitch, int velocity) {
@@ -117,8 +117,8 @@ public class StopPlayer extends KeyablePlayer {
     }
   }
   
-  protected void deactivate() {
-    super.deactivate();
+  protected void deactivated() {
+    super.deactivated();
 
     Stop stop = (Stop)getElement();
 
@@ -157,14 +157,14 @@ public class StopPlayer extends KeyablePlayer {
     Stop stop = (Stop)getElement();
       
     if (stop.getActivateMessage() == null &&
-        Configuration.instance().getWarnStopWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(onMessageWarning(stop.getActivateMessage()));
     } else {
       removeProblem(onMessageWarning(stop.getActivateMessage()));
     }
 
     if (stop.getDeactivateMessage() == null &&
-        Configuration.instance().getWarnStopWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(offMessageWarning(stop.getDeactivateMessage()));
     } else {
       removeProblem(offMessageWarning(stop.getDeactivateMessage()));

@@ -48,8 +48,4 @@ public class OtherView extends View {
     g.setFont(getNonStyleFont());
     paintName(g, 0, 0, dim.width, dim.height);
   }
-  
-  protected Font getNonStyleFont() {
-    return Configuration.instance().getLabelFont();  
-  }
 }

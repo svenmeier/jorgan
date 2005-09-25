@@ -16,14 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
+
+import jorgan.disposition.*;
+import jorgan.gui.construct.editor.DataEditor;
 
 /**
- * A crescendo.
+ * BeanInfo for {@link jorgan.disposition.Keyer}.
  */
-public class Crescendo extends Slider {
+public class KeyerBeanInfo extends ActivateableBeanInfo {
 
-  protected boolean canReference(Class clazz) {
-    return Activateable.class.isAssignableFrom(clazz);  
-  }
+    protected void registerProperties() {
+        super.registerProperties();
+
+        add("velocity", Keyer.class, DataEditor.class);
+        add("pitch", Keyer.class, DataEditor.class);
+    }
 }

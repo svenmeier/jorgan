@@ -191,9 +191,9 @@ public class OrganPanel extends JPanel {
   public List getToolBarWidgets() {
     List widgets = new ArrayList();
     
+    widgets.add(constructButton);
     widgets.add(backAction);
     widgets.add(forwardAction);
-    widgets.add(constructButton);
     
     return widgets;
   }
@@ -615,7 +615,6 @@ public class OrganPanel extends JPanel {
   private class ConstructAction extends AbstractAction {
 
     public ConstructAction() {
-      putValue(Action.NAME             , resources.getString("action.construct.name"));
       putValue(Action.SHORT_DESCRIPTION, resources.getString("action.construct.description"));
       putValue(Action.SMALL_ICON       , new ImageIcon(getClass().getResource("img/construct.gif")));
     }
@@ -664,8 +663,8 @@ public class OrganPanel extends JPanel {
   }
   
   private class BordererDockingPane extends DockingPane {
-    protected Dock createDock() {
-        Dock dock = super.createDock();
+    protected Dock createDockImpl() {
+        Dock dock = super.createDockImpl();
         dock.setBorder(new Eclipse3Border());
         return dock;
     }

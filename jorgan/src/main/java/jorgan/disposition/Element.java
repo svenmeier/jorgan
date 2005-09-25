@@ -46,14 +46,14 @@ public abstract class Element implements Cloneable, Serializable {
   private String style;
 
   /**
-   * The list of elements that reference this element.
+   * The set of elements that reference this element.
    */
-  private transient List referrer = new ArrayList();
+  protected transient Set referrer = new HashSet();
 
   /**
    * The list of elements that are referenced by this element.
    */
-  private transient List references = new ArrayList();
+  protected transient List references = new ArrayList();
 
   /**
    * Test if this element can reference the given element.
@@ -89,7 +89,7 @@ public abstract class Element implements Cloneable, Serializable {
   private void readObject(ObjectInputStream in) throws ClassNotFoundException, IOException {
     in.defaultReadObject();
   
-    referrer   = new ArrayList();
+    referrer   = new HashSet();
     references = new ArrayList();
   } 
 
@@ -100,9 +100,9 @@ public abstract class Element implements Cloneable, Serializable {
       try {
           Element clone = (Element)super.clone();
 
-          clone.referrer     = new ArrayList();
-          clone.references   = new ArrayList();
-          clone.organ        = null;
+          clone.referrer   = new HashSet();
+          clone.references = new ArrayList();
+          clone.organ      = null;
           
           return clone;
       } catch (CloneNotSupportedException ex) {
@@ -121,8 +121,9 @@ public abstract class Element implements Cloneable, Serializable {
         removeReference(reference);
       }
 
-      for (int r = referrer.size() - 1; r >= 0; r--) {
-        Element element = (Element)referrer.get(r);
+      Iterator iterator = referrer.iterator();
+      while (iterator.hasNext()) {
+        Element element = (Element)iterator.next();
 
         element.unreference(this);        
       }
@@ -183,12 +184,12 @@ public abstract class Element implements Cloneable, Serializable {
     return (Reference)references.get(index);
   }
 
-  public int getReferencesCount() {
+  public int getReferenceCount() {
     return references.size();
   }
 
   public List getReferences() {
-    return new ArrayList(references);
+    return Collections.unmodifiableList(references);
   }
   
   /**
@@ -293,11 +294,22 @@ public abstract class Element implements Cloneable, Serializable {
     }
   }
   
-  public List getReferrer(Class clazz) {
-    List filtered = new ArrayList();
+  public List referenced() {
+    List referenced = new ArrayList();
+      
+    for (int r = 0; r < references.size(); r++) {
+      Reference reference = (Reference)references.get(r);
+      referenced.add(reference.getElement());
+    }
+    return referenced;
+  }
     
-    for (int r = 0; r < referrer.size(); r++) {
-      Element element = (Element)referrer.get(r);
+  public Set referrer(Class clazz) {
+    Set filtered = new HashSet();
+    
+    Iterator iterator = referrer.iterator();
+    while (iterator.hasNext()){
+      Element element = (Element)iterator.next();
       if (clazz.isAssignableFrom(element.getClass())) {
         filtered.add(element);    
       }
@@ -305,8 +317,8 @@ public abstract class Element implements Cloneable, Serializable {
     return filtered;
   }
   
-  public Iterator referrer() {
-    return referrer.iterator();
+  public Set getReferrer() {
+    return Collections.unmodifiableSet(referrer);
   }
 
   public String toString() {

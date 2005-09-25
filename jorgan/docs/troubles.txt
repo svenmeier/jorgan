@@ -11,44 +11,44 @@ A3 - jOrgan runs on Windows, Linux and Os X. To be able to support all these ope
 
 Q4 - I double-click the file jOrgan.jar but nothing happens.
 A4 - Verify that a 1.4.1 compatible (or newer) JRE is installed. Open a command shell and enter 'java -version' to see your current Java version (output should look similar):
-	java version "1.5.0"
-	Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0-b64)
-	Java HotSpot(TM) Client VM (build 1.5.0-b64, mixed mode)	
+    java version "1.5.0"
+    Java(TM) 2 Runtime Environment, Standard Edition (build 1.5.0-b64)
+    Java HotSpot(TM) Client VM (build 1.5.0-b64, mixed mode)
 
 Q5 - My Java version is sufficient but still nothing happens.
 A5 - Please ensure that you've extracted (see A1) all files contained in jOrgan-xy.zip to the correct location:
-	/<jOrgan-installation-directory>
-	   jOrgan.jar
-	   /lib
+    /<jOrgan-installation-directory>
+       jOrgan.jar
+       /lib
               core.jar
-	      swingx.jar
-	      spin.jar
+          swingx.jar
+          spin.jar
               jh.jar
-	   /docs
-	      gpl.txt
+       /docs
+          gpl.txt
               authors.txt
               troubles.txt
 
 Q6 - jOrgan show an empty online help and the instructions tab stays empty.
-A6 - [Online help is currently under development and will hopefully be published Mai 2005]
-Online help and instrucations are avialable as separate downloads. Please ensure that you've extracted (see A1) all files contained in jOrgan-xy-docs.zip to the correct location:
-	/<jOrgan-installation-directory>
-	   /docs
-	      help.zip
-              instructions.zip
+A6 - [Online help is currently under development and will hopefully be published soon]
+Online help and instructions are available as separate downloads. Please ensure that you've extracted (see A1) all files contained in jOrgan-xy-docs.zip to the correct location:
+    /<jOrgan-installation-directory>
+       /docs
+          help.zip
+          instructions.zip
 
 Q7 - I'm not able to select a skin for the console of my organ.
 A7 - Skins are avialable as separate downloads, e.g. skin-classic-xy.zip. Please ensure that you've extracted (see A1) the contained zip file to the correct location:
-	/<jOrgan-installation-directory>
-	   /skins
-	      classic.zip
+    /<jOrgan-installation-directory>
+       /skins
+          classic.zip
 
 Q8 - jOrgan doesn't support my expander, sound card or sampler.
 A8 - Extensions for special SoundSources are avialable as separate downloads, e.g. sound-creative-xy.zip. Please ensure that you've extracted (see A1) the contained zip file to the correct location:
-	/<jOrgan-installation-directory>
-	   /lib
-	      creative.jar
-              creative.dll
+    /<jOrgan-installation-directory>
+       /lib
+          creative.jar
+          creative.dll
 
 Q9 - Where do I find answers to further questions?
 A9 - Please consult the online help (see A6) or post your questions on http://jorgan.sourceforge.net/forum.

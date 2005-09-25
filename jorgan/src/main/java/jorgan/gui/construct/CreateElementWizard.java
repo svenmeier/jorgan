@@ -99,7 +99,7 @@ public class CreateElementWizard extends BasicWizard {
 
     public ElementPage() {
       
-      elementPanel.setElementClasses(organ.getElementClasses());
+      elementPanel.setElementClasses(Organ.getElementClasses());
       if (prototype != null) {
         elementPanel.setElementClass(prototype.getClass());
       }
@@ -214,10 +214,7 @@ public class CreateElementWizard extends BasicWizard {
       referencedFrom = new ArrayList();
       if (prototype != null) {
         if (prototype.getClass() == element.getClass()) {
-          Iterator iterator = prototype.referrer();
-          while (iterator.hasNext()) {
-            referencedFrom.add(iterator.next());
-          }
+          referencedFrom.addAll(prototype.getReferrer());
           elementsSelectionPanel.setSelectedElements(referencedFrom);
         }
       }

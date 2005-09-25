@@ -23,7 +23,22 @@ package jorgan.disposition;
  */
 public class Activator extends Activateable {
 
+  private int timeout;
+  
   protected boolean canReference(Class clazz) {
     return Activateable.class.isAssignableFrom(clazz);  
-  }    
+  }
+
+  public int getTimeout() {
+    return timeout;
+  }
+
+  public void setTimeout(int timeout) {
+    if (timeout < 0) {
+      throw new IllegalArgumentException("timeout '" + timeout + "'");
+    }
+    this.timeout = timeout;
+
+    fireElementChanged(true);
+  }  
 }

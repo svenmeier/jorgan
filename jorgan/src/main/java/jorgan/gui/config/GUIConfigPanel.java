@@ -30,7 +30,6 @@ public class GUIConfigPanel extends ConfigurationPanel {
 
   private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
   private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
-  private JCheckBox disableScreenSaverCheckBox = new JCheckBox();
 
   public GUIConfigPanel() {
     setLayout(new GridBagLayout());
@@ -43,9 +42,6 @@ public class GUIConfigPanel extends ConfigurationPanel {
     showAboutOnStartupCheckBox.setText(resources.getString("config.swing.showAboutOnStartup"));
     add(showAboutOnStartupCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
-    disableScreenSaverCheckBox.setText(resources.getString("config.swing.disableScreenSaver"));
-    add(disableScreenSaverCheckBox, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
 
@@ -53,7 +49,6 @@ public class GUIConfigPanel extends ConfigurationPanel {
     Configuration config = (Configuration)getConfiguration();
     useSystemLookAndFeelCheckBox.setSelected(config.getUseSystemLookAndFeel());
     showAboutOnStartupCheckBox  .setSelected(config.getShowAboutOnStartup());
-    disableScreenSaverCheckBox  .setSelected(config.getDisableScreenSaver());
   }
 
   /**
@@ -61,8 +56,7 @@ public class GUIConfigPanel extends ConfigurationPanel {
    */
   public void write() {
     Configuration config = (Configuration)getConfiguration();
-    config.setUseSystemLookAndFeel      (useSystemLookAndFeelCheckBox.isSelected());
-    config.setShowAboutOnStartup        (showAboutOnStartupCheckBox  .isSelected());
-    config.setDisableScreenSaver        (disableScreenSaverCheckBox  .isSelected());
+    config.setUseSystemLookAndFeel(useSystemLookAndFeelCheckBox.isSelected());
+    config.setShowAboutOnStartup  (showAboutOnStartupCheckBox  .isSelected());
   }
 }

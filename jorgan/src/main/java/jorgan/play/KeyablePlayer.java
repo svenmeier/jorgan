@@ -79,14 +79,14 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
     }
   }
 
-  protected void activate() {
+  protected void activated() {
   }
 
   protected abstract void activateKey(int pitch, int velocity);
 
   protected abstract void deactivateKey(int pitch);
 
-  protected void deactivate() {
+  protected void deactivated() {
   }
   
   public void keyDown(int pitch, int velocity) {
@@ -96,7 +96,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
 
     if (pitch >= 0 && pitch <= 127) {
       if (pressedKeys[pitch] == 0) {
-        action.activateKey(pitch, velocity);
+        action.keyDown(pitch, velocity);
       }
       pressedKeys[pitch]++;
     }
@@ -109,7 +109,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
     if (pitch >= 0 && pitch <= 127) {
       pressedKeys[pitch]--;
       if (pressedKeys[pitch] == 0) {
-        action.deactivateKey(pitch);
+        action.keyUp(pitch);
       }
     }
   }
@@ -127,11 +127,11 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       if (shouldActivate()) {
         if (!activated) {
           activated = true;
-          activate();
+          activated();
         }
       } else {
         if (activated) {
-          deactivate();
+          deactivated();
           activated = false;
         }
       }  
@@ -141,20 +141,20 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       return isActive();
     }
 
-    public void activateKey(int pitch, int velocity) {
+    public void keyDown(int pitch, int velocity) {
       if (activated) {
         KeyablePlayer.this.activateKey(pitch, velocity);
       }
     }
 
-    public void deactivateKey(int pitch) {
+    public void keyUp(int pitch) {
       if (activated) {
         KeyablePlayer.this.deactivateKey(pitch);
       }
     }
 
-    public void activate() {
-      KeyablePlayer.this.activate();
+    public void activated() {
+      KeyablePlayer.this.activated();
 
       for (int p = 0; p < pressedKeys.length; p++) {
         if (pressedKeys[p] > 0) {
@@ -163,14 +163,14 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
 
-    public void deactivate() {
+    public void deactivated() {
       for (int p = 0; p < pressedKeys.length; p++) {
         if (pressedKeys[p] > 0) {
           KeyablePlayer.this.deactivateKey(p);
         }
       }
 
-      KeyablePlayer.this.deactivate();
+      KeyablePlayer.this.deactivated();
     }
   }
   
@@ -181,7 +181,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
   }
 
   private class HighestPitchAction extends Action {
-    public void activateKey(int pitch, int velocity) {
+    public void keyDown(int pitch, int velocity) {
       if (activated) {
         int highest = getHighestPitch();
         if (highest == -1 || pitch > highest) {
@@ -193,7 +193,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
 
-    public void deactivateKey(int pitch) {
+    public void keyUp(int pitch) {
       if (activated) {
         int highest = getHighestPitch();
         if (pitch > highest || highest == -1) {
@@ -205,8 +205,8 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
     
-    public void activate() {
-      KeyablePlayer.this.activate();
+    public void activated() {
+      KeyablePlayer.this.activated();
 
       int highest = getHighestPitch();
       if (highest != -1) {
@@ -214,13 +214,13 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
     
-    public void deactivate() {
+    public void deactivated() {
       int highest = getHighestPitch();
       if (highest != -1) {
         KeyablePlayer.this.deactivateKey(highest);
       }
 
-      KeyablePlayer.this.deactivate();
+      KeyablePlayer.this.deactivated();
     }
     
     private int getHighestPitch() {
@@ -234,7 +234,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
   }
   
   private class LowestPitchAction extends Action {
-    public void activateKey(int pitch, int velocity) {
+    public void keyDown(int pitch, int velocity) {
       if (activated) {
         int lowest = getLowestPitch();
         if (lowest == -1 || pitch < lowest) {
@@ -246,7 +246,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
     
-    public void deactivateKey(int pitch) {
+    public void keyUp(int pitch) {
       if (activated) {
         int lowest = getLowestPitch();
         if (pitch < lowest || lowest == -1) {
@@ -258,8 +258,8 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
     
-    public void activate() {
-      KeyablePlayer.this.activate();
+    public void activated() {
+      KeyablePlayer.this.activated();
 
       int lowest = getLowestPitch();
       if (lowest != -1) {
@@ -267,13 +267,13 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
     
-    public void deactivate() {
+    public void deactivated() {
       int lowest = getLowestPitch();
       if (lowest != -1) {
         KeyablePlayer.this.deactivateKey(lowest);
       }
 
-      KeyablePlayer.this.deactivate();
+      KeyablePlayer.this.deactivated();
     }
     
     private int getLowestPitch() {
@@ -287,7 +287,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
   }
   
   private class ConstantPitchAction extends Action {
-    public void activateKey(int pitch, int velocity) {
+    public void keyDown(int pitch, int velocity) {
       if (activated) {
         if (!hasPitch()) {
           Keyable keyable = (Keyable)getElement();
@@ -297,7 +297,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
       
-    public void deactivateKey(int pitch) {
+    public void keyUp(int pitch) {
       if (activated) {
         if (!hasPitch()) {
           Keyable keyable = (Keyable)getElement();
@@ -307,8 +307,8 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
       
-    public void activate() {
-      KeyablePlayer.this.activate();
+    public void activated() {
+      KeyablePlayer.this.activated();
 
       if (hasPitch()) {
         Keyable keyable = (Keyable)getElement();
@@ -316,13 +316,13 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
       }
     }
       
-    public void deactivate() {
+    public void deactivated() {
       if (hasPitch()) {
         Keyable keyable = (Keyable)getElement();
         KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
       }
 
-      KeyablePlayer.this.deactivate();
+      KeyablePlayer.this.deactivated();
     }
     
     private boolean hasPitch() {
@@ -337,8 +337,8 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
 
   private class SustainAction extends SostenutoAction {
 
-    public void activateKey(int pitch, int velocity) {
-      super.activateKey(pitch, velocity);
+    public void keyDown(int pitch, int velocity) {
+      super.keyDown(pitch, velocity);
       
       if (activated) {
         stuckKeys[pitch] = true;
@@ -349,25 +349,25 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
   private class SostenutoAction extends Action {
     protected boolean[] stuckKeys = new boolean[128];
 
-    public void activateKey(int pitch, int velocity) {
+    public void keyDown(int pitch, int velocity) {
       if (!activated || !stuckKeys[pitch]) {
         KeyablePlayer.this.activateKey(pitch, velocity);
       }
     }
 
-    public void deactivateKey(int pitch) {
+    public void keyUp(int pitch) {
       if (!activated || !stuckKeys[pitch]) {
         KeyablePlayer.this.deactivateKey(pitch);
       }
     }
 
-    public void activate() {
+    public void activated() {
       for (int k = 0; k < pressedKeys.length; k++) {
         stuckKeys[k] = pressedKeys[k] > 0;
       }
     }
 
-    public void deactivate() {
+    public void deactivated() {
       for (int k = 0; k < pressedKeys.length; k++) {
         if (stuckKeys[k] && pressedKeys[k] == 0) {
           KeyablePlayer.this.deactivateKey(k);

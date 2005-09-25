@@ -41,22 +41,6 @@ public class ActivateableView extends View {
     return (Activateable)getElement();
   }
   
-  protected Font getNonStyleFont() {
-    Font font = null;
-    if (getActivateable() instanceof Stop) {
-      font = Configuration.instance().getStopFont();
-    } else if (getElement() instanceof Coupler) {
-      font = Configuration.instance().getCouplerFont();
-    } else if (getElement() instanceof Tremulant) {
-      font = Configuration.instance().getTremulantFont();
-    } else if (getElement() instanceof Variation) {
-      font = Configuration.instance().getVariationFont();
-    } else if (getElement() instanceof Activator) {
-        font = Configuration.instance().getActivatorFont();
-    }
-    return font;
-  }
-  
   protected Dimension getNonStyleSize() {
        
     Dimension dim = getNameSize();
@@ -106,14 +90,24 @@ public class ActivateableView extends View {
 
     Activateable activateable = getActivateable();
 
-    activateable.setActive(!activateable.isActive());
+    if (activateable.isNonLocking()) {
+      activateable.setActive(true);
+    } else {
+      activateable.setActive(!activateable.isActive());
+    }
   } 
 
   public void released(int x, int y, MouseEvent ev) {
     pressed = false;
 
-    // issue repaint since activateable is actually not changed
-    repaint();
+    Activateable activateable = getActivateable();
+    
+    if (activateable.isNonLocking()) {
+      activateable.setActive(false);
+    } else {
+      // issue repaint since activateable is actually not changed
+      repaint();
+    }
   }
   
   public void pressed(KeyEvent ev) {

@@ -387,7 +387,9 @@ public abstract class View {
     }
   }
 
-  protected abstract Font getNonStyleFont();
+  protected Font getNonStyleFont() {
+     return Configuration.instance().getFont(getElement().getClass());
+  }
 
   /**
    * Get the index of the currently state.

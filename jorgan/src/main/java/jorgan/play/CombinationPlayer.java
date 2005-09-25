@@ -86,7 +86,7 @@ public class CombinationPlayer extends Player {
     
     PlayerProblem warnGetMessage = new PlayerProblem(PlayerProblem.WARNING, "getMessage", null); 
     if (combination.getRecallMessage() == null &&
-        Configuration.instance().getWarnCombinationWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(warnGetMessage);
     } else {
       removeProblem(warnGetMessage);
@@ -94,7 +94,7 @@ public class CombinationPlayer extends Player {
     
     PlayerProblem warnSetMessage = new PlayerProblem(PlayerProblem.WARNING, "setMessage", null); 
     if (combination.getCaptureMessage() == null &&
-        Configuration.instance().getWarnCombinationWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(warnSetMessage);
     } else {
       removeProblem(warnSetMessage);

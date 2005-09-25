@@ -210,14 +210,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
   public void addNotify() {
     super.addNotify();
-    
-    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(shortcutHandler);
+
+    KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventPostProcessor(shortcutHandler);        
   }
 
   public void removeNotify() {
-    super.removeNotify();
-
     KeyboardFocusManager.getCurrentKeyboardFocusManager().removeKeyEventPostProcessor(shortcutHandler);
+    
+    super.removeNotify();
   }
 
   public Dimension getPreferredScrollableViewportSize() {
@@ -389,7 +389,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     if (console != null) {
       setZoom(console.getZoom());
       
-      for (int r = 0; r < console.getReferencesCount(); r++) {
+      for (int r = 0; r < console.getReferenceCount(); r++) {
         createView(console.getReference(r).getElement());
       }
       viewComparator.sort(views);
@@ -652,7 +652,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
       jorgan.disposition.Element element = event.getElement();
       
-      if (element.getReferrer(Console.class).contains(console)) {
+      if (element.referrer(Console.class).contains(console)) {
         createView(element);
 
         viewComparator.sort(views);
@@ -1056,7 +1056,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
   private class ShortcutHandler implements KeyEventPostProcessor {
 
     public boolean postProcessKeyEvent(KeyEvent e) {
-      if (e.getID() == KeyEvent.KEY_PRESSED && !constructing) {
+      if (!constructing && e.getID() == KeyEvent.KEY_PRESSED && !Shortcut.isModifier(e.getKeyCode())) {
         if (KeyboardFocusManager.getCurrentKeyboardFocusManager().getFocusedWindow() == SwingUtilities.getWindowAncestor(ConsolePanel.this)) {
           for (int v = 0; v < views.size(); v++) {
             View view = (View)views.get(v);

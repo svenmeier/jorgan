@@ -46,7 +46,7 @@ public class VariationPlayer extends ActivateablePlayer implements SoundEffectPl
     
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null);
     if ((variation.getActivateMessage() == null || variation.getDeactivateMessage() == null) &&
-        Configuration.instance().getWarnVariationWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(problem);
     } else {
       removeProblem(problem);
