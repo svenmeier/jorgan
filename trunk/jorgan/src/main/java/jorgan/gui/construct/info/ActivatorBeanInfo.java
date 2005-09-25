@@ -16,14 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
+
+import jorgan.disposition.*;
+import jorgan.gui.construct.editor.PositiveNumberEditor;
 
 /**
- * A crescendo.
+ * BeanInfo for {@link jorgan.disposition.Activator}.
  */
-public class Crescendo extends Slider {
+public class ActivatorBeanInfo extends ResponsiveBeanInfo {
 
-  protected boolean canReference(Class clazz) {
-    return Activateable.class.isAssignableFrom(clazz);  
-  }
+    protected void registerProperties() {
+        super.registerProperties();
+
+        add("timeout", Activator.class, PositiveNumberEditor.class);
+    }
 }

@@ -43,19 +43,19 @@ public class ActivatorPlayer extends ActivateablePlayer {
       Activator activator = (Activator)getElement();
       if (isActive()) {
         if (!activating) {
-          for (int r = 0; r < activator.getReferencesCount(); r++) {
+          for (int r = 0; r < activator.getReferenceCount(); r++) {
             Reference reference = activator.getReference(r);
             ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(reference.getElement());
-            player.activated();
+            player.activate();
           }
           activating = true;
         }
       } else {
         if (activating) {
-          for (int r = 0; r < activator.getReferencesCount(); r++) {
+          for (int r = 0; r < activator.getReferenceCount(); r++) {
             Reference reference = activator.getReference(r);
             ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(reference.getElement());
-            player.deactivated();
+            player.deactivate();
           }
           activating = false;
         }

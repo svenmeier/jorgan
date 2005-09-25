@@ -19,46 +19,54 @@
 package jorgan.play;
 
 import jorgan.disposition.*;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.*;
 
 /**
- * A player for a crescendo.
+ * A player of a keyer.
  */
-public class CrescendoPlayer extends SliderPlayer {
+public class KeyerPlayer extends ActivateablePlayer {
 
-  private ActivateablePlayer player;
+  private boolean keying = false;
   
-  public CrescendoPlayer(Crescendo crescendo) {
-    super(crescendo);
+  public KeyerPlayer(Keyer keyer) {
+    super(keyer);
   }
-  
+
   protected void closeImpl() {
     super.closeImpl();
       
-    player = null;
+    keying = false;
   }
 
   public void elementChanged(OrganEvent event) {
     super.elementChanged(event);
-    
+      
     if (isOpen()) {
-      Crescendo crescendo = (Crescendo)getElement();
+      Keyer keyer = (Keyer)getElement();
 
-      if (crescendo.getReferenceCount() > 0) {
-        int current = (crescendo.getPosition() * crescendo.getReferenceCount() / 128);
-          
-        ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(crescendo.getReference(current).getElement());
+      if (isActive()) {
+        if (!keying) {
+          for (int e = 0; e < keyer.getReferenceCount(); e++) {
+            Element element = keyer.getReference(e).getElement();
 
-        if (player != this.player) {
-          if (player != null) {
-            player.activate();
+            Player player = getOrganPlay().getPlayer(element);
+            if (player != null) {
+              ((KeyablePlayer)player).keyDown(keyer.getPitch(), keyer.getVelocity());
+            }
           }
-              
-          if (this.player != null) {
-            this.player.deactivate();
+          keying = true;
+        }
+      } else {
+        if (keying) {
+          for (int e = 0; e < keyer.getReferenceCount(); e++) {
+            Element element = keyer.getReference(e).getElement();
+
+            Player player = getOrganPlay().getPlayer(element);
+            if (player != null) {
+              ((KeyablePlayer)player).keyUp(keyer.getPitch());
+            }
           }
-              
-          this.player = player;
+          keying = false;
         }
       }
     }

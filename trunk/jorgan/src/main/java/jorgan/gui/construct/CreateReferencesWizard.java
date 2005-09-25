@@ -74,16 +74,12 @@ public class CreateReferencesWizard extends BasicWizard {
 
       for (int t = 0; t < referencesTo.size(); t++) {
         Element referenced = (Element)referencesTo.get(t);
-        if (element.getReference(referenced) == null) {
-          element.reference(referenced);
-        }
+        element.reference(referenced);
       }
  
       for (int f = 0; f < referencedFrom.size(); f++) {
         Element referrer = (Element)referencedFrom.get(f);
-        if (referrer.getReference(element) == null) {
-          referrer.reference(element);
-        }
+        referrer.reference(element);
       }
     }
     

@@ -29,7 +29,7 @@ import jorgan.disposition.*;
  */
 public abstract class ActivateablePlayer extends Player {
 
-  private int activationCount = 0;
+  private int activations = 0;
   
   public ActivateablePlayer(Activateable activateable) {
     super(activateable);
@@ -38,17 +38,17 @@ public abstract class ActivateablePlayer extends Player {
   protected void closeImpl() {
     super.closeImpl();
     
-    activationCount = 0;
+    activations = 0;
   }
   
-  public void activated() {
-    activationCount++;     
+  public void activate() {
+    activations++;     
     
     elementChanged(null);
   }
   
-  public void deactivated() {
-    activationCount--;
+  public void deactivate() {
+    activations--;
     
     elementChanged(null);
   }
@@ -56,7 +56,7 @@ public abstract class ActivateablePlayer extends Player {
   protected boolean isActive() {
     Activateable activateable = (Activateable)getElement();
     
-    return activationCount > 0 || activateable.isActive();
+    return activations > 0 || activateable.isActive();
   }
   
   public void messageReceived(ShortMessage message) {

@@ -19,11 +19,33 @@
 package jorgan.disposition;
 
 /**
- * A crescendo.
+ * A keyer initiates a key press on activation.
  */
-public class Crescendo extends Slider {
+public class Keyer extends Activateable {
 
+  private int pitch = 64;
+  
+  private int velocity = 100;
+  
   protected boolean canReference(Class clazz) {
-    return Activateable.class.isAssignableFrom(clazz);  
+    return Keyable.class.isAssignableFrom(clazz);  
+  }
+  
+  public void setPitch(int pitch) {
+    this.pitch = pitch;
+
+    fireElementChanged(true);
+  }
+
+  public int getPitch() {
+    return pitch;
+  }
+  
+  public void setVelocity(int velocity) {
+    this.velocity = velocity;
+  }
+  
+  public int getVelocity() {
+    return velocity;
   }
 }

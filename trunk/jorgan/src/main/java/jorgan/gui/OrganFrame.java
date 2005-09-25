@@ -68,7 +68,6 @@ import jorgan.gui.help.Help;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.mac.TweakMac;
 import jorgan.xml.XMLFormatException;
-import jorgan.swing.ScreenSaverDisabler;
 import jorgan.swing.StatusBar;
 
 /**
@@ -671,6 +670,7 @@ public class OrganFrame extends JFrame implements UI {
     public HelpAction() {
       putValue(Action.NAME             , resources.getString("action.help.name"));
       putValue(Action.SHORT_DESCRIPTION, resources.getString("action.help.description"));
+      putValue(Action.SMALL_ICON       , new ImageIcon(getClass().getResource("img/help.gif")));
     }
 
     public void actionPerformed(ActionEvent ev) {
@@ -715,8 +715,6 @@ public class OrganFrame extends JFrame implements UI {
    */
   private class FullScreenAction extends AbstractAction implements ComponentListener {
     
-    private ScreenSaverDisabler disabler = new ScreenSaverDisabler();
-    
     private Map dialogs = new HashMap();
     
     public FullScreenAction() {
@@ -754,9 +752,7 @@ public class OrganFrame extends JFrame implements UI {
         }
         
         if (dialogs.isEmpty()) {
-            showMessage("action.fullScreen.failure", new Object[0]);
-        } else {
-            disabler.disable(Configuration.instance().getDisableScreenSaver());
+          showMessage("action.fullScreen.failure", new Object[0]);
         }
       }
     }
@@ -769,8 +765,6 @@ public class OrganFrame extends JFrame implements UI {
         dialog.setOrgan(null);
       }
       dialogs.clear();
-      
-      disabler.disable(false);
     }
     
     public void componentMoved(ComponentEvent e) { }

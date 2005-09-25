@@ -87,7 +87,7 @@ public class KeyboardPlayer extends Player {
     Keyboard keyboard = (Keyboard)getElement();
 
     PlayerProblem warnDevice = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
-    if (keyboard.getDevice() == null && Configuration.instance().getWarnKeyboardWithoutDevice()) {
+    if (keyboard.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
       addProblem(warnDevice);
     } else {
       removeProblem(warnDevice);
@@ -140,7 +140,7 @@ public class KeyboardPlayer extends Player {
         
       Keyboard keyboard = (Keyboard)getElement();
 
-      for (int e = 0; e < keyboard.getReferencesCount(); e++) {
+      for (int e = 0; e < keyboard.getReferenceCount(); e++) {
         Element element = keyboard.getReference(e).getElement();
 
         Player player = getOrganPlay().getPlayer(element);
@@ -157,7 +157,7 @@ public class KeyboardPlayer extends Player {
           
       Keyboard keyboard = (Keyboard)getElement();
 
-      for (int e = 0; e < keyboard.getReferencesCount(); e++) {
+      for (int e = 0; e < keyboard.getReferenceCount(); e++) {
         Element element = keyboard.getReference(e).getElement();
 
         Player player = getOrganPlay().getPlayer(element);

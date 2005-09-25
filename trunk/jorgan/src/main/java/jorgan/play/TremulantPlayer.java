@@ -46,7 +46,7 @@ public class TremulantPlayer extends ActivateablePlayer implements SoundEffectPl
     
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
     if ((tremulant.getActivateMessage() == null || tremulant.getDeactivateMessage() == null) &&
-        Configuration.instance().getWarnTremulantWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(problem);
     } else {
       removeProblem(problem);

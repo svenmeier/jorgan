@@ -99,7 +99,7 @@ public abstract class ElementHandler extends Handler {
       new StringHandler(getWriter(), "style", getElement().getStyle()).start();        
     }
     
-    for (int r = 0; r < getElement().getReferencesCount(); r++) {
+    for (int r = 0; r < getElement().getReferenceCount(); r++) {
       createReferenceHandler(getWriter(), "reference", getElement().getReference(r)).start();
     }
   }

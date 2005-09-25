@@ -244,36 +244,28 @@ public class OrganPlay  {
 
     if (element instanceof Keyboard) {
       player = new KeyboardPlayer((Keyboard)element);
-    }
-    if (element instanceof SoundSource) {
+    } else if (element instanceof SoundSource) {
       player = new SoundSourcePlayer((SoundSource)element);
-    }
-    if (element instanceof Console) {
+    } else if (element instanceof Console) {
       player = new ConsolePlayer((Console)element);
-    }
-    if (element instanceof Activator) {
+    } else if (element instanceof Activator) {
       player = new ActivatorPlayer((Activator)element);
-    }
-    if (element instanceof Stop) {
+    } else if (element instanceof Stop) {
       player = new StopPlayer((Stop)element);
-    }
-    if (element instanceof Coupler) {
+    } else if (element instanceof Coupler) {
       player = new CouplerPlayer((Coupler)element);
-    }
-    if (element instanceof Swell) {
+    } else if (element instanceof Swell) {
       player = new SwellPlayer((Swell)element);
-    }
-    if (element instanceof Crescendo) {
+    } else if (element instanceof Crescendo) {
       player = new CrescendoPlayer((Crescendo)element);
-    }
-    if (element instanceof Tremulant) {
+    } else if (element instanceof Tremulant) {
       player = new TremulantPlayer((Tremulant)element);
-    }
-    if (element instanceof Variation) {
+    } else if (element instanceof Variation) {
       player = new VariationPlayer((Variation)element);
-    }
-    if (element instanceof Combination) {
+    } else if (element instanceof Combination) {
       player = new CombinationPlayer((Combination)element);
+    } else if (element instanceof Keyer) {
+        player = new KeyerPlayer((Keyer)element);
     }
 
     if (player != null) {

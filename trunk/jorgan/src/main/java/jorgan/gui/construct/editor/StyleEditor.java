@@ -19,7 +19,7 @@
 package jorgan.gui.construct.editor;
 
 import java.beans.*;
-import java.util.List;
+import java.util.Iterator;
 
 import jorgan.disposition.*;
 import jorgan.skin.Skin;
@@ -36,11 +36,11 @@ public class StyleEditor extends PropertyEditorSupport implements ElementAwareEd
     if (element instanceof Console) {
       console = (Console)element;
     } else {
-      List consoles = element.getReferrer(Console.class);
-      if (consoles.isEmpty()) {
-        console = null;
+      Iterator iterator = element.referrer(Console.class).iterator();
+      if (iterator.hasNext()) {
+        console = (Console)iterator.next();
       } else {
-        console = (Console)consoles.get(0);
+        console = null;
       }
     }
   }

@@ -47,17 +47,17 @@ public class SliderView extends View {
   protected int getStateIndex() {
     Slider slider = (Slider)getElement();
 
-    return slider.getPosition() * style.getStateCount() / 128; 
-  }
-
-  protected Font getNonStyleFont() {
-    Font font = null;
-    if (getSlider() instanceof Swell) {
-      font = Configuration.instance().getSwellFont();
-    } else if (getSlider() instanceof Crescendo) {
-      font = Configuration.instance().getCrescendoFont();
+    if (style.getStateCount() == 2) {
+        // special handling for exactly two states:
+        // use first state for 0 position only
+        if (slider.getPosition() == 0) {
+            return 0; 
+        } else {
+            return 1; 
+        }
+    } else {
+        return slider.getPosition() * style.getStateCount() / 128; 
     }
-    return font;  
   }
 
   protected Dimension getNonStyleSize() {

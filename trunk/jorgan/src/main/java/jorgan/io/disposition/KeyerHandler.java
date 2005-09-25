@@ -18,7 +18,7 @@
  */
 package jorgan.io.disposition;
 
-import java.io.IOException;
+import java.io.*;
 
 import org.xml.sax.*;
 
@@ -26,38 +26,48 @@ import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.IntegerHandler;
 
-public class ActivatorHandler extends ActivateableHandler {
+public class KeyerHandler extends ActivateableHandler {
 
-  private Activator activator;
+  private Keyer keyer;
 
-  public ActivatorHandler(AbstractReader reader, Attributes attributes) {
+  /**
+   * Constructor.
+   */
+  public KeyerHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
 
-    activator = new Activator();
+    keyer = new Keyer();
   }
-
-  public ActivatorHandler(AbstractWriter writer, String tag, Activator activator) {
+  
+  public KeyerHandler(AbstractWriter writer, String tag, Keyer keyer) {
     super(writer, tag);
-
-    this.activator = activator;
+    
+    this.keyer = keyer;
   }
 
-  public Activator getActivator() {
-    return activator;
+  public Keyer getKeyer() {
+    return keyer;
   }
 
   protected Activateable getActivateable() {
-    return getActivator();
+    return getKeyer();
   }
-  
-  public void startElement(String uri, String localName, String qName, Attributes attributes) {
 
-    if ("timeout".equals(qName)) {
+  public void startElement(String uri, String localName,
+                           String qName, Attributes attributes) {
+
+    if ("pitch".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
-          getActivator().setTimeout(getInteger());
+          keyer.setPitch(getInteger());
         }
       };
+    } else if ("velocity".equals(qName)) {
+          new IntegerHandler(getReader()) {
+            public void finished() {
+              keyer.setVelocity(getInteger());
+            }
+          };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -66,6 +76,7 @@ public class ActivatorHandler extends ActivateableHandler {
   public void children() throws IOException {
     super.children();
 
-    new IntegerHandler(getWriter(), "timeout", getActivator().getTimeout()).start();
+    new IntegerHandler(getWriter(), "pitch", keyer.getPitch()).start();
+    new IntegerHandler(getWriter(), "velocity", keyer.getVelocity()).start();
   }
 }

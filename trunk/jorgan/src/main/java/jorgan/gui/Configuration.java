@@ -32,7 +32,6 @@ public class Configuration extends PreferencesConfiguration {
 
   private static final boolean   USE_SYSTEM_LOOK_AND_FEEL = true;
   private static final boolean   SHOW_ABOUT_ON_STARTUP    = true;
-  private static final boolean   DISABLE_SCREENSAVER      = true;
   private static final Rectangle FRAME_BOUNDS             = null;
   private static final int       FRAME_STATE              = JFrame.NORMAL;
   private static final String    PLAY_DOCKING             = null;  
@@ -42,7 +41,6 @@ public class Configuration extends PreferencesConfiguration {
 
   private boolean   useSystemLookAndFeel;
   private boolean   showAboutOnStartup;
-  private boolean   disableScreenSaver;
   private Rectangle frameBounds;
   private int       frameState;
   private String    playDocking;
@@ -61,7 +59,6 @@ public class Configuration extends PreferencesConfiguration {
   protected void restore(Preferences prefs) {
     useSystemLookAndFeel        = getBoolean  (prefs, "useSystemLookAndFeel", USE_SYSTEM_LOOK_AND_FEEL);
     showAboutOnStartup          = getBoolean  (prefs, "showAboutOnStartup"  , SHOW_ABOUT_ON_STARTUP);
-    disableScreenSaver          = getBoolean  (prefs, "disableScreenSaver"  , DISABLE_SCREENSAVER);
     frameBounds                 = getRectangle(prefs, "frameBounds"         , FRAME_BOUNDS);
     frameState                  = getInt      (prefs, "frameState"          , FRAME_STATE);
     playDocking                 = get         (prefs, "playDocking"         , PLAY_DOCKING);
@@ -71,7 +68,6 @@ public class Configuration extends PreferencesConfiguration {
   protected void backup(Preferences prefs) {
     putBoolean  (prefs, "useSystemLookAndFeel", useSystemLookAndFeel);
     putBoolean  (prefs, "showAboutOnStartup"  , showAboutOnStartup);
-    putBoolean  (prefs, "disableScreenSaver"  , disableScreenSaver);
     putRectangle(prefs, "frameBounds"         , frameBounds);
     putInt      (prefs, "frameState"          , frameState);
     put         (prefs, "playDocking"         , playDocking);
@@ -84,10 +80,6 @@ public class Configuration extends PreferencesConfiguration {
 
   public boolean getShowAboutOnStartup() {
     return showAboutOnStartup;
-  }
-
-  public boolean getDisableScreenSaver() {
-    return disableScreenSaver;
   }
 
   public Rectangle getFrameBounds() {
@@ -138,12 +130,6 @@ public class Configuration extends PreferencesConfiguration {
 
   public void setShowAboutOnStartup(boolean showAboutOnStartup) {
     this.showAboutOnStartup = showAboutOnStartup;
-    
-    fireConfigurationChanged();
-  }
-
-  public void setDisableScreenSaver(boolean disableScreenSaver) {
-    this.disableScreenSaver = disableScreenSaver;
     
     fireConfigurationChanged();
   }

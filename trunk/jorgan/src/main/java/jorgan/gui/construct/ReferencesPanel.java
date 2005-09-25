@@ -46,20 +46,14 @@ public class ReferencesPanel extends JPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
-  private static final Icon alphabetIcon =
-    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/alphabet.gif"));
-
   private static final Icon referencesToIcon =
     new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/referencesTo.gif"));
 
   private static final Icon referencedFromIcon =
     new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/referencedFrom.gif"));
 
-  private static final Icon referenceTotalIcon =
-    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/referenceTotal.gif"));
-
-  private static final Icon referencePartialIcon =
-    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/referencePartial.gif"));
+  private static final Icon referenceIcon =
+    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/reference.gif"));
 
   /**
    * The edited organ.
@@ -68,8 +62,7 @@ public class ReferencesPanel extends JPanel {
 
   private List elements = new ArrayList();
   
-  private List references          = new ArrayList();
-  private Map  referencesByElement = new HashMap();
+  private List references = null;
   
   /**
    * The listener to selection changes.
@@ -83,7 +76,6 @@ public class ReferencesPanel extends JPanel {
 
   private JToolBar toolBar = new JToolBar();
   
-  private JToggleButton alphabetButton = new JToggleButton(alphabetIcon);
   private JToggleButton referencesToButton   = new JToggleButton(referencesToIcon);
   private JToggleButton referencedFromButton = new JToggleButton(referencedFromIcon);
 
@@ -101,15 +93,6 @@ public class ReferencesPanel extends JPanel {
 
     toolBar.add(addAction);
     toolBar.add(removeAction);
-
-    toolBar.addSeparator();
-
-    alphabetButton.addItemListener(new ItemListener() {
-      public void itemStateChanged(ItemEvent e) {
-        updateReferences();
-      }
-    });
-    toolBar.add(alphabetButton);
 
     toolBar.addSeparator();
 
@@ -137,8 +120,7 @@ public class ReferencesPanel extends JPanel {
         if (e.getClickCount() == 2) {
           int index = list.getSelectedIndex();
           if (index != -1) {
-            Reference reference = (Reference)references.get(index); 
-            Element   element   = reference.getElement();
+            Element element = (Element)references.get(index);
             
             session.getSelectionModel().setSelectedElement(element);
           }
@@ -175,45 +157,42 @@ public class ReferencesPanel extends JPanel {
 
   private void updateReferences() {
 
-    referencesByElement.clear();
-    int size = references.size();
-    references.clear();
-    referencesModel.fireRemoved(size);
+    if (references != null) {
+      int size = references.size();
+      references = null;
+      
+      referencesModel.fireRemoved(size);
+    }
 
     for (int e = 0; e < elements.size(); e++) {
       Element element = (Element)elements.get(e);
-      
+
       if (getShowReferencesTo()) {
-        for (int r = 0; r < element.getReferencesCount(); r++) {
-          Element referenced = element.getReference(r).getElement();
-          
-          Reference reference = (Reference)referencesByElement.get(referenced);
-          if (reference == null) {
-            reference = new Reference(referenced);
-            referencesByElement.put(referenced, reference);
-            references.add(reference);
-          } else {
-            reference.increase();
+        List referencesTo = element.referenced(); 
+        if (e == 0) {
+          references = referencesTo;
+        } else {
+          if (!references.equals(referencesTo)) {
+            references = null;
+            break;
           }
         }
       } else {       
-        Iterator iterator = element.referrer();
-        while (iterator.hasNext()) {
-          Element referrer = (Element)iterator.next();
-
-          Reference reference = (Reference)referencesByElement.get(referrer);
-          if (reference == null) {
-            reference = new Reference(referrer);
-            referencesByElement.put(referrer, reference);
-            references.add(reference);
-          } else {
-            reference.increase();
+        List referencedFrom = new ArrayList(element.getReferrer()); 
+        if (e == 0) {
+          references = referencedFrom;
+        } else {
+          if (!references.equals(referencedFrom)) {
+            references = null;
+            break;
           }
         }
       }
     }
-    Collections.sort(references);      
-    referencesModel.fireAdded(references.size());
+    
+    if (references != null) {
+      referencesModel.fireAdded(references.size());
+    }
 
     addAction.update();
   }
@@ -257,7 +236,11 @@ public class ReferencesPanel extends JPanel {
   private class ReferencesModel extends AbstractListModel implements OrganListener {
 
     public int getSize() {
-      return references.size();
+      if (references == null) {
+        return 0;
+      } else {
+        return references.size();
+      }
     }
 
     public Object getElementAt(int index) {
@@ -269,15 +252,15 @@ public class ReferencesPanel extends JPanel {
     public void elementRemoved(OrganEvent event) { }
 
     public void elementChanged(final OrganEvent event) {
-      Reference reference = (Reference)referencesByElement.get(event.getElement());
-      if (reference != null) {
-        int index = references.indexOf(reference);
-        fireContentsChanged(this, index, index);
+      if (references != null) {
+        int index = references.indexOf(event.getElement());
+        if (index != -1) {          
+          fireContentsChanged(this, index, index);
+        }
       }
     }
 
     public void fireRemoved(int count) {
-      
       if (count > 0) {
         fireIntervalRemoved(this, 0, count - 1);
       }   
@@ -292,114 +275,11 @@ public class ReferencesPanel extends JPanel {
     public void referenceChanged(OrganEvent event) { }
 
     public void referenceAdded(OrganEvent event) {
-
-      if (getShowReferencesTo()) {
-        if (elements.contains(event.getElement())) {
-          Element referenced = event.getReference().getElement();
-
-          Reference reference = (Reference)referencesByElement.get(referenced);
-          if (reference == null) {
-            reference = new Reference(referenced);
-            referencesByElement.put(referenced, reference);
-            references.add(reference);
-
-            int index = references.size() - 1;
-            fireIntervalAdded(this, index, index);
-          } else {
-            reference.increase();
-
-            int index = references.indexOf(reference);
-            fireContentsChanged(this, index, index);
-          }
-        }
-      } else {
-        if (elements.contains(event.getReference().getElement())) {
-          Element referrer = event.getElement();
-
-          Reference reference = (Reference)referencesByElement.get(referrer);
-          if (reference == null) {
-            reference = new Reference(referrer);
-            referencesByElement.put(referrer, reference);
-            references.add(reference);
-
-            int index = references.size() - 1;
-            fireIntervalAdded(this, index, index);
-          } else {
-            reference.increase();
-
-            int index = references.indexOf(reference);
-            fireContentsChanged(this, index, index);
-          }
-        }        
-      }
+      updateReferences();
     }
 
     public void referenceRemoved(OrganEvent event) {
-      if (getShowReferencesTo()) {
-        if (elements.contains(event.getElement())) {
-          Element dereferenced = event.getReference().getElement();
-
-          Reference reference = (Reference)referencesByElement.get(dereferenced);
-          reference.decrease();
-          if (reference.getCount() == 0) {
-            referencesByElement.remove(dereferenced);
-            int index = references.indexOf(reference);
-            references.remove(reference);
-            
-            fireIntervalRemoved(this, index, index);
-          } else {
-            int index = references.indexOf(reference);
-            fireContentsChanged(this, index, index);
-          }
-        }
-      } else {
-        if (elements.contains(event.getReference().getElement())) {
-          Element dereferrer = event.getElement();
-
-          Reference reference = (Reference)referencesByElement.get(dereferrer);
-          reference.decrease();
-          if (reference.getCount() == 0) {
-            referencesByElement.remove(dereferrer);
-            int index = references.indexOf(reference);
-            references.remove(reference);
-            
-            fireIntervalRemoved(this, index, index);
-          } else {
-            int index = references.indexOf(reference);
-            fireContentsChanged(this, index, index);
-          }
-        }
-      }
-    }
-  }
-  
-  private class Reference implements Comparable {
-    private Element element;
-    private int     count = 1;
-    
-    public Reference(Element element) {
-      this.element = element;
-    }
-    
-    public Element getElement() {
-      return element;
-    }
-    
-    public int getCount() {
-      return count;
-    }
-    
-    public void increase() {
-      count++;
-    }
-    
-    public void decrease() {
-      count--;
-    }
-
-    public int compareTo(Object o) {
-      Reference reference = (Reference)o;
-      return new ElementComparator(alphabetButton.isSelected()).compare(this.element, reference.element);
+      updateReferences();
     }
   }
   
@@ -407,19 +287,13 @@ public class ReferencesPanel extends JPanel {
 
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
 
-      Reference reference = (Reference)value;
-      
-      Element element = reference.getElement();
+      Element element = (Element)value;
 
-      String name = ElementUtils.getElementAndTypeName(element, alphabetButton.isSelected());
+      String name = ElementUtils.getElementAndTypeName(element, true);
 
       super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       
-      if (reference.getCount() == elements.size()) {
-        setIcon(referenceTotalIcon);
-      } else {
-        setIcon(referencePartialIcon);
-      }
+      setIcon(referenceIcon);
             
       return this;
     }
@@ -442,7 +316,7 @@ public class ReferencesPanel extends JPanel {
     }
 
     public void update() {
-      setEnabled(elements.size() > 0);
+      setEnabled(references != null && elements.size() > 0);
     }
   }
   
@@ -460,19 +334,14 @@ public class ReferencesPanel extends JPanel {
       int[] indices = list.getSelectedIndices();
       if (indices != null) {
         for (int i = indices.length - 1; i >= 0; i--) {
-          Reference reference = (Reference)references.get(indices[i]); 
-          Element   remove    = reference.getElement();
+          Element remove = (Element)references.get(indices[i]);
 
           for (int e = 0; e < elements.size(); e++) {
             Element element = (Element)elements.get(e);
             if (getShowReferencesTo()) {
-              if (element.getReference(remove) != null) {
-                element.unreference(remove);
-              }
+              element.unreference(remove);
             } else {
-              if (remove.getReference(element) != null) {
-                remove.unreference(element);
-              }
+              remove.unreference(element);
             }
           }
         }
@@ -480,7 +349,7 @@ public class ReferencesPanel extends JPanel {
     }
     
     public void update() {
-      setEnabled(list.getSelectedIndex() != -1);
+      setEnabled(references != null && list.getSelectedIndex() != -1);
     }
   }
 }

@@ -24,6 +24,7 @@ package jorgan.disposition;
 public abstract class Activateable extends Responsive {
 
   private boolean active;
+  private boolean nonLocking;
   private Message activateMessage;
   private Message deactivateMessage;
 
@@ -37,6 +38,16 @@ public abstract class Activateable extends Responsive {
 
   public boolean isActive() {
     return active;
+  }
+
+  public boolean isNonLocking() {
+    return nonLocking;
+  }
+
+  public void setNonLocking(boolean nonLocking) {
+    this.nonLocking = nonLocking;
+        
+    fireElementChanged(false);
   }
 
   public Message getActivateMessage() {

@@ -33,7 +33,7 @@ public class CouplerPlayer extends KeyablePlayer {
     
     PlayerProblem warnOnMessage  = new PlayerProblem(PlayerProblem.WARNING, "onMessage" , null); 
     if (coupler.getActivateMessage() == null &&
-        Configuration.instance().getWarnCouplerWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(warnOnMessage);
     } else {
       removeProblem(warnOnMessage);
@@ -41,7 +41,7 @@ public class CouplerPlayer extends KeyablePlayer {
 
     PlayerProblem warnOffMessage = new PlayerProblem(PlayerProblem.WARNING, "offMessage", null); 
     if (coupler.getDeactivateMessage() == null &&
-        Configuration.instance().getWarnCouplerWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(warnOffMessage);
     } else {
       removeProblem(warnOffMessage);
@@ -55,7 +55,7 @@ public class CouplerPlayer extends KeyablePlayer {
     if (coupler.getVelocity() != 0) {
       velocity = coupler.getVelocity();
     }
-    for (int e = 0; e < coupler.getReferencesCount(); e++) {
+    for (int e = 0; e < coupler.getReferenceCount(); e++) {
       KeyablePlayer keyablePlayer = (KeyablePlayer)getOrganPlay().getPlayer(coupler.getReference(e).getElement());
       
       keyablePlayer.keyDown(pitch, velocity);
@@ -64,7 +64,7 @@ public class CouplerPlayer extends KeyablePlayer {
     
   protected void deactivateKey(int pitch) {
     Coupler coupler = (Coupler)getElement();
-    for (int e = 0; e < coupler.getReferencesCount(); e++) {
+    for (int e = 0; e < coupler.getReferenceCount(); e++) {
       KeyablePlayer keyablePlayer = (KeyablePlayer)getOrganPlay().getPlayer(coupler.getReference(e).getElement());
       
       keyablePlayer.keyUp(pitch);

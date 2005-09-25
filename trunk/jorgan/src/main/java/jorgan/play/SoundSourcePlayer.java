@@ -84,7 +84,7 @@ public class SoundSourcePlayer extends Player {
     SoundSource soundSource = (SoundSource)getElement();
 
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
-    if (soundSource.getDevice() == null && Configuration.instance().getWarnSoundSourceWithoutDevice()) {
+    if (soundSource.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
       addProblem(problem);
     } else {
       removeProblem(problem);

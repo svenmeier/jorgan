@@ -131,6 +131,12 @@ public class OrganHandler extends Handler {
           organ.addElement(getCoupler());
         }
       };
+    } else if ("keyer".equals(qName)) {
+        new KeyerHandler(getReader(), attributes) {
+          public void finished() {
+           organ.addElement(getKeyer());
+          }
+        };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -149,42 +155,34 @@ public class OrganHandler extends Handler {
       Element element = organ.getElement(e);
       if (element instanceof Console) {
         new ConsoleHandler(getWriter(), "console", (Console)element).start();
-      }
-      if (element instanceof Label) {
+      } else if (element instanceof Label) {
         new LabelHandler(getWriter(), "label", (Label)element).start();
-      }
-      if (element instanceof Keyboard) {
+      } else if (element instanceof Keyboard) {
         new KeyboardHandler(getWriter(), "keyboard", (Keyboard)element).start();
-      }
-      if (element instanceof SoundSource) {
+      } else if (element instanceof SoundSource) {
         new SoundSourceHandler(getWriter(), "soundSource", (SoundSource)element).start();
-      }
-      if (element instanceof Tremulant) {
+      } else if (element instanceof Tremulant) {
         new TremulantHandler(getWriter(), "tremulant", (Tremulant)element).start();
-      }
-      if (element instanceof Swell) {
+      } else if (element instanceof Swell) {
         new SwellHandler(getWriter(), "swell", (Swell)element).start();
-      }
-      if (element instanceof Crescendo) {
+      } else if (element instanceof Crescendo) {
         new CrescendoHandler(getWriter(), "crescendo", (Crescendo)element).start();
-      }
-      if (element instanceof Variation) {
+      } else if (element instanceof Variation) {
         new VariationHandler(getWriter(), "variation", (Variation)element).start();
-      }
-      if (element instanceof Combination) {
+      } else if (element instanceof Combination) {
         new CombinationHandler(getWriter(), "combination", (Combination)element).start();
-      }
-      if (element instanceof Sequence) {
-          new SequenceHandler(getWriter(), "sequence", (Sequence)element).start();
-        }
-      if (element instanceof Stop) {
+      } else if (element instanceof Sequence) {
+        new SequenceHandler(getWriter(), "sequence", (Sequence)element).start();
+      } else if (element instanceof Stop) {
         new StopHandler(getWriter(), "stop", (Stop)element).start();
-      }
-      if (element instanceof Coupler) {
+      } else if (element instanceof Coupler) {
         new CouplerHandler(getWriter(), "coupler", (Coupler)element).start();
-      }
-      if (element instanceof Activator) {
+      } else if (element instanceof Activator) {
         new ActivatorHandler(getWriter(), "activator", (Activator)element).start();
+      } else if (element instanceof Keyer) {
+        new KeyerHandler(getWriter(), "keyer", (Keyer)element).start();
+      } else {
+        throw new IOException("unable to write element '" + element.getClass().getName() + "'"); 
       }
     }
   }

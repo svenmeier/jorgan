@@ -117,12 +117,7 @@ public class Shortcut {
 
     public static Shortcut createShortcut(char character, int code, int modifiers, int location) {
         
-        if (code != KeyEvent.VK_CONTROL &&
-            code != KeyEvent.VK_SHIFT &&
-            code != KeyEvent.VK_META &&
-            code != KeyEvent.VK_ALT_GRAPH &&
-            code != KeyEvent.VK_ALT) {
-            
+        if (!isModifier(code)) {
             if (code != KeyEvent.VK_UNDEFINED) {
                 return new Shortcut(code, modifiers, location);
             } else if (character != KeyEvent.CHAR_UNDEFINED){
@@ -130,5 +125,13 @@ public class Shortcut {
             }
         }
         return null;
-    }    
+    }
+    
+    public static boolean isModifier(int code) {
+        return code == KeyEvent.VK_CONTROL ||
+               code == KeyEvent.VK_SHIFT ||
+               code == KeyEvent.VK_META ||
+               code == KeyEvent.VK_ALT_GRAPH ||
+               code == KeyEvent.VK_ALT;
+    }
 }

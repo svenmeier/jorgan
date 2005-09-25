@@ -57,7 +57,7 @@ public class Combination extends Responsive {
 
   public void recall() {
 
-    for (int e = 0; e < getReferencesCount(); e++) {
+    for (int e = 0; e < getReferenceCount(); e++) {
       CombinationReference reference = (CombinationReference)getReference(e);
       
       Activateable registratable = reference.getRegistratable();
@@ -67,7 +67,7 @@ public class Combination extends Responsive {
       }
     }
     
-    for (int e = 0; e < getReferencesCount(); e++) {
+    for (int e = 0; e < getReferenceCount(); e++) {
       CombinationReference reference = (CombinationReference)getReference(e);
         
       Activateable registratable = reference.getRegistratable();
@@ -76,10 +76,10 @@ public class Combination extends Responsive {
         registratable.setActive(true);
       }
     }
-        
-    Iterator referrer = referrer();
-    while (referrer.hasNext()) {
-      Element element = (Element)referrer.next();
+
+    Iterator iterator = referrer.iterator();
+    while (iterator.hasNext()) {
+      Element element = (Element)iterator.next();
       if (element instanceof Sequence) {
         ((Sequence)element).combinationGet(this);
       }
@@ -88,7 +88,7 @@ public class Combination extends Responsive {
 
   public void capture() {
 
-    for (int e = 0; e < getReferencesCount(); e++) {
+    for (int e = 0; e < getReferenceCount(); e++) {
       CombinationReference reference = (CombinationReference)getReference(e);
       
       Activateable registratable = (Activateable)reference.getElement();

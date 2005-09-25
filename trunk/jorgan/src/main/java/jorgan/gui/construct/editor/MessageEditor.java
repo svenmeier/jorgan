@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.util.List;
+import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 import java.awt.BorderLayout;
@@ -59,9 +59,9 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor, A
   public void setElement(Element element) {
     
     device = null;
-    List consoles = element.getReferrer(Console.class);
-    for (int c = 0; c < consoles.size(); c++) {
-      device = ((Console)consoles.get(0)).getDevice();
+    Iterator iterator = element.referrer(Console.class).iterator();
+    while (iterator.hasNext()) {
+      device = ((Console)iterator.next()).getDevice();
       if (device != null) {
         break;
       }

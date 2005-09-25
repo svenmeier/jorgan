@@ -27,7 +27,7 @@ import jorgan.disposition.event.*;
  */
 public class Organ {
 
-  private Class[] elementClasses = new Class[]{Console.class,
+  private static Class[] elementClasses = new Class[]{Console.class,
                                                Label.class,
                                                Keyboard.class,
                                                SoundSource.class,
@@ -39,7 +39,8 @@ public class Organ {
                                                Variation.class,
                                                Sequence.class,
                                                Activator.class,
-                                               Crescendo.class}; 
+                                               Crescendo.class,
+                                               Keyer.class}; 
   
   /**
    * Registered listeners.
@@ -48,7 +49,7 @@ public class Organ {
 
   private List elements = new ArrayList();
 
-  public Class[] getElementClasses() {
+  public static Class[] getElementClasses() {
     return elementClasses;
   }
   
@@ -75,7 +76,7 @@ public class Organ {
   }
 
   public List getElements() {
-      return new ArrayList(elements);
+      return Collections.unmodifiableList(elements);
   }
 
   public void addElement(Element element) {
@@ -183,26 +184,25 @@ public class Organ {
     candidates:
     for (int c = 0; c < this.elements.size(); c++) {
       Element candidate = (Element)this.elements.get(c);     
-      int already = 0;
 
       for (int e = 0; e < elements.size(); e++) {
         Element element = (Element)elements.get(e);
         
         if (!element.canReference(candidate)) {
-          if (element.getReference(candidate) == null) {
-            continue candidates;
-          }
-          already++;
+          continue candidates;
         }
       }
-
-      if (already < elements.size()) {      
-        candidates.add(candidate);          
-      }
+      candidates.add(candidate);
     }
     return candidates;
   }
 
+  /**
+   * Get candidates which can reference all given elements.
+   * 
+   * @param elements    elements to find candidates for 
+   * @return            candidates, never null
+   */
   public List getReferencedFromCandidates(List elements) {
 
     List candidates = new ArrayList();
@@ -210,21 +210,14 @@ public class Organ {
     candidates:
     for (int c = 0; c < this.elements.size(); c++) {
       Element candidate = (Element)this.elements.get(c);
-      int already = 0;
         
       for (int e = 0; e < elements.size(); e++) {
         Element element = (Element)elements.get(e);
         if (!candidate.canReference(element)) {
-          if (candidate.getReference(element) == null) {
-            continue candidates;
-          }
-          already++;
+          continue candidates;
         }
       }
-
-      if (already < elements.size()) {      
-        candidates.add(candidate);          
-      }
+      candidates.add(candidate);
     }    
     return candidates;
   }

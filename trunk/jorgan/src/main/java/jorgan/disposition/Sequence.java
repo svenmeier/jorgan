@@ -52,7 +52,7 @@ public class Sequence extends Responsive {
   }
     
   public void combinationGet(Combination combination) {
-    for (int r = 0; r < getReferencesCount(); r++) {
+    for (int r = 0; r < getReferenceCount(); r++) {
       SequenceReference reference = (SequenceReference)getReference(r);
       reference.setCurrent(reference.getCombination() == combination);
     }
@@ -62,12 +62,12 @@ public class Sequence extends Responsive {
     
     SequenceReference next = null;
     
-    for (int r = 0; r < getReferencesCount(); r++) {
+    for (int r = 0; r < getReferenceCount(); r++) {
       SequenceReference reference = (SequenceReference)getReference(r);
       if (reference.isCurrent()) {
         reference.setCurrent(false);
         
-        if (r == getReferencesCount() - 1) {
+        if (r == getReferenceCount() - 1) {
           next = (SequenceReference)getReference(0);
         } else {
           next = (SequenceReference)getReference(r + 1);
@@ -75,7 +75,7 @@ public class Sequence extends Responsive {
       }
     }
     
-    if (next == null && getReferencesCount() > 0) {
+    if (next == null && getReferenceCount() > 0) {
       next = (SequenceReference)getReference(0);
     }
     
@@ -89,20 +89,20 @@ public class Sequence extends Responsive {
 
     SequenceReference previous = null;
       
-    for (int r = 0; r < getReferencesCount(); r++) {
+    for (int r = 0; r < getReferenceCount(); r++) {
       SequenceReference reference = (SequenceReference)getReference(r);
       if (reference.isCurrent()) {
         reference.setCurrent(false);
           
         if (r == 0) {
-          previous = (SequenceReference)getReference(getReferencesCount() - 1);
+          previous = (SequenceReference)getReference(getReferenceCount() - 1);
         } else {
             previous = (SequenceReference)getReference(r - 1);
         }
       }
     }
       
-    if (previous == null && getReferencesCount() > 0) {
+    if (previous == null && getReferenceCount() > 0) {
       previous = (SequenceReference)getReference(0);
     }
       

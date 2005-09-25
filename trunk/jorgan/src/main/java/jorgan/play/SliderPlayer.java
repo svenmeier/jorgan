@@ -60,7 +60,7 @@ public class SliderPlayer extends Player {
     
     PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
     if (slider.getMessage() == null &&
-        Configuration.instance().getWarnCrescendoWithoutMessage()) {
+        Configuration.instance().getWarnWithoutMessage()) {
       addProblem(problem);
     } else {
       removeProblem(problem);

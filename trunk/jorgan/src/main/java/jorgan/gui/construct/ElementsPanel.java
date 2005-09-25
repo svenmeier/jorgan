@@ -21,6 +21,7 @@ package jorgan.gui.construct;
 import java.util.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -155,7 +156,7 @@ public class ElementsPanel extends JPanel {
       this.session.getPlay().addPlayerListener((PlayListener)Spin.over(elementsModel));
       this.session.getSelectionModel().addSelectionListener(selectionHandler);
   
-      elements = this.session.getOrgan().getElements();
+      elements = new ArrayList(this.session.getOrgan().getElements());
       Collections.sort(elements, new ElementComparator(alphabetButton.isSelected()));
 
       elementsModel.fireAdded(elements.size());
@@ -234,6 +235,10 @@ public class ElementsPanel extends JPanel {
       return elements.size();
     }
 
+    public int getDropActions(Transferable transferable, int index) {
+        return 0;
+    }
+    
     protected void insertElementAt(Object element, int index) {
     }
 

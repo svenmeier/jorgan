@@ -78,7 +78,7 @@ public class ConsolePlayer extends Player {
     Console console = (Console)getElement();
 
     PlayerProblem warnDevice = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
-    if (console.getDevice() == null && Configuration.instance().getWarnConsoleWithoutDevice()) {
+    if (console.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
       addProblem(warnDevice);
     } else {
       removeProblem(warnDevice);
@@ -88,7 +88,7 @@ public class ConsolePlayer extends Player {
   protected void input(ShortMessage message) {
     Console console = (Console)getElement();
 
-    for (int r = 0; r < console.getReferencesCount(); r++) {
+    for (int r = 0; r < console.getReferenceCount(); r++) {
       Reference reference = console.getReference(r);
       
       Player player = getOrganPlay().getPlayer(reference.getElement());

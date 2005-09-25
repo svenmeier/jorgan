@@ -33,5 +33,6 @@ public class ActivateableBeanInfo extends ResponsiveBeanInfo {
         add("activateMessage", Activateable.class, MessageEditor.class);
         add("deactivateMessage", Activateable.class, MessageEditor.class);
         add("active", Activateable.class, BooleanEditor.class);
+        add("nonLocking", Activateable.class, BooleanEditor.class);
     }
 }

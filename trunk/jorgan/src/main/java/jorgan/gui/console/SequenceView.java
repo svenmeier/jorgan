@@ -116,9 +116,5 @@ public class SequenceView extends View {
   protected int getStateIndex() {
     return Math.min(style.getStateCount() - 1, pressed ? 1 : 0);
   }
-    
-  protected Font getNonStyleFont() {
-    return Configuration.instance().getSequenceFont();  
-  }
 }
 
