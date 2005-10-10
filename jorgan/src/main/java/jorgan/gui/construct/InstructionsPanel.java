@@ -19,9 +19,9 @@
 package jorgan.gui.construct;
 
 import java.awt.BorderLayout;
+import java.awt.Insets;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
-import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -63,15 +63,19 @@ public class InstructionsPanel extends JPanel {
     
     addHierarchyListener(selectionHandler);
         
-    label.setText(resources.getString("construct.instructions.failure"));
+    label.setText(" ");
     label.setHorizontalAlignment(JLabel.LEFT);
     label.setVerticalAlignment(JLabel.TOP);
+    add(label, BorderLayout.NORTH);
     
     editor.setEditable(false);
+    editor.setMargin(new Insets(0,0,0,0));
     editor.setContentType("text/html");
     
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setViewportView(editor);
+    scrollPane.setVisible(false);
+    add(scrollPane, BorderLayout.CENTER);
   }
 
   public void setOrgan(OrganSession session) {
@@ -87,7 +91,10 @@ public class InstructionsPanel extends JPanel {
   }
 
   protected void updateInstructions(Class clazz, String property) {
-    if (clazz != null) {
+    if (clazz == null) {
+      scrollPane.setVisible(false);
+      label.setText(" ");
+    } else {
       try {
         URL url;
         if (property == null) {
@@ -97,18 +104,20 @@ public class InstructionsPanel extends JPanel {
         }
         editor.setPage(url);
           
-        remove(label);
-        add(scrollPane);
-        revalidate();
-        repaint();
-        return;
-      } catch (IOException ex) {
+        scrollPane.setVisible(true);
+        
+        StringBuffer buffer = new StringBuffer();
+        buffer.append(Documents.getInstance().getDisplayName(clazz));
+        if (property != null) {
+            buffer.append(" - ");
+            buffer.append(Documents.getInstance().getDisplayName(clazz, property));
+        }
+        label.setText(buffer.toString());
+      } catch (Exception ex) {
+        scrollPane.setVisible(false);
+        label.setText(resources.getString("construct.instructions.failure"));
       }
     }
-    remove(scrollPane);
-    add(label);
-    revalidate();
-    repaint();
   }
       
   /**
@@ -123,10 +132,13 @@ public class InstructionsPanel extends JPanel {
       if (session.getSelectionModel().isElementSelected()) {
         clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
         property = session.getSelectionModel().getSelectedProperty();
-        
-        if (isShowing()) {
-          flush();
-        }
+      } else {
+        clazz    = null;
+        property = null;
+      }
+      
+      if (isShowing()) {
+        flush();
       }
     }
     

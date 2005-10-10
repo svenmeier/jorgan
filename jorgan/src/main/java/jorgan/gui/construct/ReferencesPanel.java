@@ -46,6 +46,12 @@ public class ReferencesPanel extends JPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
+  private static final Icon sortNameIcon =
+      new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/sortName.gif"));
+  
+  private static final Icon sortTypeIcon =
+      new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/sortType.gif"));
+  
   private static final Icon referencesToIcon =
     new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/referencesTo.gif"));
 
@@ -79,6 +85,9 @@ public class ReferencesPanel extends JPanel {
   private JToggleButton referencesToButton   = new JToggleButton(referencesToIcon);
   private JToggleButton referencedFromButton = new JToggleButton(referencedFromIcon);
 
+  private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
+  private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
+  
   private ReferencesModel referencesModel = new ReferencesModel();
 
   /**
@@ -95,9 +104,34 @@ public class ReferencesPanel extends JPanel {
     toolBar.add(removeAction);
 
     toolBar.addSeparator();
+    
+    sortNameButton.setSelected(true);
+    sortNameButton.setToolTipText(resources.getString("sort.name"));
+    sortNameButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if (sortNameButton.isSelected()) {
+          sortTypeButton.setSelected(false);
+        }
+        updateReferences();
+      }
+    });
+    toolBar.add(sortNameButton);
 
-    ButtonGroup group = new ButtonGroup();
-    referencesToButton.getModel().setGroup(group);
+    sortTypeButton.setToolTipText(resources.getString("sort.type"));
+    sortTypeButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        if (sortTypeButton.isSelected()) {
+          sortNameButton.setSelected(false);
+        }
+        updateReferences();
+      }
+    });
+    toolBar.add(sortTypeButton);
+
+    toolBar.addSeparator();
+
+    ButtonGroup toFromGroup = new ButtonGroup();
+    referencesToButton.getModel().setGroup(toFromGroup);
     referencesToButton.setSelected(true);
     referencesToButton.getModel().addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
@@ -106,7 +140,7 @@ public class ReferencesPanel extends JPanel {
     });
     toolBar.add(referencesToButton);
 
-    referencedFromButton.getModel().setGroup(group);
+    referencedFromButton.getModel().setGroup(toFromGroup);
     toolBar.add(referencedFromButton);
 
     add(toolBar, BorderLayout.NORTH);
@@ -167,22 +201,23 @@ public class ReferencesPanel extends JPanel {
     for (int e = 0; e < elements.size(); e++) {
       Element element = (Element)elements.get(e);
 
+      List next;
       if (getShowReferencesTo()) {
-        List referencesTo = element.referenced(); 
-        if (e == 0) {
-          references = referencesTo;
-        } else {
-          if (!references.equals(referencesTo)) {
+        next = element.referenced(); 
+      } else {       
+        next = new ArrayList(element.getReferrer()); 
+      }
+      
+      if (e == 0) {
+        references = next;
+      } else {
+        if (sortNameButton.isSelected() || sortTypeButton.isSelected()) {
+          if (!references.containsAll(next) || !next.containsAll(references)) {
             references = null;
             break;
           }
-        }
-      } else {       
-        List referencedFrom = new ArrayList(element.getReferrer()); 
-        if (e == 0) {
-          references = referencedFrom;
         } else {
-          if (!references.equals(referencedFrom)) {
+          if (!references.equals(next)) {
             references = null;
             break;
           }
@@ -191,6 +226,11 @@ public class ReferencesPanel extends JPanel {
     }
     
     if (references != null) {
+      if (sortNameButton.isSelected()) {
+        Collections.sort(references, new ElementComparator(true));
+      } else if (sortTypeButton.isSelected()) {
+        Collections.sort(references, new ElementComparator(false));
+      }
       referencesModel.fireAdded(references.size());
     }
 
@@ -289,7 +329,7 @@ public class ReferencesPanel extends JPanel {
 
       Element element = (Element)value;
 
-      String name = ElementUtils.getElementAndTypeName(element, true);
+      String name = ElementUtils.getElementAndTypeName(element, sortNameButton.isSelected());
 
       super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       

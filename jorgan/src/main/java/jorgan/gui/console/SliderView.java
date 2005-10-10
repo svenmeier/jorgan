@@ -109,8 +109,14 @@ public class SliderView extends View {
   public void released(int x, int y, MouseEvent ev) {
     pressed = false; 
 
-    // issue repaint since slider is actually not changed
-    repaint();
+    Slider slider = getSlider();
+    
+    if (slider.isLocking()) {
+      // issue repaint since slider is actually not changed
+      repaint();
+    } else {
+      slider.setPosition(0);
+    }
   }
 
   public void dragged(int x, int y, MouseEvent ev) {

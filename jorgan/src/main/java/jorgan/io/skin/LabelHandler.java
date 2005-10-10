@@ -94,8 +94,6 @@ public class LabelHandler extends Handler {
     new FontHandler     (getWriter(), "font"       , label.getFont      ()).start();
     new RectangleHandler(getWriter(), "bounds"     , label.getBounds    ()).start();
     new IntegerHandler  (getWriter(), "rotation"   , label.getRotation  ()).start();
-    if (label.isAntialiased()) {
-      new BooleanHandler(getWriter(), "antialiased").start();
-    }
+    new BooleanHandler  (getWriter(), "antialiased", label.isAntialiased()).start();
   }
 }

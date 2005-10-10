@@ -79,6 +79,7 @@ public class ElementCreationPanel extends JPanel {
   public void setElementClasses(Class[] elementClasses) {
     this.elementClasses = elementClasses;
 
+    Arrays.sort(elementClasses, new TypeComparator());
     typeList.setModel(new TypeListModel());  
   }
   
@@ -114,5 +115,16 @@ public class ElementCreationPanel extends JPanel {
     public Object getElementAt(int index) {
       return ElementUtils.getTypeName(elementClasses[index]);
     }   
+  }
+  
+  private class TypeComparator implements Comparator {
+      
+    public int compare(Object o1, Object o2) {
+        
+      String name1 = ElementUtils.getTypeName((Class)o1);
+      String name2 = ElementUtils.getTypeName((Class)o2);
+      
+      return name1.compareTo(name2);
+    }
   }
 }

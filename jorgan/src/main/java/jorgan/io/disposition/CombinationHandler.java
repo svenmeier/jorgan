@@ -85,12 +85,8 @@ public class CombinationHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
-    if (combination.isFixed()) {
-      new BooleanHandler(getWriter(), "fixed").start();
-    }
-    if (combination.isCaptureWithRecall()) {
-      new BooleanHandler(getWriter(), "captureWithRecall").start();
-    }
+    new BooleanHandler(getWriter(), "fixed", combination.isFixed()).start();
+    new BooleanHandler(getWriter(), "captureWithRecall", combination.isCaptureWithRecall()).start();
     if (combination.getRecallMessage() != null) {
       new MessageHandler(getWriter(), "recallMessage", combination.getRecallMessage()).start();
     }

@@ -19,6 +19,7 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.*;
+import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.MessageEditor;
 
@@ -33,5 +34,6 @@ public class SliderBeanInfo extends ResponsiveBeanInfo {
         add("message", Slider.class, MessageEditor.class);
         add("position", Slider.class, DataEditor.class);
         add("threshold", Slider.class, DataEditor.class);
+        add("locking", Slider.class, BooleanEditor.class);
     }
 }
