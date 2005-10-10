@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
-import jorgan.disposition.Element;
 import jorgan.util.Bootstrap;
 
 public class Documents {
@@ -53,9 +52,18 @@ public class Documents {
     }
 
     public String getDisplayName(Class clazz, String property) {
-        String key = classWithoutPackage(clazz) + "." + property;
-
-        return getDisplayNames().getProperty(key, property);
+        while (clazz != Object.class) {
+            String key = classWithoutPackage(clazz) + "." + property;
+            
+            String displayName = getDisplayNames().getProperty(key);
+            if (displayName != null) {
+                return displayName;
+            }
+            
+            clazz = clazz.getSuperclass();
+        }
+        
+        return property;
     }
     
     public URL getInstructions(Class clazz) {
@@ -74,8 +82,8 @@ public class Documents {
 
         URL url = (URL)instructions.get(key);
         if (url == null) {
-            while (url == null) {
-                url = locate("instructions", key);
+            while (clazz != Object.class) {
+                url = locate("instructions", classWithoutPackage(clazz) + "." + property + ".html");
                 if (url != null) {
                     try {
                         InputStream stream = url.openStream();
@@ -84,12 +92,7 @@ public class Documents {
                     } catch (IOException ex) {
                     }
                 }
-                if (Element.class == clazz) {
-                    break;
-                } else {
-                    clazz = clazz.getSuperclass();
-                }
-                key = classWithoutPackage(clazz) + "." + property + ".html";
+                clazz = clazz.getSuperclass();
             }
             instructions.put(key, url);
         }
@@ -123,26 +126,26 @@ public class Documents {
         File docsDir = new File(System.getProperty(DOCS_PATH_PROPERTY, Bootstrap.getDirectory() + "/docs"));
         if (docsDir.exists() && docsDir.isDirectory()) {
           try {
-            String localeSuffix = Locale.getDefault().toString();
+            String locale = Locale.getDefault().toString();
             while (true) {
-              File zip = new File(docsDir, bundleName + "_" + localeSuffix + ".zip");
+              File zip = new File(docsDir, bundleName + ("".equals(locale) ?  "" : "_" + locale) + ".zip");
               if (zip.exists() && zip.isFile()) {
                 return new URL("jar:" + zip.toURL() + "!/" + fileName);
               }
               
-              File file = new File(new File(docsDir, bundleName + "/" + localeSuffix), fileName);
+              File file = new File(new File(docsDir, bundleName + "/" + locale.replace('_', '/')), fileName);
               if (file.exists()) {
                 return file.toURL();
               }
              
-              if (localeSuffix.length() == 0) {
+              if (locale.length() == 0) {
                 break; 
               } else {
-                int index = localeSuffix.lastIndexOf('_');
+                int index = locale.lastIndexOf('_');
                 if (index == -1) {
-                  localeSuffix = "";
+                  locale = "";
                 } else {
-                  localeSuffix = localeSuffix.substring(0, index);
+                  locale = locale.substring(0, index);
                 }
               }
             }

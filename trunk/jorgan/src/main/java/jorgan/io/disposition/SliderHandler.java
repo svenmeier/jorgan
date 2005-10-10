@@ -63,6 +63,12 @@ public abstract class SliderHandler extends ActiveHandler {
           getSlider().setThreshold(getInteger());
         }
       };
+    } else if ("locking".equals(qName)) {
+        new BooleanHandler(getReader()) {
+          public void finished() {
+            getSlider().setLocking(getBoolean());
+          }
+        };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -71,6 +77,7 @@ public abstract class SliderHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
+    new BooleanHandler(getWriter(), "locking", getSlider().isLocking()).start();
     new IntegerHandler(getWriter(), "position", getSlider().getPosition()).start();
     new IntegerHandler(getWriter(), "threshold", getSlider().getThreshold()).start();
     if (getSlider().getMessage() != null) {

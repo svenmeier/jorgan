@@ -19,6 +19,8 @@
 package jorgan.xml.handler;
 
 // jorgan
+import java.io.IOException;
+
 import jorgan.xml.*;
 
 /**
@@ -35,19 +37,26 @@ public class BooleanHandler extends Handler {
     super(reader);
   }
 
-  public BooleanHandler(AbstractWriter writer, String tag) {
+  public BooleanHandler(AbstractWriter writer, String tag, boolean bool) {
     super(writer, tag);
+    
+    this.bool = bool;
   }
   
   public boolean getBoolean() {
     return bool;
   }
 
+  public void characters(XMLWriter writer) throws IOException {
+
+    writer.characters(Boolean.toString(bool));
+  }
+    
   protected void finish() {
     if (getCharacters().length() == 0) {
       bool = true;
     } else {
-      bool = Boolean.getBoolean(getCharacters().toString());
+      bool = Boolean.valueOf(getCharacters().toString()).booleanValue();
     }
     finished();
   }

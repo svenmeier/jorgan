@@ -50,7 +50,9 @@ public class Organ {
   private List elements = new ArrayList();
 
   public static Class[] getElementClasses() {
-    return elementClasses;
+    Class[] copy = new Class[elementClasses.length];
+    System.arraycopy(elementClasses, 0, copy, 0, elementClasses.length);
+    return copy;
   }
   
   public void addOrganListener(OrganListener listener) {

@@ -90,10 +90,10 @@ public class ActivateableView extends View {
 
     Activateable activateable = getActivateable();
 
-    if (activateable.isNonLocking()) {
-      activateable.setActive(true);
-    } else {
+    if (activateable.isLocking()) {
       activateable.setActive(!activateable.isActive());
+    } else {
+      activateable.setActive(true);
     }
   } 
 
@@ -102,11 +102,11 @@ public class ActivateableView extends View {
 
     Activateable activateable = getActivateable();
     
-    if (activateable.isNonLocking()) {
-      activateable.setActive(false);
-    } else {
+    if (activateable.isLocking()) {
       // issue repaint since activateable is actually not changed
       repaint();
+    } else {
+      activateable.setActive(false);
     }
   }
   

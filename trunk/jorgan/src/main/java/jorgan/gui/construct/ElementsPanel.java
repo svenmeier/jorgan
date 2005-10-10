@@ -48,9 +48,12 @@ public class ElementsPanel extends JPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
-  private static final Icon alphabetIcon =
-    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/alphabet.gif"));
+  private static final Icon sortNameIcon =
+    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/sortName.gif"));
 
+  private static final Icon sortTypeIcon =
+    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/sortType.gif"));
+  
   /**
    * Icon used for indication an element.
    */
@@ -86,8 +89,10 @@ public class ElementsPanel extends JPanel {
   
   private JToolBar toolBar = new JToolBar();
   
-  private JToggleButton alphabetButton = new JToggleButton(alphabetIcon);
-
+  private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
+  
+  private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
+  
   private ElementsModel elementsModel = new ElementsModel();
   
   private List elements = new ArrayList();
@@ -108,13 +113,26 @@ public class ElementsPanel extends JPanel {
     
     toolBar.addSeparator();
     
-    alphabetButton.addItemListener(new ItemListener() {
+    ButtonGroup sortGroup = new ButtonGroup();
+    sortNameButton.getModel().setGroup(sortGroup);
+    sortNameButton.setSelected(true);
+    sortNameButton.setToolTipText(resources.getString("sort.name"));
+    sortNameButton.addItemListener(new ItemListener() {
       public void itemStateChanged(ItemEvent e) {
         setOrgan(session);
       }
     });
-    toolBar.add(alphabetButton);
+    toolBar.add(sortNameButton);
     
+    sortTypeButton.getModel().setGroup(sortGroup);
+    sortTypeButton.setToolTipText(resources.getString("sort.type"));
+    sortTypeButton.addItemListener(new ItemListener() {
+      public void itemStateChanged(ItemEvent e) {
+        setOrgan(session);
+      }
+    });
+    toolBar.add(sortTypeButton);
+
     add(toolBar, BorderLayout.NORTH);
 
     list.setModel(elementsModel);
@@ -157,7 +175,12 @@ public class ElementsPanel extends JPanel {
       this.session.getSelectionModel().addSelectionListener(selectionHandler);
   
       elements = new ArrayList(this.session.getOrgan().getElements());
-      Collections.sort(elements, new ElementComparator(alphabetButton.isSelected()));
+
+      if (sortNameButton.isSelected()) {
+        Collections.sort(elements, new ElementComparator(true));
+      } else if (sortTypeButton.isSelected()) {
+        Collections.sort(elements, new ElementComparator(false));
+      }
 
       elementsModel.fireAdded(elements.size());
     }
@@ -282,7 +305,7 @@ public class ElementsPanel extends JPanel {
       int index = elements.size() - 1;
       fireIntervalAdded(this, index, index);
       
-      Collections.sort(elements, new ElementComparator(alphabetButton.isSelected()));
+      Collections.sort(elements, new ElementComparator(sortNameButton.isSelected()));
       fireContentsChanged(this, 0, index);
       
       selectionHandler.selectionChanged(null);
@@ -325,7 +348,7 @@ public class ElementsPanel extends JPanel {
 
       Element element = (Element)value;
 
-      String name = ElementUtils.getElementAndTypeName(element, alphabetButton.isSelected());
+      String name = ElementUtils.getElementAndTypeName(element, sortNameButton.isSelected());
 
       super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
       

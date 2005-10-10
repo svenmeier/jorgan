@@ -62,9 +62,7 @@ public class SequenceReferenceHandler extends ReferenceHandler {
     super.children();
 
     Sequence.SequenceReference reference = (Sequence.SequenceReference)getReference(); 
-    if (reference.isCurrent()) {
-      new BooleanHandler(getWriter(), "current").start();
-    }
+    new BooleanHandler(getWriter(), "current", reference.isCurrent()).start();
   }
 
   protected Reference createReference(Element element) {

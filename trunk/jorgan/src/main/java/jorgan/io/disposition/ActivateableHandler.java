@@ -51,10 +51,10 @@ public abstract class ActivateableHandler extends ActiveHandler {
           getActivateable().setActive(getBoolean());
         }
       };
-    } else if ("nonLocking".equals(qName)) {
+    } else if ("locking".equals(qName)) {
       new BooleanHandler(getReader()) {
         public void finished() {
-          getActivateable().setNonLocking(getBoolean());
+          getActivateable().setLocking(getBoolean());
         }
       };
     } else if ("activateMessage".equals(qName)) {
@@ -77,12 +77,8 @@ public abstract class ActivateableHandler extends ActiveHandler {
   public void children() throws IOException {
     super.children();
 
-    if (getActivateable().isActive()) {
-      new BooleanHandler(getWriter(), "active").start();
-    }
-    if (getActivateable().isNonLocking()) {
-      new BooleanHandler(getWriter(), "nonLocking").start();
-    }
+    new BooleanHandler(getWriter(), "active", getActivateable().isActive()).start();
+    new BooleanHandler(getWriter(), "locking", getActivateable().isLocking()).start();
     if (getActivateable().getActivateMessage() != null) {
       new MessageHandler(getWriter(), "activateMessage", getActivateable().getActivateMessage()).start();
     }

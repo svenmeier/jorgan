@@ -62,9 +62,8 @@ public class CombinationReferenceHandler extends ReferenceHandler {
     super.children();
 
     Combination.CombinationReference reference = (Combination.CombinationReference)getReference(); 
-    if (reference.isActive()) {
-      new BooleanHandler(getWriter(), "active").start();
-    }
+
+    new BooleanHandler(getWriter(), "active", reference.isActive()).start();
   }
 
   protected Reference createReference(Element element) {

@@ -18,17 +18,9 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
-import jorgan.gui.construct.editor.PositiveNumberEditor;
-
 /**
  * BeanInfo for {@link jorgan.disposition.Activator}.
  */
 public class ActivatorBeanInfo extends ResponsiveBeanInfo {
 
-    protected void registerProperties() {
-        super.registerProperties();
-
-        add("timeout", Activator.class, PositiveNumberEditor.class);
-    }
 }

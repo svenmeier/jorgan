@@ -18,13 +18,10 @@
  */
 package jorgan.io.disposition;
 
-import java.io.IOException;
-
 import org.xml.sax.*;
 
 import jorgan.disposition.*;
 import jorgan.xml.*;
-import jorgan.xml.handler.IntegerHandler;
 
 public class ActivatorHandler extends ActivateableHandler {
 
@@ -48,24 +45,5 @@ public class ActivatorHandler extends ActivateableHandler {
 
   protected Activateable getActivateable() {
     return getActivator();
-  }
-  
-  public void startElement(String uri, String localName, String qName, Attributes attributes) {
-
-    if ("timeout".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          getActivator().setTimeout(getInteger());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
-    }
-  }
-
-  public void children() throws IOException {
-    super.children();
-
-    new IntegerHandler(getWriter(), "timeout", getActivator().getTimeout()).start();
-  }
+  }  
 }

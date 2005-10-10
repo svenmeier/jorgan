@@ -25,10 +25,22 @@ public abstract class Slider extends Responsive {
 
   private Message message;
 
+  private boolean locking = true;
+  
   private int position = 127;
   
   private int threshold = 0;
   
+  public boolean isLocking() {
+    return locking;
+  }
+
+  public void setLocking(boolean locking) {
+    this.locking = locking;
+          
+    fireElementChanged(true);
+  }
+
   public Message getMessage() {
     return message;
   }
