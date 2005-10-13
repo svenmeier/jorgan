@@ -64,6 +64,12 @@ public class StyleHandler extends Handler {
           style.setDescription(getString());
         }
       };
+    } else if ("drag".equals(qName)) {
+        new IntegerHandler(getReader()) {
+          public void finished() {
+            style.setDrag(getInteger());
+          }
+        };
     } else if ("state".equals(qName)) {
       new StateHandler(getReader()) {
         public void finished() {
@@ -79,6 +85,7 @@ public class StyleHandler extends Handler {
     super.children();
 
     new StringHandler(getWriter(), "name", style.getName()).start();
+    new IntegerHandler(getWriter(), "drag", style.getDrag()).start();
     if (style.getDescription() != null) {
       new StringHandler(getWriter(), "description", style.getDescription()).start();
     }
