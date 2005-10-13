@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 import jorgan.disposition.*;
+import jorgan.skin.Style;
 
 /**
  * A view for a slider.
@@ -123,13 +124,24 @@ public class SliderView extends View {
     Slider slider = (Slider)getElement();
 
     int delta;
-    if (!isStyled()) {
+    if (style == null) {
       delta = (x - oldX) * 127 / getWidth();
-    } else { 
-      if (getWidth() > getHeight()) {
-        delta = (x - oldX) * 127 / getWidth();
-      } else {
-        delta = (oldY - y) * 127 / getHeight();
+    } else {
+      switch (style.getDrag()) {
+          case Style.DRAG_LEFT_TO_RIGHT:
+              delta = (x - oldX) * 127 / getWidth();
+              break;
+          case Style.DRAG_RIGHT_TO_LEFT:
+              delta = (oldX - x) * 127 / getWidth();
+              break;
+          case Style.DRAG_TOP_TO_BOTTOM:
+              delta = (y - oldY) * 127 / getHeight();
+              break;
+          case Style.DRAG_BOTTOM_TO_TOP:
+              delta = (oldY - y) * 127 / getHeight();
+              break;
+          default:
+              delta = 0;
       }
     }
 

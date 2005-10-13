@@ -326,10 +326,6 @@ public abstract class View {
     }
   }
   
-  protected boolean isStyled() {
-    return style != null;
-  }
-  
   protected abstract void paintNonStyle(Graphics2D g);
 
   protected void paintStyle(Graphics2D g) {
