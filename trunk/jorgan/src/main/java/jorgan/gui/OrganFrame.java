@@ -53,6 +53,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import spin.Spin;
+import spin.over.OverSpinner;
 
 import jorgan.UI;
 import jorgan.config.ConfigurationEvent;
@@ -831,7 +832,10 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     Toolkit.getDefaultToolkit().setDynamicLayout(true);
-    
-    Spin.setDefaultOverWait(false);
+
+    // IMPORTANT:
+    // Never wait for the result of a spin-over or we'll
+    // run into deadlocks!! (player lock <-> Swing EDT)
+    OverSpinner.setDefaultWait(false);
   }
 }
