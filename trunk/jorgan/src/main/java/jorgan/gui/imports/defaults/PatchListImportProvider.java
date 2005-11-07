@@ -27,7 +27,7 @@ import javax.swing.JPanel;
 import jorgan.gui.imports.spi.ImportProvider;
 
 /**
- * A provider of an import.
+ * A provider for an import from a patch list.
  */
 public class PatchListImportProvider implements ImportProvider {
 
