@@ -1,2 +1,3 @@
 jorgan.gui.imports.defaults.PatchListImportProvider
 jorgan.gui.imports.defaults.SoundFontImportProvider
+jorgan.gui.imports.defaults.DispositionImportProvider

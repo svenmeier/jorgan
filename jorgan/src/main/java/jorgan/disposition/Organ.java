@@ -223,4 +223,24 @@ public class Organ {
     }    
     return candidates;
   }
+
+  /**
+   * Get elements of the given class.
+   * 
+   * @param clazz   class to give elements for
+   * @return    elements
+   */
+  public List getElements(Class clazz) {
+      List list = new ArrayList();
+
+      for (int c = 0; c < this.elements.size(); c++) {
+        Element element = (Element)this.elements.get(c);
+
+        if (clazz.isInstance(element)) {
+            list.add(element);
+        }
+      }
+      
+      return list;
+  }
 }

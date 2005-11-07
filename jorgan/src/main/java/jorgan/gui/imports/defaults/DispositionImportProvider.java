@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -37,18 +36,19 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
-import jorgan.io.riff.RiffChunk;
+import jorgan.io.DispositionReader;
 import jorgan.io.riff.RiffFormatException;
-import jorgan.io.soundfont.Preset;
-import jorgan.io.soundfont.SoundfontReader;
 import jorgan.swing.FileSelector;
+import jorgan.xml.XMLFormatException;
 
 /**
- * A provider for an import from a SoundFont.
+ * A provider for an import from a disposition.
  */
-public class SoundFontImportProvider implements ImportProvider {
+public class DispositionImportProvider implements ImportProvider {
 
   /**
    * The resource bundle.
@@ -62,11 +62,11 @@ public class SoundFontImportProvider implements ImportProvider {
   }
   
   public String getName() {
-    return resources.getString("import.soundfont.name");
+    return resources.getString("import.disposition.name");
   }
 
   public String getDescription() {
-    return resources.getString("import.soundfont.description");
+    return resources.getString("import.disposition.description");
   }
 
   public boolean hasStops() {
@@ -84,10 +84,10 @@ public class SoundFontImportProvider implements ImportProvider {
     if (file != null) {
       try {
         stops = readStops(file);
-      } catch (RiffFormatException ex) {
-        panel.showException("import.soundfont.exception.invalid", new String[]{file.getPath()}, ex);
+      } catch (XMLFormatException ex) {
+        panel.showException("import.disposition.exception.invalid", new String[]{file.getPath()}, ex);
       } catch (IOException ex) {
-        panel.showException("import.soundfont.exception", new String[]{file.getPath()}, ex);
+        panel.showException("import.disposition.exception", new String[]{file.getPath()}, ex);
       }
     }
 
@@ -95,40 +95,37 @@ public class SoundFontImportProvider implements ImportProvider {
   }
   
   /**
-   * Read stops from the given soundfont file.
+   * Read stops from the given disposition file.
    * 
    * @param file    file to read from
    * @return        list of stops
    * @throws IOException
-   * @throws RiffFormatException
+   * @throws XMLFormatException
    */  
   private List readStops(File file) throws IOException, RiffFormatException {
 
-    ArrayList stops = new ArrayList();
+      List stops;
+      
+      InputStream input = null; 
+      try {
+          input = new FileInputStream(file);
+          
+          DispositionReader reader = new DispositionReader(new FileInputStream(file));
+          
+          Organ organ = (Organ)reader.read();
+                    
+          stops = organ.getElements(Stop.class);
 
-    InputStream input = null; 
-    try {
-        input = new FileInputStream(file);
-        
-        RiffChunk riffChunk = new SoundfontReader(input).read();
-        
-        java.util.List presets = SoundfontReader.getPresets(riffChunk);
-        Collections.sort(presets);
-        for (int p = 0; p < presets.size(); p++) {
-          Preset preset = (Preset)presets.get(p);
-        
-          Stop stop = new Stop();
-          stop.setName(preset.getName());
-          stop.setProgram(preset.getProgram()); 
-          stops.add(stop);
-        }
-    } finally {
-        if (input != null) {
-            input.close();
-        }
-    }
-
-    return stops;    
+          for (int s = 0; s < stops.size(); s++) {
+              organ.removeElement((Element)stops.get(s));
+          }
+      } finally {
+          if (input != null) {
+              input.close();
+          }
+      }
+      
+      return stops;    
   }
   
   /**

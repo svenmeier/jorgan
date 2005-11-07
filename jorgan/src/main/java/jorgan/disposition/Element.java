@@ -121,7 +121,10 @@ public abstract class Element implements Cloneable, Serializable {
         removeReference(reference);
       }
 
-      Iterator iterator = referrer.iterator();
+      // create copy of referrers, otherwise we'll get a
+      // ConcurrentModification because unreference(Element)
+      // will trigger a callback to referencedBy(Element, boolean)
+      Iterator iterator = new ArrayList(referrer).iterator();
       while (iterator.hasNext()) {
         Element element = (Element)iterator.next();
 
@@ -164,12 +167,12 @@ public abstract class Element implements Cloneable, Serializable {
     return null;
   }
   
-  public void unreference(Element element) {
+  public final void unreference(Element element) {
 
     removeReference(getReference(element));
   }
 
-  public void removeReference(Reference reference) {
+  public final void removeReference(Reference reference) {
     if (!references.contains(reference)) {
       throw new IllegalArgumentException("element not referenced");
     }
