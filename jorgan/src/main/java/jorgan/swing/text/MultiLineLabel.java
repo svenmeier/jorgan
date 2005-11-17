@@ -16,21 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.config;
+package jorgan.swing.text;
+
+import java.awt.*;
+
+import javax.swing.*;
 
 /**
- * A panel for the {@link jorgan.Configuration}.
+ * A textArea used as a lable with multiple lines.
  */
-public class JOrganConfigPanel extends ConfigurationPanel {
+public class MultiLineLabel extends JTextArea {
 
-  public JOrganConfigPanel() {
-
-    setName(resources.getString("config.jorgan.name"));
-  }
-
-  public void read() {
-  }
-
-  public void write() {
-  }
+    public MultiLineLabel() {
+        this(0);
+    }
+    
+    public MultiLineLabel(int rows) {
+        super(rows, 0);
+        
+        setFont(new JTextField().getFont());
+        setLineWrap(true);
+        setWrapStyleWord(true);
+        setEnabled(false);
+        setDisabledTextColor(Color.black);
+        setBackground(new JLabel().getBackground());
+    }
+    
+    public Dimension getPreferredSize() {
+        Dimension dim = super.getPreferredSize();
+        
+        return new Dimension(0, dim.height);
+    }
 }

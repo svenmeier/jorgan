@@ -439,7 +439,7 @@ public class OrganFrame extends JFrame implements UI {
 
   public void showConfiguration() {
     ConfigurationDialog dialog = ConfigurationDialog.create(this, jorgan.Configuration.instance(), false);
-    dialog.start();
+    dialog.start(600, 750);
     dialog.dispose();
   }
 

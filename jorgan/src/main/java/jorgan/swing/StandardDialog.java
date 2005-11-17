@@ -23,8 +23,10 @@ import java.awt.event.*;
 import java.util.ResourceBundle;
 
 import javax.swing.*;
+import javax.swing.border.CompoundBorder;
 
 import jorgan.swing.border.*;
+import jorgan.swing.text.MultiLineLabel;
 
 /**
  * A standard dialog.
@@ -37,9 +39,9 @@ public class StandardDialog extends JDialog {
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
   
   /**
-   * The panel holding the description of the content.
+   * The label holding the description.
    */
-  private DescriptionPane descriptionPane = new DescriptionPane();
+  private MultiLineLabel descriptionLabel = new MultiLineLabel(2);
   
   /**
    * The panel holding the current content.
@@ -63,7 +65,10 @@ public class StandardDialog extends JDialog {
 
     setContentPane(contentPane);
     
-    contentPane.add(descriptionPane, BorderLayout.NORTH);
+    descriptionLabel.setBackground(Color.white);
+    descriptionLabel.setBorder(new CompoundBorder(new RuleBorder(RuleBorder.BOTTOM), BorderFactory.createEmptyBorder(10, 10, 10, 10)));
+    descriptionLabel.setVisible(false);
+    contentPane.add(descriptionLabel, BorderLayout.NORTH);
 
     contentPane.add(buttonPane, BorderLayout.SOUTH);
 
@@ -99,7 +104,9 @@ public class StandardDialog extends JDialog {
    * @param description   the description
    */
   public void setDescription(String description) {
-    descriptionPane.setDescription(description);
+    descriptionLabel.setText(description);
+    
+    descriptionLabel.setVisible(description != null);    
   }
   
   /**
@@ -108,7 +115,7 @@ public class StandardDialog extends JDialog {
    * @return    the description
    */
   public String getDescription() {
-    return descriptionPane.getDescription();
+    return descriptionLabel.getText();
   }
   
   /**
@@ -171,7 +178,12 @@ public class StandardDialog extends JDialog {
   }
 
   public void start() {
-    pack();
+    Dimension dim = getPreferredSize();
+    start(dim.width, dim.height);
+  }
+  
+  public void start(int width, int height) {
+    setSize(width, height);
     setLocationRelativeTo(getOwner());
     setVisible(true);
   }
@@ -315,44 +327,6 @@ public class StandardDialog extends JDialog {
       gridPanel.repaint();
       
       return button;
-    }
-  }
-  
-  /**
-   * The panel for the description.
-   */
-  private class DescriptionPane extends JPanel {
-
-    private JTextArea textArea = new JTextArea(2, 0);
-
-    public DescriptionPane() {
-      setLayout(new BorderLayout());
-      setBorder(new RuleBorder(RuleBorder.BOTTOM));
-
-      textArea.setFont(new JTextField().getFont());
-      textArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-      textArea.setLineWrap(true);
-      textArea.setWrapStyleWord(true);
-      textArea.setEnabled(false);
-      textArea.setDisabledTextColor(Color.black);
-      textArea.setBackground(Color.white);
-      add(textArea, BorderLayout.CENTER);
-
-      setVisible(false); 
-    }
-       
-    public String getDescription() {
-      return textArea.getText();
-    }
-
-    public void setDescription(String description) {
-      textArea.setText(description);
-      
-      if (description == null) {
-        setVisible(false); 
-      } else {
-        setVisible(true); 
-      }
     }
   }
   

@@ -184,41 +184,31 @@ public class CardPanel extends JPanel {
      * @see LayoutManager
      */
     public Dimension preferredLayoutSize(Container parent) {
-      int nChildren = parent.getComponentCount();
-      Insets insets = parent.getInsets();
-      int width = insets.left + insets.right;
-      int height = insets.top + insets.bottom;
+        Insets insets = parent.getInsets();
+        int width = insets.left + insets.right;
+        int height = insets.top + insets.bottom;
 
-      for (int i = 0; i < nChildren; i++) {
-        Dimension d = parent.getComponent(i).getPreferredSize();
-        if (d.width > width) {
-          width = d.width;
+        if (current != null) {
+          Dimension d = current.getPreferredSize();
+          width += d.width;
+          height += d.height;
         }
-        if (d.height > height) {
-            height = d.height;
-        }
-      }
 
-      return new Dimension(width, height);
+        return new Dimension(width, height);
     }
 
     /**
      * @see LayoutManager
      */
     public Dimension minimumLayoutSize(Container parent) {
-      int nChildren = parent.getComponentCount();
       Insets insets = parent.getInsets();
       int width = insets.left + insets.right;
       int height = insets.top + insets.bottom;
 
-      for (int i = 0; i < nChildren; i++) {
-        Dimension d = parent.getComponent(i).getMinimumSize();
-        if (d.width > width) {
-            width = d.width;
-        }
-        if (d.height > height) {
-            height = d.height;
-        }
+      if (current != null) {
+        Dimension d = current.getMinimumSize();
+        width += d.width;
+        height += d.height;
       }
 
       return new Dimension(width, height);

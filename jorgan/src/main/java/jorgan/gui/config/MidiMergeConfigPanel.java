@@ -28,6 +28,7 @@ import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.merge.MergeInput;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
+import jorgan.swing.text.MultiLineLabel;
 
 import jorgan.midi.merge.Configuration;
 import jorgan.midi.merge.MidiMergerProvider;
@@ -54,7 +55,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
   /*
    * The components.
    */
-  private JTextArea textArea = new JTextArea();
+  private MultiLineLabel descriptionLabel = new MultiLineLabel();
   private JScrollPane scrollPane = new JScrollPane(); 
   private JTable table = new JTable();
   
@@ -71,16 +72,11 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 
     setName(resources.getString("config.midi.merge.name"));
 
-    textArea.setText(resources.getString("config.midi.merge.description"));
-    textArea.setFont(new JTextField().getFont());
-    textArea.setLineWrap(true);
-    textArea.setWrapStyleWord(true);
-    textArea.setEnabled(false);
-    textArea.setDisabledTextColor(Color.black);
-    textArea.setBackground(getBackground());
-    add(textArea, BorderLayout.NORTH);
+    descriptionLabel.setText(resources.getString("config.midi.merge.description"));
+    add(descriptionLabel, BorderLayout.NORTH);
     
     scrollPane.getViewport().setBackground(Color.white);
+    scrollPane.setPreferredSize(new Dimension(0,0));
     add(scrollPane, BorderLayout.CENTER);
     
     table.setModel(mergeInputsModel);
