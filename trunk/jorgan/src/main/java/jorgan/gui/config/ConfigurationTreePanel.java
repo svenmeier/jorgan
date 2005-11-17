@@ -83,7 +83,11 @@ public class ConfigurationTreePanel extends JPanel {
       header.setHeader(Color.white);
       contentPanel.add(header, BorderLayout.NORTH);
 
-      contentPanel.add(cardPanel, BorderLayout.CENTER);
+      JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+      scrollPane.setBorder(null);
+      contentPanel.add(scrollPane, BorderLayout.CENTER);
+      
+      scrollPane.setViewportView(cardPanel);
 
         cardPanel.addCard(new JOrganConfigPanel()   , jorgan.Configuration.class);
         cardPanel.addCard(new GUIConfigPanel()    , jorgan.gui.Configuration.class);
