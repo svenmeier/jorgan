@@ -30,6 +30,10 @@ import jorgan.disposition.event.*;
  */
 public class ConsolePlayer extends Player {
 
+  private static final Problem warningDevice = new Problem(Problem.WARNING, "device");
+  private static final Problem errorDevice = new Problem(Problem.ERROR, "device"); 
+  
+    
   /**
    * The midiDevice to receive input from.
    */
@@ -47,19 +51,18 @@ public class ConsolePlayer extends Player {
   protected void openImpl() {
     Console console = (Console)getElement();
 
+    removeProblem(errorDevice);
+    
     String device = console.getDevice();
     if (device != null) {
-      PlayerProblem errorDevice = new PlayerProblem(PlayerProblem.ERROR, "device", device); 
       try {
         in = DevicePool.getMidiDevice(device, false);
         in.open();
 
         transmitter = in.getTransmitter();
         transmitter.setReceiver(getOrganPlay().createReceiver(this));
-
-        removeProblem(errorDevice);
       } catch (MidiUnavailableException ex) {
-        addProblem(errorDevice);
+        addProblem(errorDevice.value(device));
       }
     }
   }
@@ -77,11 +80,11 @@ public class ConsolePlayer extends Player {
   public void elementChanged(OrganEvent event) {
     Console console = (Console)getElement();
 
-    PlayerProblem warnDevice = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
     if (console.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
-      addProblem(warnDevice);
+      removeProblem(errorDevice);
+      addProblem(warningDevice.value(null));
     } else {
-      removeProblem(warnDevice);
+      removeProblem(warningDevice);
     }
   }
 

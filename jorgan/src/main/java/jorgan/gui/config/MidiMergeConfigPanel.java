@@ -75,17 +75,13 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
     descriptionLabel.setText(resources.getString("config.midi.merge.description"));
     add(descriptionLabel, BorderLayout.NORTH);
     
-    scrollPane.getViewport().setBackground(Color.white);
     scrollPane.setPreferredSize(new Dimension(0,0));
     add(scrollPane, BorderLayout.CENTER);
     
     table.setModel(mergeInputsModel);
-    table.setIntercellSpacing(new Dimension(0,0));
-    table.setShowHorizontalLines(false);
-    table.setShowVerticalLines(false);
-    table.setSurrendersFocusOnKeystroke(true);
     table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
-    TableUtils.fixTableColumn(table, 0, Boolean.TRUE);
+    TableUtils.pleasantLookAndFeel(scrollPane, table);
+    TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
     scrollPane.setViewportView(table);
   }
 

@@ -40,7 +40,8 @@ public class Organ {
                                                Sequence.class,
                                                Activator.class,
                                                Crescendo.class,
-                                               Keyer.class}; 
+                                               Keyer.class,
+                                               Memory.class}; 
   
   /**
    * Registered listeners.

@@ -83,6 +83,17 @@ public class Message implements Serializable {
     return (status + data1 + data2);
   }
 
+  public int wildcard(int data1, int data2) {
+    if (this.data1 == -1) {
+      return data1;
+    }
+    if (this.data2 == -1) {
+      return data2;
+    }
+      
+    return -1;
+  }
+  
   public boolean match(int status, int data1, int data2) {
     return (this.status == -1 || this.status == status) &&
            (this.data1  == -1 || this.data1  == data1 ) &&

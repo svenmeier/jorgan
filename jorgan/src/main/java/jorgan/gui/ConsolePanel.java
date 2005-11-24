@@ -410,7 +410,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
     } else if (element instanceof Combination) {
       view = new CombinationView((Combination)element);   
     } else if (element instanceof Sequence) {
-        view = new SequenceView((Sequence)element);   
+        view = new CounterView((Sequence)element);   
+    } else if (element instanceof Counter) {
+        view = new CounterView((Counter)element);   
     } else {
       view = new OtherView(element);
     }

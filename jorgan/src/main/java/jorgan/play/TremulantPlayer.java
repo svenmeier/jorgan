@@ -42,16 +42,8 @@ public class TremulantPlayer extends ActivateablePlayer implements SoundEffectPl
   }
   
   public void elementChanged(OrganEvent event) {
-    Tremulant tremulant = (Tremulant)getElement();
+    super.elementChanged(event);
     
-    PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
-    if ((tremulant.getActivateMessage() == null || tremulant.getDeactivateMessage() == null) &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(problem);
-    } else {
-      removeProblem(problem);
-    }
-
     if (isOpen()) {
       for (int s = 0; s < sounds.size(); s++) {
         TremulantSound sound = (TremulantSound)sounds.get(s);

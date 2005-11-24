@@ -18,47 +18,51 @@
  */
 package jorgan.io.disposition;
 
-import java.io.IOException;
+import java.io.*;
 
 import org.xml.sax.*;
 
-import jorgan.disposition.Console;
-import jorgan.disposition.Element;
-import jorgan.disposition.Reference;
+import jorgan.disposition.*;
 import jorgan.xml.*;
 import jorgan.xml.handler.IntegerHandler;
 
-/**
- * A handler for references to another object.
- */
-public class ConsoleReferenceHandler extends ReferenceHandler {
+public abstract class CounterHandler extends ActiveHandler {
 
-  private int x;
-  private int y;
-  
-  public ConsoleReferenceHandler(AbstractReader reader, Attributes attributes) {
+  public CounterHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
   }
 
-  public ConsoleReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    super(writer, tag, reference);
+  public CounterHandler(AbstractWriter writer, String tag) {
+    super(writer, tag);
+  }
+
+  protected abstract Counter getCounter();
+  
+  public Responsive getActive() {
+    return getCounter();
   }
 
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("x".equals(qName)) {
+    if ("current".equals(qName)) {
       new IntegerHandler(getReader()) {
         public void finished() {
-          x = getInteger();
+          getCounter().setCurrent(getInteger());
         }
       };
-    } else if ("y".equals(qName)) {
-        new IntegerHandler(getReader()) {
-          public void finished() {
-            y = getInteger();
-          }
-        };
+    } else if ("nextMessage".equals(qName)) {
+      new MessageHandler(getReader()) {
+        public void finished() {
+          getCounter().setNextMessage(getMessage());
+        }
+      };
+    } else if ("previousMessage".equals(qName)) {
+      new MessageHandler(getReader()) {
+        public void finished() {
+          getCounter().setPreviousMessage(getMessage());
+        }
+      };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -67,18 +71,13 @@ public class ConsoleReferenceHandler extends ReferenceHandler {
   public void children() throws IOException {
     super.children();
 
-    Console.LocationReference reference = (Console.LocationReference)getReference(); 
-
-    new IntegerHandler(getWriter(), "x", reference.getX()).start();
-    new IntegerHandler(getWriter(), "y", reference.getY()).start();
-  }
-
-  protected Reference createReference(Element element) {
-    Console.LocationReference reference = new Console.LocationReference(element); 
+    new IntegerHandler(getWriter(), "current", getCounter().getCurrent()).start();
     
-    reference.setX(x);
-    reference.setY(y);
-     
-    return reference;  
-  }
+    if (getCounter().getNextMessage() != null) {
+      new MessageHandler(getWriter(), "nextMessage", getCounter().getNextMessage()).start();
+    }
+    if (getCounter().getPreviousMessage() != null) {
+      new MessageHandler(getWriter(), "previousMessage", getCounter().getPreviousMessage()).start();
+    }
+  }  
 }

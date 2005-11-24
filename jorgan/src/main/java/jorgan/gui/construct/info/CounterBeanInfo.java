@@ -16,35 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
 
-public class Sequence extends Counter {
+import jorgan.disposition.*;
+import jorgan.gui.construct.editor.DataEditor;
+import jorgan.gui.construct.editor.MessageEditor;
 
-  protected boolean canReference(Class clazz) {
-    return Combination.class == clazz;  
-  }
+/**
+ * BeanInfo for {@link jorgan.disposition.Counter}.
+ */
+public class CounterBeanInfo extends ResponsiveBeanInfo {
 
-  protected void removeReference(Reference reference) {
-      super.removeReference(reference);
-      
-      setCurrent(0);
-  }
-  
-  protected void combinationGet(Combination combination) {
-    
-    setCurrent(references.indexOf(getReference(combination)));
-  }
+    protected void registerProperties() {
+        super.registerProperties();
 
-  protected void change(int delta) {
-    if (getReferenceCount() == 0) {
-      setCurrent(0);
-    } else {
-      int current = (getCurrent() + delta) % getReferenceCount();
-      
-      setCurrent(current);
-          
-      Reference reference = getReference(current);
-      ((Combination)reference.getElement()).recall();
+
+        add("current", Counter.class, DataEditor.class);
+        add("message", Counter.class, MessageEditor.class);
+        add("nextMessage", Counter.class, MessageEditor.class);
+        add("previousMessage", Counter.class, MessageEditor.class);
     }
-  }
 }

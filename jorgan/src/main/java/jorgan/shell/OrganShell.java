@@ -157,7 +157,7 @@ public class OrganShell implements UI {
     List problems = organPlay.getProblems(element);
     if (problems != null) {
       for (int p = 0; p < problems.size(); p++) {
-        PlayerProblem problem = (PlayerProblem)problems.get(p);
+        Problem problem = (Problem)problems.get(p);
 
         String pattern = "play." + problem;
 

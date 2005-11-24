@@ -122,45 +122,45 @@ public abstract class Player {
   	
   }
   
-  protected void addProblem(PlayerProblem problem) {
+  protected void addProblem(Problem problem) {
     if (problem == null) {
       throw new IllegalArgumentException("problem must not be null");
     }
     if (!problems.contains(problem)) {
       problems.add(problem);
-      if (PlayerProblem.WARNING.equals(problem.getLevel())) {
+      if (Problem.WARNING.equals(problem.getLevel())) {
         warningCount++;
       }
-      if (PlayerProblem.ERROR.equals(problem.getLevel())) {
+      if (Problem.ERROR.equals(problem.getLevel())) {
         errorCount++;
       }
       fireProblemAdded(problem);
     }
   }
   
-  protected void removeProblem(PlayerProblem problem) {
+  protected void removeProblem(Problem problem) {
     if (problem == null) {
       throw new IllegalArgumentException("problem must not be null");
     }
     if (problems.contains(problem)) {
       problems.remove(problem);
-      if (PlayerProblem.WARNING.equals(problem.getLevel())) {
+      if (Problem.WARNING.equals(problem.getLevel())) {
         warningCount--;
       }
-      if (PlayerProblem.ERROR.equals(problem.getLevel())) {
+      if (Problem.ERROR.equals(problem.getLevel())) {
         errorCount--;
       }
       fireProblemsRemoved(problem);
     }
   }
   
-  private void fireProblemAdded(PlayerProblem problem) {
+  private void fireProblemAdded(Problem problem) {
     if (organPlay != null) {
       organPlay.fireProblemAdded(this, problem);
     }
   }
 
-  private void fireProblemsRemoved(PlayerProblem problem) {
+  private void fireProblemsRemoved(Problem problem) {
     if (organPlay != null) {
       organPlay.fireProblemRemoved(this, problem);
     }

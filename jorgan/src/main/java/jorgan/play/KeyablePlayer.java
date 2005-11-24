@@ -114,7 +114,9 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
     }
   }
 
-  public void elementChanged(OrganEvent event) {   
+  public void elementChanged(OrganEvent event) {
+    super.elementChanged(event);
+    
     if (isOpen()) {
       action.changed();
     }

@@ -24,11 +24,9 @@ import java.awt.event.*;
 import jorgan.disposition.*;
 
 /**
- * A view that shows a combination.
- *
- * @see jorgan.disposition.Combination
+ * A view that shows a {@link Counter}.
  */
-public class SequenceView extends View {
+public class CounterView extends View {
  
   private static final int PADDING = 1;
   private static final int H_INSET = 8;
@@ -36,12 +34,12 @@ public class SequenceView extends View {
 
   private boolean pressed = false;
   
-  public SequenceView(Sequence sequence) {
-    super(sequence);
+  public CounterView(Counter counter) {
+    super(counter);
   }
 
-  protected Sequence getSequence() {
-    return (Sequence)getElement();
+  protected Counter getCounter() {
+    return (Counter)getElement();
   }
   
   protected Dimension getNonStyleSize() {
@@ -59,14 +57,14 @@ public class SequenceView extends View {
     Dimension size = getNonStyleSize();
     
     g.setColor(Color.black);
-    paintSequence(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
+    paintAbstractSequence(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
 
     g.setColor(Color.black);
     g.setFont(getNonStyleFont());
     paintName(g, PADDING, PADDING, size.width - 2*PADDING, size.height - 2*PADDING);
   }
 
-  private void paintSequence(Graphics2D g, int x, int y, int width, int height) {  
+  private void paintAbstractSequence(Graphics2D g, int x, int y, int width, int height) {  
     g.drawRect(x, y, width - 1, height - 1);
     if (pressed) {
       g.drawRect(x + 1, y + 1, width - 3, height - 3);
@@ -80,16 +78,13 @@ public class SequenceView extends View {
   public void pressed(int x, int y, MouseEvent ev) {
     pressed = true;
 
-    Sequence sequence = getSequence();
+    Counter counter = getCounter();
 
     if ((ev.getModifiers() & Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()) == 0) {
-      sequence.next();
+      counter.next();
     } else {
-      sequence.previous();
+      counter.previous();
     }
-
-    // issue repaint since sequence is actually not changed
-    repaint();
   }
   
   public void released(int x, int y, MouseEvent ev) {
@@ -101,14 +96,14 @@ public class SequenceView extends View {
   
   public void pressed(KeyEvent ev) {
 
-    Sequence sequence = getSequence();
+    Counter counter = getCounter();
 
-    Shortcut shortcut = sequence.getShortcut();
+    Shortcut shortcut = counter.getShortcut();
     if (shortcut != null && shortcut.match(ev)) {
       if ((ev.getModifiers() & KeyEvent.CTRL_MASK) == 0) {
-        sequence.next();
+        counter.next();
       } else {
-        sequence.previous();        
+        counter.previous();        
       }
     }
   } 

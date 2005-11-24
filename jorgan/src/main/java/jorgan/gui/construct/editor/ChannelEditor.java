@@ -51,7 +51,9 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor, A
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
 
+    spinner.setBorder(null);
     panel.add(spinner, BorderLayout.CENTER);
+    
     JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
     editor.getTextField().setBorder(null);
   }

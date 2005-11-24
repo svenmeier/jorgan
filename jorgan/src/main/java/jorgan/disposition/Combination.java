@@ -19,6 +19,7 @@
 package jorgan.disposition;
 
 import java.util.Iterator;
+import java.util.Set;
 
 public class Combination extends Responsive {
 
@@ -57,12 +58,14 @@ public class Combination extends Responsive {
 
   public void recall() {
 
+    int level = getLevel();
+    
     for (int e = 0; e < getReferenceCount(); e++) {
       CombinationReference reference = (CombinationReference)getReference(e);
       
       Activateable registratable = reference.getRegistratable();
 
-      if (!reference.isActive()) {
+      if (!reference.isActive(level)) {
         registratable.setActive(false);
       }
     }
@@ -72,7 +75,7 @@ public class Combination extends Responsive {
         
       Activateable registratable = reference.getRegistratable();
 
-      if (reference.isActive()) {
+      if (reference.isActive(level)) {
         registratable.setActive(true);
       }
     }
@@ -86,14 +89,26 @@ public class Combination extends Responsive {
     }
   }
 
+  protected int getLevel() {
+    Set memories = referrer(Memory.class);
+    if (memories.size() > 0) {
+      Memory memory = (Memory)memories.iterator().next();
+      return memory.getCurrent();
+    } else {
+      return 0;          
+    }
+  }
+  
   public void capture() {
 
+    int level = getLevel();
+    
     for (int e = 0; e < getReferenceCount(); e++) {
       CombinationReference reference = (CombinationReference)getReference(e);
       
       Activateable registratable = (Activateable)reference.getElement();
 
-      reference.setOn(registratable.isActive());
+      reference.setActive(level, registratable.isActive());
 
       fireReferenceChanged(reference, true);
     }
@@ -124,18 +139,24 @@ public class Combination extends Responsive {
    */
   public static class CombinationReference extends Reference {
 
-    private boolean active;
+    private boolean[] activated = new boolean[128];
     
     public CombinationReference(Activateable registratable) {
       super(registratable);  
     }
     
-    public void setOn(boolean active) {
-      this.active = active;
+    public void setActive(int level, boolean active) {
+      if (level < 0 || level > 127) {
+        throw new IllegalArgumentException("level");
+      }
+      activated[level] = active;
     }
     
-    public boolean isActive() {
-      return active;
+    public boolean isActive(int level) {
+      if (level < 0 || level > 127) {
+        throw new IllegalArgumentException("level");
+      }
+      return activated[level];
     }
 
     public Activateable getRegistratable() {

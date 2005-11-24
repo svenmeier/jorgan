@@ -42,15 +42,7 @@ public class VariationPlayer extends ActivateablePlayer implements SoundEffectPl
   }
   
   public void elementChanged(OrganEvent event) {
-    Variation variation = (Variation)getElement();
-    
-    PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null);
-    if ((variation.getActivateMessage() == null || variation.getDeactivateMessage() == null) &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(problem);
-    } else {
-      removeProblem(problem);
-    }
+    super.elementChanged(event);
     
     if (isOpen()) {
       for (int s = 0; s < sounds.size(); s++) {

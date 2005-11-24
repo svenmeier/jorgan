@@ -19,6 +19,11 @@
 package jorgan.swing.table;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
@@ -29,23 +34,71 @@ import javax.swing.table.TableColumn;
 public class TableUtils {
 
   /**
-   * Fix the width of tableColumn.
+   * Fix the width of a table column.
    *  
    * @param table     table to fix column for
    * @param column    the index of the column to fix width
    * @param prototype prototype value to use for calculating the preferred width
    */  
-  public static void fixTableColumn(JTable table, int column, Object prototype) {
+  public static void fixColumnWidth(JTable table, int column, Object prototype) {
 
     TableCellEditor editor = table.getCellEditor(0, column);
     
-    Component component = editor.getTableCellEditorComponent(table,  prototype, false, 0, column);
+    Component component = editor.getTableCellEditorComponent(table, prototype, false, 0, column);
 
     int width = component.getPreferredSize().width;
+    
+    width += table.getIntercellSpacing().width;
     
     TableColumn tableColumn = table.getColumnModel().getColumn(column);
     tableColumn.setMinWidth(width);
     tableColumn.setPreferredWidth(width);
     tableColumn.setMaxWidth(width);
+  }
+
+  public static void pleasantLookAndFeel(JScrollPane scrollPane, JTable table) {
+    table.setSurrendersFocusOnKeystroke(true);
+
+    ToolTipManager.sharedInstance().registerComponent(table);
+    
+    Color color = scrollPane.getBackground();
+    scrollPane.getViewport().setBackground(table.getBackground());
+    table.setGridColor(color);
+  }
+
+  public static void hideHeader(JTable table) {
+    table.getTableHeader().setPreferredSize(new Dimension(0, 0));
+  }
+  
+  public static void addActionListener(final JTable table, final ActionListener listener) {
+    table.addMouseListener(new MouseAdapter() {
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 2) {
+          if (table.getSelectedRowCount() == 1) {
+            listener.actionPerformed(new ActionEvent(table, ActionEvent.ACTION_PERFORMED, null));
+          }    
+        }
+      }
+    });
+  }
+  
+  public static void addPopup(final JTable table, final JPopupMenu popup) {
+    table.addMouseListener(new MouseAdapter() {
+        public void mousePressed(MouseEvent e) {
+            checkPopup(e);
+        }
+        public void mouseReleased(MouseEvent e) {
+            checkPopup(e);
+        }
+        public void checkPopup(MouseEvent e) {
+          if (e.isPopupTrigger()) {
+            int index = table.rowAtPoint(e.getPoint());
+            if (index != -1) {
+              table.setRowSelectionInterval(index, index);
+              popup.show(table, e.getX(), e.getY());
+            }
+          }
+        }
+    });
   }
 }

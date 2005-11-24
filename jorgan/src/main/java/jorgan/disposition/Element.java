@@ -172,7 +172,7 @@ public abstract class Element implements Cloneable, Serializable {
     removeReference(getReference(element));
   }
 
-  public final void removeReference(Reference reference) {
+  protected void removeReference(Reference reference) {
     if (!references.contains(reference)) {
       throw new IllegalArgumentException("element not referenced");
     }

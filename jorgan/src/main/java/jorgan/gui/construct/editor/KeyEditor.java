@@ -55,6 +55,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor, Actio
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
 
+    spinner.setBorder(null);
     panel.add(spinner, BorderLayout.CENTER);
 
     JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();

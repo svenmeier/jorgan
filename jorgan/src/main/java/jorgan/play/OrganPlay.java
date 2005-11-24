@@ -118,7 +118,7 @@ public class OrganPlay  {
     }
   }
 
-  protected void fireProblemAdded(Player player, PlayerProblem problem) {
+  protected void fireProblemAdded(Player player, Problem problem) {
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
       for (int l = 0; l < listeners.size(); l++) {
@@ -128,7 +128,7 @@ public class OrganPlay  {
     }
   }
 
-  protected void fireProblemRemoved(Player player, PlayerProblem problem) {
+  protected void fireProblemRemoved(Player player, Problem problem) {
     if (listeners != null) {
       PlayEvent event = new PlayEvent(this, player.getElement(), problem);
       for (int l = 0; l < listeners.size(); l++) {
@@ -266,6 +266,8 @@ public class OrganPlay  {
       player = new CombinationPlayer((Combination)element);
     } else if (element instanceof Keyer) {
         player = new KeyerPlayer((Keyer)element);
+    } else if (element instanceof Counter) {
+        player = new CounterPlayer((Counter)element);
     }
 
     if (player != null) {

@@ -22,8 +22,6 @@ import java.text.MessageFormat;
 import java.util.*;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -32,6 +30,7 @@ import javax.swing.table.AbstractTableModel;
 import spin.Spin;
 
 import jorgan.swing.table.IconTableCellRenderer;
+import jorgan.swing.table.TableUtils;
 
 import jorgan.play.*;
 import jorgan.play.event.*;
@@ -79,8 +78,8 @@ public class ProblemsPanel extends JPanel {
     setLayout(new BorderLayout());
 
     table.setModel(problemsModel);
-    table.addMouseListener(gotoAction);
-    table.setGridColor(getBackground());
+    TableUtils.addActionListener(table, gotoAction);
+    TableUtils.addPopup(table, popup);
     
     Map iconMap = new HashMap();
     iconMap.put("warning", warningIcon);    
@@ -89,7 +88,7 @@ public class ProblemsPanel extends JPanel {
     
     JScrollPane scrollPane = new JScrollPane(table);
     scrollPane.setBorder(new EmptyBorder(0,0,0,0));
-    scrollPane.getViewport().setBackground(table.getBackground());
+    TableUtils.pleasantLookAndFeel(scrollPane, table);
     add(scrollPane, BorderLayout.CENTER);
     
     popup.add(gotoAction);
@@ -121,7 +120,7 @@ public class ProblemsPanel extends JPanel {
     List problems = session.getPlay().getProblems(element);
     if (problems != null) {
       for (int p = 0; p < problems.size(); p++) {
-        rows.add(new Row(element, (PlayerProblem)problems.get(p)));
+        rows.add(new Row(element, (Problem)problems.get(p)));
       }
     }
   }
@@ -202,10 +201,10 @@ public class ProblemsPanel extends JPanel {
   private class Row {
     
     private Element       element;
-    private PlayerProblem problem;
+    private Problem problem;
     private String        message;
     
-    public Row(Element element, PlayerProblem problem) {
+    public Row(Element element, Problem problem) {
       this.element = element;      
       this.problem = problem;  
       
@@ -218,7 +217,7 @@ public class ProblemsPanel extends JPanel {
       return element;   
     }
     
-    public PlayerProblem getProblem() {
+    public Problem getProblem() {
       return problem; 
     }
     
@@ -242,7 +241,7 @@ public class ProblemsPanel extends JPanel {
     }
   }
   
-  private class GotoAction extends AbstractAction implements MouseListener {
+  private class GotoAction extends AbstractAction {
 
     public GotoAction() {
       putValue(Action.NAME             , resources.getString("problems.action.goto.name"));
@@ -251,45 +250,11 @@ public class ProblemsPanel extends JPanel {
    }
 
     public void actionPerformed(ActionEvent ev) {
-      activateGoto();
-    }
-
-    public void activateGoto() {
       int index = table.getSelectedRow();
 
       Row row = (Row)rows.get(index);
 
       session.getSelectionModel().setSelectedElement(row.getElement(), row.getProblem().getProperty());
-    }
-    
-    public void mouseClicked(MouseEvent e) {
-      if (e.getClickCount() == 2) {
-        if (table.getSelectedRowCount() == 1) {
-          activateGoto();
-        }    
-      }
-    }
-    
-    public void mouseEntered(MouseEvent e) { }
-    
-    public void mouseExited(MouseEvent e) { }
-
-    public void mousePressed(MouseEvent e) {
-        checkPopup(e);
-    }
-
-    public void mouseReleased(MouseEvent e) {
-        checkPopup(e);
-    }
-    
-    public void checkPopup(MouseEvent e) {
-      if (e.isPopupTrigger()) {
-        int index = table.rowAtPoint(e.getPoint());
-        if (index != -1) {
-          table.setRowSelectionInterval(index, index);
-          popup.show(table, e.getX(), e.getY());
-        }
-      }
-    }
+    }    
   }    
 }

@@ -30,6 +30,8 @@ import jorgan.disposition.event.*;
  */
 public class SliderPlayer extends Player {
 
+  private static final Problem warningMessage = new Problem(Problem.WARNING, "message"); 
+    
   public SliderPlayer(Slider slider) {
     super(slider);
   }
@@ -41,16 +43,13 @@ public class SliderPlayer extends Player {
     if (message != null &&
         message.match(BugFix.getStatus(shortMessage), shortMessage.getData1(), shortMessage.getData2())) {
 
-      int position;
-      if (message.getData1() == -1) {
-        position = shortMessage.getData1();
-      } else if (message.getData2() == -1) {
-        position = shortMessage.getData2();
-      } else {
-        return;
-      }
-      if (Math.abs(slider.getPosition() - position) > slider.getThreshold()) {
-        slider.setPosition(position);
+      int position = message.wildcard(shortMessage.getData1(), shortMessage.getData2());
+      if (position != -1) {
+        if (Math.abs(slider.getPosition() - position) > slider.getThreshold()) {
+          fireInputAccepted();
+        
+          slider.setPosition(position);
+        }
       }
     }
   }
@@ -58,12 +57,11 @@ public class SliderPlayer extends Player {
   public void elementChanged(OrganEvent event) {
     Slider slider = (Slider)getElement();
     
-    PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "message", null); 
     if (slider.getMessage() == null &&
         Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(problem);
+      addProblem(warningMessage.value(null));
     } else {
-      removeProblem(problem);
+      removeProblem(warningMessage);
     }
   }
 }

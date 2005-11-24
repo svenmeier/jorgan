@@ -53,6 +53,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor, A
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
 
+    textField.setBorder(null);
     panel.add(textField, BorderLayout.CENTER);
   }
 

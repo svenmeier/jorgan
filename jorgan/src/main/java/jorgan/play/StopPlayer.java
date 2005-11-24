@@ -19,11 +19,9 @@
 package jorgan.play;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Message;
 import jorgan.disposition.SoundEffect;
 import jorgan.disposition.SoundSource;
 import jorgan.disposition.Stop;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.play.sound.SilentSound;
 import jorgan.play.sound.Sound;
 
@@ -32,6 +30,8 @@ import jorgan.play.sound.Sound;
  */
 public class StopPlayer extends KeyablePlayer {
 
+  private static Problem warningProgram = new Problem(Problem.WARNING, "program");
+    
   private Sound sound;
     
   public StopPlayer(Stop stop) {
@@ -42,11 +42,9 @@ public class StopPlayer extends KeyablePlayer {
 
     super.closeImpl();
 
-    Stop stop = (Stop)getElement();
-
     sound = null;
     
-    removeProblem(programWarning(stop.getProgram()));
+    removeProblem(warningProgram);
   }
   
   protected void activated() {
@@ -96,9 +94,9 @@ public class StopPlayer extends KeyablePlayer {
     fireOutputProduced();
 
     if (silentSound) {
-      addProblem(programWarning(stop.getProgram()));
+      addProblem(warningProgram.value(new Integer(stop.getProgram())));
     } else {
-      removeProblem(programWarning(stop.getProgram()));
+      removeProblem(warningProgram);
     }
 
     super.activated();    
@@ -120,56 +118,19 @@ public class StopPlayer extends KeyablePlayer {
   protected void deactivated() {
     super.deactivated();
 
-    Stop stop = (Stop)getElement();
-
     sound.stop();
     sound = null;
 
     fireOutputProduced();
     
-    removeProblem(programWarning(stop.getProgram()));
+    removeProblem(warningProgram);
   }
   
-  private PlayerProblem programWarning(int program) {
-      
-    return new PlayerProblem(PlayerProblem.WARNING, "program", new Integer(program));
-  }
-
-  private PlayerProblem onMessageWarning(Message message) {
-      
-    return new PlayerProblem(PlayerProblem.WARNING, "onMessage", message);
-  }
-
-  private PlayerProblem offMessageWarning(Message message) {
-      
-    return new PlayerProblem(PlayerProblem.WARNING, "offMessage", message);
-  }
-
   protected void deactivateKey(int pitch) {
     if (sound != null) {
       sound.noteOff(pitch);
       
       fireOutputProduced();
     }
-  }
-  
-  public void elementChanged(OrganEvent event) {
-    Stop stop = (Stop)getElement();
-      
-    if (stop.getActivateMessage() == null &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(onMessageWarning(stop.getActivateMessage()));
-    } else {
-      removeProblem(onMessageWarning(stop.getActivateMessage()));
-    }
-
-    if (stop.getDeactivateMessage() == null &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(offMessageWarning(stop.getDeactivateMessage()));
-    } else {
-      removeProblem(offMessageWarning(stop.getDeactivateMessage()));
-    }
-
-    super.elementChanged(event);
   }
 }

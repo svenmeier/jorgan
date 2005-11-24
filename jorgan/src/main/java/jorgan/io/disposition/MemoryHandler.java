@@ -18,39 +18,48 @@
  */
 package jorgan.io.disposition;
 
-import java.io.IOException;
+import java.io.*;
 
 import org.xml.sax.*;
 
-import jorgan.disposition.Element;
-import jorgan.disposition.Combination;
-import jorgan.disposition.Reference;
-import jorgan.disposition.Activateable;
+import jorgan.disposition.*;
 import jorgan.xml.*;
-import jorgan.xml.handler.BooleanHandler;
+import jorgan.xml.handler.StringHandler;
 
-/**
- * A handler for references to another object.
- */
-public class CombinationReferenceHandler extends ReferenceHandler {
+public class MemoryHandler extends CounterHandler {
 
-  private boolean active;
+  private Memory memory;
   
-  public CombinationReferenceHandler(AbstractReader reader, Attributes attributes) {
+  private int level = 0;
+  
+  public MemoryHandler(AbstractReader reader, Attributes attributes) {
     super(reader, attributes);
+
+    memory = new Memory();
   }
 
-  public CombinationReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    super(writer, tag, reference);
+  public MemoryHandler(AbstractWriter writer, String tag, Memory memory) {
+    super(writer, tag);
+
+    this.memory = memory;
   }
 
+  public Memory getMemory() {
+      return memory;
+    }
+
+  protected Counter getCounter() {
+    return getMemory();
+  }
+  
   public void startElement(String uri, String localName,
                            String qName, Attributes attributes) {
 
-    if ("active".equals(qName)) {
-      new BooleanHandler(getReader()) {
+    if ("title".equals(qName)) {
+      new StringHandler(getReader()) {
         public void finished() {
-          active = getBoolean();
+          memory.setTitle(level, getString());
+          level++;
         }
       };
     } else {
@@ -61,16 +70,8 @@ public class CombinationReferenceHandler extends ReferenceHandler {
   public void children() throws IOException {
     super.children();
 
-    Combination.CombinationReference reference = (Combination.CombinationReference)getReference(); 
-
-    new BooleanHandler(getWriter(), "active", reference.isActive()).start();
-  }
-
-  protected Reference createReference(Element element) {
-    Combination.CombinationReference reference = new Combination.CombinationReference((Activateable)element);
-    
-    reference.setOn(active);
-     
-    return reference;  
-  }
+    for (level = 0; level < 128; level++) {
+        new StringHandler(getWriter(), "title", memory.getTitle(level)).start();
+    }
+  }  
 }

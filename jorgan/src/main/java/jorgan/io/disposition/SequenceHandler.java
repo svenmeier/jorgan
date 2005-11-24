@@ -18,14 +18,12 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
-
 import org.xml.sax.*;
 
 import jorgan.disposition.*;
 import jorgan.xml.*;
 
-public class SequenceHandler extends ActiveHandler {
+public class SequenceHandler extends CounterHandler {
 
   private Sequence sequence;
 
@@ -42,53 +40,10 @@ public class SequenceHandler extends ActiveHandler {
   }
 
   public Sequence getSequence() {
-    return sequence;
-  }
+      return sequence;
+    }
 
-  public Responsive getActive() {
+  protected Counter getCounter() {
     return getSequence();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("nextMessage".equals(qName)) {
-      new MessageHandler(getReader()) {
-        public void finished() {
-          sequence.setNextMessage(getMessage());
-        }
-      };
-    } else if ("previousMessage".equals(qName)) {
-      new MessageHandler(getReader()) {
-        public void finished() {
-            sequence.setPreviousMessage(getMessage());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
-    }
-  }
-
-  public void children() throws IOException {
-    super.children();
-
-    if (sequence.getNextMessage() != null) {
-      new MessageHandler(getWriter(), "nextMessage", sequence.getNextMessage()).start();
-    }
-    if (sequence.getPreviousMessage() != null) {
-      new MessageHandler(getWriter(), "previousMessage", sequence.getPreviousMessage()).start();
-    }
-  }
-  
-  protected ReferenceHandler createReferenceHandler(AbstractReader reader, Attributes attributes) {
-    return new SequenceReferenceHandler(reader, attributes) {
-      public void finished() {
-        getSequence().addReference(getReference());
-      }
-    };
-  }
-
-  protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    return new SequenceReferenceHandler(writer, tag, reference);
-  }
+  }  
 }

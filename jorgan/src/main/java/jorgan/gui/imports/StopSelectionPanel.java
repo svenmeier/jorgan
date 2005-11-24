@@ -26,6 +26,7 @@ import javax.swing.event.*;
 import javax.swing.table.*;
 
 import jorgan.disposition.*;
+import jorgan.swing.table.TableUtils;
 
 /**
  * A selection of stops.
@@ -53,18 +54,16 @@ public class StopSelectionPanel extends JPanel {
   public StopSelectionPanel() {
     setLayout(new BorderLayout(10, 10));
 
-    scrollPane.getViewport().setBackground(Color.white);
     add(scrollPane, BorderLayout.CENTER);
      
       table.setModel(stopModel);
       table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-      table.setShowGrid(false);
-      table.setIntercellSpacing(new Dimension(0, 0));
       table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
         public void valueChanged(ListSelectionEvent e) {
           firePropertyChange("selectedStops", null, null);
         }
       });
+      TableUtils.pleasantLookAndFeel(scrollPane, table);
       scrollPane.setViewportView(table);
     
     JPanel buttonPanel = new JPanel(new BorderLayout());
