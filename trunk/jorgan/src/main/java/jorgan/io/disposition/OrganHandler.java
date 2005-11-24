@@ -137,6 +137,12 @@ public class OrganHandler extends Handler {
            organ.addElement(getKeyer());
           }
         };
+    } else if ("memory".equals(qName)) {
+        new MemoryHandler(getReader(), attributes) {
+          public void finished() {
+           organ.addElement(getMemory());
+          }
+        };
     } else {
       super.startElement(uri, localName, qName, attributes);
     }
@@ -181,6 +187,8 @@ public class OrganHandler extends Handler {
         new ActivatorHandler(getWriter(), "activator", (Activator)element).start();
       } else if (element instanceof Keyer) {
         new KeyerHandler(getWriter(), "keyer", (Keyer)element).start();
+      } else if (element instanceof Memory) {
+        new MemoryHandler(getWriter(), "memory", (Memory)element).start();
       } else {
         throw new IOException("unable to write element '" + element.getClass().getName() + "'"); 
       }

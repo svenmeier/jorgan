@@ -106,4 +106,36 @@ public class CombinationHandler extends ActiveHandler {
   protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
     return new CombinationReferenceHandler(writer, tag, reference);
   }
+  
+  private static class CombinationReferenceHandler extends ReferenceHandler {
+
+    public CombinationReferenceHandler(AbstractReader reader, Attributes attributes) {
+      super(reader, attributes);
+    }
+
+    public CombinationReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
+      super(writer, tag, reference);
+    }
+
+    public void characters(XMLWriter writer) throws IOException {
+      Combination.CombinationReference reference = (Combination.CombinationReference)getReference(); 
+
+      StringBuffer text = new StringBuffer(128);
+      for (int l = 0; l < 128; l++) {
+          text.append(reference.isActive(l) ? '1' : '0');
+      }
+      writer.characters(text.toString());
+    }
+
+    protected Reference createReference(Element element) {
+      Combination.CombinationReference reference = new Combination.CombinationReference((Activateable)element);
+
+      StringBuffer text = getCharacters();
+      for (int l = 0; l < 128; l++) {
+          reference.setActive(l, text.charAt(l) == '1' ? true : false);
+      }
+      
+      return reference;  
+    }
+  }
 }

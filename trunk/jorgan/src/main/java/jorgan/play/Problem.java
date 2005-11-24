@@ -21,7 +21,7 @@ package jorgan.play;
 /**
  * Problem of a player.
  */
-public class PlayerProblem {
+public class Problem {
   
   public static final String WARNING = "warning";
   public static final String ERROR   = "error";
@@ -30,11 +30,10 @@ public class PlayerProblem {
   private String  property;
   private Object  value;
 
-  public PlayerProblem(String level, String property, Object value) {
+  public Problem(String level, String property) {
 
     this.level    = level;
     this.property = property;
-    this.value    = value;
   }
 
   public String getLevel() {
@@ -49,12 +48,18 @@ public class PlayerProblem {
     return value;
   }
   
+  public Problem value(Object value) {
+    this.value = value;
+    
+    return this;
+  }
+    
   public boolean equals(Object object) {
-    if (object == null || !(object instanceof PlayerProblem)) {
+    if (object == null || !(object instanceof Problem)) {
       return false;
     }
     
-    PlayerProblem problem = (PlayerProblem)object;
+    Problem problem = (Problem)object;
     
     if (this.level != problem.level) {
       return false;

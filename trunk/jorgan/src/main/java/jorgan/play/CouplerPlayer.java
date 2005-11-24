@@ -19,7 +19,6 @@
 package jorgan.play;
 
 import jorgan.disposition.*;
-import jorgan.disposition.event.*;
 
 public class CouplerPlayer extends KeyablePlayer {
 
@@ -27,29 +26,6 @@ public class CouplerPlayer extends KeyablePlayer {
     super(coupler);
   }
 
-  public void elementChanged(OrganEvent event) {
-
-    Coupler coupler = (Coupler)getElement();
-    
-    PlayerProblem warnOnMessage  = new PlayerProblem(PlayerProblem.WARNING, "onMessage" , null); 
-    if (coupler.getActivateMessage() == null &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warnOnMessage);
-    } else {
-      removeProblem(warnOnMessage);
-    }
-
-    PlayerProblem warnOffMessage = new PlayerProblem(PlayerProblem.WARNING, "offMessage", null); 
-    if (coupler.getDeactivateMessage() == null &&
-        Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warnOffMessage);
-    } else {
-      removeProblem(warnOffMessage);
-    }
-
-    super.elementChanged(event);
-  }
-  
   protected void activateKey(int pitch, int velocity) {
     Coupler coupler = (Coupler)getElement();
     if (coupler.getVelocity() != 0) {

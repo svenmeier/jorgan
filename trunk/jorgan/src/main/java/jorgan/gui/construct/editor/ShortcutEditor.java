@@ -60,6 +60,7 @@ public class ShortcutEditor extends CustomEditor {
     
     public ShortcutField() {
       setEditable(false);
+      setBorder(null);
     }
     
     public void addNotify() {

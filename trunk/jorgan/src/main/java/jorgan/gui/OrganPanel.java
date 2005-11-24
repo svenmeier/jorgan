@@ -51,7 +51,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.play.PlayerProblem;
+import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.gui.construct.*;
@@ -84,6 +84,7 @@ public class OrganPanel extends JPanel {
   private static final String KEY_REFERENCES   = "references";
   private static final String KEY_PROPERTIES   = "properties";
   private static final String KEY_INSTRUCTIONS = "instructions";
+  private static final String KEY_MEMORY       = "memory";
   private static final String KEY_SKINS        = "skins";
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
@@ -137,7 +138,8 @@ public class OrganPanel extends JPanel {
   private KeyboardPane           keyboardPane      = new KeyboardPane();
   private MidiLog                midiLog           = new MidiLog();
   private PlayMonitor            playMonitor       = new PlayMonitor();
-
+  private MemoryPanel            memoryPanel       = new MemoryPanel();
+  
   private ActionDockable problemsDockable     = new ActionDockable(KEY_PROBLEMS    , problemsPanel);
   private ActionDockable keyboardDockable     = new ActionDockable(KEY_KEYBOARD    , keyboardPane);
   private ActionDockable midiLogDockable      = new ActionDockable(KEY_MIDI_LOG    , midiLog);
@@ -145,6 +147,7 @@ public class OrganPanel extends JPanel {
   private ActionDockable referencesDockable   = new ActionDockable(KEY_REFERENCES  , referencesPanel); 
   private ActionDockable propertiesDockable   = new ActionDockable(KEY_PROPERTIES  , propertiesPanel);
   private ActionDockable instructionsDockable = new ActionDockable(KEY_INSTRUCTIONS, instructionsPanel);
+  private ActionDockable memoryDockable       = new ActionDockable(KEY_MEMORY      , memoryPanel);
   private ActionDockable skinsDockable        = new ActionDockable(KEY_SKINS       , null);
 
   private Map consoleDockables = new HashMap(); 
@@ -211,6 +214,7 @@ public class OrganPanel extends JPanel {
     actions.add(problemsDockable);
     actions.add(keyboardDockable);
     actions.add(midiLogDockable);
+    actions.add(memoryDockable);
     actions.add(elementsDockable);
     actions.add(propertiesDockable);
     actions.add(referencesDockable);
@@ -240,6 +244,7 @@ public class OrganPanel extends JPanel {
       elementsPanel.setOrgan(null);
       problemsPanel.setOrgan(null);
       instructionsPanel.setOrgan(null);
+      memoryPanel.setOrgan(null);
       
       for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
         Element element = this.session.getOrgan().getElement(e);
@@ -265,6 +270,7 @@ public class OrganPanel extends JPanel {
       elementsPanel.setOrgan(this.session);
       problemsPanel.setOrgan(this.session);
       instructionsPanel.setOrgan(this.session);
+      memoryPanel.setOrgan(this.session);
 
       for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
         Element element = this.session.getOrgan().getElement(e);
@@ -458,7 +464,7 @@ public class OrganPanel extends JPanel {
     public void playerRemoved(PlayEvent ev) { }
 
     public void problemAdded(PlayEvent ev) {
-      if (PlayerProblem.ERROR.equals(ev.getProblem().getLevel())) {
+      if (Problem.ERROR.equals(ev.getProblem().getLevel())) {
         outer.putDockable(KEY_PROBLEMS, problemsDockable);
       }
     }
@@ -647,6 +653,8 @@ public class OrganPanel extends JPanel {
         return problemsDockable;
       } else if (KEY_MIDI_LOG.equals(key)) {
         return midiLogDockable;
+      } else if (KEY_MEMORY.equals(key)) {
+          return memoryDockable;
       } else if (constructing) {
         if (KEY_ELEMENTS.equals(key)) {
           return elementsDockable;

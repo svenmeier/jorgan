@@ -111,4 +111,56 @@ public class ConsoleHandler extends ElementHandler {
   protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
     return new ConsoleReferenceHandler(writer, tag, reference);
   }
+ 
+  private static class ConsoleReferenceHandler extends ReferenceHandler {
+
+      private int x;
+      private int y;
+      
+      public ConsoleReferenceHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
+      }
+
+      public ConsoleReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
+        super(writer, tag, reference);
+      }
+
+      public void startElement(String uri, String localName,
+                               String qName, Attributes attributes) {
+
+        if ("x".equals(qName)) {
+          new IntegerHandler(getReader()) {
+            public void finished() {
+              x = getInteger();
+            }
+          };
+        } else if ("y".equals(qName)) {
+            new IntegerHandler(getReader()) {
+              public void finished() {
+                y = getInteger();
+              }
+            };
+        } else {
+          super.startElement(uri, localName, qName, attributes);
+        }
+      }
+
+      public void children() throws IOException {
+        super.children();
+
+        Console.LocationReference reference = (Console.LocationReference)getReference(); 
+
+        new IntegerHandler(getWriter(), "x", reference.getX()).start();
+        new IntegerHandler(getWriter(), "y", reference.getY()).start();
+      }
+
+      protected Reference createReference(Element element) {
+        Console.LocationReference reference = new Console.LocationReference(element); 
+        
+        reference.setX(x);
+        reference.setY(y);
+         
+        return reference;  
+      }
+  }  
 }

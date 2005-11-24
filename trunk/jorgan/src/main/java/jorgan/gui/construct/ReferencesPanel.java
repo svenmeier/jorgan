@@ -22,10 +22,9 @@ import java.util.*;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -38,6 +37,7 @@ import jorgan.disposition.*;
 import jorgan.disposition.event.*;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.*;
+import jorgan.swing.list.ListUtils;
 
 /**
  * Panel shows the references of elements.
@@ -149,16 +149,11 @@ public class ReferencesPanel extends JPanel {
     list.setModel(referencesModel);
     list.setCellRenderer(new ReferenceListCellRenderer());
     list.addListSelectionListener(selectionHandler);
-    list.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          int index = list.getSelectedIndex();
-          if (index != -1) {
-            Element element = (Element)references.get(index);
+    ListUtils.addActionListener(list, new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        Element element = (Element)references.get(list.getSelectedIndex());
             
-            session.getSelectionModel().setSelectedElement(element);
-          }
-        }
+        session.getSelectionModel().setSelectedElement(element);
       }
     });
         

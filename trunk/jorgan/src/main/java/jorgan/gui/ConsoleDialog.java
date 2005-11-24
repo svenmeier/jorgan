@@ -67,6 +67,8 @@ public class ConsoleDialog extends JDialog {
     getContentPane().add(scrollPane);
     scrollPane.setViewportView(cardPanel);
     
+    //popup.addSeparator();
+    //popup.add(new MemoryAction());
     popup.addSeparator();
     popup.add(new CloseAction());
   }
@@ -172,8 +174,7 @@ public class ConsoleDialog extends JDialog {
   private class CloseAction extends AbstractAction {
 
     public CloseAction() {
-      putValue(Action.NAME             , resources.getString("fullScreen.action.close.name"));
-      putValue(Action.SHORT_DESCRIPTION, resources.getString("fullScreen.action.close.description"));
+      putValue(Action.NAME, resources.getString("fullScreen.action.close.name"));
           
       getRootPane().getInputMap (JComponent.WHEN_IN_FOCUSED_WINDOW).put(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
       getRootPane().getActionMap().put(this, this);
@@ -184,6 +185,17 @@ public class ConsoleDialog extends JDialog {
     }
   }
   
+  private class MemoryAction extends AbstractAction {
+
+    public MemoryAction() {
+      putValue(Action.NAME, resources.getString("fullScreen.action.memory.name"));
+    }
+      
+    public void actionPerformed(ActionEvent ev) {
+      ConsoleDialog.this.setVisible(false);
+    }
+  }
+    
   public static ConsoleDialog create(JFrame owner, String screen) {
   
     if (screen == null) {

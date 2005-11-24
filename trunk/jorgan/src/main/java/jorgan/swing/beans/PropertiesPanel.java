@@ -19,9 +19,7 @@
 package jorgan.swing.beans;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -49,7 +47,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -60,6 +57,7 @@ import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
 
 import jorgan.gui.OrganPanel;
+import jorgan.swing.table.TableUtils;
 
 /**
  * A panel for editing of bean properties.
@@ -95,26 +93,20 @@ public class PropertiesPanel extends JPanel {
     
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    scrollPane.getViewport().setBackground(Color.white);
     add(scrollPane, BorderLayout.CENTER);
 
-      table.setIntercellSpacing(new Dimension(0,0));
-      table.setShowHorizontalLines(false);
-      table.setShowVerticalLines(false);
       table.setModel(model);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      table.setSurrendersFocusOnKeystroke(true);
-//      table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);            
       PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
       PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
       table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
       table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
       table.getColumnModel().getColumn(1).setCellEditor(new PropertyCellEditor());
       table.setRowHeight(nameRenderer.getPreferredSize().height);
-      table.getTableHeader().setPreferredSize(new Dimension(0, 0));
       table.getColumnModel().getSelectionModel().addListSelectionListener(model);
       table.getSelectionModel().addListSelectionListener(model);
-      ToolTipManager.sharedInstance().registerComponent(table);
+      TableUtils.pleasantLookAndFeel(scrollPane, table);
+      TableUtils.hideHeader(table);
       scrollPane.setViewportView(table);
   }
 
@@ -337,6 +329,7 @@ public class PropertiesPanel extends JPanel {
 
     public PropertyCellEditor() {
       textField.setOpaque(false);
+      textField.setBorder(null);
       textField.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
           stopCellEditing();
@@ -344,6 +337,7 @@ public class PropertiesPanel extends JPanel {
       });
 
       comboBox.setEditable(false);
+      comboBox.setBorder(null);
       comboBox.addActionListener(new ActionListener() {
         public void actionPerformed(ActionEvent ev) {
           stopCellEditing();

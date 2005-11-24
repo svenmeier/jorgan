@@ -100,7 +100,8 @@ public abstract class ElementHandler extends Handler {
     }
     
     for (int r = 0; r < getElement().getReferenceCount(); r++) {
-      createReferenceHandler(getWriter(), "reference", getElement().getReference(r)).start();
+      Reference reference = getElement().getReference(r);
+      createReferenceHandler(getWriter(), "reference", reference).start();
     }
   }
   

@@ -18,18 +18,12 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
-import jorgan.gui.construct.editor.MessageEditor;
-
 /**
- * BeanInfo for {@link jorgan.disposition.Combination}.
+ * BeanInfo for {@link jorgan.disposition.Sequence}.
  */
-public class SequenceBeanInfo extends ResponsiveBeanInfo {
+public class SequenceBeanInfo extends CounterBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();
-
-        add("nextMessage", Sequence.class, MessageEditor.class);
-        add("previousMessage", Sequence.class, MessageEditor.class);
     }
 }

@@ -388,13 +388,19 @@ public class OrganFrame extends JFrame implements UI {
       saveAction.clearChanges();
 
       showStatus("action.save.confirm", new Object[0]);
-    } catch (Exception ex) {
+    } catch (XMLFormatException ex) {
       ex.printStackTrace();
-      
-      showMessage("action.save.exception", new String[]{file.getName()});
-      
+          
+      showMessage("action.save.exception.invalid", new String[]{file.getName()});
+
       return false;
-    }   
+    } catch (IOException ex) {
+      ex.printStackTrace();
+
+      showMessage("action.save.exception", new String[]{file.getName()});
+        
+      return false;
+    }
     return true;
   }
 

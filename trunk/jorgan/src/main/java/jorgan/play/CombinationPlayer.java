@@ -30,6 +30,9 @@ import jorgan.disposition.event.*;
  */
 public class CombinationPlayer extends Player {
 
+  private static final Problem warningRecallMessage = new Problem(Problem.WARNING, "recallMessage"); 
+  private static final Problem warningCaptureMessage = new Problem(Problem.WARNING, "captureMessage");
+  
   private boolean armed = false;
 
   public CombinationPlayer(Combination combination) {
@@ -39,9 +42,9 @@ public class CombinationPlayer extends Player {
   public void messageReceived(ShortMessage message) {
     Combination combination = (Combination)getElement();
 
-    Message setMessage = combination.getCaptureMessage();
-    if (setMessage != null                   &&
-        setMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+    Message captureMessage = combination.getCaptureMessage();
+    if (captureMessage != null                   &&
+        captureMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
         
       fireInputAccepted();
       
@@ -52,9 +55,9 @@ public class CombinationPlayer extends Player {
         combination.capture();
       }
     }
-    Message getMessage = combination.getRecallMessage();
-    if (getMessage != null                   &&
-        getMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+    Message recallMessage = combination.getRecallMessage();
+    if (recallMessage != null                   &&
+        recallMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
 
       fireInputAccepted();
 
@@ -68,36 +71,22 @@ public class CombinationPlayer extends Player {
     armed = false;
   }
 
-  public void set() {
-    Combination combination = (Combination)getElement();
-
-    combination.capture();
-  }
-
-  public void get() {
-    Combination combination = (Combination)getElement();
-
-    combination.recall();
-  }
-
   public void elementChanged(OrganEvent event) {
 
     Combination combination = (Combination)getElement();
     
-    PlayerProblem warnGetMessage = new PlayerProblem(PlayerProblem.WARNING, "getMessage", null); 
     if (combination.getRecallMessage() == null &&
         Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warnGetMessage);
+      addProblem(warningRecallMessage.value(null));
     } else {
-      removeProblem(warnGetMessage);
+      removeProblem(warningRecallMessage);
     }
     
-    PlayerProblem warnSetMessage = new PlayerProblem(PlayerProblem.WARNING, "setMessage", null); 
     if (combination.getCaptureMessage() == null &&
         Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warnSetMessage);
+      addProblem(warningCaptureMessage.value(null));
     } else {
-      removeProblem(warnSetMessage);
+      removeProblem(warningCaptureMessage);
     }
   }
 

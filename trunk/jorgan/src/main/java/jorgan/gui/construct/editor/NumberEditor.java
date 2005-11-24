@@ -32,6 +32,7 @@ public class NumberEditor extends CustomEditor {
   public NumberEditor() {
 
     spinner = new JSpinner(new SpinnerNumberModel(0, getMinimum(), getMaximum(), 1));
+    spinner.setBorder(null);
 
     JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
     editor.getTextField().setBorder(null);

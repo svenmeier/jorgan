@@ -30,6 +30,9 @@ import jorgan.disposition.event.*;
  */
 public class KeyboardPlayer extends Player {
 
+  private static final Problem warningDevice = new Problem(Problem.WARNING, "device"); 
+  private static final Problem errorDevice = new Problem(Problem.ERROR, "device");
+
   /**
    * The currently pressed keys.
    */
@@ -52,19 +55,18 @@ public class KeyboardPlayer extends Player {
   protected void openImpl() {
     Keyboard keyboard = (Keyboard)getElement();
 
+    removeProblem(errorDevice);
+
     String device = keyboard.getDevice();
-    if (device != null) {
-      PlayerProblem errorDevice = new PlayerProblem(PlayerProblem.ERROR, "device", device);
+    if (device != null) { 
       try {
         in = DevicePool.getMidiDevice(device, false);
         in.open();
 
         transmitter = in.getTransmitter();
         transmitter.setReceiver(getOrganPlay().createReceiver(this));
-
-        removeProblem(errorDevice);
       } catch (MidiUnavailableException ex) {
-        addProblem(errorDevice);
+        addProblem(errorDevice.value(device));
       }
     }
   }
@@ -86,11 +88,11 @@ public class KeyboardPlayer extends Player {
   public void elementChanged(OrganEvent event) {
     Keyboard keyboard = (Keyboard)getElement();
 
-    PlayerProblem warnDevice = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
     if (keyboard.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
-      addProblem(warnDevice);
+      removeProblem(errorDevice);
+      addProblem(warningDevice.value(null));
     } else {
-      removeProblem(warnDevice);
+      removeProblem(warningDevice);
     }
   }
 

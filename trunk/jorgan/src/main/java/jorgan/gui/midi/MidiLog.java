@@ -54,6 +54,7 @@ import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MidiLogger;
 import jorgan.swing.StandardDialog;
+import jorgan.swing.table.TableUtils;
 
 
 /**
@@ -195,10 +196,10 @@ public class MidiLog extends JPanel {
     
     scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
     scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);    
-    scrollPane.getViewport().setBackground(table.getBackground());
     messagesPanel.add(scrollPane, BorderLayout.CENTER);
     
     table.setModel(model);
+    TableUtils.pleasantLookAndFeel(scrollPane, table);
     scrollPane.setViewportView(table);
     
     prepareColumn(0, 10, SwingConstants.RIGHT);

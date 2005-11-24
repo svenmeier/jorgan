@@ -29,6 +29,11 @@ import jorgan.play.sound.*;
 
 public class SoundSourcePlayer extends Player {
 
+  private static final Problem errorDevice        = new Problem(Problem.ERROR, "device"); 
+  private static final Problem errorType          = new Problem(Problem.ERROR, "type"); 
+  private static final Problem errorTypeParameter = new Problem(Problem.ERROR, "type.parameter"); 
+  private static final Problem warningDevice      = new Problem(Problem.WARNING, "device"); 
+    
   /**
    * The factory for sounds.
    */
@@ -46,24 +51,20 @@ public class SoundSourcePlayer extends Player {
   protected void openImpl() {
     SoundSource soundSource = (SoundSource)getElement();
 
-    PlayerProblem errorDevice    = new PlayerProblem(PlayerProblem.ERROR, "device", soundSource.getDevice()); 
-    PlayerProblem errorType      = new PlayerProblem(PlayerProblem.ERROR, "type", soundSource.getType()); 
-    PlayerProblem errorParameter = new PlayerProblem(PlayerProblem.ERROR, "type.parameter", null); 
-
     removeProblem(errorDevice);
     removeProblem(errorType);
-    removeProblem(errorParameter);
+    removeProblem(errorTypeParameter);
 
     if (soundSource.getDevice() != null) {
       try {
         factory = SoundFactory.instance(soundSource.getDevice(), soundSource.getType());
         factory.init(soundSource.getBank(), soundSource.getSamples());
       } catch (MidiUnavailableException ex) {
-        addProblem(errorDevice);
+        addProblem(errorDevice.value(soundSource.getDevice()));
       } catch (SoundFactoryParameterException ex) {
-        addProblem(new PlayerProblem(PlayerProblem.ERROR, "type.parameter", ex.getValue()));
+        addProblem(errorTypeParameter.value(ex.getValue()));
       } catch (SoundFactoryException ex) {
-        addProblem(errorType);
+        addProblem(errorType.value(soundSource.getType()));
       }
     }
   }
@@ -83,11 +84,11 @@ public class SoundSourcePlayer extends Player {
   public void elementChanged(OrganEvent event) {
     SoundSource soundSource = (SoundSource)getElement();
 
-    PlayerProblem problem = new PlayerProblem(PlayerProblem.WARNING, "device", null); 
     if (soundSource.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
-      addProblem(problem);
+      removeProblem(errorDevice);
+      addProblem(warningDevice.value(null));
     } else {
-      removeProblem(problem);
+      removeProblem(warningDevice);
     }
   }
 

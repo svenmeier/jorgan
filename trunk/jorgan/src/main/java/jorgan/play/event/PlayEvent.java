@@ -29,13 +29,13 @@ import jorgan.play.*;
 public class PlayEvent extends EventObject {
 
   private Element       element;
-  private PlayerProblem problem;
+  private Problem problem;
 
   public PlayEvent(OrganPlay source, Element element) {
     this(source, element, null);
   }
 
-  public PlayEvent(OrganPlay source, Element element, PlayerProblem problem) {
+  public PlayEvent(OrganPlay source, Element element, Problem problem) {
     super(source);
     
     this.element  = element;
@@ -46,7 +46,7 @@ public class PlayEvent extends EventObject {
     return element;
   }
   
-  public PlayerProblem getProblem() {
+  public Problem getProblem() {
     return problem;
   }
 }

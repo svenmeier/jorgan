@@ -44,6 +44,7 @@ public class FileEditor extends CustomEditor implements ActionListener {
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
 
+    textField.setBorder(null);
     panel.add(textField, BorderLayout.CENTER);
   }
 
