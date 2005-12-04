@@ -23,7 +23,8 @@ public class Conversion {
 	  new Conversion("<organ *version=\"2\\.0\" *>"                   , "convert2.0To2.1-beta.xsl"),
       new Conversion("<organ *version=\"2\\.1-beta.*\" *>"            , "convert2.1-betaTo2.1.xsl"),
       new Conversion("<organ *version=\"2\\.1.*\" *>"                 , "convert2.1To2.2-beta.xsl"),
-      new Conversion("<organ *version=\"2\\.2-beta.*\" *>"            , "convert2.2-betaTo2.2.xsl")
+      new Conversion("<organ *version=\"2\\.2-beta.*\" *>"            , "convert2.2-betaTo2.2.xsl"),
+      new Conversion("<organ *version=\"2\\.2.*\" *>"                 , "convert2.2To2.3.xsl")
   };
 
   private String pattern;

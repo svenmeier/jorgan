@@ -27,28 +27,28 @@ import jorgan.disposition.event.*;
  */
 public class Organ {
 
-  private static Class[] elementClasses = new Class[]{Console.class,
-                                               Label.class,
-                                               Keyboard.class,
-                                               SoundSource.class,
-                                               Stop.class,
-                                               Coupler.class,
-                                               Combination.class,
-                                               Swell.class,
-                                               Tremulant.class,
-                                               Variation.class,
-                                               Sequence.class,
-                                               Activator.class,
-                                               Crescendo.class,
-                                               Keyer.class,
-                                               Memory.class}; 
-  
   /**
    * Registered listeners.
    */
   private transient List listeners;
 
   private List elements = new ArrayList();
+  
+  private static Class[] elementClasses = new Class[]{Console.class,
+      Label.class,
+      Keyboard.class,
+      SoundSource.class,
+      Stop.class,
+      Coupler.class,
+      Combination.class,
+      Swell.class,
+      Tremulant.class,
+      Variation.class,
+      Sequence.class,
+      Activator.class,
+      Crescendo.class,
+      Keyer.class,
+      Memory.class}; 
 
   public static Class[] getElementClasses() {
     Class[] copy = new Class[elementClasses.length];
@@ -83,11 +83,7 @@ public class Organ {
   }
 
   public void addElement(Element element) {
-      addElement(elements.size(), element);
-  }
-  
-  public void addElement(int index, Element element) {
-      elements.add(index, element);
+      elements.add(element);
       element.setOrgan(this);
 
       fireElementAdded(element);
@@ -97,7 +93,7 @@ public class Organ {
 
       elements.remove(element);
       element.setOrgan(null);
-
+      
       fireElementRemoved(element);
   }
   

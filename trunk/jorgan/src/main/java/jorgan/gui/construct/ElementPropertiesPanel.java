@@ -19,18 +19,17 @@
 package jorgan.gui.construct;
 
 import java.util.*;
-import java.awt.BorderLayout;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 
-import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import spin.Spin;
+import swingx.docking.DockedPanel;
 
 import jorgan.disposition.*;
 import jorgan.disposition.event.OrganAdapter;
@@ -46,7 +45,7 @@ import jorgan.swing.beans.PropertiesPanel;
 /**
  * Panel shows the properties of elements.
  */
-public class ElementPropertiesPanel extends JPanel {
+public class ElementPropertiesPanel extends DockedPanel {
 
   private static final String[] BEAN_INFO_SEARCH_PATH = new String[]{"jorgan.gui.construct.info"};
 
@@ -62,12 +61,11 @@ public class ElementPropertiesPanel extends JPanel {
   private PropertiesPanel propertiesPanel = new PropertiesPanel();
   
   public ElementPropertiesPanel() {
-    super(new BorderLayout());
     
     ElementCustomizer customizer = new ElementCustomizer();
     propertiesPanel.setBeanCustomizer(customizer);
     propertiesPanel.addChangeListener(selectionHandler);
-    add(propertiesPanel, BorderLayout.CENTER);
+    setScrollableBody(propertiesPanel, true, false);
   }
 
   public void setOrgan(OrganSession session) {

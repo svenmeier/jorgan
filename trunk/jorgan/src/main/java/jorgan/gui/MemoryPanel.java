@@ -18,21 +18,21 @@
  */
 package jorgan.gui;
 
-import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import spin.Spin;
+import swingx.docking.DockedPanel;
 
 import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
@@ -43,13 +43,17 @@ import jorgan.swing.table.TableUtils;
 /**
  * Panel for editing of a {@link jorgan.disposition.Memory}.
  */
-public class MemoryPanel extends JPanel {
+public class MemoryPanel extends DockedPanel {
 
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-
-  private JScrollPane scrollPane = new JScrollPane();
+  
   private JTable table = new JTable();
-  private JLabel label = new JLabel();
+
+  private JButton clearButton = new JButton();
+
+  private JButton previousButton = new JButton();
+  
+  private JButton nextButton = new JButton();  
   
   private LevelsModel model = new LevelsModel();
 
@@ -58,29 +62,60 @@ public class MemoryPanel extends JPanel {
   private Memory memory;
   
   public MemoryPanel() {
-      setLayout(new BorderLayout());
-
-      label.setText(resources.getString("memory.none"));
-      label.setHorizontalAlignment(JLabel.LEFT);
-      label.setVerticalAlignment(JLabel.TOP);
-      add(label, BorderLayout.NORTH);
-      
-      scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-      scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      add(scrollPane, BorderLayout.CENTER);
       
       table.setModel(model);
       table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      table.getSelectionModel().addListSelectionListener(model);
       table.getColumnModel().getColumn(1).setCellEditor(new StringCellEditor());
       TableUtils.hideHeader(table);
       TableUtils.fixColumnWidth(table, 0, "888");
-      TableUtils.pleasantLookAndFeel(scrollPane, table);
-      scrollPane.setViewportView(table);      
+      TableUtils.pleasantLookAndFeel(table);
+      setScrollableBody(table, true, false);
+
+      previousButton.setToolTipText(resources.getString("memory.previous"));
+      previousButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/previous.gif")));
+      previousButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          previous();
+        }
+      });    
+      addTool(previousButton);
+
+      nextButton.setToolTipText(resources.getString("memory.next"));
+      nextButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/next.gif")));
+      nextButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          next();
+        }
+      });    
+      addTool(nextButton);
       
+      clearButton.setToolTipText(resources.getString("memory.clear"));
+      clearButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/clear.gif")));
+      clearButton.addActionListener(new ActionListener() {
+        public void actionPerformed(ActionEvent e) {
+          clear();
+        }
+      });    
+      addTool(clearButton);
+
       setMemory(null);
   }
 
+  protected void previous() {
+    memory.previous();
+  }
+
+  protected void next() {
+    memory.next();
+  }
+  
+  protected void clear() {
+    int[] rows = table.getSelectedRows();
+    for (int r = 0; r < rows.length; r++) {
+      memory.clear(rows[r]);
+    }
+  }
+  
   public void setOrgan(OrganSession session) {
     if (this.session != null) {
       this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(model));
@@ -106,35 +141,46 @@ public class MemoryPanel extends JPanel {
     }
   }
   
-  private void setMemory(Memory memory) {
+  private void setMemory(Memory memory) {    
     this.memory = memory;
         
     model.fireTableDataChanged();
         
+    previousButton.setEnabled(memory != null);
+    nextButton.setEnabled(memory != null);
+    clearButton.setEnabled(memory != null);
+    table.setVisible(memory != null);
+
     if (memory == null) {
-      label.setVisible(true);
-      scrollPane.setVisible(false);
+      setMessage(resources.getString("memory.none"));
     } else {
-      label.setVisible(false);
-      scrollPane.setVisible(true);
-      
-      updateLevel();
+      setMessage(null);
+
+      updateSelection();
     }    
   }      
   
-  private void updateLevel() {
+  private void updateSelection() {
+    // remove listener to avoid infinite loop 
+    table.getSelectionModel().removeListSelectionListener(model);
+    
     int level = memory.getCurrent();
     if (level != table.getSelectedRow()) {
-        if (table.getCellEditor() != null) {
-            table.getCellEditor().stopCellEditing();
-        }
-        table.getSelectionModel().setSelectionInterval(level, level);
-        table.scrollRectToVisible(table.getCellRect(level, 0, false));
+      if (table.getCellEditor() != null) {
+          table.getCellEditor().cancelCellEditing();
+          table.setCellEditor(null);
+      }
+      table.getSelectionModel().setSelectionInterval(level, level);
+      table.scrollRectToVisible(table.getCellRect(level, 0, false));
     }
     table.setColumnSelectionInterval(0, 0);
+    
+    // re-add listener 
+    table.getSelectionModel().addListSelectionListener(model);
   }
   
   private class LevelsModel extends AbstractTableModel implements OrganListener, ListSelectionListener {
+      
     public int getColumnCount() {
       return 2;
     }
@@ -170,7 +216,7 @@ public class MemoryPanel extends JPanel {
     
     public void elementChanged(OrganEvent event) {
       if (event.getElement() == memory) {
-        updateLevel();
+        setMemory(memory);
       }
     }
     

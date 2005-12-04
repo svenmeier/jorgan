@@ -288,8 +288,8 @@ public class OrganPanel extends JPanel {
       backAction.setEnabled(false);
       forwardAction.setEnabled(false);
     } else {
-      backAction.setEnabled(session.getSelectionModel().hasPrevious());
-      forwardAction.setEnabled(session.getSelectionModel().hasNext());
+      backAction.setEnabled(session.getSelectionModel().canBack());
+      forwardAction.setEnabled(session.getSelectionModel().canForward());
     }
   }
   
@@ -594,7 +594,7 @@ public class OrganPanel extends JPanel {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      session.getSelectionModel().previous();
+      session.getSelectionModel().back();
     }
   }
 
@@ -611,7 +611,7 @@ public class OrganPanel extends JPanel {
     }
 
     public void actionPerformed(ActionEvent ev) {
-      session.getSelectionModel().next();
+      session.getSelectionModel().forward();
     }
   }
   

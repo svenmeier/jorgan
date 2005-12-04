@@ -20,14 +20,13 @@ package jorgan.gui.construct;
 
 import java.text.MessageFormat;
 import java.util.*;
-import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 
 import spin.Spin;
+import swingx.docking.DockedPanel;
 
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
@@ -42,9 +41,9 @@ import jorgan.gui.OrganSession;
 /**
  * Panel shows the problems.
  */
-public class ProblemsPanel extends JPanel {
+public class ProblemsPanel extends DockedPanel {
 
-  protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+  private static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
   /**
    * Icon used for indication of a warning.
@@ -74,22 +73,16 @@ public class ProblemsPanel extends JPanel {
    * Create a tree panel.
    */
   public ProblemsPanel() {
-    
-    setLayout(new BorderLayout());
 
-    table.setModel(problemsModel);
+    table.setModel(problemsModel);    
     TableUtils.addActionListener(table, gotoAction);
     TableUtils.addPopup(table, popup);
-    
+    TableUtils.pleasantLookAndFeel(table);
     Map iconMap = new HashMap();
     iconMap.put("warning", warningIcon);    
     iconMap.put("error"  , errorIcon);    
-    IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
-    
-    JScrollPane scrollPane = new JScrollPane(table);
-    scrollPane.setBorder(new EmptyBorder(0,0,0,0));
-    TableUtils.pleasantLookAndFeel(scrollPane, table);
-    add(scrollPane, BorderLayout.CENTER);
+    IconTableCellRenderer.configureTableColumn(table, 0, iconMap);   
+    setScrollableBody(table, true, false);
     
     popup.add(gotoAction);
   }
@@ -195,7 +188,8 @@ public class ProblemsPanel extends JPanel {
       rows.remove(new Row(ev.getElement(), ev.getProblem()));
       
       fireTableDataChanged();
-    }    
+    }
+    
   }  
 
   private class Row {
@@ -208,7 +202,7 @@ public class ProblemsPanel extends JPanel {
       this.element = element;      
       this.problem = problem;  
       
-      String pattern = resources.getString("play." + problem);
+      String pattern = resources.getString("problems." + problem);
 
       message = MessageFormat.format(pattern, new Object[]{problem.getValue()});
     }

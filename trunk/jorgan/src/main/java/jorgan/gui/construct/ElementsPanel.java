@@ -19,7 +19,6 @@
 package jorgan.gui.construct;
 
 import java.util.*;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -27,11 +26,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import spin.Spin;
+import swingx.docking.DockedPanel;
 import swingx.list.AbstractDnDListModel;
 import swingx.list.DnDList;
 
@@ -44,7 +43,7 @@ import jorgan.play.event.*;
 /**
  * Panel shows all elements.
  */
-public class ElementsPanel extends JPanel {
+public class ElementsPanel extends DockedPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
@@ -87,8 +86,6 @@ public class ElementsPanel extends JPanel {
 
   private DnDList list = new DnDList();
   
-  private JToolBar toolBar = new JToolBar();
-  
   private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
   
   private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
@@ -102,16 +99,11 @@ public class ElementsPanel extends JPanel {
    */
   public ElementsPanel() {
     
-    setLayout(new BorderLayout());
+    addTool(addAction);
     
-    toolBar.setRollover(true);
-    toolBar.setFloatable(false);
-
-    toolBar.add(addAction);
+    addTool(removeAction);
     
-    toolBar.add(removeAction);
-    
-    toolBar.addSeparator();
+    addToolSeparator();
     
     ButtonGroup sortGroup = new ButtonGroup();
     sortNameButton.getModel().setGroup(sortGroup);
@@ -122,7 +114,7 @@ public class ElementsPanel extends JPanel {
         setOrgan(session);
       }
     });
-    toolBar.add(sortNameButton);
+    addTool(sortNameButton);
     
     sortTypeButton.getModel().setGroup(sortGroup);
     sortTypeButton.setToolTipText(resources.getString("sort.type"));
@@ -131,19 +123,14 @@ public class ElementsPanel extends JPanel {
         setOrgan(session);
       }
     });
-    toolBar.add(sortTypeButton);
-
-    add(toolBar, BorderLayout.NORTH);
+    addTool(sortTypeButton);
 
     list.setModel(elementsModel);
     list.setCellRenderer(new ElementListCellRenderer());
     list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     list.addListSelectionListener(selectionHandler);
     
-    JScrollPane scrollPane = new JScrollPane(list);
-    scrollPane.setBorder(new EmptyBorder(0,0,0,0));
-    add(scrollPane, BorderLayout.CENTER);
-
+    setScrollableBody(list, true, false);
   }
    
   public OrganSession getOrgan() {

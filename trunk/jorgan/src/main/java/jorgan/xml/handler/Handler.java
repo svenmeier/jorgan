@@ -139,8 +139,8 @@ public class Handler extends DefaultHandler {
    *
    * @return  string content
    */
-  protected StringBuffer getCharacters() {
-    return characters;
+  protected String getCharacters() {
+    return characters.toString().trim();
   }
 
   /**

@@ -130,7 +130,7 @@ public class CombinationHandler extends ActiveHandler {
     protected Reference createReference(Element element) {
       Combination.CombinationReference reference = new Combination.CombinationReference((Activateable)element);
 
-      StringBuffer text = getCharacters();
+      String text = getCharacters();
       for (int l = 0; l < 128; l++) {
           reference.setActive(l, text.charAt(l) == '1' ? true : false);
       }

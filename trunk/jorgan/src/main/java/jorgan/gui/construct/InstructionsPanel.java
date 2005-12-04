@@ -18,7 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.HierarchyEvent;
 import java.awt.event.HierarchyListener;
@@ -26,10 +25,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 
 import javax.swing.JEditorPane;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.border.EmptyBorder;
+
+import swingx.docking.DockedPanel;
 
 import jorgan.docs.Documents;
 import jorgan.gui.OrganSession;
@@ -40,15 +37,12 @@ import jorgan.swing.beans.PropertiesPanel;
 /**
  * Panel for instructions for the currently selected element.
  */
-public class InstructionsPanel extends JPanel {
+public class InstructionsPanel extends DockedPanel {
 
   private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
   private JEditorPane editor = new JEditorPane(); 
-  private JScrollPane scrollPane = new JScrollPane();
   
-  private JLabel label = new JLabel();
-
   /**
    * The handler of selection changes.
    */
@@ -56,26 +50,15 @@ public class InstructionsPanel extends JPanel {
 
   private OrganSession session;
   
-  public InstructionsPanel() {
-    super(new BorderLayout());
-    
-    setOpaque(false);
-    
+  public InstructionsPanel() {   
     addHierarchyListener(selectionHandler);
         
-    label.setText(" ");
-    label.setHorizontalAlignment(JLabel.LEFT);
-    label.setVerticalAlignment(JLabel.TOP);
-    add(label, BorderLayout.NORTH);
-    
     editor.setEditable(false);
     editor.setMargin(new Insets(0,0,0,0));
     editor.setContentType("text/html");
+    editor.setVisible(false);
     
-    scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-    scrollPane.setViewportView(editor);
-    scrollPane.setVisible(false);
-    add(scrollPane, BorderLayout.CENTER);
+    setScrollableBody(editor, true, false);
   }
 
   public void setOrgan(OrganSession session) {
@@ -92,8 +75,8 @@ public class InstructionsPanel extends JPanel {
 
   protected void updateInstructions(Class clazz, String property) {
     if (clazz == null) {
-      scrollPane.setVisible(false);
-      label.setText(" ");
+      editor.setVisible(false);
+      setMessage(null);
     } else {
       try {
         URL url;
@@ -104,7 +87,7 @@ public class InstructionsPanel extends JPanel {
         }
         editor.setPage(url);
           
-        scrollPane.setVisible(true);
+        editor.setVisible(true);
         
         StringBuffer buffer = new StringBuffer();
         buffer.append(Documents.getInstance().getDisplayName(clazz));
@@ -112,10 +95,10 @@ public class InstructionsPanel extends JPanel {
             buffer.append(" - ");
             buffer.append(Documents.getInstance().getDisplayName(clazz, property));
         }
-        label.setText(buffer.toString());
+        setMessage(buffer.toString());
       } catch (Exception ex) {
-        scrollPane.setVisible(false);
-        label.setText(resources.getString("construct.instructions.failure"));
+        editor.setVisible(false);
+        setMessage(resources.getString("construct.instructions.failure"));
       }
     }
   }

@@ -19,7 +19,6 @@
 package jorgan.gui.construct;
 
 import java.util.*;
-import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -27,11 +26,11 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import spin.Spin;
+import swingx.docking.DockedPanel;
 
 import jorgan.disposition.*;
 import jorgan.disposition.event.*;
@@ -42,7 +41,7 @@ import jorgan.swing.list.ListUtils;
 /**
  * Panel shows the references of elements.
  */
-public class ReferencesPanel extends JPanel {
+public class ReferencesPanel extends DockedPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
 
@@ -80,8 +79,6 @@ public class ReferencesPanel extends JPanel {
 
   private JList list = new JList();
 
-  private JToolBar toolBar = new JToolBar();
-  
   private JToggleButton referencesToButton   = new JToggleButton(referencesToIcon);
   private JToggleButton referencedFromButton = new JToggleButton(referencedFromIcon);
 
@@ -94,16 +91,11 @@ public class ReferencesPanel extends JPanel {
    * Create a tree panel.
    */
   public ReferencesPanel() {
-    
-    setLayout(new BorderLayout());
 
-    toolBar.setRollover(true);
-    toolBar.setFloatable(false);
+    addTool(addAction);
+    addTool(removeAction);
 
-    toolBar.add(addAction);
-    toolBar.add(removeAction);
-
-    toolBar.addSeparator();
+    addToolSeparator();
     
     sortNameButton.setSelected(true);
     sortNameButton.setToolTipText(resources.getString("sort.name"));
@@ -115,7 +107,7 @@ public class ReferencesPanel extends JPanel {
         updateReferences();
       }
     });
-    toolBar.add(sortNameButton);
+    addTool(sortNameButton);
 
     sortTypeButton.setToolTipText(resources.getString("sort.type"));
     sortTypeButton.addItemListener(new ItemListener() {
@@ -126,9 +118,9 @@ public class ReferencesPanel extends JPanel {
         updateReferences();
       }
     });
-    toolBar.add(sortTypeButton);
+    addTool(sortTypeButton);
 
-    toolBar.addSeparator();
+    addToolSeparator();
 
     ButtonGroup toFromGroup = new ButtonGroup();
     referencesToButton.getModel().setGroup(toFromGroup);
@@ -138,12 +130,10 @@ public class ReferencesPanel extends JPanel {
         updateReferences();
       }
     });
-    toolBar.add(referencesToButton);
+    addTool(referencesToButton);
 
     referencedFromButton.getModel().setGroup(toFromGroup);
-    toolBar.add(referencedFromButton);
-
-    add(toolBar, BorderLayout.NORTH);
+    addTool(referencedFromButton);
 
     list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
     list.setModel(referencesModel);
@@ -157,9 +147,7 @@ public class ReferencesPanel extends JPanel {
       }
     });
         
-    JScrollPane scrollPane = new JScrollPane(list);
-    scrollPane.setBorder(new EmptyBorder(0,0,0,0));
-    add(scrollPane, BorderLayout.CENTER);
+    setScrollableBody(list, true, false);
   }
   
   /**

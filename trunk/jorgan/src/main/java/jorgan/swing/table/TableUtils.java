@@ -21,6 +21,8 @@ package jorgan.swing.table;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.HierarchyEvent;
+import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -56,14 +58,22 @@ public class TableUtils {
     tableColumn.setMaxWidth(width);
   }
 
-  public static void pleasantLookAndFeel(JScrollPane scrollPane, JTable table) {
+  public static void pleasantLookAndFeel(final JTable table) {
+      
+    table.setGridColor(new JLabel().getBackground());
     table.setSurrendersFocusOnKeystroke(true);
 
     ToolTipManager.sharedInstance().registerComponent(table);
-    
-    Color color = scrollPane.getBackground();
-    scrollPane.getViewport().setBackground(table.getBackground());
-    table.setGridColor(color);
+
+    table.addHierarchyListener(new HierarchyListener() {
+        public void hierarchyChanged(HierarchyEvent e) {
+            Component parent = table.getParent();
+            if (parent != null && parent instanceof JViewport) {
+                JViewport viewport = (JViewport)parent;
+                viewport.setBackground(table.getBackground());
+            }
+        }        
+    });
   }
 
   public static void hideHeader(JTable table) {
