@@ -80,7 +80,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
     
     table.setModel(mergeInputsModel);
     table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
-    TableUtils.pleasantLookAndFeel(scrollPane, table);
+    TableUtils.pleasantLookAndFeel(table);
     TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
     scrollPane.setViewportView(table);
   }

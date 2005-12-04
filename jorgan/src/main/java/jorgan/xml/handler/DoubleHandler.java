@@ -52,7 +52,7 @@ public class DoubleHandler extends Handler {
   }
   
   protected void finish() {
-    dd = Double.parseDouble(getCharacters().toString()); 
+    dd = Double.parseDouble(getCharacters()); 
 
     finished();
   }  

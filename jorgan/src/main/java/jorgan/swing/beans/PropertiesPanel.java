@@ -42,12 +42,10 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -85,29 +83,24 @@ public class PropertiesPanel extends JPanel {
   
   private ElementTableModel model = new ElementTableModel();
 
-  private JScrollPane scrollPane = new JScrollPane();
   private JTable table = new JTable();
 
   public PropertiesPanel() {
     setLayout(new BorderLayout());
     
-    scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-    scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-    add(scrollPane, BorderLayout.CENTER);
-
-      table.setModel(model);
-      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
-      PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
-      table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
-      table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
-      table.getColumnModel().getColumn(1).setCellEditor(new PropertyCellEditor());
-      table.setRowHeight(nameRenderer.getPreferredSize().height);
-      table.getColumnModel().getSelectionModel().addListSelectionListener(model);
-      table.getSelectionModel().addListSelectionListener(model);
-      TableUtils.pleasantLookAndFeel(scrollPane, table);
-      TableUtils.hideHeader(table);
-      scrollPane.setViewportView(table);
+    table.setModel(model);
+    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
+    PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
+    table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
+    table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
+    table.getColumnModel().getColumn(1).setCellEditor(new PropertyCellEditor());
+    table.setRowHeight(nameRenderer.getPreferredSize().height);
+    table.getColumnModel().getSelectionModel().addListSelectionListener(model);
+    table.getSelectionModel().addListSelectionListener(model);
+    TableUtils.pleasantLookAndFeel(table);
+    TableUtils.hideHeader(table);
+    add(table, BorderLayout.CENTER);
   }
 
   public void setBeanCustomizer(BeanCustomizer customizer) {

@@ -46,5 +46,15 @@ public class Memory extends Counter {
             throw new IllegalArgumentException("level must not be null");
         }
         titles[index] = title;
+        
+        fireElementChanged(false);
+    }
+
+    public void clear(int i) {
+        setTitle(i, "");
+        
+        for (int r = 0; r < getReferenceCount(); r++) {
+            ((Combination)getReference(r).getElement()).clear();
+        }
     }
 }

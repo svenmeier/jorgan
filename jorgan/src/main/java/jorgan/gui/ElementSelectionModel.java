@@ -171,11 +171,11 @@ public class ElementSelectionModel {
     }
   }
   
-  public boolean hasPrevious() {
+  public boolean canBack() {
     return historyIndex > 0;
   }
   
-  public void previous() {
+  public void back() {
     if (historyIndex > 0) {
       historyIndex--;
 
@@ -189,11 +189,11 @@ public class ElementSelectionModel {
     }
   }
   
-  public boolean hasNext() {
+  public boolean canForward() {
     return historyIndex < history.size() - 1;
   }
 
-  public void next() {
+  public void forward() {
     if (historyIndex < history.size() - 1) {
       historyIndex++;
       

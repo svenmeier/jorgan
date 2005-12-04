@@ -46,7 +46,7 @@ public class KeyHandler extends Handler {
   }
 
   public void finish() {
-    key = new Key(getCharacters().toString());
+    key = new Key(getCharacters());
     
     finished();
   }

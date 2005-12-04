@@ -110,10 +110,23 @@ public class Combination extends Responsive {
 
       reference.setActive(level, registratable.isActive());
 
-      fireReferenceChanged(reference, true);
+      fireReferenceChanged(reference, false);
     }
   }
 
+
+  public void clear() {
+      int level = getLevel();
+      
+      for (int e = 0; e < getReferenceCount(); e++) {
+          CombinationReference reference = (CombinationReference)getReference(e);
+          
+          reference.setActive(level, false);
+
+          fireReferenceChanged(reference, false);
+        }
+  }
+  
   public Message getCaptureMessage() {
     return captureMessage;
   }

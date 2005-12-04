@@ -47,6 +47,15 @@ public class RuleBorder implements Border {
    * @param location    location of rule, {@see TOP} or {@see BOTTOM}
    */
   public RuleBorder(int location) {
+    this(location, true, true);
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param location    location of rule, {@see TOP} or {@see BOTTOM}
+   */
+  public RuleBorder(int location, boolean paintHighlight, boolean paintShadow) {
     this.location = location;
   }
 

@@ -49,7 +49,7 @@ public class StringHandler extends Handler {
   }
   
   protected void finish() {
-    string = getCharacters().toString();
+    string = getCharacters();
     
     finished();
   }

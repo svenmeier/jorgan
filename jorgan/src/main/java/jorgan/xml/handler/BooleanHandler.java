@@ -56,7 +56,7 @@ public class BooleanHandler extends Handler {
     if (getCharacters().length() == 0) {
       bool = true;
     } else {
-      bool = Boolean.valueOf(getCharacters().toString()).booleanValue();
+      bool = Boolean.valueOf(getCharacters()).booleanValue();
     }
     finished();
   }

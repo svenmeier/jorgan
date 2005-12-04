@@ -18,7 +18,6 @@
  */
 package jorgan.gui.midi;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -36,17 +35,15 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
+
+import swingx.docking.DockedPanel;
 
 import jorgan.midi.log.Configuration;
 
@@ -60,7 +57,7 @@ import jorgan.swing.table.TableUtils;
 /**
  * A log of MIDI messages. 
  */
-public class MidiLog extends JPanel {
+public class MidiLog extends DockedPanel {
 
   protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
   
@@ -113,14 +110,7 @@ public class MidiLog extends JPanel {
 
   private List messages = new ArrayList();
 
-  private JScrollPane scrollPane = new JScrollPane();
-  
   private JTable table = new JTable();
-  
-  private JToolBar toolBar = new JToolBar();
-  
-  private JPanel messagesPanel = new JPanel();
-  private JLabel messagesLabel = new JLabel();
   
   private ButtonGroup baseGroup = new ButtonGroup();
   private JToggleButton hexButton = new JToggleButton();
@@ -134,12 +124,7 @@ public class MidiLog extends JPanel {
   private MessagesModel model = new MessagesModel();
 
   public MidiLog() {
-    setLayout(new BorderLayout());
 
-    toolBar.setRollover(true);
-    toolBar.setFloatable(false);
-    add(toolBar, BorderLayout.NORTH);
-    
     deviceButton.setToolTipText(resources.getString("log.device"));
     deviceButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/filter.gif")));
     deviceButton.addActionListener(new ActionListener() {
@@ -147,9 +132,9 @@ public class MidiLog extends JPanel {
             selectDevice();
         }
     });
-    toolBar.add(deviceButton);
+    addTool(deviceButton);
     
-    toolBar.addSeparator();
+    addToolSeparator();
 
     hexButton.setToolTipText(resources.getString("log.hexadecimal"));
     hexButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/hexadecimal.gif")));
@@ -160,7 +145,7 @@ public class MidiLog extends JPanel {
     });
     hexButton.setSelected(true);    
     baseGroup.add(hexButton);
-    toolBar.add(hexButton);
+    addTool(hexButton);
     
     decButton.setToolTipText(resources.getString("log.decimal"));
     decButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/decimal.gif")));
@@ -170,15 +155,15 @@ public class MidiLog extends JPanel {
         }
     });  
     baseGroup.add(decButton);
-    toolBar.add(decButton);
+    addTool(decButton);
     
-    toolBar.addSeparator();
+    addToolSeparator();
 
     scrollLockButton.setToolTipText(resources.getString("log.scrollLock"));
     scrollLockButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/scrollLock.gif")));
-    toolBar.add(scrollLockButton);
+    addTool(scrollLockButton);
     
-    toolBar.addSeparator();
+    addToolSeparator();
 
     clearButton.setToolTipText(resources.getString("log.clear"));
     clearButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/clear.gif")));
@@ -187,20 +172,11 @@ public class MidiLog extends JPanel {
             clear();
         }
     });    
-    toolBar.add(clearButton);
-
-    messagesPanel.setLayout(new BorderLayout());
-    add(messagesPanel, BorderLayout.CENTER);
-    
-    messagesPanel.add(messagesLabel, BorderLayout.NORTH);
-    
-    scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-    scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);    
-    messagesPanel.add(scrollPane, BorderLayout.CENTER);
+    addTool(clearButton);
     
     table.setModel(model);
-    TableUtils.pleasantLookAndFeel(scrollPane, table);
-    scrollPane.setViewportView(table);
+    TableUtils.pleasantLookAndFeel(table);
+    setScrollableBody(table, true, false);
     
     prepareColumn(0, 10, SwingConstants.RIGHT);
     prepareColumn(1, 10, SwingConstants.RIGHT);
@@ -270,7 +246,7 @@ public class MidiLog extends JPanel {
                  (deviceOut ? "out" : "in") + ", " +
                  (open ? resources.getString("log.header.open") : resources.getString("log.header.closed")); 
       }
-      messagesLabel.setText(text);
+      setMessage(text);
   }
   
   private void prepareColumn(int index, int width, int align) {

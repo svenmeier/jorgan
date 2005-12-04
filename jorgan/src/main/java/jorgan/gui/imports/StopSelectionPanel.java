@@ -63,7 +63,7 @@ public class StopSelectionPanel extends JPanel {
           firePropertyChange("selectedStops", null, null);
         }
       });
-      TableUtils.pleasantLookAndFeel(scrollPane, table);
+      TableUtils.pleasantLookAndFeel(table);
       scrollPane.setViewportView(table);
     
     JPanel buttonPanel = new JPanel(new BorderLayout());

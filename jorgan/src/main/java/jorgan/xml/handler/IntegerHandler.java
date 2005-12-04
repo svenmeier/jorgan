@@ -52,7 +52,7 @@ public class IntegerHandler extends Handler {
   }
   
   protected void finish() {
-    integer = Integer.parseInt(getCharacters().toString()); 
+    integer = Integer.parseInt(getCharacters()); 
 
     finished();
   }  
