@@ -31,210 +31,222 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import spin.Spin;
-import swingx.docking.DockedPanel;
-
 import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
+import spin.Spin;
+import swingx.docking.DockedPanel;
 
 /**
  * Panel for editing of a {@link jorgan.disposition.Memory}.
  */
 public class MemoryPanel extends DockedPanel {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private JTable table = new JTable();
+    private static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private JButton clearButton = new JButton();
+    private JTable table = new JTable();
 
-  private JButton previousButton = new JButton();
-  
-  private JButton nextButton = new JButton();  
-  
-  private LevelsModel model = new LevelsModel();
+    private JButton clearButton = new JButton();
 
-  private OrganSession session;
-  
-  private Memory memory;
-  
-  public MemoryPanel() {
-      
-      table.setModel(model);
-      table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      table.getColumnModel().getColumn(1).setCellEditor(new StringCellEditor());
-      TableUtils.hideHeader(table);
-      TableUtils.fixColumnWidth(table, 0, "888");
-      TableUtils.pleasantLookAndFeel(table);
-      setScrollableBody(table, true, false);
+    private JButton previousButton = new JButton();
 
-      previousButton.setToolTipText(resources.getString("memory.previous"));
-      previousButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/previous.gif")));
-      previousButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          previous();
+    private JButton nextButton = new JButton();
+
+    private LevelsModel model = new LevelsModel();
+
+    private OrganSession session;
+
+    private Memory memory;
+
+    public MemoryPanel() {
+
+        table.setModel(model);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.getColumnModel().getColumn(1).setCellEditor(
+                new StringCellEditor());
+        TableUtils.hideHeader(table);
+        TableUtils.fixColumnWidth(table, 0, "888");
+        TableUtils.pleasantLookAndFeel(table);
+        setScrollableBody(table, true, false);
+
+        previousButton.setToolTipText(resources.getString("memory.previous"));
+        previousButton.setIcon(new ImageIcon(getClass().getResource(
+                "/jorgan/gui/img/previous.gif")));
+        previousButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                previous();
+            }
+        });
+        addTool(previousButton);
+
+        nextButton.setToolTipText(resources.getString("memory.next"));
+        nextButton.setIcon(new ImageIcon(getClass().getResource(
+                "/jorgan/gui/img/next.gif")));
+        nextButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                next();
+            }
+        });
+        addTool(nextButton);
+
+        clearButton.setToolTipText(resources.getString("memory.clear"));
+        clearButton.setIcon(new ImageIcon(getClass().getResource(
+                "/jorgan/gui/img/clear.gif")));
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                clear();
+            }
+        });
+        addTool(clearButton);
+
+        setMemory(null);
+    }
+
+    protected void previous() {
+        memory.setPosition(memory.getPosition() - 1);
+    }
+
+    protected void next() {
+        memory.setPosition(memory.getPosition() + 1);
+    }
+
+    protected void clear() {
+        int[] rows = table.getSelectedRows();
+        for (int r = 0; r < rows.length; r++) {
+            memory.clear(rows[r]);
         }
-      });    
-      addTool(previousButton);
+    }
 
-      nextButton.setToolTipText(resources.getString("memory.next"));
-      nextButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/next.gif")));
-      nextButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          next();
+    public void setOrgan(OrganSession session) {
+        if (this.session != null) {
+            this.session.getOrgan().removeOrganListener(
+                    (OrganListener) Spin.over(model));
+
+            setMemory(null);
         }
-      });    
-      addTool(nextButton);
-      
-      clearButton.setToolTipText(resources.getString("memory.clear"));
-      clearButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/clear.gif")));
-      clearButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-          clear();
+
+        this.session = session;
+
+        if (this.session != null) {
+            this.session.getOrgan().addOrganListener(
+                    (OrganListener) Spin.over(model));
+
+            findMemory();
         }
-      });    
-      addTool(clearButton);
-
-      setMemory(null);
-  }
-
-  protected void previous() {
-    memory.previous();
-  }
-
-  protected void next() {
-    memory.next();
-  }
-  
-  protected void clear() {
-    int[] rows = table.getSelectedRows();
-    for (int r = 0; r < rows.length; r++) {
-      memory.clear(rows[r]);
-    }
-  }
-  
-  public void setOrgan(OrganSession session) {
-    if (this.session != null) {
-      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(model));
-
-      setMemory(null);
     }
 
-    this.session = session;
+    private void findMemory() {
+        List memories = this.session.getOrgan().getCandidates(Memory.class);
+        if (memories.isEmpty()) {
+            setMemory(null);
+        } else {
+            setMemory((Memory) memories.get(0));
+        }
+    }
 
-    if (this.session != null) {
-      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(model));
+    private void setMemory(Memory memory) {
+        this.memory = memory;
 
-      findMemory();
-    }
-  }
+        model.fireTableDataChanged();
 
-  private void findMemory() {
-    List memories = this.session.getOrgan().getCandidates(Memory.class);
-    if (memories.isEmpty()) {
-      setMemory(null);
-    } else {
-      setMemory((Memory)memories.get(0));        
-    }
-  }
-  
-  private void setMemory(Memory memory) {    
-    this.memory = memory;
-        
-    model.fireTableDataChanged();
-        
-    previousButton.setEnabled(memory != null);
-    nextButton.setEnabled(memory != null);
-    clearButton.setEnabled(memory != null);
-    table.setVisible(memory != null);
+        previousButton.setEnabled(memory != null);
+        nextButton.setEnabled(memory != null);
+        clearButton.setEnabled(memory != null);
+        table.setVisible(memory != null);
 
-    if (memory == null) {
-      setMessage(resources.getString("memory.none"));
-    } else {
-      setMessage(null);
+        if (memory == null) {
+            setMessage(resources.getString("memory.none"));
+        } else {
+            setMessage(null);
 
-      updateSelection();
-    }    
-  }      
-  
-  private void updateSelection() {
-    // remove listener to avoid infinite loop 
-    table.getSelectionModel().removeListSelectionListener(model);
-    
-    int level = memory.getCurrent();
-    if (level != table.getSelectedRow()) {
-      if (table.getCellEditor() != null) {
-          table.getCellEditor().cancelCellEditing();
-          table.setCellEditor(null);
-      }
-      table.getSelectionModel().setSelectionInterval(level, level);
-      table.scrollRectToVisible(table.getCellRect(level, 0, false));
+            updateSelection();
+        }
     }
-    table.setColumnSelectionInterval(0, 0);
-    
-    // re-add listener 
-    table.getSelectionModel().addListSelectionListener(model);
-  }
-  
-  private class LevelsModel extends AbstractTableModel implements OrganListener, ListSelectionListener {
-      
-    public int getColumnCount() {
-      return 2;
+
+    private void updateSelection() {
+        // remove listener to avoid infinite loop
+        table.getSelectionModel().removeListSelectionListener(model);
+
+        int level = memory.getPosition();
+        if (level != table.getSelectedRow()) {
+            if (table.getCellEditor() != null) {
+                table.getCellEditor().cancelCellEditing();
+                table.setCellEditor(null);
+            }
+            table.getSelectionModel().setSelectionInterval(level, level);
+            table.scrollRectToVisible(table.getCellRect(level, 0, false));
+        }
+        table.setColumnSelectionInterval(0, 0);
+
+        // re-add listener
+        table.getSelectionModel().addListSelectionListener(model);
     }
-    
-    public int getRowCount() {
-      if (memory == null) {
-        return 0;
-      } else {
-        return 128;
-      }
+
+    private class LevelsModel extends AbstractTableModel implements
+            OrganListener, ListSelectionListener {
+
+        public int getColumnCount() {
+            return 2;
+        }
+
+        public int getRowCount() {
+            if (memory == null) {
+                return 0;
+            } else {
+                return 128;
+            }
+        }
+
+        public Object getValueAt(int rowIndex, int columnIndex) {
+            if (columnIndex == 0) {
+                return "" + rowIndex;
+            }
+            return memory.getTitle(rowIndex);
+        }
+
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return (columnIndex == 1);
+        }
+
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            memory.setTitle(rowIndex, (String) aValue);
+        }
+
+        public void elementAdded(OrganEvent event) {
+            if (event.getElement() instanceof Memory) {
+                setMemory((Memory) event.getElement());
+            }
+        }
+
+        public void elementChanged(OrganEvent event) {
+            if (event.getElement() == memory) {
+                setMemory(memory);
+            }
+        }
+
+        public void elementRemoved(OrganEvent event) {
+            if (event.getElement() instanceof Memory) {
+                findMemory();
+            }
+        }
+
+        public void referenceAdded(OrganEvent event) {
+        }
+
+        public void referenceChanged(OrganEvent event) {
+        }
+
+        public void referenceRemoved(OrganEvent event) {
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            int row = table.getSelectedRow();
+            if (row != -1 && row != memory.getPosition()) {
+                memory.setPosition(row);
+            }
+        }
     }
-    
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      if (columnIndex == 0) {
-        return "" + (rowIndex + 1);
-      }
-      return memory.getTitle(rowIndex);
-    }
-    
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-        return columnIndex == 1;
-    }
-    
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-      memory.setTitle(rowIndex, (String)aValue);
-    }
-    
-    public void elementAdded(OrganEvent event) {
-      if (event.getElement() instanceof Memory) {
-        setMemory((Memory)event.getElement());
-      }
-    }
-    
-    public void elementChanged(OrganEvent event) {
-      if (event.getElement() == memory) {
-        setMemory(memory);
-      }
-    }
-    
-    public void elementRemoved(OrganEvent event) {
-      if (event.getElement() instanceof Memory) {
-        findMemory();
-      }
-    }
-    
-    public void referenceAdded(OrganEvent event) { }
-    public void referenceChanged(OrganEvent event) { }
-    public void referenceRemoved(OrganEvent event) { }
-    
-    public void valueChanged(ListSelectionEvent e) {
-      int row = table.getSelectedRow();
-      if (row != -1 && row != memory.getCurrent()) {
-        memory.setCurrent(row);
-      }
-    }
-  }  
 }

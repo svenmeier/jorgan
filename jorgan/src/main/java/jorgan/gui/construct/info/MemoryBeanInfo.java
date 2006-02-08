@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Memory}.
  */
-public class MemoryBeanInfo extends CounterBeanInfo {
+public class MemoryBeanInfo extends ContinuousBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

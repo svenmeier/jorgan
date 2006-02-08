@@ -18,77 +18,84 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Message;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class MessageHandler extends Handler {
-  
-  private Message message;
 
-  private int status = -1;
-  private int data1  = -1;
-  private int data2  = -1;
+    private Message message;
 
-  public MessageHandler(AbstractWriter writer, String tag, Message message) {
-    super(writer, tag);
+    private int status = -1;
 
-    this.message = message;
-  }
+    private int data1 = -1;
 
-  public MessageHandler(AbstractReader reader) {
-    super(reader);
-  }
+    private int data2 = -1;
 
-  public Message getMessage() {
-    return message;
-  }
+    public MessageHandler(AbstractWriter writer, String tag, Message message) {
+        super(writer, tag);
 
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+        this.message = message;
+    }
 
-    if ("status".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          status = getInteger();
+    public MessageHandler(AbstractReader reader) {
+        super(reader);
+    }
+
+    public Message getMessage() {
+        return message;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("status".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    status = getInteger();
+                }
+            };
+        } else if ("data1".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    data1 = getInteger();
+                }
+            };
+        } else if ("data2".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    data2 = getInteger();
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
         }
-      };
-    } else if ("data1".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          data1 = getInteger();
-        }
-      };
-    } else if ("data2".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          data2 = getInteger();
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
     }
-  }
 
-  protected void finish() {
-    message = new Message(status, data1, data2);
-    
-    finished();    
-  }
-  
-  public void children() throws IOException {
-    if (message.getStatus() != -1) {
-      new IntegerHandler(getWriter(), "status", message.getStatus()).start();
+    protected void finish() {
+        message = new Message(status, data1, data2);
+
+        finished();
     }
-    if (message.getData1() != -1) {
-      new IntegerHandler(getWriter(), "data1" , message.getData1() ).start();
+
+    public void children() throws IOException {
+        if (message.getStatus() != -1) {
+            new IntegerHandler(getWriter(), "status", message.getStatus())
+                    .start();
+        }
+        if (message.getData1() != -1) {
+            new IntegerHandler(getWriter(), "data1", message.getData1())
+                    .start();
+        }
+        if (message.getData2() != -1) {
+            new IntegerHandler(getWriter(), "data2", message.getData2())
+                    .start();
+        }
     }
-    if (message.getData2() != -1) {
-      new IntegerHandler(getWriter(), "data2" , message.getData2() ).start();
-    }
-  }
 }

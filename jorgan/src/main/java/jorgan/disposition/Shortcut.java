@@ -24,19 +24,23 @@ import java.awt.event.KeyEvent;
  * A shortcut is an immutable value object.
  */
 public class Shortcut {
-    
+
     private char character = KeyEvent.CHAR_UNDEFINED;
-    private int  code      = KeyEvent.VK_UNDEFINED;
-    private int  modifiers = 0;
-    private int  location  = KeyEvent.KEY_LOCATION_STANDARD;
-    
+
+    private int code = KeyEvent.VK_UNDEFINED;
+
+    private int modifiers = 0;
+
+    private int location = KeyEvent.KEY_LOCATION_STANDARD;
+
     public Shortcut(char character) {
         if (character == KeyEvent.CHAR_UNDEFINED) {
-            throw new IllegalArgumentException("character must not be undefined");
+            throw new IllegalArgumentException(
+                    "character must not be undefined");
         }
         this.character = character;
     }
-    
+
     public Shortcut(int code, int modifiers, int location) {
         if (code == KeyEvent.VK_UNDEFINED) {
             throw new IllegalArgumentException("code must not be undefined");
@@ -45,15 +49,15 @@ public class Shortcut {
         this.modifiers = modifiers;
         this.location = location;
     }
-    
+
     public boolean characterFallback() {
         return code == KeyEvent.VK_UNDEFINED;
     }
-    
+
     public boolean hasModifiers() {
         return modifiers != 0;
     }
-    
+
     public boolean hasLocation() {
         return location != KeyEvent.KEY_LOCATION_STANDARD;
     }
@@ -61,36 +65,37 @@ public class Shortcut {
     public char getCharacter() {
         return character;
     }
-    
+
     public int getCode() {
         return code;
     }
-    
+
     public int getModifiers() {
         return modifiers;
     }
-    
+
     public int getLocation() {
         return location;
     }
-    
+
     public boolean match(KeyEvent ev) {
         char character = ev.getKeyChar();
-        int  code      = ev.getKeyCode();
-        int  modifiers = ev.getModifiers();
-        int  location  = ev.getKeyLocation();
-        
+        int code = ev.getKeyCode();
+        int modifiers = ev.getModifiers();
+        int location = ev.getKeyLocation();
+
         return match(character, code, modifiers, location);
     }
-    
+
     public boolean match(char character, int code, int modifiers, int location) {
         if (this.code == KeyEvent.VK_UNDEFINED) {
             return this.character == character;
         } else {
-            return this.code == code && this.modifiers == modifiers && this.location == location;
+            return this.code == code && this.modifiers == modifiers
+                    && this.location == location;
         }
     }
-    
+
     public String toString() {
         String string = "";
         if (characterFallback()) {
@@ -102,36 +107,35 @@ public class Shortcut {
             }
             string += KeyEvent.getKeyText(code);
         }
-        
+
         return string;
     }
-    
+
     public static Shortcut createShortCut(KeyEvent ev) {
         char character = ev.getKeyChar();
-        int  code      = ev.getKeyCode();
-        int  modifiers = ev.getModifiers();
-        int  location  = ev.getKeyLocation();
-        
+        int code = ev.getKeyCode();
+        int modifiers = ev.getModifiers();
+        int location = ev.getKeyLocation();
+
         return createShortcut(character, code, modifiers, location);
     }
 
-    public static Shortcut createShortcut(char character, int code, int modifiers, int location) {
-        
+    public static Shortcut createShortcut(char character, int code,
+            int modifiers, int location) {
+
         if (!isModifier(code)) {
             if (code != KeyEvent.VK_UNDEFINED) {
                 return new Shortcut(code, modifiers, location);
-            } else if (character != KeyEvent.CHAR_UNDEFINED){
+            } else if (character != KeyEvent.CHAR_UNDEFINED) {
                 return new Shortcut(character);
             }
         }
         return null;
     }
-    
+
     public static boolean isModifier(int code) {
-        return code == KeyEvent.VK_CONTROL ||
-               code == KeyEvent.VK_SHIFT ||
-               code == KeyEvent.VK_META ||
-               code == KeyEvent.VK_ALT_GRAPH ||
-               code == KeyEvent.VK_ALT;
+        return code == KeyEvent.VK_CONTROL || code == KeyEvent.VK_SHIFT
+                || code == KeyEvent.VK_META || code == KeyEvent.VK_ALT_GRAPH
+                || code == KeyEvent.VK_ALT;
     }
 }

@@ -18,10 +18,20 @@
  */
 package jorgan.gui;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.ResourceBundle;
-import java.awt.*;
-import java.awt.image.*;
-import javax.swing.*;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JWindow;
 
 import jorgan.App;
 
@@ -30,82 +40,85 @@ import jorgan.App;
  */
 public class AboutPanel extends JPanel {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    private static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  /**
-   * The icon used to display the about image.
-   */
-  private ImageIcon icon = new ImageIcon(getClass().getResource("img/about.gif"));
+    /**
+     * The icon used to display the about image.
+     */
+    private ImageIcon icon = new ImageIcon(getClass().getResource(
+            "img/about.gif"));
 
-  /**
-   * The label used to display the version of jOrgan.
-   */
-  private JLabel label = new JLabel();
+    /**
+     * The label used to display the version of jOrgan.
+     */
+    private JLabel label = new JLabel();
 
-  /**
-   * Creata an about panel.
-   */
-  public AboutPanel() {
-    setLayout(new BorderLayout());
+    /**
+     * Creata an about panel.
+     */
+    public AboutPanel() {
+        setLayout(new BorderLayout());
 
-    BufferedImage image = new BufferedImage(icon.getIconWidth(), icon.getIconHeight(), BufferedImage.TYPE_INT_RGB);
-    Graphics2D g = (Graphics2D)image.getGraphics();
-    g.drawImage(icon.getImage(), 0, 0, this);
+        BufferedImage image = new BufferedImage(icon.getIconWidth(), icon
+                .getIconHeight(), BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = (Graphics2D) image.getGraphics();
+        g.drawImage(icon.getImage(), 0, 0, this);
 
-    String version = App.getVersion();
-    int width = g.getFontMetrics().stringWidth(version);
-    g.setFont(new Font("Sans Serif", Font.PLAIN, 14));
-    g.setColor(Color.black);
-    g.drawString(version, icon.getIconWidth() - width - 10, 182);
+        String version = App.getVersion();
+        int width = g.getFontMetrics().stringWidth(version);
+        g.setFont(new Font("Sans Serif", Font.PLAIN, 14));
+        g.setColor(Color.black);
+        g.drawString(version, icon.getIconWidth() - width - 10, 182);
 
-    icon.setImage(image);
+        icon.setImage(image);
 
-    label.setIcon(icon);
-    add(label);
-  }
-
-  /**
-   * Utility method to show an about panel in a dialog.
-   * 
-   * @param parent  the frame to use for the dialogs parent
-   * @return        the dialog showing the about panel
-   */
-  public static void showInDialog(JFrame parent) {
-
-    AboutPanel aboutPanel = new AboutPanel();
-
-    JDialog dialog = new JDialog(parent, resources.getString("action.about.description"), true);
-    dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-    dialog.setContentPane(aboutPanel);
-    dialog.setResizable(false);
-    dialog.pack();
-    dialog.setLocationRelativeTo(parent);
-    dialog.setVisible(true);
-  }
-
-  /**
-   * Utility method to show an about panel in a window.
-   * <br>
-   * This method must not be called on the event dispatch
-   * thread.
-   */
-  public static void showInWindow() {
-
-    AboutPanel aboutPanel = new AboutPanel();
-    aboutPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
-
-    JWindow window = new JWindow();
-    window.setContentPane(aboutPanel);
-    window.pack();
-    window.setLocationRelativeTo(null);
-    window.setVisible(true);
-
-    try {
-      Thread.sleep(4000);
-    } catch (InterruptedException ex) {
-      throw new Error("unexpected interruption", ex);
+        label.setIcon(icon);
+        add(label);
     }
 
-    window.dispose();
-  }
+    /**
+     * Utility method to show an about panel in a dialog.
+     * 
+     * @param parent
+     *            the frame to use for the dialogs parent
+     * @return the dialog showing the about panel
+     */
+    public static void showInDialog(JFrame parent) {
+
+        AboutPanel aboutPanel = new AboutPanel();
+
+        JDialog dialog = new JDialog(parent, resources
+                .getString("action.about.description"), true);
+        dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+        dialog.setContentPane(aboutPanel);
+        dialog.setResizable(false);
+        dialog.pack();
+        dialog.setLocationRelativeTo(parent);
+        dialog.setVisible(true);
+    }
+
+    /**
+     * Utility method to show an about panel in a window. <br>
+     * This method must not be called on the event dispatch thread.
+     */
+    public static void showInWindow() {
+
+        AboutPanel aboutPanel = new AboutPanel();
+        aboutPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+
+        JWindow window = new JWindow();
+        window.setContentPane(aboutPanel);
+        window.pack();
+        window.setLocationRelativeTo(null);
+        window.setVisible(true);
+
+        try {
+            Thread.sleep(4000);
+        } catch (InterruptedException ex) {
+            throw new Error("unexpected interruption", ex);
+        }
+
+        window.dispose();
+    }
 }

@@ -19,18 +19,19 @@
 package jorgan.play;
 
 // jorgan
-import jorgan.play.sound.*;
+import jorgan.play.sound.Sound;
 
 /**
  * A player that controls effects on sounds.
  */
 interface SoundEffectPlayer {
 
-  /**
-   * Effect a sound.
-   * 
-   * @param sound   sound to effect
-   * @return        effected sound    
-   */
-  public Sound effectSound(Sound sound);
+    /**
+     * Effect a sound.
+     * 
+     * @param sound
+     *            sound to effect
+     * @return effected sound
+     */
+    public Sound effectSound(Sound sound);
 }

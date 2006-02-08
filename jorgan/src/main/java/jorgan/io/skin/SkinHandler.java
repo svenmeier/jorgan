@@ -18,56 +18,66 @@
  */
 package jorgan.io.skin;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.skin.Skin;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.StringHandler;
 
-import jorgan.skin.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class SkinHandler extends Handler {
 
-  private Skin skin;
+    private Skin skin;
 
-  /**
-   * Constructor.
-   */
-  public SkinHandler(AbstractReader reader) {
-    super(reader);
+    /**
+     * Constructor.
+     */
+    public SkinHandler(AbstractReader reader) {
+        super(reader);
 
-    skin = new Skin();
-  }
-  
-  public SkinHandler(AbstractWriter writer, String tag, Skin skin) {
-    super(writer, tag);
-    
-    this.skin = skin;
-  }
+        skin = new Skin();
+    }
 
-  public Skin getSkin() {
-    return skin;
-  }
+    public SkinHandler(AbstractWriter writer, String tag, Skin skin) {
+        super(writer, tag);
 
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+        this.skin = skin;
+    }
 
-    if ("style".equals(qName)) {
-      new StyleHandler(getReader()) {
-        public void finished() {
-          skin.addStyle(getStyle());
+    public Skin getSkin() {
+        return skin;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("name".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    skin.setName(getString());
+                }
+            };
+        } else if ("style".equals(qName)) {
+            new StyleHandler(getReader()) {
+                public void finished() {
+                    skin.addStyle(getStyle());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
         }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public void children() throws IOException {
+        super.children();
 
-    for (int s = 0; s < skin.getStyleCount(); s++) {
-      new StyleHandler(getWriter(), "style", skin.getStyle(s)).start();
+        new StringHandler(getWriter(), "name", skin.getName()).start();
+
+        for (int s = 0; s < skin.getStyleCount(); s++) {
+            new StyleHandler(getWriter(), "style", skin.getStyle(s)).start();
+        }
     }
-  }
 }

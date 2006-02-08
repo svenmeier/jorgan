@@ -18,90 +18,93 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Keyable;
+import jorgan.disposition.Stop;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class StopHandler extends KeyableHandler {
 
-  private Stop stop;
+    private Stop stop;
 
-  public StopHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public StopHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    stop = new Stop();
-  }
-
-  public StopHandler(AbstractWriter writer, String tag, Stop stop) {
-    super(writer, tag);
-
-    this.stop = stop;
-  }
-
-  public Stop getStop() {
-    return stop;
-  }
-
-  protected Keyable getKeyable() {
-    return stop;
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("program".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          stop.setProgram(getInteger());
-        }
-      };
-    } else if ("allocation".equals(qName)) {
-        new IntegerHandler(getReader()) {
-          public void finished() {
-            stop.setAllocation(getInteger());
-          }
-        };
-    } else if ("velocity".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          stop.setVelocity(getInteger());
-        }
-      };
-    } else if ("volume".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          stop.setVolume(getInteger());
-        }
-      };
-    } else if ("pan".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          stop.setPan(getInteger());
-        }
-      };
-    } else if ("bend".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          stop.setBend(getInteger());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        stop = new Stop();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public StopHandler(AbstractWriter writer, String tag, Stop stop) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "program"   , stop.getProgram   ()).start();
-    new IntegerHandler(getWriter(), "allocation", stop.getAllocation()).start();
-    new IntegerHandler(getWriter(), "velocity"  , stop.getVelocity  ()).start();
-    new IntegerHandler(getWriter(), "volume"    , stop.getVolume    ()).start();
-    new IntegerHandler(getWriter(), "pan"       , stop.getPan       ()).start();
-    new IntegerHandler(getWriter(), "bend"      , stop.getBend      ()).start();
-  }
+        this.stop = stop;
+    }
+
+    public Stop getStop() {
+        return stop;
+    }
+
+    protected Keyable getKeyable() {
+        return stop;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("program".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setProgram(getInteger());
+                }
+            };
+        } else if ("allocation".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setAllocation(getInteger());
+                }
+            };
+        } else if ("velocity".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setVelocity(getInteger());
+                }
+            };
+        } else if ("volume".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setVolume(getInteger());
+                }
+            };
+        } else if ("pan".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setPan(getInteger());
+                }
+            };
+        } else if ("bend".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    stop.setBend(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "program", stop.getProgram()).start();
+        new IntegerHandler(getWriter(), "allocation", stop.getAllocation())
+                .start();
+        new IntegerHandler(getWriter(), "velocity", stop.getVelocity()).start();
+        new IntegerHandler(getWriter(), "volume", stop.getVolume()).start();
+        new IntegerHandler(getWriter(), "pan", stop.getPan()).start();
+        new IntegerHandler(getWriter(), "bend", stop.getBend()).start();
+    }
 }

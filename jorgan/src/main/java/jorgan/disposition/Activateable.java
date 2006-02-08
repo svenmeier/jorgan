@@ -21,52 +21,55 @@ package jorgan.disposition;
 /**
  * Abstract base class for an activateable elements.
  */
-public abstract class Activateable extends Responsive {
+public abstract class Activateable extends Momentary {
 
-  private boolean active;
-  private boolean locking = true;
-  private Message activateMessage;
-  private Message deactivateMessage;
+    private boolean active;
 
-  public void setActive(boolean active) {
-    if (this.active != active) {
-      this.active = active;
-      
-      fireElementChanged(false);
+    private boolean locking = true;
+
+    private Message activateMessage;
+
+    private Message deactivateMessage;
+
+    public void setActive(boolean active) {
+        if (this.active != active) {
+            this.active = active;
+
+            fireElementChanged(false);
+        }
     }
-  }
 
-  public boolean isActive() {
-    return active;
-  }
+    public boolean isActive() {
+        return active;
+    }
 
-  public boolean isLocking() {
-    return locking;
-  }
+    public boolean isLocking() {
+        return locking;
+    }
 
-  public void setLocking(boolean locking) {
-    this.locking = locking;
-        
-    fireElementChanged(true);
-  }
+    public void setLocking(boolean locking) {
+        this.locking = locking;
 
-  public Message getActivateMessage() {
-    return activateMessage;
-  }
+        fireElementChanged(true);
+    }
 
-  public Message getDeactivateMessage() {
-    return deactivateMessage;
-  }
+    public Message getActivateMessage() {
+        return activateMessage;
+    }
 
-  public void setActivateMessage(Message message) {
-    this.activateMessage = message;
+    public Message getDeactivateMessage() {
+        return deactivateMessage;
+    }
 
-    fireElementChanged(true);
-  }
+    public void setActivateMessage(Message message) {
+        this.activateMessage = message;
 
-  public void setDeactivateMessage(Message message) {
-    this.deactivateMessage = message;
+        fireElementChanged(true);
+    }
 
-    fireElementChanged(true);
-  }
+    public void setDeactivateMessage(Message message) {
+        this.deactivateMessage = message;
+
+        fireElementChanged(true);
+    }
 }

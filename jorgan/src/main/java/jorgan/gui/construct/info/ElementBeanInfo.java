@@ -18,10 +18,12 @@
  */
 package jorgan.gui.construct.info;
 
-import java.util.*;
-import java.beans.*;
+import java.beans.PropertyDescriptor;
+import java.beans.SimpleBeanInfo;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
 import jorgan.docs.Documents;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.editor.StyleEditor;
@@ -31,44 +33,46 @@ import jorgan.gui.construct.editor.StyleEditor;
  */
 public class ElementBeanInfo extends SimpleBeanInfo {
 
-  private List descriptors = new ArrayList();
+    private List descriptors = new ArrayList();
 
-  public final PropertyDescriptor[] getPropertyDescriptors() {
+    public final PropertyDescriptor[] getPropertyDescriptors() {
 
-    descriptors.clear();
-    
-    registerProperties();
-         
-    return (PropertyDescriptor[])descriptors.toArray(new PropertyDescriptor[descriptors.size()]);
-  }
+        descriptors.clear();
 
-  public int getDefaultPropertyIndex() {
-    return 0;
-  }
-  
-  protected void registerProperties() {
-    // add name first so it's positioned at the default index
-    // @see #getDefaultPropertyIndex()
-    add("name", Element.class, StringEditor.class);
+        registerProperties();
 
-    add("description", Element.class, StringEditor.class);
-
-    add("style", Element.class, StyleEditor.class);
-  }
-
-  protected void add(String name, Class clazz, Class editor) {
-    try {
-      PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
-
-      descriptor.setDisplayName(Documents.getInstance().getDisplayName(clazz, name));
-
-      if (editor != null) {
-        descriptor.setPropertyEditorClass(editor);
-      }
-
-      descriptors.add(descriptor);
-    } catch (Exception ex) {
-      throw new Error(ex);
+        return (PropertyDescriptor[]) descriptors
+                .toArray(new PropertyDescriptor[descriptors.size()]);
     }
-  }  
+
+    public int getDefaultPropertyIndex() {
+        return 0;
+    }
+
+    protected void registerProperties() {
+        // add name first so it's positioned at the default index
+        // @see #getDefaultPropertyIndex()
+        add("name", Element.class, StringEditor.class);
+
+        add("description", Element.class, StringEditor.class);
+
+        add("style", Element.class, StyleEditor.class);
+    }
+
+    protected void add(String name, Class clazz, Class editor) {
+        try {
+            PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
+
+            descriptor.setDisplayName(Documents.getInstance().getDisplayName(
+                    clazz, name));
+
+            if (editor != null) {
+                descriptor.setPropertyEditorClass(editor);
+            }
+
+            descriptors.add(descriptor);
+        } catch (Exception ex) {
+            throw new Error(ex);
+        }
+    }
 }

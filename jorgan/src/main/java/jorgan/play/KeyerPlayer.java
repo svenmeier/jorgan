@@ -18,57 +18,59 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.*;
-import jorgan.disposition.event.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Keyer;
+import jorgan.disposition.event.OrganEvent;
 
 /**
  * A player of a keyer.
  */
 public class KeyerPlayer extends ActivateablePlayer {
 
-  private boolean keying = false;
-  
-  public KeyerPlayer(Keyer keyer) {
-    super(keyer);
-  }
+    private boolean keying = false;
 
-  protected void closeImpl() {
-    super.closeImpl();
-      
-    keying = false;
-  }
-
-  public void elementChanged(OrganEvent event) {
-    super.elementChanged(event);
-      
-    if (isOpen()) {
-      Keyer keyer = (Keyer)getElement();
-
-      if (isActive()) {
-        if (!keying) {
-          for (int e = 0; e < keyer.getReferenceCount(); e++) {
-            Element element = keyer.getReference(e).getElement();
-
-            Player player = getOrganPlay().getPlayer(element);
-            if (player != null) {
-              ((KeyablePlayer)player).keyDown(keyer.getPitch(), keyer.getVelocity());
-            }
-          }
-          keying = true;
-        }
-      } else {
-        if (keying) {
-          for (int e = 0; e < keyer.getReferenceCount(); e++) {
-            Element element = keyer.getReference(e).getElement();
-
-            Player player = getOrganPlay().getPlayer(element);
-            if (player != null) {
-              ((KeyablePlayer)player).keyUp(keyer.getPitch());
-            }
-          }
-          keying = false;
-        }
-      }
+    public KeyerPlayer(Keyer keyer) {
+        super(keyer);
     }
-  }
+
+    protected void closeImpl() {
+        super.closeImpl();
+
+        keying = false;
+    }
+
+    public void elementChanged(OrganEvent event) {
+        super.elementChanged(event);
+
+        if (isOpen()) {
+            Keyer keyer = (Keyer) getElement();
+
+            if (isActive()) {
+                if (!keying) {
+                    for (int e = 0; e < keyer.getReferenceCount(); e++) {
+                        Element element = keyer.getReference(e).getElement();
+
+                        Player player = getOrganPlay().getPlayer(element);
+                        if (player != null) {
+                            ((KeyablePlayer) player).keyDown(keyer.getPitch(),
+                                    keyer.getVelocity());
+                        }
+                    }
+                    keying = true;
+                }
+            } else {
+                if (keying) {
+                    for (int e = 0; e < keyer.getReferenceCount(); e++) {
+                        Element element = keyer.getReference(e).getElement();
+
+                        Player player = getOrganPlay().getPlayer(element);
+                        if (player != null) {
+                            ((KeyablePlayer) player).keyUp(keyer.getPitch());
+                        }
+                    }
+                    keying = false;
+                }
+            }
+        }
+    }
 }

@@ -30,107 +30,110 @@ import jorgan.play.sound.Sound;
  */
 public class StopPlayer extends KeyablePlayer {
 
-  private static Problem warningProgram = new Problem(Problem.WARNING, "program");
-    
-  private Sound sound;
-    
-  public StopPlayer(Stop stop) {
-    super(stop);
-  }
-  
-  protected void closeImpl() {
+    private static Problem warningProgram = new Problem(Problem.WARNING,
+            "program");
 
-    super.closeImpl();
+    private Sound sound;
 
-    sound = null;
-    
-    removeProblem(warningProgram);
-  }
-  
-  protected void activated() {
+    public StopPlayer(Stop stop) {
+        super(stop);
+    }
 
-    Stop stop = (Stop)getElement();
+    protected void closeImpl() {
 
-    boolean silentSound = false;
-    
-    for (int r = 0; r < stop.getReferenceCount(); r++) {
-      Element element = stop.getReference(r).getElement();
-            
-      if (element instanceof SoundSource) {
-        SoundSourcePlayer soundSourcePlayer = (SoundSourcePlayer)getOrganPlay().getPlayer(element);
-              
-        sound = soundSourcePlayer.createSound(stop.getProgram());
+        super.closeImpl();
+
+        sound = null;
+
+        removeProblem(warningProgram);
+    }
+
+    protected void activated() {
+
+        Stop stop = (Stop) getElement();
+
+        boolean silentSound = false;
+
+        for (int r = 0; r < stop.getReferenceCount(); r++) {
+            Element element = stop.getReference(r).getElement();
+
+            if (element instanceof SoundSource) {
+                SoundSourcePlayer soundSourcePlayer = (SoundSourcePlayer) getOrganPlay()
+                        .getPlayer(element);
+
+                sound = soundSourcePlayer.createSound(stop.getProgram());
+                if (sound != null) {
+                    break;
+                }
+            }
+        }
+
+        if (sound == null) {
+            sound = new SilentSound();
+
+            silentSound = true;
+        }
+
+        for (int r = 0; r < stop.getReferenceCount(); r++) {
+            Element element = stop.getReference(r).getElement();
+
+            if (element instanceof SoundEffect) {
+                SoundEffectPlayer soundEffectPlayer = (SoundEffectPlayer) getOrganPlay()
+                        .getPlayer(element);
+
+                sound = soundEffectPlayer.effectSound(sound);
+            }
+        }
+
+        sound.setProgram(stop.getProgram());
+        sound.setVolume(stop.getVolume());
+        if (stop.getPan() != 64) {
+            sound.setPan(stop.getPan());
+        }
+        if (stop.getBend() != 64) {
+            sound.setPitchBend(stop.getBend());
+        }
+
+        fireOutputProduced();
+
+        if (silentSound) {
+            addProblem(warningProgram.value(new Integer(stop.getProgram())));
+        } else {
+            removeProblem(warningProgram);
+        }
+
+        super.activated();
+    }
+
+    protected void activateKey(int pitch, int velocity) {
         if (sound != null) {
-          break;
+            Stop stop = (Stop) getElement();
+            if (stop.getVelocity() != 0) {
+                velocity = stop.getVelocity();
+            }
+
+            sound.noteOn(pitch, velocity);
+
+            fireOutputProduced();
         }
-      }
-    }
-      
-    if (sound == null) {
-      sound = new SilentSound();
-        
-      silentSound = true;
-    }
-      
-    for (int r = 0; r < stop.getReferenceCount(); r++) {
-      Element element = stop.getReference(r).getElement();
-          
-      if (element instanceof SoundEffect) {
-        SoundEffectPlayer soundEffectPlayer = (SoundEffectPlayer)getOrganPlay().getPlayer(element);
-         
-        sound = soundEffectPlayer.effectSound(sound);
-      }
     }
 
-    sound.setProgram(stop.getProgram());
-    sound.setVolume(stop.getVolume());
-    if (stop.getPan() != 64) {
-      sound.setPan(stop.getPan());
-    }
-    if (stop.getBend() != 64) {
-      sound.setPitchBend(stop.getBend());
-    }
+    protected void deactivated() {
+        super.deactivated();
 
-    fireOutputProduced();
+        sound.stop();
+        sound = null;
 
-    if (silentSound) {
-      addProblem(warningProgram.value(new Integer(stop.getProgram())));
-    } else {
-      removeProblem(warningProgram);
+        fireOutputProduced();
+
+        removeProblem(warningProgram);
     }
 
-    super.activated();    
-  }
+    protected void deactivateKey(int pitch) {
+        if (sound != null) {
+            sound.noteOff(pitch);
 
-  protected void activateKey(int pitch, int velocity) {
-    if (sound != null) {
-      Stop stop = (Stop)getElement();
-      if (stop.getVelocity() != 0) {
-          velocity = stop.getVelocity();
+            fireOutputProduced();
         }
-        
-      sound.noteOn(pitch, velocity);        
-
-      fireOutputProduced();
     }
-  }
-  
-  protected void deactivated() {
-    super.deactivated();
-
-    sound.stop();
-    sound = null;
-
-    fireOutputProduced();
-    
-    removeProblem(warningProgram);
-  }
-  
-  protected void deactivateKey(int pitch) {
-    if (sound != null) {
-      sound.noteOff(pitch);
-      
-      fireOutputProduced();
-    }
-  }
 }

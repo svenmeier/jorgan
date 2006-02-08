@@ -18,35 +18,38 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.Collections;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
+import jorgan.gui.console.ViewComparator;
 
 public class SpreadHorizontalLayout extends ViewLayout {
 
-  private int x;
-  private int width;
-  private int count;
-  
-  public SpreadHorizontalLayout() {
-    super(resources.getString("view.spread.horizontal"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/spreadHorizontal.gif")));
-  }
+    private int x;
 
-  protected void init(View pressed, List views) {
-    
-    Collections.sort(views, new ViewComparator(true, false));
-    count = views.size();
+    private int width;
 
-    View left  = (View)views.get(0); 
-    View right = (View)views.get(views.size() - 1); 
+    private int count;
 
-    x     = left.getX()  + left.getWidth()/2;
-    width = right.getX() + right.getWidth()/2 - x;
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(x + (width * index / (count - 1)) - view.getWidth()/2, view.getY());            
-  }
+    public SpreadHorizontalLayout() {
+        super("spreadHorizontal");
+    }
+
+    protected void init(View pressed, List views) {
+
+        Collections.sort(views, new ViewComparator(true, false));
+        count = views.size();
+
+        View left = (View) views.get(0);
+        View right = (View) views.get(views.size() - 1);
+
+        x = left.getX() + left.getWidth() / 2;
+        width = right.getX() + right.getWidth() / 2 - x;
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, x + (width * index / (count - 1))
+                - view.getWidth() / 2, view.getY());
+    }
 }

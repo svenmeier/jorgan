@@ -20,90 +20,95 @@ package jorgan.play;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.sound.midi.BugFix;
-
-import jorgan.disposition.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.sound.midi.BugFix;
 
 /**
  * An abstract base class for players that control regactivateable elements.
  */
 public abstract class ActivateablePlayer extends Player {
 
-  private static final Problem warningActivateMessage = new Problem(Problem.WARNING, "activateMessage");
-  private static final Problem warningDeactivateMessage = new Problem(Problem.WARNING, "deactivateMessage");      
-    
-  private int activations = 0;
-  
-  public ActivateablePlayer(Activateable activateable) {
-    super(activateable);
-  }
+    private static final Problem warningActivateMessage = new Problem(
+            Problem.WARNING, "activateMessage");
 
-  protected void closeImpl() {
-    super.closeImpl();
-    
-    activations = 0;
-  }
-  
-  public void activate() {
-    activations++;     
-    
-    elementChanged(null);
-  }
-  
-  public void deactivate() {
-    activations--;
-    
-    elementChanged(null);
-  }
-  
-  protected boolean isActive() {
-    Activateable activateable = (Activateable)getElement();
-    
-    return activations > 0 || activateable.isActive();
-  }
-  
-  public void messageReceived(ShortMessage message) {
-    Activateable activateable = (Activateable)getElement();
+    private static final Problem warningDeactivateMessage = new Problem(
+            Problem.WARNING, "deactivateMessage");
 
-    if (activateable.isActive()) {
-      Message offMessage = activateable.getDeactivateMessage();
-      if (offMessage != null &&
-          offMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
+    private int activations = 0;
 
-        fireInputAccepted();
-        
-        activateable.setActive(false);
-      }
-    } else {
-      Message onMessage = activateable.getActivateMessage();
-      if (onMessage != null &&
-          onMessage.match(BugFix.getStatus(message), message.getData1(), message.getData2())) {
-
-        fireInputAccepted();
-
-        activateable.setActive(true);
-      }
+    public ActivateablePlayer(Activateable activateable) {
+        super(activateable);
     }
-  }
-  
-  public void elementChanged(OrganEvent event) {
-    super.elementChanged(event);
-      
-    Activateable activateable = (Activateable)getElement();
-    
-    if ((activateable.getActivateMessage() == null) &&
-      Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warningActivateMessage.value(null));
-    } else {
-      removeProblem(warningActivateMessage);
+
+    protected void closeImpl() {
+        super.closeImpl();
+
+        activations = 0;
     }
-    
-    if ((activateable.getDeactivateMessage() == null) &&
-      Configuration.instance().getWarnWithoutMessage()) {
-      addProblem(warningDeactivateMessage.value(null));
-    } else {
-      removeProblem(warningDeactivateMessage);
+
+    public void activate() {
+        activations++;
+
+        elementChanged(null);
     }
-  }
+
+    public void deactivate() {
+        activations--;
+
+        elementChanged(null);
+    }
+
+    protected boolean isActive() {
+        Activateable activateable = (Activateable) getElement();
+
+        return activations > 0 || activateable.isActive();
+    }
+
+    public void messageReceived(ShortMessage message) {
+        Activateable activateable = (Activateable) getElement();
+
+        if (activateable.isActive()) {
+            Message offMessage = activateable.getDeactivateMessage();
+            if (offMessage != null
+                    && offMessage.match(BugFix.getStatus(message), message
+                            .getData1(), message.getData2())) {
+
+                fireInputAccepted();
+
+                activateable.setActive(false);
+            }
+        } else {
+            Message onMessage = activateable.getActivateMessage();
+            if (onMessage != null
+                    && onMessage.match(BugFix.getStatus(message), message
+                            .getData1(), message.getData2())) {
+
+                fireInputAccepted();
+
+                activateable.setActive(true);
+            }
+        }
+    }
+
+    public void elementChanged(OrganEvent event) {
+        super.elementChanged(event);
+
+        Activateable activateable = (Activateable) getElement();
+
+        if ((activateable.getActivateMessage() == null)
+                && Configuration.instance().getWarnWithoutMessage()) {
+            addProblem(warningActivateMessage.value(null));
+        } else {
+            removeProblem(warningActivateMessage);
+        }
+
+        if ((activateable.getDeactivateMessage() == null)
+                && Configuration.instance().getWarnWithoutMessage()) {
+            addProblem(warningDeactivateMessage.value(null));
+        } else {
+            removeProblem(warningDeactivateMessage);
+        }
+    }
 }

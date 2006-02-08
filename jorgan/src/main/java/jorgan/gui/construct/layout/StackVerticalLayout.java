@@ -18,33 +18,35 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
+import java.util.List;
 
-import jorgan.gui.construct.Configuration;
 import jorgan.gui.console.View;
+import jorgan.gui.construct.Configuration;
 
 public class StackVerticalLayout extends ViewLayout {
 
-  private int grid;
-  private int x;
-  private int y;
-  
-  public StackVerticalLayout(int x, int y) {
-    super(null, null);
-    
-    grid = Configuration.instance().getGrid();
+    private int grid;
 
-    this.x = x - (x % grid);
-    this.y = y - (y % grid);    
-  }
+    private int x;
 
-  protected void init(View notUsed, List views) {    
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(x, y);
-    
-    int height = view.getHeight(); 
-    y += (height - (height % grid)) + grid;
-  }
+    private int y;
+
+    public StackVerticalLayout(int x, int y) {
+        super(null);
+
+        grid = Configuration.instance().getGrid();
+
+        this.x = x - (x % grid);
+        this.y = y - (y % grid);
+    }
+
+    protected void init(View notUsed, List views) {
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, x, y);
+
+        int height = view.getHeight();
+        y += (height - (height % grid)) + grid;
+    }
 }

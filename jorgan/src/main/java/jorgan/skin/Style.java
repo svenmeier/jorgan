@@ -18,77 +18,27 @@
  */
 package jorgan.skin;
 
-import java.util.*;
-
 /**
  * Style.
  */
-public class Style {
+public class Style extends CompositeLayer implements Cloneable {
 
-  public static final int DRAG_NONE  = 0;
-  public static final int DRAG_LEFT_TO_RIGHT = 1;
-  public static final int DRAG_RIGHT_TO_LEFT = 2;
-  public static final int DRAG_TOP_TO_BOTTOM = 3;
-  public static final int DRAG_BOTTOM_TO_TOP = 4;
-  
-  private Skin   skin;  
-  private String name        = "";
-  private String description = null;
-  private int    drag        = DRAG_NONE;
-    
-  private ArrayList states = new ArrayList();
+    private String name = "";
 
-  public Style() {
-  }
-  
-  public Skin getSkin() {
-    return skin;
-  }
-
-  public void setSkin(Skin skin) {
-    this.skin = skin;
-  }
-
-  public void setName(String name) {
-    if (name == null) {
-      throw new IllegalArgumentException("name cannot be null");
+    public void setName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name cannot be null");
+        }
+        this.name = name;
     }
-    this.name = name;
-  }
-  
-  public void setDescription(String description) {
-    this.description = description;
-  }
-  
-  public void setDrag(int movement) {
-      this.drag = movement;
-  }
-  
-  public String getName() {
-    return name;
-  }
-  
-  public String getDescription() {
-    return description;
-  }
-  
-  public int getDrag() {
-      return drag;
-  }
-  
-  public int getStateCount() {
-    return states.size();
-  }
-  
-  public State getState(int index) {
-    return (State)states.get(index);
-  }
-  
-  public void addState(State state) {
-    states.add(state);
-  }  
 
-  public void removeState(State state) {
-    states.remove(state);
-  }  
+    public String getName() {
+        return name;
+    }
+
+    public Object clone() {
+        Style clone = (Style) super.clone();
+
+        return clone;
+    }
 }

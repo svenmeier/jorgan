@@ -18,10 +18,10 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Keyable;
+import jorgan.gui.construct.editor.ActionEditor;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.NumberEditor;
-import jorgan.gui.construct.editor.ActionEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.

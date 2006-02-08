@@ -27,24 +27,24 @@ import jorgan.skin.*;
  */
 public class SkinEditor extends PropertyEditorSupport {
 
-  private String[] tags;
+    private String[] tags;
 
-  public SkinEditor() {
-    tags = SkinManager.instance().getSkinNames();
-  }
+    public SkinEditor() {
+        tags = SkinManager.instance().getSkinNames();
+    }
 
-  public String[] getTags() {
+    public String[] getTags() {
 
-    return tags;
-  }
+        return tags;
+    }
 
-  public String getAsText() {
+    public String getAsText() {
 
-    return (String)getValue();
-  }
+        return (String) getValue();
+    }
 
-  public void setAsText(String string) {
+    public void setAsText(String string) {
 
-    setValue(string);
-  }
+        setValue(string);
+    }
 }

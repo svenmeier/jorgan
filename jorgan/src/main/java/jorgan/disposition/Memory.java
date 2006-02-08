@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public class Memory extends Counter {
+public class Memory extends Continuous {
 
     private String[] titles = new String[128];
     {
@@ -26,35 +26,63 @@ public class Memory extends Counter {
             titles[l] = "";
         }
     }
-    
+
     protected boolean canReference(Class clazz) {
-      return Combination.class == clazz;  
+        return Combination.class == clazz;
+    }
+
+    public String getTitle() {
+        return titles[getPosition()];
     }
 
     public String getTitle(int index) {
         if (index < 0 || index > 127) {
-            throw new IllegalArgumentException("index has to be between 0 and 127");
+            throw new IllegalArgumentException(
+                    "index has to be between 0 and 127");
         }
         return titles[index];
     }
-    
+
     public void setTitle(int index, String title) {
         if (index < 0 || index > 127) {
-            throw new IllegalArgumentException("index has to be between 0 and 127");
+            throw new IllegalArgumentException(
+                    "index has to be between 0 and 127");
         }
         if (title == null) {
             throw new IllegalArgumentException("level must not be null");
         }
         titles[index] = title;
-        
+
         fireElementChanged(false);
     }
 
-    public void clear(int i) {
-        setTitle(i, "");
-        
+    public void clear(int level) {
+        setTitle(level, "");
+
         for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination)getReference(r).getElement()).clear();
+            ((Combination) getReference(r).getElement()).clear(level);
+        }
+    }
+
+    public void swap(int level1, int level2) {
+        String title1 = getTitle(level1);
+        String title2 = getTitle(level2);
+
+        setTitle(level1, title2);
+        setTitle(level2, title1);
+
+        for (int r = 0; r < getReferenceCount(); r++) {
+            ((Combination) getReference(r).getElement()).swap(level1, level2);
+        }
+    }
+
+    public void copy(int level1, int level2) {
+        String title = getTitle(level1);
+
+        setTitle(level2, title);
+
+        for (int r = 0; r < getReferenceCount(); r++) {
+            ((Combination) getReference(r).getElement()).copy(level1, level2);
         }
     }
 }

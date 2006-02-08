@@ -18,79 +18,54 @@
  */
 package jorgan.io.skin;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.skin.CompositeLayer;
+import jorgan.skin.Style;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.StringHandler;
 
-import jorgan.skin.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
-public class StyleHandler extends Handler {
+public class StyleHandler extends CompositeLayerHandler {
 
-  private Style style;
-
-  /**
-   * Constructor.
-   */
-  public StyleHandler(AbstractReader reader) {
-    super(reader);
-
-    style = new Style();
-  }
-  
-  public StyleHandler(AbstractWriter writer, String tag, Style style) {
-    super(writer, tag);
-    
-    this.style = style;
-  }
-
-  public Style getStyle() {
-    return style;
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("name".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          style.setName(getString());
-        }
-      };
-    } else if ("description".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          style.setDescription(getString());
-        }
-      };
-    } else if ("drag".equals(qName)) {
-        new IntegerHandler(getReader()) {
-          public void finished() {
-            style.setDrag(getInteger());
-          }
-        };
-    } else if ("state".equals(qName)) {
-      new StateHandler(getReader()) {
-        public void finished() {
-          style.addState(getState());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+    /**
+     * Constructor.
+     */
+    public StyleHandler(AbstractReader reader) {
+        super(reader);
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    protected CompositeLayer createLayer() {
+        return new Style();
+    }
 
-    new StringHandler(getWriter(), "name", style.getName()).start();
-    new IntegerHandler(getWriter(), "drag", style.getDrag()).start();
-    if (style.getDescription() != null) {
-      new StringHandler(getWriter(), "description", style.getDescription()).start();
+    public StyleHandler(AbstractWriter writer, String tag, Style style) {
+        super(writer, tag, style);
     }
-    for (int s = 0; s < style.getStateCount(); s++) {
-      new StateHandler(getWriter(), "state", style.getState(s)).start();
+
+    public Style getStyle() {
+        return (Style) getLayer();
     }
-  }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("name".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    getStyle().setName(getString());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new StringHandler(getWriter(), "name", getStyle().getName()).start();
+    }
 }

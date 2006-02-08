@@ -23,65 +23,69 @@ package jorgan.disposition;
  */
 public class SoundSource extends Element {
 
-  private String  device;
-  private String  type;
-  private int     bank  = 0;
-  private String  samples;
-  private int     delay = 0; 
+    private String device;
 
-  public String getDevice() {
-    return device;
-  }
+    private String type;
 
-  public void setDevice(String device) {
-    this.device = device;
+    private int bank = 0;
 
-    fireElementChanged(true);
-  }
+    private String samples;
 
-  public String getType() {
-    return type;
-  }
+    private int delay = 0;
 
-  public void setType(String type) {
-    this.type = type;
-
-    fireElementChanged(true);
-  }
-
-  public int getDelay() {
-    return delay;
-  }
-
-  public void setDelay(int delay) {
-    if (delay < 0) {
-      throw new IllegalArgumentException("delay '" + delay + "'");
+    public String getDevice() {
+        return device;
     }
-    this.delay = delay;
 
-    fireElementChanged(true);
-  }
+    public void setDevice(String device) {
+        this.device = device;
 
-  public int getBank() {
-    return bank;
-  } 
+        fireElementChanged(true);
+    }
 
-  public void setBank(int bank) {
-  	if (bank < 0 || bank > 127) {
-  		throw new IllegalArgumentException("bank '" + bank + "'");
-  	}
-    this.bank = bank;
+    public String getType() {
+        return type;
+    }
 
-    fireElementChanged(true);
-  }
-  
-  public String getSamples() {
-  	return samples;
-  }
-  
-  public void setSamples(String samples) {
-  	this.samples = samples;
-    
-    fireElementChanged(true);
-  }
+    public void setType(String type) {
+        this.type = type;
+
+        fireElementChanged(true);
+    }
+
+    public int getDelay() {
+        return delay;
+    }
+
+    public void setDelay(int delay) {
+        if (delay < 0) {
+            throw new IllegalArgumentException("delay '" + delay + "'");
+        }
+        this.delay = delay;
+
+        fireElementChanged(true);
+    }
+
+    public int getBank() {
+        return bank;
+    }
+
+    public void setBank(int bank) {
+        if (bank < 0 || bank > 127) {
+            throw new IllegalArgumentException("bank '" + bank + "'");
+        }
+        this.bank = bank;
+
+        fireElementChanged(true);
+    }
+
+    public String getSamples() {
+        return samples;
+    }
+
+    public void setSamples(String samples) {
+        this.samples = samples;
+
+        fireElementChanged(true);
+    }
 }

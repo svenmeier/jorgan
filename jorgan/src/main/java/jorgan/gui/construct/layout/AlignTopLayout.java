@@ -18,25 +18,23 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignTopLayout extends ViewLayout {
 
-  private int y;
-  
-  public AlignTopLayout() {
-    super(resources.getString("view.align.top"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignTop.gif")));
-  }
+    private int y;
 
-  protected void init(View pressed, List views) {
-    y = pressed.getY();
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(view.getX(), y);
-  }
+    public AlignTopLayout() {
+        super("alignTop");
+    }
+
+    protected void init(View pressed, List views) {
+        y = pressed.getY();
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, view.getX(), y);
+    }
 }

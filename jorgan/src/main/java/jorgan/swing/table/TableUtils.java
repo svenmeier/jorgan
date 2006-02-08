@@ -62,6 +62,7 @@ public class TableUtils {
       
     table.setGridColor(new JLabel().getBackground());
     table.setSurrendersFocusOnKeystroke(true);
+    table.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
 
     ToolTipManager.sharedInstance().registerComponent(table);
 

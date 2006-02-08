@@ -18,44 +18,46 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Label;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
+import org.xml.sax.Attributes;
 
 public class LabelHandler extends ElementHandler {
 
-  private Label label;
+    private Label label;
 
-  public LabelHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public LabelHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    label = new Label();
-  }
+        label = new Label();
+    }
 
-  public LabelHandler(AbstractWriter writer, String tag, Label label) {
-    super(writer, tag);
+    public LabelHandler(AbstractWriter writer, String tag, Label label) {
+        super(writer, tag);
 
-    this.label = label;
-  }
+        this.label = label;
+    }
 
-  public Label getLabel() {
-    return label;
-  }
+    public Label getLabel() {
+        return label;
+    }
 
-  public Element getElement() {
-    return getLabel();
-  }
+    public Element getElement() {
+        return getLabel();
+    }
 
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
 
-    super.startElement(uri, localName, qName, attributes);
-  }
+        super.startElement(uri, localName, qName, attributes);
+    }
 
-  public void children() throws IOException {
-    super.children();
-  }  
+    public void children() throws IOException {
+        super.children();
+    }
 }

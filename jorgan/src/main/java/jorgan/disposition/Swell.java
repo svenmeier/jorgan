@@ -21,36 +21,37 @@ package jorgan.disposition;
 /**
  * A swell.
  */
-public class Swell extends Slider implements SoundEffect {
+public class Swell extends Continuous implements SoundEffect {
 
-  private int volume   = 64;
-  private int cutoff   = 64;
-  
-  public void setVolume(int volume) {
-    if (volume < 0 || volume > 127) {
-      throw new IllegalArgumentException("volume '" + volume + "'");
+    private int volume = 64;
+
+    private int cutoff = 64;
+
+    public void setVolume(int volume) {
+        if (volume < 0 || volume > 127) {
+            throw new IllegalArgumentException("volume '" + volume + "'");
+        }
+
+        this.volume = volume;
+
+        fireElementChanged(true);
     }
 
-    this.volume = volume;
-
-    fireElementChanged(true);
-  }
-
-  public int getVolume() {
-    return volume;
-  }
-
-  public void setCutoff(int cutoff) {
-    if (cutoff < 0 || cutoff > 127) {
-      throw new IllegalArgumentException("cutoff '" + cutoff + "'");
+    public int getVolume() {
+        return volume;
     }
 
-    this.cutoff = cutoff;
+    public void setCutoff(int cutoff) {
+        if (cutoff < 0 || cutoff > 127) {
+            throw new IllegalArgumentException("cutoff '" + cutoff + "'");
+        }
 
-    fireElementChanged(true);
-  }
+        this.cutoff = cutoff;
 
-  public int getCutoff() {
-    return cutoff;
-  }
+        fireElementChanged(true);
+    }
+
+    public int getCutoff() {
+        return cutoff;
+    }
 }

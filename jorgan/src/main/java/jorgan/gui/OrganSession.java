@@ -18,48 +18,50 @@
  */
 package jorgan.gui;
 
-import spin.Spin;
-import jorgan.disposition.*;
+import jorgan.disposition.Console;
+import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.play.OrganPlay;
+import spin.Spin;
 
 public class OrganSession {
 
     private Organ organ;
-    
+
     private OrganPlay play;
-    
+
     private ElementSelectionModel selectionModel;
 
     public OrganSession() {
         this(createDefaultOrgan());
     }
-    
+
     public OrganSession(Organ organ) {
         if (organ == null) {
             throw new IllegalArgumentException("organ must not be null");
         }
         this.organ = organ;
-        
+
         this.play = new OrganPlay(organ);
         this.selectionModel = new ElementSelectionModel();
-        this.organ.addOrganListener((OrganListener)Spin.over(new OrganAdapter() {
-          public void elementAdded(OrganEvent event) {
+        this.organ.addOrganListener((OrganListener) Spin
+                .over(new OrganAdapter() {
+                    public void elementAdded(OrganEvent event) {
 
-            jorgan.disposition.Element element = event.getElement();
+                        jorgan.disposition.Element element = event.getElement();
 
-            selectionModel.setSelectedElement(element);
-          }
+                        selectionModel.setSelectedElement(element);
+                    }
 
-          public void elementRemoved(OrganEvent event) {
+                    public void elementRemoved(OrganEvent event) {
 
-            jorgan.disposition.Element element = event.getElement();
+                        jorgan.disposition.Element element = event.getElement();
 
-            selectionModel.clear(element);
-          }
-        }));
+                        selectionModel.clear(element);
+                    }
+                }));
     }
 
     public Organ getOrgan() {
@@ -76,7 +78,7 @@ public class OrganSession {
 
     private static Organ createDefaultOrgan() {
         Organ organ = new Organ();
-        
+
         organ.addElement(new Console());
 
         return organ;

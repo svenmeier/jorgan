@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Keyer;
 import jorgan.gui.construct.editor.DataEditor;
 
 /**

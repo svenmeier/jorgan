@@ -18,77 +18,79 @@
  */
 package jorgan.play;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.disposition.*;
-import jorgan.disposition.event.*;
-import jorgan.play.sound.*;
+import jorgan.disposition.Variation;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.play.sound.Sound;
+import jorgan.play.sound.SoundWrapper;
 
 /**
  * A player for an variation.
  */
-public class VariationPlayer extends ActivateablePlayer implements SoundEffectPlayer {
+public class VariationPlayer extends ActivateablePlayer implements
+        SoundEffectPlayer {
 
-  private List sounds = new ArrayList();
+    private List sounds = new ArrayList();
 
-  public VariationPlayer(Variation variation) {
-    super(variation);
-  }
-
-  protected void closeImpl() {
-    super.closeImpl();
-    
-    sounds.clear();
-  }
-  
-  public void elementChanged(OrganEvent event) {
-    super.elementChanged(event);
-    
-    if (isOpen()) {
-      for (int s = 0; s < sounds.size(); s++) {
-        VariationSound sound = (VariationSound)sounds.get(s);
-        sound.flush();
-      }
-    }
-  }
-  
-  public Sound effectSound(Sound sound) {
-    return new VariationSound(sound);
-  }
-
-
-  private class VariationSound extends SoundWrapper {
-    private int program;
-    
-    public VariationSound(Sound sound) {
-      super(sound);
-
-      sounds.add(this);
+    public VariationPlayer(Variation variation) {
+        super(variation);
     }
 
-    public void setProgram(int program) {
-      this.program = program;
-        
-      flush();
+    protected void closeImpl() {
+        super.closeImpl();
+
+        sounds.clear();
     }
 
-    private void flush() {
-      Variation variation = (Variation)getElement();
+    public void elementChanged(OrganEvent event) {
+        super.elementChanged(event);
 
-      int program = this.program;
-      if (isActive()) {
-        program = (program + variation.getProgram()) % 128;          
-      }
-
-      sound.setProgram(program);
-      
-      fireOutputProduced();
+        if (isOpen()) {
+            for (int s = 0; s < sounds.size(); s++) {
+                VariationSound sound = (VariationSound) sounds.get(s);
+                sound.flush();
+            }
+        }
     }
 
-    public void stop() {
-      super.stop();
-
-      sounds.remove(this);
+    public Sound effectSound(Sound sound) {
+        return new VariationSound(sound);
     }
-  }
+
+    private class VariationSound extends SoundWrapper {
+        private int program;
+
+        public VariationSound(Sound sound) {
+            super(sound);
+
+            sounds.add(this);
+        }
+
+        public void setProgram(int program) {
+            this.program = program;
+
+            flush();
+        }
+
+        private void flush() {
+            Variation variation = (Variation) getElement();
+
+            int program = this.program;
+            if (isActive()) {
+                program = (program + variation.getProgram()) % 128;
+            }
+
+            sound.setProgram(program);
+
+            fireOutputProduced();
+        }
+
+        public void stop() {
+            super.stop();
+
+            sounds.remove(this);
+        }
+    }
 }

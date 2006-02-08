@@ -18,66 +18,80 @@
  */
 package jorgan.gui;
 
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ResourceBundle;
-import java.awt.*;
-import java.awt.event.*;
 
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.Timer;
 
 /**
- * Panel that displays input and output. 
+ * Panel that displays input and output.
  */
 public class PlayMonitor extends JPanel {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    private static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private static Icon noneIcon = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/none.gif"));
-  private static Icon inIcon   = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/in.gif"));
-  private static Icon outIcon  = new ImageIcon(PlayMonitor.class.getResource("/jorgan/gui/img/out.gif"));
+    private static Icon noneIcon = new ImageIcon(PlayMonitor.class
+            .getResource("/jorgan/gui/img/none.gif"));
 
-  private JLabel inLabel = new JLabel();
-  private JLabel outLabel = new JLabel();
+    private static Icon inIcon = new ImageIcon(PlayMonitor.class
+            .getResource("/jorgan/gui/img/in.gif"));
 
-  private Timer inTimer;
-  private Timer outTimer;
+    private static Icon outIcon = new ImageIcon(PlayMonitor.class
+            .getResource("/jorgan/gui/img/out.gif"));
 
-  public PlayMonitor() {
-    setLayout(new GridLayout(0, 2));
+    private JLabel inLabel = new JLabel();
 
-    add(inLabel, null);
+    private JLabel outLabel = new JLabel();
 
-    inLabel.setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
-    inLabel.setIcon(noneIcon);
-    inLabel.setToolTipText(resources.getString("monitor.in"));
-    inLabel.setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
+    private Timer inTimer;
 
-    outLabel.setBorder(BorderFactory.createEmptyBorder(1,2,1,2));
-    outLabel.setIcon(noneIcon);
-    outLabel.setToolTipText(resources.getString("monitor.out"));
-    add(outLabel, null);
+    private Timer outTimer;
 
-    inTimer = new Timer(500, new ActionListener() {
-      public void actionPerformed(ActionEvent ev) {
+    public PlayMonitor() {
+        setLayout(new GridLayout(0, 2));
+
+        add(inLabel, null);
+
+        inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
         inLabel.setIcon(noneIcon);
-      }
-    });
-    inTimer.setRepeats(false);
+        inLabel.setToolTipText(resources.getString("monitor.in"));
+        inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 
-    outTimer = new Timer(500, new ActionListener() {
-      public void actionPerformed(ActionEvent ev) {
+        outLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
         outLabel.setIcon(noneIcon);
-      }
-    });
-    outTimer.setRepeats(false);
-  }
+        outLabel.setToolTipText(resources.getString("monitor.out"));
+        add(outLabel, null);
 
-  public void input() {
-    inLabel.setIcon(inIcon);
-    inTimer.restart();
-  }
+        inTimer = new Timer(500, new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                inLabel.setIcon(noneIcon);
+            }
+        });
+        inTimer.setRepeats(false);
 
-  public void output() {
-    outLabel.setIcon(outIcon);
-    outTimer.restart();
-  }  
+        outTimer = new Timer(500, new ActionListener() {
+            public void actionPerformed(ActionEvent ev) {
+                outLabel.setIcon(noneIcon);
+            }
+        });
+        outTimer.setRepeats(false);
+    }
+
+    public void input() {
+        inLabel.setIcon(inIcon);
+        inTimer.restart();
+    }
+
+    public void output() {
+        outLabel.setIcon(outIcon);
+        outTimer.restart();
+    }
 }

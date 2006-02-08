@@ -18,54 +18,58 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Keyable;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public abstract class KeyableHandler extends ActivateableHandler {
 
-  public KeyableHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
-  }
-
-  public KeyableHandler(AbstractWriter writer, String tag) {
-    super(writer, tag);
-  }
-
-  protected abstract Keyable getKeyable();
-
-  protected Activateable getActivateable() {
-    return getKeyable();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("action".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          getKeyable().setAction(getInteger());
-        }
-      };
-    } else if ("transpose".equals(qName) || "shift".equals(qName)) {
-        new IntegerHandler(getReader()) {
-          public void finished() {
-            getKeyable().setTranspose(getInteger());
-          }
-        };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+    public KeyableHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public KeyableHandler(AbstractWriter writer, String tag) {
+        super(writer, tag);
+    }
 
-    new IntegerHandler(getWriter(), "action"   , getKeyable().getAction()).start();
-    new IntegerHandler(getWriter(), "transpose", getKeyable().getTranspose()).start();
-  }
+    protected abstract Keyable getKeyable();
+
+    protected Activateable getActivateable() {
+        return getKeyable();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("action".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    getKeyable().setAction(getInteger());
+                }
+            };
+        } else if ("transpose".equals(qName) || "shift".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    getKeyable().setTranspose(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "action", getKeyable().getAction())
+                .start();
+        new IntegerHandler(getWriter(), "transpose", getKeyable()
+                .getTranspose()).start();
+    }
 }

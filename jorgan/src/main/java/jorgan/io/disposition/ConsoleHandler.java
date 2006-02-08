@@ -18,149 +18,162 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Console;
+import jorgan.disposition.Element;
+import jorgan.disposition.Reference;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.DoubleHandler;
+import jorgan.xml.handler.IntegerHandler;
+import jorgan.xml.handler.StringHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class ConsoleHandler extends ElementHandler {
 
-  private Console console;
+    private Console console;
 
-  /**
-   * Constructor.
-   */
-  public ConsoleHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
-    
-    console = new Console();
-  }
-
-  public ConsoleHandler(AbstractWriter writer, String tag, Console console) {
-    super(writer, tag);
-    
-    this.console = console;
-  }
-
-  public Console getConsole() {
-    return console;
-  }
-  
-  protected Element getElement() {
-    return console;
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("device".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          console.setDevice(getString());
-        }
-      };
-    } else if ("skin".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          console.setSkin(getString());
-        }
-      };
-    } else if ("zoom".equals(qName)) {
-      new DoubleHandler(getReader()) {
-        public void finished() {
-          console.setZoom(getDouble());
-        }
-      };
-    } else if ("screen".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          console.setScreen(getString());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
-    }
-  }
-
-  public void children() throws IOException {
-    super.children();
-
-    if (console.getDevice() != null) {
-      new StringHandler(getWriter(), "device", console.getDevice()).start();
-    }
-    if (console.getSkin() != null) {
-      new StringHandler(getWriter(), "skin", console.getSkin()).start();
-    }
-    if (console.getScreen() != null) {
-      new StringHandler(getWriter(), "screen", console.getScreen()).start();
-    }
-    new DoubleHandler(getWriter(), "zoom", console.getZoom()).start();
-  }
-  
-  protected ReferenceHandler createReferenceHandler(AbstractReader reader, Attributes attributes) {
-    return new ConsoleReferenceHandler(reader, attributes) {
-      public void finished() {
-        getElement().addReference(getReference());
-      }
-    };
-  }
-
-  protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    return new ConsoleReferenceHandler(writer, tag, reference);
-  }
- 
-  private static class ConsoleReferenceHandler extends ReferenceHandler {
-
-      private int x;
-      private int y;
-      
-      public ConsoleReferenceHandler(AbstractReader reader, Attributes attributes) {
+    /**
+     * Constructor.
+     */
+    public ConsoleHandler(AbstractReader reader, Attributes attributes) {
         super(reader, attributes);
-      }
 
-      public ConsoleReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-        super(writer, tag, reference);
-      }
+        console = new Console();
+    }
 
-      public void startElement(String uri, String localName,
-                               String qName, Attributes attributes) {
+    public ConsoleHandler(AbstractWriter writer, String tag, Console console) {
+        super(writer, tag);
 
-        if ("x".equals(qName)) {
-          new IntegerHandler(getReader()) {
-            public void finished() {
-              x = getInteger();
-            }
-          };
-        } else if ("y".equals(qName)) {
-            new IntegerHandler(getReader()) {
-              public void finished() {
-                y = getInteger();
-              }
+        this.console = console;
+    }
+
+    public Console getConsole() {
+        return console;
+    }
+
+    protected Element getElement() {
+        return console;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("device".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    console.setDevice(getString());
+                }
+            };
+        } else if ("skin".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    console.setSkin(getString());
+                }
+            };
+        } else if ("zoom".equals(qName)) {
+            new DoubleHandler(getReader()) {
+                public void finished() {
+                    console.setZoom(getDouble());
+                }
+            };
+        } else if ("screen".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    console.setScreen(getString());
+                }
             };
         } else {
-          super.startElement(uri, localName, qName, attributes);
+            super.startElement(uri, localName, qName, attributes);
         }
-      }
+    }
 
-      public void children() throws IOException {
+    public void children() throws IOException {
         super.children();
 
-        Console.LocationReference reference = (Console.LocationReference)getReference(); 
+        if (console.getDevice() != null) {
+            new StringHandler(getWriter(), "device", console.getDevice())
+                    .start();
+        }
+        if (console.getSkin() != null) {
+            new StringHandler(getWriter(), "skin", console.getSkin()).start();
+        }
+        if (console.getScreen() != null) {
+            new StringHandler(getWriter(), "screen", console.getScreen())
+                    .start();
+        }
+        new DoubleHandler(getWriter(), "zoom", console.getZoom()).start();
+    }
 
-        new IntegerHandler(getWriter(), "x", reference.getX()).start();
-        new IntegerHandler(getWriter(), "y", reference.getY()).start();
-      }
+    protected ReferenceHandler createReferenceHandler(AbstractReader reader,
+            Attributes attributes) {
+        return new ConsoleReferenceHandler(reader, attributes) {
+            public void finished() {
+                getElement().addReference(getReference());
+            }
+        };
+    }
 
-      protected Reference createReference(Element element) {
-        Console.LocationReference reference = new Console.LocationReference(element); 
-        
-        reference.setX(x);
-        reference.setY(y);
-         
-        return reference;  
-      }
-  }  
+    protected ReferenceHandler createReferenceHandler(AbstractWriter writer,
+            String tag, Reference reference) {
+        return new ConsoleReferenceHandler(writer, tag, reference);
+    }
+
+    private static class ConsoleReferenceHandler extends ReferenceHandler {
+
+        private int x;
+
+        private int y;
+
+        public ConsoleReferenceHandler(AbstractReader reader,
+                Attributes attributes) {
+            super(reader, attributes);
+        }
+
+        public ConsoleReferenceHandler(AbstractWriter writer, String tag,
+                Reference reference) {
+            super(writer, tag, reference);
+        }
+
+        public void startElement(String uri, String localName, String qName,
+                Attributes attributes) {
+
+            if ("x".equals(qName)) {
+                new IntegerHandler(getReader()) {
+                    public void finished() {
+                        x = getInteger();
+                    }
+                };
+            } else if ("y".equals(qName)) {
+                new IntegerHandler(getReader()) {
+                    public void finished() {
+                        y = getInteger();
+                    }
+                };
+            } else {
+                super.startElement(uri, localName, qName, attributes);
+            }
+        }
+
+        public void children() throws IOException {
+            super.children();
+
+            Console.LocationReference reference = (Console.LocationReference) getReference();
+
+            new IntegerHandler(getWriter(), "x", reference.getX()).start();
+            new IntegerHandler(getWriter(), "y", reference.getY()).start();
+        }
+
+        protected Reference createReference(Element element) {
+            Console.LocationReference reference = new Console.LocationReference(
+                    element);
+
+            reference.setX(x);
+            reference.setY(y);
+
+            return reference;
+        }
+    }
 }

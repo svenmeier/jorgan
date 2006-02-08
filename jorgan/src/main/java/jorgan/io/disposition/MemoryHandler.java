@@ -18,60 +18,63 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
-
-import jorgan.disposition.*;
-import jorgan.xml.*;
+import jorgan.disposition.Continuous;
+import jorgan.disposition.Memory;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 import jorgan.xml.handler.StringHandler;
 
-public class MemoryHandler extends CounterHandler {
+import org.xml.sax.Attributes;
 
-  private Memory memory;
-  
-  private int level = 0;
-  
-  public MemoryHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+public class MemoryHandler extends ContinuousHandler {
 
-    memory = new Memory();
-  }
+    private Memory memory;
 
-  public MemoryHandler(AbstractWriter writer, String tag, Memory memory) {
-    super(writer, tag);
+    private int level = 0;
 
-    this.memory = memory;
-  }
+    public MemoryHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-  public Memory getMemory() {
-      return memory;
+        memory = new Memory();
     }
 
-  protected Counter getCounter() {
-    return getMemory();
-  }
-  
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+    public MemoryHandler(AbstractWriter writer, String tag, Memory memory) {
+        super(writer, tag);
 
-    if ("title".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          memory.setTitle(level, getString());
-          level++;
+        this.memory = memory;
+    }
+
+    public Memory getMemory() {
+        return memory;
+    }
+
+    protected Continuous getContinuous() {
+        return getMemory();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("title".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    memory.setTitle(level, getString());
+                    level++;
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
         }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public void children() throws IOException {
+        super.children();
 
-    for (level = 0; level < 128; level++) {
-        new StringHandler(getWriter(), "title", memory.getTitle(level)).start();
+        for (level = 0; level < 128; level++) {
+            new StringHandler(getWriter(), "title", memory.getTitle(level))
+                    .start();
+        }
     }
-  }  
 }

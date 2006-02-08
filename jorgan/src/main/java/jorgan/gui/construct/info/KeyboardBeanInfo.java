@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Keyboard;
 import jorgan.gui.construct.editor.ChannelEditor;
 import jorgan.gui.construct.editor.CommandEditor;
 import jorgan.gui.construct.editor.DataEditor;

@@ -16,84 +16,94 @@ import javax.xml.transform.stream.StreamSource;
 import jorgan.xml.XMLFormatException;
 
 public class Conversion {
-    
-  private static Conversion[] conversions = new Conversion[]{
-	  new Conversion("<organ>"                                        , "convert1.0To2.0-beta.xsl"),
-	  new Conversion("<organ *version=\"(2\\.0-beta.*|2\\.0-RC1)\" *>", "convert2.0-betaTo2.0.xsl"),
-	  new Conversion("<organ *version=\"2\\.0\" *>"                   , "convert2.0To2.1-beta.xsl"),
-      new Conversion("<organ *version=\"2\\.1-beta.*\" *>"            , "convert2.1-betaTo2.1.xsl"),
-      new Conversion("<organ *version=\"2\\.1.*\" *>"                 , "convert2.1To2.2-beta.xsl"),
-      new Conversion("<organ *version=\"2\\.2-beta.*\" *>"            , "convert2.2-betaTo2.2.xsl"),
-      new Conversion("<organ *version=\"2\\.2.*\" *>"                 , "convert2.2To2.3.xsl")
-  };
 
-  private String pattern;
-  private String xsl;
+    private static Conversion[] conversions = new Conversion[] {
+            new Conversion("<organ>", "convert1.0To2.0-beta.xsl"),
+            new Conversion("<organ *version=\"(2\\.0-beta.*|2\\.0-RC1)\" *>",
+                    "convert2.0-betaTo2.0.xsl"),
+            new Conversion("<organ *version=\"2\\.0\" *>",
+                    "convert2.0To2.1-beta.xsl"),
+            new Conversion("<organ *version=\"2\\.1-beta.*\" *>",
+                    "convert2.1-betaTo2.1.xsl"),
+            new Conversion("<organ *version=\"2\\.1.*\" *>",
+                    "convert2.1To2.2-beta.xsl"),
+            new Conversion("<organ *version=\"2\\.2-beta.*\" *>",
+                    "convert2.2-betaTo2.2.xsl"),
+            new Conversion("<organ *version=\"2\\.2.*\" *>",
+                    "convert2.2To2.3.xsl") };
 
-  public Conversion(String pattern, String xsl) {
-    this.pattern = pattern;
-    this.xsl     = xsl;
-  }
+    private String pattern;
 
-  public boolean isApplicable(String header) {
-    Pattern pattern = Pattern.compile(this.pattern);
-    Matcher matcher = pattern.matcher(header);
+    private String xsl;
 
-    return matcher.find();
-  }
+    public Conversion(String pattern, String xsl) {
+        this.pattern = pattern;
+        this.xsl = xsl;
+    }
 
-  public InputStream convert(InputStream in) throws Exception {
-    Transformer transform = TransformerFactory.newInstance().newTransformer(new StreamSource(Conversion.class.getResourceAsStream(xsl)));
-      
-    ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
-    
-    transform.transform(new StreamSource(in), new StreamResult(byteArrayOut));
-    
-    in = new ByteArrayInputStream(byteArrayOut.toByteArray());
-        
-    return in;
-  }
+    public boolean isApplicable(String header) {
+        Pattern pattern = Pattern.compile(this.pattern);
+        Matcher matcher = pattern.matcher(header);
 
-  public static InputStream convertAll(InputStream in) throws XMLFormatException {
+        return matcher.find();
+    }
 
-    in = new BufferedInputStream(in);
+    public InputStream convert(InputStream in) throws Exception {
+        Transformer transform = TransformerFactory.newInstance()
+                .newTransformer(
+                        new StreamSource(Conversion.class
+                                .getResourceAsStream(xsl)));
 
-    try {
-      String header = getHeader(in);
+        ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
 
-      int index = 0;
-      while (index < conversions.length) {
-        if (conversions[index].isApplicable(header)) {
-          break;
+        transform.transform(new StreamSource(in),
+                new StreamResult(byteArrayOut));
+
+        in = new ByteArrayInputStream(byteArrayOut.toByteArray());
+
+        return in;
+    }
+
+    public static InputStream convertAll(InputStream in)
+            throws XMLFormatException {
+
+        in = new BufferedInputStream(in);
+
+        try {
+            String header = getHeader(in);
+
+            int index = 0;
+            while (index < conversions.length) {
+                if (conversions[index].isApplicable(header)) {
+                    break;
+                }
+                index++;
+            }
+
+            while (index < conversions.length) {
+                in = conversions[index].convert(in);
+                index++;
+            }
+        } catch (Exception ex) {
+            throw new XMLFormatException(ex);
         }
-        index++;
-      }
 
-      while (index < conversions.length) {
-        in = conversions[index].convert(in);
-        index++;
-      }
-    } catch (Exception ex) {
-      throw new XMLFormatException(ex);
+        return in;
     }
 
-    return in;
-  }
+    private static String getHeader(InputStream in) throws IOException {
+        in.mark(2048);
 
-  private static String getHeader(InputStream in) throws IOException {
-    in.mark(2048);
+        byte[] bytes = new byte[1024];
+        int offset = 0;
+        while (offset != -1 && offset < bytes.length) {
+            offset = in.read(bytes, offset, bytes.length - offset);
+        }
 
-    byte[] bytes = new byte[1024];
-    int offset = 0;
-    while (offset != -1 && offset < bytes.length) {
-      offset = in.read(bytes, offset, bytes.length - offset);
+        in.reset();
+
+        String header = new String(bytes, "UTF-8");
+
+        return header;
     }
-      
-    in.reset();
-
-    String header = new String(bytes, "UTF-8");
-
-    return header;
-  }
 }
-

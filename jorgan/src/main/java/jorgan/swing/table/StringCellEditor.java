@@ -41,7 +41,7 @@ public class StringCellEditor extends AbstractCellEditor implements TableCellEdi
           }
         });
     }
-    
+
     public Component getTableCellEditorComponent(JTable table, Object value,
            boolean isSelected, int row, int column) {
         textField.setText((String)value);

@@ -18,63 +18,67 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
-
-import org.xml.sax.*;
+import java.io.IOException;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.io.DispositionReader;
-import jorgan.xml.*;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.XMLWriter;
 import jorgan.xml.handler.Handler;
+
+import org.xml.sax.Attributes;
 
 /**
  * A handler for references to another object.
  */
 public class ReferenceHandler extends Handler {
 
-  private Reference reference;
+    private Reference reference;
 
-  private String ref;
+    private String ref;
 
-  public ReferenceHandler(AbstractReader reader, Attributes attributes) {
-    super(reader);
+    public ReferenceHandler(AbstractReader reader, Attributes attributes) {
+        super(reader);
 
-    ref = attributes.getValue(ElementHandler.ID_ATTRIBUTE_NAME);
+        ref = attributes.getValue(ElementHandler.ID_ATTRIBUTE_NAME);
 
-    ((DispositionReader)reader).addReferenceHandler(this);
-  }
+        ((DispositionReader) reader).addReferenceHandler(this);
+    }
 
-  public ReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    super(writer, tag);
+    public ReferenceHandler(AbstractWriter writer, String tag,
+            Reference reference) {
+        super(writer, tag);
 
-    ref = "" + System.identityHashCode(reference.getElement());
+        ref = "" + System.identityHashCode(reference.getElement());
 
-    this.reference = reference;
-  }
+        this.reference = reference;
+    }
 
-  public void attributes(XMLWriter writer) throws IOException {
-    
-    writer.attribute(ElementHandler.ID_ATTRIBUTE_NAME, ref);
-  }
+    public void attributes(XMLWriter writer) throws IOException {
 
-  public Reference getReference() {
-    return reference;
-  }
-  
-  /**
-   * Overriden to delay call of <code>finished()</code> to resolve.
-   */
-  protected void finish() {
-  }
+        writer.attribute(ElementHandler.ID_ATTRIBUTE_NAME, ref);
+    }
 
-  public void resolve() throws IOException {
-    reference = createReference(((DispositionReader)getReader()).lookupElement(ref));
+    public Reference getReference() {
+        return reference;
+    }
 
-    finished();
-  }
-  
-  protected Reference createReference(Element element) {
-    return new Reference(element);  
-  }
+    /**
+     * Overriden to delay call of <code>finished()</code> to resolve.
+     */
+    protected void finish() {
+    }
+
+    public void resolve() throws IOException {
+        reference = createReference(((DispositionReader) getReader())
+                .lookupElement(ref));
+
+        finished();
+    }
+
+    protected Reference createReference(Element element) {
+        return new Reference(element);
+    }
 }

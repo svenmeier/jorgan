@@ -18,54 +18,60 @@
  */
 package jorgan.gui.console;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 /**
  * The comparator used to sort the views according to their location.
  */
 public class ViewComparator implements Comparator {
 
-  private boolean horizontal;
-  private boolean vertical;
-  
-  /**
-   * Create a new comparator.
-   * 
-   * @param horizontal  should views be compared horizontally
-   * @param vertical    should views be compared vertically
-   */
-  public ViewComparator(boolean horizontal, boolean vertical) {
-    if (!horizontal && !vertical) {
-      throw new IllegalArgumentException("need compare horizonal or vertical");
-    }
-    
-    this.horizontal = horizontal;
-    this.vertical   = vertical;
-  }
-  
-  public int compare(Object o1, Object o2) {
-    View view1 = (View)o1;
-    View view2 = (View)o2;
+    private boolean horizontal;
 
-    int v0 = 0;
-    int v1 = 0;
-    if (horizontal) {
-      v0 += view1.getX();
-      v1 += view2.getX();
-    }
-    if (vertical) {
-      v0 += view1.getY();
-      v1 += view2.getY();
+    private boolean vertical;
+
+    /**
+     * Create a new comparator.
+     * 
+     * @param horizontal
+     *            should views be compared horizontally
+     * @param vertical
+     *            should views be compared vertically
+     */
+    public ViewComparator(boolean horizontal, boolean vertical) {
+        if (!horizontal && !vertical) {
+            throw new IllegalArgumentException(
+                    "need compare horizonal or vertical");
+        }
+
+        this.horizontal = horizontal;
+        this.vertical = vertical;
     }
 
-    if (v0 < v1) {
-      return 1;
-    } else {
-      return -1;
+    public int compare(Object o1, Object o2) {
+        View view1 = (View) o1;
+        View view2 = (View) o2;
+
+        int v0 = 0;
+        int v1 = 0;
+        if (horizontal) {
+            v0 += view1.getX();
+            v1 += view2.getX();
+        }
+        if (vertical) {
+            v0 += view1.getY();
+            v1 += view2.getY();
+        }
+
+        if (v0 < v1) {
+            return 1;
+        } else {
+            return -1;
+        }
     }
-  }
-  
-  public void sort(List list) {
-    Collections.sort(list, this);
-  }
+
+    public void sort(List list) {
+        Collections.sort(list, this);
+    }
 }

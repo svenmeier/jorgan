@@ -18,107 +18,115 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
+import jorgan.xml.handler.StringHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class KeyboardHandler extends ElementHandler {
 
-  private Keyboard keyboard;
+    private Keyboard keyboard;
 
-  /**
-   * Constructor.
-   */
-  public KeyboardHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    /**
+     * Constructor.
+     */
+    public KeyboardHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    keyboard = new Keyboard();
-  }
-  
-  public KeyboardHandler(AbstractWriter writer, String tag, Keyboard keyboard) {
-    super(writer, tag);
-    
-    this.keyboard = keyboard;
-  }
-
-  public Keyboard getKeyboard() {
-    return keyboard;
-  }
-
-  protected Element getElement() {
-    return getKeyboard();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("from".equals(qName)) {
-      new KeyHandler(getReader()) {
-        public void finished() {
-          keyboard.setFrom(getKey());
-        }
-      };
-    } else if ("to".equals(qName)) {
-      new KeyHandler(getReader()) {
-        public void finished() {
-          keyboard.setTo(getKey());
-        }
-      };
-    } else if ("transpose".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          keyboard.setTranspose(getInteger());
-        }
-      };
-    } else if ("channel".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          keyboard.setChannel(getInteger());
-        }
-      };
-    } else if ("command".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          keyboard.setCommand(getInteger());
-        }
-      };
-    } else if ("threshold".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          keyboard.setThreshold(getInteger());
-        }
-      };
-    } else if ("device".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          keyboard.setDevice(getString());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        keyboard = new Keyboard();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public KeyboardHandler(AbstractWriter writer, String tag, Keyboard keyboard) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "channel"  , keyboard.getChannel()).start();
-    new IntegerHandler(getWriter(), "command"  , keyboard.getCommand()).start();
-    new IntegerHandler(getWriter(), "threshold", keyboard.getThreshold()).start();
-    new IntegerHandler(getWriter(), "transpose", keyboard.getTranspose()).start();
+        this.keyboard = keyboard;
+    }
 
-    if (keyboard.getFrom() != null) {
-      new KeyHandler(getWriter(), "from", keyboard.getFrom()).start();
+    public Keyboard getKeyboard() {
+        return keyboard;
     }
-    if (keyboard.getTo() != null) {
-      new KeyHandler(getWriter(), "to", keyboard.getTo()).start();
+
+    protected Element getElement() {
+        return getKeyboard();
     }
-    if (keyboard.getDevice() != null) {
-      new StringHandler(getWriter(), "device", keyboard.getDevice()).start();
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("from".equals(qName)) {
+            new KeyHandler(getReader()) {
+                public void finished() {
+                    keyboard.setFrom(getKey());
+                }
+            };
+        } else if ("to".equals(qName)) {
+            new KeyHandler(getReader()) {
+                public void finished() {
+                    keyboard.setTo(getKey());
+                }
+            };
+        } else if ("transpose".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyboard.setTranspose(getInteger());
+                }
+            };
+        } else if ("channel".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyboard.setChannel(getInteger());
+                }
+            };
+        } else if ("command".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyboard.setCommand(getInteger());
+                }
+            };
+        } else if ("threshold".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyboard.setThreshold(getInteger());
+                }
+            };
+        } else if ("device".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    keyboard.setDevice(getString());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
     }
-  }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "channel", keyboard.getChannel())
+                .start();
+        new IntegerHandler(getWriter(), "command", keyboard.getCommand())
+                .start();
+        new IntegerHandler(getWriter(), "threshold", keyboard.getThreshold())
+                .start();
+        new IntegerHandler(getWriter(), "transpose", keyboard.getTranspose())
+                .start();
+
+        if (keyboard.getFrom() != null) {
+            new KeyHandler(getWriter(), "from", keyboard.getFrom()).start();
+        }
+        if (keyboard.getTo() != null) {
+            new KeyHandler(getWriter(), "to", keyboard.getTo()).start();
+        }
+        if (keyboard.getDevice() != null) {
+            new StringHandler(getWriter(), "device", keyboard.getDevice())
+                    .start();
+        }
+    }
 }

@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Stop;
 import jorgan.gui.construct.editor.AllocationEditor;
 import jorgan.gui.construct.editor.DataEditor;
 

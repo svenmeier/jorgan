@@ -18,62 +18,67 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Tremulant;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class TremulantHandler extends ActivateableHandler {
 
-  private Tremulant tremulant;
+    private Tremulant tremulant;
 
-  public TremulantHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public TremulantHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    tremulant = new Tremulant();
-  }
-
-  public TremulantHandler(AbstractWriter writer, String tag, Tremulant tremulant) {
-    super(writer, tag);
-
-    this.tremulant = tremulant;
-  }
-
-  public Tremulant getTremulant() {
-    return tremulant;
-  }
-
-  protected Activateable getActivateable() {
-    return getTremulant();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("frequency".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          tremulant.setFrequency(getInteger());
-        }
-      };
-    } else if ("amplitude".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          tremulant.setAmplitude(getInteger());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        tremulant = new Tremulant();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public TremulantHandler(AbstractWriter writer, String tag,
+            Tremulant tremulant) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "frequency", tremulant.getFrequency()).start();
-    new IntegerHandler(getWriter(), "amplitude", tremulant.getAmplitude()).start();
-  }
+        this.tremulant = tremulant;
+    }
+
+    public Tremulant getTremulant() {
+        return tremulant;
+    }
+
+    protected Activateable getActivateable() {
+        return getTremulant();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("frequency".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    tremulant.setFrequency(getInteger());
+                }
+            };
+        } else if ("amplitude".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    tremulant.setAmplitude(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "frequency", tremulant.getFrequency())
+                .start();
+        new IntegerHandler(getWriter(), "amplitude", tremulant.getAmplitude())
+                .start();
+    }
 }

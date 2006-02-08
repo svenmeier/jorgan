@@ -18,25 +18,23 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignRightLayout extends ViewLayout {
 
-  private int x;
-  
-  public AlignRightLayout() {
-    super(resources.getString("view.align.right"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignRight.gif")));
-  }
+    private int x;
 
-  protected void init(View pressed, List views) {
-    x = pressed.getX() + pressed.getWidth();
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(x - view.getWidth(), view.getY());            
-  }
+    public AlignRightLayout() {
+        super("alignRight");
+    }
+
+    protected void init(View pressed, List views) {
+        x = pressed.getX() + pressed.getWidth();
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, x - view.getWidth(), view.getY());
+    }
 }

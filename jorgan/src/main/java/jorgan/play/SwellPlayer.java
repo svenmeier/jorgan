@@ -18,96 +18,103 @@
  */
 package jorgan.play;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.disposition.*;
-import jorgan.disposition.event.*;
-import jorgan.play.sound.*;
+import jorgan.disposition.Swell;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.play.sound.Sound;
+import jorgan.play.sound.SoundWrapper;
 
 /**
  * A player for a swell.
  */
-public class SwellPlayer extends SliderPlayer implements SoundEffectPlayer {
+public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
 
-  private List sounds = new ArrayList();
+    private List sounds = new ArrayList();
 
-  public SwellPlayer(Swell swell) {
-    super(swell);
-  }
-
-  protected void closeImpl() {
-    sounds.clear();
-  }
-
-  public void elementChanged(OrganEvent event) {
-    super.elementChanged(event);
-    
-    if (isOpen()) {
-      for (int s = 0; s < sounds.size(); s++) {
-        SwellSound sound = (SwellSound)sounds.get(s);
-        sound.flush();
-      }
-    }
-  }
-
-  public Sound effectSound(Sound sound) {
-
-    return new SwellSound(sound);
-  }
-
-  private class SwellSound extends SoundWrapper {
-    
-    private int volume = 127;
-    
-    private int oldVolume = -1;
-    private int oldCutoff = -1;
-    
-    public SwellSound(Sound sound) {
-      super(sound);
-
-      sounds.add(this);
+    public SwellPlayer(Swell swell) {
+        super(swell);
     }
 
-    public void setVolume(int volume) {
-      this.volume = volume;
-      
-      flush();
+    protected void closeImpl() {
+        sounds.clear();
     }
 
-    public void stop() {
-      super.stop();
+    public void elementChanged(OrganEvent event) {
+        super.elementChanged(event);
 
-      sounds.remove(this);
-    }
-    
-    private void flush() {
-      Swell swell = (Swell)getElement();
-
-      boolean output = false;
-      
-      int newVolume = (swell.getVolume() + (swell.getPosition() * (127 - swell.getVolume()) / 127)) * volume / 127;
-      if (newVolume != oldVolume) {
-        sound.setVolume(newVolume);
-        oldVolume = newVolume;
-        
-        output = true;
-      }
-
-      // Change cutoff only if lower than max value, so user can choose to not use
-      // this feature in case of soundfonts with preset cutoff values.
-      if (swell.getCutoff() < 127) {
-        int newCutoff = swell.getCutoff() + (swell.getPosition() * (127 - swell.getCutoff()) / 127);
-        if (newCutoff != oldCutoff) {
-          sound.setCutoff(newCutoff);
-          oldCutoff = newCutoff;
-
-          output = true;
+        if (isOpen()) {
+            for (int s = 0; s < sounds.size(); s++) {
+                SwellSound sound = (SwellSound) sounds.get(s);
+                sound.flush();
+            }
         }
-      } 
-      
-      if (output) {
-        fireOutputProduced();
-      }
     }
-  }
+
+    public Sound effectSound(Sound sound) {
+
+        return new SwellSound(sound);
+    }
+
+    private class SwellSound extends SoundWrapper {
+
+        private int volume = 127;
+
+        private int oldVolume = -1;
+
+        private int oldCutoff = -1;
+
+        public SwellSound(Sound sound) {
+            super(sound);
+
+            sounds.add(this);
+        }
+
+        public void setVolume(int volume) {
+            this.volume = volume;
+
+            flush();
+        }
+
+        public void stop() {
+            super.stop();
+
+            sounds.remove(this);
+        }
+
+        private void flush() {
+            Swell swell = (Swell) getElement();
+
+            boolean output = false;
+
+            int newVolume = (swell.getVolume() + (swell.getPosition()
+                    * (127 - swell.getVolume()) / 127))
+                    * volume / 127;
+            if (newVolume != oldVolume) {
+                sound.setVolume(newVolume);
+                oldVolume = newVolume;
+
+                output = true;
+            }
+
+            // Change cutoff only if lower than max value, so user can choose to
+            // not use
+            // this feature in case of soundfonts with preset cutoff values.
+            if (swell.getCutoff() < 127) {
+                int newCutoff = swell.getCutoff()
+                        + (swell.getPosition() * (127 - swell.getCutoff()) / 127);
+                if (newCutoff != oldCutoff) {
+                    sound.setCutoff(newCutoff);
+                    oldCutoff = newCutoff;
+
+                    output = true;
+                }
+            }
+
+            if (output) {
+                fireOutputProduced();
+            }
+        }
+    }
 }

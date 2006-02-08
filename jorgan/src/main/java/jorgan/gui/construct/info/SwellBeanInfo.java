@@ -18,18 +18,18 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Swell;
 import jorgan.gui.construct.editor.DataEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Swell}.
  */
-public class SwellBeanInfo extends SliderBeanInfo {
+public class SwellBeanInfo extends ContinuousBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();
 
-        add("volume",      Swell.class, DataEditor.class);
-        add("cutoff",      Swell.class, DataEditor.class);
+        add("volume", Swell.class, DataEditor.class);
+        add("cutoff", Swell.class, DataEditor.class);
     }
 }

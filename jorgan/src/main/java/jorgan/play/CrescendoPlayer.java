@@ -18,49 +18,51 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.*;
+import jorgan.disposition.ActivateableSequence;
 import jorgan.disposition.event.OrganEvent;
 
 /**
  * A player for a crescendo.
  */
-public class CrescendoPlayer extends SliderPlayer {
+public class CrescendoPlayer extends ContinuousPlayer {
 
-  private ActivateablePlayer player;
-  
-  public CrescendoPlayer(Crescendo crescendo) {
-    super(crescendo);
-  }
-  
-  protected void closeImpl() {
-    super.closeImpl();
-      
-    player = null;
-  }
+    private ActivateablePlayer player;
 
-  public void elementChanged(OrganEvent event) {
-    super.elementChanged(event);
-    
-    if (isOpen()) {
-      Crescendo crescendo = (Crescendo)getElement();
-
-      if (crescendo.getReferenceCount() > 0) {
-        int current = (crescendo.getPosition() * crescendo.getReferenceCount() / 128);
-          
-        ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(crescendo.getReference(current).getElement());
-
-        if (player != this.player) {
-          if (player != null) {
-            player.activate();
-          }
-              
-          if (this.player != null) {
-            this.player.deactivate();
-          }
-              
-          this.player = player;
-        }
-      }
+    public CrescendoPlayer(ActivateableSequence crescendo) {
+        super(crescendo);
     }
-  }
+
+    protected void closeImpl() {
+        super.closeImpl();
+
+        player = null;
+    }
+
+    public void elementChanged(OrganEvent event) {
+        super.elementChanged(event);
+
+        if (isOpen()) {
+            ActivateableSequence crescendo = (ActivateableSequence) getElement();
+
+            if (crescendo.getReferenceCount() > 0) {
+                int current = (crescendo.getPosition()
+                        * crescendo.getReferenceCount() / 128);
+
+                ActivateablePlayer player = (ActivateablePlayer) getOrganPlay()
+                        .getPlayer(crescendo.getReference(current).getElement());
+
+                if (player != this.player) {
+                    if (player != null) {
+                        player.activate();
+                    }
+
+                    if (this.player != null) {
+                        this.player.deactivate();
+                    }
+
+                    this.player = player;
+                }
+            }
+        }
+    }
 }
