@@ -37,21 +37,8 @@ public class Incrementer extends Initiator {
             Reference reference = (Reference) iterator.next();
             Continuous continuous = (Continuous) reference.getElement();
 
-            continuous.setPosition(increment(continuous.getPosition()));
+            continuous.increment(delta);
         }
-    }
-
-    private int increment(int position) {
-        if (delta > 0) {
-            position += delta;
-            position -= (position % delta);
-        } else {
-            position += delta - 1;
-            if (position >= 0) {
-                position -= delta + (position % delta);
-            }
-        }
-        return position;
     }
 
     public int getDelta() {

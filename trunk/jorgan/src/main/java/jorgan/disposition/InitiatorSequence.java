@@ -53,4 +53,8 @@ public class InitiatorSequence extends Continuous implements Combination.Observe
             }
         }
     }
+    
+    protected int getIncrementMax() {
+        return getReferenceCount();
+    }
 }

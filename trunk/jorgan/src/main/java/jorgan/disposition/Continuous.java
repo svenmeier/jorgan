@@ -87,4 +87,34 @@ public abstract class Continuous extends Element {
     public void setReverse(boolean reverse) {
         this.reverse = reverse;
     }
+
+    public void increment(int delta) {
+        int position = 0;
+        if (delta > 0) {
+            position += delta;
+            position -= (position % delta);
+        } else {
+            position += delta - 1;
+            if (position >= 0) {
+                position -= delta + (position % delta);
+            }
+        }
+        
+        if (position < getIncrementMin()) {
+            position = getIncrementMin();
+        }
+        if (position > getIncrementMax()) {
+            position = getIncrementMax();
+        }
+
+        setPosition(position);
+    }
+    
+    protected int getIncrementMin() {
+        return 0;
+    }
+    
+    protected int getIncrementMax() {
+        return 127;
+    }
 }
