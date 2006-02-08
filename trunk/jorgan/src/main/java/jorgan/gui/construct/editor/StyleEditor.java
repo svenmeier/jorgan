@@ -22,66 +22,60 @@ import java.beans.*;
 import java.util.Iterator;
 
 import jorgan.disposition.*;
-import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 
 /**
  * Property editor for a skin property.
  */
-public class StyleEditor extends PropertyEditorSupport implements ElementAwareEditor {
+public class StyleEditor extends PropertyEditorSupport implements
+        ElementAwareEditor {
 
-  private Console console;
+    private Console console;
 
-  public void setElement(Element element) {
-    if (element instanceof Console) {
-      console = (Console)element;
-    } else {
-      Iterator iterator = element.referrer(Console.class).iterator();
-      if (iterator.hasNext()) {
-        console = (Console)iterator.next();
-      } else {
-        console = null;
-      }
-    }
-  }
-
-  public String[] getTags() {
-
-    String[] tags = new String[0];
-    
-    if (console != null) {
-      String skinName = console.getSkin();
-      if (skinName != null) {
-        Skin skin = SkinManager.instance().getSkin(skinName);
-        if (skin != null) {
-          tags = new String[1 + skin.getStyleCount()];       
-          for (int s = 0; s < skin.getStyleCount(); s++) {
-            tags[1 + s] = skin.getStyle(s).getName();
-          }        
-        }      
-      }
+    public void setElement(Element element) {
+        if (element instanceof Console) {
+            console = (Console) element;
+        } else {
+            Iterator iterator = element.referrer(Console.class).iterator();
+            if (iterator.hasNext()) {
+                console = (Console) iterator.next();
+            } else {
+                console = null;
+            }
+        }
     }
 
-    return tags;
-  }
+    public String[] getTags() {
 
-  public String getAsText() {
+        String[] tags = new String[0];
 
-    String style = (String)getValue();
+        if (console != null) {
+            String skinName = console.getSkin();
+            if (skinName != null) {
+                tags = SkinManager.instance().getStyleNames(skinName);
+            }
+        }
 
-    if (style == null) {
-      return "";
-    } else {
-      return style;
+        return tags;
     }
-  }
 
-  public void setAsText(String text) {
+    public String getAsText() {
 
-    if (text == null || "".equals(text)) {
-      setValue(null);
-    } else {
-      setValue(text);
+        String style = (String) getValue();
+
+        if (style == null) {
+            return "";
+        } else {
+            return style;
+        }
     }
-  }
+
+    public void setAsText(String text) {
+
+        if (text == null || "".equals(text)) {
+            setValue(null);
+        } else {
+            setValue(text);
+        }
+    }
 }

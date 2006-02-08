@@ -18,7 +18,8 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Activator;
+import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 
 /**
@@ -26,40 +27,42 @@ import jorgan.disposition.event.OrganEvent;
  */
 public class ActivatorPlayer extends ActivateablePlayer {
 
-  private boolean activating = false;
-  
-  public ActivatorPlayer(Activator activator) {
-    super(activator);
-  }
-  
-  protected void closeImpl() {
-    super.closeImpl();
-    
-    activating = false;
-  }
-  
-  public void elementChanged(OrganEvent event) {
-    if (isOpen()) {
-      Activator activator = (Activator)getElement();
-      if (isActive()) {
-        if (!activating) {
-          for (int r = 0; r < activator.getReferenceCount(); r++) {
-            Reference reference = activator.getReference(r);
-            ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(reference.getElement());
-            player.activate();
-          }
-          activating = true;
-        }
-      } else {
-        if (activating) {
-          for (int r = 0; r < activator.getReferenceCount(); r++) {
-            Reference reference = activator.getReference(r);
-            ActivateablePlayer player = (ActivateablePlayer)getOrganPlay().getPlayer(reference.getElement());
-            player.deactivate();
-          }
-          activating = false;
-        }
-      }
+    private boolean activating = false;
+
+    public ActivatorPlayer(Activator activator) {
+        super(activator);
     }
-  }
+
+    protected void closeImpl() {
+        super.closeImpl();
+
+        activating = false;
+    }
+
+    public void elementChanged(OrganEvent event) {
+        if (isOpen()) {
+            Activator activator = (Activator) getElement();
+            if (isActive()) {
+                if (!activating) {
+                    for (int r = 0; r < activator.getReferenceCount(); r++) {
+                        Reference reference = activator.getReference(r);
+                        ActivateablePlayer player = (ActivateablePlayer) getOrganPlay()
+                                .getPlayer(reference.getElement());
+                        player.activate();
+                    }
+                    activating = true;
+                }
+            } else {
+                if (activating) {
+                    for (int r = 0; r < activator.getReferenceCount(); r++) {
+                        Reference reference = activator.getReference(r);
+                        ActivateablePlayer player = (ActivateablePlayer) getOrganPlay()
+                                .getPlayer(reference.getElement());
+                        player.deactivate();
+                    }
+                    activating = false;
+                }
+            }
+        }
+    }
 }

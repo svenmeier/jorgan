@@ -18,32 +18,35 @@
  */
 package jorgan.io.disposition;
 
-import org.xml.sax.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Activator;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
+import org.xml.sax.Attributes;
 
 public class ActivatorHandler extends ActivateableHandler {
 
-  private Activator activator;
+    private Activator activator;
 
-  public ActivatorHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public ActivatorHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    activator = new Activator();
-  }
+        activator = new Activator();
+    }
 
-  public ActivatorHandler(AbstractWriter writer, String tag, Activator activator) {
-    super(writer, tag);
+    public ActivatorHandler(AbstractWriter writer, String tag,
+            Activator activator) {
+        super(writer, tag);
 
-    this.activator = activator;
-  }
+        this.activator = activator;
+    }
 
-  public Activator getActivator() {
-    return activator;
-  }
+    public Activator getActivator() {
+        return activator;
+    }
 
-  protected Activateable getActivateable() {
-    return getActivator();
-  }  
+    protected Activateable getActivateable() {
+        return getActivator();
+    }
 }

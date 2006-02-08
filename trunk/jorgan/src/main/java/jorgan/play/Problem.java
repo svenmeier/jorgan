@@ -22,60 +22,63 @@ package jorgan.play;
  * Problem of a player.
  */
 public class Problem {
-  
-  public static final String WARNING = "warning";
-  public static final String ERROR   = "error";
 
-  private String  level;
-  private String  property;
-  private Object  value;
+    public static final String WARNING = "warning";
 
-  public Problem(String level, String property) {
+    public static final String ERROR = "error";
 
-    this.level    = level;
-    this.property = property;
-  }
+    private String level;
 
-  public String getLevel() {
-    return level;
-  }
+    private String property;
 
-  public String getProperty() {
-    return property;
-  }
+    private Object value;
 
-  public Object getValue() {
-    return value;
-  }
-  
-  public Problem value(Object value) {
-    this.value = value;
-    
-    return this;
-  }
-    
-  public boolean equals(Object object) {
-    if (object == null || !(object instanceof Problem)) {
-      return false;
+    public Problem(String level, String property) {
+
+        this.level = level;
+        this.property = property;
     }
-    
-    Problem problem = (Problem)object;
-    
-    if (this.level != problem.level) {
-      return false;
-    }
-    if (!this.property.equals(problem.property)) {
-      return false;
-    }
-    
-    return true;
-  }
 
-  public int hashCode() {
-    return toString().hashCode();
-  }
-  
-  public String toString() {
-    return level + "." + property;
-  }
+    public String getLevel() {
+        return level;
+    }
+
+    public String getProperty() {
+        return property;
+    }
+
+    public Object getValue() {
+        return value;
+    }
+
+    public Problem value(Object value) {
+        this.value = value;
+
+        return this;
+    }
+
+    public boolean equals(Object object) {
+        if (object == null || !(object instanceof Problem)) {
+            return false;
+        }
+
+        Problem problem = (Problem) object;
+
+        if (this.level != problem.level) {
+            return false;
+        }
+        if (!this.property.equals(problem.property)) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int hashCode() {
+        return toString().hashCode();
+    }
+
+    public String toString() {
+        return level + "." + property;
+    }
 }

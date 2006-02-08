@@ -18,65 +18,68 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
-
-import jorgan.disposition.*;
-import jorgan.xml.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Keyer;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 import jorgan.xml.handler.IntegerHandler;
+
+import org.xml.sax.Attributes;
 
 public class KeyerHandler extends ActivateableHandler {
 
-  private Keyer keyer;
+    private Keyer keyer;
 
-  /**
-   * Constructor.
-   */
-  public KeyerHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    /**
+     * Constructor.
+     */
+    public KeyerHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    keyer = new Keyer();
-  }
-  
-  public KeyerHandler(AbstractWriter writer, String tag, Keyer keyer) {
-    super(writer, tag);
-    
-    this.keyer = keyer;
-  }
-
-  public Keyer getKeyer() {
-    return keyer;
-  }
-
-  protected Activateable getActivateable() {
-    return getKeyer();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("pitch".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          keyer.setPitch(getInteger());
-        }
-      };
-    } else if ("velocity".equals(qName)) {
-          new IntegerHandler(getReader()) {
-            public void finished() {
-              keyer.setVelocity(getInteger());
-            }
-          };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        keyer = new Keyer();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public KeyerHandler(AbstractWriter writer, String tag, Keyer keyer) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "pitch", keyer.getPitch()).start();
-    new IntegerHandler(getWriter(), "velocity", keyer.getVelocity()).start();
-  }
+        this.keyer = keyer;
+    }
+
+    public Keyer getKeyer() {
+        return keyer;
+    }
+
+    protected Activateable getActivateable() {
+        return getKeyer();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("pitch".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyer.setPitch(getInteger());
+                }
+            };
+        } else if ("velocity".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    keyer.setVelocity(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "pitch", keyer.getPitch()).start();
+        new IntegerHandler(getWriter(), "velocity", keyer.getVelocity())
+                .start();
+    }
 }

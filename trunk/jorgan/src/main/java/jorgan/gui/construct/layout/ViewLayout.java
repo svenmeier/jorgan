@@ -18,44 +18,59 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.Icon;
+import java.util.List;
+import java.util.ResourceBundle;
 
-import jorgan.gui.console.*;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
+
+import jorgan.gui.console.View;
 
 /**
  * The Layout for views.
  */
 public abstract class ViewLayout {
 
-  protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    private static final ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private String name;
-  private Icon   icon;
-  
-  public ViewLayout(String name, Icon icon) {
-    this.name = name;
-    this.icon = icon;
-  }
-  
-  public String getName() {
-    return name;
-  }
-  
-  public Icon getIcon() {
-    return icon;
-  }
-  
-  public void layout(View pressed, List views) {
-    init(pressed, views);
-    
-    for (int s = 0; s < views.size(); s++) {
-      View view = (View)views.get(s);
-      visit(view, s);            
+    private String name;
+
+    private Icon icon;
+
+    public ViewLayout(String key) {
+        if (key != null) {
+            this.name = resources.getString("view." + key);
+            this.icon = new ImageIcon(View.class.getResource("/jorgan/gui/img/"
+                    + key + ".gif"));
+        }
     }
-  }
-  
-  protected void init(View pressed, List views) { }
-  
-  protected void visit(View view, int index) { }
+
+    public String getName() {
+        return name;
+    }
+
+    public Icon getIcon() {
+        return icon;
+    }
+
+    public void layout(View pressed, List views) {
+        init(pressed, views);
+
+        for (int s = 0; s < views.size(); s++) {
+            View view = (View) views.get(s);
+            visit(view, s);
+        }
+    }
+
+    protected void changePosition(View view, int x, int y) {
+        view.getConsolePanel().getConsole()
+                .setLocation(view.getElement(), x, y);
+    }
+
+    protected void init(View pressed, List views) {
+    }
+
+    protected void visit(View view, int index) {
+    }
 }

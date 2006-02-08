@@ -18,63 +18,66 @@
  */
 package jorgan.io.skin;
 
-import java.io.*;
 import java.awt.Point;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class PointHandler extends Handler {
 
-  private int x;
-  private int y;
+    private int x;
 
-  private Point point;
+    private int y;
 
-  public PointHandler(AbstractWriter writer, String tag, Point point) {
-    super(writer, tag);
+    private Point point;
 
-    this.point = point;
-  }
+    public PointHandler(AbstractWriter writer, String tag, Point point) {
+        super(writer, tag);
 
-  public PointHandler(AbstractReader reader) {
-    super(reader);
-  }
-
-  public Point getPoint() {
-    return point;
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("x".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          x = getInteger();
-        }
-      };
-    } else if ("y".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          y = getInteger();
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        this.point = point;
     }
-  }
 
-  protected void finish() {
-    point = new Point(x, y);
-    
-    finished();
-  }
-  
-  public void children() throws IOException {
-    new IntegerHandler(getWriter(), "x", point.x).start();
-    new IntegerHandler(getWriter(), "y", point.y).start();
-  }
+    public PointHandler(AbstractReader reader) {
+        super(reader);
+    }
+
+    public Point getPoint() {
+        return point;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("x".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    x = getInteger();
+                }
+            };
+        } else if ("y".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    y = getInteger();
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    protected void finish() {
+        point = new Point(x, y);
+
+        finished();
+    }
+
+    public void children() throws IOException {
+        new IntegerHandler(getWriter(), "x", point.x).start();
+        new IntegerHandler(getWriter(), "y", point.y).start();
+    }
 }

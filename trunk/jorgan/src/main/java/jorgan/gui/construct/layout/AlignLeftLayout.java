@@ -18,18 +18,16 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignLeftLayout extends ViewLayout {
 
   private int x;
   
   public AlignLeftLayout() {
-    super(resources.getString("view.align.left"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignLeft.gif")));
+    super("alignLeft");
   }
 
   protected void init(View pressed, List views) {
@@ -37,6 +35,6 @@ public class AlignLeftLayout extends ViewLayout {
   }
   
   protected void visit(View view, int index) {
-    view.setPosition(x, view.getY());
+      changePosition(view, x, view.getY());
   } 
 }

@@ -23,94 +23,101 @@ package jorgan.disposition;
  */
 public class Keyboard extends Element {
 
-  public static final int COMMAND_NOTE_ON       = 144;
-  public static final int COMMAND_POLY_PRESSURE = 160;
-    
-  private String  device    = null;
-  private Key     from      = null;
-  private Key     to        = null;
-  private int     transpose = 0;
-  private int     channel   = 0;
-  private int     command   = COMMAND_NOTE_ON;
-  private int     threshold = 0;
-  
-  protected boolean canReference(Class clazz) {
-    return Keyable.class.isAssignableFrom(clazz);  
-  }
-  
-  public String getDevice() {
-    return device;
-  }
+    public static final int COMMAND_NOTE_ON = 144;
 
-  public void setDevice(String device) {
-    this.device = device;
+    public static final int COMMAND_POLY_PRESSURE = 160;
 
-    fireElementChanged(true);
-  }
+    private String device = null;
 
-  public int getChannel() {
-    return channel;
-  }
+    private Key from = null;
 
-  public void setChannel(int channel) {
-    if (channel < 0 || channel > 15) {
-      throw new IllegalArgumentException("channel '" + channel + "'");
+    private Key to = null;
+
+    private int transpose = 0;
+
+    private int channel = 0;
+
+    private int command = COMMAND_NOTE_ON;
+
+    private int threshold = 0;
+
+    protected boolean canReference(Class clazz) {
+        return Keyable.class.isAssignableFrom(clazz);
     }
-    this.channel = channel;
 
-    fireElementChanged(true);
-  }
-
-  public void setTranspose(int transpose) {
-    this.transpose = transpose;
-
-    fireElementChanged(true);
-  }
-
-  public int getTranspose() {
-    return transpose;
-  }
-
-  public void setFrom(Key from) {
-    this.from = from;
-
-    fireElementChanged(true);
-  }
-
-  public void setTo(Key to) {
-    this.to = to;
-
-    fireElementChanged(true);
-  }
-
-  public Key getFrom() {
-    return from;
-  }
-
-  public Key getTo() {
-    return to;
-  }
-
-  public int getCommand() {
-    return command;
-  }
-
-  public int getThreshold() {
-    return threshold;
-  }
-
-  public void setCommand(int command) {
-    if (command != COMMAND_NOTE_ON && command != COMMAND_POLY_PRESSURE) {
-      throw new IllegalArgumentException("command '" + command + "'");
+    public String getDevice() {
+        return device;
     }
-    this.command = command;
 
-    fireElementChanged(true);
-  }
+    public void setDevice(String device) {
+        this.device = device;
 
-  public void setThreshold(int threshold) {
-    this.threshold = threshold;
+        fireElementChanged(true);
+    }
 
-    fireElementChanged(true);
-  }
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        if (channel < 0 || channel > 15) {
+            throw new IllegalArgumentException("channel '" + channel + "'");
+        }
+        this.channel = channel;
+
+        fireElementChanged(true);
+    }
+
+    public void setTranspose(int transpose) {
+        this.transpose = transpose;
+
+        fireElementChanged(true);
+    }
+
+    public int getTranspose() {
+        return transpose;
+    }
+
+    public void setFrom(Key from) {
+        this.from = from;
+
+        fireElementChanged(true);
+    }
+
+    public void setTo(Key to) {
+        this.to = to;
+
+        fireElementChanged(true);
+    }
+
+    public Key getFrom() {
+        return from;
+    }
+
+    public Key getTo() {
+        return to;
+    }
+
+    public int getCommand() {
+        return command;
+    }
+
+    public int getThreshold() {
+        return threshold;
+    }
+
+    public void setCommand(int command) {
+        if (command != COMMAND_NOTE_ON && command != COMMAND_POLY_PRESSURE) {
+            throw new IllegalArgumentException("command '" + command + "'");
+        }
+        this.command = command;
+
+        fireElementChanged(true);
+    }
+
+    public void setThreshold(int threshold) {
+        this.threshold = threshold;
+
+        fireElementChanged(true);
+    }
 }

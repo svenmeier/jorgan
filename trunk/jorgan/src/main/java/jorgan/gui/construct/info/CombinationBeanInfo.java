@@ -18,21 +18,12 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
-import jorgan.gui.construct.editor.BooleanEditor;
-import jorgan.gui.construct.editor.MessageEditor;
-
 /**
  * BeanInfo for {@link jorgan.disposition.Combination}.
  */
-public class CombinationBeanInfo extends ResponsiveBeanInfo {
+public class CombinationBeanInfo extends InitiatorBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();
-
-        add("fixed", Combination.class, BooleanEditor.class);
-        add("captureWithRecall", Combination.class, BooleanEditor.class);
-        add("recallMessage", Combination.class, MessageEditor.class);
-        add("captureMessage", Combination.class, MessageEditor.class);
     }
 }

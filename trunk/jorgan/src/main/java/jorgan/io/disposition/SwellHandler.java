@@ -18,62 +18,64 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Continuous;
+import jorgan.disposition.Swell;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
-public class SwellHandler extends SliderHandler {
+public class SwellHandler extends ContinuousHandler {
 
-  private Swell swell;
+    private Swell swell;
 
-  public SwellHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public SwellHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    swell = new Swell();
-  }
-
-  public SwellHandler(AbstractWriter writer, String tag, Swell swell) {
-    super(writer, tag);
-
-    this.swell = swell;
-  }
-
-  public Swell getSwell() {
-    return swell;
-  }
-
-  protected Slider getSlider() {
-    return getSwell();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("volume".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          swell.setVolume(getInteger());
-        }
-      };
-    } else if ("cutoff".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          swell.setCutoff(getInteger());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        swell = new Swell();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public SwellHandler(AbstractWriter writer, String tag, Swell swell) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "volume"     , swell.getVolume()).start();
-    new IntegerHandler(getWriter(), "cutoff"     , swell.getCutoff()).start();
-  }
+        this.swell = swell;
+    }
+
+    public Swell getSwell() {
+        return swell;
+    }
+
+    protected Continuous getContinuous() {
+        return getSwell();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("volume".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    swell.setVolume(getInteger());
+                }
+            };
+        } else if ("cutoff".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    swell.setCutoff(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "volume", swell.getVolume()).start();
+        new IntegerHandler(getWriter(), "cutoff", swell.getCutoff()).start();
+    }
 }

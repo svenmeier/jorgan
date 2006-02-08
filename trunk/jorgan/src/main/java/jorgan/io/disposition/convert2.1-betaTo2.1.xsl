@@ -10,9 +10,10 @@
                     <action>
                         <xsl:choose>
                             <xsl:when test="inverse">6</xsl:when>
-                            <xsl:otherwise>
+			    			<xsl:when test="pitch">
                                 <xsl:value-of select="pitch"/>
-                            </xsl:otherwise>
+			    			</xsl:when>
+                            <xsl:otherwise>0</xsl:otherwise>
                         </xsl:choose>
                     </action>
 				</xsl:otherwise>

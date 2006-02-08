@@ -18,25 +18,23 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignBottomLayout extends ViewLayout {
 
-  private int y;
-  
-  public AlignBottomLayout() {
-    super(resources.getString("view.align.bottom"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignBottom.gif")));
-  }
+    private int y;
 
-  protected void init(View pressed, List views) {
-    y = pressed.getY() + pressed.getHeight();
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(view.getX(), y - view.getHeight());            
-  }
+    public AlignBottomLayout() {
+        super("alignBottom");
+    }
+
+    protected void init(View pressed, List views) {
+        y = pressed.getY() + pressed.getHeight();
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, view.getX(), y - view.getHeight());
+    }
 }

@@ -23,34 +23,35 @@ package jorgan.disposition;
  */
 public class Variation extends Activateable implements SoundEffect {
 
-  private int program = 0;
-  private int bank    = 0;
+    private int program = 0;
 
-  public void setProgram(int program) {
-    if (program < 0 || program > 127) {
-      throw new IllegalArgumentException("program '" + program + "'");
+    private int bank = 0;
+
+    public void setProgram(int program) {
+        if (program < 0 || program > 127) {
+            throw new IllegalArgumentException("program '" + program + "'");
+        }
+
+        this.program = program;
+
+        fireElementChanged(true);
     }
 
-    this.program = program;
-
-    fireElementChanged(true);
-  }
-
-  public int getProgram() {
-    return program;
-  }
-
-  public void setBank(int bank) {
-    if (bank < 0 || bank > 127) {
-      throw new IllegalArgumentException("bank '" + bank + "'");
+    public int getProgram() {
+        return program;
     }
 
-    this.bank = bank;
+    public void setBank(int bank) {
+        if (bank < 0 || bank > 127) {
+            throw new IllegalArgumentException("bank '" + bank + "'");
+        }
 
-    fireElementChanged(true);
-  }
+        this.bank = bank;
 
-  public int getBank() {
-    return bank;
-  }
+        fireElementChanged(true);
+    }
+
+    public int getBank() {
+        return bank;
+    }
 }

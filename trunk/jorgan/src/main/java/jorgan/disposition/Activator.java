@@ -23,7 +23,7 @@ package jorgan.disposition;
  */
 public class Activator extends Activateable {
 
-  protected boolean canReference(Class clazz) {
-    return Activateable.class.isAssignableFrom(clazz);  
-  }
+    protected boolean canReference(Class clazz) {
+        return Activateable.class.isAssignableFrom(clazz);
+    }
 }

@@ -22,120 +22,137 @@ package jorgan.disposition;
  * A console.
  */
 public class Console extends Element {
-  
-  public static final double MAX_ZOOM = 2.0d;
-  
-  public static final double MIN_ZOOM = 0.5d;
-  
-  public static final String DEFAULT_SCREEN = "";
 
-  /**
-   * The device for input.
-   */
-  private String device;
-  
-  /**
-   * The skin.
-   */
-  private String skin;
-  
-  /**
-   * The zoom.
-   */
-  private double zoom = 1.0d;
-  
-  private String screen;
-  
-  protected boolean canReference(Class clazz) {
-    return Element.class.isAssignableFrom(clazz) && Console.class != clazz;  
-  }
+    public static final double MAX_ZOOM = 2.0d;
 
-  protected Reference createReference(Element element) {
-    return new LocationReference(element);
-  }
-  
-  public String getDevice() {
-    return device;
-  }
+    public static final double MIN_ZOOM = 0.5d;
 
-  public String getSkin() {
-    return skin;
-  }
+    public static final String DEFAULT_SCREEN = "";
 
-  public double getZoom() {
-    return zoom;
-  }
+    /**
+     * The device for input.
+     */
+    private String device;
 
-  public String getScreen() {
-    return screen;
-  }
+    /**
+     * The skin.
+     */
+    private String skin;
 
-  public void setDevice(String device) {
-    this.device = device;
+    /**
+     * The zoom.
+     */
+    private double zoom = 1.0d;
 
-    fireElementChanged(true);
-  }
+    private String screen;
 
-  public void setSkin(String skin) {
-    this.skin = skin;
-
-    fireElementChanged(true);
-  }
-
-  public void setZoom(double zoom) {
-    if (zoom < MIN_ZOOM) {
-      zoom = MIN_ZOOM;
-    }
-    if (zoom > MAX_ZOOM) {
-      zoom = MAX_ZOOM;
+    protected boolean canReference(Class clazz) {
+        return Element.class.isAssignableFrom(clazz) && Console.class != clazz;
     }
 
-    this.zoom = zoom;
-
-    fireElementChanged(true);
-  }
-
-  public void setScreen(String screen) {
-    this.screen = screen;
-
-    fireElementChanged(true);
-  }
-
-  public void setLocation(Element element, int x, int y) {
-    LocationReference reference = (LocationReference)getReference(element);
-    
-    reference.setX(x);
-    reference.setY(y);
-    
-    fireReferenceChanged(reference, true);
-  }
-  
-  /**
-   * A reference of a console to another element.
-   */
-  public static class LocationReference extends Reference {
-
-    private int x;
-    private int y;
-    
-    public LocationReference(Element element) {
-      super(element);  
-    }
-    
-    public int getX() {
-      return x;
+    protected Reference createReference(Element element) {
+        return new LocationReference(element);
     }
 
-    public int getY() {
-      return y;
+    public String getDevice() {
+        return device;
     }
 
-    public void setX(int i) {
-      x = i;
+    public String getSkin() {
+        return skin;
     }
 
-    public void setY(int i) {
-      y = i;
+    public double getZoom() {
+        return zoom;
     }
-  }
+
+    public String getScreen() {
+        return screen;
+    }
+
+    public void setDevice(String device) {
+        this.device = device;
+
+        fireElementChanged(true);
+    }
+
+    public void setSkin(String skin) {
+        this.skin = skin;
+
+        fireElementChanged(true);
+    }
+
+    public void setZoom(double zoom) {
+        if (zoom < MIN_ZOOM) {
+            zoom = MIN_ZOOM;
+        }
+        if (zoom > MAX_ZOOM) {
+            zoom = MAX_ZOOM;
+        }
+
+        this.zoom = zoom;
+
+        fireElementChanged(true);
+    }
+
+    public void setScreen(String screen) {
+        this.screen = screen;
+
+        fireElementChanged(true);
+    }
+
+    public void setLocation(Element element, int x, int y) {
+        LocationReference reference = (LocationReference) getReference(element);
+
+        reference.setX(x);
+        reference.setY(y);
+
+        fireReferenceChanged(reference, true);
+    }
+
+    public int getX(Element element) {
+        LocationReference reference = (LocationReference) getReference(element);
+
+        return reference.getX();
+    }
+
+    public int getY(Element element) {
+        if (element == this) {
+            return 0;
+        } else {
+            LocationReference reference = (LocationReference) getReference(element);
+
+            return reference.getY();
+        }
+    }
+
+    /**
+     * A reference of a console to another element.
+     */
+    public static class LocationReference extends Reference {
+
+        private int x;
+
+        private int y;
+
+        public LocationReference(Element element) {
+            super(element);
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public void setX(int i) {
+            x = i;
+        }
+
+        public void setY(int i) {
+            y = i;
+        }
+    }
 }

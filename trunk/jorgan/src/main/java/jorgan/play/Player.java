@@ -23,180 +23,178 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.*;
-import jorgan.disposition.event.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.event.OrganEvent;
 
 /**
  * Abstract base class for all players.
  */
 public abstract class Player {
 
-  private OrganPlay organPlay;
-  
-  /**
-   * The element played by this player.
-   */
-  private Element element;
+    private OrganPlay organPlay;
 
-  /**
-   * Is this player open.
-   */
-  private boolean open;
-  
-  /**
-   * The problems.
-   */
-  private List problems = new ArrayList();
-  
-  private int errorCount = 0;
-  
-  private int warningCount = 0;
+    /**
+     * The element played by this player.
+     */
+    private Element element;
 
-  /**
-   * Create a player for the given element.
-   */
-  public Player(Element element) {
-    this.element = element;
-  }
-  
-  public void setOrganPlay(OrganPlay organPlay) {
-    this.organPlay = organPlay;
-  }
-  
-  public OrganPlay getOrganPlay() {
-    return organPlay;
-  }
+    /**
+     * Is this player open.
+     */
+    private boolean open;
 
-  /**
-   * Test is this player is open.
-   *
-   * @return  <code>true</code> if this player is open
-   */
-  public boolean isOpen() {
-    return open;
-  }
+    /**
+     * The problems.
+     */
+    private List problems = new ArrayList();
 
-  /**
-   * Open this player.
-   */
-  public final void open() {
-    if (open) {
-      throw new IllegalStateException("already open");
+    private int errorCount = 0;
+
+    private int warningCount = 0;
+
+    /**
+     * Create a player for the given element.
+     */
+    public Player(Element element) {
+        this.element = element;
     }
-    open = true;
 
-    openImpl();
-  }
-
-  /**
-   * Perform subclass specific initialization on opening of this player,
-   * e.g. aquire MIDI resources.
-   * <br>
-   * This default implementation does nothing.
-   */
-  protected void openImpl() {
-  }
-
-  /**
-   * Close this player.
-   */
-  public final void close() {
-    if (!open) {
-      throw new IllegalStateException("already closed");
+    public void setOrganPlay(OrganPlay organPlay) {
+        this.organPlay = organPlay;
     }
-    open = false;
 
-    closeImpl();
-  }
-
-  /**
-   * Perform subclass specific cleanup on closing of this player,
-   * e.g. release MIDI resources.
-   * <br>
-   * This default implementation does nothing.
-   */
-  protected void closeImpl() {
-  }
-
-  protected void input(ShortMessage message) {
-  	
-  }
-  
-  protected void addProblem(Problem problem) {
-    if (problem == null) {
-      throw new IllegalArgumentException("problem must not be null");
+    public OrganPlay getOrganPlay() {
+        return organPlay;
     }
-    if (!problems.contains(problem)) {
-      problems.add(problem);
-      if (Problem.WARNING.equals(problem.getLevel())) {
-        warningCount++;
-      }
-      if (Problem.ERROR.equals(problem.getLevel())) {
-        errorCount++;
-      }
-      fireProblemAdded(problem);
-    }
-  }
-  
-  protected void removeProblem(Problem problem) {
-    if (problem == null) {
-      throw new IllegalArgumentException("problem must not be null");
-    }
-    if (problems.contains(problem)) {
-      problems.remove(problem);
-      if (Problem.WARNING.equals(problem.getLevel())) {
-        warningCount--;
-      }
-      if (Problem.ERROR.equals(problem.getLevel())) {
-        errorCount--;
-      }
-      fireProblemsRemoved(problem);
-    }
-  }
-  
-  private void fireProblemAdded(Problem problem) {
-    if (organPlay != null) {
-      organPlay.fireProblemAdded(this, problem);
-    }
-  }
 
-  private void fireProblemsRemoved(Problem problem) {
-    if (organPlay != null) {
-      organPlay.fireProblemRemoved(this, problem);
+    /**
+     * Test is this player is open.
+     * 
+     * @return <code>true</code> if this player is open
+     */
+    public boolean isOpen() {
+        return open;
     }
-  }
 
-  protected void fireInputAccepted() {
-    if (organPlay != null) {
-      organPlay.fireInputAccepted();
+    /**
+     * Open this player.
+     */
+    public final void open() {
+        if (open) {
+            throw new IllegalStateException("already open");
+        }
+        open = true;
+
+        openImpl();
     }
-  }
 
-  protected void fireOutputProduced() {
-    if (organPlay != null) {
-        organPlay.fireOutputProduced();
+    /**
+     * Perform subclass specific initialization on opening of this player, e.g.
+     * aquire MIDI resources. <br>
+     * This default implementation does nothing.
+     */
+    protected void openImpl() {
     }
-  }
 
-  public boolean hasWarnings() {
-    return warningCount > 0;
-  }
-  
-  public boolean hasErrors() {
-    return errorCount > 0;
-  }
-  
-  public List getProblems() {
-    return new ArrayList(problems);
-  }
-  
-  public void elementChanged(OrganEvent event) {
-  }
+    /**
+     * Close this player.
+     */
+    public final void close() {
+        if (!open) {
+            throw new IllegalStateException("already closed");
+        }
+        open = false;
 
-  public void messageReceived(ShortMessage message) {
-  }
+        closeImpl();
+    }
 
-  public Element getElement() {
-    return element;
-  }
+    /**
+     * Perform subclass specific cleanup on closing of this player, e.g. release
+     * MIDI resources. <br>
+     * This default implementation does nothing.
+     */
+    protected void closeImpl() {
+    }
+
+    protected void input(ShortMessage message) {
+
+    }
+
+    protected void addProblem(Problem problem) {
+        if (problem == null) {
+            throw new IllegalArgumentException("problem must not be null");
+        }
+        if (!problems.contains(problem)) {
+            problems.add(problem);
+            if (Problem.WARNING.equals(problem.getLevel())) {
+                warningCount++;
+            }
+            if (Problem.ERROR.equals(problem.getLevel())) {
+                errorCount++;
+            }
+            fireProblemAdded(problem);
+        }
+    }
+
+    protected void removeProblem(Problem problem) {
+        if (problem == null) {
+            throw new IllegalArgumentException("problem must not be null");
+        }
+        if (problems.contains(problem)) {
+            problems.remove(problem);
+            if (Problem.WARNING.equals(problem.getLevel())) {
+                warningCount--;
+            }
+            if (Problem.ERROR.equals(problem.getLevel())) {
+                errorCount--;
+            }
+            fireProblemsRemoved(problem);
+        }
+    }
+
+    private void fireProblemAdded(Problem problem) {
+        if (organPlay != null) {
+            organPlay.fireProblemAdded(this, problem);
+        }
+    }
+
+    private void fireProblemsRemoved(Problem problem) {
+        if (organPlay != null) {
+            organPlay.fireProblemRemoved(this, problem);
+        }
+    }
+
+    protected void fireInputAccepted() {
+        if (organPlay != null) {
+            organPlay.fireInputAccepted();
+        }
+    }
+
+    protected void fireOutputProduced() {
+        if (organPlay != null) {
+            organPlay.fireOutputProduced();
+        }
+    }
+
+    public boolean hasWarnings() {
+        return warningCount > 0;
+    }
+
+    public boolean hasErrors() {
+        return errorCount > 0;
+    }
+
+    public List getProblems() {
+        return new ArrayList(problems);
+    }
+
+    public void elementChanged(OrganEvent event) {
+    }
+
+    public void messageReceived(ShortMessage message) {
+    }
+
+    public Element getElement() {
+        return element;
+    }
 }

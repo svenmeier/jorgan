@@ -18,71 +18,76 @@
  */
 package jorgan.io.skin;
 
-import java.io.*;
 import java.awt.Font;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.IntegerHandler;
+import jorgan.xml.handler.StringHandler;
 
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class FontHandler extends Handler {
 
-  private String name;
-  private int style;
-  private int size;
-  
-  private Font font;
+    private String name;
 
-  public FontHandler(AbstractWriter writer, String tag, Font font) {
-    super(writer, tag);
+    private int style;
 
-    this.font = font;
-  }
+    private int size;
 
-  public FontHandler(AbstractReader reader) {
-    super(reader);
-  }
+    private Font font;
 
-  public Font getFont() {
-    return font;
-  }
+    public FontHandler(AbstractWriter writer, String tag, Font font) {
+        super(writer, tag);
 
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("name".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          name = getString();
-        }
-      };
-    } else if ("style".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          style = getInteger();
-        }
-      };
-    } else if ("size".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          size = getInteger();
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        this.font = font;
     }
-  }
 
-  protected void finish() {
-    font = new Font(name, style, size);
-    
-    finished();
-  }
-  
-  public void children() throws IOException {
-    new StringHandler (getWriter(), "name" , font.getName() ).start();
-    new IntegerHandler(getWriter(), "style", font.getStyle()).start();
-    new IntegerHandler(getWriter(), "size" , font.getSize() ).start();
-  }
+    public FontHandler(AbstractReader reader) {
+        super(reader);
+    }
+
+    public Font getFont() {
+        return font;
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("name".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    name = getString();
+                }
+            };
+        } else if ("style".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    style = getInteger();
+                }
+            };
+        } else if ("size".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    size = getInteger();
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    protected void finish() {
+        font = new Font(name, style, size);
+
+        finished();
+    }
+
+    public void children() throws IOException {
+        new StringHandler(getWriter(), "name", font.getName()).start();
+        new IntegerHandler(getWriter(), "style", font.getStyle()).start();
+        new IntegerHandler(getWriter(), "size", font.getSize()).start();
+    }
 }

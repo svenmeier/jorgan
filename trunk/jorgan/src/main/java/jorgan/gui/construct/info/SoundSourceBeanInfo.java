@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.SoundSource;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.OutDeviceEditor;

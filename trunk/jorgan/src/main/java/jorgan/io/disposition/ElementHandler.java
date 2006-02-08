@@ -18,102 +18,109 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
-
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Reference;
 import jorgan.io.DispositionReader;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.XMLWriter;
+import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.StringHandler;
+
+import org.xml.sax.Attributes;
 
 public abstract class ElementHandler extends Handler {
 
-  public static final String ID_ATTRIBUTE_NAME = "id";
-  
-  private String id;
+    public static final String ID_ATTRIBUTE_NAME = "id";
 
-  public ElementHandler(AbstractReader reader, Attributes attributes) {
-    super(reader);
-    
-    id = attributes.getValue(ID_ATTRIBUTE_NAME);
-  }
+    private String id;
 
-  public ElementHandler(AbstractWriter writer, String tag){
-    super(writer, tag);
-  }
+    public ElementHandler(AbstractReader reader, Attributes attributes) {
+        super(reader);
 
-  protected abstract Element getElement();
-  
-  protected void finish() {
-    ((DispositionReader)getReader()).registerElement(id, getElement());
-    
-    super.finish();
-  }
+        id = attributes.getValue(ID_ATTRIBUTE_NAME);
+    }
 
-    
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {   
-    if ("name".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          getElement().setName(getString());
+    public ElementHandler(AbstractWriter writer, String tag) {
+        super(writer, tag);
+    }
+
+    protected abstract Element getElement();
+
+    protected void finish() {
+        ((DispositionReader) getReader()).registerElement(id, getElement());
+
+        super.finish();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+        if ("name".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    getElement().setName(getString());
+                }
+            };
+        } else if ("description".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    getElement().setDescription(getString());
+                }
+            };
+        } else if ("style".equals(qName)) {
+            new StringHandler(getReader()) {
+                public void finished() {
+                    getElement().setStyle(getString());
+                }
+            };
+        } else if ("reference".equals(qName)) {
+            createReferenceHandler(getReader(), attributes);
+        } else {
+            super.startElement(uri, localName, qName, attributes);
         }
-      };
-    } else if ("description".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          getElement().setDescription(getString());
+    }
+
+    public void attributes(XMLWriter writer) throws IOException {
+        if (getElement().hasReferrer()) {
+            id = "" + System.identityHashCode(getElement());
+
+            writer.attribute(ID_ATTRIBUTE_NAME, id);
         }
-      };
-    } else if ("style".equals(qName)) {
-      new StringHandler(getReader()) {
-        public void finished() {
-          getElement().setStyle(getString());
+        super.attributes(writer);
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new StringHandler(getWriter(), "name", getElement().getName()).start();
+        if (!"".equals(getElement().getDescription())) {
+            new StringHandler(getWriter(), "description", getElement()
+                    .getDescription()).start();
         }
-      };
-    } else if ("reference".equals(qName)) {
-        createReferenceHandler(getReader(), attributes);
-    } else {
-      super.startElement(uri, localName, qName, attributes);
-    }         
-  }
+        if (getElement().getStyle() != null) {
+            new StringHandler(getWriter(), "style", getElement().getStyle())
+                    .start();
+        }
 
-  public void attributes(XMLWriter writer) throws IOException {
-    if (getElement().hasReferrer()) {
-      id = "" + System.identityHashCode(getElement());
-      
-      writer.attribute(ID_ATTRIBUTE_NAME, id);        
+        for (int r = 0; r < getElement().getReferenceCount(); r++) {
+            Reference reference = getElement().getReference(r);
+            createReferenceHandler(getWriter(), "reference", reference).start();
+        }
     }
-    super.attributes(writer);
-  }
-    
-  public void children() throws IOException {
-    super.children();
 
-    new StringHandler(getWriter(), "name", getElement().getName()).start();
-    if (!"".equals(getElement().getDescription())) {
-      new StringHandler(getWriter(), "description", getElement().getDescription()).start();
+    protected ReferenceHandler createReferenceHandler(AbstractReader reader,
+            Attributes attributes) {
+        return new ReferenceHandler(reader, attributes) {
+            public void finished() {
+                getElement().addReference(getReference());
+            }
+        };
     }
-    if (getElement().getStyle() != null) {
-      new StringHandler(getWriter(), "style", getElement().getStyle()).start();        
-    }
-    
-    for (int r = 0; r < getElement().getReferenceCount(); r++) {
-      Reference reference = getElement().getReference(r);
-      createReferenceHandler(getWriter(), "reference", reference).start();
-    }
-  }
-  
-  protected ReferenceHandler createReferenceHandler(AbstractReader reader, Attributes attributes) {
-    return new ReferenceHandler(reader, attributes) {
-      public void finished() {
-        getElement().addReference(getReference());
-      }
-    };
-  }
 
-  protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    return new ReferenceHandler(writer, tag, reference);
-  }
+    protected ReferenceHandler createReferenceHandler(AbstractWriter writer,
+            String tag, Reference reference) {
+        return new ReferenceHandler(writer, tag, reference);
+    }
 }

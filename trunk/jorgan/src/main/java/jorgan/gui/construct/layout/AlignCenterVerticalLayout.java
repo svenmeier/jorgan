@@ -18,25 +18,23 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignCenterVerticalLayout extends ViewLayout {
 
-  private int y;
-  
-  public AlignCenterVerticalLayout() {
-    super(resources.getString("view.align.centerVertical"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignCenterVertical.gif")));
-  }
+    private int y;
 
-  protected void init(View pressed, List views) {
-    y = pressed.getY() + pressed.getHeight()/2;
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(view.getX(), y - view.getHeight()/2);
-  }
-}  
+    public AlignCenterVerticalLayout() {
+        super("alignCenterVertical");
+    }
+
+    protected void init(View pressed, List views) {
+        y = pressed.getY() + pressed.getHeight() / 2;
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, view.getX(), y - view.getHeight() / 2);
+    }
+}

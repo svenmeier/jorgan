@@ -23,26 +23,28 @@ package jorgan.skin;
  */
 public interface ISkinManager {
 
-  /**
-   * Get the names of the available skins.
-   * 
-   * @return    skins
-   */
-  public String[] getSkinNames();
-    
-  /**
-   * Get the skin for the given name.
-   * 
-   * @param identifier name to get skin for
-   * @return           skin or <code>null</code>
-   */
-  public Skin getSkin(String name);
-  
-  /**
-   * Get the AWT image for the given skin and image.
-   * 
-   * @param image   image to get image for
-   * @return        image
-   */
-  public java.awt.Image getImage(Skin skin, Image image);
+    /**
+     * Get the names of the available skins.
+     * 
+     * @return skins
+     */
+    public String[] getSkinNames();
+
+    /**
+     * Get the names of styles for the given skin.
+     * 
+     * @return styles
+     */
+    public String[] getStyleNames(String skin);
+
+    /**
+     * Create a style.
+     * 
+     * @param skin
+     *            skin name
+     * @param style
+     *            style name
+     * @return style or <code>null</code>
+     */
+    public Style createStyle(String skin, String style);
 }

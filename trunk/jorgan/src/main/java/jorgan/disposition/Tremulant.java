@@ -23,34 +23,35 @@ package jorgan.disposition;
  */
 public class Tremulant extends Activateable implements SoundEffect {
 
-  private int frequency = 64;
-  private int amplitude = 64;
+    private int frequency = 64;
 
-  public void setFrequency(int frequency) {
-    if (frequency < 0 || frequency > 127) {
-      throw new IllegalArgumentException("frequency '" + frequency + "'");
+    private int amplitude = 64;
+
+    public void setFrequency(int frequency) {
+        if (frequency < 0 || frequency > 127) {
+            throw new IllegalArgumentException("frequency '" + frequency + "'");
+        }
+
+        this.frequency = frequency;
+
+        fireElementChanged(true);
     }
 
-    this.frequency = frequency;
-
-    fireElementChanged(true);
-  }
-
-  public int getFrequency() {
-    return frequency;
-  }
-
-  public void setAmplitude(int amplitude) {
-    if (amplitude < 0 || amplitude > 127) {
-      throw new IllegalArgumentException("amplitude '" + amplitude + "'");
+    public int getFrequency() {
+        return frequency;
     }
 
-    this.amplitude = amplitude;
+    public void setAmplitude(int amplitude) {
+        if (amplitude < 0 || amplitude > 127) {
+            throw new IllegalArgumentException("amplitude '" + amplitude + "'");
+        }
 
-    fireElementChanged(true);
-  }
+        this.amplitude = amplitude;
 
-  public int getAmplitude() {
-    return amplitude;
-  }
+        fireElementChanged(true);
+    }
+
+    public int getAmplitude() {
+        return amplitude;
+    }
 }

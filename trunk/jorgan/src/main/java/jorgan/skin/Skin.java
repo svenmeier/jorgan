@@ -18,50 +18,86 @@
  */
 package jorgan.skin;
 
-import java.util.*;
+import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Style.
  */
 public class Skin {
 
-  private ArrayList styles = new ArrayList();
+    private String name;
 
-  public Skin() {
-  }
-  
-  public Skin getSkin() {
-    
-    return this;
-  }
+    private ArrayList styles = new ArrayList();
 
-  public int getStyleCount() {
-    return styles.size();
-  }
-  
-  public Style getStyle(String styleName) {
+    private SkinSource source;
 
-    for (int s = 0; s < styles.size(); s++) {
-      Style style = (Style)styles.get(s);
-      if (style.getName().equals(styleName)) {
-        return style;
-      }
+    public String getName() {
+        return name;
     }
-    return null;  
-  }
- 
 
-  public Style getStyle(int index) {
-    return (Style)styles.get(index);
-  }
-  
-  public void addStyle(Style style) {
-    styles.add(style);
-    style.setSkin(this);
-  }  
+    public void setName(String name) {
+        this.name = name;
+    }
 
-  public void removeStyle(Style style) {
-    styles.remove(style);
-    style.setSkin(null);
-  }  
+    public int getStyleCount() {
+        return styles.size();
+    }
+
+    public String[] getStyleNames() {
+        String[] names = new String[1 + styles.size()];
+
+        for (int s = 0; s < styles.size(); s++) {
+            names[s + 1] = getStyle(s).getName();
+        }
+
+        return names;
+    }
+
+    public Style getStyle(int index) {
+        return (Style) styles.get(index);
+    }
+
+    public void addStyle(Style style) {
+        styles.add(style);
+        style.setResolver(new Resolver() {
+            public URL resolve(String name) {
+                return source.getURL(name);
+            }
+
+            public void setResolver(Resolver parent) {
+            }
+        });
+    }
+
+    public void setSource(SkinSource source) {
+        this.source = source;
+    }
+
+    public SkinSource getSource() {
+        return source;
+    }
+
+    public Skin getSkin() {
+        return this;
+    }
+
+    public URL getURL(String file) {
+        if (source == null) {
+            throw new IllegalStateException("no source to resolve URL from");
+        }
+        return source.getURL(file);
+    }
+
+    public Style createStyle(String styleName) {
+
+        for (int s = 0; s < styles.size(); s++) {
+            Style style = (Style) styles.get(s);
+            if (style.getName().equals(styleName)) {
+                return (Style) style.clone();
+            }
+        }
+        return null;
+    }
+
 }

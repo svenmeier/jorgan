@@ -21,6 +21,6 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Activator}.
  */
-public class ActivatorBeanInfo extends ResponsiveBeanInfo {
+public class ActivatorBeanInfo extends MomentaryBeanInfo {
 
 }

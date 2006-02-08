@@ -23,29 +23,29 @@ package jorgan.disposition;
  */
 public class Keyer extends Activateable {
 
-  private int pitch = 64;
-  
-  private int velocity = 100;
-  
-  protected boolean canReference(Class clazz) {
-    return Keyable.class.isAssignableFrom(clazz);  
-  }
-  
-  public void setPitch(int pitch) {
-    this.pitch = pitch;
+    private int pitch = 64;
 
-    fireElementChanged(true);
-  }
+    private int velocity = 100;
 
-  public int getPitch() {
-    return pitch;
-  }
-  
-  public void setVelocity(int velocity) {
-    this.velocity = velocity;
-  }
-  
-  public int getVelocity() {
-    return velocity;
-  }
+    protected boolean canReference(Class clazz) {
+        return Keyable.class.isAssignableFrom(clazz);
+    }
+
+    public void setPitch(int pitch) {
+        this.pitch = pitch;
+
+        fireElementChanged(true);
+    }
+
+    public int getPitch() {
+        return pitch;
+    }
+
+    public void setVelocity(int velocity) {
+        this.velocity = velocity;
+    }
+
+    public int getVelocity() {
+        return velocity;
+    }
 }

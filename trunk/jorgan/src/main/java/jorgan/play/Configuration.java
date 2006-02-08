@@ -18,77 +18,87 @@
  */
 package jorgan.play;
 
-import java.util.prefs.*;
+import java.util.prefs.Preferences;
 
-import jorgan.config.prefs.*;
+import jorgan.config.prefs.PreferencesConfiguration;
 
 /**
  * Configuration of the play package.
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static final boolean WARN_WITHOUT_DEVICE  = true;
-  private static final boolean WARN_WITHOUT_MESSAGE = false;
-  
-  private static final boolean RELEASE_DEVICES_WHEN_DEACTIVATED = false;
+    private static final boolean WARN_WITHOUT_DEVICE = true;
 
-  private static Configuration sharedInstance = new Configuration();
+    private static final boolean WARN_WITHOUT_MESSAGE = false;
 
-  private boolean warnWithoutDevice;
-  private boolean warnWithoutMessage;
+    private static final boolean RELEASE_DEVICES_WHEN_DEACTIVATED = false;
 
-  private boolean releaseDevicesWhenDeactivated;
+    private static Configuration sharedInstance = new Configuration();
 
-  protected void restore(Preferences prefs) {
-    warnWithoutDevice  = getBoolean(prefs, "warnWithoutDevice" , WARN_WITHOUT_DEVICE);
-    warnWithoutMessage = getBoolean(prefs, "warnWithoutMessage", WARN_WITHOUT_MESSAGE);;
+    private boolean warnWithoutDevice;
 
-    releaseDevicesWhenDeactivated = getBoolean(prefs, "releaseDevicesWhenDeactivated", RELEASE_DEVICES_WHEN_DEACTIVATED);
-  }
+    private boolean warnWithoutMessage;
 
-  protected void backup(Preferences prefs) {
-    putBoolean(prefs, "warnWithoutDevice" , warnWithoutDevice);
-    putBoolean(prefs, "warnWithoutMessage", warnWithoutMessage);;
+    private boolean releaseDevicesWhenDeactivated;
 
-    prefs.putBoolean("releaseDevicesWhenDeactivated", releaseDevicesWhenDeactivated);
-  }
+    protected void restore(Preferences prefs) {
+        warnWithoutDevice = getBoolean(prefs, "warnWithoutDevice",
+                WARN_WITHOUT_DEVICE);
+        warnWithoutMessage = getBoolean(prefs, "warnWithoutMessage",
+                WARN_WITHOUT_MESSAGE);
+        ;
 
-  public boolean getWarnWithoutDevice() {
-    return warnWithoutDevice;
-  }
+        releaseDevicesWhenDeactivated = getBoolean(prefs,
+                "releaseDevicesWhenDeactivated",
+                RELEASE_DEVICES_WHEN_DEACTIVATED);
+    }
 
-  public boolean getWarnWithoutMessage() {
-    return warnWithoutMessage;
-  }
+    protected void backup(Preferences prefs) {
+        putBoolean(prefs, "warnWithoutDevice", warnWithoutDevice);
+        putBoolean(prefs, "warnWithoutMessage", warnWithoutMessage);
+        ;
 
-  public boolean getReleaseDevicesWhenDeactivated() {
-    return releaseDevicesWhenDeactivated;
-  }
-  
-  public void setWarnWithoutDevice(boolean warnWithoutDevice) {
-    this.warnWithoutDevice = warnWithoutDevice;
-    
-    fireConfigurationChanged();
-  }
+        prefs.putBoolean("releaseDevicesWhenDeactivated",
+                releaseDevicesWhenDeactivated);
+    }
 
-  public void setWarnWithoutMessage(boolean warnWithoutMessage) {
-    this.warnWithoutMessage = warnWithoutMessage;
-    
-    fireConfigurationChanged();
-  }
+    public boolean getWarnWithoutDevice() {
+        return warnWithoutDevice;
+    }
 
-  public void setReleaseDevicesWhenDeactivated(boolean releaseDevicesWhenDeactivated) {
-    this.releaseDevicesWhenDeactivated = releaseDevicesWhenDeactivated;
-    
-    fireConfigurationChanged();
-  }
+    public boolean getWarnWithoutMessage() {
+        return warnWithoutMessage;
+    }
 
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+    public boolean getReleaseDevicesWhenDeactivated() {
+        return releaseDevicesWhenDeactivated;
+    }
+
+    public void setWarnWithoutDevice(boolean warnWithoutDevice) {
+        this.warnWithoutDevice = warnWithoutDevice;
+
+        fireConfigurationChanged();
+    }
+
+    public void setWarnWithoutMessage(boolean warnWithoutMessage) {
+        this.warnWithoutMessage = warnWithoutMessage;
+
+        fireConfigurationChanged();
+    }
+
+    public void setReleaseDevicesWhenDeactivated(
+            boolean releaseDevicesWhenDeactivated) {
+        this.releaseDevicesWhenDeactivated = releaseDevicesWhenDeactivated;
+
+        fireConfigurationChanged();
+    }
+
+    /**
+     * Get the shared configuration.
+     * 
+     * @return configuration
+     */
+    public static Configuration instance() {
+        return sharedInstance;
+    }
 }

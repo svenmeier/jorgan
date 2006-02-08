@@ -18,14 +18,14 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Activateable;
 import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.MessageEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Activateable}.
  */
-public class ActivateableBeanInfo extends ResponsiveBeanInfo {
+public class ActivateableBeanInfo extends MomentaryBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

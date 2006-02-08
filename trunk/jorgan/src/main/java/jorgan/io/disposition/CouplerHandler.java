@@ -18,32 +18,34 @@
  */
 package jorgan.io.disposition;
 
-import org.xml.sax.*;
+import jorgan.disposition.Coupler;
+import jorgan.disposition.Keyable;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
+import org.xml.sax.Attributes;
 
 public class CouplerHandler extends KeyableHandler {
 
-  private Coupler coupler;
+    private Coupler coupler;
 
-  public CouplerHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public CouplerHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    coupler = new Coupler();
-  }
+        coupler = new Coupler();
+    }
 
-  public CouplerHandler(AbstractWriter writer, String tag, Coupler coupler) {
-    super(writer, tag);
+    public CouplerHandler(AbstractWriter writer, String tag, Coupler coupler) {
+        super(writer, tag);
 
-    this.coupler = coupler;
-  }
+        this.coupler = coupler;
+    }
 
-  public Coupler getCoupler() {
-    return coupler;
-  }
+    public Coupler getCoupler() {
+        return coupler;
+    }
 
-  protected Keyable getKeyable() {
-    return getCoupler();
-  }
+    protected Keyable getKeyable() {
+        return getCoupler();
+    }
 }

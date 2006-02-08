@@ -18,41 +18,43 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import jorgan.disposition.Key;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.XMLWriter;
+import jorgan.xml.handler.Handler;
 
 public class KeyHandler extends Handler {
 
-  private Key key;
+    private Key key;
 
-  /**
-   * Constructor.
-   */
-  public KeyHandler(AbstractReader reader) {
-    super(reader);    
-  }
+    /**
+     * Constructor.
+     */
+    public KeyHandler(AbstractReader reader) {
+        super(reader);
+    }
 
-  public KeyHandler(AbstractWriter writer, String tag, Key key) {
-    super(writer, tag);
+    public KeyHandler(AbstractWriter writer, String tag, Key key) {
+        super(writer, tag);
 
-    this.key = key;
-  }
+        this.key = key;
+    }
 
-  public Key getKey() {
-    return key;
-  }
+    public Key getKey() {
+        return key;
+    }
 
-  public void finish() {
-    key = new Key(getCharacters());
-    
-    finished();
-  }
-  
-  public void characters(XMLWriter writer) throws IOException {
+    public void finish() {
+        key = new Key(getCharacters());
 
-    writer.characters(key.getName());
-  }
+        finished();
+    }
+
+    public void characters(XMLWriter writer) throws IOException {
+
+        writer.characters(key.getName());
+    }
 }

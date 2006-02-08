@@ -18,85 +18,88 @@
  */
 package jorgan.disposition;
 
-import java.io.*;
+import java.io.Serializable;
 
 /**
  * A message is an immutable value object.
  */
 public class Message implements Serializable {
 
-  private int status;
-  private int data1;
-  private int data2;
+    private int status;
 
-  /**
-   * Create a message.
-   * 
-   * @param status    status of message
-   * @param data1     data1 of message or <code>-1</code> if not used
-   * @param data2     data2 of message or <code>-1</code> if not used
-   */
-  public Message(int status, int data1, int data2) {
-    if (status < 0 || status > 255) {
-      throw new IllegalArgumentException("status '" + status + "'");
+    private int data1;
+
+    private int data2;
+
+    /**
+     * Create a message.
+     * 
+     * @param status
+     *            status of message
+     * @param data1
+     *            data1 of message or <code>-1</code> if not used
+     * @param data2
+     *            data2 of message or <code>-1</code> if not used
+     */
+    public Message(int status, int data1, int data2) {
+        if (status < 0 || status > 255) {
+            throw new IllegalArgumentException("status '" + status + "'");
+        }
+        if (data1 < -1 || data1 > 127) {
+            throw new IllegalArgumentException("data1 '" + data1 + "'");
+        }
+        if (data2 < -1 || data2 > 127) {
+            throw new IllegalArgumentException("data2 '" + data2 + "'");
+        }
+
+        this.status = status;
+        this.data1 = data1;
+        this.data2 = data2;
     }
-    if (data1 < -1 || data1 > 127) {
-      throw new IllegalArgumentException("data1 '" + data1 + "'");
-    }
-    if (data2 < -1 || data2 > 127) {
-      throw new IllegalArgumentException("data2 '" + data2 + "'");
+
+    public int getStatus() {
+        return status;
     }
 
-    this.status = status;
-    this.data1  = data1;
-    this.data2  = data2;
-  }
-
-  public int getStatus() {
-    return status;
-  }
-
-  public int getData1() {
-    return data1;
-  }
-
-  public int getData2() {
-    return data2;
-  }
-
-  public boolean hasWildcard() {
-    return data1 == -1 || data2 == -1;
-  }
-  
-  public boolean equals(Object object) {
-    if (object == null || !(object instanceof Message)) {
-      return false;
+    public int getData1() {
+        return data1;
     }
-    Message message = (Message)object;
 
-    return (this.status == message.status &&
-            this.data1  == message.data1  &&
-            this.data2  == message.data2  );
-  }
-
-  public int hashCode() {
-    return (status + data1 + data2);
-  }
-
-  public int wildcard(int data1, int data2) {
-    if (this.data1 == -1) {
-      return data1;
+    public int getData2() {
+        return data2;
     }
-    if (this.data2 == -1) {
-      return data2;
+
+    public boolean hasWildcard() {
+        return data1 == -1 || data2 == -1;
     }
-      
-    return -1;
-  }
-  
-  public boolean match(int status, int data1, int data2) {
-    return (this.status == -1 || this.status == status) &&
-           (this.data1  == -1 || this.data1  == data1 ) &&
-           (this.data2  == -1 || this.data2  == data2 );
-  }
+
+    public boolean equals(Object object) {
+        if (object == null || !(object instanceof Message)) {
+            return false;
+        }
+        Message message = (Message) object;
+
+        return (this.status == message.status && this.data1 == message.data1 && this.data2 == message.data2);
+    }
+
+    public int hashCode() {
+        return (status + data1 + data2);
+    }
+
+    public int wildcard(int data1, int data2) {
+        if (this.data1 == -1) {
+            return data1;
+        }
+        if (this.data2 == -1) {
+            return data2;
+        }
+
+        return -1;
+    }
+
+    public boolean match(int status, int data1, int data2) {
+        return (this.status == -1 || this.status == status)
+                && (this.data1 == -1 || this.data1 == data1)
+                && (this.data2 == -1 || this.data2 == data2);
+    }
 }

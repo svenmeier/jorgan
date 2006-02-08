@@ -23,16 +23,16 @@ package jorgan.disposition;
  */
 public class Reference {
 
-  /**
-   * The referenced element.
-   */
-  private Element element;
- 
-  public Reference(Element element) {
-    this.element = element;  
-  }
-  
-  public Element getElement() {
-    return element;
-  }
+    /**
+     * The referenced element.
+     */
+    private Element element;
+
+    public Reference(Element element) {
+        this.element = element;
+    }
+
+    public Element getElement() {
+        return element;
+    }
 }

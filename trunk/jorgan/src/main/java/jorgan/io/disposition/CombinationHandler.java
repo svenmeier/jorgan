@@ -18,124 +18,90 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Combination;
+import jorgan.disposition.Element;
+import jorgan.disposition.Initiator;
+import jorgan.disposition.Reference;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.XMLWriter;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
-public class CombinationHandler extends ActiveHandler {
+public class CombinationHandler extends InitiatorHandler {
 
-  private Combination combination;
+    private Combination combination;
 
-  public CombinationHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public CombinationHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    combination = new Combination();
-  }
+        combination = new Combination();
+    }
 
-  public CombinationHandler(AbstractWriter writer, String tag, Combination combination) {
-    super(writer, tag);
+    public CombinationHandler(AbstractWriter writer, String tag,
+            Combination combination) {
+        super(writer, tag);
 
-    this.combination = combination;
-  }
+        this.combination = combination;
+    }
 
-  public Combination getCombination() {
-    return combination;
-  }
+    public Combination getCombination() {
+        return combination;
+    }
 
-  public Responsive getActive() {
-    return getCombination();
-  }
+    public Initiator getInitiator() {
+        return getCombination();
+    }
 
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+    protected ReferenceHandler createReferenceHandler(AbstractReader reader,
+            Attributes attributes) {
+        return new CombinationReferenceHandler(reader, attributes) {
+            public void finished() {
+                getCombination().addReference(getReference());
+            }
+        };
+    }
 
-    if ("fixed".equals(qName)) {
-      new BooleanHandler(getReader()) {
-        public void finished() {
-          combination.setFixed(getBoolean());
+    protected ReferenceHandler createReferenceHandler(AbstractWriter writer,
+            String tag, Reference reference) {
+        return new CombinationReferenceHandler(writer, tag, reference);
+    }
+
+    private static class CombinationReferenceHandler extends ReferenceHandler {
+
+        public CombinationReferenceHandler(AbstractReader reader,
+                Attributes attributes) {
+            super(reader, attributes);
         }
-      };
-    } else if ("captureWithRecall".equals(qName)) {
-      new BooleanHandler(getReader()) {
-        public void finished() {
-          combination.setCaptureWithRecall(getBoolean());
+
+        public CombinationReferenceHandler(AbstractWriter writer, String tag,
+                Reference reference) {
+            super(writer, tag, reference);
         }
-      };
-    } else if ("recallMessage".equals(qName)) {
-      new MessageHandler(getReader()) {
-        public void finished() {
-          combination.setRecallMessage(getMessage());
+
+        public void characters(XMLWriter writer) throws IOException {
+            Combination.CombinationReference reference = (Combination.CombinationReference) getReference();
+
+            StringBuffer text = new StringBuffer(128);
+            for (int l = 0; l < 128; l++) {
+                text.append(reference.isActive(l) ? '1' : '0');
+            }
+            writer.characters(text.toString());
         }
-      };
-    } else if ("captureMessage".equals(qName)) {
-      new MessageHandler(getReader()) {
-        public void finished() {
-          combination.setCaptureMessage(getMessage());
+
+        protected Reference createReference(Element element) {
+            Combination.CombinationReference reference = new Combination.CombinationReference(
+                    (Activateable) element);
+
+            String text = getCharacters();
+            for (int l = 0; l < 128; l++) {
+                reference.setActive(l, text.charAt(l) == '1' ? true : false);
+            }
+
+            return reference;
         }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
     }
-  }
-
-  public void children() throws IOException {
-    super.children();
-
-    new BooleanHandler(getWriter(), "fixed", combination.isFixed()).start();
-    new BooleanHandler(getWriter(), "captureWithRecall", combination.isCaptureWithRecall()).start();
-    if (combination.getRecallMessage() != null) {
-      new MessageHandler(getWriter(), "recallMessage", combination.getRecallMessage()).start();
-    }
-    if (combination.getCaptureMessage() != null) {
-      new MessageHandler(getWriter(), "captureMessage", combination.getCaptureMessage()).start();
-    }
-  }
-  
-  protected ReferenceHandler createReferenceHandler(AbstractReader reader, Attributes attributes) {
-    return new CombinationReferenceHandler(reader, attributes) {
-      public void finished() {
-        getCombination().addReference(getReference());
-      }
-    };
-  }
-
-  protected ReferenceHandler createReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-    return new CombinationReferenceHandler(writer, tag, reference);
-  }
-  
-  private static class CombinationReferenceHandler extends ReferenceHandler {
-
-    public CombinationReferenceHandler(AbstractReader reader, Attributes attributes) {
-      super(reader, attributes);
-    }
-
-    public CombinationReferenceHandler(AbstractWriter writer, String tag, Reference reference) {
-      super(writer, tag, reference);
-    }
-
-    public void characters(XMLWriter writer) throws IOException {
-      Combination.CombinationReference reference = (Combination.CombinationReference)getReference(); 
-
-      StringBuffer text = new StringBuffer(128);
-      for (int l = 0; l < 128; l++) {
-          text.append(reference.isActive(l) ? '1' : '0');
-      }
-      writer.characters(text.toString());
-    }
-
-    protected Reference createReference(Element element) {
-      Combination.CombinationReference reference = new Combination.CombinationReference((Activateable)element);
-
-      String text = getCharacters();
-      for (int l = 0; l < 128; l++) {
-          reference.setActive(l, text.charAt(l) == '1' ? true : false);
-      }
-      
-      return reference;  
-    }
-  }
 }

@@ -23,57 +23,63 @@ package jorgan.disposition;
  */
 public abstract class Keyable extends Activateable {
 
-  public static final int ACTION_STRAIGHT         = 0;
-  public static final int ACTION_PITCH_CONSTANT   = 1;
-  public static final int ACTION_PITCH_HIGHEST    = 2;
-  public static final int ACTION_PITCH_LOWEST     = 3;
-  public static final int ACTION_SUSTAIN          = 4;
-  public static final int ACTION_SOSTENUTO        = 5;
-  public static final int ACTION_INVERSE          = 6;
-  
-  public static final int DEFAULT_TRANSPOSE = 0;
+    public static final int ACTION_STRAIGHT = 0;
 
-  public static final int DEFAULT_VELOCITY = 100;
+    public static final int ACTION_PITCH_CONSTANT = 1;
 
-  private int velocity = DEFAULT_VELOCITY;
+    public static final int ACTION_PITCH_HIGHEST = 2;
 
-  private int action = ACTION_STRAIGHT;
-  
-  private int transpose = DEFAULT_TRANSPOSE;
+    public static final int ACTION_PITCH_LOWEST = 3;
 
-  public int getTranspose() {
-    return transpose;
-  }
+    public static final int ACTION_SUSTAIN = 4;
 
-  public int getAction() {
-    return action;
-  }
-  
-  public void setAction(int action) {
-      if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
-        throw new IllegalArgumentException("pitch '" + action + "'");
-      }
-      this.action = action;
+    public static final int ACTION_SOSTENUTO = 5;
 
-      fireElementChanged(true);
-  }
+    public static final int ACTION_INVERSE = 6;
 
-  public void setTranspose(int transpose) {
-    this.transpose = transpose;
+    public static final int DEFAULT_TRANSPOSE = 0;
 
-    fireElementChanged(true);
-  }
+    public static final int DEFAULT_VELOCITY = 100;
 
-  public int getVelocity() {
-    return velocity;
-  }
+    private int velocity = DEFAULT_VELOCITY;
 
-  public void setVelocity(int velocity) {
-    if (velocity < 0 || velocity > 127) {
-      throw new IllegalArgumentException("velocity '" + velocity + "'");
+    private int action = ACTION_STRAIGHT;
+
+    private int transpose = DEFAULT_TRANSPOSE;
+
+    public int getTranspose() {
+        return transpose;
     }
-    this.velocity = velocity;
 
-    fireElementChanged(true);
-  }
+    public int getAction() {
+        return action;
+    }
+
+    public void setAction(int action) {
+        if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
+            throw new IllegalArgumentException("pitch '" + action + "'");
+        }
+        this.action = action;
+
+        fireElementChanged(true);
+    }
+
+    public void setTranspose(int transpose) {
+        this.transpose = transpose;
+
+        fireElementChanged(true);
+    }
+
+    public int getVelocity() {
+        return velocity;
+    }
+
+    public void setVelocity(int velocity) {
+        if (velocity < 0 || velocity > 127) {
+            throw new IllegalArgumentException("velocity '" + velocity + "'");
+        }
+        this.velocity = velocity;
+
+        fireElementChanged(true);
+    }
 }

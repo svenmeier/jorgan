@@ -18,35 +18,38 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.Collections;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
+import jorgan.gui.console.ViewComparator;
 
 public class SpreadVerticalLayout extends ViewLayout {
 
-  private int y;
-  private int height;
-  private int count;
-  
-  public SpreadVerticalLayout() {
-    super(resources.getString("view.spread.vertical"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/spreadVertical.gif")));
-  }
+    private int y;
 
-  protected void init(View pressed, List views) {
-    
-    Collections.sort(views, new ViewComparator(false, true));
-    count = views.size();
+    private int height;
 
-    View top    = (View)views.get(0); 
-    View bottom = (View)views.get(views.size() - 1); 
+    private int count;
 
-    y      = top.getY()    + top.getHeight()/2;
-    height = bottom.getY() + bottom.getHeight()/2 - y;      
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(view.getX(), y + (height * index / (count - 1)) - view.getHeight()/2);            
-  }
+    public SpreadVerticalLayout() {
+        super("spreadVertical");
+    }
+
+    protected void init(View pressed, List views) {
+
+        Collections.sort(views, new ViewComparator(false, true));
+        count = views.size();
+
+        View top = (View) views.get(0);
+        View bottom = (View) views.get(views.size() - 1);
+
+        y = top.getY() + top.getHeight() / 2;
+        height = bottom.getY() + bottom.getHeight() / 2 - y;
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, view.getX(), y + (height * index / (count - 1))
+                - view.getHeight() / 2);
+    }
 }

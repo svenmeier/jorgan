@@ -18,25 +18,23 @@
  */
 package jorgan.gui.construct.layout;
 
-import java.util.*;
-import javax.swing.ImageIcon;
+import java.util.List;
 
-import jorgan.gui.console.*;
+import jorgan.gui.console.View;
 
 public class AlignCenterHorizontalLayout extends ViewLayout {
 
-  private int x;
-  
-  public AlignCenterHorizontalLayout() {
-    super(resources.getString("view.align.centerHorizontal"),
-          new ImageIcon(View.class.getResource("/jorgan/gui/img/alignCenterHorizontal.gif")));
-  }
+    private int x;
 
-  protected void init(View pressed, List views) {
-    x = pressed.getX() + pressed.getWidth()/2;
-  }
-  
-  protected void visit(View view, int index) {
-    view.setPosition(x - view.getWidth()/2, view.getY());
-  }
+    public AlignCenterHorizontalLayout() {
+        super("alignCenterHorizontal");
+    }
+
+    protected void init(View pressed, List views) {
+        x = pressed.getX() + pressed.getWidth() / 2;
+    }
+
+    protected void visit(View view, int index) {
+        changePosition(view, x - view.getWidth() / 2, view.getY());
+    }
 }

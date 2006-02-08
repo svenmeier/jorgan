@@ -18,155 +18,166 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
 
-import jorgan.sound.midi.*;
-
-import jorgan.disposition.*;
-import jorgan.disposition.event.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Key;
+import jorgan.disposition.Keyboard;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.sound.midi.DevicePool;
 
 /**
  * A player of an keyboard.
  */
 public class KeyboardPlayer extends Player {
 
-  private static final Problem warningDevice = new Problem(Problem.WARNING, "device"); 
-  private static final Problem errorDevice = new Problem(Problem.ERROR, "device");
+    private static final Problem warningDevice = new Problem(Problem.WARNING,
+            "device");
 
-  /**
-   * The currently pressed keys.
-   */
-  private boolean[] pressedKeys = new boolean[128];
+    private static final Problem errorDevice = new Problem(Problem.ERROR,
+            "device");
 
-  /**
-   * The midiDevice to receive input from.
-   */
-  private MidiDevice in;
-  
-  /**
-   * The transmitter of the opened midiDevice.
-   */
-  private Transmitter transmitter;
-  
-  public KeyboardPlayer(Keyboard keyboard) {
-    super(keyboard);
-  }
+    /**
+     * The currently pressed keys.
+     */
+    private boolean[] pressedKeys = new boolean[128];
 
-  protected void openImpl() {
-    Keyboard keyboard = (Keyboard)getElement();
+    /**
+     * The midiDevice to receive input from.
+     */
+    private MidiDevice in;
 
-    removeProblem(errorDevice);
+    /**
+     * The transmitter of the opened midiDevice.
+     */
+    private Transmitter transmitter;
 
-    String device = keyboard.getDevice();
-    if (device != null) { 
-      try {
-        in = DevicePool.getMidiDevice(device, false);
-        in.open();
-
-        transmitter = in.getTransmitter();
-        transmitter.setReceiver(getOrganPlay().createReceiver(this));
-      } catch (MidiUnavailableException ex) {
-        addProblem(errorDevice.value(device));
-      }
+    public KeyboardPlayer(Keyboard keyboard) {
+        super(keyboard);
     }
-  }
 
-  protected void closeImpl() {
-    if (in != null) {
-      transmitter.close();
-      in.close();
+    protected void openImpl() {
+        Keyboard keyboard = (Keyboard) getElement();
 
-      transmitter = null;
-      in          = null;
+        removeProblem(errorDevice);
+
+        String device = keyboard.getDevice();
+        if (device != null) {
+            try {
+                in = DevicePool.getMidiDevice(device, false);
+                in.open();
+
+                transmitter = in.getTransmitter();
+                transmitter.setReceiver(getOrganPlay().createReceiver(this));
+            } catch (MidiUnavailableException ex) {
+                addProblem(errorDevice.value(device));
+            }
+        }
     }
-    
-    for (int p = 0; p < pressedKeys.length; p++) {
-      pressedKeys[p] = false;
+
+    protected void closeImpl() {
+        if (in != null) {
+            transmitter.close();
+            in.close();
+
+            transmitter = null;
+            in = null;
+        }
+
+        for (int p = 0; p < pressedKeys.length; p++) {
+            pressedKeys[p] = false;
+        }
     }
-  }
 
-  public void elementChanged(OrganEvent event) {
-    Keyboard keyboard = (Keyboard)getElement();
+    public void elementChanged(OrganEvent event) {
+        Keyboard keyboard = (Keyboard) getElement();
 
-    if (keyboard.getDevice() == null && Configuration.instance().getWarnWithoutDevice()) {
-      removeProblem(errorDevice);
-      addProblem(warningDevice.value(null));
-    } else {
-      removeProblem(warningDevice);
-    }
-  }
-
-  protected void input(ShortMessage message) {
-    Keyboard keyboard = (Keyboard)getElement();
-
-    if (isNoteMessage(message) && keyboard.getChannel() == message.getChannel()) {
-
-      int command  = message.getCommand();
-      int pitch    = message.getData1();
-      int velocity = message.getData2();
-
-      Key key = new Key(pitch);
-      if ((keyboard.getFrom() == null || keyboard.getFrom().lessEqual   (key)) &&
-          (keyboard.getTo()   == null || keyboard.getTo()  .greaterEqual(key))) {
-
-        pitch += keyboard.getTranspose();
-
-        if (command == keyboard.getCommand()) {
-          if (velocity > keyboard.getThreshold()) {
-            keyDown(pitch, velocity);
-          } else {
-            keyUp(pitch);
-          }
-          fireInputAccepted();
+        if (keyboard.getDevice() == null
+                && Configuration.instance().getWarnWithoutDevice()) {
+            removeProblem(errorDevice);
+            addProblem(warningDevice.value(null));
         } else {
-          if (command == ShortMessage.NOTE_OFF ||
-              command == ShortMessage.NOTE_ON && velocity == 0) {
-            keyUp(pitch);
-
-            fireInputAccepted();
-          }
+            removeProblem(warningDevice);
         }
-      }
     }
-  }
-    
-  protected boolean isNoteMessage(ShortMessage message) {
-    int status = message.getStatus();
 
-    return (status >= 0x80 && status < 0xb0);
-  }
+    protected void input(ShortMessage message) {
+        Keyboard keyboard = (Keyboard) getElement();
 
-  protected void keyDown(int pitch, int velocity) {
-    if (pitch >= 0 && pitch <= 127 && !pressedKeys[pitch]) {
-      pressedKeys[pitch] = true;
-        
-      Keyboard keyboard = (Keyboard)getElement();
+        if (isNoteMessage(message)
+                && keyboard.getChannel() == message.getChannel()) {
 
-      for (int e = 0; e < keyboard.getReferenceCount(); e++) {
-        Element element = keyboard.getReference(e).getElement();
+            int command = message.getCommand();
+            int pitch = message.getData1();
+            int velocity = message.getData2();
 
-        Player player = getOrganPlay().getPlayer(element);
-        if (player != null) {
-          ((KeyablePlayer)player).keyDown(pitch, velocity);
+            Key key = new Key(pitch);
+            if ((keyboard.getFrom() == null || keyboard.getFrom()
+                    .lessEqual(key))
+                    && (keyboard.getTo() == null || keyboard.getTo()
+                            .greaterEqual(key))) {
+
+                pitch += keyboard.getTranspose();
+
+                if (command == keyboard.getCommand()) {
+                    if (velocity > keyboard.getThreshold()) {
+                        keyDown(pitch, velocity);
+                    } else {
+                        keyUp(pitch);
+                    }
+                    fireInputAccepted();
+                } else {
+                    if (command == ShortMessage.NOTE_OFF
+                            || command == ShortMessage.NOTE_ON && velocity == 0) {
+                        keyUp(pitch);
+
+                        fireInputAccepted();
+                    }
+                }
+            }
         }
-      }
     }
-  }
 
-  protected void keyUp(int pitch) {
-    if (pitch >= 0 && pitch <= 127 && pressedKeys[pitch]) {
-      pressedKeys[pitch] = false;
-          
-      Keyboard keyboard = (Keyboard)getElement();
+    protected boolean isNoteMessage(ShortMessage message) {
+        int status = message.getStatus();
 
-      for (int e = 0; e < keyboard.getReferenceCount(); e++) {
-        Element element = keyboard.getReference(e).getElement();
+        return (status >= 0x80 && status < 0xb0);
+    }
 
-        Player player = getOrganPlay().getPlayer(element);
-        if (player != null) {
-          ((KeyablePlayer)player).keyUp(pitch);
+    protected void keyDown(int pitch, int velocity) {
+        if (pitch >= 0 && pitch <= 127 && !pressedKeys[pitch]) {
+            pressedKeys[pitch] = true;
+
+            Keyboard keyboard = (Keyboard) getElement();
+
+            for (int e = 0; e < keyboard.getReferenceCount(); e++) {
+                Element element = keyboard.getReference(e).getElement();
+
+                Player player = getOrganPlay().getPlayer(element);
+                if (player != null) {
+                    ((KeyablePlayer) player).keyDown(pitch, velocity);
+                }
+            }
         }
-      }
     }
-  }
+
+    protected void keyUp(int pitch) {
+        if (pitch >= 0 && pitch <= 127 && pressedKeys[pitch]) {
+            pressedKeys[pitch] = false;
+
+            Keyboard keyboard = (Keyboard) getElement();
+
+            for (int e = 0; e < keyboard.getReferenceCount(); e++) {
+                Element element = keyboard.getReference(e).getElement();
+
+                Player player = getOrganPlay().getPlayer(element);
+                if (player != null) {
+                    ((KeyablePlayer) player).keyUp(pitch);
+                }
+            }
+        }
+    }
 }

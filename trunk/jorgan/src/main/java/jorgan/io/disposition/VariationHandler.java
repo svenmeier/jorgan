@@ -18,62 +18,66 @@
  */
 package jorgan.io.disposition;
 
-import java.io.*;
+import java.io.IOException;
 
-import org.xml.sax.*;
+import jorgan.disposition.Activateable;
+import jorgan.disposition.Variation;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.handler.IntegerHandler;
 
-import jorgan.disposition.*;
-import jorgan.xml.*;
-import jorgan.xml.handler.*;
+import org.xml.sax.Attributes;
 
 public class VariationHandler extends ActivateableHandler {
 
-  private Variation variation;
+    private Variation variation;
 
-  public VariationHandler(AbstractReader reader, Attributes attributes) {
-    super(reader, attributes);
+    public VariationHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
 
-    variation = new Variation();
-  }
-
-  public VariationHandler(AbstractWriter writer, String tag, Variation variation) {
-    super(writer, tag);
-
-    this.variation = variation;
-  }
-
-  public Variation getVariation() {
-    return variation;
-  }
-
-  protected Activateable getActivateable() {
-    return getVariation();
-  }
-
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
-
-    if ("bank".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          variation.setBank(getInteger());
-        }
-      };
-    } else if ("program".equals(qName)) {
-      new IntegerHandler(getReader()) {
-        public void finished() {
-          variation.setProgram(getInteger());
-        }
-      };
-    } else {
-      super.startElement(uri, localName, qName, attributes);
+        variation = new Variation();
     }
-  }
 
-  public void children() throws IOException {
-    super.children();
+    public VariationHandler(AbstractWriter writer, String tag,
+            Variation variation) {
+        super(writer, tag);
 
-    new IntegerHandler(getWriter(), "bank"   , variation.getBank()   ).start();
-    new IntegerHandler(getWriter(), "program", variation.getProgram()).start();
-  }
+        this.variation = variation;
+    }
+
+    public Variation getVariation() {
+        return variation;
+    }
+
+    protected Activateable getActivateable() {
+        return getVariation();
+    }
+
+    public void startElement(String uri, String localName, String qName,
+            Attributes attributes) {
+
+        if ("bank".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    variation.setBank(getInteger());
+                }
+            };
+        } else if ("program".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    variation.setProgram(getInteger());
+                }
+            };
+        } else {
+            super.startElement(uri, localName, qName, attributes);
+        }
+    }
+
+    public void children() throws IOException {
+        super.children();
+
+        new IntegerHandler(getWriter(), "bank", variation.getBank()).start();
+        new IntegerHandler(getWriter(), "program", variation.getProgram())
+                .start();
+    }
 }

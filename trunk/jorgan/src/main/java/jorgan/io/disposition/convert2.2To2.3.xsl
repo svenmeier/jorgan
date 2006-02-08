@@ -16,6 +16,24 @@
 			</xsl:choose>
         </reference>
 	</xsl:template>
+
+	<xsl:template match="sequence">
+        <initiatorSequence>
+			<xsl:apply-templates select="@*|*"/>
+        </initiatorSequence>
+	</xsl:template>
+
+	<xsl:template match="crescendo">
+        <activateableSequence>
+			<xsl:apply-templates select="@*|*"/>
+        </activateableSequence>
+	</xsl:template>
+
+	<xsl:template match="recallMessage">
+        <message>
+			<xsl:apply-templates select="@*|*"/>
+        </message>
+	</xsl:template>
 	
 	<xsl:template match="@*|node()">
 		<xsl:copy>

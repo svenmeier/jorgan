@@ -18,12 +18,13 @@
  */
 package jorgan.gui.console;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Font;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.prefs.*;
+import java.util.prefs.Preferences;
 
-import jorgan.config.prefs.*;
+import jorgan.config.prefs.PreferencesConfiguration;
 import jorgan.disposition.Organ;
 
 /**
@@ -31,103 +32,113 @@ import jorgan.disposition.Organ;
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static final boolean INTERPOLATE     = false;
-  private static final boolean SHOW_SHORTCUT   = true;  
-  private static final Color   SHORTCUT_COLOR  = Color.blue;
-  private static final Font    SHORTCUT_FONT   = new Font("Arial", Font.PLAIN , 10);
-  private static final Font    FONT            = new Font("Arial", Font.PLAIN , 12);
-  
-  private static Configuration sharedInstance = new Configuration();
+    private static final boolean INTERPOLATE = false;
 
-  private boolean interpolate;
-  private boolean showShortcut;  
-  private Color   shortcutColor;
-  private Font    shortcutFont;
-  private Map     fonts;
+    private static final boolean SHOW_SHORTCUT = true;
 
-  protected void restore(Preferences prefs) {
-    interpolate    = getBoolean(prefs, "interpolate", INTERPOLATE);
+    private static final Color SHORTCUT_COLOR = Color.blue;
 
-    showShortcut   = getBoolean(prefs, "showShortcut", SHOW_SHORTCUT);
-    shortcutColor  = getColor  (prefs, "shortcutColor", SHORTCUT_COLOR);
-    shortcutFont   = getFont   (prefs, "shortcutFont"   , SHORTCUT_FONT);
+    private static final Font SHORTCUT_FONT = new Font("Arial", Font.PLAIN, 10);
 
-    fonts = new HashMap();
-    Class[] classes = Organ.getElementClasses();
-    for (int c = 0; c < classes.length; c++) {
-      fonts.put(classes[c], getFont(prefs, "font[" + classes[c].getName() + "]", FONT));
+    private static final Font FONT = new Font("Arial", Font.PLAIN, 12);
+
+    private static Configuration sharedInstance = new Configuration();
+
+    private boolean interpolate;
+
+    private boolean showShortcut;
+
+    private Color shortcutColor;
+
+    private Font shortcutFont;
+
+    private Map fonts;
+
+    protected void restore(Preferences prefs) {
+        interpolate = getBoolean(prefs, "interpolate", INTERPOLATE);
+
+        showShortcut = getBoolean(prefs, "showShortcut", SHOW_SHORTCUT);
+        shortcutColor = getColor(prefs, "shortcutColor", SHORTCUT_COLOR);
+        shortcutFont = getFont(prefs, "shortcutFont", SHORTCUT_FONT);
+
+        fonts = new HashMap();
+        Class[] classes = Organ.getElementClasses();
+        for (int c = 0; c < classes.length; c++) {
+            fonts.put(classes[c], getFont(prefs, "font[" + classes[c].getName()
+                    + "]", FONT));
+        }
     }
-  }
 
-  protected void backup(Preferences prefs) {
-    putBoolean(prefs, "interpolate", interpolate);
+    protected void backup(Preferences prefs) {
+        putBoolean(prefs, "interpolate", interpolate);
 
-    putBoolean(prefs, "showShortcut", showShortcut);
-    putColor  (prefs, "shortcutColor", shortcutColor);
-    putFont   (prefs, "shortcutFont" , shortcutFont);
+        putBoolean(prefs, "showShortcut", showShortcut);
+        putColor(prefs, "shortcutColor", shortcutColor);
+        putFont(prefs, "shortcutFont", shortcutFont);
 
-    Class[] classes = Organ.getElementClasses();
-    for (int c = 0; c < classes.length; c++) {
-      putFont(prefs, "font[" + classes[c].getName() + "]", (Font)fonts.get(classes[c]));
+        Class[] classes = Organ.getElementClasses();
+        for (int c = 0; c < classes.length; c++) {
+            putFont(prefs, "font[" + classes[c].getName() + "]", (Font) fonts
+                    .get(classes[c]));
+        }
     }
-  }
 
-  public boolean getInterpolate() {
-    return interpolate;
-  }
+    public boolean getInterpolate() {
+        return interpolate;
+    }
 
-  public boolean getShowShortcut() {
-    return showShortcut;
-  }
+    public boolean getShowShortcut() {
+        return showShortcut;
+    }
 
-  public Color getShortcutColor() {
-    return shortcutColor;
-  }
+    public Color getShortcutColor() {
+        return shortcutColor;
+    }
 
-  public Font getShortcutFont() {
-    return shortcutFont;
-  }
+    public Font getShortcutFont() {
+        return shortcutFont;
+    }
 
-  public Font getFont(Class clazz) {
-    return (Font)fonts.get(clazz);
-  }
+    public Font getFont(Class clazz) {
+        return (Font) fonts.get(clazz);
+    }
 
-  public void setInterpolate(boolean interpolate) {
-    this.interpolate = interpolate;
-    
-    fireConfigurationChanged();
-  }
+    public void setInterpolate(boolean interpolate) {
+        this.interpolate = interpolate;
 
-  public void setShowShortcut(boolean showShortcut) {
-    this.showShortcut = showShortcut;
-    
-    fireConfigurationChanged();
-  }
+        fireConfigurationChanged();
+    }
 
-  public void setShortcutColor(Color shortcutColor) {
-    this.shortcutColor = shortcutColor;
-    
-    fireConfigurationChanged();
-  }
+    public void setShowShortcut(boolean showShortcut) {
+        this.showShortcut = showShortcut;
 
-  public void setShortcutFont(Font shortcutFont) {
-    this.shortcutFont = shortcutFont;
-    
-    fireConfigurationChanged();
-  }
+        fireConfigurationChanged();
+    }
 
-  public void setFont(Class clazz, Font font) {
-    fonts.put(clazz, font);
-    
-    fireConfigurationChanged();
-  }
+    public void setShortcutColor(Color shortcutColor) {
+        this.shortcutColor = shortcutColor;
 
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+        fireConfigurationChanged();
+    }
+
+    public void setShortcutFont(Font shortcutFont) {
+        this.shortcutFont = shortcutFont;
+
+        fireConfigurationChanged();
+    }
+
+    public void setFont(Class clazz, Font font) {
+        fonts.put(clazz, font);
+
+        fireConfigurationChanged();
+    }
+
+    /**
+     * Get the shared configuration.
+     * 
+     * @return configuration
+     */
+    public static Configuration instance() {
+        return sharedInstance;
+    }
 }
