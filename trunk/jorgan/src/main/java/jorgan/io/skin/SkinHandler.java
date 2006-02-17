@@ -24,6 +24,7 @@ import jorgan.skin.Skin;
 import jorgan.xml.AbstractReader;
 import jorgan.xml.AbstractWriter;
 import jorgan.xml.handler.Handler;
+import jorgan.xml.handler.IntegerHandler;
 import jorgan.xml.handler.StringHandler;
 
 import org.xml.sax.Attributes;
@@ -60,6 +61,12 @@ public class SkinHandler extends Handler {
                     skin.setName(getString());
                 }
             };
+        } else if ("focus".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    skin.setFocus(getInteger());
+                }
+            };
         } else if ("style".equals(qName)) {
             new StyleHandler(getReader()) {
                 public void finished() {
@@ -75,6 +82,8 @@ public class SkinHandler extends Handler {
         super.children();
 
         new StringHandler(getWriter(), "name", skin.getName()).start();
+
+        new IntegerHandler(getWriter(), "focus", skin.getFocus()).start();
 
         for (int s = 0; s < skin.getStyleCount(); s++) {
             new StyleHandler(getWriter(), "style", skin.getStyle(s)).start();

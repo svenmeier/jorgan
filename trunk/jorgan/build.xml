@@ -4,14 +4,12 @@
 
     <property file="./build.properties"/>
 
-    <target name="dist" description="Set up the distribution" depends="distProgram, distSource" />
-
     <target name="clean" description="Cleanup directories">
         <delete dir="./build"/>
         <delete dir="./dist"/>
     </target>
 
-    <target name="buildProgram" description="Build the source" >
+    <target name="build" description="Build the source" >
         <mkdir dir="./build"/>
         <javac debug="false" deprecation="true" destdir="./build" srcdir="./src">
         	<classpath>
@@ -32,7 +30,7 @@
     	<copy file="build.properties" tofile="./build/jorgan/app.properties" overwrite="true" />
     </target>
 
-    <target name="distProgram" description="Set up the program distribution" depends="clean, buildProgram" >
+    <target name="dist" description="Set up the distribution" depends="clean, build" >
         <mkdir dir="./dist/marshal" />
 
        	<jar destfile="./dist/marshal/jorgan.jar">
@@ -72,15 +70,6 @@
 
         <zip basedir="./dist/marshal" destfile="./dist/jOrgan-${jorgan.version}.zip" />
         <delete dir="./dist/marshal" />
-    </target>
-
-    <target name="distSource" description="Set up the source distribution" depends="clean" >
-        <mkdir dir="./dist" />
-
-        <zip basedir="." destfile="./dist/jOrgan-${jorgan.version}-src.zip">
-        	<exclude name="build/**/*"/>
-        	<exclude name="dist/**/*"/>
-        </zip>
     </target>
 
     <target name="run" description="Run application" >

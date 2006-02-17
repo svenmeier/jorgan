@@ -49,6 +49,12 @@ public class ContinuousView extends View {
         getContinuous().setPosition(position);
     }
 
+    public void released() {
+        if (!getContinuous().isLocking()) {
+            getContinuous().setPosition(0);
+        }
+    }
+    
     protected Style createDefaultStyle() {
         Style style = new Style();
 

@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A crescendo.
  */
-public class ActivateableSequence extends Continuous {
+public class ActivateableSequence extends Sequence {
 
     protected boolean canReference(Class clazz) {
         return Activateable.class.isAssignableFrom(clazz);

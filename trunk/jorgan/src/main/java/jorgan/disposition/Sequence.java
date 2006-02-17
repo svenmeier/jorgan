@@ -16,32 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.skin;
+package jorgan.disposition;
 
-/**
- * Manager of skins.
- */
-public interface ISkinManager {
-
-    /**
-     * Get the names of the available skins.
-     * 
-     * @return skins
-     */
-    public String[] getSkinNames();
-
-    /**
-     * Get the names of styles for the given skin.
-     * 
-     * @return styles
-     */
-    public String[] getStyleNames(String skin);
+public abstract class Sequence extends Continuous {
     
-    /**
-     * Get a skin with the given name.
-     * 
-     * @param name  name of skin
-     * @return  skin
-     */
-    public Skin getSkin(String name);
+    protected boolean canReferenceDuplicates() {
+        return true;
+    }
 }

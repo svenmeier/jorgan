@@ -32,7 +32,7 @@ import java.util.ResourceBundle;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
-import jorgan.skin.SkinManager;
+import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
@@ -154,19 +154,20 @@ public class View {
         }
         setText(TEXT_NAME, name);
     }
-    
+
     protected void initStyle() {
         style = null;
-        String skinName = consolePanel.getConsole().getSkin();
-        if (skinName != null) {
+
+        Skin skin = consolePanel.getSkin();
+        if (skin != null) {
             String styleName = element.getStyle();
-            style = SkinManager.instance().createStyle(skinName, styleName);
+            style = skin.createStyle(styleName);
         }
         if (style == null) {
             style = createDefaultStyle();
         }
         style.init(this, consolePanel);
-        
+
         size = style.getSize();
     }
 

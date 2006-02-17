@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public class InitiatorSequence extends Continuous implements Combination.Observer {
+public class InitiatorSequence extends Sequence implements Initiator.Observer {
 
     protected boolean canReference(Class clazz) {
         return Combination.class == clazz;
@@ -55,6 +55,10 @@ public class InitiatorSequence extends Continuous implements Combination.Observe
     }
     
     protected int getIncrementMax() {
-        return getReferenceCount();
+        if (getReferenceCount() == 0) {
+            return 0;
+        } else {
+            return Math.min(127, getReferenceCount() - 1);
+        }
     }
 }

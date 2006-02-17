@@ -60,7 +60,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor, A
   public void setElement(Element element) {
     
     device = null;
-    Iterator iterator = element.referrer(Console.class).iterator();
+    Iterator iterator = element.getReferrer(Console.class).iterator();
     while (iterator.hasNext()) {
       device = ((Console)iterator.next()).getDevice();
       if (device != null) {

@@ -19,10 +19,10 @@
 package jorgan.gui.construct.layout;
 
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import jorgan.gui.console.View;
-import jorgan.gui.console.ViewComparator;
 
 public class SpreadVerticalLayout extends ViewLayout {
 
@@ -38,7 +38,14 @@ public class SpreadVerticalLayout extends ViewLayout {
 
     protected void init(View pressed, List views) {
 
-        Collections.sort(views, new ViewComparator(false, true));
+        Collections.sort(views, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                View view1 = (View)o1;
+                View view2 = (View)o2;
+                
+                return view1.getY() - view2.getY();
+            }
+        });
         count = views.size();
 
         View top = (View) views.get(0);

@@ -18,7 +18,6 @@
  */
 package jorgan.disposition;
 
-import java.util.Iterator;
 
 /**
  * An incrementer of continuous elements.
@@ -32,9 +31,8 @@ public class Incrementer extends Initiator {
     }
 
     public void initiate() {
-        Iterator iterator = getReferences().iterator();
-        while (iterator.hasNext()) {
-            Reference reference = (Reference) iterator.next();
+        for (int r = 0; r < getReferenceCount(); r++) {
+            Reference reference = (Reference) getReference(r);
             Continuous continuous = (Continuous) reference.getElement();
 
             continuous.increment(delta);

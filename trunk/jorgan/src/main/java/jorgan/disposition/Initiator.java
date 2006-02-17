@@ -37,7 +37,7 @@ public abstract class Initiator extends Momentary {
     public abstract void initiate();
     
     protected void notifyObservers() {
-        Iterator observers = referrer(Observer.class).iterator();
+        Iterator observers = getReferrer(Observer.class).iterator();
         while (observers.hasNext()) {
             Observer observer = (Observer) observers.next();
             observer.initiated(this);

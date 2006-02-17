@@ -96,7 +96,15 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
         }
 
         if (view instanceof ContinuousView) {
+            position = Math.max(0, position);
+            position = Math.min(127, position);
             ((ContinuousView) view).setPosition(position);
+        }
+    }
+    
+    public void mouseReleased(int x, int y, Dimension size) {
+        if (view instanceof ContinuousView) {
+            ((ContinuousView) view).released();
         }
     }
 
