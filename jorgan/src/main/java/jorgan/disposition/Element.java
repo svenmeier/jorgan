@@ -20,9 +20,8 @@ package jorgan.disposition;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -31,12 +30,12 @@ import java.util.Set;
 /**
  * Abstract base class of all elements of an organ.
  */
-public abstract class Element implements Cloneable, Serializable {
+public abstract class Element implements Cloneable {
 
     /**
      * The organ this element belongs to.
      */
-    private transient Organ organ;
+    private Organ organ;
 
     /**
      * The name of this element.
@@ -51,14 +50,14 @@ public abstract class Element implements Cloneable, Serializable {
     private String style;
 
     /**
-     * The set of elements that reference this element.
+     * The elements that reference this element.
      */
-    protected transient Set referrer = new HashSet();
+    protected Collection referrer = new ArrayList();
 
     /**
      * The list of elements that are referenced by this element.
      */
-    protected transient List references = new ArrayList();
+    protected List references = new ArrayList();
 
     /**
      * Test if this element can reference the given element. <br>
@@ -71,7 +70,8 @@ public abstract class Element implements Cloneable, Serializable {
      * @see #canReference(Element)
      */
     public boolean canReference(Element element) {
-        return element != this && getReference(element) == null
+        return element != this
+                && (canReferenceDuplicates() || getReference(element) == null)
                 && canReference(element.getClass());
     }
 
@@ -84,6 +84,10 @@ public abstract class Element implements Cloneable, Serializable {
      *         referenced
      */
     protected boolean canReference(Class clazz) {
+        return false;
+    }
+    
+    protected boolean canReferenceDuplicates() {
         return false;
     }
 
@@ -99,23 +103,6 @@ public abstract class Element implements Cloneable, Serializable {
 
         referrer = new HashSet();
         references = new ArrayList();
-    }
-
-    /**
-     * All elements are cloneable to support copying of elements.
-     */
-    public Object clone() {
-        try {
-            Element clone = (Element) super.clone();
-
-            clone.referrer = new HashSet();
-            clone.references = new ArrayList();
-            clone.organ = null;
-
-            return clone;
-        } catch (CloneNotSupportedException ex) {
-            throw new Error(ex);
-        }
     }
 
     public Organ getOrgan() {
@@ -167,21 +154,41 @@ public abstract class Element implements Cloneable, Serializable {
     }
 
     public Reference getReference(Element element) {
+        List filtered = getReferences(element);
+        
+        if (filtered.size() == 0) {
+            return null;
+        } else if (filtered.size() == 1){
+            return (Reference)filtered.get(0);
+        } else {
+            throw new Error("unexpected duplicate reference");
+        }
+    }
+
+    public List getReferences(Element element) {
+        List filtered = new ArrayList();
+        
         for (int r = 0; r < references.size(); r++) {
             Reference reference = (Reference) references.get(r);
             if (reference.getElement() == element) {
-                return reference;
+                filtered.add(reference);
             }
         }
-        return null;
+        
+        return filtered;
     }
 
     public final void unreference(Element element) {
 
-        removeReference(getReference(element));
+        for (int r = references.size() - 1; r >= 0; r--) {
+            Reference reference = (Reference)getReference(r);
+            if (reference.getElement() == element) {
+                removeReference(reference);
+            }
+        }
     }
 
-    protected void removeReference(Reference reference) {
+    public void removeReference(Reference reference) {
         if (!references.contains(reference)) {
             throw new IllegalArgumentException("element not referenced");
         }
@@ -198,10 +205,6 @@ public abstract class Element implements Cloneable, Serializable {
 
     public int getReferenceCount() {
         return references.size();
-    }
-
-    public List getReferences() {
-        return Collections.unmodifiableList(references);
     }
 
     /**
@@ -309,17 +312,7 @@ public abstract class Element implements Cloneable, Serializable {
         }
     }
 
-    public List referenced() {
-        List referenced = new ArrayList();
-
-        for (int r = 0; r < references.size(); r++) {
-            Reference reference = (Reference) references.get(r);
-            referenced.add(reference.getElement());
-        }
-        return referenced;
-    }
-
-    public Set referrer(Class clazz) {
+    public Set getReferrer(Class clazz) {
         Set filtered = new HashSet();
 
         Iterator iterator = referrer.iterator();
@@ -333,7 +326,7 @@ public abstract class Element implements Cloneable, Serializable {
     }
 
     public Set getReferrer() {
-        return Collections.unmodifiableSet(referrer);
+        return new HashSet(referrer);
     }
 
     public String toString() {
@@ -354,6 +347,23 @@ public abstract class Element implements Cloneable, Serializable {
         style = string;
 
         fireElementChanged(true);
+    }
+
+    /**
+     * All elements are cloneable for prototyping support.
+     */
+    public Object clone() {
+        try {
+            Element clone = (Element) super.clone();
+
+            clone.referrer = new HashSet();
+            clone.references = new ArrayList();
+            clone.organ = null;
+
+            return clone;
+        } catch (CloneNotSupportedException ex) {
+            throw new Error(ex);
+        }
     }
 
 }

@@ -18,8 +18,6 @@
  */
 package jorgan.skin;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -134,34 +132,6 @@ public class SkinManager implements ISkinManager {
         } else {
             return skin.getStyleNames();
         }
-    }
-
-    public Style createStyle(String skinName, String styleName) {
-
-        Skin skin = getSkin(skinName);
-        if (skin != null) {
-            Style style = skin.createStyle(styleName);
-            if (style != null) {
-                return style;
-            }
-        }
-
-        return null;
-    }
-
-    private Style createDefaultStyle() {
-        Style style = new Style() {
-            protected void draw(Graphics2D g, int x, int y, int width, int height) {
-                g.setColor(Color.RED);
-                g.drawRect(x, y, width - 1, height - 1);
-                g.drawLine(x, y, x + width - 1, y + height -1);
-                g.drawLine(x, y + height - 1, x + width - 1, y);
-            }
-        };
-        style.setWidth(32);        
-        style.setHeight(32);
-        
-        return style;
     }
 
     /**

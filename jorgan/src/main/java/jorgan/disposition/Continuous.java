@@ -89,7 +89,7 @@ public abstract class Continuous extends Element {
     }
 
     public void increment(int delta) {
-        int position = 0;
+        int position = getPosition();
         if (delta > 0) {
             position += delta;
             position -= (position % delta);

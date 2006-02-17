@@ -37,7 +37,7 @@ public class Combination extends Initiator {
 
     public void recall() {
 
-        Iterator captors = referrer(Captor.class).iterator();
+        Iterator captors = getReferrer(Captor.class).iterator();
         while (captors.hasNext()) {
             Captor captor = (Captor) captors.next();
             if (captor.isActive()) {
@@ -72,7 +72,7 @@ public class Combination extends Initiator {
     }
 
     protected int getLevel() {
-        Set memories = referrer(Memory.class);
+        Set memories = getReferrer(Memory.class);
         if (memories.size() > 0) {
             Memory memory = (Memory) memories.iterator().next();
             return memory.getPosition();

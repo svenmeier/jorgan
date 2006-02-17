@@ -36,7 +36,7 @@ public class StyleEditor extends PropertyEditorSupport implements
         if (element instanceof Console) {
             console = (Console) element;
         } else {
-            Iterator iterator = element.referrer(Console.class).iterator();
+            Iterator iterator = element.getReferrer(Console.class).iterator();
             if (iterator.hasNext()) {
                 console = (Console) iterator.next();
             } else {

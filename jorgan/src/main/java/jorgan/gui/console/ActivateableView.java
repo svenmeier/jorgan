@@ -58,7 +58,9 @@ public class ActivateableView extends MomentaryView {
     }
 
     public void buttonReleased() {
-        // nothing to do
+        if (!getActivateable().isLocking()) {
+            getActivateable().setActive(false);
+        }
     }
 
     protected Style createDefaultStyle() {

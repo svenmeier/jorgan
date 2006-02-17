@@ -33,133 +33,139 @@ import jorgan.disposition.*;
  */
 public class CreateReferencesWizard extends BasicWizard {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private Organ organ;
-  private List  elements;  
+    /**
+     * The resource bundle.
+     */
+    protected static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private List referencesTo = new ArrayList();
-  private List referencedFrom = new ArrayList();
+    private Organ organ;
 
-  /**
-   * Create a new wizard.
-   */    
-  public CreateReferencesWizard(Organ organ, List elements) {
-    this.organ = organ;
-    this.elements = elements;
-    
-    addPage(new ReferencesToPage());
-    addPage(new ReferencedByPage());
-  }
-    
-  /**
-   * Allows finish only if elements for new references are selected.
-   * 
-   * @return  <code>true</code> if stops are selected
-   */
-  public boolean allowsFinish() {
-    return referencesTo.size() > 0 || referencedFrom.size() > 0;
-  }
+    private Element element;
 
-  /**
-   * Finish.
-   */
-  protected boolean finishImpl() {
+    private List referencesTo = new ArrayList();
 
-    for (int e = 0; e < elements.size(); e++) {
-      Element element = (Element)elements.get(e);
+    private List referencedFrom = new ArrayList();
 
-      for (int t = 0; t < referencesTo.size(); t++) {
-        Element referenced = (Element)referencesTo.get(t);
-        element.reference(referenced);
-      }
- 
-      for (int f = 0; f < referencedFrom.size(); f++) {
-        Element referrer = (Element)referencedFrom.get(f);
-        referrer.reference(element);
-      }
+    /**
+     * Create a new wizard.
+     */
+    public CreateReferencesWizard(Organ organ, Element element) {
+        this.organ = organ;
+        this.element = element;
+
+        addPage(new ReferencesToPage());
+        addPage(new ReferencedByPage());
     }
-    
-    return true;
-  }
-  
-  /**
-   * Page for selecting elements to reference to.
-   */
-  private class ReferencesToPage extends AbstractPage {
 
-    private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
-
-    public ReferencesToPage() {
-      
-      elementsSelectionPanel.addPropertyChangeListener(this);
-      
-      elementsSelectionPanel.setElements(organ.getReferenceToCandidates(elements));
+    /**
+     * Allows finish only if elements for new references are selected.
+     * 
+     * @return <code>true</code> if stops are selected
+     */
+    public boolean allowsFinish() {
+        return referencesTo.size() > 0 || referencedFrom.size() > 0;
     }
-  
-    public String getDescription() {
-      return resources.getString("construct.create.referencesTo.description");
-    }
-  
-    public JComponent getComponent() {
-      return elementsSelectionPanel;
-    }    
 
-    public void propertyChange(PropertyChangeEvent evt) {
-      referencesTo = elementsSelectionPanel.getSelectedElements();
-      
-      super.propertyChange(evt);
-    }
-  }
- 
-  /**
-   * Page for selecting elements to be referenced from.
-   */
-  private class ReferencedByPage extends AbstractPage {
+    /**
+     * Finish.
+     */
+    protected boolean finishImpl() {
 
-    private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
+        for (int t = 0; t < referencesTo.size(); t++) {
+            Element referenced = (Element) referencesTo.get(t);
+            element.reference(referenced);
+        }
 
-    public ReferencedByPage() {
-      
-      elementsSelectionPanel.addPropertyChangeListener(this);
-      
-      elementsSelectionPanel.setElements(organ.getReferencedFromCandidates(elements));
-    }
-  
-    public String getDescription() {
-      return resources.getString("construct.create.referencedFrom.description");
-    }
-  
-    public JComponent getComponent() {
-      return elementsSelectionPanel;
-    }    
+        for (int f = 0; f < referencedFrom.size(); f++) {
+            Element referrer = (Element) referencedFrom.get(f);
+            referrer.reference(element);
+        }
 
-    public void propertyChange(PropertyChangeEvent evt) {
-      referencedFrom = elementsSelectionPanel.getSelectedElements();
-      
-      super.propertyChange(evt);
+        return true;
     }
-  }
- 
-  /**
-   * Show an reference creation wizard in a dialog.
-   * 
-   * @param owner    owner of dialog
-   * @param elements elements to add created references to
-   */ 
-  public static void showInDialog(Frame owner, Organ organ, List elements) {
 
-    WizardDialog dialog = new WizardDialog(owner);
-        
-    dialog.setTitle(resources.getString("construct.create.references.title"));  
-    
-    dialog.setWizard(new CreateReferencesWizard(organ, elements));
-    
-    dialog.start();
-    
-    dialog.dispose();
-  }
+    /**
+     * Page for selecting elements to reference to.
+     */
+    private class ReferencesToPage extends AbstractPage {
+
+        private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
+
+        public ReferencesToPage() {
+
+            elementsSelectionPanel.addPropertyChangeListener(this);
+
+            elementsSelectionPanel.setElements(organ
+                    .getReferenceToCandidates(element));
+        }
+
+        public String getDescription() {
+            return resources
+                    .getString("construct.create.referencesTo.description");
+        }
+
+        public JComponent getComponent() {
+            return elementsSelectionPanel;
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            referencesTo = elementsSelectionPanel.getSelectedElements();
+
+            super.propertyChange(evt);
+        }
+    }
+
+    /**
+     * Page for selecting elements to be referenced from.
+     */
+    private class ReferencedByPage extends AbstractPage {
+
+        private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
+
+        public ReferencedByPage() {
+
+            elementsSelectionPanel.addPropertyChangeListener(this);
+
+            elementsSelectionPanel.setElements(organ
+                    .getReferencedFromCandidates(element));
+        }
+
+        public String getDescription() {
+            return resources
+                    .getString("construct.create.referencedFrom.description");
+        }
+
+        public JComponent getComponent() {
+            return elementsSelectionPanel;
+        }
+
+        public void propertyChange(PropertyChangeEvent evt) {
+            referencedFrom = elementsSelectionPanel.getSelectedElements();
+
+            super.propertyChange(evt);
+        }
+    }
+
+    /**
+     * Show an reference creation wizard in a dialog.
+     * 
+     * @param owner
+     *            owner of dialog
+     * @param element
+     *            element to add created references to
+     */
+    public static void showInDialog(Frame owner, Organ organ, Element element) {
+
+        WizardDialog dialog = new WizardDialog(owner);
+
+        dialog.setTitle(resources
+                .getString("construct.create.references.title"));
+
+        dialog.setWizard(new CreateReferencesWizard(organ, element));
+
+        dialog.start();
+
+        dialog.dispose();
+    }
 }

@@ -42,6 +42,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +79,6 @@ import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
 import jorgan.gui.console.View;
-import jorgan.gui.console.ViewComparator;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
 import jorgan.gui.construct.layout.AlignCenterVerticalLayout;
@@ -91,6 +92,8 @@ import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.mac.TweakMac;
+import jorgan.skin.Skin;
+import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -112,12 +115,17 @@ public class ConsolePanel extends JComponent implements Scrollable {
      * The edited console.
      */
     private Console console;
+    
+    /**
+     * The skin of the console.
+     */
+    private Skin skin;
 
     /**
      * The view for the console itself.
      */
     private ConsoleView consoleView;
-    
+
     /**
      * The element to view mapping.
      */
@@ -147,11 +155,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
      * The currently selected elements.
      */
     private List selectedElements = new ArrayList();
-
-    /**
-     * The comparator used to sort the views according to their position.
-     */
-    private ViewComparator viewComparator = new ViewComparator(true, true);
 
     /**
      * The listener to selection changes.
@@ -404,6 +407,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
         return (int) (screenPos / zoom);
     }
 
+    public Skin getSkin() {
+        return skin;
+    }
+    
     /**
      * Construct an organ.
      * 
@@ -456,33 +463,45 @@ public class ConsolePanel extends JComponent implements Scrollable {
      */
     public void setConsole(Console console) {
         if (this.console != null) {
-            setZoom(1.0d);
-
             consoleView.setConsolePanel(null);
             consoleView = null;
-            
+
             for (int v = views.size() - 1; v >= 0; v--) {
                 View view = (View) views.get(v);
 
                 dropView(view.getElement());
             }
+            
+            skin = null;
+            
+            setZoom(1.0d);
         }
 
         this.console = console;
 
         if (console != null) {
             setZoom(console.getZoom());
+            
+            initSkin();
 
             consoleView = new ConsoleView(console);
             consoleView.setConsolePanel(this);
-            
+
             for (int r = 0; r < console.getReferenceCount(); r++) {
                 createView(console.getReference(r).getElement());
             }
-            viewComparator.sort(views);
+            sortViews();
         }
     }
 
+    private void initSkin() {
+        if (console.getSkin() == null) {
+            skin = null;
+        } else {
+            skin = SkinManager.instance().getSkin(console.getSkin());
+        }
+    }
+    
     protected View getView(Element element) {
         return (View) viewsByElement.get(element);
     }
@@ -659,7 +678,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
         Rectangle clip = g.getClipBounds();
 
         consoleView.paint(g);
-        
+
         for (int v = 0; v < views.size(); v++) {
             View view = (View) views.get(v);
 
@@ -679,32 +698,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
     }
 
     /**
-     * Paint the background.
-     * 
-     * @param g
-     *            graphics to paint on
-     * 
-     * private void paintBackground(Graphics2D g) { Rectangle clip =
-     * g.getClipBounds();
-     * 
-     * if (console != null) { String skinName = console.getSkin(); String
-     * styleName = console.getStyle(); if (skinName != null && styleName !=
-     * null) { Style style = SkinManager.instance().createStyle(skinName,
-     * styleName); if (style != null) { style.init(0, console.getName(), this);
-     * 
-     * Dimension dimension = new Dimension(style.getWidth(), style.getHeight());
-     * if (dimension.width > 0 && dimension.height > 0) { for (int y = clip.y /
-     * (dimension.height); y <= (clip.y + clip.height) / (dimension.height);
-     * y++) { for (int x = clip.x / (dimension.width); x <= (clip.x +
-     * clip.width) / (dimension.width); x++) { g.translate(x * dimension.width,
-     * y * dimension.height); style.draw(g, dimension); g.translate(-x *
-     * dimension.width, -y * dimension.height); } } return; } } } }
-     * 
-     * g.setColor(getBackground()); g.fillRect(clip.x, clip.y, clip.width,
-     * clip.height); }
-     */
-
-    /**
      * The listener to organ events. <br/> Note that <em>Spin</em> ensures
      * that the methods of this listeners are called on the EDT, although a
      * change in the organ might be triggered by a change on a MIDI thread.
@@ -716,6 +709,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (element == console) {
                 setZoom(console.getZoom());
+                
+                initSkin();
 
                 consoleView.changeUpdate(event);
                 for (int v = 0; v < views.size(); v++) {
@@ -735,10 +730,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             Element element = event.getElement();
 
-            if (element.referrer(Console.class).contains(console)) {
+            if (element.getReferrer(Console.class).contains(console)) {
                 createView(element);
 
-                viewComparator.sort(views);
+                sortViews();
             }
         }
 
@@ -755,6 +750,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (event.getElement() == console) {
                 getView(event.getReference().getElement()).changeUpdate(event);
+                
+                sortViews();
             }
         }
 
@@ -762,7 +759,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
             if (event.getElement() == console) {
                 createView(event.getReference().getElement());
 
-                viewComparator.sort(views);
+                sortViews();
             }
         }
 
@@ -902,8 +899,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
                         view = getView(selectedElement);
 
-                        console.setLocation(selectedElement, view.getX() + deltaX, view.getY()
-                                + deltaY);
+                        console.setLocation(selectedElement, view.getX()
+                                + deltaX, view.getY() + deltaY);
                     }
 
                     mouseDrag = new Point(mouseTo.x + viewToScreen(gridX - x),
@@ -972,7 +969,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
         }
 
         private void paintSelection(Graphics g) {
-            g.setColor(jorgan.gui.construct.Configuration.instance()
+            g
+                    .setColor(jorgan.gui.construct.Configuration.instance()
                             .getColor());
             g.setXORMode(Color.white);
 
@@ -1211,38 +1209,54 @@ public class ConsolePanel extends JComponent implements Scrollable {
     /**
      * Get the location of the given element.
      * 
-     * @param element   element to get location for
-     * @return          location
+     * @param element
+     *            element to get location for
+     * @return location
      */
     public Point getLocation(Element element) {
         return new Point(console.getX(element), console.getY(element));
     }
-    
+
     private class ConsoleView extends View {
         public ConsoleView(Console console) {
             super(console);
         }
-        
+
         protected void initLocation() {
             location = new Point(0, 0);
         }
-        
+
         protected Style createDefaultStyle() {
             return new Style();
         }
-        
+
         public void paint(Graphics2D g) {
             if (size.width > 0 && size.height > 0) {
                 Rectangle clip = g.getClipBounds();
-                
-                for (int x = clip.x - clip.x % size.width; x < clip.x + clip.width; x = x + size.width) {
-                    for (int y = clip.y - clip.y % size.height; y < clip.y + clip.height; y = y + size.height) {
+
+                for (int x = clip.x - clip.x % size.width; x < clip.x
+                        + clip.width; x = x + size.width) {
+                    for (int y = clip.y - clip.y % size.height; y < clip.y
+                            + clip.height; y = y + size.height) {
                         g.translate(x, y);
                         style.draw(g, size);
                         g.translate(-x, -y);
                     }
                 }
             }
+        }
+    }
+
+    protected void sortViews() {
+        if (skin != null) {
+            Collections.sort(views, new Comparator() {
+                public int compare(Object o1, Object o2) {
+                    View view1 = (View)o1;
+                    View view2 = (View)o2;
+                    
+                    return skin.compare(view1, view2);
+                }
+            });
         }
     }
 }

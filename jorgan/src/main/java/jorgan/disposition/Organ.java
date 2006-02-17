@@ -171,47 +171,40 @@ public class Organ {
         return candidates;
     }
 
-    public List getReferenceToCandidates(List elements) {
+    public List getReferenceToCandidates(Element element) {
 
         List candidates = new ArrayList();
 
-        candidates: for (int c = 0; c < this.elements.size(); c++) {
+        for (int c = 0; c < this.elements.size(); c++) {
             Element candidate = (Element) this.elements.get(c);
 
-            for (int e = 0; e < elements.size(); e++) {
-                Element element = (Element) elements.get(e);
-
-                if (!element.canReference(candidate)) {
-                    continue candidates;
-                }
+            if (element.canReference(candidate)) {
+                candidates.add(candidate);
             }
-            candidates.add(candidate);
         }
+        
         return candidates;
     }
 
     /**
-     * Get candidates which can reference all given elements.
+     * Get candidates which can reference the given elements.
      * 
-     * @param elements
-     *            elements to find candidates for
+     * @param element
+     *            element to find candidates for
      * @return candidates, never null
      */
-    public List getReferencedFromCandidates(List elements) {
+    public List getReferencedFromCandidates(Element element) {
 
         List candidates = new ArrayList();
 
-        candidates: for (int c = 0; c < this.elements.size(); c++) {
+        for (int c = 0; c < this.elements.size(); c++) {
             Element candidate = (Element) this.elements.get(c);
 
-            for (int e = 0; e < elements.size(); e++) {
-                Element element = (Element) elements.get(e);
-                if (!candidate.canReference(element)) {
-                    continue candidates;
-                }
+            if (candidate.canReference(element)) {
+                candidates.add(candidate);
             }
-            candidates.add(candidate);
         }
+        
         return candidates;
     }
 
