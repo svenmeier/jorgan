@@ -31,7 +31,7 @@ public class ElementUtils {
 
     String name = element.getName();
     if ("".equals(name)) {
-      name = resources.getString("element.emptyName");                  
+      name = getTypeName(element.getClass());                  
     }
 
     return name;
@@ -39,13 +39,17 @@ public class ElementUtils {
 
   public static String getElementAndTypeName(Element element, boolean alphabetic) {
 
-    String name = getElementName(element);
-
+    String elementName = getElementName(element);
     String typeName = getTypeName(element.getClass());
+    
+    if (elementName.equals(typeName)) {
+        return elementName;
+    }
+    
     if (alphabetic) {
-      return name + " - " + typeName;  
+      return elementName + " - " + typeName;  
     } else {
-      return typeName + " - " + name;  
+      return typeName + " - " + elementName;  
     }
   }
   

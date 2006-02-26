@@ -16,14 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.disposition;
 
 /**
- * BeanInfo for {@link jorgan.disposition.ActivateableSequence}.
+ * An activation of {@link jorgan.disposition.Activateable}s.
  */
-public class ActivateableSequenceBeanInfo extends ContinuousBeanInfo {
+public class Activation extends Continuous {
 
-    protected void registerProperties() {
-        super.registerProperties();
+    protected boolean canReference(Class clazz) {
+        return Activateable.class.isAssignableFrom(clazz);
+    }
+    
+    protected boolean canReferenceDuplicates() {
+        return true;
     }
 }

@@ -26,14 +26,14 @@ import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Coupler;
-import jorgan.disposition.ActivateableSequence;
+import jorgan.disposition.Activation;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Label;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
-import jorgan.disposition.InitiatorSequence;
+import jorgan.disposition.Sequence;
 import jorgan.disposition.SoundSource;
 import jorgan.disposition.Incrementer;
 import jorgan.disposition.Stop;
@@ -103,8 +103,8 @@ public class OrganHandler extends Handler {
                     organ.addElement(getCombination());
                 }
             };
-        } else if ("initiatorSequence".equals(qName)) {
-            new InitiatorSequenceHandler(getReader(), attributes) {
+        } else if ("sequence".equals(qName)) {
+            new SequenceHandler(getReader(), attributes) {
                 public void finished() {
                     organ.addElement(getSequence());
                 }
@@ -121,10 +121,10 @@ public class OrganHandler extends Handler {
                     organ.addElement(getSwell());
                 }
             };
-        } else if ("activateableSequence".equals(qName)) {
-            new ActivateableSequenceHandler(getReader(), attributes) {
+        } else if ("activation".equals(qName)) {
+            new ActivationHandler(getReader(), attributes) {
                 public void finished() {
-                    organ.addElement(getActivateableSequence());
+                    organ.addElement(getActivation());
                 }
             };
         } else if ("activator".equals(qName)) {
@@ -207,17 +207,17 @@ public class OrganHandler extends Handler {
                         (Tremulant) element).start();
             } else if (element instanceof Swell) {
                 new SwellHandler(getWriter(), "swell", (Swell) element).start();
-            } else if (element instanceof ActivateableSequence) {
-                new ActivateableSequenceHandler(getWriter(), "activateableSequence",
-                        (ActivateableSequence) element).start();
+            } else if (element instanceof Activation) {
+                new ActivationHandler(getWriter(), "activation",
+                        (Activation) element).start();
             } else if (element instanceof Variation) {
                 new VariationHandler(getWriter(), "variation",
                         (Variation) element).start();
             } else if (element instanceof Combination) {
                 new CombinationHandler(getWriter(), "combination",
                         (Combination) element).start();
-            } else if (element instanceof InitiatorSequence) {
-                new InitiatorSequenceHandler(getWriter(), "initiatorSequence", (InitiatorSequence) element)
+            } else if (element instanceof Sequence) {
+                new SequenceHandler(getWriter(), "sequence", (Sequence) element)
                         .start();
             } else if (element instanceof Stop) {
                 new StopHandler(getWriter(), "stop", (Stop) element).start();

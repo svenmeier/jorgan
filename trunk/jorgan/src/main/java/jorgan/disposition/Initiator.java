@@ -18,8 +18,6 @@
  */
 package jorgan.disposition;
 
-import java.util.Iterator;
-
 public abstract class Initiator extends Momentary {
 
     private Message message;
@@ -35,16 +33,4 @@ public abstract class Initiator extends Momentary {
     }
 
     public abstract void initiate();
-    
-    protected void notifyObservers() {
-        Iterator observers = getReferrer(Observer.class).iterator();
-        while (observers.hasNext()) {
-            Observer observer = (Observer) observers.next();
-            observer.initiated(this);
-        }
-    }
-    
-    public static interface Observer {
-        public void initiated(Initiator initiator);
-    }
 }

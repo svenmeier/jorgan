@@ -229,16 +229,20 @@ public class ReferencesPanel extends DockedPanel {
                     }
                 }
             }
+            
+            if (sortNameButton.isSelected()) {
+                Collections.sort(rows, new RowComparator(
+                        new ElementComparator(true)));
+            } else if (sortTypeButton.isSelected()) {
+                Collections.sort(rows, new RowComparator(new ElementComparator(
+                        false)));
+            }
+            referencesModel.fireAdded(rows.size());
+            
+            list.setVisible(true);
+        } else {
+            list.setVisible(false);
         }
-
-        if (sortNameButton.isSelected()) {
-            Collections.sort(rows, new RowComparator(
-                    new ElementComparator(true)));
-        } else if (sortTypeButton.isSelected()) {
-            Collections.sort(rows, new RowComparator(new ElementComparator(
-                    false)));
-        }
-        referencesModel.fireAdded(rows.size());
 
         addAction.update();
     }

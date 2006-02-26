@@ -100,21 +100,10 @@ public abstract class Continuous extends Element {
             }
         }
         
-        if (position < getIncrementMin()) {
-            position = getIncrementMin();
-        }
-        if (position > getIncrementMax()) {
-            position = getIncrementMax();
-        }
-
-        setPosition(position);
+        setPosition(limitIncrement(position));
     }
     
-    protected int getIncrementMin() {
-        return 0;
-    }
-    
-    protected int getIncrementMax() {
-        return 127;
+    protected int limitIncrement(int position) {
+        return position;
     }
 }

@@ -32,11 +32,6 @@ public class Combination extends Initiator {
     }
 
     public void initiate() {
-        recall();
-    }
-
-    public void recall() {
-
         Iterator captors = getReferrer(Captor.class).iterator();
         while (captors.hasNext()) {
             Captor captor = (Captor) captors.next();
@@ -45,6 +40,11 @@ public class Combination extends Initiator {
                 return;
             }
         }
+
+        recall();
+    }
+
+    public void recall() {
 
         int level = getLevel();
 
@@ -162,5 +162,17 @@ public class Combination extends Initiator {
         public Activateable getRegistratable() {
             return (Activateable) getElement();
         }
+    }
+        
+    protected void notifyObservers() {
+        Iterator observers = getReferrer(Observer.class).iterator();
+        while (observers.hasNext()) {
+            Observer observer = (Observer) observers.next();
+            observer.initiated(this);
+        }
+    }
+        
+    public static interface Observer {
+        public void initiated(Combination combination);
     }
 }
