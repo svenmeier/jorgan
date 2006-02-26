@@ -19,9 +19,9 @@
 package jorgan.gui.construct.info;
 
 /**
- * BeanInfo for {@link jorgan.disposition.InitiatorSequence}.
+ * BeanInfo for {@link jorgan.disposition.Sequence}.
  */
-public class InitiatorSequenceBeanInfo extends ContinuousBeanInfo {
+public class SequenceBeanInfo extends ContinuousBeanInfo {
 
     protected void registerProperties() {
         super.registerProperties();

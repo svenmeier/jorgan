@@ -32,6 +32,7 @@ import java.util.ResourceBundle;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
+import jorgan.gui.construct.ElementUtils;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -148,11 +149,7 @@ public class View {
     }
 
     protected void initTexts() {
-        String name = getElement().getName();
-        if ("".equals(name)) {
-            name = resources.getString("element.emptyName");
-        }
-        setText(TEXT_NAME, name);
+        setText(TEXT_NAME, ElementUtils.getElementName(getElement()));
     }
 
     protected void initStyle() {

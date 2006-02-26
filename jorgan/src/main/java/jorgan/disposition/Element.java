@@ -153,16 +153,20 @@ public abstract class Element implements Cloneable {
         return new Reference(element);
     }
 
+    /**
+     * Get the reference to the given element.
+     * 
+     * @param element   element to get reference for
+     * @return          reference or <code>null</code> if element is not referenced
+     */
     public Reference getReference(Element element) {
-        List filtered = getReferences(element);
-        
-        if (filtered.size() == 0) {
-            return null;
-        } else if (filtered.size() == 1){
-            return (Reference)filtered.get(0);
-        } else {
-            throw new Error("unexpected duplicate reference");
+        for (int r = 0; r < references.size(); r++) {
+            Reference reference = (Reference) references.get(r);
+            if (reference.getElement() == element) {
+                return reference;
+            }
         }
+        return null;
     }
 
     public List getReferences(Element element) {
@@ -313,16 +317,16 @@ public abstract class Element implements Cloneable {
     }
 
     public Set getReferrer(Class clazz) {
-        Set filtered = new HashSet();
+        Set set = new HashSet();
 
         Iterator iterator = referrer.iterator();
         while (iterator.hasNext()) {
             Element element = (Element) iterator.next();
             if (clazz.isAssignableFrom(element.getClass())) {
-                filtered.add(element);
+                set.add(element);
             }
         }
-        return filtered;
+        return set;
     }
 
     public Set getReferrer() {

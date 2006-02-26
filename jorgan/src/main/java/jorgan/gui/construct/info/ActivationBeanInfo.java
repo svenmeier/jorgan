@@ -16,15 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
 
-public class Captor extends Activateable implements Combination.Observer {
+/**
+ * BeanInfo for {@link jorgan.disposition.Activation}.
+ */
+public class ActivationBeanInfo extends ContinuousBeanInfo {
 
-    protected boolean canReference(Class clazz) {
-        return Combination.class == clazz;
-    }
-
-    public void initiated(Combination initiator) {
-        setActive(false);
+    protected void registerProperties() {
+        super.registerProperties();
     }
 }

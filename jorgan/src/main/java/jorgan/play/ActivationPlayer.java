@@ -18,17 +18,17 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.ActivateableSequence;
+import jorgan.disposition.Activation;
 import jorgan.disposition.event.OrganEvent;
 
 /**
  * A player for a crescendo.
  */
-public class CrescendoPlayer extends ContinuousPlayer {
+public class ActivationPlayer extends ContinuousPlayer {
 
     private ActivateablePlayer player;
 
-    public CrescendoPlayer(ActivateableSequence crescendo) {
+    public ActivationPlayer(Activation crescendo) {
         super(crescendo);
     }
 
@@ -42,7 +42,7 @@ public class CrescendoPlayer extends ContinuousPlayer {
         super.elementChanged(event);
 
         if (isOpen()) {
-            ActivateableSequence crescendo = (ActivateableSequence) getElement();
+            Activation crescendo = (Activation) getElement();
 
             if (crescendo.getReferenceCount() > 0) {
                 int current = (crescendo.getPosition()

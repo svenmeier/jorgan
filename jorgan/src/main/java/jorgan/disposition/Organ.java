@@ -40,8 +40,8 @@ public class Organ {
     private static Class[] elementClasses = new Class[] { Console.class,
             Label.class, Keyboard.class, SoundSource.class, Stop.class,
             Coupler.class, Combination.class, Captor.class, Swell.class,
-            Tremulant.class, Variation.class, InitiatorSequence.class, Activator.class,
-            ActivateableSequence.class, Keyer.class, Memory.class, Incrementer.class };
+            Tremulant.class, Variation.class, Sequence.class, Activator.class,
+            Activation.class, Keyer.class, Memory.class, Incrementer.class };
 
     public static Class[] getElementClasses() {
         Class[] copy = new Class[elementClasses.length];

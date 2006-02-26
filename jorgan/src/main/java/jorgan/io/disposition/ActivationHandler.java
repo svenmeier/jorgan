@@ -19,33 +19,34 @@
 package jorgan.io.disposition;
 
 import jorgan.disposition.Continuous;
-import jorgan.disposition.InitiatorSequence;
+import jorgan.disposition.Activation;
 import jorgan.xml.AbstractReader;
 import jorgan.xml.AbstractWriter;
 
 import org.xml.sax.Attributes;
 
-public class InitiatorSequenceHandler extends ContinuousHandler {
+public class ActivationHandler extends ContinuousHandler {
 
-    private InitiatorSequence sequence;
+    private Activation activation;
 
-    public InitiatorSequenceHandler(AbstractReader reader, Attributes attributes) {
+    public ActivationHandler(AbstractReader reader, Attributes attributes) {
         super(reader, attributes);
 
-        sequence = new InitiatorSequence();
+        activation = new Activation();
     }
 
-    public InitiatorSequenceHandler(AbstractWriter writer, String tag, InitiatorSequence sequence) {
+    public ActivationHandler(AbstractWriter writer, String tag,
+            Activation activation) {
         super(writer, tag);
 
-        this.sequence = sequence;
+        this.activation = activation;
     }
 
-    public InitiatorSequence getSequence() {
-        return sequence;
+    public Activation getActivation() {
+        return activation;
     }
 
     protected Continuous getContinuous() {
-        return getSequence();
+        return getActivation();
     }
 }

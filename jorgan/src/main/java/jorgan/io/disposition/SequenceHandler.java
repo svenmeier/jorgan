@@ -16,14 +16,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.io.disposition;
 
-/**
- * A crescendo.
- */
-public class ActivateableSequence extends Sequence {
+import jorgan.disposition.Continuous;
+import jorgan.disposition.Sequence;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 
-    protected boolean canReference(Class clazz) {
-        return Activateable.class.isAssignableFrom(clazz);
+import org.xml.sax.Attributes;
+
+public class SequenceHandler extends ContinuousHandler {
+
+    private Sequence sequence;
+
+    public SequenceHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
+
+        sequence = new Sequence();
+    }
+
+    public SequenceHandler(AbstractWriter writer, String tag, Sequence sequence) {
+        super(writer, tag);
+
+        this.sequence = sequence;
+    }
+
+    public Sequence getSequence() {
+        return sequence;
+    }
+
+    protected Continuous getContinuous() {
+        return getSequence();
     }
 }

@@ -17,16 +17,10 @@
         </reference>
 	</xsl:template>
 
-	<xsl:template match="sequence">
-        <initiatorSequence>
-			<xsl:apply-templates select="@*|*"/>
-        </initiatorSequence>
-	</xsl:template>
-
 	<xsl:template match="crescendo">
-        <activateableSequence>
+        <activation>
 			<xsl:apply-templates select="@*|*"/>
-        </activateableSequence>
+        </activation>
 	</xsl:template>
 
 	<xsl:template match="recallMessage">
