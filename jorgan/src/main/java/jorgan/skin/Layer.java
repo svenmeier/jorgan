@@ -82,8 +82,8 @@ public abstract class Layer implements Resolver, Cloneable {
     }
 
     protected Rectangle getUnpaddedBounds(Dimension size) {
-        Rectangle rectangle = new Rectangle(0, 0, getAutoWidth(),
-                getAutoHeight());
+        Rectangle rectangle = new Rectangle(0, 0, getUnpaddedWidth(),
+                getUnpadddedHeight());
 
         if (fill == BOTH || fill == HORIZONAL) {
             rectangle.width = size.width - padding.left - padding.right;
@@ -171,8 +171,8 @@ public abstract class Layer implements Resolver, Cloneable {
     }
 
     public Dimension getSize() {
-        return new Dimension(getAutoWidth() + padding.left + padding.right,
-                getAutoHeight() + padding.top + padding.bottom);
+        return new Dimension(getUnpaddedWidth() + padding.left + padding.right,
+                getUnpadddedHeight() + padding.top + padding.bottom);
 
     }
 
@@ -192,12 +192,40 @@ public abstract class Layer implements Resolver, Cloneable {
         this.width = width;
     }
 
-    protected int getAutoWidth() {
-        return getWidth();
+    protected int getUnpaddedWidth() {
+        if (this.width == 0) {
+            return calcWidth();
+        } else {
+            return this.width;
+        }
     }
 
-    protected int getAutoHeight() {
-        return getHeight();
+    /**
+     * Calculate the width in case is is not explicitely set, i.e. it is
+     * <code>0</code>.
+     * 
+     * @return the calculated width
+     */
+    protected int calcWidth() {
+        return 0;
+    }
+
+    protected int getUnpadddedHeight() {
+        if (this.width == 0) {
+            return calcHeight();
+        } else {
+            return this.height;
+        }
+    }
+
+    /**
+     * Calculate the height in case is is not explicitely set, i.e. it is
+     * <code>0</code>.
+     * 
+     * @return the calculated height
+     */
+    protected int calcHeight() {
+        return 0;
     }
 
     public boolean isPressable(int x, int y, Dimension dimension) {

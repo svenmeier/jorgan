@@ -23,81 +23,80 @@ import java.io.*;
 import javax.xml.parsers.*;
 import org.xml.sax.*;
 
-
 /**
  * A reader for xml.
  */
 public abstract class AbstractReader {
 
-  /**
-   * The inputStream to read from.
-   */
-  private InputStream in;
+    /**
+     * The inputStream to read from.
+     */
+    private InputStream in;
 
-  /**
-   * The XML parser.
-   */
-  private XMLReader reader;
+    /**
+     * The XML parser.
+     */
+    private XMLReader reader;
 
-  /**
-   * The root object read.
-   */
-  protected Object root;
+    /**
+     * The root object read.
+     */
+    protected Object root;
 
-  /**
-   * Create a new reader.
-   *
-   * @param in  the inputStream to read from
-   */
-  public AbstractReader(InputStream in) {
+    /**
+     * Create a new reader.
+     * 
+     * @param in
+     *            the inputStream to read from
+     */
+    public AbstractReader(InputStream in) {
 
-    this.in = new BufferedInputStream(in);
-  }
-
-  /**
-   * Read the object.
-   *
-   * @return the read object
-   * @throws IOException if an IO operation failes
-   * @throws InvalidDispositionException if inputStream contains an invalid disposition
-   */
-  public Object read() throws IOException {
-
-    try {
-      reader = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-
-      reader.setContentHandler(createRootHandler());
-      reader.parse(new InputSource(in));
-
-      in.close();
-
-      return root;
-    } catch (ParserConfigurationException ex) {
-      throw new Error(ex);
-    } catch (SAXException ex) {
-      ex.printStackTrace();
-
-      throw new XMLFormatException(ex);
-    } catch (RuntimeException ex) {
-      ex.printStackTrace();
-
-      throw new XMLFormatException(ex);
+        this.in = new BufferedInputStream(in);
     }
-  }
 
-  /**
-   * Get the reader for xml data.
-   * 
-   * @return    the xml reader
-   */
-  public XMLReader getXMLReader() {
-    return reader;
-  }   
+    /**
+     * Read the object.
+     * 
+     * @return the read object
+     * @throws IOException
+     *             if an IO operation failes
+     * @throws InvalidDispositionException
+     *             if inputStream contains an invalid disposition
+     */
+    public Object read() throws IOException {
 
-  /**
-   * Create the handler for the root.
-   * 
-   * @return  the root handler
-   */
-  protected abstract ContentHandler createRootHandler();  
+        try {
+            reader = SAXParserFactory.newInstance().newSAXParser()
+                    .getXMLReader();
+
+            reader.setContentHandler(createRootHandler());
+            reader.parse(new InputSource(in));
+
+            in.close();
+
+            return root;
+        } catch (ParserConfigurationException ex) {
+            throw new Error(ex);
+        } catch (SAXException ex) {
+            throw new XMLFormatException(ex);
+        } catch (RuntimeException ex) {
+            throw new XMLFormatException(ex);
+        }
+    }
+
+    /**
+     * Get the reader for xml data.
+     * 
+     * @return the xml reader
+     */
+    public XMLReader getXMLReader() {
+        return reader;
+    }
+
+    /**
+     * Create the handler for the root.
+     * 
+     * @return the root handler
+     */
+    protected abstract ContentHandler createRootHandler();
 }

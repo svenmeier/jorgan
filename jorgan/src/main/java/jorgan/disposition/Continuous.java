@@ -104,6 +104,6 @@ public abstract class Continuous extends Element {
     }
     
     protected int limitIncrement(int position) {
-        return position;
+        return Math.max(0, Math.min(127, position));
     }
 }

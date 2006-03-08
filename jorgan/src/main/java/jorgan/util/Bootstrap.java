@@ -18,9 +18,15 @@
  */
 package jorgan.util;
 
-import java.io.*; 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.*;
+import java.net.JarURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -33,179 +39,213 @@ import java.util.logging.Logger;
 /**
  * Collection of utility methods supporting the boostrapping of an application.
  */
-public class Bootstrap {
+public class Bootstrap extends ThreadGroup implements Runnable {
 
-  public final static String MANIFEST  = "META-INF/MANIFEST.MF";
-  
-  public final static String BOOTSTRAP_CLASSPATH = "Bootstrap-classpath";
-  public final static String BOOTSTRAP_CLASS     = "Bootstrap-class";
-  
-  private static boolean bootstrapped = false;
+    public final static String MANIFEST = "META-INF/MANIFEST.MF";
 
-  private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
+    public final static String BOOTSTRAP_CLASSPATH = "Bootstrap-classpath";
 
-  /**
-   * Test is the current running program is bootstrapped, i.e. it was started through
-   * the main method of this class.
-   * 
-   * @return    <code>true</code> if bootstrapped
-   */
-  public static boolean isBootstrapped() {
-    return bootstrapped;   
-  }
+    public final static String BOOTSTRAP_CLASS = "Bootstrap-class";
 
-  /**
-   * Get the directory where the current running program is bootstrapped from. 
-   * <br>
-   * If it is not bootstrapped (see {@link #isBootstrapped()}) the <em>current
-   * user working directory</em> (as denoted by the system property
-   * <code>user.dir<code>) is returned instead.
-   * 
-   * @return        the bootstrap directory
-   * @see
-   */
-  public static File getDirectory() {
-    return getDirectory(Bootstrap.class);
-  }
-  
-  /**
-   * Get the directory where given clazz in the current running program is
-   * bootstrapped from. 
-   * <br>
-   * If it is not bootstrapped (see {@link #isBootstrapped()}) the <em>current
-   * user working directory</em> (as denoted by the system property
-   * <code>user.dir<code>) is returned instead.
-   * 
-   * @param  clazz  class to get bootstrap directory for
-   * @return        the bootstrap directory
-   * @see
-   */
-  public static File getDirectory(Class clazz) {
-    if (isBootstrapped()) {
-      try {         
-        // jar:file:/C:/Program Files/FooMatic/./lib/foo.jar!/foo/Bar.class
-        JarURLConnection jarCon = (JarURLConnection)getClassURL(clazz).openConnection();
+    private static boolean bootstrapped = false;
 
-        // file:/C:/Program Files/FooMatic/./lib/foo.jar
-        URL jarUrl = jarCon.getJarFileURL();
-    
-        // /C:/Program Files/FooMatic/./lib/foo.jar
-        File jarFile = new File(URLDecoder.decode(jarUrl.getPath(), "UTF-8"));   
+    private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
+
+    private String[] args;
+
+    private Bootstrap(String[] args) {
+        super("bootstrap");
         
-        // /C:/Program Files/FooMatic/./lib
-        return jarFile.getParentFile();
-      } catch (Exception ex) {
-        logger.log(Level.FINE, "detecting bootstrap directory failed", ex);
-      }
+        this.args = args;
     }
-    
-    return new File(System.getProperty("user.dir"));
-  }
-  
-  /**
-   * Get URL of the given class.
-   * 
-   * @param  clazz  class to get URL for
-   * @return the URL this class was loaded from
-   */
-  private static URL getClassURL(Class clazz) {
-    String resourceName = "/" + clazz.getName().replace('.', '/') + ".class";
-    return clazz.getResource(resourceName);
-  }
-  
-  /**
-   * Bootstrap with dynamically constructed classpath
-   */
-  public static void main(String[] args) {
-    
-    bootstrapped = true;
-    
-    try {
-      Manifest manifest = getManifest();
-      
-      URL[] classpath = getClasspath(manifest);     
-      
-      ClassLoader classloader = new URLClassLoader(classpath);
-      Thread.currentThread().setContextClassLoader(classloader);
-      
-      Class clazz = classloader.loadClass(getClass(manifest));
-      
-      Method method = clazz.getMethod("main", new Class[]{String[].class});
-      method.invoke(null, new Object[]{args});
-    } catch (Throwable t) {
-      t.printStackTrace(System.err);
-    }
-  }
 
-  /**
-   * Get bootstrap class from manifest file information
-   */
-  private static String getClass(Manifest mf) {
-    String clazz = mf.getMainAttributes().getValue(BOOTSTRAP_CLASS);
-    if (clazz == null || clazz.length() == 0) {
-      throw new Error("No " + BOOTSTRAP_CLASS + " defined in " + MANIFEST);
-    }
-    
-    return clazz;
-  }
-  
-  /**
-   * Assemble classpath from manifest file information (optional).
-   */
-  private static URL[] getClasspath(Manifest manifest) throws MalformedURLException {
+    public void run() {
+        try {
+            Manifest manifest = getManifest();
 
-    String classpath = manifest.getMainAttributes().getValue(BOOTSTRAP_CLASSPATH);
-    if (classpath == null) {
-      classpath = "";
-    }
-   
-    StringTokenizer tokens = new StringTokenizer(classpath, ",", false);
-    List urls = new ArrayList();
-    while (tokens.hasMoreTokens()) {
-      File file = new File(getDirectory(), tokens.nextToken());
-      if (file.exists()) {
-        if (file.isDirectory()) {
-          File[] files = file.listFiles();
-          for (int i = 0; i < files.length; i++) {
-            urls.add(files[i].toURL());
-          }
-        } else {
-          urls.add(file.toURL());
+            URL[] classpath = getClasspath(manifest);
+
+            ClassLoader classloader = new URLClassLoader(classpath);
+            Thread.currentThread().setContextClassLoader(classloader);
+
+            Class clazz = classloader.loadClass(getClass(manifest));
+
+            Method method = clazz.getMethod("main",
+                    new Class[] { String[].class });
+            method.invoke(null, new Object[] { args });
+        } catch (Throwable t) {
+            logger.log(Level.INFO, "bootstrapping failed", t);
         }
-      }
     }
 
-    return (URL[])urls.toArray(new URL[urls.size()]);
-  }
-  
-  /**
-   * Get our manifest file. Normally all (parent) classloaders of a class do provide
-   * resources and the enumeration returned on lookup of manifest.mf will start
-   * with the topmost classloader's resources. 
-   * We're inverting that order to make sure we're consulting the manifest file in 
-   * the same jar as this class if available.
-   */
-  private static Manifest getManifest() throws IOException {
+    /**
+     * Test is the current running program is bootstrapped, i.e. it was started
+     * through the main method of this class.
+     * 
+     * @return <code>true</code> if bootstrapped
+     */
+    public static boolean isBootstrapped() {
+        return bootstrapped;
+    }
 
-    // find all manifest files
-    Stack manifests = new Stack();
-    for (Enumeration e = Bootstrap.class.getClassLoader().getResources(MANIFEST); e.hasMoreElements(); ) {
-      manifests.add(e.nextElement());
+    /**
+     * Get the directory where the current running program is bootstrapped from.
+     * <br>
+     * If it is not bootstrapped (see {@link #isBootstrapped()}) the
+     * <em>current
+     * user working directory</em> (as denoted by the system
+     * property <code>user.dir<code>) is returned instead.
+     * 
+     * @return        the bootstrap directory
+     * @see
+     */
+    public static File getDirectory() {
+        return getDirectory(Bootstrap.class);
     }
-    
-    // it has to have the runnable attribute
-    while (!manifests.isEmpty()) {
-      URL url = (URL)manifests.pop();
-      InputStream in = url.openStream();
-      Manifest manifest = new Manifest(in);
-      in.close();
-      // careful with key here since Attributes.Name are used internally by Manifest file
-      if (manifest.getMainAttributes().getValue(BOOTSTRAP_CLASS)!=null) {
-        return manifest;
-      }
+
+    /**
+     * Get the directory where given clazz in the current running program is
+     * bootstrapped from. <br>
+     * If it is not bootstrapped (see {@link #isBootstrapped()}) the
+     * <em>current
+     * user working directory</em> (as denoted by the system
+     * property <code>user.dir<code>) is returned instead.
+     * 
+     * @param  clazz  class to get bootstrap directory for
+     * @return        the bootstrap directory
+     * @see
+     */
+    public static File getDirectory(Class clazz) {
+        if (isBootstrapped()) {
+            try {
+                // jar:file:/C:/Program
+                // Files/FooMatic/./lib/foo.jar!/foo/Bar.class
+                JarURLConnection jarCon = (JarURLConnection) getClassURL(clazz)
+                        .openConnection();
+
+                // file:/C:/Program Files/FooMatic/./lib/foo.jar
+                URL jarUrl = jarCon.getJarFileURL();
+
+                // /C:/Program Files/FooMatic/./lib/foo.jar
+                File jarFile = new File(URLDecoder.decode(jarUrl.getPath(),
+                        "UTF-8"));
+
+                // /C:/Program Files/FooMatic/./lib
+                return jarFile.getParentFile();
+            } catch (Exception ex) {
+                logger.log(Level.INFO, "detecting bootstrap directory failed",
+                        ex);
+            }
+        }
+
+        return new File(System.getProperty("user.dir"));
     }
-      
-    // not found
-    throw new Error("No " + MANIFEST + " with " + BOOTSTRAP_CLASS + " found");
-  }
+
+    /**
+     * Get URL of the given class.
+     * 
+     * @param clazz
+     *            class to get URL for
+     * @return the URL this class was loaded from
+     */
+    private static URL getClassURL(Class clazz) {
+        String resourceName = "/" + clazz.getName().replace('.', '/')
+                + ".class";
+        return clazz.getResource(resourceName);
+    }
+
+    /**
+     * Bootstrap with dynamically constructed classpath
+     */
+    public static void main(final String[] args) {
+
+        bootstrapped = true;
+
+        Bootstrap bootstrap = new Bootstrap(args);
+        new Thread(bootstrap, bootstrap).start();
+    }
+
+    /**
+     * Get bootstrap class from manifest file information
+     */
+    private static String getClass(Manifest mf) {
+        String clazz = mf.getMainAttributes().getValue(BOOTSTRAP_CLASS);
+        if (clazz == null || clazz.length() == 0) {
+            throw new Error("No " + BOOTSTRAP_CLASS + " defined in " + MANIFEST);
+        }
+
+        return clazz;
+    }
+
+    /**
+     * Assemble classpath from manifest file information (optional).
+     */
+    private static URL[] getClasspath(Manifest manifest)
+            throws MalformedURLException {
+
+        String classpath = manifest.getMainAttributes().getValue(
+                BOOTSTRAP_CLASSPATH);
+        if (classpath == null) {
+            classpath = "";
+        }
+
+        StringTokenizer tokens = new StringTokenizer(classpath, ",", false);
+        List urls = new ArrayList();
+        while (tokens.hasMoreTokens()) {
+            File file = new File(getDirectory(), tokens.nextToken());
+            if (file.exists()) {
+                if (file.isDirectory()) {
+                    File[] files = file.listFiles();
+                    for (int i = 0; i < files.length; i++) {
+                        urls.add(files[i].toURL());
+                    }
+                } else {
+                    urls.add(file.toURL());
+                }
+            }
+        }
+
+        return (URL[]) urls.toArray(new URL[urls.size()]);
+    }
+
+    /**
+     * Get our manifest file. Normally all (parent) classloaders of a class do
+     * provide resources and the enumeration returned on lookup of manifest.mf
+     * will start with the topmost classloader's resources. We're inverting that
+     * order to make sure we're consulting the manifest file in the same jar as
+     * this class if available.
+     */
+    private static Manifest getManifest() throws IOException {
+
+        // find all manifest files
+        Stack manifests = new Stack();
+        for (Enumeration e = Bootstrap.class.getClassLoader().getResources(
+                MANIFEST); e.hasMoreElements();) {
+            manifests.add(e.nextElement());
+        }
+
+        // it has to have the runnable attribute
+        while (!manifests.isEmpty()) {
+            URL url = (URL) manifests.pop();
+            InputStream in = url.openStream();
+            Manifest manifest = new Manifest(in);
+            in.close();
+            // careful with key here since Attributes.Name are used internally
+            // by Manifest file
+            if (manifest.getMainAttributes().getValue(BOOTSTRAP_CLASS) != null) {
+                return manifest;
+            }
+        }
+
+        // not found
+        throw new Error("No " + MANIFEST + " with " + BOOTSTRAP_CLASS
+                + " found");
+    }
+
+    public void uncaughtException(Thread t, Throwable e) {
+        if (e instanceof ThreadDeath) {
+            return;
+        }
+        logger.log(Level.INFO, "uncaught exception", e);
+    }
 }

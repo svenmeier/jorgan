@@ -202,7 +202,7 @@ public class MemoryPanel extends DockedPanel {
 
         public Object getValueAt(int rowIndex, int columnIndex) {
             if (columnIndex == 0) {
-                return "" + rowIndex;
+                return "" + (rowIndex + 1);
             }
             return memory.getTitle(rowIndex);
         }

@@ -34,153 +34,176 @@ import jorgan.sound.midi.ShortMessageRecorder;
 /**
  * PropertyEditor for a message property.
  */
-public class MessageEditor extends CustomEditor implements ElementAwareEditor, ActionListener {
+public class MessageEditor extends CustomEditor implements ElementAwareEditor,
+        ActionListener {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    private static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private String  device;
+    private String device;
 
-  private JPanel     panel     = new JPanel();
-  private JTextField textField = new JTextField();
-  private JButton    button    = new JButton("...");
+    private JPanel panel = new JPanel();
 
-  private JDialog    dialog;
+    private JTextField textField = new JTextField();
 
-  public MessageEditor() {
-    panel.setLayout(new BorderLayout());
+    private JButton button = new JButton("...");
 
-    button.setMargin(new Insets(0, 0, 0, 0));
-    button.addActionListener(this);
-    panel.add(button, BorderLayout.EAST);
+    private JDialog dialog;
 
-    textField.setBorder(null);
-    panel.add(textField, BorderLayout.CENTER);
-  }
+    public MessageEditor() {
+        panel.setLayout(new BorderLayout());
 
-  public void setElement(Element element) {
+        button.setMargin(new Insets(0, 0, 0, 0));
+        button.addActionListener(this);
+        panel.add(button, BorderLayout.EAST);
+
+        textField.setBorder(null);
+        panel.add(textField, BorderLayout.CENTER);
+    }
+
+    public void setElement(Element element) {
+
+        device = null;
+        Iterator iterator = element.getReferrer(Console.class).iterator();
+        while (iterator.hasNext()) {
+            device = ((Console) iterator.next()).getDevice();
+            if (device != null) {
+                break;
+            }
+        }
+    }
+
+    public Component getCustomEditor(Object value) {
+
+        textField.setText(format(value));
+        button.setEnabled(device != null);
+
+        return panel;
+    }
+
+    protected Object getEditedValue() {
+
+        Message message = null;
+
+        try {
+            StringTokenizer tokens = new StringTokenizer(textField.getText(),
+                    ",");
+
+            if (tokens.countTokens() == 0) {
+                message = null;
+            } else {
+                String token0 = tokens.nextToken().trim();
+                String token1 = tokens.nextToken().trim();
+                String token2 = tokens.nextToken().trim();
+
+                int status = Integer.parseInt(token0);
+                int data1 = parseData(token1);
+                int data2 = parseData(token2);
+
+                message = new Message(status, data1, data2);
+            }
+        } catch (Exception ex) {
+            // invalid format results in null message
+        }
+
+        return message;
+    }
+
+    private int parseData(String token) {
+        if ("*".equals(token)) {
+            return Message.WILDCARD_ANY;
+        } else if ("+".equals(token)) {
+            return Message.WILDCARD_POSITIVE;
+        } else{
+            return Integer.parseInt(token);
+        }
+    }
+
+    public void actionPerformed(ActionEvent ev) {
+        ShortMessageRecorder recorder;
+        try {
+            recorder = new MessageRecorder(device);
+        } catch (MidiUnavailableException ex) {
+            // cannot record
+            return;
+        }
+
+        JOptionPane optionPane = new JOptionPane(resources
+                .getString("construct.editor.message.description"),
+                JOptionPane.INFORMATION_MESSAGE, -1, null,
+                new Object[] { resources
+                        .getString("construct.editor.message.cancel") });
+
+        dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
+                .getString("construct.editor.message.title"));
+        dialog.setVisible(true);
+        dialog = null;
+
+        recorder.close();
+    }
+
+    private String formatData(int data) {
+        if (data == Message.WILDCARD_ANY) {
+            return "*";
+        } else if (data == Message.WILDCARD_POSITIVE) {
+            return "+";
+        } else {
+            return Integer.toString(data);
+        }
+    }
     
-    device = null;
-    Iterator iterator = element.getReferrer(Console.class).iterator();
-    while (iterator.hasNext()) {
-      device = ((Console)iterator.next()).getDevice();
-      if (device != null) {
-        break;
-      }
-    }
-  }
+    protected String format(Object value) {
+        Message message = (Message) value;
+        if (message == null) {
+            return "";
+        } else {
+            StringBuffer buffer = new StringBuffer();
 
-  public Component getCustomEditor(Object value) {
+            buffer.append(message.getStatus());
 
-    textField.setText(format(value));
-    button.setEnabled(device != null);
+            buffer.append(", ");
 
-    return panel;
-  }
+            buffer.append(formatData(message.getData1()));
+            
+            buffer.append(", ");
+            
+            buffer.append(formatData(message.getData2()));
 
-  protected Object getEditedValue() {
-
-    Message message = null;
-
-    try {
-      StringTokenizer tokens = new StringTokenizer(textField.getText(), ",");
-
-      if (tokens.countTokens() == 0) {
-        message = null;
-      } else {
-        String token0 = tokens.nextToken().trim();
-        String token1 = tokens.nextToken().trim();
-        String token2 = tokens.nextToken().trim();
-
-        int status = "*".equals(token0) ? -1 : Integer.parseInt(token0);
-        int data1  = "*".equals(token1) ? -1 : Integer.parseInt(token1);
-        int data2  = "*".equals(token2) ? -1 : Integer.parseInt(token2);
-
-        message = new Message(status, data1, data2);
-      }
-    } catch (Exception ex) {
-      // invalid format results in null message
+            return buffer.toString();
+        }
     }
 
-    return message;
-  }
+    /**
+     * Recorder of a message.
+     */
+    private class MessageRecorder extends ShortMessageRecorder implements
+            Runnable {
 
-  public void actionPerformed(ActionEvent ev) {
-    ShortMessageRecorder recorder;
-    try {
-      recorder = new MessageRecorder(device);
-    } catch (MidiUnavailableException ex) {
-      // cannot record
-      return;
+        private int status;
+
+        private int data1;
+
+        private int data2;
+
+        public MessageRecorder(String deviceName)
+                throws MidiUnavailableException {
+            super(deviceName);
+        }
+
+        public void messageRecorded(ShortMessage message) {
+            status = message.getCommand() | message.getChannel();
+            data1 = message.getData1();
+            data2 = message.getData2();
+
+            SwingUtilities.invokeLater(this);
+        }
+
+        public void run() {
+            Message message = new Message(status, data1, data2);
+
+            textField.setText(format(message));
+
+            dialog.setVisible(false);
+        }
     }
-
-    JOptionPane optionPane = new JOptionPane(resources.getString("construct.editor.message.description"),
-                                             JOptionPane.INFORMATION_MESSAGE, -1, null,
-                                             new Object[]{resources.getString("construct.editor.message.cancel")});
-
-    dialog = optionPane.createDialog(panel.getTopLevelAncestor(),
-                                     resources.getString("construct.editor.message.title"));
-    dialog.setVisible(true);
-    dialog = null;
-
-    recorder.close();
-  }
-
-  protected String format(Object value) {
-    Message message = (Message)value;
-    if (message == null) {
-      return "";
-    } else {
-      StringBuffer buffer = new StringBuffer();
-
-      if (message.getStatus() == -1) {
-        buffer.append("*");
-      } else {
-        buffer.append(message.getStatus());
-      }
-      buffer.append(", ");
-      if (message.getData1() == -1) {
-        buffer.append("*");
-      } else {
-        buffer.append(message.getData1());
-      }
-      buffer.append(", ");
-      if (message.getData2() == -1) {
-        buffer.append("*");
-      } else {
-        buffer.append(message.getData2());
-      }
-
-      return buffer.toString();
-    }
-  }
-
-  /**
-   * Recorder of a message.
-   */
-  private class MessageRecorder extends ShortMessageRecorder implements Runnable {
-
-    private int status;
-    private int data1;
-    private int data2;
-
-    public MessageRecorder(String deviceName) throws MidiUnavailableException {
-      super(deviceName);
-    }
-
-    public void messageRecorded(ShortMessage message) {
-      status = message.getCommand() | message.getChannel();
-      data1  = message.getData1();
-      data2  = message.getData2();
-
-      SwingUtilities.invokeLater(this);
-    }
-
-    public void run() {
-      Message message = new Message(status, data1, data2);
-
-      textField.setText(format(message));
-
-      dialog.setVisible(false);
-    }
-  }
 }

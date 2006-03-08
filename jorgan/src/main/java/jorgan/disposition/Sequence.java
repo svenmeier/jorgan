@@ -62,9 +62,6 @@ public class Sequence extends Continuous implements Combination.Observer {
     }
     
     protected int limitIncrement(int position) {
-        if (position > getReferenceCount()) {
-            position = Math.max(0, getReferenceCount() - 1);
-        }
-        return position;
+        return super.limitIncrement(Math.min(position, getReferenceCount() - 1));
     }
 }

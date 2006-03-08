@@ -34,6 +34,9 @@ import jorgan.play.sound.SoundWrapper;
 
 public class SoundSourcePlayer extends Player {
 
+    private static final Problem warningDevice = new Problem(Problem.WARNING,
+    "device");
+
     private static final Problem errorDevice = new Problem(Problem.ERROR,
             "device");
 
@@ -41,9 +44,6 @@ public class SoundSourcePlayer extends Player {
 
     private static final Problem errorTypeParameter = new Problem(
             Problem.ERROR, "type.parameter");
-
-    private static final Problem warningDevice = new Problem(Problem.WARNING,
-            "device");
 
     /**
      * The factory for sounds.

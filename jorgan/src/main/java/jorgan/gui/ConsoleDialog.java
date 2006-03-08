@@ -213,18 +213,6 @@ public class ConsoleDialog extends JDialog {
         }
     }
 
-    private class MemoryAction extends AbstractAction {
-
-        public MemoryAction() {
-            putValue(Action.NAME, resources
-                    .getString("fullScreen.action.memory.name"));
-        }
-
-        public void actionPerformed(ActionEvent ev) {
-            ConsoleDialog.this.setVisible(false);
-        }
-    }
-
     public static ConsoleDialog create(JFrame owner, String screen) {
 
         if (screen == null) {
