@@ -36,7 +36,7 @@ public class TextLayer extends Layer {
     private int verticalAlignment = CENTER;
 
     private int horizontalAlignment = CENTER;
-
+    
     private Font font = new Font("Arial", Font.PLAIN, 12);
 
     private Color color = Color.black;
@@ -63,20 +63,22 @@ public class TextLayer extends Layer {
         return antialiased;
     }
 
-    protected int getAutoWidth() {
-        int width = getWidth();
-        if (width == 0) {
-            width = linesWidth;
-        }
-        return width;
+    /**
+     * Calculate the width based on the text's width.
+     * 
+     * @return width    the text's width
+     */
+    protected int calcWidth() {
+        return linesWidth;
     }
 
-    protected int getAutoHeight() {
-        int height = getHeight();
-        if (height == 0) {
-            height = linesHeight;
-        }
-        return height;
+    /**
+     * Calculate the height based on the text's height.
+     * 
+     * @return height   the text's heigth
+     */
+    protected int calcHeight() {
+        return linesHeight;
     }
 
     public void setFont(Font font) {

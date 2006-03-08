@@ -25,6 +25,10 @@ import java.io.Serializable;
  */
 public class Message implements Serializable {
 
+    public static int WILDCARD_ANY = -1;
+
+    public static int WILDCARD_POSITIVE = -2;
+
     private int status;
 
     private int data1;
@@ -37,18 +41,20 @@ public class Message implements Serializable {
      * @param status
      *            status of message
      * @param data1
-     *            data1 of message or <code>-1</code> if not used
+     *            data1 of message or {@link #WILDCARD_ANY} or
+     *            {@link #WILDCARD_POSITIVE}
      * @param data2
-     *            data2 of message or <code>-1</code> if not used
+     *            data2 of message or {@link #WILDCARD_ANY} or
+     *            {@link #WILDCARD_POSITIVE}
      */
     public Message(int status, int data1, int data2) {
         if (status < 0 || status > 255) {
             throw new IllegalArgumentException("status '" + status + "'");
         }
-        if (data1 < -1 || data1 > 127) {
+        if (data1 < -2 || data1 > 127) {
             throw new IllegalArgumentException("data1 '" + data1 + "'");
         }
-        if (data2 < -1 || data2 > 127) {
+        if (data2 < -2 || data2 > 127) {
             throw new IllegalArgumentException("data2 '" + data2 + "'");
         }
 
@@ -70,7 +76,7 @@ public class Message implements Serializable {
     }
 
     public boolean hasWildcard() {
-        return data1 == -1 || data2 == -1;
+        return isWildcard(data1) || isWildcard(data2);
     }
 
     public boolean equals(Object object) {
@@ -87,10 +93,10 @@ public class Message implements Serializable {
     }
 
     public int wildcard(int data1, int data2) {
-        if (this.data1 == -1) {
+        if (isWildcard(data1)) {
             return data1;
         }
-        if (this.data2 == -1) {
+        if (isWildcard(data2)) {
             return data2;
         }
 
@@ -98,8 +104,17 @@ public class Message implements Serializable {
     }
 
     public boolean match(int status, int data1, int data2) {
-        return (this.status == -1 || this.status == status)
-                && (this.data1 == -1 || this.data1 == data1)
-                && (this.data2 == -1 || this.data2 == data2);
+        return (this.status == status && matchData(this.data1, data1) && matchData(
+                this.data2, data2));
+    }
+
+    private boolean matchData(int myData, int data) {
+        return myData == WILDCARD_ANY
+                || (myData == WILDCARD_POSITIVE && data > 0)
+                || (myData == data);
+    }
+    
+    private boolean isWildcard(int data) {
+        return data == WILDCARD_ANY || data == WILDCARD_POSITIVE;
     }
 }

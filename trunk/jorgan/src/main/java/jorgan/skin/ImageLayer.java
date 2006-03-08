@@ -57,20 +57,22 @@ public class ImageLayer extends Layer {
         this.border = border;
     }
 
-    protected int getAutoHeight() {
-        int height = getHeight();
-        if (height == 0) {
-            height = image.getHeight(null);
-        }
-        return height;
+    /**
+     * Calculate the height based on the image's height.
+     * 
+     * @return the image's height
+     */
+    protected int calcHeight() {
+        return image.getHeight(null);
     }
 
-    protected int getAutoWidth() {
-        int width = getWidth();
-        if (width == 0) {
-            width = image.getWidth(null);
-        }
-        return width;
+    /**
+     * Calculate the width based on the image's width.
+     * 
+     * @return the image's width
+     */
+    protected int calcWidth() {
+        return image.getWidth(null);
     }
 
     public void init(View view, Component component) {
@@ -80,7 +82,7 @@ public class ImageLayer extends Layer {
     }
 
     protected void draw(Graphics2D g, int x, int y, int width, int height) {
-        if (width == getAutoWidth() && height == getAutoHeight()
+        if (width == calcWidth() && height == calcHeight()
                 || border.equals(ZERO_BORDER)) {
             g.drawImage(image, x, y, width, height, null);
         } else {
@@ -89,39 +91,39 @@ public class ImageLayer extends Layer {
                     border.left, border.top, null);
             // BOTTOM-LEFT
             g.drawImage(image, x, y + height - border.bottom, x + border.left,
-                    y + height, 0, getAutoHeight() - border.bottom,
-                    border.left, getAutoHeight(), null);
+                    y + height, 0, calcHeight() - border.bottom,
+                    border.left, calcHeight(), null);
             // TOP-RIGHT
             g.drawImage(image, x + width - border.right, y, x + width, y
-                    + border.top, getAutoWidth() - border.right, 0,
-                    getAutoWidth(), border.top, null);
+                    + border.top, calcWidth() - border.right, 0,
+                    calcWidth(), border.top, null);
             // BOTTOM-RIGHT
             g.drawImage(image, x + width - border.right, y + height
-                    - border.bottom, x + width, y + height, getAutoWidth()
-                    - border.right, getAutoHeight() - border.bottom,
-                    getAutoWidth(), getAutoHeight(), null);
+                    - border.bottom, x + width, y + height, calcWidth()
+                    - border.right, calcHeight() - border.bottom,
+                    calcWidth(), calcHeight(), null);
             // TOP
             g.drawImage(image, x + border.left, y, x + width - border.right, y
                     + border.top, border.left, 0,
-                    getAutoWidth() - border.right, border.top, null);
+                    calcWidth() - border.right, border.top, null);
             // BOTTOM
             g.drawImage(image, x + border.left, y + height - border.bottom, x
                     + width - border.right, y + height, border.left,
-                    getAutoHeight() - border.bottom, getAutoWidth()
-                            - border.right, getAutoHeight(), null);
+                    calcHeight() - border.bottom, calcWidth()
+                            - border.right, calcHeight(), null);
             // LEFT
             g.drawImage(image, x, y + border.top, x + border.left, y + height
                     - border.bottom, 0, border.top, border.left,
-                    getAutoHeight() - border.bottom, null);
+                    calcHeight() - border.bottom, null);
             // RIGHT
             g.drawImage(image, x + width - border.right, y + border.top, x
-                    + width, y + height - border.bottom, getAutoWidth()
-                    - border.right, border.top, getAutoWidth(), getAutoHeight()
+                    + width, y + height - border.bottom, calcWidth()
+                    - border.right, border.top, calcWidth(), calcHeight()
                     - border.bottom, null);
             // CENTER
             g.drawImage(image, x + border.left, y + border.top, x + width
                     - border.right, y + height - border.bottom, border.left,
-                    border.top, getAutoWidth() - border.right, getAutoHeight()
+                    border.top, calcWidth() - border.right, calcHeight()
                             - border.bottom, null);
         }
     }

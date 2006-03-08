@@ -19,173 +19,184 @@
 package jorgan.play.sound;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A sound that delays all messages.
  */
 public class DelayedSound extends SoundWrapper {
-
-  private static DelayedInvoker invoker = new DelayedInvoker();
-
-  private int delay;
-  
-  /**
-   * Create a delayed sound.
-   * 
-   * @param sound   sound to wrap
-   * @param delay   delay of sound
-   */
-  public DelayedSound(Sound sound, int delay) {
-    super(sound);
     
-    this.delay = delay;
-  }
+    private static final Logger logger = Logger.getLogger(DelayedSound.class.getName());
 
-  public void noteOff(final int pitch) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.noteOff(pitch);
-      }
-    };
-  }
+    private static DelayedInvoker invoker = new DelayedInvoker();
 
-  public void noteOn(final int pitch, final int velocity) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.noteOn(pitch, velocity);
-      }
-    };
-  }
-
-  public void setCutoff(final int cutoff) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setCutoff(cutoff);
-      }
-    };
-  }
-
-  public void setModulation(final int amplitude, final int frequency) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setModulation(amplitude, frequency);
-      }
-    };
-  }
-
-  public void setPan(final int pan) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setPan(pan);
-      }
-    };
-  }
-
-  public void setBend(final int bend) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setPitchBend(bend);
-      }
-    };
-  }
-
-  public void setProgram(final int program) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setProgram(program);
-      }
-    };
-  }
-
-  public void setVolume(final int volume) {
-    new DelayedInvocation() {
-      public void now() {
-        sound.setVolume(volume);
-      }
-    };
-  }
-
-  public void stop() {
-    new DelayedInvocation() {
-      public void now() {
-        sound.stop();
-      }
-    };
-  }
-
-  private abstract class DelayedInvocation implements Comparable {
-
-    private long when;
-      
-    public DelayedInvocation() {
-      when = System.currentTimeMillis() + delay;
-
-      invoker.delay(this); 
-    }
-    
-    public int compareTo(Object object) {
-      DelayedInvocation invocation = (DelayedInvocation)object;
-
-      if (this.when < invocation.when) {
-        return -1;
-      } else if (this.when > invocation.when) {
-        return 1;
-      }
-      return 0;
-    }
-    
-    public abstract void now();
-  }
-  
-  private static class DelayedInvoker implements Runnable {
-
-    private List invocations = new ArrayList();
-    
-    public DelayedInvoker() {  
-      Thread thread = new Thread(this, "DelayedSoundInvoker");
-      thread.setDaemon(true);
-      thread.start();
-    }
+    private int delay;
 
     /**
-     * Schedule an invocation for delayed invocation.
+     * Create a delayed sound.
      * 
-     * @param invocation   invocation to schedule
+     * @param sound
+     *            sound to wrap
+     * @param delay
+     *            delay of sound
      */
-    public synchronized void delay(DelayedInvocation invocation) {
-      int index = 0;
-      while (index < invocations.size() && ((DelayedInvocation)invocations.get(index)).compareTo(invocation) <= 0) {
-        index++;
-      }
-      invocations.add(index, invocation);
-      notify();
-    }
-    
-    public synchronized void run() {
-      while (true) {
-        try {     
-          if (invocations.size() == 0) {
-            wait();
-          } else {
-            DelayedInvocation invocation = (DelayedInvocation)invocations.get(0);
+    public DelayedSound(Sound sound, int delay) {
+        super(sound);
 
-            long timeout = invocation.when - System.currentTimeMillis();
-            if (timeout <= 0) {
-              invocations.remove(0);
-              
-              try {
-                invocation.now();
-              } catch (RuntimeException ex) {
-                ex.printStackTrace();
-              }
-            } else {
-              wait(timeout);
-            }
-          }        
-        } catch (InterruptedException ex) {
-          throw new Error("unexpected interruption", ex);
-        }
-      }
+        this.delay = delay;
     }
-  }
+
+    public void noteOff(final int pitch) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.noteOff(pitch);
+            }
+        };
+    }
+
+    public void noteOn(final int pitch, final int velocity) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.noteOn(pitch, velocity);
+            }
+        };
+    }
+
+    public void setCutoff(final int cutoff) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setCutoff(cutoff);
+            }
+        };
+    }
+
+    public void setModulation(final int amplitude, final int frequency) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setModulation(amplitude, frequency);
+            }
+        };
+    }
+
+    public void setPan(final int pan) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setPan(pan);
+            }
+        };
+    }
+
+    public void setBend(final int bend) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setPitchBend(bend);
+            }
+        };
+    }
+
+    public void setProgram(final int program) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setProgram(program);
+            }
+        };
+    }
+
+    public void setVolume(final int volume) {
+        new DelayedInvocation() {
+            public void now() {
+                sound.setVolume(volume);
+            }
+        };
+    }
+
+    public void stop() {
+        new DelayedInvocation() {
+            public void now() {
+                sound.stop();
+            }
+        };
+    }
+
+    private abstract class DelayedInvocation implements Comparable {
+
+        private long when;
+
+        public DelayedInvocation() {
+            when = System.currentTimeMillis() + delay;
+
+            invoker.delay(this);
+        }
+
+        public int compareTo(Object object) {
+            DelayedInvocation invocation = (DelayedInvocation) object;
+
+            if (this.when < invocation.when) {
+                return -1;
+            } else if (this.when > invocation.when) {
+                return 1;
+            }
+            return 0;
+        }
+
+        public abstract void now();
+    }
+
+    private static class DelayedInvoker implements Runnable {
+
+        private List invocations = new ArrayList();
+
+        public DelayedInvoker() {
+            Thread thread = new Thread(this, "DelayedSoundInvoker");
+            thread.setDaemon(true);
+            thread.start();
+        }
+
+        /**
+         * Schedule an invocation for delayed invocation.
+         * 
+         * @param invocation
+         *            invocation to schedule
+         */
+        public synchronized void delay(DelayedInvocation invocation) {
+            int index = 0;
+            while (index < invocations.size()
+                    && ((DelayedInvocation) invocations.get(index))
+                            .compareTo(invocation) <= 0) {
+                index++;
+            }
+            invocations.add(index, invocation);
+            notify();
+        }
+
+        public synchronized void run() {
+            while (true) {
+                try {
+                    if (invocations.size() == 0) {
+                        wait();
+                    } else {
+                        DelayedInvocation invocation = (DelayedInvocation) invocations
+                                .get(0);
+
+                        long timeout = invocation.when
+                                - System.currentTimeMillis();
+                        if (timeout <= 0) {
+                            invocations.remove(0);
+
+                            try {
+                                invocation.now();
+                            } catch (RuntimeException ex) {
+                                logger.log(Level.INFO, "invocation failed", ex);
+                            }
+                        } else {
+                            wait(timeout);
+                        }
+                    }
+                } catch (InterruptedException ex) {
+                    throw new Error("unexpected interruption", ex);
+                }
+            }
+        }
+    }
 }

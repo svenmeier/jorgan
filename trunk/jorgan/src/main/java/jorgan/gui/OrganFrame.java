@@ -37,6 +37,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -74,6 +76,8 @@ import spin.over.SpinOverEvaluator;
  * The jOrgan frame.
  */
 public class OrganFrame extends JFrame implements UI {
+    
+    private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
     private static ResourceBundle resources = ResourceBundle
             .getBundle("jorgan.gui.resources");
@@ -373,7 +377,7 @@ public class OrganFrame extends JFrame implements UI {
 
             return;
         } catch (XMLFormatException ex) {
-            ex.printStackTrace();
+            logger.log(Level.INFO, "opening organ failed", ex);
 
             showMessage("action.open.exception.invalid", new String[] { file
                     .getName() });
@@ -412,14 +416,14 @@ public class OrganFrame extends JFrame implements UI {
 
             showStatus("action.save.confirm", new Object[0]);
         } catch (XMLFormatException ex) {
-            ex.printStackTrace();
+            logger.log(Level.INFO, "saving organ failed", ex);
 
             showMessage("action.save.exception.invalid", new String[] { file
                     .getName() });
 
             return false;
         } catch (IOException ex) {
-            ex.printStackTrace();
+            logger.log(Level.INFO, "saving organ failed", ex);
 
             showMessage("action.save.exception",
                     new String[] { file.getName() });

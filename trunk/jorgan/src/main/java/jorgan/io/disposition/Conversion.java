@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +18,9 @@ import javax.xml.transform.stream.StreamSource;
 import jorgan.xml.XMLFormatException;
 
 public class Conversion {
+
+    private static final Logger logger = Logger.getLogger(Conversion.class
+            .getName());
 
     private static Conversion[] conversions = new Conversion[] {
             new Conversion("<organ>", "convert1.0To2.0-beta.xsl"),
@@ -81,6 +86,9 @@ public class Conversion {
             }
 
             while (index < conversions.length) {
+                logger.log(Level.INFO, "converting '"
+                        + conversions[index].pattern + "'");
+
                 in = conversions[index].convert(in);
                 index++;
             }

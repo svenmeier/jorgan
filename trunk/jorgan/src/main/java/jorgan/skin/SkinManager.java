@@ -77,8 +77,8 @@ public class SkinManager implements ISkinManager {
                         skins.add(skin);
                     }
                 } catch (IOException ex) {
-                    logger.log(Level.FINE, "failed to load skin '" + entry
-                            + "'", ex);
+                    logger.log(Level.INFO, "ignoring skin '" + entry
+                            + "'");
                 }
             }
         }
