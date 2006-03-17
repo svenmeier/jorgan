@@ -51,11 +51,11 @@ public class ContinuousPlayer extends Player {
                 if (slider.isReverse()) {
                     position = 127 - position;
                 }
-                if (Math.abs(slider.getPosition() - position) > slider
+                if (Math.abs(slider.getValue() - position) > slider
                         .getThreshold()) {
                     fireInputAccepted();
 
-                    slider.setPosition(position);
+                    slider.setValue(position);
                 }
             }
         }

@@ -36,7 +36,6 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
-import spin.Spin;
 import swingx.docking.DockedPanel;
 
 /**
@@ -55,7 +54,7 @@ public class MemoryPanel extends DockedPanel {
 
     private JButton nextButton = new JButton();
 
-    private LevelsModel model = new LevelsModel();
+    private MemoryModel model = new MemoryModel();
 
     private OrganSession session;
 
@@ -106,11 +105,11 @@ public class MemoryPanel extends DockedPanel {
     }
 
     protected void previous() {
-        memory.setPosition(memory.getPosition() - 1);
+        memory.increment(-1);
     }
 
     protected void next() {
-        memory.setPosition(memory.getPosition() + 1);
+        memory.increment(+1);
     }
 
     protected void clear() {
@@ -122,8 +121,7 @@ public class MemoryPanel extends DockedPanel {
 
     public void setOrgan(OrganSession session) {
         if (this.session != null) {
-            this.session.getOrgan().removeOrganListener(
-                    (OrganListener) Spin.over(model));
+            this.session.removeOrganListener(model);
 
             setMemory(null);
         }
@@ -131,8 +129,7 @@ public class MemoryPanel extends DockedPanel {
         this.session = session;
 
         if (this.session != null) {
-            this.session.getOrgan().addOrganListener(
-                    (OrganListener) Spin.over(model));
+            this.session.addOrganListener(model);
 
             findMemory();
         }
@@ -170,14 +167,14 @@ public class MemoryPanel extends DockedPanel {
         // remove listener to avoid infinite loop
         table.getSelectionModel().removeListSelectionListener(model);
 
-        int level = memory.getPosition();
-        if (level != table.getSelectedRow()) {
+        int index = memory.getValue();
+        if (index != table.getSelectedRow()) {
             if (table.getCellEditor() != null) {
                 table.getCellEditor().cancelCellEditing();
                 table.setCellEditor(null);
             }
-            table.getSelectionModel().setSelectionInterval(level, level);
-            table.scrollRectToVisible(table.getCellRect(level, 0, false));
+            table.getSelectionModel().setSelectionInterval(index, index);
+            table.scrollRectToVisible(table.getCellRect(index, 0, false));
         }
         table.setColumnSelectionInterval(0, 0);
 
@@ -185,7 +182,7 @@ public class MemoryPanel extends DockedPanel {
         table.getSelectionModel().addListSelectionListener(model);
     }
 
-    private class LevelsModel extends AbstractTableModel implements
+    private class MemoryModel extends AbstractTableModel implements
             OrganListener, ListSelectionListener {
 
         public int getColumnCount() {
@@ -244,8 +241,8 @@ public class MemoryPanel extends DockedPanel {
 
         public void valueChanged(ListSelectionEvent e) {
             int row = table.getSelectedRow();
-            if (row != -1 && row != memory.getPosition()) {
-                memory.setPosition(row);
+            if (row != -1 && row != memory.getValue()) {
+                memory.setValue(row);
             }
         }
     }

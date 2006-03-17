@@ -70,6 +70,7 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Memory;
+import jorgan.disposition.Sequence;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
@@ -78,6 +79,7 @@ import jorgan.gui.console.ActivateableView;
 import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
+import jorgan.gui.console.SequenceView;
 import jorgan.gui.console.View;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
@@ -95,7 +97,6 @@ import jorgan.gui.mac.TweakMac;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
-import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 
 /**
@@ -115,7 +116,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
      * The edited console.
      */
     private Console console;
-    
+
     /**
      * The skin of the console.
      */
@@ -361,10 +362,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
     public void setOrgan(OrganSession session) {
         if (this.session != null) {
-            this.session.getOrgan().removeOrganListener(
-                    (OrganListener) Spin.over(organListener));
-            this.session.getSelectionModel().removeSelectionListener(
-                    selectionListener);
+            this.session.removeOrganListener(organListener);
+            this.session.removeSelectionListener(selectionListener);
 
             jorgan.gui.console.Configuration.instance()
                     .removeConfigurationListener(configListener);
@@ -375,10 +374,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
         this.session = session;
 
         if (this.session != null) {
-            this.session.getOrgan().addOrganListener(
-                    (OrganListener) Spin.over(organListener));
-            this.session.getSelectionModel().addSelectionListener(
-                    selectionListener);
+            this.session.addOrganListener(organListener);
+            this.session.addSelectionListener(selectionListener);
 
             jorgan.gui.console.Configuration.instance()
                     .addConfigurationListener(configListener);
@@ -410,7 +407,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     public Skin getSkin() {
         return skin;
     }
-    
+
     /**
      * Construct an organ.
      * 
@@ -471,9 +468,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
                 dropView(view.getElement());
             }
-            
+
             skin = null;
-            
+
             setZoom(1.0d);
         }
 
@@ -481,7 +478,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
         if (console != null) {
             setZoom(console.getZoom());
-            
+
             initSkin();
 
             consoleView = new ConsoleView(console);
@@ -501,7 +498,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
             skin = SkinManager.instance().getSkin(console.getSkin());
         }
     }
-    
+
     protected View getView(Element element) {
         return (View) viewsByElement.get(element);
     }
@@ -513,6 +510,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
             view = new ActivateableView((Activateable) element);
         } else if (element instanceof Initiator) {
             view = new InitiatorView((Initiator) element);
+        } else if (element instanceof Sequence) {
+            view = new SequenceView((Sequence) element);
         } else if (element instanceof Memory) {
             view = new MemoryView((Memory) element);
         } else if (element instanceof Continuous) {
@@ -709,7 +708,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (element == console) {
                 setZoom(console.getZoom());
-                
+
                 initSkin();
 
                 consoleView.changeUpdate(event);
@@ -750,7 +749,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (event.getElement() == console) {
                 getView(event.getReference().getElement()).changeUpdate(event);
-                
+
                 sortViews();
             }
         }
@@ -1251,9 +1250,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
         if (skin != null) {
             Collections.sort(views, new Comparator() {
                 public int compare(Object o1, Object o2) {
-                    View view1 = (View)o1;
-                    View view2 = (View)o2;
-                    
+                    View view1 = (View) o1;
+                    View view2 = (View) o2;
+
                     return skin.compare(view1, view2);
                 }
             });

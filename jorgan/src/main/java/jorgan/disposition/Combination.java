@@ -46,14 +46,14 @@ public class Combination extends Initiator {
 
     public void recall() {
 
-        int level = getLevel();
+        int index = getIndex();
 
         for (int e = 0; e < getReferenceCount(); e++) {
             CombinationReference reference = (CombinationReference) getReference(e);
 
             Activateable registratable = reference.getRegistratable();
 
-            if (!reference.isActive(level)) {
+            if (!reference.isActive(index)) {
                 registratable.setActive(false);
             }
         }
@@ -63,7 +63,7 @@ public class Combination extends Initiator {
 
             Activateable registratable = reference.getRegistratable();
 
-            if (reference.isActive(level)) {
+            if (reference.isActive(index)) {
                 registratable.setActive(true);
             }
         }
@@ -71,11 +71,11 @@ public class Combination extends Initiator {
         notifyObservers();
     }
 
-    protected int getLevel() {
+    protected int getIndex() {
         Set memories = getReferrer(Memory.class);
         if (memories.size() > 0) {
             Memory memory = (Memory) memories.iterator().next();
-            return memory.getPosition();
+            return memory.getValue();
         } else {
             return 0;
         }
@@ -83,14 +83,14 @@ public class Combination extends Initiator {
 
     public void capture() {
 
-        int level = getLevel();
+        int index = getIndex();
 
         for (int e = 0; e < getReferenceCount(); e++) {
             CombinationReference reference = (CombinationReference) getReference(e);
 
             Activateable registratable = (Activateable) reference.getElement();
 
-            reference.setActive(level, registratable.isActive());
+            reference.setActive(index, registratable.isActive());
 
             fireReferenceChanged(reference, false);
         }
@@ -98,37 +98,37 @@ public class Combination extends Initiator {
         notifyObservers();
     }
 
-    public void clear(int level) {
+    public void clear(int index) {
         for (int e = 0; e < getReferenceCount(); e++) {
             CombinationReference reference = (CombinationReference) getReference(e);
 
-            reference.setActive(level, false);
+            reference.setActive(index, false);
 
             fireReferenceChanged(reference, false);
         }
     }
 
-    public void swap(int level1, int level2) {
+    public void swap(int index1, int index2) {
         for (int e = 0; e < getReferenceCount(); e++) {
             CombinationReference reference = (CombinationReference) getReference(e);
 
-            boolean value1 = reference.isActive(level1);
-            boolean value2 = reference.isActive(level1);
+            boolean value1 = reference.isActive(index1);
+            boolean value2 = reference.isActive(index1);
 
-            reference.setActive(level1, value2);
-            reference.setActive(level2, value1);
+            reference.setActive(index1, value2);
+            reference.setActive(index2, value1);
 
             fireReferenceChanged(reference, false);
         }
     }
 
-    public void copy(int level1, int level2) {
+    public void copy(int index1, int index2) {
         for (int e = 0; e < getReferenceCount(); e++) {
             CombinationReference reference = (CombinationReference) getReference(e);
 
-            boolean value = reference.isActive(level1);
+            boolean value = reference.isActive(index1);
 
-            reference.setActive(level2, value);
+            reference.setActive(index2, value);
 
             fireReferenceChanged(reference, false);
         }
@@ -145,18 +145,18 @@ public class Combination extends Initiator {
             super(registratable);
         }
 
-        public void setActive(int level, boolean active) {
-            if (level < 0 || level > 127) {
-                throw new IllegalArgumentException("level");
+        public void setActive(int index, boolean active) {
+            if (index < 0 || index > 127) {
+                throw new IllegalArgumentException("index");
             }
-            activated[level] = active;
+            activated[index] = active;
         }
 
-        public boolean isActive(int level) {
-            if (level < 0 || level > 127) {
-                throw new IllegalArgumentException("level");
+        public boolean isActive(int index) {
+            if (index < 0 || index > 127) {
+                throw new IllegalArgumentException("index");
             }
-            return activated[level];
+            return activated[index];
         }
 
         public Activateable getRegistratable() {

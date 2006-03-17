@@ -18,141 +18,147 @@
  */
 package jorgan.gui.construct;
 
-import java.util.*;
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import spin.Spin;
-import swingx.docking.DockedPanel;
-
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganSession;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
+import swingx.docking.DockedPanel;
 
 /**
  * Panel shows the properties of elements.
  */
 public class ElementPropertiesPanel extends DockedPanel {
 
-  private static final String[] BEAN_INFO_SEARCH_PATH = new String[]{"jorgan.gui.construct.info"};
+    private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
 
-  protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    protected static final ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  /**
-   * The handler of selection changes.
-   */
-  private SelectionHandler selectionHandler = new SelectionHandler();
+    /**
+     * The handler of selection changes.
+     */
+    private SelectionHandler selectionHandler = new SelectionHandler();
 
-  private OrganSession session;
+    private OrganSession session;
 
-  private PropertiesPanel propertiesPanel = new PropertiesPanel();
-  
-  public ElementPropertiesPanel() {
-    
-    ElementCustomizer customizer = new ElementCustomizer();
-    propertiesPanel.setBeanCustomizer(customizer);
-    propertiesPanel.addChangeListener(selectionHandler);
-    setScrollableBody(propertiesPanel, true, false);
-  }
+    private PropertiesPanel propertiesPanel = new PropertiesPanel();
 
-  public void setOrgan(OrganSession session) {
-    if (this.session != null) {
-      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
-      this.session.getOrgan().removeOrganListener((OrganListener)Spin.over(selectionHandler));
+    public ElementPropertiesPanel() {
+
+        ElementCustomizer customizer = new ElementCustomizer();
+        propertiesPanel.setBeanCustomizer(customizer);
+        propertiesPanel.addChangeListener(selectionHandler);
+        setScrollableBody(propertiesPanel, true, false);
     }
 
-    this.session = session;
-
-    if (this.session != null) {
-      this.session.getSelectionModel().addSelectionListener(selectionHandler);
-      this.session.getOrgan().addOrganListener((OrganListener)Spin.over(selectionHandler));
-    }
-  }
-    
-  /**
-   * The handler of selections.
-   */
-  private class SelectionHandler extends OrganAdapter implements ElementSelectionListener, ChangeListener {
-
-    private boolean updatingProperties = false;
-    
-    public void selectionChanged(ElementSelectionEvent ev) {
-      updateProperties();
-    }
-    
-    public void stateChanged(ChangeEvent e) {
-      if (!updatingProperties) {
-        updatingProperties = true;
-      
-        String property = propertiesPanel.getProperty();
-        session.getSelectionModel().setSelectedProperty(property);
-
-        updatingProperties = false;
-      }
-    }
-    
-    public void elementChanged(OrganEvent event) {
-      if (propertiesPanel.getBeans().contains(event.getElement())) {
-        updateProperties();
-      }
-    }
-    
-    public void referenceAdded(OrganEvent event) {
-      List beans = propertiesPanel.getBeans(); 
-      if (beans.contains(event.getElement()) || beans.contains(event.getReference().getElement())) {
-        updateProperties();
-      }
-    }
-    
-    public void referenceRemoved(OrganEvent event) {
-        List beans = propertiesPanel.getBeans(); 
-        if (beans.contains(event.getElement()) || beans.contains(event.getReference().getElement())) {
-          updateProperties();
+    public void setOrgan(OrganSession session) {
+        if (this.session != null) {
+            this.session.removeSelectionListener(selectionHandler);
+            this.session.removeOrganListener(selectionHandler);
         }
-      }
-      
-    private void updateProperties() {
-      if (!updatingProperties) {
-        updatingProperties = true;
-            
-        propertiesPanel.setBeans(session.getSelectionModel().getSelectedElements());
-        propertiesPanel.setProperty(session.getSelectionModel().getSelectedProperty());
 
-        updatingProperties = false;
-      }
-    }
-  }
-  
-  private class ElementCustomizer extends DefaultBeanCustomizer {
+        this.session = session;
 
-    public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
-        Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
-        
-        return super.getBeanInfo(beanClass);
-    }
-     
-    public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
-            throws IntrospectionException {
-        PropertyEditor editor = super.getPropertyEditor(descriptor);
-        
-        if (editor != null && editor instanceof ElementAwareEditor) {
-            ((ElementAwareEditor)editor).setElement((Element)propertiesPanel.getBeans().get(0));
+        if (this.session != null) {
+            this.session.addSelectionListener(selectionHandler);
+            this.session.addOrganListener(selectionHandler);
         }
-        
-        return editor;
     }
-  }
+
+    /**
+     * The handler of selections.
+     */
+    private class SelectionHandler extends OrganAdapter implements
+            ElementSelectionListener, ChangeListener {
+
+        private boolean updatingProperties = false;
+
+        public void selectionChanged(ElementSelectionEvent ev) {
+            updateProperties();
+        }
+
+        public void stateChanged(ChangeEvent e) {
+            if (!updatingProperties) {
+                updatingProperties = true;
+
+                String property = propertiesPanel.getProperty();
+                session.getSelectionModel().setSelectedProperty(property);
+
+                updatingProperties = false;
+            }
+        }
+
+        public void elementChanged(OrganEvent event) {
+            if (propertiesPanel.getBeans().contains(event.getElement())) {
+                updateProperties();
+            }
+        }
+
+        public void referenceAdded(OrganEvent event) {
+            List beans = propertiesPanel.getBeans();
+            if (beans.contains(event.getElement())
+                    || beans.contains(event.getReference().getElement())) {
+                updateProperties();
+            }
+        }
+
+        public void referenceRemoved(OrganEvent event) {
+            List beans = propertiesPanel.getBeans();
+            if (beans.contains(event.getElement())
+                    || beans.contains(event.getReference().getElement())) {
+                updateProperties();
+            }
+        }
+
+        private void updateProperties() {
+            if (!updatingProperties) {
+                updatingProperties = true;
+
+                propertiesPanel.setBeans(session.getSelectionModel()
+                        .getSelectedElements());
+                propertiesPanel.setProperty(session.getSelectionModel()
+                        .getSelectedProperty());
+
+                updatingProperties = false;
+            }
+        }
+    }
+
+    private class ElementCustomizer extends DefaultBeanCustomizer {
+
+        public BeanInfo getBeanInfo(Class beanClass)
+                throws IntrospectionException {
+            Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
+
+            return super.getBeanInfo(beanClass);
+        }
+
+        public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+                throws IntrospectionException {
+            PropertyEditor editor = super.getPropertyEditor(descriptor);
+
+            if (editor != null && editor instanceof ElementAwareEditor) {
+                ((ElementAwareEditor) editor)
+                        .setElement((Element) propertiesPanel.getBeans().get(0));
+            }
+
+            return editor;
+        }
+    }
 }

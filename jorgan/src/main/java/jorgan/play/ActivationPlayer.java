@@ -45,7 +45,7 @@ public class ActivationPlayer extends ContinuousPlayer {
             Activation crescendo = (Activation) getElement();
 
             if (crescendo.getReferenceCount() > 0) {
-                int current = (crescendo.getPosition()
+                int current = (crescendo.getValue()
                         * crescendo.getReferenceCount() / 128);
 
                 ActivateablePlayer player = (ActivateablePlayer) getOrganPlay()

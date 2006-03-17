@@ -48,10 +48,10 @@ public abstract class ContinuousHandler extends ElementHandler {
     public void startElement(String uri, String localName, String qName,
             Attributes attributes) {
 
-        if ("position".equals(qName)) {
+        if ("value".equals(qName)) {
             new IntegerHandler(getReader()) {
                 public void finished() {
-                    getContinuous().setPosition(getInteger());
+                    getContinuous().setValue(getInteger());
                 }
             };
         } else if ("message".equals(qName)) {
@@ -86,10 +86,10 @@ public abstract class ContinuousHandler extends ElementHandler {
     public void children() throws IOException {
         super.children();
 
+        new IntegerHandler(getWriter(), "value", getContinuous()
+                .getValue()).start();
         new BooleanHandler(getWriter(), "locking", getContinuous().isLocking())
                 .start();
-        new IntegerHandler(getWriter(), "position", getContinuous()
-                .getPosition()).start();
         new IntegerHandler(getWriter(), "threshold", getContinuous()
                 .getThreshold()).start();
         new BooleanHandler(getWriter(), "reverse", getContinuous().isReverse())

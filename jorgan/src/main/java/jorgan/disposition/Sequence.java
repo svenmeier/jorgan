@@ -33,12 +33,12 @@ public class Sequence extends Continuous implements Combination.Observer {
 
     public void initiated(Combination combination) {
         if (getCombination() != combination) {
-            setPosition(references.indexOf(getReference(combination)));
+            setValue(references.indexOf(getReference(combination)));
         }
     }
 
     private Combination getCombination() {
-        int position = getPosition();
+        int position = getValue();
         
         if (getReferenceCount() == 0) {
             return null;
@@ -48,10 +48,10 @@ public class Sequence extends Continuous implements Combination.Observer {
         }
     }
     
-    public void setPosition(int position) {
-        int oldPosition = getPosition();
+    public void setValue(int position) {
+        int oldPosition = getValue();
         
-        super.setPosition(position);
+        super.setValue(position);
         
         if (oldPosition != position) {
             Combination combination = getCombination();

@@ -31,9 +31,9 @@ public class ContinuousBeanInfo extends ElementBeanInfo {
     protected void registerProperties() {
         super.registerProperties();
 
+        add("value", Continuous.class, DataEditor.class);
         add("message", Continuous.class, MessageEditor.class);
         add("reverse", Continuous.class, BooleanEditor.class);
-        add("position", Continuous.class, DataEditor.class);
         add("threshold", Continuous.class, DataEditor.class);
         add("locking", Continuous.class, BooleanEditor.class);
     }

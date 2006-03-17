@@ -32,7 +32,7 @@ public class MemoryHandler extends ContinuousHandler {
 
     private Memory memory;
 
-    private int level = 0;
+    private int index = 0;
 
     public MemoryHandler(AbstractReader reader, Attributes attributes) {
         super(reader, attributes);
@@ -60,8 +60,8 @@ public class MemoryHandler extends ContinuousHandler {
         if ("title".equals(qName)) {
             new StringHandler(getReader()) {
                 public void finished() {
-                    memory.setTitle(level, getString());
-                    level++;
+                    memory.setTitle(index, getString());
+                    index++;
                 }
             };
         } else {
@@ -72,8 +72,8 @@ public class MemoryHandler extends ContinuousHandler {
     public void children() throws IOException {
         super.children();
 
-        for (level = 0; level < 128; level++) {
-            new StringHandler(getWriter(), "title", memory.getTitle(level))
+        for (index = 0; index < 128; index++) {
+            new StringHandler(getWriter(), "title", memory.getTitle(index))
                     .start();
         }
     }

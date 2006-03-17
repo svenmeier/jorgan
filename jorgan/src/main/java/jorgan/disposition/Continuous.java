@@ -29,7 +29,7 @@ public abstract class Continuous extends Element {
 
     private boolean reverse = false;
 
-    private int position = 127;
+    private int value = 127;
 
     private int threshold = 0;
 
@@ -56,18 +56,18 @@ public abstract class Continuous extends Element {
         fireElementChanged(true);
     }
 
-    public void setPosition(int position) {
+    public void setValue(int position) {
         if (position < 0 || position > 127) {
             throw new IllegalArgumentException("position must be between 0 and 127");
         }
         
-        this.position = position;
+        this.value = position;
 
         fireElementChanged(false);
     }
 
-    public int getPosition() {
-        return position;
+    public int getValue() {
+        return value;
     }
 
     public int getThreshold() {
@@ -89,7 +89,7 @@ public abstract class Continuous extends Element {
     }
 
     public void increment(int delta) {
-        int position = getPosition();
+        int position = getValue();
         if (delta > 0) {
             position += delta;
             position -= (position % delta);
@@ -100,7 +100,7 @@ public abstract class Continuous extends Element {
             }
         }
         
-        setPosition(limitIncrement(position));
+        setValue(limitIncrement(position));
     }
     
     protected int limitIncrement(int position) {
