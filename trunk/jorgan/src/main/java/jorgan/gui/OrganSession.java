@@ -19,11 +19,14 @@
 package jorgan.gui;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.OrganPlay;
+import jorgan.play.event.PlayListener;
 import spin.Spin;
 
 public class OrganSession {
@@ -50,14 +53,14 @@ public class OrganSession {
                 .over(new OrganAdapter() {
                     public void elementAdded(OrganEvent event) {
 
-                        jorgan.disposition.Element element = event.getElement();
+                        Element element = event.getElement();
 
                         selectionModel.setSelectedElement(element);
                     }
 
                     public void elementRemoved(OrganEvent event) {
 
-                        jorgan.disposition.Element element = event.getElement();
+                        Element element = event.getElement();
 
                         selectionModel.clear(element);
                     }
@@ -76,6 +79,30 @@ public class OrganSession {
         return selectionModel;
     }
 
+    public void addSelectionListener(ElementSelectionListener listener) {
+        selectionModel.addSelectionListener(listener);
+    }
+    
+    public void removeSelectionListener(ElementSelectionListener listener) {
+        selectionModel.removeSelectionListener(listener);
+    }
+
+    public void addOrganListener(OrganListener listener) {
+        organ.addOrganListener((OrganListener)Spin.over(listener));
+    }
+
+    public void removeOrganListener(OrganListener listener) {
+        organ.removeOrganListener((OrganListener)Spin.over(listener));
+    }
+
+    public void addPlayerListener(PlayListener listener) {
+        play.addPlayerListener((PlayListener)Spin.over(listener));
+    }
+
+    public void removePlayerListener(PlayListener listener) {
+        play.removePlayerListener((PlayListener)Spin.over(listener));
+    }
+    
     private static Organ createDefaultOrgan() {
         Organ organ = new Organ();
 

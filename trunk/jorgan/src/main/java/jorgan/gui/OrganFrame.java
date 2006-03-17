@@ -69,14 +69,13 @@ import jorgan.io.DispositionReader;
 import jorgan.io.DispositionWriter;
 import jorgan.swing.StatusBar;
 import jorgan.xml.XMLFormatException;
-import spin.Spin;
 import spin.over.SpinOverEvaluator;
 
 /**
  * The jOrgan frame.
  */
 public class OrganFrame extends JFrame implements UI {
-    
+
     private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
     private static ResourceBundle resources = ResourceBundle
@@ -315,15 +314,13 @@ public class OrganFrame extends JFrame implements UI {
         statusBar.setStatus(null);
 
         if (this.session != null) {
-            this.session.getOrgan().removeOrganListener(
-                    (OrganListener) Spin.over(saveAction));
+            this.session.removeOrganListener(saveAction);
         }
 
         this.session = session;
 
         if (this.session != null) {
-            this.session.getOrgan().addOrganListener(
-                    (OrganListener) Spin.over(saveAction));
+            this.session.addOrganListener(saveAction);
         }
         saveAction.clearChanges();
 

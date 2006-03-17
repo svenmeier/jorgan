@@ -21,6 +21,7 @@ package jorgan.gui.console;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.text.DecimalFormat;
 
 import jorgan.disposition.Continuous;
 import jorgan.skin.Layer;
@@ -33,6 +34,10 @@ import jorgan.skin.TextLayer;
  */
 public class ContinuousView extends View {
 
+    public static final String TEXT_VALUE = "value";
+
+    private DecimalFormat format = new DecimalFormat("000");
+
     public ContinuousView(Continuous continuous) {
         super(continuous);
     }
@@ -41,17 +46,23 @@ public class ContinuousView extends View {
         return (Continuous) getElement();
     }
 
-    public int getPosition() {
-        return getContinuous().getPosition();
+    protected void initTexts() {
+        super.initTexts();
+            
+        setText(TEXT_VALUE, format.format(getContinuous().getValue() + 1));
+    }
+    
+    public int getValue() {
+        return getContinuous().getValue();
     }
 
-    public void setPosition(int position) {
-        getContinuous().setPosition(position);
+    public void setValue(int value) {
+        getContinuous().setValue(value);
     }
 
     public void released() {
         if (!getContinuous().isLocking()) {
-            getContinuous().setPosition(0);
+            getContinuous().setValue(0);
         }
     }
     
@@ -84,7 +95,7 @@ public class ContinuousView extends View {
 
                 g.drawRect(x, y, width - 1, height - 1);
 
-                g.fillRect(x + 2, y + 2, getPosition() * 76 / 127, 9);
+                g.fillRect(x + 2, y + 2, getValue() * 76 / 127, 9);
             }
         };
         layer.setWidth(80);

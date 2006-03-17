@@ -53,7 +53,6 @@ import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.list.ListUtils;
-import spin.Spin;
 import swingx.docking.DockedPanel;
 
 /**
@@ -186,19 +185,15 @@ public class ReferencesPanel extends DockedPanel {
      */
     public void setOrgan(OrganSession session) {
         if (this.session != null) {
-            this.session.getOrgan().removeOrganListener(
-                    (OrganListener) Spin.over(referencesModel));
-            this.session.getSelectionModel().removeSelectionListener(
-                    selectionHandler);
+            this.session.removeOrganListener(referencesModel);
+            this.session.removeSelectionListener(selectionHandler);
         }
 
         this.session = session;
 
         if (this.session != null) {
-            this.session.getOrgan().addOrganListener(
-                    (OrganListener) Spin.over(referencesModel));
-            this.session.getSelectionModel().addSelectionListener(
-                    selectionHandler);
+            this.session.addOrganListener(referencesModel);
+            this.session.addSelectionListener(selectionHandler);
         }
 
         updateReferences();
@@ -210,7 +205,8 @@ public class ReferencesPanel extends DockedPanel {
         rows.clear();
         referencesModel.fireRemoved(size);
 
-        if (session != null && session.getSelectionModel().getSelectionCount() == 1) {
+        if (session != null
+                && session.getSelectionModel().getSelectionCount() == 1) {
             Element element = session.getSelectionModel().getSelectedElement();
 
             if (getShowReferencesTo()) {
@@ -229,16 +225,16 @@ public class ReferencesPanel extends DockedPanel {
                     }
                 }
             }
-            
+
             if (sortNameButton.isSelected()) {
-                Collections.sort(rows, new RowComparator(
-                        new ElementComparator(true)));
+                Collections.sort(rows, new RowComparator(new ElementComparator(
+                        true)));
             } else if (sortTypeButton.isSelected()) {
                 Collections.sort(rows, new RowComparator(new ElementComparator(
                         false)));
             }
             referencesModel.fireAdded(rows.size());
-            
+
             list.setVisible(true);
         } else {
             list.setVisible(false);
@@ -338,15 +334,15 @@ public class ReferencesPanel extends DockedPanel {
         public Component getListCellRendererComponent(JList list, Object value,
                 int index, boolean isSelected, boolean cellHasFocus) {
 
-            Row row = (Row)value;
-            
+            Row row = (Row) value;
+
             Element element;
             if (getShowReferencesTo()) {
                 element = row.reference.getElement();
             } else {
                 element = row.element;
             }
-            
+
             String name = ElementUtils.getElementAndTypeName(element,
                     sortNameButton.isSelected());
 
@@ -375,11 +371,13 @@ public class ReferencesPanel extends DockedPanel {
         public void actionPerformed(ActionEvent ev) {
             CreateReferencesWizard.showInDialog((JFrame) SwingUtilities
                     .getWindowAncestor(ReferencesPanel.this), session
-                    .getOrgan(), session.getSelectionModel().getSelectedElement());
+                    .getOrgan(), session.getSelectionModel()
+                    .getSelectedElement());
         }
 
         public void update() {
-            setEnabled(session != null && session.getSelectionModel().getSelectionCount() == 1);
+            setEnabled(session != null
+                    && session.getSelectionModel().getSelectionCount() == 1);
         }
     }
 

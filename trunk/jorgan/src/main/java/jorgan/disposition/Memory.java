@@ -18,21 +18,24 @@
  */
 package jorgan.disposition;
 
+import java.util.Arrays;
+
 public class Memory extends Continuous {
 
     private String[] titles = new String[128];
-    {
-        for (int l = 0; l < titles.length; l++) {
-            titles[l] = "";
-        }
-    }
 
+    public Memory() {
+        setValue(0);
+        
+        Arrays.fill(titles, "");
+    }
+    
     protected boolean canReference(Class clazz) {
         return Combination.class == clazz;
     }
 
     public String getTitle() {
-        return titles[getPosition()];
+        return titles[getValue()];
     }
 
     public String getTitle(int index) {
@@ -56,33 +59,35 @@ public class Memory extends Continuous {
         fireElementChanged(false);
     }
 
-    public void clear(int level) {
-        setTitle(level, "");
+    public void clear(int index) {
+        setTitle(index, "");
 
         for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).clear(level);
+            ((Combination) getReference(r).getElement()).clear(index);
         }
     }
 
-    public void swap(int level1, int level2) {
-        String title1 = getTitle(level1);
-        String title2 = getTitle(level2);
+    public void swap(int index1, int index2) {
+        String title1 = getTitle(index1);
+        String title2 = getTitle(index2);
 
-        setTitle(level1, title2);
-        setTitle(level2, title1);
+        setTitle(index1, title2);
+        setTitle(index2, title1);
 
         for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).swap(level1, level2);
+            ((Combination) getReference(r).getElement()).swap(index1, index2);
         }
+        
+        fireElementChanged(false);
     }
 
-    public void copy(int level1, int level2) {
-        String title = getTitle(level1);
+    public void copy(int index1, int index2) {
+        String title = getTitle(index1);
 
-        setTitle(level2, title);
+        setTitle(index2, title);
 
         for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).copy(level1, level2);
+            ((Combination) getReference(r).getElement()).copy(index1, index2);
         }
     }
 }

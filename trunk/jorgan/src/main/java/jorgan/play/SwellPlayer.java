@@ -88,8 +88,7 @@ public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
 
             boolean output = false;
 
-            int newVolume = (swell.getVolume() + (swell.getPosition()
-                    * (127 - swell.getVolume()) / 127))
+            int newVolume = getValue(swell.getVolume(), swell.getValue())
                     * volume / 127;
             if (newVolume != oldVolume) {
                 sound.setVolume(newVolume);
@@ -102,8 +101,7 @@ public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
             // not use
             // this feature in case of soundfonts with preset cutoff values.
             if (swell.getCutoff() < 127) {
-                int newCutoff = swell.getCutoff()
-                        + (swell.getPosition() * (127 - swell.getCutoff()) / 127);
+                int newCutoff = getValue(swell.getCutoff(), swell.getValue());
                 if (newCutoff != oldCutoff) {
                     sound.setCutoff(newCutoff);
                     oldCutoff = newCutoff;
@@ -115,6 +113,10 @@ public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
             if (output) {
                 fireOutputProduced();
             }
+        }
+
+        private int getValue(int base, int position) {
+            return base + ((127 - base) * position / 127);
         }
     }
 }

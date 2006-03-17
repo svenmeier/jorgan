@@ -20,31 +20,23 @@ package jorgan.gui.console;
 
 import java.awt.Insets;
 
-import jorgan.disposition.Memory;
+import jorgan.disposition.Sequence;
 import jorgan.skin.Layer;
 import jorgan.skin.SliderLayer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
 /**
- * A view that shows a {@link Memory}.
+ * A view that shows a {@link jorgan.disposition.Sequence}.
  */
-public class MemoryView extends ContinuousView {
+public class SequenceView extends ContinuousView {
 
-    public static final String TEXT_TITLE = "title";
-
-    public MemoryView(Memory memory) {
-        super(memory);
+    public SequenceView(Sequence sequence) {
+        super(sequence);
     }
 
-    protected Memory getMemory() {
-        return (Memory) getElement();
-    }
-
-    protected void initTexts() {
-        super.initTexts();
-
-        setText(TEXT_TITLE, getMemory().getTitle());
+    protected Sequence getSequence() {
+        return (Sequence) getElement();
     }
 
     protected Style createDefaultStyle() {

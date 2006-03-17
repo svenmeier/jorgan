@@ -64,7 +64,6 @@ import jorgan.gui.midi.MidiLog;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
-import spin.Spin;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
 import swingx.docking.Dockable;
@@ -270,12 +269,9 @@ public class OrganPanel extends JPanel {
      */
     public void setOrgan(OrganSession session) {
         if (this.session != null) {
-            this.session.getOrgan().removeOrganListener(
-                    (OrganListener) Spin.over(organListener));
-            this.session.getPlay().removePlayerListener(
-                    (PlayListener) Spin.over(playerListener));
-            this.session.getSelectionModel().removeSelectionListener(
-                    selectionListener);
+            this.session.removeOrganListener(organListener);
+            this.session.removePlayerListener(playerListener);
+            this.session.removeSelectionListener(selectionListener);
 
             if (this.session.getPlay().isOpen()) {
                 this.session.getPlay().close();
@@ -299,12 +295,9 @@ public class OrganPanel extends JPanel {
         this.session = session;
 
         if (this.session != null) {
-            this.session.getOrgan().addOrganListener(
-                    (OrganListener) Spin.over(organListener));
-            this.session.getPlay().addPlayerListener(
-                    (PlayListener) Spin.over(playerListener));
-            this.session.getSelectionModel().addSelectionListener(
-                    selectionListener);
+            this.session.addOrganListener(organListener);
+            this.session.addPlayerListener(playerListener);
+            this.session.addSelectionListener(selectionListener);
 
             if (!constructing) {
                 this.session.getPlay().open();
