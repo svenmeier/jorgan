@@ -29,7 +29,7 @@ public abstract class Continuous extends Element {
 
     private boolean reverse = false;
 
-    private int value = 127;
+    private int value = 0;
 
     private int threshold = 0;
 

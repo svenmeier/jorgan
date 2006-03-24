@@ -18,19 +18,20 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
-import javax.swing.border.*;
+import javax.swing.BorderFactory;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
 
-import jorgan.disposition.Organ;
-import jorgan.docs.Documents;
 import jorgan.gui.console.Configuration;
-import jorgan.swing.font.*;
-import jorgan.swing.color.*;
+import jorgan.swing.color.ColorSelector;
+import jorgan.swing.font.FontSelector;
 
 /**
  * A panel for the {@link jorgan.gui.console.Configuration}.
@@ -38,15 +39,16 @@ import jorgan.swing.color.*;
 public class GUIConsoleConfigPanel extends ConfigurationPanel {
 
   private JCheckBox interpolateCheckBox = new JCheckBox();
+  
+  private JLabel fontLabel = new JLabel();
+  private FontSelector fontSelector = new FontSelector();
+
   private JPanel shortcutsPanel = new JPanel();
   private JCheckBox showShortcutCheckBox    = new JCheckBox();
   private JLabel shortcutColorLabel = new JLabel();
   private ColorSelector shortcutColorSelector = new ColorSelector();
   private JLabel shortcutFontLabel = new JLabel();
   private FontSelector shortcutFontSelector = new FontSelector();
-  
-  private JPanel fontsPanel = new JPanel();
-  private Map fontSelectors = new HashMap();
   
   public GUIConsoleConfigPanel() {
     setLayout(new GridBagLayout());
@@ -56,9 +58,13 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
     interpolateCheckBox.setText(resources.getString("config.console.interpolate"));
     add(interpolateCheckBox, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
 
+    fontLabel.setText(resources.getString("config.console.font"));
+    add(fontLabel   , new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+    add(fontSelector, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
+
     shortcutsPanel.setLayout(new GridBagLayout());
     shortcutsPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.console.shortcuts")));
-    add(shortcutsPanel, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
+    add(shortcutsPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
 
       showShortcutCheckBox.setText(resources.getString("config.console.shortcuts.show"));
       showShortcutCheckBox.addItemListener(new ItemListener() {
@@ -77,20 +83,6 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
       shortcutsPanel.add(shortcutFontLabel   , new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
       shortcutsPanel.add(shortcutFontSelector, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
 
-    fontsPanel.setLayout(new GridBagLayout());
-    fontsPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.console.font")));
-    add(fontsPanel, new GridBagConstraints(0, 2, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
-
-      Class[] classes = Organ.getElementClasses();
-      for (int c = 0; c < classes.length; c++) {
-        JLabel label = new JLabel(Documents.getInstance().getDisplayName(classes[c]));
-        fontsPanel.add(label, new GridBagConstraints(0, c, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-        
-        FontSelector fontSelector = new FontSelector();
-        fontSelectors.put(classes[c], fontSelector);
-        fontsPanel.add(fontSelector, new GridBagConstraints(1, c, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
-      }
-
     add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
   }
 
@@ -98,19 +90,14 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
     Configuration config = (Configuration)getConfiguration();
 
     interpolateCheckBox.setSelected(config.getInterpolate());
+    
+    fontSelector.setSelectedFont(config.getFont());
 
     showShortcutCheckBox.setSelected      (config.getShowShortcut());
     shortcutColorSelector.setSelectedColor(config.getShortcutColor());
     shortcutColorSelector.setEnabled      (config.getShowShortcut());
     shortcutFontSelector.setSelectedFont  (config.getShortcutFont());
     shortcutFontSelector.setEnabled       (config.getShowShortcut());
-
-    Class[] classes = Organ.getElementClasses();
-    for (int c = 0; c < classes.length; c++) {
-      FontSelector fontSelector = (FontSelector)fontSelectors.get(classes[c]);
-      
-      fontSelector.setSelectedFont(config.getFont(classes[c]));
-    }    
   }
 
   /**
@@ -121,15 +108,10 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
 
     config.setInterpolate(interpolateCheckBox.isSelected());
 
+    config.setFont(fontSelector.getSelectedFont());
+
     config.setShowShortcut(showShortcutCheckBox.isSelected());
     config.setShortcutColor(shortcutColorSelector.getSelectedColor());
     config.setShortcutFont(shortcutFontSelector.getSelectedFont());
-
-    Class[] classes = Organ.getElementClasses();
-    for (int c = 0; c < classes.length; c++) {
-      FontSelector fontSelector = (FontSelector)fontSelectors.get(classes[c]);
-      
-      config.setFont(classes[c], fontSelector.getSelectedFont());
-    }    
   }
 }

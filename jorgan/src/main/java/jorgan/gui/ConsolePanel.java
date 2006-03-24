@@ -70,7 +70,6 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Memory;
-import jorgan.disposition.Sequence;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
@@ -79,7 +78,6 @@ import jorgan.gui.console.ActivateableView;
 import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
-import jorgan.gui.console.SequenceView;
 import jorgan.gui.console.View;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
@@ -510,8 +508,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
             view = new ActivateableView((Activateable) element);
         } else if (element instanceof Initiator) {
             view = new InitiatorView((Initiator) element);
-        } else if (element instanceof Sequence) {
-            view = new SequenceView((Sequence) element);
         } else if (element instanceof Memory) {
             view = new MemoryView((Memory) element);
         } else if (element instanceof Continuous) {

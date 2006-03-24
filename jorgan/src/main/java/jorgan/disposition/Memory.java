@@ -25,8 +25,6 @@ public class Memory extends Continuous {
     private String[] titles = new String[128];
 
     public Memory() {
-        setValue(0);
-        
         Arrays.fill(titles, "");
     }
     

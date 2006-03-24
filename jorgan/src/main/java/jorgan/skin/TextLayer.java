@@ -23,6 +23,8 @@ import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.RenderingHints.Key;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,7 +180,7 @@ public class TextLayer extends Layer {
 
             Line line = new Line(chars, start, length, metrics);
             height += line.ascent + line.descent;
-            if (height > 0 && height > height) {
+            if (getHeight() > 0 && height > getHeight()) {
                 return;
             }
 
@@ -202,6 +204,11 @@ public class TextLayer extends Layer {
         g.setFont(font);
         g.setColor(color);
 
+        Object wasAntialiased = g.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
+        if (antialiased) {
+            g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        }
+        
         switch (verticalAlignment) {
         case LEADING:
             y += 0;
@@ -236,6 +243,8 @@ public class TextLayer extends Layer {
 
             y += line.ascent + line.descent;
         }
+        
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, wasAntialiased);
     }
 
     public Object clone() {
