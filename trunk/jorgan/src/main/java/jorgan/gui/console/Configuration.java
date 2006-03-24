@@ -20,12 +20,9 @@ package jorgan.gui.console;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.prefs.Preferences;
 
 import jorgan.config.prefs.PreferencesConfiguration;
-import jorgan.disposition.Organ;
 
 /**
  * Configuration of the view package.
@@ -52,7 +49,7 @@ public class Configuration extends PreferencesConfiguration {
 
     private Font shortcutFont;
 
-    private Map fonts;
+    private Font font;
 
     protected void restore(Preferences prefs) {
         interpolate = getBoolean(prefs, "interpolate", INTERPOLATE);
@@ -61,12 +58,7 @@ public class Configuration extends PreferencesConfiguration {
         shortcutColor = getColor(prefs, "shortcutColor", SHORTCUT_COLOR);
         shortcutFont = getFont(prefs, "shortcutFont", SHORTCUT_FONT);
 
-        fonts = new HashMap();
-        Class[] classes = Organ.getElementClasses();
-        for (int c = 0; c < classes.length; c++) {
-            fonts.put(classes[c], getFont(prefs, "font[" + classes[c].getName()
-                    + "]", FONT));
-        }
+        font = getFont(prefs, "font", FONT);
     }
 
     protected void backup(Preferences prefs) {
@@ -76,11 +68,7 @@ public class Configuration extends PreferencesConfiguration {
         putColor(prefs, "shortcutColor", shortcutColor);
         putFont(prefs, "shortcutFont", shortcutFont);
 
-        Class[] classes = Organ.getElementClasses();
-        for (int c = 0; c < classes.length; c++) {
-            putFont(prefs, "font[" + classes[c].getName() + "]", (Font) fonts
-                    .get(classes[c]));
-        }
+        putFont(prefs, "font", font);
     }
 
     public boolean getInterpolate() {
@@ -99,8 +87,8 @@ public class Configuration extends PreferencesConfiguration {
         return shortcutFont;
     }
 
-    public Font getFont(Class clazz) {
-        return (Font) fonts.get(clazz);
+    public Font getFont() {
+        return font;
     }
 
     public void setInterpolate(boolean interpolate) {
@@ -127,8 +115,8 @@ public class Configuration extends PreferencesConfiguration {
         fireConfigurationChanged();
     }
 
-    public void setFont(Class clazz, Font font) {
-        fonts.put(clazz, font);
+    public void setFont(Font font) {
+        this.font = font;
 
         fireConfigurationChanged();
     }

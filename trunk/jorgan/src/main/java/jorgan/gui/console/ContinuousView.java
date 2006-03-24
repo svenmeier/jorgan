@@ -18,8 +18,7 @@
  */
 package jorgan.gui.console;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
+import java.awt.Font;
 import java.awt.Insets;
 import java.text.DecimalFormat;
 
@@ -48,10 +47,10 @@ public class ContinuousView extends View {
 
     protected void initTexts() {
         super.initTexts();
-            
+
         setText(TEXT_VALUE, format.format(getContinuous().getValue() + 1));
     }
-    
+
     public int getValue() {
         return getContinuous().getValue();
     }
@@ -65,43 +64,45 @@ public class ContinuousView extends View {
             getContinuous().setValue(0);
         }
     }
-    
+
     protected Style createDefaultStyle() {
         Style style = new Style();
 
+        style.addChild(createTextNameLayer());
+        style.addChild(createTextValueLayer());
         style.addChild(createSliderLayer());
-        style.addChild(createTextLayer());
 
         return style;
     }
 
-    protected TextLayer createTextLayer() {
+    protected TextLayer createTextNameLayer() {
+        Font font = Configuration.instance().getFont();
+        
         TextLayer layer = new TextLayer();
         layer.setText(TEXT_NAME);
-        layer.setPadding(new Insets(4, 4, 4 + 13 + 4, 4));
-        layer.setVerticalAnchor(Layer.TRAILING);
-        layer.setFont(getDefaultFont());
+        layer.setPadding(new Insets(4, 4, 4 + font.getSize(), 4));
+        layer.setFont(font);
+        layer.setColor(getDefaultColor());
+
+        return layer;
+    }
+
+    protected TextLayer createTextValueLayer() {
+        Font font = Configuration.instance().getFont();
+        
+        TextLayer layer = new TextLayer();
+        layer.setText(TEXT_VALUE);
+        layer.setPadding(new Insets(4 + font.getSize(), 4, 4, 4));
+        layer.setFont(font);
         layer.setColor(getDefaultColor());
 
         return layer;
     }
 
     protected SliderLayer createSliderLayer() {
-        SliderLayer layer = new SliderLayer() {
-            protected void draw(Graphics2D g, int x, int y, int width,
-                    int height) {
-
-                g.setColor(Color.black);
-
-                g.drawRect(x, y, width - 1, height - 1);
-
-                g.fillRect(x + 2, y + 2, getValue() * 76 / 127, 9);
-            }
-        };
-        layer.setWidth(80);
-        layer.setHeight(13);
+        SliderLayer layer = new SliderLayer();
+        layer.setFill(Layer.BOTH);
         layer.setPadding(new Insets(4, 4, 4, 4));
-        layer.setVerticalAnchor(Layer.TRAILING);
 
         return layer;
     }

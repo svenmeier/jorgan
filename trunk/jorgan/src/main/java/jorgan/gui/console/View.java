@@ -20,7 +20,6 @@ package jorgan.gui.console;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
@@ -222,10 +221,6 @@ public class View {
     public void keyPressed(KeyEvent ev) {
     }
 
-    protected Font getDefaultFont() {
-        return Configuration.instance().getFont(getElement().getClass());
-    }
-
     protected Color getDefaultColor() {
         return Color.BLACK;
     }
@@ -236,7 +231,7 @@ public class View {
         TextLayer text = new TextLayer();
         text.setText(TEXT_NAME);
         text.setPadding(new Insets(4, 4, 4, 4));
-        text.setFont(getDefaultFont());
+        text.setFont(Configuration.instance().getFont());
         text.setColor(getDefaultColor());
         style.addChild(text);
 
