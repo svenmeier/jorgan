@@ -77,7 +77,7 @@ public class ActivateableView extends MomentaryView {
         TextLayer layer = new TextLayer();
         layer.setText(TEXT_NAME);
         layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
-        layer.setHorizontalAnchor(TextLayer.LEADING);
+        layer.setAnchor(TextLayer.LEFT);
         layer.setFont(Configuration.instance().getFont());
         layer.setColor(getDefaultColor());
 
@@ -117,7 +117,7 @@ public class ActivateableView extends MomentaryView {
         layer.setWidth(13);
         layer.setHeight(13);
         layer.setPadding(new Insets(4, 4, 4, 4));
-        layer.setHorizontalAnchor(Layer.LEADING);
+        layer.setAnchor(Layer.LEFT);
 
         return layer;
     }

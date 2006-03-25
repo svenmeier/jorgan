@@ -70,16 +70,10 @@ public abstract class LayerHandler extends Handler {
                     getLayer().setFill(getInteger());
                 }
             };
-        } else if ("horizontalAnchor".equals(qName)) {
+        } else if ("anchor".equals(qName)) {
             new IntegerHandler(getReader()) {
                 public void finished() {
-                    getLayer().setHorizontalAnchor(getInteger());
-                }
-            };
-        } else if ("verticalAnchor".equals(qName)) {
-            new IntegerHandler(getReader()) {
-                public void finished() {
-                    getLayer().setVerticalAnchor(getInteger());
+                    getLayer().setAnchor(getInteger());
                 }
             };
         } else {
@@ -96,9 +90,7 @@ public abstract class LayerHandler extends Handler {
         new InsetsHandler(getWriter(), "padding", getLayer().getPadding())
                 .start();
         new IntegerHandler(getWriter(), "fill", getLayer().getFill()).start();
-        new IntegerHandler(getWriter(), "horizontalAnchor", getLayer()
-                .getHorizontalAnchor()).start();
-        new IntegerHandler(getWriter(), "verticalAnchor", getLayer()
-                .getVerticalAnchor()).start();
+        new IntegerHandler(getWriter(), "anchor", getLayer()
+                .getAnchor()).start();
     }
 }

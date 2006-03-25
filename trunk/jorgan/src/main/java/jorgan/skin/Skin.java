@@ -48,7 +48,7 @@ public class Skin {
      */
     public static final int TOP_RIGHT = 3;
     
-    private String name;
+    private String name = "";
     
     private int focus = BOTTOM_RIGHT;
 
@@ -61,6 +61,9 @@ public class Skin {
     }
 
     public void setName(String name) {
+        if (name == null) {
+            name = "";
+        }
         this.name = name;
     }
 

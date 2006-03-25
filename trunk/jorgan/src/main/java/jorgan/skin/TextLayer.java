@@ -24,9 +24,10 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.RenderingHints.Key;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import jorgan.gui.console.View;
 
@@ -35,9 +36,9 @@ import jorgan.gui.console.View;
  */
 public class TextLayer extends Layer {
 
-    private int verticalAlignment = CENTER;
-
-    private int horizontalAlignment = CENTER;
+    private static Pattern pattern = Pattern.compile("\\$\\{(.*?)\\}");
+    
+    private int alignment = CENTER;
     
     private Font font = new Font("Arial", Font.PLAIN, 12);
 
@@ -101,41 +102,43 @@ public class TextLayer extends Layer {
         antialiased = b;
     }
 
-    public int getHorizontalAlignment() {
-        return horizontalAlignment;
+    public int getAlignment() {
+        return alignment;
     }
 
-    public void setHorizontalAlignment(int horizontalAlignment) {
-        this.horizontalAlignment = horizontalAlignment;
-    }
-
-    public int getVerticalAlignment() {
-        return verticalAlignment;
-    }
-
-    public void setVerticalAlignment(int verticalAlignment) {
-        this.verticalAlignment = verticalAlignment;
+    public void setAlignment(int alignment) {
+        this.alignment = alignment;
     }
 
     public void init(View view, Component component) {
-        String line = view.getText(text);
+        Matcher matcher = pattern.matcher(this.text);
+        
+        StringBuffer text = new StringBuffer();
+        while (matcher.find()) {
+            String key = matcher.group(1);
+            String value = view.getText(key);
+            if (value == null) {
+                value = "";
+            } else {
+                value = value.trim();
+            }
+            matcher.appendReplacement(text, value);
+        }
+        matcher.appendTail(text);
 
-        breakLines(line, component.getFontMetrics(font));
+        breakLines(text.toString().trim(), component.getFontMetrics(font));
     }
 
     /**
-     * Break the name into lines.
+     * Break the text into lines.
      */
-    protected void breakLines(String name, FontMetrics metrics) {
-
-        // trim leading and trailing whitespace
-        name = name.trim();
+    protected void breakLines(String text, FontMetrics metrics) {
 
         lines = new ArrayList();
         linesWidth = 0;
         linesHeight = 0;
 
-        char[] chars = name.toCharArray();
+        char[] chars = text.toCharArray();
         int start = 0;
         int end = chars.length;
 
@@ -147,7 +150,7 @@ public class TextLayer extends Layer {
             int length = end - start;
 
             // honour line break (multiple whitespace)
-            int lineBreak = name.indexOf("  ", start);
+            int lineBreak = text.indexOf("  ", start);
             if (lineBreak != -1) {
                 length = lineBreak - start;
             }
@@ -157,10 +160,10 @@ public class TextLayer extends Layer {
                 while (metrics.charsWidth(chars, start, length) > getWidth()) {
 
                     // seek word break (single whitespace)
-                    int wordBreak = name.lastIndexOf(' ', start + length - 1);
+                    int wordBreak = text.lastIndexOf(' ', start + length - 1);
                     if (length > 1) {
                         // seek intra word break (hyphen)
-                        wordBreak = Math.max(wordBreak, name.lastIndexOf('-',
+                        wordBreak = Math.max(wordBreak, text.lastIndexOf('-',
                                 start + length - 2) + 1);
                     }
 
@@ -209,15 +212,10 @@ public class TextLayer extends Layer {
             g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         }
         
-        switch (verticalAlignment) {
-        case LEADING:
-            y += 0;
-            break;
-        case TRAILING:
-            y += height - linesHeight;
-            break;
-        default:
+        if (alignment == CENTER || alignment == RIGHT || alignment == LEFT) {
             y += height / 2 - linesHeight / 2;
+        } else if (alignment == BOTTOM || alignment == BOTTOM_RIGHT || alignment == BOTTOM_LEFT) {
+            y += height - linesHeight;
         }
 
         for (int l = 0; l < lines.size(); l++) {
@@ -227,16 +225,11 @@ public class TextLayer extends Layer {
                 y += line.leading;
             }
 
-            int alignedX;
-            switch (horizontalAlignment) {
-            case LEADING:
-                alignedX = x;
-                break;
-            case TRAILING:
-                alignedX = x + width - line.width;
-                break;
-            default:
+            int alignedX = x;
+            if (alignment == TOP || alignment == CENTER || alignment == BOTTOM) {
                 alignedX = x + width / 2 - line.width / 2;
+            } else if (alignment == RIGHT || alignment == TOP_RIGHT || alignment == BOTTOM_RIGHT) {
+                alignedX = x + width - line.width;
             }
 
             line.draw(g, alignedX, y);
