@@ -34,9 +34,21 @@ public abstract class Layer implements Resolver, Cloneable {
 
     public static final int CENTER = 0;
 
-    public static final int LEADING = 1;
+    public static final int TOP = 1;
 
-    public static final int TRAILING = 2;
+    public static final int TOP_RIGHT = 2;
+
+    public static final int RIGHT = 3;
+
+    public static final int BOTTOM_RIGHT = 4;
+    
+    public static final int BOTTOM = 5;
+
+    public static final int BOTTOM_LEFT = 6;
+
+    public static final int LEFT = 7;
+    
+    public static final int TOP_LEFT = 8;
 
     public static final int NONE = 0;
 
@@ -46,11 +58,9 @@ public abstract class Layer implements Resolver, Cloneable {
 
     public static final int BOTH = 3;
 
-    protected int horizontalAnchor = CENTER;
+    private int anchor = CENTER;
 
-    protected int verticalAnchor = CENTER;
-
-    protected int fill = NONE;
+    private int fill = NONE;
 
     private int width;
 
@@ -92,27 +102,21 @@ public abstract class Layer implements Resolver, Cloneable {
             rectangle.height = size.height - padding.top - padding.bottom;
         }
 
-        switch (horizontalAnchor) {
-        case LEADING:
+        if (anchor == TOP_LEFT || anchor == LEFT || anchor == BOTTOM_LEFT) {
             rectangle.x = padding.left;
-            break;
-        case TRAILING:
+        } else if (anchor == TOP_RIGHT || anchor == RIGHT || anchor == BOTTOM_RIGHT) {
             rectangle.x = size.width - padding.right - rectangle.width;
-            break;
-        default:
+        } else {
             rectangle.x = padding.left
                     + (size.width - padding.left - padding.right) / 2
                     - rectangle.width / 2;
         }
 
-        switch (verticalAnchor) {
-        case LEADING:
+        if (anchor == TOP_LEFT || anchor == TOP || anchor == TOP_RIGHT) {
             rectangle.y = padding.top;
-            break;
-        case TRAILING:
+        } else if (anchor == BOTTOM_LEFT || anchor == BOTTOM || anchor == BOTTOM_RIGHT) {
             rectangle.y = size.height - padding.bottom - rectangle.height;
-            break;
-        default:
+        } else {
             rectangle.y = padding.top
                     + (size.height - padding.top - padding.bottom) / 2
                     - rectangle.height / 2;
@@ -154,20 +158,12 @@ public abstract class Layer implements Resolver, Cloneable {
         return padding;
     }
 
-    public void setHorizontalAnchor(int anchor) {
-        this.horizontalAnchor = anchor;
+    public void setAnchor(int anchor) {
+        this.anchor = anchor;
     }
 
-    public int getHorizontalAnchor() {
-        return horizontalAnchor;
-    }
-
-    public void setVerticalAnchor(int anchor) {
-        this.verticalAnchor = anchor;
-    }
-
-    public int getVerticalAnchor() {
-        return verticalAnchor;
+    public int getAnchor() {
+        return anchor;
     }
 
     public Dimension getSize() {

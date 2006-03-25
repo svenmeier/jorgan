@@ -78,16 +78,10 @@ public class TextLayerHandler extends LayerHandler {
                     layer.setAntialiased(getBoolean());
                 }
             };
-        } else if ("horizontalAlignment".equals(qName)) {
+        } else if ("alignment".equals(qName)) {
             new IntegerHandler(getReader()) {
                 public void finished() {
-                    layer.setHorizontalAlignment(getInteger());
-                }
-            };
-        } else if ("verticalAlignment".equals(qName)) {
-            new IntegerHandler(getReader()) {
-                public void finished() {
-                    layer.setVerticalAlignment(getInteger());
+                    layer.setAlignment(getInteger());
                 }
             };
         } else if ("text".equals(qName)) {
@@ -108,10 +102,8 @@ public class TextLayerHandler extends LayerHandler {
         new FontHandler(getWriter(), "font", layer.getFont()).start();
         new BooleanHandler(getWriter(), "antialiased", layer.isAntialiased())
                 .start();
-        new IntegerHandler(getWriter(), "horizontalAlignment", layer
-                .getHorizontalAlignment()).start();
-        new IntegerHandler(getWriter(), "verticalAlignment", layer
-                .getVerticalAlignment()).start();
+        new IntegerHandler(getWriter(), "alignment", layer
+                .getAlignment()).start();
         new StringHandler(getWriter(), "text", layer.getText()).start();
     }
 }
