@@ -79,7 +79,7 @@ public class InitiatorView extends MomentaryView {
 
     private Layer createTextLayer() {
         TextLayer layer = new TextLayer();
-        layer.setText(TEXT_NAME);
+        layer.setText("${" + TEXT_NAME + "}");
         layer.setPadding(new Insets(4, 4, 4, 4));
         layer.setFont(Configuration.instance().getFont());
         layer.setColor(getDefaultColor());

@@ -41,13 +41,14 @@ import jorgan.skin.TextLayer;
  */
 public class View {
 
+    public static final String TEXT_NAME = "name";
+    public static final String TEXT_DESCRIPTION = "description";
+
     /**
      * The resource bundle.
      */
     protected static ResourceBundle resources = ResourceBundle
             .getBundle("jorgan.gui.resources");
-
-    public static final String TEXT_NAME = "name";
 
     protected Dimension size = new Dimension();
 
@@ -149,6 +150,7 @@ public class View {
 
     protected void initTexts() {
         setText(TEXT_NAME, ElementUtils.getElementName(getElement()));
+        setText(TEXT_DESCRIPTION, getElement().getDescription());
     }
 
     protected void initStyle() {
@@ -228,12 +230,12 @@ public class View {
     protected Style createDefaultStyle() {
         Style style = new Style();
 
-        TextLayer text = new TextLayer();
-        text.setText(TEXT_NAME);
-        text.setPadding(new Insets(4, 4, 4, 4));
-        text.setFont(Configuration.instance().getFont());
-        text.setColor(getDefaultColor());
-        style.addChild(text);
+        TextLayer layer = new TextLayer();
+        layer.setText("${" + TEXT_NAME + "}");
+        layer.setPadding(new Insets(4, 4, 4, 4));
+        layer.setFont(Configuration.instance().getFont());
+        layer.setColor(getDefaultColor());
+        style.addChild(layer);
 
         return style;
     }

@@ -93,10 +93,10 @@ public class Message implements Serializable {
     }
 
     public int wildcard(int data1, int data2) {
-        if (isWildcard(data1)) {
+        if (isWildcard(this.data1)) {
             return data1;
         }
-        if (isWildcard(data2)) {
+        if (isWildcard(this.data2)) {
             return data2;
         }
 

@@ -18,24 +18,15 @@
  */
 package jorgan.skin;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
 import jorgan.gui.console.MomentaryView;
-import jorgan.gui.console.View;
 
 /**
  * A layer for a {@link jorgan.disposition.Momentary}.
  */
 public class ButtonLayer extends CompositeLayer implements Cloneable {
-
-    public void init(View view, Component component) {
-        if (!(view instanceof MomentaryView)) {
-            throw new IllegalArgumentException();
-        }
-        super.init(view, component);
-    }
 
     protected void drawChildren(Graphics2D g, Dimension dimension) {
         if (getChildCount() > 0) {
