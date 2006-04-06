@@ -25,7 +25,7 @@
 					<xsl:call-template name="consoleDrawbarReference"/>
 				</xsl:for-each>
 			</console>
-			<xsl:apply-templates select="division|piston"/>
+			<xsl:apply-templates select="division|piston|variation|tremulant"/>
 		</organ>
 	</xsl:template>
 	
@@ -238,7 +238,7 @@
 				<shortcut><xsl:value-of select="shortcut"/></shortcut>
 			</xsl:if>
 			<xsl:apply-templates select="onMessage|offMessage" />
-			<xsl:for-each select="../stop">
+			<xsl:for-each select="..//stop">
 				<xsl:call-template name="reference"/>
 			</xsl:for-each>
 		</tremulant>
@@ -261,14 +261,14 @@
 				<shortcut><xsl:value-of select="shortcut"/></shortcut>
 			</xsl:if>
 			<xsl:apply-templates select="onMessage|offMessage" />
-			<xsl:for-each select="../stop">
+			<xsl:for-each select="..//stop">
 				<xsl:call-template name="reference"/>
 			</xsl:for-each>
 		</variation>
 	</xsl:template>
 	
-	<xsl:template match="message">
-		<message>
+	<xsl:template match="message|onMessage|offMessage|getMessage|setMessage">
+		<xsl:copy>
 		  <xsl:if test="status">
   			<status><xsl:value-of select="status"/></status>
 		  </xsl:if>
@@ -278,34 +278,9 @@
 		  <xsl:if test="data2">
   			<data2><xsl:value-of select="data2"/></data2>
 		  </xsl:if>
-		</message>
+		</xsl:copy>
 	</xsl:template>
-	<xsl:template match="onMessage">
-		<onMessage>
-		  <xsl:if test="status">
-  			<status><xsl:value-of select="status"/></status>
-		  </xsl:if>
-		  <xsl:if test="data1">
-  			<data1><xsl:value-of select="data1"/></data1>
-		  </xsl:if>
-		  <xsl:if test="data2">
-  			<data2><xsl:value-of select="data2"/></data2>
-		  </xsl:if>
-		</onMessage>
-	</xsl:template>
-	<xsl:template match="offMessage">
-		<offMessage>
-		  <xsl:if test="status">
-  			<status><xsl:value-of select="status"/></status>
-		  </xsl:if>
-		  <xsl:if test="data1">
-  			<data1><xsl:value-of select="data1"/></data1>
-		  </xsl:if>
-		  <xsl:if test="data2">
-  			<data2><xsl:value-of select="data2"/></data2>
-		  </xsl:if>
-		</offMessage>
-	</xsl:template>
+
 	<xsl:template match="patch">
 		<patch>
 		  <xsl:if test="bank">

@@ -22,6 +22,8 @@ public class Conversion {
     private static final Logger logger = Logger.getLogger(Conversion.class
             .getName());
 
+    private static final boolean DEBUG = false;
+
     private static Conversion[] conversions = new Conversion[] {
             new Conversion("<organ>", "convert1.0To2.0-beta.xsl"),
             new Conversion("<organ *version=\"(2\\.0-beta.*|2\\.0-RC1)\" *>",
@@ -64,6 +66,11 @@ public class Conversion {
         transform.transform(new StreamSource(in),
                 new StreamResult(byteArrayOut));
 
+        if (DEBUG) {
+            System.out.println(new String(byteArrayOut.toByteArray()));
+            System.out.flush();
+        }
+        
         in = new ByteArrayInputStream(byteArrayOut.toByteArray());
 
         return in;

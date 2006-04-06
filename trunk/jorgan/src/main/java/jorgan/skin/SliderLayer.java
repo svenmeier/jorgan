@@ -55,8 +55,14 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
                 position = ((ContinuousView) view).getValue();
             }
 
-            int index = Math
-                    .round(((float) (getChildCount() - 1) * position) / 127);
+            int index;
+            if (getChildCount() == 2) {
+                // use first layer for position 0 only
+                index = position == 0 ? 0 : 1;
+            } else {
+                index = Math
+                        .round(((float) (getChildCount() - 1) * position) / 127);
+            }
 
             Layer layer = getChild(index);
 
@@ -87,7 +93,6 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
             break;
         case DIRECTION_TOP_BOTTOM:
             position = (y - rectangle.y) * 127 / rectangle.height;
-            ;
             break;
         case DIRECTION_BOTTOM_TOP:
             position = (rectangle.height - (y - rectangle.y)) * 127
@@ -101,7 +106,7 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
             ((ContinuousView) view).setValue(position);
         }
     }
-    
+
     public void mouseReleased(int x, int y, Dimension size) {
         if (view instanceof ContinuousView) {
             ((ContinuousView) view).released();

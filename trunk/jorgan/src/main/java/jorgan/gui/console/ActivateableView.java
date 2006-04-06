@@ -33,8 +33,6 @@ import jorgan.skin.TextLayer;
  */
 public class ActivateableView extends MomentaryView {
 
-    public static final String TEXT_NAME = "name";
-
     public ActivateableView(Activateable activateable) {
         super(activateable);
     }
@@ -75,7 +73,7 @@ public class ActivateableView extends MomentaryView {
 
     private Layer createTextLayer() {
         TextLayer layer = new TextLayer();
-        layer.setText(TEXT_NAME);
+        layer.setText("${" + TEXT_NAME + "}");
         layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
         layer.setAnchor(TextLayer.LEFT);
         layer.setFont(Configuration.instance().getFont());

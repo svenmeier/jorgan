@@ -79,7 +79,7 @@ public class ContinuousView extends View {
         Font font = Configuration.instance().getFont();
         
         TextLayer layer = new TextLayer();
-        layer.setText(TEXT_NAME);
+        layer.setText("${" + TEXT_NAME + "}");
         layer.setPadding(new Insets(4, 4, 4 + font.getSize(), 4));
         layer.setFont(font);
         layer.setColor(getDefaultColor());
@@ -91,7 +91,7 @@ public class ContinuousView extends View {
         Font font = Configuration.instance().getFont();
         
         TextLayer layer = new TextLayer();
-        layer.setText(TEXT_VALUE);
+        layer.setText("${" + TEXT_VALUE + "}");
         layer.setPadding(new Insets(4 + font.getSize(), 4, 4, 4));
         layer.setFont(font);
         layer.setColor(getDefaultColor());

@@ -62,12 +62,14 @@ public abstract class MomentaryView extends View {
     }
     
     protected void paintShortcut(Graphics2D g) {
-        Shortcut shortcut = getMomentary().getShortcut();
-        if (shortcut != null) {
-            g.setFont(Configuration.instance().getShortcutFont());
-            g.setColor(Configuration.instance().getShortcutColor());
-            
-            g.drawString(shortcut.toString(), getX(), getY() + getHeight());
+        if (Configuration.instance().getShowShortcut()) {
+            Shortcut shortcut = getMomentary().getShortcut();
+            if (shortcut != null) {
+                g.setFont(Configuration.instance().getShortcutFont());
+                g.setColor(Configuration.instance().getShortcutColor());
+                
+                g.drawString(shortcut.toString(), getX(), getY() + getHeight());
+            }
         }
     }
 }
