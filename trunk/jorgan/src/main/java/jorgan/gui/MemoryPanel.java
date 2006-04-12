@@ -19,12 +19,13 @@
 package jorgan.gui;
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -48,12 +49,6 @@ public class MemoryPanel extends DockedPanel {
 
     private JTable table = new JTable();
 
-    private JButton clearButton = new JButton();
-
-    private JButton previousButton = new JButton();
-
-    private JButton nextButton = new JButton();
-
     private MemoryModel model = new MemoryModel();
 
     private OrganSession session;
@@ -63,7 +58,7 @@ public class MemoryPanel extends DockedPanel {
     public MemoryPanel() {
 
         table.setModel(model);
-        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         table.getColumnModel().getColumn(1).setCellEditor(
                 new StringCellEditor());
         TableUtils.hideHeader(table);
@@ -71,52 +66,12 @@ public class MemoryPanel extends DockedPanel {
         TableUtils.pleasantLookAndFeel(table);
         setScrollableBody(table, true, false);
 
-        previousButton.setToolTipText(resources.getString("memory.previous"));
-        previousButton.setIcon(new ImageIcon(getClass().getResource(
-                "/jorgan/gui/img/previous.gif")));
-        previousButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                previous();
-            }
-        });
-        addTool(previousButton);
-
-        nextButton.setToolTipText(resources.getString("memory.next"));
-        nextButton.setIcon(new ImageIcon(getClass().getResource(
-                "/jorgan/gui/img/next.gif")));
-        nextButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                next();
-            }
-        });
-        addTool(nextButton);
-
-        clearButton.setToolTipText(resources.getString("memory.clear"));
-        clearButton.setIcon(new ImageIcon(getClass().getResource(
-                "/jorgan/gui/img/clear.gif")));
-        clearButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                clear();
-            }
-        });
-        addTool(clearButton);
+        addTool(new PreviousAction());
+        addTool(new NextAction());
+        addTool(new SwapAction());
+        addTool(new ClearAction());
 
         setMemory(null);
-    }
-
-    protected void previous() {
-        memory.increment(-1);
-    }
-
-    protected void next() {
-        memory.increment(+1);
-    }
-
-    protected void clear() {
-        int[] rows = table.getSelectedRows();
-        for (int r = 0; r < rows.length; r++) {
-            memory.clear(rows[r]);
-        }
     }
 
     public void setOrgan(OrganSession session) {
@@ -149,9 +104,6 @@ public class MemoryPanel extends DockedPanel {
 
         model.fireTableDataChanged();
 
-        previousButton.setEnabled(memory != null);
-        nextButton.setEnabled(memory != null);
-        clearButton.setEnabled(memory != null);
         table.setVisible(memory != null);
 
         if (memory == null) {
@@ -240,10 +192,109 @@ public class MemoryPanel extends DockedPanel {
         }
 
         public void valueChanged(ListSelectionEvent e) {
-            int row = table.getSelectedRow();
-            if (row != -1 && row != memory.getValue()) {
-                memory.setValue(row);
+            if (table.getSelectedRowCount() == 1) {
+                int row = table.getSelectedRow();
+                if (row != -1 && row != memory.getValue()) {
+                    memory.setValue(row);
+                }
             }
+        }
+    }
+
+    private class NextAction extends AbstractAction implements
+            ListSelectionListener {
+        public NextAction() {
+            putValue(Action.NAME, resources.getString("memory.next.name"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+                    "/jorgan/gui/img/next.gif")));
+
+            setEnabled(false);
+
+            table.getSelectionModel().addListSelectionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            memory.increment(+1);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(table.getSelectedRowCount() == 1);
+        }
+    }
+
+    private class PreviousAction extends AbstractAction implements
+            ListSelectionListener {
+        public PreviousAction() {
+            putValue(Action.NAME, resources.getString("memory.previous.name"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+                    "/jorgan/gui/img/previous.gif")));
+
+            setEnabled(false);
+
+            table.getSelectionModel().addListSelectionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            memory.increment(-1);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(table.getSelectedRowCount() == 1);
+        }
+    }
+
+    private class SwapAction extends AbstractAction implements
+            ListSelectionListener {
+        public SwapAction() {
+            putValue(Action.NAME, resources.getString("memory.swap.name"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+                    "/jorgan/gui/img/swap.gif")));
+
+            setEnabled(false);
+
+            table.getSelectionModel().addListSelectionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            int[] rows = table.getSelectedRows();
+            memory.swap(rows[0], rows[1]);
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(table.getSelectedRowCount() == 2);
+        }
+    }
+
+    private class ClearAction extends AbstractAction implements
+            ListSelectionListener {
+        public ClearAction() {
+            putValue(Action.NAME, resources.getString("memory.clear.name"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+                    "/jorgan/gui/img/clear.gif")));
+
+            setEnabled(false);
+
+            table.getSelectionModel().addListSelectionListener(this);
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            if (confirm()) {
+                int[] rows = table.getSelectedRows();
+                for (int r = 0; r < rows.length; r++) {
+                    memory.clear(rows[r]);
+                }
+            }
+        }
+
+        private boolean confirm() {
+            return JOptionPane.showConfirmDialog(MemoryPanel.this, resources
+                    .getString("memory.clear.warning"), resources
+                    .getString("memory.clear.name"), JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+        }
+
+        public void valueChanged(ListSelectionEvent e) {
+            setEnabled(table.getSelectedRowCount() > 0);
         }
     }
 }
