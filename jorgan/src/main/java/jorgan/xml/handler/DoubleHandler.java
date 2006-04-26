@@ -27,33 +27,33 @@ import jorgan.xml.*;
  */
 public class DoubleHandler extends Handler {
 
-  private double dd;
+    private double dd;
 
-  public DoubleHandler(AbstractWriter writer, String tag, double dd) {
-    super(writer, tag);
+    public DoubleHandler(AbstractWriter writer, String tag, double dd) {
+        super(writer, tag);
 
-    this.dd = dd;
-  }
+        this.dd = dd;
+    }
 
-  /**
-   * Constructor.
-   */
-  public DoubleHandler(AbstractReader reader) {
-    super(reader);
-  }
+    /**
+     * Constructor.
+     */
+    public DoubleHandler(AbstractReader reader) {
+        super(reader);
+    }
 
-  public double getDouble() {
-    return dd;
-  } 
+    public double getDouble() {
+        return dd;
+    }
 
-  public void characters(XMLWriter writer) throws IOException {
+    public void characters(XMLWriter writer) throws IOException {
 
-    writer.characters(Double.toString(dd));
-  }
-  
-  protected void finish() {
-    dd = Double.parseDouble(getCharacters()); 
+        writer.characters(Double.toString(dd));
+    }
 
-    finished();
-  }  
+    protected void finish() {
+        dd = Double.parseDouble(getCharacters());
+
+        finished();
+    }
 }

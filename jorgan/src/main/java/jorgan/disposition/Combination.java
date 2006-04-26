@@ -113,7 +113,7 @@ public class Combination extends Initiator {
             CombinationReference reference = (CombinationReference) getReference(e);
 
             boolean value1 = reference.isActive(index1);
-            boolean value2 = reference.isActive(index1);
+            boolean value2 = reference.isActive(index2);
 
             reference.setActive(index1, value2);
             reference.setActive(index2, value1);

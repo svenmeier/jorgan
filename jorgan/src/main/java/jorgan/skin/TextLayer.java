@@ -19,7 +19,6 @@
 package jorgan.skin;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
@@ -110,7 +109,9 @@ public class TextLayer extends Layer {
         this.alignment = alignment;
     }
 
-    public void init(View view, Component component) {
+    public void setView(View view) {
+        super.setView(view);
+        
         Matcher matcher = pattern.matcher(this.text);
         
         StringBuffer text = new StringBuffer();
@@ -126,7 +127,7 @@ public class TextLayer extends Layer {
         }
         matcher.appendTail(text);
 
-        breakLines(text.toString().trim(), component.getFontMetrics(font));
+        breakLines(text.toString().trim(), view.getConsolePanel().getFontMetrics(font));
     }
 
     /**

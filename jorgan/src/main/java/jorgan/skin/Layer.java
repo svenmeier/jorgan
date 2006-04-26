@@ -18,7 +18,6 @@
  */
 package jorgan.skin;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -80,10 +79,14 @@ public abstract class Layer implements Resolver, Cloneable {
         return this.resolver.resolve(name);
     }
 
-    public void init(View view, Component component) {
+    public void setView(View view) {
         this.view = view;
     }
 
+    public View getView() {
+        return view;
+    }
+    
     public void draw(Graphics2D g, Dimension dimension) {
 
         Rectangle rectangle = getUnpaddedBounds(dimension);

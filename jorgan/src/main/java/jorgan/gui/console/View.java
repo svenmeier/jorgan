@@ -164,7 +164,7 @@ public class View {
         if (style == null) {
             style = createDefaultStyle();
         }
-        style.init(this, consolePanel);
+        style.setView(this);
 
         size = style.getSize();
     }
@@ -238,5 +238,9 @@ public class View {
         style.addChild(layer);
 
         return style;
+    }
+
+    public double getZoom() {
+        return getConsolePanel().getConsole().getZoom();
     }
 }

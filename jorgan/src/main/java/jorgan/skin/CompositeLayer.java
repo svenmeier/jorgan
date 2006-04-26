@@ -18,7 +18,6 @@
  */
 package jorgan.skin;
 
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -64,13 +63,13 @@ public class CompositeLayer extends Layer {
         return dimension;
     }
 
-    public void init(View view, Component component) {
-        super.init(view, component);
+    public void setView(View view) {
+        super.setView(view);
 
         for (int l = 0; l < layers.size(); l++) {
             Layer layer = (Layer) layers.get(l);
 
-            layer.init(view, component);
+            layer.setView(view);
         }
     }
 

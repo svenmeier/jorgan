@@ -86,6 +86,8 @@ public abstract class Continuous extends Element {
 
     public void setReverse(boolean reverse) {
         this.reverse = reverse;
+        
+        fireElementChanged(true);
     }
 
     public void increment(int delta) {

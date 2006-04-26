@@ -16,25 +16,37 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.io.disposition;
 
-import jorgan.disposition.Console;
-import jorgan.gui.construct.editor.InDeviceEditor;
-import jorgan.gui.construct.editor.ZoomEditor;
-import jorgan.gui.construct.editor.ScreenEditor;
-import jorgan.gui.construct.editor.SkinEditor;
+import jorgan.disposition.Continuous;
+import jorgan.disposition.Regulator;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
 
-/**
- * BeanInfo for {@link jorgan.disposition.Organ}.
- */
-public class ConsoleBeanInfo extends ElementBeanInfo {
+import org.xml.sax.Attributes;
 
-    protected void registerProperties() {
-        super.registerProperties();
+public class RegulatorHandler extends ContinuousHandler {
 
-        add("device", Console.class, InDeviceEditor.class);
-        add("skin", Console.class, SkinEditor.class);
-        add("screen", Console.class, ScreenEditor.class);
-        add("zoom", Console.class, ZoomEditor.class);
+    private Regulator regulator;
+
+    public RegulatorHandler(AbstractReader reader, Attributes attributes) {
+        super(reader, attributes);
+
+        regulator = new Regulator();
+    }
+
+    public RegulatorHandler(AbstractWriter writer, String tag,
+            Regulator regulator) {
+        super(writer, tag);
+
+        this.regulator = regulator;
+    }
+
+    public Regulator getRegulator() {
+        return regulator;
+    }
+
+    protected Continuous getContinuous() {
+        return getRegulator();
     }
 }
