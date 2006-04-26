@@ -18,7 +18,6 @@
  */
 package jorgan.skin;
 
-import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
@@ -75,59 +74,66 @@ public class ImageLayer extends Layer {
         return image.getWidth(null);
     }
 
-    public void init(View view, Component component) {
+    public void setView(View view) {
+        super.setView(view);
+        
         if (image == null) {
-            image = ImageCache.getImage(resolve(file));
+            image = ImageCache.getImage(resolve(file), view.getConsolePanel());
         }
     }
 
     protected void draw(Graphics2D g, int x, int y, int width, int height) {
+
         if (width == calcWidth() && height == calcHeight()
                 || border.equals(ZERO_BORDER)) {
-            g.drawImage(image, x, y, width, height, null);
+            drawImage(g, image, x, y, x + width, y + height, 0, 0, width, height);
         } else {
             // TOP-LEFT
-            g.drawImage(image, x, y, x + border.left, y + border.top, 0, 0,
-                    border.left, border.top, null);
+            drawImage(g, image, x, y, x + border.left, y + border.top, 0, 0,
+                    border.left, border.top);
             // BOTTOM-LEFT
-            g.drawImage(image, x, y + height - border.bottom, x + border.left,
-                    y + height, 0, calcHeight() - border.bottom,
-                    border.left, calcHeight(), null);
+            drawImage(g, image, x, y + height - border.bottom, x + border.left,
+                    y + height, 0, calcHeight() - border.bottom, border.left,
+                    calcHeight());
             // TOP-RIGHT
-            g.drawImage(image, x + width - border.right, y, x + width, y
-                    + border.top, calcWidth() - border.right, 0,
-                    calcWidth(), border.top, null);
+            drawImage(g, image, x + width - border.right, y, x + width, y
+                    + border.top, calcWidth() - border.right, 0, calcWidth(),
+                    border.top);
             // BOTTOM-RIGHT
-            g.drawImage(image, x + width - border.right, y + height
+            drawImage(g, image, x + width - border.right, y + height
                     - border.bottom, x + width, y + height, calcWidth()
-                    - border.right, calcHeight() - border.bottom,
-                    calcWidth(), calcHeight(), null);
+                    - border.right, calcHeight() - border.bottom, calcWidth(),
+                    calcHeight());
             // TOP
-            g.drawImage(image, x + border.left, y, x + width - border.right, y
-                    + border.top, border.left, 0,
-                    calcWidth() - border.right, border.top, null);
+            drawImage(g, image, x + border.left, y, x + width - border.right, y
+                    + border.top, border.left, 0, calcWidth() - border.right,
+                    border.top);
             // BOTTOM
-            g.drawImage(image, x + border.left, y + height - border.bottom, x
+            drawImage(g, image, x + border.left, y + height - border.bottom, x
                     + width - border.right, y + height, border.left,
-                    calcHeight() - border.bottom, calcWidth()
-                            - border.right, calcHeight(), null);
+                    calcHeight() - border.bottom, calcWidth() - border.right,
+                    calcHeight());
             // LEFT
-            g.drawImage(image, x, y + border.top, x + border.left, y + height
-                    - border.bottom, 0, border.top, border.left,
-                    calcHeight() - border.bottom, null);
+            drawImage(g, image, x, y + border.top, x + border.left, y + height
+                    - border.bottom, 0, border.top, border.left, calcHeight()
+                    - border.bottom);
             // RIGHT
-            g.drawImage(image, x + width - border.right, y + border.top, x
+            drawImage(g, image, x + width - border.right, y + border.top, x
                     + width, y + height - border.bottom, calcWidth()
                     - border.right, border.top, calcWidth(), calcHeight()
-                    - border.bottom, null);
+                    - border.bottom);
             // CENTER
-            g.drawImage(image, x + border.left, y + border.top, x + width
+            drawImage(g, image, x + border.left, y + border.top, x + width
                     - border.right, y + height - border.bottom, border.left,
                     border.top, calcWidth() - border.right, calcHeight()
-                            - border.bottom, null);
+                            - border.bottom);
         }
     }
 
+    protected void drawImage(Graphics2D g, Image image, int dx1, int dy1, int dx2, int dy2, int sx1, int sy1, int sx2, int sy2) {
+        g.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
+    }
+    
     public Object clone() {
         ImageLayer clone = (ImageLayer) super.clone();
 

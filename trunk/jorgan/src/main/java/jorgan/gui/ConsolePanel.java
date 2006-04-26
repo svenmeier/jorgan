@@ -79,6 +79,7 @@ import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
 import jorgan.gui.console.View;
+import jorgan.gui.construct.Configuration;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
 import jorgan.gui.construct.layout.AlignCenterVerticalLayout;
@@ -143,7 +144,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     /**
      * The zoom to paint views at.
      */
-    private double zoom = 1.0d;
+    private float zoom = 1.0f;
 
     /**
      * The element that is currently pressed.
@@ -178,7 +179,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     /**
      * The listener to mouse (motion) events in construction modus.
      */
-    private ConstructMouseInputListener constructMouseInputListener = new ConstructMouseInputListener();
+    private ConstructionHandler constructMouseInputListener = new ConstructionHandler();
 
     /**
      * The listener to drop events.
@@ -342,10 +343,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
         // Ensure an increment of at least 1, since translation to screen
         // can make view increment irrelevant.
-        return Math.max(1, viewToScreen(viewIncrement));
+        return Math.max(1, viewToScreen(viewIncrement, false));
     }
 
-    public void setZoom(double zoom) {
+    public void setZoom(float zoom) {
         if (this.zoom != zoom) {
             this.zoom = zoom;
 
@@ -386,16 +387,22 @@ public class ConsolePanel extends JComponent implements Scrollable {
         if (element != null) {
             View view = getView(element);
             if (view != null) {
-                scrollRectToVisible(new Rectangle(viewToScreen(view.getX()),
-                        viewToScreen(view.getY()),
-                        viewToScreen(view.getWidth()), viewToScreen(view
-                                .getHeight())));
+                int x1 = viewToScreen(view.getX(), false);
+                int y1 = viewToScreen(view.getY(), false);
+                int x2 = viewToScreen(view.getX() + view.getWidth(), true);
+                int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+
+                scrollRectToVisible(new Rectangle(x1, y1, x2 - x2, y2 - y1));
             }
         }
     }
 
-    protected int viewToScreen(int viewPos) {
-        return (int) (viewPos * zoom);
+    protected int viewToScreen(int viewPos, boolean roundUp) {
+        if (roundUp) {
+            return Math.round(viewPos * zoom);
+        } else {
+            return (int) (viewPos * zoom);
+        }
     }
 
     protected int screenToView(int screenPos) {
@@ -469,7 +476,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             skin = null;
 
-            setZoom(1.0d);
+            setZoom(1.0f);
         }
 
         this.console = console;
@@ -603,24 +610,24 @@ public class ConsolePanel extends JComponent implements Scrollable {
     }
 
     /**
-     * The preferred size is determined by the contained views positiosn and
+     * The preferred size is determined by the contained views position and
      * size.
      * 
      * @return the preferred size
      */
     public Dimension getPreferredSize() {
 
-        int width = 0;
-        int height = 0;
+        int x = 0;
+        int y = 0;
 
         for (int v = 0; v < views.size(); v++) {
             View view = (View) views.get(v);
 
-            width = Math.max(width, view.getX() + view.getWidth());
-            height = Math.max(height, view.getY() + view.getHeight());
+            x = Math.max(x, view.getX() + view.getWidth());
+            y = Math.max(y, view.getY() + view.getHeight());
         }
 
-        return new Dimension(viewToScreen(width), viewToScreen(height));
+        return new Dimension(viewToScreen(x, true), viewToScreen(y, true));
     }
 
     /**
@@ -630,8 +637,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
      *            view to repaint
      */
     public void repaintView(View view) {
-        repaint(viewToScreen(view.getX()), viewToScreen(view.getY()),
-                viewToScreen(view.getWidth()), viewToScreen(view.getHeight()));
+        int x1 = viewToScreen(view.getX(), false);
+        int y1 = viewToScreen(view.getY(), false);
+        int x2 = viewToScreen(view.getX() + view.getWidth(), true);
+        int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+
+        repaint(x1, y1, x2 - x1, y2 - y1);
     }
 
     /**
@@ -685,17 +696,16 @@ public class ConsolePanel extends JComponent implements Scrollable {
             if ((clip.x + clip.width > x && clip.x < x + width)
                     && (clip.y + clip.height > y && clip.y < y + height)) {
 
-                g.clipRect(x, y, width, height);
+                // clipping a scaled graphics corrupts the clip so don't do it
+                // g.clipRect(x, y, width, height);
                 view.paint(g);
-                g.setClip(clip);
+                // g.setClip(clip);
             }
         }
     }
 
     /**
-     * The listener to organ events. <br/> Note that <em>Spin</em> ensures
-     * that the methods of this listeners are called on the EDT, although a
-     * change in the organ might be triggered by a change on a MIDI thread.
+     * The listener to organ events.
      */
     private class InternalOrganListener extends OrganAdapter {
 
@@ -782,13 +792,13 @@ public class ConsolePanel extends JComponent implements Scrollable {
     /**
      * The mouse listener for construction.
      */
-    private class ConstructMouseInputListener extends MouseInputAdapter {
+    private class ConstructionHandler extends MouseInputAdapter {
 
         private Point mouseFrom;
 
         private Point mouseTo;
 
-        private Point mouseDrag;
+        private Point original;
 
         private boolean wasSelected;
 
@@ -869,39 +879,40 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 }
                 session.getSelectionModel().setSelectedElements(elements);
             } else {
+                View view = getView(pressedElement);
+
+                int deltaX = 0;
+                int deltaY = 0;
+                if (mouseTo == null) {
+                    original = new Point(view.getX(), view.getY());
+                } else {
+                    deltaX = original.x - view.getX();
+                    deltaY = original.y - view.getY();
+                }
                 mouseTo = e.getPoint();
 
-                if (mouseDrag == null) {
-                    mouseDrag = mouseFrom;
-                } else {
-                    int grid = jorgan.gui.construct.Configuration.instance()
-                            .getGrid();
+                deltaX += grid(original.x
+                        + screenToView(mouseTo.x - mouseFrom.x))
+                        - original.x;
+                deltaY += grid(original.y
+                        + screenToView(mouseTo.y - mouseFrom.y))
+                        - original.y;
 
-                    View view = getView(pressedElement);
+                for (int s = 0; s < selectedElements.size(); s++) {
+                    Element selectedElement = (Element) selectedElements.get(s);
 
-                    int x = view.getX() + screenToView(mouseTo.x - mouseDrag.x);
-                    int y = view.getY() + screenToView(mouseTo.y - mouseDrag.y);
+                    view = getView(selectedElement);
 
-                    int gridX = (x + grid / 2) / grid * grid;
-                    int gridY = (y + grid / 2) / grid * grid;
-
-                    int deltaX = gridX - view.getX();
-                    int deltaY = gridY - view.getY();
-
-                    for (int s = 0; s < selectedElements.size(); s++) {
-                        Element selectedElement = (Element) selectedElements
-                                .get(s);
-
-                        view = getView(selectedElement);
-
-                        console.setLocation(selectedElement, view.getX()
-                                + deltaX, view.getY() + deltaY);
-                    }
-
-                    mouseDrag = new Point(mouseTo.x + viewToScreen(gridX - x),
-                            mouseTo.y + viewToScreen(gridY - y));
+                    console.setLocation(selectedElement, view.getX() + deltaX,
+                            view.getY() + deltaY);
                 }
             }
+        }
+
+        private int grid(int pos) {
+            int grid = Configuration.instance().getGrid();
+
+            return (pos + grid / 2) / grid * grid;
         }
 
         public void mouseReleased(MouseEvent e) {
@@ -917,7 +928,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             mouseFrom = null;
             mouseTo = null;
-            mouseDrag = null;
 
             showPopup(e);
         }
@@ -974,11 +984,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
                 View view = getView(selectedElement);
                 if (view != null) {
-                    int x = viewToScreen(view.getX());
-                    int y = viewToScreen(view.getY());
-                    int width = viewToScreen(view.getWidth());
-                    int height = viewToScreen(view.getHeight());
-                    g.drawRect(x, y, width - 1, height - 1);
+                    int x1 = viewToScreen(view.getX(), false);
+                    int y1 = viewToScreen(view.getY(), false);
+                    int x2 = viewToScreen(view.getX() + view.getWidth(), true);
+                    int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+
+                    g.drawRect(x1, y1, x2 - x1 - 1, y2 - y1 - 1);
                 }
             }
 

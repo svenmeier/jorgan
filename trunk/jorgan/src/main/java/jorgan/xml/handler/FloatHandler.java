@@ -16,37 +16,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.io.disposition;
+package jorgan.xml.handler;
 
-import jorgan.disposition.Continuous;
-import jorgan.disposition.Activation;
-import jorgan.xml.AbstractReader;
-import jorgan.xml.AbstractWriter;
+import java.io.IOException;
 
-import org.xml.sax.Attributes;
+import jorgan.xml.*;
 
-public class ActivationHandler extends ContinuousHandler {
+/**
+ * A handler for float values.
+ */
+public class FloatHandler extends Handler {
 
-    private Activation activation;
+    private float ff;
 
-    public ActivationHandler(AbstractReader reader, Attributes attributes) {
-        super(reader, attributes);
-
-        activation = new Activation();
-    }
-
-    public ActivationHandler(AbstractWriter writer, String tag,
-            Activation activation) {
+    public FloatHandler(AbstractWriter writer, String tag, float ff) {
         super(writer, tag);
 
-        this.activation = activation;
+        this.ff = ff;
     }
 
-    public Activation getActivation() {
-        return activation;
+    /**
+     * Constructor.
+     */
+    public FloatHandler(AbstractReader reader) {
+        super(reader);
     }
 
-    protected Continuous getContinuous() {
-        return getActivation();
+    public float getFloat() {
+        return ff;
+    }
+
+    public void characters(XMLWriter writer) throws IOException {
+
+        writer.characters(Double.toString(ff));
+    }
+
+    protected void finish() {
+        ff = Float.parseFloat(getCharacters());
+
+        finished();
     }
 }

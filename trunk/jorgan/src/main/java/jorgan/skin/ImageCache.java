@@ -31,16 +31,17 @@ import java.util.Map;
  */
 public class ImageCache {
 
-    protected static MediaTracker tracker = new MediaTracker(new Component() {
-    });
-
     private static Map images = new HashMap();
+
+    // private static Map scaled = new HashMap();
 
     /**
      * Flush all cached images.
      */
     public static void flush() {
         images.clear();
+
+        // scaled.clear();
     }
 
     /**
@@ -50,16 +51,16 @@ public class ImageCache {
      *            url to get image for
      * @return image
      */
-    public static Image getImage(URL url) {
+    public static Image getImage(URL url, Component component) {
 
         Image img = (Image) images.get(url);
         if (img == null) {
-            img = createImage(url);
+            img = createImage(url, component);
 
-            if (!loadImage(img)) {
+            if (!loadImage(img, component)) {
                 img = createImage(ImageCache.class
-                        .getResource("img/missing.gif"));
-                loadImage(img);
+                        .getResource("img/missing.gif"), component);
+                loadImage(img, component);
             }
 
             images.put(url, img);
@@ -68,6 +69,50 @@ public class ImageCache {
         return img;
     }
 
+    // public static void drawImage(Graphics2D g, Image image, int dx1, int dy1,
+    // int dx2, int dy2, int sx1, int sy1, int sx2, int sy2, Component
+    // component) {
+    // AffineTransform original = g.getTransform();
+    //        
+    // double scaleX = original.getScaleX();
+    // double scaleY = original.getScaleY();
+    //        
+    // if (scaleX != 0.0d || scaleY != 0.0d) {
+    // image = scaleImage(image, scaleX, scaleY, component);
+    //            
+    // g.setTransform(new AffineTransform(1.0d, original.getShearY(),
+    // original.getShearX(), 1.0d, original.getTranslateX(),
+    // original.getTranslateY()));
+    // }
+    //        
+    // g.drawImage(image, (int)(dx1 * scaleX), (int)(dy1 * scaleY),
+    // (int)Math.round(dx2 * scaleX), (int)Math.round(dy2 * scaleY), (int)(sx1 *
+    // scaleX), (int)(sy1 * scaleY), (int)(sx2 * scaleX), (int)(sy2 * scaleY),
+    // null);
+    //        
+    // if (scaleX != 0.0d || scaleY != 0.0d) {
+    // g.setTransform(original);
+    // }
+    // }
+
+    // private static Image scaleImage(Image image, double scaleX, double
+    // scaleY, Component component) {
+    // String key = scaleX + ":" + scaleY + ":" +
+    // System.identityHashCode(image);
+    //        
+    // Image scaledInstance = (Image)scaled.get(key);
+    // if (scaledInstance == null) {
+    // scaledInstance = image.getScaledInstance((int)(image.getWidth(null) *
+    // scaleX), (int)(image.getHeight(null) * scaleY), Image.SCALE_SMOOTH);
+    //
+    // loadImage(scaledInstance, component);
+    //            
+    // scaled.put(key, scaledInstance);
+    // }
+    //        
+    // return scaledInstance;
+    // }
+
     /**
      * Create an image for the given URL.
      * 
@@ -75,7 +120,7 @@ public class ImageCache {
      *            url to create image from
      * @return created image
      */
-    private static Image createImage(URL url) {
+    private static Image createImage(URL url, Component component) {
         return Toolkit.getDefaultToolkit().createImage(url);
     }
 
@@ -86,7 +131,9 @@ public class ImageCache {
      *            the image
      * @return <code>true</code> if the image was correctly loaded
      */
-    private static boolean loadImage(java.awt.Image image) {
+    private static boolean loadImage(Image image, Component component) {
+
+        MediaTracker tracker = new MediaTracker(component);
         tracker.addImage(image, -1);
         try {
             tracker.waitForAll();

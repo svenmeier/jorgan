@@ -26,7 +26,7 @@ import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Coupler;
-import jorgan.disposition.Activation;
+import jorgan.disposition.Regulator;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
@@ -121,10 +121,10 @@ public class OrganHandler extends Handler {
                     organ.addElement(getSwell());
                 }
             };
-        } else if ("activation".equals(qName)) {
-            new ActivationHandler(getReader(), attributes) {
+        } else if ("regulator".equals(qName)) {
+            new RegulatorHandler(getReader(), attributes) {
                 public void finished() {
-                    organ.addElement(getActivation());
+                    organ.addElement(getRegulator());
                 }
             };
         } else if ("activator".equals(qName)) {
@@ -207,9 +207,9 @@ public class OrganHandler extends Handler {
                         (Tremulant) element).start();
             } else if (element instanceof Swell) {
                 new SwellHandler(getWriter(), "swell", (Swell) element).start();
-            } else if (element instanceof Activation) {
-                new ActivationHandler(getWriter(), "activation",
-                        (Activation) element).start();
+            } else if (element instanceof Regulator) {
+                new RegulatorHandler(getWriter(), "regulator",
+                        (Regulator) element).start();
             } else if (element instanceof Variation) {
                 new VariationHandler(getWriter(), "variation",
                         (Variation) element).start();

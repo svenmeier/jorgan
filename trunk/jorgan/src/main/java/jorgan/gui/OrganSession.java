@@ -29,6 +29,12 @@ import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
 import spin.Spin;
 
+/**
+ * A session playing or constructing an organ via a GUI. <br>
+ * Note that <em>Spin</em> ensures that listener methods are called on the
+ * EDT, although a change in disposition or players might be triggered by a
+ * change on a MIDI thread.
+ */
 public class OrganSession {
 
     private Organ organ;
@@ -82,27 +88,27 @@ public class OrganSession {
     public void addSelectionListener(ElementSelectionListener listener) {
         selectionModel.addSelectionListener(listener);
     }
-    
+
     public void removeSelectionListener(ElementSelectionListener listener) {
         selectionModel.removeSelectionListener(listener);
     }
 
     public void addOrganListener(OrganListener listener) {
-        organ.addOrganListener((OrganListener)Spin.over(listener));
+        organ.addOrganListener((OrganListener) Spin.over(listener));
     }
 
     public void removeOrganListener(OrganListener listener) {
-        organ.removeOrganListener((OrganListener)Spin.over(listener));
+        organ.removeOrganListener((OrganListener) Spin.over(listener));
     }
 
     public void addPlayerListener(PlayListener listener) {
-        play.addPlayerListener((PlayListener)Spin.over(listener));
+        play.addPlayerListener((PlayListener) Spin.over(listener));
     }
 
     public void removePlayerListener(PlayListener listener) {
-        play.removePlayerListener((PlayListener)Spin.over(listener));
+        play.removePlayerListener((PlayListener) Spin.over(listener));
     }
-    
+
     private static Organ createDefaultOrgan() {
         Organ organ = new Organ();
 

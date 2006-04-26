@@ -26,6 +26,7 @@ import jorgan.disposition.Reference;
 import jorgan.xml.AbstractReader;
 import jorgan.xml.AbstractWriter;
 import jorgan.xml.handler.DoubleHandler;
+import jorgan.xml.handler.FloatHandler;
 import jorgan.xml.handler.IntegerHandler;
 import jorgan.xml.handler.StringHandler;
 
@@ -74,9 +75,9 @@ public class ConsoleHandler extends ElementHandler {
                 }
             };
         } else if ("zoom".equals(qName)) {
-            new DoubleHandler(getReader()) {
+            new FloatHandler(getReader()) {
                 public void finished() {
-                    console.setZoom(getDouble());
+                    console.setZoom(getFloat());
                 }
             };
         } else if ("screen".equals(qName)) {

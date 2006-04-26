@@ -33,7 +33,7 @@ import jorgan.config.ConfigurationListener;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Console;
 import jorgan.disposition.Coupler;
-import jorgan.disposition.Activation;
+import jorgan.disposition.Regulator;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Keyboard;
@@ -276,8 +276,8 @@ public class OrganPlay {
             player = new CouplerPlayer((Coupler) element);
         } else if (element instanceof Swell) {
             player = new SwellPlayer((Swell) element);
-        } else if (element instanceof Activation) {
-            player = new ActivationPlayer((Activation) element);
+        } else if (element instanceof Regulator) {
+            player = new ActivationPlayer((Regulator) element);
         } else if (element instanceof Tremulant) {
             player = new TremulantPlayer((Tremulant) element);
         } else if (element instanceof Variation) {

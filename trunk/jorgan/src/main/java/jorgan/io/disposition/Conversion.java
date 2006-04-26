@@ -37,7 +37,9 @@ public class Conversion {
             new Conversion("<organ *version=\"2\\.2-beta.*\" *>",
                     "convert2.2-betaTo2.2.xsl"),
             new Conversion("<organ *version=\"2\\.2.*\" *>",
-                    "convert2.2To2.3.xsl") };
+                    "convert2.2To2.3-beta.xsl"),
+            new Conversion("<organ *version=\"2\\.3-beta.*\" *>",
+                    "convert2.3-betaTo2.3.xsl") };
 
     private String pattern;
 
@@ -70,7 +72,7 @@ public class Conversion {
             System.out.println(new String(byteArrayOut.toByteArray()));
             System.out.flush();
         }
-        
+
         in = new ByteArrayInputStream(byteArrayOut.toByteArray());
 
         return in;

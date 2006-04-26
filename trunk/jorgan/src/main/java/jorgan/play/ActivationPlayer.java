@@ -18,7 +18,7 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.Activation;
+import jorgan.disposition.Regulator;
 import jorgan.disposition.event.OrganEvent;
 
 /**
@@ -28,7 +28,7 @@ public class ActivationPlayer extends ContinuousPlayer {
 
     private ActivateablePlayer player;
 
-    public ActivationPlayer(Activation crescendo) {
+    public ActivationPlayer(Regulator crescendo) {
         super(crescendo);
     }
 
@@ -42,7 +42,7 @@ public class ActivationPlayer extends ContinuousPlayer {
         super.elementChanged(event);
 
         if (isOpen()) {
-            Activation crescendo = (Activation) getElement();
+            Regulator crescendo = (Regulator) getElement();
 
             if (crescendo.getReferenceCount() > 0) {
                 int current = (crescendo.getValue()

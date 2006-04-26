@@ -59,6 +59,12 @@ public abstract class KeyableHandler extends ActivateableHandler {
                     getKeyable().setTranspose(getInteger());
                 }
             };
+        } else if ("velocity".equals(qName)) {
+            new IntegerHandler(getReader()) {
+                public void finished() {
+                    getKeyable().setVelocity(getInteger());
+                }
+            };
         } else {
             super.startElement(uri, localName, qName, attributes);
         }
@@ -71,5 +77,6 @@ public abstract class KeyableHandler extends ActivateableHandler {
                 .start();
         new IntegerHandler(getWriter(), "transpose", getKeyable()
                 .getTranspose()).start();
+        new IntegerHandler(getWriter(), "velocity", getKeyable().getVelocity()).start();
     }
 }

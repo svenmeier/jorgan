@@ -67,12 +67,6 @@ public class StopHandler extends KeyableHandler {
                     stop.setAllocation(getInteger());
                 }
             };
-        } else if ("velocity".equals(qName)) {
-            new IntegerHandler(getReader()) {
-                public void finished() {
-                    stop.setVelocity(getInteger());
-                }
-            };
         } else if ("volume".equals(qName)) {
             new IntegerHandler(getReader()) {
                 public void finished() {
@@ -102,7 +96,6 @@ public class StopHandler extends KeyableHandler {
         new IntegerHandler(getWriter(), "program", stop.getProgram()).start();
         new IntegerHandler(getWriter(), "allocation", stop.getAllocation())
                 .start();
-        new IntegerHandler(getWriter(), "velocity", stop.getVelocity()).start();
         new IntegerHandler(getWriter(), "volume", stop.getVolume()).start();
         new IntegerHandler(getWriter(), "pan", stop.getPan()).start();
         new IntegerHandler(getWriter(), "bend", stop.getBend()).start();
