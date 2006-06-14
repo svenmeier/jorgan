@@ -18,7 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -34,7 +33,6 @@ import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
@@ -49,6 +47,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -159,7 +158,21 @@ public class ReferencesPanel extends DockedPanel {
 
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setModel(referencesModel);
-        list.setCellRenderer(new ReferenceListCellRenderer());
+        list.setCellRenderer(new ElementListCellRenderer() {
+            protected Element getElement(Object object) {
+                Row row = (Row) object;
+
+                if (getShowReferencesTo()) {
+                    return row.reference.getElement();
+                } else {
+                    return row.element;
+                }
+            }
+
+            protected Icon getIcon(Element element) {
+                return referenceIcon;
+            }
+        });
         list.addListSelectionListener(selectionHandler);
         ListUtils.addActionListener(list, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -326,32 +339,6 @@ public class ReferencesPanel extends DockedPanel {
 
         public void referenceRemoved(OrganEvent event) {
             updateReferences();
-        }
-    }
-
-    public class ReferenceListCellRenderer extends DefaultListCellRenderer {
-
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
-
-            Row row = (Row) value;
-
-            Element element;
-            if (getShowReferencesTo()) {
-                element = row.reference.getElement();
-            } else {
-                element = row.element;
-            }
-
-            String name = ElementUtils.getElementAndTypeName(element,
-                    sortNameButton.isSelected());
-
-            super.getListCellRendererComponent(list, name, index, isSelected,
-                    cellHasFocus);
-
-            setIcon(referenceIcon);
-
-            return this;
         }
     }
 

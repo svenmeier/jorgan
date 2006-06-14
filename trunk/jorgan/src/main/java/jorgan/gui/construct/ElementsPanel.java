@@ -18,7 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.Component;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -32,20 +31,20 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
-import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -143,7 +142,19 @@ public class ElementsPanel extends DockedPanel {
         addTool(sortTypeButton);
 
         list.setModel(elementsModel);
-        list.setCellRenderer(new ElementListCellRenderer());
+        list.setCellRenderer(new ElementListCellRenderer() {
+            public Icon getIcon(Element element) {
+                if (session != null) {
+                    if (session.getPlay().hasErrors(element)) {
+                        return errorIcon;
+                    } else if (session.getPlay().hasWarnings(element)) {
+                        return warningIcon;
+                    }
+                }
+                return elementIcon;
+            }
+        });
+        ToolTipManager.sharedInstance().registerComponent(list);
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.addListSelectionListener(selectionHandler);
 
@@ -356,33 +367,6 @@ public class ElementsPanel extends DockedPanel {
             if (count > 0) {
                 fireIntervalAdded(this, 0, count - 1);
             }
-        }
-    }
-
-    public class ElementListCellRenderer extends DefaultListCellRenderer {
-
-        public Component getListCellRendererComponent(JList list, Object value,
-                int index, boolean isSelected, boolean cellHasFocus) {
-
-            Element element = (Element) value;
-
-            String name = ElementUtils.getElementAndTypeName(element,
-                    sortNameButton.isSelected());
-
-            super.getListCellRendererComponent(list, name, index, isSelected,
-                    cellHasFocus);
-
-            setIcon(elementIcon);
-
-            if (session != null) {
-                if (session.getPlay().hasErrors(element)) {
-                    setIcon(errorIcon);
-                } else if (session.getPlay().hasWarnings(element)) {
-                    setIcon(warningIcon);
-                }
-            }
-
-            return this;
         }
     }
 

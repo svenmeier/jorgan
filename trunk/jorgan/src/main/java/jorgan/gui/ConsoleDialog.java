@@ -44,7 +44,7 @@ import javax.swing.Timer;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
-import jorgan.gui.construct.ElementUtils;
+import jorgan.docs.Documents;
 import jorgan.swing.CardPanel;
 
 /**
@@ -101,7 +101,7 @@ public class ConsoleDialog extends JDialog {
     /**
      * Add a console to be shown in <em>full screen</em>.
      */
-    public void addConsole(final Console console) {
+public void addConsole(final Console console) {
 
         ConsolePanel consolePanel = new ConsolePanel();
         consolePanel.setOrgan(session);
@@ -112,8 +112,7 @@ public class ConsoleDialog extends JDialog {
 
         cardPanel.addCard(consolePanel, console);
 
-        final JCheckBoxMenuItem check = new JCheckBoxMenuItem(ElementUtils
-                .getElementName(console));
+        final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Documents.getInstance().getDisplayName(console));
         check.getModel().setGroup(group);
         check.setSelected(true);
         check.addItemListener(new ItemListener() {
@@ -125,7 +124,6 @@ public class ConsoleDialog extends JDialog {
         });
         popup.add(check, 0);
     }
-
     /**
      * The handler for mouse events.
      */

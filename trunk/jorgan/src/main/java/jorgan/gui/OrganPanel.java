@@ -51,8 +51,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.docs.Documents;
 import jorgan.gui.construct.ElementPropertiesPanel;
-import jorgan.gui.construct.ElementUtils;
 import jorgan.gui.construct.ElementsPanel;
 import jorgan.gui.construct.InstructionsPanel;
 import jorgan.gui.construct.ProblemsPanel;
@@ -341,8 +341,7 @@ public class OrganPanel extends JPanel {
         JScrollPane scrollPane = new JScrollPane(consolePanel);
         scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        Dockable dockable = new DefaultDockable(scrollPane, ElementUtils
-                .getElementName(console));
+        Dockable dockable = new DefaultDockable(scrollPane, Documents.getInstance().getDisplayName(console));
 
         inner.putDockable(console, dockable);
 
@@ -353,7 +352,7 @@ public class OrganPanel extends JPanel {
         DefaultDockable dockable = (DefaultDockable) consoleDockables
                 .get(console);
 
-        dockable.setName(ElementUtils.getElementName(console));
+        dockable.setName(Documents.getInstance().getDisplayName(console));
 
         inner.putDockable(console, dockable);
     }

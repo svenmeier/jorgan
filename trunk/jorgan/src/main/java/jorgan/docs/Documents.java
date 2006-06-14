@@ -27,6 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 
+import jorgan.disposition.Element;
 import jorgan.util.Bootstrap;
 
 public class Documents {
@@ -44,7 +45,17 @@ public class Documents {
     private Properties displayNames;
     
     private Map instructions = new HashMap();
+    
+    public String getDisplayName(Element element) {
 
+        String name = element.getName();
+        if ("".equals(name)) {
+            name = getDisplayName(element.getClass());
+        }
+
+        return name;
+    }
+    
     public String getDisplayName(Class clazz) {
         String key = classWithoutPackage(clazz);
 

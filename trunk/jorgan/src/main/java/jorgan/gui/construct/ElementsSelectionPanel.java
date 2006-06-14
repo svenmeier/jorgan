@@ -19,15 +19,17 @@
 package jorgan.gui.construct;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
-import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -35,130 +37,127 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
+import jorgan.gui.ElementListCellRenderer;
 
 /**
  * A panel for selection of elements.
  */
 public class ElementsSelectionPanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  /**
-   * Icon used for indication an element.
-   */
-  private static final Icon elementIcon =
-    new ImageIcon(ElementsPanel.class.getResource("/jorgan/gui/img/element.gif"));
+    /**
+     * The resource bundle.
+     */
+    protected static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private Action allAction  = new AllAction();
-  private Action noneAction = new NoneAction();
+    /**
+     * Icon used for indication an element.
+     */
+    private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
+            .getResource("/jorgan/gui/img/element.gif"));
 
-  private JList elementsList = new JList();
-  
-  private List elements = new ArrayList();
-  
-  public ElementsSelectionPanel() {
-    setLayout(new BorderLayout(10, 10));
+    private Action allAction = new AllAction();
 
-    elementsList.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-    elementsList.setCellRenderer(new ElementListCellRenderer());
-    elementsList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        firePropertyChange("selectedElements", null, null);
-      }
-    });
-    add(new JScrollPane(elementsList), BorderLayout.CENTER);
-    
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    add(buttonPanel, BorderLayout.SOUTH);
-    
-      JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
-      buttonPanel.add(gridPanel, BorderLayout.EAST);
-   
-        gridPanel.add(new JButton(allAction)); 
+    private Action noneAction = new NoneAction();
 
-        gridPanel.add(new JButton(noneAction)); 
-  }
-  
-  public void setElements(List elements) {
-    this.elements = elements;
+    private JList elementsList = new JList();
 
-    Collections.sort(elements, new ElementComparator(false));
-    
-    elementsList.setModel(new ElementsModel());
-    
-    allAction.setEnabled(!elements.isEmpty());
-    noneAction.setEnabled(!elements.isEmpty());
-  }
-  
-  public void setSelectedElements(List elements) {
-    for (int e = 0; e < elements.size(); e++) {
-      Element element = (Element)elements.get(e);
-      
-      int index = elements.indexOf(element);
-      if (index != -1) {
-        elementsList.addSelectionInterval(index, index);
-      }
-    }
-  }
-  
-  public List getSelectedElements() {
+    private List elements = new ArrayList();
 
-    return Arrays.asList(elementsList.getSelectedValues()); 
-  }
-  
-  private class ElementsModel extends AbstractListModel {
-    
-    public int getSize() {
-      return elements.size();
+    public ElementsSelectionPanel() {
+        setLayout(new BorderLayout(10, 10));
+
+        elementsList
+                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+        elementsList.setCellRenderer(new ElementListCellRenderer() {
+            protected Icon getIcon(Element element) {
+                return elementIcon;
+            }
+        });
+        ToolTipManager.sharedInstance().registerComponent(elementsList);
+        elementsList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                firePropertyChange("selectedElements", null, null);
+            }
+        });
+        add(new JScrollPane(elementsList), BorderLayout.CENTER);
+
+        JPanel buttonPanel = new JPanel(new BorderLayout());
+        add(buttonPanel, BorderLayout.SOUTH);
+
+        JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
+        buttonPanel.add(gridPanel, BorderLayout.EAST);
+
+        gridPanel.add(new JButton(allAction));
+
+        gridPanel.add(new JButton(noneAction));
     }
 
-    public Object getElementAt(int index) {
-      return elements.get(index);
-    }   
-  }
-  
-  private class ElementListCellRenderer extends DefaultListCellRenderer {
+    public void setElements(List elements) {
+        this.elements = elements;
 
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        Collections.sort(elements, new ElementComparator(false));
 
-      Element element = (Element)value;
+        elementsList.setModel(new ElementsModel());
 
-      String name = ElementUtils.getElementAndTypeName(element, false);
-
-      super.getListCellRendererComponent(list, name, index, isSelected, cellHasFocus);
-      
-      setIcon(elementIcon);
-      
-      return this;
-    }
-  }
-  
-  private class AllAction extends AbstractAction {
-
-    public AllAction() {
-      putValue(Action.NAME, resources.getString("construct.create.references.elements.all"));
+        allAction.setEnabled(!elements.isEmpty());
+        noneAction.setEnabled(!elements.isEmpty());
     }
 
-    public void actionPerformed(ActionEvent ev) {
-      elementsList.setSelectionInterval(0, elementsList.getModel().getSize() - 1);
-    }
-  }
-      
-  private class NoneAction extends AbstractAction {
+    public void setSelectedElements(List elements) {
+        for (int e = 0; e < elements.size(); e++) {
+            Element element = (Element) elements.get(e);
 
-    public NoneAction() {
-      putValue(Action.NAME, resources.getString("construct.create.references.elements.none"));
+            int index = elements.indexOf(element);
+            if (index != -1) {
+                elementsList.addSelectionInterval(index, index);
+            }
+        }
     }
-    
-    public void actionPerformed(ActionEvent ev) {
-      elementsList.clearSelection();
+
+    public List getSelectedElements() {
+
+        return Arrays.asList(elementsList.getSelectedValues());
     }
-  }   
+
+    private class ElementsModel extends AbstractListModel {
+
+        public int getSize() {
+            return elements.size();
+        }
+
+        public Object getElementAt(int index) {
+            return elements.get(index);
+        }
+    }
+
+    private class AllAction extends AbstractAction {
+
+        public AllAction() {
+            putValue(Action.NAME, resources
+                    .getString("construct.create.references.elements.all"));
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            elementsList.setSelectionInterval(0, elementsList.getModel()
+                    .getSize() - 1);
+        }
+    }
+
+    private class NoneAction extends AbstractAction {
+
+        public NoneAction() {
+            putValue(Action.NAME, resources
+                    .getString("construct.create.references.elements.none"));
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            elementsList.clearSelection();
+        }
+    }
 }
