@@ -26,6 +26,8 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jorgan.docs.Documents;
+
 /**
  * A panel for an element.
  */
@@ -113,7 +115,7 @@ public class ElementCreationPanel extends JPanel {
     }
 
     public Object getElementAt(int index) {
-      return ElementUtils.getTypeName(elementClasses[index]);
+      return Documents.getInstance().getDisplayName(elementClasses[index]);
     }   
   }
   
@@ -121,8 +123,8 @@ public class ElementCreationPanel extends JPanel {
       
     public int compare(Object o1, Object o2) {
         
-      String name1 = ElementUtils.getTypeName((Class)o1);
-      String name2 = ElementUtils.getTypeName((Class)o2);
+      String name1 = Documents.getInstance().getDisplayName((Class)o1);
+      String name2 = Documents.getInstance().getDisplayName((Class)o2);
       
       return name1.compareTo(name2);
     }

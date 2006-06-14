@@ -30,8 +30,8 @@ import java.util.ResourceBundle;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.docs.Documents;
 import jorgan.gui.ConsolePanel;
-import jorgan.gui.construct.ElementUtils;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -149,7 +149,7 @@ public class View {
     }
 
     protected void initTexts() {
-        setText(TEXT_NAME, ElementUtils.getElementName(getElement()));
+        setText(TEXT_NAME, Documents.getInstance().getDisplayName(getElement()));
         setText(TEXT_DESCRIPTION, getElement().getDescription());
     }
 
