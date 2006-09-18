@@ -230,7 +230,7 @@ public abstract class Element implements Cloneable {
         if (name == null) {
             name = "";
         }
-        this.name = name;
+        this.name = name.trim();
 
         fireElementChanged(true);
     }
@@ -254,7 +254,7 @@ public abstract class Element implements Cloneable {
         if (description == null) {
             description = "";
         }
-        this.description = description;
+        this.description = description.trim();
 
         fireElementChanged(true);
     }
