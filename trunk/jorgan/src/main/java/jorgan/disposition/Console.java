@@ -24,6 +24,7 @@ package jorgan.disposition;
 public class Console extends Element {
 
     public static final float MAX_ZOOM = 2.0f;
+
     public static final float MIN_ZOOM = 0.5f;
 
     public static final String DEFAULT_SCREEN = "";
@@ -153,5 +154,41 @@ public class Console extends Element {
         public void setY(int i) {
             y = i;
         }
+    }
+
+    /**
+     * Move to front the reference to the given element.
+     * 
+     * @param element
+     *            element to move to front
+     */
+    public void toFront(Element element) {
+        Reference reference = getReference(element);
+        if (reference == null) {
+            throw new IllegalArgumentException("unkown element");
+        }
+
+        references.remove(reference);
+        references.add(reference);
+        
+        fireElementChanged(true);
+    }
+
+    /**
+     * Move to back the reference to the given element.
+     * 
+     * @param element
+     *            element to move to back
+     */
+    public void toBack(Element element) {
+        Reference reference = getReference(element);
+        if (reference == null) {
+            throw new IllegalArgumentException("unkown element");
+        }
+
+        references.remove(reference);
+        references.add(0, reference);
+        
+        fireElementChanged(true);
     }
 }

@@ -21,36 +21,12 @@ package jorgan.skin;
 import java.net.URL;
 import java.util.ArrayList;
 
-import jorgan.gui.console.View;
-
 /**
  * Style.
  */
 public class Skin {
 
-    /**
-     * Constant for a focus towards the bottom left of the console. 
-     */
-    public static final int BOTTOM_LEFT = 0;
-
-    /**
-     * Constant for a focus towards the bottom right of the console. 
-     */
-    public static final int BOTTOM_RIGHT = 1;
-    
-    /**
-     * Constant for a focus towards the top left of the console. 
-     */
-    public static final int TOP_LEFT = 2;
-    
-    /**
-     * Constant for a focus towards the top rightof the console. 
-     */
-    public static final int TOP_RIGHT = 3;
-    
     private String name = "";
-    
-    private int focus = BOTTOM_RIGHT;
 
     private ArrayList styles = new ArrayList();
 
@@ -66,14 +42,6 @@ public class Skin {
         }
         this.name = name;
     }
-
-    public int getFocus() {
-        return focus;
-    }
-    
-    public void setFocus(int focus) {
-        this.focus = focus;
-    }    
 
     public int getStyleCount() {
         return styles.size();
@@ -127,32 +95,4 @@ public class Skin {
         }
         return null;
     }
-
-    /**
-     * Compare the given two views according to the focus of this skin.
-     * 
-     * @param view1 first view
-     * @param view2 second view
-     * @return  comparison result
-     * 
-     * @see #BOTTOM_LEFT
-     * @see #BOTTOM_RIGHT
-     * @see #TOP_LEFT
-     * @see #TOP_RIGHT
-     */
-    public int compare(View view1, View view2) {
-        switch (focus) {
-            case BOTTOM_LEFT:
-                return (view1.getX() - view2.getX()) + (view2.getY() - view1.getY());   
-            case BOTTOM_RIGHT:
-                return (view2.getX() - view1.getX()) + (view2.getY() - view1.getY());   
-            case TOP_LEFT:
-                return (view1.getX() - view2.getX()) + (view1.getY() - view2.getY());   
-            case TOP_RIGHT:
-                return (view2.getX() - view1.getX()) + (view1.getY() - view2.getY());   
-        }
-
-        throw new Error();
-    }
-
 }

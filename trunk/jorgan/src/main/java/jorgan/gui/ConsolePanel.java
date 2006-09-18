@@ -37,13 +37,10 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +50,6 @@ import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
-import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
@@ -132,11 +128,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
     private Map viewsByElement = new HashMap();
 
     /**
-     * The views.
-     */
-    private ArrayList views = new ArrayList();
-
-    /**
      * Currently constructing.
      */
     private boolean constructing = true;
@@ -200,7 +191,16 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
     private JMenu spreadMenu = new JMenu();
 
-    private JMenuItem hideMenuItem = new JMenuItem();
+    private JMenu arrangeMenu = new JMenu();
+
+    /**
+     * The arrangements.
+     */
+    private Action arrangeToFrontAction = new ArrangeToFrontAction();
+
+    private Action arrangeToBackAction = new ArrangeToBackAction();
+
+    private Action arrangeHideAction = new ArrangeHideAction();
 
     /*
      * The layouts.
@@ -259,19 +259,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
         spreadMenu.add(spreadHorizontalAction);
         spreadMenu.add(spreadVerticalAction);
 
-        menu.addSeparator();
+        arrangeMenu.setText(resources.getString("view.arrange"));
+        menu.add(arrangeMenu);
 
-        hideMenuItem.setText(resources.getString("view.hide"));
-        hideMenuItem.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                for (int s = 0; s < selectedElements.size(); s++) {
-                    Element element = (Element) selectedElements.get(s);
-
-                    console.unreference(element);
-                }
-            }
-        });
-        menu.add(hideMenuItem);
+        arrangeMenu.add(arrangeToFrontAction);
+        arrangeMenu.add(arrangeToBackAction);
+        arrangeMenu.add(arrangeHideAction);
 
         setConstructing(false);
     }
@@ -392,7 +385,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 int x2 = viewToScreen(view.getX() + view.getWidth(), true);
                 int y2 = viewToScreen(view.getY() + view.getHeight(), true);
 
-                scrollRectToVisible(new Rectangle(x1, y1, x2 - x2, y2 - y1));
+                scrollRectToVisible(new Rectangle(x1, y1, x2 - x1, y2 - y1));
             }
         }
     }
@@ -465,14 +458,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
      */
     public void setConsole(Console console) {
         if (this.console != null) {
-            consoleView.setConsolePanel(null);
             consoleView = null;
 
-            for (int v = views.size() - 1; v >= 0; v--) {
-                View view = (View) views.get(v);
-
-                dropView(view.getElement());
-            }
+            viewsByElement.clear();
 
             skin = null;
 
@@ -492,7 +480,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
             for (int r = 0; r < console.getReferenceCount(); r++) {
                 createView(console.getReference(r).getElement());
             }
-            sortViews();
         }
     }
 
@@ -524,7 +511,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
         }
 
         viewsByElement.put(element, view);
-        views.add(view);
         view.setConsolePanel(this);
 
         repaint();
@@ -535,7 +521,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
         View view = getView(element);
 
         viewsByElement.remove(element);
-        views.remove(view);
         view.setConsolePanel(null);
 
         repaint();
@@ -582,10 +567,11 @@ public class ConsolePanel extends JComponent implements Scrollable {
             }
         }
 
-        for (int v = views.size() - 1; v >= 0; v--) {
-            View view = (View) views.get(v);
+        for (int r = 0; r < console.getReferenceCount(); r++) {
+            Element element = console.getReference(r).getElement();
+            View view = getView(element);
             if (view.contains(x, y)) {
-                return view.getElement();
+                return element;
             }
         }
         return null;
@@ -620,8 +606,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
         int x = 0;
         int y = 0;
 
-        for (int v = 0; v < views.size(); v++) {
-            View view = (View) views.get(v);
+        for (int r = 0; r < console.getReferenceCount(); r++) {
+            Element element = console.getReference(r).getElement();
+            View view = getView(element);
 
             x = Math.max(x, view.getX() + view.getWidth());
             y = Math.max(y, view.getY() + view.getHeight());
@@ -685,8 +672,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
         consoleView.paint(g);
 
-        for (int v = 0; v < views.size(); v++) {
-            View view = (View) views.get(v);
+        for (int r = 0; r < console.getReferenceCount(); r++) {
+            Element element = console.getReference(r).getElement();
+            View view = getView(element);
 
             int x = view.getX();
             int y = view.getY();
@@ -718,8 +706,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 initSkin();
 
                 consoleView.changeUpdate(event);
-                for (int v = 0; v < views.size(); v++) {
-                    ((View) views.get(v)).changeUpdate(event);
+                for (int r = 0; r < console.getReferenceCount(); r++) {
+                    View view = getView(console.getReference(r).getElement());
+                    view.changeUpdate(event);
                 }
 
                 repaint();
@@ -737,8 +726,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (element.getReferrer(Console.class).contains(console)) {
                 createView(element);
-
-                sortViews();
             }
         }
 
@@ -755,16 +742,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
             if (event.getElement() == console) {
                 getView(event.getReference().getElement()).changeUpdate(event);
-
-                sortViews();
             }
         }
 
         public void referenceAdded(OrganEvent event) {
             if (event.getElement() == console) {
                 createView(event.getReference().getElement());
-
-                sortViews();
             }
         }
 
@@ -867,14 +850,15 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 int y2 = screenToView(Math.max(mouseFrom.y, mouseTo.y));
 
                 List elements = new ArrayList();
-                for (int v = 0; v < views.size(); v++) {
-                    View view = (View) views.get(v);
+                for (int r = 0; r < console.getReferenceCount(); r++) {
+                    Element element = console.getReference(r).getElement();
+                    View view = getView(element);
 
                     if (view.getX() > x1
                             && (view.getX() + view.getWidth()) < x2
                             && view.getY() > y1
                             && (view.getY() + view.getHeight()) < y2) {
-                        elements.add(view.getElement());
+                        elements.add(element);
                     }
                 }
                 session.getSelectionModel().setSelectedElements(elements);
@@ -1172,8 +1156,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
                         .getFocusedWindow() == SwingUtilities
                         .getWindowAncestor(ConsolePanel.this)) {
-                    for (int v = 0; v < views.size(); v++) {
-                        View view = (View) views.get(v);
+
+                    for (int r = 0; r < console.getReferenceCount(); r++) {
+                        View view = getView(console.getReference(r)
+                                .getElement());
 
                         view.keyPressed(e);
                     }
@@ -1181,6 +1167,48 @@ public class ConsolePanel extends JComponent implements Scrollable {
             }
 
             return false;
+        }
+    }
+
+    private class ArrangeToFrontAction extends AbstractAction {
+        public ArrangeToFrontAction() {
+            putValue(Action.NAME, resources.getString("view.arrangeToFront"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            for (int s = 0; s < selectedElements.size(); s++) {
+                Element element = (Element) selectedElements.get(s);
+
+                console.toFront(element);
+            }
+        }
+    }
+
+    private class ArrangeToBackAction extends AbstractAction {
+        public ArrangeToBackAction() {
+            putValue(Action.NAME, resources.getString("view.arrangeToBack"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            for (int s = 0; s < selectedElements.size(); s++) {
+                Element element = (Element) selectedElements.get(s);
+
+                console.toBack(element);
+            }
+        }
+    }
+
+    private class ArrangeHideAction extends AbstractAction {
+        public ArrangeHideAction() {
+            putValue(Action.NAME, resources.getString("view.arrangeHide"));
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            for (int s = 0; s < selectedElements.size(); s++) {
+                Element element = (Element) selectedElements.get(s);
+
+                console.unreference(element);
+            }
         }
     }
 
@@ -1250,19 +1278,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
                     }
                 }
             }
-        }
-    }
-
-    protected void sortViews() {
-        if (skin != null) {
-            Collections.sort(views, new Comparator() {
-                public int compare(Object o1, Object o2) {
-                    View view1 = (View) o1;
-                    View view2 = (View) o2;
-
-                    return skin.compare(view1, view2);
-                }
-            });
         }
     }
 }

@@ -123,7 +123,6 @@ public class ElementsPanel extends DockedPanel {
 
         ButtonGroup sortGroup = new ButtonGroup();
         sortNameButton.getModel().setGroup(sortGroup);
-        sortNameButton.setSelected(true);
         sortNameButton.setToolTipText(resources.getString("sort.name"));
         sortNameButton.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
@@ -133,6 +132,7 @@ public class ElementsPanel extends DockedPanel {
         addTool(sortNameButton);
 
         sortTypeButton.getModel().setGroup(sortGroup);
+        sortTypeButton.setSelected(true);
         sortTypeButton.setToolTipText(resources.getString("sort.type"));
         sortTypeButton.addItemListener(new ItemListener() {
             public void itemStateChanged(ItemEvent e) {
