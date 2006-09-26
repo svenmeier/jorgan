@@ -200,7 +200,12 @@ public class ProblemsPanel extends DockedPanel {
 
             fireTableDataChanged();
         }
-
+        
+        public void opened() {
+        }
+        
+        public void closed() {
+        }
     }
 
     private class Row {

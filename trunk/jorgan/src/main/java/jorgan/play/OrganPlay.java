@@ -118,6 +118,24 @@ public class OrganPlay {
         listeners.clear();
     }
 
+    protected void fireClosed() {
+        if (listeners != null) {
+            for (int l = 0; l < listeners.size(); l++) {
+                PlayListener listener = (PlayListener) listeners.get(l);
+                listener.closed();
+            }
+        }
+    }
+
+    protected void fireOpened() {
+        if (listeners != null) {
+            for (int l = 0; l < listeners.size(); l++) {
+                PlayListener listener = (PlayListener) listeners.get(l);
+                listener.opened();
+            }
+        }
+    }
+
     protected void firePlayerAdded(Player player) {
         if (listeners != null) {
             PlayEvent event = new PlayEvent(this, player.getElement());
@@ -235,6 +253,8 @@ public class OrganPlay {
         synchronized (RECEIVER_LOCK) {
             open = true;
         }
+        
+        fireOpened();
     }
 
     public boolean isOpen() {
@@ -257,6 +277,8 @@ public class OrganPlay {
                 player.close();
             }
         }
+        
+        fireClosed();
     }
 
     protected void createPlayer(Element element) {

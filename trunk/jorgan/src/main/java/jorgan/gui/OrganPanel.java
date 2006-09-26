@@ -27,7 +27,6 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -41,7 +40,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.JToggleButton;
 import javax.swing.border.EmptyBorder;
 
 import jorgan.config.ConfigurationEvent;
@@ -101,16 +99,12 @@ public class OrganPanel extends JPanel {
     protected static final ResourceBundle resources = ResourceBundle
             .getBundle("jorgan.gui.resources");
 
+    private boolean constructing = false;
+
     /**
      * The organ.
      */
     private OrganSession session;
-
-    private ConstructAction constructAction = new ConstructAction();
-
-    private JToggleButton constructButton = new JToggleButton(constructAction);
-
-    private boolean constructing = false;
 
     /**
      * The listener to organ changes.
@@ -201,8 +195,6 @@ public class OrganPanel extends JPanel {
         outer.setBorder(new EmptyBorder(2, 2, 2, 2));
         add(outer, BorderLayout.CENTER);
 
-        setOrgan(new OrganSession());
-
         elementsDockable.setEnabled(false);
         referencesDockable.setEnabled(false);
         propertiesDockable.setEnabled(false);
@@ -231,7 +223,6 @@ public class OrganPanel extends JPanel {
     public List getToolBarWidgets() {
         List widgets = new ArrayList();
 
-        widgets.add(constructButton);
         widgets.add(backAction);
         widgets.add(forwardAction);
 
@@ -273,10 +264,6 @@ public class OrganPanel extends JPanel {
             this.session.removePlayerListener(playerListener);
             this.session.removeSelectionListener(selectionListener);
 
-            if (this.session.getPlay().isOpen()) {
-                this.session.getPlay().close();
-            }
-
             propertiesPanel.setOrgan(null);
             referencesPanel.setOrgan(null);
             elementsPanel.setOrgan(null);
@@ -295,13 +282,11 @@ public class OrganPanel extends JPanel {
         this.session = session;
 
         if (this.session != null) {
+            setConstructing(!this.session.getPlay().isOpen());
+            
             this.session.addOrganListener(organListener);
             this.session.addPlayerListener(playerListener);
             this.session.addSelectionListener(selectionListener);
-
-            if (!constructing) {
-                this.session.getPlay().open();
-            }
 
             propertiesPanel.setOrgan(this.session);
             referencesPanel.setOrgan(this.session);
@@ -322,7 +307,7 @@ public class OrganPanel extends JPanel {
     }
 
     protected void updateHistory() {
-        if (session == null || !isConstructing()) {
+        if (session == null || !constructing) {
             backAction.setEnabled(false);
             forwardAction.setEnabled(false);
         } else {
@@ -336,12 +321,12 @@ public class OrganPanel extends JPanel {
         ConsolePanel consolePanel = new ConsolePanel();
         consolePanel.setOrgan(session);
         consolePanel.setConsole(console);
-        consolePanel.setConstructing(constructing);
 
         JScrollPane scrollPane = new JScrollPane(consolePanel);
         scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-        Dockable dockable = new DefaultDockable(scrollPane, Documents.getInstance().getDisplayName(console));
+        Dockable dockable = new DefaultDockable(scrollPane, Documents
+                .getInstance().getDisplayName(console));
 
         inner.putDockable(console, dockable);
 
@@ -378,21 +363,7 @@ public class OrganPanel extends JPanel {
         return session;
     }
 
-    /**
-     * Is this organ panel currently constructing.
-     * 
-     * @return <code>true</code> if currently constructing
-     */
-    public boolean isConstructing() {
-        return constructing;
-    }
-
-    /**
-     * Construct.
-     * 
-     * @param construct
-     */
-    protected void setConstructing(boolean constructing) {
+    private void setConstructing(boolean constructing) {
 
         if (this.constructing != constructing) {
             saveDocking();
@@ -401,35 +372,10 @@ public class OrganPanel extends JPanel {
 
             loadDocking();
 
-            constructButton.setSelected(constructing);
-
             elementsDockable.setEnabled(constructing);
             referencesDockable.setEnabled(constructing);
             propertiesDockable.setEnabled(constructing);
             instructionsDockable.setEnabled(constructing);
-
-            if (constructing) {
-                if (session.getPlay().isOpen()) {
-                    session.getPlay().close();
-                }
-            } else {
-                session.getSelectionModel().setSelectedElement(null);
-
-                if (!session.getPlay().isOpen()) {
-                    session.getPlay().open();
-                }
-            }
-
-            Iterator iterator = consoleDockables.values().iterator();
-            while (iterator.hasNext()) {
-                Dockable consoleDockable = (Dockable) iterator.next();
-
-                JScrollPane scrollPane = (JScrollPane) consoleDockable
-                        .getComponent();
-                ConsolePanel consolePanel = (ConsolePanel) scrollPane
-                        .getViewport().getView();
-                consolePanel.setConstructing(constructing);
-            }
 
             updateHistory();
         }
@@ -459,7 +405,7 @@ public class OrganPanel extends JPanel {
                 OrganPanelPersister persister = new OrganPanelPersister(reader);
                 persister.load();
             } catch (Exception error) {
-                throw new Error("unable to load standard docking");
+                throw new Error("unable to load default docking");
             }
         }
     }
@@ -518,6 +464,14 @@ public class OrganPanel extends JPanel {
 
         public void problemRemoved(PlayEvent ev) {
         }
+
+        public void opened() {
+            setConstructing(false);
+        }
+
+        public void closed() {
+            setConstructing(true);
+        }
     }
 
     /**
@@ -557,10 +511,6 @@ public class OrganPanel extends JPanel {
      */
     private class InternalSelectionListener implements ElementSelectionListener {
         public void selectionChanged(ElementSelectionEvent ev) {
-            if (session.getSelectionModel().isElementSelected()) {
-                setConstructing(true);
-            }
-
             if (session.getSelectionModel().getSelectionCount() == 1) {
                 Element element = session.getSelectionModel()
                         .getSelectedElement();
@@ -670,23 +620,6 @@ public class OrganPanel extends JPanel {
 
         public void actionPerformed(ActionEvent ev) {
             session.getSelectionModel().forward();
-        }
-    }
-
-    /**
-     * The action that toggles construction.
-     */
-    private class ConstructAction extends AbstractAction {
-
-        public ConstructAction() {
-            putValue(Action.SHORT_DESCRIPTION, resources
-                    .getString("action.construct.description"));
-            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-                    "img/construct.gif")));
-        }
-
-        public void actionPerformed(ActionEvent ev) {
-            setConstructing(constructButton.isSelected());
         }
     }
 

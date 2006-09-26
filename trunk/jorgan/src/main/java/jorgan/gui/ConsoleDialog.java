@@ -101,7 +101,7 @@ public class ConsoleDialog extends JDialog {
     /**
      * Add a console to be shown in <em>full screen</em>.
      */
-public void addConsole(final Console console) {
+    public void addConsole(final Console console) {
 
         ConsolePanel consolePanel = new ConsolePanel();
         consolePanel.setOrgan(session);

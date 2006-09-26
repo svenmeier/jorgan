@@ -23,15 +23,19 @@ package jorgan.play.event;
  */
 public interface PlayListener {
 
-  public void playerAdded(PlayEvent ev);
-  
-  public void playerRemoved(PlayEvent ev);
+    public void opened();
 
-  public void problemAdded(PlayEvent ev);
+    public void closed();
 
-  public void problemRemoved(PlayEvent ev);
+    public void playerAdded(PlayEvent ev);
 
-  public void inputAccepted();
-  
-  public void outputProduced();
+    public void playerRemoved(PlayEvent ev);
+
+    public void problemAdded(PlayEvent ev);
+
+    public void problemRemoved(PlayEvent ev);
+
+    public void inputAccepted();
+
+    public void outputProduced();
 }

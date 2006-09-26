@@ -47,6 +47,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor, A
   public ChannelEditor() {
     panel.setLayout(new BorderLayout());
 
+    button.setFocusable(false);
     button.setMargin(new Insets(0, 0, 0, 0));
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
