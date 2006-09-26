@@ -311,6 +311,12 @@ public class ElementsPanel extends DockedPanel {
             updateProblem(ev);
         }
 
+        public void opened() {
+        }
+        
+        public void closed() {
+        }
+        
         private void updateProblem(PlayEvent ev) {
 
             Element element = ev.getElement();

@@ -18,196 +18,233 @@
  */
 package jorgan.gui.config;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
-import jorgan.swing.CardPanel;
-import jorgan.swing.Header;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.event.TreeModelListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
 import jorgan.config.AbstractConfiguration;
+import jorgan.swing.CardPanel;
+import jorgan.swing.Header;
 
 /**
  * A panel for editing of a tree of configurations.
  */
 public class ConfigurationTreePanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    /**
+     * The resource bundle.
+     */
+    protected static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private JTree tree = new JTree();
-  private JPanel contentPanel = new JPanel();
-  private CardPanel cardPanel = new CardPanel();
-  private Header header = new Header();
-  private JPanel buttonPanel = new JPanel();
+    private JTree tree = new JTree();
 
-  private Action resetAction = new ResetAction();
+    private JPanel contentPanel = new JPanel();
 
-  private AbstractConfiguration configuration;
+    private CardPanel cardPanel = new CardPanel();
 
-  /**
-   * Constructor.
-   */
-  public ConfigurationTreePanel() {
-    super(new BorderLayout(10, 10));
+    private Header header = new Header();
 
-    tree.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
-    tree.setShowsRootHandles(true);
-    tree.setModel(new ConfigurationTreeModel());
-    tree.setCellRenderer(new ConfigurationRenderer());
-    tree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-    tree.addTreeSelectionListener(new TreeSelectionListener() {
-      public void valueChanged(TreeSelectionEvent ev) {
-        AbstractConfiguration config;
+    private JPanel buttonPanel = new JPanel();
 
-        TreePath path = tree.getSelectionPath();
-        if (path == null) {
-          config = configuration;
-        } else {
-          config = (AbstractConfiguration)path.getLastPathComponent();
+    private Action resetAction = new ResetAction();
+
+    private AbstractConfiguration configuration;
+
+    /**
+     * Constructor.
+     */
+    public ConfigurationTreePanel() {
+        super(new BorderLayout(10, 10));
+
+        tree.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+        tree.setShowsRootHandles(true);
+        tree.setModel(new ConfigurationTreeModel());
+        tree.setCellRenderer(new ConfigurationRenderer());
+        tree.getSelectionModel().setSelectionMode(
+                TreeSelectionModel.SINGLE_TREE_SELECTION);
+        tree.addTreeSelectionListener(new TreeSelectionListener() {
+            public void valueChanged(TreeSelectionEvent ev) {
+                AbstractConfiguration config;
+
+                TreePath path = tree.getSelectionPath();
+                if (path == null) {
+                    config = configuration;
+                } else {
+                    config = (AbstractConfiguration) path
+                            .getLastPathComponent();
+                }
+
+                showConfiguration(config);
+            }
+        });
+        add(new JScrollPane(tree), BorderLayout.WEST);
+
+        contentPanel.setLayout(new BorderLayout(4, 4));
+        add(contentPanel, BorderLayout.CENTER);
+
+        header.setHeader(Color.white);
+        contentPanel.add(header, BorderLayout.NORTH);
+
+        JScrollPane scrollPane = new JScrollPane(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollPane.setBorder(null);
+        contentPanel.add(scrollPane, BorderLayout.CENTER);
+
+        scrollPane.setViewportView(cardPanel);
+
+        cardPanel.addCard(new JOrganConfigPanel(), jorgan.Configuration.class);
+        cardPanel.addCard(new GUIConfigPanel(), jorgan.gui.Configuration.class);
+        cardPanel.addCard(new GUIConsoleConfigPanel(),
+                jorgan.gui.console.Configuration.class);
+        cardPanel.addCard(new GUIConstructConfigPanel(),
+                jorgan.gui.construct.Configuration.class);
+        cardPanel.addCard(new MidiLogConfigPanel(),
+                jorgan.midi.log.Configuration.class);
+        cardPanel.addCard(new MidiConfigPanel(),
+                jorgan.midi.Configuration.class);
+        cardPanel.addCard(new MidiMergeConfigPanel(),
+                jorgan.midi.merge.Configuration.class);
+        cardPanel.addCard(new PlayConfigPanel(),
+                jorgan.play.Configuration.class);
+        cardPanel.addCard(new IOConfigPanel(), jorgan.io.Configuration.class);
+        cardPanel.addCard(new ShellConfigPanel(),
+                jorgan.shell.Configuration.class);
+
+        buttonPanel.setLayout(new BorderLayout());
+        buttonPanel.add(new JButton(resetAction), BorderLayout.EAST);
+        contentPanel.add(buttonPanel, BorderLayout.SOUTH);
+    }
+
+    public void write() {
+        for (int c = 0; c < cardPanel.getComponentCount(); c++) {
+            ConfigurationPanel panel = (ConfigurationPanel) cardPanel
+                    .getComponent(c);
+            if (panel.getConfiguration() != null) {
+                panel.write();
+            }
+        }
+    }
+
+    public void setConfiguration(AbstractConfiguration configuration,
+            boolean showRoot) {
+        this.configuration = configuration;
+
+        tree.setRootVisible(showRoot);
+        tree.setModel(new ConfigurationTreeModel());
+
+        showConfiguration(configuration);
+    }
+
+    public AbstractConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    protected void showConfiguration(AbstractConfiguration config) {
+        ConfigurationPanel panel = (ConfigurationPanel) cardPanel
+                .getCard(config.getClass());
+        if (panel != null) {
+            if (panel.getConfiguration() == null) {
+                panel.setConfiguration(config);
+                panel.read();
+            }
+
+            cardPanel.selectCard(config.getClass());
+            header.setText(panel.getName());
+        }
+    }
+
+    private class ResetAction extends AbstractAction {
+
+        public ResetAction() {
+            putValue(Action.NAME, resources.getString("config.reset"));
         }
 
-        showConfiguration(config);
-      }
-    });
-    add(new JScrollPane(tree), BorderLayout.WEST);
-
-    contentPanel.setLayout(new BorderLayout(4, 4));
-    add(contentPanel, BorderLayout.CENTER);
-
-      header.setHeader(Color.white);
-      contentPanel.add(header, BorderLayout.NORTH);
-
-      JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-      scrollPane.setBorder(null);
-      contentPanel.add(scrollPane, BorderLayout.CENTER);
-      
-      scrollPane.setViewportView(cardPanel);
-
-        cardPanel.addCard(new JOrganConfigPanel()   , jorgan.Configuration.class);
-        cardPanel.addCard(new GUIConfigPanel()    , jorgan.gui.Configuration.class);
-        cardPanel.addCard(new GUIConsoleConfigPanel()     , jorgan.gui.console.Configuration.class);
-        cardPanel.addCard(new GUIConstructConfigPanel(), jorgan.gui.construct.Configuration.class);
-        cardPanel.addCard(new MidiLogConfigPanel(), jorgan.midi.log.Configuration.class);
-        cardPanel.addCard(new MidiConfigPanel()     , jorgan.midi.Configuration.class);
-        cardPanel.addCard(new MidiMergeConfigPanel(), jorgan.midi.merge.Configuration.class);
-        cardPanel.addCard(new PlayConfigPanel()     , jorgan.play.Configuration.class);
-        cardPanel.addCard(new IOConfigPanel()       , jorgan.io.Configuration.class);
-        cardPanel.addCard(new ShellConfigPanel()    , jorgan.shell.Configuration.class);
-
-      buttonPanel.setLayout(new BorderLayout());
-      buttonPanel.add(new JButton(resetAction), BorderLayout.EAST);
-      contentPanel.add(buttonPanel, BorderLayout.SOUTH);
-  }
-
-  public void write() {
-    for (int c = 0; c < cardPanel.getComponentCount(); c++) {
-      ConfigurationPanel panel = (ConfigurationPanel)cardPanel.getComponent(c);
-      if (panel.getConfiguration() != null) {
-        panel.write();
-      }
-    }
-  }
-
-  public void setConfiguration(AbstractConfiguration configuration, boolean showRoot) {
-    this.configuration = configuration;
-
-    tree.setRootVisible(showRoot);
-    tree.setModel(new ConfigurationTreeModel());
-
-    showConfiguration(configuration);
-  }
-
-  public AbstractConfiguration getConfiguration() {
-    return configuration;
-  }
-
-  protected void showConfiguration(AbstractConfiguration config) {
-    ConfigurationPanel panel = (ConfigurationPanel)cardPanel.getCard(config.getClass());
-    if (panel != null) {
-      if (panel.getConfiguration() == null) {
-        panel.setConfiguration(config);
-        panel.read();
-      }
-      
-      cardPanel.selectCard(config.getClass());
-      header.setText(panel.getName());
-    }
-  }
-
-  private class ResetAction extends AbstractAction {
-
-    public ResetAction() {
-      putValue(Action.NAME, resources.getString("config.reset"));
+        public void actionPerformed(ActionEvent ev) {
+            ConfigurationPanel configPanel = (ConfigurationPanel) cardPanel
+                    .getSelectedCard();
+            if (configPanel != null) {
+                configPanel.getConfiguration().reset();
+                configPanel.read();
+            }
+        }
     }
 
-    public void actionPerformed(ActionEvent ev) {
-      ConfigurationPanel configPanel = (ConfigurationPanel)cardPanel.getSelectedCard();
-      if (configPanel != null) {
-        configPanel.getConfiguration().reset();
-        configPanel.read();
-      }
-    }
-  }
+    private class ConfigurationTreeModel implements TreeModel {
 
-  private class ConfigurationTreeModel implements TreeModel {
+        protected AbstractConfiguration cast(Object object) {
+            return (AbstractConfiguration) object;
+        }
 
-    protected AbstractConfiguration cast(Object object) {
-      return (AbstractConfiguration)object;
-    }
+        public Object getRoot() {
+            return configuration;
+        }
 
-    public Object getRoot() {
-      return configuration;
-    }
+        public Object getChild(Object parent, int index) {
+            return cast(parent).getChild(index);
+        }
 
-    public Object getChild(Object parent, int index) {
-      return cast(parent).getChild(index);
-    }
+        public int getChildCount(Object parent) {
+            return cast(parent).getChildCount();
+        }
 
-    public int getChildCount(Object parent) {
-      return cast(parent).getChildCount();
-    }
+        public boolean isLeaf(Object node) {
+            return cast(node).getChildCount() == 0;
+        }
 
-    public boolean isLeaf(Object node) {
-      return cast(node).getChildCount() == 0;
-    }
+        public void valueForPathChanged(TreePath path, Object newValue) {
+        }
 
-    public void valueForPathChanged(TreePath path, Object newValue) {}
+        public int getIndexOfChild(Object parent, Object child) {
+            return cast(parent).getChildIndex(cast(child));
+        }
 
-    public int getIndexOfChild(Object parent, Object child) {
-      return cast(parent).getChildIndex(cast(child));
-    }
+        public void addTreeModelListener(TreeModelListener l) {
+        }
 
-    public void addTreeModelListener(TreeModelListener l) {}
-
-    public void removeTreeModelListener(TreeModelListener l) {}
-  }
-
-  private class ConfigurationRenderer extends DefaultTreeCellRenderer {
-
-    public ConfigurationRenderer() {
-      setOpenIcon(null);
-      setClosedIcon(null);
-      setLeafIcon(null);
+        public void removeTreeModelListener(TreeModelListener l) {
+        }
     }
 
-    public Component getTreeCellRendererComponent(JTree tree, Object value,
-                                                  boolean selected, boolean expanded,
-                                                  boolean leaf, int row, boolean hasFocus) {
-      String text = "???";
-      JPanel panel = (JPanel)cardPanel.getCard(value.getClass());
-      if (panel != null) {
-        text = panel.getName();
-      }
+    private class ConfigurationRenderer extends DefaultTreeCellRenderer {
 
-      Component component = super.getTreeCellRendererComponent(tree, text, selected, expanded, leaf, row, hasFocus);
+        public ConfigurationRenderer() {
+            setOpenIcon(null);
+            setClosedIcon(null);
+            setLeafIcon(null);
+        }
 
-      return component;
+        public Component getTreeCellRendererComponent(JTree tree, Object value,
+                boolean selected, boolean expanded, boolean leaf, int row,
+                boolean hasFocus) {
+            String text = "???";
+            JPanel panel = (JPanel) cardPanel.getCard(value.getClass());
+            if (panel != null) {
+                text = panel.getName();
+            }
+
+            Component component = super.getTreeCellRendererComponent(tree,
+                    text, selected, expanded, leaf, row, hasFocus);
+
+            return component;
+        }
     }
-  }
 }

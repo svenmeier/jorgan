@@ -48,8 +48,9 @@ import jorgan.xml.XMLFormatException;
  */
 public class OrganShell implements UI {
 
-    private static final Logger logger = Logger.getLogger(OrganShell.class.getName());
-    
+    private static final Logger logger = Logger.getLogger(OrganShell.class
+            .getName());
+
     private static ResourceBundle resources = ResourceBundle
             .getBundle("jorgan.shell.resources");
 
@@ -466,6 +467,12 @@ public class OrganShell implements UI {
 
         public void problemRemoved(PlayEvent ev) {
             showElementStatus(ev.getElement());
+        }
+
+        public void opened() {
+        }
+        
+        public void closed() {
         }
     }
 

@@ -18,92 +18,102 @@
  */
 package jorgan.gui.config;
 
-import java.util.*;
 import java.awt.Component;
 import java.awt.Window;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
-import jorgan.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 import jorgan.config.AbstractConfiguration;
+import jorgan.swing.StandardDialog;
 
 /**
  * A dialog for editing of configurations.
  */
 public class ConfigurationDialog extends StandardDialog {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+    /**
+     * The resource bundle.
+     */
+    protected static ResourceBundle resources = ResourceBundle
+            .getBundle("jorgan.gui.resources");
 
-  private ConfigurationTreePanel configTreePanel = new ConfigurationTreePanel();
+    private ConfigurationTreePanel configTreePanel = new ConfigurationTreePanel();
 
-  private Action okAction     = new OKAction();
-  private Action cancelAction = new CancelAction();
-  
-  private AbstractConfiguration configuration;
+    private Action okAction = new OKAction();
 
-  /**
-   * Constructor.
-   */
-  private ConfigurationDialog(JFrame owner, AbstractConfiguration configuration, boolean showRoot) {
-    super(owner);
+    private Action cancelAction = new CancelAction();
 
-    setTitle(resources.getString("config.title"));
+    private AbstractConfiguration configuration;
 
-    setContent(configTreePanel);
+    /**
+     * Constructor.
+     */
+    private ConfigurationDialog(JFrame owner,
+            AbstractConfiguration configuration, boolean showRoot) {
+        super(owner);
 
-    addAction(okAction, true);
-    addAction(cancelAction);
+        setTitle(resources.getString("config.title"));
 
-    this.configuration = configuration;
-    configuration.backup();
+        setContent(configTreePanel);
 
-    try {
-      configTreePanel.setConfiguration((AbstractConfiguration)configuration.getClass().newInstance(), showRoot);
-    } catch (Exception ex) {
-      throw new Error("unable to create configuration '" + configuration.getClass() + "'");
-    }
-  }
+        addAction(okAction, true);
+        addAction(cancelAction);
 
-  private class OKAction extends AbstractAction {
+        this.configuration = configuration;
+        configuration.backup();
 
-    public OKAction() {
-      putValue(Action.NAME, resources.getString("config.ok"));
-    }
-
-    public void actionPerformed(ActionEvent ev) {
-
-      configTreePanel.write();
-      configTreePanel.getConfiguration().backup();
-      
-      configuration.restore();
-      
-      setVisible(false);
-    }
-  }
-
-  private class CancelAction extends AbstractAction {
-
-    public CancelAction() {
-      putValue(Action.NAME, resources.getString("config.cancel"));
+        try {
+            configTreePanel.setConfiguration(
+                    (AbstractConfiguration) configuration.getClass()
+                            .newInstance(), showRoot);
+        } catch (Exception ex) {
+            throw new Error("unable to create configuration '"
+                    + configuration.getClass() + "'");
+        }
     }
 
-    public void actionPerformed(ActionEvent ev) {
-      setVisible(false);
+    private class OKAction extends AbstractAction {
+
+        public OKAction() {
+            putValue(Action.NAME, resources.getString("config.ok"));
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+
+            configTreePanel.write();
+            configTreePanel.getConfiguration().backup();
+
+            configuration.restore();
+
+            setVisible(false);
+        }
     }
-  }
-  
-  public static ConfigurationDialog create(Component owner, AbstractConfiguration configuration, boolean showRoot) {
-    Window window;
-    if (owner instanceof JFrame) {
-        window = (JFrame)owner;
-    } else {
-        window = SwingUtilities.getWindowAncestor(owner);
+
+    private class CancelAction extends AbstractAction {
+
+        public CancelAction() {
+            putValue(Action.NAME, resources.getString("config.cancel"));
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            setVisible(false);
+        }
     }
-    
-    return new ConfigurationDialog((JFrame)window, configuration, showRoot);
-  }
+
+    public static ConfigurationDialog create(Component owner,
+            AbstractConfiguration configuration, boolean showRoot) {
+        Window window;
+        if (owner instanceof JFrame) {
+            window = (JFrame) owner;
+        } else {
+            window = SwingUtilities.getWindowAncestor(owner);
+        }
+
+        return new ConfigurationDialog((JFrame) window, configuration, showRoot);
+    }
 }

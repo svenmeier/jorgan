@@ -24,6 +24,8 @@ import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -49,6 +51,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JOptionPane;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
@@ -154,6 +157,8 @@ public class OrganFrame extends JFrame implements UI {
 
     private AboutAction aboutAction = new AboutAction();
 
+    private JToggleButton constructButton = new JToggleButton();
+
     /**
      * Create a new organFrame.
      */
@@ -170,7 +175,26 @@ public class OrganFrame extends JFrame implements UI {
         toolBar.add(newAction);
         toolBar.add(openAction);
         toolBar.add(saveAction);
+
         toolBar.addSeparator();
+
+        constructButton.setToolTipText(resources
+                .getString("action.construct.description"));
+        constructButton.setIcon(new ImageIcon(getClass().getResource(
+                "img/construct.gif")));
+        constructButton.addItemListener(new ItemListener() {
+            public void itemStateChanged(ItemEvent e) {
+                if (constructButton.isSelected()) {
+                    session.getPlay().close();
+                } else {
+                    session.getPlay().open();
+                }
+            };
+        });
+        toolBar.add(constructButton);
+
+        toolBar.addSeparator();
+
         List toolBarWidgets = organPanel.getToolBarWidgets();
         for (int w = 0; w < toolBarWidgets.size(); w++) {
             if (toolBarWidgets.get(w) instanceof Action) {
@@ -179,6 +203,7 @@ public class OrganFrame extends JFrame implements UI {
                 toolBar.add((JComponent) toolBarWidgets.get(w));
             }
         }
+
         toolBar.setFloatable(false);
         getContentPane().add(toolBar, BorderLayout.NORTH);
 
@@ -202,6 +227,7 @@ public class OrganFrame extends JFrame implements UI {
                 if (released) {
                     session.getPlay().open();
                 }
+                released = false;
             }
 
             public void windowDeactivated(WindowEvent e) {
@@ -292,6 +318,7 @@ public class OrganFrame extends JFrame implements UI {
             if (session.getPlay().isOpen()) {
                 session.getPlay().close();
             }
+            session.getPlay().dispose();
 
             Configuration.instance().setFrameState(getExtendedState());
             Configuration.instance().setFrameBounds(getBounds());
@@ -300,7 +327,7 @@ public class OrganFrame extends JFrame implements UI {
 
             dispose();
 
-            exitAction.notifyStop();
+            exitAction.stopped();
         }
     }
 
@@ -314,6 +341,11 @@ public class OrganFrame extends JFrame implements UI {
         statusBar.setStatus(null);
 
         if (this.session != null) {
+            if (this.session.getPlay().isOpen()) {
+                this.session.getPlay().close();
+            }
+            this.session.getPlay().dispose();
+
             this.session.removeOrganListener(saveAction);
         }
 
@@ -321,7 +353,12 @@ public class OrganFrame extends JFrame implements UI {
 
         if (this.session != null) {
             this.session.addOrganListener(saveAction);
+
+            if (!constructButton.isSelected()) {
+                session.getPlay().open();
+            }
         }
+
         saveAction.clearChanges();
 
         organPanel.setOrgan(session);
@@ -476,7 +513,7 @@ public class OrganFrame extends JFrame implements UI {
     public void showConfiguration() {
         ConfigurationDialog dialog = ConfigurationDialog.create(this,
                 jorgan.Configuration.instance(), false);
-        dialog.start(600, 750);
+        dialog.start(600, 600);
         dialog.dispose();
     }
 
@@ -493,32 +530,35 @@ public class OrganFrame extends JFrame implements UI {
     public void start(final File file) {
 
         if (jorgan.gui.Configuration.instance().getShowAboutOnStartup()) {
-            AboutPanel.showInWindow();
+            AboutPanel.showSplash();
         }
-
-        // realize first so changing state has effect
-        pack();
-        jorgan.io.Configuration.instance().addConfigurationListener(
-                configurationListener);
-        Rectangle rect = Configuration.instance().getFrameBounds();
-        if (rect != null) {
-            setBounds(rect);
-        }
-        setExtendedState(Configuration.instance().getFrameState());
-
-        updateMenu();
-
-        setVisible(true);
-
+        
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
+
+                // realize first so changing state has effect
+                pack();
+                jorgan.io.Configuration.instance().addConfigurationListener(
+                        configurationListener);
+                Rectangle rect = Configuration.instance().getFrameBounds();
+                if (rect != null) {
+                    setBounds(rect);
+                }
+                setExtendedState(Configuration.instance().getFrameState());
+
+                updateMenu();
+
                 if (file == null) {
                     setFile(null);
                 } else {
                     openOrgan(file);
                 }
+
+                setVisible(true);
             }
         });
+
+        AboutPanel.hideSplash();
 
         exitAction.waitForStop();
     }
@@ -786,8 +826,6 @@ public class OrganFrame extends JFrame implements UI {
 
         public void actionPerformed(ActionEvent ev) {
             if (dialogs.isEmpty()) {
-                organPanel.setConstructing(false);
-
                 List consoles = session.getOrgan().getCandidates(Console.class);
                 for (int c = 0; c < consoles.size(); c++) {
                     Console console = (Console) consoles.get(c);
@@ -865,7 +903,7 @@ public class OrganFrame extends JFrame implements UI {
         /**
          * Called on event dispatch thread to notify wait on main thread.
          */
-        public synchronized void notifyStop() {
+        private synchronized void stopped() {
             notify();
         }
     }

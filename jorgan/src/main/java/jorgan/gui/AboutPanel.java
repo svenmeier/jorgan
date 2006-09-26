@@ -32,6 +32,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JWindow;
+import javax.swing.SwingUtilities;
 
 import jorgan.App;
 
@@ -98,27 +99,40 @@ public class AboutPanel extends JPanel {
         dialog.setVisible(true);
     }
 
+    private static JWindow splash;
+
     /**
-     * Utility method to show an about panel in a window. <br>
-     * This method must not be called on the event dispatch thread.
+     * Utility method to show an about panel in a window.
      */
-    public static void showInWindow() {
+    public static void showSplash() {
 
-        AboutPanel aboutPanel = new AboutPanel();
-        aboutPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
+        SwingUtilities.invokeLater(new Runnable() {
+            public void run() {
+                AboutPanel aboutPanel = new AboutPanel();
+                aboutPanel.setBorder(BorderFactory.createLineBorder(Color.black, 1));
 
-        JWindow window = new JWindow();
-        window.setContentPane(aboutPanel);
-        window.pack();
-        window.setLocationRelativeTo(null);
-        window.setVisible(true);
-
+                splash = new JWindow();
+                splash.setContentPane(aboutPanel);
+                splash.pack();
+                splash.setLocationRelativeTo(null);
+                splash.setVisible(true);
+            }
+        });
+        
         try {
-            Thread.sleep(4000);
+            Thread.sleep(1000);
         } catch (InterruptedException ex) {
-            throw new Error("unexpected interruption", ex);
-        }
+        }        
+    }
 
-        window.dispose();
+    public static void hideSplash() {
+        if (splash != null) {
+            SwingUtilities.invokeLater(new Runnable() {
+                public void run() {
+                    splash.dispose();
+                    splash = null;
+                }
+            });
+        }
     }
 }

@@ -28,25 +28,26 @@ import jorgan.play.*;
  */
 public class PlayEvent extends EventObject {
 
-  private Element       element;
-  private Problem problem;
+    private Element element;
 
-  public PlayEvent(OrganPlay source, Element element) {
-    this(source, element, null);
-  }
+    private Problem problem;
 
-  public PlayEvent(OrganPlay source, Element element, Problem problem) {
-    super(source);
-    
-    this.element  = element;
-    this.problem  = problem;
-  }
+    public PlayEvent(OrganPlay source, Element element) {
+        this(source, element, null);
+    }
 
-  public Element getElement() {
-    return element;
-  }
-  
-  public Problem getProblem() {
-    return problem;
-  }
+    public PlayEvent(OrganPlay source, Element element, Problem problem) {
+        super(source);
+
+        this.element = element;
+        this.problem = problem;
+    }
+
+    public Element getElement() {
+        return element;
+    }
+
+    public Problem getProblem() {
+        return problem;
+    }
 }

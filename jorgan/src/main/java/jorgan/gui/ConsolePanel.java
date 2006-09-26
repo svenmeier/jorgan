@@ -89,6 +89,8 @@ import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.mac.TweakMac;
+import jorgan.play.event.PlayEvent;
+import jorgan.play.event.PlayListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
@@ -130,7 +132,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
     /**
      * Currently constructing.
      */
-    private boolean constructing = true;
+    private boolean constructing = false;
 
     /**
      * The zoom to paint views at.
@@ -156,6 +158,11 @@ public class ConsolePanel extends JComponent implements Scrollable {
      * The listener to organ changes.
      */
     private OrganListener organListener = new InternalOrganListener();
+
+    /**
+     * The listener to play changes.
+     */
+    private PlayListener playListener = new InternalPlayListener();
 
     /**
      * The listener to configuration changes.
@@ -266,7 +273,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
         arrangeMenu.add(arrangeToBackAction);
         arrangeMenu.add(arrangeHideAction);
 
-        setConstructing(false);
+        setConstructing(true);
     }
 
     public void addNotify() {
@@ -356,6 +363,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
         if (this.session != null) {
             this.session.removeOrganListener(organListener);
             this.session.removeSelectionListener(selectionListener);
+            this.session.removePlayerListener(playListener);
 
             jorgan.gui.console.Configuration.instance()
                     .removeConfigurationListener(configListener);
@@ -368,11 +376,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
         if (this.session != null) {
             this.session.addOrganListener(organListener);
             this.session.addSelectionListener(selectionListener);
+            this.session.addPlayerListener(playListener);
 
             jorgan.gui.console.Configuration.instance()
                     .addConfigurationListener(configListener);
             jorgan.gui.construct.Configuration.instance()
                     .addConfigurationListener(configListener);
+            
+            setConstructing(!this.session.getPlay().isOpen());
         }
     }
 
@@ -406,13 +417,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
         return skin;
     }
 
-    /**
-     * Construct an organ.
-     * 
-     * @param constructing
-     *            should organ be constructed
-     */
-    public void setConstructing(boolean constructing) {
+    private void setConstructing(boolean constructing) {
         if (constructing != this.constructing) {
             this.constructing = constructing;
 
@@ -430,15 +435,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
                 addMouseMotionListener(playMouseInputListener);
             }
         }
-    }
-
-    /**
-     * Test if organ is currently constructed.
-     * 
-     * @return <code>true</code> if organ is currently constructed
-     */
-    public boolean isConstructing() {
-        return constructing;
     }
 
     /**
@@ -567,7 +563,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
             }
         }
 
-        for (int r = 0; r < console.getReferenceCount(); r++) {
+        // iterate over elements from front to back
+        for (int r = console.getReferenceCount() - 1; r >= 0; r--) {
             Element element = console.getReference(r).getElement();
             View view = getView(element);
             if (view.contains(x, y)) {
@@ -758,6 +755,35 @@ public class ConsolePanel extends JComponent implements Scrollable {
         }
     }
 
+    private class InternalPlayListener implements PlayListener {
+
+        public void opened() {
+            setConstructing(false);
+        }
+        
+        public void closed() {
+            setConstructing(true);
+        }
+
+        public void inputAccepted() {
+        }
+
+        public void outputProduced() {
+        }
+
+        public void playerAdded(PlayEvent ev) {
+        }
+
+        public void playerRemoved(PlayEvent ev) {
+        }
+
+        public void problemAdded(PlayEvent ev) {
+        }
+
+        public void problemRemoved(PlayEvent ev) {
+        }        
+    }
+    
     /**
      * The listener to configuration events.
      */

@@ -28,7 +28,6 @@ public class ElementListCellRenderer extends DefaultListCellRenderer {
         super.getListCellRendererComponent(list, getText(element), index,
                 isSelected, cellHasFocus);
 
-        setToolTipText(getToolTipText(element));
         setIcon(getIcon(element));
 
         return this;
@@ -39,30 +38,22 @@ public class ElementListCellRenderer extends DefaultListCellRenderer {
     }
 
     protected String getText(Element element) {
-        return noRepeatedWhitespace(Documents.getInstance().getDisplayName(
-                element));
-    }
-
-    protected Icon getIcon(Element element) {
-        return null;
-    }
-
-    protected String getToolTipText(Element element) {
         StringBuffer text = new StringBuffer();
 
         text.append(noRepeatedWhitespace(Documents.getInstance()
                 .getDisplayName(element)));
 
-        text.append(" (");
-        text.append(Documents.getInstance().getDisplayName(element.getClass()));
-        text.append(")");
-
         if (!"".equals(element.getDescription())) {
-            text.append(" - ");
+            text.append(" [");
             text.append(element.getDescription());
+            text.append("]");
         }
 
         return text.toString();
+    }
+
+    protected Icon getIcon(Element element) {
+        return null;
     }
 
     private static String noRepeatedWhitespace(String string) {

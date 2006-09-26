@@ -51,6 +51,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor, Actio
   public KeyEditor() {
     panel.setLayout(new BorderLayout());
 
+    button.setFocusable(false);
     button.setMargin(new Insets(0, 0, 0, 0));
     button.addActionListener(this);
     panel.add(button, BorderLayout.EAST);
