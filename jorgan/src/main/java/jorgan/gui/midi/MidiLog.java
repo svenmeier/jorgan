@@ -203,7 +203,7 @@ public class MidiLog extends DockedPanel {
       selectionPanel.setDevice(deviceName, deviceOut);
       dialog.start();
 
-      if (!dialog.wasCanceled()) {
+      if (!dialog.wasCancelled()) {
           setDevice(selectionPanel.getDeviceName(), selectionPanel.getDeviceOut());
       }
   }

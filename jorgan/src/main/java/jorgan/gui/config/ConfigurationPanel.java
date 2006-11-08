@@ -18,9 +18,9 @@
  */
 package jorgan.gui.config;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
+import java.util.ResourceBundle;
+
+import javax.swing.JPanel;
 
 import jorgan.config.AbstractConfiguration;
 
@@ -29,48 +29,39 @@ import jorgan.config.AbstractConfiguration;
  */
 public abstract class ConfigurationPanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  protected AbstractConfiguration configuration;
-  
-  /**
-   * Insets to use by subclasse for no spacing around components.
-   */
-  protected Insets emptyInsets = new Insets(0,0,0,0);
+	protected AbstractConfiguration configuration;
 
-  /**
-   * Insets to use by subclasse for a standard spacing around components.
-   */
-  protected Insets standardInsets = new Insets(2,2,2,2);
+	/**
+	 * Set the configuration of this panel.
+	 * 
+	 * @return the configuration
+	 */
+	public void setConfiguration(AbstractConfiguration configuration) {
+		this.configuration = configuration;
+	}
 
-  /**
-   * Set the configuration of this panel.
-   *
-   * @return    the configuration
-   */
-  public void setConfiguration(AbstractConfiguration configuration) {
-    this.configuration = configuration;
-  }
+	/**
+	 * Get the configuration of this panel.
+	 * 
+	 * @return the configuration
+	 */
+	public AbstractConfiguration getConfiguration() {
+		return configuration;
+	}
 
-  /**
-   * Get the configuration of this panel.
-   *
-   * @return    the configuration
-   */
-  public AbstractConfiguration getConfiguration() {
-    return configuration;
-  }
-  
-  /**
-   * Read the configuration.
-   */
-  public abstract void read();
-  
-  /**
-   * Write the configuration.
-   */
-  public abstract void write();  
+	/**
+	 * Read the configuration.
+	 */
+	public abstract void read();
+
+	/**
+	 * Write the configuration.
+	 */
+	public abstract void write();
 }

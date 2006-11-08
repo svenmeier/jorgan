@@ -62,388 +62,455 @@ import jorgan.swing.table.TableUtils;
  */
 public class PropertiesPanel extends JPanel {
 
-  private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
-    
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
-  
-  private static final Object[] EMPTY_ARGUMENTS = new Object[0];
-  
-  private List listeners = new ArrayList();
-  
-  private BeanCustomizer customizer = new DefaultBeanCustomizer();
-  
-  private List beans = new ArrayList();
-  
-  private String property;
-  
-  private Class                beanClass;
-  private BeanInfo             beanInfo;
-  private PropertyDescriptor[] descriptors;
-  private PropertyEditor[]     editors;
-  
-  private ElementTableModel model = new ElementTableModel();
+	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
-  private JTable table = new JTable();
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.swing.resources");
 
-  public PropertiesPanel() {
-    setLayout(new BorderLayout());
-    
-    table.setModel(model);
-    table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    PropertyCellRenderer nameRenderer  = new PropertyCellRenderer(true);
-    PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
-    table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
-    table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
-    table.getColumnModel().getColumn(1).setCellEditor(new PropertyCellEditor());
-    table.setRowHeight(nameRenderer.getPreferredSize().height);
-    table.getColumnModel().getSelectionModel().addListSelectionListener(model);
-    table.getSelectionModel().addListSelectionListener(model);
-    TableUtils.pleasantLookAndFeel(table);
-    TableUtils.hideHeader(table);
-    add(table, BorderLayout.CENTER);
-  }
+	private static final Object[] EMPTY_ARGUMENTS = new Object[0];
 
-  public void setBeanCustomizer(BeanCustomizer customizer) {
-	this.customizer = customizer;
-  }
+	private List listeners = new ArrayList();
 
-  public void addChangeListener(ChangeListener listener) {
-    listeners.add(listener);
-  }
-  
-  public void removeChangeListener(ChangeListener listener) {
-    listeners.remove(listener);
-  }
-    
-  protected void fireChanged() {
-    ChangeEvent event = new ChangeEvent(this);
-    for (int l = 0; l < listeners.size(); l++) {
-      ChangeListener listener = (ChangeListener)listeners.get(l);
-      listener.stateChanged(event);
-    }
-  }
-  public void setBean(Object bean) {
-    setBeans(new ArrayList(beans));
-  }
-  
-  public java.util.List getBeans() {
-    return Collections.unmodifiableList(beans);
-  }
+	private BeanCustomizer customizer = new DefaultBeanCustomizer();
 
-  public void setBeans(java.util.List beans) {
-    TableCellEditor cellEditor = table.getCellEditor();
-    if (cellEditor != null) {
-      cellEditor.stopCellEditing();
-    }
+	private List beans = new ArrayList();
 
-    this.beans = new ArrayList(beans);
+	private String property;
 
-    property = null;
+	private Class beanClass;
 
-    if (beans.size() == 0) {
-      descriptors = null;
-      editors     = null;
-    } else {
-      try {
-        beanClass = getCommonClass(this.beans);
-        
-        beanInfo = customizer.getBeanInfo(beanClass);
-        
-        descriptors = beanInfo.getPropertyDescriptors();
+	private BeanInfo beanInfo;
 
-        editors = getEditors(descriptors);
-      } catch (IntrospectionException ex) {
-        descriptors = null;
-        editors     = null;
-      }
-    }
+	private PropertyDescriptor[] descriptors;
 
-    model.fireTableDataChanged();
-  }
-  
-  public Class getBeanClass() {
-    return beanClass;
-  }
+	private PropertyEditor[] editors;
 
-  public void setProperty(String property) {
-    if (this.property == null && property != null ||
-        this.property != null && !this.property.equals(property)) {
-      this.property = property;
-      
-      if (property != null && descriptors != null) {
-        for (int d = 0; d < descriptors.length; d++) {
-          if (descriptors[d].getName().equals(property)) {
-            table.getSelectionModel().setSelectionInterval(d, d);
-            break;
-          }
-        }
-      }
-      
-      fireChanged();
-    }
-  }
+	private ElementTableModel model = new ElementTableModel();
 
-  public String getProperty() {
-    return property;
-  }
-  
-  /**
-   * Get the common superclass of all beans in the given list.
-   *  
-   * @param beans   list of beans to get common superclass for
-   * @return        common superclass
-   */
-  public static Class getCommonClass(java.util.List beans) {
-    Class commonClass = null;
-    for (int b = 0; b < beans.size(); b++) {
-      Object bean = beans.get(b);
-      
-      if (commonClass == null) {
-        commonClass = bean.getClass();
-      } else {
-        while ((commonClass != Object.class) &&
-               !(commonClass.isAssignableFrom(bean.getClass()))) {
-          commonClass = commonClass.getSuperclass();
-        }
-      }
-    }
-    return commonClass;
-  }
-  
-  private PropertyEditor[] getEditors(PropertyDescriptor[] descriptors) throws IntrospectionException {
-    
-    PropertyEditor[] editors = new PropertyEditor[descriptors.length];
+	private JTable table = new JTable();
 
-    for (int d = 0; d < descriptors.length; d++) {
-      PropertyDescriptor descriptor = descriptors[d];
-       
-      if (descriptor instanceof IndexedPropertyDescriptor) {
-        // indexed properties are not supported
-        continue;
-      }
+	/**
+	 * Construtor.
+	 */
+	public PropertiesPanel() {
+		setLayout(new BorderLayout());
 
-      editors[d] = customizer.getPropertyEditor(descriptor);
-    }
+		table.setModel(model);
+		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		PropertyCellRenderer nameRenderer = new PropertyCellRenderer(true);
+		PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
+		table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
+		table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new PropertyCellEditor());
+		table.setRowHeight(nameRenderer.getPreferredSize().height);
+		table.getColumnModel().getSelectionModel().addListSelectionListener(
+				model);
+		table.getSelectionModel().addListSelectionListener(model);
+		TableUtils.pleasantLookAndFeel(table);
+		TableUtils.hideHeader(table);
+		add(table, BorderLayout.CENTER);
+	}
 
-    return editors;
-  }
-  
-  private class ElementTableModel extends AbstractTableModel implements ListSelectionListener {
-    public String getColumnName(int column) {
-      return null;
-    }
+	/**
+	 * Set the customizer of beans.
+	 * 
+	 * @param customizer
+	 *            the customizer
+	 */
+	public void setBeanCustomizer(BeanCustomizer customizer) {
+		this.customizer = customizer;
+	}
 
-    public int getColumnCount() {
-      return 2;
-    }
+	/**
+	 * Add a listener to changes.
+	 * 
+	 * @param listener
+	 *            the listener to add
+	 */
+	public void addChangeListener(ChangeListener listener) {
+		listeners.add(listener);
+	}
 
-    public int getRowCount() {
-      if (descriptors == null) {
-        return 0;
-      } else {
-        return descriptors.length;
-      }
-    }
+	/**
+	 * Remove a listener to changes.
+	 * 
+	 * @param listener
+	 *            the listener to remove
+	 */
+	public void removeChangeListener(ChangeListener listener) {
+		listeners.remove(listener);
+	}
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      if (columnIndex == 0) {
-        return descriptors[rowIndex].getDisplayName();
-      } else {
-        try {
-          Method method = descriptors[rowIndex].getReadMethod();
+	protected void fireChanged() {
+		ChangeEvent event = new ChangeEvent(this);
+		for (int l = 0; l < listeners.size(); l++) {
+			ChangeListener listener = (ChangeListener) listeners.get(l);
+			listener.stateChanged(event);
+		}
+	}
 
-          Object value = null;
-          for (int b = 0; b < beans.size(); b++) {
-            Object bean = beans.get(b);
-            
-            Object temp = method.invoke(bean, EMPTY_ARGUMENTS); 
-            if (value == null) {
-              value = temp;
-            } else {
-              if (temp != null && !temp.equals(value)) {
-                return null;
-              }
-            }
-          }
-           
-          return value; 
-        } catch (Exception ex) {
-          logger.log(Level.FINER, "unable to get property value", ex);
-        }
-        return null;
-      }
-    }
+	/**
+	 * Set the bean.
+	 * 
+	 * @param bean
+	 *            bean to set
+	 */
+	public void setBean(Object bean) {
+		setBeans(new ArrayList(beans));
+	}
 
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
-      if (columnIndex == 0) {
-        return false;
-      }
-      return (descriptors[rowIndex].getWriteMethod() != null &&
-              editors[rowIndex] != null);
-    }
+	/**
+	 * Get the beans.
+	 * 
+	 * @return the beans
+	 */
+	public List getBeans() {
+		return Collections.unmodifiableList(beans);
+	}
 
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-      Method method = descriptors[rowIndex].getWriteMethod();
-       
-      for (int b = 0; b < beans.size(); b++) {
-        try {
-          Object bean = beans.get(b);
-          method.invoke(bean, new Object[]{aValue});
-        } catch (Exception ex) {
-          logger.log(Level.FINER, "unable to set property value", ex);
-        }
-      }
-    }
-    
-    public void valueChanged(ListSelectionEvent e) {
-      if (descriptors != null && descriptors.length > 0) {
-        if (e.getSource() == table.getColumnModel().getSelectionModel()) {
-          if (table.getSelectedColumn() == 0) {
-            table.getColumnModel().getSelectionModel().setSelectionInterval(1, 1);
-          }
-        } else {
-          int row = table.getSelectedRow();
-          if (row == -1) {
-            setProperty(null);
-          } else {
-            setProperty(descriptors[row].getName());
-          }
-        }            
-      }
-    }
-  }
+	/**
+	 * Set the beans.
+	 * 
+	 * @param beans
+	 *            the beans
+	 */
+	public void setBeans(List beans) {
+		TableCellEditor cellEditor = table.getCellEditor();
+		if (cellEditor != null) {
+			cellEditor.stopCellEditing();
+		}
 
-  private class PropertyCellEditor extends AbstractCellEditor implements TableCellEditor, Runnable {
+		this.beans = new ArrayList(beans);
 
-    private PropertyEditor editor;
+		property = null;
 
-    private JTextField textField = new JTextField();
-    private JComboBox  comboBox  = new JComboBox();
+		if (beans.size() == 0) {
+			descriptors = null;
+			editors = null;
+		} else {
+			try {
+				beanClass = getCommonClass(this.beans);
 
-    public PropertyCellEditor() {
-      textField.setOpaque(false);
-      textField.setBorder(null);
-      textField.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ev) {
-          stopCellEditing();
-        }
-      });
+				beanInfo = customizer.getBeanInfo(beanClass);
 
-      comboBox.setEditable(false);
-      comboBox.setBorder(null);
-      comboBox.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent ev) {
-          stopCellEditing();
-        }
-      });
-    }
+				descriptors = beanInfo.getPropertyDescriptors();
 
-    public Component getTableCellEditorComponent(JTable table, Object value,
-                                                 boolean isSelected,
-                                                 int row, int column) {
+				editors = getEditors(descriptors);
+			} catch (IntrospectionException ex) {
+				descriptors = null;
+				editors = null;
+			}
+		}
 
-      editor = editors[row];
-      editor.setValue(value);
+		model.fireTableDataChanged();
+	}
 
-      Component component;
-      if (editor.supportsCustomEditor()) {
-        component = editor.getCustomEditor();
-      } else {
-        String[] tags = editor.getTags();
-        if (tags == null) {
-          textField.setText(editor.getAsText());
-          textField.selectAll();
-          component = textField;
-        } else {
-          comboBox.setModel(new DefaultComboBoxModel(tags));
-          comboBox.setSelectedItem(editor.getAsText());
-          component = comboBox;
-        }
-      }
-      
-      SwingUtilities.invokeLater(this);
-      
-      return component;
-    }
+	/**
+	 * Get the class of the current beans.
+	 * 
+	 * @return the bean class
+	 */
+	public Class getBeanClass() {
+		return beanClass;
+	}
 
-    /**
-     * Client property 'terminateEditOnFocusLost' may lead to a
-     * corrupted display of editor in the table.
-     * This method (invoked via SwingUtilities.invokeLater()) will
-     * issue an additional repaint if the table is still editing.
-     */
-    public void run() {
-      Component component = table.getEditorComponent();
-      if (component != null) {
-        component.repaint();
-      }
-    }
-    
-    public Object getCellEditorValue() {
-      if (!editor.supportsCustomEditor()) {
-        try {
-          if (editor.getTags() == null) {
-            editor.setAsText(textField.getText());
-          } else {
-            editor.setAsText((String)comboBox.getSelectedItem());
-          }
-        } catch (IllegalArgumentException ex) {
-          logger.log(Level.FINER, "unable to get value", ex);
-        }
-      }
-      return editor.getValue();
-    }
-  }
+	/**
+	 * Select a property.
+	 * 
+	 * @param property
+	 *            property to select
+	 */
+	public void setProperty(String property) {
+		if (this.property == null && property != null || this.property != null
+				&& !this.property.equals(property)) {
+			this.property = property;
 
-  private class PropertyCellRenderer extends JLabel implements TableCellRenderer {
+			if (property != null && descriptors != null) {
+				for (int d = 0; d < descriptors.length; d++) {
+					if (descriptors[d].getName().equals(property)) {
+						table.getSelectionModel().setSelectionInterval(d, d);
+						break;
+					}
+				}
+			}
 
-    private boolean name;
+			fireChanged();
+		}
+	}
 
-    public PropertyCellRenderer(boolean name) {
-      this.name = name;
+	/**
+	 * Get the selected property.
+	 * 
+	 * @return selected property
+	 */
+	public String getProperty() {
+		return property;
+	}
 
-      setOpaque(true);
-      setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
-      if (name) {
-        setText("name");
-      } else {
-        setText("value");
-      }
-    }
+	/**
+	 * Get the common superclass of all beans in the given list.
+	 * 
+	 * @param beans
+	 *            list of beans to get common superclass for
+	 * @return common superclass
+	 */
+	public static Class getCommonClass(java.util.List beans) {
+		Class commonClass = null;
+		for (int b = 0; b < beans.size(); b++) {
+			Object bean = beans.get(b);
 
-    public Component getTableCellRendererComponent(JTable table, Object value,
-                          boolean isSelected, boolean hasFocus, int row, int column) {
-      if (isSelected) {
-        setForeground(table.getSelectionForeground());
-        setBackground(table.getSelectionBackground());
-      } else {
-        setForeground(table.getForeground());
-        setBackground(table.getBackground());
-      }
-      setFont(table.getFont());
+			if (commonClass == null) {
+				commonClass = bean.getClass();
+			} else {
+				while ((commonClass != Object.class)
+						&& !(commonClass.isAssignableFrom(bean.getClass()))) {
+					commonClass = commonClass.getSuperclass();
+				}
+			}
+		}
+		return commonClass;
+	}
 
-      if (name) {
-        setText((String)value);
-        setToolTipText(null);
-        if (row == beanInfo.getDefaultPropertyIndex()) {
-          setFont(getFont().deriveFont(Font.BOLD));
-        }
-      } else{
-        if (editors[row] == null) {
-          if (value == null) {
-            setText("");
-          } else {
-            setText(value.toString());
-          }
-          setToolTipText(null);
-        } else {
-          editors[row].setValue(value);
+	private PropertyEditor[] getEditors(PropertyDescriptor[] descriptors)
+			throws IntrospectionException {
 
-          setText(editors[row].getAsText());
-        }
-      }
-      setToolTipText(descriptors[row].getShortDescription());
-      return this;
-    }
-  }
+		PropertyEditor[] editors = new PropertyEditor[descriptors.length];
+
+		for (int d = 0; d < descriptors.length; d++) {
+			PropertyDescriptor descriptor = descriptors[d];
+
+			if (descriptor instanceof IndexedPropertyDescriptor) {
+				// indexed properties are not supported
+				continue;
+			}
+
+			editors[d] = customizer.getPropertyEditor(descriptor);
+		}
+
+		return editors;
+	}
+
+	private class ElementTableModel extends AbstractTableModel implements
+			ListSelectionListener {
+		public String getColumnName(int column) {
+			return null;
+		}
+
+		public int getColumnCount() {
+			return 2;
+		}
+
+		public int getRowCount() {
+			if (descriptors == null) {
+				return 0;
+			} else {
+				return descriptors.length;
+			}
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (columnIndex == 0) {
+				return descriptors[rowIndex].getDisplayName();
+			} else {
+				try {
+					Method method = descriptors[rowIndex].getReadMethod();
+
+					Object value = null;
+					for (int b = 0; b < beans.size(); b++) {
+						Object bean = beans.get(b);
+
+						Object temp = method.invoke(bean, EMPTY_ARGUMENTS);
+						if (value == null) {
+							value = temp;
+						} else {
+							if (temp != null && !temp.equals(value)) {
+								return null;
+							}
+						}
+					}
+
+					return value;
+				} catch (Exception ex) {
+					logger.log(Level.FINER, "unable to get property value", ex);
+				}
+				return null;
+			}
+		}
+
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			if (columnIndex == 0) {
+				return false;
+			}
+			return (descriptors[rowIndex].getWriteMethod() != null && editors[rowIndex] != null);
+		}
+
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			Method method = descriptors[rowIndex].getWriteMethod();
+
+			for (int b = 0; b < beans.size(); b++) {
+				try {
+					Object bean = beans.get(b);
+					method.invoke(bean, new Object[] { aValue });
+				} catch (Exception ex) {
+					logger.log(Level.FINER, "unable to set property value", ex);
+				}
+			}
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			if (descriptors != null && descriptors.length > 0) {
+				if (e.getSource() == table.getColumnModel().getSelectionModel()) {
+					if (table.getSelectedColumn() == 0) {
+						table.getColumnModel().getSelectionModel()
+								.setSelectionInterval(1, 1);
+					}
+				} else {
+					int row = table.getSelectedRow();
+					if (row == -1) {
+						setProperty(null);
+					} else {
+						setProperty(descriptors[row].getName());
+					}
+				}
+			}
+		}
+	}
+
+	private class PropertyCellEditor extends AbstractCellEditor implements
+			TableCellEditor, Runnable {
+
+		private PropertyEditor editor;
+
+		private JTextField textField = new JTextField();
+
+		private JComboBox comboBox = new JComboBox();
+
+		private PropertyCellEditor() {
+			textField.setOpaque(false);
+			textField.setBorder(null);
+			textField.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					stopCellEditing();
+				}
+			});
+
+			comboBox.setEditable(false);
+			comboBox.setBorder(null);
+			comboBox.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent ev) {
+					stopCellEditing();
+				}
+			});
+		}
+
+		public Component getTableCellEditorComponent(JTable table,
+				Object value, boolean isSelected, int row, int column) {
+
+			editor = editors[row];
+			editor.setValue(value);
+
+			Component component;
+			if (editor.supportsCustomEditor()) {
+				component = editor.getCustomEditor();
+			} else {
+				String[] tags = editor.getTags();
+				if (tags == null) {
+					textField.setText(editor.getAsText());
+					textField.selectAll();
+					component = textField;
+				} else {
+					comboBox.setModel(new DefaultComboBoxModel(tags));
+					comboBox.setSelectedItem(editor.getAsText());
+					component = comboBox;
+				}
+			}
+
+			SwingUtilities.invokeLater(this);
+
+			return component;
+		}
+
+		/**
+		 * Client property 'terminateEditOnFocusLost' may lead to a corrupted
+		 * display of editor in the table. This method (invoked via
+		 * SwingUtilities.invokeLater()) will issue an additional repaint if the
+		 * table is still editing.
+		 */
+		public void run() {
+			Component component = table.getEditorComponent();
+			if (component != null) {
+				component.repaint();
+			}
+		}
+
+		public Object getCellEditorValue() {
+			if (!editor.supportsCustomEditor()) {
+				try {
+					if (editor.getTags() == null) {
+						editor.setAsText(textField.getText());
+					} else {
+						editor.setAsText((String) comboBox.getSelectedItem());
+					}
+				} catch (IllegalArgumentException ex) {
+					logger.log(Level.FINER, "unable to get value", ex);
+				}
+			}
+			return editor.getValue();
+		}
+	}
+
+	private class PropertyCellRenderer extends JLabel implements
+			TableCellRenderer {
+
+		private boolean name;
+
+		private PropertyCellRenderer(boolean name) {
+			this.name = name;
+
+			setOpaque(true);
+			setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
+			if (name) {
+				setText("name");
+			} else {
+				setText("value");
+			}
+		}
+
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
+			if (isSelected) {
+				setForeground(table.getSelectionForeground());
+				setBackground(table.getSelectionBackground());
+			} else {
+				setForeground(table.getForeground());
+				setBackground(table.getBackground());
+			}
+			setFont(table.getFont());
+
+			if (name) {
+				setText((String) value);
+				setToolTipText(null);
+				if (row == beanInfo.getDefaultPropertyIndex()) {
+					setFont(getFont().deriveFont(Font.BOLD));
+				}
+			} else {
+				if (editors[row] == null) {
+					if (value == null) {
+						setText("");
+					} else {
+						setText(value.toString());
+					}
+					setToolTipText(null);
+				} else {
+					editors[row].setValue(value);
+
+					setText(editors[row].getAsText());
+				}
+			}
+			setToolTipText(descriptors[row].getShortDescription());
+			return this;
+		}
+	}
 }

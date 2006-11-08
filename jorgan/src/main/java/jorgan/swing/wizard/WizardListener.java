@@ -21,11 +21,20 @@ package jorgan.swing.wizard;
 /**
  * A listener to a wizard.
  */
-public interface WizardListener{
+public interface WizardListener {
 
-  public void wizardChanged();
-  
-  public void wizardFinished();
-  
-  public void wizardCanceled();  
+	/**
+	 * The wizard has changed.
+	 */
+	public void wizardChanged();
+
+	/**
+	 * The wizard has finished.
+	 */
+	public void wizardFinished();
+
+	/**
+	 * The wizard was cancelled.
+	 */
+	public void wizardCancelled();
 }

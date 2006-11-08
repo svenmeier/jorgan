@@ -18,144 +18,167 @@
  */
 package jorgan.swing.wizard;
 
-import java.util.*;
+import java.util.ArrayList;
 
 /**
  * A wizard implementation.
  */
 public class BasicWizard implements Wizard {
 
-  private ArrayList listeners = new ArrayList();
-  
-  private ArrayList pages = new ArrayList();
+	private ArrayList listeners = new ArrayList();
 
-  protected Page current = null;
-  
-  public void addPage(Page page) {
-    addPage(pages.size(), page);
-  }
-  
-  public void addPage(int index, Page page) {
-    pages.add(index, page);
-    page.setWizard(this);
-    
-    if (current == null) {
-      setCurrentPage(page);
-    }
-    
-    fireWizardChanged();
-  }
-  
-  public void removePage(Page page) {
-    if (current == page) {
-      setCurrentPage((Page)pages.get(0));
-    }
+	private ArrayList pages = new ArrayList();
 
-    pages.remove(page);
-    page.setWizard(null);
+	protected Page current = null;
 
-    fireWizardChanged();
-  }
-  
-  public boolean hasPrevious() {
-    return pages.indexOf(current) > 0;
-  }
+	/**
+	 * Add a page.
+	 * 
+	 * @param page
+	 *            page to add
+	 */
+	public void addPage(Page page) {
+		addPage(pages.size(), page);
+	}
 
-  public boolean hasNext() {
-    return pages.indexOf(current) < pages.size() - 1;
-  }
+	/**
+	 * Add a page to the given index.
+	 * 
+	 * @param index
+	 *            index
+	 * @param page
+	 *            page to add
+	 */
+	public void addPage(int index, Page page) {
+		pages.add(index, page);
+		page.setWizard(this);
 
-  public Page getCurrentPage() {
-    return current;  
-  }
+		if (current == null) {
+			setCurrentPage(page);
+		}
 
-  public void next() {  
-    if (current.leavingToNext()) {
-      int index = pages.indexOf(current);
+		fireWizardChanged();
+	}
 
-      Page page = (Page)pages.get(index + 1);
-        
-      page.enteringFromPrevious();
+	/**
+	 * Remove a page.
+	 * 
+	 * @param page
+	 *            page to remove
+	 */
+	public void removePage(Page page) {
+		if (current == page) {
+			setCurrentPage((Page) pages.get(0));
+		}
 
-      setCurrentPage(page);
-    }
-  }
+		pages.remove(page);
+		page.setWizard(null);
 
-  public void previous() {  
-    if (current.leavingToPrevious()) {
-      int index = pages.indexOf(current);
+		fireWizardChanged();
+	}
 
-      Page page = (Page)pages.get(index - 1);
-        
-      page.enteringFromNext();
+	public boolean hasPrevious() {
+		return pages.indexOf(current) > 0;
+	}
 
-      setCurrentPage(page);      
-    }
-  }
+	public boolean hasNext() {
+		return pages.indexOf(current) < pages.size() - 1;
+	}
 
-  public boolean allowsFinish() {
-    return true;
-  }
-    
-  public final void finish() {
-    if (current.leavingToNext() && finishImpl()) {
-      
-      fireWizardFinished();
-    }
-  }
-  
-  protected boolean finishImpl() {
-    return true;
-  }
-  
-  public void cancel() {
-    cancelImpl();
-      
-    fireWizardCanceled();
-  }
-  
-  protected void cancelImpl() {
-  }
-  
-  public void pageChanged(Page page) {
-    fireWizardChanged(); 
-  }
+	public Page getCurrentPage() {
+		return current;
+	}
 
-  protected void setCurrentPage(Page page) {
-    current = page;
-       
-    fireWizardChanged();
-  }
+	public void next() {
+		if (current.leavingToNext()) {
+			int index = pages.indexOf(current);
 
-  public void addWizardListener(WizardListener listener) {
-    listeners.add(listener);  
-  }
-  
-  public void removeWizardListener(WizardListener listener) {
-    listeners.remove(listener);  
-  }
+			Page page = (Page) pages.get(index + 1);
 
-  private void fireWizardChanged() {
-    for (int l = 0; l < listeners.size(); l++) {
-      WizardListener listener = (WizardListener)listeners.get(l);
+			page.enteringFromPrevious();
 
-      listener.wizardChanged();
-    }
-  }
-    
-  private void fireWizardFinished() {
-    for (int l = 0; l < listeners.size(); l++) {
-      WizardListener listener = (WizardListener)listeners.get(l);
+			setCurrentPage(page);
+		}
+	}
 
-      listener.wizardFinished();
-    }
-  }
-  
-  private void fireWizardCanceled() {
-    for (int l = 0; l < listeners.size(); l++) {
-      WizardListener listener = (WizardListener)listeners.get(l);
+	public void previous() {
+		if (current.leavingToPrevious()) {
+			int index = pages.indexOf(current);
 
-      listener.wizardCanceled();
-    }
-  }
+			Page page = (Page) pages.get(index - 1);
+
+			page.enteringFromNext();
+
+			setCurrentPage(page);
+		}
+	}
+
+	public boolean allowsFinish() {
+		return true;
+	}
+
+	public final void finish() {
+		if (current.leavingToNext() && finishImpl()) {
+
+			fireWizardFinished();
+		}
+	}
+
+	protected boolean finishImpl() {
+		return true;
+	}
+
+	/**
+	 * Cancel this wizard.
+	 */
+	public void cancel() {
+		cancelImpl();
+
+		fireWizardCancelled();
+	}
+
+	protected void cancelImpl() {
+	}
+
+	public void pageChanged(Page page) {
+		fireWizardChanged();
+	}
+
+	protected void setCurrentPage(Page page) {
+		current = page;
+
+		fireWizardChanged();
+	}
+
+	public void addWizardListener(WizardListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeWizardListener(WizardListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void fireWizardChanged() {
+		for (int l = 0; l < listeners.size(); l++) {
+			WizardListener listener = (WizardListener) listeners.get(l);
+
+			listener.wizardChanged();
+		}
+	}
+
+	private void fireWizardFinished() {
+		for (int l = 0; l < listeners.size(); l++) {
+			WizardListener listener = (WizardListener) listeners.get(l);
+
+			listener.wizardFinished();
+		}
+	}
+
+	private void fireWizardCancelled() {
+		for (int l = 0; l < listeners.size(); l++) {
+			WizardListener listener = (WizardListener) listeners.get(l);
+
+			listener.wizardCancelled();
+		}
+	}
 }

@@ -18,73 +18,99 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.GridBagLayout;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.text.MessageFormat;
 
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.border.TitledBorder;
+
 import jorgan.shell.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.shell.Configuration}.
  */
 public class ShellConfigPanel extends ConfigurationPanel {
 
-  private static final String[] encodings = new String[]{"Cp1252", "Cp850", "ISO-8859-1", "US-ASCII", "UTF-16", "UTF-8"};
+	private static final String[] encodings = new String[] { "Cp1252", "Cp850",
+			"ISO-8859-1", "US-ASCII", "UTF-16", "UTF-8" };
+
+	private JPanel encodingPanel = new JPanel();
+
+	private JRadioButton encodingDefaultRadioButton = new JRadioButton();
+
+	private JRadioButton encodingOtherRadioButton = new JRadioButton();
+
+	private ButtonGroup buttonGroup = new ButtonGroup();
+
+	private JComboBox encodingComboBox = new JComboBox();
+
+	public ShellConfigPanel() {
+		setName(resources.getString("config.shell.name"));
+		setLayout(new GridBagLayout());
 		
-  private JPanel       encodingPanel              = new JPanel(); 
-  private JRadioButton encodingDefaultRadioButton = new JRadioButton();
-  private JRadioButton encodingOtherRadioButton   = new JRadioButton();
-  private ButtonGroup  buttonGroup                = new ButtonGroup();
-  private JComboBox    encodingComboBox           = new JComboBox();
-
-  public ShellConfigPanel() {
-    setLayout(new GridBagLayout());
-
-    setName(resources.getString("config.shell.name"));
+		GridBuilder builder = new GridBuilder(new double[]{1.0d});
+		
+		builder.nextRow(1.0d);
 
 		encodingPanel.setLayout(new GridBagLayout());
-		encodingPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.shell.encoding")));
-		add(encodingPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
+		encodingPanel.setBorder(new TitledBorder(BorderFactory
+				.createEtchedBorder(), resources
+				.getString("config.shell.encoding")));
+		add(encodingPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
 
-			String defaultEncoding = System.getProperty("file.encoding");
-			encodingDefaultRadioButton.setText(MessageFormat.format(resources.getString("config.shell.encodingDefault"), new Object[]{defaultEncoding}));
-			buttonGroup.add(encodingDefaultRadioButton);
-			encodingPanel.add(encodingDefaultRadioButton, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+		GridBuilder encodingBuilder = new GridBuilder(new double[]{0.0d, 1.0d});
+		
+		encodingBuilder.nextRow();
 
-			encodingOtherRadioButton.setText(resources.getString("config.shell.encodingOther"));
-			buttonGroup.add(encodingOtherRadioButton);		
-			encodingPanel.add(encodingOtherRadioButton, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
-	    
-	    encodingComboBox.setEditable(true);
-	    encodingComboBox.setModel(new DefaultComboBoxModel(encodings));
-			encodingOtherRadioButton.addItemListener(new ItemListener() {
-				public void itemStateChanged(ItemEvent ev) {
-					encodingComboBox.setEnabled(encodingOtherRadioButton.isSelected());
-				}
-			});
-			encodingPanel.add(encodingComboBox, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
+		String defaultEncoding = System.getProperty("file.encoding");
+		encodingDefaultRadioButton.setText(MessageFormat.format(resources
+				.getString("config.shell.encodingDefault"),
+				new Object[] { defaultEncoding }));
+		buttonGroup.add(encodingDefaultRadioButton);
+		encodingPanel.add(encodingDefaultRadioButton, encodingBuilder.nextColumn().gridWidthRemainder());
 
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+		encodingBuilder.nextRow();
 
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+		encodingOtherRadioButton.setText(resources
+				.getString("config.shell.encodingOther"));
+		buttonGroup.add(encodingOtherRadioButton);
+		encodingPanel.add(encodingOtherRadioButton, encodingBuilder.nextColumn());
+
+		encodingComboBox.setEditable(true);
+		encodingComboBox.setModel(new DefaultComboBoxModel(encodings));
+		encodingOtherRadioButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent ev) {
+				encodingComboBox.setEnabled(encodingOtherRadioButton
+						.isSelected());
+			}
+		});
+		encodingPanel.add(encodingComboBox, encodingBuilder.nextColumn());
+	}
+
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
 
 		encodingDefaultRadioButton.setSelected(config.getUseDefaultEncoding());
-		encodingOtherRadioButton  .setSelected(!config.getUseDefaultEncoding());
-		encodingComboBox.setEnabled          (!config.getUseDefaultEncoding());
-		encodingComboBox.setSelectedItem     (config.getEncoding());
-  }
+		encodingOtherRadioButton.setSelected(!config.getUseDefaultEncoding());
+		encodingComboBox.setEnabled(!config.getUseDefaultEncoding());
+		encodingComboBox.setSelectedItem(config.getEncoding());
+	}
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
 
-    config.setUseDefaultEncoding(encodingDefaultRadioButton.isSelected());
-    config.setEncoding          ((String)encodingComboBox.getSelectedItem());
-  }
+		config.setUseDefaultEncoding(encodingDefaultRadioButton.isSelected());
+		config.setEncoding((String) encodingComboBox.getSelectedItem());
+	}
 }

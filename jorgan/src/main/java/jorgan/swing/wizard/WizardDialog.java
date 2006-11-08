@@ -18,125 +18,142 @@
  */
 package jorgan.swing.wizard;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.Frame;
+import java.awt.event.ActionEvent;
+import java.util.ResourceBundle;
 
-import jorgan.swing.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+
+import jorgan.swing.StandardDialog;
 
 /**
- * A wizard like dialog.
+ * A dialog showing a wizard.
  */
 public class WizardDialog extends StandardDialog {
 
-  /**
-   * The resource bundle.
-   */
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+	/**
+	 * The resource bundle.
+	 */
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.swing.resources");
 
-  private Action previousAction = new PreviousAction();
-  private Action nextAction     = new NextAction();
-  private Action finishAction   = new FinishAction();
-  
-  private WizardListener listener = new InternalWizardListener();
-  
-  private Wizard wizard;
-  
-  /**
-   * Constructor.
-   */
-  public WizardDialog(Frame owner) {
-    super(owner);
+	private Action previousAction = new PreviousAction();
 
-    setTitle(resources.getString("wizard.title"));
+	private Action nextAction = new NextAction();
 
-    addAction(previousAction);
-    addAction(nextAction);
-    addAction(finishAction, true);
-    addCancelAction();
-    
-    setWizard(new BasicWizard());       
-  }
+	private Action finishAction = new FinishAction();
 
-  public void setWizard(Wizard wizard) {
-    if (this.wizard != null) {
-      this.wizard.removeWizardListener(listener);
-    }
-    
-    this.wizard = wizard;
-    
-    if (this.wizard != null) {
-      this.wizard.addWizardListener(listener);
+	private WizardListener listener = new InternalWizardListener();
 
-      listener.wizardChanged();
-    }
-  }
-  
-  private class PreviousAction extends AbstractAction {
+	private Wizard wizard;
 
-    public PreviousAction() {
-      putValue(Action.NAME, resources.getString("wizard.previous"));
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param owner
+	 *            the owner of this dialog
+	 */
+	public WizardDialog(Frame owner) {
+		super(owner);
 
-    public void actionPerformed(ActionEvent ev) {
-      wizard.previous();
-    }
-  }
+		setTitle(resources.getString("wizard.title"));
 
-  private class NextAction extends AbstractAction {
+		addAction(previousAction);
+		addAction(nextAction);
+		addAction(finishAction, true);
+		addCancelAction();
 
-    public NextAction() {
-      putValue(Action.NAME, resources.getString("wizard.next"));
-    }
+		setWizard(new BasicWizard());
+	}
 
-    public void actionPerformed(ActionEvent ev) {
-      wizard.next();
-    }
-  }
+	/**
+	 * Set the wizard.
+	 * 
+	 * @param wizard
+	 *            the wizard
+	 */
+	public void setWizard(Wizard wizard) {
+		if (this.wizard != null) {
+			this.wizard.removeWizardListener(listener);
+		}
 
-  private class FinishAction extends AbstractAction {
+		this.wizard = wizard;
 
-    public FinishAction() {
-      putValue(Action.NAME, resources.getString("wizard.finish"));
-    }
+		if (this.wizard != null) {
+			this.wizard.addWizardListener(listener);
 
-    public void actionPerformed(ActionEvent ev) {
-      wizard.finish();
-    }
-  }
+			listener.wizardChanged();
+		}
+	}
 
-  private class InternalWizardListener implements WizardListener {
-    public void wizardChanged() {
-      Page current = wizard.getCurrentPage();
-      if (current == null) {
-        setContent(null);
-        previousAction.setEnabled(false);
-        nextAction    .setEnabled(false);
-        finishAction  .setEnabled(false);
-      } else {
-        JComponent component = current.getComponent();
-        if (component == null) {
-          setContent(null);
-          setDescription(null);
-        } else {
-          if (!component.equals(getContent())) {
-            setContent(component);
-          }
-          setDescription(current.getDescription());
-        }
-        previousAction.setEnabled(wizard.hasPrevious() && wizard.getCurrentPage().allowsPrevious());
-        nextAction    .setEnabled(wizard.hasNext()     && wizard.getCurrentPage().allowsNext());
-        finishAction  .setEnabled(wizard.allowsFinish());
-      }
-    }
-     
-    public void wizardCanceled() {
-      cancel();
-    }
-    
-    public void wizardFinished() {
-      ok();
-    }
-  }
+	private class PreviousAction extends AbstractAction {
+
+		private PreviousAction() {
+			putValue(Action.NAME, resources.getString("wizard.previous"));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			wizard.previous();
+		}
+	}
+
+	private class NextAction extends AbstractAction {
+
+		private NextAction() {
+			putValue(Action.NAME, resources.getString("wizard.next"));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			wizard.next();
+		}
+	}
+
+	private class FinishAction extends AbstractAction {
+
+		private FinishAction() {
+			putValue(Action.NAME, resources.getString("wizard.finish"));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			wizard.finish();
+		}
+	}
+
+	private class InternalWizardListener implements WizardListener {
+		public void wizardChanged() {
+			Page current = wizard.getCurrentPage();
+			if (current == null) {
+				setContent(null);
+				previousAction.setEnabled(false);
+				nextAction.setEnabled(false);
+				finishAction.setEnabled(false);
+			} else {
+				JComponent component = current.getComponent();
+				if (component == null) {
+					setContent(null);
+					setDescription(null);
+				} else {
+					if (!component.equals(getContent())) {
+						setContent(component);
+					}
+					setDescription(current.getDescription());
+				}
+				previousAction.setEnabled(wizard.hasPrevious()
+						&& wizard.getCurrentPage().allowsPrevious());
+				nextAction.setEnabled(wizard.hasNext()
+						&& wizard.getCurrentPage().allowsNext());
+				finishAction.setEnabled(wizard.allowsFinish());
+			}
+		}
+
+		public void wizardCancelled() {
+			cancel();
+		}
+
+		public void wizardFinished() {
+			ok();
+		}
+	}
 }

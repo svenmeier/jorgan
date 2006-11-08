@@ -29,51 +29,55 @@ import jorgan.shell.*;
  */
 public class App {
 
-  private static Properties properties = new Properties();
-  
-  static {
-    try {
-      properties.load(App.class.getResourceAsStream("app.properties"));
-    } catch (IOException ex) {
-      throw new Error(ex);
-    }
-  }
-  
-  /**
-   * Get the current version of jOrgan.
-   */
-  public static String getVersion() {
-    return properties.getProperty("jorgan.version");
-  }
+	private static Properties properties = new Properties();
 
-  /**
-   * Main entrance to jOrgan.
-   *
-   * @param args  command line arguments
-   */
-  public static void main(String[] args) {
+	static {
+		try {
+			properties.load(App.class.getResourceAsStream("app.properties"));
+		} catch (IOException ex) {
+			throw new Error(ex);
+		}
+	}
 
-    Arguments arguments = new Arguments();
-    if (!arguments.parse(args)) {
-      arguments.printUsage();
-      System.exit(1);
-    }
+	/**
+	 * Get the current version of jOrgan.
+	 * 
+	 * @return the current version
+	 */
+	public static String getVersion() {
+		return properties.getProperty("jorgan.version");
+	}
 
-    File file = arguments.getFile();
-    if (file == null && jorgan.io.Configuration.instance().getRecentOpenOnStartup()) {
-      file = jorgan.io.Configuration.instance().getRecentFile();
-    }
+	/**
+	 * Main entrance to jOrgan.
+	 * 
+	 * @param args
+	 *            command line arguments
+	 */
+	public static void main(String[] args) {
 
-    UI ui;
-    if (arguments.getHeadless()) {
-      ui = new OrganShell();
-    } else {
-      ui = new OrganFrame();
-    }
-    ui.start(file);
+		Arguments arguments = new Arguments();
+		if (!arguments.parse(args)) {
+			arguments.printUsage();
+			System.exit(1);
+		}
 
-    Configuration.instance().backup();
+		File file = arguments.getFile();
+		if (file == null
+				&& jorgan.io.Configuration.instance().getRecentOpenOnStartup()) {
+			file = jorgan.io.Configuration.instance().getRecentFile();
+		}
 
-    System.exit(0);
-  }
+		UI ui;
+		if (arguments.getHeadless()) {
+			ui = new OrganShell();
+		} else {
+			ui = new OrganFrame();
+		}
+		ui.start(file);
+
+		Configuration.instance().backup();
+
+		System.exit(0);
+	}
 }

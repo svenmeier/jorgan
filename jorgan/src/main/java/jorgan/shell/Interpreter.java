@@ -18,191 +18,213 @@
  */
 package jorgan.shell;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * An interpreter of commands.
- *
+ * 
  * @see jorgan.shell.Command
  */
 public class Interpreter {
 
-  /**
-   * The default prompt.
-   */
-  public static final String DEFAULT_PROMPT = ">";
+	/**
+	 * The default prompt.
+	 */
+	public static final String DEFAULT_PROMPT = ">";
 
-  /**
-   * Should this interpreter stop.
-   */
-  private boolean stop = false;
+	/**
+	 * Should this interpreter stop.
+	 */
+	private boolean stop = false;
 
-  /**
-   * The commands to interpret.
-   */
-  private List commands;
+	/**
+	 * The commands to interpret.
+	 */
+	private List commands;
 
-  /**
-   * The unknown command.
-   */
-  private Command unknown;
+	/**
+	 * The unknown command.
+	 */
+	private Command unknown;
 
-  /**
-   * The prompt to display.
-   */
-  private String prompt = DEFAULT_PROMPT;
+	/**
+	 * The prompt to display.
+	 */
+	private String prompt = DEFAULT_PROMPT;
 
-  /**
-   * The encoding of this interpreter.
-   */
-  private String encoding;
+	/**
+	 * The encoding of this interpreter.
+	 */
+	private String encoding;
 
-  /**
-   * The reader used to read from system in.
-   */
-  private BufferedReader reader;
+	/**
+	 * The reader used to read from system in.
+	 */
+	private BufferedReader reader;
 
-  /**
-   * The writer to write to system out.
-   */
-  private PrintWriter writer;
+	/**
+	 * The writer to write to system out.
+	 */
+	private PrintWriter writer;
 
-  /**
-   * Create a new interpreter for commands.
-   *
-   * @param commands  the command to use
-   * @param unknown   the command to use in case of an unknown command
-   */
-  public Interpreter(List commands, Command unknown) {
+	/**
+	 * Create a new interpreter for commands.
+	 * 
+	 * @param commands
+	 *            the command to use
+	 * @param unknown
+	 *            the command to use in case of an unknown command
+	 */
+	public Interpreter(List commands, Command unknown) {
 
-    this.commands = commands;
-    this.unknown  = unknown;
-  }
+		this.commands = commands;
+		this.unknown = unknown;
+	}
 
-  /**
-   * Set the prompt to use.
-   * 
-   * @param prompt  the prompt to use
-   */
-  public void setPrompt(String prompt) {
-    this.prompt = prompt;
-  }
+	/**
+	 * Set the prompt to use.
+	 * 
+	 * @param prompt
+	 *            the prompt to use
+	 */
+	public void setPrompt(String prompt) {
+		this.prompt = prompt;
+	}
 
-  /**
-   * Set the encoding to use.
-   * 
-   * @param encoding    the encoding to use
-   */
-  public void setEncoding(String encoding) throws UnsupportedEncodingException {
-    reader = new BufferedReader(new InputStreamReader (System.in , encoding));
-    writer = new PrintWriter   (new OutputStreamWriter(System.out, encoding));
+	/**
+	 * Set the encoding to use.
+	 * 
+	 * @param encoding
+	 *            the encoding to use
+	 * @throws UnsupportedEncodingException
+	 */
+	public void setEncoding(String encoding)
+			throws UnsupportedEncodingException {
+		reader = new BufferedReader(new InputStreamReader(System.in, encoding));
+		writer = new PrintWriter(new OutputStreamWriter(System.out, encoding));
 
-    this.encoding = encoding;
-  }
+		this.encoding = encoding;
+	}
 
-  public String getEncoding() {
-    return encoding;
-  }
-  
-  /**
-   * Start the interpretation.
-   */
-  public void start() {
-    try {
-      while (!stop) {
-        write(prompt);
-        String line = readLine();
-        StringTokenizer tokens = new StringTokenizer(line, " ");
-        if (tokens.hasMoreTokens()) {
-          Command command = getCommand(tokens.nextToken());
-          String param = null;
-          if (tokens.hasMoreTokens()) {
-            param = tokens.nextToken();
-          }
-          command.execute(param);
-        }
-      }
-    } catch (IOException ex) {
-      throw new Error("unexpected", ex);
-    }
-  }
+	/**
+	 * Get the encoding.
+	 * 
+	 * @return the encoding
+	 */
+	public String getEncoding() {
+		return encoding;
+	}
 
-  /**
-   * Stop this interpreter.
-   */
-  public void stop() {
-    stop = true;
-  }
+	/**
+	 * Start the interpretation.
+	 */
+	public void start() {
+		try {
+			while (!stop) {
+				write(prompt);
+				String line = readLine();
+				StringTokenizer tokens = new StringTokenizer(line, " ");
+				if (tokens.hasMoreTokens()) {
+					Command command = getCommand(tokens.nextToken());
+					String param = null;
+					if (tokens.hasMoreTokens()) {
+						param = tokens.nextToken();
+					}
+					command.execute(param);
+				}
+			}
+		} catch (IOException ex) {
+			throw new Error("unexpected", ex);
+		}
+	}
 
-  /**
-   * Read a line.
-   * 
-   * @return read line
-   * @throws IOException
-   */
-  public String readLine() throws IOException {
-    if (reader == null) {
-      reader = new BufferedReader(new InputStreamReader(System.in));
-    }
-    return reader.readLine();
-  }
+	/**
+	 * Stop this interpreter.
+	 */
+	public void stop() {
+		stop = true;
+	}
 
-  /**
-   * Write text with new line.
-   *
-   * @param text    text to print
-   */
-  public void writeln(String text) {
-    write(text);
-    write("\n");
-  }
+	/**
+	 * Read a line.
+	 * 
+	 * @return read line
+	 * @throws IOException
+	 */
+	public String readLine() throws IOException {
+		if (reader == null) {
+			reader = new BufferedReader(new InputStreamReader(System.in));
+		}
+		return reader.readLine();
+	}
 
-  /**
-   * Write text.
-   *
-   * @param text    text to print
-   */
-  public void write(String text) {
-    if (writer == null) {
-      writer = new PrintWriter(new OutputStreamWriter(System.out));
-    }
-    writer.print(text);
-    writer.flush();
-  }
+	/**
+	 * Write text with new line.
+	 * 
+	 * @param text
+	 *            text to print
+	 */
+	public void writeln(String text) {
+		write(text);
+		write("\n");
+	}
 
-  /**
-   * Get the command for the given name. If no command for the name
-   * can be looked up, the 'unkown' command will be returned.
-   *
-   * @param name  name to get command for
-   * @return      the command
-   */
-  public Command getCommand(String name) {
-    for (int c = 0; c < commands.size(); c++) {
-      Command command = (Command)commands.get(c);
-      if (name.equals(command.getName())) {
-        return command;
-      }
-    }
-    return unknown;
-  }
+	/**
+	 * Write text.
+	 * 
+	 * @param text
+	 *            text to print
+	 */
+	public void write(String text) {
+		if (writer == null) {
+			writer = new PrintWriter(new OutputStreamWriter(System.out));
+		}
+		writer.print(text);
+		writer.flush();
+	}
 
-  /**
-   * Get the count of commands.
-   *
-   * @return    the count of commands
-   */
-  public int getCommandCount() {
-    return commands.size();
-  }
+	/**
+	 * Get the command for the given name. If no command for the name can be
+	 * looked up, the 'unkown' command will be returned.
+	 * 
+	 * @param name
+	 *            name to get command for
+	 * @return the command
+	 */
+	public Command getCommand(String name) {
+		for (int c = 0; c < commands.size(); c++) {
+			Command command = (Command) commands.get(c);
+			if (name.equals(command.getName())) {
+				return command;
+			}
+		}
+		return unknown;
+	}
 
-  /**
-   * Get the command for the given index.
-   *
-   * @return    the index to get the command for
-   */
-  public Command getCommand(int index) {
-    return (Command)commands.get(index);
-  }
+	/**
+	 * Get the count of commands.
+	 * 
+	 * @return the count of commands
+	 */
+	public int getCommandCount() {
+		return commands.size();
+	}
+
+	/**
+	 * Get the command for the given index.
+	 * 
+	 * @param index
+	 *            the index to get the command for
+	 * @return the command
+	 */
+	public Command getCommand(int index) {
+		return (Command) commands.get(index);
+	}
 }

@@ -18,126 +18,147 @@
  */
 package jorgan.swing;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.ArrayList;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  * Selector of a file.
  */
 public class FileSelector extends JPanel {
 
-  /**
-   * The textField used to edit the selected file.
-   */
-  private JTextField textField = new JTextField();
+	/**
+	 * The textField used to edit the selected file.
+	 */
+	private JTextField textField = new JTextField();
 
-  /**
-   * The button used to edit the selected file.
-   */
-  private JButton button = new JButton("...");
-  
-  /**
-   * The fileChooser to use for file selection.
-   */
-  private JFileChooser chooser ;
-  
-  /**
-   * The listeners to changes.
-   */
-  private java.util.List listeners = new ArrayList();
-  
-  /**
-   * The filter for file selection.
-   */
-  private javax.swing.filechooser.FileFilter filter; 
-  
-  /**
-   * Create a new selector.
-   */
-  public FileSelector() {
-    super(new BorderLayout());
+	/**
+	 * The button used to edit the selected file.
+	 */
+	private JButton button = new JButton("...");
 
-    textField.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
-        fireStateChanged();
-      }
-      public void insertUpdate(DocumentEvent e) {
-        fireStateChanged();
-      }
-      public void removeUpdate(DocumentEvent e) {
-        fireStateChanged();
-      }
-    });
-    add(textField, BorderLayout.CENTER);
-    
-    button.setMargin(new Insets(0, 0, 0, 0));
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ev) {
-        showFileChooser();
-      }
-    });
-    add(button, BorderLayout.EAST);
-  }
+	/**
+	 * The fileChooser to use for file selection.
+	 */
+	private JFileChooser chooser;
 
-  public void setEnabled(boolean enabled) {
-    textField.setEnabled(enabled);
-    button.setEnabled(enabled);
-  }
+	/**
+	 * The listeners to changes.
+	 */
+	private java.util.List listeners = new ArrayList();
 
-  public void addChangeListener(ChangeListener listener) {
-    listeners.add(listener); 
-  }
-  
-  public void removeChangeListener(ChangeListener listener) {
-    listeners.remove(listener); 
-  }
-  
-  protected void showFileChooser() {
-    if (chooser == null) {
-      chooser = new JFileChooser();
-    }
-    chooser.setSelectedFile(getSelectedFile());
-    chooser.setFileFilter  (filter);
-    if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-      textField.setText(chooser.getSelectedFile().getAbsolutePath());
-    }
-  }
-  
-  protected void fireStateChanged() {
-    for (int l = 0; l < listeners.size(); l++) {
-      ChangeListener listener = (ChangeListener)listeners.get(l);
-      listener.stateChanged(new ChangeEvent(this));
-    }
-  }
-  
-  /**
-   * Set the selected file.
-   *
-   * @param file  the file to select
-   */
-  public void setSelectedFile(File file) {
-    if (file == null) {
-      textField.setText("");
-    } else {
-      textField.setText(file.getAbsolutePath());
-    }
-  }
+	/**
+	 * The filter for file selection.
+	 */
+	private javax.swing.filechooser.FileFilter filter;
 
-  /**
-   * Get the selected file.
-   *
-   * @return  the selected file
-   */
-  public File getSelectedFile() {
-    if ("".equals(textField.getText())) {
-      return null;
-    } else {
-      return new File(textField.getText());
-    }
-  }
+	/**
+	 * Create a new selector.
+	 */
+	public FileSelector() {
+		super(new BorderLayout());
+
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				fireStateChanged();
+			}
+
+			public void insertUpdate(DocumentEvent e) {
+				fireStateChanged();
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				fireStateChanged();
+			}
+		});
+		add(textField, BorderLayout.CENTER);
+
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				showFileChooser();
+			}
+		});
+		add(button, BorderLayout.EAST);
+	}
+
+	public void setEnabled(boolean enabled) {
+		textField.setEnabled(enabled);
+		button.setEnabled(enabled);
+	}
+
+	/**
+	 * Add a listener to changes.
+	 * 
+	 * @param listener	the listener to add
+	 */
+	public void addChangeListener(ChangeListener listener) {
+		listeners.add(listener);
+	}
+
+	/**
+	 * Remove a listener to changes.
+	 * 
+	 * @param listener	the listener to remove
+	 */
+	public void removeChangeListener(ChangeListener listener) {
+		listeners.remove(listener);
+	}
+
+	private void showFileChooser() {
+		if (chooser == null) {
+			chooser = new JFileChooser();
+		}
+		chooser.setSelectedFile(getSelectedFile());
+		chooser.setFileFilter(filter);
+		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+			textField.setText(chooser.getSelectedFile().getAbsolutePath());
+		}
+	}
+
+	private void fireStateChanged() {
+		for (int l = 0; l < listeners.size(); l++) {
+			ChangeListener listener = (ChangeListener) listeners.get(l);
+			listener.stateChanged(new ChangeEvent(this));
+		}
+	}
+
+	/**
+	 * Set the selected file.
+	 * 
+	 * @param file
+	 *            the file to select
+	 */
+	public void setSelectedFile(File file) {
+		if (file == null) {
+			textField.setText("");
+		} else {
+			textField.setText(file.getAbsolutePath());
+		}
+	}
+
+	/**
+	 * Get the selected file.
+	 * 
+	 * @return the selected file
+	 */
+	public File getSelectedFile() {
+		if ("".equals(textField.getText())) {
+			return null;
+		} else {
+			return new File(textField.getText());
+		}
+	}
 }

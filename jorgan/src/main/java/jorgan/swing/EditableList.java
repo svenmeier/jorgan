@@ -18,90 +18,131 @@
  */
 package jorgan.swing;
 
-import java.util.*;
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-import javax.swing.*;
-import javax.swing.event.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 /**
  * An editable list.
- */ 
+ */
 public class EditableList extends JPanel {
 
-  private JTextField textField = new JTextField();
-  private JList list = new JList();
-  
-  private boolean checking = false;
+	private JTextField textField = new JTextField();
 
-  private java.util.List values = new ArrayList();
-  
-  public EditableList() {
-    super(new BorderLayout());
-        
-    textField.getDocument().addDocumentListener(new DocumentListener() {      
-      public void insertUpdate(DocumentEvent e) {
-        checkSelectedValue();        
-      }
+	private JList list = new JList();
 
-      public void removeUpdate(DocumentEvent e) {
-        checkSelectedValue();        
-      }
-      
-      public void changedUpdate(DocumentEvent e) {
-        checkSelectedValue();        
-      }
-    });
-    add(textField, BorderLayout.NORTH);
+	private boolean checking = false;
 
-    list.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        if (!checking) {
-          textField.setText((String)list.getSelectedValue());      
-        }
-      }
-    });
-    add(new JScrollPane(list), BorderLayout.CENTER);
-  }
+	private java.util.List values = new ArrayList();
 
-  private void checkSelectedValue() {
-    if (values != null) {
-      checking = true;
-      int index = values.indexOf(textField.getText());
-      if (index != -1) {
-        list.setSelectedIndex(index);
-      }
-      checking = false;
-    }
-  }
-  
-  public void setValues(java.util.List values) {
-    this.values = values;
-     
-    DefaultListModel model = new DefaultListModel();
+	/**
+	 * Constructor.
+	 */
+	public EditableList() {
+		super(new BorderLayout());
 
-    for (int v = 0; v < values.size(); v++) {
-      model.addElement(values.get(v));
-    }
-    list.setModel(model);
-  }
+		textField.getDocument().addDocumentListener(new DocumentListener() {
+			public void insertUpdate(DocumentEvent e) {
+				checkSelectedValue();
+			}
 
-  public void setValues(String[] values) {
-    setValues(Arrays.asList(values));
-  }
+			public void removeUpdate(DocumentEvent e) {
+				checkSelectedValue();
+			}
 
-  public void setSelectedValue(String value) {
-    textField.setText(value);
-    
-    checkSelectedValue();
-  }
+			public void changedUpdate(DocumentEvent e) {
+				checkSelectedValue();
+			}
+		});
+		add(textField, BorderLayout.NORTH);
 
-  public String getSelectedValue() {
-    return textField.getText();
-  }
-  
-  public int getSelectedIndex() {
-    
-    return values.indexOf(textField.getText());
-  }
+		list.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				if (!checking) {
+					textField.setText((String) list.getSelectedValue());
+				}
+			}
+		});
+		add(new JScrollPane(list), BorderLayout.CENTER);
+	}
+
+	private void checkSelectedValue() {
+		if (values != null) {
+			checking = true;
+			int index = values.indexOf(textField.getText());
+			if (index != -1) {
+				list.setSelectedIndex(index);
+			}
+			checking = false;
+		}
+	}
+
+	/**
+	 * Set the values of this list.
+	 * 
+	 * @param values
+	 *            the list values
+	 */
+	public void setValues(List values) {
+		this.values = values;
+
+		DefaultListModel model = new DefaultListModel();
+
+		for (int v = 0; v < values.size(); v++) {
+			model.addElement(values.get(v));
+		}
+		list.setModel(model);
+	}
+
+	/**
+	 * Set the values of this list.
+	 * 
+	 * @param values
+	 *            the list values
+	 */
+	public void setValues(String[] values) {
+		setValues(Arrays.asList(values));
+	}
+
+	/**
+	 * Set the selected value.
+	 * 
+	 * @param value
+	 *            the selectedvalues
+	 */
+	public void setSelectedValue(String value) {
+		textField.setText(value);
+
+		checkSelectedValue();
+	}
+
+	/**
+	 * Get the selected value.
+	 * 
+	 * @return	the selected value
+	 */
+	public String getSelectedValue() {
+		return textField.getText();
+	}
+
+	/**
+	 * Get the selected index.
+	 * 
+	 * @return	the selected index
+	 */
+	public int getSelectedIndex() {
+
+		return values.indexOf(textField.getText());
+	}
 }

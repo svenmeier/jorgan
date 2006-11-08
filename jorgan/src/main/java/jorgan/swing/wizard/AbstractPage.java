@@ -26,80 +26,81 @@ import java.beans.PropertyChangeListener;
  */
 public abstract class AbstractPage implements Page, PropertyChangeListener {
 
-  /**
-   * The containing wizard.
-   */
-  private Wizard wizard;
-  
-  private boolean ignorePropertyChangeEventsWhileNotifyingWizard = false;
-  
-  /**
-   * Set the wizard.
-   * 
-   * @param wizard wizard to set
-   */
-  public void setWizard(Wizard wizard) {
-    this.wizard = wizard;
-  }
+	/**
+	 * The containing wizard.
+	 */
+	private Wizard wizard;
 
-  /**
-   * Default implementation does nothing.
-   */
-  public void enteringFromNext() {
-  }
+	private boolean ignorePropertyChangeEventsWhileNotifyingWizard = false;
 
-  /**
-   * Default implementation does nothing.
-   */
-  public void enteringFromPrevious() {
-  }
+	/**
+	 * Set the wizard.
+	 * 
+	 * @param wizard
+	 *            wizard to set
+	 */
+	public void setWizard(Wizard wizard) {
+		this.wizard = wizard;
+	}
 
-  /**
-   * Get a description.
-   * 
-   * @return  description
-   */
-  public String getDescription() {
-    return null;
-  }
+	/**
+	 * Default implementation does nothing.
+	 */
+	public void enteringFromNext() {
+	}
 
-  /**
-   * Default implementation allows leaving to next page.
-   */
-  public boolean allowsNext() {
-    return true;
-  }
+	/**
+	 * Default implementation does nothing.
+	 */
+	public void enteringFromPrevious() {
+	}
 
-  /**
-   * Default implementation allows leaving to previous page.
-   */
-  public boolean allowsPrevious() {
-    return true;
-  }
+	/**
+	 * Get a description.
+	 * 
+	 * @return description
+	 */
+	public String getDescription() {
+		return null;
+	}
 
-  /**
-   * Default implementation does nothing.
-   */
-  public boolean leavingToNext() {
-    return true;
-  }
+	/**
+	 * Default implementation allows leaving to next page.
+	 */
+	public boolean allowsNext() {
+		return true;
+	}
 
-  /**
-   * Default implementation does nothing.
-   */
-  public boolean leavingToPrevious() {
-    return true;
-  }
-  
-  public void propertyChange(PropertyChangeEvent evt) {
-    if (!ignorePropertyChangeEventsWhileNotifyingWizard) {
-      ignorePropertyChangeEventsWhileNotifyingWizard = true;
+	/**
+	 * Default implementation allows leaving to previous page.
+	 */
+	public boolean allowsPrevious() {
+		return true;
+	}
 
-      if (wizard != null) {
-        wizard.pageChanged(this);
-      }
+	/**
+	 * Default implementation does nothing.
+	 */
+	public boolean leavingToNext() {
+		return true;
+	}
 
-      ignorePropertyChangeEventsWhileNotifyingWizard = false;
-    }
-  }
+	/**
+	 * Default implementation does nothing.
+	 */
+	public boolean leavingToPrevious() {
+		return true;
+	}
+
+	public void propertyChange(PropertyChangeEvent evt) {
+		if (!ignorePropertyChangeEventsWhileNotifyingWizard) {
+			ignorePropertyChangeEventsWhileNotifyingWizard = true;
+
+			if (wizard != null) {
+				wizard.pageChanged(this);
+			}
+
+			ignorePropertyChangeEventsWhileNotifyingWizard = false;
+		}
+	}
 }

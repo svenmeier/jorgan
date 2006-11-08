@@ -70,6 +70,7 @@ import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.mac.TweakMac;
 import jorgan.io.DispositionReader;
 import jorgan.io.DispositionWriter;
+import jorgan.io.disposition.History;
 import jorgan.swing.StatusBar;
 import jorgan.xml.XMLFormatException;
 import spin.over.SpinOverEvaluator;
@@ -408,8 +409,10 @@ public class OrganFrame extends JFrame implements UI {
             setFile(file);
 
             setOrgan(new OrganSession(organ));
-
-            return;
+            
+            if (Configuration.instance().getFullScreenOnLoad()) {
+                fullScreenAction.goFullScreen();
+            }
         } catch (XMLFormatException ex) {
             logger.log(Level.INFO, "opening organ failed", ex);
 
@@ -418,8 +421,10 @@ public class OrganFrame extends JFrame implements UI {
         } catch (IOException ex) {
             showMessage("action.open.exception",
                     new String[] { file.getName() });
+            
+            jorgan.io.Configuration.instance().removeRecentFile(file);
+            
         }
-        jorgan.io.Configuration.instance().removeRecentFile(file);
     }
 
     public boolean saveOrgan() {
@@ -438,6 +443,8 @@ public class OrganFrame extends JFrame implements UI {
      */
     public boolean saveOrgan(File file) {
         try {
+        	new History(file).add();
+        	
             DispositionWriter writer = new DispositionWriter(
                     new FileOutputStream(file));
             writer.write(session.getOrgan());
@@ -536,15 +543,7 @@ public class OrganFrame extends JFrame implements UI {
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
 
-                // realize first so changing state has effect
-                pack();
-                jorgan.io.Configuration.instance().addConfigurationListener(
-                        configurationListener);
-                Rectangle rect = Configuration.instance().getFrameBounds();
-                if (rect != null) {
-                    setBounds(rect);
-                }
-                setExtendedState(Configuration.instance().getFrameState());
+                updateState();
 
                 updateMenu();
 
@@ -586,7 +585,19 @@ public class OrganFrame extends JFrame implements UI {
                 .getString("exception.title"), JOptionPane.ERROR_MESSAGE);
     }
 
-    /**
+    private void updateState() {
+		// realize first so changing state has effect
+		pack();
+		jorgan.io.Configuration.instance().addConfigurationListener(
+		        configurationListener);
+		Rectangle rect = Configuration.instance().getFrameBounds();
+		if (rect != null) {
+		    setBounds(rect);
+		}
+		setExtendedState(Configuration.instance().getFrameState());
+	}
+
+	/**
      * The action that initiates a new organ.
      */
     private class NewAction extends AbstractAction {
@@ -826,33 +837,37 @@ public class OrganFrame extends JFrame implements UI {
 
         public void actionPerformed(ActionEvent ev) {
             if (dialogs.isEmpty()) {
-                List consoles = session.getOrgan().getCandidates(Console.class);
-                for (int c = 0; c < consoles.size(); c++) {
-                    Console console = (Console) consoles.get(c);
-                    String screen = console.getScreen();
-                    if (screen == null) {
-                        continue;
-                    }
-                    if (Console.DEFAULT_SCREEN.equals(screen)) {
-                        screen = ConsoleDialog.getDefaultSceen();
-                    }
-
-                    ConsoleDialog dialog = (ConsoleDialog) dialogs.get(screen);
-                    if (dialog == null) {
-                        dialog = ConsoleDialog.create(OrganFrame.this, screen);
-                        dialog.setOrgan(session);
-                        dialogs.put(screen, dialog);
-                    }
-                    dialog.addConsole(console);
-                    dialog.addComponentListener(this);
-                    dialog.setVisible(true);
-                }
+                goFullScreen();
 
                 if (dialogs.isEmpty()) {
                     showMessage("action.fullScreen.failure", new Object[0]);
                 }
             }
         }
+
+		private void goFullScreen() {
+			List consoles = session.getOrgan().getCandidates(Console.class);
+			for (int c = 0; c < consoles.size(); c++) {
+			    Console console = (Console) consoles.get(c);
+			    String screen = console.getScreen();
+			    if (screen == null) {
+			        continue;
+			    }
+			    if (Console.DEFAULT_SCREEN.equals(screen)) {
+			        screen = ConsoleDialog.getDefaultSceen();
+			    }
+
+			    ConsoleDialog dialog = (ConsoleDialog) dialogs.get(screen);
+			    if (dialog == null) {
+			        dialog = ConsoleDialog.create(OrganFrame.this, screen);
+			        dialog.setOrgan(session);
+			        dialogs.put(screen, dialog);
+			    }
+			    dialog.addConsole(console);
+			    dialog.addComponentListener(this);
+			    dialog.setVisible(true);
+			}
+		}
 
         public void componentHidden(ComponentEvent e) {
             Iterator iterator = dialogs.values().iterator();

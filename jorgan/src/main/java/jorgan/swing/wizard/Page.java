@@ -18,65 +18,71 @@
  */
 package jorgan.swing.wizard;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
 /**
  * A single page of a wizard.
  */
 public interface Page {
 
-  /**
-   * Set the containing wizard of this page.
-   * 
-   * @param wizard    containing wizard
-   */
-  public void setWizard(Wizard wizard);
-  
-  /**
-   * Notification that this page is entered from the next page.
-   */
-  public void enteringFromNext();
-   
-  /**
-   * Notification that this page is entered from the previous page.
-   */
-  public void enteringFromPrevious();  
+	/**
+	 * Set the containing wizard of this page.
+	 * 
+	 * @param wizard
+	 *            containing wizard
+	 */
+	public void setWizard(Wizard wizard);
 
-  /**
-   * Get a description.
-   * 
-   * @return  description
-   */
-  public String getDescription();
-  
-  /**
-   * Get the component for this page.
-   * 
-   * @return  the component used to display this page
-   */
-  public JComponent getComponent();    
+	/**
+	 * Notification that this page is entered from the next page.
+	 */
+	public void enteringFromNext();
 
-  /**
-   * Is leaving to the next page allowed.
-   * 
-   * @return  <code>true</code> if this page can be leaved to the next page
-   */
-  public boolean allowsNext();
-   
-  /**
-   * Is leaving to the previous page allowed.
-   * 
-   * @return  <code>true</code> if this page can be leaved to the previous page
-   */
-  public boolean allowsPrevious();
+	/**
+	 * Notification that this page is entered from the previous page.
+	 */
+	public void enteringFromPrevious();
 
-  /**
-   * Notification that this page is leaved to the next page.
-   */       
-  public boolean leavingToNext();
-   
-  /**
-   * Notification that this page is leaved to the previous page.
-   */       
-  public boolean leavingToPrevious();  
+	/**
+	 * Get a description.
+	 * 
+	 * @return description
+	 */
+	public String getDescription();
+
+	/**
+	 * Get the component for this page.
+	 * 
+	 * @return the component used to display this page
+	 */
+	public JComponent getComponent();
+
+	/**
+	 * Is leaving to the next page allowed.
+	 * 
+	 * @return <code>true</code> if this page can be leaved to the next page
+	 */
+	public boolean allowsNext();
+
+	/**
+	 * Is leaving to the previous page allowed.
+	 * 
+	 * @return <code>true</code> if this page can be leaved to the previous
+	 *         page
+	 */
+	public boolean allowsPrevious();
+
+	/**
+	 * Notification that this page is left to the next page.
+	 * 
+	 * @return <code>true</code> if leaving is accepted
+	 */
+	public boolean leavingToNext();
+
+	/**
+	 * Notification that this page is left to the previous page.
+	 * 
+	 * @return <code>true</code> if leaving is accepted
+	 */
+	public boolean leavingToPrevious();
 }

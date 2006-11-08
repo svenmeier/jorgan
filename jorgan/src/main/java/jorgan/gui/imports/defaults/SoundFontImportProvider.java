@@ -18,7 +18,6 @@
  */
 package jorgan.gui.imports.defaults;
 
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
@@ -44,137 +43,145 @@ import jorgan.io.riff.RiffFormatException;
 import jorgan.io.soundfont.Preset;
 import jorgan.io.soundfont.SoundfontReader;
 import jorgan.swing.FileSelector;
+import jorgan.swing.GridBuilder;
 
 /**
  * A provider for an import from a SoundFont.
  */
 public class SoundFontImportProvider implements ImportProvider {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private OptionsPanel panel = new OptionsPanel();
+	private OptionsPanel panel = new OptionsPanel();
 
-  public JPanel getOptionsPanel() {
-      return panel;
-  }
-  
-  public String getName() {
-    return resources.getString("import.soundfont.name");
-  }
+	public JPanel getOptionsPanel() {
+		return panel;
+	}
 
-  public String getDescription() {
-    return resources.getString("import.soundfont.description");
-  }
+	public String getName() {
+		return resources.getString("import.soundfont.name");
+	}
 
-  public boolean hasStops() {
-    File file = panel.fileSelector.getSelectedFile();
-    
-    return file != null  &&
-           file.exists() &&
-           file.isFile();
-  }
-  
-  public List getStops() {      
-    List stops = new ArrayList();
+	public String getDescription() {
+		return resources.getString("import.soundfont.description");
+	}
 
-    File file = panel.fileSelector.getSelectedFile();
-    if (file != null) {
-      try {
-        stops = readStops(file);
-      } catch (RiffFormatException ex) {
-        panel.showException("import.soundfont.exception.invalid", new String[]{file.getPath()}, ex);
-      } catch (IOException ex) {
-        panel.showException("import.soundfont.exception", new String[]{file.getPath()}, ex);
-      }
-    }
+	public boolean hasStops() {
+		File file = panel.fileSelector.getSelectedFile();
 
-    return stops;    
-  }
-  
-  /**
-   * Read stops from the given soundfont file.
-   * 
-   * @param file    file to read from
-   * @return        list of stops
-   * @throws IOException
-   * @throws RiffFormatException
-   */  
-  private List readStops(File file) throws IOException, RiffFormatException {
+		return file != null && file.exists() && file.isFile();
+	}
 
-    ArrayList stops = new ArrayList();
+	public List getStops() {
+		List stops = new ArrayList();
 
-    InputStream input = null; 
-    try {
-        input = new FileInputStream(file);
-        
-        RiffChunk riffChunk = new SoundfontReader(input).read();
-        
-        java.util.List presets = SoundfontReader.getPresets(riffChunk);
-        Collections.sort(presets);
-        for (int p = 0; p < presets.size(); p++) {
-          Preset preset = (Preset)presets.get(p);
-        
-          Stop stop = new Stop();
-          stop.setName(preset.getName());
-          stop.setProgram(preset.getProgram()); 
-          stops.add(stop);
-        }
-    } finally {
-        if (input != null) {
-            input.close();
-        }
-    }
+		File file = panel.fileSelector.getSelectedFile();
+		if (file != null) {
+			try {
+				stops = readStops(file);
+			} catch (RiffFormatException ex) {
+				panel.showException("import.soundfont.exception.invalid",
+						new String[] { file.getPath() }, ex);
+			} catch (IOException ex) {
+				panel.showException("import.soundfont.exception",
+						new String[] { file.getPath() }, ex);
+			}
+		}
 
-    return stops;    
-  }
-  
-  /**
-   * A panel for options.
-   */
-  public class OptionsPanel extends JPanel {
+		return stops;
+	}
 
-    /**
-     * Insets to use by subclasse for a standard spacing around components.
-     */
-    protected Insets insets = new Insets(2,2,2,2);
+	/**
+	 * Read stops from the given soundfont file.
+	 * 
+	 * @param file
+	 *            file to read from
+	 * @return list of stops
+	 * @throws IOException
+	 * @throws RiffFormatException
+	 */
+	private List readStops(File file) throws IOException, RiffFormatException {
 
-    private JLabel       fileLabel        = new JLabel();
-    private FileSelector fileSelector     = new FileSelector();
-   
-    public OptionsPanel() {
-      setLayout(new GridBagLayout());
+		ArrayList stops = new ArrayList();
 
-      fileLabel.setText(resources.getString("import.soundfont.file"));
-      add(fileLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
+		InputStream input = null;
+		try {
+			input = new FileInputStream(file);
 
-      fileSelector.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
-          firePropertyChange("stops", null, null);
-        }
-      });
-      add(fileSelector, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, insets, 0, 0));
+			RiffChunk riffChunk = new SoundfontReader(input).read();
 
-      add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, insets, 0, 0));    
-    }
-  
-    /**
-     * Show an exception.
-     *
-     * @param message   message of exception
-     * @param args      arguments of message
-     * @param exception the exception
-     */
-    public void showException(String message, Object[] args, Exception exception) {
+			java.util.List presets = SoundfontReader.getPresets(riffChunk);
+			Collections.sort(presets);
+			for (int p = 0; p < presets.size(); p++) {
+				Preset preset = (Preset) presets.get(p);
 
-      message = MessageFormat.format(resources.getString(message), args);
+				Stop stop = new Stop();
+				stop.setName(preset.getName());
+				stop.setProgram(preset.getProgram());
+				stops.add(stop);
+			}
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
 
-      JOptionPane.showMessageDialog(this,
-                                    message,
-                                    resources.getString("exception.title"),
-                                    JOptionPane.ERROR_MESSAGE);
-    }
-  }
+		return stops;
+	}
+
+	/**
+	 * A panel for options.
+	 */
+	public class OptionsPanel extends JPanel {
+
+		/**
+		 * Insets to use by subclasse for a standard spacing around components.
+		 */
+		protected Insets insets = new Insets(2, 2, 2, 2);
+
+		private JLabel fileLabel = new JLabel();
+
+		private FileSelector fileSelector = new FileSelector();
+
+		public OptionsPanel() {
+			super(new GridBagLayout());
+			
+			GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+
+			builder.nextRow(1.0d);
+			
+			fileLabel.setText(resources.getString("import.soundfont.file"));
+			add(fileLabel, builder.nextColumn());
+
+			fileSelector.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					firePropertyChange("stops", null, null);
+				}
+			});
+			add(fileSelector, builder.nextColumn().fillHorizontal());
+		}
+
+		/**
+		 * Show an exception.
+		 * 
+		 * @param message
+		 *            message of exception
+		 * @param args
+		 *            arguments of message
+		 * @param exception
+		 *            the exception
+		 */
+		public void showException(String message, Object[] args,
+				Exception exception) {
+
+			message = MessageFormat.format(resources.getString(message), args);
+
+			JOptionPane.showMessageDialog(this, message, resources
+					.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }

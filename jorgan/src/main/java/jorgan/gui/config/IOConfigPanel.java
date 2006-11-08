@@ -18,95 +18,155 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 
 import jorgan.io.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.io.Configuration}.
  */
 public class IOConfigPanel extends ConfigurationPanel {
 
-  private JPanel recentsPanel = new JPanel();
-  private JCheckBox recentOpenOnStartupCheckBox = new JCheckBox();
-  private JLabel recentMaxLabel = new JLabel();
-  private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 100, 1));
-  private JPanel changesPanel = new JPanel();
-  private ButtonGroup changesGroup = new ButtonGroup();
-  private JRadioButton confirmChangesRadioButton = new JRadioButton();
-  private JRadioButton saveChangesRadioButton = new JRadioButton();
-  private JRadioButton ignoreChangesRadioButton = new JRadioButton();
+	private JPanel recentsPanel = new JPanel();
 
-  public IOConfigPanel() {
-    setLayout(new GridBagLayout());
+	private JCheckBox recentOpenOnStartupCheckBox = new JCheckBox();
 
-    setName(resources.getString("config.io.name"));
+	private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
+			0, 100, 1));
 
-    recentsPanel.setLayout(new GridBagLayout());
-    recentsPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.io.recents")));
-    add(recentsPanel, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
+	private JPanel changesPanel = new JPanel();
 
-      recentOpenOnStartupCheckBox.setText(resources.getString("config.io.recentOpenOnStartup"));
-      recentsPanel.add(recentOpenOnStartupCheckBox, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private ButtonGroup changesGroup = new ButtonGroup();
 
-      recentMaxLabel.setText(resources.getString("config.io.recentMax"));
-      recentsPanel.add(recentMaxLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
+	private JRadioButton confirmChangesRadioButton = new JRadioButton();
 
-      recentsPanel.add(recentMaxSpinner, new GridBagConstraints(1, 1, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JRadioButton saveChangesRadioButton = new JRadioButton();
 
-    changesPanel.setLayout(new GridBagLayout());
-    changesPanel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(), resources.getString("config.io.changes")));
-    add(changesPanel, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, emptyInsets, 0, 0));
-      
-      confirmChangesRadioButton.getModel().setGroup(changesGroup);
-      confirmChangesRadioButton.setText(resources.getString("config.io.changesConfirm"));
-      changesPanel.add(confirmChangesRadioButton, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JRadioButton ignoreChangesRadioButton = new JRadioButton();
 
-      saveChangesRadioButton.getModel().setGroup(changesGroup);
-      saveChangesRadioButton.setText(resources.getString("config.io.changesSave"));
-      changesPanel.add(saveChangesRadioButton, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JSpinner historySizeSpinner = new JSpinner(new SpinnerNumberModel(
+			0, 0, 255, 1));
 
-      ignoreChangesRadioButton.getModel().setGroup(changesGroup);
-      ignoreChangesRadioButton.setText(resources.getString("config.io.changesIgnore"));
-      changesPanel.add(ignoreChangesRadioButton, new GridBagConstraints(0, 2, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-      
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+	public IOConfigPanel() {
+		setName(resources.getString("config.io.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
 
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+		builder.nextRow();
+		
+		recentsPanel.setLayout(new GridBagLayout());
+		recentsPanel
+				.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
+						resources.getString("config.io.recents")));
+		add(recentsPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
 
-    recentOpenOnStartupCheckBox.setSelected(config.getRecentOpenOnStartup());
-    recentMaxSpinner           .setValue(new Integer(config.getRecentMax()));
-    switch (config.getRegistrationChanges()) {
-      case Configuration.REGISTRATION_CHANGES_CONFIRM:
-        confirmChangesRadioButton  .setSelected(true);
-        break;
-      case Configuration.REGISTRATION_CHANGES_SAVE:
-        saveChangesRadioButton  .setSelected(true);
-        break;
-      case Configuration.REGISTRATION_CHANGES_IGNORE:
-        ignoreChangesRadioButton  .setSelected(true);
-        break;
-    }
-  }
+		GridBuilder recentsBuilder = new GridBuilder(new double[]{0.0d, 1.0d});
+		
+		recentsBuilder.nextRow();
+		
+		recentOpenOnStartupCheckBox.setText(resources
+				.getString("config.io.recentOpenOnStartup"));
+		recentsPanel.add(recentOpenOnStartupCheckBox, recentsBuilder.nextColumn().gridWidthRemainder());
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
+		recentsBuilder.nextRow();
 
-    config.setRecentOpenOnStartup       (recentOpenOnStartupCheckBox.isSelected());
-    config.setRecentMax                 (((Integer)recentMaxSpinner.getValue()).intValue());
-    if (confirmChangesRadioButton.isSelected()) {
-      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_CONFIRM);
-    } else if (saveChangesRadioButton.isSelected()) {
-      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_SAVE);
-    } else if (ignoreChangesRadioButton.isSelected()) {
-      config.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_IGNORE);
-    }
-  }
+		JLabel recentMaxLabel = new JLabel(resources
+				.getString("config.io.recentMax"));
+		recentsPanel.add(recentMaxLabel, recentsBuilder.nextColumn());
+		recentsPanel.add(recentMaxSpinner, recentsBuilder.nextColumn());
+
+		builder.nextRow();
+		
+		changesPanel.setLayout(new GridBagLayout());
+		changesPanel
+				.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
+						resources.getString("config.io.changes")));
+		add(changesPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+
+		GridBuilder changesBuilder = new GridBuilder(new double[]{1.0d});
+		
+		changesBuilder.nextRow();
+		
+		confirmChangesRadioButton.getModel().setGroup(changesGroup);
+		confirmChangesRadioButton.setText(resources
+				.getString("config.io.changesConfirm"));
+		changesPanel.add(confirmChangesRadioButton, changesBuilder.nextColumn());
+
+		changesBuilder.nextRow();
+
+		saveChangesRadioButton.getModel().setGroup(changesGroup);
+		saveChangesRadioButton.setText(resources
+				.getString("config.io.changesSave"));
+		changesPanel.add(saveChangesRadioButton, changesBuilder.nextColumn());
+
+		changesBuilder.nextRow();
+
+		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
+		ignoreChangesRadioButton.setText(resources
+				.getString("config.io.changesIgnore"));
+		changesPanel.add(ignoreChangesRadioButton, changesBuilder.nextColumn());
+
+		builder.nextRow();
+
+		JLabel historySizeLabel = new JLabel(resources
+				.getString("config.io.historySize"));
+		add(historySizeLabel, builder.nextColumn());
+		add(historySizeSpinner, builder.nextColumn());
+	}
+
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
+
+		recentOpenOnStartupCheckBox
+				.setSelected(config.getRecentOpenOnStartup());
+		recentMaxSpinner.setValue(new Integer(config.getRecentMax()));
+		switch (config.getRegistrationChanges()) {
+		case Configuration.REGISTRATION_CHANGES_CONFIRM:
+			confirmChangesRadioButton.setSelected(true);
+			break;
+		case Configuration.REGISTRATION_CHANGES_SAVE:
+			saveChangesRadioButton.setSelected(true);
+			break;
+		case Configuration.REGISTRATION_CHANGES_IGNORE:
+			ignoreChangesRadioButton.setSelected(true);
+			break;
+		}
+
+		historySizeSpinner.setValue(new Integer(config.getHistorySize()));
+	}
+
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+
+		config.setRecentOpenOnStartup(recentOpenOnStartupCheckBox.isSelected());
+		config.setRecentMax(((Integer) recentMaxSpinner.getValue()).intValue());
+		if (confirmChangesRadioButton.isSelected()) {
+			config
+					.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_CONFIRM);
+		} else if (saveChangesRadioButton.isSelected()) {
+			config
+					.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_SAVE);
+		} else if (ignoreChangesRadioButton.isSelected()) {
+			config
+					.setRegistrationChanges(Configuration.REGISTRATION_CHANGES_IGNORE);
+		}
+
+		config.setHistorySize(((Integer) historySizeSpinner.getValue())
+				.intValue());
+	}
 }

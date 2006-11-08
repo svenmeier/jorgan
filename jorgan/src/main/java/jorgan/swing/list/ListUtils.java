@@ -30,35 +30,56 @@ import javax.swing.*;
  */
 public class ListUtils {
 
-  public static void addActionListener(final JList list, final ActionListener listener) {
-    list.addMouseListener(new MouseAdapter() {
-      public void mouseClicked(MouseEvent e) {
-        if (e.getClickCount() == 2) {
-          if (list.getSelectedIndex() != -1) {
-            listener.actionPerformed(new ActionEvent(list, ActionEvent.ACTION_PERFORMED, null));
-          }    
-        }
-      }
-    });
-  }
-  
-  public static void addPopup(final JList list, final JPopupMenu popup) {
-    list.addMouseListener(new MouseAdapter() {
-        public void mousePressed(MouseEvent e) {
-            checkPopup(e);
-        }
-        public void mouseReleased(MouseEvent e) {
-            checkPopup(e);
-        }
-        public void checkPopup(MouseEvent e) {
-          if (e.isPopupTrigger()) {
-            int index = list.locationToIndex(e.getPoint());
-            if (index != -1) {
-              list.setSelectedIndex(index);
-              popup.show(list, e.getX(), e.getY());
-            }
-          }
-        }
-    });
-  }
+	/**
+	 * Add a listener to actions to the given list, i.e. the given listener is
+	 * notified if a cell is double clicked.
+	 * 
+	 * @param list
+	 *            the list to add the listener to
+	 * @param listener
+	 *            the listener to add
+	 */
+	public static void addActionListener(final JList list,
+			final ActionListener listener) {
+		list.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				if (e.getClickCount() == 2) {
+					if (list.getSelectedIndex() != -1) {
+						listener.actionPerformed(new ActionEvent(list,
+								ActionEvent.ACTION_PERFORMED, null));
+					}
+				}
+			}
+		});
+	}
+
+	/**
+	 * Add a popup to the given list.
+	 * 
+	 * @param list
+	 *            list to add popup to
+	 * @param popup
+	 *            the popup to add
+	 */
+	public static void addPopup(final JList list, final JPopupMenu popup) {
+		list.addMouseListener(new MouseAdapter() {
+			public void mousePressed(MouseEvent e) {
+				checkPopup(e);
+			}
+
+			public void mouseReleased(MouseEvent e) {
+				checkPopup(e);
+			}
+
+			public void checkPopup(MouseEvent e) {
+				if (e.isPopupTrigger()) {
+					int index = list.locationToIndex(e.getPoint());
+					if (index != -1) {
+						list.setSelectedIndex(index);
+						popup.show(list, e.getX(), e.getY());
+					}
+				}
+			}
+		});
+	}
 }

@@ -14,6 +14,9 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreeCellRenderer;
 
+/**
+ * A cell editor/renderer that adds a {@link javax.swing.JCheckBox} to any tree cell.
+ */
 public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEditor, TreeCellRenderer {
 
 	private TreeCellRenderer renderer;
@@ -23,10 +26,18 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
 	private JPanel panel = new JPanel(new BorderLayout());
 	private JCheckBox checkBox = new JCheckBox();
 	
+	/**
+	 * Cosntructor.
+	 */
 	public CheckedTreeCell() {
 		this(new DefaultTreeCellRenderer());
 	}
 	
+	/**
+	 * Constructor.
+	 * 
+	 * @param renderer	the renderer to wrap
+	 */
 	public CheckedTreeCell(TreeCellRenderer renderer) {
 		this.renderer = renderer;
 		

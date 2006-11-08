@@ -18,115 +18,139 @@
  */
 package jorgan.gui.construct;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.ResourceBundle;
+
+import javax.swing.AbstractListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.ListSelectionModel;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.docs.Documents;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for an element.
  */
 public class ElementCreationPanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  protected Insets standardInsets = new Insets(2,2,2,2);
+	protected Insets standardInsets = new Insets(2, 2, 2, 2);
 
-  private JLabel       nameLabel        = new JLabel();
-  private JTextField   nameTextField    = new JTextField();
-  private JLabel       typeLabel        = new JLabel();
-  private JList        typeList         = new JList();
-  
-  private Class[] elementClasses = new Class[0];
-   
-  public ElementCreationPanel() {
-    setLayout(new GridBagLayout());
+	private JLabel nameLabel = new JLabel();
 
-    nameLabel.setText(resources.getString("construct.create.element.name"));
-    add(nameLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JTextField nameTextField = new JTextField();
 
-    nameTextField.getDocument().addDocumentListener(new DocumentListener() {
-      public void changedUpdate(DocumentEvent e) {
-        firePropertyChange("name", null, null);
-      }
-      public void insertUpdate(DocumentEvent e) {
-        firePropertyChange("name", null, null);
-      }
-      public void removeUpdate(DocumentEvent e) {
-        firePropertyChange("name", null, null);
-      }
-    });
-    add(nameTextField, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));
+	private JLabel typeLabel = new JLabel();
 
-    typeLabel.setText(resources.getString("construct.create.element.type"));
-    add(typeLabel, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JList typeList = new JList();
 
-    typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    typeList.addListSelectionListener(new ListSelectionListener() {
-      public void valueChanged(ListSelectionEvent e) {
-        firePropertyChange("type", null, null);
-      }
-    });
-    add(new JScrollPane(typeList), new GridBagConstraints(1, 1, 1, 1, 1.0, 1.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, standardInsets, 0, 0));
-  }
-  
-  public void setElementClasses(Class[] elementClasses) {
-    this.elementClasses = elementClasses;
+	private Class[] elementClasses = new Class[0];
 
-    Arrays.sort(elementClasses, new TypeComparator());
-    typeList.setModel(new TypeListModel());  
-  }
-  
-  public void setElementClass(Class elementClass) {
-    for (int c = 0; c < elementClasses.length; c++) {
-      if (elementClasses[c] == elementClass) {
-        typeList.setSelectedIndex(c);
-        return;
-      }
-    }
-  }
-  
-  public Class getElementClass() {
-    int index = typeList.getSelectedIndex();
-      
-    if (index == -1) {
-      return null;
-    } else {
-      return elementClasses[index];
-    }
-  }
-  
-  public String getElementName() {
-    return nameTextField.getText();
-  }
+	public ElementCreationPanel() {
+		super(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+		
+		builder.nextRow();
 
-  private class TypeListModel extends AbstractListModel {
-    
-    public int getSize() {
-      return elementClasses.length;
-    }
+		nameLabel.setText(resources.getString("construct.create.element.name"));
+		add(nameLabel, builder.nextColumn());
 
-    public Object getElementAt(int index) {
-      return Documents.getInstance().getDisplayName(elementClasses[index]);
-    }   
-  }
-  
-  private class TypeComparator implements Comparator {
-      
-    public int compare(Object o1, Object o2) {
-        
-      String name1 = Documents.getInstance().getDisplayName((Class)o1);
-      String name2 = Documents.getInstance().getDisplayName((Class)o2);
-      
-      return name1.compareTo(name2);
-    }
-  }
+		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
+			public void changedUpdate(DocumentEvent e) {
+				firePropertyChange("name", null, null);
+			}
+
+			public void insertUpdate(DocumentEvent e) {
+				firePropertyChange("name", null, null);
+			}
+
+			public void removeUpdate(DocumentEvent e) {
+				firePropertyChange("name", null, null);
+			}
+		});
+		add(nameTextField, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+
+		builder.nextRow(1.0d);
+
+		typeLabel.setText(resources.getString("construct.create.element.type"));
+		add(typeLabel, builder.nextColumn().alignNorthWest());
+
+		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		typeList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				firePropertyChange("type", null, null);
+			}
+		});
+		add(new JScrollPane(typeList), builder.nextColumn().gridWidthRemainder().gridHeight(2).fillBoth());
+	}
+
+	public void setElementClasses(Class[] elementClasses) {
+		this.elementClasses = elementClasses;
+
+		Arrays.sort(elementClasses, new TypeComparator());
+		typeList.setModel(new TypeListModel());
+	}
+
+	public void setElementClass(Class elementClass) {
+		for (int c = 0; c < elementClasses.length; c++) {
+			if (elementClasses[c] == elementClass) {
+				typeList.setSelectedIndex(c);
+				return;
+			}
+		}
+	}
+
+	public Class getElementClass() {
+		int index = typeList.getSelectedIndex();
+
+		if (index == -1) {
+			return null;
+		} else {
+			return elementClasses[index];
+		}
+	}
+
+	public String getElementName() {
+		return nameTextField.getText();
+	}
+
+	private class TypeListModel extends AbstractListModel {
+
+		public int getSize() {
+			return elementClasses.length;
+		}
+
+		public Object getElementAt(int index) {
+			return Documents.getInstance()
+					.getDisplayName(elementClasses[index]);
+		}
+	}
+
+	private class TypeComparator implements Comparator {
+
+		public int compare(Object o1, Object o2) {
+
+			String name1 = Documents.getInstance().getDisplayName((Class) o1);
+			String name2 = Documents.getInstance().getDisplayName((Class) o2);
+
+			return name1.compareTo(name2);
+		}
+	}
 }

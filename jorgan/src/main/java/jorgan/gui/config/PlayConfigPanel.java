@@ -18,58 +18,72 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JCheckBox;
 
 import jorgan.play.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.play.Configuration}.
  */
 public class PlayConfigPanel extends ConfigurationPanel {
 
-  private JCheckBox warnDeviceCheckBox = new JCheckBox();
-  private JCheckBox warnMessageCheckBox = new JCheckBox();
-  
-  private JCheckBox releaseDevicesCheckBox = new JCheckBox();
+	private JCheckBox warnDeviceCheckBox = new JCheckBox();
 
-  public PlayConfigPanel() {
-    setLayout(new GridBagLayout());
-    setName(resources.getString("config.play.name"));
+	private JCheckBox warnMessageCheckBox = new JCheckBox();
 
-    warnDeviceCheckBox.setText(resources.getString("config.play.warn.device"));
-    add(warnDeviceCheckBox, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-  
-    warnMessageCheckBox.setText(resources.getString("config.play.warn.message"));
-    add(warnMessageCheckBox, new GridBagConstraints(0, 1, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private JCheckBox releaseDevicesCheckBox = new JCheckBox();
 
-    releaseDevicesCheckBox.setText(resources.getString("config.play.releaseDevicesWhenDeactivated"));
-    add(releaseDevicesCheckBox, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
-    
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+	public PlayConfigPanel() {
+		setName(resources.getString("config.play.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{1.0d});
 
-  /**
-   * Read the configuration.
-   */
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+		builder.nextRow();
+		
+		warnDeviceCheckBox.setText(resources
+				.getString("config.play.warn.device"));
+		add(warnDeviceCheckBox, builder.nextColumn());
 
-    warnDeviceCheckBox.setSelected(config.getWarnWithoutDevice());
-    warnMessageCheckBox.setSelected(config.getWarnWithoutMessage());
+		builder.nextRow();
 
-    releaseDevicesCheckBox.setSelected(config.getReleaseDevicesWhenDeactivated());
-  }
+		warnMessageCheckBox.setText(resources
+				.getString("config.play.warn.message"));
+		add(warnMessageCheckBox, builder.nextColumn());
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
+		builder.nextRow();
 
-    config.setWarnWithoutDevice(warnDeviceCheckBox.isSelected());
-    config.setWarnWithoutMessage(warnMessageCheckBox.isSelected());
+		releaseDevicesCheckBox.setText(resources
+				.getString("config.play.releaseDevicesWhenDeactivated"));
+		add(releaseDevicesCheckBox, builder.nextColumn());
+	}
 
-    config.setReleaseDevicesWhenDeactivated(releaseDevicesCheckBox.isSelected());
-  }
+	/**
+	 * Read the configuration.
+	 */
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
+
+		warnDeviceCheckBox.setSelected(config.getWarnWithoutDevice());
+		warnMessageCheckBox.setSelected(config.getWarnWithoutMessage());
+
+		releaseDevicesCheckBox.setSelected(config
+				.getReleaseDevicesWhenDeactivated());
+	}
+
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+
+		config.setWarnWithoutDevice(warnDeviceCheckBox.isSelected());
+		config.setWarnWithoutMessage(warnMessageCheckBox.isSelected());
+
+		config.setReleaseDevicesWhenDeactivated(releaseDevicesCheckBox
+				.isSelected());
+	}
 }

@@ -23,19 +23,31 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 
+/**
+ * A customer of beans.
+ * 
+ * @see jorgan.swing.beans.PropertiesPanel#setBeanCustomizer(BeanCustomizer)
+ */
 public interface BeanCustomizer {
 
-  /**
-   * Get a beanInfo for the given class of beans.
-   *
-   * @param beanClass  class of beans to get beanInfo for
-   */
-  public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException;
+	/**
+	 * Get a beanInfo for the given class of beans.
+	 * 
+	 * @param beanClass
+	 *            class of beans to get beanInfo for
+	 * @return the bean info for the given class
+	 * @throws IntrospectionException
+	 */
+	public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException;
 
-  /**
-   * Get an editor for a property.
-   *
-   * @param descriptor   descriptor of property to get editor for
-   */
-  public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor) throws IntrospectionException;
+	/**
+	 * Get an editor for a property.
+	 * 
+	 * @param descriptor
+	 *            descriptor of property to get editor for
+	 * @return the property editor for the given descriptor
+	 * @throws IntrospectionException
+	 */
+	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+			throws IntrospectionException;
 }

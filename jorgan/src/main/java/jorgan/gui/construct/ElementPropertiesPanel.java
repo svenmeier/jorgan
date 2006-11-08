@@ -71,6 +71,8 @@ public class ElementPropertiesPanel extends DockedPanel {
         if (this.session != null) {
             this.session.removeSelectionListener(selectionHandler);
             this.session.removeOrganListener(selectionHandler);
+            
+            selectionHandler.clearProperties();
         }
 
         this.session = session;
@@ -78,6 +80,8 @@ public class ElementPropertiesPanel extends DockedPanel {
         if (this.session != null) {
             this.session.addSelectionListener(selectionHandler);
             this.session.addOrganListener(selectionHandler);
+                        
+            selectionHandler.updateProperties();
         }
     }
 
@@ -87,20 +91,20 @@ public class ElementPropertiesPanel extends DockedPanel {
     private class SelectionHandler extends OrganAdapter implements
             ElementSelectionListener, ChangeListener {
 
-        private boolean updatingProperties = false;
+        private boolean changing = false;
 
         public void selectionChanged(ElementSelectionEvent ev) {
             updateProperties();
         }
 
         public void stateChanged(ChangeEvent e) {
-            if (!updatingProperties) {
-                updatingProperties = true;
+            if (!changing) {
+                changing = true;
 
                 String property = propertiesPanel.getProperty();
                 session.getSelectionModel().setSelectedProperty(property);
 
-                updatingProperties = false;
+                changing = false;
             }
         }
 
@@ -127,15 +131,25 @@ public class ElementPropertiesPanel extends DockedPanel {
         }
 
         private void updateProperties() {
-            if (!updatingProperties) {
-                updatingProperties = true;
+            if (!changing) {
+                changing = true;
 
                 propertiesPanel.setBeans(session.getSelectionModel()
                         .getSelectedElements());
                 propertiesPanel.setProperty(session.getSelectionModel()
                         .getSelectedProperty());
 
-                updatingProperties = false;
+                changing = false;
+            }
+        }
+        
+        private void clearProperties() {
+            if (!changing) {
+                changing = true;
+
+                propertiesPanel.setBean(null);
+
+                changing = false;
             }
         }
     }

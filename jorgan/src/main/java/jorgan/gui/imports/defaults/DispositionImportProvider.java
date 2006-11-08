@@ -18,7 +18,6 @@
  */
 package jorgan.gui.imports.defaults;
 
-import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
@@ -43,6 +42,7 @@ import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionReader;
 import jorgan.io.riff.RiffFormatException;
 import jorgan.swing.FileSelector;
+import jorgan.swing.GridBuilder;
 import jorgan.xml.XMLFormatException;
 
 /**
@@ -50,128 +50,136 @@ import jorgan.xml.XMLFormatException;
  */
 public class DispositionImportProvider implements ImportProvider {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private OptionsPanel panel = new OptionsPanel();
+	private OptionsPanel panel = new OptionsPanel();
 
-  public JPanel getOptionsPanel() {
-      return panel;
-  }
-  
-  public String getName() {
-    return resources.getString("import.disposition.name");
-  }
+	public JPanel getOptionsPanel() {
+		return panel;
+	}
 
-  public String getDescription() {
-    return resources.getString("import.disposition.description");
-  }
+	public String getName() {
+		return resources.getString("import.disposition.name");
+	}
 
-  public boolean hasStops() {
-    File file = panel.fileSelector.getSelectedFile();
-    
-    return file != null  &&
-           file.exists() &&
-           file.isFile();
-  }
-  
-  public List getStops() {      
-    List stops = new ArrayList();
+	public String getDescription() {
+		return resources.getString("import.disposition.description");
+	}
 
-    File file = panel.fileSelector.getSelectedFile();
-    if (file != null) {
-      try {
-        stops = readStops(file);
-      } catch (XMLFormatException ex) {
-        panel.showException("import.disposition.exception.invalid", new String[]{file.getPath()}, ex);
-      } catch (IOException ex) {
-        panel.showException("import.disposition.exception", new String[]{file.getPath()}, ex);
-      }
-    }
+	public boolean hasStops() {
+		File file = panel.fileSelector.getSelectedFile();
 
-    return stops;    
-  }
-  
-  /**
-   * Read stops from the given disposition file.
-   * 
-   * @param file    file to read from
-   * @return        list of stops
-   * @throws IOException
-   * @throws XMLFormatException
-   */  
-  private List readStops(File file) throws IOException, RiffFormatException {
+		return file != null && file.exists() && file.isFile();
+	}
 
-      List stops;
-      
-      InputStream input = null; 
-      try {
-          input = new FileInputStream(file);
-          
-          DispositionReader reader = new DispositionReader(new FileInputStream(file));
-          
-          Organ organ = (Organ)reader.read();
-                    
-          stops = organ.getElements(Stop.class);
+	public List getStops() {
+		List stops = new ArrayList();
 
-          for (int s = 0; s < stops.size(); s++) {
-              organ.removeElement((Element)stops.get(s));
-          }
-      } finally {
-          if (input != null) {
-              input.close();
-          }
-      }
-      
-      return stops;    
-  }
-  
-  /**
-   * A panel for options.
-   */
-  public class OptionsPanel extends JPanel {
+		File file = panel.fileSelector.getSelectedFile();
+		if (file != null) {
+			try {
+				stops = readStops(file);
+			} catch (XMLFormatException ex) {
+				panel.showException("import.disposition.exception.invalid",
+						new String[] { file.getPath() }, ex);
+			} catch (IOException ex) {
+				panel.showException("import.disposition.exception",
+						new String[] { file.getPath() }, ex);
+			}
+		}
 
-    /**
-     * Insets to use by subclasse for a standard spacing around components.
-     */
-    protected Insets insets = new Insets(2,2,2,2);
+		return stops;
+	}
 
-    private JLabel       fileLabel        = new JLabel();
-    private FileSelector fileSelector     = new FileSelector();
-   
-    public OptionsPanel() {
-      setLayout(new GridBagLayout());
+	/**
+	 * Read stops from the given disposition file.
+	 * 
+	 * @param file
+	 *            file to read from
+	 * @return list of stops
+	 * @throws IOException
+	 * @throws XMLFormatException
+	 */
+	private List readStops(File file) throws IOException, RiffFormatException {
 
-      fileLabel.setText(resources.getString("import.soundfont.file"));
-      add(fileLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, insets, 0, 0));
+		List stops;
 
-      fileSelector.addChangeListener(new ChangeListener() {
-        public void stateChanged(ChangeEvent e) {
-          firePropertyChange("stops", null, null);
-        }
-      });
-      add(fileSelector, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.HORIZONTAL, insets, 0, 0));
+		InputStream input = null;
+		try {
+			input = new FileInputStream(file);
 
-      add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, insets, 0, 0));    
-    }
-  
-    /**
-     * Show an exception.
-     *
-     * @param message   message of exception
-     * @param args      arguments of message
-     * @param exception the exception
-     */
-    public void showException(String message, Object[] args, Exception exception) {
+			DispositionReader reader = new DispositionReader(
+					new FileInputStream(file));
 
-      message = MessageFormat.format(resources.getString(message), args);
+			Organ organ = (Organ) reader.read();
 
-      JOptionPane.showMessageDialog(this,
-                                    message,
-                                    resources.getString("exception.title"),
-                                    JOptionPane.ERROR_MESSAGE);
-    }
-  }
+			stops = organ.getElements(Stop.class);
+
+			for (int s = 0; s < stops.size(); s++) {
+				organ.removeElement((Element) stops.get(s));
+			}
+		} finally {
+			if (input != null) {
+				input.close();
+			}
+		}
+
+		return stops;
+	}
+
+	/**
+	 * A panel for options.
+	 */
+	public class OptionsPanel extends JPanel {
+
+		/**
+		 * Insets to use by subclasse for a standard spacing around components.
+		 */
+		protected Insets insets = new Insets(2, 2, 2, 2);
+
+		private JLabel fileLabel = new JLabel();
+
+		private FileSelector fileSelector = new FileSelector();
+
+		public OptionsPanel() {
+			super(new GridBagLayout());
+			
+			GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+			
+			builder.nextRow(1.0d);
+
+			fileLabel.setText(resources.getString("import.soundfont.file"));
+			add(fileLabel, builder.nextColumn());
+
+			fileSelector.addChangeListener(new ChangeListener() {
+				public void stateChanged(ChangeEvent e) {
+					firePropertyChange("stops", null, null);
+				}
+			});
+			add(fileSelector, builder.nextColumn().fillHorizontal());
+		}
+
+		/**
+		 * Show an exception.
+		 * 
+		 * @param message
+		 *            message of exception
+		 * @param args
+		 *            arguments of message
+		 * @param exception
+		 *            the exception
+		 */
+		public void showException(String message, Object[] args,
+				Exception exception) {
+
+			message = MessageFormat.format(resources.getString(message), args);
+
+			JOptionPane.showMessageDialog(this, message, resources
+					.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
+		}
+	}
 }

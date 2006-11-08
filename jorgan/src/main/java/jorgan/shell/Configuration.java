@@ -18,59 +18,83 @@
  */
 package jorgan.shell;
 
-import java.util.prefs.*;
+import java.util.prefs.Preferences;
 
-import jorgan.config.prefs.*;
+import jorgan.config.prefs.PreferencesConfiguration;
 
 /**
  * Configuration of the shell package.
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static final boolean USE_ENCODING = true;
-  private static final String  ENCODING     = "";
+	private static final boolean USE_ENCODING = true;
 
-  private static Configuration sharedInstance = new Configuration();
+	private static final String ENCODING = "";
 
-  private boolean useDefaultEncoding;
-  private String  encoding;
+	private static Configuration sharedInstance = new Configuration();
 
-  protected void restore(Preferences prefs) {
-    useDefaultEncoding = getBoolean(prefs, "useDefaultEncoding", USE_ENCODING);
-    encoding           = get       (prefs, "encoding"          , ENCODING);
-  }
+	private boolean useDefaultEncoding;
 
-  protected void backup(Preferences prefs) {
-    putBoolean(prefs, "useDefaultEncoding", useDefaultEncoding);
-    put       (prefs, "encoding", encoding);
-  }
+	private String encoding;
 
-  public boolean getUseDefaultEncoding() {
-    return useDefaultEncoding;
-  }
+	protected void restore(Preferences prefs) {
+		useDefaultEncoding = getBoolean(prefs, "useDefaultEncoding",
+				USE_ENCODING);
+		encoding = get(prefs, "encoding", ENCODING);
+	}
 
-  public void setUseDefaultEncoding(boolean useDefaultEncoding) {
-    this.useDefaultEncoding = useDefaultEncoding;
-    
-    fireConfigurationChanged();
-  }
+	protected void backup(Preferences prefs) {
+		putBoolean(prefs, "useDefaultEncoding", useDefaultEncoding);
+		put(prefs, "encoding", encoding);
+	}
 
-  public String getEncoding() {
-    return encoding;
-  }
+	/**
+	 * Should default encoding be used.
+	 * 
+	 * @return <code>true</code> if default encoding should be used
+	 */
+	public boolean getUseDefaultEncoding() {
+		return useDefaultEncoding;
+	}
 
-  public void setEncoding(String encoding) {
-    this.encoding = encoding;
-    
-    fireConfigurationChanged();
-  }
+	/**
+	 * Should default encoding be used.
+	 * 
+	 * @param useDefaultEncoding
+	 *            <code>true</code> if default encoding should be used
+	 */
+	public void setUseDefaultEncoding(boolean useDefaultEncoding) {
+		this.useDefaultEncoding = useDefaultEncoding;
 
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+		fireConfigurationChanged();
+	}
+
+	/**
+	 * Get the encoding.
+	 * 
+	 * @return	encoding to use
+	 */
+	public String getEncoding() {
+		return encoding;
+	}
+
+	/**
+	 * Set the encoding.
+	 * 
+	 * @param encoding	the encoding to use
+	 */
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+
+		fireConfigurationChanged();
+	}
+
+	/**
+	 * Get the shared configuration.
+	 * 
+	 * @return configuration
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 }
