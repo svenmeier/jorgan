@@ -72,6 +72,12 @@
         <delete dir="./dist/marshal" />
     </target>
 
+	<target name="deploy" description="deploy the application on SourceForge" depends="dist">
+		<ftp server="upload.sourceforge.net" userid="anonymous" password="" remotedir="/incoming">
+			<fileset file="./dist/jOrgan-${jorgan.version}.zip" />
+		</ftp>
+	</target>
+	
     <target name="run" description="Run application" >
     	<java classname="jorgan.App" fork="true">
     		<sysproperty key="user.language" value="en"/>
