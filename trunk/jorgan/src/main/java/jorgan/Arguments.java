@@ -25,55 +25,59 @@ import java.io.*;
  */
 public class Arguments {
 
-  private boolean headless = false;
-  private File    file;
+	private boolean headless = false;
 
-  /**
-   * Parse arguments.
-   *
-   * @param args  command line arguments to parse
-   */
-  public boolean parse(String[] args) {
+	private File file;
 
-    for (int a = 0; a < args.length; a++) {
-      if ("-headless".equals(args[a])) {
-        headless = true;
-        continue;
-      }
-      if (!(args[a].startsWith("-"))) {
-        file = new File(args[a]);
-        continue;
-      }
-      return false;
-    }
+	/**
+	 * Parse arguments.
+	 * 
+	 * @param args
+	 *            command line arguments to parse
+	 * @return <code>true</code if parsing was successfull
+	 */
+	public boolean parse(String[] args) {
 
-    return true;
-  }
+		for (int a = 0; a < args.length; a++) {
+			if ("-headless".equals(args[a])) {
+				headless = true;
+				continue;
+			}
+			if (!(args[a].startsWith("-"))) {
+				file = new File(args[a]);
+				continue;
+			}
+			return false;
+		}
 
-  /**
-   * Print the usage.
-   */
-  public void printUsage() {
-    System.out.println("Usage: java -jar jOrgan.jar [-headless] disposition");
-    System.out.println("  disposition   disposition to load on startup");
-    System.out.println("  -headless     start without GUI");
-  }
+		return true;
+	}
 
-  /**
-   * Get the file argument.
-   *
-   * @return file argument
-   */
-  public File getFile() {
-    return file;
-  }
+	/**
+	 * Print the usage.
+	 */
+	public void printUsage() {
+		System.out
+				.println("Usage: java -jar jOrgan.jar [-headless] disposition");
+		System.out.println("  disposition   disposition to load on startup");
+		System.out.println("  -headless     start without GUI");
+	}
 
-  /**
-   * Get the headless argument.
-   *
-   * @return headless argument
-   */
-  public boolean getHeadless() {
-    return headless;
-  }
+	/**
+	 * Get the file argument.
+	 * 
+	 * @return file argument
+	 */
+	public File getFile() {
+		return file;
+	}
+
+	/**
+	 * Get the headless argument.
+	 * 
+	 * @return headless argument
+	 */
+	public boolean getHeadless() {
+		return headless;
+	}
 }

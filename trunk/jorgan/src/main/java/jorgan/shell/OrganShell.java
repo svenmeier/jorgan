@@ -141,6 +141,11 @@ public class OrganShell implements UI {
         }
     }
 
+    /**
+     * Set the organ.
+     * 
+     * @param organ	the organ
+     */
     public void setOrgan(Organ organ) {
         if (organPlay != null) {
             organPlay.close();

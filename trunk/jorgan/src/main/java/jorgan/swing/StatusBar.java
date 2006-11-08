@@ -18,8 +18,13 @@
  */
 package jorgan.swing;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+
+import javax.swing.Icon;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.JToolBar;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -27,58 +32,74 @@ import javax.swing.border.EmptyBorder;
  */
 public class StatusBar extends JPanel {
 
-  private Insets insets = new Insets(1, 1, 1, 1);
-  
-  private GridBagConstraints constraints = new GridBagConstraints(GridBagConstraints.RELATIVE, 0, 1, 1, 0.0, 0.0
-                                                                 ,GridBagConstraints.CENTER, GridBagConstraints.BOTH
-                                                                 ,insets, 0, 0);
-  
-  private JLabel label = new JLabel();
+	private JLabel label = new JLabel();
 
-  public StatusBar() {
-    setLayout(new GridBagLayout());
+	private JToolBar toolBar = new JToolBar();
 
-    setBorder(new EmptyBorder(0, 2, 0, 2));
+	/**
+	 * Create a status bar.
+	 */
+	public StatusBar() {
+		super(new BorderLayout());
 
-    label.setText(" ");
-    add(label, new GridBagConstraints(0, 0, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.BOTH, insets, 0, 0));
-  }
+		setBorder(new EmptyBorder(0, 0, 2, 0));
 
-  public void addStatus(JComponent status) {
-      
-    JSeparator separator = new JSeparator(SwingConstants.VERTICAL);
-    status.putClientProperty(this, separator);
-    
-    this.add(separator, constraints);
-    this.add(status, constraints);
-            
-    repaint();
-    revalidate();
-  }
+		label.setText(" ");
+		add(label, BorderLayout.CENTER);
 
-  public void removeStatus(JComponent status) {
-    this.remove(status);
-    
-    this.remove((JSeparator)status.getClientProperty(this));
-    
-    repaint();
-    revalidate();
-  }
+		toolBar.setFloatable(false);
+		add(toolBar, BorderLayout.EAST);
+	}
 
-  public String getStatus() {
-    return label.getText();
-  }
+	/**
+	 * Add a new status component.
+	 * 
+	 * @param status
+	 *            component
+	 */
+	public void addStatus(JComponent status) {
 
-  public void setStatus(String status) {
-    setStatus(status, null);
-  }
+		toolBar.addSeparator();
 
-  public void setStatus(String status, Icon icon) {
-    if (status == null || "".equals(status)) {
-      label.setText(" ");
-    } else {
-      label.setText(status);
-    }
-    label.setIcon(icon);    
-  }
+		toolBar.add(status);
+
+		toolBar.repaint();
+		toolBar.revalidate();
+	}
+
+	/**
+	 * Get the current <em>main</em> status
+	 * 
+	 * @return the current status
+	 */
+	public String getStatus() {
+		return label.getText();
+	}
+
+	/**
+	 * Set the new <em>main</em> status.
+	 * 
+	 * @param status
+	 *            the new status
+	 */
+	public void setStatus(String status) {
+		setStatus(status, null);
+	}
+
+	/**
+	 * Set the new <em>main</em> status.
+	 * 
+	 * @param status
+	 *            the new status
+	 * @param icon
+	 *            optional icon
+	 */
+	public void setStatus(String status, Icon icon) {
+		if (status == null || "".equals(status)) {
+			label.setText(" ");
+		} else {
+			label.setText(status);
+		}
+		label.setIcon(icon);
+	}
 }

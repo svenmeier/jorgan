@@ -26,39 +26,44 @@ import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
 
 /**
- * Default implementation of a beanCustomizer that uses the default
- * beans schema for lookup of beanInfos and propertyEditors.
- *
+ * Default implementation of a beanCustomizer that uses the default beans schema
+ * for lookup of {@link java.beans.BeanInfo}s and
+ * {@link java.beans.PropertyEditor}s.
+ * 
  * @see java.beans.Introspector
  * @see java.beans.PropertyEditorManager
  */
 public class DefaultBeanCustomizer implements BeanCustomizer {
 
-  public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
-    return new SortingBeanInfo(Introspector.getBeanInfo(beanClass));
-  }
+	public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
+		return new SortingBeanInfo(Introspector.getBeanInfo(beanClass));
+	}
 
-  public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor) throws IntrospectionException {
-    if (descriptor.getPropertyEditorClass() == null) {
-      return findPropertyEditor(descriptor.getPropertyType());
-    } else {
-      try {
-        return (PropertyEditor)descriptor.getPropertyEditorClass().newInstance();
-      } catch (Exception ex) {
-      	throw new IntrospectionException(ex.getMessage());
-      }
-    }
-  }
+	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+			throws IntrospectionException {
+		if (descriptor.getPropertyEditorClass() == null) {
+			return findPropertyEditor(descriptor.getPropertyType());
+		} else {
+			try {
+				return (PropertyEditor) descriptor.getPropertyEditorClass()
+						.newInstance();
+			} catch (Exception ex) {
+				throw new IntrospectionException(ex.getMessage());
+			}
+		}
+	}
 
-  /**
-   * Hook method for subclasses that want to implement a custom find of
-   * a propertyEditor if none is defined by a propertyDescriptor.
-   *
-   * @see java.beans.PropertyDescriptor.getPropertyEditorClass()
-   *
-   * @param propertyType	type of property to find editor for
-   */
-  protected PropertyEditor findPropertyEditor(Class propertyType) throws IntrospectionException {
-    return PropertyEditorManager.findEditor(propertyType);
-  }
+	/**
+	 * Hook method for subclasses that want to implement a custom find of a
+	 * {@link PropertyEditor} if none is defined by a {@link PropertyDescriptor}.
+	 * 
+	 * @see java.beans.PropertyDescriptor#getPropertyEditorClass()
+	 * 
+	 * @param propertyType
+	 *            type of property to find editor for
+	 */
+	protected PropertyEditor findPropertyEditor(Class propertyType)
+			throws IntrospectionException {
+		return PropertyEditorManager.findEditor(propertyType);
+	}
 }

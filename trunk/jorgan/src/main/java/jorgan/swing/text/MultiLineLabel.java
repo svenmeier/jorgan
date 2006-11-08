@@ -27,24 +27,33 @@ import javax.swing.*;
  */
 public class MultiLineLabel extends JTextArea {
 
-    public MultiLineLabel() {
-        this(0);
-    }
-    
-    public MultiLineLabel(int rows) {
-        super(rows, 0);
-        
-        setFont(new JTextField().getFont());
-        setLineWrap(true);
-        setWrapStyleWord(true);
-        setEnabled(false);
-        setDisabledTextColor(Color.black);
-        setBackground(new JLabel().getBackground());
-    }
-    
-    public Dimension getPreferredSize() {
-        Dimension dim = super.getPreferredSize();
-        
-        return new Dimension(0, dim.height);
-    }
+	/**
+	 * Constructor.
+	 */
+	public MultiLineLabel() {
+		this(0);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param rows
+	 *            number of rows
+	 */
+	public MultiLineLabel(int rows) {
+		super(rows, 0);
+
+		setFont(new JTextField().getFont());
+		setLineWrap(true);
+		setWrapStyleWord(true);
+		setEnabled(false);
+		setDisabledTextColor(Color.black);
+		setBackground(new JLabel().getBackground());
+	}
+
+	public Dimension getPreferredSize() {
+		Dimension dim = super.getPreferredSize();
+
+		return new Dimension(0, dim.height);
+	}
 }

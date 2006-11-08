@@ -26,7 +26,7 @@ import java.io.File;
 import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.prefs.*;
+import java.util.prefs.Preferences;
 
 import jorgan.config.AbstractConfiguration;
 import jorgan.midi.log.Configuration;
@@ -37,224 +37,223 @@ import jorgan.midi.log.Configuration;
  */
 public abstract class PreferencesConfiguration extends AbstractConfiguration {
 
-  private static Logger logger = Logger.getLogger(Configuration.class
-          .getName());
+	private static Logger logger = Logger.getLogger(Configuration.class
+			.getName());
 
-  public PreferencesConfiguration() {
+	/**
+	 * Constructor.
+	 */
+	public PreferencesConfiguration() {
 
-    restore(Preferences.userNodeForPackage(getClass()));
-  }
+		restore(Preferences.userNodeForPackage(getClass()));
+	}
 
-  /**
-   * Backup this configuration and all its children.
-   */
-  public final void backup() {
-    fireConfigurationBackup();
+	/**
+	 * Backup this configuration and all its children.
+	 */
+	public final void backup() {
+		fireConfigurationBackup();
 
-    backup(Preferences.userNodeForPackage(getClass()));
+		backup(Preferences.userNodeForPackage(getClass()));
 
-    for (int c = 0; c < getChildCount(); c++) {
-      getChild(c).backup();
-    }
-  }
+		for (int c = 0; c < getChildCount(); c++) {
+			getChild(c).backup();
+		}
+	}
 
-  /**
-   * Backup the values of this configuration.
-   * <br>
-   * This default implementation does nothing and should
-   * be overridden by subclasses.
-   *
-   * @param preferences    preferences to backup to
-   */
-  protected void backup(Preferences preferences) {
-  }
+	/**
+	 * Backup the values of this configuration. <br>
+	 * This default implementation does nothing and should be overridden by
+	 * subclasses.
+	 * 
+	 * @param preferences
+	 *            preferences to backup to
+	 */
+	protected void backup(Preferences preferences) {
+	}
 
-  /**
-   * Restore this configuration and all its children.
-   */
-  public final void restore() {
-    restore(Preferences.userNodeForPackage(getClass()));
+	/**
+	 * Restore this configuration and all its children.
+	 */
+	public final void restore() {
+		restore(Preferences.userNodeForPackage(getClass()));
 
-    for (int c = 0; c < getChildCount(); c++) {
-      getChild(c).restore();
-    }
+		for (int c = 0; c < getChildCount(); c++) {
+			getChild(c).restore();
+		}
 
-    fireConfigurationChanged();
-  }
+		fireConfigurationChanged();
+	}
 
-  /**
-   * Restore the values of this configuration.
-   * <br>
-   * This default implementation does nothing and should
-   * be overridden by subclasses.
-   *
-   * @param preferences    preferences to restore from
-   */
-  protected void restore(Preferences preferences) {
-  }
+	/**
+	 * Restore the values of this configuration. <br>
+	 * This default implementation does nothing and should be overridden by
+	 * subclasses.
+	 * 
+	 * @param preferences
+	 *            preferences to restore from
+	 */
+	protected void restore(Preferences preferences) {
+	}
 
-  /**
-   * Reset this configuration.
-   * <br>
-   * Children of this configuration are not changed.
-   */
-  public void reset() {
-    restore(new ResetPreferences());
-  }
-  
-  protected void put(Preferences prefs, String key, String value) {
-      if (value == null) {
-          prefs.remove(key);
-      } else {
-          prefs.put(key, value);
-      }
-  }
+	/**
+	 * Reset this configuration. <br>
+	 * Children of this configuration are not changed.
+	 */
+	public void reset() {
+		restore(new ResetPreferences());
+	}
 
-  protected void putInt(Preferences prefs, String key, int value) {
-      prefs.putInt(key, value);
-  }
+	protected void put(Preferences prefs, String key, String value) {
+		if (value == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, value);
+		}
+	}
 
-  protected void putBoolean(Preferences prefs, String key,
-          boolean value) {
-      prefs.putBoolean(key, value);
-  }
+	protected void putInt(Preferences prefs, String key, int value) {
+		prefs.putInt(key, value);
+	}
 
-  protected String get(Preferences prefs, String key,
-          String defaultValue) {
-      return prefs.get(key, defaultValue);
-  }
+	protected void putBoolean(Preferences prefs, String key, boolean value) {
+		prefs.putBoolean(key, value);
+	}
 
-  protected int getInt(Preferences prefs, String key, int defaultValue) {
-      return prefs.getInt(key, defaultValue);
-  }
+	protected String get(Preferences prefs, String key, String defaultValue) {
+		return prefs.get(key, defaultValue);
+	}
 
-  protected boolean getBoolean(Preferences prefs, String key,
-          boolean defaultValue) {
-      return prefs.getBoolean(key, defaultValue);
-  }
+	protected int getInt(Preferences prefs, String key, int defaultValue) {
+		return prefs.getInt(key, defaultValue);
+	}
 
-  public Rectangle getRectangle(Preferences prefs, String key,
-          Rectangle def) {
-      String rectangle = prefs.get(key, null);
-      if (rectangle != null) {
-          try {
-              StringTokenizer tokens = new StringTokenizer(rectangle, ",");
+	protected boolean getBoolean(Preferences prefs, String key,
+			boolean defaultValue) {
+		return prefs.getBoolean(key, defaultValue);
+	}
 
-              int x = Integer.parseInt(tokens.nextToken().trim());
-              int y = Integer.parseInt(tokens.nextToken().trim());
-              int w = Integer.parseInt(tokens.nextToken().trim());
-              int h = Integer.parseInt(tokens.nextToken().trim());
+	public static Rectangle getRectangle(Preferences prefs, String key, Rectangle def) {
+		String rectangle = prefs.get(key, null);
+		if (rectangle != null) {
+			try {
+				StringTokenizer tokens = new StringTokenizer(rectangle, ",");
 
-              return new Rectangle(x, y, w, h);
-          } catch (Exception ex) {
-              logger.log(Level.FINE, "rectangle parsing failed", ex);
-          }
-      }
-      return def;
-  }
+				int x = Integer.parseInt(tokens.nextToken().trim());
+				int y = Integer.parseInt(tokens.nextToken().trim());
+				int w = Integer.parseInt(tokens.nextToken().trim());
+				int h = Integer.parseInt(tokens.nextToken().trim());
 
-  public void putRectangle(Preferences prefs, String key,
-          Rectangle rectangle) {
-      if (rectangle == null) {
-          prefs.remove(key);
-      } else {
-          prefs.put(key, rectangle.x + ", " + rectangle.y + ", "
-                  + rectangle.width + ", " + rectangle.height);
-      }
-  }
+				return new Rectangle(x, y, w, h);
+			} catch (Exception ex) {
+				logger.log(Level.FINE, "rectangle parsing failed", ex);
+			}
+		}
+		return def;
+	}
 
-  public Point getPoint(Preferences prefs, String key, Point def) {
-      String point = prefs.get(key, null);
-      if (point != null) {
-          try {
-              StringTokenizer tokens = new StringTokenizer(point, ",");
+	public static void putRectangle(Preferences prefs, String key, Rectangle rectangle) {
+		if (rectangle == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, rectangle.x + ", " + rectangle.y + ", "
+					+ rectangle.width + ", " + rectangle.height);
+		}
+	}
 
-              int x = Integer.parseInt(tokens.nextToken().trim());
-              int y = Integer.parseInt(tokens.nextToken().trim());
+	public static Point getPoint(Preferences prefs, String key, Point def) {
+		String point = prefs.get(key, null);
+		if (point != null) {
+			try {
+				StringTokenizer tokens = new StringTokenizer(point, ",");
 
-              return new Point(x, y);
-          } catch (Exception ex) {
-              logger.log(Level.FINE, "point parsing failed", ex);
-          }
-      }
-      return def;
-  }
+				int x = Integer.parseInt(tokens.nextToken().trim());
+				int y = Integer.parseInt(tokens.nextToken().trim());
 
-  public void putPoint(Preferences prefs, String key, Point point) {
-      if (point == null) {
-          prefs.remove(key);
-      } else {
-          prefs.put(key, point.x + ", " + point.y);
-      }
-  }
-  
-  public static Font getFont(Preferences prefs, String key, Font def) {
-      String font = prefs.get(key, null);
-      if (font != null) {
-        try {
-          StringTokenizer tokens = new StringTokenizer(font, ",");
-    
-          String name  = tokens.nextToken().trim();
-          int    style = Integer.parseInt(tokens.nextToken().trim());
-          int    size  = Integer.parseInt(tokens.nextToken().trim());
-    
-          return new Font(name, style, size);
-        } catch (Exception ex) {
-          logger.log(Level.FINE, "font parsing failed", ex);
-        }
-      }
-      return def;
-    }
+				return new Point(x, y);
+			} catch (Exception ex) {
+				logger.log(Level.FINE, "point parsing failed", ex);
+			}
+		}
+		return def;
+	}
 
-    public static void putFont(Preferences prefs, String key, Font font) {
-      if (font == null) {
-        prefs.remove(key);
-      } else {
-        prefs.put(key, font.getName() + ", " + font.getStyle() + ", " + font.getSize());
-      }
-    }
+	public static void putPoint(Preferences prefs, String key, Point point) {
+		if (point == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, point.x + ", " + point.y);
+		}
+	}
 
-    public static Color getColor(Preferences prefs, String key, Color def) {
-      String color = prefs.get(key, null);
-      if (color != null) {
-        try {
-          StringTokenizer tokens = new StringTokenizer(color, ",");
+	public static Font getFont(Preferences prefs, String key, Font def) {
+		String font = prefs.get(key, null);
+		if (font != null) {
+			try {
+				StringTokenizer tokens = new StringTokenizer(font, ",");
 
-          int r = Integer.parseInt(tokens.nextToken().trim());
-          int g = Integer.parseInt(tokens.nextToken().trim());
-          int b = Integer.parseInt(tokens.nextToken().trim());
+				String name = tokens.nextToken().trim();
+				int style = Integer.parseInt(tokens.nextToken().trim());
+				int size = Integer.parseInt(tokens.nextToken().trim());
 
-          return new Color(r, g, b);
-        } catch (Exception ex) {
-          logger.log(Level.FINE, "color parsing failed", ex);
-        }
-      }
-      return def;
-    }
+				return new Font(name, style, size);
+			} catch (Exception ex) {
+				logger.log(Level.FINE, "font parsing failed", ex);
+			}
+		}
+		return def;
+	}
 
-    public static void putColor(Preferences prefs, String key, Color color) {
-      if (color == null) {
-        prefs.remove(key);
-      } else {
-        prefs.put(key, color.getRed() + ", " + color.getGreen() + ", " + color.getBlue());
-      }
-    }
+	public static void putFont(Preferences prefs, String key, Font font) {
+		if (font == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, font.getName() + ", " + font.getStyle() + ", "
+					+ font.getSize());
+		}
+	}
 
-    protected static File getFile(Preferences prefs, String key, File def) {
-        String file = prefs.get(key, null);
-        if (file != null) {
-          return new File(file);
-        }
-        return def;
-      }
+	public static Color getColor(Preferences prefs, String key, Color def) {
+		String color = prefs.get(key, null);
+		if (color != null) {
+			try {
+				StringTokenizer tokens = new StringTokenizer(color, ",");
 
-      protected static void putFile(Preferences prefs, String key, File file) {
-        if (file == null) {
-          prefs.remove(key);
-        } else {
-          prefs.put(key, file.getPath());
-        }
-      }
+				int r = Integer.parseInt(tokens.nextToken().trim());
+				int g = Integer.parseInt(tokens.nextToken().trim());
+				int b = Integer.parseInt(tokens.nextToken().trim());
 
+				return new Color(r, g, b);
+			} catch (Exception ex) {
+				logger.log(Level.FINE, "color parsing failed", ex);
+			}
+		}
+		return def;
+	}
+
+	public static void putColor(Preferences prefs, String key, Color color) {
+		if (color == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, color.getRed() + ", " + color.getGreen() + ", "
+					+ color.getBlue());
+		}
+	}
+
+	protected static File getFile(Preferences prefs, String key, File def) {
+		String file = prefs.get(key, null);
+		if (file != null) {
+			return new File(file);
+		}
+		return def;
+	}
+
+	protected static void putFile(Preferences prefs, String key, File file) {
+		if (file == null) {
+			prefs.remove(key);
+		} else {
+			prefs.put(key, file.getPath());
+		}
+	}
 
 }

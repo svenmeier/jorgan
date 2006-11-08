@@ -25,7 +25,17 @@ package jorgan.config;
  */
 public interface ConfigurationListener {
 
-  public void configurationChanged(ConfigurationEvent event);
-  
-  public void configurationBackup(ConfigurationEvent event);
+	/**
+	 * The configuration has changed.
+	 * 
+	 * @param event
+	 */
+	public void configurationChanged(ConfigurationEvent event);
+
+	/**
+	 * The configuration will be backed up.
+	 * 
+	 * @param event
+	 */
+	public void configurationBackup(ConfigurationEvent event);
 }

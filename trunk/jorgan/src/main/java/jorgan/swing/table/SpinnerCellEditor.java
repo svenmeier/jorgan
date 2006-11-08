@@ -31,24 +31,32 @@ import javax.swing.table.TableCellEditor;
  * 
  * @see javax.swing.JSpinner
  */
-public class SpinnerCellEditor extends AbstractCellEditor implements TableCellEditor {
+public class SpinnerCellEditor extends AbstractCellEditor implements
+		TableCellEditor {
 
-  private JSpinner spinner = new JSpinner();
-  
-  public SpinnerCellEditor(int min, int max, int stepSize) {
-    spinner.setModel(new SpinnerNumberModel(0, min, max, stepSize));
-  }
-  
-  public Component getTableCellEditorComponent(JTable table, Object value,
-                                               boolean isSelected, int row, int column) {
+	private JSpinner spinner = new JSpinner();
 
-    spinner.setValue(value);
+	/**
+	 * Constructor.
+	 * 
+	 * @param min	minimum value
+	 * @param max	maximum value
+	 * @param stepSize	step size
+	 */
+	public SpinnerCellEditor(int min, int max, int stepSize) {
+		spinner.setModel(new SpinnerNumberModel(0, min, max, stepSize));
+	}
 
-    return spinner;
-  }
+	public Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column) {
 
-  public Object getCellEditorValue() {
-    return spinner.getValue();
-  }
+		spinner.setValue(value);
+
+		return spinner;
+	}
+
+	public Object getCellEditorValue() {
+		return spinner.getValue();
+	}
 
 }

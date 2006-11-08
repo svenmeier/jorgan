@@ -18,54 +18,65 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.construct.Configuration;
-import jorgan.swing.color.*;
+import jorgan.swing.GridBuilder;
+import jorgan.swing.color.ColorSelector;
 
 /**
  * A panel for the {@link jorgan.gui.construct.Configuration}.
  */
 public class GUIConstructConfigPanel extends ConfigurationPanel {
 
-  private JLabel gridLabel = new JLabel();
-  private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 256, 1)); 
-  private JLabel        colorLabel = new JLabel();
-  private ColorSelector colorSelector = new ColorSelector();
+	private JLabel gridLabel = new JLabel();
 
-  public GUIConstructConfigPanel() {
-    setLayout(new GridBagLayout());
+	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
+			256, 1));
 
-    setName(resources.getString("config.construct.name"));
+	private JLabel colorLabel = new JLabel();
 
-    gridLabel.setText(resources.getString("config.construct.grid"));
-    add(gridLabel,   new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-    add(gridSpinner, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	private ColorSelector colorSelector = new ColorSelector();
 
-    colorLabel.setText(resources.getString("config.construct.color"));
-    add(colorLabel   , new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-    add(colorSelector, new GridBagConstraints(1, 2, 1, 1, 1.0, 0.0, GridBagConstraints.WEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	public GUIConstructConfigPanel() {
+		setName(resources.getString("config.construct.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
 
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 1, 1, 0.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+		builder.nextRow();
+		
+		gridLabel.setText(resources.getString("config.construct.grid"));
+		add(gridLabel, builder.nextColumn());
+		add(gridSpinner, builder.nextColumn());
 
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+		builder.nextRow();
 
-    gridSpinner.setValue(new Integer(config.getGrid()));
+		colorLabel.setText(resources.getString("config.construct.color"));
+		add(colorLabel, builder.nextColumn());
+		add(colorSelector, builder.nextColumn());
+	}
 
-    colorSelector.setSelectedColor(config.getColor());
-  }
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
+		gridSpinner.setValue(new Integer(config.getGrid()));
 
-    config.setGrid(((Integer)gridSpinner.getValue()).intValue());
+		colorSelector.setSelectedColor(config.getColor());
+	}
 
-    config.setColor(colorSelector.getSelectedColor());
-  }
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+
+		config.setGrid(((Integer) gridSpinner.getValue()).intValue());
+
+		config.setColor(colorSelector.getSelectedColor());
+	}
 }

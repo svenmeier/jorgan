@@ -18,45 +18,65 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.GridBagLayout;
+
+import javax.swing.JCheckBox;
 
 import jorgan.gui.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.gui.Configuration}.
  */
 public class GUIConfigPanel extends ConfigurationPanel {
 
-  private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
-  private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
+	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
 
-  public GUIConfigPanel() {
-    setLayout(new GridBagLayout());
+	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-    setName(resources.getString("config.swing.name"));
+	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
-    useSystemLookAndFeelCheckBox.setText(resources.getString("config.swing.useSystemLookAndFeel"));
-    add(useSystemLookAndFeelCheckBox, new GridBagConstraints(0, 0, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+	public GUIConfigPanel() {
+		setName(resources.getString("config.gui.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{1.0d});
+		
+		builder.nextRow();
 
-    showAboutOnStartupCheckBox.setText(resources.getString("config.swing.showAboutOnStartup"));
-    add(showAboutOnStartupCheckBox, new GridBagConstraints(0, 1, 2, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
+		useSystemLookAndFeelCheckBox.setText(resources
+				.getString("config.gui.useSystemLookAndFeel"));
+		add(useSystemLookAndFeelCheckBox, builder.nextColumn());
 
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+		builder.nextRow();
 
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
-    useSystemLookAndFeelCheckBox.setSelected(config.getUseSystemLookAndFeel());
-    showAboutOnStartupCheckBox  .setSelected(config.getShowAboutOnStartup());
-  }
+		showAboutOnStartupCheckBox.setText(resources
+				.getString("config.gui.showAboutOnStartup"));
+		add(showAboutOnStartupCheckBox, builder.nextColumn());
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
-    config.setUseSystemLookAndFeel(useSystemLookAndFeelCheckBox.isSelected());
-    config.setShowAboutOnStartup  (showAboutOnStartupCheckBox  .isSelected());
-  }
+		builder.nextRow();
+
+		fullScreenOnLoadCheckBox.setText(resources
+				.getString("config.gui.fullScreenOnLoad"));
+		add(fullScreenOnLoadCheckBox, builder.nextColumn());
+	}
+
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
+		useSystemLookAndFeelCheckBox.setSelected(config
+				.getUseSystemLookAndFeel());
+		showAboutOnStartupCheckBox.setSelected(config.getShowAboutOnStartup());
+		fullScreenOnLoadCheckBox.setSelected(config.getFullScreenOnLoad());
+	}
+
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+		config.setUseSystemLookAndFeel(useSystemLookAndFeelCheckBox
+				.isSelected());
+		config.setShowAboutOnStartup(showAboutOnStartupCheckBox.isSelected());
+		config.setFullScreenOnLoad(fullScreenOnLoadCheckBox.isSelected());
+	}
 }

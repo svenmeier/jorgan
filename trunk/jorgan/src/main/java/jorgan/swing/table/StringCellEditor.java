@@ -26,29 +26,33 @@ import javax.swing.*;
 import javax.swing.table.TableCellEditor;
 
 /**
- * Utility method for tables.
+ * Cell editor for strings.
  */
-public class StringCellEditor extends AbstractCellEditor implements TableCellEditor {
-    
-    private JTextField textField;
-    
-    public StringCellEditor() {
-        textField = new JTextField();
-        textField.setBorder(null);
-        textField.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent ev) {
-            stopCellEditing();
-          }
-        });
-    }
+public class StringCellEditor extends AbstractCellEditor implements
+		TableCellEditor {
 
-    public Component getTableCellEditorComponent(JTable table, Object value,
-           boolean isSelected, int row, int column) {
-        textField.setText((String)value);
-        return textField;
-    }
+	private JTextField textField;
 
-    public Object getCellEditorValue() {
-        return textField.getText();
-    }
+	/**
+	 * Constructor.
+	 */
+	public StringCellEditor() {
+		textField = new JTextField();
+		textField.setBorder(null);
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				stopCellEditing();
+			}
+		});
+	}
+
+	public Component getTableCellEditorComponent(JTable table, Object value,
+			boolean isSelected, int row, int column) {
+		textField.setText((String) value);
+		return textField;
+	}
+
+	public Object getCellEditorValue() {
+		return textField.getText();
+	}
 }

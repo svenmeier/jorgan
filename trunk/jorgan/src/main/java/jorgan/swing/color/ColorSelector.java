@@ -18,112 +18,136 @@
  */
 package jorgan.swing.color;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JColorChooser;
+import javax.swing.JPanel;
 
 /**
  * Selector of a color.
  */
 public class ColorSelector extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.swing.resources");
 
-  /**
-   * The selected color.
-   */
-  private Color color;
+	/**
+	 * The selected color.
+	 */
+	private Color color;
 
-  /**
-   * The button used to edit the selected font.
-   */
-  private JButton button = new JButton();
-  
-  /**
-   * Should color be shown as an icon.
-   */
-  private boolean showIcon;
+	/**
+	 * The button used to edit the selected font.
+	 */
+	private JButton button = new JButton();
 
-  /**
-   * Create a new selector.
-   */
-  public ColorSelector() {
-    this(true);
-  }
-  
-  /**
-   * Create a new selector.
-   */
-  public ColorSelector(boolean showIcon) {
-    super(new BorderLayout());
-    
-    this.showIcon = showIcon;
+	/**
+	 * Should color be shown as an icon.
+	 */
+	private boolean showIcon;
 
-    button.setHorizontalAlignment(JButton.LEFT);
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ev) {
-        String title = resources.getString("color.title");
-        Color newColor = JColorChooser.showDialog(ColorSelector.this, title, color);
-        if (newColor != null) {
-          setSelectedColor(newColor);
-        }
-      }
-    });
-    add(button, BorderLayout.CENTER);
+	/**
+	 * Should color be shown as text.
+	 */
+	private boolean showText;
 
-    setSelectedColor(Color.black);
-  }
+	/**
+	 * Create a new selector.
+	 */
+	public ColorSelector() {
+		this(true, false);
+	}
 
-  public void setEnabled(boolean enabled) {
-    button.setEnabled(enabled);
-  }
+	/**
+	 * Create a new selector.
+	 * 
+	 * @param showIcon
+	 *            should an icon be shown
+	 * @param showText
+	 *            should text be shown
+	 */
+	public ColorSelector(boolean showIcon, boolean showText) {
+		super(new BorderLayout());
 
-  /**
-   * Set the selected color.
-   *
-   * @param color  the color to select
-   */
-  public void setSelectedColor(Color color) {
-    this.color = color;
-    if (color == null) {
-      button.setText("-");
-      button.setIcon(null);
-    } else {
-      if (showIcon) {
-        button.setText(null);
-        button.setIcon(new ColorIcon(color));
-      } else {
-        button.setText(format(color));
-        button.setIcon(null);
-      }
-    }
-  }
+		this.showIcon = showIcon;
+		this.showText = showText;
 
-  /**
-   * Get the selected color.
-   *
-   * @return  the selected color
-   */
-  public Color getSelectedColor() {
-    return color;
-  }
+		button.setHorizontalAlignment(JButton.LEFT);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				String title = resources.getString("color.title");
+				Color newColor = JColorChooser.showDialog(ColorSelector.this,
+						title, color);
+				if (newColor != null) {
+					setSelectedColor(newColor);
+				}
+			}
+		});
+		add(button, BorderLayout.CENTER);
 
-  /**
-   * Utility method for formatting of a color.
-   * 
-   * @param color   color to format
-   * @return        formatted color
-   */
-  public static String format(Color color) {
-    if (color == null) {
-      return "-";
-    } else {
-      return (color.getRed() + ", " + color.getGreen() + ", " + color.getBlue());
-    }
-  }
- }
+		setSelectedColor(Color.black);
+	}
+
+	public void setEnabled(boolean enabled) {
+		button.setEnabled(enabled);
+	}
+
+	/**
+	 * Set the selected color.
+	 * 
+	 * @param color
+	 *            the color to select
+	 */
+	public void setSelectedColor(Color color) {
+		this.color = color;
+		
+		if (showText) {
+			if (color == null) {
+				button.setText("-");
+			} else {
+				button.setText(format(color));
+			}
+		}
+		
+		if (showIcon) {
+			if (color == null) {
+				button.setIcon(null);
+			} else {
+				button.setIcon(new ColorIcon(color));
+			}
+		}		
+	}
+
+	/**
+	 * Get the selected color.
+	 * 
+	 * @return the selected color
+	 */
+	public Color getSelectedColor() {
+		return color;
+	}
+
+	/**
+	 * Utility method for formatting of a color.
+	 * 
+	 * @param color
+	 *            color to format
+	 * @return formatted color
+	 */
+	public static String format(Color color) {
+		if (color == null) {
+			return "-";
+		} else {
+			return (color.getRed() + ", " + color.getGreen() + ", " + color
+					.getBlue());
+		}
+	}
+}

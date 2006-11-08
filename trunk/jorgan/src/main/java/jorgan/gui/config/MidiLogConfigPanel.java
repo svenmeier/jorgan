@@ -18,49 +18,56 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
+import java.awt.GridBagLayout;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import jorgan.midi.log.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.midi.log.Configuration}.
  */
 public class MidiLogConfigPanel extends ConfigurationPanel {
 
-  private JLabel maxLabel = new JLabel();
-  private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1, Integer.MAX_VALUE, 50));
-  
-  /**
-   * Create this panel.
-   */
-  public MidiLogConfigPanel() {
-    setLayout(new GridBagLayout());
-    setName(resources.getString("config.midi.log.name"));
+	private JLabel maxLabel = new JLabel();
 
-    maxLabel.setText(resources.getString("config.midi.log.max"));
-    add(maxLabel, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));
-    add(maxSpinner, new GridBagConstraints(1, 0, 1, 1, 1.0, 0.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, standardInsets, 0, 0));    
-  
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+	private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
+			Integer.MAX_VALUE, 50));
 
-  /**
-   * Read the configuration.
-   */
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+	/**
+	 * Create this panel.
+	 */
+	public MidiLogConfigPanel() {
+		setName(resources.getString("config.midi.log.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+		
+		builder.nextRow();
 
-    maxSpinner.setValue(new Integer(config.getMax()));
-  }
+		maxLabel.setText(resources.getString("config.midi.log.max"));
+		add(maxLabel, builder.nextColumn());
+		add(maxSpinner, builder.nextColumn());
+	}
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
+	/**
+	 * Read the configuration.
+	 */
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
 
-    config.setMax(((Integer)maxSpinner.getValue()).intValue());
-  }  
+		maxSpinner.setValue(new Integer(config.getMax()));
+	}
+
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+
+		config.setMax(((Integer) maxSpinner.getValue()).intValue());
+	}
 }

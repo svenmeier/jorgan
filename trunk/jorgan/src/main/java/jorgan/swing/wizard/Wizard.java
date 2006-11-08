@@ -23,34 +23,68 @@ package jorgan.swing.wizard;
  */
 public interface Wizard {
 
-  public boolean hasPrevious();
+	/**
+	 * Does this wizard have a previous page.
+	 * 
+	 * @return <code>true</code> if a previous page exists
+	 */
+	public boolean hasPrevious();
 
-  public boolean hasNext();
+	/**
+	 * Does this wizard have a next page.
+	 * 
+	 * @return <code>true</code> if a next page exists
+	 */
+	public boolean hasNext();
 
-  public Page getCurrentPage();  
+	/**
+	 * Get the current page.
+	 * 
+	 * @return the current apge
+	 */
+	public Page getCurrentPage();
 
-  public void next();  
+	/**
+	 * Step to the next page.
+	 */
+	public void next();
 
-  public void previous();  
+	/**
+	 * Step to the previous page.
+	 */
+	public void previous();
 
-  /**
-   * Can this wizard currently be finished.
-   */
-  public boolean allowsFinish();
+	/**
+	 * Can this wizard currently be finished.
+	 * 
+	 * @return <code>true</code> if can be finished
+	 */
+	public boolean allowsFinish();
 
-  /**
-   * Finish wizard.
-   */
-  public void finish();
+	/**
+	 * Finish wizard.
+	 */
+	public void finish();
 
-  /**
-   * Notification that a page has changed.
-   * 
-   * @param step    page that changed
-   */  
-  public void pageChanged(Page page);
-   
-  public void addWizardListener(WizardListener listener);
-  
-  public void removeWizardListener(WizardListener listener);
+	/**
+	 * Notification that a page has changed.
+	 * 
+	 * @param page
+	 *            page that changed
+	 */
+	public void pageChanged(Page page);
+
+	/**
+	 * Add a listener.
+	 * 
+	 * @param listener	listener to add
+	 */
+	public void addWizardListener(WizardListener listener);
+
+	/**
+	 * Remove a listener.
+	 * 
+	 * @param listener	listener to remove
+	 */
+	public void removeWizardListener(WizardListener listener);
 }

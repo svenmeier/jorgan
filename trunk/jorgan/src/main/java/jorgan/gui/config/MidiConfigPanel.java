@@ -18,11 +18,12 @@
  */
 package jorgan.gui.config;
 
-import java.awt.*;
+import java.awt.GridBagLayout;
 
-import javax.swing.*;
+import javax.swing.JCheckBox;
 
 import jorgan.midi.Configuration;
+import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.midi.Configuration}.
@@ -32,36 +33,39 @@ import jorgan.midi.Configuration;
  */
 public class MidiConfigPanel extends ConfigurationPanel {
 
-  private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
-  
-  /**
-   * Create this panel.
-   */
-  public MidiConfigPanel() {
-    setLayout(new GridBagLayout());
-    setName(resources.getString("config.midi.name"));
+	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
-    sendAllNotesOffCheckBox.setText(resources.getString("config.midi.sendAllNotesOff"));
-    add(sendAllNotesOffCheckBox, new GridBagConstraints(0, 14, 1, 1, 0.0, 0.0, GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL, standardInsets, 0, 0));    
+	/**
+	 * Create this panel.
+	 */
+	public MidiConfigPanel() {
+		setName(resources.getString("config.midi.name"));
+		setLayout(new GridBagLayout());
+		
+		GridBuilder builder = new GridBuilder(new double[]{1.0d});
 
-    add(new JLabel(), new GridBagConstraints(0, GridBagConstraints.RELATIVE, 512, 1, 1.0, 1.0, GridBagConstraints.NORTHWEST, GridBagConstraints.NONE, emptyInsets, 0, 0));
-  }
+		builder.nextRow();
+		
+		sendAllNotesOffCheckBox.setText(resources
+				.getString("config.midi.sendAllNotesOff"));
+		add(sendAllNotesOffCheckBox, builder.nextColumn());
+	}
 
-    /**
-   * Read the configuration.
-   */
-  public void read() {
-    Configuration config = (Configuration)getConfiguration();
+	/**
+	 * Read the configuration.
+	 */
+	public void read() {
+		Configuration config = (Configuration) getConfiguration();
 
-    sendAllNotesOffCheckBox.setSelected(config.getSendAllNotesOff());
-  }
+		sendAllNotesOffCheckBox.setSelected(config.getSendAllNotesOff());
+	}
 
-  /**
-   * Write the configuration.
-   */
-  public void write() {
-    Configuration config = (Configuration)getConfiguration();
-       
-    config.setSendAllNotesOff(sendAllNotesOffCheckBox.isSelected());
-  }
+	/**
+	 * Write the configuration.
+	 */
+	public void write() {
+		Configuration config = (Configuration) getConfiguration();
+
+		config.setSendAllNotesOff(sendAllNotesOffCheckBox.isSelected());
+	}
 }

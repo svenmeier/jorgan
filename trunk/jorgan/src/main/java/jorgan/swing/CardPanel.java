@@ -23,238 +23,246 @@ import java.awt.*;
 import javax.swing.*;
 
 /**
- * A simpler alternative to a JPanel with a CardLayout.
+ * A simpler alternative to a {@link javax.swing.JPanel} with a
+ * {@link java.awt.CardLayout}.
  */
 public class CardPanel extends JPanel {
 
-  private Layout layout = new Layout();
+	private Layout layout = new Layout();
 
-  /**
-   * Constructor.
-   */
-  public CardPanel() {
-    setLayout(layout);
-  }
+	/**
+	 * Constructor.
+	 */
+	public CardPanel() {
+		setLayout(layout);
+	}
 
-  /**
-   * Return the selected card.
-   *
-   * @return    selected card
-   */
-  public Component getSelectedCard() {
+	/**
+	 * Return the selected card.
+	 * 
+	 * @return selected card
+	 */
+	public Component getSelectedCard() {
 
-    return layout.getSelectedCard();
-  }
+		return layout.getSelectedCard();
+	}
 
-  /**
-   * Select the card with the specified constraint.
-   *
-   * @param constraint   constraint of card to select
-   * @return             the component with the specified constraint
-   */
-  public Component selectCard(Object constraint) {
+	/**
+	 * Select the card with the specified constraint.
+	 * 
+	 * @param constraint
+	 *            constraint of card to select
+	 * @return the component with the specified constraint
+	 */
+	public Component selectCard(Object constraint) {
 
-    Component component = layout.selectCard(constraint);
+		Component component = layout.selectCard(constraint);
 
-    revalidate();
-    repaint();
+		revalidate();
+		repaint();
 
-    return component;
-  }
+		return component;
+	}
 
-  /**
-   * Get the card with the specified constraint.
-   *
-   * @param constraint   constraint of card to get
-   */
-  public Component getCard(Object constraint) {
+	/**
+	 * Get the card with the specified constraint.
+	 * 
+	 * @param constraint
+	 *            constraint of card to get
+	 * @return the component for the given constraint
+	 */
+	public Component getCard(Object constraint) {
 
-    return layout.getCard(constraint);
-  }
+		return layout.getCard(constraint);
+	}
 
-  /**
-   * Add a card.
-   *
-   * @param card         card to add
-   * @param constraint   constraint of card to add
-   */
-  public void addCard(Component card, Object constraint) {
+	/**
+	 * Add a card.
+	 * 
+	 * @param card
+	 *            card to add
+	 * @param constraint
+	 *            constraint of card to add
+	 */
+	public void addCard(Component card, Object constraint) {
 
-    this.add(card, constraint);
-    
-    revalidate();
-    repaint();
-  }
+		this.add(card, constraint);
 
-  /**
-   * Layout.
-   */
-  private static class Layout implements LayoutManager2 {
+		revalidate();
+		repaint();
+	}
 
-    private Map       cards = new HashMap();
-    private Component current;
+	/**
+	 * Layout.
+	 */
+	private static class Layout implements LayoutManager2 {
 
+		private Map cards = new HashMap();
 
-    /**
-     * Select the card with the specified constraint.
-     *
-     * @param constraint   constraint of card to select
-     * @return             the component with the specified constraint
-     */
-    public Component selectCard(Object constraint) {
-      if (current != null) {
-        current.setVisible(false);
-      }
-      if (constraint == null) {
-        current = null;
-      } else {
-        current = (Component)cards.get(constraint);
-        if (current != null) {
-          current.setVisible(true);
-        }
-      }
-      return current;
-    }
+		private Component current;
 
-    /**
-     * Get the card with the specified constraint.
-     *
-     * @param constraint   constraint of card to get
-     */
-    public Component getCard(Object constraint) {
-      return (Component)cards.get(constraint);
-    }
+		/**
+		 * Select the card with the specified constraint.
+		 * 
+		 * @param constraint
+		 *            constraint of card to select
+		 * @return the component with the specified constraint
+		 */
+		public Component selectCard(Object constraint) {
+			if (current != null) {
+				current.setVisible(false);
+			}
+			if (constraint == null) {
+				current = null;
+			} else {
+				current = (Component) cards.get(constraint);
+				if (current != null) {
+					current.setVisible(true);
+				}
+			}
+			return current;
+		}
 
-    /**
-     * Get the selected card.
-     *
-     * @return    the selected card
-     */
-    public Component getSelectedCard() {
-      return current;
-    }
+		/**
+		 * Get the card with the specified constraint.
+		 * 
+		 * @param constraint
+		 *            constraint of card to get
+		 * @return the component with the given constraint
+		 */
+		public Component getCard(Object constraint) {
+			return (Component) cards.get(constraint);
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public void addLayoutComponent(String name, Component comp) {
-      addLayoutComponent(comp, name);
-    }
+		/**
+		 * Get the selected card.
+		 * 
+		 * @return the selected card
+		 */
+		public Component getSelectedCard() {
+			return current;
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public void addLayoutComponent(Component comp, Object constraint) {
-      cards.put(constraint, comp);
+		/**
+		 * @see LayoutManager
+		 */
+		public void addLayoutComponent(String name, Component comp) {
+			addLayoutComponent(comp, name);
+		}
 
-      if (current != null) {
-        current.setVisible(false);
-      }
-      current = comp;
-      comp.setVisible(true);
-    }
+		/**
+		 * @see LayoutManager
+		 */
+		public void addLayoutComponent(Component comp, Object constraint) {
+			cards.put(constraint, comp);
 
-    /**
-     * @see LayoutManager
-     */
-    public void removeLayoutComponent(Component comp) {
-      Iterator entries = cards.entrySet().iterator();
-      while (entries.hasNext()) {
-        Map.Entry entry = (Map.Entry)entries.next();
-        if (entry.getValue() == comp) {
-          cards.remove(entry.getKey());
-          break;
-        }
-      }
+			if (current != null) {
+				current.setVisible(false);
+			}
+			current = comp;
+			comp.setVisible(true);
+		}
 
-      if (current == comp) {
-        Iterator values = cards.values().iterator();
-        if (values.hasNext()) {
-          current = (Component)values.next();
-          current.setVisible(true);
-        } else {
-          current = null;
-        }
-      }
+		/**
+		 * @see LayoutManager
+		 */
+		public void removeLayoutComponent(Component comp) {
+			Iterator entries = cards.entrySet().iterator();
+			while (entries.hasNext()) {
+				Map.Entry entry = (Map.Entry) entries.next();
+				if (entry.getValue() == comp) {
+					cards.remove(entry.getKey());
+					break;
+				}
+			}
 
-      comp.setVisible(true);
-    }
+			if (current == comp) {
+				Iterator values = cards.values().iterator();
+				if (values.hasNext()) {
+					current = (Component) values.next();
+					current.setVisible(true);
+				} else {
+					current = null;
+				}
+			}
 
-    /**
-     * @see LayoutManager
-     */
-    public Dimension preferredLayoutSize(Container parent) {
-        Insets insets = parent.getInsets();
-        int width = insets.left + insets.right;
-        int height = insets.top + insets.bottom;
+			comp.setVisible(true);
+		}
 
-        if (current != null) {
-          Dimension d = current.getPreferredSize();
-          width += d.width;
-          height += d.height;
-        }
+		/**
+		 * @see LayoutManager
+		 */
+		public Dimension preferredLayoutSize(Container parent) {
+			Insets insets = parent.getInsets();
+			int width = insets.left + insets.right;
+			int height = insets.top + insets.bottom;
 
-        return new Dimension(width, height);
-    }
+			if (current != null) {
+				Dimension d = current.getPreferredSize();
+				width += d.width;
+				height += d.height;
+			}
 
-    /**
-     * @see LayoutManager
-     */
-    public Dimension minimumLayoutSize(Container parent) {
-      Insets insets = parent.getInsets();
-      int width = insets.left + insets.right;
-      int height = insets.top + insets.bottom;
+			return new Dimension(width, height);
+		}
 
-      if (current != null) {
-        Dimension d = current.getMinimumSize();
-        width += d.width;
-        height += d.height;
-      }
+		/**
+		 * @see LayoutManager
+		 */
+		public Dimension minimumLayoutSize(Container parent) {
+			Insets insets = parent.getInsets();
+			int width = insets.left + insets.right;
+			int height = insets.top + insets.bottom;
 
-      return new Dimension(width, height);
-    }
+			if (current != null) {
+				Dimension d = current.getMinimumSize();
+				width += d.width;
+				height += d.height;
+			}
 
-    /**
-     * @see LayoutManager
-     */
-    public Dimension maximumLayoutSize(Container target) {
-      return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
-    }
+			return new Dimension(width, height);
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public float getLayoutAlignmentX(Container target) {
-      return 0.5f;
-    }
+		/**
+		 * @see LayoutManager
+		 */
+		public Dimension maximumLayoutSize(Container target) {
+			return new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE);
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public float getLayoutAlignmentY(Container target) {
-      return 0.5f;
-    }
+		/**
+		 * @see LayoutManager
+		 */
+		public float getLayoutAlignmentX(Container target) {
+			return 0.5f;
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public void invalidateLayout(Container target) {
-    }
+		/**
+		 * @see LayoutManager
+		 */
+		public float getLayoutAlignmentY(Container target) {
+			return 0.5f;
+		}
 
-    /**
-     * @see LayoutManager
-     */
-    public void layoutContainer(Container parent) {
-      if (current != null) {
-        Rectangle rect   = parent.getBounds();
-        Insets    insets = parent.getInsets();
+		/**
+		 * @see LayoutManager
+		 */
+		public void invalidateLayout(Container target) {
+		}
 
-        int width  = rect.width  - insets.left + insets.right;
-        int height = rect.height - insets.top  + insets.bottom;
+		/**
+		 * @see LayoutManager
+		 */
+		public void layoutContainer(Container parent) {
+			if (current != null) {
+				Rectangle rect = parent.getBounds();
+				Insets insets = parent.getInsets();
 
-        current.setBounds(insets.left, insets.top, width, height);
-      }
-    }
-  }
+				int width = rect.width - insets.left + insets.right;
+				int height = rect.height - insets.top + insets.bottom;
+
+				current.setBounds(insets.left, insets.top, width, height);
+			}
+		}
+	}
 }
-

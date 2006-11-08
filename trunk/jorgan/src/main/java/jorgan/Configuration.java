@@ -26,30 +26,33 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
 
-  private static Configuration sharedInstance = new Configuration(true);
-  
-  private Configuration(boolean sharedFlag) {
-    addChild(jorgan.io.Configuration.instance());
-    addChild(jorgan.gui.Configuration.instance());
-    addChild(jorgan.play.Configuration.instance());
-    addChild(jorgan.midi.Configuration.instance());
-    addChild(jorgan.shell.Configuration.instance());
-  }
+	private static Configuration sharedInstance = new Configuration(true);
 
-  public Configuration() {
-    addChild(new jorgan.io.Configuration());
-    addChild(new jorgan.gui.Configuration());
-    addChild(new jorgan.play.Configuration());
-    addChild(new jorgan.midi.Configuration());
-    addChild(new jorgan.shell.Configuration());
-  }
+	private Configuration(boolean sharedFlag) {
+		addChild(jorgan.io.Configuration.instance());
+		addChild(jorgan.gui.Configuration.instance());
+		addChild(jorgan.play.Configuration.instance());
+		addChild(jorgan.midi.Configuration.instance());
+		addChild(jorgan.shell.Configuration.instance());
+	}
 
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+	/**
+	 * Create a new configuration.
+	 */
+	public Configuration() {
+		addChild(new jorgan.io.Configuration());
+		addChild(new jorgan.gui.Configuration());
+		addChild(new jorgan.play.Configuration());
+		addChild(new jorgan.midi.Configuration());
+		addChild(new jorgan.shell.Configuration());
+	}
+
+	/**
+	 * Get the shared configuration.
+	 * 
+	 * @return configuration
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 }

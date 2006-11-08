@@ -18,34 +18,44 @@
  */
 package jorgan.swing.color;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+
+import javax.swing.Icon;
 
 /**
  * Icon of color
  */
 public class ColorIcon implements Icon {
 
-  private static final int SIZE = 16;
-  /**
-   * The color.
-   */
-  private Color color;
+	private static final int SIZE = 16;
 
-  public ColorIcon(Color color) {
-    this.color = color;
-  }
+	/**
+	 * The color.
+	 */
+	private Color color;
 
-  public void paintIcon(Component c, Graphics g, int x, int y) {
-    g.setColor(color);
-    g.fillRect(x, y, SIZE, SIZE);
-  }
-    
-  public int getIconWidth() {
-    return SIZE;
-  }
+	/**
+	 * Create an icon for the given color.
+	 * 
+	 * @param color
+	 *            color
+	 */
+	public ColorIcon(Color color) {
+		this.color = color;
+	}
 
-  public int getIconHeight() {
-    return SIZE;
-  }
+	public void paintIcon(Component c, Graphics g, int x, int y) {
+		g.setColor(color);
+		g.fillRect(x, y, SIZE, SIZE);
+	}
+
+	public int getIconWidth() {
+		return SIZE;
+	}
+
+	public int getIconHeight() {
+		return SIZE;
+	}
 }

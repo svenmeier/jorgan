@@ -18,91 +18,126 @@
  */
 package jorgan.swing.font;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ResourceBundle;
 
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 
 /**
  * A dialog for a font selection.
  */
 class FontDialog extends JDialog {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.swing.resources");
 
-  private JPanel borderPanel = new JPanel();
-  private FontPanel fontPanel = new FontPanel();
-  private JPanel buttonPanel = new JPanel();
-  private JButton okButton = new JButton();
-  private JButton cancelButton = new JButton();
+	private JPanel borderPanel = new JPanel();
 
-  private Font font;
+	private FontPanel fontPanel = new FontPanel();
 
-  public FontDialog(JFrame owner) {
-    super(owner, true);
+	private JPanel buttonPanel = new JPanel();
 
-    init();
-  }
+	private JButton okButton = new JButton();
 
-  public FontDialog(JDialog owner) {
-    super(owner, true);
+	private JButton cancelButton = new JButton();
 
-    init();
-  }
+	private Font font;
 
-  private void init() {
+	/**
+	 * Constructor.
+	 * 
+	 * @param owner	the owner of this dialog
+	 */
+	public FontDialog(JFrame owner) {
+		super(owner, true);
 
-    setTitle(resources.getString("font.title"));
+		init();
+	}
 
-    borderPanel.setLayout(new BorderLayout(10, 10));
-    borderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-    getContentPane().add(borderPanel, BorderLayout.CENTER);
+	/**
+	 * Constructor.
+	 * 
+	 * @param owner	the owner of this dialog
+	 */
+	public FontDialog(JDialog owner) {
+		super(owner, true);
 
-    borderPanel.add(fontPanel, BorderLayout.CENTER);
+		init();
+	}
 
-    buttonPanel.setLayout(new BorderLayout());
-    borderPanel.add(buttonPanel, BorderLayout.SOUTH);
+	private void init() {
+		setTitle(resources.getString("font.title"));
 
-      JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
-      buttonPanel.add(gridPanel, BorderLayout.EAST);
+		borderPanel.setLayout(new BorderLayout(10, 10));
+		borderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		getContentPane().add(borderPanel, BorderLayout.CENTER);
 
-        okButton.setText(resources.getString("font.ok"));
-        okButton.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent ev) {
-            font = fontPanel.getSelectedFont();
-            setVisible(false);
-          }
-        });
-        getRootPane().setDefaultButton(okButton);
-        gridPanel.add(okButton);
+		borderPanel.add(fontPanel, BorderLayout.CENTER);
 
-        cancelButton.setText(resources.getString("font.cancel"));
-        cancelButton.addActionListener(new ActionListener() {
-          public void actionPerformed(ActionEvent ev) {
-            setVisible(false);
-          }
-        });
-        gridPanel.add(cancelButton);
-  }
+		buttonPanel.setLayout(new BorderLayout());
+		borderPanel.add(buttonPanel, BorderLayout.SOUTH);
 
-  public void start() {
-    setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-    pack();
-    setLocationRelativeTo(getOwner());
-    setVisible(true);
-  }
+		JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
+		buttonPanel.add(gridPanel, BorderLayout.EAST);
 
-  public void setSelectedFont(Font font) {
-    this.font = font;
+		okButton.setText(resources.getString("font.ok"));
+		okButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				font = fontPanel.getSelectedFont();
+				setVisible(false);
+			}
+		});
+		getRootPane().setDefaultButton(okButton);
+		gridPanel.add(okButton);
 
-    fontPanel.setSelectedFont(font);
-  }
+		cancelButton.setText(resources.getString("font.cancel"));
+		cancelButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				setVisible(false);
+			}
+		});
+		gridPanel.add(cancelButton);
+	}
 
-  public Font getSelectedFont() {
-    return font;
-  }
+	/**
+	 * Start.
+	 */
+	public void start() {
+		setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		pack();
+		setLocationRelativeTo(getOwner());
+		setVisible(true);
+	}
+
+	/**
+	 * Set the selected font.
+	 * 
+	 * @param font 	the font to select
+	 */
+	public void setSelectedFont(Font font) {
+		this.font = font;
+
+		fontPanel.setSelectedFont(font);
+	}
+
+	/**
+	 * Get the selected font.
+	 * 
+	 * @return	the selected font
+	 */
+	public Font getSelectedFont() {
+		return font;
+	}
 }

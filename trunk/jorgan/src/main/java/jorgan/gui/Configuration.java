@@ -34,6 +34,8 @@ public class Configuration extends PreferencesConfiguration {
 
     private static final boolean SHOW_ABOUT_ON_STARTUP = true;
 
+    private static final boolean FULL_SCREEN_ON_LOAD = false;
+
     private static final Rectangle FRAME_BOUNDS = null;
 
     private static final int FRAME_STATE = JFrame.NORMAL;
@@ -47,6 +49,8 @@ public class Configuration extends PreferencesConfiguration {
     private boolean useSystemLookAndFeel;
 
     private boolean showAboutOnStartup;
+    
+    private boolean fullScreenOnLoad;
 
     private Rectangle frameBounds;
 
@@ -71,6 +75,8 @@ public class Configuration extends PreferencesConfiguration {
                 USE_SYSTEM_LOOK_AND_FEEL);
         showAboutOnStartup = getBoolean(prefs, "showAboutOnStartup",
                 SHOW_ABOUT_ON_STARTUP);
+        fullScreenOnLoad = getBoolean(prefs, "fullScreenOnLoad",
+                FULL_SCREEN_ON_LOAD);
         frameBounds = getRectangle(prefs, "frameBounds", FRAME_BOUNDS);
         frameState = getInt(prefs, "frameState", FRAME_STATE);
         playDocking = get(prefs, "playDocking", PLAY_DOCKING);
@@ -80,6 +86,7 @@ public class Configuration extends PreferencesConfiguration {
     protected void backup(Preferences prefs) {
         putBoolean(prefs, "useSystemLookAndFeel", useSystemLookAndFeel);
         putBoolean(prefs, "showAboutOnStartup", showAboutOnStartup);
+        putBoolean(prefs, "fullScreenOnLoad", fullScreenOnLoad);
         putRectangle(prefs, "frameBounds", frameBounds);
         putInt(prefs, "frameState", frameState);
         put(prefs, "playDocking", playDocking);
@@ -154,4 +161,12 @@ public class Configuration extends PreferencesConfiguration {
     public static Configuration instance() {
         return sharedInstance;
     }
+
+	public boolean getFullScreenOnLoad() {
+		return fullScreenOnLoad;
+	}
+
+	public void setFullScreenOnLoad(boolean fullScreenOnLoad) {
+		this.fullScreenOnLoad = fullScreenOnLoad;
+	}
 }

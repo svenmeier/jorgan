@@ -30,160 +30,194 @@ import jorgan.util.Bootstrap;
  */
 public class Configuration extends PreferencesConfiguration {
 
-  public static final int REGISTRATION_CHANGES_CONFIRM = 0; 
-  public static final int REGISTRATION_CHANGES_SAVE    = 1;
-  public static final int REGISTRATION_CHANGES_IGNORE  = 2; 
-  
-  private static final boolean RECENT_OPEN_ON_STARTUP = false;
-  private static final int     RECENT_MAX = 4;
-  private static final int     REGISTRATION_CHANGES = REGISTRATION_CHANGES_CONFIRM;
+	public static final int REGISTRATION_CHANGES_CONFIRM = 0;
 
-  private static Configuration sharedInstance = new Configuration();
+	public static final int REGISTRATION_CHANGES_SAVE = 1;
 
-  private boolean recentOpenOnStartup;
-  private int     recentMax;
-  private File    recentDirectory;
-  private List    recentFiles;
-  private int     registrationChanges;
+	public static final int REGISTRATION_CHANGES_IGNORE = 2;
 
-  protected void restore(Preferences prefs) {
-    registrationChanges = getInt    (prefs, "registrationChanges", REGISTRATION_CHANGES);
-    recentOpenOnStartup = getBoolean(prefs, "recentOpenOnStartup", RECENT_OPEN_ON_STARTUP);
-    recentMax           = getInt    (prefs, "recentMax"          , RECENT_MAX);
-    recentDirectory     = getFile   (prefs,   "recentDirectory"    , RECENT_DIRECTORY());
-    recentFiles = new ArrayList();
-    for (int r = 0; ; r++) {
-      File def = (r == 0) ? RECENT_FILE() : null;
-      File recentFile = getFile(prefs, "recentFiles[" + r + "]", def);
-      if (recentFile == null) {
-        break;
-      } else {
-        recentFiles.add(recentFile);
-      }
-    }
-  }
+	private static final boolean RECENT_OPEN_ON_STARTUP = false;
 
-  protected void backup(Preferences prefs) {
-    putInt    (prefs, "registrationChanges", registrationChanges);
-    putBoolean(prefs, "recentOpenOnStartup", recentOpenOnStartup);
-    putInt    (prefs, "recentMax"          , recentMax);
-    putFile   (prefs,   "recentDirectory"    , recentDirectory);
-    for (int r = 0; ; r++) {
-      String key = "recentFiles[" + r + "]";
-      if (prefs.get(key, null) == null) {
-        break ;
-      }
-      prefs.remove(key);
-    }
-    for (int r = 0; r < recentFiles.size(); r++) {
-      putFile(prefs, "recentFiles[" + r + "]", (File)recentFiles.get(r));
-    }
-  }
+	private static final int RECENT_MAX = 4;
 
-  public int getRegistrationChanges() {
-    return registrationChanges;
-  }
+	private static final int REGISTRATION_CHANGES = REGISTRATION_CHANGES_CONFIRM;
 
-  public void setRegistrationChanges(int registrationChanges) {
-    if (registrationChanges < REGISTRATION_CHANGES_CONFIRM && registrationChanges > REGISTRATION_CHANGES_CONFIRM) {
-        throw new IllegalArgumentException("unknown registration change '" + registrationChanges + "'");
-    }
-    this.registrationChanges = registrationChanges;
-    
-    fireConfigurationChanged();
-  }
+	private static final int HISTORY_COUNT = 0;
+	
+	private static Configuration sharedInstance = new Configuration();
 
-  public boolean getRecentOpenOnStartup() {
-    return recentOpenOnStartup;
-  }
+	private boolean recentOpenOnStartup;
 
-  public void setRecentOpenOnStartup(boolean recentOpenOnStartup) {
-    this.recentOpenOnStartup = recentOpenOnStartup;
-    
-    fireConfigurationChanged();
-  }
+	private int recentMax;
 
-  public File getRecentDirectory() {
-    return recentDirectory;
-  }
+	private File recentDirectory;
 
-  public List getRecentFiles() {
-    return Collections.unmodifiableList(recentFiles);
-  }
+	private List recentFiles;
 
-  public File getRecentFile() {
-    if (recentFiles.size() > 0) {
-      return (File)recentFiles.get(0);
-    }
-    return null;
-  }
+	private int registrationChanges;
+	
+	private int historySize;
 
-  public int getRecentMax() {
-    return recentMax;
-  }
+	protected void restore(Preferences prefs) {
+		registrationChanges = getInt(prefs, "registrationChanges",
+				REGISTRATION_CHANGES);
+		recentOpenOnStartup = getBoolean(prefs, "recentOpenOnStartup",
+				RECENT_OPEN_ON_STARTUP);
+		recentMax = getInt(prefs, "recentMax", RECENT_MAX);
+		recentDirectory = getFile(prefs, "recentDirectory", RECENT_DIRECTORY());
+		recentFiles = new ArrayList();
+		for (int r = 0;; r++) {
+			File def = (r == 0) ? RECENT_FILE() : null;
+			File recentFile = getFile(prefs, "recentFiles[" + r + "]", def);
+			if (recentFile == null) {
+				break;
+			} else {
+				recentFiles.add(recentFile);
+			}
+		}
+		
+		historySize = getInt(prefs, "historyCount", HISTORY_COUNT);
+	}
 
-  public void setRecentMax(int recentMax) {
-    this.recentMax = recentMax;
+	protected void backup(Preferences prefs) {
+		putInt(prefs, "registrationChanges", registrationChanges);
+		putBoolean(prefs, "recentOpenOnStartup", recentOpenOnStartup);
+		putInt(prefs, "recentMax", recentMax);
+		putFile(prefs, "recentDirectory", recentDirectory);
+		for (int r = 0;; r++) {
+			String key = "recentFiles[" + r + "]";
+			if (prefs.get(key, null) == null) {
+				break;
+			}
+			prefs.remove(key);
+		}
+		for (int r = 0; r < recentFiles.size(); r++) {
+			putFile(prefs, "recentFiles[" + r + "]", (File) recentFiles.get(r));
+		}
+		
+		putInt(prefs, "historyCount", historySize);
+	}
 
-    for (int r = recentFiles.size() - 1; r >= recentMax; r--) {
-      recentFiles.remove(r);
-    }
-    
-    fireConfigurationChanged();
-  }
+	public int getHistorySize() {
+		return historySize;
+	}
 
-  public void addRecentFile(File file) {
-    try {
-      File canonical = file.getCanonicalFile();
+	public void setHistorySize(int size) {
+		if (size < 0) {
+			size = 0;
+		}
+		
+		this.historySize = size;
 
-      int index = recentFiles.indexOf(canonical);
-      if (index == -1) {
-        recentFiles.add(0, canonical);
-        if (recentFiles.size() > recentMax) {
-          recentFiles.remove(recentMax);
-        }
-      } else {
-        recentFiles.remove(index);
-        recentFiles.add(0, canonical);
-      }
+		fireConfigurationChanged();
+	}
 
-      recentDirectory = canonical.getParentFile();
-    } catch (IOException ex) {
-      // ignoe
-    }
-    
-    fireConfigurationChanged();
-  }
+	public int getRegistrationChanges() {
+		return registrationChanges;
+	}
 
-  public void removeRecentFile(File file) {
-    try {
-      File canonical = file.getCanonicalFile();
+	public void setRegistrationChanges(int registrationChanges) {
+		if (registrationChanges < REGISTRATION_CHANGES_CONFIRM
+				&& registrationChanges > REGISTRATION_CHANGES_CONFIRM) {
+			throw new IllegalArgumentException("unknown registration change '"
+					+ registrationChanges + "'");
+		}
+		this.registrationChanges = registrationChanges;
 
-      int index = recentFiles.indexOf(canonical);
-      if (index != -1) {
-        recentFiles.remove(index);
-      }
-    } catch (IOException ex) {
-      // ignoe
-    }
-    
-    fireConfigurationChanged();
-  }
+		fireConfigurationChanged();
+	}
 
-  protected File RECENT_FILE() {
-    return new File(RECENT_DIRECTORY(), "Example.disposition");    
-  }
-  
-  protected File RECENT_DIRECTORY() {
-    return new File(Bootstrap.getDirectory(), "dispositions");    
-  }
-  
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+	public boolean getRecentOpenOnStartup() {
+		return recentOpenOnStartup;
+	}
+
+	public void setRecentOpenOnStartup(boolean recentOpenOnStartup) {
+		this.recentOpenOnStartup = recentOpenOnStartup;
+
+		fireConfigurationChanged();
+	}
+
+	public File getRecentDirectory() {
+		return recentDirectory;
+	}
+
+	public List getRecentFiles() {
+		return Collections.unmodifiableList(recentFiles);
+	}
+
+	public File getRecentFile() {
+		if (recentFiles.size() > 0) {
+			return (File) recentFiles.get(0);
+		}
+		return null;
+	}
+
+	public int getRecentMax() {
+		return recentMax;
+	}
+
+	public void setRecentMax(int recentMax) {
+		this.recentMax = recentMax;
+
+		for (int r = recentFiles.size() - 1; r >= recentMax; r--) {
+			recentFiles.remove(r);
+		}
+
+		fireConfigurationChanged();
+	}
+
+	public void addRecentFile(File file) {
+		try {
+			File canonical = file.getCanonicalFile();
+
+			int index = recentFiles.indexOf(canonical);
+			if (index == -1) {
+				recentFiles.add(0, canonical);
+				if (recentFiles.size() > recentMax) {
+					recentFiles.remove(recentMax);
+				}
+			} else {
+				recentFiles.remove(index);
+				recentFiles.add(0, canonical);
+			}
+
+			recentDirectory = canonical.getParentFile();
+		} catch (IOException ex) {
+			// ignoe
+		}
+
+		fireConfigurationChanged();
+	}
+
+	public void removeRecentFile(File file) {
+		try {
+			File canonical = file.getCanonicalFile();
+
+			int index = recentFiles.indexOf(canonical);
+			if (index != -1) {
+				recentFiles.remove(index);
+			}
+		} catch (IOException ex) {
+			// ignoe
+		}
+
+		fireConfigurationChanged();
+	}
+
+	protected File RECENT_FILE() {
+		return new File(RECENT_DIRECTORY(), "Example.disposition");
+	}
+
+	protected File RECENT_DIRECTORY() {
+		return new File(Bootstrap.getDirectory(), "dispositions");
+	}
+
+	/**
+	 * Get the shared configuration.
+	 * 
+	 * @return configuration
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 }

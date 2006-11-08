@@ -18,120 +18,159 @@
  */
 package jorgan.swing.border;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.border.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 /**
  * A class that implements a border in form of a rule.
  */
 public class RuleBorder implements Border {
 
-  public static final int TOP     = SwingConstants.TOP;
-  public static final int BOTTOM  = SwingConstants.BOTTOM;
-  public static final int LEFT    = SwingConstants.LEFT;
-  public static final int RIGHT   = SwingConstants.RIGHT;
+	/**
+	 * Paint rule to the top of the component.
+	 * 
+	 * @see #RuleBorder(int, boolean, boolean)
+	 */
+	public static final int TOP = SwingConstants.TOP;
 
-  private int location;
+	/**
+	 * Paint rule to the bottom of the component.
+	 * 
+	 * @see #RuleBorder(int, boolean, boolean)
+	 */
+	public static final int BOTTOM = SwingConstants.BOTTOM;
 
-  /**
-   * Constructor.
-   */
-  public RuleBorder() {
-    this(BOTTOM);
-  }
+	/**
+	 * Paint rule to the left of the component.
+	 * 
+	 * @see #RuleBorder(int, boolean, boolean)
+	 */
+	public static final int LEFT = SwingConstants.LEFT;
 
-  /**
-   * Constructor.
-   *
-   * @param location    location of rule, {@see TOP} or {@see BOTTOM}
-   */
-  public RuleBorder(int location) {
-    this(location, true, true);
-  }
+	/**
+	 * Paint rule to the right of the component.
+	 * 
+	 * @see #RuleBorder(int, boolean, boolean)
+	 */
+	public static final int RIGHT = SwingConstants.RIGHT;
 
-  /**
-   * Constructor.
-   *
-   * @param location    location of rule, {@see TOP} or {@see BOTTOM}
-   */
-  public RuleBorder(int location, boolean paintHighlight, boolean paintShadow) {
-    this.location = location;
-  }
+	private int location;
 
-  /**
-   * Paint.
-   */
-  public void paintBorder(Component c, Graphics g,
-                          int x, int y, int width, int height) {
+	/**
+	 * Constructor.
+	 */
+	public RuleBorder() {
+		this(BOTTOM);
+	}
 
-    switch (location) {
-      case TOP:
-        g.setColor(getShadowColor(c));
-        g.drawLine(x, y,     x + width - 1, y);
+	/**
+	 * Constructor.
+	 * 
+	 * @param location
+	 *            location of rule
+	 * @see #RuleBorder(int, boolean, boolean)
+	 */
+	public RuleBorder(int location) {
+		this(location, true, true);
+	}
 
-        g.setColor(getHighlightColor(c));
-        g.drawLine(x, y + 1, x + width - 1, y + 1);
-        break;
-      case LEFT:
-        g.setColor(getShadowColor(c));
-        g.drawLine(x,     y, x,     y + height - 1);
+	/**
+	 * Constructor.
+	 * 
+	 * @param location
+	 *            location of rule, {@link #TOP}, {@link #BOTTOM},
+	 *            {@link #LEFT} or {@link #RIGHT}
+	 * @param paintHighlight
+	 *            should highlight be painted
+	 * @param paintShadow
+	 *            should shadow be painted
+	 */
+	public RuleBorder(int location, boolean paintHighlight, boolean paintShadow) {
+		this.location = location;
+	}
 
-        g.setColor(getHighlightColor(c));
-        g.drawLine(x + 1, y, x + 1, y + height - 1);
-        break;
-      case BOTTOM:
-        g.setColor(getShadowColor(c));
-        g.drawLine(x, y + height - 2, x + width - 1, y + height - 2);
+	/**
+	 * Paint.
+	 */
+	public void paintBorder(Component c, Graphics g, int x, int y, int width,
+			int height) {
 
-        g.setColor(getHighlightColor(c));
-        g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
-        break;
-      case RIGHT:
-        g.setColor(getShadowColor(c));
-        g.drawLine(x + width - 2, y, x + width - 2, y + height - 1);
+		switch (location) {
+		case TOP:
+			g.setColor(getShadowColor(c));
+			g.drawLine(x, y, x + width - 1, y);
 
-        g.setColor(getHighlightColor(c));
-        g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
-        break;
-    }
-  }
+			g.setColor(getHighlightColor(c));
+			g.drawLine(x, y + 1, x + width - 1, y + 1);
+			break;
+		case LEFT:
+			g.setColor(getShadowColor(c));
+			g.drawLine(x, y, x, y + height - 1);
 
-  public Insets getBorderInsets(Component c) {
-    switch (location) {
-      case TOP:
-        return new Insets(2, 0, 0, 0);
-      case LEFT:
-        return new Insets(0, 2, 0, 0);
-      case BOTTOM:
-        return new Insets(0, 0, 2, 0);
-      case RIGHT:
-        return new Insets(0, 0, 0, 2);
-    }
-    return new Insets(0, 0, 0, 0);
-  }
+			g.setColor(getHighlightColor(c));
+			g.drawLine(x + 1, y, x + 1, y + height - 1);
+			break;
+		case BOTTOM:
+			g.setColor(getShadowColor(c));
+			g.drawLine(x, y + height - 2, x + width - 1, y + height - 2);
 
-  public boolean isBorderOpaque() {
-    return true;
-  }
+			g.setColor(getHighlightColor(c));
+			g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
+			break;
+		case RIGHT:
+			g.setColor(getShadowColor(c));
+			g.drawLine(x + width - 2, y, x + width - 2, y + height - 1);
 
-  /**
-   * Returns the highlight color of the etched border
-   * when rendered on the specified component.
-   *
-   * @param c the component for which the highlight shall be derived
-   */
-  public Color getHighlightColor(Component c)   {
-    return c.getBackground().brighter();
-  }
+			g.setColor(getHighlightColor(c));
+			g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
+			break;
+		}
+	}
 
-  /**
-   * Returns the shadow color of the etched border
-   * when rendered on the specified component.
-   *
-   * @param c the component for which the shadow shall be derived
-   */
-  public Color getShadowColor(Component c)   {
-    return c.getBackground().darker();
-  }
+	public Insets getBorderInsets(Component c) {
+		switch (location) {
+		case TOP:
+			return new Insets(2, 0, 0, 0);
+		case LEFT:
+			return new Insets(0, 2, 0, 0);
+		case BOTTOM:
+			return new Insets(0, 0, 2, 0);
+		case RIGHT:
+			return new Insets(0, 0, 0, 2);
+		}
+		return new Insets(0, 0, 0, 0);
+	}
+
+	public boolean isBorderOpaque() {
+		return true;
+	}
+
+	/**
+	 * Returns the highlight color of the etched border when rendered on the
+	 * specified component.
+	 * 
+	 * @param c
+	 *            the component for which the highlight shall be derived
+	 * @return the color to highlight with
+	 */
+	public Color getHighlightColor(Component c) {
+		return c.getBackground().brighter();
+	}
+
+	/**
+	 * Returns the shadow color of the etched border when rendered on the
+	 * specified component.
+	 * 
+	 * @param c
+	 *            the component for which the shadow shall be derived
+	 * @return the color to use as shadow
+	 */
+	public Color getShadowColor(Component c) {
+		return c.getBackground().darker();
+	}
 }
