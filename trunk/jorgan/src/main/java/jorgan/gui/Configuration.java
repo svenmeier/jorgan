@@ -30,137 +30,132 @@ import jorgan.config.prefs.PreferencesConfiguration;
  */
 public class Configuration extends PreferencesConfiguration {
 
-    private static final boolean USE_SYSTEM_LOOK_AND_FEEL = true;
+	private static final boolean USE_SYSTEM_LOOK_AND_FEEL = true;
 
-    private static final boolean SHOW_ABOUT_ON_STARTUP = true;
+	private static final boolean SHOW_ABOUT_ON_STARTUP = true;
 
-    private static final boolean FULL_SCREEN_ON_LOAD = false;
+	private static final boolean FULL_SCREEN_ON_LOAD = false;
 
-    private static final Rectangle FRAME_BOUNDS = null;
+	private static final Rectangle FRAME_BOUNDS = null;
 
-    private static final int FRAME_STATE = JFrame.NORMAL;
+	private static final int FRAME_STATE = JFrame.NORMAL;
 
-    private static final String PLAY_DOCKING = null;
+	private static final String PLAY_DOCKING = null;
 
-    private static final String CONSTRUCT_DOCKING = null;
+	private static final String CONSTRUCT_DOCKING = null;
 
-    private static Configuration sharedInstance = new Configuration(true);
+	private static Configuration sharedInstance = new Configuration();
 
-    private boolean useSystemLookAndFeel;
+	private boolean useSystemLookAndFeel;
 
-    private boolean showAboutOnStartup;
-    
-    private boolean fullScreenOnLoad;
+	private boolean showAboutOnStartup;
 
-    private Rectangle frameBounds;
+	private boolean fullScreenOnLoad;
 
-    private int frameState;
+	private Rectangle frameBounds;
 
-    private String playDocking;
+	private int frameState;
 
-    private String constructDocking;
+	private String playDocking;
 
-    private Configuration(boolean sharedFlag) {
-        addChild(jorgan.gui.console.Configuration.instance());
-        addChild(jorgan.gui.construct.Configuration.instance());
-    }
+	private String constructDocking;
 
-    public Configuration() {
-        addChild(new jorgan.gui.console.Configuration());
-        addChild(new jorgan.gui.construct.Configuration());
-    }
+	private Configuration() {
+		addChild(jorgan.gui.console.Configuration.instance());
+		addChild(jorgan.gui.construct.Configuration.instance());
+	}
 
-    protected void restore(Preferences prefs) {
-        useSystemLookAndFeel = getBoolean(prefs, "useSystemLookAndFeel",
-                USE_SYSTEM_LOOK_AND_FEEL);
-        showAboutOnStartup = getBoolean(prefs, "showAboutOnStartup",
-                SHOW_ABOUT_ON_STARTUP);
-        fullScreenOnLoad = getBoolean(prefs, "fullScreenOnLoad",
-                FULL_SCREEN_ON_LOAD);
-        frameBounds = getRectangle(prefs, "frameBounds", FRAME_BOUNDS);
-        frameState = getInt(prefs, "frameState", FRAME_STATE);
-        playDocking = get(prefs, "playDocking", PLAY_DOCKING);
-        constructDocking = get(prefs, "constructDocking", CONSTRUCT_DOCKING);
-    }
+	protected void restore(Preferences prefs) {
+		useSystemLookAndFeel = getBoolean(prefs, "useSystemLookAndFeel",
+				USE_SYSTEM_LOOK_AND_FEEL);
+		showAboutOnStartup = getBoolean(prefs, "showAboutOnStartup",
+				SHOW_ABOUT_ON_STARTUP);
+		fullScreenOnLoad = getBoolean(prefs, "fullScreenOnLoad",
+				FULL_SCREEN_ON_LOAD);
+		frameBounds = getRectangle(prefs, "frameBounds", FRAME_BOUNDS);
+		frameState = getInt(prefs, "frameState", FRAME_STATE);
+		playDocking = get(prefs, "playDocking", PLAY_DOCKING);
+		constructDocking = get(prefs, "constructDocking", CONSTRUCT_DOCKING);
+	}
 
-    protected void backup(Preferences prefs) {
-        putBoolean(prefs, "useSystemLookAndFeel", useSystemLookAndFeel);
-        putBoolean(prefs, "showAboutOnStartup", showAboutOnStartup);
-        putBoolean(prefs, "fullScreenOnLoad", fullScreenOnLoad);
-        putRectangle(prefs, "frameBounds", frameBounds);
-        putInt(prefs, "frameState", frameState);
-        put(prefs, "playDocking", playDocking);
-        put(prefs, "constructDocking", constructDocking);
-    }
+	protected void backup(Preferences prefs) {
+		putBoolean(prefs, "useSystemLookAndFeel", useSystemLookAndFeel);
+		putBoolean(prefs, "showAboutOnStartup", showAboutOnStartup);
+		putBoolean(prefs, "fullScreenOnLoad", fullScreenOnLoad);
+		putRectangle(prefs, "frameBounds", frameBounds);
+		putInt(prefs, "frameState", frameState);
+		put(prefs, "playDocking", playDocking);
+		put(prefs, "constructDocking", constructDocking);
+	}
 
-    public boolean getUseSystemLookAndFeel() {
-        return useSystemLookAndFeel;
-    }
+	public boolean getUseSystemLookAndFeel() {
+		return useSystemLookAndFeel;
+	}
 
-    public boolean getShowAboutOnStartup() {
-        return showAboutOnStartup;
-    }
+	public boolean getShowAboutOnStartup() {
+		return showAboutOnStartup;
+	}
 
-    public Rectangle getFrameBounds() {
-        return frameBounds;
-    }
+	public Rectangle getFrameBounds() {
+		return frameBounds;
+	}
 
-    public int getFrameState() {
-        return frameState;
-    }
+	public int getFrameState() {
+		return frameState;
+	}
 
-    public String getPlayDocking() {
-        return playDocking;
-    }
+	public String getPlayDocking() {
+		return playDocking;
+	}
 
-    public String getConstructDocking() {
-        return constructDocking;
-    }
+	public String getConstructDocking() {
+		return constructDocking;
+	}
 
-    public void setFrameBounds(Rectangle rectangle) {
-        this.frameBounds = rectangle;
+	public void setFrameBounds(Rectangle rectangle) {
+		this.frameBounds = rectangle;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    public void setFrameState(int frameState) {
-        this.frameState = frameState;
+	public void setFrameState(int frameState) {
+		this.frameState = frameState;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    public void setPlayDocking(String docking) {
-        this.playDocking = docking;
+	public void setPlayDocking(String docking) {
+		this.playDocking = docking;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    public void setConstructDocking(String docking) {
-        this.constructDocking = docking;
+	public void setConstructDocking(String docking) {
+		this.constructDocking = docking;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    public void setUseSystemLookAndFeel(boolean useSystemLookAndFeel) {
-        this.useSystemLookAndFeel = useSystemLookAndFeel;
+	public void setUseSystemLookAndFeel(boolean useSystemLookAndFeel) {
+		this.useSystemLookAndFeel = useSystemLookAndFeel;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    public void setShowAboutOnStartup(boolean showAboutOnStartup) {
-        this.showAboutOnStartup = showAboutOnStartup;
+	public void setShowAboutOnStartup(boolean showAboutOnStartup) {
+		this.showAboutOnStartup = showAboutOnStartup;
 
-        fireConfigurationChanged();
-    }
+		fireConfigurationChanged();
+	}
 
-    /**
-     * Get the shared configuration.
-     * 
-     * @return configuration
-     */
-    public static Configuration instance() {
-        return sharedInstance;
-    }
+	/**
+	 * Get the shared configuration.
+	 * 
+	 * @return configuration
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 
 	public boolean getFullScreenOnLoad() {
 		return fullScreenOnLoad;

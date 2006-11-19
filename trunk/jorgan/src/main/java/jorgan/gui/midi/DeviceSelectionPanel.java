@@ -35,111 +35,139 @@ import jorgan.swing.tree.CheckedTreeCell;
  */
 public class DeviceSelectionPanel extends JPanel {
 
-  protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private JTree deviceTree = new JTree();
+	protected static final ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
-  private DefaultMutableTreeNode in = new DefaultMutableTreeNode(resources.getString("log.select.input"));
-  private DefaultMutableTreeNode out = new DefaultMutableTreeNode(resources.getString("log.select.output"));
-  
-  private String deviceName = null;
-  private boolean deviceOut = false;
-  
-  /**
-   * Create this panel.
-   */
-  public DeviceSelectionPanel() {
-    setLayout(new BorderLayout());
+	private JTree deviceTree = new JTree();
 
-    deviceTree.setShowsRootHandles(true);
-    deviceTree.setRootVisible(false);
-    deviceTree.setEditable(true);
-    deviceTree.setCellRenderer(new MidiDeviceCell());
-    deviceTree.setCellEditor(new MidiDeviceCell());
-    deviceTree.setModel(createModel());
-    add(new JScrollPane(deviceTree), BorderLayout.CENTER);    
-  }
+	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-  protected TreeModel createModel() {
-      root.add(in);
-      root.add(out);
-          
-      String[] inDevices = DevicePool.getMidiDeviceNames(false);
-      for (int i = 0; i < inDevices.length; i++) {
-        in.add(new DefaultMutableTreeNode(inDevices[i], false));
-      }
-          
-      String[] outDevices = DevicePool.getMidiDeviceNames(true);
-      for (int o = 0; o < outDevices.length; o++) {
-        out.add(new DefaultMutableTreeNode(outDevices[o], false));
-      }
-      
-      return new DefaultTreeModel(root, true) {
-        public void valueForPathChanged(TreePath path, Object newValue) {
-          if (Boolean.TRUE.equals(newValue)) {
-              DefaultMutableTreeNode node = (DefaultMutableTreeNode)path.getLastPathComponent();
+	private DefaultMutableTreeNode in = new DefaultMutableTreeNode(resources
+			.getString("log.select.input"));
 
-              setDevice((String)node.getUserObject(), node.getParent() == out);
-          } else {
-              setDevice(null, false);
-          }
-        }
-      };
-  }
-  
-  public void setDevice(String name, boolean out) {
-      DefaultTreeModel model = (DefaultTreeModel)deviceTree.getModel();
+	private DefaultMutableTreeNode out = new DefaultMutableTreeNode(resources
+			.getString("log.select.output"));
 
-      if (this.deviceName != null) {
-          DefaultMutableTreeNode node = getNode(this.deviceName, this.deviceOut);
-          if (node != null) {
-              model.nodeChanged(node);
-          }
-      }
-      
-      this.deviceName = name;
-      this.deviceOut  = out;
-      
-      if (this.deviceName != null) {
-          DefaultMutableTreeNode node = getNode(this.deviceName, this.deviceOut);
-          if (node != null) {
-              model.nodeChanged(node);
-          }
-      }      
-  }
-  
-  protected DefaultMutableTreeNode getNode(String name, boolean out) {
-      DefaultMutableTreeNode parent = out ? this.out : this.in; 
-      for (int n = 0; n < parent.getChildCount(); n++) {
-          DefaultMutableTreeNode child = (DefaultMutableTreeNode)parent.getChildAt(n);
-          if (child.getUserObject().equals(name)) {
-              return child;
-          }
-      }
-      return null;
-  }
-  
-  public boolean getDeviceOut() {
-      return deviceOut;
-  }
+	private String deviceName = null;
 
-  public String getDeviceName() {
-      return deviceName;
-  }   
-      
-  private class MidiDeviceCell extends CheckedTreeCell {
+	private boolean deviceOut = false;
 
-    protected boolean isCheckable(Object value) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
-        
-        return !node.getAllowsChildren();
-    }
+	/**
+	 * Create this panel.
+	 */
+	public DeviceSelectionPanel() {
+		setLayout(new BorderLayout());
 
-    protected boolean isChecked(Object value) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode)value;
+		deviceTree.setShowsRootHandles(true);
+		deviceTree.setRootVisible(false);
+		deviceTree.setEditable(true);
+		deviceTree.setCellRenderer(new MidiDeviceCell());
+		deviceTree.setCellEditor(new MidiDeviceCell());
+		deviceTree.setModel(createModel());
+		add(new JScrollPane(deviceTree), BorderLayout.CENTER);
+	}
 
-        return node.getUserObject() == deviceName && ((node.getParent() == out) == deviceOut);
-    }
-  }
+	protected TreeModel createModel() {
+		root.add(in);
+		root.add(out);
+
+		String[] inDevices = DevicePool.getMidiDeviceNames(false);
+		for (int i = 0; i < inDevices.length; i++) {
+			in.add(new DefaultMutableTreeNode(inDevices[i], false));
+		}
+
+		String[] outDevices = DevicePool.getMidiDeviceNames(true);
+		for (int o = 0; o < outDevices.length; o++) {
+			out.add(new DefaultMutableTreeNode(outDevices[o], false));
+		}
+
+		return new DefaultTreeModel(root, true) {
+			public void valueForPathChanged(TreePath path, Object newValue) {
+				if (Boolean.TRUE.equals(newValue)) {
+					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
+							.getLastPathComponent();
+
+					setDevice((String) node.getUserObject(),
+							node.getParent() == out);
+				} else {
+					setDevice(null, false);
+				}
+			}
+		};
+	}
+
+	/**
+	 * Set the selected device.
+	 * 
+	 * @param name	name of device
+	 * @param out	is the device selected for <code>out</code> of <code>in</code> 
+	 */
+	public void setDevice(String name, boolean out) {
+		DefaultTreeModel model = (DefaultTreeModel) deviceTree.getModel();
+
+		if (this.deviceName != null) {
+			DefaultMutableTreeNode node = getNode(this.deviceName,
+					this.deviceOut);
+			if (node != null) {
+				model.nodeChanged(node);
+			}
+		}
+
+		this.deviceName = name;
+		this.deviceOut = out;
+
+		if (this.deviceName != null) {
+			DefaultMutableTreeNode node = getNode(this.deviceName,
+					this.deviceOut);
+			if (node != null) {
+				model.nodeChanged(node);
+			}
+		}
+	}
+
+	protected DefaultMutableTreeNode getNode(String name, boolean out) {
+		DefaultMutableTreeNode parent = out ? this.out : this.in;
+		for (int n = 0; n < parent.getChildCount(); n++) {
+			DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent
+					.getChildAt(n);
+			if (child.getUserObject().equals(name)) {
+				return child;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Is the device selected for <code>out</code> or <code>in</code>.
+	 * 
+	 * @return	<code>true</code> if selected for out
+	 */
+	public boolean getDeviceOut() {
+		return deviceOut;
+	}
+
+	/**
+	 * Get the name of the selected device.
+	 * 
+	 * @return	name
+	 */
+	public String getDeviceName() {
+		return deviceName;
+	}
+
+	private class MidiDeviceCell extends CheckedTreeCell {
+
+		protected boolean isCheckable(Object value) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+
+			return !node.getAllowsChildren();
+		}
+
+		protected boolean isChecked(Object value) {
+			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
+
+			return node.getUserObject() == deviceName
+					&& ((node.getParent() == out) == deviceOut);
+		}
+	}
 }

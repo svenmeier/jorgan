@@ -23,241 +23,294 @@ import java.util.*;
 import javax.sound.midi.*;
 
 /**
- * A <code>MidiDevice</code> serving as a loopback. 
+ * A <code>MidiDevice</code> serving as a loopback.
  */
 public class Loopback implements MidiDevice {
-    
-  /**
-   * The info of this midiDevice.
-   */
-  private Info info;
 
-  /**
-   * Is this device open.
-   */
-  private boolean open;
-  
-  private boolean allowReceivers;
+	/**
+	 * The info of this midiDevice.
+	 */
+	private Info info;
 
-  private boolean allowTransmitters;
-  
-  public final LoopbackTransmitter loopbackTransmitter = new LoopbackTransmitter();
+	/**
+	 * Is this device open.
+	 */
+	private boolean open;
 
-  public final LoopbackReceiver loopbackReceiver = new LoopbackReceiver();
+	private boolean allowReceivers;
 
-  /**
-   * The created transmitters.
-   */  
-  protected List transmitters = new ArrayList();
+	private boolean allowTransmitters;
 
-  /**
-   * The created receivers.
-   */  
-  protected List receivers = new ArrayList();
+	/**
+	 * The explicit transmitter for the loopback.
+	 */
+	public final LoopbackTransmitter loopbackTransmitter = new LoopbackTransmitter();
 
-  /**
-   * Create a virtual loopback.
-   * 
-   * @param info        info of this loopback
-   */  
-  public Loopback(MidiDevice.Info info, boolean allowReceivers, boolean allowTransmitters) {
-    this.info = info;
-    
-    this.allowReceivers    = allowReceivers;
-    this.allowTransmitters = allowTransmitters;
-  }
+	/**
+	 * The explicit receiver for the loopback.
+	 */
+	public final LoopbackReceiver loopbackReceiver = new LoopbackReceiver();
 
-  /**
-   * Get the info about this device.
-   */
-  public MidiDevice.Info getDeviceInfo() {
-    return info;
-  }
+	/**
+	 * The created transmitters.
+	 */
+	protected List transmitters = new ArrayList();
 
-  /**
-   * This device supports unlimited receivers.
-   * 
-   * @return    always <code>-1</code> 
-   */
-  public int getMaxReceivers() {
-    return allowReceivers ? -1 : 0;
-  }
+	/**
+	 * The created receivers.
+	 */
+	protected List receivers = new ArrayList();
 
-  /**
-   * This device supports unlimited transmitters.
-   * 
-   * @return    always <code>-1</code> 
-   */
-  public int getMaxTransmitters() {
-    return allowTransmitters ? -1 : 0;
-  }
+	/**
+	 * Create a virtual loopback.
+	 * 
+	 * @param info
+	 *            info of this loopback
+	 * @param allowReceivers
+	 *            are receivers allowed
+	 * @param allowTransmitters
+	 *            are transmitters allowed
+	 */
+	public Loopback(MidiDevice.Info info, boolean allowReceivers,
+			boolean allowTransmitters) {
+		this.info = info;
 
-  public List getReceivers() {
-    return new ArrayList(receivers);
-  }
+		this.allowReceivers = allowReceivers;
+		this.allowTransmitters = allowTransmitters;
+	}
 
-  public List getTransmitters() {
-    return new ArrayList(transmitters);
-  }
+	/**
+	 * Get the info about this device.
+	 */
+	public MidiDevice.Info getDeviceInfo() {
+		return info;
+	}
 
-  public long getMicrosecondPosition() {
-    return -1;
-  }
+	/**
+	 * This device supports unlimited receivers.
+	 * 
+	 * @return always <code>-1</code>
+	 */
+	public int getMaxReceivers() {
+		return allowReceivers ? -1 : 0;
+	}
 
-  public synchronized void open() throws MidiUnavailableException {
-    if (isOpen()) {
-      return;
-    }
-    open = true;
-  }
+	/**
+	 * This device supports unlimited transmitters.
+	 * 
+	 * @return always <code>-1</code>
+	 */
+	public int getMaxTransmitters() {
+		return allowTransmitters ? -1 : 0;
+	}
 
-  /**
-   * Is this device currently open.
-   * 
-   * @return    <code>true</code> if device is open
-   */  
-  public boolean isOpen() {
-    return open;
-  }
+	/**
+	 * @return receivers
+	 * @since 1.5
+	 */	
+	public List getReceivers() {
+		return new ArrayList(receivers);
+	}
 
-  /**
-   * Get a new receiver.
-   * 
-   * @throws MidiUnavailableException is receivers are not allowed
-   */
-  public synchronized Receiver getReceiver() throws MidiUnavailableException {
-    if (!isOpen()) {
-      throw new IllegalStateException("not open");
-    }
-    if (!allowReceivers) {
-      throw new MidiUnavailableException("no receivers allowed");
-    }
-    
-    Receiver receiver = new LoopbackReceiver();
-    receivers.add(receiver);
+	/**
+	 * @return transmitters
+	 * @since 1.5
+	 */	
+	public List getTransmitters() {
+		return new ArrayList(transmitters);
+	}
 
-    return receiver;
-  }
+	public long getMicrosecondPosition() {
+		return -1;
+	}
 
-  /**
-   * Get a new transmitter.
-   * 
-   * @throws MidiUnavailableException is transmitters are not allowed
-   */
-  public synchronized Transmitter getTransmitter() throws MidiUnavailableException {
-    if (!isOpen()) {
-      throw new IllegalStateException("not open");
-    }
-    if (!allowTransmitters) {
-      throw new MidiUnavailableException("no transmitters allowed");
-    }
+	public synchronized void open() throws MidiUnavailableException {
+		if (isOpen()) {
+			return;
+		}
+		open = true;
+	}
 
-    Transmitter transmitter = new LoopbackTransmitter();
-    transmitters.add(transmitter);
+	/**
+	 * Is this device currently open.
+	 * 
+	 * @return <code>true</code> if device is open
+	 */
+	public boolean isOpen() {
+		return open;
+	}
 
-    return transmitter;
-  }
+	/**
+	 * Get a new receiver.
+	 * 
+	 * @throws MidiUnavailableException
+	 *             is receivers are not allowed
+	 */
+	public synchronized Receiver getReceiver() throws MidiUnavailableException {
+		if (!isOpen()) {
+			throw new IllegalStateException("not open");
+		}
+		if (!allowReceivers) {
+			throw new MidiUnavailableException("no receivers allowed");
+		}
 
-  private synchronized void loopbackMessage(MidiMessage message, long timestamp) {
-    if (isOpen()) {
-      loopbackTransmitter.transmit(message, timestamp);
+		Receiver receiver = new LoopbackReceiver();
+		receivers.add(receiver);
 
-      for (int r = 0; r < transmitters.size(); r++) {
-        LoopbackTransmitter transmitter = (LoopbackTransmitter)transmitters.get(r);
-        
-        transmitter.transmit(message, timestamp);
-      }
-    }
-  }
+		return receiver;
+	}
 
-  /**
-   * Close this device.
-   */
-  public synchronized void close() {
-    if (open) {
-      open = false;
-    
-      for (int t = 0; t < transmitters.size(); t++) {
-        ((Transmitter)transmitters.get(t)).close();
-      }
-      transmitters.clear(); 
+	/**
+	 * Get a new transmitter.
+	 * 
+	 * @throws MidiUnavailableException
+	 *             is transmitters are not allowed
+	 */
+	public synchronized Transmitter getTransmitter()
+			throws MidiUnavailableException {
+		if (!isOpen()) {
+			throw new IllegalStateException("not open");
+		}
+		if (!allowTransmitters) {
+			throw new MidiUnavailableException("no transmitters allowed");
+		}
 
-      for (int r = 0; r < receivers.size(); r++) {
-        ((Receiver)receivers.get(r)).close();
-      }
-      receivers.clear();
-    }
-  }
+		Transmitter transmitter = new LoopbackTransmitter();
+		transmitters.add(transmitter);
 
-  /**
-   * The transmitter implementation handed to clients of this midi device.
-   * 
-   * @see #createTransmitter() 
-   */
-  protected class LoopbackTransmitter implements Transmitter {
-    
-    /**
-     * The receiver to transmit messages to.
-     */
-    private Receiver receiver;
-      
-    /**
-     * Set the reciver.
-     * 
-     * @param receiver  receiver
-     */
-    public void setReceiver(Receiver receiver) {
-      this.receiver = receiver;
-    }
+		return transmitter;
+	}
 
-    /**
-     * Get the receiver.
-     * 
-     * @return the receiver 
-     */
-    public Receiver getReceiver() {
-      return receiver;
-    }
+	private synchronized void loopbackMessage(MidiMessage message,
+			long timestamp) {
+		if (isOpen()) {
+			loopbackTransmitter.transmit(message, timestamp);
 
-    /**
-     * Transmit the given message if a receiver is set.
-     * 
-     * @param message       message to transmit
-     */
-    protected void transmit(MidiMessage message, long timeStamp) {
-      if (receiver != null) {
-        receiver.send(message, timeStamp);
-      }
-    }
+			for (int r = 0; r < transmitters.size(); r++) {
+				LoopbackTransmitter transmitter = (LoopbackTransmitter) transmitters
+						.get(r);
 
-    /**
-     * Close this transmitter.
-     */
-    public void close() {
-    }
-  }
-  
-  /**
-   * The receiver implementation handed to clients of this midi device.
-   * 
-   * @see #createReceiver() 
-   */
-  protected class LoopbackReceiver implements Receiver {
+				transmitter.transmit(message, timestamp);
+			}
+		}
+	}
 
-    /**
-     * Send the given message to all registered receivers.
-     * 
-     * @param message       message to send
-     * @param timeStamp     timeStamp
-     */
-    public void send(MidiMessage message, long timeStamp) {
-      loopbackMessage(message, timeStamp);
-    }
-    
-    /**
-     * Close this transmitter.
-     */
-    public void close() {
-    }
-  }
+	/**
+	 * Close this device.
+	 */
+	public synchronized void close() {
+		if (open) {
+			open = false;
+
+			for (int t = 0; t < transmitters.size(); t++) {
+				((Transmitter) transmitters.get(t)).close();
+			}
+			transmitters.clear();
+
+			for (int r = 0; r < receivers.size(); r++) {
+				((Receiver) receivers.get(r)).close();
+			}
+			receivers.clear();
+		}
+	}
+
+	/**
+	 * The transmitter implementation handed to clients of this midi device.
+	 * 
+	 * @see #getTransmitter()
+	 */
+	protected class LoopbackTransmitter implements Transmitter {
+
+		private boolean closed = false;
+		
+		/**
+		 * The receiver to transmit messages to.
+		 */
+		private Receiver receiver;
+
+		/**
+		 * Set the reciver.
+		 * 
+		 * @param receiver
+		 *            receiver
+		 */
+		public void setReceiver(Receiver receiver) {
+			this.receiver = receiver;
+		}
+
+		/**
+		 * Get the receiver.
+		 * 
+		 * @return the receiver
+		 */
+		public Receiver getReceiver() {
+			return receiver;
+		}
+
+		/**
+		 * Transmit the given message if a receiver is set.
+		 * 
+		 * @param message
+		 *            message to transmit
+		 */
+		protected void transmit(MidiMessage message, long timeStamp) {
+			if (receiver != null) {
+				receiver.send(message, timeStamp);
+			}
+		}
+
+		/**
+		 * Close this transmitter.
+		 */
+		public void close() {
+			synchronized(Loopback.this) {
+				if (closed) {
+					throw new IllegalStateException("already closed");
+				}
+				
+				transmitters.remove(this);
+				closed = true;
+			}
+		}
+	}
+
+	/**
+	 * The receiver implementation handed to clients of this midi device.
+	 * 
+	 * @see #getReceiver()
+	 */
+	protected class LoopbackReceiver implements Receiver {
+
+		private boolean closed = false;
+		
+		/**
+		 * Send the given message to all registered receivers.
+		 * 
+		 * @param message
+		 *            message to send
+		 * @param timeStamp
+		 *            timeStamp
+		 */
+		public void send(MidiMessage message, long timeStamp) {
+			if (closed) {
+				throw new IllegalStateException("already closed");
+			}
+			
+			loopbackMessage(message, timeStamp);
+		}
+
+		/**
+		 * Close this transmitter.
+		 */
+		public void close() {
+			synchronized(Loopback.this) {
+				if (closed) {
+					throw new IllegalStateException("already closed");
+				}
+				closed = true;
+				
+				receivers.remove(this);
+			}
+		}
+	}
 }

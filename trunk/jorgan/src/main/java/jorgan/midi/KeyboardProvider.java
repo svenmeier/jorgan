@@ -26,57 +26,60 @@ import jorgan.sound.midi.Loopback;
 /**
  * The provider of a <code>Keyboard</code> device.
  * 
- * @see soundx.midi.keyboard.Keyboard
+ * @see jorgan.gui.midi.KeyboardPane
  */
 public class KeyboardProvider extends MidiDeviceProvider {
 
-  /**
-   * The name of this device.
-   */
-  public static final String DEVICE_NAME = "jOrgan Keyboard";
+	/**
+	 * The name of this device.
+	 */
+	public static final String DEVICE_NAME = "jOrgan Keyboard";
 
-  /**
-   * The device info for this providers device.
-   */
-  private static final Info info = new Info();
-  
-  /**
-   * The used loopback.
-   */
-  private static Loopback loopback;
+	/**
+	 * The device info for this providers device.
+	 */
+	private static final Info info = new Info();
 
-  public MidiDevice.Info[] getDeviceInfo() {
+	/**
+	 * The used loopback.
+	 */
+	private static Loopback loopback;
 
-    return new MidiDevice.Info[]{info};
-  }
-  
-  public MidiDevice getDevice(MidiDevice.Info info) {
-    if (KeyboardProvider.info == info) {        
-      return getLoopback();
-    }
+	public MidiDevice.Info[] getDeviceInfo() {
 
-    return null;
-  }
-  
-  /**
-   * The info class for this device.
-   */
-  protected static class Info extends MidiDevice.Info {
+		return new MidiDevice.Info[] { info };
+	}
 
-    public Info() {
-      super(DEVICE_NAME, "jOrgan", "Keyboard of jOrgan", "1.0");
-    }
-  }
-  
-  /**
-   * Get the loopback for this device.
-   * 
-   * @return    the lookback
-   */
-  public static Loopback getLoopback() {
-    if (loopback == null) {
-      loopback = new Loopback(info, false, true);
-    }
-    return loopback;
-  }  
+	public MidiDevice getDevice(MidiDevice.Info info) {
+		if (KeyboardProvider.info == info) {
+			return getLoopback();
+		}
+
+		return null;
+	}
+
+	/**
+	 * The info class for this device.
+	 */
+	protected static class Info extends MidiDevice.Info {
+
+		/**
+		 * Constructor.
+		 */
+		public Info() {
+			super(DEVICE_NAME, "jOrgan", "Keyboard of jOrgan", "1.0");
+		}
+	}
+
+	/**
+	 * Get the loopback for this device.
+	 * 
+	 * @return the lookback
+	 */
+	public static Loopback getLoopback() {
+		if (loopback == null) {
+			loopback = new Loopback(info, false, true);
+		}
+		return loopback;
+	}
 }

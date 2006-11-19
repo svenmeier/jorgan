@@ -22,43 +22,58 @@ import java.util.prefs.*;
 
 import jorgan.config.prefs.*;
 
+/**
+ * Configuration for midi.
+ */
 public class Configuration extends PreferencesConfiguration {
 
-  private static final boolean SEND_ALL_NOTES_OFF = false;
+	private static final boolean SEND_ALL_NOTES_OFF = false;
 
-  private static Configuration sharedInstance = new Configuration(true);
+	private static Configuration sharedInstance = new Configuration();
 
-  private boolean sendAllNotesOff;
-  
-  private Configuration(boolean sharedFlag) {
-    addChild(jorgan.midi.merge.Configuration.instance());
-    addChild(jorgan.midi.log.Configuration.instance());
-  }
+	private boolean sendAllNotesOff;
 
-  public Configuration() {
-    addChild(new jorgan.midi.merge.Configuration());
-    addChild(new jorgan.midi.log.Configuration());
-  }
-  
-  protected void restore(Preferences prefs) {
-    sendAllNotesOff = getBoolean(prefs, "sendAllNotesOff", SEND_ALL_NOTES_OFF);
-  }
+	private Configuration() {
+		addChild(jorgan.midi.merge.Configuration.instance());
+		addChild(jorgan.midi.log.Configuration.instance());
+	}
 
-  protected void backup(Preferences prefs) {
-    putBoolean(prefs, "sendAllNotesOff", sendAllNotesOff);
-  }
+	protected void restore(Preferences prefs) {
+		sendAllNotesOff = getBoolean(prefs, "sendAllNotesOff",
+				SEND_ALL_NOTES_OFF);
+	}
 
-  public boolean getSendAllNotesOff() {
-      return sendAllNotesOff;
-    }
+	protected void backup(Preferences prefs) {
+		putBoolean(prefs, "sendAllNotesOff", sendAllNotesOff);
+	}
 
-  public void setSendAllNotesOff(boolean sendAllNotesOff) {
-    this.sendAllNotesOff = sendAllNotesOff;
-    
-    fireConfigurationChanged();
-  }
+	/**
+	 * Are <code>all notes off</code> sent.
+	 * 
+	 * @return <code>true</code> if sent
+	 */
+	public boolean getSendAllNotesOff() {
+		return sendAllNotesOff;
+	}
 
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+	/**
+	 * Should <code>all notes off</code> be sent.
+	 * 
+	 * @param sendAllNotesOff
+	 *            sent if <code>true</code>
+	 */
+	public void setSendAllNotesOff(boolean sendAllNotesOff) {
+		this.sendAllNotesOff = sendAllNotesOff;
+
+		fireConfigurationChanged();
+	}
+
+	/**
+	 * Singleton.
+	 * 
+	 * @return instance
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 }

@@ -133,7 +133,8 @@ public abstract class PreferencesConfiguration extends AbstractConfiguration {
 		return prefs.getBoolean(key, defaultValue);
 	}
 
-	public static Rectangle getRectangle(Preferences prefs, String key, Rectangle def) {
+	public static Rectangle getRectangle(Preferences prefs, String key,
+			Rectangle def) {
 		String rectangle = prefs.get(key, null);
 		if (rectangle != null) {
 			try {
@@ -152,7 +153,8 @@ public abstract class PreferencesConfiguration extends AbstractConfiguration {
 		return def;
 	}
 
-	public static void putRectangle(Preferences prefs, String key, Rectangle rectangle) {
+	public static void putRectangle(Preferences prefs, String key,
+			Rectangle rectangle) {
 		if (rectangle == null) {
 			prefs.remove(key);
 		} else {

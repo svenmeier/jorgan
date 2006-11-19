@@ -23,110 +23,168 @@ package jorgan.disposition;
  */
 public class Stop extends Keyable {
 
-    public static final int DEFAULT_PAN = 64;
+	private static final int DEFAULT_PAN = 64;
 
-    public static final int DEFAULT_VOLUME = 100;
+	private static final int DEFAULT_VOLUME = 100;
 
-    public static final int DEFAULT_BEND = 64;
+	private static final int DEFAULT_BEND = 64;
 
-    /**
-     * Allocate a sound on the first referenced {@link SoundSource} that is
-     * available.
-     */
-    public static final int ALLOCATION_FIRST_AVAILABLE = 0;
+	/**
+	 * Allocate a sound on the first referenced {@link SoundSource} that is
+	 * available.
+	 */
+	public static final int ALLOCATION_FIRST_AVAILABLE = 0;
 
-    /**
-     * Allocate a sound on each referenced {@link SoundSource} that is
-     * available.
-     */
-    public static final int ALLOCATION_ALL_AVAILABLE = 1;
+	/**
+	 * Allocate a sound on each referenced {@link SoundSource} that is
+	 * available.
+	 */
+	public static final int ALLOCATION_ALL_AVAILABLE = 1;
 
-    /**
-     * How should a sound be allocated.
-     * 
-     * @see #ALLOCATION_FIRST
-     * @see #ALLOCATION_ALL
-     * @see #ALLOCATION_PITCH
-     */
-    private int allocation = ALLOCATION_FIRST_AVAILABLE;
+	/**
+	 * How should a sound be allocated.
+	 * 
+	 * @see #ALLOCATION_FIRST_AVAILABLE
+	 * @see #ALLOCATION_ALL_AVAILABLE
+	 */
+	private int allocation = ALLOCATION_FIRST_AVAILABLE;
 
-    private int program = 0;
+	private int program = 0;
 
-    private int pan = DEFAULT_PAN;
+	private int pan = DEFAULT_PAN;
 
-    private int volume = DEFAULT_VOLUME;
+	private int volume = DEFAULT_VOLUME;
 
-    private int bend = DEFAULT_BEND;
+	private int bend = DEFAULT_BEND;
 
-    protected boolean canReference(Class clazz) {
-        return SoundEffect.class.isAssignableFrom(clazz)
-                || SoundSource.class.isAssignableFrom(clazz);
-    }
+	protected boolean canReference(Class clazz) {
+		return SoundEffect.class.isAssignableFrom(clazz)
+				|| SoundSource.class.isAssignableFrom(clazz);
+	}
 
-    public int getAllocation() {
-        return allocation;
-    }
+	/**
+	 * Get the allocation.
+	 * 
+	 * @return the allocation
+	 * @see #ALLOCATION_ALL_AVAILABLE
+	 * @see #ALLOCATION_FIRST_AVAILABLE
+	 */
+	public int getAllocation() {
+		return allocation;
+	}
 
-    public int getProgram() {
-        return program;
-    }
+	/**
+	 * Get the program.
+	 * 
+	 * @return the program
+	 */
+	public int getProgram() {
+		return program;
+	}
 
-    public int getPan() {
-        return pan;
-    }
+	/**
+	 * Get the pan.
+	 * 
+	 * @return the pane
+	 */
+	public int getPan() {
+		return pan;
+	}
 
-    public int getBend() {
-        return bend;
-    }
+	/**
+	 * Get the bend.
+	 * 
+	 * @return the bend
+	 */
+	public int getBend() {
+		return bend;
+	}
 
-    public int getVolume() {
-        return volume;
-    }
+	/**
+	 * Get the volume.
+	 * 
+	 * @return the volume
+	 */
+	public int getVolume() {
+		return volume;
+	}
 
-    public void setAllocation(int allocation) {
-        if (allocation != ALLOCATION_FIRST_AVAILABLE
-                && allocation != ALLOCATION_ALL_AVAILABLE) {
-            throw new IllegalArgumentException("allocation '" + allocation
-                    + "'");
-        }
-        this.allocation = allocation;
+	/**
+	 * Set the allocation.
+	 * 
+	 * @param allocation
+	 *            the allocation to set
+	 * @see #ALLOCATION_ALL_AVAILABLE
+	 * @see #ALLOCATION_FIRST_AVAILABLE
+	 */
+	public void setAllocation(int allocation) {
+		if (allocation != ALLOCATION_FIRST_AVAILABLE
+				&& allocation != ALLOCATION_ALL_AVAILABLE) {
+			throw new IllegalArgumentException("allocation '" + allocation
+					+ "'");
+		}
+		this.allocation = allocation;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setProgram(int program) {
-        if (program < 0 || program > 127) {
-            throw new IllegalArgumentException("program '" + program + "'");
-        }
-        this.program = program;
+	/**
+	 * Set the program.
+	 * 
+	 * @param program
+	 *            the program to set
+	 */
+	public void setProgram(int program) {
+		if (program < 0 || program > 127) {
+			throw new IllegalArgumentException("program '" + program + "'");
+		}
+		this.program = program;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setPan(int pan) {
-        if (pan < 0 || pan > 127) {
-            throw new IllegalArgumentException("pan '" + pan + "'");
-        }
-        this.pan = pan;
+	/**
+	 * Set the pan.
+	 * 
+	 * @param pan
+	 *            the pan to set
+	 */
+	public void setPan(int pan) {
+		if (pan < 0 || pan > 127) {
+			throw new IllegalArgumentException("pan '" + pan + "'");
+		}
+		this.pan = pan;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setBend(int bend) {
-        if (bend < 0 || bend > 127) {
-            throw new IllegalArgumentException("bend '" + bend + "'");
-        }
-        this.bend = bend;
+	/**
+	 * Set the bend.
+	 * 
+	 * @param bend
+	 *            the bend to set
+	 */
+	public void setBend(int bend) {
+		if (bend < 0 || bend > 127) {
+			throw new IllegalArgumentException("bend '" + bend + "'");
+		}
+		this.bend = bend;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setVolume(int volume) {
-        if (volume < 0 || volume > 127) {
-            throw new IllegalArgumentException("volume '" + volume + "'");
-        }
-        this.volume = volume;
+	/**
+	 * Set the volume.
+	 * 
+	 * @param volume
+	 *            the volume to set
+	 */
+	public void setVolume(int volume) {
+		if (volume < 0 || volume > 127) {
+			throw new IllegalArgumentException("volume '" + volume + "'");
+		}
+		this.volume = volume;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 }

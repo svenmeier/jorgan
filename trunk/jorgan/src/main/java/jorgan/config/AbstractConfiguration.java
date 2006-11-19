@@ -23,144 +23,163 @@ import java.util.*;
 /**
  * Abstract base class for configurations.
  */
-public abstract class AbstractConfiguration {
+public abstract class AbstractConfiguration implements Cloneable {
 
-  /**
-   * The parental configuration.
-   */
-  private AbstractConfiguration parent;
+	/**
+	 * The parental configuration.
+	 */
+	private AbstractConfiguration parent;
 
-  /**
-   * The children configurations.
-   */
-  private List children = new ArrayList();
+	/**
+	 * The children configurations.
+	 */
+	private List children = new ArrayList();
 
-  /**
-   * The listener to changes of this configuration.
-   */
-  private List listeners = new ArrayList();
+	/**
+	 * The listener to changes of this configuration.
+	 */
+	private List listeners = new ArrayList();
 
-  /**
-   * Add a listener to this configuration.
-   *
-   * @param listener    listener to add
-   */
-  public void addConfigurationListener(ConfigurationListener listener) {
-    listeners.add(listener);
-  }
+	/**
+	 * Add a listener to this configuration.
+	 * 
+	 * @param listener
+	 *            listener to add
+	 */
+	public void addConfigurationListener(ConfigurationListener listener) {
+		listeners.add(listener);
+	}
 
-  /**
-   * Remove a listener from this configuration.
-   *
-   * @param listener    listener to remove
-   */
-  public void removeConfigurationListener(ConfigurationListener listener) {
-    listeners.remove(listener);
-  }
+	/**
+	 * Remove a listener from this configuration.
+	 * 
+	 * @param listener
+	 *            listener to remove
+	 */
+	public void removeConfigurationListener(ConfigurationListener listener) {
+		listeners.remove(listener);
+	}
 
-  /**
-   * Inform listeners of a change.
-   */
-  protected void fireConfigurationChanged() {
-    for (int l = 0; l < listeners.size(); l++) {
-      ConfigurationListener listener = (ConfigurationListener)listeners.get(l);
-      listener.configurationChanged(new ConfigurationEvent(this));
-    }
-  }
+	/**
+	 * Inform listeners of a change.
+	 */
+	protected void fireConfigurationChanged() {
+		for (int l = 0; l < listeners.size(); l++) {
+			ConfigurationListener listener = (ConfigurationListener) listeners
+					.get(l);
+			listener.configurationChanged(new ConfigurationEvent(this));
+		}
+	}
 
-  /**
-   * Inform listeners of a backup.
-   */
-  protected void fireConfigurationBackup() {
-    for (int l = 0; l < listeners.size(); l++) {
-      ConfigurationListener listener = (ConfigurationListener)listeners.get(l);
-      listener.configurationBackup(new ConfigurationEvent(this));
-    }
-  }
+	/**
+	 * Inform listeners of a backup.
+	 */
+	protected void fireConfigurationBackup() {
+		for (int l = 0; l < listeners.size(); l++) {
+			ConfigurationListener listener = (ConfigurationListener) listeners
+					.get(l);
+			listener.configurationBackup(new ConfigurationEvent(this));
+		}
+	}
 
-  /**
-   * Get the parental configuration.
-   *
-   * @return    the parental configuration
-   */
-  public AbstractConfiguration getParent() {
-    return parent;
-  }
+	/**
+	 * Get the parental configuration.
+	 * 
+	 * @return the parental configuration
+	 */
+	public AbstractConfiguration getParent() {
+		return parent;
+	}
 
-  /**
-   * Get count of childs.
-   *
-   * @return    the child count
-   */
-  public int getChildCount() {
-    return children.size();
-  }
+	/**
+	 * Get count of childs.
+	 * 
+	 * @return the child count
+	 */
+	public int getChildCount() {
+		return children.size();
+	}
 
-  /**
-   * Get child for the given index.
-   *
-   * @param index   index of child to get
-   * @return        child at given index
-   */
-  public AbstractConfiguration getChild(int index) {
-    return (AbstractConfiguration)children.get(index);
-  }
+	/**
+	 * Get child for the given index.
+	 * 
+	 * @param index
+	 *            index of child to get
+	 * @return child at given index
+	 */
+	public AbstractConfiguration getChild(int index) {
+		return (AbstractConfiguration) children.get(index);
+	}
 
-  /**
-   * Get the index of a child.
-   *
-   * @param child   child to get index for
-   * @return        index of child
-   */
-  public int getChildIndex(AbstractConfiguration child) {
-    return children.indexOf(child);
-  }
+	/**
+	 * Get the index of a child.
+	 * 
+	 * @param child
+	 *            child to get index for
+	 * @return index of child
+	 */
+	public int getChildIndex(AbstractConfiguration child) {
+		return children.indexOf(child);
+	}
 
-  /**
-   * Set the parental configuration.
-   *
-   * @param parent
-   */
-  protected void setParent(AbstractConfiguration parent) {
-    this.parent = parent;
-  }
+	/**
+	 * Set the parental configuration.
+	 * 
+	 * @param parent
+	 */
+	protected void setParent(AbstractConfiguration parent) {
+		this.parent = parent;
+	}
 
-  /**
-   * Add a child.
-   *
-   * @param child   child to add
-   */
-  protected void addChild(AbstractConfiguration child) {
-    children.add(child);
+	/**
+	 * Add a child.
+	 * 
+	 * @param child
+	 *            child to add
+	 */
+	protected void addChild(AbstractConfiguration child) {
+		children.add(child);
 
-    child.setParent(this);
-  }
+		child.setParent(this);
+	}
 
-  /**
-   * Remove a child.
-   *
-   * @param child   child to remove
-   */
-  protected void removeChild(AbstractConfiguration child) {
-    children.remove(child);
+	/**
+	 * Remove a child.
+	 * 
+	 * @param child
+	 *            child to remove
+	 */
+	protected void removeChild(AbstractConfiguration child) {
+		children.remove(child);
 
-    child.setParent(null);
-  }
+		child.setParent(null);
+	}
 
-  /**
-   * Backup this configuration and all its children.
-   */
-  public abstract void backup();
+	/**
+	 * Backup this configuration and all its children.
+	 */
+	public abstract void backup();
 
-  /**
-   * Restore this configuration and all its children.
-   */
-  public abstract void restore();
+	/**
+	 * Restore this configuration and all its children.
+	 */
+	public abstract void restore();
 
-  /**
-   * Reset this configuration.
-   * <br>
-   * Children of this configuration are not changed!
-   */
-  public abstract void reset();
+	/**
+	 * Reset this configuration. <br>
+	 * Children of this configuration are not changed!
+	 */
+	public abstract void reset();
+	
+	public Object clone() throws CloneNotSupportedException {
+		AbstractConfiguration clone = (AbstractConfiguration)super.clone();
+		
+		clone.listeners = new ArrayList();
+		
+		clone.children = new ArrayList();
+		for (int c = 0; c < children.size(); c++) {
+			clone.children.add(((AbstractConfiguration)children.get(c)).clone());
+		}
+		return clone;
+	}
 }
