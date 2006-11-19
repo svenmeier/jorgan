@@ -26,43 +26,37 @@ import jorgan.config.prefs.*;
  * Configuration of the swing package.
  */
 public class Configuration extends PreferencesConfiguration {
-    
-  private static final int MAX    = 500;
-  
-  private static Configuration sharedInstance = new Configuration(true);
 
-  private int max;
+	private static final int MAX = 500;
 
-  private Configuration(boolean sharedFlag) {
-  }
+	private static Configuration sharedInstance = new Configuration();
 
-  public Configuration() {
-  }
+	private int max;
 
-  protected void restore(Preferences prefs) {
-    max = getInt(prefs, "max"   , MAX);
-  }
+	protected void restore(Preferences prefs) {
+		max = getInt(prefs, "max", MAX);
+	}
 
-  protected void backup(Preferences prefs) {
-    putInt    (prefs, "max", max);
-  }
+	protected void backup(Preferences prefs) {
+		putInt(prefs, "max", max);
+	}
 
-  public int getMax() {
-    return max;
-  }
-  
-  public void setMax(int max) {
-    this.max = max;
-    
-    fireConfigurationChanged();
-  }
-  
-  /**
-   * Get the shared configuration.
-   *
-   * @return configuration
-   */
-  public static Configuration instance() {
-    return sharedInstance;
-  }
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
+
+		fireConfigurationChanged();
+	}
+
+	/**
+	 * Get the shared configuration.
+	 * 
+	 * @return configuration
+	 */
+	public static Configuration instance() {
+		return sharedInstance;
+	}
 }

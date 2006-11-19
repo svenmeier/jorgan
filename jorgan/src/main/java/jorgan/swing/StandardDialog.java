@@ -97,7 +97,7 @@ public class StandardDialog extends JDialog {
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent ev) {
-				cancel();
+				onCancel();
 			}
 		});
 	}
@@ -146,7 +146,7 @@ public class StandardDialog extends JDialog {
 	 * Add an action for OK.
 	 */
 	public void addOKAction() {
-		addAction(new OKAction(), false);
+		addAction(new OKAction(), true);
 	}
 
 	/**
@@ -154,26 +154,6 @@ public class StandardDialog extends JDialog {
 	 */
 	public void addCancelAction() {
 		addAction(new CancelAction(), false);
-	}
-
-	/**
-	 * Add an action for OK.
-	 * 
-	 * @param isDefault
-	 *            should the button of the action be the default action
-	 */
-	public void addOKAction(boolean isDefault) {
-		addAction(new OKAction(), isDefault);
-	}
-
-	/**
-	 * Add an action for cancel.
-	 * 
-	 * @param isDefault
-	 *            should the button of the action be the default action
-	 */
-	public void addCancelAction(boolean isDefault) {
-		addAction(new CancelAction(), isDefault);
 	}
 
 	/**
@@ -226,18 +206,22 @@ public class StandardDialog extends JDialog {
 	}
 
 	/**
-	 * Cancel.
+	 * Invoked when the cancel action was choosen.
+	 * 
+	 * @see #addCancelAction()
 	 */
-	public void cancel() {
+	public void onCancel() {
 		cancelled = true;
 
 		setVisible(false);
 	}
 
 	/**
-	 * OK.
+	 * Invoked when the ok action was choosen.
+	 * 
+	 * @see #addOKAction()
 	 */
-	public void ok() {
+	public void onOK() {
 		cancelled = false;
 
 		setVisible(false);
@@ -247,7 +231,7 @@ public class StandardDialog extends JDialog {
 	 * Was this dialog cancelled.
 	 * 
 	 * @return <code>true</code> if cancelled
-	 * @see #cancel()
+	 * @see #onCancel()
 	 */
 	public boolean wasCancelled() {
 		return cancelled;
@@ -276,7 +260,7 @@ public class StandardDialog extends JDialog {
 					KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "CANCEL");
 			getActionMap().put("CANCEL", new AbstractAction() {
 				public void actionPerformed(ActionEvent e) {
-					cancel();
+					onCancel();
 				}
 			});
 		}
@@ -391,7 +375,7 @@ public class StandardDialog extends JDialog {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			cancel();
+			onCancel();
 		}
 	}
 
@@ -402,7 +386,7 @@ public class StandardDialog extends JDialog {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			ok();
+			onOK();
 		}
 	}
 }

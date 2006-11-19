@@ -149,11 +149,11 @@ public class WizardDialog extends StandardDialog {
 		}
 
 		public void wizardCancelled() {
-			cancel();
+			onCancel();
 		}
 
 		public void wizardFinished() {
-			ok();
+			onOK();
 		}
 	}
 }

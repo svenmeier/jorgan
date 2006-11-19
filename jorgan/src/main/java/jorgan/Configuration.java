@@ -26,25 +26,14 @@ import jorgan.config.prefs.*;
  */
 public class Configuration extends PreferencesConfiguration {
 
-	private static Configuration sharedInstance = new Configuration(true);
+	private static Configuration sharedInstance = new Configuration();
 
-	private Configuration(boolean sharedFlag) {
+	private Configuration() {
 		addChild(jorgan.io.Configuration.instance());
 		addChild(jorgan.gui.Configuration.instance());
 		addChild(jorgan.play.Configuration.instance());
 		addChild(jorgan.midi.Configuration.instance());
 		addChild(jorgan.shell.Configuration.instance());
-	}
-
-	/**
-	 * Create a new configuration.
-	 */
-	public Configuration() {
-		addChild(new jorgan.io.Configuration());
-		addChild(new jorgan.gui.Configuration());
-		addChild(new jorgan.play.Configuration());
-		addChild(new jorgan.midi.Configuration());
-		addChild(new jorgan.shell.Configuration());
 	}
 
 	/**

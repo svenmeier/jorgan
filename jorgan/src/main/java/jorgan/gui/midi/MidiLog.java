@@ -53,383 +53,458 @@ import jorgan.sound.midi.MidiLogger;
 import jorgan.swing.StandardDialog;
 import jorgan.swing.table.TableUtils;
 
-
 /**
- * A log of MIDI messages. 
+ * A log of MIDI messages.
  */
 public class MidiLog extends DockedPanel {
 
-  protected static final ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private static final KeyFormat keyFormat = new KeyFormat();
+	protected static final ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private static final Color[] channelColors = new Color[] {
-                                                new Color(255, 240, 240),
-                                                new Color(240, 255, 240),
-                                                new Color(240, 255, 255),
-                                                new Color(240, 240, 255),
-                                                new Color(255, 240, 255),
-                                                new Color(255, 255, 240),
-                                                new Color(240, 240, 240)
-                                               };
+	private static final KeyFormat keyFormat = new KeyFormat();
 
-  private static final String[] channelEvents = new String[]{
-                                                "NOTE_OFF",              // 0x80
-                                                "NOTE_ON",               // 0x90
-                                                "POLY_PRESSURE",         // 0xa0
-                                                "CONTROL_CHANGE",        // 0xb0
-                                                "PROGRAM_CHANGE",        // 0xc0
-                                                "CHANNEL_PRESSURE",      // 0xd0
-                                                "PITCH_BEND"             // 0xe0
-                                                };
+	private static final Color[] channelColors = new Color[] {
+			new Color(255, 240, 240), new Color(240, 255, 240),
+			new Color(240, 255, 255), new Color(240, 240, 255),
+			new Color(255, 240, 255), new Color(255, 255, 240),
+			new Color(240, 240, 240) };
 
-  private static final String[] systemEvents = new String[]{
-                                                "?",                     // 0xf0
-                                                "MIDI_TIME_CODE",        // 0xf1
-                                                "SONG_POSITION_POINTER", // 0xf2
-                                                "SONG_SELECT",           // 0xf3
-                                                "?",                     // 0xf4
-                                                "?",                     // 0xf5
-                                                "TUNE_REQUEST",          // 0xf6
-                                                "END_OF_EXCLUSIVE",      // 0xf7
-                                                "TIMING_CLOCK",          // 0xf8
-                                                "?",                     // 0xf9
-                                                "START",                 // 0xfa
-                                                "CONTINUE",              // 0xfb
-                                                "STOP",                  // 0xfc
-                                                "?",                     // 0xfd
-                                                "ACTIVE_SENSING",        // 0xfe
-                                                "SYSTEM_RESET"           // 0xff
-                                               };
+	private static final String[] channelEvents = new String[] { "NOTE_OFF", // 0x80
+			"NOTE_ON", // 0x90
+			"POLY_PRESSURE", // 0xa0
+			"CONTROL_CHANGE", // 0xb0
+			"PROGRAM_CHANGE", // 0xc0
+			"CHANNEL_PRESSURE", // 0xd0
+			"PITCH_BEND" // 0xe0
+	};
 
-  private MidiLogger logger = new InternalMidiLogger();
-  
-  private String deviceName;
-  private boolean deviceOut;
-  private boolean open;
+	private static final String[] systemEvents = new String[] { "?", // 0xf0
+			"MIDI_TIME_CODE", // 0xf1
+			"SONG_POSITION_POINTER", // 0xf2
+			"SONG_SELECT", // 0xf3
+			"?", // 0xf4
+			"?", // 0xf5
+			"TUNE_REQUEST", // 0xf6
+			"END_OF_EXCLUSIVE", // 0xf7
+			"TIMING_CLOCK", // 0xf8
+			"?", // 0xf9
+			"START", // 0xfa
+			"CONTINUE", // 0xfb
+			"STOP", // 0xfc
+			"?", // 0xfd
+			"ACTIVE_SENSING", // 0xfe
+			"SYSTEM_RESET" // 0xff
+	};
 
-  private List messages = new ArrayList();
+	private MidiLogger logger = new InternalMidiLogger();
 
-  private JTable table = new JTable();
-  
-  private ButtonGroup baseGroup = new ButtonGroup();
-  private JToggleButton hexButton = new JToggleButton();
-  private JToggleButton decButton = new JToggleButton();
-  
-  private JButton deviceButton = new JButton();
+	private String deviceName;
 
-  private JToggleButton scrollLockButton = new JToggleButton();
-  private JButton clearButton = new JButton();
-  
-  private MessagesModel model = new MessagesModel();
+	private boolean deviceOut;
 
-  public MidiLog() {
+	private boolean open;
 
-    deviceButton.setToolTipText(resources.getString("log.device"));
-    deviceButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/filter.gif")));
-    deviceButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            selectDevice();
-        }
-    });
-    addTool(deviceButton);
-    
-    addToolSeparator();
+	private List messages = new ArrayList();
 
-    hexButton.setToolTipText(resources.getString("log.hexadecimal"));
-    hexButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/hexadecimal.gif")));
-    hexButton.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-            model.fireTableDataChanged();
-        }
-    });
-    hexButton.setSelected(true);    
-    baseGroup.add(hexButton);
-    addTool(hexButton);
-    
-    decButton.setToolTipText(resources.getString("log.decimal"));
-    decButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/decimal.gif")));
-    decButton.addItemListener(new ItemListener() {
-        public void itemStateChanged(ItemEvent e) {
-            model.fireTableDataChanged();
-        }
-    });  
-    baseGroup.add(decButton);
-    addTool(decButton);
-    
-    addToolSeparator();
+	private JTable table = new JTable();
 
-    scrollLockButton.setToolTipText(resources.getString("log.scrollLock"));
-    scrollLockButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/scrollLock.gif")));
-    addTool(scrollLockButton);
-    
-    addToolSeparator();
+	private ButtonGroup baseGroup = new ButtonGroup();
 
-    clearButton.setToolTipText(resources.getString("log.clear"));
-    clearButton.setIcon(new ImageIcon(getClass().getResource("/jorgan/gui/img/clear.gif")));
-    clearButton.addActionListener(new ActionListener() {
-        public void actionPerformed(ActionEvent e) {
-            clear();
-        }
-    });    
-    addTool(clearButton);
-    
-    table.setModel(model);
-    TableUtils.pleasantLookAndFeel(table);
-    setScrollableBody(table, true, false);
-    
-    prepareColumn(0, 10, SwingConstants.RIGHT);
-    prepareColumn(1, 10, SwingConstants.RIGHT);
-    prepareColumn(2, 10, SwingConstants.RIGHT);
-    prepareColumn(3, 10, SwingConstants.RIGHT);
-    prepareColumn(4, 10, SwingConstants.RIGHT);
-    prepareColumn(5, 100, SwingConstants.LEFT);
-    
-    setDevice(null, false);
-  }
-  
-  private DeviceSelectionPanel selectionPanel;
-  
-  protected void selectDevice() {
-      StandardDialog dialog = new StandardDialog((JFrame)SwingUtilities.getWindowAncestor(this));
-      dialog.addCancelAction();
-      dialog.addOKAction(true);
-      dialog.setTitle(resources.getString("log.select.title"));
-      dialog.setDescription(resources.getString("log.select.description"));
-      if (selectionPanel == null) {
-          selectionPanel = new DeviceSelectionPanel();
-      }
-      dialog.setContent(selectionPanel);
-      selectionPanel.setDevice(deviceName, deviceOut);
-      dialog.start();
+	private JToggleButton hexButton = new JToggleButton();
 
-      if (!dialog.wasCancelled()) {
-          setDevice(selectionPanel.getDeviceName(), selectionPanel.getDeviceOut());
-      }
-  }
+	private JToggleButton decButton = new JToggleButton();
 
-  public void setDevice(String deviceName, boolean out) {
-      if (this.deviceName == null && deviceName != null ||
-          this.deviceName != null && !this.deviceName.equals(deviceName) ||
-          this.deviceOut != out) {
+	private JButton deviceButton = new JButton();
 
-          if (this.deviceName != null) {
-              try {
-                  DevicePool.removeLogger(logger, this.deviceName, this.deviceOut);
-              } catch (MidiUnavailableException ex) {
-                  throw new Error();
-              }
-          }
-          
-          this.deviceName = deviceName;
-          this.deviceOut  = out;          
-          
-          if (this.deviceName != null) {
-              try {
-                  open = DevicePool.addLogger(logger, deviceName, out);
-              } catch (MidiUnavailableException ex) {
-                  this.deviceName = null;
-              }
-          }
+	private JToggleButton scrollLockButton = new JToggleButton();
 
-          clear();
-      }
-      updateMessagesLabel();
-  }
-  
-  protected void updateMessagesLabel() {
-      String text;
-      if (deviceName == null) {
-          text = resources.getString("log.header.noDevice");
-      } else {
-          text = deviceName + ", " +
-                 (deviceOut ? "out" : "in") + ", " +
-                 (open ? resources.getString("log.header.open") : resources.getString("log.header.closed")); 
-      }
-      setMessage(text);
-  }
-  
-  private void prepareColumn(int index, int width, int align) {
-    TableColumn column = table.getColumnModel().getColumn(index); 
+	private JButton clearButton = new JButton();
 
-    column.setCellRenderer(new MessageCellRenderer(align));
-    column.setPreferredWidth(width);
-  }
-  
-  public void clear() {
-    messages.clear();
+	private MessagesModel model = new MessagesModel();
 
-    model.fireTableDataChanged();
-  }
-  
-  private class InternalMidiLogger implements MidiLogger {
+	/**
+	 * Constructor.
+	 */
+	public MidiLog() {
 
-    public void opened() {
-        open = true;
-        
-        updateMessagesLabel();
-    }
+		deviceButton.setToolTipText(resources.getString("log.device"));
+		deviceButton.setIcon(new ImageIcon(getClass().getResource(
+				"/jorgan/gui/img/filter.gif")));
+		deviceButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				selectDevice();
+			}
+		});
+		addTool(deviceButton);
 
-    public void closed() {
-        open = false;
-        
-        updateMessagesLabel();
-    }
+		addToolSeparator();
 
-    public void log(MidiMessage message) {
-      messages.add(new Message(message.getMessage(), message.getLength()));     
+		hexButton.setToolTipText(resources.getString("log.hexadecimal"));
+		hexButton.setIcon(new ImageIcon(getClass().getResource(
+				"/jorgan/gui/img/hexadecimal.gif")));
+		hexButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				model.fireTableDataChanged();
+			}
+		});
+		hexButton.setSelected(true);
+		baseGroup.add(hexButton);
+		addTool(hexButton);
 
-      int row = messages.size() - 1;
-      
-      model.fireTableRowsInserted(row, row);
-        
-      if (!scrollLockButton.isSelected()) {
-        table.scrollRectToVisible(table.getCellRect(row, 0, true));
-      }
-        
-      int over = messages.size() - Configuration.instance().getMax();
-      if (over > 0) { 
-          for (int m = 0; m < over; m++) {
-              messages.remove(0);
-          }
-            
-          model.fireTableRowsDeleted(0, over - 1);
-      }
-    }
-  }
-  
-  private class MessagesModel extends AbstractTableModel {
+		decButton.setToolTipText(resources.getString("log.decimal"));
+		decButton.setIcon(new ImageIcon(getClass().getResource(
+				"/jorgan/gui/img/decimal.gif")));
+		decButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				model.fireTableDataChanged();
+			}
+		});
+		baseGroup.add(decButton);
+		addTool(decButton);
 
-    private String[] names = new String[]{"Status", "Data 1", "Data 2", "Channel", "Note", "Event"};
-    
-    public int getColumnCount() {
-      return names.length;
-    }
+		addToolSeparator();
 
-    public String getColumnName(int column) {
-      return names[column];
-    }
+		scrollLockButton.setToolTipText(resources.getString("log.scrollLock"));
+		scrollLockButton.setIcon(new ImageIcon(getClass().getResource(
+				"/jorgan/gui/img/scrollLock.gif")));
+		addTool(scrollLockButton);
 
-    public int getRowCount() {
-      return messages.size();
-    }
-    
-    public Object getValueAt(int rowIndex, int columnIndex) {
+		addToolSeparator();
 
-      Message message = (Message)messages.get(rowIndex);
+		clearButton.setToolTipText(resources.getString("log.clear"));
+		clearButton.setIcon(new ImageIcon(getClass().getResource(
+				"/jorgan/gui/img/clear.gif")));
+		clearButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				clear();
+			}
+		});
+		addTool(clearButton);
 
-      switch (columnIndex) {
-        case 0:
-          return message.getStatus();
-        case 1:
-          return message.getData1();
-        case 2:
-          return message.getData2();
-        case 3:
-          return message.getChannel();
-        case 4:
-          return message.getNote();
-        case 5:
-          return message.getEvent();
-      }
-      return null;
-    }
-  }
-  
-  private class Message {
+		table.setModel(model);
+		TableUtils.pleasantLookAndFeel(table);
+		setScrollableBody(table, true, false);
 
-    private byte[] data;
-    private int    length;
-    
-    public Message(byte[] data, int length) {
-        
-      this.data      = data;
-      this.length    = length;
-    }
-    
-    public String getStatus() {
-      return format(data[0] & 0xff);    
-    }
+		prepareColumn(0, 10, SwingConstants.RIGHT);
+		prepareColumn(1, 10, SwingConstants.RIGHT);
+		prepareColumn(2, 10, SwingConstants.RIGHT);
+		prepareColumn(3, 10, SwingConstants.RIGHT);
+		prepareColumn(4, 10, SwingConstants.RIGHT);
+		prepareColumn(5, 100, SwingConstants.LEFT);
 
-    public String getData1() {
-      if (length > 1) {
-        return format(data[1] & 0xff);    
-      } else {
-        return "-";
-      }
-    }
-    
-    public String getData2() {
-      if (length > 2) {
-        return format(data[2] & 0xff);
-      } else {
-        return "-";    
-      }
-    }
+		setDevice(null, false);
+	}
 
-    public String getChannel() {
-      int status  = (data[0] & 0xff);
-      if (status >= 0x80 && status < 0xf0) {
-        return Integer.toString((data[0] & 0x0f) + 1);    
-      } else {
-        return "-";    
-      }
-    }
+	private DeviceSelectionPanel selectionPanel;
 
-    public String getNote() {
-      int status  = (data[0] & 0xff);
-      if (status >= 0x80 && status < 0xb0) {
-        return keyFormat.format(new Integer(data[1] & 0xff));    
-      } else {
-        return "-";    
-      }
-    }
+	protected void selectDevice() {
+		StandardDialog dialog = new StandardDialog((JFrame) SwingUtilities
+				.getWindowAncestor(this));
+		dialog.addCancelAction();
+		dialog.addOKAction();
+		dialog.setTitle(resources.getString("log.select.title"));
+		dialog.setDescription(resources.getString("log.select.description"));
+		if (selectionPanel == null) {
+			selectionPanel = new DeviceSelectionPanel();
+		}
+		dialog.setContent(selectionPanel);
+		selectionPanel.setDevice(deviceName, deviceOut);
+		dialog.start();
 
-    public String getEvent() {
-      int status  = (data[0] & 0xff);
-      if (status >= 0x80 && status < 0xf0) {
-        return channelEvents[(status - 0x80) >> 4 ];    
-      } else if (status >= 0xf0) {
-        return systemEvents[status - 0xf0];    
-      } else {
-        return "-";    
-      }
-    }
+		if (!dialog.wasCancelled()) {
+			setDevice(selectionPanel.getDeviceName(), selectionPanel
+					.getDeviceOut());
+		}
+	}
 
-    public Color getColor() {
-      int status  = (data[0] & 0xff);
+	/**
+	 * Set the device to log.
+	 * 
+	 * @param name
+	 *            name of device to log
+	 * @param out
+	 *            should <code>out</code> or <code>in</code> be logged
+	 */
+	public void setDevice(String name, boolean out) {
+		if (this.deviceName == null && name != null || this.deviceName != null
+				&& !this.deviceName.equals(name) || this.deviceOut != out) {
 
-      if (status >= 0x80 && status < 0xf0) {
-        return channelColors[(status - 0x80) >> 4 ];    
-      } else {
-        return Color.WHITE;    
-      }
-    }
-    
-    private String format(int value) {
-      return Integer.toString(value, hexButton.isSelected() ? 16 : 10); 
-    }    
-  }
-  
-  private class MessageCellRenderer extends DefaultTableCellRenderer {
+			if (this.deviceName != null) {
+				try {
+					DevicePool.removeLogger(logger, this.deviceName,
+							this.deviceOut);
+				} catch (MidiUnavailableException ex) {
+					throw new Error();
+				}
+			}
 
-    public MessageCellRenderer(int alignment) {
-        setHorizontalAlignment(alignment);
-    }
+			this.deviceName = name;
+			this.deviceOut = out;
 
-    public Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus,
-        int row, int column) {
+			if (this.deviceName != null) {
+				try {
+					open = DevicePool.addLogger(logger, name, out);
+				} catch (MidiUnavailableException ex) {
+					this.deviceName = null;
+				}
+			}
 
-        JLabel label = (JLabel)super.getTableCellRendererComponent(
-            table, value, isSelected, hasFocus, row, column);
+			clear();
+		}
+		updateMessagesLabel();
+	}
 
-        if (!isSelected) {
-            Message message = (Message)messages.get(row);
-            label.setBackground(message.getColor());
-        }
-                    
-        return label;
-    }
-  }
+	protected void updateMessagesLabel() {
+		String text;
+		if (deviceName == null) {
+			text = resources.getString("log.header.noDevice");
+		} else {
+			text = deviceName
+					+ ", "
+					+ (deviceOut ? "out" : "in")
+					+ ", "
+					+ (open ? resources.getString("log.header.open")
+							: resources.getString("log.header.closed"));
+		}
+		setMessage(text);
+	}
+
+	private void prepareColumn(int index, int width, int align) {
+		TableColumn column = table.getColumnModel().getColumn(index);
+
+		column.setCellRenderer(new MessageCellRenderer(align));
+		column.setPreferredWidth(width);
+	}
+
+	/**
+	 * Clear this log.
+	 */
+	public void clear() {
+		messages.clear();
+
+		model.fireTableDataChanged();
+	}
+
+	private class InternalMidiLogger implements MidiLogger {
+
+		public void opened() {
+			open = true;
+
+			updateMessagesLabel();
+		}
+
+		public void closed() {
+			open = false;
+
+			updateMessagesLabel();
+		}
+
+		public void log(MidiMessage message) {
+			messages
+					.add(new Message(message.getMessage(), message.getLength()));
+
+			int row = messages.size() - 1;
+
+			model.fireTableRowsInserted(row, row);
+
+			if (!scrollLockButton.isSelected()) {
+				table.scrollRectToVisible(table.getCellRect(row, 0, true));
+			}
+
+			int over = messages.size() - Configuration.instance().getMax();
+			if (over > 0) {
+				for (int m = 0; m < over; m++) {
+					messages.remove(0);
+				}
+
+				model.fireTableRowsDeleted(0, over - 1);
+			}
+		}
+	}
+
+	private class MessagesModel extends AbstractTableModel {
+
+		private String[] names = new String[] { "Status", "Data 1", "Data 2",
+				"Channel", "Note", "Event" };
+
+		public int getColumnCount() {
+			return names.length;
+		}
+
+		public String getColumnName(int column) {
+			return names[column];
+		}
+
+		public int getRowCount() {
+			return messages.size();
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+
+			Message message = (Message) messages.get(rowIndex);
+
+			switch (columnIndex) {
+			case 0:
+				return message.getStatus();
+			case 1:
+				return message.getData1();
+			case 2:
+				return message.getData2();
+			case 3:
+				return message.getChannel();
+			case 4:
+				return message.getNote();
+			case 5:
+				return message.getEvent();
+			}
+			return null;
+		}
+	}
+
+	private class Message {
+
+		private byte[] data;
+
+		private int length;
+
+		/**
+		 * Create a message.
+		 * 
+		 * @param data
+		 *            data of message
+		 * @param length
+		 *            length of message
+		 */
+		public Message(byte[] data, int length) {
+
+			this.data = data;
+			this.length = length;
+		}
+
+		/**
+		 * Get the status.
+		 * 
+		 * @return status
+		 */
+		public String getStatus() {
+			return format(data[0] & 0xff);
+		}
+
+		/**
+		 * Get the data1.
+		 * 
+		 * @return data1
+		 */
+		public String getData1() {
+			if (length > 1) {
+				return format(data[1] & 0xff);
+			} else {
+				return "-";
+			}
+		}
+
+		/**
+		 * Get the data2.
+		 * 
+		 * @return data2
+		 */
+		public String getData2() {
+			if (length > 2) {
+				return format(data[2] & 0xff);
+			} else {
+				return "-";
+			}
+		}
+
+		/**
+		 * Get the channel (if applicable).
+		 * 
+		 * @return channel
+		 */
+		public String getChannel() {
+			int status = (data[0] & 0xff);
+			if (status >= 0x80 && status < 0xf0) {
+				return Integer.toString((data[0] & 0x0f) + 1);
+			} else {
+				return "-";
+			}
+		}
+
+		/**
+		 * Get the note (if applicable).
+		 * 
+		 * @return note
+		 */
+		public String getNote() {
+			int status = (data[0] & 0xff);
+			if (status >= 0x80 && status < 0xb0) {
+				return keyFormat.format(new Integer(data[1] & 0xff));
+			} else {
+				return "-";
+			}
+		}
+
+		/**
+		 * Get the event (if applicable).
+		 * 
+		 * @return event
+		 */
+		public String getEvent() {
+			int status = (data[0] & 0xff);
+			if (status >= 0x80 && status < 0xf0) {
+				return channelEvents[(status - 0x80) >> 4];
+			} else if (status >= 0xf0) {
+				return systemEvents[status - 0xf0];
+			} else {
+				return "-";
+			}
+		}
+
+		/**
+		 * Get the color.
+		 * 
+		 * @return color
+		 */
+		public Color getColor() {
+			int status = (data[0] & 0xff);
+
+			if (status >= 0x80 && status < 0xf0) {
+				return channelColors[(status - 0x80) >> 4];
+			} else {
+				return Color.WHITE;
+			}
+		}
+
+		private String format(int value) {
+			return Integer.toString(value, hexButton.isSelected() ? 16 : 10);
+		}
+	}
+
+	private class MessageCellRenderer extends DefaultTableCellRenderer {
+
+		/**
+		 * Create a renderer with the given alingment.
+		 * 
+		 * @param alignment
+		 *            alignment
+		 */
+		public MessageCellRenderer(int alignment) {
+			setHorizontalAlignment(alignment);
+		}
+
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
+
+			JLabel label = (JLabel) super.getTableCellRendererComponent(table,
+					value, isSelected, hasFocus, row, column);
+
+			if (!isSelected) {
+				Message message = (Message) messages.get(row);
+				label.setBackground(message.getColor());
+			}
+
+			return label;
+		}
+	}
 }
