@@ -83,7 +83,6 @@ public class AboutPanel extends JPanel {
      * 
      * @param parent
      *            the frame to use for the dialogs parent
-     * @return the dialog showing the about panel
      */
     public static void showInDialog(JFrame parent) {
 
@@ -125,6 +124,11 @@ public class AboutPanel extends JPanel {
         }        
     }
 
+    /**
+     * Hide a previously shown splash.
+     * 
+     * @see #showSplash()
+     */
     public static void hideSplash() {
         if (splash != null) {
             SwingUtilities.invokeLater(new Runnable() {
