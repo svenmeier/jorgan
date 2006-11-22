@@ -58,7 +58,7 @@ import jorgan.gui.construct.ReferencesPanel;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.midi.KeyboardPane;
-import jorgan.gui.midi.MidiLog;
+import jorgan.gui.midi.MidiMonitor;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
@@ -82,7 +82,7 @@ public class OrganPanel extends JPanel {
 
     private static final String KEY_KEYBOARD = "keyboard";
 
-    private static final String KEY_MIDI_LOG = "midiLog";
+    private static final String KEY_MIDI_MONITOR = "midiMonitor";
 
     private static final String KEY_ELEMENTS = "elements";
 
@@ -148,7 +148,7 @@ public class OrganPanel extends JPanel {
 
     private KeyboardPane keyboardPane = new KeyboardPane();
 
-    private MidiLog midiLog = new MidiLog();
+    private MidiMonitor midiMonitor = new MidiMonitor();
 
     private PlayMonitor playMonitor = new PlayMonitor();
 
@@ -160,8 +160,8 @@ public class OrganPanel extends JPanel {
     private ActionDockable keyboardDockable = new ActionDockable(KEY_KEYBOARD,
             keyboardPane);
 
-    private ActionDockable midiLogDockable = new ActionDockable(KEY_MIDI_LOG,
-            midiLog);
+    private ActionDockable midiMonitorDockable = new ActionDockable(KEY_MIDI_MONITOR,
+            midiMonitor);
 
     private ActionDockable elementsDockable = new ActionDockable(KEY_ELEMENTS,
             elementsPanel);
@@ -220,6 +220,11 @@ public class OrganPanel extends JPanel {
         super.removeNotify();
     }
 
+    /**
+     * Get widgets (i.e. actions or components) for the toolbar.
+     * 
+     * @return	widgets
+     */
     public List getToolBarWidgets() {
         List widgets = new ArrayList();
 
@@ -229,6 +234,11 @@ public class OrganPanel extends JPanel {
         return widgets;
     }
 
+    /**
+     * Get widgets (i.e. actions or components) for the status bar.
+     * 
+     * @return	widgets
+     */
     public List getStatusBarWidgets() {
         List widgets = new ArrayList();
 
@@ -237,11 +247,16 @@ public class OrganPanel extends JPanel {
         return widgets;
     }
 
+    /**
+     * Get widgets (i.e. actions or components) for the menu bar.
+     * 
+     * @return	widgets
+     */
     public List getMenuWidgets() {
         List actions = new ArrayList();
         actions.add(problemsDockable);
         actions.add(keyboardDockable);
-        actions.add(midiLogDockable);
+        actions.add(midiMonitorDockable);
         actions.add(memoryDockable);
         actions.add(elementsDockable);
         actions.add(propertiesDockable);
@@ -255,7 +270,7 @@ public class OrganPanel extends JPanel {
     /**
      * Set the organ to be displayed.
      * 
-     * @param organ
+     * @param session
      *            the organ to be displayed
      */
     public void setOrgan(OrganSession session) {
@@ -645,8 +660,8 @@ public class OrganPanel extends JPanel {
                 return keyboardDockable;
             } else if (KEY_PROBLEMS.equals(key)) {
                 return problemsDockable;
-            } else if (KEY_MIDI_LOG.equals(key)) {
-                return midiLogDockable;
+            } else if (KEY_MIDI_MONITOR.equals(key)) {
+                return midiMonitorDockable;
             } else if (KEY_MEMORY.equals(key)) {
                 return memoryDockable;
             } else if (constructing) {

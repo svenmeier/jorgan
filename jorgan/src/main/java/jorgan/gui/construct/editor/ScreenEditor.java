@@ -20,59 +20,37 @@ package jorgan.gui.construct.editor;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
-import java.beans.*;
-import java.util.ResourceBundle;
+import java.beans.PropertyEditorSupport;
 
 /**
  * Property editor for a screen property.
  */
 public class ScreenEditor extends PropertyEditorSupport {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	private String[] tags;
 
-  private String[] tags;
-  
-  private String defaultTag;
+	public String[] getTags() {
+		if (tags == null) {
+			GraphicsEnvironment environment = GraphicsEnvironment
+					.getLocalGraphicsEnvironment();
+			GraphicsDevice[] devices = environment.getScreenDevices();
 
-  public ScreenEditor() {
-      
-    defaultTag = resources.getString("construct.editor.screen.default");
+			tags = new String[devices.length + 1];
+			tags[0] = null;
+			for (int d = 0; d < devices.length; d++) {
+				tags[d + 1] = devices[d].getIDstring();
+			}
+		}
+		return tags;
+	}
+	
+	public String getAsText() {
 
-    GraphicsEnvironment environment = GraphicsEnvironment.getLocalGraphicsEnvironment();    
-    GraphicsDevice[] devices = environment.getScreenDevices();
-    
-    tags = new String[devices.length + 2];
-    tags[0] = null;
-    tags[1] = defaultTag;
-    for (int d = 0; d < devices.length; d++) {
-      tags[d + 2] = devices[d].getIDstring();
-    }
-  }
+		return (String) getValue();
+	}
 
-  public String[] getTags() {
+	public void setAsText(String string) {
 
-    return tags;
-  }
-
-  public String getAsText() {
-
-    String value = (String)getValue();
-    if ("".equals(value)) {
-        return defaultTag;
-    } else {
-        return value;
-    }
-  }
-
-  public void setAsText(String string) {
-
-    if (defaultTag.equals(string)) {
-        setValue("");
-    } else {
-        setValue(string);
-    }
-  }
+		setValue(string);
+	}
 }

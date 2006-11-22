@@ -20,14 +20,10 @@ package jorgan.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -242,8 +238,6 @@ public class StandardDialog extends JDialog {
 	 */
 	private class ContentPane extends JPanel {
 
-		private ComponentListener listener = new Listener();
-
 		private JComponent borderPane = new JPanel();
 
 		private JComponent content;
@@ -256,13 +250,10 @@ public class StandardDialog extends JDialog {
 			borderPane.setLayout(new BorderLayout());
 			add(borderPane, BorderLayout.CENTER);
 
+			CancelAction cancel = new CancelAction();
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-					KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "CANCEL");
-			getActionMap().put("CANCEL", new AbstractAction() {
-				public void actionPerformed(ActionEvent e) {
-					onCancel();
-				}
-			});
+					KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancel);
+			getActionMap().put(cancel, cancel);
 		}
 
 		private JComponent getContent() {
@@ -282,61 +273,6 @@ public class StandardDialog extends JDialog {
 				borderPane.add(content, BorderLayout.CENTER);
 				borderPane.revalidate();
 				borderPane.repaint();
-			}
-		}
-
-		/**
-		 * Add componentListener to container.
-		 */
-		public void addNotify() {
-			super.addNotify();
-
-			Container container = getTopLevelAncestor();
-			container.addComponentListener(listener);
-		}
-
-		/**
-		 * Remove componentListener from container.
-		 */
-		public void removeNotify() {
-			super.removeNotify();
-
-			Container container = getTopLevelAncestor();
-
-			container.removeComponentListener(listener);
-		}
-
-		/**
-		 * DoLayout overriden for check of minimum size.
-		 */
-		public void doLayout() {
-			super.doLayout();
-
-			checkMinimumSize();
-		}
-
-		/**
-		 * Check the minimum size.
-		 */
-		protected void checkMinimumSize() {
-			Container container = getTopLevelAncestor();
-
-			Dimension minimumSize = container.getMinimumSize();
-			Dimension size = container.getSize();
-			if (size.width < minimumSize.width
-					|| size.height < minimumSize.height) {
-				Dimension newSize = new Dimension(Math.max(minimumSize.width,
-						size.width), Math.max(minimumSize.height, size.height));
-				container.setSize(newSize);
-			}
-		}
-
-		/**
-		 * ComponentListener.
-		 */
-		private class Listener extends ComponentAdapter {
-			public void componentResized(ComponentEvent e) {
-				checkMinimumSize();
 			}
 		}
 	}

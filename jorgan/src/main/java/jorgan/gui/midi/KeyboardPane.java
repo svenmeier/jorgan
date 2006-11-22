@@ -85,13 +85,15 @@ public class KeyboardPane extends JComponent {
 
 	private JMenuItem polyPressureMenuItem;
 
+	private JMenuItem channelPressureMenuItem;
+	
 	private int channel = 0;
 
 	private boolean sendVelocity = true;
 
 	private boolean sendPolyPressure = true;
 
-	private boolean sendAftertouch = true;
+	private boolean sendChannelPressure = false;
 
 	private List keys = new ArrayList();
 
@@ -246,13 +248,13 @@ public class KeyboardPane extends JComponent {
 	}
 
 	/**
-	 * Should aftertouch be sent.
+	 * Should channel pressure be sent.
 	 * 
-	 * @param sendAftertouch
+	 * @param sendChannelPressure
 	 *            <code>true</code> if aftertouch should be sent
 	 */
-	public void setSendAftertouch(boolean sendAftertouch) {
-		this.sendAftertouch = sendAftertouch;
+	public void setSendAftertouch(boolean sendChannelPressure) {
+		this.sendChannelPressure = sendChannelPressure;
 	}
 
 	/**
@@ -261,7 +263,7 @@ public class KeyboardPane extends JComponent {
 	 * @return	<code>true</code> if aftertouch is sent
 	 */
 	public boolean getSendAftertouch() {
-		return sendAftertouch;
+		return sendChannelPressure;
 	}
 
 	/**
@@ -414,6 +416,15 @@ public class KeyboardPane extends JComponent {
 			}
 		});
 		popupMenu.add(polyPressureMenuItem);
+		
+		channelPressureMenuItem = new JCheckBoxMenuItem(resources
+				.getString("keyboard.channelPressure"));
+		channelPressureMenuItem.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				sendChannelPressure = channelPressureMenuItem.isSelected();
+			}
+		});
+		popupMenu.add(channelPressureMenuItem);
 
 		return popupMenu;
 	}
@@ -478,7 +489,7 @@ public class KeyboardPane extends JComponent {
 				if (sendPolyPressure) {
 					send(ShortMessage.POLY_PRESSURE, pitch, pressure);
 				}
-				if (sendAftertouch) {
+				if (sendChannelPressure) {
 					send(ShortMessage.CHANNEL_PRESSURE, pressure, 0);
 				}
 			}

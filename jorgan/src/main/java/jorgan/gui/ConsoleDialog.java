@@ -52,191 +52,209 @@ import jorgan.swing.CardPanel;
  */
 public class ConsoleDialog extends JDialog {
 
-    private static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-    /**
-     * The handler of mouse events.
-     */
-    private MouseHandler mouseHandler = new MouseHandler();
+	/**
+	 * The handler of mouse events.
+	 */
+	private MouseHandler mouseHandler = new MouseHandler();
 
-    private JScrollPane scrollPane = new JScrollPane(
-            JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-            JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+	private JScrollPane scrollPane = new JScrollPane(
+			JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-    private CardPanel cardPanel = new CardPanel();
+	private CardPanel cardPanel = new CardPanel();
 
-    private JPopupMenu popup = new JPopupMenu();
+	private JPopupMenu popup = new JPopupMenu();
 
-    private ButtonGroup group = new ButtonGroup();
+	private ButtonGroup group = new ButtonGroup();
 
-    private OrganSession session;
+	private OrganSession session;
 
-    /**
-     * Create a dialog.
-     */
-    public ConsoleDialog(JFrame owner, GraphicsConfiguration configuration) {
-        super(owner, null, false, configuration);
+	/**
+	 * Create a dialog.
+	 * 
+	 * @param owner
+	 *            the owner
+	 * @param configuration
+	 *            the graphics configuration
+	 */
+	public ConsoleDialog(JFrame owner, GraphicsConfiguration configuration) {
+		super(owner, null, false, configuration);
 
-        setUndecorated(true);
-        setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		setUndecorated(true);
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
-        Rectangle bounds = getGraphicsConfiguration().getBounds();
-        setBounds(bounds);
+		Rectangle bounds = getGraphicsConfiguration().getBounds();
+		setBounds(bounds);
 
-        scrollPane.setBorder(null);
-        getContentPane().add(scrollPane);
-        scrollPane.setViewportView(cardPanel);
+		scrollPane.setBorder(null);
+		getContentPane().add(scrollPane);
+		scrollPane.setViewportView(cardPanel);
 
-        // popup.addSeparator();
-        // popup.add(new MemoryAction());
-        popup.addSeparator();
-        popup.add(new CloseAction());
-    }
+		popup.addSeparator();
+		popup.add(new CloseAction());
+	}
 
-    public void setOrgan(OrganSession session) {
-        this.session = session;
-    }
+	/**
+	 * Set the organ session.
+	 * 
+	 * @param session
+	 *            organ session
+	 */
+	public void setOrgan(OrganSession session) {
+		this.session = session;
+	}
 
-    /**
-     * Add a console to be shown in <em>full screen</em>.
-     */
-    public void addConsole(final Console console) {
+	/**
+	 * Add a console to be shown on this dialog.
+	 * 
+	 * @param console
+	 *            console to add
+	 */
+	public void addConsole(final Console console) {
 
-        ConsolePanel consolePanel = new ConsolePanel();
-        consolePanel.setOrgan(session);
-        consolePanel.setConsole(console);
+		ConsolePanel consolePanel = new ConsolePanel();
+		consolePanel.setOrgan(session);
+		consolePanel.setConsole(console);
 
-        consolePanel.addMouseListener(mouseHandler);
-        consolePanel.addMouseMotionListener(mouseHandler);
+		consolePanel.addMouseListener(mouseHandler);
+		consolePanel.addMouseMotionListener(mouseHandler);
 
-        cardPanel.addCard(consolePanel, console);
+		cardPanel.addCard(consolePanel, console);
 
-        final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Documents.getInstance().getDisplayName(console));
-        check.getModel().setGroup(group);
-        check.setSelected(true);
-        check.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                if (check.isSelected()) {
-                    cardPanel.selectCard(console);
-                }
-            }
-        });
-        popup.add(check, 0);
-    }
-    /**
-     * The handler for mouse events.
-     */
-    private class MouseHandler extends MouseInputAdapter implements
-            ActionListener {
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Documents
+				.getInstance().getDisplayName(console));
+		check.getModel().setGroup(group);
+		check.setSelected(true);
+		check.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (check.isSelected()) {
+					cardPanel.selectCard(console);
+				}
+			}
+		});
+		popup.add(check, 0);
+	}
 
-        private Timer timer;
+	/**
+	 * The handler for mouse events.
+	 */
+	private class MouseHandler extends MouseInputAdapter implements
+			ActionListener {
 
-        private int deltaX;
+		private Timer timer;
 
-        private int deltaY;
+		private int deltaX;
 
-        public MouseHandler() {
-            timer = new Timer(50, this);
-        }
+		private int deltaY;
 
-        public void mousePressed(MouseEvent e) {
-            checkPopup(e);
-        }
+		private MouseHandler() {
+			timer = new Timer(50, this);
+		}
 
-        public void mouseReleased(MouseEvent e) {
-            checkPopup(e);
-        }
+		public void mousePressed(MouseEvent e) {
+			checkPopup(e);
+		}
 
-        protected void checkPopup(MouseEvent e) {
-            if (e.isPopupTrigger()) {
-                popup.show(e.getComponent(), e.getX(), e.getY());
-            }
-        }
+		public void mouseReleased(MouseEvent e) {
+			checkPopup(e);
+		}
 
-        public void mouseExited(MouseEvent e) {
-            if (timer.isRunning()) {
-                timer.stop();
-            }
-        }
+		protected void checkPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
 
-        public void mouseMoved(MouseEvent e) {
+		public void mouseExited(MouseEvent e) {
+			if (timer.isRunning()) {
+				timer.stop();
+			}
+		}
 
-            if (popup.isVisible()) {
-                return;
-            }
+		public void mouseMoved(MouseEvent e) {
 
-            Rectangle rect = scrollPane.getViewport().getViewRect();
+			if (popup.isVisible()) {
+				return;
+			}
 
-            int x = e.getX() - (rect.x + rect.width / 2);
-            int y = e.getY() - (rect.y + rect.height / 2);
+			Rectangle rect = scrollPane.getViewport().getViewRect();
 
-            deltaX = (int) (Math.pow((double) x / (rect.width / 2), 5) * (rect.width / 5));
-            deltaY = (int) (Math.pow((double) y / (rect.height / 2), 5) * (rect.height / 5));
+			int x = e.getX() - (rect.x + rect.width / 2);
+			int y = e.getY() - (rect.y + rect.height / 2);
 
-            if (deltaX != 0 || deltaY != 0) {
-                if (!timer.isRunning()) {
-                    timer.start();
-                }
-            } else {
-                if (timer.isRunning()) {
-                    timer.stop();
-                }
-            }
-        }
+			deltaX = (int) (Math.pow((double) x / (rect.width / 2), 5) * (rect.width / 5));
+			deltaY = (int) (Math.pow((double) y / (rect.height / 2), 5) * (rect.height / 5));
 
-        public void actionPerformed(ActionEvent e) {
-            // must change horizontal and vertical value separately
-            // or otherwise scrollpane will not use blitting :(
-            scrollPane.getHorizontalScrollBar().setValue(
-                    scrollPane.getHorizontalScrollBar().getValue() + deltaX);
-            scrollPane.getVerticalScrollBar().setValue(
-                    scrollPane.getVerticalScrollBar().getValue() + deltaY);
-        }
-    }
+			if (deltaX != 0 || deltaY != 0) {
+				if (!timer.isRunning()) {
+					timer.start();
+				}
+			} else {
+				if (timer.isRunning()) {
+					timer.stop();
+				}
+			}
+		}
 
-    private class CloseAction extends AbstractAction {
+		public void actionPerformed(ActionEvent e) {
+			// must change horizontal and vertical value separately
+			// or otherwise scrollpane will not use blitting :(
+			scrollPane.getHorizontalScrollBar().setValue(
+					scrollPane.getHorizontalScrollBar().getValue() + deltaX);
+			scrollPane.getVerticalScrollBar().setValue(
+					scrollPane.getVerticalScrollBar().getValue() + deltaY);
+		}
+	}
 
-        public CloseAction() {
-            putValue(Action.NAME, resources
-                    .getString("fullScreen.action.close.name"));
+	private class CloseAction extends AbstractAction {
 
-            getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-                    KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
-            getRootPane().getActionMap().put(this, this);
-        }
+		private CloseAction() {
+			putValue(Action.NAME, resources
+					.getString("fullScreen.action.close.name"));
 
-        public void actionPerformed(ActionEvent ev) {
-            ConsoleDialog.this.setVisible(false);
-        }
-    }
+			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
+			getRootPane().getActionMap().put(this, this);
+		}
 
-    public static ConsoleDialog create(JFrame owner, String screen) {
+		public void actionPerformed(ActionEvent ev) {
+			ConsoleDialog.this.setVisible(false);
+		}
+	}
 
-        if (screen == null) {
-            throw new IllegalArgumentException("screen must not be null");
-        }
+	/**
+	 * Create a dialog for the given owner and screen.
+	 * 
+	 * @param owner
+	 *            owner
+	 * @param screen
+	 *            screen
+	 * @return created dialog
+	 */
+	public static ConsoleDialog create(JFrame owner, String screen) {
 
-        GraphicsConfiguration configuration = null;
-        GraphicsEnvironment environment = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice[] devices = environment.getScreenDevices();
-        for (int d = 0; d < devices.length; d++) {
-            if (devices[d].getIDstring().equals(screen)) {
-                configuration = devices[d].getDefaultConfiguration();
-            }
-        }
+		if (screen == null) {
+			throw new IllegalArgumentException("screen must not be null");
+		}
 
-        ConsoleDialog dialog = new ConsoleDialog(owner, configuration);
+		GraphicsConfiguration configuration = null;
+		GraphicsEnvironment environment = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = environment.getScreenDevices();
+		for (int d = 0; d < devices.length; d++) {
+			if (devices[d].getIDstring().equals(screen)) {
+				configuration = devices[d].getDefaultConfiguration();
+			}
+		}
+		if (configuration == null) {
+			environment.getDefaultScreenDevice().getDefaultConfiguration();
+		}
 
-        return dialog;
-    }
+		ConsoleDialog dialog = new ConsoleDialog(owner, configuration);
 
-    public static String getDefaultSceen() {
-        GraphicsEnvironment environment = GraphicsEnvironment
-                .getLocalGraphicsEnvironment();
-        GraphicsDevice device = environment.getDefaultScreenDevice();
-
-        return device.getIDstring();
-    }
+		return dialog;
+	}
 }

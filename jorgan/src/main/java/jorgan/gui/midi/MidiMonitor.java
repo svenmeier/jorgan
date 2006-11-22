@@ -30,6 +30,7 @@ import java.util.ResourceBundle;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -47,6 +48,7 @@ import swingx.docking.DockedPanel;
 
 import jorgan.midi.log.Configuration;
 
+import jorgan.sound.midi.BugFix;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MidiLogger;
@@ -54,9 +56,9 @@ import jorgan.swing.StandardDialog;
 import jorgan.swing.table.TableUtils;
 
 /**
- * A log of MIDI messages.
+ * A monitor of MIDI messages.
  */
-public class MidiLog extends DockedPanel {
+public class MidiMonitor extends DockedPanel {
 
 	protected static final ResourceBundle resources = ResourceBundle
 			.getBundle("jorgan.gui.resources");
@@ -125,7 +127,7 @@ public class MidiLog extends DockedPanel {
 	/**
 	 * Constructor.
 	 */
-	public MidiLog() {
+	public MidiMonitor() {
 
 		deviceButton.setToolTipText(resources.getString("log.device"));
 		deviceButton.setIcon(new ImageIcon(getClass().getResource(
@@ -300,8 +302,7 @@ public class MidiLog extends DockedPanel {
 		}
 
 		public void log(MidiMessage message) {
-			messages
-					.add(new Message(message.getMessage(), message.getLength()));
+			messages.add(new Message(message));
 
 			int row = messages.size() - 1;
 
@@ -363,22 +364,25 @@ public class MidiLog extends DockedPanel {
 
 	private class Message {
 
-		private byte[] data;
+		private int status = -1;
 
-		private int length;
+		private int data1 = -1;
+
+		private int data2 = -1;
 
 		/**
 		 * Create a message.
 		 * 
-		 * @param data
-		 *            data of message
-		 * @param length
-		 *            length of message
+		 * @param message
+		 *            the original message
 		 */
-		public Message(byte[] data, int length) {
-
-			this.data = data;
-			this.length = length;
+		public Message(MidiMessage message) {
+			if (message instanceof ShortMessage) {
+				ShortMessage shortMessage = (ShortMessage) message;
+				this.status = BugFix.getStatus(shortMessage);
+				this.data1 = shortMessage.getData1();
+				this.data2 = shortMessage.getData2();
+			}
 		}
 
 		/**
@@ -387,7 +391,7 @@ public class MidiLog extends DockedPanel {
 		 * @return status
 		 */
 		public String getStatus() {
-			return format(data[0] & 0xff);
+			return format(status);
 		}
 
 		/**
@@ -396,11 +400,7 @@ public class MidiLog extends DockedPanel {
 		 * @return data1
 		 */
 		public String getData1() {
-			if (length > 1) {
-				return format(data[1] & 0xff);
-			} else {
-				return "-";
-			}
+			return format(data1);
 		}
 
 		/**
@@ -409,11 +409,7 @@ public class MidiLog extends DockedPanel {
 		 * @return data2
 		 */
 		public String getData2() {
-			if (length > 2) {
-				return format(data[2] & 0xff);
-			} else {
-				return "-";
-			}
+			return format(data2);
 		}
 
 		/**
@@ -422,9 +418,8 @@ public class MidiLog extends DockedPanel {
 		 * @return channel
 		 */
 		public String getChannel() {
-			int status = (data[0] & 0xff);
 			if (status >= 0x80 && status < 0xf0) {
-				return Integer.toString((data[0] & 0x0f) + 1);
+				return Integer.toString((status & 0x0f) + 1);
 			} else {
 				return "-";
 			}
@@ -436,9 +431,8 @@ public class MidiLog extends DockedPanel {
 		 * @return note
 		 */
 		public String getNote() {
-			int status = (data[0] & 0xff);
 			if (status >= 0x80 && status < 0xb0) {
-				return keyFormat.format(new Integer(data[1] & 0xff));
+				return keyFormat.format(new Integer(data1 & 0xff));
 			} else {
 				return "-";
 			}
@@ -450,13 +444,12 @@ public class MidiLog extends DockedPanel {
 		 * @return event
 		 */
 		public String getEvent() {
-			int status = (data[0] & 0xff);
 			if (status >= 0x80 && status < 0xf0) {
 				return channelEvents[(status - 0x80) >> 4];
 			} else if (status >= 0xf0) {
 				return systemEvents[status - 0xf0];
 			} else {
-				return "-";
+				return "?";
 			}
 		}
 
@@ -466,17 +459,19 @@ public class MidiLog extends DockedPanel {
 		 * @return color
 		 */
 		public Color getColor() {
-			int status = (data[0] & 0xff);
-
 			if (status >= 0x80 && status < 0xf0) {
 				return channelColors[(status - 0x80) >> 4];
 			} else {
-				return Color.WHITE;
+				return null;
 			}
 		}
 
 		private String format(int value) {
-			return Integer.toString(value, hexButton.isSelected() ? 16 : 10);
+			if (value == -1) {
+				return "-";
+			} else {
+				return Integer.toString(value, hexButton.isSelected() ? 16 : 10);
+			}
 		}
 	}
 
@@ -501,7 +496,10 @@ public class MidiLog extends DockedPanel {
 
 			if (!isSelected) {
 				Message message = (Message) messages.get(row);
-				label.setBackground(message.getColor());
+				Color color = message.getColor();
+				if (color != null) {
+					label.setBackground(color);
+				}
 			}
 
 			return label;

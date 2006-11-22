@@ -32,72 +32,83 @@ import jorgan.disposition.Shortcut;
  */
 public class ShortcutEditor extends CustomEditor {
 
-    private ShortcutField shortcutField = new ShortcutField();
+	private ShortcutField shortcutField = new ShortcutField();
 
-    public String format(Object value) {
+	public String format(Object value) {
 
-        Shortcut shortcut = (Shortcut) value;
+		Shortcut shortcut = (Shortcut) value;
 
-        if (shortcut == null) {
-            return "";
-        } else {
-            return shortcut.toString();
-        }
-    }
+		if (shortcut == null) {
+			return "";
+		} else {
+			return shortcut.toString();
+		}
+	}
 
-    public Component getCustomEditor(Object value) {
+	public Component getCustomEditor(Object value) {
 
-        shortcutField.setShortcut((Shortcut) value);
+		shortcutField.setShortcut((Shortcut) value);
 
-        return shortcutField;
-    }
+		return shortcutField;
+	}
 
-    public Object getEditedValue() {
-        return shortcutField.getShortcut();
-    }
+	public Object getEditedValue() {
+		return shortcutField.getShortcut();
+	}
 
-    private class ShortcutField extends JTextField implements
-            KeyEventDispatcher {
+	private class ShortcutField extends JTextField implements
+			KeyEventDispatcher {
 
-        private Shortcut shortcut;
+		private Shortcut shortcut;
 
-        public ShortcutField() {
-            setBorder(null);
-        }
+		private ShortcutField() {
+			setBorder(null);
+		}
 
-        public void addNotify() {
-            super.addNotify();
+		public void addNotify() {
+			super.addNotify();
 
-            KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                    .addKeyEventDispatcher(this);
-        }
+			KeyboardFocusManager.getCurrentKeyboardFocusManager()
+					.addKeyEventDispatcher(this);
+		}
 
-        public void removeNotify() {
-            KeyboardFocusManager.getCurrentKeyboardFocusManager()
-                    .removeKeyEventDispatcher(this);
+		public void removeNotify() {
+			KeyboardFocusManager.getCurrentKeyboardFocusManager()
+					.removeKeyEventDispatcher(this);
 
-            super.removeNotify();
-        }
+			super.removeNotify();
+		}
 
-        public void setShortcut(Shortcut shortcut) {
-            this.shortcut = shortcut;
+		/**
+		 * Set the shortcut.
+		 * 
+		 * @param shortcut
+		 *            shortcut
+		 */
+		public void setShortcut(Shortcut shortcut) {
+			this.shortcut = shortcut;
 
-            if (shortcut == null) {
-                setText("");
-            } else {
-                setText(shortcut.toString());
-            }
-        }
+			if (shortcut == null) {
+				setText("");
+			} else {
+				setText(shortcut.toString());
+			}
+		}
 
-        public Shortcut getShortcut() {
-            return shortcut;
-        }
+		/**
+		 * Get the shortcut.
+		 * 
+		 * @return shortcut
+		 */
+		public Shortcut getShortcut() {
+			return shortcut;
+		}
 
-        public boolean dispatchKeyEvent(KeyEvent e) {
-            if (e.getID() == KeyEvent.KEY_PRESSED) {
-                setShortcut(Shortcut.createShortCut(e));
-            }
-            return true;
-        }
-    }
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getID() == KeyEvent.KEY_PRESSED) {
+				setShortcut(Shortcut.createShortCut(e));
+			}
+			return true;
+		}
+	}
 }
