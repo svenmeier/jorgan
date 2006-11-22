@@ -21,19 +21,23 @@ package jorgan.sound.midi;
 import javax.sound.midi.*;
 
 /**
- * BugFix for the JavaSound midi implementation.
+ * BugFix for the JavaSound midi implementation. <br>
+ * Reminder for Bug #4851018: don't use MidiMessage.getMessage() and
+ * MidiMessage.getLength() as they may return bogus values from external
+ * devices - fixed in 1.5 (Tiger).
  */
 public class BugFix {
 
-  /**
-   * Workaround for BUG in JavaSound:
-   * ShortMessage.getStatus() delivers bogus value
-   * so compute the status from <code>command OR channel</code> instead.
-   *
-   * @param message   message to get status for
-   * @return          status of message
-   */
-  public static int getStatus(ShortMessage message) {
-      return message.getCommand() | message.getChannel();
-  }
+	/**
+	 * Workaround for BUG #4716323 in JavaSound:<br>
+	 * ShortMessage.getStatus() delivers bogus value so compute the status from
+	 * <code>command OR channel</code> instead - fixed in 1.4.2 (mantis).
+	 * 
+	 * @param message
+	 *            message to get status from
+	 * @return status of message
+	 */
+	public static int getStatus(ShortMessage message) {
+		return message.getCommand() | message.getChannel();
+	}
 }

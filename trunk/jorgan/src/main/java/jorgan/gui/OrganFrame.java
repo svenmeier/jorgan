@@ -853,9 +853,6 @@ public class OrganFrame extends JFrame implements UI {
 			    if (screen == null) {
 			        continue;
 			    }
-			    if (Console.DEFAULT_SCREEN.equals(screen)) {
-			        screen = ConsoleDialog.getDefaultSceen();
-			    }
 
 			    ConsoleDialog dialog = (ConsoleDialog) dialogs.get(screen);
 			    if (dialog == null) {

@@ -7,7 +7,7 @@
         </dock>
         <slice orientation="3" weight="0.25">
           <dock>
-            <dockable key="midiLog" null="true"/>
+            <dockable key="midiMonitor" null="true"/>
             <dockable key="problems" null="true"/>
           </dock>
           <bridge key="consoles"/>

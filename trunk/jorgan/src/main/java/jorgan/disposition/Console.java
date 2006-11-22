@@ -23,11 +23,15 @@ package jorgan.disposition;
  */
 public class Console extends Element {
 
+	/**
+	 * The maximum supported zoom.
+	 */
     public static final float MAX_ZOOM = 2.0f;
 
+	/**
+	 * The minimum supported zoom.
+	 */
     public static final float MIN_ZOOM = 0.5f;
-
-    public static final String DEFAULT_SCREEN = "";
 
     /**
      * The device for input.
