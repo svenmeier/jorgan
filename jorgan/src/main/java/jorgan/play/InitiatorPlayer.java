@@ -23,7 +23,7 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.BugFix;
+import jorgan.sound.midi.MessageUtils;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
@@ -42,7 +42,7 @@ public class InitiatorPlayer extends Player {
 
         Message message = initiator.getMessage();
         if (message != null
-                && message.match(BugFix.getStatus(shortMessage), shortMessage
+                && message.match(MessageUtils.getStatusBugFix(shortMessage), shortMessage
                         .getData1(), shortMessage.getData2())) {
 
             fireInputAccepted();

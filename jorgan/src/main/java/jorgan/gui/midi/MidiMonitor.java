@@ -44,11 +44,12 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import spin.Spin;
 import swingx.docking.DockedPanel;
 
 import jorgan.midi.log.Configuration;
 
-import jorgan.sound.midi.BugFix;
+import jorgan.sound.midi.MessageUtils;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MidiLogger;
@@ -233,7 +234,7 @@ public class MidiMonitor extends DockedPanel {
 
 			if (this.deviceName != null) {
 				try {
-					DevicePool.removeLogger(logger, this.deviceName,
+					DevicePool.removeLogger((MidiLogger)Spin.over(logger), this.deviceName,
 							this.deviceOut);
 				} catch (MidiUnavailableException ex) {
 					throw new Error();
@@ -245,7 +246,7 @@ public class MidiMonitor extends DockedPanel {
 
 			if (this.deviceName != null) {
 				try {
-					open = DevicePool.addLogger(logger, name, out);
+					open = DevicePool.addLogger((MidiLogger)Spin.over(logger), name, out);
 				} catch (MidiUnavailableException ex) {
 					this.deviceName = null;
 				}
@@ -302,23 +303,25 @@ public class MidiMonitor extends DockedPanel {
 		}
 
 		public void log(MidiMessage message) {
-			messages.add(new Message(message));
+			if (MessageUtils.isShortMessage(message)) {
+				messages.add(new Message(message));
 
-			int row = messages.size() - 1;
+				int row = messages.size() - 1;
 
-			model.fireTableRowsInserted(row, row);
+				model.fireTableRowsInserted(row, row);
 
-			if (!scrollLockButton.isSelected()) {
-				table.scrollRectToVisible(table.getCellRect(row, 0, true));
-			}
-
-			int over = messages.size() - Configuration.instance().getMax();
-			if (over > 0) {
-				for (int m = 0; m < over; m++) {
-					messages.remove(0);
+				if (!scrollLockButton.isSelected()) {
+					table.scrollRectToVisible(table.getCellRect(row, 0, true));
 				}
 
-				model.fireTableRowsDeleted(0, over - 1);
+				int over = messages.size() - Configuration.instance().getMax();
+				if (over > 0) {
+					for (int m = 0; m < over; m++) {
+						messages.remove(0);
+					}
+
+					model.fireTableRowsDeleted(0, over - 1);
+				}
 			}
 		}
 	}
@@ -379,7 +382,7 @@ public class MidiMonitor extends DockedPanel {
 		public Message(MidiMessage message) {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
-				this.status = BugFix.getStatus(shortMessage);
+				this.status = MessageUtils.getStatusBugFix(shortMessage);
 				this.data1 = shortMessage.getData1();
 				this.data2 = shortMessage.getData2();
 			}

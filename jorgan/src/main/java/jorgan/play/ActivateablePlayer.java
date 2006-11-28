@@ -23,7 +23,7 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Activateable;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.BugFix;
+import jorgan.sound.midi.MessageUtils;
 
 /**
  * An abstract base class for players that control regactivateable elements.
@@ -72,7 +72,7 @@ public abstract class ActivateablePlayer extends Player {
         if (activateable.isActive()) {
             Message offMessage = activateable.getDeactivateMessage();
             if (offMessage != null
-                    && offMessage.match(BugFix.getStatus(message), message
+                    && offMessage.match(MessageUtils.getStatusBugFix(message), message
                             .getData1(), message.getData2())) {
 
                 fireInputAccepted();
@@ -82,7 +82,7 @@ public abstract class ActivateablePlayer extends Player {
         } else {
             Message onMessage = activateable.getActivateMessage();
             if (onMessage != null
-                    && onMessage.match(BugFix.getStatus(message), message
+                    && onMessage.match(MessageUtils.getStatusBugFix(message), message
                             .getData1(), message.getData2())) {
 
                 fireInputAccepted();

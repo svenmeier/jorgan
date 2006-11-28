@@ -23,7 +23,7 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.BugFix;
+import jorgan.sound.midi.MessageUtils;
 
 /**
  * A player for a swell.
@@ -42,7 +42,7 @@ public class ContinuousPlayer extends Player {
 
         Message message = slider.getMessage();
         if (message != null
-                && message.match(BugFix.getStatus(shortMessage), shortMessage
+                && message.match(MessageUtils.getStatusBugFix(shortMessage), shortMessage
                         .getData1(), shortMessage.getData2())) {
 
             int position = message.wildcard(shortMessage.getData1(),

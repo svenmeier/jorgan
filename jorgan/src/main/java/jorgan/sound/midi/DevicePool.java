@@ -26,266 +26,276 @@ import javax.sound.midi.*;
  */
 public class DevicePool {
 
-  private static Map sharedDevices = new HashMap();
-  
-  private DevicePool() {
-  }
-      
-  /**
-   * Get a device by name.
-   *
-   * @param name    name of device to get
-   * @param out     if <code>true</code> device should support midi-out, otherwise
-   *                it should support midi-in.
-   * @return        the named device
-   * @throws MidiUnavailableException
-   */
-  public static MidiDevice getMidiDevice(String name, boolean out) throws MidiUnavailableException {
+	private static Map sharedDevices = new HashMap();
 
-    SharedDevice sharedDevice = getSharedDevice(name, out);
+	private DevicePool() {
+	}
 
-    return new ProxyDevice(sharedDevice);
-  }
+	/**
+	 * Get a device by name.
+	 * 
+	 * @param name
+	 *            name of device to get
+	 * @param out
+	 *            if <code>true</code> device should support midi-out,
+	 *            otherwise it should support midi-in.
+	 * @return the named device
+	 * @throws MidiUnavailableException
+	 */
+	public static MidiDevice getMidiDevice(String name, boolean out)
+			throws MidiUnavailableException {
 
-  private static SharedDevice getSharedDevice(String name, boolean out) throws MidiUnavailableException {
+		SharedDevice sharedDevice = getSharedDevice(name, out);
 
-      DeviceKey key = new DeviceKey(name, out);
-      
-      SharedDevice sharedDevice = (SharedDevice)sharedDevices.get(key);
-      if (sharedDevice == null) {
-          MidiDevice[] devices = getMidiDevices(out);
+		return new ProxyDevice(sharedDevice);
+	}
 
-          for (int d = 0; d < devices.length; d++) {
-            if (name.equals(devices[d].getDeviceInfo().getName())) {
-              sharedDevice = new SharedDevice(devices[d]);
+	private static SharedDevice getSharedDevice(String name, boolean out)
+			throws MidiUnavailableException {
 
-              sharedDevices.put(key, sharedDevice);
-              
-              break;
-            }
-          }
-      }
+		DeviceKey key = new DeviceKey(name, out);
 
-      if (sharedDevice == null) {
-          throw new MidiUnavailableException(name);
-      }
-      
-      return sharedDevice;
-  }
-  
-  /**
-   * Get all devices that support midi-out or midi-in.
-   *
-   * @param out     if <code>true</code> devices should support midi-out, otherwise
-   *                they should support midi-in.
-   * @return        list of devices
-   * @throws MidiUnavailableException
-   */
-  private static MidiDevice[] getMidiDevices(boolean out) throws MidiUnavailableException {
-    MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
+		SharedDevice sharedDevice = (SharedDevice) sharedDevices.get(key);
+		if (sharedDevice == null) {
+			MidiDevice[] devices = getMidiDevices(out);
 
-    List devices = new ArrayList();
+			for (int d = 0; d < devices.length; d++) {
+				if (name.equals(devices[d].getDeviceInfo().getName())) {
+					sharedDevice = new SharedDevice(devices[d]);
 
-    for (int i = 0; i < infos.length; i++) {
-      MidiDevice.Info info = infos[i];
+					sharedDevices.put(key, sharedDevice);
 
-      MidiDevice device = MidiSystem.getMidiDevice(info);
-      if (out  && device.getMaxReceivers()    != 0 ||
-          !out && device.getMaxTransmitters() != 0) {
-        devices.add(device);
-      }
-    }
+					break;
+				}
+			}
+		}
 
-    return (MidiDevice[])devices.toArray(new MidiDevice[0]);
-  }
+		if (sharedDevice == null) {
+			throw new MidiUnavailableException(name);
+		}
 
-  /**
-   * Get the name of all devices that support midi-out or midi-in.
-   *
-   * @param out     if <code>true</code> devices should support midi-out, otherwise
-   *                they should support midi-in.
-   * @return        list of device names
-   * @throws MidiUnavailableException
-   */
-  public static String[] getMidiDeviceNames(boolean out) {
+		return sharedDevice;
+	}
 
-    String[] names = null;
-    try {
-      MidiDevice[] devices = getMidiDevices(out);
+	/**
+	 * Get all devices that support midi-out or midi-in.
+	 * 
+	 * @param out
+	 *            if <code>true</code> devices should support midi-out,
+	 *            otherwise they should support midi-in.
+	 * @return list of devices
+	 * @throws MidiUnavailableException
+	 */
+	private static MidiDevice[] getMidiDevices(boolean out)
+			throws MidiUnavailableException {
+		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
-      names = new String[devices.length];
+		List devices = new ArrayList();
 
-      for (int d = 0; d < devices.length; d++) {
-        names[d] = devices[d].getDeviceInfo().getName();
-      }
-    } catch (MidiUnavailableException ex) {
-      names = new String[0];
-    }
+		for (int i = 0; i < infos.length; i++) {
+			MidiDevice.Info info = infos[i];
 
-    return names;
-  }
+			MidiDevice device = MidiSystem.getMidiDevice(info);
+			if (out && device.getMaxReceivers() != 0 || !out
+					&& device.getMaxTransmitters() != 0) {
+				devices.add(device);
+			}
+		}
 
-  public static boolean addLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
-      SharedDevice device = getSharedDevice(name, out);
+		return (MidiDevice[]) devices.toArray(new MidiDevice[0]);
+	}
 
-      if (out) {
-        device.outLoggers.add(logger);
-      } else {
-        device.inLoggers.add(logger);
-      }
-      
-      return device.isOpen();
-  }
-  
-  public static void removeLogger(MidiLogger logger, String name, boolean out) throws MidiUnavailableException {
-      SharedDevice device = getSharedDevice(name, out);
+	/**
+	 * Get the name of all devices that support midi-out or midi-in.
+	 * 
+	 * @param out
+	 *            if <code>true</code> devices should support midi-out,
+	 *            otherwise they should support midi-in.
+	 * @return list of device names
+	 * @throws MidiUnavailableException
+	 */
+	public static String[] getMidiDeviceNames(boolean out) {
 
-      if (out) {
-        device.outLoggers.remove(logger);
-      } else {
-        device.inLoggers.remove(logger);
-      }
-  }
-  
-  private static class ProxyDevice extends DeviceWrapper {
-    private boolean open = false;
+		String[] names = null;
+		try {
+			MidiDevice[] devices = getMidiDevices(out);
 
-    private ProxyDevice(SharedDevice device) {
-        super(device);
-    }
+			names = new String[devices.length];
 
-    public void close() {
-        assertOpen();
-       
-        super.close();
+			for (int d = 0; d < devices.length; d++) {
+				names[d] = devices[d].getDeviceInfo().getName();
+			}
+		} catch (MidiUnavailableException ex) {
+			names = new String[0];
+		}
 
-        open = false;
-    }
+		return names;
+	}
 
-    public void open() throws MidiUnavailableException {
-        assertClosed();
+	public static boolean addLogger(MidiLogger logger, String name, boolean out)
+			throws MidiUnavailableException {
+		SharedDevice device = getSharedDevice(name, out);
 
-        super.open();
-        
-        open = true;
-    }
+		if (out) {
+			device.outLoggers.add(logger);
+		} else {
+			device.inLoggers.add(logger);
+		}
 
-    public boolean isOpen() {
-        return open;
-    }
+		return device.isOpen();
+	}
 
-    public Receiver getReceiver() throws MidiUnavailableException {
-        assertOpen();
-        return super.getReceiver();
-    }
+	public static void removeLogger(MidiLogger logger, String name, boolean out)
+			throws MidiUnavailableException {
+		SharedDevice device = getSharedDevice(name, out);
 
-    public Transmitter getTransmitter() throws MidiUnavailableException {
-        assertOpen();
-        return super.getTransmitter();
-    }
+		if (out) {
+			device.outLoggers.remove(logger);
+		} else {
+			device.inLoggers.remove(logger);
+		}
+	}
 
-    protected void assertOpen() throws IllegalStateException {
-        if (!open) {
-            throw new IllegalStateException("not open");
-        }
-    }
+	private static class ProxyDevice extends DeviceWrapper {
+		private boolean open = false;
 
-    protected void assertClosed() throws IllegalStateException {
-        if (open) {
-            throw new IllegalStateException("open");
-        }
-    }
-  }
+		private ProxyDevice(SharedDevice device) {
+			super(device);
+		}
 
-  private static class DeviceKey {
+		public void close() {
+			assertOpen();
 
-    private String deviceName;
-    private boolean out;
-     
-    public DeviceKey(String deviceName, boolean out) {
-        this.deviceName = deviceName;
-        this.out        = out;  
-    }
-    
-    public boolean equals(Object obj) {
+			super.close();
 
-        if (!(obj instanceof DeviceKey)) {
-            return false;
-        }
-        
-        DeviceKey key = (DeviceKey)obj;
-        
-        return key.deviceName.equals(deviceName) &&
-               key.out == out;
-    }
+			open = false;
+		}
 
-    public int hashCode() {
-        return deviceName.hashCode();
-    }
-  }
-  
-  private static class SharedDevice extends DeviceWrapper {
-      
-    private List inLoggers = new ArrayList();
-    private List outLoggers = new ArrayList();
-    
-    private int openCount;
- 
-    public SharedDevice(MidiDevice device) {
-      super(device);
-    }
-    
-    public void open() throws MidiUnavailableException {
-      if (openCount == 0) {
-        super.open();
-        
-        for (int l = 0; l < inLoggers.size(); l++) {
-          ((MidiLogger)inLoggers.get(l)).opened();
-        }
-        for (int l = 0; l < outLoggers.size(); l++) {
-          ((MidiLogger)outLoggers.get(l)).opened();
-        }
-      }
-      openCount++;
-    }
+		public void open() throws MidiUnavailableException {
+			assertClosed();
 
-    public Receiver getReceiver() throws MidiUnavailableException {
-      return new ReceiverWrapper(super.getReceiver()) {
-        public void send(MidiMessage message, long timeStamp) {
-          super.send(message, timeStamp);
-                
-          for (int l = 0; l < outLoggers.size(); l++) {
-            ((MidiLogger)outLoggers.get(l)).log(message);
-          }
-        }
-      };
-    }
-    
-    public Transmitter getTransmitter() throws MidiUnavailableException {
-        return new TransmitterWrapper(super.getTransmitter()) {
-          protected void send(MidiMessage message, long timeStamp) {
-            super.send(message, timeStamp);
-            
-            for (int l = 0; l < inLoggers.size(); l++) {
-              ((MidiLogger)inLoggers.get(l)).log(message);
-            }
-          }
-        };
-    }
-    
-    public void close() {
-      openCount--;
-              
-      if (openCount == 0) {
-        super.close();
-        
-        for (int l = 0; l < inLoggers.size(); l++) {
-          ((MidiLogger)inLoggers.get(l)).closed();
-        }
-        for (int l = 0; l < outLoggers.size(); l++) {
-          ((MidiLogger)outLoggers.get(l)).closed();
-        }
-      }
-    }
-  }
+			super.open();
+
+			open = true;
+		}
+
+		public boolean isOpen() {
+			return open;
+		}
+
+		public Receiver getReceiver() throws MidiUnavailableException {
+			assertOpen();
+			return super.getReceiver();
+		}
+
+		public Transmitter getTransmitter() throws MidiUnavailableException {
+			assertOpen();
+			return super.getTransmitter();
+		}
+
+		protected void assertOpen() throws IllegalStateException {
+			if (!open) {
+				throw new IllegalStateException("not open");
+			}
+		}
+
+		protected void assertClosed() throws IllegalStateException {
+			if (open) {
+				throw new IllegalStateException("open");
+			}
+		}
+	}
+
+	private static class DeviceKey {
+
+		private String deviceName;
+
+		private boolean out;
+
+		public DeviceKey(String deviceName, boolean out) {
+			this.deviceName = deviceName;
+			this.out = out;
+		}
+
+		public boolean equals(Object obj) {
+
+			if (!(obj instanceof DeviceKey)) {
+				return false;
+			}
+
+			DeviceKey key = (DeviceKey) obj;
+
+			return key.deviceName.equals(deviceName) && key.out == out;
+		}
+
+		public int hashCode() {
+			return deviceName.hashCode();
+		}
+	}
+
+	private static class SharedDevice extends DeviceWrapper {
+
+		private List inLoggers = new ArrayList();
+
+		private List outLoggers = new ArrayList();
+
+		private int openCount;
+
+		public SharedDevice(MidiDevice device) {
+			super(device);
+		}
+
+		public void open() throws MidiUnavailableException {
+			if (openCount == 0) {
+				super.open();
+
+				for (int l = 0; l < inLoggers.size(); l++) {
+					((MidiLogger) inLoggers.get(l)).opened();
+				}
+				for (int l = 0; l < outLoggers.size(); l++) {
+					((MidiLogger) outLoggers.get(l)).opened();
+				}
+			}
+			openCount++;
+		}
+
+		public Receiver getReceiver() throws MidiUnavailableException {
+			return new ReceiverWrapper(super.getReceiver()) {
+				public void send(MidiMessage message, long timeStamp) {
+					super.send(message, timeStamp);
+
+					for (int l = 0; l < outLoggers.size(); l++) {
+						((MidiLogger) outLoggers.get(l)).log(message);
+					}
+				}
+			};
+		}
+
+		public Transmitter getTransmitter() throws MidiUnavailableException {
+			return new TransmitterWrapper(super.getTransmitter()) {
+				protected void send(MidiMessage message, long timeStamp) {
+					super.send(message, timeStamp);
+
+					for (int l = 0; l < inLoggers.size(); l++) {
+						((MidiLogger) inLoggers.get(l)).log(message);
+					}
+				}
+			};
+		}
+
+		public void close() {
+			openCount--;
+
+			if (openCount == 0) {
+				super.close();
+
+				for (int l = 0; l < inLoggers.size(); l++) {
+					((MidiLogger) inLoggers.get(l)).closed();
+				}
+				for (int l = 0; l < outLoggers.size(); l++) {
+					((MidiLogger) outLoggers.get(l)).closed();
+				}
+			}
+		}
+	}
 }
