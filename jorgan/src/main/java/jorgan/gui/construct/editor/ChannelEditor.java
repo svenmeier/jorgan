@@ -31,109 +31,130 @@ import jorgan.disposition.*;
 /**
  * A property editor for a channel property.
  */
-public class ChannelEditor extends CustomEditor implements ElementAwareEditor, ActionListener {
+public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
+		ActionListener {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private Keyboard keyboard;
+	private Keyboard keyboard;
 
-  private JPanel   panel   = new JPanel();
-  private JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
-  private JButton  button  = new JButton("...");
+	private JPanel panel = new JPanel();
 
-  private JDialog              dialog;
-  private ShortMessageRecorder recorder;
+	private JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
 
-  public ChannelEditor() {
-    panel.setLayout(new BorderLayout());
+	private JButton button = new JButton("...");
 
-    button.setFocusable(false);
-    button.setMargin(new Insets(0, 0, 0, 0));
-    button.addActionListener(this);
-    panel.add(button, BorderLayout.EAST);
+	private JDialog dialog;
 
-    spinner.setBorder(null);
-    panel.add(spinner, BorderLayout.CENTER);
-    
-    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-    editor.getTextField().setBorder(null);
-  }
+	private ShortMessageRecorder recorder;
 
-  public void setElement(Element element) {
-    keyboard = (Keyboard)element;
-  }
+	/**
+	 * Constructor.
+	 */
+	public ChannelEditor() {
+		panel.setLayout(new BorderLayout());
 
-  protected String format(Object value) {
-    if (value == null) {
-      return "";
-    } else {
-      return "" + (((Integer)value).intValue() + 1);
-    }
-  }
+		button.setFocusable(false);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(this);
+		panel.add(button, BorderLayout.EAST);
 
-  public Component getCustomEditor(Object value) {
+		spinner.setBorder(null);
+		panel.add(spinner, BorderLayout.CENTER);
 
-    spinner.setValue(new Integer(((Integer)value).intValue() + 1));
-    button.setEnabled(keyboard.getDevice() != null);
+		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+				.getEditor();
+		editor.getTextField().setBorder(null);
+	}
 
-    return panel;
-  }
+	public void setElement(Element element) {
+		keyboard = (Keyboard) element;
+	}
 
-  public void actionPerformed(ActionEvent ev) {
-    try {
-      recorder = new ChannelRecorder(keyboard.getDevice());
-    } catch (MidiUnavailableException ex) {
-      // cannot record
-      return;
-    }
+	protected String format(Object value) {
+		if (value == null) {
+			return "";
+		} else {
+			return "" + (((Integer) value).intValue() + 1);
+		}
+	}
 
-    JOptionPane optionPane = new JOptionPane(resources.getString("construct.editor.channel.description"),
-                                             JOptionPane.INFORMATION_MESSAGE, -1, null,
-                                             new Object[]{resources.getString("construct.editor.channel.cancel")});
+	public Component getCustomEditor(Object value) {
 
-    dialog = optionPane.createDialog(panel.getTopLevelAncestor(),
-                                     resources.getString("construct.editor.channel.title"));
-    dialog.setVisible(true);
-    dialog = null;
+		spinner.setValue(new Integer(((Integer) value).intValue() + 1));
+		button.setEnabled(keyboard.getDevice() != null);
 
-    recorder.close();
-  }
-  
-  protected Object getEditedValue() {
-    try {
-      JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-      editor.commitEdit();
-    } catch (ParseException ex) {
-      // invalid format so keep previous value
-    }
+		return panel;
+	}
 
-    return new Integer(((Integer)spinner.getValue()).intValue() - 1);
-  }
-  
-  /**
-   * Recorder of a channel.
-   */
-  private class ChannelRecorder extends ShortMessageRecorder implements Runnable {
+	public void actionPerformed(ActionEvent ev) {
+		try {
+			recorder = new ChannelRecorder(keyboard.getDevice());
+		} catch (MidiUnavailableException ex) {
+			// cannot record
+			return;
+		}
 
-    private int channel;
+		JOptionPane optionPane = new JOptionPane(resources
+				.getString("construct.editor.channel.description"),
+				JOptionPane.INFORMATION_MESSAGE, -1, null,
+				new Object[] { resources
+						.getString("construct.editor.channel.cancel") });
 
-    public ChannelRecorder(String deviceName) throws MidiUnavailableException {
-      super(deviceName);
-    }
+		dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
+				.getString("construct.editor.channel.title"));
+		dialog.setVisible(true);
+		dialog = null;
 
-    public void messageRecorded(ShortMessage message) {
-      if (message.getCommand() == ShortMessage.NOTE_ON) {
-        channel = message.getChannel();
+		recorder.close();
+	}
 
-        SwingUtilities.invokeLater(this);
-      }
-    }
+	protected Object getEditedValue() {
+		try {
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.commitEdit();
+		} catch (ParseException ex) {
+			// invalid format so keep previous value
+		}
 
-    public void run() {
+		return new Integer(((Integer) spinner.getValue()).intValue() - 1);
+	}
 
-      spinner.setValue(new Integer(channel + 1));
+	/**
+	 * Recorder of a channel.
+	 */
+	private class ChannelRecorder extends ShortMessageRecorder implements
+			Runnable {
 
-      dialog.setVisible(false);
-    }
-  }
+		private int channel;
+
+		/**
+		 * Constructor.
+		 * 
+		 * @param deviceName
+		 *            name of device
+		 * @throws MidiUnavailableException
+		 */
+		public ChannelRecorder(String deviceName)
+				throws MidiUnavailableException {
+			super(deviceName);
+		}
+
+		public void messageRecorded(ShortMessage message) {
+			if (message.getCommand() == ShortMessage.NOTE_ON) {
+				channel = message.getChannel();
+
+				SwingUtilities.invokeLater(this);
+			}
+		}
+
+		public void run() {
+
+			spinner.setValue(new Integer(channel + 1));
+
+			dialog.setVisible(false);
+		}
+	}
 }
