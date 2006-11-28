@@ -34,173 +34,184 @@ import jorgan.gui.imports.spi.ImportProvider;
  */
 public class ImportWizard extends BasicWizard {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
-  
-  private Organ organ;
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private ImportProvider provider;
-  private java.util.List stops;
-  private java.util.List selectedStops;
+	private Organ organ;
 
-  /**
-   * Create a new wizard.
-   */    
-  public ImportWizard(Organ organ) {
-    this.organ = organ;
-    
-    addPage(new ProviderSelectionPage());
-    addPage(new ImportOptionsPage());
-    addPage(new StopSelectionPage());
-  }
-    
-  /**
-   * Allows finish only if stops are selected.
-   * 
-   * @return  <code>true</code> if stops are selected
-   */
-  public boolean allowsFinish() {
-    return selectedStops != null && selectedStops.size() > 0;
-  }
+	private ImportProvider provider;
 
-  /**
-   * Finish.
-   */
-  protected boolean finishImpl() {
+	private java.util.List stops;
 
-    for (int s = 0; s < selectedStops.size(); s++) {
-      organ.addElement((Element)selectedStops.get(s));
-    }
- 
-    return true;
-  }
-  
-  /**
-   * Page for selection of an import provider.
-   */
-  private class ProviderSelectionPage extends AbstractPage {
+	private java.util.List selectedStops;
 
-    private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
+	/**
+	 * Create a new wizard.
+	 * 
+	 * @param organ
+	 *            organ to import to
+	 */
+	public ImportWizard(Organ organ) {
+		this.organ = organ;
 
-    public ProviderSelectionPage() {
-      
-      providerSelectionPanel.addPropertyChangeListener(this);
-    }
-  
-    public String getDescription() {
-      return resources.getString("import.method.description");
-    }
-  
-    public JComponent getComponent() {
-      return providerSelectionPanel;
-    }    
+		addPage(new ProviderSelectionPage());
+		addPage(new ImportOptionsPage());
+		addPage(new StopSelectionPage());
+	}
 
-    public boolean allowsNext() {
-      return providerSelectionPanel.getSelectedImportProvider() != null;
-    }  
+	/**
+	 * Allows finish only if stops are selected.
+	 * 
+	 * @return <code>true</code> if stops are selected
+	 */
+	public boolean allowsFinish() {
+		return selectedStops != null && selectedStops.size() > 0;
+	}
 
-    public boolean leavingToNext() {
-      provider = providerSelectionPanel.getSelectedImportProvider();
-      
-      return true;
-    }
-  }
- 
-  /**
-   * Page for altering of options of the selected importMethod.
-   */
-  private class ImportOptionsPage extends AbstractPage {
+	/**
+	 * Finish.
+	 */
+	protected boolean finishImpl() {
 
-    private JPanel optionsPanel;
-    
-    public ImportOptionsPage() {
-    }
-  
-    public void enteringFromPrevious() {
-      if (this.optionsPanel != null) {
-        this.optionsPanel.removePropertyChangeListener(this);         
-      }
+		for (int s = 0; s < selectedStops.size(); s++) {
+			organ.addElement((Element) selectedStops.get(s));
+		}
 
-      this.optionsPanel = provider.getOptionsPanel();
+		return true;
+	}
 
-      if (this.optionsPanel != null) {
-        this.optionsPanel.addPropertyChangeListener(this);         
-      }
-    }
+	/**
+	 * Page for selection of an import provider.
+	 */
+	private class ProviderSelectionPage extends AbstractPage {
 
-    public String getDescription() {
-      return provider.getDescription();
-    }
-    
-    public JComponent getComponent() {
-      return optionsPanel;
-    }
-  
-    public boolean allowsNext() {
-      return provider.hasStops();
-    }
+		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
 
-    public boolean leavingToNext() {
-      stops = provider.getStops();
-    
-      return stops.size() > 0;
-    }
-  }
+		/**
+		 * Constructor.
+		 */
+		public ProviderSelectionPage() {
 
-  /**
-   * Page for selecting of stops to import.
-   */
-  private class StopSelectionPage extends AbstractPage {
+			providerSelectionPanel.addPropertyChangeListener(this);
+		}
 
-    private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
+		public String getDescription() {
+			return resources.getString("import.method.description");
+		}
 
-    public StopSelectionPage() {
-      stopSelectionPanel.addPropertyChangeListener(this);
-    }
- 
-    public void enteringFromPrevious() {
-      stopSelectionPanel.setStops(stops);  
-    }
+		public JComponent getComponent() {
+			return providerSelectionPanel;
+		}
 
-    public String getDescription() {
-      return resources.getString("import.stop.description");
-    }
+		public boolean allowsNext() {
+			return providerSelectionPanel.getSelectedImportProvider() != null;
+		}
 
-    public JComponent getComponent() {
-      return stopSelectionPanel;
-    }
-  
-    public boolean leavingToPrevious() {
-      selectedStops = null;
+		public boolean leavingToNext() {
+			provider = providerSelectionPanel.getSelectedImportProvider();
 
-      return true;
-    }
-    
-    public void propertyChange(PropertyChangeEvent evt) {
-      selectedStops = stopSelectionPanel.getSelectedStops();
+			return true;
+		}
+	}
 
-      super.propertyChange(evt);
-    }
-  }
-   
-  /**
-   * Show an import wizard in a dialog.
-   * 
-   * @param owner   owner of dialog
-   * @param organ   organ to import into
-   */ 
-  public static void showInDialog(Frame owner, Organ organ) {
+	/**
+	 * Page for altering of options of the selected importMethod.
+	 */
+	private class ImportOptionsPage extends AbstractPage {
 
-    WizardDialog dialog = new WizardDialog(owner);
-        
-    dialog.setTitle(resources.getString("import.title"));  
-    
-    dialog.setWizard(new ImportWizard(organ));
-    
-    dialog.start();
-    
-    dialog.dispose();
-  }
+		private JPanel optionsPanel;
+
+		public void enteringFromPrevious() {
+			if (this.optionsPanel != null) {
+				this.optionsPanel.removePropertyChangeListener(this);
+			}
+
+			this.optionsPanel = provider.getOptionsPanel();
+
+			if (this.optionsPanel != null) {
+				this.optionsPanel.addPropertyChangeListener(this);
+			}
+		}
+
+		public String getDescription() {
+			return provider.getDescription();
+		}
+
+		public JComponent getComponent() {
+			return optionsPanel;
+		}
+
+		public boolean allowsNext() {
+			return provider.hasStops();
+		}
+
+		public boolean leavingToNext() {
+			stops = provider.getStops();
+
+			return stops.size() > 0;
+		}
+	}
+
+	/**
+	 * Page for selecting of stops to import.
+	 */
+	private class StopSelectionPage extends AbstractPage {
+
+		private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
+
+		/**
+		 * Constructor.
+		 */
+		public StopSelectionPage() {
+			stopSelectionPanel.addPropertyChangeListener(this);
+		}
+
+		public void enteringFromPrevious() {
+			stopSelectionPanel.setStops(stops);
+		}
+
+		public String getDescription() {
+			return resources.getString("import.stop.description");
+		}
+
+		public JComponent getComponent() {
+			return stopSelectionPanel;
+		}
+
+		public boolean leavingToPrevious() {
+			selectedStops = null;
+
+			return true;
+		}
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			selectedStops = stopSelectionPanel.getSelectedStops();
+
+			super.propertyChange(evt);
+		}
+	}
+
+	/**
+	 * Show an import wizard in a dialog.
+	 * 
+	 * @param owner
+	 *            owner of dialog
+	 * @param organ
+	 *            organ to import into
+	 */
+	public static void showInDialog(Frame owner, Organ organ) {
+
+		WizardDialog dialog = new WizardDialog(owner);
+
+		dialog.setTitle(resources.getString("import.title"));
+
+		dialog.setWizard(new ImportWizard(organ));
+
+		dialog.start();
+
+		dialog.dispose();
+	}
 }
