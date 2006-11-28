@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -33,6 +34,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
 
 /**
  * Selector of a file.
@@ -57,12 +59,12 @@ public class FileSelector extends JPanel {
 	/**
 	 * The listeners to changes.
 	 */
-	private java.util.List listeners = new ArrayList();
+	private List listeners = new ArrayList();
 
 	/**
 	 * The filter for file selection.
 	 */
-	private javax.swing.filechooser.FileFilter filter;
+	private FileFilter filter;
 
 	/**
 	 * Create a new selector.
@@ -102,7 +104,8 @@ public class FileSelector extends JPanel {
 	/**
 	 * Add a listener to changes.
 	 * 
-	 * @param listener	the listener to add
+	 * @param listener
+	 *            the listener to add
 	 */
 	public void addChangeListener(ChangeListener listener) {
 		listeners.add(listener);
@@ -111,7 +114,8 @@ public class FileSelector extends JPanel {
 	/**
 	 * Remove a listener to changes.
 	 * 
-	 * @param listener	the listener to remove
+	 * @param listener
+	 *            the listener to remove
 	 */
 	public void removeChangeListener(ChangeListener listener) {
 		listeners.remove(listener);
