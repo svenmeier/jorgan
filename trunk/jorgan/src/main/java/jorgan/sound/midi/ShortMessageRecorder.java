@@ -21,48 +21,54 @@ package jorgan.sound.midi;
 import javax.sound.midi.*;
 
 /**
- * Recorder of a shortMessage.
+ * Recorder of {@link javax.sound.midi.ShortMessage}s.
  */
 public abstract class ShortMessageRecorder {
 
-  private MidiDevice  device;
-  private Transmitter transmitter;
+	private MidiDevice device;
 
-  /**
-   * Create a recorder for a short message of a device.
-   *
-   * @param deviceName      name of device to record from
-   * @throws MidiUnavailableException if device is unavailable
-   */
-  public ShortMessageRecorder(String deviceName) throws MidiUnavailableException {
+	private Transmitter transmitter;
 
-    device = DevicePool.getMidiDevice(deviceName, false);
+	/**
+	 * Create a recorder for a short message of a device.
+	 * 
+	 * @param deviceName
+	 *            name of device to record from
+	 * @throws MidiUnavailableException
+	 *             if device is unavailable
+	 */
+	public ShortMessageRecorder(String deviceName)
+			throws MidiUnavailableException {
 
-    device.open();
+		device = DevicePool.getMidiDevice(deviceName, false);
 
-    transmitter = device.getTransmitter();
-    transmitter.setReceiver(new Receiver() {
-      public void send(MidiMessage message, long when) {
-        if (message instanceof ShortMessage) {
-          ShortMessage shortMessage = (ShortMessage)message;
+		device.open();
 
-          int status = BugFix.getStatus(shortMessage);
-          if (status != ShortMessage.ACTIVE_SENSING &&
-              status != ShortMessage.TIMING_CLOCK) {
-            messageRecorded(shortMessage);
-          }
-        }
-      }
+		transmitter = device.getTransmitter();
+		transmitter.setReceiver(new Receiver() {
+			public void send(MidiMessage message, long when) {
+				if (MessageUtils.isShortMessage(message)) {
+					messageRecorded((ShortMessage)message);
+				}
+			}
 
-      public void close() {
-      }
-    });
-  }
+			public void close() {
+			}
+		});
+	}
 
-  public void close() {
-    transmitter.close();
-    device.close();
-  }
+	/**
+	 * Close recording.
+	 */
+	public void close() {
+		transmitter.close();
+		device.close();
+	}
 
-  public abstract void messageRecorded(ShortMessage message);
+	/**
+	 * Notification that a message was recorded.
+	 * 
+	 * @param message	recorded message
+	 */
+	public abstract void messageRecorded(ShortMessage message);
 }

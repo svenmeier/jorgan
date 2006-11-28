@@ -30,7 +30,7 @@ import jorgan.swing.GridBuilder;
 /**
  * A panel for the {@link jorgan.midi.log.Configuration}.
  */
-public class MidiLogConfigPanel extends ConfigurationPanel {
+public class MidiMonitorConfigPanel extends ConfigurationPanel {
 
 	private JLabel maxLabel = new JLabel();
 
@@ -40,15 +40,15 @@ public class MidiLogConfigPanel extends ConfigurationPanel {
 	/**
 	 * Create this panel.
 	 */
-	public MidiLogConfigPanel() {
-		setName(resources.getString("config.midi.log.name"));
+	public MidiMonitorConfigPanel() {
+		setName(resources.getString("config.midi.monitor.name"));
 		setLayout(new GridBagLayout());
 		
 		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
 		
 		builder.nextRow();
 
-		maxLabel.setText(resources.getString("config.midi.log.max"));
+		maxLabel.setText(resources.getString("config.midi.monitor.max"));
 		add(maxLabel, builder.nextColumn());
 		add(maxSpinner, builder.nextColumn());
 	}
