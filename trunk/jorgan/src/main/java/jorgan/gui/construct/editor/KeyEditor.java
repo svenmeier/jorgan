@@ -32,168 +32,188 @@ import jorgan.disposition.*;
 /**
  * Property editor for a key property.
  */
-public class KeyEditor extends CustomEditor implements ElementAwareEditor, ActionListener {
+public class KeyEditor extends CustomEditor implements ElementAwareEditor,
+		ActionListener {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private Keyboard keyboard;
+	private Keyboard keyboard;
 
-  private KeyFormatter formatter = new KeyFormatter();
-  private KeyModel     model     = new KeyModel();
+	private KeyFormatter formatter = new KeyFormatter();
 
-  private JPanel   panel   = new JPanel();
-  private JSpinner spinner = new JSpinner(model);
-  private JButton  button  = new JButton("...");
+	private KeyModel model = new KeyModel();
 
-  private JDialog              dialog;
-  private ShortMessageRecorder recorder;
+	private JPanel panel = new JPanel();
 
-  public KeyEditor() {
-    panel.setLayout(new BorderLayout());
+	private JSpinner spinner = new JSpinner(model);
 
-    button.setFocusable(false);
-    button.setMargin(new Insets(0, 0, 0, 0));
-    button.addActionListener(this);
-    panel.add(button, BorderLayout.EAST);
+	private JButton button = new JButton("...");
 
-    spinner.setBorder(null);
-    panel.add(spinner, BorderLayout.CENTER);
+	private JDialog dialog;
 
-    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-    editor.getTextField().setBorder(null);
-    editor.getTextField().setEditable(true);
-    editor.getTextField().setFormatterFactory(new DefaultFormatterFactory(formatter));
-  }
+	private ShortMessageRecorder recorder;
 
-  public void setElement(Element element) {
-    keyboard = (Keyboard)element;
-  }
+	/**
+	 * Constructor.
+	 */
+	public KeyEditor() {
+		panel.setLayout(new BorderLayout());
 
-  public Component getCustomEditor(Object value) {
+		button.setFocusable(false);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(this);
+		panel.add(button, BorderLayout.EAST);
 
-    spinner.setValue(value);
-    button.setEnabled(keyboard.getDevice() != null);
+		spinner.setBorder(null);
+		panel.add(spinner, BorderLayout.CENTER);
 
-    return panel;
-  }
+		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+				.getEditor();
+		editor.getTextField().setBorder(null);
+		editor.getTextField().setEditable(true);
+		editor.getTextField().setFormatterFactory(
+				new DefaultFormatterFactory(formatter));
+	}
 
-  protected Object getEditedValue() {
-    try {
-      JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-      editor.commitEdit();
-    } catch (ParseException ex) {
-      // invalid format so keep previous value
-    }
+	public void setElement(Element element) {
+		keyboard = (Keyboard) element;
+	}
 
-    return spinner.getValue();
-  }
+	public Component getCustomEditor(Object value) {
 
-  public void actionPerformed(ActionEvent ev) {
-    try {
-      recorder = new KeyRecorder(keyboard.getDevice());
-    } catch (MidiUnavailableException ex) {
-      // cannot record
-      return;
-    }
+		spinner.setValue(value);
+		button.setEnabled(keyboard.getDevice() != null);
 
-    JOptionPane optionPane = new JOptionPane(resources.getString("construct.editor.key.description"),
-                                             JOptionPane.INFORMATION_MESSAGE, -1, null,
-                                             new Object[]{resources.getString("construct.editor.key.cancel")});
+		return panel;
+	}
 
-    dialog = optionPane.createDialog(panel.getTopLevelAncestor(),
-                                     resources.getString("construct.editor.key.title"));
-    dialog.setVisible(true);
-    dialog = null;
+	protected Object getEditedValue() {
+		try {
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.commitEdit();
+		} catch (ParseException ex) {
+			// invalid format so keep previous value
+		}
 
-    recorder.close();
-  }
+		return spinner.getValue();
+	}
 
-  protected String format(Object value) {
-    return formatter.valueToString(value);
-  }
+	public void actionPerformed(ActionEvent ev) {
+		try {
+			recorder = new KeyRecorder(keyboard.getDevice());
+		} catch (MidiUnavailableException ex) {
+			// cannot record
+			return;
+		}
 
-  private class KeyModel extends AbstractSpinnerModel {
+		JOptionPane optionPane = new JOptionPane(resources
+				.getString("construct.editor.key.description"),
+				JOptionPane.INFORMATION_MESSAGE, -1, null,
+				new Object[] { resources
+						.getString("construct.editor.key.cancel") });
 
-    private Key key;
+		dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
+				.getString("construct.editor.key.title"));
+		dialog.setVisible(true);
+		dialog = null;
 
-    public Object getValue() {
-      return key;
-    }
+		recorder.close();
+	}
 
-    public void setValue(Object value) {
+	protected String format(Object value) {
+		return formatter.valueToString(value);
+	}
 
-      if (value == null && key != null ||
-          value != null && key == null ||
-          value != null && !value.equals(key)) {
-        this.key = (Key)value;
-        fireStateChanged();
-      }
-    }
+	private class KeyModel extends AbstractSpinnerModel {
 
-    public Object getNextValue() {
-      if (key == null) {
-        return Key.C4;
-      } else {
-        return key.halftoneUp();
-      }
-    }
+		private Key key;
 
-    public Object getPreviousValue() {
-      if (key == null) {
-        return Key.C4;
-      } else {
-        return key.halftoneDown();
-      }
-    }
-  }
+		public Object getValue() {
+			return key;
+		}
 
-  private class KeyFormatter extends JFormattedTextField.AbstractFormatter {
-    public Object stringToValue(String text) throws ParseException {
-      if ("".equals(text)) {
-        return null;
-      } else{
-        try {
-          return new Key(text);
-        } catch (IllegalArgumentException ex) {
-          throw new ParseException("no key with name '" + text + "'", 0);
-        }
-      }
-    }
+		public void setValue(Object value) {
 
-    public String valueToString(Object value) {
-      if (value == null) {
-        return "";
-      } else {
-        return ((Key)value).getName();
-      }
-    }
-  }
+			if (value == null && key != null || value != null && key == null
+					|| value != null && !value.equals(key)) {
+				this.key = (Key) value;
+				fireStateChanged();
+			}
+		}
 
-  /**
-   * Recorder of a key.
-   */
-  private class KeyRecorder extends ShortMessageRecorder implements Runnable {
+		public Object getNextValue() {
+			if (key == null) {
+				return Key.C4;
+			} else {
+				return key.halftoneUp();
+			}
+		}
 
-    private int pitch;
+		public Object getPreviousValue() {
+			if (key == null) {
+				return Key.C4;
+			} else {
+				return key.halftoneDown();
+			}
+		}
+	}
 
-    public KeyRecorder(String deviceName) throws MidiUnavailableException {
-      super(deviceName);
-    }
+	private class KeyFormatter extends JFormattedTextField.AbstractFormatter {
+		public Object stringToValue(String text) throws ParseException {
+			if ("".equals(text)) {
+				return null;
+			} else {
+				try {
+					return new Key(text);
+				} catch (IllegalArgumentException ex) {
+					throw new ParseException("no key with name '" + text + "'",
+							0);
+				}
+			}
+		}
 
-    public void messageRecorded(ShortMessage message) {
-      if (message.getCommand() == ShortMessage.NOTE_ON) {
-        pitch = message.getData1();
+		public String valueToString(Object value) {
+			if (value == null) {
+				return "";
+			} else {
+				return ((Key) value).getName();
+			}
+		}
+	}
 
-        SwingUtilities.invokeLater(this);
-      }
-    }
+	/**
+	 * Recorder of a key.
+	 */
+	private class KeyRecorder extends ShortMessageRecorder implements Runnable {
 
-    public void run() {
-      Key key = new Key(pitch);
+		private int pitch;
 
-      spinner.setValue(key);
+		/**
+		 * Constructor.
+		 * 
+		 * @param deviceName	name of device
+		 * @throws MidiUnavailableException
+		 */
+		public KeyRecorder(String deviceName) throws MidiUnavailableException {
+			super(deviceName);
+		}
 
-      dialog.setVisible(false);
-    }
-  }
+		public void messageRecorded(ShortMessage message) {
+			if (message.getCommand() == ShortMessage.NOTE_ON) {
+				pitch = message.getData1();
+
+				SwingUtilities.invokeLater(this);
+			}
+		}
+
+		public void run() {
+			Key key = new Key(pitch);
+
+			spinner.setValue(key);
+
+			dialog.setVisible(false);
+		}
+	}
 }
