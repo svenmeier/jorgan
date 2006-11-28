@@ -31,38 +31,39 @@ import jorgan.gui.imports.spi.ImportProvider;
  */
 public class PatchListImportProvider implements ImportProvider {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private PatchListPanel panel = new PatchListPanel();
+	private PatchListPanel panel = new PatchListPanel();
 
-  private List stops = new ArrayList();
-  
-  public JPanel getOptionsPanel() {
-      return panel;
-  }
-  
-  public String getName() {
-    return resources.getString("import.patchlist.name");
-  }
+	private List stops = new ArrayList();
 
-  public String getDescription() {
-    return resources.getString("import.patchlist.description");
-  }
+	public JPanel getOptionsPanel() {
+		return panel;
+	}
 
-  public boolean hasStops() {
-    return false;
-  }
-  
-  public java.util.List getStops() {      
-    return stops;
-  }
-  
-  /**
-   * A panel for options of a patchList.
-   */
-  public class PatchListPanel extends JPanel {
-  }
+	public String getName() {
+		return resources.getString("import.patchlist.name");
+	}
+
+	public String getDescription() {
+		return resources.getString("import.patchlist.description");
+	}
+
+	public boolean hasStops() {
+		return false;
+	}
+
+	public java.util.List getStops() {
+		return stops;
+	}
+
+	/**
+	 * A panel for options of a patchList.
+	 */
+	public class PatchListPanel extends JPanel {
+	}
 }

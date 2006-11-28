@@ -147,13 +147,16 @@ public class SoundFontImportProvider implements ImportProvider {
 
 		private FileSelector fileSelector = new FileSelector();
 
+		/**
+		 * Constructor.
+		 */
 		public OptionsPanel() {
 			super(new GridBagLayout());
-			
-			GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+
+			GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 			builder.nextRow(1.0d);
-			
+
 			fileLabel.setText(resources.getString("import.soundfont.file"));
 			add(fileLabel, builder.nextColumn());
 
