@@ -61,7 +61,9 @@ public class StandardDialog extends JDialog {
 	/**
 	 * The panel holding the current content.
 	 */
-	private ContentPane contentPane = new ContentPane();
+	private JPanel borderPane = new JPanel();
+
+	private JComponent content;
 
 	/**
 	 * The panel holding the buttons.
@@ -79,6 +81,11 @@ public class StandardDialog extends JDialog {
 	public StandardDialog(Frame owner) {
 		super(owner, true);
 
+		JPanel contentPane = new JPanel(new BorderLayout());
+		CancelAction cancel = new CancelAction();
+		contentPane.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+				KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancel);
+		contentPane.getActionMap().put(cancel, cancel);
 		setContentPane(contentPane);
 
 		descriptionLabel.setBackground(Color.white);
@@ -87,6 +94,10 @@ public class StandardDialog extends JDialog {
 				10)));
 		descriptionLabel.setVisible(false);
 		contentPane.add(descriptionLabel, BorderLayout.NORTH);
+
+		borderPane.setLayout(new BorderLayout());
+		borderPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		contentPane.add(borderPane, BorderLayout.CENTER);
 
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 
@@ -105,7 +116,21 @@ public class StandardDialog extends JDialog {
 	 *            content to be displayed
 	 */
 	public void setContent(JComponent content) {
-		contentPane.setContent(content);
+		if (this.content != null) {
+			borderPane.remove(this.content);
+			borderPane.revalidate();
+			borderPane.repaint();
+		}
+
+		this.content = content;
+
+		if (this.content != null) {
+			borderPane.add(content, BorderLayout.CENTER);
+			borderPane.revalidate();
+			borderPane.repaint();
+		}
+
+		guaranteePreferredSize();
 	}
 
 	/**
@@ -114,7 +139,7 @@ public class StandardDialog extends JDialog {
 	 * @return the content
 	 */
 	public JComponent getContent() {
-		return contentPane.getContent();
+		return content;
 	}
 
 	/**
@@ -234,47 +259,16 @@ public class StandardDialog extends JDialog {
 	}
 
 	/**
-	 * The content panel.
+	 * Guarantee that the size of this dialog is greaten than the preferred
+	 * size.
 	 */
-	private class ContentPane extends JPanel {
+	private void guaranteePreferredSize() {
+		Dimension preferredSize = getPreferredSize();
+		Dimension size = getSize();
 
-		private JComponent borderPane = new JPanel();
-
-		private JComponent content;
-
-		private ContentPane() {
-			setLayout(new BorderLayout());
-
-			borderPane.setBorder(BorderFactory
-					.createEmptyBorder(10, 10, 10, 10));
-			borderPane.setLayout(new BorderLayout());
-			add(borderPane, BorderLayout.CENTER);
-
-			CancelAction cancel = new CancelAction();
-			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-					KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), cancel);
-			getActionMap().put(cancel, cancel);
-		}
-
-		private JComponent getContent() {
-			return content;
-		}
-
-		private void setContent(JComponent content) {
-			if (this.content != null) {
-				borderPane.remove(this.content);
-				borderPane.revalidate();
-				borderPane.repaint();
-			}
-
-			this.content = content;
-
-			if (this.content != null) {
-				borderPane.add(content, BorderLayout.CENTER);
-				borderPane.revalidate();
-				borderPane.repaint();
-			}
-		}
+		setSize(Math.max(preferredSize.width, size.width), Math.max(
+				preferredSize.height, size.height));
+		validate();
 	}
 
 	/**
