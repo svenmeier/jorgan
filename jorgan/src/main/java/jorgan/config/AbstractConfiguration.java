@@ -174,8 +174,8 @@ public abstract class AbstractConfiguration implements Cloneable {
 	public Object clone() throws CloneNotSupportedException {
 		AbstractConfiguration clone = (AbstractConfiguration)super.clone();
 		
+		clone.parent = null;
 		clone.listeners = new ArrayList();
-		
 		clone.children = new ArrayList();
 		for (int c = 0; c < children.size(); c++) {
 			clone.children.add(((AbstractConfiguration)children.get(c)).clone());
