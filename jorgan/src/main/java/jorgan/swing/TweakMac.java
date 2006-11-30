@@ -1,10 +1,11 @@
-package jorgan.gui.mac;
+package jorgan.swing;
 
+import java.awt.event.ActionEvent;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import jorgan.gui.OrganFrame;
+import javax.swing.Action;
 
 /**
  * Tweak appearance of jOrgan on Mac OS X.
@@ -19,19 +20,27 @@ public class TweakMac {
 
 	private boolean tweaked;
 
-	/**
-	 * The organ frame to tweak.
-	 */
-	private OrganFrame organFrame;
+	private Action preferencesAction;
+
+	private Action aboutAction;
+
+	private Action quitAction;
 
 	/**
-	 * Tweak the appearence of the given frame for Mac OS X.
+	 * Tweak the appearence for Mac OS X.
 	 * 
-	 * @param frame
-	 *            frame to tweak
+	 * @param preferences
+	 *            the action to perform for configuration
+	 * @param about
+	 *            the action to perform for about
+	 * @param quit
+	 *            the action to perform for quit
 	 */
-	public TweakMac(OrganFrame frame) {
-		this.organFrame = frame;
+	public TweakMac(Action preferences, Action about, Action quit) {
+
+		this.preferencesAction = preferences;
+		this.aboutAction = about;
+		this.quitAction = quit;
 
 		if (isMac()) {
 			try {
@@ -46,7 +55,8 @@ public class TweakMac {
 						"setEnabledPreferencesMenu",
 						new Class[] { Boolean.TYPE });
 				setEnabledPreferencesMenu.invoke(application,
-						new Object[] { Boolean.TRUE });
+						new Object[] { Boolean
+								.valueOf(preferencesAction != null) });
 
 				Object applicationListener = Proxy.newProxyInstance(getClass()
 						.getClassLoader(),
@@ -58,16 +68,19 @@ public class TweakMac {
 								Boolean handled = null;
 
 								if ("handlePreferences"
-										.equals(method.getName())) {
-									organFrame.showConfiguration();
+										.equals(method.getName())
+										&& preferencesAction != null) {
+									perform(preferencesAction);
 									handled = Boolean.TRUE;
 								} else if ("handleAbout".equals(method
-										.getName())) {
-									organFrame.showAbout();
+										.getName())
+										&& aboutAction != null) {
+									perform(aboutAction);
 									handled = Boolean.TRUE;
 								} else if ("handleQuit"
-										.equals(method.getName())) {
-									organFrame.stop();
+										.equals(method.getName())
+										&& quitAction != null) {
+									perform(quitAction);
 									handled = Boolean.FALSE;
 								}
 
@@ -104,6 +117,11 @@ public class TweakMac {
 				tweaked = false;
 			}
 		}
+	}
+
+	private void perform(Action action) {
+		action.actionPerformed(new ActionEvent(this,
+				ActionEvent.ACTION_PERFORMED, "mac"));
 	}
 
 	/**
