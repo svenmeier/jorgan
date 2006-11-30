@@ -74,8 +74,6 @@ public class TableUtils {
 		table.setSurrendersFocusOnKeystroke(true);
 		table.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
 
-		ToolTipManager.sharedInstance().registerComponent(table);
-
 		table.addHierarchyListener(new HierarchyListener() {
 			public void hierarchyChanged(HierarchyEvent e) {
 				Component parent = table.getParent();
