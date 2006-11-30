@@ -88,12 +88,12 @@ import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
-import jorgan.gui.mac.TweakMac;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
+import jorgan.swing.TweakMac;
 import swingx.dnd.ObjectTransferable;
 
 /**

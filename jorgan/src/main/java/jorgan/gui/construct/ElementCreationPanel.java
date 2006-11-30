@@ -62,6 +62,9 @@ public class ElementCreationPanel extends JPanel {
 
 	private Class[] elementClasses = new Class[0];
 
+	/**
+	 * Constructor.
+	 */
 	public ElementCreationPanel() {
 		super(new GridBagLayout());
 		
@@ -101,6 +104,11 @@ public class ElementCreationPanel extends JPanel {
 		add(new JScrollPane(typeList), builder.nextColumn().gridWidthRemainder().gridHeight(2).fillBoth());
 	}
 
+	/**
+	 * Set the classes to choose from.
+	 * 
+	 * @param elementClasses	the classes for the element to create
+	 */
 	public void setElementClasses(Class[] elementClasses) {
 		this.elementClasses = elementClasses;
 
@@ -108,15 +116,26 @@ public class ElementCreationPanel extends JPanel {
 		typeList.setModel(new TypeListModel());
 	}
 
+	/**
+	 * Set the class for the element.
+	 * 
+	 * @param elementClass	the class for the element to create
+	 */
 	public void setElementClass(Class elementClass) {
 		for (int c = 0; c < elementClasses.length; c++) {
 			if (elementClasses[c] == elementClass) {
 				typeList.setSelectedIndex(c);
+				typeList.scrollRectToVisible(typeList.getCellBounds(c, c));
 				return;
 			}
 		}
 	}
 
+	/**
+	 * Get the class for the element.
+	 * 
+	 * @return	the element class
+	 */
 	public Class getElementClass() {
 		int index = typeList.getSelectedIndex();
 
@@ -127,6 +146,11 @@ public class ElementCreationPanel extends JPanel {
 		}
 	}
 
+	/**
+	 * Get the element name.
+	 * 
+	 * @return	name of element
+	 */
 	public String getElementName() {
 		return nameTextField.getText();
 	}
