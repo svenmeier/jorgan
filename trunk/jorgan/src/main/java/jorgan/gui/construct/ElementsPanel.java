@@ -37,7 +37,6 @@ import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
-import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -59,372 +58,379 @@ import swingx.list.DnDList;
  */
 public class ElementsPanel extends DockedPanel {
 
-    protected static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
-
-    private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/sortName.gif"));
-
-    private static final Icon sortTypeIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/sortType.gif"));
-
-    /**
-     * Icon used for indication an element.
-     */
-    private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/element.gif"));
-
-    /**
-     * Icon used for indication of a warning.
-     */
-    private static final Icon warningIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/elementWarning.gif"));
-
-    /**
-     * Icon used for indication of an error.
-     */
-    private static final Icon errorIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/elementError.gif"));
-
-    /**
-     * The edited organ.
-     */
-    private OrganSession session;
-
-    /**
-     * The handler of selection changes.
-     */
-    private SelectionHandler selectionHandler = new SelectionHandler();
-
-    private AddAction addAction = new AddAction();
-
-    private RemoveAction removeAction = new RemoveAction();
-
-    private DnDList list = new DnDList();
-
-    private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
-
-    private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
-
-    private ElementsModel elementsModel = new ElementsModel();
-
-    private List elements = new ArrayList();
-
-    /**
-     * Create a tree panel.
-     */
-    public ElementsPanel() {
-
-        addTool(addAction);
-
-        addTool(removeAction);
-
-        addToolSeparator();
-
-        ButtonGroup sortGroup = new ButtonGroup();
-        sortNameButton.getModel().setGroup(sortGroup);
-        sortNameButton.setToolTipText(resources.getString("sort.name"));
-        sortNameButton.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                setOrgan(session);
-            }
-        });
-        addTool(sortNameButton);
-
-        sortTypeButton.getModel().setGroup(sortGroup);
-        sortTypeButton.setSelected(true);
-        sortTypeButton.setToolTipText(resources.getString("sort.type"));
-        sortTypeButton.addItemListener(new ItemListener() {
-            public void itemStateChanged(ItemEvent e) {
-                setOrgan(session);
-            }
-        });
-        addTool(sortTypeButton);
-
-        list.setModel(elementsModel);
-        list.setCellRenderer(new ElementListCellRenderer() {
-            public Icon getIcon(Element element) {
-                if (session != null) {
-                    if (session.getPlay().hasErrors(element)) {
-                        return errorIcon;
-                    } else if (session.getPlay().hasWarnings(element)) {
-                        return warningIcon;
-                    }
-                }
-                return elementIcon;
-            }
-        });
-        ToolTipManager.sharedInstance().registerComponent(list);
-        list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        list.addListSelectionListener(selectionHandler);
-
-        setScrollableBody(list, true, false);
-    }
-
-    public OrganSession getOrgan() {
-        return session;
-    }
-
-    /**
-     * Set the organ to be edited.
-     * 
-     * @param organ
-     *            organ to be edited
-     */
-    public void setOrgan(OrganSession session) {
-
-        if (this.session != null) {
-            this.session.removeOrganListener(elementsModel);
-            this.session.removePlayerListener(elementsModel);
-            this.session.removeSelectionListener(selectionHandler);
-
-            int removed = elements.size();
-            elements = new ArrayList();
-            elementsModel.fireRemoved(removed);
-        }
-
-        this.session = session;
-
-        if (this.session != null) {
-            this.session.addOrganListener(elementsModel);
-            this.session.addPlayerListener(elementsModel);
-            this.session.getSelectionModel().addSelectionListener(
-                    selectionHandler);
-
-            elements = new ArrayList(this.session.getOrgan().getElements());
-
-            if (sortNameButton.isSelected()) {
-                Collections.sort(elements, new ElementComparator(true));
-            } else if (sortTypeButton.isSelected()) {
-                Collections.sort(elements, new ElementComparator(false));
-            }
-
-            elementsModel.fireAdded(elements.size());
-        }
-
-        removeAction.update();
-    }
-
-    /**
-     * The handler of selections.
-     */
-    private class SelectionHandler implements ElementSelectionListener,
-            ListSelectionListener {
-
-        private boolean updatingSelection = false;
-
-        public void selectionChanged(ElementSelectionEvent ev) {
-            if (!updatingSelection) {
-                updatingSelection = true;
-
-                list.clearSelection();
-
-                java.util.List selectedElements = session.getSelectionModel()
-                        .getSelectedElements();
-                for (int e = 0; e < selectedElements.size(); e++) {
-                    Element element = (Element) selectedElements.get(e);
-
-                    int index = elements.indexOf(element);
-                    if (index != -1) {
-                        list.addSelectionInterval(index, index);
-
-                        if (e == 0) {
-                            list.scrollRectToVisible(list.getCellBounds(index,
-                                    index));
-                        }
-                    }
-                }
-
-                updatingSelection = false;
-            }
-
-            removeAction.update();
-        }
-
-        public void valueChanged(ListSelectionEvent e) {
-            if (!e.getValueIsAdjusting() && !updatingSelection) {
-                updatingSelection = true;
-
-                Object[] values = list.getSelectedValues();
-                if (values.length == 1) {
-                    session.getSelectionModel().setSelectedElement(
-                            (Element) values[0]);
-                } else {
-                    session.getSelectionModel().setSelectedElements(
-                            Arrays.asList(values));
-                }
+	protected static final ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
+
+	private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/sortName.gif"));
+
+	private static final Icon sortTypeIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/sortType.gif"));
+
+	/**
+	 * Icon used for indication an element.
+	 */
+	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/element.gif"));
+
+	/**
+	 * Icon used for indication of a warning.
+	 */
+	private static final Icon warningIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/elementWarning.gif"));
+
+	/**
+	 * Icon used for indication of an error.
+	 */
+	private static final Icon errorIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/elementError.gif"));
+
+	/**
+	 * The edited organ.
+	 */
+	private OrganSession session;
+
+	/**
+	 * The handler of selection changes.
+	 */
+	private SelectionHandler selectionHandler = new SelectionHandler();
+
+	private AddAction addAction = new AddAction();
+
+	private RemoveAction removeAction = new RemoveAction();
+
+	private DnDList list = new DnDList();
+
+	private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
+
+	private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
+
+	private ElementsModel elementsModel = new ElementsModel();
+
+	private List elements = new ArrayList();
+
+	/**
+	 * Create a tree panel.
+	 */
+	public ElementsPanel() {
+
+		addTool(addAction);
+
+		addTool(removeAction);
+
+		addToolSeparator();
+
+		ButtonGroup sortGroup = new ButtonGroup();
+		sortNameButton.getModel().setGroup(sortGroup);
+		sortNameButton.setToolTipText(resources.getString("sort.name"));
+		sortNameButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				setOrgan(session);
+			}
+		});
+		addTool(sortNameButton);
+
+		sortTypeButton.getModel().setGroup(sortGroup);
+		sortTypeButton.setSelected(true);
+		sortTypeButton.setToolTipText(resources.getString("sort.type"));
+		sortTypeButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				setOrgan(session);
+			}
+		});
+		addTool(sortTypeButton);
+
+		list.setModel(elementsModel);
+		list.setCellRenderer(new ElementListCellRenderer() {
+			public Icon getIcon(Element element) {
+				if (session != null) {
+					if (session.getPlay().hasErrors(element)) {
+						return errorIcon;
+					} else if (session.getPlay().hasWarnings(element)) {
+						return warningIcon;
+					}
+				}
+				return elementIcon;
+			}
+		});
+		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		list.addListSelectionListener(selectionHandler);
+
+		setScrollableBody(list, true, false);
+	}
+
+	/**
+	 * Get the edited organ.
+	 * 
+	 * @return	organ
+	 */
+	public OrganSession getOrgan() {
+		return session;
+	}
+
+	/**
+	 * Set the organ to be edited.
+	 * 
+	 * @param session
+	 *            organ to be edited
+	 */
+	public void setOrgan(OrganSession session) {
+
+		if (this.session != null) {
+			this.session.removeOrganListener(elementsModel);
+			this.session.removePlayerListener(elementsModel);
+			this.session.removeSelectionListener(selectionHandler);
+
+			int removed = elements.size();
+			elements = new ArrayList();
+			elementsModel.fireRemoved(removed);
+		}
+
+		this.session = session;
+
+		if (this.session != null) {
+			this.session.addOrganListener(elementsModel);
+			this.session.addPlayerListener(elementsModel);
+			this.session.getSelectionModel().addSelectionListener(
+					selectionHandler);
+
+			elements = new ArrayList(this.session.getOrgan().getElements());
+
+			if (sortNameButton.isSelected()) {
+				Collections.sort(elements, new ElementComparator(true));
+			} else if (sortTypeButton.isSelected()) {
+				Collections.sort(elements, new ElementComparator(false));
+			}
+
+			elementsModel.fireAdded(elements.size());
+		}
+
+		removeAction.update();
+	}
+
+	/**
+	 * The handler of selections.
+	 */
+	private class SelectionHandler implements ElementSelectionListener,
+			ListSelectionListener {
+
+		private boolean updatingSelection = false;
+
+		public void selectionChanged(ElementSelectionEvent ev) {
+			if (!updatingSelection) {
+				updatingSelection = true;
+
+				list.clearSelection();
+
+				java.util.List selectedElements = session.getSelectionModel()
+						.getSelectedElements();
+				for (int e = 0; e < selectedElements.size(); e++) {
+					Element element = (Element) selectedElements.get(e);
+
+					int index = elements.indexOf(element);
+					if (index != -1) {
+						list.addSelectionInterval(index, index);
+
+						if (e == 0) {
+							list.scrollRectToVisible(list.getCellBounds(index,
+									index));
+						}
+					}
+				}
+
+				updatingSelection = false;
+			}
+
+			removeAction.update();
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			if (!e.getValueIsAdjusting() && !updatingSelection) {
+				updatingSelection = true;
+
+				Object[] values = list.getSelectedValues();
+				if (values.length == 1) {
+					session.getSelectionModel().setSelectedElement(
+							(Element) values[0]);
+				} else {
+					session.getSelectionModel().setSelectedElements(
+							Arrays.asList(values));
+				}
 
-                updatingSelection = false;
-            }
+				updatingSelection = false;
+			}
 
-            removeAction.update();
-        }
-    }
+			removeAction.update();
+		}
+	}
 
-    /**
-     * Note that <em>Spin</em> ensures that the organListener methods are
-     * called on the EDT, although a change in the organ might be triggered by a
-     * change on a MIDI thread.
-     */
-    private class ElementsModel extends AbstractDnDListModel implements
-            PlayListener, OrganListener {
+	/**
+	 * Note that <em>Spin</em> ensures that the organListener methods are
+	 * called on the EDT, although a change in the organ might be triggered by a
+	 * change on a MIDI thread.
+	 */
+	private class ElementsModel extends AbstractDnDListModel implements
+			PlayListener, OrganListener {
 
-        public Object getElementAt(int index) {
-            return elements.get(index);
-        }
+		public Object getElementAt(int index) {
+			return elements.get(index);
+		}
 
-        public int indexOf(Object element) {
-            return elements.indexOf(element);
-        }
+		public int indexOf(Object element) {
+			return elements.indexOf(element);
+		}
 
-        public int getSize() {
-            return elements.size();
-        }
+		public int getSize() {
+			return elements.size();
+		}
 
-        public int getDropActions(Transferable transferable, int index) {
-            return 0;
-        }
-
-        protected void insertElementAt(Object element, int index) {
-        }
+		public int getDropActions(Transferable transferable, int index) {
+			return 0;
+		}
 
-        protected void removeElement(Object element) {
-        }
-
-        public void outputProduced() {
-        }
-
-        public void inputAccepted() {
-        }
-
-        public void playerAdded(PlayEvent ev) {
-        }
-
-        public void playerRemoved(PlayEvent ev) {
-        }
-
-        public void problemAdded(PlayEvent ev) {
-            updateProblem(ev);
-        }
-
-        public void problemRemoved(PlayEvent ev) {
-            updateProblem(ev);
-        }
-
-        public void opened() {
-        }
-        
-        public void closed() {
-        }
-        
-        private void updateProblem(PlayEvent ev) {
-
-            Element element = ev.getElement();
-            int index = elements.indexOf(element);
-
-            fireContentsChanged(this, index, index);
-        }
-
-        public void elementChanged(final OrganEvent event) {
-            Element element = event.getElement();
-            int index = elements.indexOf(element);
-
-            fireContentsChanged(this, index, index);
-        }
-
-        public void elementAdded(OrganEvent event) {
-            elements.add(event.getElement());
-
-            int index = elements.size() - 1;
-            fireIntervalAdded(this, index, index);
-
-            Collections.sort(elements, new ElementComparator(sortNameButton
-                    .isSelected()));
-            fireContentsChanged(this, 0, index);
-
-            selectionHandler.selectionChanged(null);
-        }
-
-        public void elementRemoved(OrganEvent event) {
-            int index = elements.indexOf(event.getElement());
-
-            elements.remove(event.getElement());
-
-            fireIntervalRemoved(this, index, index);
-        }
-
-        public void referenceAdded(OrganEvent event) {
-        }
-
-        public void referenceChanged(OrganEvent event) {
-        }
-
-        public void referenceRemoved(OrganEvent event) {
-        }
-
-        public void fireRemoved(int count) {
-
-            if (count > 0) {
-                fireIntervalRemoved(this, 0, count - 1);
-            }
-        }
-
-        public void fireAdded(int count) {
-            if (count > 0) {
-                fireIntervalAdded(this, 0, count - 1);
-            }
-        }
-    }
-
-    private class AddAction extends AbstractAction {
-
-        public AddAction() {
-            putValue(Action.NAME, resources
-                    .getString("construct.action.element.add.name"));
-            putValue(Action.SHORT_DESCRIPTION, resources
-                    .getString("construct.action.element.add.description"));
-            putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-                    .getResource("/jorgan/gui/img/add.gif")));
-        }
-
-        public void actionPerformed(ActionEvent ev) {
-            if (session != null) {
-                Element prototype = null;
-                if (session.getSelectionModel().getSelectionCount() == 1) {
-                    prototype = session.getSelectionModel()
-                            .getSelectedElement();
-                }
-                CreateElementWizard.showInDialog((JFrame) SwingUtilities
-                        .getWindowAncestor(ElementsPanel.this), session
-                        .getOrgan(), prototype);
-            }
-        }
-    }
-
-    private class RemoveAction extends AbstractAction {
-
-        public RemoveAction() {
-            putValue(Action.NAME, resources
-                    .getString("construct.action.element.remove.name"));
-            putValue(Action.SHORT_DESCRIPTION, resources
-                    .getString("construct.action.element.remove.description"));
-            putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-                    .getResource("/jorgan/gui/img/remove.gif")));
-        }
-
-        public void actionPerformed(ActionEvent ev) {
-            List selectedElements = session.getSelectionModel()
-                    .getSelectedElements();
-
-            for (int e = selectedElements.size() - 1; e >= 0; e--) {
-                session.getOrgan().removeElement(
-                        (Element) selectedElements.get(e));
-            }
-        }
-
-        public void update() {
-            setEnabled(session != null
-                    && session.getSelectionModel().isElementSelected());
-        }
-    }
+		protected void insertElementAt(Object element, int index) {
+		}
+
+		protected void removeElement(Object element) {
+		}
+
+		public void outputProduced() {
+		}
+
+		public void inputAccepted() {
+		}
+
+		public void playerAdded(PlayEvent ev) {
+		}
+
+		public void playerRemoved(PlayEvent ev) {
+		}
+
+		public void problemAdded(PlayEvent ev) {
+			updateProblem(ev);
+		}
+
+		public void problemRemoved(PlayEvent ev) {
+			updateProblem(ev);
+		}
+
+		public void opened() {
+		}
+
+		public void closed() {
+		}
+
+		private void updateProblem(PlayEvent ev) {
+
+			Element element = ev.getElement();
+			int index = elements.indexOf(element);
+
+			fireContentsChanged(this, index, index);
+		}
+
+		public void elementChanged(final OrganEvent event) {
+			Element element = event.getElement();
+			int index = elements.indexOf(element);
+
+			fireContentsChanged(this, index, index);
+		}
+
+		public void elementAdded(OrganEvent event) {
+			elements.add(event.getElement());
+
+			int index = elements.size() - 1;
+			fireIntervalAdded(this, index, index);
+
+			Collections.sort(elements, new ElementComparator(sortNameButton
+					.isSelected()));
+			fireContentsChanged(this, 0, index);
+
+			selectionHandler.selectionChanged(null);
+		}
+
+		public void elementRemoved(OrganEvent event) {
+			int index = elements.indexOf(event.getElement());
+
+			elements.remove(event.getElement());
+
+			fireIntervalRemoved(this, index, index);
+		}
+
+		public void referenceAdded(OrganEvent event) {
+		}
+
+		public void referenceChanged(OrganEvent event) {
+		}
+
+		public void referenceRemoved(OrganEvent event) {
+		}
+
+		public void fireRemoved(int count) {
+
+			if (count > 0) {
+				fireIntervalRemoved(this, 0, count - 1);
+			}
+		}
+
+		public void fireAdded(int count) {
+			if (count > 0) {
+				fireIntervalAdded(this, 0, count - 1);
+			}
+		}
+	}
+
+	private class AddAction extends AbstractAction {
+
+		private AddAction() {
+			putValue(Action.NAME, resources
+					.getString("construct.action.element.add.name"));
+			putValue(Action.SHORT_DESCRIPTION, resources
+					.getString("construct.action.element.add.description"));
+			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
+					.getResource("/jorgan/gui/img/add.gif")));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			if (session != null) {
+				Element prototype = null;
+				if (session.getSelectionModel().getSelectionCount() == 1) {
+					prototype = session.getSelectionModel()
+							.getSelectedElement();
+				}
+				CreateElementWizard.showInDialog((JFrame) SwingUtilities
+						.getWindowAncestor(ElementsPanel.this), session
+						.getOrgan(), prototype);
+			}
+		}
+	}
+
+	private class RemoveAction extends AbstractAction {
+
+		private RemoveAction() {
+			putValue(Action.NAME, resources
+					.getString("construct.action.element.remove.name"));
+			putValue(Action.SHORT_DESCRIPTION, resources
+					.getString("construct.action.element.remove.description"));
+			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
+					.getResource("/jorgan/gui/img/remove.gif")));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			List selectedElements = session.getSelectionModel()
+					.getSelectedElements();
+
+			for (int e = selectedElements.size() - 1; e >= 0; e--) {
+				session.getOrgan().removeElement(
+						(Element) selectedElements.get(e));
+			}
+		}
+
+		/**
+		 * Update the enabled state.
+		 */
+		public void update() {
+			setEnabled(session != null
+					&& session.getSelectionModel().isElementSelected());
+		}
+	}
 }

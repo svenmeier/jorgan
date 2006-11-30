@@ -37,7 +37,6 @@ import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
-import javax.swing.ToolTipManager;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -49,115 +48,134 @@ import jorgan.gui.ElementListCellRenderer;
  */
 public class ElementsSelectionPanel extends JPanel {
 
-    /**
-     * The resource bundle.
-     */
-    protected static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-    /**
-     * Icon used for indication an element.
-     */
-    private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/element.gif"));
+	/**
+	 * Icon used for indication an element.
+	 */
+	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/element.gif"));
 
-    private Action allAction = new AllAction();
+	private Action allAction = new AllAction();
 
-    private Action noneAction = new NoneAction();
+	private Action noneAction = new NoneAction();
 
-    private JList elementsList = new JList();
+	private JList elementsList = new JList();
 
-    private List elements = new ArrayList();
+	private List elements = new ArrayList();
 
-    public ElementsSelectionPanel() {
-        setLayout(new BorderLayout(10, 10));
+	/**
+	 * Constructor.
+	 */
+	public ElementsSelectionPanel() {
+		setLayout(new BorderLayout(10, 10));
 
-        elementsList
-                .setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        elementsList.setCellRenderer(new ElementListCellRenderer() {
-            protected Icon getIcon(Element element) {
-                return elementIcon;
-            }
-        });
-        ToolTipManager.sharedInstance().registerComponent(elementsList);
-        elementsList.addListSelectionListener(new ListSelectionListener() {
-            public void valueChanged(ListSelectionEvent e) {
-                firePropertyChange("selectedElements", null, null);
-            }
-        });
-        add(new JScrollPane(elementsList), BorderLayout.CENTER);
+		elementsList
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		elementsList.setCellRenderer(new ElementListCellRenderer() {
+			protected Icon getIcon(Element element) {
+				return elementIcon;
+			}
+		});
+		elementsList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				firePropertyChange("selectedElements", null, null);
+			}
+		});
+		add(new JScrollPane(elementsList), BorderLayout.CENTER);
 
-        JPanel buttonPanel = new JPanel(new BorderLayout());
-        add(buttonPanel, BorderLayout.SOUTH);
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		add(buttonPanel, BorderLayout.SOUTH);
 
-        JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
-        buttonPanel.add(gridPanel, BorderLayout.EAST);
+		JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
+		buttonPanel.add(gridPanel, BorderLayout.EAST);
 
-        gridPanel.add(new JButton(allAction));
+		gridPanel.add(new JButton(allAction));
 
-        gridPanel.add(new JButton(noneAction));
-    }
+		gridPanel.add(new JButton(noneAction));
+	}
 
-    public void setElements(List elements) {
-        this.elements = elements;
+	/**
+	 * Set the elements to select from.
+	 * 
+	 * @param elements
+	 *            the elements
+	 */
+	public void setElements(List elements) {
+		this.elements = elements;
 
-        Collections.sort(elements, new ElementComparator(false));
+		Collections.sort(elements, new ElementComparator(false));
 
-        elementsList.setModel(new ElementsModel());
+		elementsList.setModel(new ElementsModel());
 
-        allAction.setEnabled(!elements.isEmpty());
-        noneAction.setEnabled(!elements.isEmpty());
-    }
+		allAction.setEnabled(!elements.isEmpty());
+		noneAction.setEnabled(!elements.isEmpty());
+	}
 
-    public void setSelectedElements(List elements) {
-        for (int e = 0; e < elements.size(); e++) {
-            Element element = (Element) elements.get(e);
+	/**
+	 * Set the selected elements.
+	 * 
+	 * @param elements
+	 *            elements to be selected
+	 */
+	public void setSelectedElements(List elements) {
+		for (int e = 0; e < elements.size(); e++) {
+			Element element = (Element) elements.get(e);
 
-            int index = elements.indexOf(element);
-            if (index != -1) {
-                elementsList.addSelectionInterval(index, index);
-            }
-        }
-    }
+			int index = elements.indexOf(element);
+			if (index != -1) {
+				elementsList.addSelectionInterval(index, index);
+			}
+		}
+	}
 
-    public List getSelectedElements() {
+	/**
+	 * Get the selected elements.
+	 * 
+	 * @return the selected elements
+	 */
+	public List getSelectedElements() {
 
-        return Arrays.asList(elementsList.getSelectedValues());
-    }
+		return Arrays.asList(elementsList.getSelectedValues());
+	}
 
-    private class ElementsModel extends AbstractListModel {
+	private class ElementsModel extends AbstractListModel {
 
-        public int getSize() {
-            return elements.size();
-        }
+		public int getSize() {
+			return elements.size();
+		}
 
-        public Object getElementAt(int index) {
-            return elements.get(index);
-        }
-    }
+		public Object getElementAt(int index) {
+			return elements.get(index);
+		}
+	}
 
-    private class AllAction extends AbstractAction {
+	private class AllAction extends AbstractAction {
 
-        public AllAction() {
-            putValue(Action.NAME, resources
-                    .getString("construct.create.references.elements.all"));
-        }
+		private AllAction() {
+			putValue(Action.NAME, resources
+					.getString("construct.create.references.elements.all"));
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            elementsList.setSelectionInterval(0, elementsList.getModel()
-                    .getSize() - 1);
-        }
-    }
+		public void actionPerformed(ActionEvent ev) {
+			elementsList.setSelectionInterval(0, elementsList.getModel()
+					.getSize() - 1);
+		}
+	}
 
-    private class NoneAction extends AbstractAction {
+	private class NoneAction extends AbstractAction {
 
-        public NoneAction() {
-            putValue(Action.NAME, resources
-                    .getString("construct.create.references.elements.none"));
-        }
+		private NoneAction() {
+			putValue(Action.NAME, resources
+					.getString("construct.create.references.elements.none"));
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            elementsList.clearSelection();
-        }
-    }
+		public void actionPerformed(ActionEvent ev) {
+			elementsList.clearSelection();
+		}
+	}
 }
