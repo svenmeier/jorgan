@@ -67,11 +67,11 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.config.ConfigurationDialog;
 import jorgan.gui.help.Help;
 import jorgan.gui.imports.ImportWizard;
-import jorgan.gui.mac.TweakMac;
 import jorgan.io.DispositionReader;
 import jorgan.io.DispositionWriter;
 import jorgan.io.disposition.History;
 import jorgan.swing.StatusBar;
+import jorgan.swing.TweakMac;
 import jorgan.xml.XMLFormatException;
 import spin.over.SpinOverEvaluator;
 
@@ -93,7 +93,7 @@ public class OrganFrame extends JFrame implements UI {
     /**
      * Tweak Mac Os X appearance.
      */
-    private TweakMac tweakMac = new TweakMac(this);
+    private TweakMac tweakMac;
 
     /**
      * The javaHelp used by this UI.
@@ -242,6 +242,8 @@ public class OrganFrame extends JFrame implements UI {
             }
         });
 
+        tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
+        
         newOrgan();
     }
 
@@ -335,7 +337,7 @@ public class OrganFrame extends JFrame implements UI {
     /**
      * Set the organ edited by this frame.
      * 
-     * @param organ
+     * @param session
      *            organ to be edited
      */
     private void setOrgan(OrganSession session) {
@@ -427,6 +429,11 @@ public class OrganFrame extends JFrame implements UI {
         }
     }
 
+    /**
+     * Save the current organ.
+     * 
+     * @return	was the organ saved
+     */
     public boolean saveOrgan() {
         if (file == null) {
             return saveOrganAs();
@@ -440,6 +447,7 @@ public class OrganFrame extends JFrame implements UI {
      * 
      * @param file
      *            file to save organ to
+     * @return	was the organ saved
      */
     public boolean saveOrgan(File file) {
         try {
@@ -476,6 +484,8 @@ public class OrganFrame extends JFrame implements UI {
 
     /**
      * Save the current organ.
+     * 
+     * @return	was the organ saved
      */
     public boolean saveOrganAs() {
         JFileChooser chooser = new JFileChooser(jorgan.io.Configuration
@@ -515,17 +525,6 @@ public class OrganFrame extends JFrame implements UI {
         }
 
         return true;
-    }
-
-    public void showConfiguration() {
-        ConfigurationDialog dialog = ConfigurationDialog.create(this,
-                jorgan.Configuration.instance(), false);
-        dialog.start(600, 600);
-        dialog.dispose();
-    }
-
-    public void showAbout() {
-        AboutPanel.showInDialog(this);
     }
 
     /**
@@ -601,7 +600,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that initiates a new organ.
      */
     private class NewAction extends AbstractAction {
-        public NewAction() {
+        private NewAction() {
             putValue(Action.NAME, resources.getString("action.new.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.new.description"));
@@ -618,7 +617,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that opens the recent organ.
      */
     private class RecentAction extends AbstractAction {
-        public RecentAction(int number, File file) {
+    	private RecentAction(int number, File file) {
             String name = file.getPath();
 
             putValue(Action.SHORT_DESCRIPTION, name);
@@ -644,7 +643,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that opens an organ.
      */
     private class OpenAction extends AbstractAction {
-        public OpenAction() {
+    	private OpenAction() {
             putValue(Action.NAME, resources.getString("action.open.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.open.description"));
@@ -668,7 +667,7 @@ public class OrganFrame extends JFrame implements UI {
 
         private boolean registrationChanges = false;
 
-        public SaveAction() {
+        private SaveAction() {
             putValue(Action.NAME, resources.getString("action.save.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.save.description"));
@@ -680,6 +679,11 @@ public class OrganFrame extends JFrame implements UI {
             saveOrgan();
         }
 
+        /**
+         * Are changes known.
+         * 
+         * @return	<code>true</code> if changes are known
+         */
         public boolean hasChanges() {
             return dispositionChanges
                     || registrationChanges
@@ -687,12 +691,20 @@ public class OrganFrame extends JFrame implements UI {
                             .getRegistrationChanges() != jorgan.io.Configuration.REGISTRATION_CHANGES_IGNORE;
         }
 
+        /**
+         * Are changes to be confirmed.
+         * 
+         * @return	<code>true</code> if changes are to be confirmed
+         */
         public boolean confirmChanges() {
             return dispositionChanges
                     || jorgan.io.Configuration.instance()
                             .getRegistrationChanges() == jorgan.io.Configuration.REGISTRATION_CHANGES_CONFIRM;
         }
 
+        /**
+         * Clear changes.
+         */
         public void clearChanges() {
             dispositionChanges = false;
             registrationChanges = false;
@@ -739,7 +751,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that saves an organ under a new name.
      */
     private class SaveAsAction extends AbstractAction {
-        public SaveAsAction() {
+    	private SaveAsAction() {
             putValue(Action.NAME, resources.getString("action.saveAs.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.saveAs.description"));
@@ -754,14 +766,14 @@ public class OrganFrame extends JFrame implements UI {
      * The action that shows information about jOrgan.
      */
     private class AboutAction extends AbstractAction {
-        public AboutAction() {
+    	private AboutAction() {
             putValue(Action.NAME, resources.getString("action.about.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.about.description"));
         }
 
         public void actionPerformed(ActionEvent ev) {
-            showAbout();
+            AboutPanel.showInDialog(OrganFrame.this);
         }
     }
 
@@ -769,7 +781,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that shows the help contents.
      */
     private class HelpAction extends AbstractAction {
-        public HelpAction() {
+    	private HelpAction() {
             putValue(Action.NAME, resources.getString("action.help.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.help.description"));
@@ -790,7 +802,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that starts an import.
      */
     private class ImportAction extends AbstractAction {
-        public ImportAction() {
+    	private ImportAction() {
             putValue(Action.NAME, resources.getString("action.import.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.import.description"));
@@ -805,7 +817,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that shows the configuration.
      */
     private class ConfigurationAction extends AbstractAction {
-        public ConfigurationAction() {
+    	private ConfigurationAction() {
             putValue(Action.NAME, resources
                     .getString("action.configuration.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
@@ -813,7 +825,10 @@ public class OrganFrame extends JFrame implements UI {
         }
 
         public void actionPerformed(ActionEvent ev) {
-            showConfiguration();
+            ConfigurationDialog dialog = ConfigurationDialog.create(OrganFrame.this,
+			        jorgan.Configuration.instance(), false);
+			dialog.start(600, 600);
+			dialog.dispose();
         }
     }
 
@@ -825,7 +840,7 @@ public class OrganFrame extends JFrame implements UI {
 
         private Map dialogs = new HashMap();
 
-        public FullScreenAction() {
+        private FullScreenAction() {
             putValue(Action.NAME, resources.getString("action.fullScreen.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.fullScreen.description"));
@@ -891,7 +906,7 @@ public class OrganFrame extends JFrame implements UI {
      * The action that exits jOrgan.
      */
     private class ExitAction extends AbstractAction {
-        public ExitAction() {
+    	private ExitAction() {
             putValue(Action.NAME, resources.getString("action.exit.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.exit.description"));
