@@ -44,257 +44,266 @@ import swingx.docking.DockedPanel;
  */
 public class MemoryPanel extends DockedPanel {
 
-    private static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-    private JTable table = new JTable();
+	private JTable table = new JTable();
 
-    private MemoryModel model = new MemoryModel();
+	private MemoryModel model = new MemoryModel();
 
-    private OrganSession session;
+	private OrganSession session;
 
-    private Memory memory;
+	private Memory memory;
 
-    public MemoryPanel() {
+	/**
+	 * Constructor.
+	 */
+	public MemoryPanel() {
 
-        table.setModel(model);
-        table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-        table.getColumnModel().getColumn(1).setCellEditor(
-                new StringCellEditor());
-        TableUtils.hideHeader(table);
-        TableUtils.fixColumnWidth(table, 0, "888");
-        TableUtils.pleasantLookAndFeel(table);
-        setScrollableBody(table, true, false);
+		table.setModel(model);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new StringCellEditor());
+		TableUtils.hideHeader(table);
+		TableUtils.fixColumnWidth(table, 0, "888");
+		TableUtils.pleasantLookAndFeel(table);
+		setScrollableBody(table, true, false);
 
-        addTool(new PreviousAction());
-        addTool(new NextAction());
-        addTool(new SwapAction());
-        addTool(new ClearAction());
+		addTool(new PreviousAction());
+		addTool(new NextAction());
+		addTool(new SwapAction());
+		addTool(new ClearAction());
 
-        setMemory(null);
-    }
+		setMemory(null);
+	}
 
-    public void setOrgan(OrganSession session) {
-        if (this.session != null) {
-            this.session.removeOrganListener(model);
+	/**
+	 * Set the organ to control memory of.
+	 * 
+	 * @param session
+	 *            session
+	 */
+	public void setOrgan(OrganSession session) {
+		if (this.session != null) {
+			this.session.removeOrganListener(model);
 
-            setMemory(null);
-        }
+			setMemory(null);
+		}
 
-        this.session = session;
+		this.session = session;
 
-        if (this.session != null) {
-            this.session.addOrganListener(model);
+		if (this.session != null) {
+			this.session.addOrganListener(model);
 
-            findMemory();
-        }
-    }
+			findMemory();
+		}
+	}
 
-    private void findMemory() {
-        List memories = this.session.getOrgan().getCandidates(Memory.class);
-        if (memories.isEmpty()) {
-            setMemory(null);
-        } else {
-            setMemory((Memory) memories.get(0));
-        }
-    }
+	private void findMemory() {
+		List memories = this.session.getOrgan().getCandidates(Memory.class);
+		if (memories.isEmpty()) {
+			setMemory(null);
+		} else {
+			setMemory((Memory) memories.get(0));
+		}
+	}
 
-    private void setMemory(Memory memory) {
-        this.memory = memory;
+	private void setMemory(Memory memory) {
+		this.memory = memory;
 
-        model.fireTableDataChanged();
+		model.fireTableDataChanged();
 
-        table.setVisible(memory != null);
+		table.setVisible(memory != null);
 
-        if (memory == null) {
-            setMessage(resources.getString("memory.none"));
-        } else {
-            setMessage(null);
+		if (memory == null) {
+			setMessage(resources.getString("memory.none"));
+		} else {
+			setMessage(null);
 
-            updateSelection();
-        }
-    }
+			updateSelection();
+		}
+	}
 
-    private void updateSelection() {
-        // remove listener to avoid infinite loop
-        table.getSelectionModel().removeListSelectionListener(model);
+	private void updateSelection() {
+		// remove listener to avoid infinite loop
+		table.getSelectionModel().removeListSelectionListener(model);
 
-        int index = memory.getValue();
-        if (index != table.getSelectedRow()) {
-            if (table.getCellEditor() != null) {
-                table.getCellEditor().cancelCellEditing();
-                table.setCellEditor(null);
-            }
-            table.getSelectionModel().setSelectionInterval(index, index);
-            table.scrollRectToVisible(table.getCellRect(index, 0, false));
-        }
-        table.setColumnSelectionInterval(0, 0);
+		int index = memory.getValue();
+		if (index != table.getSelectedRow()) {
+			if (table.getCellEditor() != null) {
+				table.getCellEditor().cancelCellEditing();
+				table.setCellEditor(null);
+			}
+			table.getSelectionModel().setSelectionInterval(index, index);
+			table.scrollRectToVisible(table.getCellRect(index, 0, false));
+		}
+		table.setColumnSelectionInterval(0, 0);
 
-        // re-add listener
-        table.getSelectionModel().addListSelectionListener(model);
-    }
+		// re-add listener
+		table.getSelectionModel().addListSelectionListener(model);
+	}
 
-    private class MemoryModel extends AbstractTableModel implements
-            OrganListener, ListSelectionListener {
+	private class MemoryModel extends AbstractTableModel implements
+			OrganListener, ListSelectionListener {
 
-        public int getColumnCount() {
-            return 2;
-        }
+		public int getColumnCount() {
+			return 2;
+		}
 
-        public int getRowCount() {
-            if (memory == null) {
-                return 0;
-            } else {
-                return 128;
-            }
-        }
+		public int getRowCount() {
+			if (memory == null) {
+				return 0;
+			} else {
+				return 128;
+			}
+		}
 
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            if (columnIndex == 0) {
-                return "" + (rowIndex + 1);
-            }
-            return memory.getTitle(rowIndex);
-        }
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (columnIndex == 0) {
+				return "" + (rowIndex + 1);
+			}
+			return memory.getTitle(rowIndex);
+		}
 
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
-            return (columnIndex == 1);
-        }
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return (columnIndex == 1);
+		}
 
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            memory.setTitle(rowIndex, (String) aValue);
-        }
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			memory.setTitle(rowIndex, (String) aValue);
+		}
 
-        public void elementAdded(OrganEvent event) {
-            if (event.getElement() instanceof Memory) {
-                setMemory((Memory) event.getElement());
-            }
-        }
+		public void elementAdded(OrganEvent event) {
+			if (event.getElement() instanceof Memory) {
+				setMemory((Memory) event.getElement());
+			}
+		}
 
-        public void elementChanged(OrganEvent event) {
-            if (event.getElement() == memory) {
-                setMemory(memory);
-            }
-        }
+		public void elementChanged(OrganEvent event) {
+			if (event.getElement() == memory) {
+				setMemory(memory);
+			}
+		}
 
-        public void elementRemoved(OrganEvent event) {
-            if (event.getElement() instanceof Memory) {
-                findMemory();
-            }
-        }
+		public void elementRemoved(OrganEvent event) {
+			if (event.getElement() instanceof Memory) {
+				findMemory();
+			}
+		}
 
-        public void referenceAdded(OrganEvent event) {
-        }
+		public void referenceAdded(OrganEvent event) {
+		}
 
-        public void referenceChanged(OrganEvent event) {
-        }
+		public void referenceChanged(OrganEvent event) {
+		}
 
-        public void referenceRemoved(OrganEvent event) {
-        }
+		public void referenceRemoved(OrganEvent event) {
+		}
 
-        public void valueChanged(ListSelectionEvent e) {
-            if (table.getSelectedRowCount() == 1) {
-                int row = table.getSelectedRow();
-                if (row != -1 && row != memory.getValue()) {
-                    memory.setValue(row);
-                }
-            }
-        }
-    }
+		public void valueChanged(ListSelectionEvent e) {
+			if (table.getSelectedRowCount() == 1) {
+				int row = table.getSelectedRow();
+				if (row != -1 && row != memory.getValue()) {
+					memory.setValue(row);
+				}
+			}
+		}
+	}
 
-    private class NextAction extends AbstractAction implements
-            ListSelectionListener {
-        public NextAction() {
-            putValue(Action.NAME, resources.getString("memory.next.name"));
-            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-                    "/jorgan/gui/img/next.gif")));
+	private class NextAction extends AbstractAction implements
+			ListSelectionListener {
+		private NextAction() {
+			putValue(Action.NAME, resources.getString("memory.next.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/next.gif")));
 
-            setEnabled(false);
+			setEnabled(false);
 
-            table.getSelectionModel().addListSelectionListener(this);
-        }
+			table.getSelectionModel().addListSelectionListener(this);
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            memory.increment(+1);
-        }
+		public void actionPerformed(ActionEvent ev) {
+			memory.increment(+1);
+		}
 
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(table.getSelectedRowCount() == 1);
-        }
-    }
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(table.getSelectedRowCount() == 1);
+		}
+	}
 
-    private class PreviousAction extends AbstractAction implements
-            ListSelectionListener {
-        public PreviousAction() {
-            putValue(Action.NAME, resources.getString("memory.previous.name"));
-            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-                    "/jorgan/gui/img/previous.gif")));
+	private class PreviousAction extends AbstractAction implements
+			ListSelectionListener {
+		private PreviousAction() {
+			putValue(Action.NAME, resources.getString("memory.previous.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/previous.gif")));
 
-            setEnabled(false);
+			setEnabled(false);
 
-            table.getSelectionModel().addListSelectionListener(this);
-        }
+			table.getSelectionModel().addListSelectionListener(this);
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            memory.increment(-1);
-        }
+		public void actionPerformed(ActionEvent ev) {
+			memory.increment(-1);
+		}
 
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(table.getSelectedRowCount() == 1);
-        }
-    }
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(table.getSelectedRowCount() == 1);
+		}
+	}
 
-    private class SwapAction extends AbstractAction implements
-            ListSelectionListener {
-        public SwapAction() {
-            putValue(Action.NAME, resources.getString("memory.swap.name"));
-            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-                    "/jorgan/gui/img/swap.gif")));
+	private class SwapAction extends AbstractAction implements
+			ListSelectionListener {
+		private SwapAction() {
+			putValue(Action.NAME, resources.getString("memory.swap.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/swap.gif")));
 
-            setEnabled(false);
+			setEnabled(false);
 
-            table.getSelectionModel().addListSelectionListener(this);
-        }
+			table.getSelectionModel().addListSelectionListener(this);
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            int[] rows = table.getSelectedRows();
-            memory.swap(rows[0], rows[1]);
-        }
+		public void actionPerformed(ActionEvent ev) {
+			int[] rows = table.getSelectedRows();
+			memory.swap(rows[0], rows[1]);
+		}
 
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(table.getSelectedRowCount() == 2);
-        }
-    }
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(table.getSelectedRowCount() == 2);
+		}
+	}
 
-    private class ClearAction extends AbstractAction implements
-            ListSelectionListener {
-        public ClearAction() {
-            putValue(Action.NAME, resources.getString("memory.clear.name"));
-            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-                    "/jorgan/gui/img/clear.gif")));
+	private class ClearAction extends AbstractAction implements
+			ListSelectionListener {
+		private ClearAction() {
+			putValue(Action.NAME, resources.getString("memory.clear.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/clear.gif")));
 
-            setEnabled(false);
+			setEnabled(false);
 
-            table.getSelectionModel().addListSelectionListener(this);
-        }
+			table.getSelectionModel().addListSelectionListener(this);
+		}
 
-        public void actionPerformed(ActionEvent ev) {
-            if (confirm()) {
-                int[] rows = table.getSelectedRows();
-                for (int r = 0; r < rows.length; r++) {
-                    memory.clear(rows[r]);
-                }
-            }
-        }
+		public void actionPerformed(ActionEvent ev) {
+			if (confirm()) {
+				int[] rows = table.getSelectedRows();
+				for (int r = 0; r < rows.length; r++) {
+					memory.clear(rows[r]);
+				}
+			}
+		}
 
-        private boolean confirm() {
-            return JOptionPane.showConfirmDialog(MemoryPanel.this, resources
-                    .getString("memory.clear.warning"), resources
-                    .getString("memory.clear.name"), JOptionPane.YES_NO_OPTION,
-                    JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
-        }
+		private boolean confirm() {
+			return JOptionPane.showConfirmDialog(MemoryPanel.this, resources
+					.getString("memory.clear.warning"), resources
+					.getString("memory.clear.name"), JOptionPane.YES_NO_OPTION,
+					JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+		}
 
-        public void valueChanged(ListSelectionEvent e) {
-            setEnabled(table.getSelectedRowCount() > 0);
-        }
-    }
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(table.getSelectedRowCount() > 0);
+		}
+	}
 }
