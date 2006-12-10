@@ -77,15 +77,15 @@ public class ElementCreationPanel extends JPanel {
 
 		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
-				firePropertyChange("name", null, null);
+				firePropertyChange("elementName", null, null);
 			}
 
 			public void insertUpdate(DocumentEvent e) {
-				firePropertyChange("name", null, null);
+				firePropertyChange("elementName", null, null);
 			}
 
 			public void removeUpdate(DocumentEvent e) {
-				firePropertyChange("name", null, null);
+				firePropertyChange("elementName", null, null);
 			}
 		});
 		add(nameTextField, builder.nextColumn().gridWidthRemainder().fillHorizontal());
@@ -98,7 +98,7 @@ public class ElementCreationPanel extends JPanel {
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				firePropertyChange("type", null, null);
+				firePropertyChange("elementClass", null, null);
 			}
 		});
 		add(new JScrollPane(typeList), builder.nextColumn().gridWidthRemainder().gridHeight(2).fillBoth());

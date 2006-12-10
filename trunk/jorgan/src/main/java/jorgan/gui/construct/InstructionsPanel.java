@@ -39,102 +39,120 @@ import jorgan.swing.beans.PropertiesPanel;
  */
 public class InstructionsPanel extends DockedPanel {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	private static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private JEditorPane editor = new JEditorPane(); 
-  
-  /**
-   * The handler of selection changes.
-   */
-  private SelectionHandler selectionHandler = new SelectionHandler();
+	private JEditorPane editor = new JEditorPane();
 
-  private OrganSession session;
-  
-  public InstructionsPanel() {   
-    addHierarchyListener(selectionHandler);
-        
-    editor.setEditable(false);
-    editor.setMargin(new Insets(0,0,0,0));
-    editor.setContentType("text/html");
-    editor.setVisible(false);
-    
-    setScrollableBody(editor, true, false);
-  }
+	/**
+	 * The handler of selection changes.
+	 */
+	private SelectionHandler selectionHandler = new SelectionHandler();
 
-  public void setOrgan(OrganSession session) {
-    if (this.session != null) {
-      this.session.getSelectionModel().removeSelectionListener(selectionHandler);
-    }
+	private OrganSession session;
 
-    this.session = session;
+	/**
+	 * Constructor.
+	 */
+	public InstructionsPanel() {
+		addHierarchyListener(selectionHandler);
 
-    if (this.session != null) {
-      this.session.getSelectionModel().addSelectionListener(selectionHandler);        
-    }
-  }
+		editor.setEditable(false);
+		editor.setMargin(new Insets(0, 0, 0, 0));
+		editor.setContentType("text/html");
+		editor.setVisible(false);
 
-  protected void updateInstructions(Class clazz, String property) {
-    if (clazz == null) {
-      editor.setVisible(false);
-      setMessage(null);
-    } else {
-      try {
-        URL url;
-        if (property == null) {
-          url = Documents.getInstance().getInstructions(clazz);
-        } else {
-          url = Documents.getInstance().getInstructions(clazz, property);
-        }
-        editor.setPage(url);
-          
-        editor.setVisible(true);
-        
-        StringBuffer buffer = new StringBuffer();
-        buffer.append(Documents.getInstance().getDisplayName(clazz));
-        if (property != null) {
-            buffer.append(" - ");
-            buffer.append(Documents.getInstance().getDisplayName(clazz, property));
-        }
-        setMessage(buffer.toString());
-      } catch (Exception ex) {
-        editor.setVisible(false);
-        setMessage(resources.getString("construct.instructions.failure"));
-      }
-    }
-  }
-      
-  /**
-   * The handler of selections.
-   */
-  private class SelectionHandler implements ElementSelectionListener, HierarchyListener {
+		setScrollableBody(editor, true, false);
+	}
 
-    private Class  clazz;
-    private String property;
-        
-    public void selectionChanged(ElementSelectionEvent ev) {
-      if (session.getSelectionModel().isElementSelected()) {
-        clazz    = PropertiesPanel.getCommonClass(session.getSelectionModel().getSelectedElements());
-        property = session.getSelectionModel().getSelectedProperty();
-      } else {
-        clazz    = null;
-        property = null;
-      }
-      
-      if (isShowing()) {
-        flush();
-      }
-    }
-    
-    public void hierarchyChanged(HierarchyEvent e) {
-      if (clazz != null && isShowing()) {
-        flush();
-      }
-    }
-    
-    protected void flush() {
-      updateInstructions(clazz, property);
-      this.clazz    = null;
-      this.property = null;
-    }
-  }
+	/**
+	 * Set the organ.
+	 * 
+	 * @param session
+	 *            organ session
+	 */
+	public void setOrgan(OrganSession session) {
+		if (this.session != null) {
+			this.session.getSelectionModel().removeSelectionListener(
+					selectionHandler);
+		}
+
+		this.session = session;
+
+		if (this.session != null) {
+			this.session.getSelectionModel().addSelectionListener(
+					selectionHandler);
+		}
+	}
+
+	protected void updateInstructions(Class clazz, String property) {
+		if (clazz == null) {
+			editor.setVisible(false);
+			setMessage(null);
+		} else {
+			try {
+				URL url;
+				if (property == null) {
+					url = Documents.getInstance().getInstructions(clazz);
+				} else {
+					url = Documents.getInstance().getInstructions(clazz,
+							property);
+				}
+				editor.setPage(url);
+
+				editor.setVisible(true);
+
+				StringBuffer buffer = new StringBuffer();
+				buffer.append(Documents.getInstance().getDisplayName(clazz));
+				if (property != null) {
+					buffer.append(" - ");
+					buffer.append(Documents.getInstance().getDisplayName(clazz,
+							property));
+				}
+				setMessage(buffer.toString());
+			} catch (Exception ex) {
+				editor.setVisible(false);
+				setMessage(resources
+						.getString("construct.instructions.failure"));
+			}
+		}
+	}
+
+	/**
+	 * The handler of selections.
+	 */
+	private class SelectionHandler implements ElementSelectionListener,
+			HierarchyListener {
+
+		private Class clazz;
+
+		private String property;
+
+		public void selectionChanged(ElementSelectionEvent ev) {
+			if (session.getSelectionModel().isElementSelected()) {
+				clazz = PropertiesPanel.getCommonClass(session
+						.getSelectionModel().getSelectedElements());
+				property = session.getSelectionModel().getSelectedProperty();
+			} else {
+				clazz = null;
+				property = null;
+			}
+
+			if (isShowing()) {
+				flush();
+			}
+		}
+
+		public void hierarchyChanged(HierarchyEvent e) {
+			if (clazz != null && isShowing()) {
+				flush();
+			}
+		}
+
+		protected void flush() {
+			updateInstructions(clazz, property);
+			this.clazz = null;
+			this.property = null;
+		}
+	}
 }
