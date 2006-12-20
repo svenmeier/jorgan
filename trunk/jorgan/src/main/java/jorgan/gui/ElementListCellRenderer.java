@@ -16,6 +16,9 @@ import javax.swing.JList;
 import jorgan.disposition.Element;
 import jorgan.docs.Documents;
 
+/**
+ * A cell renderer for elements.
+ */
 public class ElementListCellRenderer extends DefaultListCellRenderer {
 
     private static Pattern repeatedWhitespace = Pattern.compile(" +");
@@ -43,11 +46,13 @@ public class ElementListCellRenderer extends DefaultListCellRenderer {
         text.append(noRepeatedWhitespace(Documents.getInstance()
                 .getDisplayName(element)));
 
+        text.append(" [");
+        text.append(Documents.getInstance().getDisplayName(element.getClass()));
         if (!"".equals(element.getDescription())) {
-            text.append(" [");
+        	text.append(" - ");
             text.append(element.getDescription());
-            text.append("]");
         }
+        text.append("]");
 
         return text.toString();
     }
