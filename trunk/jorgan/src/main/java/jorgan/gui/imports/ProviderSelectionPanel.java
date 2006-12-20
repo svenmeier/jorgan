@@ -34,7 +34,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.imports.spi.ImportProvider;
-
 import sun.misc.Service;
 
 /**
@@ -42,80 +41,92 @@ import sun.misc.Service;
  */
 public class ProviderSelectionPanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-  private JScrollPane scrollPane = new JScrollPane();
-  private JList list = new JList();
-  
-  private List providers = new ArrayList();
-  
-  /**
-   * Constructor.
-   */
-  public ProviderSelectionPanel() {
-    setLayout(new BorderLayout(10, 10));
+	private JScrollPane scrollPane = new JScrollPane();
 
-    scrollPane.getViewport().setBackground(Color.white);
-    add(scrollPane, BorderLayout.CENTER);
-     
-      list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-      list.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-           firePropertyChange("selectedImportPanel", null, null);
-        }
-      }); 
-      scrollPane.setViewportView(list);    
+	private JList list = new JList();
 
-    setImportProviders(lookupImportProviders());
-  }
-  
-  public void setImportProviders(List providers) {
-    this.providers = providers;
-    
-    list.setModel(new ProvidersModel());
-  }
- 
-  public ImportProvider getSelectedImportProvider() {
-    int index = list.getSelectedIndex();
-    if (index == -1) {
-      return null;
-    } else {
-      return (ImportProvider)providers.get(index);    
-    }
-  }
+	private List providers = new ArrayList();
 
-  
-  /**
-   * Utility method to get all importProviders that are registered as
-   * a service.
-   * 
-   * @return    providers of import
-   */
-  public static List lookupImportProviders() {
-    ArrayList providers = new ArrayList();
-     
-    Iterator iterator = Service.providers(ImportProvider.class);
-    
-    while (iterator.hasNext()) {
-      providers.add(iterator.next());
-    }
-    
-    return providers;
-  }
-  
-  private class ProvidersModel extends AbstractListModel {
+	/**
+	 * Constructor.
+	 */
+	public ProviderSelectionPanel() {
+		setLayout(new BorderLayout(10, 10));
 
-    public int getSize() {
-      return providers.size();
-    }
+		scrollPane.getViewport().setBackground(Color.white);
+		add(scrollPane, BorderLayout.CENTER);
 
-    public Object getElementAt(int index) {
-      ImportProvider provider = (ImportProvider)providers.get(index);
-      
-      return provider.getName();
-    }
-  }
+		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		list.getSelectionModel().addListSelectionListener(
+				new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent e) {
+						firePropertyChange("selectedImportProvider", null, null);
+					}
+				});
+		scrollPane.setViewportView(list);
+
+		setImportProviders(lookupImportProviders());
+	}
+
+	/**
+	 * Set the {@link ImportProvider}s to choose from.
+	 * 
+	 * @param providers	providers
+	 */
+	public void setImportProviders(List providers) {
+		this.providers = providers;
+
+		list.setModel(new ProvidersModel());
+	}
+
+	/**
+	 * Get the selected provider.
+	 * 
+	 * @return provider	the selected provider
+	 */
+	public ImportProvider getSelectedImportProvider() {
+		int index = list.getSelectedIndex();
+		if (index == -1) {
+			return null;
+		} else {
+			return (ImportProvider) providers.get(index);
+		}
+	}
+
+	/**
+	 * Utility method to get all importProviders that are registered as a
+	 * service.
+	 * 
+	 * @return providers of import
+	 */
+	public static List lookupImportProviders() {
+		ArrayList providers = new ArrayList();
+
+		Iterator iterator = Service.providers(ImportProvider.class);
+
+		while (iterator.hasNext()) {
+			providers.add(iterator.next());
+		}
+
+		return providers;
+	}
+
+	private class ProvidersModel extends AbstractListModel {
+
+		public int getSize() {
+			return providers.size();
+		}
+
+		public Object getElementAt(int index) {
+			ImportProvider provider = (ImportProvider) providers.get(index);
+
+			return provider.getName();
+		}
+	}
 }
