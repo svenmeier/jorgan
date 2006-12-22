@@ -11,57 +11,102 @@ import java.util.regex.Pattern;
 
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JList;
 
 import jorgan.disposition.Element;
 import jorgan.docs.Documents;
+import jorgan.gui.construct.ElementsPanel;
+import jorgan.swing.list.CommentedCellRenderer;
 
 /**
  * A cell renderer for elements.
  */
-public class ElementListCellRenderer extends DefaultListCellRenderer {
+public class ElementListCellRenderer extends CommentedCellRenderer {
 
-    private static Pattern repeatedWhitespace = Pattern.compile(" +");
+	private static Pattern repeatedWhitespace = Pattern.compile(" +");
 
-    public Component getListCellRendererComponent(JList list, Object value,
-            int index, boolean isSelected, boolean cellHasFocus) {
+	/**
+	 * Icon used for indication an element.
+	 */
+	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/element.gif"));
 
-        Element element = getElement(value);
+	/**
+	 * Icon used for indication of a warning.
+	 */
+	private static final Icon warningIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/elementWarning.gif"));
 
-        super.getListCellRendererComponent(list, getText(element), index,
-                isSelected, cellHasFocus);
+	/**
+	 * Icon used for indication of an error.
+	 */
+	private static final Icon errorIcon = new ImageIcon(ElementsPanel.class
+			.getResource("/jorgan/gui/img/elementError.gif"));
 
-        setIcon(getIcon(element));
+	/**
+	 * Constructor.
+	 */
+	public ElementListCellRenderer() {
+		setRenderer(new WrappedRenderer());
+	}
 
-        return this;
-    }
+	protected Element getElement(Object object) {
+		return (Element) object;
+	}
 
-    protected Element getElement(Object object) {
-        return (Element) object;
-    }
+	protected String getComment(Object value, int index, boolean isSelected) {
+		Element element = getElement(value);
 
-    protected String getText(Element element) {
-        StringBuffer text = new StringBuffer();
+		StringBuffer comment = new StringBuffer();
 
-        text.append(noRepeatedWhitespace(Documents.getInstance()
-                .getDisplayName(element)));
+		if (!"".equals(element.getDescription())) {
+			comment.append(element.getDescription());
+			comment.append(" : ");
+		}
 
-        text.append(" [");
-        text.append(Documents.getInstance().getDisplayName(element.getClass()));
-        if (!"".equals(element.getDescription())) {
-        	text.append(" - ");
-            text.append(element.getDescription());
-        }
-        text.append("]");
+		comment.append(Documents.getInstance().getDisplayName(
+				element.getClass()));
 
-        return text.toString();
-    }
+		return comment.toString();
+	}
 
-    protected Icon getIcon(Element element) {
-        return null;
-    }
+	protected OrganSession getOrgan() {
+		return null;
+	}
 
-    private static String noRepeatedWhitespace(String string) {
-        return repeatedWhitespace.matcher(string).replaceAll(" ");
-    }
+	private Icon getIcon(Element element) {
+		OrganSession session = getOrgan();
+
+		if (session != null) {
+			if (session.getPlay().hasErrors(element)) {
+				return errorIcon;
+			} else if (session.getPlay().hasWarnings(element)) {
+				return warningIcon;
+			}
+		}
+		return elementIcon;
+	}
+
+	private class WrappedRenderer extends DefaultListCellRenderer {
+		public Component getListCellRendererComponent(JList list, Object value,
+				int index, boolean isSelected, boolean cellHasFocus) {
+
+			Element element = getElement(value);
+
+			String name = noRepeatedWhitespace(Documents.getInstance()
+					.getDisplayName(element));
+
+			super.getListCellRendererComponent(list, name, index, isSelected,
+					cellHasFocus);
+
+			setIcon(ElementListCellRenderer.this.getIcon(element));
+
+			return this;
+		}
+	}
+
+	private static String noRepeatedWhitespace(String string) {
+		return repeatedWhitespace.matcher(string).replaceAll(" ");
+	}
 }
