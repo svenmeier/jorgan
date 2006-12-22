@@ -30,8 +30,6 @@ import java.util.ResourceBundle;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -54,12 +52,6 @@ public class ElementsSelectionPanel extends JPanel {
 	protected static ResourceBundle resources = ResourceBundle
 			.getBundle("jorgan.gui.resources");
 
-	/**
-	 * Icon used for indication an element.
-	 */
-	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/element.gif"));
-
 	private Action allAction = new AllAction();
 
 	private Action noneAction = new NoneAction();
@@ -76,11 +68,7 @@ public class ElementsSelectionPanel extends JPanel {
 
 		elementsList
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		elementsList.setCellRenderer(new ElementListCellRenderer() {
-			protected Icon getIcon(Element element) {
-				return elementIcon;
-			}
-		});
+		elementsList.setCellRenderer(new ElementListCellRenderer());
 		elementsList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				firePropertyChange("selectedElements", null, null);

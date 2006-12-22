@@ -68,24 +68,6 @@ public class ElementsPanel extends DockedPanel {
 			.getResource("/jorgan/gui/img/sortType.gif"));
 
 	/**
-	 * Icon used for indication an element.
-	 */
-	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/element.gif"));
-
-	/**
-	 * Icon used for indication of a warning.
-	 */
-	private static final Icon warningIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/elementWarning.gif"));
-
-	/**
-	 * Icon used for indication of an error.
-	 */
-	private static final Icon errorIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/elementError.gif"));
-
-	/**
 	 * The edited organ.
 	 */
 	private OrganSession session;
@@ -142,15 +124,8 @@ public class ElementsPanel extends DockedPanel {
 
 		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
-			public Icon getIcon(Element element) {
-				if (session != null) {
-					if (session.getPlay().hasErrors(element)) {
-						return errorIcon;
-					} else if (session.getPlay().hasWarnings(element)) {
-						return warningIcon;
-					}
-				}
-				return elementIcon;
+			protected OrganSession getOrgan() {
+				return session;
 			}
 		});
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -162,7 +137,7 @@ public class ElementsPanel extends DockedPanel {
 	/**
 	 * Get the edited organ.
 	 * 
-	 * @return	organ
+	 * @return organ
 	 */
 	public OrganSession getOrgan() {
 		return session;
@@ -366,7 +341,6 @@ public class ElementsPanel extends DockedPanel {
 		}
 
 		public void fireRemoved(int count) {
-
 			if (count > 0) {
 				fireIntervalRemoved(this, 0, count - 1);
 			}

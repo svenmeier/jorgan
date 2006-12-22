@@ -75,9 +75,6 @@ public class ReferencesPanel extends DockedPanel {
             ElementsPanel.class
                     .getResource("/jorgan/gui/img/referencedFrom.gif"));
 
-    private static final Icon referenceIcon = new ImageIcon(ElementsPanel.class
-            .getResource("/jorgan/gui/img/reference.gif"));
-
     /**
      * The edited organ.
      */
@@ -159,6 +156,10 @@ public class ReferencesPanel extends DockedPanel {
         list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
         list.setModel(referencesModel);
         list.setCellRenderer(new ElementListCellRenderer() {
+        	protected OrganSession getOrgan() {
+        		return session;
+        	}
+        	
             protected Element getElement(Object object) {
                 Row row = (Row) object;
 
@@ -167,10 +168,6 @@ public class ReferencesPanel extends DockedPanel {
                 } else {
                     return row.element;
                 }
-            }
-
-            protected Icon getIcon(Element element) {
-                return referenceIcon;
             }
         });
         list.addListSelectionListener(selectionHandler);
