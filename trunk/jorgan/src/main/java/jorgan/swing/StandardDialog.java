@@ -73,13 +73,25 @@ public class StandardDialog extends JDialog {
 	private boolean cancelled = false;
 
 	/**
-	 * Constructor.
+	 * Constructor for modal dialogs.
 	 * 
 	 * @param owner
 	 *            the owner of this dialog
 	 */
 	public StandardDialog(Frame owner) {
-		super(owner, true);
+		this(owner, true);
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param owner
+	 *            the owner of this dialog
+	 * @param modal
+	 *            modal
+	 */
+	public StandardDialog(Frame owner, boolean modal) {
+		super(owner, modal);
 
 		JPanel contentPane = new JPanel(new BorderLayout());
 		CancelAction cancel = new CancelAction();
