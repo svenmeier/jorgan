@@ -70,6 +70,7 @@ import jorgan.gui.imports.ImportWizard;
 import jorgan.io.DispositionReader;
 import jorgan.io.DispositionWriter;
 import jorgan.io.disposition.History;
+import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
 import jorgan.xml.XMLFormatException;
@@ -138,6 +139,8 @@ public class OrganFrame extends JFrame implements UI {
     /*
      * The actions.
      */
+    private DebugAction debugAction = new DebugAction();
+
     private NewAction newAction = new NewAction();
 
     private OpenAction openAction = new OpenAction();
@@ -291,6 +294,8 @@ public class OrganFrame extends JFrame implements UI {
         JMenu viewMenu = new JMenu(resources.getString("menu.view"));
         menuBar.add(viewMenu);
         viewMenu.add(fullScreenAction);
+        viewMenu.addSeparator();
+        viewMenu.add(debugAction);
         viewMenu.addSeparator();
         List actions = organPanel.getMenuWidgets();
         for (int a = 0; a < actions.size(); a++) {
@@ -639,6 +644,20 @@ public class OrganFrame extends JFrame implements UI {
         }
     }
 
+    private class DebugAction extends AbstractAction {
+    	private DebugAction() {
+            putValue(Action.NAME, resources.getString("action.debug.name"));
+            putValue(Action.SHORT_DESCRIPTION, resources
+                    .getString("action.debug.description"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+                    "img/debug.gif")));
+        }
+
+        public void actionPerformed(ActionEvent ev) {
+            DebugPanel.showInDialog(OrganFrame.this);
+        }
+    }
+    
     /**
      * The action that opens an organ.
      */
