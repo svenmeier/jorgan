@@ -58,17 +58,7 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	protected String getComment(Object value, int index, boolean isSelected) {
 		Element element = getElement(value);
 
-		StringBuffer comment = new StringBuffer();
-
-		if (!"".equals(element.getDescription())) {
-			comment.append(element.getDescription());
-			comment.append(" : ");
-		}
-
-		comment.append(Documents.getInstance().getDisplayName(
-				element.getClass()));
-
-		return comment.toString();
+		return element.getDescription();
 	}
 
 	protected OrganSession getOrgan() {
@@ -89,16 +79,24 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	}
 
 	private class WrappedRenderer extends DefaultListCellRenderer {
+		private StringBuffer text = new StringBuffer();
+
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 
 			Element element = getElement(value);
 
-			String name = noRepeatedWhitespace(Documents.getInstance()
-					.getDisplayName(element));
+			text.setLength(0);
+			text.append(noRepeatedWhitespace(Documents.getInstance()
+					.getDisplayName(element)));
+			if (!"".equals(element.getName())) {
+				text.append(" : ");
+				text.append(Documents.getInstance().getDisplayName(
+						element.getClass()));
+			}
 
-			super.getListCellRendererComponent(list, name, index, isSelected,
-					cellHasFocus);
+			super.getListCellRendererComponent(list, text.toString(), index,
+					isSelected, cellHasFocus);
 
 			setIcon(ElementListCellRenderer.this.getIcon(element));
 
