@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.disposition.Element;
 import jorgan.util.Bootstrap;
@@ -41,6 +43,9 @@ public class Documents {
 	 * folder relative to the installation directory.
 	 */
 	private static final String DOCS_PATH_PROPERTY = "jorgan.docs.path";
+
+	private static final Logger logger = Logger.getLogger(Documents.class
+			.getName());
 
 	private static Documents instance = new Documents();
 
@@ -213,6 +218,10 @@ public class Documents {
 			} catch (Exception e) {
 			}
 		}
+
+		logger.log(Level.INFO, "unable to locate file '" + fileName
+				+ "' from bundle '" + bundleName + "'");
+
 		return null;
 	}
 
