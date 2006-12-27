@@ -141,7 +141,7 @@ public class SkinManager implements ISkinManager {
 
         private File directory;
 
-        public SkinDirectory(File directory) throws IOException {
+        private SkinDirectory(File directory) throws IOException {
             this.directory = directory;
         }
 
@@ -161,7 +161,7 @@ public class SkinManager implements ISkinManager {
 
         private File file;
 
-        public SkinZip(File file) throws IOException {
+        private SkinZip(File file) throws IOException {
             this.file = file;
         }
 
@@ -174,6 +174,11 @@ public class SkinManager implements ISkinManager {
         }
     }
 
+    /**
+     * Get the singleton instance.
+     * 
+     * @return	manager of {@Skin}s.
+     */
     public static SkinManager instance() {
         if (instance == null) {
             instance = new SkinManager();
