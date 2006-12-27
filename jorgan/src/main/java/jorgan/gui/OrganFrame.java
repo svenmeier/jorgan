@@ -645,6 +645,9 @@ public class OrganFrame extends JFrame implements UI {
     }
 
     private class DebugAction extends AbstractAction {
+    	
+    	private DebugPanel debugPanel = new DebugPanel();
+    	
     	private DebugAction() {
             putValue(Action.NAME, resources.getString("action.debug.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
@@ -654,7 +657,7 @@ public class OrganFrame extends JFrame implements UI {
         }
 
         public void actionPerformed(ActionEvent ev) {
-            DebugPanel.showInDialog(OrganFrame.this);
+            debugPanel.showInDialog(OrganFrame.this);
         }
     }
     

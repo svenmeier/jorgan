@@ -109,14 +109,13 @@ public class DebugPanel extends JPanel {
 	 * @param owner
 	 *            owner of dialog
 	 */
-	public static void showInDialog(JFrame owner) {
+	public void showInDialog(JFrame owner) {
 		StandardDialog dialog = new StandardDialog(owner, false);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-		DebugPanel debugPanel = new DebugPanel();
-		dialog.setContent(new DebugPanel());
-		dialog.addAction(debugPanel.new ClearAction());
-		dialog.addAction(debugPanel.new CopyAction());
+		dialog.setContent(this);
+		dialog.addAction(new ClearAction());
+		dialog.addAction(new CopyAction());
 
 		dialog.start();
 	}
