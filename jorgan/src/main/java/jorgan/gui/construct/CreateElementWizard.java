@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.Frame;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -257,9 +257,10 @@ public class CreateElementWizard extends BasicWizard {
 	 * @param prototype
 	 *            element to use as prototype
 	 */
-	public static void showInDialog(Frame owner, Organ organ, Element prototype) {
+	public static void showInDialog(Component owner, Organ organ,
+			Element prototype) {
 
-		WizardDialog dialog = new WizardDialog(owner);
+		WizardDialog dialog = WizardDialog.create(owner);
 
 		dialog.setTitle(resources.getString("construct.create.element.title"));
 

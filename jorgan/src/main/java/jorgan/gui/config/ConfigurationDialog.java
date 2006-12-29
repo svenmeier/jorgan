@@ -22,8 +22,8 @@ import java.awt.Component;
 import java.awt.Window;
 import java.util.ResourceBundle;
 
+import javax.swing.JDialog;
 import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
 
 import jorgan.config.AbstractConfiguration;
 import jorgan.swing.StandardDialog;
@@ -46,17 +46,38 @@ public class ConfigurationDialog extends StandardDialog {
 	/**
 	 * Constructor.
 	 */
-	private ConfigurationDialog(JFrame owner,
-			AbstractConfiguration configuration, boolean showRoot) {
+	private ConfigurationDialog(JDialog owner) {
 		super(owner);
 
+		init();
+	}
+
+	/**
+	 * Constructor.
+	 */
+	private ConfigurationDialog(JFrame owner) {
+		super(owner);
+
+		init();
+	}
+
+	private void init() {
 		setTitle(resources.getString("config.title"));
 
 		setContent(configTreePanel);
 
 		addOKAction();
 		addCancelAction();
+	}
 
+	/**
+	 * Set the configuration.
+	 * 
+	 * @param configuration
+	 * @param showRoot
+	 */
+	public void setConfiguration(AbstractConfiguration configuration,
+			boolean showRoot) {
 		this.configuration = configuration;
 
 		try {
@@ -91,13 +112,21 @@ public class ConfigurationDialog extends StandardDialog {
 	 */
 	public static ConfigurationDialog create(Component owner,
 			AbstractConfiguration configuration, boolean showRoot) {
-		Window window;
-		if (owner instanceof JFrame) {
-			window = (JFrame) owner;
+
+		Window window = getWindow(owner);
+
+		ConfigurationDialog dialog;
+
+		if (window instanceof JFrame) {
+			dialog = new ConfigurationDialog((JFrame) window);
+		} else if (window instanceof JDialog) {
+			dialog = new ConfigurationDialog((JDialog) window);
 		} else {
-			window = SwingUtilities.getWindowAncestor(owner);
+			throw new Error("unable to get window ancestor");
 		}
 
-		return new ConfigurationDialog((JFrame) window, configuration, showRoot);
+		dialog.setConfiguration(configuration, showRoot);
+
+		return dialog;
 	}
 }

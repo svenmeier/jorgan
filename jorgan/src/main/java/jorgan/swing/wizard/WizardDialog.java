@@ -18,13 +18,16 @@
  */
 package jorgan.swing.wizard;
 
-import java.awt.Frame;
+import java.awt.Component;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 
 import jorgan.swing.StandardDialog;
 
@@ -55,8 +58,25 @@ public class WizardDialog extends StandardDialog {
 	 * @param owner
 	 *            the owner of this dialog
 	 */
-	public WizardDialog(Frame owner) {
+	public WizardDialog(JDialog owner) {
 		super(owner);
+
+		init();
+	}
+
+	/**
+	 * Constructor.
+	 * 
+	 * @param owner
+	 *            the owner of this dialog
+	 */
+	public WizardDialog(JFrame owner) {
+		super(owner);
+
+		init();
+	}
+
+	private void init() {
 
 		setTitle(resources.getString("wizard.title"));
 
@@ -154,6 +174,25 @@ public class WizardDialog extends StandardDialog {
 
 		public void wizardFinished() {
 			onOK();
+		}
+	}
+
+	/**
+	 * Create a dialog suitable for the given owner.
+	 * 
+	 * @param owner
+	 *            owner
+	 * @return dialog
+	 */
+	public static WizardDialog create(Component owner) {
+		Window window = getWindow(owner);
+
+		if (window instanceof JFrame) {
+			return new WizardDialog((JFrame) window);
+		} else if (window instanceof JDialog) {
+			return new WizardDialog((JDialog) window);
+		} else {
+			throw new Error("unable to get window ancestor");
 		}
 	}
 }

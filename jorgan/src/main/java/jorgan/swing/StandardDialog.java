@@ -20,9 +20,10 @@ package jorgan.swing;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
@@ -35,8 +36,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
 import jorgan.swing.border.RuleBorder;
@@ -78,7 +81,31 @@ public class StandardDialog extends JDialog {
 	 * @param owner
 	 *            the owner of this dialog
 	 */
-	public StandardDialog(Frame owner) {
+	public StandardDialog(JDialog owner) {
+		this(owner, true);
+	}
+
+	/**
+	 * Constructor for modal dialogs.
+	 * 
+	 * @param owner
+	 *            the owner of this dialog
+	 * @param modal
+	 *            modal
+	 */
+	public StandardDialog(JDialog owner, boolean modal) {
+		super(owner, true);
+
+		init();
+	}
+
+	/**
+	 * Constructor for modal dialogs.
+	 * 
+	 * @param owner
+	 *            the owner of this dialog
+	 */
+	public StandardDialog(JFrame owner) {
 		this(owner, true);
 	}
 
@@ -90,8 +117,13 @@ public class StandardDialog extends JDialog {
 	 * @param modal
 	 *            modal
 	 */
-	public StandardDialog(Frame owner, boolean modal) {
+	public StandardDialog(JFrame owner, boolean modal) {
 		super(owner, modal);
+
+		init();
+	}
+
+	private void init() {
 
 		JPanel contentPane = new JPanel(new BorderLayout());
 		CancelAction cancel = new CancelAction();
@@ -330,5 +362,20 @@ public class StandardDialog extends JDialog {
 		public void actionPerformed(ActionEvent ev) {
 			onOK();
 		}
+	}
+
+	/**
+	 * Utility method to get the containing window of a component.
+	 * 
+	 * @param component
+	 *            the component to get window for
+	 * @return containing window
+	 */
+	public static Window getWindow(Component component) {
+		if (component instanceof Window) {
+			return (Window) component;
+		}
+
+		return SwingUtilities.getWindowAncestor(component);
 	}
 }
