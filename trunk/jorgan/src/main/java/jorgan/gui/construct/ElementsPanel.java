@@ -33,10 +33,8 @@ import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JFrame;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -156,9 +154,8 @@ public class ElementsPanel extends DockedPanel {
 			this.session.removePlayerListener(elementsModel);
 			this.session.removeSelectionListener(selectionHandler);
 
-			int removed = elements.size();
 			elements = new ArrayList();
-			elementsModel.fireRemoved(removed);
+			elementsModel.update();
 		}
 
 		this.session = session;
@@ -170,16 +167,14 @@ public class ElementsPanel extends DockedPanel {
 					selectionHandler);
 
 			elements = new ArrayList(this.session.getOrgan().getElements());
-
 			if (sortNameButton.isSelected()) {
 				Collections.sort(elements, new ElementComparator(true));
 			} else if (sortTypeButton.isSelected()) {
 				Collections.sort(elements, new ElementComparator(false));
 			}
-
-			elementsModel.fireAdded(elements.size());
+			elementsModel.update();
 		}
-
+		
 		removeAction.update();
 	}
 
@@ -247,6 +242,19 @@ public class ElementsPanel extends DockedPanel {
 	private class ElementsModel extends AbstractDnDListModel implements
 			PlayListener, OrganListener {
 
+		private int size = -1;
+
+		private void update() {
+			if (size != -1) {
+				if (elements.size() > size) {
+					fireIntervalAdded(this, size, elements.size() - 1);
+				} else if (elements.size() < size) {
+					fireIntervalRemoved(this, elements.size(), size - 1);
+				}
+				size = elements.size();
+			}
+		}
+		
 		public Object getElementAt(int index) {
 			return elements.get(index);
 		}
@@ -256,7 +264,9 @@ public class ElementsPanel extends DockedPanel {
 		}
 
 		public int getSize() {
-			return elements.size();
+			size = elements.size();
+			
+			return size;
 		}
 
 		public int getDropActions(Transferable transferable, int index) {
@@ -339,18 +349,6 @@ public class ElementsPanel extends DockedPanel {
 
 		public void referenceRemoved(OrganEvent event) {
 		}
-
-		public void fireRemoved(int count) {
-			if (count > 0) {
-				fireIntervalRemoved(this, 0, count - 1);
-			}
-		}
-
-		public void fireAdded(int count) {
-			if (count > 0) {
-				fireIntervalAdded(this, 0, count - 1);
-			}
-		}
 	}
 
 	private class AddAction extends AbstractAction {
@@ -371,8 +369,7 @@ public class ElementsPanel extends DockedPanel {
 					prototype = session.getSelectionModel()
 							.getSelectedElement();
 				}
-				CreateElementWizard.showInDialog((JFrame) SwingUtilities
-						.getWindowAncestor(ElementsPanel.this), session
+				CreateElementWizard.showInDialog(ElementsPanel.this, session
 						.getOrgan(), prototype);
 			}
 		}
