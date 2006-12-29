@@ -18,15 +18,19 @@
  */
 package jorgan.gui.construct;
 
-import java.util.*;
-import java.awt.Frame;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JComponent;
 
-import jorgan.swing.wizard.*;
-
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
+import jorgan.swing.wizard.AbstractPage;
+import jorgan.swing.wizard.BasicWizard;
+import jorgan.swing.wizard.WizardDialog;
 
 /**
  * A wizard for creating of references.
@@ -162,9 +166,10 @@ public class CreateReferencesWizard extends BasicWizard {
 	 * @param element
 	 *            element to add created references to
 	 */
-	public static void showInDialog(Frame owner, Organ organ, Element element) {
+	public static void showInDialog(Component owner, Organ organ,
+			Element element) {
 
-		WizardDialog dialog = new WizardDialog(owner);
+		WizardDialog dialog = WizardDialog.create(owner);
 
 		dialog.setTitle(resources
 				.getString("construct.create.references.title"));

@@ -18,16 +18,19 @@
  */
 package jorgan.gui.imports;
 
-import java.util.*;
-import java.awt.*;
+import java.awt.Component;
 import java.beans.PropertyChangeEvent;
+import java.util.ResourceBundle;
 
-import javax.swing.*;
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
-import jorgan.swing.wizard.*;
-
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.swing.wizard.AbstractPage;
+import jorgan.swing.wizard.BasicWizard;
+import jorgan.swing.wizard.WizardDialog;
 
 /**
  * A wizard for importing of sounds.
@@ -202,9 +205,9 @@ public class ImportWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to import into
 	 */
-	public static void showInDialog(Frame owner, Organ organ) {
+	public static void showInDialog(Component owner, Organ organ) {
 
-		WizardDialog dialog = new WizardDialog(owner);
+		WizardDialog dialog = WizardDialog.create(owner);
 
 		dialog.setTitle(resources.getString("import.title"));
 
