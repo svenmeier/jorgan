@@ -777,6 +777,8 @@ public class OrganFrame extends JFrame implements UI {
             putValue(Action.NAME, resources.getString("action.saveAs.name"));
             putValue(Action.SHORT_DESCRIPTION, resources
                     .getString("action.saveAs.description"));
+            putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+            "img/saveAs.gif")));
         }
 
         public void actionPerformed(ActionEvent ev) {
