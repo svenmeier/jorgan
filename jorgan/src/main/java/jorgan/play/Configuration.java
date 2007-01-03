@@ -39,26 +39,16 @@ public class Configuration extends PreferencesConfiguration {
 
 	private boolean warnWithoutMessage;
 
-	private boolean releaseDevicesWhenDeactivated;
-
 	protected void restore(Preferences prefs) {
 		warnWithoutDevice = getBoolean(prefs, "warnWithoutDevice",
 				WARN_WITHOUT_DEVICE);
 		warnWithoutMessage = getBoolean(prefs, "warnWithoutMessage",
 				WARN_WITHOUT_MESSAGE);
-		;
-
-		releaseDevicesWhenDeactivated = getBoolean(prefs,
-				"releaseDevicesWhenDeactivated",
-				RELEASE_DEVICES_WHEN_DEACTIVATED);
 	}
 
 	protected void backup(Preferences prefs) {
 		putBoolean(prefs, "warnWithoutDevice", warnWithoutDevice);
 		putBoolean(prefs, "warnWithoutMessage", warnWithoutMessage);
-
-		prefs.putBoolean("releaseDevicesWhenDeactivated",
-				releaseDevicesWhenDeactivated);
 	}
 
 	public boolean getWarnWithoutDevice() {
@@ -69,10 +59,6 @@ public class Configuration extends PreferencesConfiguration {
 		return warnWithoutMessage;
 	}
 
-	public boolean getReleaseDevicesWhenDeactivated() {
-		return releaseDevicesWhenDeactivated;
-	}
-
 	public void setWarnWithoutDevice(boolean warnWithoutDevice) {
 		this.warnWithoutDevice = warnWithoutDevice;
 
@@ -81,13 +67,6 @@ public class Configuration extends PreferencesConfiguration {
 
 	public void setWarnWithoutMessage(boolean warnWithoutMessage) {
 		this.warnWithoutMessage = warnWithoutMessage;
-
-		fireConfigurationChanged();
-	}
-
-	public void setReleaseDevicesWhenDeactivated(
-			boolean releaseDevicesWhenDeactivated) {
-		this.releaseDevicesWhenDeactivated = releaseDevicesWhenDeactivated;
 
 		fireConfigurationChanged();
 	}

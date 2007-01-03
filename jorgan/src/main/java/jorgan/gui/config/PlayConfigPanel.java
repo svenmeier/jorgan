@@ -34,16 +34,14 @@ public class PlayConfigPanel extends ConfigurationPanel {
 
 	private JCheckBox warnMessageCheckBox = new JCheckBox();
 
-	private JCheckBox releaseDevicesCheckBox = new JCheckBox();
-
 	public PlayConfigPanel() {
 		setName(resources.getString("config.play.name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{1.0d});
+
+		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
 		builder.nextRow();
-		
+
 		warnDeviceCheckBox.setText(resources
 				.getString("config.play.warn.device"));
 		add(warnDeviceCheckBox, builder.nextColumn());
@@ -53,12 +51,6 @@ public class PlayConfigPanel extends ConfigurationPanel {
 		warnMessageCheckBox.setText(resources
 				.getString("config.play.warn.message"));
 		add(warnMessageCheckBox, builder.nextColumn());
-
-		builder.nextRow();
-
-		releaseDevicesCheckBox.setText(resources
-				.getString("config.play.releaseDevicesWhenDeactivated"));
-		add(releaseDevicesCheckBox, builder.nextColumn());
 	}
 
 	/**
@@ -69,9 +61,6 @@ public class PlayConfigPanel extends ConfigurationPanel {
 
 		warnDeviceCheckBox.setSelected(config.getWarnWithoutDevice());
 		warnMessageCheckBox.setSelected(config.getWarnWithoutMessage());
-
-		releaseDevicesCheckBox.setSelected(config
-				.getReleaseDevicesWhenDeactivated());
 	}
 
 	/**
@@ -82,8 +71,5 @@ public class PlayConfigPanel extends ConfigurationPanel {
 
 		config.setWarnWithoutDevice(warnDeviceCheckBox.isSelected());
 		config.setWarnWithoutMessage(warnMessageCheckBox.isSelected());
-
-		config.setReleaseDevicesWhenDeactivated(releaseDevicesCheckBox
-				.isSelected());
 	}
 }

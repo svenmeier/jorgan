@@ -221,27 +221,8 @@ public class OrganFrame extends JFrame implements UI {
 
         setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         addWindowListener(new WindowAdapter() {
-            private boolean released;
-
             public void windowClosing(WindowEvent ev) {
                 stop();
-            }
-
-            public void windowActivated(WindowEvent e) {
-                if (released) {
-                    session.getPlay().open();
-                }
-                released = false;
-            }
-
-            public void windowDeactivated(WindowEvent e) {
-                if (jorgan.play.Configuration.instance()
-                        .getReleaseDevicesWhenDeactivated()) {
-                    if (!released && session.getPlay().isOpen()) {
-                        session.getPlay().close();
-                        released = true;
-                    }
-                }
             }
         });
 
