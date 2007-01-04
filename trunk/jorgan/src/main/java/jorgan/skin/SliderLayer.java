@@ -29,91 +29,90 @@ import jorgan.gui.console.ContinuousView;
  */
 public class SliderLayer extends CompositeLayer implements Cloneable {
 
-    public static final int DIRECTION_LEFT_RIGHT = 1;
+	public static final int DIRECTION_LEFT_RIGHT = 1;
 
-    public static final int DIRECTION_RIGHT_LEFT = 2;
+	public static final int DIRECTION_RIGHT_LEFT = 2;
 
-    public static final int DIRECTION_TOP_BOTTOM = 3;
+	public static final int DIRECTION_TOP_BOTTOM = 3;
 
-    public static final int DIRECTION_BOTTOM_TOP = 4;
+	public static final int DIRECTION_BOTTOM_TOP = 4;
 
-    private int direction = DIRECTION_LEFT_RIGHT;
+	private int direction = DIRECTION_LEFT_RIGHT;
 
-    public void setDirection(int direction) {
-        this.direction = direction;
-    }
+	public void setDirection(int direction) {
+		this.direction = direction;
+	}
 
-    public int getDirection() {
-        return direction;
-    }
+	public int getDirection() {
+		return direction;
+	}
 
-    protected void drawChildren(Graphics2D g, Dimension dimension) {
-        if (getChildCount() > 0) {
-            int position = 0;
+	protected void drawChildren(Graphics2D g, Dimension dimension) {
+		if (getChildCount() > 0) {
+			double position = 0.0d;
 
-            if (view instanceof ContinuousView) {
-                position = ((ContinuousView) view).getSliderMove();
-            }
+			if (view instanceof ContinuousView) {
+				position = ((ContinuousView) view).getSliderPosition();
+			}
 
-            int index;
-            if (getChildCount() == 2) {
-                // use first layer for position 0 only
-                index = position == 0 ? 0 : 1;
-            } else {
-                index = Math
-                        .round(((float) (getChildCount() - 1) * position) / 127);
-            }
+			int index;
+			if (getChildCount() == 2) {
+				// use first layer for position 0 only
+				index = position == 0.0d ? 0 : 1;
+			} else {
+				index = (int) Math.round((getChildCount() - 1) * position);
+			}
 
-            Layer layer = getChild(index);
+			Layer layer = getChild(index);
 
-            layer.draw(g, dimension);
-        }
-    }
+			layer.draw(g, dimension);
+		}
+	}
 
-    protected boolean isPressable() {
-        return true;
-    }
+	protected boolean isPressable() {
+		return true;
+	}
 
-    public void mousePressed(int x, int y, Dimension size) {
-        mouseDragged(x, y, size);
-    }
+	public void mousePressed(int x, int y, Dimension size) {
+		mouseDragged(x, y, size);
+	}
 
-    public void mouseDragged(int x, int y, Dimension size) {
-        Rectangle rectangle = getUnpaddedBounds(size);
+	public void mouseDragged(int x, int y, Dimension size) {
+		Rectangle rectangle = getUnpaddedBounds(size);
 
-        int position = 0;
+		double position = 0.0d;
 
-        switch (direction) {
-        case DIRECTION_LEFT_RIGHT:
-            position = (x - rectangle.x) * 127 / rectangle.width;
-            break;
-        case DIRECTION_RIGHT_LEFT:
-            position = (rectangle.width - (x - rectangle.x)) * 127
-                    / rectangle.width;
-            break;
-        case DIRECTION_TOP_BOTTOM:
-            position = (y - rectangle.y) * 127 / rectangle.height;
-            break;
-        case DIRECTION_BOTTOM_TOP:
-            position = (rectangle.height - (y - rectangle.y)) * 127
-                    / rectangle.height;
-            break;
-        }
+		switch (direction) {
+		case DIRECTION_LEFT_RIGHT:
+			position = (double) (x - rectangle.x) / rectangle.width;
+			break;
+		case DIRECTION_RIGHT_LEFT:
+			position = (double) (rectangle.width - (x - rectangle.x))
+					/ rectangle.width;
+			break;
+		case DIRECTION_TOP_BOTTOM:
+			position = (double) (y - rectangle.y) / rectangle.height;
+			break;
+		case DIRECTION_BOTTOM_TOP:
+			position = (double) (rectangle.height - (y - rectangle.y))
+					/ rectangle.height;
+			break;
+		}
 
-        if (view instanceof ContinuousView) {
-            position = Math.max(0, position);
-            position = Math.min(127, position);
-            ((ContinuousView) view).sliderMoved(position);
-        }
-    }
+		if (view instanceof ContinuousView) {
+			position = Math.max(0.0d, position);
+			position = Math.min(1.0d, position);
+			((ContinuousView) view).sliderPositioned(position);
+		}
+	}
 
-    public void mouseReleased(int x, int y, Dimension size) {
-        if (view instanceof ContinuousView) {
-            ((ContinuousView) view).sliderReleased();
-        }
-    }
+	public void mouseReleased(int x, int y, Dimension size) {
+		if (view instanceof ContinuousView) {
+			((ContinuousView) view).sliderReleased();
+		}
+	}
 
-    public Object clone() {
-        return (SliderLayer) super.clone();
-    }
+	public Object clone() {
+		return (SliderLayer) super.clone();
+	}
 }

@@ -21,6 +21,7 @@ package jorgan.gui.console;
 import java.awt.Font;
 import java.awt.Insets;
 import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
 import jorgan.disposition.Continuous;
 import jorgan.skin.Layer;
@@ -33,77 +34,110 @@ import jorgan.skin.TextLayer;
  */
 public class ContinuousView extends View {
 
-    public static final String TEXT_VALUE = "value";
+	/**
+	 * The key of the {@link Continuous#getValue()} text for {@link TextLayer}s.
+	 */
+	public static final String TEXT_VALUE = "value";
 
-    private DecimalFormat format = new DecimalFormat("000");
+	/**
+	 * The key of the position text for {@link TextLayer}s.
+	 */
+	public static final String TEXT_POSITION = "position";
 
-    public ContinuousView(Continuous continuous) {
-        super(continuous);
-    }
+	private NumberFormat valueFormat = new DecimalFormat("000");
 
-    protected Continuous getContinuous() {
-        return (Continuous) getElement();
-    }
+	private NumberFormat positionFormat = NumberFormat.getPercentInstance();
+	
+	/**
+	 * Constructor.
+	 * 
+	 * @param continuous
+	 *            continuous to view
+	 */
+	public ContinuousView(Continuous continuous) {
+		super(continuous);
+	}
 
-    protected void initTexts() {
-        super.initTexts();
+	protected Continuous getContinuous() {
+		return (Continuous) getElement();
+	}
 
-        setText(TEXT_VALUE, format.format(getContinuous().getValue() + 1));
-    }
+	protected void initTexts() {
+		super.initTexts();
 
-    public int getSliderMove() {
-        return getContinuous().getValue();
-    }
+		int value = getContinuous().getValue();
+		
+		setText(TEXT_VALUE, valueFormat.format(value + 1));
+		setText(TEXT_POSITION, positionFormat.format(value / 127.0d));
+	}
 
-    public void sliderMoved(int value) {
-        getContinuous().setValue(value);
-    }
+	/**
+	 * Get the position for a {@link SliderLayer}.
+	 * 
+	 * @return the current position
+	 */
+	public double getSliderPosition() {
+		return getContinuous().getValue() / 127.0d;
+	}
 
-    public void sliderReleased() {
-        if (!getContinuous().isLocking()) {
-            getContinuous().setValue(0);
-        }
-    }
+	/**
+	 * The {@link jorgan.skin.SliderLayer} was positioned.
+	 * 
+	 * @param position
+	 *            the new position
+	 */
+	public void sliderPositioned(double position) {
+		getContinuous().setValue((int) (position * 127));
+	}
 
-    protected Style createDefaultStyle() {
-        Style style = new Style();
+	/**
+	 * The {@link jorgan.skin.SliderLayer} was released.
+	 */
+	public void sliderReleased() {
+		if (!getContinuous().isLocking()) {
+			getContinuous().setValue(0);
+		}
+	}
 
-        style.addChild(createTextNameLayer());
-        style.addChild(createTextValueLayer());
-        style.addChild(createSliderLayer());
+	protected Style createDefaultStyle() {
+		Style style = new Style();
 
-        return style;
-    }
+		style.addChild(createTextNameLayer());
+		style.addChild(createTextValueLayer());
+		style.addChild(createSliderLayer());
 
-    protected TextLayer createTextNameLayer() {
-        Font font = Configuration.instance().getFont();
-        
-        TextLayer layer = new TextLayer();
-        layer.setText("${" + TEXT_NAME + "}");
-        layer.setPadding(new Insets(4, 4, 4 + font.getSize(), 4));
-        layer.setFont(font);
-        layer.setColor(getDefaultColor());
+		return style;
+	}
 
-        return layer;
-    }
+	protected TextLayer createTextNameLayer() {
+		Font font = Configuration.instance().getFont();
 
-    protected TextLayer createTextValueLayer() {
-        Font font = Configuration.instance().getFont();
-        
-        TextLayer layer = new TextLayer();
-        layer.setText("${" + TEXT_VALUE + "}");
-        layer.setPadding(new Insets(4 + font.getSize(), 4, 4, 4));
-        layer.setFont(font);
-        layer.setColor(getDefaultColor());
+		TextLayer layer = new TextLayer();
+		layer.setText("${" + TEXT_NAME + "}");
+		layer.setPadding(new Insets(4, 4, 4 + font.getSize(), 4));
+		layer.setFont(font);
+		layer.setColor(getDefaultColor());
 
-        return layer;
-    }
+		return layer;
+	}
 
-    protected SliderLayer createSliderLayer() {
-        SliderLayer layer = new SliderLayer();
-        layer.setFill(Layer.BOTH);
-        layer.setPadding(new Insets(4, 4, 4, 4));
+	protected TextLayer createTextValueLayer() {
+		Font font = Configuration.instance().getFont();
 
-        return layer;
-    }
+		TextLayer layer = new TextLayer();
+		layer.setText("${" + TEXT_VALUE + "}");
+		layer.setPadding(new Insets(4 + font.getSize(), 4, 4, 4));
+		layer.setFont(font);
+		layer.setColor(getDefaultColor());
+
+		return layer;
+	}
+
+	protected SliderLayer createSliderLayer() {
+		SliderLayer layer = new SliderLayer();
+		layer.setFill(Layer.BOTH);
+		layer.setPadding(new Insets(4, 4, 4, 4));
+
+		return layer;
+	}
 }
