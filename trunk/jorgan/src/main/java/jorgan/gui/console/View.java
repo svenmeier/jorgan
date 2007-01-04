@@ -41,206 +41,269 @@ import jorgan.skin.TextLayer;
  */
 public class View {
 
-    public static final String TEXT_NAME = "name";
-    public static final String TEXT_DESCRIPTION = "description";
+	/**
+	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
+	 */
+	public static final String TEXT_NAME = "name";
 
-    /**
-     * The resource bundle.
-     */
-    protected static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+	/**
+	 * The key of the {@link Element#getDescription()} text for
+	 * {@link TextLayer}s.
+	 */
+	public static final String TEXT_DESCRIPTION = "description";
 
-    protected Dimension size = new Dimension();
+	/**
+	 * The resource bundle.
+	 */
+	protected static ResourceBundle resources = ResourceBundle
+			.getBundle("jorgan.gui.resources");
 
-    protected Point location = new Point();
+	protected Dimension size = new Dimension();
 
-    /**
-     * The style of this view.
-     */
-    protected Style style;
+	protected Point location = new Point();
 
-    /**
-     * The containing viewPanel.
-     */
-    private ConsolePanel consolePanel;
+	/**
+	 * The style of this view.
+	 */
+	protected Style style;
 
-    /**
-     * The element represented by this view.
-     */
-    private Element element;
+	/**
+	 * The containing viewPanel.
+	 */
+	private ConsolePanel consolePanel;
 
-    private Map texts = new HashMap();
+	/**
+	 * The element represented by this view.
+	 */
+	private Element element;
 
-    /**
-     * Create a view for the given element.
-     * 
-     * @param element
-     *            element to create view for
-     */
-    public View(Element element) {
+	private Map texts = new HashMap();
 
-        this.element = element;
-    }
+	/**
+	 * Create a view for the given element.
+	 * 
+	 * @param element
+	 *            element to create view for
+	 */
+	public View(Element element) {
 
-    protected void setText(String name, String text) {
-        texts.put(name, text);
-    }
+		this.element = element;
+	}
 
-    public String getText(String name) {
-        String text = (String) texts.get(name);
+	protected void setText(String name, String text) {
+		texts.put(name, text);
+	}
 
-        if (text == null) {
-            text = "";
-        }
+	/**
+	 * Get the text for the given key.
+	 * 
+	 * @param key
+	 *            key to get text for
+	 * @return text
+	 */
+	public String getText(String key) {
+		String text = (String) texts.get(key);
 
-        return text;
-    }
+		if (text == null) {
+			text = "";
+		}
 
-    public void setConsolePanel(ConsolePanel consolePanel) {
-        this.consolePanel = consolePanel;
+		return text;
+	}
 
-        if (consolePanel != null) {
-            changeUpdate(null);
-        }
-    }
+	/**
+	 * Set the containing {@link ConsolePanel}.
+	 * 
+	 * @param consolePanel
+	 *            containing panel
+	 */
+	public void setConsolePanel(ConsolePanel consolePanel) {
+		this.consolePanel = consolePanel;
 
-    public ConsolePanel getConsolePanel() {
-        return consolePanel;
-    }
+		if (consolePanel != null) {
+			changeUpdate(null);
+		}
+	}
 
-    /**
-     * Get the element represented by this view.
-     * 
-     * @return the element
-     */
-    public Element getElement() {
-        return element;
-    }
+	/**
+	 * Get the containing {@link ConsolePanel}.
+	 * 
+	 * @return containing panel
+	 */
+	public ConsolePanel getConsolePanel() {
+		return consolePanel;
+	}
 
-    public boolean contains(int x, int y) {
+	/**
+	 * Get the element represented by this view.
+	 * 
+	 * @return the element
+	 */
+	public Element getElement() {
+		return element;
+	}
 
-        return (location.x < x) && (location.x + size.width > x)
-                && (location.y < y) && (location.y + size.height > y);
-    }
+	/**
+	 * Is the point with the given coordinates contained.
+	 * 
+	 * @param x
+	 *            x coordinate
+	 * @param y
+	 *            y coordinate
+	 * @return containment
+	 */
+	public boolean contains(int x, int y) {
 
-    /**
-     * Update this view in response to a change of an element.
-     * 
-     * @param event
-     *            event of disposition
-     */
-    public void changeUpdate(OrganEvent event) {
+		return (location.x < x) && (location.x + size.width > x)
+				&& (location.y < y) && (location.y + size.height > y);
+	}
 
-        // issure repaint so old location gets cleared
-        // in case of a changed bounds
-        repaint();
+	/**
+	 * Update this view in response to a change of an element.
+	 * 
+	 * @param event
+	 *            event of disposition
+	 */
+	public void changeUpdate(OrganEvent event) {
 
-        initLocation();
+		// issure repaint so old location gets cleared
+		// in case of a changed bounds
+		repaint();
 
-        initTexts();
+		initLocation();
 
-        initStyle();
+		initTexts();
 
-        repaint();
-    }
+		initStyle();
 
-    protected void initLocation() {
-        location = consolePanel.getLocation(element);
-    }
+		repaint();
+	}
 
-    protected void initTexts() {
-        setText(TEXT_NAME, Documents.getInstance().getDisplayName(getElement()));
-        setText(TEXT_DESCRIPTION, getElement().getDescription());
-    }
+	protected void initLocation() {
+		location = consolePanel.getLocation(element);
+	}
 
-    protected void initStyle() {
-        style = null;
+	protected void initTexts() {
+		setText(TEXT_NAME, Documents.getInstance().getDisplayName(getElement()));
+		setText(TEXT_DESCRIPTION, getElement().getDescription());
+	}
 
-        Skin skin = consolePanel.getSkin();
-        if (skin != null) {
-            String styleName = element.getStyle();
-            style = skin.createStyle(styleName);
-        }
-        if (style == null) {
-            style = createDefaultStyle();
-        }
-        style.setView(this);
+	protected void initStyle() {
+		style = null;
 
-        size = style.getSize();
-    }
+		Skin skin = consolePanel.getSkin();
+		if (skin != null) {
+			String styleName = element.getStyle();
+			style = skin.createStyle(styleName);
+		}
+		if (style == null) {
+			style = createDefaultStyle();
+		}
+		style.setView(this);
 
-    protected void repaint() {
-        consolePanel.repaintView(this);
-    }
+		size = style.getSize();
+	}
 
-    public int getX() {
-        return location.x;
-    }
+	protected void repaint() {
+		consolePanel.repaintView(this);
+	}
 
-    public int getY() {
-        return location.y;
-    }
+	/**
+	 * Get x.
+	 * 
+	 * @return x
+	 */
+	public int getX() {
+		return location.x;
+	}
 
-    public int getWidth() {
-        return size.width;
-    }
+	/**
+	 * Get y.
+	 * 
+	 * @return y
+	 */
+	public int getY() {
+		return location.y;
+	}
 
-    public int getHeight() {
-        return size.height;
-    }
+	/**
+	 * Get width.
+	 * 
+	 * @return width
+	 */
+	public int getWidth() {
+		return size.width;
+	}
 
-    /**
-     * Paint this view.
-     * 
-     * @param graphics
-     *            graphics to paint on
-     */
-    public void paint(Graphics2D g) {
-        g.translate(location.x, location.y);
+	/**
+	 * Get height.
+	 * 
+	 * @return height
+	 */
+	public int getHeight() {
+		return size.height;
+	}
 
-        style.draw(g, size);
+	/**
+	 * Paint this view.
+	 * 
+	 * @param g
+	 *            graphics to paint on
+	 */
+	public void paint(Graphics2D g) {
+		g.translate(location.x, location.y);
 
-        g.translate(-location.x, -location.y);
-    }
+		style.draw(g, size);
 
-    public final boolean isPressable(int x, int y) {
+		g.translate(-location.x, -location.y);
+	}
 
-        return style.isPressable(x - location.x, y - location.y, size);
-    }
+	/**
+	 * Is this view pressable on the given coordinate.
+	 * 
+	 * @param x
+	 *            x coordinate
+	 * @param y
+	 *            y coordinate
+	 * @return pressable
+	 */
+	public final boolean isPressable(int x, int y) {
 
-    public final void mousePressed(int x, int y) {
-        style.mousePressed(x - location.x, y - location.y, size);
-    }
+		return style.isPressable(x - location.x, y - location.y, size);
+	}
 
-    public final void mouseDragged(int x, int y) {
-        style.mouseDragged(x - location.x, y - location.y, size);
-    }
+	public final void mousePressed(int x, int y) {
+		style.mousePressed(x - location.x, y - location.y, size);
+	}
 
-    public final void mouseReleased(int x, int y) {
-        style.mouseReleased(x - location.x, y - location.y, size);
-    }
+	public final void mouseDragged(int x, int y) {
+		style.mouseDragged(x - location.x, y - location.y, size);
+	}
 
-    public void keyPressed(KeyEvent ev) {
-    }
+	public final void mouseReleased(int x, int y) {
+		style.mouseReleased(x - location.x, y - location.y, size);
+	}
 
-    protected Color getDefaultColor() {
-        return Color.BLACK;
-    }
+	public void keyPressed(KeyEvent ev) {
+	}
 
-    protected Style createDefaultStyle() {
-        Style style = new Style();
+	public void keyReleased(KeyEvent ev) {
+	}
 
-        TextLayer layer = new TextLayer();
-        layer.setText("${" + TEXT_NAME + "}");
-        layer.setPadding(new Insets(4, 4, 4, 4));
-        layer.setFont(Configuration.instance().getFont());
-        layer.setColor(getDefaultColor());
-        style.addChild(layer);
+	protected Color getDefaultColor() {
+		return Color.BLACK;
+	}
 
-        return style;
-    }
+	protected Style createDefaultStyle() {
+		Style style = new Style();
 
-    public double getZoom() {
-        return getConsolePanel().getConsole().getZoom();
-    }
+		TextLayer layer = new TextLayer();
+		layer.setText("${" + TEXT_NAME + "}");
+		layer.setPadding(new Insets(4, 4, 4, 4));
+		layer.setFont(Configuration.instance().getFont());
+		layer.setColor(getDefaultColor());
+		style.addChild(layer);
+
+		return style;
+	}
 }

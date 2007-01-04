@@ -33,90 +33,107 @@ import jorgan.skin.TextLayer;
  */
 public class ActivateableView extends MomentaryView {
 
-    public ActivateableView(Activateable activateable) {
-        super(activateable);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param activateable	the activateable to view
+	 */
+	public ActivateableView(Activateable activateable) {
+		super(activateable);
+	}
 
-    protected Activateable getActivateable() {
-        return (Activateable) getElement();
-    }
+	protected Activateable getActivateable() {
+		return (Activateable) getElement();
+	}
 
-    protected void shortcutMatched() {
-        Activateable activateable = getActivateable();
+	protected void shortcutPressed() {
+		Activateable activateable = getActivateable();
 
-        activateable.setActive(!activateable.isActive());
-    }
+		if (activateable.isLocking()) {
+			activateable.setActive(!activateable.isActive());
+		} else {
+			activateable.setActive(true);
+		}
+	}
 
-    public boolean isButtonPressed() {
-        return getActivateable().isActive();
-    }
+	protected void shortcutReleased() {
+		Activateable activateable = getActivateable();
 
-    public void buttonPressed() {
-        getActivateable().setActive(!getActivateable().isActive());
-    }
+		if (!activateable.isLocking()) {
+			activateable.setActive(false);
+		}
+	}
 
-    public void buttonReleased() {
-        if (!getActivateable().isLocking()) {
-            getActivateable().setActive(false);
-        }
-    }
+	public boolean isButtonPressed() {
+		return getActivateable().isActive();
+	}
 
-    protected Style createDefaultStyle() {
-        Style style = new Style();
+	public void buttonPressed() {
+		getActivateable().setActive(!getActivateable().isActive());
+	}
 
-        style.addChild(createTextLayer());
+	public void buttonReleased() {
+		if (!getActivateable().isLocking()) {
+			getActivateable().setActive(false);
+		}
+	}
 
-        style.addChild(createButtonLayer());
+	protected Style createDefaultStyle() {
+		Style style = new Style();
 
-        return style;
-    }
+		style.addChild(createTextLayer());
 
-    private Layer createTextLayer() {
-        TextLayer layer = new TextLayer();
-        layer.setText("${" + TEXT_NAME + "}");
-        layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
-        layer.setAnchor(TextLayer.LEFT);
-        layer.setFont(Configuration.instance().getFont());
-        layer.setColor(getDefaultColor());
+		style.addChild(createButtonLayer());
 
-        return layer;
-    }
+		return style;
+	}
 
-    private Layer createButtonLayer() {
-        ButtonLayer buttonLayer = new ButtonLayer();
-        buttonLayer.setFill(ButtonLayer.BOTH);
+	private Layer createTextLayer() {
+		TextLayer layer = new TextLayer();
+		layer.setText("${" + TEXT_NAME + "}");
+		layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
+		layer.setAnchor(TextLayer.LEFT);
+		layer.setFont(Configuration.instance().getFont());
+		layer.setColor(getDefaultColor());
 
-        buttonLayer.addChild(createCheckLayer(false));
+		return layer;
+	}
 
-        buttonLayer.addChild(createCheckLayer(true));
+	private Layer createButtonLayer() {
+		ButtonLayer buttonLayer = new ButtonLayer();
+		buttonLayer.setFill(ButtonLayer.BOTH);
 
-        return buttonLayer;
-    }
+		buttonLayer.addChild(createCheckLayer(false));
 
-    private Layer createCheckLayer(final boolean activated) {
-        Layer layer = new Layer() {
-            protected void draw(Graphics2D g, int x, int y, int width,
-                    int height) {
-                g.setColor(Color.black);
+		buttonLayer.addChild(createCheckLayer(true));
 
-                g.drawRect(x, y, width - 1, height - 1);
+		return buttonLayer;
+	}
 
-                if (activated) {
-                    g.drawLine(x + 3, y + 5, x + 3, y + 7);
-                    g.drawLine(x + 4, y + 6, x + 4, y + 8);
-                    g.drawLine(x + 5, y + 7, x + 5, y + 9);
-                    g.drawLine(x + 6, y + 6, x + 6, y + 8);
-                    g.drawLine(x + 7, y + 5, x + 7, y + 7);
-                    g.drawLine(x + 8, y + 4, x + 8, y + 6);
-                    g.drawLine(x + 9, y + 3, x + 9, y + 5);
-                }
-            }
-        };
-        layer.setWidth(13);
-        layer.setHeight(13);
-        layer.setPadding(new Insets(4, 4, 4, 4));
-        layer.setAnchor(Layer.LEFT);
+	private Layer createCheckLayer(final boolean activated) {
+		Layer layer = new Layer() {
+			protected void draw(Graphics2D g, int x, int y, int width,
+					int height) {
+				g.setColor(Color.black);
 
-        return layer;
-    }
+				g.drawRect(x, y, width - 1, height - 1);
+
+				if (activated) {
+					g.drawLine(x + 3, y + 5, x + 3, y + 7);
+					g.drawLine(x + 4, y + 6, x + 4, y + 8);
+					g.drawLine(x + 5, y + 7, x + 5, y + 9);
+					g.drawLine(x + 6, y + 6, x + 6, y + 8);
+					g.drawLine(x + 7, y + 5, x + 7, y + 7);
+					g.drawLine(x + 8, y + 4, x + 8, y + 6);
+					g.drawLine(x + 9, y + 3, x + 9, y + 5);
+				}
+			}
+		};
+		layer.setWidth(13);
+		layer.setHeight(13);
+		layer.setPadding(new Insets(4, 4, 4, 4));
+		layer.setAnchor(Layer.LEFT);
+
+		return layer;
+	}
 }

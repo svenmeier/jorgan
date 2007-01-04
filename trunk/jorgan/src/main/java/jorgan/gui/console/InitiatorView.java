@@ -35,86 +35,92 @@ import jorgan.skin.TextLayer;
  */
 public class InitiatorView extends MomentaryView {
 
-    private boolean pressed;
+	private boolean pressed;
 
-    public InitiatorView(Initiator initiator) {
-        super(initiator);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param initiator
+	 *            the initiator to view
+	 */
+	public InitiatorView(Initiator initiator) {
+		super(initiator);
+	}
 
-    protected Initiator getInitiator() {
-        return (Initiator) getElement();
-    }
+	protected Initiator getInitiator() {
+		return (Initiator) getElement();
+	}
 
-    protected void shortcutMatched() {
-        Initiator initiator = getInitiator();
+	protected void shortcutPressed() {
+		Initiator initiator = getInitiator();
 
-        initiator.initiate();
-    }
+		initiator.initiate();
+	}
 
-    public boolean isButtonPressed() {
-        return pressed;
-    }
+	public boolean isButtonPressed() {
+		return pressed;
+	}
 
-    public void buttonPressed() {
-        getInitiator().initiate();
+	public void buttonPressed() {
+		getInitiator().initiate();
 
-        pressed = true;
-        repaint();
-    }
+		pressed = true;
+		repaint();
+	}
 
-    public void buttonReleased() {
-        pressed = false;
-        repaint();
-    }
+	public void buttonReleased() {
+		pressed = false;
+		repaint();
+	}
 
-    protected Style createDefaultStyle() {
-        Style style = new Style();
+	protected Style createDefaultStyle() {
+		Style style = new Style();
 
-        style.addChild(createTextLayer());
+		style.addChild(createTextLayer());
 
-        style.addChild(createButtonLayer());
+		style.addChild(createButtonLayer());
 
-        return style;
-    }
+		return style;
+	}
 
-    private Layer createTextLayer() {
-        TextLayer layer = new TextLayer();
-        layer.setText("${" + TEXT_NAME + "}");
-        layer.setPadding(new Insets(4, 4, 4, 4));
-        layer.setFont(Configuration.instance().getFont());
-        layer.setColor(getDefaultColor());
+	private Layer createTextLayer() {
+		TextLayer layer = new TextLayer();
+		layer.setText("${" + TEXT_NAME + "}");
+		layer.setPadding(new Insets(4, 4, 4, 4));
+		layer.setFont(Configuration.instance().getFont());
+		layer.setColor(getDefaultColor());
 
-        return layer;
-    }
+		return layer;
+	}
 
-    private Layer createButtonLayer() {
+	private Layer createButtonLayer() {
 
-        ButtonLayer buttonLayer = new ButtonLayer();
-        buttonLayer.setFill(ButtonLayer.BOTH);
+		ButtonLayer buttonLayer = new ButtonLayer();
+		buttonLayer.setFill(ButtonLayer.BOTH);
 
-        buttonLayer.addChild(createBorderLayer(false));
+		buttonLayer.addChild(createBorderLayer(false));
 
-        buttonLayer.addChild(createBorderLayer(true));
+		buttonLayer.addChild(createBorderLayer(true));
 
-        return buttonLayer;
-    }
+		return buttonLayer;
+	}
 
-    private Layer createBorderLayer(final boolean pressed) {
-        Layer layer = new Layer() {
-            protected void draw(Graphics2D g, int x, int y, int width,
-                    int height) {
+	private Layer createBorderLayer(final boolean pressed) {
+		Layer layer = new Layer() {
+			protected void draw(Graphics2D g, int x, int y, int width,
+					int height) {
 
-                g.setColor(Color.black);
+				g.setColor(Color.black);
 
-                g.drawRect(x, y, width - 1, height - 1);
+				g.drawRect(x, y, width - 1, height - 1);
 
-                if (pressed) {
-                    g.drawRect(x + 1, y + 1, width - 3, height - 3);
-                }
-            }
-        };
-        layer.setFill(Layer.BOTH);
+				if (pressed) {
+					g.drawRect(x + 1, y + 1, width - 3, height - 3);
+				}
+			}
+		};
+		layer.setFill(Layer.BOTH);
 
-        return layer;
-    }
+		return layer;
+	}
 }

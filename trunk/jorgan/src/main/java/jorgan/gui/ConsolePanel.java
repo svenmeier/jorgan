@@ -1188,17 +1188,30 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	private class ShortcutHandler implements KeyEventPostProcessor {
 
 		public boolean postProcessKeyEvent(KeyEvent e) {
-			if (!constructing && e.getID() == KeyEvent.KEY_PRESSED
-					&& !Shortcut.isModifier(e.getKeyCode())) {
-				if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
-						.getFocusedWindow() == SwingUtilities
-						.getWindowAncestor(ConsolePanel.this)) {
+			if (constructing) {
+				return false;
+			}
+			if (Shortcut.isModifier(e.getKeyCode())) {
+				return false;
+			}
+			
+			if (e.getID() == KeyEvent.KEY_TYPED) {
+				return false;
+			}
+			boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
 
-					for (int r = 0; r < console.getReferenceCount(); r++) {
-						View view = getView(console.getReference(r)
-								.getElement());
+			if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
+					.getFocusedWindow() == SwingUtilities
+					.getWindowAncestor(ConsolePanel.this)) {
 
+				for (int r = 0; r < console.getReferenceCount(); r++) {
+					View view = getView(console.getReference(r)
+							.getElement());
+
+					if (pressed) {
 						view.keyPressed(e);
+					} else {
+						view.keyReleased(e);
 					}
 				}
 			}

@@ -29,47 +29,77 @@ import jorgan.disposition.Shortcut;
  */
 public abstract class MomentaryView extends View {
 
-    public MomentaryView(Momentary responsive) {
-        super(responsive);
-    }
+	/**
+	 * Constructor.
+	 * 
+	 * @param momentary	the momentary to view
+	 */
+	public MomentaryView(Momentary momentary) {
+		super(momentary);
+	}
 
-    protected Momentary getMomentary() {
-        return (Momentary) getElement();
-    }
+	protected Momentary getMomentary() {
+		return (Momentary) getElement();
+	}
 
-    public void keyPressed(KeyEvent ev) {
+	public void keyPressed(KeyEvent ev) {
 
-        Momentary momentary = getMomentary();
+		Momentary momentary = getMomentary();
 
-        Shortcut shortcut = momentary.getShortcut();
-        if (shortcut != null && shortcut.match(ev)) {
-            shortcutMatched();
-        }
-    }
+		Shortcut shortcut = momentary.getShortcut();
+		if (shortcut != null && shortcut.match(ev)) {
+			shortcutPressed();
+		}
+	}
 
-    protected abstract void shortcutMatched();
+	public void keyReleased(KeyEvent ev) {
 
-    public abstract boolean isButtonPressed();
+		Momentary momentary = getMomentary();
 
-    public abstract void buttonPressed();
+		Shortcut shortcut = momentary.getShortcut();
+		if (shortcut != null && shortcut.match(ev)) {
+			shortcutReleased();
+		}
+	}
 
-    public abstract void buttonReleased();
-    
-    public void paint(Graphics2D g) {
-        super.paint(g);
-        
-        paintShortcut(g);
-    }
-    
-    protected void paintShortcut(Graphics2D g) {
-        if (Configuration.instance().getShowShortcut()) {
-            Shortcut shortcut = getMomentary().getShortcut();
-            if (shortcut != null) {
-                g.setFont(Configuration.instance().getShortcutFont());
-                g.setColor(Configuration.instance().getShortcutColor());
-                
-                g.drawString(shortcut.toString(), getX(), getY() + getHeight());
-            }
-        }
-    }
+	protected void shortcutPressed() {
+	}
+
+	protected void shortcutReleased() {
+	}
+
+	/**
+	 * Is the {@link jorgan.skin.ButtonLayer} currently pressed.
+	 * 
+	 * @return 	pressed
+	 */
+	public abstract boolean isButtonPressed();
+
+	/**
+	 * The {@link jorgan.skin.ButtonLayer} was pressed.
+	 */
+	public abstract void buttonPressed();
+
+	/**
+	 * The {@link jorgan.skin.ButtonLayer} was released.
+	 */
+	public abstract void buttonReleased();
+
+	public void paint(Graphics2D g) {
+		super.paint(g);
+
+		paintShortcut(g);
+	}
+
+	protected void paintShortcut(Graphics2D g) {
+		if (Configuration.instance().getShowShortcut()) {
+			Shortcut shortcut = getMomentary().getShortcut();
+			if (shortcut != null) {
+				g.setFont(Configuration.instance().getShortcutFont());
+				g.setColor(Configuration.instance().getShortcutColor());
+
+				g.drawString(shortcut.toString(), getX(), getY() + getHeight());
+			}
+		}
+	}
 }

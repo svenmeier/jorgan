@@ -51,15 +51,15 @@ public class ContinuousView extends View {
         setText(TEXT_VALUE, format.format(getContinuous().getValue() + 1));
     }
 
-    public int getValue() {
+    public int getSliderMove() {
         return getContinuous().getValue();
     }
 
-    public void setValue(int value) {
+    public void sliderMoved(int value) {
         getContinuous().setValue(value);
     }
 
-    public void released() {
+    public void sliderReleased() {
         if (!getContinuous().isLocking()) {
             getContinuous().setValue(0);
         }
