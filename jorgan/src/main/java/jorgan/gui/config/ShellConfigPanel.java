@@ -32,15 +32,13 @@ import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
 import jorgan.shell.Configuration;
+import jorgan.shell.Interpreter;
 import jorgan.swing.GridBuilder;
 
 /**
  * A panel for the {@link jorgan.shell.Configuration}.
  */
 public class ShellConfigPanel extends ConfigurationPanel {
-
-	private static final String[] encodings = new String[] { "Cp1252", "Cp850",
-			"ISO-8859-1", "US-ASCII", "UTF-16", "UTF-8" };
 
 	private JPanel encodingPanel = new JPanel();
 
@@ -52,22 +50,27 @@ public class ShellConfigPanel extends ConfigurationPanel {
 
 	private JComboBox encodingComboBox = new JComboBox();
 
+	/**
+	 * Constructor.
+	 */
 	public ShellConfigPanel() {
 		setName(resources.getString("config.shell.name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{1.0d});
-		
+
+		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
+
 		builder.nextRow(1.0d);
 
 		encodingPanel.setLayout(new GridBagLayout());
 		encodingPanel.setBorder(new TitledBorder(BorderFactory
 				.createEtchedBorder(), resources
 				.getString("config.shell.encoding")));
-		add(encodingPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+		add(encodingPanel, builder.nextColumn().gridWidthRemainder()
+				.fillHorizontal());
 
-		GridBuilder encodingBuilder = new GridBuilder(new double[]{0.0d, 1.0d});
-		
+		GridBuilder encodingBuilder = new GridBuilder(
+				new double[] { 0.0d, 1.0d });
+
 		encodingBuilder.nextRow();
 
 		String defaultEncoding = System.getProperty("file.encoding");
@@ -75,17 +78,20 @@ public class ShellConfigPanel extends ConfigurationPanel {
 				.getString("config.shell.encodingDefault"),
 				new Object[] { defaultEncoding }));
 		buttonGroup.add(encodingDefaultRadioButton);
-		encodingPanel.add(encodingDefaultRadioButton, encodingBuilder.nextColumn().gridWidthRemainder());
+		encodingPanel.add(encodingDefaultRadioButton, encodingBuilder
+				.nextColumn().gridWidthRemainder());
 
 		encodingBuilder.nextRow();
 
 		encodingOtherRadioButton.setText(resources
 				.getString("config.shell.encodingOther"));
 		buttonGroup.add(encodingOtherRadioButton);
-		encodingPanel.add(encodingOtherRadioButton, encodingBuilder.nextColumn());
+		encodingPanel.add(encodingOtherRadioButton, encodingBuilder
+				.nextColumn());
 
 		encodingComboBox.setEditable(true);
-		encodingComboBox.setModel(new DefaultComboBoxModel(encodings));
+		encodingComboBox.setModel(new DefaultComboBoxModel(Interpreter
+				.getEncodings()));
 		encodingOtherRadioButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
 				encodingComboBox.setEnabled(encodingOtherRadioButton

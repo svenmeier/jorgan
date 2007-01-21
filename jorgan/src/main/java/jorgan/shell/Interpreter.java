@@ -24,7 +24,10 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
@@ -33,6 +36,8 @@ import java.util.StringTokenizer;
  * @see jorgan.shell.Command
  */
 public class Interpreter {
+
+	private static String[] encodings;
 
 	/**
 	 * The default prompt.
@@ -111,6 +116,24 @@ public class Interpreter {
 		writer = new PrintWriter(new OutputStreamWriter(System.out, encoding));
 
 		this.encoding = encoding;
+	}
+
+	/**
+	 * Get all supported encodings.
+	 * 
+	 * @return encodings
+	 */
+	public static String[] getEncodings() {
+		if (encodings == null) {
+			Set keys = Charset.availableCharsets().keySet();
+
+			String[] encodings = (String[]) keys.toArray(new String[keys.size()]);
+			
+			Arrays.sort(encodings);
+			
+			Interpreter.encodings = encodings;
+		}
+		return encodings;
 	}
 
 	/**
