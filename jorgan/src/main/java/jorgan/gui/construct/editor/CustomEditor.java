@@ -18,41 +18,61 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.*;
-import java.beans.*;
+import java.awt.Component;
+import java.beans.PropertyEditorSupport;
 
 /**
  * Abstract base class for propertyEditors that support a custom editor.
  */
-public abstract class CustomEditor extends PropertyEditorSupport  {
+public abstract class CustomEditor extends PropertyEditorSupport {
 
-  public final String getAsText() {
-    return format(super.getValue());
-  }
+	public final String getAsText() {
+		return format(super.getValue());
+	}
 
-  public final boolean supportsCustomEditor() {
-    return true;
-  }
+	public final boolean supportsCustomEditor() {
+		return true;
+	}
 
-  public final Component getCustomEditor() {
+	public final Component getCustomEditor() {
 
-    return getCustomEditor(super.getValue());
-  }
+		return getCustomEditor(super.getValue());
+	}
 
-  public abstract Component getCustomEditor(Object value);
+	/**
+	 * Get the custom editor initialized with the given value.
+	 * 
+	 * @param value
+	 *            the value to get editor for
+	 * @return editor
+	 */
+	protected abstract Component getCustomEditor(Object value);
 
-  public final Object getValue() {
+	public final Object getValue() {
 
-    Object editedValue = getEditedValue();
-    if (editedValue == null && super.getValue() != null              ||
-        editedValue != null && !editedValue.equals(super.getValue())) {
-      setValue(editedValue);
-    }
+		Object editedValue = getEditedValue();
+		if (editedValue == null && super.getValue() != null
+				|| editedValue != null && !editedValue.equals(super.getValue())) {
+			setValue(editedValue);
+		}
 
-    return super.getValue();
-  }
+		return super.getValue();
+	}
 
-  protected abstract Object getEditedValue();
-  
-  protected abstract String format(Object value);
+	/**
+	 * Get the edited value from the editor.
+	 * 
+	 * @return edited value
+	 */
+	protected abstract Object getEditedValue();
+
+	/**
+	 * Format the given value to be displayed as text.
+	 * 
+	 * @param value
+	 *            value to format
+	 * @return formatted value
+	 * @see #getAsText()
+	 */
+	protected abstract String format(Object value);
 }
