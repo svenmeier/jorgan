@@ -23,41 +23,48 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
 /**
- * A wrapper of a receiver.
+ * A wrapper of a transmitter.
  */
 public class TransmitterWrapper implements Transmitter {
 
-    private Transmitter transmitter;
-    
-    private Receiver receiver;
-    
-    public TransmitterWrapper(Transmitter transmitter) {
-        this.transmitter = transmitter;
-        
-        transmitter.setReceiver(new Receiver() {
-            public void close() {
-            }
-            public void send(MidiMessage message, long timeStamp) {
-                TransmitterWrapper.this.send(message, timeStamp);
-            }
-        });
-    }
+	private Transmitter transmitter;
 
-    public void close() {
-        transmitter.close();
-    }
-    
-    public Receiver getReceiver() {
-        return receiver;
-    }
-    
-    public void setReceiver(Receiver receiver) {
-        this.receiver = receiver;
-    }
-    
-    protected void send(MidiMessage message, long timeStamp) {
-        if (receiver != null) {
-            receiver.send(message, timeStamp);
-        }
-    }
+	private Receiver receiver;
+
+	/**
+	 * Wrap the given transmitter.
+	 * 
+	 * @param transmitter
+	 *            transmitter to wrap
+	 */
+	public TransmitterWrapper(Transmitter transmitter) {
+		this.transmitter = transmitter;
+
+		transmitter.setReceiver(new Receiver() {
+			public void close() {
+			}
+
+			public void send(MidiMessage message, long timeStamp) {
+				TransmitterWrapper.this.send(message, timeStamp);
+			}
+		});
+	}
+
+	public void close() {
+		transmitter.close();
+	}
+
+	public Receiver getReceiver() {
+		return receiver;
+	}
+
+	public void setReceiver(Receiver receiver) {
+		this.receiver = receiver;
+	}
+
+	protected void send(MidiMessage message, long timeStamp) {
+		if (receiver != null) {
+			receiver.send(message, timeStamp);
+		}
+	}
 }

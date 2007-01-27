@@ -18,150 +18,166 @@
  */
 package jorgan.sound.midi.merge;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
 
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.Loopback;
 
-
 /**
- * <code>MidiDevice</code> for merging of mutiple other devices. 
+ * <code>MidiDevice</code> for merging of mutiple other devices.
  */
 public class MidiMerger extends Loopback {
-  
-  /**
-   * The list of inputs to merge.
-   */
-  private List mergeInputs = new ArrayList();
-  
-  /**
-   * Create a new midiMerger.
-   * 
-   * @param info        info to use
-   */
-  public MidiMerger(MidiDevice.Info info) {
-    super(info, false, true);
-  }
-  
-  /**
-   * Set the inputs to merge.
-   * <br>
-   * This change has immediate effect only If this midiMerger is not currently
-   * open, otherwise it is delayed until the next opening. 
-   * 
-   * @param mergeInputs the inputs to merge
-   */
-  public void setMergeInputs(List mergeInputs) {
-    if (mergeInputs == null) {
-      throw new IllegalArgumentException("mergeInputs must not be null");
-    }
 
-    this.mergeInputs = mergeInputs;
-  }
+	/**
+	 * The list of inputs to merge.
+	 */
+	private List mergeInputs = new ArrayList();
 
-  /**
-   * Overriden to create receivers for all devices to merge. 
-   */
-  public void open() throws MidiUnavailableException {
-    super.open();
+	/**
+	 * Create a new midiMerger.
+	 * 
+	 * @param info
+	 *            info to use
+	 */
+	public MidiMerger(MidiDevice.Info info) {
+		super(info, false, true);
+	}
 
-    try {
-      for (int i = 0; i < mergeInputs.size(); i++) {
-        MergeInput input = (MergeInput)mergeInputs.get(i);
-        
-        receivers.add(new MergeReceiver(input.getDevice(), input.getChannel()));
-      }
-    } catch (MidiUnavailableException ex) {
-      close();
-        
-      throw ex;
-    }
-  }
+	/**
+	 * Set the inputs to merge. <br>
+	 * This change has immediate effect only If this midiMerger is not currently
+	 * open, otherwise it is delayed until the next opening.
+	 * 
+	 * @param mergeInputs
+	 *            the inputs to merge
+	 */
+	public void setMergeInputs(List mergeInputs) {
+		if (mergeInputs == null) {
+			throw new IllegalArgumentException("mergeInputs must not be null");
+		}
 
-  /**
-   * One receiver used for each input device.
-   */
-  private class MergeReceiver implements Receiver {
+		this.mergeInputs = mergeInputs;
+	}
 
-    /**
-     * The input device to receive messages from.
-     */
-    private MidiDevice device;
-    
-    /**
-     * The transmitter of the input device.
-     */
-    private Transmitter transmitter;
-    
-    /**
-     * The channel to map message to or <code>-1</code> if no
-     * mapping should be performed.
-     */
-    private int channel;
-    
-    /**
-     * Create a new receiver for the given input.
-     * 
-     * @param  device  name of device to create receiver for
-     * @param  channel channel to map messages to
-     * @throws MidiUnavailableException if input device is unavailable
-     */
-    public MergeReceiver(String device, int channel) throws MidiUnavailableException {
-  
-      this.device = DevicePool.getMidiDevice(device, false);
-      this.device.open();
-      
-      transmitter = this.device.getTransmitter();
-      transmitter.setReceiver(this);
-    
-      this.channel = channel;
-    }
-    
-    /**
-     * Send messages are optionally mapped before loopbacked.
-     */
-    public void send(MidiMessage message, long timestamp) {
-      if (isOpen()) {
-        if (message instanceof ShortMessage) {
-          message = mapChannel((ShortMessage)message);
-        }
+	/**
+	 * Overriden to create receivers for all devices to merge.
+	 */
+	public void open() throws MidiUnavailableException {
+		super.open();
 
-        loopbackReceiver.send(message, timestamp);
-      }
-    }
-    
-    /**
-     * Map the channel of the given message.
-     * 
-     * @param message   message to map channel
-     * @return          new message with mapped channel
-     */
-    private MidiMessage mapChannel(ShortMessage message) {
+		try {
+			for (int i = 0; i < mergeInputs.size(); i++) {
+				MergeInput input = (MergeInput) mergeInputs.get(i);
 
-      int command = message.getCommand();
-      int data1   = message.getData1();
-      int data2   = message.getData2();
+				new MergeReceiver(input.getDevice(), input.getChannel());
+			}
+		} catch (MidiUnavailableException ex) {
+			close();
 
-      if (command < 0xF0 && channel != -1) {
-        try {
-          ShortMessage mapped = new ShortMessage();
-          mapped.setMessage(command, channel, data1, data2);
-          message = mapped;
-        } catch (InvalidMidiDataException ex) {
-          throw new Error("unexpected invalid data in MidiMerger channel mapping");
-        }
-      }
-      return message;
-    }
+			throw ex;
+		}
+	}
 
-    /**
-     * Closing this receiver also closes the device listened to.
-     */
-    public void close() {
-      transmitter.close();
-      device.close();
-    }
-  }
+	/**
+	 * One receiver used for each input device.
+	 */
+	private class MergeReceiver extends LoopbackReceiver {
+
+		/**
+		 * The input device to receive messages from.
+		 */
+		private MidiDevice device;
+
+		/**
+		 * The transmitter of the input device.
+		 */
+		private Transmitter transmitter;
+
+		/**
+		 * The channel to map message to or <code>-1</code> if no mapping
+		 * should be performed.
+		 */
+		private int channel;
+
+		/**
+		 * Create a new receiver for the given input.
+		 * 
+		 * @param device
+		 *            name of device to create receiver for
+		 * @param channel
+		 *            channel to map messages to
+		 * @throws MidiUnavailableException
+		 *             if input device is unavailable
+		 */
+		public MergeReceiver(String device, int channel)
+				throws MidiUnavailableException {
+
+			this.device = DevicePool.getMidiDevice(device, false);
+			this.device.open();
+
+			transmitter = this.device.getTransmitter();
+			transmitter.setReceiver(this);
+
+			this.channel = channel;
+		}
+
+		/**
+		 * Apply channel mapping.
+		 */
+		protected MidiMessage filter(MidiMessage message) {
+			if (message instanceof ShortMessage) {
+				message = mapChannel((ShortMessage) message);
+			}
+			return message;
+		}
+
+		/**
+		 * Map the channel of the given message.
+		 * 
+		 * @param message
+		 *            message to map channel
+		 * @return new message with mapped channel
+		 */
+		private MidiMessage mapChannel(ShortMessage message) {
+
+			int command = message.getCommand();
+			int data1 = message.getData1();
+			int data2 = message.getData2();
+
+			if (command < 0xF0 && channel != -1) {
+				try {
+					ShortMessage mapped = new ShortMessage();
+					mapped.setMessage(command, channel, data1, data2);
+					message = mapped;
+				} catch (InvalidMidiDataException ex) {
+					throw new Error(
+							"unexpected invalid data in MidiMerger channel mapping");
+				}
+			}
+			return message;
+		}
+
+		/**
+		 * Closing this receiver also closes the device listened to.
+		 */
+		public void close() {
+			super.close();
+			
+			if (transmitter != null) {
+				transmitter.close();
+			}
+			
+			if (device != null) {
+				device.close();
+			}
+		}
+	}
 }

@@ -18,59 +18,45 @@
  */
 package jorgan.midi.merge;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.sound.midi.merge.*;
+import jorgan.sound.midi.DeviceInfo;
+import jorgan.sound.midi.merge.MidiMerger;
 
 /**
  * The provider of <code>MidiMerger</code> devices.
  * 
- * @see soundx.midi.merge.MidiMerger
+ * @see jorgan.sound.midi.merge.MidiMerger
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 
-  /**
-   * The name of this device.
-   */
-  public static final String DEVICE_NAME = "jOrgan Midi Merger";
+	/**
+	 * The device info for this providers device.
+	 */
+	public static final DeviceInfo INFO = new DeviceInfo("jOrgan Midi Merger",
+			"jOrgan", "Midi-Merger of jOrgan", "1.0");
 
-  /**
-   * The device info for this providers device.
-   */
-  private static final Info info = new Info();
-  
-  /**
-   * The device.
-   */
-  private static MidiMerger midiMerger;
+	/**
+	 * The device.
+	 */
+	private static MidiMerger midiMerger;
 
-  public MidiDevice.Info[] getDeviceInfo() {
+	public MidiDevice.Info[] getDeviceInfo() {
 
-    return new MidiDevice.Info[]{info};
-  }
-  
-  public MidiDevice getDevice(MidiDevice.Info info) {
-    if (MidiMergerProvider.info == info) {
-      if (midiMerger == null) {
-        midiMerger = new MidiMerger(info);         
-      }
-      if (!midiMerger.isOpen()) {
-        midiMerger.setMergeInputs(Configuration.instance().getInputs());
-      }
-      return midiMerger;
-    }
+		return new MidiDevice.Info[] { INFO };
+	}
 
-    return null;
-  }
-  
-  /**
-   * The info class for this device.
-   */
-  protected static class Info extends MidiDevice.Info {
+	public MidiDevice getDevice(MidiDevice.Info info) {
+		if (MidiMergerProvider.INFO == info) {
+			if (midiMerger == null) {
+				midiMerger = new MidiMerger(info);
+			}
+			midiMerger.setMergeInputs(Configuration.instance().getInputs());
+			
+			return midiMerger;
+		}
 
-    public Info() {
-      super(DEVICE_NAME, "jOrgan", "Midi-Merger of jOrgan", "1.0");
-    }
-  }
+		return null;
+	}
 }

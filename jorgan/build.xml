@@ -11,7 +11,7 @@
 
     <target name="build" description="Build the source" >
         <mkdir dir="./build"/>
-        <javac debug="false" deprecation="true" destdir="./build" srcdir="./src">
+        <javac debug="true" deprecation="true" destdir="./build" srcdir="./src">
         	<classpath>
 	            <fileset dir="./lib">
     	            <include name="*" />
