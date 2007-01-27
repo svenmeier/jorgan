@@ -18,9 +18,15 @@
  */
 package jorgan.sound.midi;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
 /**
  * A <code>MidiDevice</code> serving as a loopback.
@@ -42,24 +48,14 @@ public class Loopback implements MidiDevice {
 	private boolean allowTransmitters;
 
 	/**
-	 * The explicit transmitter for the loopback.
-	 */
-	public final LoopbackTransmitter loopbackTransmitter = new LoopbackTransmitter();
-
-	/**
-	 * The explicit receiver for the loopback.
-	 */
-	public final LoopbackReceiver loopbackReceiver = new LoopbackReceiver();
-
-	/**
 	 * The created transmitters.
 	 */
-	protected List transmitters = new ArrayList();
+	private List transmitters = new ArrayList();
 
 	/**
 	 * The created receivers.
 	 */
-	protected List receivers = new ArrayList();
+	private List receivers = new ArrayList();
 
 	/**
 	 * Create a virtual loopback.
@@ -107,7 +103,7 @@ public class Loopback implements MidiDevice {
 	/**
 	 * @return receivers
 	 * @since 1.5
-	 */	
+	 */
 	public List getReceivers() {
 		return new ArrayList(receivers);
 	}
@@ -115,7 +111,7 @@ public class Loopback implements MidiDevice {
 	/**
 	 * @return transmitters
 	 * @since 1.5
-	 */	
+	 */
 	public List getTransmitters() {
 		return new ArrayList(transmitters);
 	}
@@ -154,10 +150,7 @@ public class Loopback implements MidiDevice {
 			throw new MidiUnavailableException("no receivers allowed");
 		}
 
-		Receiver receiver = new LoopbackReceiver();
-		receivers.add(receiver);
-
-		return receiver;
+		return new LoopbackReceiver();
 	}
 
 	/**
@@ -175,17 +168,11 @@ public class Loopback implements MidiDevice {
 			throw new MidiUnavailableException("no transmitters allowed");
 		}
 
-		Transmitter transmitter = new LoopbackTransmitter();
-		transmitters.add(transmitter);
-
-		return transmitter;
+		return new LoopbackTransmitter();
 	}
 
-	private synchronized void loopbackMessage(MidiMessage message,
-			long timestamp) {
+	protected synchronized void loopbackMessage(MidiMessage message, long timestamp) {
 		if (isOpen()) {
-			loopbackTransmitter.transmit(message, timestamp);
-
 			for (int r = 0; r < transmitters.size(); r++) {
 				LoopbackTransmitter transmitter = (LoopbackTransmitter) transmitters
 						.get(r);
@@ -202,15 +189,19 @@ public class Loopback implements MidiDevice {
 		if (open) {
 			open = false;
 
-			for (int t = 0; t < transmitters.size(); t++) {
-				((Transmitter) transmitters.get(t)).close();
+			// important: work on copy of transmitter list as closing of
+			// transmitter removes it from list
+			Iterator transmitters = getTransmitters().iterator();
+			while (transmitters.hasNext()) {
+				((Transmitter) transmitters.next()).close();
 			}
-			transmitters.clear();
 
-			for (int r = 0; r < receivers.size(); r++) {
-				((Receiver) receivers.get(r)).close();
+			// important: work on copy of receiver list as closing of
+			// receiver removes it from list
+			Iterator receivers = getReceivers().iterator();
+			while (receivers.hasNext()) {
+				((Receiver) receivers.next()).close();
 			}
-			receivers.clear();
 		}
 	}
 
@@ -222,11 +213,15 @@ public class Loopback implements MidiDevice {
 	protected class LoopbackTransmitter implements Transmitter {
 
 		private boolean closed = false;
-		
+
 		/**
 		 * The receiver to transmit messages to.
 		 */
 		private Receiver receiver;
+
+		private LoopbackTransmitter() {
+			transmitters.add(this);
+		}
 
 		/**
 		 * Set the reciver.
@@ -263,11 +258,11 @@ public class Loopback implements MidiDevice {
 		 * Close this transmitter.
 		 */
 		public void close() {
-			synchronized(Loopback.this) {
+			synchronized (Loopback.this) {
 				if (closed) {
 					throw new IllegalStateException("already closed");
 				}
-				
+
 				transmitters.remove(this);
 				closed = true;
 			}
@@ -282,7 +277,11 @@ public class Loopback implements MidiDevice {
 	protected class LoopbackReceiver implements Receiver {
 
 		private boolean closed = false;
-		
+
+		protected LoopbackReceiver() {
+			receivers.add(this);
+		}
+
 		/**
 		 * Send the given message to all registered receivers.
 		 * 
@@ -295,20 +294,35 @@ public class Loopback implements MidiDevice {
 			if (closed) {
 				throw new IllegalStateException("already closed");
 			}
-			
-			loopbackMessage(message, timeStamp);
+
+			message = filter(message);
+
+			if (message != null) {
+				loopbackMessage(message, timeStamp);
+			}
+		}
+
+		/**
+		 * Hook method for subclasses that want to filter messages.
+		 * 
+		 * @param message
+		 *            message to filter
+		 * @return filtered message
+		 */
+		protected MidiMessage filter(MidiMessage message) {
+			return message;
 		}
 
 		/**
 		 * Close this transmitter.
 		 */
 		public void close() {
-			synchronized(Loopback.this) {
+			synchronized (Loopback.this) {
 				if (closed) {
 					throw new IllegalStateException("already closed");
 				}
 				closed = true;
-				
+
 				receivers.remove(this);
 			}
 		}

@@ -28,53 +28,59 @@ import javax.sound.midi.Transmitter;
  */
 public class DeviceWrapper implements MidiDevice {
 
-    private MidiDevice device;
-    
-    public DeviceWrapper(MidiDevice device) {
-        this.device = device;
-    }
+	private MidiDevice device;
 
-    public int getMaxReceivers() {
-        return device.getMaxReceivers();
-    }
+	/**
+	 * Wrap the given device.
+	 * 
+	 * @param device
+	 *            device to wrap
+	 */
+	public DeviceWrapper(MidiDevice device) {
+		this.device = device;
+	}
 
-    public int getMaxTransmitters() {
-        return device.getMaxTransmitters();
-    }
+	public int getMaxReceivers() {
+		return device.getMaxReceivers();
+	}
 
-    public long getMicrosecondPosition() {
-        return device.getMicrosecondPosition();
-    }
+	public int getMaxTransmitters() {
+		return device.getMaxTransmitters();
+	}
 
-    public void close() {
-        device.close();
-    }
+	public long getMicrosecondPosition() {
+		return device.getMicrosecondPosition();
+	}
 
-    public void open() throws MidiUnavailableException {
-        device.open();
-    }
+	public void close() {
+		device.close();
+	}
 
-    public boolean isOpen() {
-        return device.isOpen();
-    }
+	public void open() throws MidiUnavailableException {
+		device.open();
+	}
 
-    public Info getDeviceInfo() {
-        return device.getDeviceInfo();
-    }
+	public boolean isOpen() {
+		return device.isOpen();
+	}
 
-    public Receiver getReceiver() throws MidiUnavailableException {
-        return device.getReceiver();
-    }
+	public Info getDeviceInfo() {
+		return device.getDeviceInfo();
+	}
 
-    public Transmitter getTransmitter() throws MidiUnavailableException {
-        return device.getTransmitter();
-    }
-    
-//    public List getReceivers() {
-//        return device.getReceivers();
-//    }
-    
-//    public List getTransmitters() {
-//        return device.getTransmitters();
-//    }
+	public Receiver getReceiver() throws MidiUnavailableException {
+		return device.getReceiver();
+	}
+
+	public Transmitter getTransmitter() throws MidiUnavailableException {
+		return device.getTransmitter();
+	}
+
+	// public List getReceivers() {
+	// return device.getReceivers();
+	// }
+
+	// public List getTransmitters() {
+	// return device.getTransmitters();
+	// }
 }

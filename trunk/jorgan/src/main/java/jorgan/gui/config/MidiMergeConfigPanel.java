@@ -99,7 +99,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 		allInputs.clear();
 		String[] devices = DevicePool.getMidiDeviceNames(false);
 		for (int d = 0; d < devices.length; d++) {
-			if (!MidiMergerProvider.DEVICE_NAME.equals(devices[d])) {
+			if (!MidiMergerProvider.INFO.getName().equals(devices[d])) {
 				allInputs.add(new MergeInput(devices[d]));
 			}
 		}

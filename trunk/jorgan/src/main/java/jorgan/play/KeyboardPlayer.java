@@ -55,6 +55,11 @@ public class KeyboardPlayer extends Player {
      */
     private Transmitter transmitter;
 
+    /**
+     * Create player for the given keyboard.
+     * 
+     * @param keyboard	keyboard to play
+     */
     public KeyboardPlayer(Keyboard keyboard) {
         super(keyboard);
     }
@@ -80,10 +85,12 @@ public class KeyboardPlayer extends Player {
 
     protected void closeImpl() {
         if (in != null) {
-            transmitter.close();
-            in.close();
+        	if (transmitter != null) {
+                transmitter.close();
+                transmitter = null;
+        	}
 
-            transmitter = null;
+            in.close();
             in = null;
         }
 

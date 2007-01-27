@@ -32,10 +32,12 @@ import java.util.ResourceBundle;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
-import javax.swing.*;
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
-
-import jorgan.midi.KeyboardProvider;
 
 /**
  * A keyboard.
@@ -86,7 +88,7 @@ public class KeyboardPane extends JComponent {
 	private JMenuItem polyPressureMenuItem;
 
 	private JMenuItem channelPressureMenuItem;
-	
+
 	private int channel = 0;
 
 	private boolean sendVelocity = true;
@@ -160,8 +162,6 @@ public class KeyboardPane extends JComponent {
 
 		setMinimumSize(new Dimension(0, whiteHeight));
 		setPreferredSize(new Dimension(x, whiteHeight));
-
-		setReceiver(KeyboardProvider.getLoopback().loopbackReceiver);
 	}
 
 	/**
@@ -222,7 +222,7 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Is the velocity sent.
 	 * 
-	 * @return	<code>true</code> if velocity is sent
+	 * @return <code>true</code> if velocity is sent
 	 */
 	public boolean getSendVelocity() {
 		return sendVelocity;
@@ -241,7 +241,7 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Is the poly pressure sent.
 	 * 
-	 * @return	<code>true</code> if poly pressure is sent
+	 * @return <code>true</code> if poly pressure is sent
 	 */
 	public boolean getSendPolyPressure() {
 		return sendPolyPressure;
@@ -260,7 +260,7 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Is the aftertouch sent.
 	 * 
-	 * @return	<code>true</code> if aftertouch is sent
+	 * @return <code>true</code> if aftertouch is sent
 	 */
 	public boolean getSendAftertouch() {
 		return sendChannelPressure;
@@ -416,7 +416,7 @@ public class KeyboardPane extends JComponent {
 			}
 		});
 		popupMenu.add(polyPressureMenuItem);
-		
+
 		channelPressureMenuItem = new JCheckBoxMenuItem(resources
 				.getString("keyboard.channelPressure"));
 		channelPressureMenuItem.addItemListener(new ItemListener() {
@@ -562,7 +562,7 @@ public class KeyboardPane extends JComponent {
 	}
 
 	private class WhiteKey extends Key {
-		
+
 		/**
 		 * Create a white key for the given pitch at the given x position.
 		 * 

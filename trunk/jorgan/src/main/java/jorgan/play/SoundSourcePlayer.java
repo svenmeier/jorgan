@@ -32,138 +32,141 @@ import jorgan.play.sound.SoundFactoryException;
 import jorgan.play.sound.SoundFactoryParameterException;
 import jorgan.play.sound.SoundWrapper;
 
+/**
+ * A player of a {@link jorgan.disposition.SoundSource}.
+ */
 public class SoundSourcePlayer extends Player {
 
-    private static final Problem warningDevice = new Problem(Problem.WARNING,
-    "device");
+	private static final Problem warningDevice = new Problem(Problem.WARNING,
+			"device");
 
-    private static final Problem errorDevice = new Problem(Problem.ERROR,
-            "device");
+	private static final Problem errorDevice = new Problem(Problem.ERROR,
+			"device");
 
-    private static final Problem errorType = new Problem(Problem.ERROR, "type");
+	private static final Problem errorType = new Problem(Problem.ERROR, "type");
 
-    private static final Problem errorTypeParameter = new Problem(
-            Problem.ERROR, "type.parameter");
+	private static final Problem errorTypeParameter = new Problem(
+			Problem.ERROR, "type.parameter");
 
-    /**
-     * The factory for sounds.
-     */
-    private SoundFactory factory;
+	/**
+	 * The factory for sounds.
+	 */
+	private SoundFactory factory;
 
-    private Map sounds = new HashMap();
+	private Map sounds = new HashMap();
 
-    public SoundSourcePlayer(SoundSource soundSource) {
-        super(soundSource);
-    }
+	public SoundSourcePlayer(SoundSource soundSource) {
+		super(soundSource);
+	}
 
-    /**
-     * Aquire soundFactory.
-     */
-    protected void openImpl() {
-        SoundSource soundSource = (SoundSource) getElement();
+	/**
+	 * Aquire soundFactory.
+	 */
+	protected void openImpl() {
+		SoundSource soundSource = (SoundSource) getElement();
 
-        removeProblem(errorDevice);
-        removeProblem(errorType);
-        removeProblem(errorTypeParameter);
+		removeProblem(errorDevice);
+		removeProblem(errorType);
+		removeProblem(errorTypeParameter);
 
-        if (soundSource.getDevice() != null) {
-            try {
-                factory = SoundFactory.instance(soundSource.getDevice(),
-                        soundSource.getType());
-                factory.init(soundSource.getBank(), soundSource.getSamples());
-            } catch (MidiUnavailableException ex) {
-                addProblem(errorDevice.value(soundSource.getDevice()));
-            } catch (SoundFactoryParameterException ex) {
-                addProblem(errorTypeParameter.value(ex.getValue()));
-            } catch (SoundFactoryException ex) {
-                addProblem(errorType.value(soundSource.getType()));
-            }
-        }
-    }
+		if (soundSource.getDevice() != null) {
+			try {
+				factory = SoundFactory.instance(soundSource.getDevice(),
+						soundSource.getType());
+				factory.init(soundSource.getBank(), soundSource.getSamples());
+			} catch (MidiUnavailableException ex) {
+				addProblem(errorDevice.value(soundSource.getDevice()));
+			} catch (SoundFactoryParameterException ex) {
+				addProblem(errorTypeParameter.value(ex.getValue()));
+			} catch (SoundFactoryException ex) {
+				addProblem(errorType.value(soundSource.getType()));
+			}
+		}
+	}
 
-    /**
-     * Release soundFactory.
-     */
-    protected void closeImpl() {
-        if (factory != null) {
-            factory.close();
-            factory = null;
+	/**
+	 * Release soundFactory.
+	 */
+	protected void closeImpl() {
+		if (factory != null) {
+			factory.close();
+			factory = null;
 
-            sounds.clear();
-        }
-    }
+			sounds.clear();
+		}
+	}
 
-    public void elementChanged(OrganEvent event) {
-        SoundSource soundSource = (SoundSource) getElement();
+	public void elementChanged(OrganEvent event) {
+		SoundSource soundSource = (SoundSource) getElement();
 
-        if (soundSource.getDevice() == null
-                && Configuration.instance().getWarnWithoutDevice()) {
-            removeProblem(errorDevice);
-            addProblem(warningDevice.value(null));
-        } else {
-            removeProblem(warningDevice);
-        }
-    }
+		if (soundSource.getDevice() == null
+				&& Configuration.instance().getWarnWithoutDevice()) {
+			removeProblem(errorDevice);
+			addProblem(warningDevice.value(null));
+		} else {
+			removeProblem(warningDevice);
+		}
+	}
 
-    /**
-     * Create a sound from the aquired soundFactory.
-     * 
-     * @param program
-     *            the program to use for the sound
-     */
-    public Sound createSound(int program) {
+	/**
+	 * Create a sound from the aquired soundFactory.
+	 * 
+	 * @param program
+	 *            the program to use for the sound
+	 */
+	public Sound createSound(int program) {
 
-        SoundSource soundSource = (SoundSource) getElement();
+		SoundSource soundSource = (SoundSource) getElement();
 
-        Sound sound = null;
-        if (factory != null) {
-            SoundSourceSound soundSourceSound = (SoundSourceSound) sounds
-                    .get(new Integer(program));
-            if (soundSourceSound == null) {
-                sound = factory.createSound();
-                if (sound != null) {
-                    soundSourceSound = new SoundSourceSound(program, sound);
-                }
-            }
+		Sound sound = null;
+		if (factory != null) {
+			SoundSourceSound soundSourceSound = (SoundSourceSound) sounds
+					.get(new Integer(program));
+			if (soundSourceSound == null) {
+				sound = factory.createSound();
+				if (sound != null) {
+					soundSourceSound = new SoundSourceSound(program, sound);
+				}
+			}
 
-            if (soundSourceSound != null) {
-                soundSourceSound.init();
-            }
-            sound = soundSourceSound;
+			if (soundSourceSound != null) {
+				soundSourceSound.init();
+			}
+			sound = soundSourceSound;
 
-            if (sound != null && soundSource.getDelay() != 0) {
-                sound = new DelayedSound(sound, soundSource.getDelay());
-            }
-        }
-        return sound;
-    }
+			if (sound != null && soundSource.getDelay() != 0) {
+				sound = new DelayedSound(sound, soundSource.getDelay());
+			}
+		}
+		return sound;
+	}
 
-    private class SoundSourceSound extends SoundWrapper {
+	private class SoundSourceSound extends SoundWrapper {
 
-        private int program;
+		private int program;
 
-        private int initCount = 0;
+		private int initCount = 0;
 
-        public SoundSourceSound(int program, Sound sound) {
-            super(sound);
+		public SoundSourceSound(int program, Sound sound) {
+			super(sound);
 
-            this.program = program;
+			this.program = program;
 
-            sounds.put(new Integer(program), this);
-        }
+			sounds.put(new Integer(program), this);
+		}
 
-        public void init() {
-            initCount++;
-        }
+		public void init() {
+			initCount++;
+		}
 
-        public void stop() {
-            initCount--;
+		public void stop() {
+			initCount--;
 
-            if (initCount == 0) {
-                super.stop();
+			if (initCount == 0) {
+				super.stop();
 
-                sounds.remove(new Integer(program));
-            }
-        }
-    }
+				sounds.remove(new Integer(program));
+			}
+		}
+	}
 }
