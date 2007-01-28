@@ -120,8 +120,11 @@ public class MidiMerger extends Loopback {
 		public MergeReceiver(String device, int channel)
 				throws MidiUnavailableException {
 
-			this.device = DevicePool.getMidiDevice(device, false);
-			this.device.open();
+			// Important: assure successfull opening of MIDI device
+			// before storing reference in instance variable
+			MidiDevice toBeOpened = DevicePool.getMidiDevice(device, false);
+			toBeOpened.open();
+			this.device = toBeOpened;
 
 			transmitter = this.device.getTransmitter();
 			transmitter.setReceiver(this);
