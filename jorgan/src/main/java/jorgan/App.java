@@ -18,16 +18,20 @@
  */
 package jorgan;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
+import java.util.logging.Logger;
 
-import jorgan.gui.*;
-import jorgan.shell.*;
+import jorgan.gui.OrganFrame;
+import jorgan.shell.OrganShell;
 
 /**
  * The jOrgan application.
  */
 public class App {
+
+	private static Logger logger = Logger.getLogger(App.class.getName());
 
 	private static Properties properties = new Properties();
 
@@ -68,6 +72,8 @@ public class App {
 			file = jorgan.io.Configuration.instance().getRecentFile();
 		}
 
+		info();
+
 		UI ui;
 		if (arguments.getHeadless()) {
 			ui = new OrganShell();
@@ -79,5 +85,33 @@ public class App {
 		Configuration.instance().backup();
 
 		System.exit(0);
+	}
+
+	private static void info() {
+		StringBuffer buffer = new StringBuffer();
+		
+		info(buffer, "os.arch");
+		info(buffer, "os.name");
+		info(buffer, "os.version");
+
+		info(buffer, "java.home");
+		info(buffer, "java.version");
+		info(buffer, "java.runtime.name");
+		info(buffer, "java.runtime.version");
+
+		info(buffer, "user.dir");
+		info(buffer, "user.home");
+		info(buffer, "user.country");
+		info(buffer, "user.language");
+		info(buffer, "user.name");
+
+		logger.info(buffer.toString());
+	}
+
+	private static void info(StringBuffer buffer, String key) {
+		buffer.append("\n");
+		buffer.append(key);
+		buffer.append(" = ");
+		buffer.append(System.getProperty(key));
 	}
 }

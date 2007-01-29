@@ -34,7 +34,6 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import jorgan.App;
-import jorgan.util.SystemInfo;
 
 /**
  * Panel that displays information about jOrgan.
@@ -73,8 +72,6 @@ public class AboutPanel extends JPanel {
 		g.drawImage(icon.getImage(), 0, 0, this);
 
 		addVersion(g, width, height);
-		addJavaVersion(g, width, height);
-		addOsName(g, width, height);
 
 		g.dispose();
 
@@ -93,27 +90,6 @@ public class AboutPanel extends JPanel {
 		g.drawString(version, 182, 182);
 	}
 
-	private void addJavaVersion(Graphics2D g, int width, int height) {
-
-		String version = "Java " + new SystemInfo().getJavaVersion();
-
-		g.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-		g.setColor(Color.black);
-
-		g.drawString(version, 5, 242);
-	}
-
-	private void addOsName(Graphics2D g, int width, int height) {
-
-		String version = new SystemInfo().getOsName();
-
-		g.setFont(new Font("Sans Serif", Font.PLAIN, 12));
-		g.setColor(Color.black);
-
-		g.drawString(version, 5, 258);
-	}
-
-	
 	/**
 	 * Utility method to show an about panel in a dialog.
 	 * 

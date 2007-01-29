@@ -7,8 +7,6 @@ import java.lang.reflect.Proxy;
 
 import javax.swing.Action;
 
-import jorgan.util.SystemInfo;
-
 /**
  * Tweak appearance of jOrgan on Mac OS X.
  */
@@ -141,6 +139,6 @@ public class TweakMac {
 	 * @return <code>true</code> if running on a Mac
 	 */
 	public static boolean isMac() {
-		return (new SystemInfo().getOsName().toLowerCase().indexOf("mac") != -1);
+		return (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1);
 	}
 }
