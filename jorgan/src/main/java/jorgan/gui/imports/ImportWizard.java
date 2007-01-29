@@ -216,5 +216,7 @@ public class ImportWizard extends BasicWizard {
 		dialog.start();
 
 		dialog.dispose();
+		
+		dialog.setWizard(null);
 	}
 }

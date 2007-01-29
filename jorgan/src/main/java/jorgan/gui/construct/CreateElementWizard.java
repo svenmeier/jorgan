@@ -269,5 +269,7 @@ public class CreateElementWizard extends BasicWizard {
 		dialog.start();
 
 		dialog.dispose();
+		
+		dialog.setWizard(null);
 	}
 }
