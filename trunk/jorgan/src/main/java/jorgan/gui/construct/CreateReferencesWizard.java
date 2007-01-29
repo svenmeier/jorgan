@@ -179,5 +179,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		dialog.start();
 
 		dialog.dispose();
+		
+		dialog.setWizard(null);
 	}
 }
