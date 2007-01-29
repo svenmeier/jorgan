@@ -358,7 +358,7 @@ public class OrganPanel extends JPanel {
 	}
 
 	protected void removeConsoleDockable(Console console) {
-		Dockable dockable = (Dockable) consoleDockables.get(console);
+		Dockable dockable = (Dockable) consoleDockables.remove(console);
 
 		JScrollPane scrollPane = (JScrollPane) dockable.getComponent();
 		ConsolePanel consolePanel = (ConsolePanel) scrollPane.getViewport()
@@ -396,7 +396,7 @@ public class OrganPanel extends JPanel {
 		}
 	}
 
-	public void loadDocking() {
+	protected void loadDocking() {
 		try {
 			String docking;
 			if (constructing) {
@@ -425,7 +425,7 @@ public class OrganPanel extends JPanel {
 		}
 	}
 
-	public void saveDocking() {
+	protected void saveDocking() {
 		try {
 			Writer writer = new StringWriter();
 			OrganPanelPersister persister = new OrganPanelPersister(writer);
@@ -557,7 +557,7 @@ public class OrganPanel extends JPanel {
 
 		private Icon icon;
 
-		public ActionDockable(String key, JComponent component) {
+		private ActionDockable(String key, JComponent component) {
 			this.key = key;
 			this.component = component;
 			this.title = resources.getString("dock." + key);
@@ -583,16 +583,8 @@ public class OrganPanel extends JPanel {
 			return component;
 		}
 
-		public String getDescription() {
-			return null;
-		}
-
 		public Icon getIcon() {
 			return icon;
-		}
-
-		public List getMenuItems() {
-			return null;
 		}
 
 		public String getName() {
@@ -604,7 +596,7 @@ public class OrganPanel extends JPanel {
 	 * The action that steps back to the previous element.
 	 */
 	private class BackAction extends AbstractAction {
-		public BackAction() {
+		private BackAction() {
 			putValue(Action.NAME, resources.getString("action.back.name"));
 			putValue(Action.SHORT_DESCRIPTION, resources
 					.getString("action.back.description"));
@@ -623,7 +615,7 @@ public class OrganPanel extends JPanel {
 	 * The action that steps forward to the next element.
 	 */
 	private class ForwardAction extends AbstractAction {
-		public ForwardAction() {
+		private ForwardAction() {
 			putValue(Action.NAME, resources.getString("action.forward.name"));
 			putValue(Action.SHORT_DESCRIPTION, resources
 					.getString("action.forward.description"));
@@ -639,11 +631,11 @@ public class OrganPanel extends JPanel {
 	}
 
 	private class OrganPanelPersister extends XMLPersister {
-		public OrganPanelPersister(Reader reader) {
+		private OrganPanelPersister(Reader reader) {
 			super(outer, reader);
 		}
 
-		public OrganPanelPersister(Writer writer) {
+		private OrganPanelPersister(Writer writer) {
 			super(outer, writer);
 		}
 
