@@ -15,7 +15,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 
 import jorgan.disposition.Element;
-import jorgan.docs.Documents;
 import jorgan.gui.construct.ElementsPanel;
 import jorgan.swing.list.CommentedCellRenderer;
 
@@ -87,12 +86,10 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 			Element element = getElement(value);
 
 			text.setLength(0);
-			text.append(noRepeatedWhitespace(Documents.getInstance()
-					.getDisplayName(element)));
+			text.append(noRepeatedWhitespace(Elements.getDisplayName(element)));
 			if (!"".equals(element.getName())) {
 				text.append(" : ");
-				text.append(Documents.getInstance().getDisplayName(
-						element.getClass()));
+				text.append(Elements.getDisplayName(element.getClass()));
 			}
 
 			super.getListCellRendererComponent(list, text.toString(), index,

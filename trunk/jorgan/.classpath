@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry sourcepath="C:/Dokumente und Einstellungen/Sven/Eigene Dateien/Sven/java/projects/swingx/src" kind="lib" path="lib/swingx.jar"/>
-	<classpathentry kind="lib" path="lib/spin.jar"/>
-	<classpathentry sourcepath="C:/Programme/jh2.0/src.jar" kind="lib" path="lib/jh.jar"/>
-	<classpathentry kind="output" path="build"/>
+	<classpathentry path="src" kind="src"/>
+	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER" kind="con"/>
+	<classpathentry sourcepath="C:/Dokumente und Einstellungen/Sven/Eigene Dateien/Sven/java/projects/swingx/src" path="lib/swingx.jar" kind="lib"/>
+	<classpathentry path="lib/spin.jar" kind="lib"/>
+	<classpathentry path="build" kind="output"/>
 </classpath>
