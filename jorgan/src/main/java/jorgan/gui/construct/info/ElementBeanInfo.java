@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.docs.Documents;
+import jorgan.gui.Elements;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.editor.StyleEditor;
 
@@ -33,46 +33,45 @@ import jorgan.gui.construct.editor.StyleEditor;
  */
 public class ElementBeanInfo extends SimpleBeanInfo {
 
-    private List descriptors = new ArrayList();
+	private List descriptors = new ArrayList();
 
-    public final PropertyDescriptor[] getPropertyDescriptors() {
+	public final PropertyDescriptor[] getPropertyDescriptors() {
 
-        descriptors.clear();
+		descriptors.clear();
 
-        registerProperties();
+		registerProperties();
 
-        return (PropertyDescriptor[]) descriptors
-                .toArray(new PropertyDescriptor[descriptors.size()]);
-    }
+		return (PropertyDescriptor[]) descriptors
+				.toArray(new PropertyDescriptor[descriptors.size()]);
+	}
 
-    public int getDefaultPropertyIndex() {
-        return 0;
-    }
+	public int getDefaultPropertyIndex() {
+		return 0;
+	}
 
-    protected void registerProperties() {
-        // add name first so it's positioned at the default index
-        // @see #getDefaultPropertyIndex()
-        add("name", Element.class, StringEditor.class);
+	protected void registerProperties() {
+		// add name first so it's positioned at the default index
+		// @see #getDefaultPropertyIndex()
+		add("name", Element.class, StringEditor.class);
 
-        add("description", Element.class, StringEditor.class);
+		add("description", Element.class, StringEditor.class);
 
-        add("style", Element.class, StyleEditor.class);
-    }
+		add("style", Element.class, StyleEditor.class);
+	}
 
-    protected void add(String name, Class clazz, Class editor) {
-        try {
-            PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
+	protected void add(String name, Class clazz, Class editor) {
+		try {
+			PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 
-            descriptor.setDisplayName(Documents.getInstance().getDisplayName(
-                    clazz, name));
+			descriptor.setDisplayName(Elements.getDisplayName(clazz, name));
 
-            if (editor != null) {
-                descriptor.setPropertyEditorClass(editor);
-            }
+			if (editor != null) {
+				descriptor.setPropertyEditorClass(editor);
+			}
 
-            descriptors.add(descriptor);
-        } catch (Exception ex) {
-            throw new Error(ex);
-        }
-    }
+			descriptors.add(descriptor);
+		} catch (Exception ex) {
+			throw new Error(ex);
+		}
+	}
 }

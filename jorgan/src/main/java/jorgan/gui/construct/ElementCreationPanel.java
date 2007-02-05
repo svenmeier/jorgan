@@ -36,7 +36,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.docs.Documents;
+import jorgan.gui.Elements;
 import jorgan.swing.GridBuilder;
 
 /**
@@ -67,9 +67,9 @@ public class ElementCreationPanel extends JPanel {
 	 */
 	public ElementCreationPanel() {
 		super(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
-		
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+
 		builder.nextRow();
 
 		nameLabel.setText(resources.getString("construct.create.element.name"));
@@ -88,7 +88,8 @@ public class ElementCreationPanel extends JPanel {
 				firePropertyChange("elementName", null, null);
 			}
 		});
-		add(nameTextField, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+		add(nameTextField, builder.nextColumn().gridWidthRemainder()
+				.fillHorizontal());
 
 		builder.nextRow(1.0d);
 
@@ -101,13 +102,15 @@ public class ElementCreationPanel extends JPanel {
 				firePropertyChange("elementClass", null, null);
 			}
 		});
-		add(new JScrollPane(typeList), builder.nextColumn().gridWidthRemainder().gridHeight(2).fillBoth());
+		add(new JScrollPane(typeList), builder.nextColumn()
+				.gridWidthRemainder().gridHeight(2).fillBoth());
 	}
 
 	/**
 	 * Set the classes to choose from.
 	 * 
-	 * @param elementClasses	the classes for the element to create
+	 * @param elementClasses
+	 *            the classes for the element to create
 	 */
 	public void setElementClasses(Class[] elementClasses) {
 		this.elementClasses = elementClasses;
@@ -119,7 +122,8 @@ public class ElementCreationPanel extends JPanel {
 	/**
 	 * Set the class for the element.
 	 * 
-	 * @param elementClass	the class for the element to create
+	 * @param elementClass
+	 *            the class for the element to create
 	 */
 	public void setElementClass(Class elementClass) {
 		for (int c = 0; c < elementClasses.length; c++) {
@@ -134,7 +138,7 @@ public class ElementCreationPanel extends JPanel {
 	/**
 	 * Get the class for the element.
 	 * 
-	 * @return	the element class
+	 * @return the element class
 	 */
 	public Class getElementClass() {
 		int index = typeList.getSelectedIndex();
@@ -149,7 +153,7 @@ public class ElementCreationPanel extends JPanel {
 	/**
 	 * Get the element name.
 	 * 
-	 * @return	name of element
+	 * @return name of element
 	 */
 	public String getElementName() {
 		return nameTextField.getText();
@@ -162,8 +166,7 @@ public class ElementCreationPanel extends JPanel {
 		}
 
 		public Object getElementAt(int index) {
-			return Documents.getInstance()
-					.getDisplayName(elementClasses[index]);
+			return Elements.getDisplayName(elementClasses[index]);
 		}
 	}
 
@@ -171,8 +174,8 @@ public class ElementCreationPanel extends JPanel {
 
 		public int compare(Object o1, Object o2) {
 
-			String name1 = Documents.getInstance().getDisplayName((Class) o1);
-			String name2 = Documents.getInstance().getDisplayName((Class) o2);
+			String name1 = Elements.getDisplayName((Class) o1);
+			String name2 = Elements.getDisplayName((Class) o2);
 
 			return name1.compareTo(name2);
 		}

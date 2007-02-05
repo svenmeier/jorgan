@@ -49,10 +49,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.docs.Documents;
 import jorgan.gui.construct.ElementPropertiesPanel;
 import jorgan.gui.construct.ElementsPanel;
-import jorgan.gui.construct.InstructionsPanel;
 import jorgan.gui.construct.ProblemsPanel;
 import jorgan.gui.construct.ReferencesPanel;
 import jorgan.gui.event.ElementSelectionEvent;
@@ -89,8 +87,6 @@ public class OrganPanel extends JPanel {
 	private static final String KEY_REFERENCES = "references";
 
 	private static final String KEY_PROPERTIES = "properties";
-
-	private static final String KEY_INSTRUCTIONS = "instructions";
 
 	private static final String KEY_MEMORY = "memory";
 
@@ -144,8 +140,6 @@ public class OrganPanel extends JPanel {
 
 	private ProblemsPanel problemsPanel = new ProblemsPanel();
 
-	private InstructionsPanel instructionsPanel = new InstructionsPanel();
-
 	private VirtualKeyboard virtualKeyboard = new VirtualKeyboard();
 
 	private MidiMonitor midiMonitor = new MidiMonitor();
@@ -172,9 +166,6 @@ public class OrganPanel extends JPanel {
 	private ActionDockable propertiesDockable = new ActionDockable(
 			KEY_PROPERTIES, propertiesPanel);
 
-	private ActionDockable instructionsDockable = new ActionDockable(
-			KEY_INSTRUCTIONS, instructionsPanel);
-
 	private ActionDockable memoryDockable = new ActionDockable(KEY_MEMORY,
 			memoryPanel);
 
@@ -198,7 +189,6 @@ public class OrganPanel extends JPanel {
 		elementsDockable.setEnabled(false);
 		referencesDockable.setEnabled(false);
 		propertiesDockable.setEnabled(false);
-		instructionsDockable.setEnabled(false);
 		skinsDockable.setEnabled(false);
 
 		loadDocking();
@@ -261,7 +251,6 @@ public class OrganPanel extends JPanel {
 		actions.add(elementsDockable);
 		actions.add(propertiesDockable);
 		actions.add(referencesDockable);
-		actions.add(instructionsDockable);
 		actions.add(skinsDockable);
 
 		return actions;
@@ -283,7 +272,6 @@ public class OrganPanel extends JPanel {
 			referencesPanel.setOrgan(null);
 			elementsPanel.setOrgan(null);
 			problemsPanel.setOrgan(null);
-			instructionsPanel.setOrgan(null);
 			memoryPanel.setOrgan(null);
 
 			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
@@ -307,7 +295,6 @@ public class OrganPanel extends JPanel {
 			referencesPanel.setOrgan(this.session);
 			elementsPanel.setOrgan(this.session);
 			problemsPanel.setOrgan(this.session);
-			instructionsPanel.setOrgan(this.session);
 			memoryPanel.setOrgan(this.session);
 
 			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
@@ -340,8 +327,7 @@ public class OrganPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(consolePanel);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-		Dockable dockable = new DefaultDockable(scrollPane, Documents
-				.getInstance().getDisplayName(console));
+		Dockable dockable = new DefaultDockable(scrollPane, Elements.getDisplayName(console));
 
 		inner.putDockable(console, dockable);
 
@@ -352,7 +338,7 @@ public class OrganPanel extends JPanel {
 		DefaultDockable dockable = (DefaultDockable) consoleDockables
 				.get(console);
 
-		dockable.setName(Documents.getInstance().getDisplayName(console));
+		dockable.setName(Elements.getDisplayName(console));
 
 		inner.putDockable(console, dockable);
 	}
@@ -390,7 +376,6 @@ public class OrganPanel extends JPanel {
 			elementsDockable.setEnabled(constructing);
 			referencesDockable.setEnabled(constructing);
 			propertiesDockable.setEnabled(constructing);
-			instructionsDockable.setEnabled(constructing);
 
 			updateHistory();
 		}
@@ -663,8 +648,6 @@ public class OrganPanel extends JPanel {
 					return referencesDockable;
 				} else if (KEY_PROPERTIES.equals(key)) {
 					return propertiesDockable;
-				} else if (KEY_INSTRUCTIONS.equals(key)) {
-					return instructionsDockable;
 				}
 			}
 			return null;
