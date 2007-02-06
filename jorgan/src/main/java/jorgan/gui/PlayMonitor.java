@@ -36,7 +36,7 @@ import javax.swing.Timer;
 public class PlayMonitor extends JPanel {
 
     private static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+            .getBundle("jorgan.gui.i18n");
 
     private static Icon noneIcon = new ImageIcon(PlayMonitor.class
             .getResource("/jorgan/gui/img/none.gif"));

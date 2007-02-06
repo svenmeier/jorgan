@@ -26,7 +26,7 @@ import java.util.ResourceBundle;
  */
 public class ActionEditor extends PropertyEditorSupport {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
 
   private String[] tags;
 

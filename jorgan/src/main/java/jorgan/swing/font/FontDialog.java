@@ -23,7 +23,6 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,16 +31,14 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
+import jorgan.util.I18N;
+
 /**
  * A dialog for a font selection.
  */
 class FontDialog extends JDialog {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.swing.resources");
+	private static I18N i18n = I18N.get(FontDialog.class);
 
 	private JPanel borderPanel = new JPanel();
 
@@ -58,7 +55,8 @@ class FontDialog extends JDialog {
 	/**
 	 * Constructor.
 	 * 
-	 * @param owner	the owner of this dialog
+	 * @param owner
+	 *            the owner of this dialog
 	 */
 	public FontDialog(JFrame owner) {
 		super(owner, true);
@@ -69,7 +67,8 @@ class FontDialog extends JDialog {
 	/**
 	 * Constructor.
 	 * 
-	 * @param owner	the owner of this dialog
+	 * @param owner
+	 *            the owner of this dialog
 	 */
 	public FontDialog(JDialog owner) {
 		super(owner, true);
@@ -78,7 +77,7 @@ class FontDialog extends JDialog {
 	}
 
 	private void init() {
-		setTitle(resources.getString("font.title"));
+		setTitle(i18n.getString("title"));
 
 		borderPanel.setLayout(new BorderLayout(10, 10));
 		borderPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -92,7 +91,7 @@ class FontDialog extends JDialog {
 		JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
 		buttonPanel.add(gridPanel, BorderLayout.EAST);
 
-		okButton.setText(resources.getString("font.ok"));
+		okButton.setText(i18n.getString("okButton.text"));
 		okButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				font = fontPanel.getSelectedFont();
@@ -102,7 +101,7 @@ class FontDialog extends JDialog {
 		getRootPane().setDefaultButton(okButton);
 		gridPanel.add(okButton);
 
-		cancelButton.setText(resources.getString("font.cancel"));
+		cancelButton.setText(i18n.getString("cancelButton.text"));
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				setVisible(false);
@@ -124,7 +123,8 @@ class FontDialog extends JDialog {
 	/**
 	 * Set the selected font.
 	 * 
-	 * @param font 	the font to select
+	 * @param font
+	 *            the font to select
 	 */
 	public void setSelectedFont(Font font) {
 		this.font = font;
@@ -135,7 +135,7 @@ class FontDialog extends JDialog {
 	/**
 	 * Get the selected font.
 	 * 
-	 * @return	the selected font
+	 * @return the selected font
 	 */
 	public Font getSelectedFont() {
 		return font;

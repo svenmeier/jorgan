@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -60,6 +59,7 @@ import jorgan.gui.midi.VirtualKeyboard;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.util.I18N;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
 import swingx.docking.Dockable;
@@ -71,6 +71,8 @@ import swingx.docking.persistence.XMLPersister;
  * Panel for display and editing of an organ.
  */
 public class OrganPanel extends JPanel {
+
+	private static I18N i18n = I18N.get(OrganPanel.class);
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
@@ -91,9 +93,6 @@ public class OrganPanel extends JPanel {
 	private static final String KEY_MEMORY = "memory";
 
 	private static final String KEY_SKINS = "skins";
-
-	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
 
 	private boolean constructing = false;
 
@@ -327,7 +326,8 @@ public class OrganPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(consolePanel);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-		Dockable dockable = new DefaultDockable(scrollPane, Elements.getDisplayName(console));
+		Dockable dockable = new DefaultDockable(scrollPane, Elements
+				.getDisplayName(console));
 
 		inner.putDockable(console, dockable);
 
@@ -545,7 +545,7 @@ public class OrganPanel extends JPanel {
 		private ActionDockable(String key, JComponent component) {
 			this.key = key;
 			this.component = component;
-			this.title = resources.getString("dock." + key);
+			this.title = i18n.getString(key + "Dockable");
 			this.icon = new ImageIcon(getClass().getResource(
 					"img/" + key + ".gif"));
 
@@ -582,9 +582,9 @@ public class OrganPanel extends JPanel {
 	 */
 	private class BackAction extends AbstractAction {
 		private BackAction() {
-			putValue(Action.NAME, resources.getString("action.back.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.back.description"));
+			putValue(Action.NAME, i18n.getString("backAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("backAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/back.gif")));
 
@@ -601,9 +601,9 @@ public class OrganPanel extends JPanel {
 	 */
 	private class ForwardAction extends AbstractAction {
 		private ForwardAction() {
-			putValue(Action.NAME, resources.getString("action.forward.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.forward.description"));
+			putValue(Action.NAME, i18n.getString("forwardAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("forwardAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/forward.gif")));
 

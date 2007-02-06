@@ -52,7 +52,7 @@ import jorgan.swing.CardPanel;
 public class ConsoleDialog extends JDialog {
 
 	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	/**
 	 * The handler of mouse events.

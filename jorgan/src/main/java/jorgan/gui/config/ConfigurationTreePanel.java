@@ -52,7 +52,7 @@ public class ConfigurationTreePanel extends JPanel {
      * The resource bundle.
      */
     protected static ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+            .getBundle("jorgan.gui.i18n");
 
     private JTree tree = new JTree();
 

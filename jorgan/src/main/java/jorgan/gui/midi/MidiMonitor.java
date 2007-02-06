@@ -62,7 +62,7 @@ import jorgan.swing.table.TableUtils;
 public class MidiMonitor extends DockedPanel {
 
 	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private static final KeyFormat keyFormat = new KeyFormat();
 

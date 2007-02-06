@@ -102,7 +102,7 @@ import swingx.dnd.ObjectTransferable;
 public class ConsolePanel extends JComponent implements Scrollable {
 
 	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	/**
 	 * The organ of the edited console.

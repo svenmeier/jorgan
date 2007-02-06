@@ -18,96 +18,101 @@
  */
 package jorgan.swing.font;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Font;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.SwingUtilities;
 
 /**
  * Selector of a font.
  */
 public class FontSelector extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.swing.resources");
+	/**
+	 * The selected font.
+	 */
+	private Font font;
 
-  /**
-   * The selected font.
-   */
-  private Font font;
+	/**
+	 * The button used to edit the selected font.
+	 */
+	private JButton button = new JButton();
 
-  /**
-   * The button used to edit the selected font.
-   */
-  private JButton button = new JButton();
+	/**
+	 * Create a new selector.
+	 */
+	public FontSelector() {
+		super(new BorderLayout());
 
-  /**
-   * Create a new selector.
-   */
-  public FontSelector() {
-    super(new BorderLayout());
+		button.setHorizontalAlignment(JButton.LEFT);
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				FontDialog dialog;
+				Window window = SwingUtilities
+						.getWindowAncestor(FontSelector.this);
+				if (window instanceof JFrame) {
+					dialog = new FontDialog((JFrame) window);
+				} else {
+					dialog = new FontDialog((JDialog) window);
+				}
+				dialog.setSelectedFont(font);
+				dialog.start();
 
-    button.setHorizontalAlignment(JButton.LEFT);
-    button.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent ev) {
-        FontDialog dialog;
-        Window window = SwingUtilities.getWindowAncestor(FontSelector.this);
-        if (window instanceof JFrame) {
-          dialog = new FontDialog((JFrame)window);
-        } else {
-          dialog = new FontDialog((JDialog)window);
-        }
-        dialog.setSelectedFont(font);
-        dialog.start();
+				setSelectedFont(dialog.getSelectedFont());
+			}
+		});
+		add(button, BorderLayout.CENTER);
 
-        setSelectedFont(dialog.getSelectedFont());
-      }
-    });
-    add(button, BorderLayout.CENTER);
+		setSelectedFont(new Font("Arial", Font.PLAIN, 12));
+	}
 
-    setSelectedFont(new Font("Arial", Font.PLAIN, 12));
-  }
+	public void setEnabled(boolean enabled) {
+		button.setEnabled(enabled);
+	}
 
-  public void setEnabled(boolean enabled) {
-    button.setEnabled(enabled);
-  }
+	/**
+	 * Set the selected font.
+	 * 
+	 * @param font
+	 *            the font to select
+	 */
+	public void setSelectedFont(Font font) {
+		this.font = font;
 
-  /**
-   * Set the selected font.
-   *
-   * @param font  the font to select
-   */
-  public void setSelectedFont(Font font) {
-    this.font = font;
-    
-    button.setText(format(font));
-  }
+		button.setText(format(font));
+	}
 
-  /**
-   * Get the selected font.
-   *
-   * @return  the selected font
-   */
-  public Font getSelectedFont() {
-    return font;
-  }
+	/**
+	 * Get the selected font.
+	 * 
+	 * @return the selected font
+	 */
+	public Font getSelectedFont() {
+		return font;
+	}
 
-  /**
-   * Utility method for formatting of a font.
-   * 
-   * @param font    font to format
-   * @return        formatted font
-   */
-  public static String format(Font font) {
-    if (font == null) {
-      return "-";
-    } else {
-      String name  = font.getName();
-      int    size  = font.getSize();
-      String style = resources.getString("font.style." + font.getStyle());
-      return (name + " " + size + " " + style);
-    }
-  }
+	/**
+	 * Utility method for formatting of a font.
+	 * 
+	 * @param font
+	 *            font to format
+	 * @return formatted font
+	 */
+	public static String format(Font font) {
+		if (font == null) {
+			return "-";
+		} else {
+			String name = font.getName();
+			int size = font.getSize();
+			String style = FontPanel.formatStyle(font.getStyle());
+			return (name + " " + size + " " + style);
+		}
+	}
 }

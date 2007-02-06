@@ -32,7 +32,6 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,9 +62,6 @@ import jorgan.swing.table.TableUtils;
 public class PropertiesPanel extends JPanel {
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
-
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.swing.resources");
 
 	private static final Object[] EMPTY_ARGUMENTS = new Object[0];
 

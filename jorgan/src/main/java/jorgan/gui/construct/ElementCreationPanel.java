@@ -48,7 +48,7 @@ public class ElementCreationPanel extends JPanel {
 	 * The resource bundle.
 	 */
 	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	protected Insets standardInsets = new Insets(2, 2, 2, 2);
 

@@ -35,7 +35,7 @@ public class PatchListImportProvider implements ImportProvider {
 	 * The resource bundle.
 	 */
 	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private PatchListPanel panel = new PatchListPanel();
 

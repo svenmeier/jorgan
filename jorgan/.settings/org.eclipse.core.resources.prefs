@@ -1,17 +1,17 @@
-#Fri Aug 26 22:41:03 CEST 2005
+#Tue Feb 06 22:56:20 CET 2007
 eclipse.preferences.version=1
-encoding//src/jorgan/gui/resources.properties=UTF-8
-encoding//src/jorgan/gui/resources_de.properties=UTF-8
-encoding//src/jorgan/gui/resources_it.properties=UTF-8
-encoding//src/jorgan/gui/resources_no.properties=UTF-8
-encoding//src/jorgan/gui/resources_ru.properties=UTF-8
-encoding//src/jorgan/shell/resources.properties=UTF-8
-encoding//src/jorgan/shell/resources_de.properties=UTF-8
-encoding//src/jorgan/shell/resources_it.properties=UTF-8
-encoding//src/jorgan/shell/resources_no.properties=UTF-8
-encoding//src/jorgan/shell/resources_ru.properties=UTF-8
-encoding//src/jorgan/swing/resources.properties=UTF-8
-encoding//src/jorgan/swing/resources_de.properties=UTF-8
-encoding//src/jorgan/swing/resources_it.properties=UTF-8
-encoding//src/jorgan/swing/resources_no.properties=UTF-8
-encoding//src/jorgan/swing/resources_ru.properties=UTF-8
+encoding//src/jorgan/gui/i18n.properties=UTF-8
+encoding//src/jorgan/gui/i18n_de.properties=UTF-8
+encoding//src/jorgan/gui/i18n_it.properties=UTF-8
+encoding//src/jorgan/gui/i18n_no.properties=UTF-8
+encoding//src/jorgan/gui/i18n_ru.properties=UTF-8
+encoding//src/jorgan/shell/i18n.properties=UTF-8
+encoding//src/jorgan/shell/i18n_de.properties=UTF-8
+encoding//src/jorgan/shell/i18n_it.properties=UTF-8
+encoding//src/jorgan/shell/i18n_no.properties=UTF-8
+encoding//src/jorgan/shell/i18n_ru.properties=UTF-8
+encoding//src/jorgan/swing/i18n.properties=UTF-8
+encoding//src/jorgan/swing/i18n_de.properties=UTF-8
+encoding//src/jorgan/swing/i18n_it.properties=UTF-8
+encoding//src/jorgan/swing/i18n_no.properties=UTF-8
+encoding//src/jorgan/swing/i18n_ru.properties=UTF-8

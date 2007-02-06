@@ -17,7 +17,7 @@ public class Elements {
 	 * The resource bundle.
 	 */
 	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private Elements() {
 	}

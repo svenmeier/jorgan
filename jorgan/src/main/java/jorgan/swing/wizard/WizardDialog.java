@@ -21,7 +21,6 @@ package jorgan.swing.wizard;
 import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -30,18 +29,15 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import jorgan.swing.StandardDialog;
+import jorgan.util.I18N;
 
 /**
  * A dialog showing a wizard.
  */
 public class WizardDialog extends StandardDialog {
 
-	/**
-	 * The resource bundle.
-	 */
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.swing.resources");
-
+	private static I18N i18n = I18N.get(WizardDialog.class);
+	
 	private Action previousAction = new PreviousAction();
 
 	private Action nextAction = new NextAction();
@@ -78,7 +74,7 @@ public class WizardDialog extends StandardDialog {
 
 	private void init() {
 
-		setTitle(resources.getString("wizard.title"));
+		setTitle(i18n.getString("title"));
 
 		addAction(previousAction);
 		addAction(nextAction);
@@ -111,7 +107,7 @@ public class WizardDialog extends StandardDialog {
 	private class PreviousAction extends AbstractAction {
 
 		private PreviousAction() {
-			putValue(Action.NAME, resources.getString("wizard.previous"));
+			putValue(Action.NAME, i18n.getString("previousAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -122,7 +118,7 @@ public class WizardDialog extends StandardDialog {
 	private class NextAction extends AbstractAction {
 
 		private NextAction() {
-			putValue(Action.NAME, resources.getString("wizard.next"));
+			putValue(Action.NAME, i18n.getString("nextAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -133,7 +129,7 @@ public class WizardDialog extends StandardDialog {
 	private class FinishAction extends AbstractAction {
 
 		private FinishAction() {
-			putValue(Action.NAME, resources.getString("wizard.finish"));
+			putValue(Action.NAME, i18n.getString("finishAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
