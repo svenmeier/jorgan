@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
-import jorgan.gui.OrganFrame;
+import jorgan.gui.GUI;
 import jorgan.shell.OrganShell;
 
 /**
@@ -78,7 +78,7 @@ public class App {
 		if (arguments.getHeadless()) {
 			ui = new OrganShell();
 		} else {
-			ui = new OrganFrame();
+			ui = new GUI();
 		}
 		ui.start(file);
 

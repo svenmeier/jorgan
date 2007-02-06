@@ -20,7 +20,6 @@ package jorgan.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Rectangle;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -38,7 +37,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -54,10 +52,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import jorgan.UI;
 import jorgan.config.ConfigurationEvent;
 import jorgan.config.ConfigurationListener;
 import jorgan.disposition.Console;
@@ -72,18 +68,17 @@ import jorgan.io.disposition.History;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
+import jorgan.util.I18N;
 import jorgan.xml.XMLFormatException;
-import spin.over.SpinOverEvaluator;
 
 /**
  * The jOrgan frame.
  */
-public class OrganFrame extends JFrame implements UI {
+public class OrganFrame extends JFrame {
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+	private static I18N i18n = I18N.get(OrganFrame.class);
 
 	/**
 	 * The suffix used for the frame title.
@@ -172,8 +167,8 @@ public class OrganFrame extends JFrame implements UI {
 
 		toolBar.addSeparator();
 
-		constructButton.setToolTipText(resources
-				.getString("action.construct.description"));
+		constructButton.setToolTipText(i18n
+				.getString("constructButton.toolTipText"));
 		constructButton.setIcon(new ImageIcon(getClass().getResource(
 				"img/construct.gif")));
 		constructButton.addItemListener(new ItemListener() {
@@ -212,13 +207,15 @@ public class OrganFrame extends JFrame implements UI {
 		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent ev) {
-				stop();
+				close();
 			}
 		});
 
 		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
 
 		newOrgan();
+		
+		updateMenu();
 	}
 
 	/**
@@ -241,7 +238,7 @@ public class OrganFrame extends JFrame implements UI {
 	private void updateMenu() {
 
 		menuBar.removeAll();
-		JMenu fileMenu = new JMenu(resources.getString("menu.file"));
+		JMenu fileMenu = new JMenu(i18n.getString("fileMenu.text"));
 		menuBar.add(fileMenu);
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
@@ -262,7 +259,7 @@ public class OrganFrame extends JFrame implements UI {
 			fileMenu.add(exitAction);
 		}
 
-		JMenu viewMenu = new JMenu(resources.getString("menu.view"));
+		JMenu viewMenu = new JMenu(i18n.getString("viewMenu.text"));
 		menuBar.add(viewMenu);
 		viewMenu.add(fullScreenAction);
 		viewMenu.addSeparator();
@@ -284,7 +281,7 @@ public class OrganFrame extends JFrame implements UI {
 	/**
 	 * Stop.
 	 */
-	public void stop() {
+	private void close() {
 		if (canCloseOrgan()) {
 			if (session.getPlay().isOpen()) {
 				session.getPlay().close();
@@ -296,9 +293,7 @@ public class OrganFrame extends JFrame implements UI {
 			jorgan.io.Configuration.instance().removeConfigurationListener(
 					configurationListener);
 
-			dispose();
-
-			exitAction.stopped();
+			setVisible(false);
 		}
 	}
 
@@ -386,11 +381,9 @@ public class OrganFrame extends JFrame implements UI {
 		} catch (XMLFormatException ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
-			showMessage("action.open.exception.invalid", new String[] { file
-					.getName() });
+			showMessage("openOrganInvalid", new String[] { file.getName() });
 		} catch (IOException ex) {
-			showMessage("action.open.exception",
-					new String[] { file.getName() });
+			showMessage("openOrganException", new String[] { file.getName() });
 
 			jorgan.io.Configuration.instance().removeRecentFile(file);
 
@@ -431,19 +424,17 @@ public class OrganFrame extends JFrame implements UI {
 
 			saveAction.clearChanges();
 
-			showStatus("action.save.confirm", new Object[0]);
+			showStatus("organSaved", new Object[0]);
 		} catch (XMLFormatException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showMessage("action.save.exception.invalid", new String[] { file
-					.getName() });
+			showMessage("saveOrganInvalid", new String[] { file.getName() });
 
 			return false;
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showMessage("action.save.exception",
-					new String[] { file.getName() });
+			showMessage("saveOrganException", new String[] { file.getName() });
 
 			return false;
 		}
@@ -463,8 +454,8 @@ public class OrganFrame extends JFrame implements UI {
 			File file = jorgan.io.DispositionFileFilter.addSuffix(chooser
 					.getSelectedFile());
 			if (!file.exists()
-					|| JOptionPane.showConfirmDialog(OrganFrame.this, resources
-							.getString("action.saveAs.replace"), "jOrgan",
+					|| JOptionPane.showConfirmDialog(OrganFrame.this, i18n
+							.getString("saveOrganAsConfirmReplace"), "jOrgan",
 							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
 				return saveOrgan(file);
 			}
@@ -480,8 +471,8 @@ public class OrganFrame extends JFrame implements UI {
 	public boolean canCloseOrgan() {
 		if (saveAction.hasChanges()) {
 			if (saveAction.confirmChanges()) {
-				int option = JOptionPane.showConfirmDialog(this, resources
-						.getString("action.save.edited"), "jOrgan",
+				int option = JOptionPane.showConfirmDialog(this, i18n
+						.getString("closeOrganConfirmChanges"), "jOrgan",
 						JOptionPane.YES_NO_CANCEL_OPTION);
 				if (option == JOptionPane.CANCEL_OPTION) {
 					return false;
@@ -495,43 +486,9 @@ public class OrganFrame extends JFrame implements UI {
 		return true;
 	}
 
-	/**
-	 * Start the user interaction.
-	 * 
-	 * @param file
-	 *            optional file that contains an organ
-	 */
-	public void start(final File file) {
-
-		if (jorgan.gui.Configuration.instance().getShowAboutOnStartup()) {
-			AboutPanel.showSplash();
-		}
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-
-				updateState();
-
-				updateMenu();
-
-				if (file == null) {
-					setFile(null);
-				} else {
-					openOrgan(file);
-				}
-
-				setVisible(true);
-			}
-		});
-
-		AboutPanel.hideSplash();
-
-		exitAction.waitForStop();
-	}
-
 	protected void showStatus(String message, Object[] args) {
 
-		message = MessageFormat.format(resources.getString(message), args);
+		message = MessageFormat.format(i18n.getString(message), args);
 
 		statusBar.setStatus(message);
 	}
@@ -539,29 +496,32 @@ public class OrganFrame extends JFrame implements UI {
 	/**
 	 * Show a message.
 	 * 
-	 * @param message
+	 * @param key
 	 *            identifier of message
 	 * @param args
 	 *            arguments of message
 	 */
-	protected void showMessage(String message, Object[] args) {
+	protected void showMessage(String key, Object[] args) {
 
-		message = MessageFormat.format(resources.getString(message), args);
+		String message = MessageFormat.format(i18n.getString(key), args);
 
-		JOptionPane.showMessageDialog(this, message, resources
-				.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
+		JOptionPane.showMessageDialog(this, message, i18n
+				.getString("message.title"), JOptionPane.ERROR_MESSAGE);
 	}
 
-	private void updateState() {
-		// realize first so changing state has effect
-		pack();
-		jorgan.io.Configuration.instance().addConfigurationListener(
-				configurationListener);
-		Rectangle rect = Configuration.instance().getFrameBounds();
-		if (rect != null) {
-			setBounds(rect);
+	public void setVisible(boolean visible) {
+		if (visible) {
+			// realize first so changing state has effect
+			pack();
+			jorgan.io.Configuration.instance().addConfigurationListener(
+					configurationListener);
+			Rectangle rect = Configuration.instance().getFrameBounds();
+			if (rect != null) {
+				setBounds(rect);
+			}
+			setExtendedState(Configuration.instance().getFrameState());			
 		}
-		setExtendedState(Configuration.instance().getFrameState());
+		super.setVisible(visible);
 	}
 
 	/**
@@ -569,9 +529,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class NewAction extends AbstractAction {
 		private NewAction() {
-			putValue(Action.NAME, resources.getString("action.new.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.new.description"));
+			putValue(Action.NAME, i18n.getString("newAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("newAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/new.gif")));
 		}
@@ -612,9 +572,9 @@ public class OrganFrame extends JFrame implements UI {
 		private DebugPanel debugPanel = new DebugPanel();
 
 		private DebugAction() {
-			putValue(Action.NAME, resources.getString("action.debug.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.debug.description"));
+			putValue(Action.NAME, i18n.getString("debugAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("debugAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/debug.gif")));
 		}
@@ -629,9 +589,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class OpenAction extends AbstractAction {
 		private OpenAction() {
-			putValue(Action.NAME, resources.getString("action.open.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.open.description"));
+			putValue(Action.NAME, i18n.getString("openAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("openAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/open.gif")));
 		}
@@ -653,9 +613,9 @@ public class OrganFrame extends JFrame implements UI {
 		private boolean registrationChanges = false;
 
 		private SaveAction() {
-			putValue(Action.NAME, resources.getString("action.save.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.save.description"));
+			putValue(Action.NAME, i18n.getString("saveAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("saveAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/save.gif")));
 		}
@@ -737,9 +697,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class SaveAsAction extends AbstractAction {
 		private SaveAsAction() {
-			putValue(Action.NAME, resources.getString("action.saveAs.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.saveAs.description"));
+			putValue(Action.NAME, i18n.getString("saveAsAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("saveAsAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/saveAs.gif")));
 		}
@@ -754,9 +714,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class AboutAction extends AbstractAction {
 		private AboutAction() {
-			putValue(Action.NAME, resources.getString("action.about.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.about.description"));
+			putValue(Action.NAME, i18n.getString("aboutAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("aboutAction.shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -769,9 +729,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class ImportAction extends AbstractAction {
 		private ImportAction() {
-			putValue(Action.NAME, resources.getString("action.import.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.import.description"));
+			putValue(Action.NAME, i18n.getString("importAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("importAction.shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -784,10 +744,9 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class ConfigurationAction extends AbstractAction {
 		private ConfigurationAction() {
-			putValue(Action.NAME, resources
-					.getString("action.configuration.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.configuration.description"));
+			putValue(Action.NAME, i18n.getString("configurationAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("configurationAction.shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -807,9 +766,9 @@ public class OrganFrame extends JFrame implements UI {
 		private Map dialogs = new HashMap();
 
 		private FullScreenAction() {
-			putValue(Action.NAME, resources.getString("action.fullScreen.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.fullScreen.description"));
+			putValue(Action.NAME, i18n.getString("fullScreenAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("fullScreenAction.shortDescription"));
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
@@ -821,7 +780,7 @@ public class OrganFrame extends JFrame implements UI {
 				goFullScreen();
 
 				if (dialogs.isEmpty()) {
-					showMessage("action.fullScreen.failure", new Object[0]);
+					showMessage("noFullScreen", new Object[0]);
 				}
 			}
 		}
@@ -873,31 +832,13 @@ public class OrganFrame extends JFrame implements UI {
 	 */
 	private class ExitAction extends AbstractAction {
 		private ExitAction() {
-			putValue(Action.NAME, resources.getString("action.exit.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("action.exit.description"));
+			putValue(Action.NAME, i18n.getString("exitAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("exitAction.shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			stop();
-		}
-
-		/**
-		 * Called on the main thread to wait for stop on event dispatch thread.
-		 */
-		public synchronized void waitForStop() {
-			try {
-				wait();
-			} catch (InterruptedException ex) {
-				throw new Error("unexpected interruption", ex);
-			}
-		}
-
-		/**
-		 * Called on event dispatch thread to notify wait on main thread.
-		 */
-		private synchronized void stopped() {
-			notify();
+			close();
 		}
 	}
 
@@ -913,26 +854,5 @@ public class OrganFrame extends JFrame implements UI {
 
 		public void configurationBackup(ConfigurationEvent event) {
 		}
-	}
-
-	/***************************************************************************
-	 * Initialization of visual appearance.
-	 */
-	static {
-		if (Configuration.instance().getUseSystemLookAndFeel()) {
-			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
-			} catch (Exception ex) {
-				// keep default look and feel
-			}
-		}
-
-		Toolkit.getDefaultToolkit().setDynamicLayout(true);
-
-		// IMPORTANT:
-		// Never wait for the result of a spin-over or we'll
-		// run into deadlocks!! (player lock <-> Swing EDT)
-		SpinOverEvaluator.setDefaultWait(false);
 	}
 }
