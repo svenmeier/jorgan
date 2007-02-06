@@ -36,7 +36,7 @@ public class StopSelectionPanel extends JPanel {
   /**
    * The resource bundle.
    */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.resources");
+  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
 
   private Action allAction  = new AllAction();
   private Action noneAction = new NoneAction();

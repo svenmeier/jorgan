@@ -51,7 +51,7 @@ import swingx.docking.DockedPanel;
 public class ProblemsPanel extends DockedPanel {
 
     private static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+            .getBundle("jorgan.gui.i18n");
 
     /**
      * Icon used for indication of a warning.

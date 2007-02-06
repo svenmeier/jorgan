@@ -22,22 +22,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ResourceBundle;
 
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
+
+import jorgan.util.I18N;
 
 /**
  * Selector of a color.
  */
 public class ColorSelector extends JPanel {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.swing.resources");
+	private static I18N i18n = I18N.get(ColorSelector.class);
 
 	/**
 	 * The selected color.
@@ -83,7 +80,7 @@ public class ColorSelector extends JPanel {
 		button.setHorizontalAlignment(JButton.LEFT);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				String title = resources.getString("color.title");
+				String title = i18n.getString("colorChooser.title");
 				Color newColor = JColorChooser.showDialog(ColorSelector.this,
 						title, color);
 				if (newColor != null) {
@@ -108,7 +105,7 @@ public class ColorSelector extends JPanel {
 	 */
 	public void setSelectedColor(Color color) {
 		this.color = color;
-		
+
 		if (showText) {
 			if (color == null) {
 				button.setText("-");
@@ -116,14 +113,14 @@ public class ColorSelector extends JPanel {
 				button.setText(format(color));
 			}
 		}
-		
+
 		if (showIcon) {
 			if (color == null) {
 				button.setIcon(null);
 			} else {
 				button.setIcon(new ColorIcon(color));
 			}
-		}		
+		}
 	}
 
 	/**

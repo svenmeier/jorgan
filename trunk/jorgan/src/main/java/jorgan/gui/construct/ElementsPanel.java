@@ -57,7 +57,7 @@ import swingx.list.DnDList;
 public class ElementsPanel extends DockedPanel {
 
 	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
 			.getResource("/jorgan/gui/img/sortName.gif"));

@@ -41,7 +41,7 @@ import jorgan.App;
 public class AboutPanel extends JPanel {
 
 	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	/**
 	 * The label used to display the version of jOrgan.

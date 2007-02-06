@@ -28,7 +28,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -44,17 +43,14 @@ import javax.swing.border.CompoundBorder;
 
 import jorgan.swing.border.RuleBorder;
 import jorgan.swing.text.MultiLineLabel;
+import jorgan.util.I18N;
 
 /**
  * A standard dialog.
  */
 public class StandardDialog extends JDialog {
 
-	/**
-	 * The resource bundle.
-	 */
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.swing.resources");
+	private static I18N i18n = I18N.get(StandardDialog.class);
 
 	/**
 	 * The label holding the description.
@@ -345,7 +341,7 @@ public class StandardDialog extends JDialog {
 	private class CancelAction extends AbstractAction {
 
 		private CancelAction() {
-			putValue(Action.NAME, resources.getString("dialog.cancel"));
+			putValue(Action.NAME, i18n.getString("cancelAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -356,7 +352,7 @@ public class StandardDialog extends JDialog {
 	private class OKAction extends AbstractAction {
 
 		private OKAction() {
-			putValue(Action.NAME, resources.getString("dialog.ok"));
+			putValue(Action.NAME, i18n.getString("okAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {

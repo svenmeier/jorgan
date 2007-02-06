@@ -48,7 +48,7 @@ public class ElementPropertiesPanel extends DockedPanel {
     private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
 
     protected static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+            .getBundle("jorgan.gui.i18n");
 
     /**
      * The handler of selection changes.

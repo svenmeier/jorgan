@@ -45,7 +45,7 @@ import javax.swing.event.MouseInputAdapter;
 public class KeyboardPane extends JComponent {
 
 	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private static final int C = 0;
 

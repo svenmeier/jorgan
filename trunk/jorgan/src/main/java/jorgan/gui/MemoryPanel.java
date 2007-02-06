@@ -45,7 +45,7 @@ import swingx.docking.DockedPanel;
 public class MemoryPanel extends DockedPanel {
 
 	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private JTable table = new JTable();
 

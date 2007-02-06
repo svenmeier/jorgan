@@ -56,7 +56,7 @@ public class View {
 	 * The resource bundle.
 	 */
 	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	protected Dimension size = new Dimension();
 

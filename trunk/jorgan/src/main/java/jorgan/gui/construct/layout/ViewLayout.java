@@ -32,7 +32,7 @@ import jorgan.gui.console.View;
 public abstract class ViewLayout {
 
     private static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.resources");
+            .getBundle("jorgan.gui.i18n");
 
     private String name;
 

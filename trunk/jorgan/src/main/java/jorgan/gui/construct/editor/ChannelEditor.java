@@ -35,7 +35,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
 	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private Keyboard keyboard;
 

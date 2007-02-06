@@ -36,7 +36,7 @@ import jorgan.swing.tree.CheckedTreeCell;
 public class DeviceSelectionPanel extends JPanel {
 
 	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.resources");
+			.getBundle("jorgan.gui.i18n");
 
 	private JTree deviceTree = new JTree();
 
