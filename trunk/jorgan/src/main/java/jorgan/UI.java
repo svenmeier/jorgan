@@ -25,10 +25,12 @@ import java.io.*;
  */
 public interface UI {
 
-  /**
-   * Start the user interaction.
-   *
-   * @param file    optional file that contains an organ to start with
-   */
-  public void start(File file);
+	/**
+	 * Display the user interaction.<br>
+	 * This method must not return before end of user interaction.
+	 * 
+	 * @param file
+	 *            optional file that contains an organ to start with
+	 */
+	public void display(File file);
 }
