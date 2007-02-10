@@ -18,50 +18,52 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
-import java.util.ResourceBundle;
+import java.beans.PropertyEditorSupport;
+
+import jorgan.util.I18N;
 
 /**
  * Property editor for a boolean property.
  */
 public class BooleanEditor extends PropertyEditorSupport {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
+	private I18N i18n = I18N.get(BooleanEditor.class);
 
-  private String[] tags;
+	private String[] tags;
 
-  public BooleanEditor() {
-    tags = new String[]{resources.getString("construct.editor.boolean.true"),
-                        resources.getString("construct.editor.boolean.false")};
-    
-    
-  }
+	/**
+	 * Constructor.
+	 */
+	public BooleanEditor() {
+		tags = new String[] { i18n.getString("true"), i18n.getString("false") };
 
-  public String[] getTags() {
+	}
 
-    return tags;
-  }
+	public String[] getTags() {
 
-  public String getAsText() {
+		return tags;
+	}
 
-    Boolean value = (Boolean)getValue();
-    if (value == null) {
-      return "";
-    } else {
-      if (value.booleanValue()) {
-        return tags[0];
-      } else {
-        return tags[1];
-      }
-    }
-  }
+	public String getAsText() {
 
-  public void setAsText(String string) {
+		Boolean value = (Boolean) getValue();
+		if (value == null) {
+			return "";
+		} else {
+			if (value.booleanValue()) {
+				return tags[0];
+			} else {
+				return tags[1];
+			}
+		}
+	}
 
-    if (tags[0].equals(string)) {
-      setValue(Boolean.TRUE);
-    } else {
-      setValue(Boolean.FALSE);
-    }
-  }
+	public void setAsText(String string) {
+
+		if (tags[0].equals(string)) {
+			setValue(Boolean.TRUE);
+		} else {
+			setValue(Boolean.FALSE);
+		}
+	}
 }

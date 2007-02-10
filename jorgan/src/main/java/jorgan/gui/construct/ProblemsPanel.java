@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -43,6 +42,7 @@ import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
+import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
 
 /**
@@ -50,228 +50,232 @@ import swingx.docking.DockedPanel;
  */
 public class ProblemsPanel extends DockedPanel {
 
-    private static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ProblemsPanel.class);
 
-    /**
-     * Icon used for indication of a warning.
-     */
-    private static final Icon warningIcon = new ImageIcon(OrganPanel.class
-            .getResource("img/warning.gif"));
+	/**
+	 * Icon used for indication of a warning.
+	 */
+	private static final Icon warningIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/warning.gif"));
 
-    /**
-     * Icon used for indication of an error.
-     */
-    private static final Icon errorIcon = new ImageIcon(OrganPanel.class
-            .getResource("img/error.gif"));
+	/**
+	 * Icon used for indication of an error.
+	 */
+	private static final Icon errorIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/error.gif"));
 
-    private OrganSession session;
+	private OrganSession session;
 
-    private JTable table = new JTable();
+	private JTable table = new JTable();
 
-    private ProblemsModel problemsModel = new ProblemsModel();
+	private ProblemsModel problemsModel = new ProblemsModel();
 
-    private List rows = new ArrayList();
+	private List rows = new ArrayList();
 
-    private JPopupMenu popup = new JPopupMenu();
+	private JPopupMenu popup = new JPopupMenu();
 
-    private GotoAction gotoAction = new GotoAction();
+	private GotoAction gotoAction = new GotoAction();
 
-    /**
-     * Create a tree panel.
-     */
-    public ProblemsPanel() {
+	/**
+	 * Create a tree panel.
+	 */
+	public ProblemsPanel() {
 
-        table.setModel(problemsModel);
-        TableUtils.addActionListener(table, gotoAction);
-        TableUtils.addPopup(table, popup);
-        TableUtils.pleasantLookAndFeel(table);
-        Map iconMap = new HashMap();
-        iconMap.put("warning", warningIcon);
-        iconMap.put("error", errorIcon);
-        IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
-        setScrollableBody(table, true, false);
+		table.setModel(problemsModel);
+		TableUtils.addActionListener(table, gotoAction);
+		TableUtils.addPopup(table, popup);
+		TableUtils.pleasantLookAndFeel(table);
+		Map iconMap = new HashMap();
+		iconMap.put("warning", warningIcon);
+		iconMap.put("error", errorIcon);
+		IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
+		setScrollableBody(table, true, false);
 
-        popup.add(gotoAction);
-    }
+		popup.add(gotoAction);
+	}
 
-    public void setOrgan(OrganSession session) {
-        if (this.session != null) {
-            this.session.removePlayerListener(problemsModel);
+	/**
+	 * Set the organ.
+	 * 
+	 * @param session
+	 *            the organ
+	 */
+	public void setOrgan(OrganSession session) {
+		if (this.session != null) {
+			this.session.removePlayerListener(problemsModel);
 
-            rows.clear();
-        }
+			rows.clear();
+		}
 
-        this.session = session;
+		this.session = session;
 
-        if (this.session != null) {
-            this.session.addPlayerListener(problemsModel);
+		if (this.session != null) {
+			this.session.addPlayerListener(problemsModel);
 
-            Organ organ = this.session.getOrgan();
-            for (int e = 0; e < organ.getElementCount(); e++) {
-                addProblems(organ.getElement(e));
-            }
-        }
+			Organ organ = this.session.getOrgan();
+			for (int e = 0; e < organ.getElementCount(); e++) {
+				addProblems(organ.getElement(e));
+			}
+		}
 
-        problemsModel.fireTableDataChanged();
-    }
+		problemsModel.fireTableDataChanged();
+	}
 
-    private void addProblems(Element element) {
+	private void addProblems(Element element) {
 
-        List problems = session.getPlay().getProblems(element);
-        if (problems != null) {
-            for (int p = 0; p < problems.size(); p++) {
-                rows.add(new Row(element, (Problem) problems.get(p)));
-            }
-        }
-    }
+		List problems = session.getPlay().getProblems(element);
+		if (problems != null) {
+			for (int p = 0; p < problems.size(); p++) {
+				rows.add(new Row(element, (Problem) problems.get(p)));
+			}
+		}
+	}
 
-    private void removeProblems(Element element) {
+	private void removeProblems(Element element) {
 
-        for (int r = rows.size() - 1; r >= 0; r--) {
-            Row row = (Row) rows.get(r);
-            if (row.getElement() == element) {
-                rows.remove(row);
-            }
-        }
-    }
+		for (int r = rows.size() - 1; r >= 0; r--) {
+			Row row = (Row) rows.get(r);
+			if (row.getElement() == element) {
+				rows.remove(row);
+			}
+		}
+	}
 
-    private class ProblemsModel extends AbstractTableModel implements
-            PlayListener {
+	private class ProblemsModel extends AbstractTableModel implements
+			PlayListener {
 
-        private String[] columns = new String[] { " ", "Description", "Element" };
+		private String[] columns = new String[] { " ", "Description", "Element" };
 
-        public int getColumnCount() {
-            return columns.length;
-        }
+		public int getColumnCount() {
+			return columns.length;
+		}
 
-        public String getColumnName(int column) {
-            return columns[column];
-        }
+		public String getColumnName(int column) {
+			return columns[column];
+		}
 
-        public int getRowCount() {
-            return rows.size();
-        }
+		public int getRowCount() {
+			return rows.size();
+		}
 
-        public Object getValueAt(int rowIndex, int columnIndex) {
-            Row row = (Row) rows.get(rowIndex);
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Row row = (Row) rows.get(rowIndex);
 
-            switch (columnIndex) {
-            case 0:
-                return row.getProblem().getLevel();
-            case 1:
-                return row.getMessage();
-            case 2:
-                return row.getElement();
-            }
+			switch (columnIndex) {
+			case 0:
+				return row.getProblem().getLevel();
+			case 1:
+				return row.getMessage();
+			case 2:
+				return row.getElement();
+			}
 
-            return null;
-        }
+			return null;
+		}
 
-        public void inputAccepted() {
-        }
+		public void inputAccepted() {
+		}
 
-        public void outputProduced() {
-        }
+		public void outputProduced() {
+		}
 
-        public void playerAdded(PlayEvent ev) {
+		public void playerAdded(PlayEvent ev) {
 
-            addProblems(ev.getElement());
+			addProblems(ev.getElement());
 
-            problemsModel.fireTableDataChanged();
-        }
+			problemsModel.fireTableDataChanged();
+		}
 
-        public void playerRemoved(PlayEvent ev) {
-            removeProblems(ev.getElement());
+		public void playerRemoved(PlayEvent ev) {
+			removeProblems(ev.getElement());
 
-            problemsModel.fireTableDataChanged();
-        }
+			problemsModel.fireTableDataChanged();
+		}
 
-        public void problemAdded(PlayEvent ev) {
+		public void problemAdded(PlayEvent ev) {
 
-            rows.add(new Row(ev.getElement(), ev.getProblem()));
+			rows.add(new Row(ev.getElement(), ev.getProblem()));
 
-            fireTableDataChanged();
-        }
+			fireTableDataChanged();
+		}
 
-        public void problemRemoved(PlayEvent ev) {
+		public void problemRemoved(PlayEvent ev) {
 
-            rows.remove(new Row(ev.getElement(), ev.getProblem()));
+			rows.remove(new Row(ev.getElement(), ev.getProblem()));
 
-            fireTableDataChanged();
-        }
-        
-        public void opened() {
-        }
-        
-        public void closed() {
-        }
-    }
+			fireTableDataChanged();
+		}
 
-    private class Row {
+		public void opened() {
+		}
 
-        private Element element;
+		public void closed() {
+		}
+	}
 
-        private Problem problem;
+	private class Row {
 
-        private String message;
+		private Element element;
 
-        public Row(Element element, Problem problem) {
-            this.element = element;
-            this.problem = problem;
+		private Problem problem;
 
-            String pattern = resources.getString("problems." + problem);
+		private String message;
 
-            message = MessageFormat.format(pattern, new Object[] { problem
-                    .getValue() });
-        }
+		private Row(Element element, Problem problem) {
+			this.element = element;
+			this.problem = problem;
 
-        public Element getElement() {
-            return element;
-        }
+			String pattern = i18n.getString(problem.toString());
 
-        public Problem getProblem() {
-            return problem;
-        }
+			message = MessageFormat.format(pattern, new Object[] { problem
+					.getValue() });
+		}
 
-        public String getMessage() {
-            return message;
-        }
+		private Element getElement() {
+			return element;
+		}
 
-        public int hashCode() {
-            return element.hashCode() + problem.hashCode();
-        }
+		private Problem getProblem() {
+			return problem;
+		}
 
-        public boolean equals(Object object) {
-            if (!(object instanceof Row)) {
-                return false;
-            }
+		private String getMessage() {
+			return message;
+		}
 
-            Row row = (Row) object;
+		public int hashCode() {
+			return element.hashCode() + problem.hashCode();
+		}
 
-            return row.element.equals(this.element)
-                    && row.problem.equals(this.problem);
-        }
-    }
+		public boolean equals(Object object) {
+			if (!(object instanceof Row)) {
+				return false;
+			}
 
-    private class GotoAction extends AbstractAction {
+			Row row = (Row) object;
 
-        public GotoAction() {
-            putValue(Action.NAME, resources
-                    .getString("problems.action.goto.name"));
-            putValue(Action.SHORT_DESCRIPTION, resources
-                    .getString("problems.action.goto.description"));
-            putValue(Action.SMALL_ICON, new ImageIcon(ProblemsPanel.class
-                    .getResource("/jorgan/gui/img/goto.gif")));
-        }
+			return row.element.equals(this.element)
+					&& row.problem.equals(this.problem);
+		}
+	}
 
-        public void actionPerformed(ActionEvent ev) {
-            int index = table.getSelectedRow();
+	private class GotoAction extends AbstractAction {
 
-            Row row = (Row) rows.get(index);
+		private GotoAction() {
+			putValue(Action.NAME, i18n.getString("gotoAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("gotoAction.shortDescription"));
+			putValue(Action.SMALL_ICON, new ImageIcon(ProblemsPanel.class
+					.getResource("/jorgan/gui/img/goto.gif")));
+		}
 
-            session.getSelectionModel().setSelectedElement(row.getElement(),
-                    row.getProblem().getProperty());
-        }
-    }
+		public void actionPerformed(ActionEvent ev) {
+			int index = table.getSelectedRow();
+
+			Row row = (Row) rows.get(index);
+
+			session.getSelectionModel().setSelectedElement(row.getElement(),
+					row.getProblem().getProperty());
+		}
+	}
 }

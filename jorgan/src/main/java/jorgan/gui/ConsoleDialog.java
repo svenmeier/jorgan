@@ -28,7 +28,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -45,14 +44,14 @@ import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
 import jorgan.swing.CardPanel;
+import jorgan.util.I18N;
 
 /**
  * JDialog subclass to show a console <em>full screen</em>.
  */
 public class ConsoleDialog extends JDialog {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ConsoleDialog.class);
 
 	/**
 	 * The handler of mouse events.
@@ -211,8 +210,7 @@ public class ConsoleDialog extends JDialog {
 	private class CloseAction extends AbstractAction {
 
 		private CloseAction() {
-			putValue(Action.NAME, resources
-					.getString("fullScreen.action.close.name"));
+			putValue(Action.NAME, i18n.getString("closeAction.name"));
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);

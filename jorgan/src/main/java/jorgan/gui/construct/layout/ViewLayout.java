@@ -19,58 +19,75 @@
 package jorgan.gui.construct.layout;
 
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import jorgan.gui.console.View;
+import jorgan.util.I18N;
 
 /**
  * The Layout for views.
  */
 public abstract class ViewLayout {
 
-    private static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.i18n");
+	private static final I18N i18n = I18N.get(ViewLayout.class);
 
-    private String name;
+	private String name;
 
-    private Icon icon;
+	private Icon icon;
 
-    public ViewLayout(String key) {
-        if (key != null) {
-            this.name = resources.getString("view." + key);
-            this.icon = new ImageIcon(View.class.getResource("/jorgan/gui/img/"
-                    + key + ".gif"));
-        }
-    }
+	protected ViewLayout(String key) {
+		if (key != null) {
+			this.name = i18n.getString(key);
+			this.icon = new ImageIcon(View.class.getResource("/jorgan/gui/img/"
+					+ key + ".gif"));
+		}
+	}
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Get the name of this layout.
+	 * 
+	 * @return name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    public Icon getIcon() {
-        return icon;
-    }
+	/**
+	 * Get the icon of this layout.
+	 * 
+	 * @return icon
+	 */
+	public Icon getIcon() {
+		return icon;
+	}
 
-    public void layout(View pressed, List views) {
-        init(pressed, views);
+	/**
+	 * Layout the given views.
+	 * 
+	 * @param pressed
+	 *            the pressed view
+	 * @param views
+	 *            the selected views to layout
+	 */
+	public void layout(View pressed, List views) {
+		init(pressed, views);
 
-        for (int s = 0; s < views.size(); s++) {
-            View view = (View) views.get(s);
-            visit(view, s);
-        }
-    }
+		for (int s = 0; s < views.size(); s++) {
+			View view = (View) views.get(s);
+			visit(view, s);
+		}
+	}
 
-    protected void changePosition(View view, int x, int y) {
-        view.getConsolePanel().getConsole()
-                .setLocation(view.getElement(), x, y);
-    }
+	protected void changePosition(View view, int x, int y) {
+		view.getConsolePanel().getConsole()
+				.setLocation(view.getElement(), x, y);
+	}
 
-    protected void init(View pressed, List views) {
-    }
+	protected void init(View pressed, List views) {
+	}
 
-    protected void visit(View view, int index) {
-    }
+	protected void visit(View view, int index) {
+	}
 }

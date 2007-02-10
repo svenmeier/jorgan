@@ -113,7 +113,7 @@ public class DebugPanel extends JPanel {
 		StandardDialog dialog = new StandardDialog(owner, false);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
-		dialog.setContent(this);
+		dialog.setBody(this);
 		dialog.addAction(new ClearAction());
 		dialog.addAction(new CopyAction());
 

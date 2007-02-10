@@ -22,7 +22,6 @@ import java.awt.Component;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 
@@ -31,17 +30,14 @@ import jorgan.disposition.Organ;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
+import jorgan.util.I18N;
 
 /**
  * A wizard for creating of references.
  */
 public class CreateReferencesWizard extends BasicWizard {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(CreateReferencesWizard.class);
 
 	private Organ organ;
 
@@ -110,8 +106,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return resources
-					.getString("construct.create.referencesTo.description");
+			return i18n.getString("referencesToPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -141,8 +136,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return resources
-					.getString("construct.create.referencedFrom.description");
+			return i18n.getString("referencedFromPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -171,15 +165,14 @@ public class CreateReferencesWizard extends BasicWizard {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 
-		dialog.setTitle(resources
-				.getString("construct.create.references.title"));
+		dialog.setTitle(i18n.getString("title"));
 
 		dialog.setWizard(new CreateReferencesWizard(organ, element));
 
 		dialog.start();
 
 		dialog.dispose();
-		
+
 		dialog.setWizard(null);
 	}
 }

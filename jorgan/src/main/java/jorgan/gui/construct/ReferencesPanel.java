@@ -27,7 +27,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -50,6 +49,7 @@ import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.list.ListUtils;
+import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
 
 /**
@@ -57,8 +57,7 @@ import swingx.docking.DockedPanel;
  */
 public class ReferencesPanel extends DockedPanel {
 
-	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static final I18N i18n = I18N.get(ReferencesPanel.class);
 
 	private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
 			.getResource("/jorgan/gui/img/sortName.gif"));
@@ -114,7 +113,8 @@ public class ReferencesPanel extends DockedPanel {
 		addToolSeparator();
 
 		sortNameButton.setSelected(true);
-		sortNameButton.setToolTipText(resources.getString("sort.name"));
+		sortNameButton.setToolTipText(i18n
+				.getString("sortNameButton.toolTipText"));
 		sortNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (sortNameButton.isSelected()) {
@@ -125,7 +125,8 @@ public class ReferencesPanel extends DockedPanel {
 		});
 		addTool(sortNameButton);
 
-		sortTypeButton.setToolTipText(resources.getString("sort.type"));
+		sortTypeButton.setToolTipText(i18n
+				.getString("sortTypeButton.toolTipText"));
 		sortTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (sortTypeButton.isSelected()) {
@@ -349,10 +350,9 @@ public class ReferencesPanel extends DockedPanel {
 	private class AddAction extends AbstractAction {
 
 		private AddAction() {
-			putValue(Action.NAME, resources
-					.getString("construct.action.reference.add.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("construct.action.reference.add.description"));
+			putValue(Action.NAME, i18n.getString("addAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("addAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
 					.getResource("/jorgan/gui/img/add.gif")));
 
@@ -375,10 +375,9 @@ public class ReferencesPanel extends DockedPanel {
 			ListSelectionListener {
 
 		private RemoveAction() {
-			putValue(Action.NAME, resources
-					.getString("construct.action.reference.remove.name"));
-			putValue(Action.SHORT_DESCRIPTION, resources
-					.getString("construct.action.reference.remove.description"));
+			putValue(Action.NAME, i18n.getString("removeAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("removeAction.shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
 					.getResource("/jorgan/gui/img/remove.gif")));
 

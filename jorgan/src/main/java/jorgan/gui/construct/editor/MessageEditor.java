@@ -18,18 +18,28 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.util.Iterator;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Insets;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.sound.midi.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Iterator;
+import java.util.StringTokenizer;
 
-import jorgan.disposition.*;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
+
+import jorgan.disposition.Console;
+import jorgan.disposition.Element;
+import jorgan.disposition.Message;
 import jorgan.sound.midi.ShortMessageRecorder;
+import jorgan.util.I18N;
 
 /**
  * PropertyEditor for a message property.
@@ -37,8 +47,7 @@ import jorgan.sound.midi.ShortMessageRecorder;
 public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(MessageEditor.class);
 
 	private String device;
 
@@ -132,14 +141,13 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane optionPane = new JOptionPane(resources
-				.getString("construct.editor.message.description"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null,
-				new Object[] { resources
-						.getString("construct.editor.message.cancel") });
+		JOptionPane messageOptionPane = new JOptionPane(i18n
+				.getString("messageOptionPane.message"),
+				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
+						.getString("messageOptionPane.cancel") });
 
-		dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
-				.getString("construct.editor.message.title"));
+		dialog = messageOptionPane.createDialog(panel.getTopLevelAncestor(),
+				i18n.getString("messageOptionPane.title"));
 		dialog.setVisible(true);
 		dialog = null;
 

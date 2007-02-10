@@ -18,10 +18,11 @@
  */
 package jorgan.gui.midi;
 
-import java.awt.*;
-import java.util.ResourceBundle;
+import java.awt.BorderLayout;
 
-import javax.swing.*;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -29,24 +30,24 @@ import javax.swing.tree.TreePath;
 
 import jorgan.sound.midi.DevicePool;
 import jorgan.swing.tree.CheckedTreeCell;
+import jorgan.util.I18N;
 
 /**
  * A panel to select a MIDI device.
  */
 public class DeviceSelectionPanel extends JPanel {
 
-	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private I18N i18n = I18N.get(DeviceSelectionPanel.class);
 
 	private JTree deviceTree = new JTree();
 
 	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-	private DefaultMutableTreeNode in = new DefaultMutableTreeNode(resources
-			.getString("log.select.input"));
+	private DefaultMutableTreeNode in = new DefaultMutableTreeNode(i18n
+			.getString("input"));
 
-	private DefaultMutableTreeNode out = new DefaultMutableTreeNode(resources
-			.getString("log.select.output"));
+	private DefaultMutableTreeNode out = new DefaultMutableTreeNode(i18n
+			.getString("output"));
 
 	private String deviceName = null;
 
@@ -99,8 +100,11 @@ public class DeviceSelectionPanel extends JPanel {
 	/**
 	 * Set the selected device.
 	 * 
-	 * @param name	name of device
-	 * @param out	is the device selected for <code>out</code> of <code>in</code> 
+	 * @param name
+	 *            name of device
+	 * @param out
+	 *            is the device selected for <code>out</code> of
+	 *            <code>in</code>
 	 */
 	public void setDevice(String name, boolean out) {
 		DefaultTreeModel model = (DefaultTreeModel) deviceTree.getModel();
@@ -140,7 +144,7 @@ public class DeviceSelectionPanel extends JPanel {
 	/**
 	 * Is the device selected for <code>out</code> or <code>in</code>.
 	 * 
-	 * @return	<code>true</code> if selected for out
+	 * @return <code>true</code> if selected for out
 	 */
 	public boolean getDeviceOut() {
 		return deviceOut;
@@ -149,7 +153,7 @@ public class DeviceSelectionPanel extends JPanel {
 	/**
 	 * Get the name of the selected device.
 	 * 
-	 * @return	name
+	 * @return name
 	 */
 	public String getDeviceName() {
 		return deviceName;

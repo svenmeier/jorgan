@@ -18,19 +18,26 @@
  */
 package jorgan.gui.config;
 
+import jorgan.util.I18N;
+
 /**
  * A panel for the {@link jorgan.Configuration}.
  */
 public class JOrganConfigPanel extends ConfigurationPanel {
 
-  public JOrganConfigPanel() {
+	private static I18N i18n = I18N.get(JOrganConfigPanel.class);
 
-    setName(resources.getString("config.jorgan.name"));
-  }
+	/**
+	 * Constructor.
+	 */
+	public JOrganConfigPanel() {
 
-  public void read() {
-  }
+		setName(i18n.getString("name"));
+	}
 
-  public void write() {
-  }
+	public void read() {
+	}
+
+	public void write() {
+	}
 }

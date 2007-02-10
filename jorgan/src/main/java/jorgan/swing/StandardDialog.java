@@ -58,11 +58,11 @@ public class StandardDialog extends JDialog {
 	private MultiLineLabel descriptionLabel = new MultiLineLabel(2);
 
 	/**
-	 * The panel holding the current content.
+	 * The panel wrapping the current body.
 	 */
-	private JPanel borderPane = new JPanel();
+	private JPanel bodyWrapper = new JPanel();
 
-	private JComponent content;
+	private JComponent body;
 
 	/**
 	 * The panel holding the buttons.
@@ -135,9 +135,9 @@ public class StandardDialog extends JDialog {
 		descriptionLabel.setVisible(false);
 		contentPane.add(descriptionLabel, BorderLayout.NORTH);
 
-		borderPane.setLayout(new BorderLayout());
-		borderPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		contentPane.add(borderPane, BorderLayout.CENTER);
+		bodyWrapper.setLayout(new BorderLayout());
+		bodyWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		contentPane.add(bodyWrapper, BorderLayout.CENTER);
 
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
 
@@ -150,36 +150,36 @@ public class StandardDialog extends JDialog {
 	}
 
 	/**
-	 * Set the content. Only one content can be displayed.
+	 * Set the body. Only one body can be displayed.
 	 * 
-	 * @param content
-	 *            content to be displayed
+	 * @param body
+	 *            body to be displayed
 	 */
-	public void setContent(JComponent content) {
-		if (this.content != null) {
-			borderPane.remove(this.content);
-			borderPane.revalidate();
-			borderPane.repaint();
+	public void setBody(JComponent body) {
+		if (this.body != null) {
+			bodyWrapper.remove(this.body);
+			bodyWrapper.revalidate();
+			bodyWrapper.repaint();
 		}
 
-		this.content = content;
+		this.body = body;
 
-		if (this.content != null) {
-			borderPane.add(content, BorderLayout.CENTER);
-			borderPane.revalidate();
-			borderPane.repaint();
+		if (this.body != null) {
+			bodyWrapper.add(body, BorderLayout.CENTER);
+			bodyWrapper.revalidate();
+			bodyWrapper.repaint();
 		}
 
 		guaranteePreferredSize();
 	}
 
 	/**
-	 * Get the current content.
+	 * Get the current body.
 	 * 
-	 * @return the content
+	 * @return the body
 	 */
-	public JComponent getContent() {
-		return content;
+	public JComponent getBody() {
+		return body;
 	}
 
 	/**

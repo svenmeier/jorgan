@@ -18,16 +18,30 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.util.*;
-import java.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.text.DefaultFormatterFactory;
-import javax.sound.midi.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
 
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.swing.AbstractSpinnerModel;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFormattedTextField;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SwingUtilities;
+import javax.swing.text.DefaultFormatterFactory;
+
+import jorgan.disposition.Element;
+import jorgan.disposition.Key;
+import jorgan.disposition.Keyboard;
 import jorgan.sound.midi.ShortMessageRecorder;
-import jorgan.disposition.*;
+import jorgan.util.I18N;
 
 /**
  * Property editor for a key property.
@@ -35,8 +49,7 @@ import jorgan.disposition.*;
 public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(KeyEditor.class);
 
 	private Keyboard keyboard;
 
@@ -108,14 +121,13 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane optionPane = new JOptionPane(resources
-				.getString("construct.editor.key.description"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null,
-				new Object[] { resources
-						.getString("construct.editor.key.cancel") });
+		JOptionPane keyOptionPane = new JOptionPane(i18n
+				.getString("keyOptionPane.message"),
+				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
+						.getString("keyOptionPane.cancel") });
 
-		dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
-				.getString("construct.editor.key.title"));
+		dialog = keyOptionPane.createDialog(panel, i18n
+				.getString("keyOptionPane.title"));
 		dialog.setVisible(true);
 		dialog = null;
 
@@ -193,7 +205,8 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		/**
 		 * Constructor.
 		 * 
-		 * @param deviceName	name of device
+		 * @param deviceName
+		 *            name of device
 		 * @throws MidiUnavailableException
 		 */
 		public KeyRecorder(String deviceName) throws MidiUnavailableException {

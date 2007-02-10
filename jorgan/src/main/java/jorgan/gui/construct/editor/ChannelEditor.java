@@ -18,15 +18,27 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.util.*;
-import java.text.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.sound.midi.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.ParseException;
 
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.SwingUtilities;
+
+import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
 import jorgan.sound.midi.ShortMessageRecorder;
-import jorgan.disposition.*;
+import jorgan.util.I18N;
 
 /**
  * A property editor for a channel property.
@@ -34,8 +46,7 @@ import jorgan.disposition.*;
 public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ChannelEditor.class);
 
 	private Keyboard keyboard;
 
@@ -96,14 +107,13 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane optionPane = new JOptionPane(resources
-				.getString("construct.editor.channel.description"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null,
-				new Object[] { resources
-						.getString("construct.editor.channel.cancel") });
+		JOptionPane channelOptionPane = new JOptionPane(i18n
+				.getString("channelOptionPane.message"),
+				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
+						.getString("channelOptionPane.cancel") });
 
-		dialog = optionPane.createDialog(panel.getTopLevelAncestor(), resources
-				.getString("construct.editor.channel.title"));
+		dialog = channelOptionPane.createDialog(panel, i18n
+				.getString("channelOptionPane.title"));
 		dialog.setVisible(true);
 		dialog = null;
 

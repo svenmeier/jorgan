@@ -32,11 +32,14 @@ import javax.swing.border.TitledBorder;
 
 import jorgan.io.Configuration;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.io.Configuration}.
  */
 public class IOConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(IOConfigPanel.class);
 
 	private JPanel recentsPanel = new JPanel();
 
@@ -58,70 +61,76 @@ public class IOConfigPanel extends ConfigurationPanel {
 	private JSpinner historySizeSpinner = new JSpinner(new SpinnerNumberModel(
 			0, 0, 255, 1));
 
+	/**
+	 * Constructor.
+	 */
 	public IOConfigPanel() {
-		setName(resources.getString("config.io.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
-		
+
 		recentsPanel.setLayout(new GridBagLayout());
-		recentsPanel
-				.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-						resources.getString("config.io.recents")));
-		add(recentsPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+		recentsPanel.setBorder(new TitledBorder(BorderFactory
+				.createEtchedBorder(), i18n.getString("recentsPanel.title")));
+		add(recentsPanel, builder.nextColumn().gridWidthRemainder()
+				.fillHorizontal());
 
-		GridBuilder recentsBuilder = new GridBuilder(new double[]{0.0d, 1.0d});
-		
-		recentsBuilder.nextRow();
-		
-		recentOpenOnStartupCheckBox.setText(resources
-				.getString("config.io.recentOpenOnStartup"));
-		recentsPanel.add(recentOpenOnStartupCheckBox, recentsBuilder.nextColumn().gridWidthRemainder());
+		GridBuilder recentsBuilder = new GridBuilder(
+				new double[] { 0.0d, 1.0d });
 
 		recentsBuilder.nextRow();
 
-		JLabel recentMaxLabel = new JLabel(resources
-				.getString("config.io.recentMax"));
+		recentOpenOnStartupCheckBox.setText(i18n
+				.getString("recentOpenOnStartupCheckBox.text"));
+		recentsPanel.add(recentOpenOnStartupCheckBox, recentsBuilder
+				.nextColumn().gridWidthRemainder());
+
+		recentsBuilder.nextRow();
+
+		JLabel recentMaxLabel = new JLabel(i18n
+				.getString("recentMaxLabel.text"));
 		recentsPanel.add(recentMaxLabel, recentsBuilder.nextColumn());
 		recentsPanel.add(recentMaxSpinner, recentsBuilder.nextColumn());
 
 		builder.nextRow();
-		
-		changesPanel.setLayout(new GridBagLayout());
-		changesPanel
-				.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-						resources.getString("config.io.changes")));
-		add(changesPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
 
-		GridBuilder changesBuilder = new GridBuilder(new double[]{1.0d});
-		
+		changesPanel.setLayout(new GridBagLayout());
+		changesPanel.setBorder(new TitledBorder(BorderFactory
+				.createEtchedBorder(), i18n.getString("changesPanel.title")));
+		add(changesPanel, builder.nextColumn().gridWidthRemainder()
+				.fillHorizontal());
+
+		GridBuilder changesBuilder = new GridBuilder(new double[] { 1.0d });
+
 		changesBuilder.nextRow();
-		
+
 		confirmChangesRadioButton.getModel().setGroup(changesGroup);
-		confirmChangesRadioButton.setText(resources
-				.getString("config.io.changesConfirm"));
-		changesPanel.add(confirmChangesRadioButton, changesBuilder.nextColumn());
+		confirmChangesRadioButton.setText(i18n
+				.getString("confirmChangesRadioButton.text"));
+		changesPanel
+				.add(confirmChangesRadioButton, changesBuilder.nextColumn());
 
 		changesBuilder.nextRow();
 
 		saveChangesRadioButton.getModel().setGroup(changesGroup);
-		saveChangesRadioButton.setText(resources
-				.getString("config.io.changesSave"));
+		saveChangesRadioButton.setText(i18n
+				.getString("saveChangesRadioButton.text"));
 		changesPanel.add(saveChangesRadioButton, changesBuilder.nextColumn());
 
 		changesBuilder.nextRow();
 
 		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
-		ignoreChangesRadioButton.setText(resources
-				.getString("config.io.changesIgnore"));
+		ignoreChangesRadioButton.setText(i18n
+				.getString("ignoreChangesRadioButton.text"));
 		changesPanel.add(ignoreChangesRadioButton, changesBuilder.nextColumn());
 
 		builder.nextRow();
 
-		JLabel historySizeLabel = new JLabel(resources
-				.getString("config.io.historySize"));
+		JLabel historySizeLabel = new JLabel(i18n
+				.getString("historySizeLabel.text"));
 		add(historySizeLabel, builder.nextColumn());
 		add(historySizeSpinner, builder.nextColumn());
 	}

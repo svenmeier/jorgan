@@ -26,11 +26,14 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.midi.log.Configuration;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.midi.log.Configuration}.
  */
 public class MidiMonitorConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(MidiMonitorConfigPanel.class);
 
 	private JLabel maxLabel = new JLabel();
 
@@ -41,14 +44,14 @@ public class MidiMonitorConfigPanel extends ConfigurationPanel {
 	 * Create this panel.
 	 */
 	public MidiMonitorConfigPanel() {
-		setName(resources.getString("config.midi.monitor.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
-		
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+
 		builder.nextRow();
 
-		maxLabel.setText(resources.getString("config.midi.monitor.max"));
+		maxLabel.setText(i18n.getString("maxLabel.text"));
 		add(maxLabel, builder.nextColumn());
 		add(maxSpinner, builder.nextColumn());
 	}

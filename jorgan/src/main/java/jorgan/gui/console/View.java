@@ -26,7 +26,6 @@ import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
@@ -51,12 +50,6 @@ public class View {
 	 * {@link TextLayer}s.
 	 */
 	public static final String TEXT_DESCRIPTION = "description";
-
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
 
 	protected Dimension size = new Dimension();
 

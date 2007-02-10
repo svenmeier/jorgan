@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import java.util.ResourceBundle;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDialog;
@@ -34,14 +33,14 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import jorgan.App;
+import jorgan.util.I18N;
 
 /**
  * Panel that displays information about jOrgan.
  */
 public class AboutPanel extends JPanel {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(AboutPanel.class);
 
 	/**
 	 * The label used to display the version of jOrgan.
@@ -100,8 +99,7 @@ public class AboutPanel extends JPanel {
 
 		AboutPanel aboutPanel = new AboutPanel();
 
-		JDialog dialog = new JDialog(parent, resources
-				.getString("action.about.description"), true);
+		JDialog dialog = new JDialog(parent, i18n.getString("title"), true);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		dialog.setContentPane(aboutPanel);
 		dialog.setResizable(false);

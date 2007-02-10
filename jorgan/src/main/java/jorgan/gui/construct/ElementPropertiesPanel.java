@@ -24,7 +24,6 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -45,134 +44,131 @@ import swingx.docking.DockedPanel;
  */
 public class ElementPropertiesPanel extends DockedPanel {
 
-    private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
+	private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
 
-    protected static final ResourceBundle resources = ResourceBundle
-            .getBundle("jorgan.gui.i18n");
+	/**
+	 * The handler of selection changes.
+	 */
+	private SelectionHandler selectionHandler = new SelectionHandler();
 
-    /**
-     * The handler of selection changes.
-     */
-    private SelectionHandler selectionHandler = new SelectionHandler();
+	private OrganSession session;
 
-    private OrganSession session;
+	private PropertiesPanel propertiesPanel = new PropertiesPanel();
 
-    private PropertiesPanel propertiesPanel = new PropertiesPanel();
+	public ElementPropertiesPanel() {
 
-    public ElementPropertiesPanel() {
+		ElementCustomizer customizer = new ElementCustomizer();
+		propertiesPanel.setBeanCustomizer(customizer);
+		propertiesPanel.addChangeListener(selectionHandler);
+		setScrollableBody(propertiesPanel, true, false);
+	}
 
-        ElementCustomizer customizer = new ElementCustomizer();
-        propertiesPanel.setBeanCustomizer(customizer);
-        propertiesPanel.addChangeListener(selectionHandler);
-        setScrollableBody(propertiesPanel, true, false);
-    }
+	public void setOrgan(OrganSession session) {
+		if (this.session != null) {
+			this.session.removeSelectionListener(selectionHandler);
+			this.session.removeOrganListener(selectionHandler);
 
-    public void setOrgan(OrganSession session) {
-        if (this.session != null) {
-            this.session.removeSelectionListener(selectionHandler);
-            this.session.removeOrganListener(selectionHandler);
-            
-            selectionHandler.clearProperties();
-        }
+			selectionHandler.clearProperties();
+		}
 
-        this.session = session;
+		this.session = session;
 
-        if (this.session != null) {
-            this.session.addSelectionListener(selectionHandler);
-            this.session.addOrganListener(selectionHandler);
-                        
-            selectionHandler.updateProperties();
-        }
-    }
+		if (this.session != null) {
+			this.session.addSelectionListener(selectionHandler);
+			this.session.addOrganListener(selectionHandler);
 
-    /**
-     * The handler of selections.
-     */
-    private class SelectionHandler extends OrganAdapter implements
-            ElementSelectionListener, ChangeListener {
+			selectionHandler.updateProperties();
+		}
+	}
 
-        private boolean changing = false;
+	/**
+	 * The handler of selections.
+	 */
+	private class SelectionHandler extends OrganAdapter implements
+			ElementSelectionListener, ChangeListener {
 
-        public void selectionChanged(ElementSelectionEvent ev) {
-            updateProperties();
-        }
+		private boolean changing = false;
 
-        public void stateChanged(ChangeEvent e) {
-            if (!changing) {
-                changing = true;
+		public void selectionChanged(ElementSelectionEvent ev) {
+			updateProperties();
+		}
 
-                String property = propertiesPanel.getProperty();
-                session.getSelectionModel().setSelectedProperty(property);
+		public void stateChanged(ChangeEvent e) {
+			if (!changing) {
+				changing = true;
 
-                changing = false;
-            }
-        }
+				String property = propertiesPanel.getProperty();
+				session.getSelectionModel().setSelectedProperty(property);
 
-        public void elementChanged(OrganEvent event) {
-            if (propertiesPanel.getBeans().contains(event.getElement())) {
-                updateProperties();
-            }
-        }
+				changing = false;
+			}
+		}
 
-        public void referenceAdded(OrganEvent event) {
-            List beans = propertiesPanel.getBeans();
-            if (beans.contains(event.getElement())
-                    || beans.contains(event.getReference().getElement())) {
-                updateProperties();
-            }
-        }
+		public void elementChanged(OrganEvent event) {
+			if (propertiesPanel.getBeans().contains(event.getElement())) {
+				updateProperties();
+			}
+		}
 
-        public void referenceRemoved(OrganEvent event) {
-            List beans = propertiesPanel.getBeans();
-            if (beans.contains(event.getElement())
-                    || beans.contains(event.getReference().getElement())) {
-                updateProperties();
-            }
-        }
+		public void referenceAdded(OrganEvent event) {
+			List beans = propertiesPanel.getBeans();
+			if (beans.contains(event.getElement())
+					|| beans.contains(event.getReference().getElement())) {
+				updateProperties();
+			}
+		}
 
-        private void updateProperties() {
-            if (!changing) {
-                changing = true;
+		public void referenceRemoved(OrganEvent event) {
+			List beans = propertiesPanel.getBeans();
+			if (beans.contains(event.getElement())
+					|| beans.contains(event.getReference().getElement())) {
+				updateProperties();
+			}
+		}
 
-                propertiesPanel.setBeans(session.getSelectionModel()
-                        .getSelectedElements());
-                propertiesPanel.setProperty(session.getSelectionModel()
-                        .getSelectedProperty());
+		private void updateProperties() {
+			if (!changing) {
+				changing = true;
 
-                changing = false;
-            }
-        }
-        
-        private void clearProperties() {
-            if (!changing) {
-                changing = true;
+				propertiesPanel.setBeans(session.getSelectionModel()
+						.getSelectedElements());
+				propertiesPanel.setProperty(session.getSelectionModel()
+						.getSelectedProperty());
 
-                propertiesPanel.setBean(null);
+				changing = false;
+			}
+		}
 
-                changing = false;
-            }
-        }
-    }
+		private void clearProperties() {
+			if (!changing) {
+				changing = true;
 
-    private class ElementCustomizer extends DefaultBeanCustomizer {
+				propertiesPanel.setBean(null);
 
-        public BeanInfo getBeanInfo(Class beanClass)
-                throws IntrospectionException {
-            Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
+				changing = false;
+			}
+		}
+	}
 
-            return super.getBeanInfo(beanClass);
-        }
+	private class ElementCustomizer extends DefaultBeanCustomizer {
 
-        public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
-                throws IntrospectionException {
-            PropertyEditor editor = super.getPropertyEditor(descriptor);
+		public BeanInfo getBeanInfo(Class beanClass)
+				throws IntrospectionException {
+			Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
 
-            if (editor != null && editor instanceof ElementAwareEditor) {
-                ((ElementAwareEditor) editor)
-                        .setElement((Element) propertiesPanel.getBeans().get(0));
-            }
+			return super.getBeanInfo(beanClass);
+		}
 
-            return editor;
-        }
-    }
+		public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+				throws IntrospectionException {
+			PropertyEditor editor = super.getPropertyEditor(descriptor);
+
+			if (editor != null && editor instanceof ElementAwareEditor) {
+				((ElementAwareEditor) editor)
+						.setElement((Element) propertiesPanel.getBeans().get(0));
+			}
+
+			return editor;
+		}
+	}
 }

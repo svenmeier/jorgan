@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
@@ -40,17 +39,14 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.gui.ElementListCellRenderer;
+import jorgan.util.I18N;
 
 /**
  * A panel for selection of elements.
  */
 public class ElementsSelectionPanel extends JPanel {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ElementsSelectionPanel.class);
 
 	private Action allAction = new AllAction();
 
@@ -145,8 +141,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class AllAction extends AbstractAction {
 
 		private AllAction() {
-			putValue(Action.NAME, resources
-					.getString("construct.create.references.elements.all"));
+			putValue(Action.NAME, i18n.getString("allAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -158,8 +153,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class NoneAction extends AbstractAction {
 
 		private NoneAction() {
-			putValue(Action.NAME, resources
-					.getString("construct.create.references.elements.none"));
+			putValue(Action.NAME, i18n.getString("noneAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {

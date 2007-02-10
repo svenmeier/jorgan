@@ -20,24 +20,20 @@ package jorgan.gui.config;
 
 import java.awt.Component;
 import java.awt.Window;
-import java.util.ResourceBundle;
 
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
 import jorgan.config.AbstractConfiguration;
 import jorgan.swing.StandardDialog;
+import jorgan.util.I18N;
 
 /**
  * A dialog for editing of configurations.
  */
 public class ConfigurationDialog extends StandardDialog {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ConfigurationDialog.class);
 
 	private ConfigurationTreePanel configTreePanel = new ConfigurationTreePanel();
 
@@ -62,9 +58,9 @@ public class ConfigurationDialog extends StandardDialog {
 	}
 
 	private void init() {
-		setTitle(resources.getString("config.title"));
+		setTitle(i18n.getString("title"));
 
-		setContent(configTreePanel);
+		setBody(configTreePanel);
 
 		addOKAction();
 		addCancelAction();

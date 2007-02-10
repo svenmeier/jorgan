@@ -18,134 +18,156 @@
  */
 package jorgan.gui.imports;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.table.*;
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.disposition.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.table.AbstractTableModel;
+
+import jorgan.disposition.Stop;
 import jorgan.swing.table.TableUtils;
+import jorgan.util.I18N;
 
 /**
  * A selection of stops.
  */
 public class StopSelectionPanel extends JPanel {
 
-  /**
-   * The resource bundle.
-   */
-  protected static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(StopSelectionPanel.class);
 
-  private Action allAction  = new AllAction();
-  private Action noneAction = new NoneAction();
+	private Action allAction = new AllAction();
 
-  private JScrollPane scrollPane = new JScrollPane();
-  private JTable table = new JTable();
-  
-  private StopModel stopModel = new StopModel();
-  
-  private java.util.List stops = new ArrayList();
-  
-  /**
-   * Constructor.
-   */
-  public StopSelectionPanel() {
-    setLayout(new BorderLayout(10, 10));
+	private Action noneAction = new NoneAction();
 
-    add(scrollPane, BorderLayout.CENTER);
-     
-      table.setModel(stopModel);
-      table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-      table.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
-        public void valueChanged(ListSelectionEvent e) {
-          firePropertyChange("selectedStops", null, null);
-        }
-      });
-      TableUtils.pleasantLookAndFeel(table);
-      scrollPane.setViewportView(table);
-    
-    JPanel buttonPanel = new JPanel(new BorderLayout());
-    add(buttonPanel, BorderLayout.SOUTH);
-    
-      JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
-      buttonPanel.add(gridPanel, BorderLayout.EAST);
-   
-        gridPanel.add(new JButton(allAction)); 
+	private JScrollPane scrollPane = new JScrollPane();
 
-        gridPanel.add(new JButton(noneAction)); 
-  }
-  
-  public void setStops(java.util.List stops) {
-    this.stops = stops;
-    
-    stopModel.fireTableDataChanged();
-  }
- 
-  public java.util.List getSelectedStops() {
-    int[] rows = table.getSelectedRows();
-    
-    ArrayList selectedStops = new ArrayList();    
-    for (int r = 0; r < rows.length; r++) {
-      selectedStops.add(stops.get(rows[r]));  
-    }
-    
-    return selectedStops;
-  }
-  
-  private class AllAction extends AbstractAction {
+	private JTable table = new JTable();
 
-    public AllAction() {
-      putValue(Action.NAME, resources.getString("import.stop.all"));
-    }
+	private StopModel stopModel = new StopModel();
 
-    public void actionPerformed(ActionEvent ev) {
-      table.selectAll();
-    }
-  }
-    
-  private class NoneAction extends AbstractAction {
+	private java.util.List stops = new ArrayList();
 
-    public NoneAction() {
-      putValue(Action.NAME, resources.getString("import.stop.none"));
-    }
-  
-    public void actionPerformed(ActionEvent ev) {
-      table.clearSelection();
-    }
-  }
-  
-  private class StopModel extends AbstractTableModel {
+	/**
+	 * Constructor.
+	 */
+	public StopSelectionPanel() {
+		setLayout(new BorderLayout(10, 10));
 
-    public Class getColumnClass(int columnIndex) {
-      
-      return String.class;
-    }
+		add(scrollPane, BorderLayout.CENTER);
 
-    public String getColumnName(int column) {
-      if (column == 0) {
-        return resources.getString("import.stop.name");
-      } else {
-        return resources.getString("import.stop.program");
-      }
-    }
+		table.setModel(stopModel);
+		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		table.getSelectionModel().addListSelectionListener(
+				new ListSelectionListener() {
+					public void valueChanged(ListSelectionEvent e) {
+						firePropertyChange("selectedStops", null, null);
+					}
+				});
+		TableUtils.pleasantLookAndFeel(table);
+		scrollPane.setViewportView(table);
 
-    public int getColumnCount() {
-      return 2;
-    }
+		JPanel buttonPanel = new JPanel(new BorderLayout());
+		add(buttonPanel, BorderLayout.SOUTH);
 
-    public int getRowCount() {
-      return stops.size();
-    }
+		JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
+		buttonPanel.add(gridPanel, BorderLayout.EAST);
 
-    public Object getValueAt(int rowIndex, int columnIndex) {
-      Stop stop = (Stop)stops.get(rowIndex);
-      if (columnIndex == 0) {
-        return stop.getName();
-      } else {
-        return new Integer(stop.getProgram());
-      }
-    }
-  } 
+		gridPanel.add(new JButton(allAction));
+
+		gridPanel.add(new JButton(noneAction));
+	}
+
+	/**
+	 * Set the stops to select from.
+	 * 
+	 * @param stops
+	 *            the stops
+	 */
+	public void setStops(List stops) {
+		this.stops = stops;
+
+		stopModel.fireTableDataChanged();
+	}
+
+	/**
+	 * Get the selected stops.
+	 * 
+	 * @return selected stops
+	 */
+	public java.util.List getSelectedStops() {
+		int[] rows = table.getSelectedRows();
+
+		ArrayList selectedStops = new ArrayList();
+		for (int r = 0; r < rows.length; r++) {
+			selectedStops.add(stops.get(rows[r]));
+		}
+
+		return selectedStops;
+	}
+
+	private class AllAction extends AbstractAction {
+
+		private AllAction() {
+			putValue(Action.NAME, i18n.getString("allAction.name"));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			table.selectAll();
+		}
+	}
+
+	private class NoneAction extends AbstractAction {
+
+		private NoneAction() {
+			putValue(Action.NAME, i18n.getString("noneAction.name"));
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			table.clearSelection();
+		}
+	}
+
+	private class StopModel extends AbstractTableModel {
+
+		public Class getColumnClass(int columnIndex) {
+
+			return String.class;
+		}
+
+		public String getColumnName(int column) {
+			if (column == 0) {
+				return i18n.getString("stopName");
+			} else {
+				return i18n.getString("stopProgram");
+			}
+		}
+
+		public int getColumnCount() {
+			return 2;
+		}
+
+		public int getRowCount() {
+			return stops.size();
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			Stop stop = (Stop) stops.get(rowIndex);
+			if (columnIndex == 0) {
+				return stop.getName();
+			} else {
+				return new Integer(stop.getProgram());
+			}
+		}
+	}
 }

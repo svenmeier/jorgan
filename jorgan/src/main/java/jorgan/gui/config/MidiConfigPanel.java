@@ -24,14 +24,14 @@ import javax.swing.JCheckBox;
 
 import jorgan.midi.Configuration;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.midi.Configuration}.
- * 
- * @see jorgan.midi.merge.MergeInput
- * @see jorgan.midi.merge.MidiMerger
  */
 public class MidiConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(MidiConfigPanel.class);
 
 	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
@@ -39,15 +39,15 @@ public class MidiConfigPanel extends ConfigurationPanel {
 	 * Create this panel.
 	 */
 	public MidiConfigPanel() {
-		setName(resources.getString("config.midi.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{1.0d});
+
+		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
 		builder.nextRow();
-		
-		sendAllNotesOffCheckBox.setText(resources
-				.getString("config.midi.sendAllNotesOff"));
+
+		sendAllNotesOffCheckBox.setText(i18n
+				.getString("sendAllNotesOffCheckBox.text"));
 		add(sendAllNotesOffCheckBox, builder.nextColumn());
 	}
 

@@ -24,32 +24,33 @@ import javax.swing.JCheckBox;
 
 import jorgan.play.Configuration;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.play.Configuration}.
  */
 public class PlayConfigPanel extends ConfigurationPanel {
 
+	private static I18N i18n = I18N.get(PlayConfigPanel.class);
+
 	private JCheckBox warnDeviceCheckBox = new JCheckBox();
 
 	private JCheckBox warnMessageCheckBox = new JCheckBox();
 
 	public PlayConfigPanel() {
-		setName(resources.getString("config.play.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
 		builder.nextRow();
 
-		warnDeviceCheckBox.setText(resources
-				.getString("config.play.warn.device"));
+		warnDeviceCheckBox.setText(i18n.getString("warnDeviceCheckBox.text"));
 		add(warnDeviceCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		warnMessageCheckBox.setText(resources
-				.getString("config.play.warn.message"));
+		warnMessageCheckBox.setText(i18n.getString("warnMessageCheckBox.text"));
 		add(warnMessageCheckBox, builder.nextColumn());
 	}
 
