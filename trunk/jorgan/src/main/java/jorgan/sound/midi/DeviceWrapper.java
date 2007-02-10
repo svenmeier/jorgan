@@ -18,6 +18,8 @@
  */
 package jorgan.sound.midi;
 
+import java.util.List;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -76,11 +78,11 @@ public class DeviceWrapper implements MidiDevice {
 		return device.getTransmitter();
 	}
 
-	// public List getReceivers() {
-	// return device.getReceivers();
-	// }
+	public List getReceivers() {
+		 return device.getReceivers();
+	}
 
-	// public List getTransmitters() {
-	// return device.getTransmitters();
-	// }
+	public List getTransmitters() {
+		return device.getTransmitters();
+	}
 }
