@@ -80,7 +80,7 @@ public class App {
 		} else {
 			ui = new GUI();
 		}
-		ui.start(file);
+		ui.display(file);
 
 		Configuration.instance().backup();
 

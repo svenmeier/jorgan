@@ -86,7 +86,7 @@ public class OrganShell implements UI {
 	 * @param file
 	 *            optional file that contains an organ
 	 */
-	public void start(File file) {
+	public void display(File file) {
 		writeMessage("splash", new Object[] { App.getVersion() });
 
 		if (!Configuration.instance().getUseDefaultEncoding()) {

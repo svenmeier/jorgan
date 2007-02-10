@@ -16,7 +16,7 @@ import spin.over.SpinOverEvaluator;
  */
 public class GUI implements UI {
 
-	private Object FRAME_SHOWING = new Object();
+	private FrameDisposer disposer = new FrameDisposer();
 
 	/**
 	 * Start the user interaction.
@@ -24,7 +24,7 @@ public class GUI implements UI {
 	 * @param file
 	 *            optional file that contains an organ
 	 */
-	public void start(final File file) {
+	public void display(final File file) {
 
 		if (jorgan.gui.Configuration.instance().getShowAboutOnStartup()) {
 			AboutPanel.showSplash();
@@ -39,26 +39,13 @@ public class GUI implements UI {
 
 		AboutPanel.hideSplash();
 
-		synchronized (FRAME_SHOWING) {
-			try {
-				FRAME_SHOWING.wait();
-			} catch (InterruptedException ex) {
-				throw new Error("interruption on waiting for FRAME_SHOWING", ex);
-			}
-		}
+		disposer.waitForDispose();
 	}
 
 	private void showFrame(final File file) {
-		final OrganFrame frame = new OrganFrame();
-		frame.addComponentListener(new ComponentAdapter() {
-			public void componentHidden(ComponentEvent e) {
-				synchronized (FRAME_SHOWING) {
-					frame.dispose();
+		OrganFrame frame = new OrganFrame();
 
-					FRAME_SHOWING.notify();
-				}
-			}
-		});
+		disposer.attach(frame);
 
 		if (file != null) {
 			frame.openOrgan(file);
@@ -83,5 +70,39 @@ public class GUI implements UI {
 		// Never wait for the result of a spin-over or we'll
 		// run into deadlocks!! (player lock <-> Swing EDT)
 		SpinOverEvaluator.setDefaultWait(false);
+	}
+
+	/**
+	 * The listener that gets attached to the {@link OrganFrame} to dispose it
+	 * on {@link #componentHidden(ComponentEvent)}.
+	 */
+	private class FrameDisposer extends ComponentAdapter {
+
+		private boolean disposed = false;
+		
+		private OrganFrame frame;
+		
+		private void attach(OrganFrame frame) {
+			frame.addComponentListener(this);
+			this.frame = frame;
+		}
+		
+		public synchronized void componentHidden(ComponentEvent e) {
+			frame.dispose();
+
+			disposed = true;
+			
+			notify();
+		}
+
+		private synchronized void waitForDispose() {
+			while (!disposed) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					throw new Error("unexpected interruption", ex);
+				}
+			}
+		}
 	}
 }
