@@ -18,15 +18,17 @@
  */
 package jorgan.swing.table;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.HierarchyEvent;
-import java.awt.event.HierarchyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Method;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JPopupMenu;
+import javax.swing.JTable;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableColumn;
 
@@ -74,16 +76,18 @@ public class TableUtils {
 		table.setSurrendersFocusOnKeystroke(true);
 		table.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
 
-		table.addHierarchyListener(new HierarchyListener() {
-			public void hierarchyChanged(HierarchyEvent e) {
-				Component parent = table.getParent();
-				if (parent != null && parent instanceof JViewport) {
-					JViewport viewport = (JViewport) parent;
-					viewport.setBackground(table.getBackground());
-				}
+		try {
+			if (setFillsViewportHeight == null) {
+				setFillsViewportHeight = table.getClass().getMethod(
+						"setFillsViewportHeight", new Class[] { Boolean.TYPE });
 			}
-		});
+			setFillsViewportHeight.invoke(table, new Object[] { Boolean.TRUE });
+		} catch (Exception notJava6) {
+			// unsupported before Java 6
+		}
 	}
+
+	private static Method setFillsViewportHeight;
 
 	/**
 	 * Hide the header of the given table.
