@@ -18,45 +18,49 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
-import java.util.ResourceBundle;
+import java.beans.PropertyEditorSupport;
+
+import jorgan.util.I18N;
 
 /**
  * Property editor for an allocation property.
  */
 public class AllocationEditor extends PropertyEditorSupport {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(AllocationEditor.class);
 
-  private String[] tags;
+	private String[] tags;
 
-  public AllocationEditor() {
-    tags = new String[]{resources.getString("construct.editor.allocation.firstAvailable"),
-                        resources.getString("construct.editor.allocation.allAvailable")};   
-  }
+	/**
+	 * Constructor.
+	 */
+	public AllocationEditor() {
+		tags = new String[] { i18n.getString("firstAvailable"),
+				i18n.getString("allAvailable") };
+	}
 
-  public String[] getTags() {
-    return tags;
-  }
+	public String[] getTags() {
+		return tags;
+	}
 
-  public String getAsText() {
+	public String getAsText() {
 
-    Integer value = (Integer)getValue();
-    if (value == null) {
-      return "";
-    } else {
-      return tags[value.intValue()];
-    }
-  }
+		Integer value = (Integer) getValue();
+		if (value == null) {
+			return "";
+		} else {
+			return tags[value.intValue()];
+		}
+	}
 
-  public void setAsText(String string) {
+	public void setAsText(String string) {
 
-    for (int t = 0; t < tags.length; t++) {
-      if (tags[t].equals(string)) {
-        setValue(new Integer(t));
-        return;
-      }
-    }
-    throw new IllegalArgumentException("unkown allocation");
-  }
+		for (int t = 0; t < tags.length; t++) {
+			if (tags[t].equals(string)) {
+				setValue(new Integer(t));
+				return;
+			}
+		}
+		throw new IllegalArgumentException("unkown allocation");
+	}
 }

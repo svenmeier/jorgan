@@ -20,23 +20,19 @@ package jorgan.gui.imports.defaults;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JPanel;
 
 import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.util.I18N;
 
 /**
  * A provider for an import from a patch list.
  */
 public class PatchListImportProvider implements ImportProvider {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
-
+	private static I18N i18n = I18N.get(PatchListImportProvider.class);
+	
 	private PatchListPanel panel = new PatchListPanel();
 
 	private List stops = new ArrayList();
@@ -46,11 +42,11 @@ public class PatchListImportProvider implements ImportProvider {
 	}
 
 	public String getName() {
-		return resources.getString("import.patchlist.name");
+		return i18n.getString("name");
 	}
 
 	public String getDescription() {
-		return resources.getString("import.patchlist.description");
+		return i18n.getString("description");
 	}
 
 	public boolean hasStops() {

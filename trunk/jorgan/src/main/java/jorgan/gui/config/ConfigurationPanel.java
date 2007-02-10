@@ -18,8 +18,6 @@
  */
 package jorgan.gui.config;
 
-import java.util.ResourceBundle;
-
 import javax.swing.JPanel;
 
 import jorgan.config.AbstractConfiguration;
@@ -29,18 +27,13 @@ import jorgan.config.AbstractConfiguration;
  */
 public abstract class ConfigurationPanel extends JPanel {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
-
 	protected AbstractConfiguration configuration;
 
 	/**
 	 * Set the configuration of this panel.
 	 * 
-	 * @return the configuration
+	 * @param configuration
+	 *            the configuration
 	 */
 	public void setConfiguration(AbstractConfiguration configuration) {
 		this.configuration = configuration;

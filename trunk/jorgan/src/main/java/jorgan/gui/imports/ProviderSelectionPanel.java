@@ -23,7 +23,6 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JList;
@@ -40,12 +39,6 @@ import sun.misc.Service;
  * A selection of an import method.
  */
 public class ProviderSelectionPanel extends JPanel {
-
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
 
 	private JScrollPane scrollPane = new JScrollPane();
 
@@ -77,7 +70,8 @@ public class ProviderSelectionPanel extends JPanel {
 	/**
 	 * Set the {@link ImportProvider}s to choose from.
 	 * 
-	 * @param providers	providers
+	 * @param providers
+	 *            providers
 	 */
 	public void setImportProviders(List providers) {
 		this.providers = providers;
@@ -88,7 +82,7 @@ public class ProviderSelectionPanel extends JPanel {
 	/**
 	 * Get the selected provider.
 	 * 
-	 * @return provider	the selected provider
+	 * @return provider the selected provider
 	 */
 	public ImportProvider getSelectedImportProvider() {
 		int index = list.getSelectedIndex();

@@ -27,7 +27,6 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -43,6 +42,7 @@ import jorgan.io.DispositionReader;
 import jorgan.io.riff.RiffFormatException;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 import jorgan.xml.XMLFormatException;
 
 /**
@@ -50,11 +50,7 @@ import jorgan.xml.XMLFormatException;
  */
 public class DispositionImportProvider implements ImportProvider {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private I18N i18n = I18N.get(DispositionImportProvider.class);
 
 	private OptionsPanel panel = new OptionsPanel();
 
@@ -63,11 +59,11 @@ public class DispositionImportProvider implements ImportProvider {
 	}
 
 	public String getName() {
-		return resources.getString("import.disposition.name");
+		return i18n.getString("name");
 	}
 
 	public String getDescription() {
-		return resources.getString("import.disposition.description");
+		return i18n.getString("description");
 	}
 
 	public boolean hasStops() {
@@ -84,10 +80,10 @@ public class DispositionImportProvider implements ImportProvider {
 			try {
 				stops = readStops(file);
 			} catch (XMLFormatException ex) {
-				panel.showException("import.disposition.exception.invalid",
+				panel.showException("exception.invalid",
 						new String[] { file.getPath() }, ex);
 			} catch (IOException ex) {
-				panel.showException("import.disposition.exception",
+				panel.showException("exception.general",
 						new String[] { file.getPath() }, ex);
 			}
 		}
@@ -155,7 +151,7 @@ public class DispositionImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			fileLabel.setText(resources.getString("import.soundfont.file"));
+			fileLabel.setText(i18n.getString("optionsPanel.fileLabel.text"));
 			add(fileLabel, builder.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
@@ -179,9 +175,9 @@ public class DispositionImportProvider implements ImportProvider {
 		public void showException(String message, Object[] args,
 				Exception exception) {
 
-			message = MessageFormat.format(resources.getString(message), args);
+			message = MessageFormat.format(i18n.getString(message), args);
 
-			JOptionPane.showMessageDialog(this, message, resources
+			JOptionPane.showMessageDialog(this, message, i18n
 					.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}

@@ -22,7 +22,6 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
@@ -38,17 +37,14 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.Elements;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for an element.
  */
 public class ElementCreationPanel extends JPanel {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private I18N i18n = I18N.get(ElementCreationPanel.class);
 
 	protected Insets standardInsets = new Insets(2, 2, 2, 2);
 
@@ -72,7 +68,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow();
 
-		nameLabel.setText(resources.getString("construct.create.element.name"));
+		nameLabel.setText(i18n.getString("nameLabel.text"));
 		add(nameLabel, builder.nextColumn());
 
 		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -93,7 +89,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow(1.0d);
 
-		typeLabel.setText(resources.getString("construct.create.element.type"));
+		typeLabel.setText(i18n.getString("typeLabel.text"));
 		add(typeLabel, builder.nextColumn().alignNorthWest());
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

@@ -24,11 +24,14 @@ import javax.swing.JCheckBox;
 
 import jorgan.gui.Configuration;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.gui.Configuration}.
  */
 public class GUIConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(GUIConfigPanel.class);
 
 	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
 
@@ -36,28 +39,31 @@ public class GUIConfigPanel extends ConfigurationPanel {
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
+	/**
+	 * Constructor.
+	 */
 	public GUIConfigPanel() {
-		setName(resources.getString("config.gui.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{1.0d});
-		
+
+		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
+
 		builder.nextRow();
 
-		useSystemLookAndFeelCheckBox.setText(resources
-				.getString("config.gui.useSystemLookAndFeel"));
+		useSystemLookAndFeelCheckBox.setText(i18n
+				.getString("useSystemLookAndFeelCheckBox.text"));
 		add(useSystemLookAndFeelCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		showAboutOnStartupCheckBox.setText(resources
-				.getString("config.gui.showAboutOnStartup"));
+		showAboutOnStartupCheckBox.setText(i18n
+				.getString("showAboutOnStartupCheckBox.text"));
 		add(showAboutOnStartupCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		fullScreenOnLoadCheckBox.setText(resources
-				.getString("config.gui.fullScreenOnLoad"));
+		fullScreenOnLoadCheckBox.setText(i18n
+				.getString("fullScreenOnLoadCheckBox.text"));
 		add(fullScreenOnLoadCheckBox, builder.nextColumn());
 	}
 

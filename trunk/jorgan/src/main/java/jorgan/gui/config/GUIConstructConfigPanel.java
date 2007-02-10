@@ -27,11 +27,14 @@ import javax.swing.SpinnerNumberModel;
 import jorgan.gui.construct.Configuration;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.color.ColorSelector;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.gui.construct.Configuration}.
  */
 public class GUIConstructConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(GUIConstructConfigPanel.class);
 
 	private JLabel gridLabel = new JLabel();
 
@@ -42,21 +45,24 @@ public class GUIConstructConfigPanel extends ConfigurationPanel {
 
 	private ColorSelector colorSelector = new ColorSelector();
 
+	/**
+	 * Constructor.
+	 */
 	public GUIConstructConfigPanel() {
-		setName(resources.getString("config.construct.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
-		
-		gridLabel.setText(resources.getString("config.construct.grid"));
+
+		gridLabel.setText(i18n.getString("gridLabel.text"));
 		add(gridLabel, builder.nextColumn());
 		add(gridSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		colorLabel.setText(resources.getString("config.construct.color"));
+		colorLabel.setText(i18n.getString("colorLabel.text"));
 		add(colorLabel, builder.nextColumn());
 		add(colorSelector, builder.nextColumn());
 	}

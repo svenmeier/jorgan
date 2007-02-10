@@ -44,10 +44,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -94,6 +94,7 @@ import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.TweakMac;
+import jorgan.util.I18N;
 import swingx.dnd.ObjectTransferable;
 
 /**
@@ -101,8 +102,7 @@ import swingx.dnd.ObjectTransferable;
  */
 public class ConsolePanel extends JComponent implements Scrollable {
 
-	protected static final ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static final I18N i18n = I18N.get(ConsolePanel.class);
 
 	/**
 	 * The organ of the edited console.
@@ -245,7 +245,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		ToolTipManager.sharedInstance().registerComponent(this);
 		new DropTarget(this, dropTargetListener);
 
-		alignMenu.setText(resources.getString("view.align"));
+		alignMenu.setText(i18n.getString("alignMenu.text"));
 		menu.add(alignMenu);
 
 		alignMenu.add(alignLeftAction);
@@ -255,13 +255,13 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		alignMenu.add(alignCenterVerticalAction);
 		alignMenu.add(alignBottomAction);
 
-		spreadMenu.setText(resources.getString("view.spread"));
+		spreadMenu.setText(i18n.getString("spreadMenu.text"));
 		menu.add(spreadMenu);
 
 		spreadMenu.add(spreadHorizontalAction);
 		spreadMenu.add(spreadVerticalAction);
 
-		arrangeMenu.setText(resources.getString("view.arrange"));
+		arrangeMenu.setText(i18n.getString("arrangeMenu.text"));
 		menu.add(arrangeMenu);
 
 		arrangeMenu.add(arrangeToFrontAction);
@@ -1222,7 +1222,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeToFrontAction extends AbstractAction {
 		private ArrangeToFrontAction() {
-			putValue(Action.NAME, resources.getString("view.arrangeToFront"));
+			putValue(Action.NAME, i18n.getString("arrangeToFrontAction.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource("/jorgan/gui/img/arrangeFront.gif")));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1236,7 +1237,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeToBackAction extends AbstractAction {
 		private ArrangeToBackAction() {
-			putValue(Action.NAME, resources.getString("view.arrangeToBack"));
+			putValue(Action.NAME, i18n.getString("arrangeToBackAction.name"));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource("/jorgan/gui/img/arrangeBack.gif")));
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1250,7 +1252,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeHideAction extends AbstractAction {
 		private ArrangeHideAction() {
-			putValue(Action.NAME, resources.getString("view.arrangeHide"));
+			putValue(Action.NAME, i18n.getString("arrangeHideAction.name"));
 		}
 
 		public void actionPerformed(ActionEvent e) {

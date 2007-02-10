@@ -1,10 +1,10 @@
 package jorgan.gui;
 
 import java.util.MissingResourceException;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import jorgan.disposition.Element;
+import jorgan.util.I18N;
 
 /**
  * Element <code>i18n</code> utilities.
@@ -13,11 +13,7 @@ public class Elements {
 
 	private static Logger logger = Logger.getLogger(Elements.class.getName());
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(Elements.class);
 
 	private Elements() {
 	}
@@ -65,7 +61,7 @@ public class Elements {
 
 	private static String getString(String classAndProperty) {
 		try {
-			return resources.getString("disposition." + classAndProperty);
+			return i18n.getString(classAndProperty);
 		} catch (MissingResourceException ex) {
 			logger.info("missing resource '" + classAndProperty + "'");
 

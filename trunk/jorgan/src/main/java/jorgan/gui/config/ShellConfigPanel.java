@@ -34,11 +34,14 @@ import javax.swing.border.TitledBorder;
 import jorgan.shell.Configuration;
 import jorgan.shell.Interpreter;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.shell.Configuration}.
  */
 public class ShellConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(ShellConfigPanel.class);
 
 	private JPanel encodingPanel = new JPanel();
 
@@ -54,7 +57,7 @@ public class ShellConfigPanel extends ConfigurationPanel {
 	 * Constructor.
 	 */
 	public ShellConfigPanel() {
-		setName(resources.getString("config.shell.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
@@ -63,8 +66,7 @@ public class ShellConfigPanel extends ConfigurationPanel {
 
 		encodingPanel.setLayout(new GridBagLayout());
 		encodingPanel.setBorder(new TitledBorder(BorderFactory
-				.createEtchedBorder(), resources
-				.getString("config.shell.encoding")));
+				.createEtchedBorder(), i18n.getString("encodingPanel.title")));
 		add(encodingPanel, builder.nextColumn().gridWidthRemainder()
 				.fillHorizontal());
 
@@ -74,8 +76,8 @@ public class ShellConfigPanel extends ConfigurationPanel {
 		encodingBuilder.nextRow();
 
 		String defaultEncoding = System.getProperty("file.encoding");
-		encodingDefaultRadioButton.setText(MessageFormat.format(resources
-				.getString("config.shell.encodingDefault"),
+		encodingDefaultRadioButton.setText(MessageFormat.format(i18n
+				.getString("encodingDefaultRadioButton.text"),
 				new Object[] { defaultEncoding }));
 		buttonGroup.add(encodingDefaultRadioButton);
 		encodingPanel.add(encodingDefaultRadioButton, encodingBuilder
@@ -83,8 +85,8 @@ public class ShellConfigPanel extends ConfigurationPanel {
 
 		encodingBuilder.nextRow();
 
-		encodingOtherRadioButton.setText(resources
-				.getString("config.shell.encodingOther"));
+		encodingOtherRadioButton.setText(i18n
+				.getString("encodingOtherRadioButton.text"));
 		buttonGroup.add(encodingOtherRadioButton);
 		encodingPanel.add(encodingOtherRadioButton, encodingBuilder
 				.nextColumn());

@@ -32,11 +32,14 @@ import jorgan.gui.console.Configuration;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.gui.console.Configuration}.
  */
 public class GUIConsoleConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(GUIConsoleConfigPanel.class);
 
 	private JCheckBox interpolateCheckBox = new JCheckBox();
 
@@ -57,20 +60,19 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
 	private FontSelector shortcutFontSelector = new FontSelector();
 
 	public GUIConsoleConfigPanel() {
-		setName(resources.getString("config.console.name"));
+		setName(i18n.getString("name"));
 		setLayout(new GridBagLayout());
-		
-		GridBuilder builder = new GridBuilder(new double[]{0.0d, 1.0d});
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
-		
-		interpolateCheckBox.setText(resources
-				.getString("config.console.interpolate"));
+
+		interpolateCheckBox.setText(i18n.getString("interpolateCheckBox.text"));
 		add(interpolateCheckBox, builder.nextColumn().gridWidthRemainder());
 
 		builder.nextRow();
 
-		fontLabel.setText(resources.getString("config.console.font"));
+		fontLabel.setText(i18n.getString("fontLabel.text"));
 		add(fontLabel, builder.nextColumn());
 		add(fontSelector, builder.nextColumn().fillHorizontal());
 
@@ -78,16 +80,17 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
 
 		shortcutsPanel.setLayout(new GridBagLayout());
 		shortcutsPanel.setBorder(new TitledBorder(BorderFactory
-				.createEtchedBorder(), resources
-				.getString("config.console.shortcuts")));
-		add(shortcutsPanel, builder.nextColumn().gridWidthRemainder().fillHorizontal());
+				.createEtchedBorder(), i18n.getString("shortcutPanel.title")));
+		add(shortcutsPanel, builder.nextColumn().gridWidthRemainder()
+				.fillHorizontal());
 
-		GridBuilder shortcutsBuilder = new GridBuilder(new double[]{0.0d, 1.0d});
-		
+		GridBuilder shortcutsBuilder = new GridBuilder(new double[] { 0.0d,
+				1.0d });
+
 		shortcutsBuilder.nextRow();
-		
-		showShortcutCheckBox.setText(resources
-				.getString("config.console.shortcuts.show"));
+
+		showShortcutCheckBox.setText(i18n
+				.getString("showShortcutCheckBox.text"));
 		showShortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
 				shortcutColorSelector.setEnabled(showShortcutCheckBox
@@ -96,21 +99,22 @@ public class GUIConsoleConfigPanel extends ConfigurationPanel {
 						.isSelected());
 			}
 		});
-		shortcutsPanel.add(showShortcutCheckBox, shortcutsBuilder.nextColumn().gridWidthRemainder());
+		shortcutsPanel.add(showShortcutCheckBox, shortcutsBuilder.nextColumn()
+				.gridWidthRemainder());
 
 		shortcutsBuilder.nextRow();
 
-		shortcutColorLabel.setText(resources
-				.getString("config.console.shortcuts.color"));
+		shortcutColorLabel.setText(i18n.getString("shortcutColorLabel.text"));
 		shortcutsPanel.add(shortcutColorLabel, shortcutsBuilder.nextColumn());
-		shortcutsPanel.add(shortcutColorSelector, shortcutsBuilder.nextColumn());
+		shortcutsPanel
+				.add(shortcutColorSelector, shortcutsBuilder.nextColumn());
 
 		shortcutsBuilder.nextRow();
 
-		shortcutFontLabel.setText(resources
-				.getString("config.console.shortcuts.font"));
+		shortcutFontLabel.setText(i18n.getString("shortcutFontLabel.text"));
 		shortcutsPanel.add(shortcutFontLabel, shortcutsBuilder.nextColumn());
-		shortcutsPanel.add(shortcutFontSelector, shortcutsBuilder.nextColumn().fillHorizontal());
+		shortcutsPanel.add(shortcutFontSelector, shortcutsBuilder.nextColumn()
+				.fillHorizontal());
 	}
 
 	public void read() {

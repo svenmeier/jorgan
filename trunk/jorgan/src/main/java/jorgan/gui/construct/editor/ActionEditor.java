@@ -18,50 +18,51 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
-import java.util.ResourceBundle;
+import java.beans.PropertyEditorSupport;
+
+import jorgan.util.I18N;
 
 /**
  * Property editor for an action property of a <code>Keyable</code>.
  */
 public class ActionEditor extends PropertyEditorSupport {
 
-  private static ResourceBundle resources = ResourceBundle.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ActionEditor.class);
 
-  private String[] tags;
+	private String[] tags;
 
-  public ActionEditor() {
-    tags = new String[]{resources.getString("construct.editor.action.straight"),
-                        resources.getString("construct.editor.action.constant"),
-                        resources.getString("construct.editor.action.highest"),
-                        resources.getString("construct.editor.action.lowest"),   
-                        resources.getString("construct.editor.action.sustain"),
-                        resources.getString("construct.editor.action.sostenuto"),
-                        resources.getString("construct.editor.action.inverse")};   
-  }
+	/**
+	 * Constructor.
+	 */
+	public ActionEditor() {
+		tags = new String[] { i18n.getString("straight"),
+				i18n.getString("constant"), i18n.getString("highest"),
+				i18n.getString("lowest"), i18n.getString("sustain"),
+				i18n.getString("sostenuto"), i18n.getString("inverse") };
+	}
 
-  public String[] getTags() {
-    return tags;
-  }
+	public String[] getTags() {
+		return tags;
+	}
 
-  public String getAsText() {
+	public String getAsText() {
 
-    Integer value = (Integer)getValue();
-    if (value == null) {
-      return "";
-    } else {
-      return tags[value.intValue()];
-    }
-  }
+		Integer value = (Integer) getValue();
+		if (value == null) {
+			return "";
+		} else {
+			return tags[value.intValue()];
+		}
+	}
 
-  public void setAsText(String string) {
+	public void setAsText(String string) {
 
-    for (int t = 0; t < tags.length; t++) {
-      if (tags[t].equals(string)) {
-        setValue(new Integer(t));
-        return;
-      }
-    }
-    throw new IllegalArgumentException("unkown action");
-  }
+		for (int t = 0; t < tags.length; t++) {
+			if (tags[t].equals(string)) {
+				setValue(new Integer(t));
+				return;
+			}
+		}
+		throw new IllegalArgumentException("unkown action");
+	}
 }

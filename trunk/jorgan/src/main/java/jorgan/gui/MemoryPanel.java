@@ -20,7 +20,6 @@ package jorgan.gui;
 
 import java.awt.event.ActionEvent;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -37,6 +36,7 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
+import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
 
 /**
@@ -44,8 +44,7 @@ import swingx.docking.DockedPanel;
  */
 public class MemoryPanel extends DockedPanel {
 
-	private static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(MemoryPanel.class);
 
 	private JTable table = new JTable();
 
@@ -116,7 +115,7 @@ public class MemoryPanel extends DockedPanel {
 		table.setVisible(memory != null);
 
 		if (memory == null) {
-			setMessage(resources.getString("memory.none"));
+			setMessage(i18n.getString("noMemory"));
 		} else {
 			setMessage(null);
 
@@ -213,7 +212,7 @@ public class MemoryPanel extends DockedPanel {
 	private class NextAction extends AbstractAction implements
 			ListSelectionListener {
 		private NextAction() {
-			putValue(Action.NAME, resources.getString("memory.next.name"));
+			putValue(Action.NAME, i18n.getString("nextAction.name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/next.gif")));
 
@@ -234,7 +233,7 @@ public class MemoryPanel extends DockedPanel {
 	private class PreviousAction extends AbstractAction implements
 			ListSelectionListener {
 		private PreviousAction() {
-			putValue(Action.NAME, resources.getString("memory.previous.name"));
+			putValue(Action.NAME, i18n.getString("previousAction.name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/previous.gif")));
 
@@ -255,7 +254,7 @@ public class MemoryPanel extends DockedPanel {
 	private class SwapAction extends AbstractAction implements
 			ListSelectionListener {
 		private SwapAction() {
-			putValue(Action.NAME, resources.getString("memory.swap.name"));
+			putValue(Action.NAME, i18n.getString("swapAction.name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/swap.gif")));
 
@@ -277,7 +276,7 @@ public class MemoryPanel extends DockedPanel {
 	private class ClearAction extends AbstractAction implements
 			ListSelectionListener {
 		private ClearAction() {
-			putValue(Action.NAME, resources.getString("memory.clear.name"));
+			putValue(Action.NAME, i18n.getString("clearAction.name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/clear.gif")));
 
@@ -296,9 +295,9 @@ public class MemoryPanel extends DockedPanel {
 		}
 
 		private boolean confirm() {
-			return JOptionPane.showConfirmDialog(MemoryPanel.this, resources
-					.getString("memory.clear.warning"), resources
-					.getString("memory.clear.name"), JOptionPane.YES_NO_OPTION,
+			return JOptionPane.showConfirmDialog(MemoryPanel.this, i18n
+					.getString("confirmDialog.message"), i18n
+					.getString("confirmDialog.title"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 		}
 

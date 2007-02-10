@@ -20,7 +20,6 @@ package jorgan.gui.imports;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
-import java.util.ResourceBundle;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -31,17 +30,14 @@ import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
+import jorgan.util.I18N;
 
 /**
  * A wizard for importing of sounds.
  */
 public class ImportWizard extends BasicWizard {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(ImportWizard.class);
 
 	private Organ organ;
 
@@ -102,7 +98,7 @@ public class ImportWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return resources.getString("import.method.description");
+			return i18n.getString("providerSelectionPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -177,7 +173,7 @@ public class ImportWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return resources.getString("import.stop.description");
+			return i18n.getString("stopSelectionPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -209,14 +205,14 @@ public class ImportWizard extends BasicWizard {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 
-		dialog.setTitle(resources.getString("import.title"));
+		dialog.setTitle(i18n.getString("title"));
 
 		dialog.setWizard(new ImportWizard(organ));
 
 		dialog.start();
 
 		dialog.dispose();
-		
+
 		dialog.setWizard(null);
 	}
 }

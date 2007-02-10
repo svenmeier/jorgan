@@ -93,6 +93,8 @@ public class WizardDialog extends StandardDialog {
 	public void setWizard(Wizard wizard) {
 		if (this.wizard != null) {
 			this.wizard.removeWizardListener(listener);
+
+			setBody(null);
 		}
 
 		this.wizard = wizard;
@@ -141,18 +143,18 @@ public class WizardDialog extends StandardDialog {
 		public void wizardChanged() {
 			Page current = wizard.getCurrentPage();
 			if (current == null) {
-				setContent(null);
+				setBody(null);
 				previousAction.setEnabled(false);
 				nextAction.setEnabled(false);
 				finishAction.setEnabled(false);
 			} else {
 				JComponent component = current.getComponent();
 				if (component == null) {
-					setContent(null);
+					setBody(null);
 					setDescription(null);
 				} else {
-					if (!component.equals(getContent())) {
-						setContent(component);
+					if (!component.equals(getBody())) {
+						setBody(component);
 					}
 					setDescription(current.getDescription());
 				}

@@ -34,6 +34,7 @@ import jorgan.sound.midi.merge.MergeInput;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
+import jorgan.util.I18N;
 
 /**
  * A panel for the {@link jorgan.midi.merge.Configuration}.
@@ -42,6 +43,8 @@ import jorgan.swing.text.MultiLineLabel;
  * @see jorgan.sound.midi.merge.MidiMerger
  */
 public class MidiMergeConfigPanel extends ConfigurationPanel {
+
+	private static I18N i18n = I18N.get(MidiMergeConfigPanel.class);
 
 	/**
 	 * All available inputs.
@@ -73,10 +76,9 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 	public MidiMergeConfigPanel() {
 		setLayout(new BorderLayout(10, 10));
 
-		setName(resources.getString("config.midi.merge.name"));
+		setName(i18n.getString("name"));
 
-		descriptionLabel.setText(resources
-				.getString("config.midi.merge.description"));
+		descriptionLabel.setText(i18n.getString("descriptionLabel.text"));
 		add(descriptionLabel, BorderLayout.NORTH);
 
 		scrollPane.setPreferredSize(new Dimension(0, 0));
@@ -161,9 +163,9 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 			case 0:
 				return " ";
 			case 1:
-				return resources.getString("config.midi.merge.device");
+				return i18n.getString("device");
 			case 2:
-				return resources.getString("config.midi.merge.channel");
+				return i18n.getString("channel");
 			}
 			return null;
 		}

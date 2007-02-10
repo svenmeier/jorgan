@@ -28,7 +28,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.ResourceBundle;
 
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -44,17 +43,14 @@ import jorgan.io.soundfont.Preset;
 import jorgan.io.soundfont.SoundfontReader;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
+import jorgan.util.I18N;
 
 /**
  * A provider for an import from a SoundFont.
  */
 public class SoundFontImportProvider implements ImportProvider {
 
-	/**
-	 * The resource bundle.
-	 */
-	protected static ResourceBundle resources = ResourceBundle
-			.getBundle("jorgan.gui.i18n");
+	private static I18N i18n = I18N.get(SoundFontImportProvider.class);
 
 	private OptionsPanel panel = new OptionsPanel();
 
@@ -63,11 +59,11 @@ public class SoundFontImportProvider implements ImportProvider {
 	}
 
 	public String getName() {
-		return resources.getString("import.soundfont.name");
+		return i18n.getString("name");
 	}
 
 	public String getDescription() {
-		return resources.getString("import.soundfont.description");
+		return i18n.getString("description");
 	}
 
 	public boolean hasStops() {
@@ -84,10 +80,10 @@ public class SoundFontImportProvider implements ImportProvider {
 			try {
 				stops = readStops(file);
 			} catch (RiffFormatException ex) {
-				panel.showException("import.soundfont.exception.invalid",
+				panel.showException("exception.invalid",
 						new String[] { file.getPath() }, ex);
 			} catch (IOException ex) {
-				panel.showException("import.soundfont.exception",
+				panel.showException("exception.general",
 						new String[] { file.getPath() }, ex);
 			}
 		}
@@ -157,7 +153,7 @@ public class SoundFontImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			fileLabel.setText(resources.getString("import.soundfont.file"));
+			fileLabel.setText(i18n.getString("fileLabel.text"));
 			add(fileLabel, builder.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
@@ -181,9 +177,9 @@ public class SoundFontImportProvider implements ImportProvider {
 		public void showException(String message, Object[] args,
 				Exception exception) {
 
-			message = MessageFormat.format(resources.getString(message), args);
+			message = MessageFormat.format(i18n.getString(message), args);
 
-			JOptionPane.showMessageDialog(this, message, resources
+			JOptionPane.showMessageDialog(this, message, i18n
 					.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
