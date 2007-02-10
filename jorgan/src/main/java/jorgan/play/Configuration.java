@@ -31,8 +31,6 @@ public class Configuration extends PreferencesConfiguration {
 
 	private static final boolean WARN_WITHOUT_MESSAGE = false;
 
-	private static final boolean RELEASE_DEVICES_WHEN_DEACTIVATED = false;
-
 	private static Configuration sharedInstance = new Configuration();
 
 	private boolean warnWithoutDevice;
