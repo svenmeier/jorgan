@@ -3,7 +3,7 @@
     <docking x="0" y="0" width="200" height="200">
       <slice orientation="3" weight="0.0">
         <dock>
-          <dockable key="keyboard" null="true"/>
+          <dockable key="keyboard"/>
         </dock>
         <slice orientation="3" weight="0.25">
           <dock>
