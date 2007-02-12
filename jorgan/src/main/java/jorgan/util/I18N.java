@@ -13,6 +13,7 @@ public class I18N {
 
 	private static Logger logger = Logger.getLogger(I18N.class.getName());
 
+	private String resourcePath;
 	private String keyPrefix;
 
 	private ResourceBundle resources;
@@ -20,7 +21,7 @@ public class I18N {
 	private I18N(Class clazz) {
 		keyPrefix = "";
 
-		String resourcePath = clazz.getName();
+		resourcePath = clazz.getName();
 		while (true) {
 			int index = resourcePath.lastIndexOf('.');
 			if (index == -1) {
@@ -52,7 +53,7 @@ public class I18N {
 		try {
 			return resources.getString(key);
 		} catch (MissingResourceException ex) {
-			logger.info("missing resource '" + key + "'");
+			logger.info("missing resource '" + resourcePath + "." + key + "'");
 
 			return key;
 		}
