@@ -171,7 +171,7 @@ public class OrganPanel extends JPanel {
 
 	private ActionDockable skinsDockable = new ActionDockable(KEY_SKINS, null);
 
-	private Map consoleDockables = new HashMap();
+	private Map<Console, DefaultDockable> consoleDockables = new HashMap<Console, DefaultDockable>();
 
 	private BackAction backAction = new BackAction();
 
@@ -215,8 +215,8 @@ public class OrganPanel extends JPanel {
 	 * 
 	 * @return widgets
 	 */
-	public List getToolBarWidgets() {
-		List widgets = new ArrayList();
+	public List<Object> getToolBarWidgets() {
+		List<Object> widgets = new ArrayList<Object>();
 
 		widgets.add(backAction);
 		widgets.add(forwardAction);
@@ -229,8 +229,8 @@ public class OrganPanel extends JPanel {
 	 * 
 	 * @return widgets
 	 */
-	public List getStatusBarWidgets() {
-		List widgets = new ArrayList();
+	public List<Object> getStatusBarWidgets() {
+		List<Object> widgets = new ArrayList<Object>();
 
 		widgets.add(playMonitor);
 
@@ -243,7 +243,7 @@ public class OrganPanel extends JPanel {
 	 * @return widgets
 	 */
 	public List getMenuWidgets() {
-		List actions = new ArrayList();
+		List<Object> actions = new ArrayList<Object>();
 		actions.add(problemsDockable);
 		actions.add(keyboardDockable);
 		actions.add(midiMonitorDockable);
@@ -327,7 +327,7 @@ public class OrganPanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(consolePanel);
 		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 
-		Dockable dockable = new DefaultDockable(scrollPane, Elements
+		DefaultDockable dockable = new DefaultDockable(scrollPane, Elements
 				.getDisplayName(console));
 
 		inner.putDockable(console, dockable);
@@ -336,8 +336,7 @@ public class OrganPanel extends JPanel {
 	}
 
 	protected void updateConsoleDockable(Console console) {
-		DefaultDockable dockable = (DefaultDockable) consoleDockables
-				.get(console);
+		DefaultDockable dockable = consoleDockables.get(console);
 
 		dockable.setName(Elements.getDisplayName(console));
 
@@ -345,7 +344,7 @@ public class OrganPanel extends JPanel {
 	}
 
 	protected void removeConsoleDockable(Console console) {
-		Dockable dockable = (Dockable) consoleDockables.remove(console);
+		Dockable dockable = consoleDockables.remove(console);
 
 		JScrollPane scrollPane = (JScrollPane) dockable.getComponent();
 		ConsolePanel consolePanel = (ConsolePanel) scrollPane.getViewport()
@@ -518,12 +517,11 @@ public class OrganPanel extends JPanel {
 				if (element instanceof Console) {
 					Console console = (Console) element;
 
-					Dockable dockable = (Dockable) consoleDockables
-							.get(console);
+					Dockable dockable = consoleDockables.get(console);
 					if (dockable == null) {
 						addConsoleDockable(console);
 
-						dockable = (Dockable) consoleDockables.get(console);
+						dockable = consoleDockables.get(console);
 					}
 					inner.putDockable(console, dockable);
 				}

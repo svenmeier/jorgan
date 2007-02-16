@@ -77,7 +77,7 @@ public class ReferencesPanel extends DockedPanel {
 	 */
 	private OrganSession session;
 
-	private List rows = new ArrayList();
+	private List<Row> rows = new ArrayList<Row>();
 
 	/**
 	 * The listener to selection changes.
@@ -172,7 +172,7 @@ public class ReferencesPanel extends DockedPanel {
 		list.addListSelectionListener(removeAction);
 		ListUtils.addActionListener(list, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Row row = (Row) rows.get(list.getSelectedIndex());
+				Row row = rows.get(list.getSelectedIndex());
 
 				if (getShowReferencesTo()) {
 					session.getSelectionModel().setSelectedElement(
@@ -388,7 +388,7 @@ public class ReferencesPanel extends DockedPanel {
 			int[] indices = list.getSelectedIndices();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
-					Row row = (Row) rows.get(indices[i]);
+					Row row = rows.get(indices[i]);
 
 					if (getShowReferencesTo()) {
 						row.element.removeReference(row.reference);
@@ -415,16 +415,14 @@ public class ReferencesPanel extends DockedPanel {
 		private Reference reference;
 	}
 
-	private class RowComparator implements Comparator {
+	private class RowComparator implements Comparator<Row> {
 		private ElementComparator comparator;
 
 		private RowComparator(ElementComparator comparator) {
 			this.comparator = comparator;
 		}
 
-		public int compare(Object o1, Object o2) {
-			Row row1 = (Row) o1;
-			Row row2 = (Row) o2;
+		public int compare(Row row1, Row row2) {
 
 			if (getShowReferencesTo()) {
 				return comparator.compare(row1.reference.getElement(),

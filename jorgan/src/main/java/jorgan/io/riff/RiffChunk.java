@@ -23,17 +23,21 @@ package jorgan.io.riff;
  */
 public class RiffChunk extends ListChunk {
 
-  public static final String RIFF_ID = "RIFF";
-  public static final String RIFX_ID = "RIFX";
+	public static final String RIFF_ID = "RIFF";
 
-  /**
-   * Create a new riffChunk.
-   * 
-   * @param id          id must be <code>RIFF</code> or <code>RIFX</code>
-   * @param dataLength  length of data
-   * @param type        type
-   */
-  public RiffChunk(String id, int dataLength, String type) {
-    super(id, dataLength, type);
-  }  
+	public static final String RIFX_ID = "RIFX";
+
+	/**
+	 * Create a new riffChunk.
+	 * 
+	 * @param id
+	 *            id must be <code>RIFF</code> or <code>RIFX</code>
+	 * @param dataLength
+	 *            length of data
+	 * @param type
+	 *            type
+	 */
+	public RiffChunk(String id, int dataLength, String type) {
+		super(id, dataLength, type);
+	}
 }

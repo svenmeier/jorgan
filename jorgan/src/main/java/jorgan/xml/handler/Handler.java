@@ -19,148 +19,140 @@
 package jorgan.xml.handler;
 
 import java.io.IOException;
-import org.xml.sax.*;
-import org.xml.sax.helpers.DefaultHandler;
 
-import jorgan.xml.*;
+import jorgan.xml.AbstractReader;
+import jorgan.xml.AbstractWriter;
+import jorgan.xml.XMLWriter;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.ContentHandler;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * A handler writes an object to XML.
  */
 public class Handler extends DefaultHandler {
 
-  /**
-   * The parental handler.
-   */
-  private ContentHandler parent;
-  
-  /**
-   * The reader.
-   */
-  private AbstractReader reader;
+	/**
+	 * The parental handler.
+	 */
+	private ContentHandler parent;
 
-  /**
-   * The reader.
-   */
-  private AbstractWriter writer;
+	/**
+	 * The reader.
+	 */
+	private AbstractReader reader;
 
-  /**
-   * The character content (if any).
-   */
-  private StringBuffer characters = new StringBuffer();
+	/**
+	 * The reader.
+	 */
+	private AbstractWriter writer;
 
-  private String tag;
+	/**
+	 * The character content (if any).
+	 */
+	private StringBuffer characters = new StringBuffer();
 
-  /**
-   * Create a new handler with the given tag.
-   * 
-   * @param tag   the tag to use for this handler 
-   */
-  public Handler(AbstractWriter writer, String tag){
-    this.writer = writer;    
-    this.tag    = tag;
-  }
+	private String tag;
 
-  /**
-   * Constructor.
-   *
-   * @param parent      the parental handler
-   */
-  public Handler(AbstractReader reader) {
-    this.reader = reader;
+	/**
+	 * Create a new handler with the given tag.
+	 * 
+	 * @param tag
+	 *            the tag to use for this handler
+	 */
+	public Handler(AbstractWriter writer, String tag) {
+		this.writer = writer;
+		this.tag = tag;
+	}
 
-    this.parent = reader.getXMLReader().getContentHandler();
+	/**
+	 * Constructor.
+	 * 
+	 * @param reader
+	 *            the current reader
+	 */
+	public Handler(AbstractReader reader) {
+		this.reader = reader;
 
-    reader.getXMLReader().setContentHandler(this);
-  }
+		this.parent = reader.getXMLReader().getContentHandler();
 
-  public AbstractReader getReader() {
-    return reader;
-  }
-  
-  public AbstractWriter getWriter() {
-    return writer;
-  }
-  
-  public void start() throws IOException {
-    startElement(writer.getXMLWriter());
-    attributes  (writer.getXMLWriter());
-    children    ();
-    characters  (writer.getXMLWriter());
-    endElement  (writer.getXMLWriter());
-  }
+		reader.getXMLReader().setContentHandler(this);
+	}
 
-  public void startElement(XMLWriter writer) throws IOException {
-    writer.startElement(tag);
-  }
+	public AbstractReader getReader() {
+		return reader;
+	}
 
-  public void attributes(XMLWriter writer) throws IOException {
-  }
+	public AbstractWriter getWriter() {
+		return writer;
+	}
 
-  public void characters(XMLWriter writer) throws IOException {
-  }
+	public void start() throws IOException {
+		startElement(writer.getXMLWriter());
+		attributes(writer.getXMLWriter());
+		children();
+		characters(writer.getXMLWriter());
+		endElement(writer.getXMLWriter());
+	}
 
-  public void children() throws IOException {
-  }
+	public void startElement(XMLWriter writer) throws IOException {
+		writer.startElement(tag);
+	}
 
-  public void endElement(XMLWriter writer) throws IOException {
-    writer.endElement(tag);
-  }
-  
-  /**
-   * @see org.xml.sax.ContentHandler
-   */
-  public void startElement(String uri, String localName,
-                           String qName, Attributes attributes) {
+	public void attributes(XMLWriter writer) throws IOException {
+	}
 
-    new Handler(reader);
-  }
+	public void characters(XMLWriter writer) throws IOException {
+	}
 
-  /**
-   * @see org.xml.sax.ContentHandler
-   */
-  public void characters(char[] ch, int start, int length) {
-    characters.append(ch, start, length);
-  }
+	public void children() throws IOException {
+	}
 
-  /**
-   * @see org.xml.sax.ContentHandler
-   */
-  public void endElement(String uri, String localName, String qName) {
-    finish();
+	public void endElement(XMLWriter writer) throws IOException {
+		writer.endElement(tag);
+	}
 
-    if (parent != null) {
-      reader.getXMLReader().setContentHandler(parent);
-    }
-  }
+	public void startElement(String uri, String localName, String qName,
+			Attributes attributes) {
 
-  /**
-   * Get the character content as a string.
-   *
-   * @return  string content
-   */
-  protected String getCharacters() {
-    return characters.toString().trim();
-  }
+		new Handler(reader);
+	}
 
-  /**
-   * Callback that request this handler to finish.
-   * <br>
-   * Subclasses should override this method to create
-   * the handled object and not forget to call
-   * {@link #finished()} afterwards.
-   */
-  protected void finish() {
-    finished();
-  }
+	public final void characters(char[] ch, int start, int length) {
+		characters.append(ch, start, length);
+	}
 
-  /**
-   * Callback that notifies about that this handler
-   * is finished.
-   * <br>
-   * Subclasses should override this method to get
-   * hold of the handled object.
-   */
-  public void finished() {
-  }
+	public final void endElement(String uri, String localName, String qName) {
+		finish();
+
+		if (parent != null) {
+			reader.getXMLReader().setContentHandler(parent);
+		}
+	}
+
+	/**
+	 * Get the character content as a string.
+	 * 
+	 * @return string content
+	 */
+	protected String getCharacters() {
+		return characters.toString().trim();
+	}
+
+	/**
+	 * Callback that request this handler to finish. <br>
+	 * Subclasses should override this method to create the handled object and
+	 * not forget to call {@link #finished()} afterwards.
+	 */
+	protected void finish() {
+		finished();
+	}
+
+	/**
+	 * Callback that notifies about that this handler is finished. <br>
+	 * Subclasses should override this method to get hold of the handled object.
+	 */
+	public void finished() {
+	}
 }

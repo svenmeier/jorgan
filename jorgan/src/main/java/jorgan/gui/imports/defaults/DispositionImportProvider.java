@@ -34,7 +34,6 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
@@ -72,19 +71,19 @@ public class DispositionImportProvider implements ImportProvider {
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List getStops() {
-		List stops = new ArrayList();
+	public List<Stop> getStops() {
+		List<Stop> stops = new ArrayList<Stop>();
 
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
 			try {
 				stops = readStops(file);
 			} catch (XMLFormatException ex) {
-				panel.showException("exception.invalid",
-						new String[] { file.getPath() }, ex);
+				panel.showException("exception.invalid", new String[] { file
+						.getPath() }, ex);
 			} catch (IOException ex) {
-				panel.showException("exception.general",
-						new String[] { file.getPath() }, ex);
+				panel.showException("exception.general", new String[] { file
+						.getPath() }, ex);
 			}
 		}
 
@@ -100,9 +99,10 @@ public class DispositionImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws XMLFormatException
 	 */
-	private List readStops(File file) throws IOException, RiffFormatException {
+	private List<Stop> readStops(File file) throws IOException,
+			RiffFormatException {
 
-		List stops;
+		List<Stop> stops;
 
 		InputStream input = null;
 		try {
@@ -116,7 +116,7 @@ public class DispositionImportProvider implements ImportProvider {
 			stops = organ.getElements(Stop.class);
 
 			for (int s = 0; s < stops.size(); s++) {
-				organ.removeElement((Element) stops.get(s));
+				organ.removeElement(stops.get(s));
 			}
 		} finally {
 			if (input != null) {

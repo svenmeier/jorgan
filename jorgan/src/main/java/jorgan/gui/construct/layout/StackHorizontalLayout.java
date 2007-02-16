@@ -35,7 +35,7 @@ public class StackHorizontalLayout extends ViewLayout {
         super(null);
     }
 
-    protected void init(View pressed, List views) {
+    protected void init(View pressed, List<View> views) {
 
         grid = Configuration.instance().getGrid();
 

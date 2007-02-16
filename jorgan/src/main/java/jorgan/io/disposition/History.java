@@ -38,7 +38,7 @@ public class History {
 
 	private File parent;
 
-	private List existingNumbers;
+	private List<Integer> existingNumbers;
 
 	public History(File file) {
 		this.file = file;
@@ -48,15 +48,15 @@ public class History {
 		existingNumbers = getExistingNumbers();
 	}
 
-	
 	/**
-	 * Add an additional history. 
+	 * Add an additional history.
 	 */
 	public void add() {
 
 		if (file.exists()) {
 
-			deleteExceedingHistories(Math.max(0, Configuration.instance().getHistorySize() - 1));
+			deleteExceedingHistories(Math.max(0, Configuration.instance()
+					.getHistorySize() - 1));
 
 			if (Configuration.instance().getHistorySize() > 0) {
 				addHistory();
@@ -65,15 +65,15 @@ public class History {
 	}
 
 	/**
-	 * Clear the history. 
+	 * Clear the history.
 	 */
 	public void clear() {
 
 		deleteExceedingHistories(0);
 	}
 
-	private List getExistingNumbers() {
-		final List numbers = new ArrayList();
+	private List<Integer> getExistingNumbers() {
+		final List<Integer> numbers = new ArrayList<Integer>();
 
 		final Pattern pattern = Pattern.compile("\\." + file.getName()
 				+ "~(\\d*)");
@@ -98,17 +98,17 @@ public class History {
 	}
 
 	private void deleteExceedingHistories(int max) {
-		Collections.sort(existingNumbers, new Comparator() {
-			public int compare(Object o1, Object o2) {
-				File file1 = getBackup((Integer) o1);
-				File file2 = getBackup((Integer) o2);
+		Collections.sort(existingNumbers, new Comparator<Integer>() {
+			public int compare(Integer integer1, Integer integer2) {
+				File file1 = getBackup(integer1);
+				File file2 = getBackup(integer2);
 
 				return (int) (file2.lastModified() - file1.lastModified());
 			}
 		});
 
 		for (int n = existingNumbers.size() - 1; n >= max; n--) {
-			getBackup((Integer) existingNumbers.get(n)).delete();
+			getBackup(existingNumbers.get(n)).delete();
 			existingNumbers.remove(n);
 		}
 	}
@@ -119,7 +119,7 @@ public class History {
 
 		int free = 1;
 		for (int n = 0; n < existingNumbers.size(); n++) {
-			Integer number = (Integer) existingNumbers.get(n);
+			Integer number = existingNumbers.get(n);
 			if (number.intValue() == free) {
 				free++;
 			} else {

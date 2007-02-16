@@ -78,11 +78,11 @@ public class DeviceWrapper implements MidiDevice {
 		return device.getTransmitter();
 	}
 
-	public List getReceivers() {
-		 return device.getReceivers();
+	public List<Receiver> getReceivers() {
+		return device.getReceivers();
 	}
 
-	public List getTransmitters() {
+	public List<Transmitter> getTransmitters() {
 		return device.getTransmitters();
 	}
 }

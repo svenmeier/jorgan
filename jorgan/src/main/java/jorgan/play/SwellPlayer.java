@@ -31,7 +31,7 @@ import jorgan.play.sound.SoundWrapper;
  */
 public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
 
-    private List sounds = new ArrayList();
+    private List<SwellSound> sounds = new ArrayList<SwellSound>();
 
     public SwellPlayer(Swell swell) {
         super(swell);
@@ -46,7 +46,7 @@ public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
 
         if (isOpen()) {
             for (int s = 0; s < sounds.size(); s++) {
-                SwellSound sound = (SwellSound) sounds.get(s);
+                SwellSound sound = sounds.get(s);
                 sound.flush();
             }
         }

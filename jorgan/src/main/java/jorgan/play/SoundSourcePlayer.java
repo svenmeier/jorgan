@@ -53,7 +53,7 @@ public class SoundSourcePlayer extends Player {
 	 */
 	private SoundFactory factory;
 
-	private Map sounds = new HashMap();
+	private Map<Integer, SoundSourceSound> sounds = new HashMap<Integer, SoundSourceSound>();
 
 	public SoundSourcePlayer(SoundSource soundSource) {
 		super(soundSource);
@@ -120,7 +120,7 @@ public class SoundSourcePlayer extends Player {
 
 		Sound sound = null;
 		if (factory != null) {
-			SoundSourceSound soundSourceSound = (SoundSourceSound) sounds
+			SoundSourceSound soundSourceSound = sounds
 					.get(new Integer(program));
 			if (soundSourceSound == null) {
 				sound = factory.createSound();

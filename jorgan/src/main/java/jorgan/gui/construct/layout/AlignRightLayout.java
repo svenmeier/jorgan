@@ -30,7 +30,7 @@ public class AlignRightLayout extends ViewLayout {
         super("alignRight");
     }
 
-    protected void init(View pressed, List views) {
+    protected void init(View pressed, List<View> views) {
         x = pressed.getX() + pressed.getWidth();
     }
 

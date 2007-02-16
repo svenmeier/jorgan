@@ -70,7 +70,7 @@ public class View {
 	 */
 	private Element element;
 
-	private Map texts = new HashMap();
+	private Map<String, String> texts = new HashMap<String, String>();
 
 	/**
 	 * Create a view for the given element.
@@ -95,7 +95,7 @@ public class View {
 	 * @return text
 	 */
 	public String getText(String key) {
-		String text = (String) texts.get(key);
+		String text = texts.get(key);
 
 		if (text == null) {
 			text = "";

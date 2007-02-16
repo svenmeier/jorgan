@@ -68,7 +68,7 @@ public class OrganShell implements UI {
 	 */
 	public OrganShell() {
 
-		List commands = new ArrayList();
+		List<Command> commands = new ArrayList<Command>();
 		commands.add(new HelpCommand());
 		commands.add(new EncodingCommand());
 		commands.add(new OpenCommand());

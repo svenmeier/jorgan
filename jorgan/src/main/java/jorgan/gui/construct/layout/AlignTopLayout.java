@@ -30,7 +30,7 @@ public class AlignTopLayout extends ViewLayout {
         super("alignTop");
     }
 
-    protected void init(View pressed, List views) {
+    protected void init(View pressed, List<View> views) {
         y = pressed.getY();
     }
 

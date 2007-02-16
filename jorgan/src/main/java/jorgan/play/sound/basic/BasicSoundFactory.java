@@ -18,122 +18,127 @@
  */
 package jorgan.play.sound.basic;
 
-import javax.sound.midi.*;
-
-import jorgan.sound.midi.Channel;
-import jorgan.sound.midi.ChannelPool;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 
 import jorgan.play.sound.ChanneledSoundFactory;
 import jorgan.play.sound.Sound;
+import jorgan.sound.midi.Channel;
+import jorgan.sound.midi.ChannelPool;
 
 /**
- * An implementation of a sound factory that should work for most MIDI
- * devices.
+ * An implementation of a sound factory that should work for most MIDI devices.
  */
 public class BasicSoundFactory extends ChanneledSoundFactory {
 
-  public BasicSoundFactory(ChannelPool pool) throws MidiUnavailableException {
-    super(pool);
-  }
-  
-  /**
-   * Factory method.
-   *
-   * @param channel  channel to use for sound
-   * @return         sound
-   */
-  protected Sound createSoundImpl(Channel channel) {
-    return new BasicSound(channel);
-  }
+	public BasicSoundFactory(ChannelPool pool) throws MidiUnavailableException {
+		super(pool);
+	}
 
-  /**
-   * Basic implementation of a sound.
-   */
-  public class BasicSound extends ChannelSound {
-   
-    /**
-     * Create a new sound.
-     *
-     * @return         sound
-     */
-    public BasicSound(Channel channel) {
+	/**
+	 * Factory method.
+	 * 
+	 * @param channel
+	 *            channel to use for sound
+	 * @return sound
+	 */
+	protected Sound createSoundImpl(Channel channel) {
+		return new BasicSound(channel);
+	}
 
-      super(channel);
-      
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_RESET_ALL, UNUSED_DATA);
+	/**
+	 * Basic implementation of a sound.
+	 */
+	public class BasicSound extends ChannelSound {
 
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB, bank % 128);
-    }
+		/**
+		 * Create a new sound.
+		 */
+		public BasicSound(Channel channel) {
 
-    /**
-     * Set the program of the sound.
-     * 
-     * @param program   program
-     */
-    public void setProgram(int program) {
-      sendMessage(ShortMessage.PROGRAM_CHANGE, program, UNUSED_DATA);
-    }
+			super(channel);
 
-    /**
-     * Set the pan of the sound.
-     * 
-     * @param pan      pan to set
-     */
-    public void setPan(int pan) {
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_PAN, pan);
-    }
-    
-    /**
-     * Set the pitch bend of the sound.
-     * 
-     * @param bend      bend to set
-     */
-    public void setPitchBend(int bend) {
-      sendMessage(ShortMessage.PITCH_BEND, 0, bend);
-    }
-    
-    /**
-     * Set the volume of this sound.
-     *
-     * @param volume  the volume to set
-     */
-    public void setVolume(int volume) {
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_VOLUME, volume);
-    }
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_RESET_ALL,
+					UNUSED_DATA);
 
-    /**
-     * Set the cutoff of this sound.
-     * <br>
-     * This default implementation uses the brightness control
-     * since the MIDI specification does not define a standard
-     * way to set the cutoff.
-     *
-     * @param cutoff  the cutoff to set
-     */
-    public void setCutoff(int cutoff) {
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BRIGHTNESS, cutoff);
-    }
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB,
+					bank % 128);
+		}
 
-    protected void noteOnImpl(int pitch, int velocity) {
-      sendMessage(ShortMessage.NOTE_ON, pitch, velocity);
-    }
+		/**
+		 * Set the program of the sound.
+		 * 
+		 * @param program
+		 *            program
+		 */
+		public void setProgram(int program) {
+			sendMessage(ShortMessage.PROGRAM_CHANGE, program, UNUSED_DATA);
+		}
 
-    protected void noteOffImpl(int pitch) {
-      sendMessage(ShortMessage.NOTE_OFF, pitch, UNUSED_DATA);
-    }
+		/**
+		 * Set the pan of the sound.
+		 * 
+		 * @param pan
+		 *            pan to set
+		 */
+		public void setPan(int pan) {
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_PAN, pan);
+		}
 
-    /**
-     * Set the modulation of this sound.
-     * <br>
-     * General MIDI does not support setting of the modulation
-     * frequency so this parameter is ignored.
-     *
-     * @param amplitude the amplitude of modulation
-     * @param frequency the frequency of modulation
-     */
-    public void setModulation(int amplitude, int frequency) {
+		/**
+		 * Set the pitch bend of the sound.
+		 * 
+		 * @param bend
+		 *            bend to set
+		 */
+		public void setPitchBend(int bend) {
+			sendMessage(ShortMessage.PITCH_BEND, 0, bend);
+		}
 
-      sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_MODULATION, amplitude);
-    }
-  }
+		/**
+		 * Set the volume of this sound.
+		 * 
+		 * @param volume
+		 *            the volume to set
+		 */
+		public void setVolume(int volume) {
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_VOLUME, volume);
+		}
+
+		/**
+		 * Set the cutoff of this sound. <br>
+		 * This default implementation uses the brightness control since the
+		 * MIDI specification does not define a standard way to set the cutoff.
+		 * 
+		 * @param cutoff
+		 *            the cutoff to set
+		 */
+		public void setCutoff(int cutoff) {
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BRIGHTNESS, cutoff);
+		}
+
+		protected void noteOnImpl(int pitch, int velocity) {
+			sendMessage(ShortMessage.NOTE_ON, pitch, velocity);
+		}
+
+		protected void noteOffImpl(int pitch) {
+			sendMessage(ShortMessage.NOTE_OFF, pitch, UNUSED_DATA);
+		}
+
+		/**
+		 * Set the modulation of this sound. <br>
+		 * General MIDI does not support setting of the modulation frequency so
+		 * this parameter is ignored.
+		 * 
+		 * @param amplitude
+		 *            the amplitude of modulation
+		 * @param frequency
+		 *            the frequency of modulation
+		 */
+		public void setModulation(int amplitude, int frequency) {
+
+			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_MODULATION,
+					amplitude);
+		}
+	}
 }

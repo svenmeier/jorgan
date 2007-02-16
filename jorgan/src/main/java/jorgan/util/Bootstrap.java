@@ -192,7 +192,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 		}
 
 		StringTokenizer tokens = new StringTokenizer(classpath, ",", false);
-		List urls = new ArrayList();
+		List<URL> urls = new ArrayList<URL>();
 		while (tokens.hasMoreTokens()) {
 			File file = new File(getDirectory(), tokens.nextToken());
 			if (file.exists()) {
@@ -207,7 +207,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 			}
 		}
 
-		return (URL[]) urls.toArray(new URL[urls.size()]);
+		return urls.toArray(new URL[urls.size()]);
 	}
 
 	/**
@@ -220,15 +220,15 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 	private static Manifest getManifest() throws IOException {
 
 		// find all manifest files
-		Stack manifests = new Stack();
-		for (Enumeration e = Bootstrap.class.getClassLoader().getResources(
+		Stack<URL> manifests = new Stack<URL>();
+		for (Enumeration<URL> e = Bootstrap.class.getClassLoader().getResources(
 				MANIFEST); e.hasMoreElements();) {
 			manifests.add(e.nextElement());
 		}
 
 		// it has to have the runnable attribute
 		while (!manifests.isEmpty()) {
-			URL url = (URL) manifests.pop();
+			URL url = manifests.pop();
 			InputStream in = url.openStream();
 			Manifest manifest = new Manifest(in);
 			in.close();

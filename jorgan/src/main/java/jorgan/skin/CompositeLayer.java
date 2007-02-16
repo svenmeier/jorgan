@@ -30,7 +30,7 @@ import jorgan.gui.console.View;
  */
 public class CompositeLayer extends Layer {
 
-    private List layers = new ArrayList();
+    private List<Layer> layers = new ArrayList<Layer>();
 
     public List getLayers() {
         return layers;
@@ -46,14 +46,14 @@ public class CompositeLayer extends Layer {
     }
 
     public Layer getChild(int index) {
-        return (Layer) layers.get(index);
+        return layers.get(index);
     }
 
     public Dimension getSize() {
         Dimension dimension = super.getSize();
 
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             Dimension dim = layer.getSize();
             dimension.width = Math.max(dimension.width, dim.width);
@@ -67,7 +67,7 @@ public class CompositeLayer extends Layer {
         super.setView(view);
 
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             layer.setView(view);
         }
@@ -78,7 +78,7 @@ public class CompositeLayer extends Layer {
             return true;
         }
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             if (layer.isPressable(x, y, dimension)) {
                 return true;
@@ -91,7 +91,7 @@ public class CompositeLayer extends Layer {
         super.mousePressed(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             layer.mousePressed(x, y, size);
         }
@@ -101,7 +101,7 @@ public class CompositeLayer extends Layer {
         super.mouseDragged(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             layer.mouseDragged(x, y, size);
         }
@@ -111,7 +111,7 @@ public class CompositeLayer extends Layer {
         super.mouseReleased(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             layer.mouseReleased(x, y, size);
         }
@@ -125,7 +125,7 @@ public class CompositeLayer extends Layer {
 
     protected void drawChildren(Graphics2D g, Dimension dimension) {
         for (int l = 0; l < layers.size(); l++) {
-            Layer layer = (Layer) layers.get(l);
+            Layer layer = layers.get(l);
 
             layer.draw(g, dimension);
         }
@@ -134,7 +134,7 @@ public class CompositeLayer extends Layer {
     public Object clone() {
         CompositeLayer clone = (CompositeLayer) super.clone();
 
-        clone.layers = new ArrayList();
+        clone.layers = new ArrayList<Layer>();
 
         for (int l = 0; l < layers.size(); l++) {
             Layer layer = getChild(l);

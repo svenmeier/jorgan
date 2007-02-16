@@ -70,7 +70,7 @@ public class ProblemsPanel extends DockedPanel {
 
 	private ProblemsModel problemsModel = new ProblemsModel();
 
-	private List rows = new ArrayList();
+	private List<Row> rows = new ArrayList<Row>();
 
 	private JPopupMenu popup = new JPopupMenu();
 
@@ -85,7 +85,7 @@ public class ProblemsPanel extends DockedPanel {
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
 		TableUtils.pleasantLookAndFeel(table);
-		Map iconMap = new HashMap();
+		Map<String, Icon> iconMap = new HashMap<String, Icon>();
 		iconMap.put("warning", warningIcon);
 		iconMap.put("error", errorIcon);
 		IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
@@ -134,7 +134,7 @@ public class ProblemsPanel extends DockedPanel {
 	private void removeProblems(Element element) {
 
 		for (int r = rows.size() - 1; r >= 0; r--) {
-			Row row = (Row) rows.get(r);
+			Row row = rows.get(r);
 			if (row.getElement() == element) {
 				rows.remove(row);
 			}
@@ -159,7 +159,7 @@ public class ProblemsPanel extends DockedPanel {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Row row = (Row) rows.get(rowIndex);
+			Row row = rows.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
@@ -272,7 +272,7 @@ public class ProblemsPanel extends DockedPanel {
 		public void actionPerformed(ActionEvent ev) {
 			int index = table.getSelectedRow();
 
-			Row row = (Row) rows.get(index);
+			Row row = rows.get(index);
 
 			session.getSelectionModel().setSelectedElement(row.getElement(),
 					row.getProblem().getProperty());

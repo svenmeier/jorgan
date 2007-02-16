@@ -45,7 +45,7 @@ public class TextLayer extends Layer {
 
     private boolean antialiased = false;
 
-    private transient List lines;
+    private transient List<Line> lines;
 
     private transient int linesWidth;
 
@@ -135,7 +135,7 @@ public class TextLayer extends Layer {
      */
     protected void breakLines(String text, FontMetrics metrics) {
 
-        lines = new ArrayList();
+        lines = new ArrayList<Line>();
         linesWidth = 0;
         linesHeight = 0;
 
@@ -220,7 +220,7 @@ public class TextLayer extends Layer {
         }
 
         for (int l = 0; l < lines.size(); l++) {
-            Line line = (Line) lines.get(l);
+            Line line = lines.get(l);
 
             if (l > 0) {
                 y += line.leading;

@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.util.I18N;
 
@@ -35,7 +36,7 @@ public class PatchListImportProvider implements ImportProvider {
 	
 	private PatchListPanel panel = new PatchListPanel();
 
-	private List stops = new ArrayList();
+	private List<Stop> stops = new ArrayList<Stop>();
 
 	public JPanel getOptionsPanel() {
 		return panel;
@@ -53,7 +54,7 @@ public class PatchListImportProvider implements ImportProvider {
 		return false;
 	}
 
-	public java.util.List getStops() {
+	public List<Stop> getStops() {
 		return stops;
 	}
 

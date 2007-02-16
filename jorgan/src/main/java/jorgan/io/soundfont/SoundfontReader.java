@@ -18,50 +18,56 @@
  */
 package jorgan.io.soundfont;
 
-import java.io.*;
-import java.util.*;
+import java.io.InputStream;
+import java.util.List;
 
-import jorgan.io.riff.*;
-import jorgan.io.soundfont.factory.*;
+import jorgan.io.riff.ListChunk;
+import jorgan.io.riff.RiffChunk;
+import jorgan.io.riff.RiffReader;
+import jorgan.io.soundfont.factory.PresetHeaderChunkFactory;
 
 /**
  * A reader for data in <em>Soundfont</em> file format.
  */
 public class SoundfontReader extends RiffReader {
 
-  public static final String PRESETS_DATA_LIST_TYPE = "pdta";
-  public static final String PRESETS_HEADER_ID      = "phdr";
+	public static final String PRESETS_DATA_LIST_TYPE = "pdta";
 
-  public SoundfontReader(InputStream in ) {
-    super(in);
-    
-    registerFactory(PRESETS_HEADER_ID, new PresetHeaderChunkFactory());    
-  }
-  
-  /**
-   * Check if read riffChunk contains the demanded presets list.
-   * 
-   * @param chunk   riffChunk to check 
-   */
-  protected void checkFormat(RiffChunk chunk) throws SoundfontFormatException {
-    try {
-      getPresets(chunk);
-    } catch (Exception ex) {
-      throw new SoundfontFormatException("missing soundfont presets");      
-    }
-  }
-  
-  /**
-   * Utility method to get a list of presets contained in the
-   * given soundfont.
-   * 
-   * @param chunk   riffChunk of soundfont
-   * @return        list of presets
-   */
-  public static List getPresets(RiffChunk chunk) {
-    ListChunk         presetDataChunk   = chunk.getListChunk(SoundfontReader.PRESETS_DATA_LIST_TYPE);
-    PresetHeaderChunk presetHeaderChunk = (PresetHeaderChunk)presetDataChunk.getChunk(SoundfontReader.PRESETS_HEADER_ID);
+	public static final String PRESETS_HEADER_ID = "phdr";
 
-    return presetHeaderChunk.getPresets();
-  }
+	public SoundfontReader(InputStream in) {
+		super(in);
+
+		registerFactory(PRESETS_HEADER_ID, new PresetHeaderChunkFactory());
+	}
+
+	/**
+	 * Check if read riffChunk contains the demanded presets list.
+	 * 
+	 * @param chunk
+	 *            riffChunk to check
+	 */
+	protected void checkFormat(RiffChunk chunk) throws SoundfontFormatException {
+		try {
+			getPresets(chunk);
+		} catch (Exception ex) {
+			throw new SoundfontFormatException("missing soundfont presets");
+		}
+	}
+
+	/**
+	 * Utility method to get a list of presets contained in the given soundfont.
+	 * 
+	 * @param chunk
+	 *            riffChunk of soundfont
+	 * @return list of presets
+	 */
+	public static List<Preset> getPresets(RiffChunk chunk) {
+		ListChunk presetDataChunk = chunk
+				.getListChunk(SoundfontReader.PRESETS_DATA_LIST_TYPE);
+		PresetHeaderChunk presetHeaderChunk = (PresetHeaderChunk) presetDataChunk
+				.getChunk(SoundfontReader.PRESETS_HEADER_ID);
+
+		return presetHeaderChunk.getPresets();
+	}
 }

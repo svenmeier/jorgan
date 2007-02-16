@@ -18,32 +18,31 @@
  */
 package jorgan.disposition;
 
-
 /**
  * An incrementer of continuous elements.
  */
 public class Incrementer extends Initiator {
 
-    private int delta = 1;
+	private int delta = 1;
 
-    protected boolean canReference(Class clazz) {
-        return Continuous.class.isAssignableFrom(clazz);
-    }
+	protected boolean canReference(Class clazz) {
+		return Continuous.class.isAssignableFrom(clazz);
+	}
 
-    public void initiate() {
-        for (int r = 0; r < getReferenceCount(); r++) {
-            Reference reference = (Reference) getReference(r);
-            Continuous continuous = (Continuous) reference.getElement();
+	public void initiate() {
+		for (int r = 0; r < getReferenceCount(); r++) {
+			Reference reference = getReference(r);
+			Continuous continuous = (Continuous) reference.getElement();
 
-            continuous.increment(delta);
-        }
-    }
+			continuous.increment(delta);
+		}
+	}
 
-    public int getDelta() {
-        return delta;
-    }
+	public int getDelta() {
+		return delta;
+	}
 
-    public void setDelta(int delta) {
-        this.delta = delta;
-    }
+	public void setDelta(int delta) {
+		this.delta = delta;
+	}
 }

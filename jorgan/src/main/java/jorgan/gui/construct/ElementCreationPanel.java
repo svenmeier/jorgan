@@ -35,6 +35,7 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import jorgan.disposition.Element;
 import jorgan.gui.Elements;
 import jorgan.swing.GridBuilder;
 import jorgan.util.I18N;
@@ -166,12 +167,12 @@ public class ElementCreationPanel extends JPanel {
 		}
 	}
 
-	private class TypeComparator implements Comparator {
+	private class TypeComparator implements Comparator<Class<? extends Element>> {
 
-		public int compare(Object o1, Object o2) {
+		public int compare(Class<? extends Element> c1, Class<? extends Element> c2) {
 
-			String name1 = Elements.getDisplayName((Class) o1);
-			String name2 = Elements.getDisplayName((Class) o2);
+			String name1 = Elements.getDisplayName(c1);
+			String name2 = Elements.getDisplayName(c2);
 
 			return name1.compareTo(name2);
 		}

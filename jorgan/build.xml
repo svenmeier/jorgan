@@ -11,7 +11,8 @@
 
     <target name="build" description="Build the source" >
         <mkdir dir="./build"/>
-        <javac debug="true" source="1.4" target="1.4" deprecation="true" destdir="./build" srcdir="./src">
+        <javac debug="true" source="1.5" target="1.5" destdir="./build" srcdir="./src">
+        	<compilerarg value="-Xlint"/>
         	<classpath>
 	            <fileset dir="./lib">
     	            <include name="*" />
@@ -76,20 +77,5 @@
 		<ftp server="upload.sourceforge.net" userid="anonymous" password="" remotedir="/incoming">
 			<fileset file="./dist/jOrgan-${jorgan.version}.zip" />
 		</ftp>
-	</target>
-	
-    <target name="run" description="Run application" >
-    	<java classname="jorgan.App" fork="true">
-    		<sysproperty key="user.language" value="en"/>
-    		<sysproperty key="jorgan.skins.path" value="../skins"/>
-    		<sysproperty key="jorgan.creative.library.path" value="../sounds/creative/build/native/win32"/>
-     		<sysproperty key="jorgan.docs.path" value="../docs/build"/>
-    		<classpath path="build" />
-    		<classpath>
-                <fileset dir="./lib">
-    	            <include name="*" />
-                </fileset>
-    		</classpath>
-    	</java>
-    </target>
+	</target>	
 </project>

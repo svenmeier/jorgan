@@ -68,17 +68,11 @@ public abstract class SoundFactory {
 
     public static final int CONTROL_NRPN_LSB_DATA = 38;
 
-    protected List sounds = new ArrayList();
+    protected List<AbstractSound> sounds = new ArrayList<AbstractSound>();
 
     protected int bank;
 
     protected String samples;
-
-    /**
-     * Use {@link #instance(String)}.
-     */
-    protected SoundFactory() {
-    }
 
     /**
      * Initialize this soundFactory. <br>
@@ -162,7 +156,7 @@ public abstract class SoundFactory {
 
         Iterator providers = getProviders();
 
-        List types = new ArrayList();
+        List<String> types = new ArrayList<String>();
         while (providers.hasNext()) {
             SoundFactoryProvider provider = (SoundFactoryProvider) providers
                     .next();
@@ -172,7 +166,7 @@ public abstract class SoundFactory {
             }
         }
 
-        return (String[]) types.toArray(new String[types.size()]);
+        return types.toArray(new String[types.size()]);
     }
 
     /**

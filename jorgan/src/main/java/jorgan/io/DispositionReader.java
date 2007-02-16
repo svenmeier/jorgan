@@ -39,12 +39,12 @@ public class DispositionReader extends AbstractReader {
     /**
      * Mapping of ids to elements.
      */
-    private Map elements = new HashMap();
+    private Map<String, Element> elements = new HashMap<String, Element>();
 
     /**
      * All handlers for references.
      */
-    private List referenceHandlers = new ArrayList();
+    private List<ReferenceHandler> referenceHandlers = new ArrayList<ReferenceHandler>();
 
     /**
      * Create a new reader for a disposition.
@@ -64,7 +64,7 @@ public class DispositionReader extends AbstractReader {
         Object object = super.read();
 
         for (int r = 0; r < referenceHandlers.size(); r++) {
-            ReferenceHandler reference = (ReferenceHandler) referenceHandlers
+            ReferenceHandler reference = referenceHandlers
                     .get(r);
             reference.resolve();
         }
@@ -93,7 +93,7 @@ public class DispositionReader extends AbstractReader {
         if (id == null) {
             throw new XMLFormatException("id must not be null");
         }
-        Element element = (Element) elements.get(id);
+        Element element = elements.get(id);
         if (element == null) {
             throw new XMLFormatException("unknown id '" + id + "'");
         }

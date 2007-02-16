@@ -31,7 +31,7 @@ import java.util.Map;
  */
 public class ImageCache {
 
-    private static Map images = new HashMap();
+    private static Map<URL, Image> images = new HashMap<URL, Image>();
 
     // private static Map scaled = new HashMap();
 
@@ -53,7 +53,7 @@ public class ImageCache {
      */
     public static Image getImage(URL url, Component component) {
 
-        Image img = (Image) images.get(url);
+        Image img = images.get(url);
         if (img == null) {
             img = createImage(url, component);
 

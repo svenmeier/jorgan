@@ -52,7 +52,7 @@ public class SkinManager implements ISkinManager {
 
     private static SkinManager instance;
 
-    private List skins = new ArrayList();
+    private List<Skin> skins = new ArrayList<Skin>();
 
     private void initialize() {
         File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY,
@@ -105,7 +105,7 @@ public class SkinManager implements ISkinManager {
         String[] names = new String[1 + skins.size()];
 
         for (int s = 0; s < skins.size(); s++) {
-            Skin skin = (Skin) skins.get(s);
+            Skin skin = skins.get(s);
             names[s + 1] = skin.getName();
         }
 
@@ -114,7 +114,7 @@ public class SkinManager implements ISkinManager {
 
     public Skin getSkin(String skinName) {
         for (int s = 0; s < skins.size(); s++) {
-            Skin skin = (Skin) skins.get(s);
+            Skin skin = skins.get(s);
 
             if (skin.getName().equals(skinName)) {
                 return skin;

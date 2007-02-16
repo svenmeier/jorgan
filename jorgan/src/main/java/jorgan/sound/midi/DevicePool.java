@@ -18,15 +18,24 @@
  */
 package jorgan.sound.midi;
 
-import java.util.*;
-import javax.sound.midi.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
 /**
  * Helper for lookup of devices.
  */
 public class DevicePool {
 
-	private static Map sharedDevices = new HashMap();
+	private static Map<DeviceKey, SharedDevice> sharedDevices = new HashMap<DeviceKey, SharedDevice>();
 
 	private DevicePool() {
 	}
@@ -55,7 +64,7 @@ public class DevicePool {
 
 		DeviceKey key = new DeviceKey(name, out);
 
-		SharedDevice sharedDevice = (SharedDevice) sharedDevices.get(key);
+		SharedDevice sharedDevice = sharedDevices.get(key);
 		if (sharedDevice == null) {
 			MidiDevice[] devices = getMidiDevices(out);
 
@@ -90,7 +99,7 @@ public class DevicePool {
 			throws MidiUnavailableException {
 		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
-		List devices = new ArrayList();
+		List<MidiDevice> devices = new ArrayList<MidiDevice>();
 
 		for (int i = 0; i < infos.length; i++) {
 			MidiDevice.Info info = infos[i];
@@ -102,7 +111,7 @@ public class DevicePool {
 			}
 		}
 
-		return (MidiDevice[]) devices.toArray(new MidiDevice[0]);
+		return devices.toArray(new MidiDevice[0]);
 	}
 
 	/**
@@ -112,7 +121,6 @@ public class DevicePool {
 	 *            if <code>true</code> devices should support midi-out,
 	 *            otherwise they should support midi-in.
 	 * @return list of device names
-	 * @throws MidiUnavailableException
 	 */
 	public static String[] getMidiDeviceNames(boolean out) {
 
@@ -235,9 +243,9 @@ public class DevicePool {
 
 	private static class SharedDevice extends DeviceWrapper {
 
-		private List inLoggers = new ArrayList();
+		private List<MidiLogger> inLoggers = new ArrayList<MidiLogger>();
 
-		private List outLoggers = new ArrayList();
+		private List<MidiLogger> outLoggers = new ArrayList<MidiLogger>();
 
 		private int openCount;
 
@@ -250,10 +258,10 @@ public class DevicePool {
 				super.open();
 
 				for (int l = 0; l < inLoggers.size(); l++) {
-					((MidiLogger) inLoggers.get(l)).opened();
+					inLoggers.get(l).opened();
 				}
 				for (int l = 0; l < outLoggers.size(); l++) {
-					((MidiLogger) outLoggers.get(l)).opened();
+					outLoggers.get(l).opened();
 				}
 			}
 			openCount++;
@@ -265,7 +273,7 @@ public class DevicePool {
 					super.send(message, timeStamp);
 
 					for (int l = 0; l < outLoggers.size(); l++) {
-						((MidiLogger) outLoggers.get(l)).log(message);
+						outLoggers.get(l).log(message);
 					}
 				}
 			};
@@ -277,7 +285,7 @@ public class DevicePool {
 					super.send(message, timeStamp);
 
 					for (int l = 0; l < inLoggers.size(); l++) {
-						((MidiLogger) inLoggers.get(l)).log(message);
+						inLoggers.get(l).log(message);
 					}
 				}
 			};
@@ -290,10 +298,10 @@ public class DevicePool {
 				super.close();
 
 				for (int l = 0; l < inLoggers.size(); l++) {
-					((MidiLogger) inLoggers.get(l)).closed();
+					inLoggers.get(l).closed();
 				}
 				for (int l = 0; l < outLoggers.size(); l++) {
-					((MidiLogger) outLoggers.get(l)).closed();
+					outLoggers.get(l).closed();
 				}
 			}
 		}

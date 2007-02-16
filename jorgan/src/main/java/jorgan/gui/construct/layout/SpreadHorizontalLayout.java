@@ -26,37 +26,34 @@ import jorgan.gui.console.View;
 
 public class SpreadHorizontalLayout extends ViewLayout {
 
-    private int x;
+	private int x;
 
-    private int width;
+	private int width;
 
-    private int count;
+	private int count;
 
-    public SpreadHorizontalLayout() {
-        super("spreadHorizontal");
-    }
+	public SpreadHorizontalLayout() {
+		super("spreadHorizontal");
+	}
 
-    protected void init(View pressed, List views) {
+	protected void init(View pressed, List<View> views) {
 
-        Collections.sort(views, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                View view1 = (View)o1;
-                View view2 = (View)o2;
-                
-                return view1.getX() - view2.getX();
-            }
-        });
-        count = views.size();
+		Collections.sort(views, new Comparator<View>() {
+			public int compare(View view1, View view2) {
+				return view1.getX() - view2.getX();
+			}
+		});
+		count = views.size();
 
-        View left = (View) views.get(0);
-        View right = (View) views.get(views.size() - 1);
+		View left = views.get(0);
+		View right = views.get(views.size() - 1);
 
-        x = left.getX() + left.getWidth() / 2;
-        width = right.getX() + right.getWidth() / 2 - x;
-    }
+		x = left.getX() + left.getWidth() / 2;
+		width = right.getX() + right.getWidth() / 2 - x;
+	}
 
-    protected void visit(View view, int index) {
-        changePosition(view, x + (width * index / (count - 1))
-                - view.getWidth() / 2, view.getY());
-    }
+	protected void visit(View view, int index) {
+		changePosition(view, x + (width * index / (count - 1))
+				- view.getWidth() / 2, view.getY());
+	}
 }

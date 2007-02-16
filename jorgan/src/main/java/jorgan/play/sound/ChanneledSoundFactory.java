@@ -95,8 +95,6 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
     
     /**
      * Create a new sound.
-     *
-     * @return         sound
      */
     public ChannelSound(Channel channel) {
 

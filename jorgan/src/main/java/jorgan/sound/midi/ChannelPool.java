@@ -26,7 +26,7 @@ import javax.sound.midi.*;
  */
 public abstract class ChannelPool {
 
-  private static Map sharedPools = new HashMap();
+  private static Map<String, SharedChannelPool> sharedPools = new HashMap<String, SharedChannelPool>();
 
   public abstract String getDeviceName();
   
@@ -59,7 +59,7 @@ public abstract class ChannelPool {
    * @throws MidiUnavailableException if device is not available
    */
   public static ChannelPool instance(String deviceName) throws MidiUnavailableException {
-    SharedChannelPool pool = (SharedChannelPool)sharedPools.get(deviceName);
+    SharedChannelPool pool = sharedPools.get(deviceName);
     if (pool == null) {
       pool = new SharedChannelPool(deviceName);
 

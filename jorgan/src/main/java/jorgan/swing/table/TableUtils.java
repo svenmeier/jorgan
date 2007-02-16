@@ -75,6 +75,7 @@ public class TableUtils {
 		table.setGridColor(new JLabel().getBackground());
 		table.setSurrendersFocusOnKeystroke(true);
 		table.putClientProperty("JTable.autoStartsEdit", Boolean.FALSE);
+		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
 
 		try {
 			if (setFillsViewportHeight == null) {

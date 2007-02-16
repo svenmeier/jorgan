@@ -18,7 +18,8 @@
  */
 package jorgan.config;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Abstract base class for configurations.
@@ -33,12 +34,12 @@ public abstract class AbstractConfiguration implements Cloneable {
 	/**
 	 * The children configurations.
 	 */
-	private List children = new ArrayList();
+	private List<AbstractConfiguration> children = new ArrayList<AbstractConfiguration>();
 
 	/**
 	 * The listener to changes of this configuration.
 	 */
-	private List listeners = new ArrayList();
+	private List<ConfigurationListener> listeners = new ArrayList<ConfigurationListener>();
 
 	/**
 	 * Add a listener to this configuration.
@@ -65,8 +66,7 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 */
 	protected void fireConfigurationChanged() {
 		for (int l = 0; l < listeners.size(); l++) {
-			ConfigurationListener listener = (ConfigurationListener) listeners
-					.get(l);
+			ConfigurationListener listener = listeners.get(l);
 			listener.configurationChanged(new ConfigurationEvent(this));
 		}
 	}
@@ -76,8 +76,7 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 */
 	protected void fireConfigurationBackup() {
 		for (int l = 0; l < listeners.size(); l++) {
-			ConfigurationListener listener = (ConfigurationListener) listeners
-					.get(l);
+			ConfigurationListener listener = listeners.get(l);
 			listener.configurationBackup(new ConfigurationEvent(this));
 		}
 	}
@@ -108,7 +107,7 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 * @return child at given index
 	 */
 	public AbstractConfiguration getChild(int index) {
-		return (AbstractConfiguration) children.get(index);
+		return children.get(index);
 	}
 
 	/**
@@ -170,15 +169,15 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 * Children of this configuration are not changed!
 	 */
 	public abstract void reset();
-	
+
 	public Object clone() throws CloneNotSupportedException {
-		AbstractConfiguration clone = (AbstractConfiguration)super.clone();
-		
+		AbstractConfiguration clone = (AbstractConfiguration) super.clone();
+
 		clone.parent = null;
-		clone.listeners = new ArrayList();
-		clone.children = new ArrayList();
+		clone.listeners = new ArrayList<ConfigurationListener>();
+		clone.children = new ArrayList<AbstractConfiguration>();
 		for (int c = 0; c < children.size(); c++) {
-			clone.children.add(((AbstractConfiguration)children.get(c)).clone());
+			clone.children.add((AbstractConfiguration) children.get(c).clone());
 		}
 		return clone;
 	}

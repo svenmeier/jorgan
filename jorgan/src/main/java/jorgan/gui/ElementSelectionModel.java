@@ -28,280 +28,279 @@ import jorgan.gui.event.ElementSelectionListener;
 
 public class ElementSelectionModel {
 
-    private List listeners = new ArrayList();
+	private List<ElementSelectionListener> listeners = new ArrayList<ElementSelectionListener>();
 
-    private ArrayList history = new ArrayList();
+	private ArrayList<Element> history = new ArrayList<Element>();
 
-    private int historyIndex;
+	private int historyIndex;
 
-    /**
-     * The currently selected elements.
-     */
-    private List selectedElements = new ArrayList();
+	/**
+	 * The currently selected elements.
+	 */
+	private List<Element> selectedElements = new ArrayList<Element>();
 
-    private String property;
+	private String property;
 
-    public ElementSelectionModel() {
-        clear();
-    }
+	public ElementSelectionModel() {
+		clear();
+	}
 
-    public void clear() {
-        history.clear();
-        historyIndex = 0;
+	public void clear() {
+		history.clear();
+		historyIndex = 0;
 
-        selectedElements.clear();
+		selectedElements.clear();
 
-        fireStateChanged();
-    }
+		fireStateChanged();
+	}
 
-    public void clear(Element element) {
-        selectedElements.remove(element);
+	public void clear(Element element) {
+		selectedElements.remove(element);
 
-        int index = history.indexOf(element);
-        if (index != -1) {
-            history.remove(element);
-            if (historyIndex > index) {
-                historyIndex--;
-            }
-        }
+		int index = history.indexOf(element);
+		if (index != -1) {
+			history.remove(element);
+			if (historyIndex > index) {
+				historyIndex--;
+			}
+		}
 
-        fireStateChanged();
-    }
+		fireStateChanged();
+	}
 
-    public String getSelectedProperty() {
-        return property;
-    }
+	public String getSelectedProperty() {
+		return property;
+	}
 
-    public void setSelectedProperty(String property) {
-        if (this.property == null && property != null || this.property != null
-                && !this.property.equals(property)) {
+	public void setSelectedProperty(String property) {
+		if (this.property == null && property != null || this.property != null
+				&& !this.property.equals(property)) {
 
-            this.property = property;
+			this.property = property;
 
-            fireStateChanged();
-        }
-    }
+			fireStateChanged();
+		}
+	}
 
-    /**
-     * Is an element selected.
-     */
-    public boolean isElementSelected() {
-        return selectedElements.size() > 0;
-    }
+	/**
+	 * Is an element selected.
+	 */
+	public boolean isElementSelected() {
+		return selectedElements.size() > 0;
+	}
 
-    /**
-     * Get the count of selected elements.
-     */
-    public int getSelectionCount() {
-        return selectedElements.size();
-    }
+	/**
+	 * Get the count of selected elements.
+	 */
+	public int getSelectionCount() {
+		return selectedElements.size();
+	}
 
-    public boolean isSelected(Element element) {
-        return selectedElements.contains(element);
-    }
+	public boolean isSelected(Element element) {
+		return selectedElements.contains(element);
+	}
 
-    /**
-     * Get the currently selected elements.
-     * 
-     * @return the currently selected elements
-     */
-    public java.util.List getSelectedElements() {
-        return Collections.unmodifiableList(selectedElements);
-    }
+	/**
+	 * Get the currently selected elements.
+	 * 
+	 * @return the currently selected elements
+	 */
+	public List<Element> getSelectedElements() {
+		return Collections.unmodifiableList(selectedElements);
+	}
 
-    /**
-     * Get the currently selected element.
-     * 
-     * @return the currently selected element
-     */
-    public Element getSelectedElement() {
-        if (selectedElements.size() == 1) {
-            return (Element) selectedElements.get(0);
-        } else {
-            return null;
-        }
-    }
+	/**
+	 * Get the currently selected element.
+	 * 
+	 * @return the currently selected element
+	 */
+	public Element getSelectedElement() {
+		if (selectedElements.size() == 1) {
+			return selectedElements.get(0);
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Set the element to be selected.
-     * 
-     * @param element
-     *            element to select
-     */
-    public void setSelectedElement(Element element) {
+	/**
+	 * Set the element to be selected.
+	 * 
+	 * @param element
+	 *            element to select
+	 */
+	public void setSelectedElement(Element element) {
 
-        setSelectedElement(element, null);
-    }
+		setSelectedElement(element, null);
+	}
 
-    /**
-     * Set the element and property to be selected.
-     * 
-     * @param element
-     *            element to select
-     * @param property
-     *            property to select
-     */
-    public void setSelectedElement(Element element, String property) {
+	/**
+	 * Set the element and property to be selected.
+	 * 
+	 * @param element
+	 *            element to select
+	 * @param property
+	 *            property to select
+	 */
+	public void setSelectedElement(Element element, String property) {
 
-        this.property = property;
+		this.property = property;
 
-        updateHistory(element);
+		updateHistory(element);
 
-        selectedElements.clear();
-        if (element != null) {
-            selectedElements.add(element);
-        }
-        fireStateChanged();
-    }
+		selectedElements.clear();
+		if (element != null) {
+			selectedElements.add(element);
+		}
+		fireStateChanged();
+	}
 
-    private void updateHistory(Element element) {
-        while (historyIndex < history.size() - 1) {
-            history.remove(history.size() - 1);
-        }
+	private void updateHistory(Element element) {
+		while (historyIndex < history.size() - 1) {
+			history.remove(history.size() - 1);
+		}
 
-        if (element == null) {
-            if (historyIndex != history.size()) {
-                historyIndex++;
-            }
-        } else {
-            if (historyIndex == history.size()) {
-                if (historyIndex > 0
-                        && history.get(historyIndex - 1) == element) {
-                    historyIndex--;
-                } else {
-                    history.add(historyIndex, element);
-                }
-            } else {
-                if (history.get(historyIndex) != element) {
-                    historyIndex++;
-                    history.add(historyIndex, element);
-                }
-            }
-        }
-    }
+		if (element == null) {
+			if (historyIndex != history.size()) {
+				historyIndex++;
+			}
+		} else {
+			if (historyIndex == history.size()) {
+				if (historyIndex > 0
+						&& history.get(historyIndex - 1) == element) {
+					historyIndex--;
+				} else {
+					history.add(historyIndex, element);
+				}
+			} else {
+				if (history.get(historyIndex) != element) {
+					historyIndex++;
+					history.add(historyIndex, element);
+				}
+			}
+		}
+	}
 
-    public boolean canBack() {
-        return historyIndex > 0;
-    }
+	public boolean canBack() {
+		return historyIndex > 0;
+	}
 
-    public void back() {
-        if (historyIndex > 0) {
-            historyIndex--;
+	public void back() {
+		if (historyIndex > 0) {
+			historyIndex--;
 
-            property = null;
+			property = null;
 
-            Element element = (Element) history.get(historyIndex);
-            selectedElements.clear();
-            selectedElements.add(element);
+			Element element = history.get(historyIndex);
+			selectedElements.clear();
+			selectedElements.add(element);
 
-            fireStateChanged();
-        }
-    }
+			fireStateChanged();
+		}
+	}
 
-    public boolean canForward() {
-        return historyIndex < history.size() - 1;
-    }
+	public boolean canForward() {
+		return historyIndex < history.size() - 1;
+	}
 
-    public void forward() {
-        if (historyIndex < history.size() - 1) {
-            historyIndex++;
+	public void forward() {
+		if (historyIndex < history.size() - 1) {
+			historyIndex++;
 
-            property = null;
+			property = null;
 
-            Element element = (Element) history.get(historyIndex);
-            selectedElements.clear();
-            selectedElements.add(element);
+			Element element = history.get(historyIndex);
+			selectedElements.clear();
+			selectedElements.add(element);
 
-            fireStateChanged();
-        }
-    }
+			fireStateChanged();
+		}
+	}
 
-    /**
-     * Set the elements to be selected.
-     * 
-     * @param elements
-     *            elements to select
-     */
-    public void setSelectedElements(List elements) {
-        property = null;
+	/**
+	 * Set the elements to be selected.
+	 * 
+	 * @param elements
+	 *            elements to select
+	 */
+	public void setSelectedElements(List<Element> elements) {
+		property = null;
 
-        selectedElements.clear();
-        selectedElements.addAll(elements);
+		selectedElements.clear();
+		selectedElements.addAll(elements);
 
-        fireStateChanged();
-    }
+		fireStateChanged();
+	}
 
-    /**
-     * Remove an element from being selected.
-     * 
-     * @param element
-     *            element to remove
-     */
-    public void removeSelectedElement(Element element) {
+	/**
+	 * Remove an element from being selected.
+	 * 
+	 * @param element
+	 *            element to remove
+	 */
+	public void removeSelectedElement(Element element) {
 
-        if (selectedElements.contains(element)) {
-            property = null;
+		if (selectedElements.contains(element)) {
+			property = null;
 
-            selectedElements.remove(element);
+			selectedElements.remove(element);
 
-            if (selectedElements.isEmpty()) {
-                updateHistory(null);
-            }
+			if (selectedElements.isEmpty()) {
+				updateHistory(null);
+			}
 
-            fireStateChanged();
-        }
-    }
+			fireStateChanged();
+		}
+	}
 
-    /**
-     * Add an element to be selected.
-     * 
-     * @param element
-     *            element to add
-     */
-    public void addSelectedElement(Element element) {
-        if (element == null) {
-            throw new IllegalArgumentException(
-                    "cannot add null element to selected elements");
-        }
+	/**
+	 * Add an element to be selected.
+	 * 
+	 * @param element
+	 *            element to add
+	 */
+	public void addSelectedElement(Element element) {
+		if (element == null) {
+			throw new IllegalArgumentException(
+					"cannot add null element to selected elements");
+		}
 
-        property = null;
+		property = null;
 
-        updateHistory(element);
+		updateHistory(element);
 
-        if (!selectedElements.contains(element)) {
-            selectedElements.add(element);
-        }
-        fireStateChanged();
-    }
+		if (!selectedElements.contains(element)) {
+			selectedElements.add(element);
+		}
+		fireStateChanged();
+	}
 
-    /**
-     * Add a listener to selections.
-     * 
-     * @param listener
-     *            listener to add
-     */
-    public void addSelectionListener(ElementSelectionListener listener) {
-        listeners.add(listener);
-    }
+	/**
+	 * Add a listener to selections.
+	 * 
+	 * @param listener
+	 *            listener to add
+	 */
+	public void addSelectionListener(ElementSelectionListener listener) {
+		listeners.add(listener);
+	}
 
-    /**
-     * Remove a listener to selections.
-     * 
-     * @param listener
-     *            listener to remove
-     */
-    public void removeSelectionListener(ElementSelectionListener listener) {
-        listeners.remove(listener);
-    }
+	/**
+	 * Remove a listener to selections.
+	 * 
+	 * @param listener
+	 *            listener to remove
+	 */
+	public void removeSelectionListener(ElementSelectionListener listener) {
+		listeners.remove(listener);
+	}
 
-    /**
-     * Fire a change to all registered change listeners.
-     */
-    protected void fireStateChanged() {
-        for (int l = 0; l < listeners.size(); l++) {
-            ElementSelectionListener listener = (ElementSelectionListener) listeners
-                    .get(l);
-            listener.selectionChanged(new ElementSelectionEvent(this));
-        }
-    }
+	/**
+	 * Fire a change to all registered change listeners.
+	 */
+	protected void fireStateChanged() {
+		for (int l = 0; l < listeners.size(); l++) {
+			ElementSelectionListener listener = listeners.get(l);
+			listener.selectionChanged(new ElementSelectionEvent(this));
+		}
+	}
 }
