@@ -65,6 +65,7 @@ import jorgan.gui.imports.ImportWizard;
 import jorgan.io.DispositionReader;
 import jorgan.io.DispositionWriter;
 import jorgan.io.disposition.History;
+import jorgan.swing.Browser;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
@@ -145,6 +146,8 @@ public class OrganFrame extends JFrame {
 	private FullScreenAction fullScreenAction = new FullScreenAction();
 
 	private ConfigurationAction configurationAction = new ConfigurationAction();
+
+	private WebsiteAction websiteAction = new WebsiteAction();
 
 	private AboutAction aboutAction = new AboutAction();
 
@@ -274,6 +277,11 @@ public class OrganFrame extends JFrame {
 			viewMenu.add(configurationAction);
 		}
 
+		JMenu helpMenu = new JMenu(i18n.getString("helpMenu.text"));
+		menuBar.add(helpMenu);
+		helpMenu.add(websiteAction);
+		helpMenu.add(aboutAction);
+		
 		menuBar.revalidate();
 		menuBar.repaint();
 	}
@@ -725,6 +733,24 @@ public class OrganFrame extends JFrame {
 	}
 
 	/**
+	 * The action that shows the jOrgan website.
+	 */
+	private class WebsiteAction extends AbstractAction {
+		private WebsiteAction() {
+			putValue(Action.NAME, i18n.getString("websiteAction.name"));
+			putValue(Action.SHORT_DESCRIPTION, i18n
+					.getString("websiteAction.shortDescription"));
+			
+			setEnabled(Browser.isSupported());
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			Browser.open("http://jorgan.sourceforge.net");
+		}
+	}
+
+	
+	/**
 	 * The action that starts an import.
 	 */
 	private class ImportAction extends AbstractAction {
@@ -763,7 +789,7 @@ public class OrganFrame extends JFrame {
 	private class FullScreenAction extends AbstractAction implements
 			ComponentListener {
 
-		private Map dialogs = new HashMap();
+		private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
 
 		private FullScreenAction() {
 			putValue(Action.NAME, i18n.getString("fullScreenAction.name"));
@@ -786,7 +812,7 @@ public class OrganFrame extends JFrame {
 		}
 
 		private void goFullScreen() {
-			List consoles = session.getOrgan().getCandidates(Console.class);
+			List consoles = session.getOrgan().getElements(Console.class);
 			for (int c = 0; c < consoles.size(); c++) {
 				Console console = (Console) consoles.get(c);
 				String screen = console.getScreen();
@@ -794,7 +820,7 @@ public class OrganFrame extends JFrame {
 					continue;
 				}
 
-				ConsoleDialog dialog = (ConsoleDialog) dialogs.get(screen);
+				ConsoleDialog dialog = dialogs.get(screen);
 				if (dialog == null) {
 					dialog = ConsoleDialog.create(OrganFrame.this, screen);
 					dialog.setOrgan(session);
@@ -807,9 +833,9 @@ public class OrganFrame extends JFrame {
 		}
 
 		public void componentHidden(ComponentEvent e) {
-			Iterator iterator = dialogs.values().iterator();
+			Iterator<ConsoleDialog> iterator = dialogs.values().iterator();
 			while (iterator.hasNext()) {
-				ConsoleDialog dialog = (ConsoleDialog) iterator.next();
+				ConsoleDialog dialog = iterator.next();
 				dialog.setVisible(false);
 				dialog.dispose();
 				dialog.setOrgan(null);

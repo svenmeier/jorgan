@@ -28,7 +28,7 @@ public class Skin {
 
     private String name = "";
 
-    private ArrayList styles = new ArrayList();
+    private ArrayList<Style> styles = new ArrayList<Style>();
 
     private SkinSource source;
 
@@ -58,7 +58,7 @@ public class Skin {
     }
 
     public Style getStyle(int index) {
-        return (Style) styles.get(index);
+        return styles.get(index);
     }
 
     public void addStyle(Style style) {
@@ -88,7 +88,7 @@ public class Skin {
     public Style createStyle(String styleName) {
 
         for (int s = 0; s < styles.size(); s++) {
-            Style style = (Style) styles.get(s);
+            Style style = styles.get(s);
             if (style.getName().equals(styleName)) {
                 return (Style) style.clone();
             }

@@ -18,26 +18,27 @@
  */
 package jorgan.io.soundfont;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import jorgan.io.riff.Chunk;
 
 /**
- * The soundfont chunk containing all presets. 
+ * The soundfont chunk containing all presets.
  */
-public class PresetHeaderChunk extends Chunk{
+public class PresetHeaderChunk extends Chunk {
 
-  private List presets = new ArrayList();
-  
-  public PresetHeaderChunk(String id, int dataLength) {
-    super(id, dataLength);
-  }
-  
-  public void addPreset(Preset preset) {
-    presets.add(preset);
-  }
-  
-  public List getPresets() {
-    return new ArrayList(presets);
-  }
+	private List<Preset> presets = new ArrayList<Preset>();
+
+	public PresetHeaderChunk(String id, int dataLength) {
+		super(id, dataLength);
+	}
+
+	public void addPreset(Preset preset) {
+		presets.add(preset);
+	}
+
+	public List<Preset> getPresets() {
+		return new ArrayList<Preset>(presets);
+	}
 }

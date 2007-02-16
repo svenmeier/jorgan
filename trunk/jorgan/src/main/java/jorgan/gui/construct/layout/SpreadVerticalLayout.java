@@ -36,20 +36,18 @@ public class SpreadVerticalLayout extends ViewLayout {
         super("spreadVertical");
     }
 
-    protected void init(View pressed, List views) {
+    protected void init(View pressed, List<View> views) {
 
-        Collections.sort(views, new Comparator() {
-            public int compare(Object o1, Object o2) {
-                View view1 = (View)o1;
-                View view2 = (View)o2;
+        Collections.sort(views, new Comparator<View>() {
+            public int compare(View view1, View view2) {
                 
                 return view1.getY() - view2.getY();
             }
         });
         count = views.size();
 
-        View top = (View) views.get(0);
-        View bottom = (View) views.get(views.size() - 1);
+        View top = views.get(0);
+        View bottom = views.get(views.size() - 1);
 
         y = top.getY() + top.getHeight() / 2;
         height = bottom.getY() + bottom.getHeight() / 2 - y;

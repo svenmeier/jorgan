@@ -44,7 +44,7 @@ public class ProviderSelectionPanel extends JPanel {
 
 	private JList list = new JList();
 
-	private List providers = new ArrayList();
+	private List<ImportProvider> providers = new ArrayList<ImportProvider>();
 
 	/**
 	 * Constructor.
@@ -73,7 +73,7 @@ public class ProviderSelectionPanel extends JPanel {
 	 * @param providers
 	 *            providers
 	 */
-	public void setImportProviders(List providers) {
+	public void setImportProviders(List<ImportProvider> providers) {
 		this.providers = providers;
 
 		list.setModel(new ProvidersModel());
@@ -89,7 +89,7 @@ public class ProviderSelectionPanel extends JPanel {
 		if (index == -1) {
 			return null;
 		} else {
-			return (ImportProvider) providers.get(index);
+			return providers.get(index);
 		}
 	}
 
@@ -99,13 +99,13 @@ public class ProviderSelectionPanel extends JPanel {
 	 * 
 	 * @return providers of import
 	 */
-	public static List lookupImportProviders() {
-		ArrayList providers = new ArrayList();
+	public static List<ImportProvider> lookupImportProviders() {
+		ArrayList<ImportProvider> providers = new ArrayList<ImportProvider>();
 
 		Iterator iterator = Service.providers(ImportProvider.class);
 
 		while (iterator.hasNext()) {
-			providers.add(iterator.next());
+			providers.add((ImportProvider)iterator.next());
 		}
 
 		return providers;
@@ -118,7 +118,7 @@ public class ProviderSelectionPanel extends JPanel {
 		}
 
 		public Object getElementAt(int index) {
-			ImportProvider provider = (ImportProvider) providers.get(index);
+			ImportProvider provider = providers.get(index);
 
 			return provider.getName();
 		}

@@ -32,7 +32,7 @@ import jorgan.play.sound.SoundWrapper;
 public class VariationPlayer extends ActivateablePlayer implements
         SoundEffectPlayer {
 
-    private List sounds = new ArrayList();
+    private List<VariationSound> sounds = new ArrayList<VariationSound>();
 
     public VariationPlayer(Variation variation) {
         super(variation);
@@ -49,7 +49,7 @@ public class VariationPlayer extends ActivateablePlayer implements
 
         if (isOpen()) {
             for (int s = 0; s < sounds.size(); s++) {
-                VariationSound sound = (VariationSound) sounds.get(s);
+                VariationSound sound = sounds.get(s);
                 sound.flush();
             }
         }

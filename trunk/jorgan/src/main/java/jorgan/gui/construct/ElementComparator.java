@@ -27,9 +27,9 @@ import jorgan.disposition.*;
 /**
  * Comparator of elements.
  */
-public class ElementComparator implements Comparator {
+public class ElementComparator implements Comparator<Element> {
 
-    private static List types = new ArrayList();
+    private static List<Class> types = new ArrayList<Class>();
 
     static {
         types.add(Console.class);
@@ -50,10 +50,7 @@ public class ElementComparator implements Comparator {
         this.alphabet = alphabet;
     }
 
-    public int compare(Object o1, Object o2) {
-
-        Element e1 = (Element) o1;
-        Element e2 = (Element) o2;
+    public int compare(Element e1, Element e2) {
 
         if (alphabet) {
             int result = compareAlphabetical(e1, e2);

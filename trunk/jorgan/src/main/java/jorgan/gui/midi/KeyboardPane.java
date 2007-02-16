@@ -97,7 +97,7 @@ public class KeyboardPane extends JComponent {
 
 	private boolean sendChannelPressure = false;
 
-	private List keys = new ArrayList();
+	private List<Key> keys = new ArrayList<Key>();
 
 	private Receiver receiver;
 
@@ -171,7 +171,7 @@ public class KeyboardPane extends JComponent {
 	 *            receiver.
 	 */
 	public void setReceiver(Receiver receiver) {
-		clearKeys();
+		releaseKeys();
 
 		this.receiver = receiver;
 	}
@@ -179,9 +179,9 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Clear all keys.
 	 */
-	public void clearKeys() {
+	public void releaseKeys() {
 		for (int k = 0; k < 128; k++) {
-			Key key = (Key) keys.get(k);
+			Key key = keys.get(k);
 			key.release();
 		}
 
@@ -195,7 +195,7 @@ public class KeyboardPane extends JComponent {
 	 *            channel to use
 	 */
 	public void setChannel(int channel) {
-		clearKeys();
+		releaseKeys();
 
 		this.channel = channel;
 	}
@@ -276,7 +276,7 @@ public class KeyboardPane extends JComponent {
 		g.translate((getWidth() - preferredSize.width) / 2,
 				(getHeight() - preferredSize.height) / 2);
 		for (int k = 0; k < 128; k++) {
-			Key key = (Key) keys.get(k);
+			Key key = keys.get(k);
 			key.paint(g);
 		}
 	}
@@ -348,7 +348,7 @@ public class KeyboardPane extends JComponent {
 	private Key getKey(int x, int y) {
 
 		for (int k = 128 - 1; k >= 0; k--) {
-			Key key = (Key) keys.get(k);
+			Key key = keys.get(k);
 			if (key.hits(x, y)) {
 				return key;
 			}

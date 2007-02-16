@@ -125,9 +125,9 @@ public class Interpreter {
 	 */
 	public static String[] getEncodings() {
 		if (encodings == null) {
-			Set keys = Charset.availableCharsets().keySet();
+			Set<String> keys = Charset.availableCharsets().keySet();
 
-			String[] encodings = (String[]) keys.toArray(new String[keys.size()]);
+			String[] encodings = keys.toArray(new String[keys.size()]);
 			
 			Arrays.sort(encodings);
 			

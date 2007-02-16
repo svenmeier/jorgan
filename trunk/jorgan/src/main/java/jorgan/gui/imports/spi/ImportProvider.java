@@ -22,18 +22,20 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
+import jorgan.disposition.Stop;
+
 /**
  * A provider of an import.
  */
 public interface ImportProvider {
 
-  public JPanel getOptionsPanel();
-  
-  public String getName();
+	public JPanel getOptionsPanel();
 
-  public String getDescription();
+	public String getName();
 
-  public abstract boolean hasStops();
-  
-  public abstract List getStops();
+	public String getDescription();
+
+	public abstract boolean hasStops();
+
+	public abstract List<Stop> getStops();
 }

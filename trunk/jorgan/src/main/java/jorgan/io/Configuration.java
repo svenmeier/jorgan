@@ -52,7 +52,7 @@ public class Configuration extends PreferencesConfiguration {
 
 	private File recentDirectory;
 
-	private List recentFiles;
+	private List<File> recentFiles;
 
 	private int registrationChanges;
 	
@@ -65,7 +65,7 @@ public class Configuration extends PreferencesConfiguration {
 				RECENT_OPEN_ON_STARTUP);
 		recentMax = getInt(prefs, "recentMax", RECENT_MAX);
 		recentDirectory = getFile(prefs, "recentDirectory", RECENT_DIRECTORY());
-		recentFiles = new ArrayList();
+		recentFiles = new ArrayList<File>();
 		for (int r = 0;; r++) {
 			File def = (r == 0) ? RECENT_FILE() : null;
 			File recentFile = getFile(prefs, "recentFiles[" + r + "]", def);
@@ -92,7 +92,7 @@ public class Configuration extends PreferencesConfiguration {
 			prefs.remove(key);
 		}
 		for (int r = 0; r < recentFiles.size(); r++) {
-			putFile(prefs, "recentFiles[" + r + "]", (File) recentFiles.get(r));
+			putFile(prefs, "recentFiles[" + r + "]", recentFiles.get(r));
 		}
 		
 		putInt(prefs, "historyCount", historySize);
@@ -141,13 +141,13 @@ public class Configuration extends PreferencesConfiguration {
 		return recentDirectory;
 	}
 
-	public List getRecentFiles() {
+	public List<File> getRecentFiles() {
 		return Collections.unmodifiableList(recentFiles);
 	}
 
 	public File getRecentFile() {
 		if (recentFiles.size() > 0) {
-			return (File) recentFiles.get(0);
+			return recentFiles.get(0);
 		}
 		return null;
 	}

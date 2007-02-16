@@ -105,7 +105,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private boolean open;
 
-	private List messages = new ArrayList();
+	private List<Message> messages = new ArrayList<Message>();
 
 	private JTable table = new JTable();
 
@@ -244,7 +244,8 @@ public class MidiMonitor extends DockedPanel {
 			message = i18n.getString("noDeviceMessage");
 		} else {
 			message = MessageFormat.format(i18n.getString("deviceMessage"),
-					new Object[] { deviceName, deviceOut ? new Integer(1) : new Integer(0),
+					new Object[] { deviceName,
+							deviceOut ? new Integer(1) : new Integer(0),
 							open ? new Integer(1) : new Integer(0) });
 		}
 		setMessage(message);
@@ -323,7 +324,7 @@ public class MidiMonitor extends DockedPanel {
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 
-			Message message = (Message) messages.get(rowIndex);
+			Message message = messages.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
@@ -477,7 +478,7 @@ public class MidiMonitor extends DockedPanel {
 					value, isSelected, hasFocus, row, column);
 
 			if (!isSelected) {
-				Message message = (Message) messages.get(row);
+				Message message = messages.get(row);
 				Color color = message.getColor();
 				if (color != null) {
 					label.setBackground(color);

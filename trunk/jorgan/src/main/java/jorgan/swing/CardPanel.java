@@ -18,9 +18,18 @@
  */
 package jorgan.swing;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
+import java.awt.LayoutManager2;
+import java.awt.Rectangle;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import javax.swing.JPanel;
 
 /**
  * A simpler alternative to a {@link javax.swing.JPanel} with a
@@ -97,7 +106,7 @@ public class CardPanel extends JPanel {
 	 */
 	private static class Layout implements LayoutManager2 {
 
-		private Map cards = new HashMap();
+		private Map<Object, Component> cards = new HashMap<Object, Component>();
 
 		private Component current;
 
@@ -115,7 +124,7 @@ public class CardPanel extends JPanel {
 			if (constraint == null) {
 				current = null;
 			} else {
-				current = (Component) cards.get(constraint);
+				current = cards.get(constraint);
 				if (current != null) {
 					current.setVisible(true);
 				}
@@ -131,7 +140,7 @@ public class CardPanel extends JPanel {
 		 * @return the component with the given constraint
 		 */
 		public Component getCard(Object constraint) {
-			return (Component) cards.get(constraint);
+			return cards.get(constraint);
 		}
 
 		/**
@@ -177,9 +186,9 @@ public class CardPanel extends JPanel {
 			}
 
 			if (current == comp) {
-				Iterator values = cards.values().iterator();
+				Iterator<Component> values = cards.values().iterator();
 				if (values.hasNext()) {
-					current = (Component) values.next();
+					current = values.next();
 					current.setVisible(true);
 				} else {
 					current = null;

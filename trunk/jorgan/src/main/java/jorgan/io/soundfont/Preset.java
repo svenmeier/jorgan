@@ -22,55 +22,58 @@ package jorgan.io.soundfont;
  * The information about a preset contained in the
  * {@jorgan.io.soundfont.PresetHeaderChunk}.
  */
-public class Preset implements Comparable {
+public class Preset implements Comparable<Preset> {
 
-  private String name;
-  private short  program;
-  private short  bank;
-  
-  /**
-   * Create a preset.
-   * 
-   * @param name        name of preset
-   * @param program     program number
-   * @param bank        bank number
-   */
-  public Preset(String name, short program, short bank) {
-    this.name    = name;
-    this.program = program;
-    this.bank    = bank;
-  }
+	private String name;
 
-  public short getBank() {
-    return bank;
-  }
+	private short program;
 
-  public String getName() {
-    return name;
-  }
+	private short bank;
 
-  public short getProgram() {
-    return program;
-  }
+	/**
+	 * Create a preset.
+	 * 
+	 * @param name
+	 *            name of preset
+	 * @param program
+	 *            program number
+	 * @param bank
+	 *            bank number
+	 */
+	public Preset(String name, short program, short bank) {
+		this.name = name;
+		this.program = program;
+		this.bank = bank;
+	}
 
-  /**
-   * Natural ordering by bank an program number.
-   */
-  public int compareTo(Object object) {
-    Preset preset = (Preset)object;
-    
-    if (bank < preset.bank) {
-      return -1;  
-    } else if (bank > preset.bank) {
-      return 1;      
-    }
+	public short getBank() {
+		return bank;
+	}
 
-    if (program < preset.program) {
-      return -1;  
-    } else if (program > preset.program) {
-      return 1;      
-    }
+	public String getName() {
+		return name;
+	}
 
-    return 0;  
-  }    
+	public short getProgram() {
+		return program;
+	}
+
+	/**
+	 * Natural ordering by bank an program number.
+	 */
+	public int compareTo(Preset preset) {
+		if (bank < preset.bank) {
+			return -1;
+		} else if (bank > preset.bank) {
+			return 1;
+		}
+
+		if (program < preset.program) {
+			return -1;
+		} else if (program > preset.program) {
+			return 1;
+		}
+
+		return 0;
+	}
 }

@@ -18,12 +18,13 @@
  */
 package jorgan.midi.merge;
 
-import java.util.*;
-import java.util.prefs.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.prefs.Preferences;
 
-import jorgan.sound.midi.merge.*;
-
-import jorgan.config.prefs.*;
+import jorgan.config.prefs.PreferencesConfiguration;
+import jorgan.sound.midi.merge.MergeInput;
 
 /**
  * The configuration for merging.
@@ -32,10 +33,10 @@ public class Configuration extends PreferencesConfiguration {
 
 	private static final Configuration instance = new Configuration();
 
-	private List inputs;
+	private List<MergeInput> inputs;
 
 	protected void restore(Preferences prefs) {
-		inputs = new ArrayList();
+		inputs = new ArrayList<MergeInput>();
 		for (int i = 0;; i++) {
 			MergeInput input = getMergeInput(prefs, "input[" + i + "]", null);
 			if (input == null) {
@@ -55,16 +56,16 @@ public class Configuration extends PreferencesConfiguration {
 			prefs.remove(key);
 		}
 		for (int i = 0; i < inputs.size(); i++) {
-			putMergeInput(prefs, "input[" + i + "]", (MergeInput) inputs.get(i));
+			putMergeInput(prefs, "input[" + i + "]", inputs.get(i));
 		}
 	}
 
-	public List getInputs() {
+	public List<MergeInput> getInputs() {
 		return Collections.unmodifiableList(inputs);
 	}
 
-	public void setInputs(List inputs) {
-		this.inputs = new ArrayList(inputs);
+	public void setInputs(List<MergeInput> inputs) {
+		this.inputs = new ArrayList<MergeInput>(inputs);
 
 		fireConfigurationChanged();
 	}

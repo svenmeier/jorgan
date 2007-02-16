@@ -18,88 +18,95 @@
  */
 package jorgan.io.riff;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Representation of a listChunk.
  */
 public class ListChunk extends Chunk {
 
-  public static final String LIST_ID = "LIST";
+	public static final String LIST_ID = "LIST";
 
-  /**
-   * The type of this listChunk.
-   */  
-  private String type;
-  
-  /**
-   * The sub chunks.
-   */
-  private List subChunks = new ArrayList();
-  
-  /**
-   * Create a list chunk.
-   * 
-   * @param id          id of list chunk, must be <code>LIST</code>
-   * @param dataLength  length of data of chunk
-   * @param type        type
-   */
-  public ListChunk(String id, int dataLength, String type) {
-    super(id, dataLength);
-    
-    this.type = type;
-  }
-  
-  /**
-   * Get the type of this chunk.
-   * 
-   * @return  the type
-   */
-  public String getType() {
-    return type;    
-  }
-  
-  /**
-   * Add a chunk.
-   * 
-   * @param chunk   chunk to add
-   */
-  public void addChunk(Chunk chunk) {
-    subChunks.add(chunk);
-  }
-  
-  /**
-   * Get the chunk with the given id.
-   * 
-   * @param id    id to get chunk for
-   * @return      chunk or <code>null</code> if no matching chunk is contained 
-   */
-  public Chunk getChunk(String id) {
-    for (int c = 0; c < subChunks.size(); c++) {
-      Chunk chunk = (Chunk)subChunks.get(c);
-      if (id.equals(chunk.getId())) {
-        return chunk;
-      }
-    }
-    return null;
-  }
-  
-  /**
-   * Get the listChunk with the given type.
-   * 
-   * @param type  type to get chunk for
-   * @return      listChunk or <code>null</code> if no mathing chunk is contained 
-   */
-  public ListChunk getListChunk(String type) {
-    for (int c = 0; c < subChunks.size(); c++) {
-      Chunk chunk = (Chunk)subChunks.get(c);
-      if (chunk instanceof ListChunk) {
-        ListChunk listChunk = (ListChunk)chunk;
-        if (type.equals(listChunk.getType())) {
-          return listChunk;
-        }
-      }
-    }
-    return null;
-  }
+	/**
+	 * The type of this listChunk.
+	 */
+	private String type;
+
+	/**
+	 * The sub chunks.
+	 */
+	private List<Chunk> subChunks = new ArrayList<Chunk>();
+
+	/**
+	 * Create a list chunk.
+	 * 
+	 * @param id
+	 *            id of list chunk, must be <code>LIST</code>
+	 * @param dataLength
+	 *            length of data of chunk
+	 * @param type
+	 *            type
+	 */
+	public ListChunk(String id, int dataLength, String type) {
+		super(id, dataLength);
+
+		this.type = type;
+	}
+
+	/**
+	 * Get the type of this chunk.
+	 * 
+	 * @return the type
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * Add a chunk.
+	 * 
+	 * @param chunk
+	 *            chunk to add
+	 */
+	public void addChunk(Chunk chunk) {
+		subChunks.add(chunk);
+	}
+
+	/**
+	 * Get the chunk with the given id.
+	 * 
+	 * @param id
+	 *            id to get chunk for
+	 * @return chunk or <code>null</code> if no matching chunk is contained
+	 */
+	public Chunk getChunk(String id) {
+		for (int c = 0; c < subChunks.size(); c++) {
+			Chunk chunk = subChunks.get(c);
+			if (id.equals(chunk.getId())) {
+				return chunk;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the listChunk with the given type.
+	 * 
+	 * @param type
+	 *            type to get chunk for
+	 * @return listChunk or <code>null</code> if no mathing chunk is contained
+	 */
+	public ListChunk getListChunk(String type) {
+		for (int c = 0; c < subChunks.size(); c++) {
+			Chunk chunk = subChunks.get(c);
+			if (chunk instanceof ListChunk) {
+				ListChunk listChunk = (ListChunk) chunk;
+				if (type.equals(listChunk.getType())) {
+					return listChunk;
+				}
+			}
+		}
+		return null;
+	}
 }

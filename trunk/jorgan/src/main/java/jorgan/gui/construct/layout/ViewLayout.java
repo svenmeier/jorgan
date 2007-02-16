@@ -71,11 +71,11 @@ public abstract class ViewLayout {
 	 * @param views
 	 *            the selected views to layout
 	 */
-	public void layout(View pressed, List views) {
+	public void layout(View pressed, List<View> views) {
 		init(pressed, views);
 
 		for (int s = 0; s < views.size(); s++) {
-			View view = (View) views.get(s);
+			View view = views.get(s);
 			visit(view, s);
 		}
 	}
@@ -85,7 +85,7 @@ public abstract class ViewLayout {
 				.setLocation(view.getElement(), x, y);
 	}
 
-	protected void init(View pressed, List views) {
+	protected void init(View pressed, List<View> views) {
 	}
 
 	protected void visit(View view, int index) {

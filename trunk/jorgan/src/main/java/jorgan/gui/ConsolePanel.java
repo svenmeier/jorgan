@@ -127,7 +127,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	/**
 	 * The element to view mapping.
 	 */
-	private Map viewsByElement = new HashMap();
+	private Map<Element, View> viewsByElement = new HashMap<Element, View>();
 
 	/**
 	 * Currently constructing.
@@ -142,7 +142,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	/**
 	 * The currently selected elements.
 	 */
-	private List selectedElements = new ArrayList();
+	private List<Element> selectedElements = new ArrayList<Element>();
 
 	/**
 	 * The listener to selection changes.
@@ -483,7 +483,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	}
 
 	protected View getView(Element element) {
-		return (View) viewsByElement.get(element);
+		return viewsByElement.get(element);
 	}
 
 	private void createView(Element element) {
@@ -550,7 +550,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 */
 	protected Element getElement(int x, int y) {
 		for (int e = 0; e < selectedElements.size(); e++) {
-			Element element = (Element) selectedElements.get(e);
+			Element element = selectedElements.get(e);
 
 			View view = getView(element);
 			if (view != null && view.contains(x, y)) {
@@ -871,7 +871,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				int x2 = screenToView(Math.max(mouseFrom.x, mouseTo.x));
 				int y2 = screenToView(Math.max(mouseFrom.y, mouseTo.y));
 
-				List elements = new ArrayList();
+				List<Element> elements = new ArrayList<Element>();
 				for (int r = 0; r < console.getReferenceCount(); r++) {
 					Element element = console.getReference(r).getElement();
 					View view = getView(element);
@@ -905,7 +905,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 						- original.y;
 
 				for (int s = 0; s < selectedElements.size(); s++) {
-					Element selectedElement = (Element) selectedElements.get(s);
+					Element selectedElement = selectedElements.get(s);
 
 					view = getView(selectedElement);
 
@@ -998,7 +998,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			g.setXORMode(Color.white);
 
 			for (int s = 0; s < selectedElements.size(); s++) {
-				Element selectedElement = (Element) selectedElements.get(s);
+				Element selectedElement = selectedElements.get(s);
 
 				View view = getView(selectedElement);
 				if (view != null) {
@@ -1120,7 +1120,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				Object[] elements = (Object[]) ObjectTransferable
 						.getObject(dtde.getTransferable());
 
-				ArrayList views = new ArrayList();
+				ArrayList<View> views = new ArrayList<View>();
 				for (int e = 0; e < elements.length; e++) {
 					Element element = (Element) elements[e];
 
@@ -1158,11 +1158,11 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			ElementSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
 
-			List newElements = session.getSelectionModel()
+			List<Element> newElements = session.getSelectionModel()
 					.getSelectedElements();
 
 			for (int e = 0; e < newElements.size(); e++) {
-				Element element = (Element) newElements.get(e);
+				Element element = newElements.get(e);
 
 				if (selectedElements.contains(element)) {
 					selectedElements.remove(element);
@@ -1180,7 +1180,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			selectedElements.addAll(newElements);
 
 			if (constructing && selectedElements.size() == 1) {
-				scrollElementToVisible((Element) selectedElements.get(0));
+				scrollElementToVisible(selectedElements.get(0));
 			}
 		}
 	}
@@ -1228,7 +1228,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		public void actionPerformed(ActionEvent e) {
 			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = (Element) selectedElements.get(s);
+				Element element = selectedElements.get(s);
 
 				console.toFront(element);
 			}
@@ -1243,7 +1243,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		public void actionPerformed(ActionEvent e) {
 			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = (Element) selectedElements.get(s);
+				Element element = selectedElements.get(s);
 
 				console.toBack(element);
 			}
@@ -1257,7 +1257,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		public void actionPerformed(ActionEvent e) {
 			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = (Element) selectedElements.get(s);
+				Element element = selectedElements.get(s);
 
 				console.unreference(element);
 			}
@@ -1279,9 +1279,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			ArrayList views = new ArrayList();
+			ArrayList<View> views = new ArrayList<View>();
 			for (int s = 0; s < selectedElements.size(); s++) {
-				View view = getView((Element) selectedElements.get(s));
+				View view = getView(selectedElements.get(s));
 				if (view != null) {
 					views.add(view);
 				}

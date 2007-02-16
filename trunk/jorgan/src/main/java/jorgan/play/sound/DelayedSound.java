@@ -18,7 +18,8 @@
  */
 package jorgan.play.sound;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -145,7 +146,7 @@ public class DelayedSound extends SoundWrapper {
 
     private static class DelayedInvoker implements Runnable {
 
-        private List invocations = new ArrayList();
+        private List<DelayedInvocation> invocations = new ArrayList<DelayedInvocation>();
 
         public DelayedInvoker() {
             Thread thread = new Thread(this, "DelayedSoundInvoker");
@@ -162,7 +163,7 @@ public class DelayedSound extends SoundWrapper {
         public synchronized void delay(DelayedInvocation invocation) {
             int index = 0;
             while (index < invocations.size()
-                    && ((DelayedInvocation) invocations.get(index))
+                    && invocations.get(index)
                             .compareTo(invocation) <= 0) {
                 index++;
             }
@@ -176,7 +177,7 @@ public class DelayedSound extends SoundWrapper {
                     if (invocations.size() == 0) {
                         wait();
                     } else {
-                        DelayedInvocation invocation = (DelayedInvocation) invocations
+                        DelayedInvocation invocation = invocations
                                 .get(0);
 
                         long timeout = invocation.when

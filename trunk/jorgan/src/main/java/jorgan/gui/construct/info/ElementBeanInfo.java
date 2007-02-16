@@ -33,7 +33,7 @@ import jorgan.gui.construct.editor.StyleEditor;
  */
 public class ElementBeanInfo extends SimpleBeanInfo {
 
-	private List descriptors = new ArrayList();
+	private List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 
 	public final PropertyDescriptor[] getPropertyDescriptors() {
 
@@ -41,8 +41,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 
 		registerProperties();
 
-		return (PropertyDescriptor[]) descriptors
-				.toArray(new PropertyDescriptor[descriptors.size()]);
+		return descriptors.toArray(new PropertyDescriptor[descriptors.size()]);
 	}
 
 	public int getDefaultPropertyIndex() {

@@ -71,8 +71,8 @@ public class I18N {
 	}
 
 	private static class EmptyResourceBundle extends ResourceBundle {
-		public Enumeration getKeys() {
-			return Collections.enumeration(Collections.EMPTY_LIST);
+		public Enumeration<String> getKeys() {
+			return Collections.enumeration(Collections.<String>emptyList());
 		}
 
 		protected Object handleGetObject(String key) {

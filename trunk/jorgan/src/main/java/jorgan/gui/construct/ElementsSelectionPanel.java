@@ -22,7 +22,6 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -39,6 +38,7 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.gui.ElementListCellRenderer;
+import jorgan.util.Generics;
 import jorgan.util.I18N;
 
 /**
@@ -54,7 +54,7 @@ public class ElementsSelectionPanel extends JPanel {
 
 	private JList elementsList = new JList();
 
-	private List elements = new ArrayList();
+	private List<Element> elements = new ArrayList<Element>();
 
 	/**
 	 * Constructor.
@@ -89,7 +89,7 @@ public class ElementsSelectionPanel extends JPanel {
 	 * @param elements
 	 *            the elements
 	 */
-	public void setElements(List elements) {
+	public void setElements(List<Element> elements) {
 		this.elements = elements;
 
 		Collections.sort(elements, new ElementComparator(false));
@@ -122,9 +122,9 @@ public class ElementsSelectionPanel extends JPanel {
 	 * 
 	 * @return the selected elements
 	 */
-	public List getSelectedElements() {
+	public List<Element> getSelectedElements() {
 
-		return Arrays.asList(elementsList.getSelectedValues());
+		return Generics.asList(elementsList.getSelectedValues(), Element.class);
 	}
 
 	private class ElementsModel extends AbstractListModel {

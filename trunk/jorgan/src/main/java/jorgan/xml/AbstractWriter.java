@@ -48,7 +48,7 @@ public abstract class AbstractWriter {
   /**
    * Write an object.
    *
-   * @param object   object to write
+   * @param root   object to write
    */
   public void write(Object root) throws IOException {
 

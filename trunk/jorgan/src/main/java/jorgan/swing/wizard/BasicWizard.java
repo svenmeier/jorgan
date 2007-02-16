@@ -25,9 +25,9 @@ import java.util.ArrayList;
  */
 public class BasicWizard implements Wizard {
 
-	private ArrayList listeners = new ArrayList();
+	private ArrayList<WizardListener> listeners = new ArrayList<WizardListener>();
 
-	private ArrayList pages = new ArrayList();
+	private ArrayList<Page> pages = new ArrayList<Page>();
 
 	protected Page current = null;
 
@@ -68,7 +68,7 @@ public class BasicWizard implements Wizard {
 	 */
 	public void removePage(Page page) {
 		if (current == page) {
-			setCurrentPage((Page) pages.get(0));
+			setCurrentPage(pages.get(0));
 		}
 
 		pages.remove(page);
@@ -93,7 +93,7 @@ public class BasicWizard implements Wizard {
 		if (current.leavingToNext()) {
 			int index = pages.indexOf(current);
 
-			Page page = (Page) pages.get(index + 1);
+			Page page = pages.get(index + 1);
 
 			page.enteringFromPrevious();
 
@@ -105,7 +105,7 @@ public class BasicWizard implements Wizard {
 		if (current.leavingToPrevious()) {
 			int index = pages.indexOf(current);
 
-			Page page = (Page) pages.get(index - 1);
+			Page page = pages.get(index - 1);
 
 			page.enteringFromNext();
 
@@ -160,7 +160,7 @@ public class BasicWizard implements Wizard {
 
 	private void fireWizardChanged() {
 		for (int l = 0; l < listeners.size(); l++) {
-			WizardListener listener = (WizardListener) listeners.get(l);
+			WizardListener listener = listeners.get(l);
 
 			listener.wizardChanged();
 		}
@@ -168,7 +168,7 @@ public class BasicWizard implements Wizard {
 
 	private void fireWizardFinished() {
 		for (int l = 0; l < listeners.size(); l++) {
-			WizardListener listener = (WizardListener) listeners.get(l);
+			WizardListener listener = listeners.get(l);
 
 			listener.wizardFinished();
 		}
@@ -176,7 +176,7 @@ public class BasicWizard implements Wizard {
 
 	private void fireWizardCancelled() {
 		for (int l = 0; l < listeners.size(); l++) {
-			WizardListener listener = (WizardListener) listeners.get(l);
+			WizardListener listener = listeners.get(l);
 
 			listener.wizardCancelled();
 		}

@@ -99,7 +99,7 @@ public class MemoryPanel extends DockedPanel {
 	}
 
 	private void findMemory() {
-		List memories = this.session.getOrgan().getCandidates(Memory.class);
+		List memories = this.session.getOrgan().getElements(Memory.class);
 		if (memories.isEmpty()) {
 			setMemory(null);
 		} else {

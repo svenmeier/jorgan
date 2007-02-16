@@ -32,7 +32,7 @@ import jorgan.play.sound.SoundWrapper;
 public class TremulantPlayer extends ActivateablePlayer implements
         SoundEffectPlayer {
 
-    private List sounds = new ArrayList();
+    private List<TremulantSound> sounds = new ArrayList<TremulantSound>();
 
     public TremulantPlayer(Tremulant tremulant) {
         super(tremulant);
@@ -49,7 +49,7 @@ public class TremulantPlayer extends ActivateablePlayer implements
 
         if (isOpen()) {
             for (int s = 0; s < sounds.size(); s++) {
-                TremulantSound sound = (TremulantSound) sounds.get(s);
+                TremulantSound sound = sounds.get(s);
                 sound.flush();
             }
         }

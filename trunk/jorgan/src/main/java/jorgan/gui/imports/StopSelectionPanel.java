@@ -56,7 +56,7 @@ public class StopSelectionPanel extends JPanel {
 
 	private StopModel stopModel = new StopModel();
 
-	private java.util.List stops = new ArrayList();
+	private List<Stop> stops = new ArrayList<Stop>();
 
 	/**
 	 * Constructor.
@@ -94,7 +94,7 @@ public class StopSelectionPanel extends JPanel {
 	 * @param stops
 	 *            the stops
 	 */
-	public void setStops(List stops) {
+	public void setStops(List<Stop> stops) {
 		this.stops = stops;
 
 		stopModel.fireTableDataChanged();
@@ -105,10 +105,10 @@ public class StopSelectionPanel extends JPanel {
 	 * 
 	 * @return selected stops
 	 */
-	public java.util.List getSelectedStops() {
+	public List<Stop> getSelectedStops() {
 		int[] rows = table.getSelectedRows();
 
-		ArrayList selectedStops = new ArrayList();
+		ArrayList<Stop> selectedStops = new ArrayList<Stop>();
 		for (int r = 0; r < rows.length; r++) {
 			selectedStops.add(stops.get(rows[r]));
 		}
@@ -140,7 +140,7 @@ public class StopSelectionPanel extends JPanel {
 
 	private class StopModel extends AbstractTableModel {
 
-		public Class getColumnClass(int columnIndex) {
+		public Class<?> getColumnClass(int columnIndex) {
 
 			return String.class;
 		}
@@ -162,7 +162,7 @@ public class StopSelectionPanel extends JPanel {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Stop stop = (Stop) stops.get(rowIndex);
+			Stop stop = stops.get(rowIndex);
 			if (columnIndex == 0) {
 				return stop.getName();
 			} else {

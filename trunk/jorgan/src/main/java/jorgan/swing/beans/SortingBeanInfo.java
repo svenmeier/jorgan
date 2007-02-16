@@ -28,7 +28,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * A {@link java.beans.BeanInfo} wrapper that sorts property descriptors. 
+ * A {@link java.beans.BeanInfo} wrapper that sorts property descriptors.
  */
 public class SortingBeanInfo implements BeanInfo {
 
@@ -37,7 +37,8 @@ public class SortingBeanInfo implements BeanInfo {
 	/**
 	 * Wrap the given bean info.
 	 * 
-	 * @param info	bean info to wrap
+	 * @param info
+	 *            bean info to wrap
 	 */
 	public SortingBeanInfo(BeanInfo info) {
 		this.info = info;
@@ -86,7 +87,7 @@ public class SortingBeanInfo implements BeanInfo {
 			defaultPropertyDescriptor = descriptors[index];
 		}
 
-		descriptors = (PropertyDescriptor[]) descriptors.clone();
+		descriptors = descriptors.clone();
 		Arrays.sort(descriptors, new PropertyComparator(
 				defaultPropertyDescriptor));
 
@@ -97,7 +98,7 @@ public class SortingBeanInfo implements BeanInfo {
 	 * Comparator for sorting of property descriptors in alphabetical ordering
 	 * of their short descriptions.
 	 */
-	private class PropertyComparator implements Comparator {
+	private class PropertyComparator implements Comparator<PropertyDescriptor> {
 
 		private PropertyDescriptor defaultPropertyDescriptor;
 
@@ -105,9 +106,8 @@ public class SortingBeanInfo implements BeanInfo {
 			this.defaultPropertyDescriptor = defaultPropertyDescriptor;
 		}
 
-		public int compare(Object o1, Object o2) {
-			PropertyDescriptor descriptor1 = (PropertyDescriptor) o1;
-			PropertyDescriptor descriptor2 = (PropertyDescriptor) o2;
+		public int compare(PropertyDescriptor descriptor1,
+				PropertyDescriptor descriptor2) {
 
 			if (defaultPropertyDescriptor == descriptor1) {
 				return -1;
@@ -116,11 +116,6 @@ public class SortingBeanInfo implements BeanInfo {
 				return 1;
 			}
 
-			return compare(descriptor1, descriptor2);
-		}
-
-		protected int compare(PropertyDescriptor descriptor1,
-				PropertyDescriptor descriptor2) {
 			return descriptor1.getShortDescription().compareTo(
 					descriptor2.getShortDescription());
 		}

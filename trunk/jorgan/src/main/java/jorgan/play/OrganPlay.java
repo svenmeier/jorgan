@@ -64,7 +64,7 @@ public class OrganPlay {
 	/**
 	 * Element to player mapping.
 	 */
-	private Map players = new HashMap();
+	private Map<Element, Player> players = new HashMap<Element, Player>();
 
 	/**
 	 * The handler of organ and configuration events.
@@ -74,7 +74,7 @@ public class OrganPlay {
 	/**
 	 * All registered playerListeners.
 	 */
-	private List listeners = new ArrayList();
+	private List<PlayListener> listeners = new ArrayList<PlayListener>();
 
 	private Organ organ;
 
@@ -121,7 +121,7 @@ public class OrganPlay {
 	protected void fireClosed() {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.closed();
 			}
 		}
@@ -130,7 +130,7 @@ public class OrganPlay {
 	protected void fireOpened() {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.opened();
 			}
 		}
@@ -140,7 +140,7 @@ public class OrganPlay {
 		if (listeners != null) {
 			PlayEvent event = new PlayEvent(this, player.getElement());
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.playerAdded(event);
 			}
 		}
@@ -150,7 +150,7 @@ public class OrganPlay {
 		if (listeners != null) {
 			PlayEvent event = new PlayEvent(this, player.getElement());
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.playerRemoved(event);
 			}
 		}
@@ -160,7 +160,7 @@ public class OrganPlay {
 		if (listeners != null) {
 			PlayEvent event = new PlayEvent(this, player.getElement(), problem);
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.problemAdded(event);
 			}
 		}
@@ -170,7 +170,7 @@ public class OrganPlay {
 		if (listeners != null) {
 			PlayEvent event = new PlayEvent(this, player.getElement(), problem);
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.problemRemoved(event);
 			}
 		}
@@ -182,7 +182,7 @@ public class OrganPlay {
 	protected void fireInputAccepted() {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.inputAccepted();
 			}
 		}
@@ -194,14 +194,14 @@ public class OrganPlay {
 	protected void fireOutputProduced() {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = (PlayListener) listeners.get(l);
+				PlayListener listener = listeners.get(l);
 				listener.outputProduced();
 			}
 		}
 	}
 
 	protected Player getPlayer(Element element) {
-		return (Player) players.get(element);
+		return players.get(element);
 	}
 
 	public boolean hasErrors(Element element) {
@@ -237,15 +237,15 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator iterator = players.values().iterator();
+			Iterator<Player> iterator = players.values().iterator();
 			while (iterator.hasNext()) {
-				Player player = (Player) iterator.next();
+				Player player = iterator.next();
 				player.open();
 			}
 
 			iterator = players.values().iterator();
 			while (iterator.hasNext()) {
-				Player player = (Player) iterator.next();
+				Player player = iterator.next();
 				player.elementChanged(null);
 			}
 		}
@@ -271,9 +271,9 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator iterator = players.values().iterator();
+			Iterator<Player> iterator = players.values().iterator();
 			while (iterator.hasNext()) {
-				Player player = (Player) iterator.next();
+				Player player = iterator.next();
 				player.close();
 			}
 		}
@@ -321,7 +321,7 @@ public class OrganPlay {
 	}
 
 	protected void dropPlayer(Element element) {
-		Player player = (Player) players.get(element);
+		Player player = players.get(element);
 		if (player != null) {
 			players.remove(element);
 
@@ -383,9 +383,9 @@ public class OrganPlay {
 
 		public void configurationChanged(ConfigurationEvent ev) {
 			synchronized (CHANGE_LOCK) {
-				Iterator iterator = players.values().iterator();
+				Iterator<Player> iterator = players.values().iterator();
 				while (iterator.hasNext()) {
-					Player player = (Player) iterator.next();
+					Player player = iterator.next();
 					player.elementChanged(null);
 				}
 			}

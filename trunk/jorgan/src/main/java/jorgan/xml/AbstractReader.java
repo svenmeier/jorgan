@@ -60,8 +60,6 @@ public abstract class AbstractReader {
      * @return the read object
      * @throws IOException
      *             if an IO operation failes
-     * @throws InvalidDispositionException
-     *             if inputStream contains an invalid disposition
      */
     public Object read() throws IOException {
 

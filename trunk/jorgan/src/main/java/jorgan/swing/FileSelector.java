@@ -59,7 +59,7 @@ public class FileSelector extends JPanel {
 	/**
 	 * The listeners to changes.
 	 */
-	private List listeners = new ArrayList();
+	private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
 	/**
 	 * The filter for file selection.
@@ -134,7 +134,7 @@ public class FileSelector extends JPanel {
 
 	private void fireStateChanged() {
 		for (int l = 0; l < listeners.size(); l++) {
-			ChangeListener listener = (ChangeListener) listeners.get(l);
+			ChangeListener listener = listeners.get(l);
 			listener.stateChanged(new ChangeEvent(this));
 		}
 	}

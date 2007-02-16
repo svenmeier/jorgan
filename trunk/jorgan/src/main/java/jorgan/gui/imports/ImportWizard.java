@@ -20,12 +20,13 @@ package jorgan.gui.imports;
 
 import java.awt.Component;
 import java.beans.PropertyChangeEvent;
+import java.util.List;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
@@ -43,9 +44,9 @@ public class ImportWizard extends BasicWizard {
 
 	private ImportProvider provider;
 
-	private java.util.List stops;
+	private List<Stop> stops;
 
-	private java.util.List selectedStops;
+	private List<Stop> selectedStops;
 
 	/**
 	 * Create a new wizard.
@@ -76,7 +77,7 @@ public class ImportWizard extends BasicWizard {
 	protected boolean finishImpl() {
 
 		for (int s = 0; s < selectedStops.size(); s++) {
-			organ.addElement((Element) selectedStops.get(s));
+			organ.addElement(selectedStops.get(s));
 		}
 
 		return true;

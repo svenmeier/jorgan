@@ -19,39 +19,46 @@
 package jorgan.io.riff.factory;
 
 // jorgan
-import jorgan.io.riff.*;
+import jorgan.io.riff.Chunk;
+import jorgan.io.riff.ListChunk;
+import jorgan.io.riff.RiffFormatException;
+import jorgan.io.riff.RiffReader;
 
 /**
- * A factory for {@link jorgan.riff.ListChunk}s.
+ * A factory for {@link jorgan.io.riff.ListChunk}s.
  */
 public class ListChunkFactory extends ChunkFactory {
-  
-  public Chunk createChunk(String id, int dataLength, RiffReader reader) throws RiffFormatException {
-    String type = reader.readId();
 
-    ListChunk chunk = createChunk(id, dataLength, type);
+	public Chunk createChunk(String id, int dataLength, RiffReader reader)
+			throws RiffFormatException {
+		String type = reader.readId();
 
-    int index = 4;
-    while (index < chunk.getDataLength()) {
-      Chunk subChunk = reader.readChunk();
-      chunk.addChunk(subChunk);
-        
-      index += subChunk.getSize();
-    }
-      
-    return chunk;      
-  }
-  
-  /**
-   * Hook method for subclasses of this factory that create subclasses
-   * of {@link jorgan.riff.ListChunk}s.
-   * 
-   * @param id          identifier of chunk to create
-   * @param dataLength  length ot chunk
-   * @param type        type of list
-   * @return            created listChunk
-   */
-  protected ListChunk createChunk(String id, int dataLength, String type) {
-    return new ListChunk(id, dataLength, type);
-  }
+		ListChunk chunk = createChunk(id, dataLength, type);
+
+		int index = 4;
+		while (index < chunk.getDataLength()) {
+			Chunk subChunk = reader.readChunk();
+			chunk.addChunk(subChunk);
+
+			index += subChunk.getSize();
+		}
+
+		return chunk;
+	}
+
+	/**
+	 * Hook method for subclasses of this factory that create subclasses of
+	 * {@link jorgan.io.riff.ListChunk}s.
+	 * 
+	 * @param id
+	 *            identifier of chunk to create
+	 * @param dataLength
+	 *            length ot chunk
+	 * @param type
+	 *            type of list
+	 * @return created listChunk
+	 */
+	protected ListChunk createChunk(String id, int dataLength, String type) {
+		return new ListChunk(id, dataLength, type);
+	}
 }

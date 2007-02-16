@@ -46,9 +46,9 @@ public class CreateElementWizard extends BasicWizard {
 
 	private Element element;
 
-	private List referencesTo = new ArrayList();
+	private List<Element> referencesTo = new ArrayList<Element>();
 
-	private List referencedFrom = new ArrayList();
+	private List<Element> referencedFrom = new ArrayList<Element>();
 
 	/**
 	 * Create a new wizard.
@@ -85,13 +85,13 @@ public class CreateElementWizard extends BasicWizard {
 
 		if (!referencesTo.isEmpty()) {
 			for (int r = 0; r < referencesTo.size(); r++) {
-				element.reference((Element) referencesTo.get(r));
+				element.reference(referencesTo.get(r));
 			}
 		}
 
 		if (!referencedFrom.isEmpty()) {
 			for (int r = 0; r < referencedFrom.size(); r++) {
-				((Element) referencedFrom.get(r)).reference(element);
+				referencedFrom.get(r).reference(element);
 			}
 		}
 
@@ -168,8 +168,7 @@ public class CreateElementWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n
-					.getString("referencesToPage.description");
+			return i18n.getString("referencesToPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -180,12 +179,11 @@ public class CreateElementWizard extends BasicWizard {
 			elementsSelectionPanel.setElements(organ
 					.getReferenceToCandidates(element));
 
-			referencesTo = new ArrayList();
+			referencesTo = new ArrayList<Element>();
 			if (prototype != null) {
 				if (prototype.getClass() == element.getClass()) {
 					for (int r = 0; r < prototype.getReferenceCount(); r++) {
-						Reference reference = (Reference) prototype
-								.getReference(r);
+						Reference reference = prototype.getReference(r);
 						referencesTo.add(reference.getElement());
 					}
 					elementsSelectionPanel.setSelectedElements(referencesTo);
@@ -215,8 +213,7 @@ public class CreateElementWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n
-					.getString("referencedFromPage.description");
+			return i18n.getString("referencedFromPage.description");
 		}
 
 		public JComponent getComponent() {
@@ -227,7 +224,7 @@ public class CreateElementWizard extends BasicWizard {
 			elementsSelectionPanel.setElements(organ
 					.getReferencedFromCandidates(element));
 
-			referencedFrom = new ArrayList();
+			referencedFrom = new ArrayList<Element>();
 			if (prototype != null) {
 				if (prototype.getClass() == element.getClass()) {
 					referencedFrom.addAll(prototype.getReferrer());
@@ -265,7 +262,7 @@ public class CreateElementWizard extends BasicWizard {
 		dialog.start();
 
 		dialog.dispose();
-		
+
 		dialog.setWizard(null);
 	}
 }

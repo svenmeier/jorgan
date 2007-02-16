@@ -20,7 +20,9 @@ package jorgan.swing.beans;
 
 import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.BeanInfo;
@@ -44,6 +46,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
+import javax.swing.Scrollable;
 import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -59,17 +62,17 @@ import jorgan.swing.table.TableUtils;
 /**
  * A panel for editing of bean properties.
  */
-public class PropertiesPanel extends JPanel {
+public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
 	private static final Object[] EMPTY_ARGUMENTS = new Object[0];
 
-	private List listeners = new ArrayList();
+	private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
 	private BeanCustomizer customizer = new DefaultBeanCustomizer();
 
-	private List beans = new ArrayList();
+	private List<Object> beans = new ArrayList<Object>();
 
 	private String property;
 
@@ -141,7 +144,7 @@ public class PropertiesPanel extends JPanel {
 	protected void fireChanged() {
 		ChangeEvent event = new ChangeEvent(this);
 		for (int l = 0; l < listeners.size(); l++) {
-			ChangeListener listener = (ChangeListener) listeners.get(l);
+			ChangeListener listener = listeners.get(l);
 			listener.stateChanged(event);
 		}
 	}
@@ -153,7 +156,7 @@ public class PropertiesPanel extends JPanel {
 	 *            bean to set
 	 */
 	public void setBean(Object bean) {
-		setBeans(new ArrayList(beans));
+		setBeans(new ArrayList<Object>(beans));
 	}
 
 	/**
@@ -171,13 +174,13 @@ public class PropertiesPanel extends JPanel {
 	 * @param beans
 	 *            the beans
 	 */
-	public void setBeans(List beans) {
+	public void setBeans(List<?> beans) {
 		TableCellEditor cellEditor = table.getCellEditor();
 		if (cellEditor != null) {
 			cellEditor.stopCellEditing();
 		}
 
-		this.beans = new ArrayList(beans);
+		this.beans = new ArrayList<Object>(beans);
 
 		property = null;
 
@@ -251,8 +254,8 @@ public class PropertiesPanel extends JPanel {
 	 *            list of beans to get common superclass for
 	 * @return common superclass
 	 */
-	public static Class getCommonClass(java.util.List beans) {
-		Class commonClass = null;
+	public static Class getCommonClass(List<Object> beans) {
+		Class<?> commonClass = null;
 		for (int b = 0; b < beans.size(); b++) {
 			Object bean = beans.get(b);
 
@@ -509,4 +512,26 @@ public class PropertiesPanel extends JPanel {
 			return this;
 		}
 	}
+
+	public Dimension getPreferredScrollableViewportSize() {
+		return table.getPreferredScrollableViewportSize();
+	}
+
+	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return table.getScrollableBlockIncrement(visibleRect, orientation, direction);
+	}
+
+	public boolean getScrollableTracksViewportHeight() {
+		return table.getScrollableTracksViewportHeight();
+	}
+
+	public boolean getScrollableTracksViewportWidth() {
+		return table.getScrollableTracksViewportWidth();
+	}
+
+	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
+		return table.getScrollableUnitIncrement(visibleRect, orientation, direction);
+	}
+	
+	
 }

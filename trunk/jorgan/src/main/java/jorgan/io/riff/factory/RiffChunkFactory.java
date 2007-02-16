@@ -19,14 +19,15 @@
 package jorgan.io.riff.factory;
 
 // jorgan
-import jorgan.io.riff.*;
+import jorgan.io.riff.ListChunk;
+import jorgan.io.riff.RiffChunk;
 
 /**
- * A factory for the one and only {@link jorgan.riff.RiffChunk}.
+ * A factory for the one and only {@link jorgan.io.riff.RiffChunk}.
  */
 public class RiffChunkFactory extends ListChunkFactory {
-  
-  protected ListChunk createChunk(String id, int dataLength, String type) {
-    return new RiffChunk(id, dataLength, type);
-  }
+
+	protected ListChunk createChunk(String id, int dataLength, String type) {
+		return new RiffChunk(id, dataLength, type);
+	}
 }

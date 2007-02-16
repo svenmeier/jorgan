@@ -50,12 +50,12 @@ public class Loopback implements MidiDevice {
 	/**
 	 * The created transmitters.
 	 */
-	private List transmitters = new ArrayList();
+	private List<LoopbackTransmitter> transmitters = new ArrayList<LoopbackTransmitter>();
 
 	/**
 	 * The created receivers.
 	 */
-	private List receivers = new ArrayList();
+	private List<LoopbackReceiver> receivers = new ArrayList<LoopbackReceiver>();
 
 	/**
 	 * Create a virtual loopback.
@@ -104,16 +104,16 @@ public class Loopback implements MidiDevice {
 	 * @return receivers
 	 * @since 1.5
 	 */
-	public List getReceivers() {
-		return new ArrayList(receivers);
+	public List<Receiver> getReceivers() {
+		return new ArrayList<Receiver>(receivers);
 	}
 
 	/**
 	 * @return transmitters
 	 * @since 1.5
 	 */
-	public List getTransmitters() {
-		return new ArrayList(transmitters);
+	public List<Transmitter> getTransmitters() {
+		return new ArrayList<Transmitter>(transmitters);
 	}
 
 	public long getMicrosecondPosition() {
@@ -174,7 +174,7 @@ public class Loopback implements MidiDevice {
 	protected synchronized void loopbackMessage(MidiMessage message, long timestamp) {
 		if (isOpen()) {
 			for (int r = 0; r < transmitters.size(); r++) {
-				LoopbackTransmitter transmitter = (LoopbackTransmitter) transmitters
+				LoopbackTransmitter transmitter = transmitters
 						.get(r);
 
 				transmitter.transmit(message, timestamp);
@@ -191,16 +191,16 @@ public class Loopback implements MidiDevice {
 
 			// important: work on copy of transmitter list as closing of
 			// transmitter removes it from list
-			Iterator transmitters = getTransmitters().iterator();
+			Iterator<Transmitter> transmitters = getTransmitters().iterator();
 			while (transmitters.hasNext()) {
-				((Transmitter) transmitters.next()).close();
+				transmitters.next().close();
 			}
 
 			// important: work on copy of receiver list as closing of
 			// receiver removes it from list
-			Iterator receivers = getReceivers().iterator();
+			Iterator<Receiver> receivers = getReceivers().iterator();
 			while (receivers.hasNext()) {
-				((Receiver) receivers.next()).close();
+				receivers.next().close();
 			}
 		}
 	}

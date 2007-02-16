@@ -23,7 +23,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -46,6 +45,7 @@ import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.util.Generics;
 import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
 import swingx.list.AbstractDnDListModel;
@@ -86,7 +86,7 @@ public class ElementsPanel extends DockedPanel {
 
 	private ElementsModel elementsModel = new ElementsModel();
 
-	private List elements = new ArrayList();
+	private List<Element> elements = new ArrayList<Element>();
 
 	/**
 	 * Create a tree panel.
@@ -155,7 +155,7 @@ public class ElementsPanel extends DockedPanel {
 			this.session.removePlayerListener(elementsModel);
 			this.session.removeSelectionListener(selectionHandler);
 
-			elements = new ArrayList();
+			elements = new ArrayList<Element>();
 			elementsModel.update();
 		}
 
@@ -167,7 +167,8 @@ public class ElementsPanel extends DockedPanel {
 			this.session.getSelectionModel().addSelectionListener(
 					selectionHandler);
 
-			elements = new ArrayList(this.session.getOrgan().getElements());
+			elements = new ArrayList<Element>(this.session.getOrgan()
+					.getElements());
 			if (sortNameButton.isSelected()) {
 				Collections.sort(elements, new ElementComparator(true));
 			} else if (sortTypeButton.isSelected()) {
@@ -220,12 +221,13 @@ public class ElementsPanel extends DockedPanel {
 				updatingSelection = true;
 
 				Object[] values = list.getSelectedValues();
+
 				if (values.length == 1) {
 					session.getSelectionModel().setSelectedElement(
 							(Element) values[0]);
 				} else {
 					session.getSelectionModel().setSelectedElements(
-							Arrays.asList(values));
+							Generics.asList(values, Element.class));
 				}
 
 				updatingSelection = false;

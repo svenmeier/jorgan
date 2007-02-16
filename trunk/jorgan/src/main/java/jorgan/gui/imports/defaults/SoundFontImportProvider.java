@@ -72,8 +72,8 @@ public class SoundFontImportProvider implements ImportProvider {
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List getStops() {
-		List stops = new ArrayList();
+	public List<Stop> getStops() {
+		List<Stop> stops = new ArrayList<Stop>();
 
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
@@ -100,9 +100,9 @@ public class SoundFontImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws RiffFormatException
 	 */
-	private List readStops(File file) throws IOException, RiffFormatException {
+	private List<Stop> readStops(File file) throws IOException, RiffFormatException {
 
-		ArrayList stops = new ArrayList();
+		ArrayList<Stop> stops = new ArrayList<Stop>();
 
 		InputStream input = null;
 		try {
@@ -110,10 +110,10 @@ public class SoundFontImportProvider implements ImportProvider {
 
 			RiffChunk riffChunk = new SoundfontReader(input).read();
 
-			java.util.List presets = SoundfontReader.getPresets(riffChunk);
+			List<Preset> presets = SoundfontReader.getPresets(riffChunk);
 			Collections.sort(presets);
 			for (int p = 0; p < presets.size(); p++) {
-				Preset preset = (Preset) presets.get(p);
+				Preset preset = presets.get(p);
 
 				Stop stop = new Stop();
 				stop.setName(preset.getName());

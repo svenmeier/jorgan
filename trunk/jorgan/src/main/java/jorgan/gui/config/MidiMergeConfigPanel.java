@@ -49,12 +49,12 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 	/**
 	 * All available inputs.
 	 */
-	private ArrayList allInputs = new ArrayList();
+	private ArrayList<MergeInput> allInputs = new ArrayList<MergeInput>();
 
 	/**
 	 * All currently selected inputs - this is a subset of {@link #allInputs}.
 	 */
-	private ArrayList selectedInputs = new ArrayList();
+	private ArrayList<MergeInput> selectedInputs = new ArrayList<MergeInput>();
 
 	/*
 	 * The components.
@@ -110,7 +110,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 		selectedInputs.clear();
 		selectedInputs.addAll(config.getInputs());
 		for (int s = 0; s < selectedInputs.size(); s++) {
-			MergeInput selectedInput = (MergeInput) selectedInputs.get(s);
+			MergeInput selectedInput = selectedInputs.get(s);
 
 			int index = indexOfMergeInput(selectedInput.getDevice());
 			if (index == -1) {
@@ -131,7 +131,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 	 */
 	private int indexOfMergeInput(String device) {
 		for (int i = 0; i < allInputs.size(); i++) {
-			MergeInput input = (MergeInput) allInputs.get(i);
+			MergeInput input = allInputs.get(i);
 			if (device.equals(input.getDevice())) {
 				return i;
 			}
@@ -170,7 +170,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 			return null;
 		}
 
-		public Class getColumnClass(int column) {
+		public Class<?> getColumnClass(int column) {
 			switch (column) {
 			case 0:
 				return Boolean.class;
@@ -191,7 +191,7 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 		}
 
 		public Object getValueAt(int row, int column) {
-			MergeInput input = (MergeInput) allInputs.get(row);
+			MergeInput input = allInputs.get(row);
 
 			switch (column) {
 			case 0:
@@ -206,14 +206,14 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 		}
 
 		public boolean isCellEditable(int row, int column) {
-			MergeInput input = (MergeInput) allInputs.get(row);
+			MergeInput input = allInputs.get(row);
 
 			return column == 0
 					|| (selectedInputs.contains(input) && column == 2);
 		}
 
 		public void setValueAt(Object aValue, int row, int column) {
-			MergeInput input = (MergeInput) allInputs.get(row);
+			MergeInput input = allInputs.get(row);
 
 			switch (column) {
 			case 0:

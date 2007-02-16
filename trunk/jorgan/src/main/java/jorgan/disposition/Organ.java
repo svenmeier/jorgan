@@ -30,202 +30,220 @@ import jorgan.disposition.event.OrganListener;
  */
 public class Organ {
 
-    /**
-     * Registered listeners.
-     */
-    private transient List listeners;
+	/**
+	 * Registered listeners.
+	 */
+	private transient List<OrganListener> listeners;
 
-    private List elements = new ArrayList();
+	private List<Element> elements = new ArrayList<Element>();
 
-    private static Class[] elementClasses = new Class[] { Console.class,
-            Label.class, Keyboard.class, SoundSource.class, Stop.class,
-            Coupler.class, Combination.class, Captor.class, Swell.class,
-            Tremulant.class, Variation.class, Sequence.class, Activator.class,
-            Regulator.class, Keyer.class, Memory.class, Incrementer.class };
+	private static Class[] elementClasses = new Class[] { Console.class,
+			Label.class, Keyboard.class, SoundSource.class, Stop.class,
+			Coupler.class, Combination.class, Captor.class, Swell.class,
+			Tremulant.class, Variation.class, Sequence.class, Activator.class,
+			Regulator.class, Keyer.class, Memory.class, Incrementer.class };
 
-    public static Class[] getElementClasses() {
-        Class[] copy = new Class[elementClasses.length];
-        System.arraycopy(elementClasses, 0, copy, 0, elementClasses.length);
-        return copy;
-    }
+	/**
+	 * Get all known element classes.
+	 * 
+	 * @return element classes
+	 */
+	public static Class<?>[] getElementClasses() {
+		Class<?>[] copy = new Class[elementClasses.length];
+		System.arraycopy(elementClasses, 0, copy, 0, elementClasses.length);
+		return copy;
+	}
 
-    public void addOrganListener(OrganListener listener) {
-        if (listeners == null) {
-            listeners = new ArrayList();
-        }
-        listeners.add(listener);
-    }
+	/**
+	 * Add a listener to this organ.
+	 * 
+	 * @param listener
+	 *            listener to add
+	 */
+	public void addOrganListener(OrganListener listener) {
+		if (listeners == null) {
+			listeners = new ArrayList<OrganListener>();
+		}
+		listeners.add(listener);
+	}
 
-    public void removeOrganListener(OrganListener listener) {
-        if (listeners == null) {
-            listeners = new ArrayList();
-        }
-        listeners.remove(listener);
-    }
+	/**
+	 * Remove the given listener.
+	 * 
+	 * @param listener
+	 *            listener to remove
+	 * @see #addOrganListener(OrganListener)
+	 */
+	public void removeOrganListener(OrganListener listener) {
+		if (listeners == null) {
+			listeners = new ArrayList<OrganListener>();
+		}
+		listeners.remove(listener);
+	}
 
-    public int getElementCount() {
-        return elements.size();
-    }
+	/**
+	 * Get count of elements.
+	 * 
+	 * @return element count
+	 */
+	public int getElementCount() {
+		return elements.size();
+	}
 
-    public Element getElement(int index) {
-        return (Element) elements.get(index);
-    }
+	public Element getElement(int index) {
+		return elements.get(index);
+	}
 
-    public List getElements() {
-        return Collections.unmodifiableList(elements);
-    }
+	public List<Element> getElements() {
+		return Collections.unmodifiableList(elements);
+	}
 
-    public void addElement(Element element) {
-        elements.add(element);
-        element.setOrgan(this);
+	public void addElement(Element element) {
+		elements.add(element);
+		element.setOrgan(this);
 
-        fireElementAdded(element);
-    }
+		fireElementAdded(element);
+	}
 
-    public void removeElement(Element element) {
+	public void removeElement(Element element) {
 
-        elements.remove(element);
-        element.setOrgan(null);
+		elements.remove(element);
+		element.setOrgan(null);
 
-        fireElementRemoved(element);
-    }
+		fireElementRemoved(element);
+	}
 
-    protected void fireElementChanged(Element element, boolean dispositionChange) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, dispositionChange);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireElementChanged(Element element, boolean dispositionChange) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, dispositionChange);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.elementChanged(event);
-            }
-        }
-    }
+				listener.elementChanged(event);
+			}
+		}
+	}
 
-    protected void fireElementAdded(Element element) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, true);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireElementAdded(Element element) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, true);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.elementAdded(event);
-            }
-        }
-    }
+				listener.elementAdded(event);
+			}
+		}
+	}
 
-    protected void fireElementRemoved(Element element) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, true);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireElementRemoved(Element element) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, true);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.elementRemoved(event);
-            }
-        }
-    }
+				listener.elementRemoved(event);
+			}
+		}
+	}
 
-    protected void fireReferenceChanged(Element element, Reference reference,
-            boolean dispositionChange) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, reference,
-                    dispositionChange);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireReferenceChanged(Element element, Reference reference,
+			boolean dispositionChange) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, reference,
+					dispositionChange);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.referenceChanged(event);
-            }
-        }
-    }
+				listener.referenceChanged(event);
+			}
+		}
+	}
 
-    protected void fireReferenceAdded(Element element, Reference reference) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, reference, true);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireReferenceAdded(Element element, Reference reference) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, reference, true);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.referenceAdded(event);
-            }
-        }
-    }
+				listener.referenceAdded(event);
+			}
+		}
+	}
 
-    protected void fireReferenceRemoved(Element element, Reference reference) {
-        if (listeners != null) {
-            OrganEvent event = new OrganEvent(this, element, reference, true);
-            for (int l = 0; l < listeners.size(); l++) {
-                OrganListener listener = (OrganListener) listeners.get(l);
+	protected void fireReferenceRemoved(Element element, Reference reference) {
+		if (listeners != null) {
+			OrganEvent event = new OrganEvent(this, element, reference, true);
+			for (int l = 0; l < listeners.size(); l++) {
+				OrganListener listener = listeners.get(l);
 
-                listener.referenceRemoved(event);
-            }
-        }
-    }
+				listener.referenceRemoved(event);
+			}
+		}
+	}
 
-    public List getCandidates(Class clazz) {
-        List candidates = new ArrayList();
+	/**
+	 * Get candidates to reference from the given element.
+	 * 
+	 * @param element
+	 *            element to get candidates for
+	 * @return candidates
+	 */
+	public List<Element> getReferenceToCandidates(Element element) {
 
-        for (int e = 0; e < elements.size(); e++) {
-            Element element = (Element) elements.get(e);
-            if (clazz.isInstance(element)) {
-                candidates.add(element);
-            }
-        }
+		List<Element> candidates = new ArrayList<Element>();
 
-        return candidates;
-    }
+		for (int c = 0; c < this.elements.size(); c++) {
+			Element candidate = this.elements.get(c);
 
-    public List getReferenceToCandidates(Element element) {
+			if (element.canReference(candidate)) {
+				candidates.add(candidate);
+			}
+		}
 
-        List candidates = new ArrayList();
+		return candidates;
+	}
 
-        for (int c = 0; c < this.elements.size(); c++) {
-            Element candidate = (Element) this.elements.get(c);
+	/**
+	 * Get candidates which can reference the given elements.
+	 * 
+	 * @param element
+	 *            element to find candidates for
+	 * @return candidates, never null
+	 */
+	public List<Element> getReferencedFromCandidates(Element element) {
 
-            if (element.canReference(candidate)) {
-                candidates.add(candidate);
-            }
-        }
-        
-        return candidates;
-    }
+		List<Element> candidates = new ArrayList<Element>();
 
-    /**
-     * Get candidates which can reference the given elements.
-     * 
-     * @param element
-     *            element to find candidates for
-     * @return candidates, never null
-     */
-    public List getReferencedFromCandidates(Element element) {
+		for (int c = 0; c < this.elements.size(); c++) {
+			Element candidate = this.elements.get(c);
 
-        List candidates = new ArrayList();
+			if (candidate.canReference(element)) {
+				candidates.add(candidate);
+			}
+		}
 
-        for (int c = 0; c < this.elements.size(); c++) {
-            Element candidate = (Element) this.elements.get(c);
+		return candidates;
+	}
 
-            if (candidate.canReference(element)) {
-                candidates.add(candidate);
-            }
-        }
-        
-        return candidates;
-    }
+	/**
+	 * Get elements of the given class.
+	 * 
+	 * @param clazz
+	 *            class to give elements for
+	 * @return elements
+	 */
+	@SuppressWarnings("unchecked")
+	public <E> List<E> getElements(Class<E> clazz) {
+		List<E> list = new ArrayList<E>();
 
-    /**
-     * Get elements of the given class.
-     * 
-     * @param clazz
-     *            class to give elements for
-     * @return elements
-     */
-    public List getElements(Class clazz) {
-        List list = new ArrayList();
+		for (int c = 0; c < this.elements.size(); c++) {
+			Element element = this.elements.get(c);
 
-        for (int c = 0; c < this.elements.size(); c++) {
-            Element element = (Element) this.elements.get(c);
+			if (clazz.isInstance(element)) {
+				list.add((E) element);
+			}
+		}
 
-            if (clazz.isInstance(element)) {
-                list.add(element);
-            }
-        }
-
-        return list;
-    }
+		return list;
+	}
 }

@@ -46,7 +46,7 @@ public abstract class Player {
     /**
      * The problems.
      */
-    private List problems = new ArrayList();
+    private List<Problem> problems = new ArrayList<Problem>();
 
     private int errorCount = 0;
 
@@ -184,8 +184,8 @@ public abstract class Player {
         return errorCount > 0;
     }
 
-    public List getProblems() {
-        return new ArrayList(problems);
+    public List<Problem> getProblems() {
+        return new ArrayList<Problem>(problems);
     }
 
     public void elementChanged(OrganEvent event) {
