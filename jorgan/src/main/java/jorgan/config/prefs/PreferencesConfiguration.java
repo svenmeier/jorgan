@@ -55,10 +55,8 @@ public abstract class PreferencesConfiguration extends AbstractConfiguration {
 		fireConfigurationBackup();
 
 		backup(Preferences.userNodeForPackage(getClass()));
-
-		for (int c = 0; c < getChildCount(); c++) {
-			getChild(c).backup();
-		}
+		
+		super.backup();
 	}
 
 	/**
@@ -78,11 +76,7 @@ public abstract class PreferencesConfiguration extends AbstractConfiguration {
 	public final void restore() {
 		restore(Preferences.userNodeForPackage(getClass()));
 
-		for (int c = 0; c < getChildCount(); c++) {
-			getChild(c).restore();
-		}
-
-		fireConfigurationChanged();
+		super.restore();
 	}
 
 	/**

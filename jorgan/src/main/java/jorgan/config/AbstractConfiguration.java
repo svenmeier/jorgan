@@ -65,8 +65,7 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 * Inform listeners of a change.
 	 */
 	protected void fireConfigurationChanged() {
-		for (int l = 0; l < listeners.size(); l++) {
-			ConfigurationListener listener = listeners.get(l);
+		for (ConfigurationListener listener : listeners) {
 			listener.configurationChanged(new ConfigurationEvent(this));
 		}
 	}
@@ -75,8 +74,7 @@ public abstract class AbstractConfiguration implements Cloneable {
 	 * Inform listeners of a backup.
 	 */
 	protected void fireConfigurationBackup() {
-		for (int l = 0; l < listeners.size(); l++) {
-			ConfigurationListener listener = listeners.get(l);
+		for (ConfigurationListener listener : listeners) {
 			listener.configurationBackup(new ConfigurationEvent(this));
 		}
 	}
@@ -157,12 +155,22 @@ public abstract class AbstractConfiguration implements Cloneable {
 	/**
 	 * Backup this configuration and all its children.
 	 */
-	public abstract void backup();
+	public void backup() {
+		for (AbstractConfiguration child : children) {
+			child.backup();
+		}
+	}
 
 	/**
 	 * Restore this configuration and all its children.
 	 */
-	public abstract void restore();
+	public void restore() {
+		for (AbstractConfiguration child : children) {
+			child.restore();
+		}
+
+		fireConfigurationChanged();
+	}
 
 	/**
 	 * Reset this configuration. <br>
@@ -176,8 +184,8 @@ public abstract class AbstractConfiguration implements Cloneable {
 		clone.parent = null;
 		clone.listeners = new ArrayList<ConfigurationListener>();
 		clone.children = new ArrayList<AbstractConfiguration>();
-		for (int c = 0; c < children.size(); c++) {
-			clone.children.add((AbstractConfiguration) children.get(c).clone());
+		for (AbstractConfiguration child : children) {
+			clone.children.add((AbstractConfiguration) child.clone());
 		}
 		return clone;
 	}

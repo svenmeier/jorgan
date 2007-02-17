@@ -116,8 +116,7 @@ public class Organ {
 	protected void fireElementChanged(Element element, boolean dispositionChange) {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, dispositionChange);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
+			for (OrganListener listener : listeners) {
 
 				listener.elementChanged(event);
 			}
@@ -127,8 +126,7 @@ public class Organ {
 	protected void fireElementAdded(Element element) {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, true);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
+			for (OrganListener listener : listeners) {
 
 				listener.elementAdded(event);
 			}
@@ -138,8 +136,7 @@ public class Organ {
 	protected void fireElementRemoved(Element element) {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, true);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
+			for (OrganListener listener : listeners) {
 
 				listener.elementRemoved(event);
 			}
@@ -151,9 +148,7 @@ public class Organ {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, reference,
 					dispositionChange);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
-
+			for (OrganListener listener : listeners) {
 				listener.referenceChanged(event);
 			}
 		}
@@ -162,8 +157,7 @@ public class Organ {
 	protected void fireReferenceAdded(Element element, Reference reference) {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, reference, true);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
+			for (OrganListener listener : listeners) {
 
 				listener.referenceAdded(event);
 			}
@@ -192,9 +186,7 @@ public class Organ {
 
 		List<Element> candidates = new ArrayList<Element>();
 
-		for (int c = 0; c < this.elements.size(); c++) {
-			Element candidate = this.elements.get(c);
-
+		for (Element candidate : elements) {
 			if (element.canReference(candidate)) {
 				candidates.add(candidate);
 			}
@@ -214,9 +206,7 @@ public class Organ {
 
 		List<Element> candidates = new ArrayList<Element>();
 
-		for (int c = 0; c < this.elements.size(); c++) {
-			Element candidate = this.elements.get(c);
-
+		for (Element candidate : elements) {
 			if (candidate.canReference(element)) {
 				candidates.add(candidate);
 			}
