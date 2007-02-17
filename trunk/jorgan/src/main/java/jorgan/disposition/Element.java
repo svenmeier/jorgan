@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -111,8 +112,7 @@ public abstract class Element implements Cloneable {
 
 	public void setOrgan(Organ organ) {
 		if (this.organ != organ) {
-			for (int r = references.size() - 1; r >= 0; r--) {
-				Reference reference = references.get(r);
+			for (Reference reference : references) {
 				removeReference(reference);
 			}
 
@@ -131,6 +131,10 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
+	public List<Reference> getReferences() {
+		return Collections.unmodifiableList(references);
+	}
+	
 	public void reference(Element element) {
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
@@ -162,8 +166,7 @@ public abstract class Element implements Cloneable {
 	 * @return reference or <code>null</code> if element is not referenced
 	 */
 	public Reference getReference(Element element) {
-		for (int r = 0; r < references.size(); r++) {
-			Reference reference = references.get(r);
+		for (Reference reference : references) {
 			if (reference.getElement() == element) {
 				return reference;
 			}
@@ -181,8 +184,7 @@ public abstract class Element implements Cloneable {
 	public List<Reference> getReferences(Element element) {
 		List<Reference> filtered = new ArrayList<Reference>();
 
-		for (int r = 0; r < references.size(); r++) {
-			Reference reference = references.get(r);
+		for (Reference reference : references) {
 			if (reference.getElement() == element) {
 				filtered.add(reference);
 			}
@@ -193,8 +195,8 @@ public abstract class Element implements Cloneable {
 
 	public final void unreference(Element element) {
 
-		for (int r = references.size() - 1; r >= 0; r--) {
-			Reference reference = getReference(r);
+		// work on copy of references to avoid concurrent modification
+		for (Reference reference : new ArrayList<Reference>(references)) {
 			if (reference.getElement() == element) {
 				removeReference(reference);
 			}
@@ -376,5 +378,4 @@ public abstract class Element implements Cloneable {
 			throw new Error(ex);
 		}
 	}
-
 }

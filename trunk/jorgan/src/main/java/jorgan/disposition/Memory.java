@@ -22,70 +22,70 @@ import java.util.Arrays;
 
 public class Memory extends Continuous {
 
-    private String[] titles = new String[128];
+	private String[] titles = new String[128];
 
-    public Memory() {
-        Arrays.fill(titles, "");
-    }
-    
-    protected boolean canReference(Class clazz) {
-        return Combination.class == clazz;
-    }
+	public Memory() {
+		Arrays.fill(titles, "");
+	}
 
-    public String getTitle() {
-        return titles[getValue()];
-    }
+	protected boolean canReference(Class clazz) {
+		return Combination.class == clazz;
+	}
 
-    public String getTitle(int index) {
-        if (index < 0 || index > 127) {
-            throw new IllegalArgumentException(
-                    "index has to be between 0 and 127");
-        }
-        return titles[index];
-    }
+	public String getTitle() {
+		return titles[getValue()];
+	}
 
-    public void setTitle(int index, String title) {
-        if (index < 0 || index > 127) {
-            throw new IllegalArgumentException(
-                    "index has to be between 0 and 127");
-        }
-        if (title == null) {
-            throw new IllegalArgumentException("level must not be null");
-        }
-        titles[index] = title;
+	public String getTitle(int index) {
+		if (index < 0 || index > 127) {
+			throw new IllegalArgumentException(
+					"index has to be between 0 and 127");
+		}
+		return titles[index];
+	}
 
-        fireElementChanged(false);
-    }
+	public void setTitle(int index, String title) {
+		if (index < 0 || index > 127) {
+			throw new IllegalArgumentException(
+					"index has to be between 0 and 127");
+		}
+		if (title == null) {
+			throw new IllegalArgumentException("level must not be null");
+		}
+		titles[index] = title;
 
-    public void clear(int index) {
-        setTitle(index, "");
+		fireElementChanged(false);
+	}
 
-        for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).clear(index);
-        }
-    }
+	public void clear(int index) {
+		setTitle(index, "");
 
-    public void swap(int index1, int index2) {
-        String title1 = getTitle(index1);
-        String title2 = getTitle(index2);
+		for (Reference reference : references) {
+			((Combination) reference.getElement()).clear(index);
+		}
+	}
 
-        setTitle(index1, title2);
-        setTitle(index2, title1);
+	public void swap(int index1, int index2) {
+		String title1 = getTitle(index1);
+		String title2 = getTitle(index2);
 
-        for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).swap(index1, index2);
-        }
-        
-        fireElementChanged(false);
-    }
+		setTitle(index1, title2);
+		setTitle(index2, title1);
 
-    public void copy(int index1, int index2) {
-        String title = getTitle(index1);
+		for (Reference reference : references) {
+			((Combination) reference.getElement()).swap(index1, index2);
+		}
 
-        setTitle(index2, title);
+		fireElementChanged(false);
+	}
 
-        for (int r = 0; r < getReferenceCount(); r++) {
-            ((Combination) getReference(r).getElement()).copy(index1, index2);
-        }
-    }
+	public void copy(int index1, int index2) {
+		String title = getTitle(index1);
+
+		setTitle(index2, title);
+
+		for (Reference reference : references) {
+			((Combination) reference.getElement()).copy(index1, index2);
+		}
+	}
 }

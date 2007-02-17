@@ -18,7 +18,7 @@
  */
 package jorgan;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * Arguments of jOrgan.
@@ -38,13 +38,13 @@ public class Arguments {
 	 */
 	public boolean parse(String[] args) {
 
-		for (int a = 0; a < args.length; a++) {
-			if ("-headless".equals(args[a])) {
+		for (String arg : args) {
+			if ("-headless".equals(arg)) {
 				headless = true;
 				continue;
 			}
-			if (!(args[a].startsWith("-"))) {
-				file = new File(args[a]);
+			if (!(arg.startsWith("-"))) {
+				file = new File(arg);
 				continue;
 			}
 			return false;

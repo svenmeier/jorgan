@@ -66,6 +66,7 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Memory;
+import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
@@ -468,8 +469,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			consoleView = new ConsoleView(console);
 			consoleView.setConsolePanel(this);
 
-			for (int r = 0; r < console.getReferenceCount(); r++) {
-				createView(console.getReference(r).getElement());
+			for (Reference reference : console.getReferences()) {
+				createView(reference.getElement());
 			}
 		}
 	}
@@ -549,9 +550,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * @return element
 	 */
 	protected Element getElement(int x, int y) {
-		for (int e = 0; e < selectedElements.size(); e++) {
-			Element element = selectedElements.get(e);
-
+		for (Element element : selectedElements) {
 			View view = getView(element);
 			if (view != null && view.contains(x, y)) {
 				return element;
@@ -598,9 +597,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		int x = 0;
 		int y = 0;
 
-		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Element element = console.getReference(r).getElement();
-			View view = getView(element);
+		for (Reference reference : console.getReferences()) {
+			View view = getView(reference.getElement());
 
 			x = Math.max(x, view.getX() + view.getWidth());
 			y = Math.max(y, view.getY() + view.getHeight());
@@ -666,9 +664,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		consoleView.paint(g);
 
-		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Element element = console.getReference(r).getElement();
-			View view = getView(element);
+		for (Reference reference : console.getReferences()) {
+			View view = getView(reference.getElement());
 
 			int x = view.getX();
 			int y = view.getY();
@@ -698,8 +695,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				initSkin();
 
 				consoleView.changeUpdate(event);
-				for (int r = 0; r < console.getReferenceCount(); r++) {
-					View view = getView(console.getReference(r).getElement());
+				for (Reference reference : console.getReferences()) {
+					View view = getView(reference.getElement());
 					view.changeUpdate(event);
 				}
 
@@ -872,8 +869,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				int y2 = screenToView(Math.max(mouseFrom.y, mouseTo.y));
 
 				List<Element> elements = new ArrayList<Element>();
-				for (int r = 0; r < console.getReferenceCount(); r++) {
-					Element element = console.getReference(r).getElement();
+				for (Reference reference : console.getReferences()) {
+					Element element = reference.getElement();
 					View view = getView(element);
 
 					if (view.getX() > x1
@@ -904,9 +901,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 						+ screenToView(mouseTo.y - mouseFrom.y))
 						- original.y;
 
-				for (int s = 0; s < selectedElements.size(); s++) {
-					Element selectedElement = selectedElements.get(s);
-
+				for (Element selectedElement : selectedElements) {
 					view = getView(selectedElement);
 
 					console.setLocation(selectedElement, view.getX() + deltaX,
@@ -997,8 +992,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 							.getColor());
 			g.setXORMode(Color.white);
 
-			for (int s = 0; s < selectedElements.size(); s++) {
-				Element selectedElement = selectedElements.get(s);
+			for (Element selectedElement : selectedElements) {
 
 				View view = getView(selectedElement);
 				if (view != null) {
@@ -1161,8 +1155,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			List<Element> newElements = session.getSelectionModel()
 					.getSelectedElements();
 
-			for (int e = 0; e < newElements.size(); e++) {
-				Element element = newElements.get(e);
+			for (Element element : newElements) {
 
 				if (selectedElements.contains(element)) {
 					selectedElements.remove(element);
@@ -1194,7 +1187,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			if (Shortcut.isModifier(e.getKeyCode())) {
 				return false;
 			}
-			
+
 			if (e.getID() == KeyEvent.KEY_TYPED) {
 				return false;
 			}
@@ -1204,9 +1197,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 					.getFocusedWindow() == SwingUtilities
 					.getWindowAncestor(ConsolePanel.this)) {
 
-				for (int r = 0; r < console.getReferenceCount(); r++) {
-					View view = getView(console.getReference(r)
-							.getElement());
+				for (Reference reference : console.getReferences()) {
+					View view = getView(reference.getElement());
 
 					if (pressed) {
 						view.keyPressed(e);
@@ -1223,13 +1215,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	private class ArrangeToFrontAction extends AbstractAction {
 		private ArrangeToFrontAction() {
 			putValue(Action.NAME, i18n.getString("arrangeToFrontAction.name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource("/jorgan/gui/img/arrangeFront.gif")));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/arrangeFront.gif")));
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = selectedElements.get(s);
-
+			for (Element element : selectedElements) {
 				console.toFront(element);
 			}
 		}
@@ -1238,13 +1229,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	private class ArrangeToBackAction extends AbstractAction {
 		private ArrangeToBackAction() {
 			putValue(Action.NAME, i18n.getString("arrangeToBackAction.name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource("/jorgan/gui/img/arrangeBack.gif")));
+			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
+					"/jorgan/gui/img/arrangeBack.gif")));
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = selectedElements.get(s);
-
+			for (Element element : selectedElements) {
 				console.toBack(element);
 			}
 		}
@@ -1256,9 +1246,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (int s = 0; s < selectedElements.size(); s++) {
-				Element element = selectedElements.get(s);
-
+			for (Element element : selectedElements) {
 				console.unreference(element);
 			}
 		}

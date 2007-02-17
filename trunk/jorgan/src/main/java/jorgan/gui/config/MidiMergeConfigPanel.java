@@ -100,18 +100,16 @@ public class MidiMergeConfigPanel extends ConfigurationPanel {
 		// create inputs for all devices (excluding MidiMerger)
 		allInputs.clear();
 		String[] devices = DevicePool.getMidiDeviceNames(false);
-		for (int d = 0; d < devices.length; d++) {
-			if (!MidiMergerProvider.INFO.getName().equals(devices[d])) {
-				allInputs.add(new MergeInput(devices[d]));
+		for (String device : devices) {
+			if (!MidiMergerProvider.INFO.getName().equals(device)) {
+				allInputs.add(new MergeInput(device));
 			}
 		}
 
 		// get all currently selected inputs
 		selectedInputs.clear();
 		selectedInputs.addAll(config.getInputs());
-		for (int s = 0; s < selectedInputs.size(); s++) {
-			MergeInput selectedInput = selectedInputs.get(s);
-
+		for (MergeInput selectedInput : selectedInputs) {
 			int index = indexOfMergeInput(selectedInput.getDevice());
 			if (index == -1) {
 				allInputs.add(selectedInput);

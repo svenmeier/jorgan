@@ -30,8 +30,7 @@ public class Incrementer extends Initiator {
 	}
 
 	public void initiate() {
-		for (int r = 0; r < getReferenceCount(); r++) {
-			Reference reference = getReference(r);
+		for (Reference reference : references) {
 			Continuous continuous = (Continuous) reference.getElement();
 
 			continuous.increment(delta);

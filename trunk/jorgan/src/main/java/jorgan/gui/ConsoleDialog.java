@@ -241,9 +241,9 @@ public class ConsoleDialog extends JDialog {
 		GraphicsEnvironment environment = GraphicsEnvironment
 				.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = environment.getScreenDevices();
-		for (int d = 0; d < devices.length; d++) {
-			if (devices[d].getIDstring().equals(screen)) {
-				configuration = devices[d].getDefaultConfiguration();
+		for (GraphicsDevice device : devices) {
+			if (device.getIDstring().equals(screen)) {
+				configuration = device.getDefaultConfiguration();
 			}
 		}
 		if (configuration == null) {
