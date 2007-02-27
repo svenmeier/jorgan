@@ -29,7 +29,7 @@ import jorgan.gui.console.View;
 /**
  * A layer.
  */
-public abstract class Layer implements Resolver, Cloneable {
+public abstract class Layer implements Cloneable {
 
     public static final int CENTER = 0;
 

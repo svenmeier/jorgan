@@ -140,6 +140,8 @@ public class ReferencesPanel extends DockedPanel {
 		addToolSeparator();
 
 		ButtonGroup toFromGroup = new ButtonGroup();
+		referencesToButton.setToolTipText(i18n
+				.getString("referencesToButton.toolTipText"));
 		referencesToButton.getModel().setGroup(toFromGroup);
 		referencesToButton.setSelected(true);
 		referencesToButton.getModel().addItemListener(new ItemListener() {
@@ -149,6 +151,8 @@ public class ReferencesPanel extends DockedPanel {
 		});
 		addTool(referencesToButton);
 
+		referencedFromButton.setToolTipText(i18n
+				.getString("referencedFromButton.toolTipText"));
 		referencedFromButton.getModel().setGroup(toFromGroup);
 		addTool(referencedFromButton);
 

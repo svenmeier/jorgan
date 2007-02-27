@@ -23,53 +23,53 @@ package jorgan.disposition;
  */
 public abstract class Activateable extends Momentary {
 
-    private boolean active;
+	private boolean active = true;
 
-    private boolean locking = true;
+	private boolean locking = true;
 
-    private Message activateMessage;
+	private Message activateMessage;
 
-    private Message deactivateMessage;
+	private Message deactivateMessage;
 
-    public void setActive(boolean active) {
-        if (this.active != active) {
-            this.active = active;
+	public void setActive(boolean active) {
+		if (this.active != active) {
+			this.active = active;
 
-            fireElementChanged(false);
-        }
-    }
+			fireElementChanged(false);
+		}
+	}
 
-    public boolean isActive() {
-        return active;
-    }
+	public boolean isActive() {
+		return active;
+	}
 
-    public boolean isLocking() {
-        return locking;
-    }
+	public boolean isLocking() {
+		return locking;
+	}
 
-    public void setLocking(boolean locking) {
-        this.locking = locking;
+	public void setLocking(boolean locking) {
+		this.locking = locking;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public Message getActivateMessage() {
-        return activateMessage;
-    }
+	public Message getActivateMessage() {
+		return activateMessage;
+	}
 
-    public Message getDeactivateMessage() {
-        return deactivateMessage;
-    }
+	public Message getDeactivateMessage() {
+		return deactivateMessage;
+	}
 
-    public void setActivateMessage(Message message) {
-        this.activateMessage = message;
+	public void setActivateMessage(Message message) {
+		this.activateMessage = message;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setDeactivateMessage(Message message) {
-        this.deactivateMessage = message;
+	public void setDeactivateMessage(Message message) {
+		this.deactivateMessage = message;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 }

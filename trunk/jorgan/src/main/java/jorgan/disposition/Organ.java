@@ -37,21 +37,38 @@ public class Organ {
 
 	private List<Element> elements = new ArrayList<Element>();
 
-	private static Class[] elementClasses = new Class[] { Console.class,
-			Label.class, Keyboard.class, SoundSource.class, Stop.class,
-			Coupler.class, Combination.class, Captor.class, Swell.class,
-			Tremulant.class, Variation.class, Sequence.class, Activator.class,
-			Regulator.class, Keyer.class, Memory.class, Incrementer.class };
+	private static List<Class<? extends Element>> elementClasses;
 
 	/**
 	 * Get all known element classes.
 	 * 
 	 * @return element classes
 	 */
-	public static Class<?>[] getElementClasses() {
-		Class<?>[] copy = new Class[elementClasses.length];
-		System.arraycopy(elementClasses, 0, copy, 0, elementClasses.length);
-		return copy;
+	public static List<Class<? extends Element>> getElementClasses() {
+		if (elementClasses == null) {
+			List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
+			classes.add(Console.class);
+			classes.add(Label.class);
+			classes.add(Keyboard.class);
+			classes.add(SoundSource.class);
+			classes.add(Stop.class);
+			classes.add(Coupler.class);
+			classes.add(Combination.class);
+			classes.add(Captor.class);
+			classes.add(Swell.class);
+			classes.add(Tremulant.class);
+			classes.add(Variation.class);
+			classes.add(Sequence.class);
+			classes.add(Activator.class);
+			classes.add(Regulator.class);
+			classes.add(Keyer.class);
+			classes.add(Memory.class);
+			classes.add(Incrementer.class);
+
+			elementClasses = classes;
+		}
+
+		return new ArrayList<Class<? extends Element>>(elementClasses);
 	}
 
 	/**
@@ -126,7 +143,7 @@ public class Organ {
 	protected void fireElementAdded(Element element) {
 		if (listeners != null) {
 			OrganEvent event = new OrganEvent(this, element, true);
-			for (OrganListener listener : listeners) {
+			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
 
 				listener.elementAdded(event);
 			}
@@ -226,9 +243,7 @@ public class Organ {
 	public <E> List<E> getElements(Class<E> clazz) {
 		List<E> list = new ArrayList<E>();
 
-		for (int c = 0; c < this.elements.size(); c++) {
-			Element element = this.elements.get(c);
-
+		for (Element element : this.elements) {
 			if (clazz.isInstance(element)) {
 				list.add((E) element);
 			}

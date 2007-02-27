@@ -23,89 +23,90 @@ package jorgan.disposition;
  */
 public abstract class Continuous extends Element {
 
-    private Message message;
+	private Message message;
 
-    private boolean locking = true;
+	private boolean locking = true;
 
-    private boolean reverse = false;
+	private boolean reverse = false;
 
-    private int value = 0;
+	private int value = 0;
 
-    private int threshold = 0;
+	private int threshold = 0;
 
-    public boolean isLocking() {
-        return locking;
-    }
+	public boolean isLocking() {
+		return locking;
+	}
 
-    public void setLocking(boolean locking) {
-        this.locking = locking;
+	public void setLocking(boolean locking) {
+		this.locking = locking;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public Message getMessage() {
-        return message;
-    }
+	public Message getMessage() {
+		return message;
+	}
 
-    public void setMessage(Message message) {
-        if (message != null && !message.hasWildcard()) {
-            message = new Message(message.getStatus(), message.getData1(), -1);
-        }
-        this.message = message;
+	public void setMessage(Message message) {
+		if (message != null && !message.hasWildcard()) {
+			message = new Message(message.getStatus(), message.getData1(), -1);
+		}
+		this.message = message;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setValue(int position) {
-        if (position < 0 || position > 127) {
-            throw new IllegalArgumentException("position must be between 0 and 127");
-        }
-        
-        this.value = position;
+	public void setValue(int position) {
+		if (position < 0 || position > 127) {
+			throw new IllegalArgumentException(
+					"position must be between 0 and 127");
+		}
 
-        fireElementChanged(false);
-    }
+		this.value = position;
 
-    public int getValue() {
-        return value;
-    }
+		fireElementChanged(false);
+	}
 
-    public int getThreshold() {
-        return threshold;
-    }
+	public int getValue() {
+		return value;
+	}
 
-    public void setThreshold(int granularity) {
-        this.threshold = granularity;
+	public int getThreshold() {
+		return threshold;
+	}
 
-        fireElementChanged(true);
-    }
+	public void setThreshold(int granularity) {
+		this.threshold = granularity;
 
-    public boolean isReverse() {
-        return reverse;
-    }
+		fireElementChanged(true);
+	}
 
-    public void setReverse(boolean reverse) {
-        this.reverse = reverse;
-        
-        fireElementChanged(true);
-    }
+	public boolean isReverse() {
+		return reverse;
+	}
 
-    public void increment(int delta) {
-        int position = getValue();
-        if (delta > 0) {
-            position += delta;
-            position -= (position % delta);
-        } else {
-            position += delta - 1;
-            if (position >= 0) {
-                position -= delta + (position % delta);
-            }
-        }
-        
-        setValue(limitIncrement(position));
-    }
-    
-    protected int limitIncrement(int position) {
-        return Math.max(0, Math.min(127, position));
-    }
+	public void setReverse(boolean reverse) {
+		this.reverse = reverse;
+
+		fireElementChanged(true);
+	}
+
+	public void increment(int delta) {
+		int position = getValue();
+		if (delta > 0) {
+			position += delta;
+			position -= (position % delta);
+		} else {
+			position += delta - 1;
+			if (position >= 0) {
+				position -= delta + (position % delta);
+			}
+		}
+
+		setValue(limitIncrement(position));
+	}
+
+	protected int limitIncrement(int position) {
+		return Math.max(0, Math.min(127, position));
+	}
 }

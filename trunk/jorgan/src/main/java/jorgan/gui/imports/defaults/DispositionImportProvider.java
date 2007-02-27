@@ -23,7 +23,6 @@ import java.awt.Insets;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,12 +36,11 @@ import javax.swing.event.ChangeListener;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
-import jorgan.io.DispositionReader;
+import jorgan.io.DispositionStream;
 import jorgan.io.riff.RiffFormatException;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
 import jorgan.util.I18N;
-import jorgan.xml.XMLFormatException;
 
 /**
  * A provider for an import from a disposition.
@@ -78,11 +76,11 @@ public class DispositionImportProvider implements ImportProvider {
 		if (file != null) {
 			try {
 				stops = readStops(file);
-			} catch (XMLFormatException ex) {
-				panel.showException("exception.invalid", new String[] { file
-						.getPath() }, ex);
 			} catch (IOException ex) {
 				panel.showException("exception.general", new String[] { file
+						.getPath() }, ex);
+			} catch (Exception ex) {
+				panel.showException("exception.invalid", new String[] { file
 						.getPath() }, ex);
 			}
 		}
@@ -102,26 +100,12 @@ public class DispositionImportProvider implements ImportProvider {
 	private List<Stop> readStops(File file) throws IOException,
 			RiffFormatException {
 
-		List<Stop> stops;
+		Organ organ = new DispositionStream().read(new FileInputStream(file));
 
-		InputStream input = null;
-		try {
-			input = new FileInputStream(file);
+		List<Stop> stops = organ.getElements(Stop.class);
 
-			DispositionReader reader = new DispositionReader(
-					new FileInputStream(file));
-
-			Organ organ = (Organ) reader.read();
-
-			stops = organ.getElements(Stop.class);
-
-			for (int s = 0; s < stops.size(); s++) {
-				organ.removeElement(stops.get(s));
-			}
-		} finally {
-			if (input != null) {
-				input.close();
-			}
+		for (int s = 0; s < stops.size(); s++) {
+			organ.removeElement(stops.get(s));
 		}
 
 		return stops;

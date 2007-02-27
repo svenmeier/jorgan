@@ -18,161 +18,152 @@
  */
 package jorgan.disposition;
 
-import java.util.Iterator;
-import java.util.Set;
 
 public class Combination extends Initiator {
 
-    protected boolean canReference(Class clazz) {
-        return Activateable.class.isAssignableFrom(clazz);
-    }
+	protected boolean canReference(Class clazz) {
+		return Activateable.class.isAssignableFrom(clazz);
+	}
 
-    protected Reference createReference(Element element) {
-        return new CombinationReference((Activateable) element);
-    }
+	protected Reference createReference(Element element) {
+		return new CombinationReference((Activateable) element);
+	}
 
-    public void initiate() {
-        Iterator captors = getReferrer(Captor.class).iterator();
-        while (captors.hasNext()) {
-            Captor captor = (Captor) captors.next();
-            if (captor.isActive()) {
-                capture();
-                return;
-            }
-        }
+	public void initiate() {
+		for (Captor captor : getReferrer(Captor.class)) {
+			if (captor.isActive()) {
+				capture();
+				return;
+			}
+		}
 
-        recall();
-    }
+		recall();
+	}
 
-    public void recall() {
+	public void recall() {
 
-        int index = getIndex();
+		int index = getIndex();
 
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            Activateable registratable = reference.getRegistratable();
+			Activateable registratable = reference.getRegistratable();
 
-            if (!reference.isActive(index)) {
-                registratable.setActive(false);
-            }
-        }
+			if (!reference.isActive(index)) {
+				registratable.setActive(false);
+			}
+		}
 
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            Activateable registratable = reference.getRegistratable();
+			Activateable registratable = reference.getRegistratable();
 
-            if (reference.isActive(index)) {
-                registratable.setActive(true);
-            }
-        }
+			if (reference.isActive(index)) {
+				registratable.setActive(true);
+			}
+		}
 
-        notifyObservers();
-    }
+		notifyObservers();
+	}
 
-    protected int getIndex() {
-        Set memories = getReferrer(Memory.class);
-        if (memories.size() > 0) {
-            Memory memory = (Memory) memories.iterator().next();
-            return memory.getValue();
-        } else {
-            return 0;
-        }
-    }
+	protected int getIndex() {
+		for (Memory memory : getReferrer(Memory.class)) {
+			return memory.getValue();
+		}
+		return 0;
+	}
 
-    public void capture() {
+	public void capture() {
 
-        int index = getIndex();
+		int index = getIndex();
 
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            Activateable registratable = (Activateable) reference.getElement();
+			Activateable registratable = (Activateable) reference.getElement();
 
-            reference.setActive(index, registratable.isActive());
+			reference.setActive(index, registratable.isActive());
 
-            fireReferenceChanged(reference, false);
-        }
+			fireReferenceChanged(reference, false);
+		}
 
-        notifyObservers();
-    }
+		notifyObservers();
+	}
 
-    public void clear(int index) {
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+	public void clear(int index) {
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            reference.setActive(index, false);
+			reference.setActive(index, false);
 
-            fireReferenceChanged(reference, false);
-        }
-    }
+			fireReferenceChanged(reference, false);
+		}
+	}
 
-    public void swap(int index1, int index2) {
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+	public void swap(int index1, int index2) {
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            boolean value1 = reference.isActive(index1);
-            boolean value2 = reference.isActive(index2);
+			boolean value1 = reference.isActive(index1);
+			boolean value2 = reference.isActive(index2);
 
-            reference.setActive(index1, value2);
-            reference.setActive(index2, value1);
+			reference.setActive(index1, value2);
+			reference.setActive(index2, value1);
 
-            fireReferenceChanged(reference, false);
-        }
-    }
+			fireReferenceChanged(reference, false);
+		}
+	}
 
-    public void copy(int index1, int index2) {
-        for (int e = 0; e < getReferenceCount(); e++) {
-            CombinationReference reference = (CombinationReference) getReference(e);
+	public void copy(int index1, int index2) {
+		for (int e = 0; e < getReferenceCount(); e++) {
+			CombinationReference reference = (CombinationReference) getReference(e);
 
-            boolean value = reference.isActive(index1);
+			boolean value = reference.isActive(index1);
 
-            reference.setActive(index2, value);
+			reference.setActive(index2, value);
 
-            fireReferenceChanged(reference, false);
-        }
-    }
+			fireReferenceChanged(reference, false);
+		}
+	}
 
-    /**
-     * A reference of a combination to another element.
-     */
-    public static class CombinationReference extends Reference {
+	/**
+	 * A reference of a combination to another element.
+	 */
+	public static class CombinationReference extends Reference {
 
-        private boolean[] activated = new boolean[128];
+		private boolean[] activated = new boolean[128];
 
-        public CombinationReference(Activateable registratable) {
-            super(registratable);
-        }
+		public CombinationReference(Activateable registratable) {
+			super(registratable);
+		}
 
-        public void setActive(int index, boolean active) {
-            if (index < 0 || index > 127) {
-                throw new IllegalArgumentException("index");
-            }
-            activated[index] = active;
-        }
+		public void setActive(int index, boolean active) {
+			if (index < 0 || index > 127) {
+				throw new IllegalArgumentException("index");
+			}
+			activated[index] = active;
+		}
 
-        public boolean isActive(int index) {
-            if (index < 0 || index > 127) {
-                throw new IllegalArgumentException("index");
-            }
-            return activated[index];
-        }
+		public boolean isActive(int index) {
+			if (index < 0 || index > 127) {
+				throw new IllegalArgumentException("index");
+			}
+			return activated[index];
+		}
 
-        public Activateable getRegistratable() {
-            return (Activateable) getElement();
-        }
-    }
-        
-    protected void notifyObservers() {
-        Iterator observers = getReferrer(Observer.class).iterator();
-        while (observers.hasNext()) {
-            Observer observer = (Observer) observers.next();
-            observer.initiated(this);
-        }
-    }
-        
-    public static interface Observer {
-        public void initiated(Combination combination);
-    }
+		public Activateable getRegistratable() {
+			return (Activateable) getElement();
+		}
+	}
+
+	protected void notifyObservers() {
+		for (Observer observer : getReferrer(Observer.class)) {
+			observer.initiated(this);
+		}
+	}
+
+	public static interface Observer {
+		public void initiated(Combination combination);
+	}
 }

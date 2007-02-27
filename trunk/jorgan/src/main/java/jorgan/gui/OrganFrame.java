@@ -30,7 +30,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -62,15 +61,12 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.config.ConfigurationDialog;
 import jorgan.gui.imports.ImportWizard;
-import jorgan.io.DispositionReader;
-import jorgan.io.DispositionWriter;
-import jorgan.io.disposition.History;
+import jorgan.io.DispositionStream;
 import jorgan.swing.Browser;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
 import jorgan.util.I18N;
-import jorgan.xml.XMLFormatException;
 
 /**
  * The jOrgan frame.
@@ -217,7 +213,7 @@ public class OrganFrame extends JFrame {
 		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
 
 		newOrgan();
-		
+
 		updateMenu();
 	}
 
@@ -281,7 +277,7 @@ public class OrganFrame extends JFrame {
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
 		helpMenu.add(aboutAction);
-		
+
 		menuBar.revalidate();
 		menuBar.repaint();
 	}
@@ -372,10 +368,11 @@ public class OrganFrame extends JFrame {
 	 */
 	public void openOrgan(File file) {
 		try {
-			DispositionReader reader = new DispositionReader(
-					new FileInputStream(file));
+			Organ organ = new DispositionStream()
+					.read(new FileInputStream(file));
 
-			Organ organ = (Organ) reader.read();
+			// Organ organ = (Organ) new DispositionReader(new FileInputStream(
+			// file)).read();
 
 			jorgan.io.Configuration.instance().addRecentFile(file);
 
@@ -386,15 +383,14 @@ public class OrganFrame extends JFrame {
 			if (Configuration.instance().getFullScreenOnLoad()) {
 				fullScreenAction.goFullScreen();
 			}
-		} catch (XMLFormatException ex) {
-			logger.log(Level.INFO, "opening organ failed", ex);
-
-			showMessage("openOrganInvalid", new String[] { file.getName() });
 		} catch (IOException ex) {
 			showMessage("openOrganException", new String[] { file.getName() });
 
 			jorgan.io.Configuration.instance().removeRecentFile(file);
+		} catch (Exception ex) {
+			logger.log(Level.INFO, "opening organ failed", ex);
 
+			showMessage("openOrganInvalid", new String[] { file.getName() });
 		}
 	}
 
@@ -420,11 +416,7 @@ public class OrganFrame extends JFrame {
 	 */
 	public boolean saveOrgan(File file) {
 		try {
-			new History(file).add();
-
-			DispositionWriter writer = new DispositionWriter(
-					new FileOutputStream(file));
-			writer.write(session.getOrgan());
+			new DispositionStream().write(session.getOrgan(), file);
 
 			jorgan.io.Configuration.instance().addRecentFile(file);
 
@@ -433,16 +425,16 @@ public class OrganFrame extends JFrame {
 			saveAction.clearChanges();
 
 			showStatus("organSaved", new Object[0]);
-		} catch (XMLFormatException ex) {
-			logger.log(Level.INFO, "saving organ failed", ex);
-
-			showMessage("saveOrganInvalid", new String[] { file.getName() });
-
-			return false;
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
 			showMessage("saveOrganException", new String[] { file.getName() });
+
+			return false;
+		} catch (Exception ex) {
+			logger.log(Level.INFO, "saving organ failed", ex);
+
+			showMessage("saveOrganInvalid", new String[] { file.getName() });
 
 			return false;
 		}
@@ -527,7 +519,7 @@ public class OrganFrame extends JFrame {
 			if (rect != null) {
 				setBounds(rect);
 			}
-			setExtendedState(Configuration.instance().getFrameState());			
+			setExtendedState(Configuration.instance().getFrameState());
 		}
 		super.setVisible(visible);
 	}
@@ -740,7 +732,7 @@ public class OrganFrame extends JFrame {
 			putValue(Action.NAME, i18n.getString("websiteAction.name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
 					.getString("websiteAction.shortDescription"));
-			
+
 			setEnabled(Browser.isSupported());
 		}
 
@@ -749,7 +741,6 @@ public class OrganFrame extends JFrame {
 		}
 	}
 
-	
 	/**
 	 * The action that starts an import.
 	 */

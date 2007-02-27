@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.io.SkinReader;
+import jorgan.io.SkinStream;
 import jorgan.util.Bootstrap;
 
 /**
@@ -35,157 +35,156 @@ import jorgan.util.Bootstrap;
  */
 public class SkinManager implements ISkinManager {
 
-    private static final Logger logger = Logger.getLogger(SkinManager.class
-            .getName());
+	private static final Logger logger = Logger.getLogger(SkinManager.class
+			.getName());
 
-    /**
-     * The name of the system property to specify the path to load skins from.
-     * <br>
-     * If this system property is not set, skins will be loaded in a "skins"
-     * folder relative to the installation directory.
-     */
-    private static final String SKINS_PATH_PROPERTY = "jorgan.skins.path";
+	/**
+	 * The name of the system property to specify the path to load skins from.
+	 * <br>
+	 * If this system property is not set, skins will be loaded in a "skins"
+	 * folder relative to the installation directory.
+	 */
+	private static final String SKINS_PATH_PROPERTY = "jorgan.skins.path";
 
-    private static final String SKIN_FILE = "skin.xml";
+	private static final String SKIN_FILE = "skin.xml";
 
-    private static final String ZIP_SUFFIX = ".zip";
+	private static final String ZIP_SUFFIX = ".zip";
 
-    private static SkinManager instance;
+	private static SkinManager instance;
 
-    private List<Skin> skins = new ArrayList<Skin>();
+	private List<Skin> skins = new ArrayList<Skin>();
 
-    private void initialize() {
-        File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY,
-                Bootstrap.getDirectory() + "/skins"));
-        if (skinsDir.exists()) {
-            String[] entries = skinsDir.list();
-            for (int e = 0; e < entries.length; e++) {
-                String entry = entries[e];
+	private void initialize() {
+		File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY,
+				Bootstrap.getDirectory() + "/skins"));
+		if (skinsDir.exists()) {
+			String[] entries = skinsDir.list();
+			for (int e = 0; e < entries.length; e++) {
+				String entry = entries[e];
 
-                File skinFile = new File(skinsDir, entry);
+				File skinFile = new File(skinsDir, entry);
 
-                try {
-                    SkinSource source = createSkinDirectory(skinFile);
-                    if (source == null) {
-                        source = createSkinZip(skinFile);
-                    }
+				try {
+					SkinSource source = createSkinDirectory(skinFile);
+					if (source == null) {
+						source = createSkinZip(skinFile);
+					}
 
-                    if (source != null) {
-                        Skin skin = (Skin) new SkinReader(source.getURL(
-                                SKIN_FILE).openStream()).read();
-                        skin.setSource(source);
-                        skins.add(skin);
-                    }
-                } catch (IOException ex) {
-                    logger.log(Level.INFO, "ignoring skin '" + entry
-                            + "'");
-                }
-            }
-        }
-    }
+					if (source != null) {
+						Skin skin = new SkinStream().read(source.getURL(
+								SKIN_FILE).openStream());
+						skin.setSource(source);
+						skins.add(skin);
+					}
+				} catch (IOException ex) {
+					logger.log(Level.INFO, "ignoring skin '" + entry + "'");
+				}
+			}
+		}
+	}
 
-    private SkinSource createSkinDirectory(File file) throws IOException {
+	private SkinSource createSkinDirectory(File file) throws IOException {
 
-        if (file.isDirectory()) {
-            return new SkinDirectory(file);
-        }
-        return null;
-    }
+		if (file.isDirectory()) {
+			return new SkinDirectory(file);
+		}
+		return null;
+	}
 
-    private SkinSource createSkinZip(File file) throws IOException {
+	private SkinSource createSkinZip(File file) throws IOException {
 
-        if (file.getName().endsWith(ZIP_SUFFIX)) {
-            return new SkinZip(file);
-        }
-        return null;
-    }
+		if (file.getName().endsWith(ZIP_SUFFIX)) {
+			return new SkinZip(file);
+		}
+		return null;
+	}
 
-    public String[] getSkinNames() {
+	public String[] getSkinNames() {
 
-        String[] names = new String[1 + skins.size()];
+		String[] names = new String[1 + skins.size()];
 
-        for (int s = 0; s < skins.size(); s++) {
-            Skin skin = skins.get(s);
-            names[s + 1] = skin.getName();
-        }
+		for (int s = 0; s < skins.size(); s++) {
+			Skin skin = skins.get(s);
+			names[s + 1] = skin.getName();
+		}
 
-        return names;
-    }
+		return names;
+	}
 
-    public Skin getSkin(String skinName) {
-        for (int s = 0; s < skins.size(); s++) {
-            Skin skin = skins.get(s);
+	public Skin getSkin(String skinName) {
+		for (int s = 0; s < skins.size(); s++) {
+			Skin skin = skins.get(s);
 
-            if (skin.getName().equals(skinName)) {
-                return skin;
-            }
-        }
+			if (skin.getName().equals(skinName)) {
+				return skin;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    public String[] getStyleNames(String skinName) {
+	public String[] getStyleNames(String skinName) {
 
-        Skin skin = getSkin(skinName);
-        if (skin == null) {
-            return new String[0];
-        } else {
-            return skin.getStyleNames();
-        }
-    }
+		Skin skin = getSkin(skinName);
+		if (skin == null) {
+			return new String[0];
+		} else {
+			return skin.getStyleNames();
+		}
+	}
 
-    /**
-     * A source of a skin contained in a directory.
-     */
-    private class SkinDirectory implements SkinSource {
+	/**
+	 * A source of a skin contained in a directory.
+	 */
+	private class SkinDirectory implements SkinSource {
 
-        private File directory;
+		private File directory;
 
-        private SkinDirectory(File directory) throws IOException {
-            this.directory = directory;
-        }
+		private SkinDirectory(File directory) throws IOException {
+			this.directory = directory;
+		}
 
-        public URL getURL(String name) {
-            try {
-                return new File(directory, name).toURL();
-            } catch (MalformedURLException ex) {
-                return null;
-            }
-        }
-    }
+		public URL getURL(String name) {
+			try {
+				return new File(directory, name).toURL();
+			} catch (MalformedURLException ex) {
+				return null;
+			}
+		}
+	}
 
-    /**
-     * A source of a skin contained in a zipFile.
-     */
-    private class SkinZip implements SkinSource {
+	/**
+	 * A source of a skin contained in a zipFile.
+	 */
+	private class SkinZip implements SkinSource {
 
-        private File file;
+		private File file;
 
-        private SkinZip(File file) throws IOException {
-            this.file = file;
-        }
+		private SkinZip(File file) throws IOException {
+			this.file = file;
+		}
 
-        public URL getURL(String name) {
-            try {
-                return new URL("jar:" + file.toURL() + "!/" + name);
-            } catch (MalformedURLException ex) {
-                return null;
-            }
-        }
-    }
+		public URL getURL(String name) {
+			try {
+				return new URL("jar:" + file.toURL() + "!/" + name);
+			} catch (MalformedURLException ex) {
+				return null;
+			}
+		}
+	}
 
-    /**
-     * Get the singleton instance.
-     * 
-     * @return	manager of {@Skin}s.
-     */
-    public static SkinManager instance() {
-        if (instance == null) {
-            instance = new SkinManager();
+	/**
+	 * Get the singleton instance.
+	 * 
+	 * @return manager of {@Skin}s.
+	 */
+	public static SkinManager instance() {
+		if (instance == null) {
+			instance = new SkinManager();
 
-            instance.initialize();
-        }
+			instance.initialize();
+		}
 
-        return instance;
-    }
+		return instance;
+	}
 }

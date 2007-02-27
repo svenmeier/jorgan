@@ -19,7 +19,6 @@
 package jorgan.gui.construct;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -114,15 +113,13 @@ public class CreateElementWizard extends BasicWizard {
 			if (prototype != null) {
 				elementPanel.setElementClass(prototype.getClass());
 			}
-
-			elementPanel.addPropertyChangeListener(this);
 		}
 
 		public String getDescription() {
 			return i18n.getString("elementPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return elementPanel;
 		}
 
@@ -130,7 +127,7 @@ public class CreateElementWizard extends BasicWizard {
 			return element != null;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			Class elementClass = elementPanel.getElementClass();
 			String elementName = elementPanel.getElementName();
 
@@ -149,7 +146,7 @@ public class CreateElementWizard extends BasicWizard {
 				}
 			}
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 
@@ -160,18 +157,11 @@ public class CreateElementWizard extends BasicWizard {
 
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
-		/**
-		 * Constructor.
-		 */
-		public ReferencesToPage() {
-			elementsSelectionPanel.addPropertyChangeListener(this);
-		}
-
 		public String getDescription() {
 			return i18n.getString("referencesToPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
@@ -191,10 +181,10 @@ public class CreateElementWizard extends BasicWizard {
 			}
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			referencesTo = elementsSelectionPanel.getSelectedElements();
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 
@@ -205,18 +195,11 @@ public class CreateElementWizard extends BasicWizard {
 
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
-		/**
-		 * Constructor.
-		 */
-		public ReferencedByPage() {
-			elementsSelectionPanel.addPropertyChangeListener(this);
-		}
-
 		public String getDescription() {
 			return i18n.getString("referencedFromPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
@@ -233,10 +216,10 @@ public class CreateElementWizard extends BasicWizard {
 			}
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			referencedFrom = elementsSelectionPanel.getSelectedElements();
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 

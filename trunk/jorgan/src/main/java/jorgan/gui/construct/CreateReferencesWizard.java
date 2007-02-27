@@ -19,7 +19,6 @@
 package jorgan.gui.construct;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -99,8 +98,6 @@ public class CreateReferencesWizard extends BasicWizard {
 
 		private ReferencesToPage() {
 
-			elementsSelectionPanel.addPropertyChangeListener(this);
-
 			elementsSelectionPanel.setElements(organ
 					.getReferenceToCandidates(element));
 		}
@@ -109,14 +106,14 @@ public class CreateReferencesWizard extends BasicWizard {
 			return i18n.getString("referencesToPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			referencesTo = elementsSelectionPanel.getSelectedElements();
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 
@@ -129,8 +126,6 @@ public class CreateReferencesWizard extends BasicWizard {
 
 		private ReferencedByPage() {
 
-			elementsSelectionPanel.addPropertyChangeListener(this);
-
 			elementsSelectionPanel.setElements(organ
 					.getReferencedFromCandidates(element));
 		}
@@ -139,14 +134,14 @@ public class CreateReferencesWizard extends BasicWizard {
 			return i18n.getString("referencedFromPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			referencedFrom = elementsSelectionPanel.getSelectedElements();
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 

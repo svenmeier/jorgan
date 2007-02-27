@@ -24,13 +24,13 @@ import java.util.ArrayList;
 /**
  * Style.
  */
-public class Skin {
+public class Skin implements Resolver {
 
     private String name = "";
 
     private ArrayList<Style> styles = new ArrayList<Style>();
 
-    private SkinSource source;
+    private transient SkinSource source;
 
     public String getName() {
         return name;
@@ -63,14 +63,6 @@ public class Skin {
 
     public void addStyle(Style style) {
         styles.add(style);
-        style.setResolver(new Resolver() {
-            public URL resolve(String name) {
-                return source.getURL(name);
-            }
-
-            public void setResolver(Resolver parent) {
-            }
-        });
     }
 
     public void setSource(SkinSource source) {
@@ -90,9 +82,29 @@ public class Skin {
         for (int s = 0; s < styles.size(); s++) {
             Style style = styles.get(s);
             if (style.getName().equals(styleName)) {
-                return (Style) style.clone();
+            	Style clone = (Style)style.clone();
+            	
+            	initResolver(clone);
+            	
+                return clone;
             }
         }
         return null;
+    }
+    
+    private void initResolver(Layer layer) {
+    	layer.setResolver(this);
+    	
+    	if (layer instanceof CompositeLayer) {
+    		CompositeLayer compositeLayer = (CompositeLayer)layer;
+    		
+    		for (Layer child : compositeLayer.getChildren()) {
+    			initResolver(child);
+    		}
+    	}
+    }
+    
+    public URL resolve(String name) {
+        return source.getURL(name);
     }
 }

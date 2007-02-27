@@ -29,6 +29,9 @@ public class Reference {
     private Element element;
 
     public Reference(Element element) {
+    	if (element == null) {
+    		throw new IllegalArgumentException("element must not be null");
+    	}
         this.element = element;
     }
 
