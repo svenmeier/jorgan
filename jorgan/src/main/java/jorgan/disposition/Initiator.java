@@ -20,17 +20,17 @@ package jorgan.disposition;
 
 public abstract class Initiator extends Momentary {
 
-    private Message message;
+	private Message message;
 
-    public Message getMessage() {
-        return message;
-    }
+	public Message getMessage() {
+		return message;
+	}
 
-    public void setMessage(Message message) {
-        this.message = message;
+	public void setMessage(Message message) {
+		this.message = message;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public abstract void initiate();
+	public abstract void initiate();
 }

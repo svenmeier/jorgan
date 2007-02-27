@@ -28,84 +28,84 @@ import jorgan.sound.midi.KeyFormat;
  */
 public class Key implements Comparable, Serializable {
 
-    public static final Key C0 = new Key(12);
+	public static final Key C0 = new Key(12);
 
-    public static final Key C1 = new Key(24);
+	public static final Key C1 = new Key(24);
 
-    public static final Key C2 = new Key(36);
+	public static final Key C2 = new Key(36);
 
-    public static final Key C3 = new Key(48);
+	public static final Key C3 = new Key(48);
 
-    public static final Key C4 = new Key(60);
+	public static final Key C4 = new Key(60);
 
-    public static final Key C5 = new Key(72);
+	public static final Key C5 = new Key(72);
 
-    public static final Key C6 = new Key(84);
+	public static final Key C6 = new Key(84);
 
-    public static final Key C7 = new Key(96);
+	public static final Key C7 = new Key(96);
 
-    public static final Key C8 = new Key(108);
+	public static final Key C8 = new Key(108);
 
-    private int pitch;
+	private int pitch;
 
-    public Key(int pitch) {
-        if (pitch < 0 || pitch > 127) {
-            throw new IllegalArgumentException("pitch '" + pitch + "'");
-        }
-        this.pitch = pitch;
-    }
+	public Key(int pitch) {
+		if (pitch < 0 || pitch > 127) {
+			throw new IllegalArgumentException("pitch '" + pitch + "'");
+		}
+		this.pitch = pitch;
+	}
 
-    public Key(String name) {
-        pitch = ((Integer) new KeyFormat().parseObject(name, new ParsePosition(
-                0))).intValue();
-    }
+	public Key(String name) {
+		pitch = ((Integer) new KeyFormat().parseObject(name, new ParsePosition(
+				0))).intValue();
+	}
 
-    public String getName() {
-        return new KeyFormat().format(new Integer(pitch));
-    }
+	public String getName() {
+		return new KeyFormat().format(new Integer(pitch));
+	}
 
-    public Key halftoneUp() {
-        if (pitch == 127) {
-            return null;
-        }
-        return new Key(pitch + 1);
-    }
+	public Key halftoneUp() {
+		if (pitch == 127) {
+			return null;
+		}
+		return new Key(pitch + 1);
+	}
 
-    public Key halftoneDown() {
-        if (pitch == 0) {
-            return null;
-        }
-        return new Key(pitch - 1);
-    }
+	public Key halftoneDown() {
+		if (pitch == 0) {
+			return null;
+		}
+		return new Key(pitch - 1);
+	}
 
-    public int compareTo(Object object) {
-        Key key = (Key) object;
+	public int compareTo(Object object) {
+		Key key = (Key) object;
 
-        if (this.pitch < key.pitch) {
-            return -1;
-        }
-        if (this.pitch > key.pitch) {
-            return 1;
-        }
-        return 0;
-    }
+		if (this.pitch < key.pitch) {
+			return -1;
+		}
+		if (this.pitch > key.pitch) {
+			return 1;
+		}
+		return 0;
+	}
 
-    public boolean lessEqual(Key key) {
-        return compareTo(key) <= 0;
-    }
+	public boolean lessEqual(Key key) {
+		return compareTo(key) <= 0;
+	}
 
-    public boolean greaterEqual(Key key) {
-        return compareTo(key) >= 0;
-    }
+	public boolean greaterEqual(Key key) {
+		return compareTo(key) >= 0;
+	}
 
-    public boolean equals(Object key) {
-        if (key == null || !(key instanceof Key)) {
-            return false;
-        }
-        return this.pitch == ((Key) key).pitch;
-    }
+	public boolean equals(Object key) {
+		if (key == null || !(key instanceof Key)) {
+			return false;
+		}
+		return this.pitch == ((Key) key).pitch;
+	}
 
-    public int hashCode() {
-        return pitch;
-    }
+	public int hashCode() {
+		return pitch;
+	}
 }

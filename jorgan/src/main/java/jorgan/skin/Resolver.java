@@ -25,7 +25,5 @@ import java.net.URL;
  */
 public interface Resolver {
 
-    public void setResolver(Resolver parent);
-
     public URL resolve(String name);
 }

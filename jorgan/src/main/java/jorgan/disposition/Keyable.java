@@ -23,63 +23,63 @@ package jorgan.disposition;
  */
 public abstract class Keyable extends Activateable {
 
-    public static final int ACTION_STRAIGHT = 0;
+	public static final int ACTION_STRAIGHT = 0;
 
-    public static final int ACTION_PITCH_CONSTANT = 1;
+	public static final int ACTION_PITCH_CONSTANT = 1;
 
-    public static final int ACTION_PITCH_HIGHEST = 2;
+	public static final int ACTION_PITCH_HIGHEST = 2;
 
-    public static final int ACTION_PITCH_LOWEST = 3;
+	public static final int ACTION_PITCH_LOWEST = 3;
 
-    public static final int ACTION_SUSTAIN = 4;
+	public static final int ACTION_SUSTAIN = 4;
 
-    public static final int ACTION_SOSTENUTO = 5;
+	public static final int ACTION_SOSTENUTO = 5;
 
-    public static final int ACTION_INVERSE = 6;
+	public static final int ACTION_INVERSE = 6;
 
-    public static final int DEFAULT_TRANSPOSE = 0;
+	public static final int DEFAULT_TRANSPOSE = 0;
 
-    public static final int DEFAULT_VELOCITY = 100;
+	public static final int DEFAULT_VELOCITY = 100;
 
-    private int velocity = DEFAULT_VELOCITY;
+	private int velocity = DEFAULT_VELOCITY;
 
-    private int action = ACTION_STRAIGHT;
+	private int action = ACTION_STRAIGHT;
 
-    private int transpose = DEFAULT_TRANSPOSE;
+	private int transpose = DEFAULT_TRANSPOSE;
 
-    public int getTranspose() {
-        return transpose;
-    }
+	public int getTranspose() {
+		return transpose;
+	}
 
-    public int getAction() {
-        return action;
-    }
+	public int getAction() {
+		return action;
+	}
 
-    public void setAction(int action) {
-        if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
-            throw new IllegalArgumentException("pitch '" + action + "'");
-        }
-        this.action = action;
+	public void setAction(int action) {
+		if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
+			throw new IllegalArgumentException("pitch '" + action + "'");
+		}
+		this.action = action;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setTranspose(int transpose) {
-        this.transpose = transpose;
+	public void setTranspose(int transpose) {
+		this.transpose = transpose;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public int getVelocity() {
-        return velocity;
-    }
+	public int getVelocity() {
+		return velocity;
+	}
 
-    public void setVelocity(int velocity) {
-        if (velocity < 0 || velocity > 127) {
-            throw new IllegalArgumentException("velocity '" + velocity + "'");
-        }
-        this.velocity = velocity;
+	public void setVelocity(int velocity) {
+		if (velocity < 0 || velocity > 127) {
+			throw new IllegalArgumentException("velocity '" + velocity + "'");
+		}
+		this.velocity = velocity;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 }

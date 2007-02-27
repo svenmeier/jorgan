@@ -29,7 +29,7 @@ import jorgan.gui.console.View;
  */
 public class ImageLayer extends Layer {
 
-    private Insets ZERO_BORDER = new Insets(0, 0, 0, 0);
+    private static final Insets ZERO_BORDER = new Insets(0, 0, 0, 0);
 
     private String file = "";
 

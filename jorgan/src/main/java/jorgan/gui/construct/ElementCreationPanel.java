@@ -20,8 +20,9 @@ package jorgan.gui.construct;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JLabel;
@@ -57,7 +58,7 @@ public class ElementCreationPanel extends JPanel {
 
 	private JList typeList = new JList();
 
-	private Class[] elementClasses = new Class[0];
+	private List<Class<? extends Element>> elementClasses;
 
 	/**
 	 * Constructor.
@@ -109,10 +110,10 @@ public class ElementCreationPanel extends JPanel {
 	 * @param elementClasses
 	 *            the classes for the element to create
 	 */
-	public void setElementClasses(Class[] elementClasses) {
+	public void setElementClasses(List<Class<? extends Element>> elementClasses) {
 		this.elementClasses = elementClasses;
 
-		Arrays.sort(elementClasses, new TypeComparator());
+		Collections.sort(elementClasses, new TypeComparator());
 		typeList.setModel(new TypeListModel());
 	}
 
@@ -123,8 +124,8 @@ public class ElementCreationPanel extends JPanel {
 	 *            the class for the element to create
 	 */
 	public void setElementClass(Class elementClass) {
-		for (int c = 0; c < elementClasses.length; c++) {
-			if (elementClasses[c] == elementClass) {
+		for (int c = 0; c < elementClasses.size(); c++) {
+			if (elementClasses.get(c) == elementClass) {
 				typeList.setSelectedIndex(c);
 				typeList.scrollRectToVisible(typeList.getCellBounds(c, c));
 				return;
@@ -143,7 +144,7 @@ public class ElementCreationPanel extends JPanel {
 		if (index == -1) {
 			return null;
 		} else {
-			return elementClasses[index];
+			return elementClasses.get(index);
 		}
 	}
 
@@ -159,17 +160,19 @@ public class ElementCreationPanel extends JPanel {
 	private class TypeListModel extends AbstractListModel {
 
 		public int getSize() {
-			return elementClasses.length;
+			return elementClasses.size();
 		}
 
 		public Object getElementAt(int index) {
-			return Elements.getDisplayName(elementClasses[index]);
+			return Elements.getDisplayName(elementClasses.get(index));
 		}
 	}
 
-	private class TypeComparator implements Comparator<Class<? extends Element>> {
+	private class TypeComparator implements
+			Comparator<Class<? extends Element>> {
 
-		public int compare(Class<? extends Element> c1, Class<? extends Element> c2) {
+		public int compare(Class<? extends Element> c1,
+				Class<? extends Element> c2) {
 
 			String name1 = Elements.getDisplayName(c1);
 			String name2 = Elements.getDisplayName(c2);

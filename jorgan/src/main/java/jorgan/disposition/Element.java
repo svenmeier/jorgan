@@ -18,13 +18,9 @@
  */
 package jorgan.disposition;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -36,7 +32,7 @@ public abstract class Element implements Cloneable {
 	/**
 	 * The organ this element belongs to.
 	 */
-	private Organ organ;
+	private transient Organ organ;
 
 	/**
 	 * The name of this element.
@@ -51,12 +47,7 @@ public abstract class Element implements Cloneable {
 	private String style;
 
 	/**
-	 * The elements that reference this element.
-	 */
-	protected Collection<Element> referrer = new ArrayList<Element>();
-
-	/**
-	 * The list of elements that are referenced by this element.
+	 * The references to other elements.
 	 */
 	protected List<Reference> references = new ArrayList<Reference>();
 
@@ -92,49 +83,23 @@ public abstract class Element implements Cloneable {
 		return false;
 	}
 
-	/**
-	 * Restore transient state on deserialization.
-	 * 
-	 * @param in
-	 *            stream to read from
-	 */
-	private void readObject(ObjectInputStream in)
-			throws ClassNotFoundException, IOException {
-		in.defaultReadObject();
-
-		referrer = new HashSet<Element>();
-		references = new ArrayList<Reference>();
-	}
-
 	public Organ getOrgan() {
 		return organ;
 	}
 
 	public void setOrgan(Organ organ) {
 		if (this.organ != organ) {
-			for (Reference reference : references) {
+			for (Reference reference : new ArrayList<Reference>(references)) {
 				removeReference(reference);
 			}
-
-			// create copy of referrers, otherwise we'll get a
-			// ConcurrentModification because unreference(Element)
-			// will trigger a callback to referencedBy(Element, boolean)
-			Iterator<Element> iterator = new ArrayList<Element>(referrer)
-					.iterator();
-			while (iterator.hasNext()) {
-				Element element = iterator.next();
-
-				element.unreference(this);
-			}
-
-			this.organ = organ;
 		}
+		this.organ = organ;
 	}
 
 	public List<Reference> getReferences() {
 		return Collections.unmodifiableList(references);
 	}
-	
+
 	public void reference(Element element) {
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
@@ -149,7 +114,6 @@ public abstract class Element implements Cloneable {
 					+ "'");
 		}
 		references.add(reference);
-		reference.getElement().referencedBy(this, true);
 
 		fireReferenceAdded(reference);
 	}
@@ -209,7 +173,6 @@ public abstract class Element implements Cloneable {
 		}
 
 		references.remove(reference);
-		reference.getElement().referencedBy(this, false);
 
 		fireReferenceRemoved(reference);
 	}
@@ -303,45 +266,6 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	/**
-	 * Test if this element is referenced by other elements.
-	 * 
-	 * @return <code>true</code> if at least on other element references this
-	 *         element
-	 */
-	public boolean hasReferrer() {
-		return !referrer.isEmpty();
-	}
-
-	/**
-	 * Notification that this element is referenced by the given element.
-	 * 
-	 * @param element
-	 *            element that referres this element
-	 */
-	protected void referencedBy(Element element, boolean referenced) {
-		if (referenced) {
-			referrer.add(element);
-		} else {
-			referrer.remove(element);
-		}
-	}
-
-	public Set<Element> getReferrer(Class<?> clazz) {
-		Set<Element> set = new HashSet<Element>();
-
-		for (Element element : referrer) {
-			if (clazz.isAssignableFrom(element.getClass())) {
-				set.add(element);
-			}
-		}
-		return set;
-	}
-
-	public Set<Element> getReferrer() {
-		return new HashSet<Element>(referrer);
-	}
-
 	public String toString() {
 		return getName();
 	}
@@ -369,7 +293,6 @@ public abstract class Element implements Cloneable {
 		try {
 			Element clone = (Element) super.clone();
 
-			clone.referrer = new HashSet<Element>();
 			clone.references = new ArrayList<Reference>();
 			clone.organ = null;
 
@@ -377,5 +300,26 @@ public abstract class Element implements Cloneable {
 		} catch (CloneNotSupportedException ex) {
 			throw new Error(ex);
 		}
+	}
+
+	public boolean references(Element element) {
+		return getReference(element) != null;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E> Set<E> getReferrer(Class<E> clazz) {
+		Set<E> set = new HashSet<E>();
+
+		for (Element candidate : organ.getElements()) {
+			if (clazz.isAssignableFrom(candidate.getClass())
+					&& candidate.references(this)) {
+				set.add((E) candidate);
+			}
+		}
+		return set;
+	}
+
+	public Set<Element> getReferrer() {
+		return getReferrer(Element.class);
 	}
 }

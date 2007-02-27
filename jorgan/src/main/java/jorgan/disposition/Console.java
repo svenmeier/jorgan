@@ -26,173 +26,173 @@ public class Console extends Element {
 	/**
 	 * The maximum supported zoom.
 	 */
-    public static final float MAX_ZOOM = 2.0f;
+	public static final float MAX_ZOOM = 2.0f;
 
 	/**
 	 * The minimum supported zoom.
 	 */
-    public static final float MIN_ZOOM = 0.5f;
+	public static final float MIN_ZOOM = 0.5f;
 
-    /**
-     * The device for input.
-     */
-    private String device;
+	/**
+	 * The device for input.
+	 */
+	private String device;
 
-    /**
-     * The skin.
-     */
-    private String skin;
+	/**
+	 * The skin.
+	 */
+	private String skin;
 
-    /**
-     * The zoom.
-     */
-    private float zoom = 1.0f;
+	/**
+	 * The zoom.
+	 */
+	private float zoom = 1.0f;
 
-    private String screen;
+	private String screen;
 
-    protected boolean canReference(Class clazz) {
-        return Element.class.isAssignableFrom(clazz) && Console.class != clazz;
-    }
+	protected boolean canReference(Class clazz) {
+		return Element.class.isAssignableFrom(clazz) && Console.class != clazz;
+	}
 
-    protected Reference createReference(Element element) {
-        return new LocationReference(element);
-    }
+	protected Reference createReference(Element element) {
+		return new ConsoleReference(element);
+	}
 
-    public String getDevice() {
-        return device;
-    }
+	public String getDevice() {
+		return device;
+	}
 
-    public String getSkin() {
-        return skin;
-    }
+	public String getSkin() {
+		return skin;
+	}
 
-    public float getZoom() {
-        return zoom;
-    }
+	public float getZoom() {
+		return zoom;
+	}
 
-    public String getScreen() {
-        return screen;
-    }
+	public String getScreen() {
+		return screen;
+	}
 
-    public void setDevice(String device) {
-        this.device = device;
+	public void setDevice(String device) {
+		this.device = device;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setSkin(String skin) {
-        this.skin = skin;
+	public void setSkin(String skin) {
+		this.skin = skin;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setZoom(float zoom) {
-        if (zoom < MIN_ZOOM) {
-            zoom = MIN_ZOOM;
-        }
-        if (zoom > MAX_ZOOM) {
-            zoom = MAX_ZOOM;
-        }
+	public void setZoom(float zoom) {
+		if (zoom < MIN_ZOOM) {
+			zoom = MIN_ZOOM;
+		}
+		if (zoom > MAX_ZOOM) {
+			zoom = MAX_ZOOM;
+		}
 
-        this.zoom = zoom;
+		this.zoom = zoom;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setScreen(String screen) {
-        this.screen = screen;
+	public void setScreen(String screen) {
+		this.screen = screen;
 
-        fireElementChanged(true);
-    }
+		fireElementChanged(true);
+	}
 
-    public void setLocation(Element element, int x, int y) {
-        LocationReference reference = (LocationReference) getReference(element);
+	public void setLocation(Element element, int x, int y) {
+		ConsoleReference reference = (ConsoleReference) getReference(element);
 
-        reference.setX(x);
-        reference.setY(y);
+		reference.setX(x);
+		reference.setY(y);
 
-        fireReferenceChanged(reference, true);
-    }
+		fireReferenceChanged(reference, true);
+	}
 
-    public int getX(Element element) {
-        LocationReference reference = (LocationReference) getReference(element);
+	public int getX(Element element) {
+		ConsoleReference reference = (ConsoleReference) getReference(element);
 
-        return reference.getX();
-    }
+		return reference.getX();
+	}
 
-    public int getY(Element element) {
-        if (element == this) {
-            return 0;
-        } else {
-            LocationReference reference = (LocationReference) getReference(element);
+	public int getY(Element element) {
+		if (element == this) {
+			return 0;
+		} else {
+			ConsoleReference reference = (ConsoleReference) getReference(element);
 
-            return reference.getY();
-        }
-    }
+			return reference.getY();
+		}
+	}
 
-    /**
-     * A reference of a console to another element.
-     */
-    public static class LocationReference extends Reference {
+	/**
+	 * A reference of a console to another element.
+	 */
+	public static class ConsoleReference extends Reference {
 
-        private int x;
+		private int x;
 
-        private int y;
+		private int y;
 
-        public LocationReference(Element element) {
-            super(element);
-        }
+		public ConsoleReference(Element element) {
+			super(element);
+		}
 
-        public int getX() {
-            return x;
-        }
+		public int getX() {
+			return x;
+		}
 
-        public int getY() {
-            return y;
-        }
+		public int getY() {
+			return y;
+		}
 
-        public void setX(int i) {
-            x = i;
-        }
+		public void setX(int i) {
+			x = i;
+		}
 
-        public void setY(int i) {
-            y = i;
-        }
-    }
+		public void setY(int i) {
+			y = i;
+		}
+	}
 
-    /**
-     * Move to front the reference to the given element.
-     * 
-     * @param element
-     *            element to move to front
-     */
-    public void toFront(Element element) {
-        Reference reference = getReference(element);
-        if (reference == null) {
-            throw new IllegalArgumentException("unkown element");
-        }
+	/**
+	 * Move to front the reference to the given element.
+	 * 
+	 * @param element
+	 *            element to move to front
+	 */
+	public void toFront(Element element) {
+		Reference reference = getReference(element);
+		if (reference == null) {
+			throw new IllegalArgumentException("unkown element");
+		}
 
-        references.remove(reference);
-        references.add(reference);
-        
-        fireElementChanged(true);
-    }
+		references.remove(reference);
+		references.add(reference);
 
-    /**
-     * Move to back the reference to the given element.
-     * 
-     * @param element
-     *            element to move to back
-     */
-    public void toBack(Element element) {
-        Reference reference = getReference(element);
-        if (reference == null) {
-            throw new IllegalArgumentException("unkown element");
-        }
+		fireElementChanged(true);
+	}
 
-        references.remove(reference);
-        references.add(0, reference);
-        
-        fireElementChanged(true);
-    }
+	/**
+	 * Move to back the reference to the given element.
+	 * 
+	 * @param element
+	 *            element to move to back
+	 */
+	public void toBack(Element element) {
+		Reference reference = getReference(element);
+		if (reference == null) {
+			throw new IllegalArgumentException("unkown element");
+		}
+
+		references.remove(reference);
+		references.add(0, reference);
+
+		fireElementChanged(true);
+	}
 }

@@ -34,14 +34,12 @@ import jorgan.UI;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionFileFilter;
-import jorgan.io.DispositionReader;
-import jorgan.io.DispositionWriter;
+import jorgan.io.DispositionStream;
 import jorgan.play.OrganPlay;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.util.I18N;
-import jorgan.xml.XMLFormatException;
 
 /**
  * Shell for playing of an organ.
@@ -93,7 +91,7 @@ public class OrganShell implements UI {
 			String encoding = Configuration.instance().getEncoding();
 			try {
 				interpreter.setEncoding(encoding);
-				
+
 				writeEncoding();
 			} catch (UnsupportedEncodingException ex) {
 				writeMessage("unsupportedEncoding", new Object[] { encoding });
@@ -117,10 +115,8 @@ public class OrganShell implements UI {
 	 */
 	public void openOrgan(File file) {
 		try {
-			DispositionReader reader = new DispositionReader(
-					new FileInputStream(file));
-
-			Organ organ = (Organ) reader.read();
+			Organ organ = new DispositionStream()
+					.read(new FileInputStream(file));
 
 			this.file = file;
 
@@ -130,12 +126,12 @@ public class OrganShell implements UI {
 
 			writeMessage("organOpened", new Object[] { DispositionFileFilter
 					.removeSuffix(file) });
-		} catch (XMLFormatException ex) {
+		} catch (IOException ex) {
+			writeMessage("openOrganException", new String[] { file.getName() });
+		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
 			writeMessage("openOrganInvalid", new String[] { file.getName() });
-		} catch (IOException ex) {
-			writeMessage("openOrganException", new String[] { file.getName() });
 		}
 	}
 
@@ -171,9 +167,7 @@ public class OrganShell implements UI {
 	 */
 	protected void saveOrgan() {
 		try {
-			DispositionWriter writer = new DispositionWriter(
-					new FileOutputStream(file));
-			writer.write(organ);
+			new DispositionStream().write(organ, new FileOutputStream(file));
 
 			jorgan.io.Configuration.instance().addRecentFile(file);
 

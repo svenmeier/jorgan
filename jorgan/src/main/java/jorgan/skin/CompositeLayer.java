@@ -21,6 +21,7 @@ package jorgan.skin;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jorgan.gui.console.View;
@@ -38,7 +39,6 @@ public class CompositeLayer extends Layer {
 
     public void addChild(Layer layer) {
         layers.add(layer);
-        layer.setResolver(this);
     }
 
     public int getChildCount() {
@@ -49,6 +49,10 @@ public class CompositeLayer extends Layer {
         return layers.get(index);
     }
 
+    public List<Layer> getChildren() {
+    	return Collections.unmodifiableList(layers);
+    }
+    
     public Dimension getSize() {
         Dimension dimension = super.getSize();
 

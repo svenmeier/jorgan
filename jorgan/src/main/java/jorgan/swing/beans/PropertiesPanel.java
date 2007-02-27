@@ -47,7 +47,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.Scrollable;
-import javax.swing.SwingUtilities;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -377,7 +376,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	}
 
 	private class PropertyCellEditor extends AbstractCellEditor implements
-			TableCellEditor, Runnable {
+			TableCellEditor {
 
 		private PropertyEditor editor;
 
@@ -425,22 +424,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 				}
 			}
 
-			SwingUtilities.invokeLater(this);
-
 			return component;
-		}
-
-		/**
-		 * Client property 'terminateEditOnFocusLost' may lead to a corrupted
-		 * display of editor in the table. This method (invoked via
-		 * SwingUtilities.invokeLater()) will issue an additional repaint if the
-		 * table is still editing.
-		 */
-		public void run() {
-			Component component = table.getEditorComponent();
-			if (component != null) {
-				component.repaint();
-			}
 		}
 
 		public Object getCellEditorValue() {
@@ -517,8 +501,10 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		return table.getPreferredScrollableViewportSize();
 	}
 
-	public int getScrollableBlockIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return table.getScrollableBlockIncrement(visibleRect, orientation, direction);
+	public int getScrollableBlockIncrement(Rectangle visibleRect,
+			int orientation, int direction) {
+		return table.getScrollableBlockIncrement(visibleRect, orientation,
+				direction);
 	}
 
 	public boolean getScrollableTracksViewportHeight() {
@@ -529,9 +515,10 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		return table.getScrollableTracksViewportWidth();
 	}
 
-	public int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction) {
-		return table.getScrollableUnitIncrement(visibleRect, orientation, direction);
+	public int getScrollableUnitIncrement(Rectangle visibleRect,
+			int orientation, int direction) {
+		return table.getScrollableUnitIncrement(visibleRect, orientation,
+				direction);
 	}
-	
-	
+
 }

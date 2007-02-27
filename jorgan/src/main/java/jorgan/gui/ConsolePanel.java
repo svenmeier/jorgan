@@ -714,7 +714,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 			Element element = event.getElement();
 
-			if (element.getReferrer(Console.class).contains(console)) {
+			if (console.references(element)) {
 				createView(element);
 			}
 		}

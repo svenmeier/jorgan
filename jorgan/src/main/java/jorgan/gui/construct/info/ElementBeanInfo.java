@@ -58,7 +58,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		add("style", Element.class, StyleEditor.class);
 	}
 
-	protected void add(String name, Class clazz, Class editor) {
+	protected void add(String name, Class<? extends Element> clazz, Class editor) {
 		try {
 			PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 

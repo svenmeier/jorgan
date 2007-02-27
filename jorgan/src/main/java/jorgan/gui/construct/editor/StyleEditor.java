@@ -18,64 +18,63 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
-import java.util.Iterator;
+import java.beans.PropertyEditorSupport;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Console;
+import jorgan.disposition.Element;
 import jorgan.skin.SkinManager;
 
 /**
  * Property editor for a skin property.
  */
 public class StyleEditor extends PropertyEditorSupport implements
-        ElementAwareEditor {
+		ElementAwareEditor {
 
-    private Console console;
+	private Console console;
 
-    public void setElement(Element element) {
-        if (element instanceof Console) {
-            console = (Console) element;
-        } else {
-            Iterator iterator = element.getReferrer(Console.class).iterator();
-            if (iterator.hasNext()) {
-                console = (Console) iterator.next();
-            } else {
-                console = null;
-            }
-        }
-    }
+	public void setElement(Element element) {
+		console = null;
 
-    public String[] getTags() {
+		if (element instanceof Console) {
+			console = (Console) element;
+		} else {
+			for (Console console : element.getReferrer(Console.class)) {
+				this.console = console;
+			}
+		}
+	}
 
-        String[] tags = new String[0];
+	public String[] getTags() {
 
-        if (console != null) {
-            String skinName = console.getSkin();
-            if (skinName != null) {
-                tags = SkinManager.instance().getStyleNames(skinName);
-            }
-        }
+		String[] tags = new String[0];
 
-        return tags;
-    }
+		if (console != null) {
+			String skinName = console.getSkin();
+			if (skinName != null) {
+				tags = SkinManager.instance().getStyleNames(skinName);
+			}
+		}
 
-    public String getAsText() {
+		return tags;
+	}
 
-        String style = (String) getValue();
+	public String getAsText() {
 
-        if (style == null) {
-            return "";
-        } else {
-            return style;
-        }
-    }
+		String style = (String) getValue();
 
-    public void setAsText(String text) {
+		if (style == null) {
+			return "";
+		} else {
+			return style;
+		}
+	}
 
-        if (text == null || "".equals(text)) {
-            setValue(null);
-        } else {
-            setValue(text);
-        }
-    }
+	public void setAsText(String text) {
+
+		if (text == null || "".equals(text)) {
+			setValue(null);
+		} else {
+			setValue(text);
+		}
+	}
 }

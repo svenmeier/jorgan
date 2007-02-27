@@ -21,17 +21,19 @@ package jorgan.swing.wizard;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
+import javax.swing.JComponent;
+
 /**
  * Basic implementation of a page.
  */
-public abstract class AbstractPage implements Page, PropertyChangeListener {
+public abstract class AbstractPage implements Page {
 
 	/**
 	 * The containing wizard.
 	 */
 	private Wizard wizard;
-
-	private boolean ignorePropertyChangeEventsWhileNotifyingWizard = false;
+	
+	private JComponent component;
 
 	/**
 	 * Set the wizard.
@@ -43,6 +45,43 @@ public abstract class AbstractPage implements Page, PropertyChangeListener {
 		this.wizard = wizard;
 	}
 
+	private PropertyChangeListener changeListener = new PropertyChangeListener() {
+
+		private boolean ignorePropertyChangeEventsWhileNotifyingWizard = false;
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			if (!ignorePropertyChangeEventsWhileNotifyingWizard) {
+				ignorePropertyChangeEventsWhileNotifyingWizard = true;
+
+				if (wizard != null) {
+					changing();
+				}
+
+				ignorePropertyChangeEventsWhileNotifyingWizard = false;
+			}
+		}
+	};
+ 
+	public final JComponent getComponent() {
+		JComponent component = getComponentImpl();
+		
+		if (component != this.component) {
+			if (this.component != null) {
+				this.component.removePropertyChangeListener(changeListener);
+			}
+			
+			this.component = component;
+			
+			if (this.component != null) {
+				this.component.addPropertyChangeListener(changeListener);
+			}
+		}
+		
+		return this.component;
+	}
+	
+	protected abstract JComponent getComponentImpl();
+	
 	/**
 	 * Default implementation does nothing.
 	 */
@@ -92,15 +131,7 @@ public abstract class AbstractPage implements Page, PropertyChangeListener {
 		return true;
 	}
 
-	public void propertyChange(PropertyChangeEvent evt) {
-		if (!ignorePropertyChangeEventsWhileNotifyingWizard) {
-			ignorePropertyChangeEventsWhileNotifyingWizard = true;
-
-			if (wizard != null) {
-				wizard.pageChanged(this);
-			}
-
-			ignorePropertyChangeEventsWhileNotifyingWizard = false;
-		}
+	protected void changing() {
+		wizard.pageChanged(AbstractPage.this);
 	}
 }

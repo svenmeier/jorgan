@@ -19,11 +19,9 @@
 package jorgan.gui.imports;
 
 import java.awt.Component;
-import java.beans.PropertyChangeEvent;
 import java.util.List;
 
 import javax.swing.JComponent;
-import javax.swing.JPanel;
 
 import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
@@ -90,19 +88,11 @@ public class ImportWizard extends BasicWizard {
 
 		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
 
-		/**
-		 * Constructor.
-		 */
-		public ProviderSelectionPage() {
-
-			providerSelectionPanel.addPropertyChangeListener(this);
-		}
-
 		public String getDescription() {
 			return i18n.getString("providerSelectionPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return providerSelectionPanel;
 		}
 
@@ -122,26 +112,12 @@ public class ImportWizard extends BasicWizard {
 	 */
 	private class ImportOptionsPage extends AbstractPage {
 
-		private JPanel optionsPanel;
-
-		public void enteringFromPrevious() {
-			if (this.optionsPanel != null) {
-				this.optionsPanel.removePropertyChangeListener(this);
-			}
-
-			this.optionsPanel = provider.getOptionsPanel();
-
-			if (this.optionsPanel != null) {
-				this.optionsPanel.addPropertyChangeListener(this);
-			}
-		}
-
 		public String getDescription() {
 			return provider.getDescription();
 		}
 
-		public JComponent getComponent() {
-			return optionsPanel;
+		protected JComponent getComponentImpl() {
+			return provider.getOptionsPanel();
 		}
 
 		public boolean allowsNext() {
@@ -162,13 +138,6 @@ public class ImportWizard extends BasicWizard {
 
 		private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
 
-		/**
-		 * Constructor.
-		 */
-		public StopSelectionPage() {
-			stopSelectionPanel.addPropertyChangeListener(this);
-		}
-
 		public void enteringFromPrevious() {
 			stopSelectionPanel.setStops(stops);
 		}
@@ -177,7 +146,7 @@ public class ImportWizard extends BasicWizard {
 			return i18n.getString("stopSelectionPage.description");
 		}
 
-		public JComponent getComponent() {
+		protected JComponent getComponentImpl() {
 			return stopSelectionPanel;
 		}
 
@@ -187,10 +156,10 @@ public class ImportWizard extends BasicWizard {
 			return true;
 		}
 
-		public void propertyChange(PropertyChangeEvent evt) {
+		protected void changing() {
 			selectedStops = stopSelectionPanel.getSelectedStops();
 
-			super.propertyChange(evt);
+			super.changing();
 		}
 	}
 

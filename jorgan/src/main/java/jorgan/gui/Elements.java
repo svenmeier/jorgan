@@ -42,7 +42,7 @@ public class Elements {
 	 *            class of elements to get display name for
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class elementClass) {
+	public static String getDisplayName(Class<? extends Element> elementClass) {
 		return getString(classWithoutPackage(elementClass));
 	}
 
@@ -55,7 +55,7 @@ public class Elements {
 	 *            properyt
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class elementClass, String property) {
+	public static String getDisplayName(Class<? extends Element> elementClass, String property) {
 		return getString(classWithoutPackage(elementClass) + "." + property);
 	}
 

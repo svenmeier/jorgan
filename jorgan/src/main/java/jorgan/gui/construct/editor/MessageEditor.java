@@ -23,7 +23,6 @@ import java.awt.Component;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Iterator;
 import java.util.StringTokenizer;
 
 import javax.sound.midi.MidiUnavailableException;
@@ -77,9 +76,9 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 	public void setElement(Element element) {
 
 		device = null;
-		Iterator iterator = element.getReferrer(Console.class).iterator();
-		while (iterator.hasNext()) {
-			device = ((Console) iterator.next()).getDevice();
+
+		for (Console console : element.getReferrer(Console.class)) {
+			device = console.getDevice();
 			if (device != null) {
 				break;
 			}
