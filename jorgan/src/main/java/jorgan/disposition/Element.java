@@ -32,7 +32,7 @@ public abstract class Element implements Cloneable {
 	/**
 	 * The organ this element belongs to.
 	 */
-	private transient Organ organ;
+	private Organ organ;
 
 	/**
 	 * The name of this element.

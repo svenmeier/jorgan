@@ -20,8 +20,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * Converter for {@link Element}s that writes an id on marshalling an reads an
  * id on unmarshalling.
  * 
- * @see #writeId(Element, HierarchicalStreamWriter, MarshallingContext)
- * @see #readId(Element, HierarchicalStreamReader, UnmarshallingContext)
+ * @see #marshallId(Element, HierarchicalStreamWriter, MarshallingContext)
+ * @see #unmarshallId(Element, HierarchicalStreamReader, UnmarshallingContext)
  */
 public class ElementConverter implements Converter {
 
@@ -36,11 +36,14 @@ public class ElementConverter implements Converter {
 		return Element.class.isAssignableFrom(clazz);
 	}
 
+	/**
+	 * @see #marshallId(Element, HierarchicalStreamWriter, MarshallingContext)
+	 */ 
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		Element element = (Element) value;
 
-		writeId(element, writer, context);
+		marshallId(element, writer, context);
 
 		nested.marshal(element, writer, context);
 	}
@@ -55,22 +58,25 @@ public class ElementConverter implements Converter {
 	 * @param context
 	 *            context
 	 */
-	protected void writeId(Element element, HierarchicalStreamWriter writer,
+	protected void marshallId(Element element, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		writer.addAttribute("id", Marshal.get(context).getId(element));
 	}
 
+	/**
+	 * @see #unmarshallId(Element, HierarchicalStreamReader, UnmarshallingContext)
+	 */ 
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
 		Element element = (Element) nested.unmarshal(reader, context);
 
-		readId(element, reader, context);
+		unmarshallId(element, reader, context);
 
 		return element;
 	}
 
-	protected void readId(Element element, HierarchicalStreamReader reader,
+	protected void unmarshallId(Element element, HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
 		Unmarshal.get(context).putElement(reader.getAttribute("id"),

@@ -21,9 +21,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * on marshalling and links the element on unmarshalling in a completion
  * callback.
  * 
- * @see #writeElement(Reference, HierarchicalStreamWriter, MarshallingContext)
+ * @see #marshalElement(Reference, HierarchicalStreamWriter, MarshallingContext)
  * @see UnmarshallingContext#addCompletionCallback(Runnable, int)
- * @see ElementLinker
+ * @see UnmarshalElement
  */
 public class ReferenceConverter implements Converter {
 
@@ -42,11 +42,14 @@ public class ReferenceConverter implements Converter {
 		return Reference.class.isAssignableFrom(clazz);
 	}
 
+	/**
+	 * @see #marshalElement(Reference, HierarchicalStreamWriter, MarshallingContext)
+	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		Reference reference = (Reference) value;
 
-		writeElement(reference, writer, context);
+		marshalElement(reference, writer, context);
 
 		nested.marshal(reference, writer, context);
 	}
@@ -61,27 +64,30 @@ public class ReferenceConverter implements Converter {
 	 * @param context
 	 *            the context
 	 */
-	protected void writeElement(Reference reference,
+	protected void marshalElement(Reference reference,
 			HierarchicalStreamWriter writer, MarshallingContext context) {
 		writer.addAttribute("id", ElementConverter.Marshal
 				.get(context).getId(reference.getElement()));
 	}
 
+	/**
+	 * @see UnmarshalElement
+	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
 		Reference reference = (Reference) nested.unmarshal(reader, context);
 
-		context.addCompletionCallback(new ElementLinker(reference, reader
+		context.addCompletionCallback(new UnmarshalElement(reference, reader
 				.getAttribute("id"), context), 0);
 
 		return reference;
 	}
 
 	/**
-	 * Linker of a reference to its element.
+	 * Read the element of a reference.
 	 */
-	protected static class ElementLinker implements Runnable {
+	protected static class UnmarshalElement implements Runnable {
 
 		private Reference reference;
 
@@ -89,7 +95,7 @@ public class ReferenceConverter implements Converter {
 
 		private UnmarshallingContext context;
 
-		private ElementLinker(Reference reference, String id,
+		private UnmarshalElement(Reference reference, String id,
 				UnmarshallingContext context) {
 			this.reference = reference;
 			this.id = id;
