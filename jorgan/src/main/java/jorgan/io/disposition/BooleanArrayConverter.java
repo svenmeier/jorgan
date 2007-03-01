@@ -1,9 +1,7 @@
 /**
  * 
  */
-package jorgan.io.disposition.converter;
-
-import jorgan.disposition.Key;
+package jorgan.io.disposition;
 
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
@@ -11,22 +9,35 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class KeyConverter implements Converter {
+public class BooleanArrayConverter implements Converter {
+
+	private boolean[] tmp = new boolean[0];
 
 	public boolean canConvert(Class clazz) {
-		return clazz.equals(Key.class);
+		return tmp.getClass() == clazz;
 	}
 
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-		Key key = (Key) value;
+		boolean[] bs = (boolean[]) value;
 
-		writer.setValue("" + key.getName());
+		StringBuffer buffer = new StringBuffer(bs.length);
+		for (boolean b : bs) {
+			buffer.append(b ? "1" : "0");
+		}
+
+		writer.setValue(buffer.toString());
 	}
 
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		return new Key(reader.getValue());
+		String value = reader.getValue();
+
+		boolean[] bs = new boolean[value.length()];
+		for (int b = 0; b < bs.length; b++) {
+			bs[b] = value.charAt(b) == '1' ? true : false;
+		}
+		return bs;
 	}
 }
