@@ -124,6 +124,14 @@ public class Organ {
 
 	public void removeElement(Element element) {
 
+		if (element.getOrgan() != this) {
+			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
+		}
+		
+		for (Element referrer : element.getReferrer()) {
+			referrer.unreference(element);
+		}
+
 		elements.remove(element);
 		element.setOrgan(null);
 
