@@ -21,8 +21,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * Converter for {@link Organ}s that adds version information an marshalling
  * and sets parent reference on unmarshalling.
  * 
- * @see #writeVersion(HierarchicalStreamWriter)
- * @see #setElementParent(Organ)
+ * @see #marshallVersion(HierarchicalStreamWriter)
+ * @see #unmarshallElementsOrgan(Organ)
  */
 public class OrganConverter implements Converter {
 
@@ -32,6 +32,8 @@ public class OrganConverter implements Converter {
 
 	public OrganConverter(XStream xstream) {
 		xstream.registerConverter(this);
+		
+		xstream.omitField(Element.class, "organ");
 
 		nested = xstream.getConverterLookup().lookupConverterForType(
 				Object.class);
@@ -41,11 +43,14 @@ public class OrganConverter implements Converter {
 		return Organ.class.isAssignableFrom(clazz);
 	}
 
+	/**
+	 * @see #marshallVersion(HierarchicalStreamWriter)
+	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		Organ organ = (Organ) value;
 
-		writeVersion(writer);
+		marshallVersion(writer);
 
 		nested.marshal(organ, writer, context);
 	}
@@ -56,16 +61,19 @@ public class OrganConverter implements Converter {
 	 * @param writer
 	 *            writer
 	 */
-	protected void writeVersion(HierarchicalStreamWriter writer) {
+	protected void marshallVersion(HierarchicalStreamWriter writer) {
 		writer.addAttribute("version", App.getVersion());
 	}
 
+	/**
+	 * @see #unmarshallElementsOrgan(Organ)
+	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
 		Organ organ = (Organ) nested.unmarshal(reader, context);
 
-		setElementParent(organ);
+		unmarshallElementsOrgan(organ);
 
 		return organ;
 	}
@@ -76,7 +84,7 @@ public class OrganConverter implements Converter {
 	 * @param organ
 	 *            organ
 	 */
-	protected void setElementParent(Organ organ) {
+	protected void unmarshallElementsOrgan(Organ organ) {
 		try {
 			if (elementOrganField == null) {
 				elementOrganField = Element.class.getDeclaredField("organ");
