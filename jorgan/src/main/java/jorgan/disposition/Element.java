@@ -87,7 +87,7 @@ public abstract class Element implements Cloneable {
 		return organ;
 	}
 
-	public void setOrgan(Organ organ) {
+	protected void setOrgan(Organ organ) {
 		if (this.organ != organ) {
 			for (Reference reference : new ArrayList<Reference>(references)) {
 				removeReference(reference);
