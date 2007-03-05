@@ -111,30 +111,33 @@ public class AboutPanel extends JPanel {
 	private static JWindow splash;
 
 	/**
-	 * Utility method to show an about panel in a window.
+	 * Utility method to show an about panel in a splash. <br>
+	 * This method <strong>must not</strong> be called on the EDT.
+	 * 
+	 * @see #hideSplash()
 	 */
 	public static void showSplash() {
-
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				AboutPanel aboutPanel = new AboutPanel();
-
-				splash = new JWindow();
-				splash.setContentPane(aboutPanel);
-				splash.pack();
-				splash.setLocationRelativeTo(null);
-				splash.setVisible(true);
-			}
-		});
-
 		try {
+			SwingUtilities.invokeAndWait(new Runnable() {
+				public void run() {
+					AboutPanel aboutPanel = new AboutPanel();
+
+					splash = new JWindow();
+					splash.setContentPane(aboutPanel);
+					splash.pack();
+					splash.setLocationRelativeTo(null);
+					splash.setVisible(true);
+				}
+			});
+
 			Thread.sleep(1000);
-		} catch (InterruptedException ex) {
+		} catch (Exception ignore) {
 		}
 	}
 
 	/**
-	 * Hide a previously shown splash.
+	 * Hide a previously shown splash.<br>
+	 * This method <strong>must not</strong> be called on the EDT.
 	 * 
 	 * @see #showSplash()
 	 */
