@@ -361,7 +361,7 @@ public class MidiMonitor extends DockedPanel {
 		public Message(MidiMessage message) {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
-				this.status = MessageUtils.getStatusBugFix(shortMessage);
+				this.status = shortMessage.getStatus();
 				this.data1 = shortMessage.getData1();
 				this.data2 = shortMessage.getData2();
 			}

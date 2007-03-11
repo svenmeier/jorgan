@@ -23,43 +23,42 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.MessageUtils;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
  */
 public class InitiatorPlayer extends Player {
 
-    private static final Problem warningMessage = new Problem(Problem.WARNING,
-            "message");
+	private static final Problem warningMessage = new Problem(Problem.WARNING,
+			"message");
 
-    public InitiatorPlayer(Initiator initiator) {
-        super(initiator);
-    }
+	public InitiatorPlayer(Initiator initiator) {
+		super(initiator);
+	}
 
-    public void messageReceived(ShortMessage shortMessage) {
-        Initiator initiator = (Initiator) getElement();
+	public void messageReceived(ShortMessage shortMessage) {
+		Initiator initiator = (Initiator) getElement();
 
-        Message message = initiator.getMessage();
-        if (message != null
-                && message.match(MessageUtils.getStatusBugFix(shortMessage), shortMessage
-                        .getData1(), shortMessage.getData2())) {
+		Message message = initiator.getMessage();
+		if (message != null
+				&& message.match(message.getStatus(), shortMessage.getData1(),
+						shortMessage.getData2())) {
 
-            fireInputAccepted();
+			fireInputAccepted();
 
-            initiator.initiate();
-        }
-    }
+			initiator.initiate();
+		}
+	}
 
-    public void elementChanged(OrganEvent event) {
+	public void elementChanged(OrganEvent event) {
 
-        Initiator initiator = (Initiator) getElement();
+		Initiator initiator = (Initiator) getElement();
 
-        if (initiator.getMessage() == null
-                && Configuration.instance().getWarnWithoutMessage()) {
-            addProblem(warningMessage.value(null));
-        } else {
-            removeProblem(warningMessage);
-        }
-    }
+		if (initiator.getMessage() == null
+				&& Configuration.instance().getWarnWithoutMessage()) {
+			addProblem(warningMessage.value(null));
+		} else {
+			removeProblem(warningMessage);
+		}
+	}
 }

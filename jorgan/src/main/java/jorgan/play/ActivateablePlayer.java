@@ -23,92 +23,91 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Activateable;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.MessageUtils;
 
 /**
  * An abstract base class for players that control regactivateable elements.
  */
 public abstract class ActivateablePlayer extends Player {
 
-    private static final Problem warningActivateMessage = new Problem(
-            Problem.WARNING, "activateMessage");
+	private static final Problem warningActivateMessage = new Problem(
+			Problem.WARNING, "activateMessage");
 
-    private static final Problem warningDeactivateMessage = new Problem(
-            Problem.WARNING, "deactivateMessage");
+	private static final Problem warningDeactivateMessage = new Problem(
+			Problem.WARNING, "deactivateMessage");
 
-    private int activations = 0;
+	private int activations = 0;
 
-    public ActivateablePlayer(Activateable activateable) {
-        super(activateable);
-    }
+	public ActivateablePlayer(Activateable activateable) {
+		super(activateable);
+	}
 
-    protected void closeImpl() {
-        super.closeImpl();
+	protected void closeImpl() {
+		super.closeImpl();
 
-        activations = 0;
-    }
+		activations = 0;
+	}
 
-    public void activate() {
-        activations++;
+	public void activate() {
+		activations++;
 
-        elementChanged(null);
-    }
+		elementChanged(null);
+	}
 
-    public void deactivate() {
-        activations--;
+	public void deactivate() {
+		activations--;
 
-        elementChanged(null);
-    }
+		elementChanged(null);
+	}
 
-    protected boolean isActive() {
-        Activateable activateable = (Activateable) getElement();
+	protected boolean isActive() {
+		Activateable activateable = (Activateable) getElement();
 
-        return activations > 0 || activateable.isActive();
-    }
+		return activations > 0 || activateable.isActive();
+	}
 
-    public void messageReceived(ShortMessage message) {
-        Activateable activateable = (Activateable) getElement();
+	public void messageReceived(ShortMessage message) {
+		Activateable activateable = (Activateable) getElement();
 
-        if (activateable.isActive()) {
-            Message offMessage = activateable.getDeactivateMessage();
-            if (offMessage != null
-                    && offMessage.match(MessageUtils.getStatusBugFix(message), message
-                            .getData1(), message.getData2())) {
+		if (activateable.isActive()) {
+			Message offMessage = activateable.getDeactivateMessage();
+			if (offMessage != null
+					&& offMessage.match(message.getStatus(),
+							message.getData1(), message.getData2())) {
 
-                fireInputAccepted();
+				fireInputAccepted();
 
-                activateable.setActive(false);
-            }
-        } else {
-            Message onMessage = activateable.getActivateMessage();
-            if (onMessage != null
-                    && onMessage.match(MessageUtils.getStatusBugFix(message), message
-                            .getData1(), message.getData2())) {
+				activateable.setActive(false);
+			}
+		} else {
+			Message onMessage = activateable.getActivateMessage();
+			if (onMessage != null
+					&& onMessage.match(message.getStatus(), message.getData1(),
+							message.getData2())) {
 
-                fireInputAccepted();
+				fireInputAccepted();
 
-                activateable.setActive(true);
-            }
-        }
-    }
+				activateable.setActive(true);
+			}
+		}
+	}
 
-    public void elementChanged(OrganEvent event) {
-        super.elementChanged(event);
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
 
-        Activateable activateable = (Activateable) getElement();
+		Activateable activateable = (Activateable) getElement();
 
-        if ((activateable.getActivateMessage() == null)
-                && Configuration.instance().getWarnWithoutMessage()) {
-            addProblem(warningActivateMessage.value(null));
-        } else {
-            removeProblem(warningActivateMessage);
-        }
+		if ((activateable.getActivateMessage() == null)
+				&& Configuration.instance().getWarnWithoutMessage()) {
+			addProblem(warningActivateMessage.value(null));
+		} else {
+			removeProblem(warningActivateMessage);
+		}
 
-        if ((activateable.getDeactivateMessage() == null)
-                && Configuration.instance().getWarnWithoutMessage()) {
-            addProblem(warningDeactivateMessage.value(null));
-        } else {
-            removeProblem(warningDeactivateMessage);
-        }
-    }
+		if ((activateable.getDeactivateMessage() == null)
+				&& Configuration.instance().getWarnWithoutMessage()) {
+			addProblem(warningDeactivateMessage.value(null));
+		} else {
+			removeProblem(warningDeactivateMessage);
+		}
+	}
 }
