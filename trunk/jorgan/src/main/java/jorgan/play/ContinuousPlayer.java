@@ -23,52 +23,51 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.MessageUtils;
 
 /**
  * A player for a swell.
  */
 public class ContinuousPlayer extends Player {
 
-    private static final Problem warningMessage = new Problem(Problem.WARNING,
-            "message");
+	private static final Problem warningMessage = new Problem(Problem.WARNING,
+			"message");
 
-    public ContinuousPlayer(Continuous slider) {
-        super(slider);
-    }
+	public ContinuousPlayer(Continuous slider) {
+		super(slider);
+	}
 
-    public void messageReceived(ShortMessage shortMessage) {
-        Continuous slider = (Continuous) getElement();
+	public void messageReceived(ShortMessage shortMessage) {
+		Continuous slider = (Continuous) getElement();
 
-        Message message = slider.getMessage();
-        if (message != null
-                && message.match(MessageUtils.getStatusBugFix(shortMessage), shortMessage
-                        .getData1(), shortMessage.getData2())) {
+		Message message = slider.getMessage();
+		if (message != null
+				&& message.match(message.getStatus(), shortMessage.getData1(),
+						shortMessage.getData2())) {
 
-            int position = message.wildcard(shortMessage.getData1(),
-                    shortMessage.getData2());
-            if (position != -1) {
-                if (slider.isReverse()) {
-                    position = 127 - position;
-                }
-                if (Math.abs(slider.getValue() - position) > slider
-                        .getThreshold()) {
-                    fireInputAccepted();
+			int position = message.wildcard(shortMessage.getData1(),
+					shortMessage.getData2());
+			if (position != -1) {
+				if (slider.isReverse()) {
+					position = 127 - position;
+				}
+				if (Math.abs(slider.getValue() - position) > slider
+						.getThreshold()) {
+					fireInputAccepted();
 
-                    slider.setValue(position);
-                }
-            }
-        }
-    }
+					slider.setValue(position);
+				}
+			}
+		}
+	}
 
-    public void elementChanged(OrganEvent event) {
-        Continuous slider = (Continuous) getElement();
+	public void elementChanged(OrganEvent event) {
+		Continuous slider = (Continuous) getElement();
 
-        if (slider.getMessage() == null
-                && Configuration.instance().getWarnWithoutMessage()) {
-            addProblem(warningMessage.value(null));
-        } else {
-            removeProblem(warningMessage);
-        }
-    }
+		if (slider.getMessage() == null
+				&& Configuration.instance().getWarnWithoutMessage()) {
+			addProblem(warningMessage.value(null));
+		} else {
+			removeProblem(warningMessage);
+		}
+	}
 }

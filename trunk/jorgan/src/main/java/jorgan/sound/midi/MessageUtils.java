@@ -33,6 +33,7 @@ public class MessageUtils {
 	 * @param message
 	 *            message to get status from
 	 * @return status of message
+	 * @deprecated
 	 */
 	public static int getStatusBugFix(ShortMessage message) {
 		return message.getCommand() | message.getChannel();
@@ -48,6 +49,7 @@ public class MessageUtils {
 	 * @return never
 	 * @throws java.lang.UnsupportedOperationException
 	 *             always
+	 * @deprecated
 	 */
 	public static byte[] getMessageBugFix(ShortMessage message) {
 		throw new UnsupportedOperationException();
@@ -63,6 +65,7 @@ public class MessageUtils {
 	 * @return never
 	 * @throws java.lang.UnsupportedOperationException
 	 *             always
+	 * @deprecated
 	 */
 	public static int getLengthBugFix(ShortMessage message) {
 		throw new UnsupportedOperationException();
