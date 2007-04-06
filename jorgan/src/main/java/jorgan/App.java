@@ -19,12 +19,17 @@
 package jorgan;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Logger;
 
 import jorgan.gui.GUI;
+import jorgan.io.DispositionStream;
 import jorgan.shell.OrganShell;
+import bias.Bias;
+import bias.Store;
+import bias.store.CachingStore;
+import bias.store.DefaultingStore;
+import bias.store.PreferencesStore;
+import bias.store.PropertiesStore;
 
 /**
  * The jOrgan application.
@@ -33,43 +38,18 @@ public class App {
 
 	private static Logger logger = Logger.getLogger(App.class.getName());
 
-	private static Properties properties = new Properties();
+	private static App instance;
 
-	static {
-		try {
-			properties.load(App.class.getResourceAsStream("app.properties"));
-		} catch (IOException ex) {
-			throw new Error(ex);
-		}
-	}
+	private static Bias bias;
 
-	/**
-	 * Get the current version of jOrgan.
-	 * 
-	 * @return the current version
-	 */
-	public static String getVersion() {
-		return properties.getProperty("jorgan.version");
-	}
+	private String version;
 
-	/**
-	 * Main entrance to jOrgan.
-	 * 
-	 * @param args
-	 *            command line arguments
-	 */
-	public static void main(String[] args) {
+	private boolean openRecentOnStartup = false;
 
-		Arguments arguments = new Arguments();
-		if (!arguments.parse(args)) {
-			arguments.printUsage();
-			System.exit(1);
-		}
-
+	public void start(Arguments arguments) {
 		File file = arguments.getFile();
-		if (file == null
-				&& jorgan.io.Configuration.instance().getRecentOpenOnStartup()) {
-			file = jorgan.io.Configuration.instance().getRecentFile();
+		if (file == null && openRecentOnStartup) {
+			file = new DispositionStream().getRecentFile();
 		}
 
 		info();
@@ -81,15 +61,12 @@ public class App {
 			ui = new GUI();
 		}
 		ui.display(file);
-
-		Configuration.instance().backup();
-
-		System.exit(0);
 	}
 
-	private static void info() {
+	private void info() {
 		StringBuffer buffer = new StringBuffer();
-		
+
+		buffer.append("jOrgan " + version);
 		info(buffer, "os.arch");
 		info(buffer, "os.name");
 		info(buffer, "os.version");
@@ -108,10 +85,65 @@ public class App {
 		logger.info(buffer.toString());
 	}
 
-	private static void info(StringBuffer buffer, String key) {
+	private void info(StringBuffer buffer, String key) {
 		buffer.append("\n");
 		buffer.append(key);
 		buffer.append(" = ");
 		buffer.append(System.getProperty(key));
+	}
+
+	public boolean getOpenRecentOnStartup() {
+		return openRecentOnStartup;
+	}
+
+	public void setOpenRecentOnStartup(boolean openRecentOnStartup) {
+		this.openRecentOnStartup = openRecentOnStartup;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	/**
+	 * Get the current version of jOrgan.
+	 * 
+	 * @return the current version
+	 */
+	public String getVersion() {
+		return version;
+	}
+
+	/**
+	 * Main entrance to jOrgan.
+	 * 
+	 * @param args
+	 *            command line arguments
+	 */
+	public static void main(String[] args) {
+
+		Arguments arguments = new Arguments();
+		if (!arguments.parse(args)) {
+			arguments.printUsage();
+			System.exit(1);
+		}
+
+		Store store = new DefaultingStore(new CachingStore(PreferencesStore
+				.user()), new CachingStore(new PropertiesStore(App.class,
+				"app.properties")));
+		bias = new Bias(store);
+
+		instance = new App();
+		App.getBias().register(instance);
+		instance.start(arguments);
+
+		System.exit(0);
+	}
+
+	public static App getInstance() {
+		return instance;
+	}
+
+	public static Bias getBias() {
+		return bias;
 	}
 }

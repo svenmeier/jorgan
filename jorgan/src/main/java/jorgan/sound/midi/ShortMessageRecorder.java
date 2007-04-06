@@ -29,6 +29,8 @@ public abstract class ShortMessageRecorder {
 
 	private Transmitter transmitter;
 
+	private boolean keepRecording = true;
+
 	/**
 	 * Create a recorder for a short message of a device.
 	 * 
@@ -47,8 +49,8 @@ public abstract class ShortMessageRecorder {
 		transmitter = device.getTransmitter();
 		transmitter.setReceiver(new Receiver() {
 			public void send(MidiMessage message, long when) {
-				if (MessageUtils.isShortMessage(message)) {
-					messageRecorded((ShortMessage)message);
+				if (keepRecording && MessageUtils.isShortMessage(message)) {
+					keepRecording = messageRecorded((ShortMessage) message);
 				}
 			}
 
@@ -68,7 +70,9 @@ public abstract class ShortMessageRecorder {
 	/**
 	 * Notification that a message was recorded.
 	 * 
-	 * @param message	recorded message
+	 * @param message
+	 *            recorded message
+	 * @return should recording be kept
 	 */
-	public abstract void messageRecorded(ShortMessage message);
+	public abstract boolean messageRecorded(ShortMessage message);
 }

@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Reference;
@@ -242,7 +243,9 @@ public class CreateElementWizard extends BasicWizard {
 
 		dialog.setWizard(new CreateElementWizard(organ, prototype));
 
-		dialog.start();
+		App.getBias().register(dialog);
+		dialog.setVisible(true);
+		App.getBias().changed(dialog);
 
 		dialog.dispose();
 

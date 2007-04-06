@@ -18,7 +18,6 @@
  */
 package jorgan.gui.console;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 
@@ -29,9 +28,9 @@ import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
 /**
- * A view that shows a combination.
+ * A view that shows an Initiator.
  * 
- * @see jorgan.disposition.Combination
+ * @see jorgan.disposition.Initiator
  */
 public class InitiatorView extends MomentaryView {
 
@@ -87,7 +86,7 @@ public class InitiatorView extends MomentaryView {
 		TextLayer layer = new TextLayer();
 		layer.setText("${" + TEXT_NAME + "}");
 		layer.setPadding(new Insets(4, 4, 4, 4));
-		layer.setFont(Configuration.instance().getFont());
+		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
 
 		return layer;
@@ -110,7 +109,7 @@ public class InitiatorView extends MomentaryView {
 			protected void draw(Graphics2D g, int x, int y, int width,
 					int height) {
 
-				g.setColor(Color.black);
+				g.setColor(getDefaultColor());
 
 				g.drawRect(x, y, width - 1, height - 1);
 

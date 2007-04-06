@@ -28,6 +28,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
+import jorgan.App;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.Loopback;
 
@@ -39,7 +40,7 @@ public class MidiMerger extends Loopback {
 	/**
 	 * The list of inputs to merge.
 	 */
-	private List mergeInputs = new ArrayList();
+	private List<MergeInput> inputs = new ArrayList<MergeInput>();
 
 	/**
 	 * Create a new midiMerger.
@@ -49,22 +50,8 @@ public class MidiMerger extends Loopback {
 	 */
 	public MidiMerger(MidiDevice.Info info) {
 		super(info, false, true);
-	}
-
-	/**
-	 * Set the inputs to merge. <br>
-	 * This change has immediate effect only If this midiMerger is not currently
-	 * open, otherwise it is delayed until the next opening.
-	 * 
-	 * @param mergeInputs
-	 *            the inputs to merge
-	 */
-	public void setMergeInputs(List mergeInputs) {
-		if (mergeInputs == null) {
-			throw new IllegalArgumentException("mergeInputs must not be null");
-		}
-
-		this.mergeInputs = mergeInputs;
+		
+		App.getBias().register(this);
 	}
 
 	/**
@@ -74,9 +61,7 @@ public class MidiMerger extends Loopback {
 		super.open();
 
 		try {
-			for (int i = 0; i < mergeInputs.size(); i++) {
-				MergeInput input = (MergeInput) mergeInputs.get(i);
-
+			for (MergeInput input : inputs) {
 				new MergeReceiver(input.getDevice(), input.getChannel());
 			}
 		} catch (MidiUnavailableException ex) {
@@ -173,14 +158,34 @@ public class MidiMerger extends Loopback {
 		 */
 		public void close() {
 			super.close();
-			
+
 			if (transmitter != null) {
 				transmitter.close();
 			}
-			
+
 			if (device != null) {
 				device.close();
 			}
 		}
+	}
+
+	public List<MergeInput> getInputs() {
+		return inputs;
+	}
+	
+	/**
+	 * Set the inputs to merge. <br>
+	 * This change has immediate effect only If this midiMerger is not currently
+	 * open, otherwise it is delayed until the next opening.
+	 * 
+	 * @param inputs
+	 *            the inputs to merge
+	 */
+	public void setInputs(List<MergeInput> inputs) {
+		if (inputs == null) {
+			throw new IllegalArgumentException("mergeInputs must not be null");
+		}
+
+		this.inputs = inputs;
 	}
 }

@@ -152,12 +152,15 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
-		public void messageRecorded(ShortMessage message) {
+		public boolean messageRecorded(ShortMessage message) {
 			if (message.getCommand() == ShortMessage.NOTE_ON) {
 				channel = message.getChannel();
 
 				SwingUtilities.invokeLater(this);
+				
+				return false;
 			}
+			return true;
 		}
 
 		public void run() {

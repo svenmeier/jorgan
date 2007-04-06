@@ -19,7 +19,6 @@
 package jorgan.gui.construct.layout;
 
 import jorgan.gui.console.View;
-import jorgan.gui.construct.Configuration;
 
 public class StackVerticalLayout extends ViewLayout {
 
@@ -29,10 +28,10 @@ public class StackVerticalLayout extends ViewLayout {
 
 	private int y;
 
-	public StackVerticalLayout(int x, int y) {
+	public StackVerticalLayout(int x, int y, int grid) {
 		super(null);
 
-		grid = Configuration.instance().getGrid();
+		this.grid = grid;
 
 		this.x = x - (x % grid);
 		this.y = y - (y % grid);

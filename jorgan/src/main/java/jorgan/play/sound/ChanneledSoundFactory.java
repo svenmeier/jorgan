@@ -18,118 +18,130 @@
  */
 package jorgan.play.sound;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 
+import jorgan.App;
 import jorgan.sound.midi.Channel;
 import jorgan.sound.midi.ChannelPool;
-
-import jorgan.midi.Configuration;
-
-import jorgan.play.sound.SoundFactory;
-import jorgan.play.sound.Sound;
 
 /**
  * An abstract base class for sound factories that are based on channels.
  */
 public abstract class ChanneledSoundFactory extends SoundFactory {
 
-  /**
-   * The pool of channels used by this factory.
-   */
-  protected ChannelPool pool;
-  
-  public ChanneledSoundFactory(ChannelPool pool) throws MidiUnavailableException {
-    if (pool == null) {
-        throw new IllegalArgumentException("pool must not be null");
-    }
-      
-    this.pool = pool;
-      
-    pool.open();
-  }
-  
-  protected int[] getBlockedChannels() {
-    return new int[0];
-  }
+	private boolean sendAllNotesOff;
 
-  /**
-   * Factory method.
-   *
-   * @return         sound
-   */
-  public Sound createSound() {
-    Channel channel = pool.createChannel(getBlockedChannels());
+	/**
+	 * The pool of channels used by this factory.
+	 */
+	protected ChannelPool pool;
 
-    if (channel != null) {
-      return createSoundImpl(channel);
-    } else {
-      return null;
-    }
-  }
+	public ChanneledSoundFactory(ChannelPool pool)
+			throws MidiUnavailableException {
+		if (pool == null) {
+			throw new IllegalArgumentException("pool must not be null");
+		}
 
-  /**
-   * Factory method.
-   *
-   * @param channel  channel to use for sound
-   * @return         sound
-   */
-  protected abstract Sound createSoundImpl(Channel channel);
+		App.getBias().register(this);
 
-  /**
-   * Close this factory.
-   */
-  public void close() {
-    pool.close();
-    pool = null;
-  }
+		this.pool = pool;
 
-  /**
-   * Sound on a channel.
-   */
-  public abstract class ChannelSound extends AbstractSound {
+		pool.open();
+	}
 
-    /**
-     * The MIDI channel of this sound.
-     */
-    private Channel channel;
-    
-    /**
-     * Create a new sound.
-     */
-    public ChannelSound(Channel channel) {
+	protected int[] getBlockedChannels() {
+		return new int[0];
+	}
 
-      if (channel == null) {
-          throw new IllegalArgumentException("channel must not be null");
-      }
-      this.channel = channel;      
-    }
+	/**
+	 * Factory method.
+	 * 
+	 * @return sound
+	 */
+	public Sound createSound() {
+		Channel channel = pool.createChannel(getBlockedChannels());
 
-    protected void sendMessage(int command, int data1, int data2) {
-        if (channel == null) {
-            throw new IllegalStateException("already stopped");
-        }
-        if (pool == null) {
-            throw new IllegalStateException("factory already closed");
-        }
-        channel.sendMessage(command, data1, data2);
-    }    
+		if (channel != null) {
+			return createSoundImpl(channel);
+		} else {
+			return null;
+		}
+	}
 
-    /**
-     * Stop this sound.
-     */
-    public void stop() {
-        if (channel == null) {
-            throw new IllegalStateException("already stopped");
-        }
+	/**
+	 * Factory method.
+	 * 
+	 * @param channel
+	 *            channel to use for sound
+	 * @return sound
+	 */
+	protected abstract Sound createSoundImpl(Channel channel);
 
-        if (Configuration.instance().getSendAllNotesOff()) {
-          sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_ALL_NOTES_OFF, UNUSED_DATA);
-        }
+	/**
+	 * Close this factory.
+	 */
+	public void close() {
+		pool.close();
+		pool = null;
+	}
 
-        channel.release();
-        channel = null;
+	/**
+	 * Sound on a channel.
+	 */
+	public abstract class ChannelSound extends AbstractSound {
 
-        super.stop();
-    }
-  }
+		/**
+		 * The MIDI channel of this sound.
+		 */
+		private Channel channel;
+
+		/**
+		 * Create a new sound.
+		 */
+		public ChannelSound(Channel channel) {
+
+			if (channel == null) {
+				throw new IllegalArgumentException("channel must not be null");
+			}
+			this.channel = channel;
+		}
+
+		protected void sendMessage(int command, int data1, int data2) {
+			if (channel == null) {
+				throw new IllegalStateException("already stopped");
+			}
+			if (pool == null) {
+				throw new IllegalStateException("factory already closed");
+			}
+			channel.sendMessage(command, data1, data2);
+		}
+
+		/**
+		 * Stop this sound.
+		 */
+		public void stop() {
+			if (channel == null) {
+				throw new IllegalStateException("already stopped");
+			}
+
+			if (getSendAllNotesOff()) {
+				sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_ALL_NOTES_OFF,
+						UNUSED_DATA);
+			}
+
+			channel.release();
+			channel = null;
+
+			super.stop();
+		}
+	}
+
+	public boolean getSendAllNotesOff() {
+		return sendAllNotesOff;
+	}
+
+	public void setSendAllNotesOff(boolean sendAllNotesOff) {
+		this.sendAllNotesOff = sendAllNotesOff;
+	}
 }

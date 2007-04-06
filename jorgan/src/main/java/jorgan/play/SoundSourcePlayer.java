@@ -99,8 +99,7 @@ public class SoundSourcePlayer extends Player {
 	public void elementChanged(OrganEvent event) {
 		SoundSource soundSource = (SoundSource) getElement();
 
-		if (soundSource.getDevice() == null
-				&& Configuration.instance().getWarnWithoutDevice()) {
+		if (soundSource.getDevice() == null && getWarnDevice()) {
 			removeProblem(errorDevice);
 			addProblem(warningDevice.value(null));
 		} else {

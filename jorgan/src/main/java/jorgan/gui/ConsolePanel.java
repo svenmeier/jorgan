@@ -21,7 +21,6 @@ package jorgan.gui;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.KeyEventPostProcessor;
@@ -58,8 +57,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 
-import jorgan.config.ConfigurationEvent;
-import jorgan.config.ConfigurationListener;
+import jorgan.App;
 import jorgan.disposition.Activateable;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -76,7 +74,6 @@ import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
 import jorgan.gui.console.View;
-import jorgan.gui.construct.Configuration;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
 import jorgan.gui.construct.layout.AlignCenterVerticalLayout;
@@ -135,6 +132,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 */
 	private boolean constructing = false;
 
+	private int grid = 1;
+
+	private boolean interpolate = false;
+
 	/**
 	 * The element that is currently pressed.
 	 */
@@ -159,11 +160,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * The listener to play changes.
 	 */
 	private PlayListener playListener = new InternalPlayListener();
-
-	/**
-	 * The listener to configuration changes.
-	 */
-	private ConfigurationListener configListener = new InternalConfigurationListener();
 
 	/**
 	 * The listener to mouse (motion) events in play modus.
@@ -232,16 +228,13 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * Create a view panel.
 	 */
 	public ConsolePanel() {
+		App.getBias().register(this);
 
 		// must report to be opaque so containing scrollPane can use blitting
 		setOpaque(true);
 
 		// must be focusable to be used in fullScreen
 		setFocusable(true);
-
-		setFont(new Font("Arial", Font.PLAIN, 12));
-		setBackground(Color.white);
-		setForeground(Color.black);
 
 		ToolTipManager.sharedInstance().registerComponent(this);
 		new DropTarget(this, dropTargetListener);
@@ -286,6 +279,22 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		super.removeNotify();
 	}
 
+	public boolean getInterpolate() {
+		return interpolate;
+	}
+
+	public void setInterpolate(boolean interpolate) {
+		this.interpolate = interpolate;
+	}
+
+	public int getGrid() {
+		return grid;
+	}
+
+	public void setGrid(int grid) {
+		this.grid = grid;
+	}
+
 	public Dimension getPreferredScrollableViewportSize() {
 		return getPreferredSize();
 	}
@@ -323,8 +332,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			viewPos = screenToView(visibleRect.x);
 		}
 
-		int grid = jorgan.gui.construct.Configuration.instance().getGrid();
-
 		int newViewPos;
 		if (direction > 0) {
 			newViewPos = viewPos + grid;
@@ -353,11 +360,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			this.session.removeOrganListener(organListener);
 			this.session.removeSelectionListener(selectionListener);
 			this.session.removePlayerListener(playListener);
-
-			jorgan.gui.console.Configuration.instance()
-					.removeConfigurationListener(configListener);
-			jorgan.gui.construct.Configuration.instance()
-					.removeConfigurationListener(configListener);
 		}
 
 		this.session = session;
@@ -366,11 +368,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			this.session.addOrganListener(organListener);
 			this.session.addSelectionListener(selectionListener);
 			this.session.addPlayerListener(playListener);
-
-			jorgan.gui.console.Configuration.instance()
-					.addConfigurationListener(configListener);
-			jorgan.gui.construct.Configuration.instance()
-					.addConfigurationListener(configListener);
 
 			setConstructing(!this.session.getPlay().isOpen());
 		}
@@ -639,7 +636,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		if (console != null) {
 			AffineTransform original = graphics2D.getTransform();
 			graphics2D.scale(console.getZoom(), console.getZoom());
-			if (jorgan.gui.console.Configuration.instance().getInterpolate()) {
+			if (interpolate) {
 				graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
 						RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 			}
@@ -778,20 +775,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	}
 
 	/**
-	 * The listener to configuration events.
-	 */
-	private class InternalConfigurationListener implements
-			ConfigurationListener {
-
-		public void configurationChanged(ConfigurationEvent ev) {
-			setConsole(console);
-		}
-
-		public void configurationBackup(ConfigurationEvent event) {
-		}
-	}
-
-	/**
 	 * The mouse listener for construction.
 	 */
 	private class ConstructionHandler extends MouseInputAdapter {
@@ -911,8 +894,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 
 		private int grid(int pos) {
-			int grid = Configuration.instance().getGrid();
-
 			return (pos + grid / 2) / grid * grid;
 		}
 
@@ -987,9 +968,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 
 		private void paintSelection(Graphics g) {
-			g
-					.setColor(jorgan.gui.construct.Configuration.instance()
-							.getColor());
+			g.setColor(getForeground());
 			g.setXORMode(Color.white);
 
 			for (Element selectedElement : selectedElements) {
@@ -1009,9 +988,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 
 		private void paintSelector(Graphics g) {
-			g
-					.setColor(jorgan.gui.construct.Configuration.instance()
-							.getColor());
+			g.setColor(getForeground());
 			g.setXORMode(Color.white);
 
 			if (pressedElement == null && mouseFrom != null && mouseTo != null) {
@@ -1134,7 +1111,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				int x = screenToView(dtde.getLocation().x);
 				int y = screenToView(dtde.getLocation().y);
 
-				new StackVerticalLayout(x, y).layout(null, views);
+				new StackVerticalLayout(x, y, grid).layout(null, views);
 
 				dtde.dropComplete(true);
 			} catch (RuntimeException ex) {

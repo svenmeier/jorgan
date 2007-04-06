@@ -97,14 +97,14 @@ public abstract class ActivateablePlayer extends Player {
 		Activateable activateable = (Activateable) getElement();
 
 		if ((activateable.getActivateMessage() == null)
-				&& Configuration.instance().getWarnWithoutMessage()) {
+				&& getWarnMessage()) {
 			addProblem(warningActivateMessage.value(null));
 		} else {
 			removeProblem(warningActivateMessage);
 		}
 
 		if ((activateable.getDeactivateMessage() == null)
-				&& Configuration.instance().getWarnWithoutMessage()) {
+				&& getWarnMessage()) {
 			addProblem(warningDeactivateMessage.value(null));
 		} else {
 			removeProblem(warningDeactivateMessage);

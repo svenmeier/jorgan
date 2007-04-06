@@ -148,6 +148,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		dialog = messageOptionPane.createDialog(panel.getTopLevelAncestor(),
 				i18n.getString("messageOptionPane.title"));
 		dialog.setVisible(true);
+		dialog.dispose();
 		dialog = null;
 
 		recorder.close();
@@ -201,12 +202,14 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
-		public void messageRecorded(ShortMessage message) {
+		public boolean messageRecorded(ShortMessage message) {
 			status = message.getCommand() | message.getChannel();
 			data1 = message.getData1();
 			data2 = message.getData2();
 
 			SwingUtilities.invokeLater(this);
+			
+			return false;
 		}
 
 		public void run() {

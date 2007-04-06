@@ -106,8 +106,7 @@ public class KeyboardPlayer extends Player {
 	public void elementChanged(OrganEvent event) {
 		Keyboard keyboard = (Keyboard) getElement();
 
-		if (keyboard.getDevice() == null
-				&& Configuration.instance().getWarnWithoutDevice()) {
+		if (keyboard.getDevice() == null && getWarnDevice()) {
 			removeProblem(errorDevice);
 			addProblem(warningDevice.value(null));
 		} else {

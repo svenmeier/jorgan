@@ -41,8 +41,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import jorgan.config.ConfigurationEvent;
-import jorgan.config.ConfigurationListener;
+import jorgan.App;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
@@ -54,9 +53,10 @@ import jorgan.gui.construct.ReferencesPanel;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.midi.MidiMonitor;
-import jorgan.gui.midi.VirtualKeyboard;
+import jorgan.gui.play.MemoryPanel;
 import jorgan.gui.play.PlayMonitor;
 import jorgan.gui.play.ProblemsPanel;
+import jorgan.gui.play.VirtualKeyboard;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
@@ -117,11 +117,6 @@ public class OrganPanel extends JPanel {
 	 */
 	private PlayListener playerListener = new InternalPlayerListener();
 
-	/**
-	 * The listener to configuration changes.
-	 */
-	private InternalConfigurationListener configurationListener = new InternalConfigurationListener();
-
 	/*
 	 * The outer dockingPane that holds all views.
 	 */
@@ -177,10 +172,16 @@ public class OrganPanel extends JPanel {
 
 	private ForwardAction forwardAction = new ForwardAction();
 
+	private String playDocking;
+
+	private String constructDocking;
+
 	/**
 	 * Create a new organPanel.
 	 */
 	public OrganPanel() {
+		App.getBias().register(this);
+
 		setLayout(new BorderLayout());
 
 		outer.setBorder(new EmptyBorder(2, 2, 2, 2));
@@ -192,22 +193,6 @@ public class OrganPanel extends JPanel {
 		skinsDockable.setEnabled(false);
 
 		loadDocking();
-	}
-
-	public void addNotify() {
-		super.addNotify();
-
-		Configuration configuration = Configuration.instance();
-		configuration.addConfigurationListener(configurationListener);
-	}
-
-	public void removeNotify() {
-		Configuration.instance().removeConfigurationListener(
-				configurationListener);
-
-		saveDocking();
-
-		super.removeNotify();
 	}
 
 	/**
@@ -378,6 +363,8 @@ public class OrganPanel extends JPanel {
 			propertiesDockable.setEnabled(constructing);
 
 			updateHistory();
+
+			App.getBias().changed(this);
 		}
 	}
 
@@ -385,9 +372,9 @@ public class OrganPanel extends JPanel {
 		try {
 			String docking;
 			if (constructing) {
-				docking = Configuration.instance().getConstructDocking();
+				docking = constructDocking;
 			} else {
-				docking = Configuration.instance().getPlayDocking();
+				docking = playDocking;
 			}
 			Reader reader = new StringReader(docking);
 			OrganPanelPersister persister = new OrganPanelPersister(reader);
@@ -417,23 +404,12 @@ public class OrganPanel extends JPanel {
 			persister.save();
 			String docking = writer.toString();
 			if (constructing) {
-				Configuration.instance().setConstructDocking(docking);
+				constructDocking = docking;
 			} else {
-				Configuration.instance().setPlayDocking(docking);
+				playDocking = docking;
 			}
 		} catch (Exception ex) {
 			logger.log(Level.FINE, "unable to save docking", ex);
-		}
-	}
-
-	private class InternalConfigurationListener implements
-			ConfigurationListener {
-
-		public void configurationChanged(ConfigurationEvent ev) {
-		}
-
-		public void configurationBackup(ConfigurationEvent event) {
-			saveDocking();
 		}
 	}
 
@@ -659,5 +635,21 @@ public class OrganPanel extends JPanel {
 			dock.setBorder(new Eclipse3Border());
 			return dock;
 		}
+	}
+
+	public String getConstructDocking() {
+		return constructDocking;
+	}
+
+	public void setConstructDocking(String constructDocking) {
+		this.constructDocking = constructDocking;
+	}
+
+	public String getPlayDocking() {
+		return playDocking;
+	}
+
+	public void setPlayDocking(String playDocking) {
+		this.playDocking = playDocking;
 	}
 }

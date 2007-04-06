@@ -21,32 +21,31 @@ package jorgan.gui.construct.layout;
 import java.util.List;
 
 import jorgan.gui.console.View;
-import jorgan.gui.construct.Configuration;
 
 public class StackHorizontalLayout extends ViewLayout {
 
-    private int grid;
+	private int grid;
 
-    private int x;
+	private int x;
 
-    private int y;
+	private int y;
 
-    public StackHorizontalLayout() {
-        super(null);
-    }
+	public StackHorizontalLayout(int grid) {
+		super(null);
 
-    protected void init(View pressed, List<View> views) {
+		this.grid = grid;
+	}
 
-        grid = Configuration.instance().getGrid();
+	protected void init(View pressed, List<View> views) {
 
-        x = pressed.getX() - (x % grid);
-        y = pressed.getY() - (y % grid);
-    }
+		x = pressed.getX() - (x % grid);
+		y = pressed.getY() - (y % grid);
+	}
 
-    protected void visit(View view, int index) {
-        changePosition(view, x, y);
+	protected void visit(View view, int index) {
+		changePosition(view, x, y);
 
-        int width = view.getWidth();
-        x += (width - (width % grid)) + grid;
-    }
+		int width = view.getWidth();
+		x += (width - (width % grid)) + grid;
+	}
 }

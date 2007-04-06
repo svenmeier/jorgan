@@ -54,8 +54,7 @@ public class InitiatorPlayer extends Player {
 
 		Initiator initiator = (Initiator) getElement();
 
-		if (initiator.getMessage() == null
-				&& Configuration.instance().getWarnWithoutMessage()) {
+		if (initiator.getMessage() == null && getWarnMessage()) {
 			addProblem(warningMessage.value(null));
 		} else {
 			removeProblem(warningMessage);

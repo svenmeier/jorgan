@@ -13,30 +13,22 @@ public class I18N {
 
 	private static Logger logger = Logger.getLogger(I18N.class.getName());
 
-	private String resourcePath;
+	private String name;
+
 	private String keyPrefix;
 
-	private ResourceBundle resources;
+	private ResourceBundle bundle;
 
 	private I18N(Class clazz) {
-		keyPrefix = "";
+		name = clazz.getName();
 
-		resourcePath = clazz.getName();
-		while (true) {
-			int index = resourcePath.lastIndexOf('.');
-			if (index == -1) {
-				resources = new EmptyResourceBundle();
-				break;
-			}
-
-			keyPrefix = resourcePath.substring(index + 1) + '.' + keyPrefix;
-			resourcePath = resourcePath.substring(0, index);
-
-			try {
-				resources = ResourceBundle.getBundle(resourcePath + ".i18n");
-				break;
-			} catch (MissingResourceException tryAgain) {
-			}
+		int index = name.lastIndexOf('.');
+		keyPrefix = name.substring(index + 1) + ".";
+		try {
+			bundle = ResourceBundle.getBundle(name.substring(0, index)
+					+ ".i18n");
+		} catch (MissingResourceException ex) {
+			bundle = new EmptyResourceBundle();
 		}
 	}
 
@@ -51,9 +43,9 @@ public class I18N {
 		key = keyPrefix + key;
 
 		try {
-			return resources.getString(key);
+			return bundle.getString(key);
 		} catch (MissingResourceException ex) {
-			logger.info("missing resource '" + resourcePath + "." + key + "'");
+			logger.info("missing resource '" + key + "'");
 
 			return key;
 		}
@@ -72,11 +64,11 @@ public class I18N {
 
 	private static class EmptyResourceBundle extends ResourceBundle {
 		public Enumeration<String> getKeys() {
-			return Collections.enumeration(Collections.<String>emptyList());
+			return Collections.enumeration(Collections.<String> emptyList());
 		}
 
 		protected Object handleGetObject(String key) {
-			return null;
+			return key;
 		}
 	}
 }

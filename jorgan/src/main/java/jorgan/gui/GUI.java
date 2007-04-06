@@ -8,6 +8,7 @@ import java.io.File;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import jorgan.App;
 import jorgan.UI;
 import spin.over.SpinOverEvaluator;
 
@@ -18,6 +19,14 @@ public class GUI implements UI {
 
 	private FrameDisposer disposer = new FrameDisposer();
 
+	private boolean showAboutOnStartup = true;
+
+	private boolean useSystemLookAndFeel = true;
+
+	public GUI() {
+		App.getBias().register(this);
+	}
+
 	/**
 	 * Start the user interaction.
 	 * 
@@ -26,7 +35,7 @@ public class GUI implements UI {
 	 */
 	public void display(final File file) {
 
-		if (jorgan.gui.Configuration.instance().getShowAboutOnStartup()) {
+		if (showAboutOnStartup) {
 			AboutPanel.showSplash();
 		}
 
@@ -55,7 +64,7 @@ public class GUI implements UI {
 	}
 
 	private void initSwing() {
-		if (Configuration.instance().getUseSystemLookAndFeel()) {
+		if (useSystemLookAndFeel) {
 			try {
 				UIManager.setLookAndFeel(UIManager
 						.getSystemLookAndFeelClassName());
@@ -79,19 +88,19 @@ public class GUI implements UI {
 	private class FrameDisposer extends ComponentAdapter {
 
 		private boolean disposed = false;
-		
+
 		private OrganFrame frame;
-		
+
 		private void attach(OrganFrame frame) {
 			frame.addComponentListener(this);
 			this.frame = frame;
 		}
-		
+
 		public synchronized void componentHidden(ComponentEvent e) {
 			frame.dispose();
 
 			disposed = true;
-			
+
 			notify();
 		}
 
@@ -104,5 +113,21 @@ public class GUI implements UI {
 				}
 			}
 		}
+	}
+
+	public boolean getShowAboutOnStartup() {
+		return showAboutOnStartup;
+	}
+
+	public void setShowAboutOnStartup(boolean showAboutOnStartup) {
+		this.showAboutOnStartup = showAboutOnStartup;
+	}
+
+	public boolean getUseSystemLookAndFeel() {
+		return useSystemLookAndFeel;
+	}
+
+	public void setUseSystemLookAndFeel(boolean useSystemLookAndFeel) {
+		this.useSystemLookAndFeel = useSystemLookAndFeel;
 	}
 }

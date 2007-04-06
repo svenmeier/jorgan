@@ -117,6 +117,7 @@ public class DebugPanel extends JPanel {
 		dialog.addAction(new ClearAction());
 		dialog.addAction(new CopyAction());
 
-		dialog.start();
+		dialog.autoPosition();
+		dialog.setVisible(true);
 	}
 }

@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import jorgan.io.Configuration;
-
 /**
  * A history utility.
  */
@@ -40,7 +38,9 @@ public class History {
 
 	private List<Integer> existingNumbers;
 
-	public History(File file) {
+	private int max;
+
+	public History(File file, int max) {
 		this.file = file;
 
 		this.parent = file.getParentFile();
@@ -55,10 +55,9 @@ public class History {
 
 		if (file.exists()) {
 
-			deleteExceedingHistories(Math.max(0, Configuration.instance()
-					.getHistorySize() - 1));
+			deleteExceedingHistories(Math.max(0, max - 1));
 
-			if (Configuration.instance().getHistorySize() > 0) {
+			if (max > 0) {
 				addHistory();
 			}
 		}

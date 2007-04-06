@@ -28,17 +28,15 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.config.ConfigurationEvent;
-import jorgan.config.ConfigurationListener;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Console;
 import jorgan.disposition.Coupler;
-import jorgan.disposition.Regulator;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Regulator;
 import jorgan.disposition.SoundSource;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Swell;
@@ -92,8 +90,6 @@ public class OrganPlay {
 		for (int e = 0; e < organ.getElementCount(); e++) {
 			createPlayer(organ.getElement(e));
 		}
-
-		Configuration.instance().addConfigurationListener(eventHandler);
 	}
 
 	public Organ getOrgan() {
@@ -112,8 +108,6 @@ public class OrganPlay {
 
 		organ.removeOrganListener(eventHandler);
 		organ = null;
-
-		Configuration.instance().removeConfigurationListener(eventHandler);
 
 		listeners.clear();
 	}
@@ -357,8 +351,7 @@ public class OrganPlay {
 		};
 	}
 
-	private class EventHandler extends OrganAdapter implements
-			ConfigurationListener {
+	private class EventHandler extends OrganAdapter {
 
 		public void elementChanged(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
@@ -379,19 +372,6 @@ public class OrganPlay {
 			synchronized (CHANGE_LOCK) {
 				dropPlayer(event.getElement());
 			}
-		}
-
-		public void configurationChanged(ConfigurationEvent ev) {
-			synchronized (CHANGE_LOCK) {
-				Iterator<Player> iterator = players.values().iterator();
-				while (iterator.hasNext()) {
-					Player player = iterator.next();
-					player.elementChanged(null);
-				}
-			}
-		}
-
-		public void configurationBackup(ConfigurationEvent event) {
 		}
 	}
 }
