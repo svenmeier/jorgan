@@ -19,7 +19,6 @@
 package jorgan.gui;
 
 import java.awt.BorderLayout;
-import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
@@ -29,7 +28,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.HashMap;
@@ -53,14 +51,13 @@ import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import jorgan.config.ConfigurationEvent;
-import jorgan.config.ConfigurationListener;
+import jorgan.App;
 import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.config.ConfigurationDialog;
 import jorgan.gui.imports.ImportWizard;
+import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
 import jorgan.swing.Browser;
 import jorgan.swing.DebugPanel;
@@ -77,6 +74,12 @@ public class OrganFrame extends JFrame {
 
 	private static I18N i18n = I18N.get(OrganFrame.class);
 
+	public static final int REGISTRATION_CHANGES_CONFIRM = 0;
+
+	public static final int REGISTRATION_CHANGES_SAVE = 1;
+
+	public static final int REGISTRATION_CHANGES_IGNORE = 2;
+
 	/**
 	 * The suffix used for the frame title.
 	 */
@@ -86,11 +89,6 @@ public class OrganFrame extends JFrame {
 	 * Tweak Mac Os X appearance.
 	 */
 	private TweakMac tweakMac;
-
-	/**
-	 * The menuBar of this frame.
-	 */
-	private JMenuBar menuBar = new JMenuBar();
 
 	/**
 	 * The toolBar of this frame.
@@ -117,11 +115,6 @@ public class OrganFrame extends JFrame {
 	 */
 	private OrganSession session = new OrganSession();
 
-	/**
-	 * The listener to changes to the configuration.
-	 */
-	private ConfigurationListener configurationListener = new InternalConfigurationListener();
-
 	/*
 	 * The actions.
 	 */
@@ -141,7 +134,7 @@ public class OrganFrame extends JFrame {
 
 	private FullScreenAction fullScreenAction = new FullScreenAction();
 
-	private ConfigurationAction configurationAction = new ConfigurationAction();
+	private PreferencesAction configurationAction = new PreferencesAction();
 
 	private WebsiteAction websiteAction = new WebsiteAction();
 
@@ -149,11 +142,19 @@ public class OrganFrame extends JFrame {
 
 	private JToggleButton constructButton = new JToggleButton();
 
+	private JMenu recentsMenu = new JMenu();
+
+	private boolean fullScreenOnLoad = false;
+
+	private int handleRegistrationChanges;
+
 	/**
 	 * Create a new organFrame.
 	 */
 	public OrganFrame() {
+		App.getBias().register(this);
 
+		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 
 		// not neccessary for XP but for older Windows LookAndFeel
@@ -212,47 +213,17 @@ public class OrganFrame extends JFrame {
 
 		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
 
-		newOrgan();
-
-		updateMenu();
-	}
-
-	/**
-	 * Set the file of the current organ.
-	 */
-	private void setFile(File file) {
-
-		this.file = file;
-		if (file == null) {
-			setTitle(TITEL_SUFFIX);
-		} else {
-			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(file) + " - "
-					+ TITEL_SUFFIX);
-		}
-	}
-
-	/**
-	 * Update the menu.
-	 */
-	private void updateMenu() {
-
-		menuBar.removeAll();
 		JMenu fileMenu = new JMenu(i18n.getString("fileMenu.text"));
 		menuBar.add(fileMenu);
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
+		recentsMenu.setText(i18n.getString("recentsMenu.text"));
+		fileMenu.add(recentsMenu);
+		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
 		fileMenu.addSeparator();
 		fileMenu.add(importAction);
-		java.util.List recents = jorgan.io.Configuration.instance()
-				.getRecentFiles();
-		if (recents.size() > 0) {
-			fileMenu.addSeparator();
-			for (int r = 0; r < recents.size(); r++) {
-				fileMenu.add(new RecentAction(r + 1, (File) recents.get(r)));
-			}
-		}
 		if (!tweakMac.isTweaked()) {
 			fileMenu.addSeparator();
 			fileMenu.add(exitAction);
@@ -278,8 +249,51 @@ public class OrganFrame extends JFrame {
 		helpMenu.add(websiteAction);
 		helpMenu.add(aboutAction);
 
-		menuBar.revalidate();
-		menuBar.repaint();
+		buildRecentsMenu();
+
+		newOrgan();
+	}
+
+	private void buildRecentsMenu() {
+		recentsMenu.removeAll();
+
+		List<File> recents = new DispositionStream().getRecentFiles();
+		for (int r = 0; r < recents.size(); r++) {
+			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
+		}
+
+		recentsMenu.revalidate();
+		recentsMenu.repaint();
+	}
+
+	public boolean getFullScreenOnLoad() {
+		return fullScreenOnLoad;
+	}
+
+	public void setFullScreenOnLoad(boolean fullScreenOnLoad) {
+		this.fullScreenOnLoad = fullScreenOnLoad;
+	}
+
+	public int getHandleRegistrationChanges() {
+		return handleRegistrationChanges;
+	}
+
+	public void setHandleRegistrationChanges(int handleRegistrationChanges) {
+		this.handleRegistrationChanges = handleRegistrationChanges;
+	}
+
+	/**
+	 * Set the file of the current organ.
+	 */
+	private void setFile(File file) {
+
+		this.file = file;
+		if (file == null) {
+			setTitle(TITEL_SUFFIX);
+		} else {
+			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(file) + " - "
+					+ TITEL_SUFFIX);
+		}
 	}
 
 	/**
@@ -292,10 +306,7 @@ public class OrganFrame extends JFrame {
 			}
 			session.getPlay().dispose();
 
-			Configuration.instance().setFrameState(getExtendedState());
-			Configuration.instance().setFrameBounds(getBounds());
-			jorgan.io.Configuration.instance().removeConfigurationListener(
-					configurationListener);
+			App.getBias().changed(this);
 
 			setVisible(false);
 		}
@@ -351,8 +362,8 @@ public class OrganFrame extends JFrame {
 	 */
 	public void openOrgan() {
 		if (canCloseOrgan()) {
-			JFileChooser chooser = new JFileChooser(jorgan.io.Configuration
-					.instance().getRecentDirectory());
+			JFileChooser chooser = new JFileChooser(new DispositionStream()
+					.getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				openOrgan(chooser.getSelectedFile());
@@ -368,25 +379,18 @@ public class OrganFrame extends JFrame {
 	 */
 	public void openOrgan(File file) {
 		try {
-			Organ organ = new DispositionStream()
-					.read(new FileInputStream(file));
-
-			// Organ organ = (Organ) new DispositionReader(new FileInputStream(
-			// file)).read();
-
-			jorgan.io.Configuration.instance().addRecentFile(file);
+			Organ organ = new DispositionStream().read(file);
 
 			setFile(file);
 
 			setOrgan(new OrganSession(organ));
 
-			if (Configuration.instance().getFullScreenOnLoad()) {
+			buildRecentsMenu();
+			if (fullScreenOnLoad) {
 				fullScreenAction.goFullScreen();
 			}
 		} catch (IOException ex) {
 			showMessage("openOrganException", new String[] { file.getName() });
-
-			jorgan.io.Configuration.instance().removeRecentFile(file);
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
@@ -418,12 +422,11 @@ public class OrganFrame extends JFrame {
 		try {
 			new DispositionStream().write(session.getOrgan(), file);
 
-			jorgan.io.Configuration.instance().addRecentFile(file);
-
 			setFile(file);
 
 			saveAction.clearChanges();
 
+			buildRecentsMenu();
 			showStatus("organSaved", new Object[0]);
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
@@ -447,8 +450,8 @@ public class OrganFrame extends JFrame {
 	 * @return was the organ saved
 	 */
 	public boolean saveOrganAs() {
-		JFileChooser chooser = new JFileChooser(jorgan.io.Configuration
-				.instance().getRecentDirectory());
+		JFileChooser chooser = new JFileChooser(new DispositionStream()
+				.getRecentDirectory());
 		chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 		if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 			File file = jorgan.io.DispositionFileFilter.addSuffix(chooser
@@ -507,21 +510,6 @@ public class OrganFrame extends JFrame {
 
 		JOptionPane.showMessageDialog(this, message, i18n
 				.getString("message.title"), JOptionPane.ERROR_MESSAGE);
-	}
-
-	public void setVisible(boolean visible) {
-		if (visible) {
-			// realize first so changing state has effect
-			pack();
-			jorgan.io.Configuration.instance().addConfigurationListener(
-					configurationListener);
-			Rectangle rect = Configuration.instance().getFrameBounds();
-			if (rect != null) {
-				setBounds(rect);
-			}
-			setExtendedState(Configuration.instance().getFrameState());
-		}
-		super.setVisible(visible);
 	}
 
 	/**
@@ -630,10 +618,8 @@ public class OrganFrame extends JFrame {
 		 * @return <code>true</code> if changes are known
 		 */
 		public boolean hasChanges() {
-			return dispositionChanges
-					|| registrationChanges
-					&& jorgan.io.Configuration.instance()
-							.getRegistrationChanges() != jorgan.io.Configuration.REGISTRATION_CHANGES_IGNORE;
+			return dispositionChanges || registrationChanges
+					&& handleRegistrationChanges != REGISTRATION_CHANGES_IGNORE;
 		}
 
 		/**
@@ -643,8 +629,7 @@ public class OrganFrame extends JFrame {
 		 */
 		public boolean confirmChanges() {
 			return dispositionChanges
-					|| jorgan.io.Configuration.instance()
-							.getRegistrationChanges() == jorgan.io.Configuration.REGISTRATION_CHANGES_CONFIRM;
+					|| handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM;
 		}
 
 		/**
@@ -757,20 +742,17 @@ public class OrganFrame extends JFrame {
 	}
 
 	/**
-	 * The action that shows the configuration.
+	 * The action that shows the preferences.
 	 */
-	private class ConfigurationAction extends AbstractAction {
-		private ConfigurationAction() {
-			putValue(Action.NAME, i18n.getString("configurationAction.name"));
+	private class PreferencesAction extends AbstractAction {
+		private PreferencesAction() {
+			putValue(Action.NAME, i18n.getString("preferencesAction.name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("configurationAction.shortDescription"));
+					.getString("preferencesAction.shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			ConfigurationDialog dialog = ConfigurationDialog.create(
-					OrganFrame.this, jorgan.Configuration.instance(), false);
-			dialog.start(600, 600);
-			dialog.dispose();
+			PreferencesDialog.show(OrganFrame.this);
 		}
 	}
 
@@ -856,20 +838,6 @@ public class OrganFrame extends JFrame {
 
 		public void actionPerformed(ActionEvent ev) {
 			close();
-		}
-	}
-
-	/**
-	 * Listener to configuration changes.
-	 */
-	private class InternalConfigurationListener implements
-			ConfigurationListener {
-
-		public void configurationChanged(ConfigurationEvent ev) {
-			updateMenu();
-		}
-
-		public void configurationBackup(ConfigurationEvent event) {
 		}
 	}
 }

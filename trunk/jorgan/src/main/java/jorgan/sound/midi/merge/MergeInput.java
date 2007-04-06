@@ -20,27 +20,40 @@ package jorgan.sound.midi.merge;
 
 public class MergeInput {
 
-  private String device;
-  private int channel;
-  
-  public MergeInput(String device) {
-    this(device, -1);
-  }
-  
-  public MergeInput(String device, int channel) {
-    this.device  = device;
-    this.channel = channel;
-  }
-  
-  public String getDevice() {
-    return device;
-  }
-  
-  public int getChannel() {
-    return channel;
-  }
-  
-  public void setChannel(int channel) {
-    this.channel = channel;
-  } 
+	private String device;
+
+	private int channel;
+
+	public MergeInput(String device) {
+
+		int colon = device.indexOf(':');
+		if (colon != -1) {
+			this.channel = Integer.parseInt(device.substring(0, colon));
+
+			device = device.substring(colon + 1);
+		}
+
+		this.device = device;
+	}
+
+	public MergeInput(String device, int channel) {
+		this.device = device;
+		this.channel = channel;
+	}
+
+	public String getDevice() {
+		return device;
+	}
+
+	public int getChannel() {
+		return channel;
+	}
+
+	public void setChannel(int channel) {
+		this.channel = channel;
+	}
+
+	public String toString() {
+		return channel + ":" + device;
+	}
 }

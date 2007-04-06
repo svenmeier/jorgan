@@ -245,25 +245,14 @@ public class StandardDialog extends JDialog {
 	}
 
 	/**
-	 * Start with the preferred size.
+	 * Position automatically.
 	 */
-	public void start() {
+	public void autoPosition() {
 		Dimension dim = getPreferredSize();
-		start(dim.width, dim.height);
-	}
 
-	/**
-	 * Start with the given size.
-	 * 
-	 * @param width
-	 *            the width
-	 * @param height
-	 *            the height
-	 */
-	public void start(int width, int height) {
-		setSize(width, height);
+		setSize(dim.width, dim.height);
+		
 		setLocationRelativeTo(getOwner());
-		setVisible(true);
 	}
 
 	/**

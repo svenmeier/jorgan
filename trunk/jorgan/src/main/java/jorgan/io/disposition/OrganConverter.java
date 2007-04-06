@@ -32,7 +32,7 @@ public class OrganConverter implements Converter {
 
 	public OrganConverter(XStream xstream) {
 		xstream.registerConverter(this);
-		
+
 		xstream.omitField(Element.class, "organ");
 
 		nested = xstream.getConverterLookup().lookupConverterForType(
@@ -62,7 +62,7 @@ public class OrganConverter implements Converter {
 	 *            writer
 	 */
 	protected void marshallVersion(HierarchicalStreamWriter writer) {
-		writer.addAttribute("version", App.getVersion());
+		writer.addAttribute("version", App.getInstance().getVersion());
 	}
 
 	/**

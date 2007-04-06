@@ -18,9 +18,12 @@
  */
 package jorgan.swing.text;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
 
-import javax.swing.*;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 /**
  * A textArea used as a lable with multiple lines.
@@ -32,6 +35,15 @@ public class MultiLineLabel extends JTextArea {
 	 */
 	public MultiLineLabel() {
 		this(0);
+	}
+
+	/**
+	 * Constructor.
+	 */
+	public MultiLineLabel(String text) {
+		this(0);
+
+		setText(text);
 	}
 
 	/**

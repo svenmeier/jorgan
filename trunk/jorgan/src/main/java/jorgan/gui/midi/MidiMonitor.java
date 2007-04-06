@@ -44,7 +44,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.midi.log.Configuration;
+import jorgan.App;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MessageUtils;
@@ -105,6 +105,8 @@ public class MidiMonitor extends DockedPanel {
 
 	private boolean open;
 
+	private int max;
+
 	private List<Message> messages = new ArrayList<Message>();
 
 	private JTable table = new JTable();
@@ -123,6 +125,7 @@ public class MidiMonitor extends DockedPanel {
 	 * Constructor.
 	 */
 	public MidiMonitor() {
+		App.getBias().register(this);
 
 		addTool(new DeviceAction());
 
@@ -192,7 +195,8 @@ public class MidiMonitor extends DockedPanel {
 		}
 		selectionDialog.setBody(selectionPanel);
 		selectionPanel.setDevice(deviceName, deviceOut);
-		selectionDialog.start();
+		selectionDialog.autoPosition();
+		selectionDialog.setVisible(true);
 
 		if (!selectionDialog.wasCancelled()) {
 			setDevice(selectionPanel.getDeviceName(), selectionPanel
@@ -293,7 +297,7 @@ public class MidiMonitor extends DockedPanel {
 					table.scrollRectToVisible(table.getCellRect(row, 0, true));
 				}
 
-				int over = messages.size() - Configuration.instance().getMax();
+				int over = messages.size() - max;
 				if (over > 0) {
 					for (int m = 0; m < over; m++) {
 						messages.remove(0);
@@ -515,5 +519,13 @@ public class MidiMonitor extends DockedPanel {
 		public void actionPerformed(ActionEvent e) {
 			clear();
 		}
+	}
+
+	public int getMax() {
+		return max;
+	}
+
+	public void setMax(int max) {
+		this.max = max;
 	}
 }

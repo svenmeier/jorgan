@@ -52,7 +52,6 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 			if (midiMerger == null) {
 				midiMerger = new MidiMerger(info);
 			}
-			midiMerger.setMergeInputs(Configuration.instance().getInputs());
 			
 			return midiMerger;
 		}

@@ -19,8 +19,6 @@
 package jorgan.shell;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
@@ -61,10 +59,15 @@ public class OrganShell implements UI {
 
 	private InternalPlayerListener playerListener = new InternalPlayerListener();
 
+	private boolean useDefaultEncoding;
+
+	private String encoding;
+
 	/**
 	 * Create a new organShell.
 	 */
 	public OrganShell() {
+		App.getBias().register(this);
 
 		List<Command> commands = new ArrayList<Command>();
 		commands.add(new HelpCommand());
@@ -85,10 +88,9 @@ public class OrganShell implements UI {
 	 *            optional file that contains an organ
 	 */
 	public void display(File file) {
-		writeMessage("splash", new Object[] { App.getVersion() });
+		writeMessage("splash", new Object[] { App.getInstance().getVersion() });
 
-		if (!Configuration.instance().getUseDefaultEncoding()) {
-			String encoding = Configuration.instance().getEncoding();
+		if (!useDefaultEncoding) {
 			try {
 				interpreter.setEncoding(encoding);
 
@@ -115,12 +117,9 @@ public class OrganShell implements UI {
 	 */
 	public void openOrgan(File file) {
 		try {
-			Organ organ = new DispositionStream()
-					.read(new FileInputStream(file));
+			Organ organ = new DispositionStream().read(file);
 
 			this.file = file;
-
-			jorgan.io.Configuration.instance().addRecentFile(file);
 
 			setOrgan(organ);
 
@@ -167,9 +166,7 @@ public class OrganShell implements UI {
 	 */
 	protected void saveOrgan() {
 		try {
-			new DispositionStream().write(organ, new FileOutputStream(file));
-
-			jorgan.io.Configuration.instance().addRecentFile(file);
+			new DispositionStream().write(organ, file);
 
 			writeMessage("organSaved", new Object[0]);
 		} catch (Exception ex) {
@@ -208,12 +205,11 @@ public class OrganShell implements UI {
 	}
 
 	private void writeEncoding() {
-		if (Configuration.instance().getUseDefaultEncoding()) {
+		if (useDefaultEncoding) {
 			String defaultEncoding = System.getProperty("file.encoding");
 			writeMessage("defaultEncoding", new Object[] { defaultEncoding });
 		} else {
-			writeMessage("currentEncoding", new Object[] { Configuration
-					.instance().getEncoding() });
+			writeMessage("currentEncoding", new Object[] { encoding });
 		}
 	}
 
@@ -322,12 +318,11 @@ public class OrganShell implements UI {
 					String defaultEncoding = System
 							.getProperty("file.encoding");
 					if (defaultEncoding.equalsIgnoreCase(param)) {
-						Configuration.instance().setUseDefaultEncoding(true);
+						useDefaultEncoding = true;
 					} else {
-						Configuration.instance().setEncoding(param);
-						Configuration.instance().setUseDefaultEncoding(false);
+						useDefaultEncoding = false;
+						encoding = param;
 					}
-					Configuration.instance().backup();
 				} catch (UnsupportedEncodingException ex) {
 					writeMessage("unsupportedEncoding", new Object[] { param });
 					return;
@@ -347,7 +342,7 @@ public class OrganShell implements UI {
 		}
 
 		public void execute(String param) {
-			List recents = jorgan.io.Configuration.instance().getRecentFiles();
+			List recents = new DispositionStream().getRecentFiles();
 			if (recents.size() == 0) {
 				writeMessage("recentCommand.none", new Object[0]);
 				return;
@@ -497,5 +492,21 @@ public class OrganShell implements UI {
 		}
 
 		return buffer.toString();
+	}
+
+	public String getEncoding() {
+		return encoding;
+	}
+
+	public void setEncoding(String encoding) {
+		this.encoding = encoding;
+	}
+
+	public boolean isUseDefaultEncoding() {
+		return useDefaultEncoding;
+	}
+
+	public void setUseDefaultEncoding(boolean useDefaultEncoding) {
+		this.useDefaultEncoding = useDefaultEncoding;
 	}
 }

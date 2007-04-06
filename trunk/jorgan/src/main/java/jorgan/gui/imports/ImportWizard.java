@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import jorgan.App;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
@@ -179,7 +180,9 @@ public class ImportWizard extends BasicWizard {
 
 		dialog.setWizard(new ImportWizard(organ));
 
-		dialog.start();
+		App.getBias().register(dialog);
+		dialog.setVisible(true);
+		App.getBias().changed(dialog);
 
 		dialog.dispose();
 

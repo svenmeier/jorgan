@@ -20,6 +20,7 @@ package jorgan.gui.console;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
@@ -27,6 +28,7 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
+import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
@@ -55,6 +57,16 @@ public class View {
 
 	protected Point location = new Point();
 
+	private Font defaultFont = new Font("Arial", Font.PLAIN, 12);
+
+	private Color defaultColor = new Color(0, 0, 255);
+
+	private boolean showShortcut;
+
+	private Font shortcutFont;
+
+	private Color shortcutColor;
+
 	/**
 	 * The style of this view.
 	 */
@@ -81,6 +93,8 @@ public class View {
 	public View(Element element) {
 
 		this.element = element;
+
+		App.getBias().register(this);
 	}
 
 	protected void setText(String name, String text) {
@@ -283,8 +297,12 @@ public class View {
 	public void keyReleased(KeyEvent ev) {
 	}
 
-	protected Color getDefaultColor() {
-		return Color.BLACK;
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setDefaultColor(Color color) {
+		this.defaultColor = color;
 	}
 
 	protected Style createDefaultStyle() {
@@ -293,10 +311,42 @@ public class View {
 		TextLayer layer = new TextLayer();
 		layer.setText("${" + TEXT_NAME + "}");
 		layer.setPadding(new Insets(4, 4, 4, 4));
-		layer.setFont(Configuration.instance().getFont());
+		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
 		style.addChild(layer);
 
 		return style;
+	}
+
+	public Font getDefaultFont() {
+		return defaultFont;
+	}
+
+	public void setDefaultFont(Font font) {
+		this.defaultFont = font;
+	}
+
+	public Color getShortcutColor() {
+		return shortcutColor;
+	}
+
+	public void setShortcutColor(Color shortcutColor) {
+		this.shortcutColor = shortcutColor;
+	}
+
+	public Font getShortcutFont() {
+		return shortcutFont;
+	}
+
+	public void setShortcutFont(Font shortcutFont) {
+		this.shortcutFont = shortcutFont;
+	}
+
+	public boolean isShowShortcut() {
+		return showShortcut;
+	}
+
+	public void setShowShortcut(boolean showShortcut) {
+		this.showShortcut = showShortcut;
 	}
 }

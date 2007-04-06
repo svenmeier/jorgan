@@ -213,12 +213,15 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
-		public void messageRecorded(ShortMessage message) {
+		public boolean messageRecorded(ShortMessage message) {
 			if (message.getCommand() == ShortMessage.NOTE_ON) {
 				pitch = message.getData1();
 
 				SwingUtilities.invokeLater(this);
+				
+				return false;
 			}
+			return true;
 		}
 
 		public void run() {

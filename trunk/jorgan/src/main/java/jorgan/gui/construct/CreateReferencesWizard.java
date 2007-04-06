@@ -24,6 +24,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
+import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.swing.wizard.AbstractPage;
@@ -164,7 +165,9 @@ public class CreateReferencesWizard extends BasicWizard {
 
 		dialog.setWizard(new CreateReferencesWizard(organ, element));
 
-		dialog.start();
+		App.getBias().register(dialog);
+		dialog.setVisible(true);
+		App.getBias().changed(dialog);
 
 		dialog.dispose();
 

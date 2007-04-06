@@ -19,6 +19,7 @@
 package jorgan.io;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,9 +28,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
+import jorgan.App;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
@@ -70,6 +74,14 @@ public class DispositionStream {
 
 	private XStream xstream = new XStream(new DomDriver());
 
+	private int recentMax = 4;
+
+	private List<File> recentFiles = new ArrayList<File>();
+
+	private File recentDirectory;
+
+	private int historySize = 0;
+
 	public DispositionStream() {
 		xstream.setMode(XStream.NO_REFERENCES);
 
@@ -100,6 +112,16 @@ public class DispositionStream {
 		xstream.registerConverter(new ReferenceConverter(xstream));
 		xstream.registerConverter(new KeyConverter());
 		xstream.registerConverter(new BooleanArrayConverter());
+
+		App.getBias().register(this);
+	}
+
+	public Organ read(File file) throws IOException {
+		Organ organ = read(new FileInputStream(file));
+
+		addRecentFile(file);
+
+		return organ;
 	}
 
 	public Organ read(InputStream in) throws IOException {
@@ -123,6 +145,14 @@ public class DispositionStream {
 		return organ;
 	}
 
+	public void write(Organ organ, File file) throws IOException {
+		new History(file, historySize).add();
+
+		write(organ, new FileOutputStream(file));
+
+		addRecentFile(file);
+	}
+
 	public void write(Organ organ, OutputStream out) throws IOException {
 
 		try {
@@ -137,9 +167,62 @@ public class DispositionStream {
 		}
 	}
 
-	public void write(Organ organ, File file) throws IOException {
-		new History(file).add();
+	public File getRecentDirectory() {
+		return recentDirectory;
+	}
 
-		write(organ, new FileOutputStream(file));
+	public void setRecentDirectory(File recentDirectory) {
+		this.recentDirectory = recentDirectory;
+	}
+
+	public File getRecentFile() {
+		if (recentFiles.size() > 0) {
+			return recentFiles.get(0);
+		}
+		return null;
+	}
+
+	public void setRecentFiles(List<File> recentFiles) {
+		this.recentFiles = recentFiles;
+	}
+
+	public List<File> getRecentFiles() {
+		return recentFiles;
+	}
+
+	public int getRecentMax() {
+		return recentMax;
+	}
+
+	public void setRecentMax(int recentMax) {
+		this.recentMax = recentMax;
+	}
+
+	private void addRecentFile(File file) {
+		try {
+			File canonical = file.getCanonicalFile();
+
+			recentFiles.remove(file);
+			recentFiles.remove(canonical);
+
+			recentFiles.add(0, canonical);
+			if (recentFiles.size() > recentMax) {
+				recentFiles.remove(recentMax);
+			}
+
+			recentDirectory = canonical.getParentFile();
+		} catch (IOException ex) {
+			// ignoe
+		}
+
+		App.getBias().changed(this);
+	}
+
+	public int getHistorySize() {
+		return historySize;
+	}
+
+	public void setHistorySize(int historySize) {
+		this.historySize = historySize;
 	}
 }

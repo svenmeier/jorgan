@@ -18,7 +18,6 @@
  */
 package jorgan.gui.console;
 
-import java.awt.Font;
 import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -47,7 +46,7 @@ public class ContinuousView extends View {
 	private NumberFormat valueFormat = new DecimalFormat("000");
 
 	private NumberFormat positionFormat = NumberFormat.getPercentInstance();
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -66,7 +65,7 @@ public class ContinuousView extends View {
 		super.initTexts();
 
 		int value = getContinuous().getValue();
-		
+
 		setText(TEXT_VALUE, valueFormat.format(value + 1));
 		setText(TEXT_POSITION, positionFormat.format(value / 127.0d));
 	}
@@ -110,24 +109,20 @@ public class ContinuousView extends View {
 	}
 
 	protected TextLayer createTextNameLayer() {
-		Font font = Configuration.instance().getFont();
-
 		TextLayer layer = new TextLayer();
 		layer.setText("${" + TEXT_NAME + "}");
-		layer.setPadding(new Insets(4, 4, 4 + font.getSize(), 4));
-		layer.setFont(font);
+		layer.setPadding(new Insets(4, 4, 4 + getDefaultFont().getSize(), 4));
+		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
 
 		return layer;
 	}
 
 	protected TextLayer createTextValueLayer() {
-		Font font = Configuration.instance().getFont();
-
 		TextLayer layer = new TextLayer();
 		layer.setText("${" + TEXT_VALUE + "}");
-		layer.setPadding(new Insets(4 + font.getSize(), 4, 4, 4));
-		layer.setFont(font);
+		layer.setPadding(new Insets(4 + getDefaultFont().getSize(), 4, 4, 4));
+		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
 
 		return layer;

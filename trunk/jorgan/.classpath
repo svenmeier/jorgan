@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry path="src" kind="src"/>
-	<classpathentry sourcepath="C:/Dokumente und Einstellungen/Sven/Eigene Dateien/Sven/java/projects/swingx/src" path="lib/swingx.jar" kind="lib"/>
-	<classpathentry path="lib/spin.jar" kind="lib"/>
-	<classpathentry path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0" kind="con"/>
-	<classpathentry sourcepath="C:/Programme/Java/xstream-1.2.1/xstream/src/java" path="lib/xstream-1.2.1.jar" kind="lib"/>
-	<classpathentry path="build" kind="output"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="lib" path="lib/swingx.jar" sourcepath="C:/Dokumente und Einstellungen/Sven/Eigene Dateien/Sven/java/projects/swingx/src"/>
+	<classpathentry kind="lib" path="lib/spin-1.5.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jdk1.5.0"/>
+	<classpathentry kind="lib" path="lib/xstream-1.2.1.jar" sourcepath="C:/Programme/Java/xstream-1.2.1/xstream/src/java"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/Bias"/>
+	<classpathentry kind="output" path="build"/>
 </classpath>

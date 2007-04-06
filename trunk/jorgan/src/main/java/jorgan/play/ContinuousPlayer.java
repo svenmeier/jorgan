@@ -63,8 +63,7 @@ public class ContinuousPlayer extends Player {
 	public void elementChanged(OrganEvent event) {
 		Continuous slider = (Continuous) getElement();
 
-		if (slider.getMessage() == null
-				&& Configuration.instance().getWarnWithoutMessage()) {
+		if (slider.getMessage() == null && getWarnMessage()) {
 			addProblem(warningMessage.value(null));
 		} else {
 			removeProblem(warningMessage);

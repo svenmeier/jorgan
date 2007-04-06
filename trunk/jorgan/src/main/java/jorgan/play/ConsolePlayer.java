@@ -33,77 +33,76 @@ import jorgan.sound.midi.DevicePool;
  */
 public class ConsolePlayer extends Player {
 
-    private static final Problem warningDevice = new Problem(Problem.WARNING,
-            "device");
+	private static final Problem warningDevice = new Problem(Problem.WARNING,
+			"device");
 
-    private static final Problem errorDevice = new Problem(Problem.ERROR,
-            "device");
+	private static final Problem errorDevice = new Problem(Problem.ERROR,
+			"device");
 
-    /**
-     * The midiDevice to receive input from.
-     */
-    private MidiDevice in;
+	/**
+	 * The midiDevice to receive input from.
+	 */
+	private MidiDevice in;
 
-    /**
-     * The transmitter of the opened midiDevice.
-     */
-    private Transmitter transmitter;
+	/**
+	 * The transmitter of the opened midiDevice.
+	 */
+	private Transmitter transmitter;
 
-    public ConsolePlayer(Console console) {
-        super(console);
-    }
+	public ConsolePlayer(Console console) {
+		super(console);
+	}
 
-    protected void openImpl() {
-        Console console = (Console) getElement();
+	protected void openImpl() {
+		Console console = (Console) getElement();
 
-        removeProblem(errorDevice);
+		removeProblem(errorDevice);
 
-        String device = console.getDevice();
-        if (device != null) {
-            try {
-                in = DevicePool.getMidiDevice(device, false);
-                in.open();
+		String device = console.getDevice();
+		if (device != null) {
+			try {
+				in = DevicePool.getMidiDevice(device, false);
+				in.open();
 
-                transmitter = in.getTransmitter();
-                transmitter.setReceiver(getOrganPlay().createReceiver(this));
-            } catch (MidiUnavailableException ex) {
-                addProblem(errorDevice.value(device));
-            }
-        }
-    }
+				transmitter = in.getTransmitter();
+				transmitter.setReceiver(getOrganPlay().createReceiver(this));
+			} catch (MidiUnavailableException ex) {
+				addProblem(errorDevice.value(device));
+			}
+		}
+	}
 
-    protected void closeImpl() {
-        if (transmitter != null) {
-            transmitter.close();
-            in.close();
+	protected void closeImpl() {
+		if (transmitter != null) {
+			transmitter.close();
+			in.close();
 
-            transmitter = null;
-            in = null;
-        }
-    }
+			transmitter = null;
+			in = null;
+		}
+	}
 
-    public void elementChanged(OrganEvent event) {
-        Console console = (Console) getElement();
+	public void elementChanged(OrganEvent event) {
+		Console console = (Console) getElement();
 
-        if (console.getDevice() == null
-                && Configuration.instance().getWarnWithoutDevice()) {
-            removeProblem(errorDevice);
-            addProblem(warningDevice.value(null));
-        } else {
-            removeProblem(warningDevice);
-        }
-    }
+		if (console.getDevice() == null && getWarnDevice()) {
+			removeProblem(errorDevice);
+			addProblem(warningDevice.value(null));
+		} else {
+			removeProblem(warningDevice);
+		}
+	}
 
-    protected void input(ShortMessage message) {
-        Console console = (Console) getElement();
+	protected void input(ShortMessage message) {
+		Console console = (Console) getElement();
 
-        for (int r = 0; r < console.getReferenceCount(); r++) {
-            Reference reference = console.getReference(r);
+		for (int r = 0; r < console.getReferenceCount(); r++) {
+			Reference reference = console.getReference(r);
 
-            Player player = getOrganPlay().getPlayer(reference.getElement());
-            if (player != null) {
-                player.messageReceived(message);
-            }
-        }
-    }
+			Player player = getOrganPlay().getPlayer(reference.getElement());
+			if (player != null) {
+				player.messageReceived(message);
+			}
+		}
+	}
 }
