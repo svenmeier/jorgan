@@ -23,7 +23,7 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 
 /**
- * An player that controls activators.
+ * A player for an {@link Activator}
  */
 public class ActivatorPlayer extends ActivateablePlayer {
 

@@ -29,6 +29,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Activator;
+import jorgan.disposition.Captor;
 import jorgan.disposition.Console;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
@@ -293,7 +294,7 @@ public class OrganPlay {
 		} else if (element instanceof Swell) {
 			player = new SwellPlayer((Swell) element);
 		} else if (element instanceof Regulator) {
-			player = new ActivationPlayer((Regulator) element);
+			player = new RegulatorPlayer((Regulator) element);
 		} else if (element instanceof Tremulant) {
 			player = new TremulantPlayer((Tremulant) element);
 		} else if (element instanceof Variation) {
@@ -302,6 +303,8 @@ public class OrganPlay {
 			player = new InitiatorPlayer((Initiator) element);
 		} else if (element instanceof Keyer) {
 			player = new KeyerPlayer((Keyer) element);
+		} else if (element instanceof Captor) {
+			player = new CaptorPlayer((Captor) element);
 		}
 
 		if (player != null) {

@@ -25,7 +25,7 @@ import jorgan.disposition.Message;
 import jorgan.disposition.event.OrganEvent;
 
 /**
- * An abstract base class for players that control regactivateable elements.
+ * An abstract base class for players that control activateable elements.
  */
 public abstract class ActivateablePlayer extends Player {
 

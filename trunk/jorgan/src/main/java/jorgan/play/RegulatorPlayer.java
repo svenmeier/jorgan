@@ -22,14 +22,14 @@ import jorgan.disposition.Regulator;
 import jorgan.disposition.event.OrganEvent;
 
 /**
- * A player for a crescendo.
+ * A player for a {@link Regulator}.
  */
-public class ActivationPlayer extends ContinuousPlayer {
+public class RegulatorPlayer extends ContinuousPlayer {
 
     private ActivateablePlayer player;
 
-    public ActivationPlayer(Regulator crescendo) {
-        super(crescendo);
+    public RegulatorPlayer(Regulator regulator) {
+        super(regulator);
     }
 
     protected void closeImpl() {
@@ -42,14 +42,14 @@ public class ActivationPlayer extends ContinuousPlayer {
         super.elementChanged(event);
 
         if (isOpen()) {
-            Regulator crescendo = (Regulator) getElement();
+            Regulator regulator = (Regulator) getElement();
 
-            if (crescendo.getReferenceCount() > 0) {
-                int current = (crescendo.getValue()
-                        * crescendo.getReferenceCount() / 128);
+            if (regulator.getReferenceCount() > 0) {
+                int current = (regulator.getValue()
+                        * regulator.getReferenceCount() / 128);
 
                 ActivateablePlayer player = (ActivateablePlayer) getOrganPlay()
-                        .getPlayer(crescendo.getReference(current).getElement());
+                        .getPlayer(regulator.getReference(current).getElement());
 
                 if (player != this.player) {
                     if (player != null) {
