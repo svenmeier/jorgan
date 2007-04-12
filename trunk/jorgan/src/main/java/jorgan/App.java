@@ -26,7 +26,7 @@ import jorgan.io.DispositionStream;
 import jorgan.shell.OrganShell;
 import bias.Bias;
 import bias.Store;
-import bias.store.CachingStore;
+import bias.store.CompositeStore;
 import bias.store.DefaultingStore;
 import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
@@ -127,16 +127,21 @@ public class App {
 			System.exit(1);
 		}
 
-		Store store = new DefaultingStore(new CachingStore(PreferencesStore
-				.user()), new CachingStore(new PropertiesStore(App.class,
-				"app.properties")));
-		bias = new Bias(store);
+		bias = new Bias(createStore());
 
 		instance = new App();
 		App.getBias().register(instance);
 		instance.start(arguments);
 
 		System.exit(0);
+	}
+
+	private static Store createStore() {
+		Store preferences = new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(App.class, "app.properties"));
+		// Store i18n = new ResourceBundlesStore("i18n");
+
+		return new CompositeStore(preferences);
 	}
 
 	public static App getInstance() {
