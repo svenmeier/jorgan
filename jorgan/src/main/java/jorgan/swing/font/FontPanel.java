@@ -27,9 +27,10 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import jorgan.App;
 import jorgan.swing.EditableList;
 import jorgan.swing.GridBuilder;
-import jorgan.util.I18N;
+import bias.Context;
 
 /**
  * A panel for a font selection.
@@ -38,7 +39,7 @@ class FontPanel extends JPanel {
 
 	private static Logger logger = Logger.getLogger(FontPanel.class.getName());
 
-	private static I18N i18n = I18N.get(FontPanel.class);
+	private static Context context = App.getBias().get(FontPanel.class);
 
 	private static String[] sizes = new String[] { "8", "10", "12", "14", "16",
 			"18", "24" };
@@ -53,7 +54,7 @@ class FontPanel extends JPanel {
 
 	private EditableList sizeList = new EditableList();
 
-	private EditableList styleList = new EditableList();
+	private EditableList stylesList = new EditableList();
 
 	private Font font;
 
@@ -66,10 +67,10 @@ class FontPanel extends JPanel {
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d, 0.0d, 0.0d });
 
 		builder.nextRow();
-		
-		familyLabel.setText(i18n.getString("familyLabel.text"));
-		sizeLabel.setText(i18n.getString("sizeLabel.text"));
-		styleLabel.setText(i18n.getString("styleLabel.text"));
+
+		context.get("familyLabel").getValues(familyLabel);
+		context.get("sizeLabel").getValues(sizeLabel);
+		context.get("styleLabel").getValues(styleLabel);
 
 		add(familyLabel, builder.nextColumn());
 		add(sizeLabel, builder.nextColumn());
@@ -84,11 +85,8 @@ class FontPanel extends JPanel {
 		sizeList.setValues(sizes);
 		add(sizeList, builder.nextColumn().fillBoth());
 
-		String[] styles = new String[] { i18n.getString("style0"),
-				i18n.getString("style1"), i18n.getString("style2"),
-				i18n.getString("style3") };
-		styleList.setValues(styles);
-		add(styleList, builder.nextColumn().fillBoth());
+		context.get("stylesList").getValues(stylesList);
+		add(stylesList, builder.nextColumn().fillBoth());
 	}
 
 	/**
@@ -103,8 +101,7 @@ class FontPanel extends JPanel {
 		if (font != null) {
 			familyList.setSelectedValue("" + font.getFamily());
 			sizeList.setSelectedValue("" + font.getSize());
-			styleList.setSelectedValue(i18n
-					.getString("style" + font.getStyle()));
+			stylesList.setSelectedValue(formatStyle(font.getStyle()));
 		}
 	}
 
@@ -116,7 +113,7 @@ class FontPanel extends JPanel {
 	public Font getSelectedFont() {
 		try {
 			int size = Integer.parseInt(sizeList.getSelectedValue());
-			int style = styleList.getSelectedIndex();
+			int style = stylesList.getSelectedIndex();
 			String family = familyList.getSelectedValue();
 
 			font = new Font(family, style, size);
@@ -133,7 +130,7 @@ class FontPanel extends JPanel {
 	 *            style to format
 	 * @return formatted style
 	 */
-	public static String formatStyle(int style) {
-		return i18n.getString("style" + style);
+	public String formatStyle(int style) {
+		return stylesList.getValues().get(font.getStyle());
 	}
 }

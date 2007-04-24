@@ -41,6 +41,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
+import bias.Context;
+
 import jorgan.App;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
@@ -60,6 +62,7 @@ import jorgan.gui.play.VirtualKeyboard;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.swing.BaseAction;
 import jorgan.util.I18N;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
@@ -73,6 +76,8 @@ import swingx.docking.persistence.XMLPersister;
  */
 public class OrganPanel extends JPanel {
 
+	private static Context context = App.getBias().get(OrganPanel.class);
+	
 	private static I18N i18n = I18N.get(OrganPanel.class);
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
@@ -180,7 +185,7 @@ public class OrganPanel extends JPanel {
 	 * Create a new organPanel.
 	 */
 	public OrganPanel() {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		setLayout(new BorderLayout());
 
@@ -364,7 +369,7 @@ public class OrganPanel extends JPanel {
 
 			updateHistory();
 
-			App.getBias().changed(this);
+			App.getBias().setValues(this);
 		}
 	}
 
@@ -507,25 +512,22 @@ public class OrganPanel extends JPanel {
 		}
 	}
 
-	private class ActionDockable extends AbstractAction implements Dockable {
+	private class ActionDockable extends BaseAction implements Dockable {
 
 		private String key;
 
 		private JComponent component;
-
-		private String title;
 
 		private Icon icon;
 
 		private ActionDockable(String key, JComponent component) {
 			this.key = key;
 			this.component = component;
-			this.title = i18n.getString(key + "Dockable");
 			this.icon = new ImageIcon(getClass().getResource(
 					"img/" + key + ".gif"));
-
-			putValue(Action.NAME, title);
 			putValue(Action.SMALL_ICON, icon);
+
+			context.get(key + "Dockable").getValues(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -546,10 +548,6 @@ public class OrganPanel extends JPanel {
 		public Icon getIcon() {
 			return icon;
 		}
-
-		public String getName() {
-			return title;
-		}
 	}
 
 	/**
@@ -557,9 +555,9 @@ public class OrganPanel extends JPanel {
 	 */
 	private class BackAction extends AbstractAction {
 		private BackAction() {
-			putValue(Action.NAME, i18n.getString("backAction.name"));
+			putValue(Action.NAME, i18n.getString("backAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("backAction.shortDescription"));
+					.getString("backAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/back.gif")));
 
@@ -576,9 +574,9 @@ public class OrganPanel extends JPanel {
 	 */
 	private class ForwardAction extends AbstractAction {
 		private ForwardAction() {
-			putValue(Action.NAME, i18n.getString("forwardAction.name"));
+			putValue(Action.NAME, i18n.getString("forwardAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("forwardAction.shortDescription"));
+					.getString("forwardAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/forward.gif")));
 

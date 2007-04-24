@@ -93,9 +93,9 @@ public class PreferencesDialog extends StandardDialog {
 			throw new Error("unable to get window ancestor");
 		}
 
-		App.getBias().register(dialog);
+		App.getBias().getValues(dialog);
 		dialog.setVisible(true);
-		App.getBias().changed(dialog);
+		App.getBias().setValues(dialog);
 		dialog.dispose();
 	}
 }

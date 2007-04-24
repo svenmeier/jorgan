@@ -8,6 +8,8 @@ import java.util.logging.Logger;
 
 /**
  * Internationalization utility class.
+ * 
+ * @deprecated
  */
 public class I18N {
 
@@ -23,7 +25,7 @@ public class I18N {
 		name = clazz.getName();
 
 		int index = name.lastIndexOf('.');
-		keyPrefix = name.substring(index + 1) + ".";
+		keyPrefix = name.substring(index + 1).replace('.', '/') + "/";
 		try {
 			bundle = ResourceBundle.getBundle(name.substring(0, index)
 					+ ".i18n");

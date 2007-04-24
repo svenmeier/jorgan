@@ -73,25 +73,25 @@ public class ConsolePanelCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("gridSpinner.label")), builder
+		panel.add(new JLabel(i18n.getString("gridSpinner/label")), builder
 				.nextColumn());
 		panel.add(gridSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		interpolateCheckBox.setText(i18n.getString("interpolateCheckBox.text"));
+		interpolateCheckBox.setText(i18n.getString("interpolateCheckBox/text"));
 		panel.add(interpolateCheckBox, builder.nextColumn()
 				.gridWidthRemainder());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("backgroundSelector.label")),
+		panel.add(new JLabel(i18n.getString("backgroundSelector/label")),
 				builder.nextColumn());
 		panel.add(backgroundSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("foregroundSelector.label")),
+		panel.add(new JLabel(i18n.getString("foregroundSelector/label")),
 				builder.nextColumn());
 		panel.add(foregroundSelector, builder.nextColumn());
 

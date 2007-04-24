@@ -62,13 +62,13 @@ public class DispositionStreamCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("recentsSizeSpinner.label")),
+		panel.add(new JLabel(i18n.getString("recentsSizeSpinner/label")),
 				builder.nextColumn());
 		panel.add(recentMaxSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("historySizeSpinner.label")),
+		panel.add(new JLabel(i18n.getString("historySizeSpinner/label")),
 				builder.nextColumn());
 		panel.add(historySizeSpinner, builder.nextColumn());
 

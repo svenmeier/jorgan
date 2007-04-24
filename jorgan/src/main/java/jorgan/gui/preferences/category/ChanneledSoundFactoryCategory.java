@@ -54,7 +54,7 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 		builder.nextRow();
 
 		sendAllNotesOffCheckBox.setText(i18n
-				.getString("sendAllNotesOffCheckBox.text"));
+				.getString("sendAllNotesOffCheckBox/text"));
 		panel.add(sendAllNotesOffCheckBox, builder.nextColumn());
 
 		builder.nextRow();

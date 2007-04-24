@@ -108,12 +108,12 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		}
 
 		JOptionPane channelOptionPane = new JOptionPane(i18n
-				.getString("channelOptionPane.message"),
+				.getString("channelOptionPane/message"),
 				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("channelOptionPane.cancel") });
+						.getString("channelOptionPane/cancel") });
 
 		dialog = channelOptionPane.createDialog(panel, i18n
-				.getString("channelOptionPane.title"));
+				.getString("channelOptionPane/title"));
 		dialog.setVisible(true);
 		dialog = null;
 

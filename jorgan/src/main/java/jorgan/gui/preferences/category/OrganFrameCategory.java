@@ -69,7 +69,7 @@ public class OrganFrameCategory extends JOrganCategory {
 		builder.nextRow();
 
 		fullScreenOnLoadCheckBox.setText(i18n
-				.getString("fullScreenOnLoadCheckBox.text"));
+				.getString("fullScreenOnLoadCheckBox/text"));
 		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn());
 
 		builder.nextRow();
@@ -86,7 +86,7 @@ public class OrganFrameCategory extends JOrganCategory {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-				i18n.getString("changesPanel.title")));
+				i18n.getString("changesPanel/title")));
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
@@ -94,21 +94,21 @@ public class OrganFrameCategory extends JOrganCategory {
 
 		confirmChangesRadioButton.getModel().setGroup(changesGroup);
 		confirmChangesRadioButton.setText(i18n
-				.getString("confirmChangesRadioButton.text"));
+				.getString("confirmChangesRadioButton/text"));
 		panel.add(confirmChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
 		saveChangesRadioButton.getModel().setGroup(changesGroup);
 		saveChangesRadioButton.setText(i18n
-				.getString("saveChangesRadioButton.text"));
+				.getString("saveChangesRadioButton/text"));
 		panel.add(saveChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
 		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
 		ignoreChangesRadioButton.setText(i18n
-				.getString("ignoreChangesRadioButton.text"));
+				.getString("ignoreChangesRadioButton/text"));
 		panel.add(ignoreChangesRadioButton, builder.nextColumn());
 
 		return panel;

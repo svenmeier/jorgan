@@ -82,7 +82,7 @@ public class OrganShellCategory extends JOrganCategory {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
 		panel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-				i18n.getString("encodingPanel.title")));
+				i18n.getString("encodingPanel/title")));
 
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
@@ -90,7 +90,7 @@ public class OrganShellCategory extends JOrganCategory {
 
 		String defaultEncoding = System.getProperty("file.encoding");
 		encodingDefaultRadioButton.setText(MessageFormat.format(i18n
-				.getString("encodingDefaultRadioButton.text"),
+				.getString("encodingDefaultRadioButton/text"),
 				new Object[] { defaultEncoding }));
 		buttonGroup.add(encodingDefaultRadioButton);
 		panel.add(encodingDefaultRadioButton, builder.nextColumn()
@@ -99,7 +99,7 @@ public class OrganShellCategory extends JOrganCategory {
 		builder.nextRow();
 
 		encodingOtherRadioButton.setText(i18n
-				.getString("encodingOtherRadioButton.text"));
+				.getString("encodingOtherRadioButton/text"));
 		buttonGroup.add(encodingOtherRadioButton);
 		encodingOtherRadioButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {

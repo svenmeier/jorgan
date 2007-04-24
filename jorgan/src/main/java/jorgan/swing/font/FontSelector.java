@@ -20,30 +20,29 @@ package jorgan.swing.font;
 
 import java.awt.BorderLayout;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
+
+import jorgan.App;
+import jorgan.swing.StandardDialog;
+import bias.Context;
 
 /**
  * Selector of a font.
  */
 public class FontSelector extends JPanel {
 
-	/**
-	 * The selected font.
-	 */
-	private Font font;
+	private static Context context = App.getBias().get(FontSelector.class);
 
 	/**
 	 * The button used to edit the selected font.
 	 */
 	private JButton button = new JButton();
+
+	private FontPanel panel = new FontPanel();
 
 	/**
 	 * Create a new selector.
@@ -54,18 +53,13 @@ public class FontSelector extends JPanel {
 		button.setHorizontalAlignment(JButton.LEFT);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				FontDialog dialog;
-				Window window = SwingUtilities
-						.getWindowAncestor(FontSelector.this);
-				if (window instanceof JFrame) {
-					dialog = new FontDialog((JFrame) window);
-				} else {
-					dialog = new FontDialog((JDialog) window);
-				}
-				dialog.setSelectedFont(font);
-				dialog.start();
+				StandardDialog dialog = StandardDialog
+						.create(FontSelector.this);
+				context.get("dialog").getValues(dialog);
 
-				setSelectedFont(dialog.getSelectedFont());
+				dialog.setVisible(true);
+
+				setSelectedFont(getSelectedFont());
 			}
 		});
 		add(button, BorderLayout.CENTER);
@@ -84,9 +78,19 @@ public class FontSelector extends JPanel {
 	 *            the font to select
 	 */
 	public void setSelectedFont(Font font) {
-		this.font = font;
+		panel.setSelectedFont(font);
 
-		button.setText(format(font));
+		String text;
+		if (font == null) {
+			text = "-";
+		} else {
+			String name = font.getName();
+			int size = font.getSize();
+			String style = panel.formatStyle(font.getStyle());
+			text = (name + " " + size + " " + style);
+		}
+
+		button.setText(text);
 	}
 
 	/**
@@ -95,24 +99,6 @@ public class FontSelector extends JPanel {
 	 * @return the selected font
 	 */
 	public Font getSelectedFont() {
-		return font;
-	}
-
-	/**
-	 * Utility method for formatting of a font.
-	 * 
-	 * @param font
-	 *            font to format
-	 * @return formatted font
-	 */
-	public static String format(Font font) {
-		if (font == null) {
-			return "-";
-		} else {
-			String name = font.getName();
-			int size = font.getSize();
-			String style = FontPanel.formatStyle(font.getStyle());
-			return (name + " " + size + " " + style);
-		}
+		return panel.getSelectedFont();
 	}
 }

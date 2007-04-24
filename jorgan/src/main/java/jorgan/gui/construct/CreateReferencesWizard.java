@@ -104,7 +104,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n.getString("referencesToPage.description");
+			return i18n.getString("referencesToPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -132,7 +132,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n.getString("referencedFromPage.description");
+			return i18n.getString("referencedFromPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -165,9 +165,9 @@ public class CreateReferencesWizard extends BasicWizard {
 
 		dialog.setWizard(new CreateReferencesWizard(organ, element));
 
-		App.getBias().register(dialog);
+		App.getBias().getValues(dialog);
 		dialog.setVisible(true);
-		App.getBias().changed(dialog);
+		App.getBias().setValues(dialog);
 
 		dialog.dispose();
 

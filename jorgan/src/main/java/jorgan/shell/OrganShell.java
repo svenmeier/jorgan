@@ -21,7 +21,6 @@ package jorgan.shell;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -37,7 +36,8 @@ import jorgan.play.OrganPlay;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
-import jorgan.util.I18N;
+import bias.Context;
+import bias.util.MessageBuilder;
 
 /**
  * Shell for playing of an organ.
@@ -47,7 +47,7 @@ public class OrganShell implements UI {
 	private static final Logger logger = Logger.getLogger(OrganShell.class
 			.getName());
 
-	private static I18N i18n = I18N.get(OrganShell.class);
+	private static Context context = App.getBias().get(OrganShell.class);
 
 	private File file;
 
@@ -67,7 +67,7 @@ public class OrganShell implements UI {
 	 * Create a new organShell.
 	 */
 	public OrganShell() {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		List<Command> commands = new ArrayList<Command>();
 		commands.add(new HelpCommand());
@@ -77,8 +77,9 @@ public class OrganShell implements UI {
 		commands.add(new RecentCommand());
 		commands.add(new SaveCommand());
 		commands.add(new ExitCommand());
+
 		interpreter = new Interpreter(commands, new UnknownCommand());
-		interpreter.setPrompt(i18n.getString("prompt"));
+		context.get("interpreter").getValues(interpreter);
 	}
 
 	/**
@@ -88,7 +89,7 @@ public class OrganShell implements UI {
 	 *            optional file that contains an organ
 	 */
 	public void display(File file) {
-		writeMessage("splash", new Object[] { App.getInstance().getVersion() });
+		writeMessage("splash", App.getInstance().getVersion());
 
 		if (!useDefaultEncoding) {
 			try {
@@ -96,11 +97,11 @@ public class OrganShell implements UI {
 
 				writeEncoding();
 			} catch (UnsupportedEncodingException ex) {
-				writeMessage("unsupportedEncoding", new Object[] { encoding });
+				writeMessage("unsupportedEncoding", encoding);
 			}
 		}
 
-		writeMessage("help", new Object[0]);
+		writeMessage("help");
 
 		if (file != null) {
 			openOrgan(file);
@@ -123,14 +124,14 @@ public class OrganShell implements UI {
 
 			setOrgan(organ);
 
-			writeMessage("organOpened", new Object[] { DispositionFileFilter
-					.removeSuffix(file) });
+			writeMessage("organOpened", DispositionFileFilter
+					.removeSuffix(file));
 		} catch (IOException ex) {
-			writeMessage("openOrganException", new String[] { file.getName() });
+			writeMessage("openOrganException", file.getName());
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
-			writeMessage("openOrganInvalid", new String[] { file.getName() });
+			writeMessage("openOrganInvalid", file.getName());
 		}
 	}
 
@@ -168,9 +169,9 @@ public class OrganShell implements UI {
 		try {
 			new DispositionStream().write(organ, file);
 
-			writeMessage("organSaved", new Object[0]);
+			writeMessage("organSaved");
 		} catch (Exception ex) {
-			writeMessage("saveOrganException", new String[] { file.getName() });
+			writeMessage("saveOrganException", file.getName());
 		}
 	}
 
@@ -181,10 +182,9 @@ public class OrganShell implements UI {
 			for (int p = 0; p < problems.size(); p++) {
 				Problem problem = (Problem) problems.get(p);
 
-				String pattern = "problem." + problem;
+				String pattern = "problem/" + problem;
 
-				writeMessage(pattern, new Object[] { element.getName(),
-						problem.getValue() });
+				writeMessage(pattern, element.getName(), problem.getValue());
 			}
 		}
 	}
@@ -197,9 +197,9 @@ public class OrganShell implements UI {
 	 * @param args
 	 *            arguments to message
 	 */
-	protected void writeMessage(String key, Object[] args) {
+	protected void writeMessage(String key, Object... args) {
 
-		String text = MessageFormat.format(i18n.getString(key), args);
+		String text = MessageBuilder.get(context.get(key)).build(args);
 
 		interpreter.writeln(text);
 	}
@@ -207,9 +207,9 @@ public class OrganShell implements UI {
 	private void writeEncoding() {
 		if (useDefaultEncoding) {
 			String defaultEncoding = System.getProperty("file.encoding");
-			writeMessage("defaultEncoding", new Object[] { defaultEncoding });
+			writeMessage("defaultEncoding", defaultEncoding);
 		} else {
-			writeMessage("currentEncoding", new Object[] { encoding });
+			writeMessage("currentEncoding", encoding);
 		}
 	}
 
@@ -223,7 +223,7 @@ public class OrganShell implements UI {
 
 		public void execute(String param) {
 			if (param == null) {
-				writeMessage("openCommand.format", new Object[0]);
+				writeMessage("openCommand/format");
 				return;
 			}
 			openOrgan(new File(param));
@@ -240,13 +240,13 @@ public class OrganShell implements UI {
 
 		public void execute(String param) {
 			if (file == null) {
-				writeMessage("closeCommand.file", new Object[0]);
+				writeMessage("closeCommand/file");
 				return;
 			}
 			file = null;
 			setOrgan(null);
 
-			writeMessage("closeCommand.confirm", new Object[0]);
+			writeMessage("closeCommand/confirm");
 		}
 	}
 
@@ -260,11 +260,11 @@ public class OrganShell implements UI {
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("saveCommand.format", new Object[0]);
+				writeMessage("saveCommand/format");
 				return;
 			}
 			if (file == null) {
-				writeMessage("saveCommand.file", new Object[0]);
+				writeMessage("saveCommand/file");
 				return;
 			}
 			saveOrgan();
@@ -284,7 +284,7 @@ public class OrganShell implements UI {
 				Command command = interpreter.getCommand(param);
 				interpreter.writeln(command.getLongDescription());
 			} else {
-				writeMessage("helpCommand.header", new Object[0]);
+				writeMessage("helpCommand/header");
 				int length = 0;
 				for (int c = 0; c < interpreter.getCommandCount(); c++) {
 					Command command = interpreter.getCommand(c);
@@ -293,10 +293,10 @@ public class OrganShell implements UI {
 				for (int c = 0; c < interpreter.getCommandCount(); c++) {
 					Command command = interpreter.getCommand(c);
 					String name = pad(command.getName(), length);
-					writeMessage("helpCommand.body", new Object[] { name,
-							command.getDescription() });
+					writeMessage("helpCommand/body", name, command
+							.getDescription());
 				}
-				writeMessage("helpCommand.footer", new Object[0]);
+				writeMessage("helpCommand/footer");
 			}
 		}
 	}
@@ -324,7 +324,7 @@ public class OrganShell implements UI {
 						encoding = param;
 					}
 				} catch (UnsupportedEncodingException ex) {
-					writeMessage("unsupportedEncoding", new Object[] { param });
+					writeMessage("unsupportedEncoding", param);
 					return;
 				}
 			}
@@ -344,16 +344,16 @@ public class OrganShell implements UI {
 		public void execute(String param) {
 			List recents = new DispositionStream().getRecentFiles();
 			if (recents.size() == 0) {
-				writeMessage("recentCommand.none", new Object[0]);
+				writeMessage("recentCommand/none");
 				return;
 			}
 
 			if (param == null) {
-				writeMessage("recentCommand.header", new Object[0]);
+				writeMessage("recentCommand/header");
 
 				for (int r = 0; r < recents.size(); r++) {
 					File recent = (File) recents.get(r);
-					writeMessage("recentCommand.list", new Object[] {
+					writeMessage("recentCommand/list", new Object[] {
 							new Integer(r + 1), recent });
 				}
 			} else {
@@ -364,7 +364,7 @@ public class OrganShell implements UI {
 				} catch (Exception ex) {
 					Integer from = new Integer(1);
 					Integer to = new Integer(recents.size());
-					writeMessage("recentCommand.format", new Object[] { from,
+					writeMessage("recentCommand/format", new Object[] { from,
 							to });
 				}
 			}
@@ -381,7 +381,7 @@ public class OrganShell implements UI {
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("exitCommand.format", new Object[0]);
+				writeMessage("exitCommand/format");
 				return;
 			}
 
@@ -391,7 +391,7 @@ public class OrganShell implements UI {
 				organPlay = null;
 			}
 
-			writeMessage("exitCommand.confirm", new Object[0]);
+			writeMessage("exitCommand/confirm");
 
 			interpreter.stop();
 		}
@@ -402,44 +402,62 @@ public class OrganShell implements UI {
 	 */
 	private class UnknownCommand implements Command {
 		public String getName() {
-			return i18n.getString("command.unknown");
+			return null;
 		}
 
 		public String getDescription() {
-			return i18n.getString("command.unknown");
+			return null;
 		}
 
 		public String getLongDescription() {
-			return i18n.getString("command.unknown");
+			return null;
 		}
 
 		public void execute(String param) {
-			writeMessage("command.unknown", new Object[0]);
+			writeMessage("unknownCommand");
 		}
 	}
 
 	/**
 	 * The abstract base class for all commands of this organ shell.
 	 */
-	private abstract class AbstractCommand implements Command {
+	public abstract class AbstractCommand implements Command {
+
+		private String name;
+
+		private String description;
+
+		private String longDescription;
+
+		protected AbstractCommand() {
+			context.get(getPrefix()).getValues(this);
+		}
+
 		protected abstract String getPrefix();
 
 		public String getName() {
-			return MessageFormat.format(i18n.getString(getPrefix() + ".name"),
-					new Object[0]);
+			return name;
 		}
 
 		public String getDescription() {
-			return MessageFormat.format(i18n.getString(getPrefix()
-					+ ".description"), new Object[0]);
+			return description;
 		}
 
 		public String getLongDescription() {
-			return MessageFormat.format(i18n.getString(getPrefix()
-					+ ".longDescription"), new Object[0]);
+			return longDescription;
 		}
 
-		public abstract void execute(String param);
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public void setLongDescription(String longDescription) {
+			this.longDescription = longDescription;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
 	}
 
 	/**

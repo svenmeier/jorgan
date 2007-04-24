@@ -117,7 +117,7 @@ public class CreateElementWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n.getString("elementPage.description");
+			return i18n.getString("elementPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -159,7 +159,7 @@ public class CreateElementWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		public String getDescription() {
-			return i18n.getString("referencesToPage.description");
+			return i18n.getString("referencesToPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -197,7 +197,7 @@ public class CreateElementWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		public String getDescription() {
-			return i18n.getString("referencedFromPage.description");
+			return i18n.getString("referencedFromPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -243,9 +243,9 @@ public class CreateElementWizard extends BasicWizard {
 
 		dialog.setWizard(new CreateElementWizard(organ, prototype));
 
-		App.getBias().register(dialog);
+		App.getBias().getValues(dialog);
 		dialog.setVisible(true);
-		App.getBias().changed(dialog);
+		App.getBias().setValues(dialog);
 
 		dialog.dispose();
 

@@ -388,7 +388,7 @@ public class KeyboardPane extends JComponent {
 		ChannelHandler channelHandler = new ChannelHandler();
 		for (int c = 0; c < 16; c++) {
 			channelMenuItems[c] = new JCheckBoxMenuItem(i18n
-					.getString("channelMenuItem.text")
+					.getString("channelMenuItem/text")
 					+ " " + (c + 1));
 			channelMenuItems[c].getModel().setGroup(channelGroup);
 			channelMenuItems[c].putClientProperty(channelHandler,
@@ -400,7 +400,7 @@ public class KeyboardPane extends JComponent {
 		popupMenu.addSeparator();
 
 		velocityMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("velocityMenuItem.text"));
+				.getString("velocityMenuItem/text"));
 		velocityMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendVelocity = velocityMenuItem.isSelected();
@@ -409,7 +409,7 @@ public class KeyboardPane extends JComponent {
 		popupMenu.add(velocityMenuItem);
 
 		polyPressureMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("polyPressureMenuItem.text"));
+				.getString("polyPressureMenuItem/text"));
 		polyPressureMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendPolyPressure = polyPressureMenuItem.isSelected();
@@ -418,7 +418,7 @@ public class KeyboardPane extends JComponent {
 		popupMenu.add(polyPressureMenuItem);
 
 		channelPressureMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("channelPressureMenuItem.text"));
+				.getString("channelPressureMenuItem/text"));
 		channelPressureMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendChannelPressure = channelPressureMenuItem.isSelected();

@@ -25,11 +25,13 @@ import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
 import jorgan.shell.OrganShell;
 import bias.Bias;
+import bias.Context;
 import bias.Store;
 import bias.store.CompositeStore;
 import bias.store.DefaultingStore;
 import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
+import bias.store.ResourceBundlesStore;
 
 /**
  * The jOrgan application.
@@ -40,7 +42,7 @@ public class App {
 
 	private static App instance;
 
-	private static Bias bias;
+	private static Context bias;
 
 	private String version;
 
@@ -130,7 +132,7 @@ public class App {
 		bias = new Bias(createStore());
 
 		instance = new App();
-		App.getBias().register(instance);
+		App.getBias().getValues(instance);
 		instance.start(arguments);
 
 		System.exit(0);
@@ -139,16 +141,16 @@ public class App {
 	private static Store createStore() {
 		Store preferences = new DefaultingStore(PreferencesStore.user(),
 				new PropertiesStore(App.class, "app.properties"));
-		// Store i18n = new ResourceBundlesStore("i18n");
+		Store i18n = new ResourceBundlesStore("i18n");
 
-		return new CompositeStore(preferences);
+		return new CompositeStore(preferences, i18n);
 	}
 
 	public static App getInstance() {
 		return instance;
 	}
 
-	public static Bias getBias() {
+	public static Context getBias() {
 		return bias;
 	}
 }

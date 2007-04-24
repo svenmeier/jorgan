@@ -94,7 +94,7 @@ public class View {
 
 		this.element = element;
 
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 	}
 
 	protected void setText(String name, String text) {
@@ -173,17 +173,19 @@ public class View {
 	 */
 	public void changeUpdate(OrganEvent event) {
 
-		// issure repaint so old location gets cleared
-		// in case of a changed bounds
-		repaint();
+		if (consolePanel != null) {
+			// issure repaint so old location gets cleared
+			// in case of a changed bounds
+			repaint();
 
-		initLocation();
+			initLocation();
 
-		initTexts();
+			initTexts();
 
-		initStyle();
+			initStyle();
 
-		repaint();
+			repaint();
+		}		
 	}
 
 	protected void initLocation() {
@@ -297,14 +299,6 @@ public class View {
 	public void keyReleased(KeyEvent ev) {
 	}
 
-	public Color getDefaultColor() {
-		return defaultColor;
-	}
-
-	public void setDefaultColor(Color color) {
-		this.defaultColor = color;
-	}
-
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
@@ -318,12 +312,24 @@ public class View {
 		return style;
 	}
 
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setDefaultColor(Color color) {
+		this.defaultColor = color;
+		
+		changeUpdate(null);
+	}
+
 	public Font getDefaultFont() {
 		return defaultFont;
 	}
 
 	public void setDefaultFont(Font font) {
 		this.defaultFont = font;
+		
+		changeUpdate(null);
 	}
 
 	public Color getShortcutColor() {
@@ -332,6 +338,8 @@ public class View {
 
 	public void setShortcutColor(Color shortcutColor) {
 		this.shortcutColor = shortcutColor;
+		
+		changeUpdate(null);
 	}
 
 	public Font getShortcutFont() {
@@ -340,6 +348,8 @@ public class View {
 
 	public void setShortcutFont(Font shortcutFont) {
 		this.shortcutFont = shortcutFont;
+		
+		changeUpdate(null);
 	}
 
 	public boolean isShowShortcut() {
@@ -348,5 +358,7 @@ public class View {
 
 	public void setShowShortcut(boolean showShortcut) {
 		this.showShortcut = showShortcut;
+		
+		changeUpdate(null);
 	}
 }
