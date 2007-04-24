@@ -22,22 +22,23 @@ import java.awt.Component;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
+import jorgan.App;
+import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
-import jorgan.util.I18N;
+import bias.Context;
 
 /**
  * A dialog showing a wizard.
  */
 public class WizardDialog extends StandardDialog {
 
-	private static I18N i18n = I18N.get(WizardDialog.class);
-	
+	private static Context context = App.getBias().get(WizardDialog.class);
+
 	private Action previousAction = new PreviousAction();
 
 	private Action nextAction = new NextAction();
@@ -74,10 +75,13 @@ public class WizardDialog extends StandardDialog {
 
 	private void init() {
 
-		setTitle(i18n.getString("title"));
+		context.getValues(this);
 
+		context.get("previousAction").getValues(previousAction);
 		addAction(previousAction);
+		context.get("nextAction").getValues(nextAction);
 		addAction(nextAction);
+		context.get("finishAction").getValues(finishAction);
 		addAction(finishAction, true);
 		addCancelAction();
 
@@ -106,33 +110,21 @@ public class WizardDialog extends StandardDialog {
 		}
 	}
 
-	private class PreviousAction extends AbstractAction {
-
-		private PreviousAction() {
-			putValue(Action.NAME, i18n.getString("previousAction.name"));
-		}
+	private class PreviousAction extends BaseAction {
 
 		public void actionPerformed(ActionEvent ev) {
 			wizard.previous();
 		}
 	}
 
-	private class NextAction extends AbstractAction {
-
-		private NextAction() {
-			putValue(Action.NAME, i18n.getString("nextAction.name"));
-		}
+	private class NextAction extends BaseAction {
 
 		public void actionPerformed(ActionEvent ev) {
 			wizard.next();
 		}
 	}
 
-	private class FinishAction extends AbstractAction {
-
-		private FinishAction() {
-			putValue(Action.NAME, i18n.getString("finishAction.name"));
-		}
+	private class FinishAction extends BaseAction {
 
 		public void actionPerformed(ActionEvent ev) {
 			wizard.finish();

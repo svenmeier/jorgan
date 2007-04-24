@@ -65,12 +65,12 @@ public class PlayMonitor extends JPanel {
 
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		inLabel.setIcon(noneIcon);
-		inLabel.setToolTipText(i18n.getString("inLabel.toolTipText"));
+		inLabel.setToolTipText(i18n.getString("inLabel/toolTipText"));
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 
 		outLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		outLabel.setIcon(noneIcon);
-		outLabel.setToolTipText(i18n.getString("outLabel.toolTipText"));
+		outLabel.setToolTipText(i18n.getString("outLabel/toolTipText"));
 		add(outLabel, null);
 
 		inTimer = new Timer(500, new ActionListener() {

@@ -61,7 +61,7 @@ public abstract class Player {
 	 * Create a player for the given element.
 	 */
 	public Player(Element element) {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		this.element = element;
 	}

@@ -141,12 +141,12 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		}
 
 		JOptionPane messageOptionPane = new JOptionPane(i18n
-				.getString("messageOptionPane.message"),
+				.getString("messageOptionPane/message"),
 				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("messageOptionPane.cancel") });
+						.getString("messageOptionPane/cancel") });
 
 		dialog = messageOptionPane.createDialog(panel.getTopLevelAncestor(),
-				i18n.getString("messageOptionPane.title"));
+				i18n.getString("messageOptionPane/title"));
 		dialog.setVisible(true);
 		dialog.dispose();
 		dialog = null;

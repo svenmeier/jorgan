@@ -153,7 +153,7 @@ public class SoundFontImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			fileLabel.setText(i18n.getString("fileLabel.text"));
+			fileLabel.setText(i18n.getString("fileLabel/text"));
 			add(fileLabel, builder.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
@@ -180,7 +180,7 @@ public class SoundFontImportProvider implements ImportProvider {
 			message = MessageFormat.format(i18n.getString(message), args);
 
 			JOptionPane.showMessageDialog(this, message, i18n
-					.getString("exception.title"), JOptionPane.ERROR_MESSAGE);
+					.getString("exception/title"), JOptionPane.ERROR_MESSAGE);
 		}
 	}
 }

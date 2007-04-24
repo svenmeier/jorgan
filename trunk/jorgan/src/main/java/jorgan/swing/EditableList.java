@@ -44,7 +44,7 @@ public class EditableList extends JPanel {
 
 	private boolean checking = false;
 
-	private java.util.List values = new ArrayList();
+	private java.util.List<String> values = new ArrayList<String>();
 
 	/**
 	 * Constructor.
@@ -94,7 +94,7 @@ public class EditableList extends JPanel {
 	 * @param values
 	 *            the list values
 	 */
-	public void setValues(List values) {
+	public void setValues(List<String> values) {
 		this.values = values;
 
 		DefaultListModel model = new DefaultListModel();
@@ -116,6 +116,15 @@ public class EditableList extends JPanel {
 	}
 
 	/**
+	 * Get the values of this list.
+	 * 
+	 * @return values
+	 */
+	public List<String> getValues() {
+		return values;
+	}
+
+	/**
 	 * Set the selected value.
 	 * 
 	 * @param value
@@ -130,7 +139,7 @@ public class EditableList extends JPanel {
 	/**
 	 * Get the selected value.
 	 * 
-	 * @return	the selected value
+	 * @return the selected value
 	 */
 	public String getSelectedValue() {
 		return textField.getText();
@@ -139,7 +148,7 @@ public class EditableList extends JPanel {
 	/**
 	 * Get the selected index.
 	 * 
-	 * @return	the selected index
+	 * @return the selected index
 	 */
 	public int getSelectedIndex() {
 

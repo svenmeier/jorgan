@@ -102,7 +102,7 @@ public class ElementsPanel extends DockedPanel {
 		ButtonGroup sortGroup = new ButtonGroup();
 		sortNameButton.getModel().setGroup(sortGroup);
 		sortNameButton.setToolTipText(i18n
-				.getString("sortNameButton.toolTipText"));
+				.getString("sortNameButton/toolTipText"));
 		sortNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
@@ -113,7 +113,7 @@ public class ElementsPanel extends DockedPanel {
 		sortTypeButton.getModel().setGroup(sortGroup);
 		sortTypeButton.setSelected(true);
 		sortTypeButton.setToolTipText(i18n
-				.getString("sortTypeButton.toolTipText"));
+				.getString("sortTypeButton/toolTipText"));
 		sortTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
@@ -357,9 +357,9 @@ public class ElementsPanel extends DockedPanel {
 	private class AddAction extends AbstractAction {
 
 		private AddAction() {
-			putValue(Action.NAME, i18n.getString("addAction.name"));
+			putValue(Action.NAME, i18n.getString("addAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("addAction.shortDescription"));
+					.getString("addAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
 					.getResource("/jorgan/gui/img/add.gif")));
 		}
@@ -380,9 +380,9 @@ public class ElementsPanel extends DockedPanel {
 	private class RemoveAction extends AbstractAction {
 
 		private RemoveAction() {
-			putValue(Action.NAME, i18n.getString("removeAction.name"));
+			putValue(Action.NAME, i18n.getString("removeAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("removeAction.shortDescription"));
+					.getString("removeAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
 					.getResource("/jorgan/gui/img/remove.gif")));
 		}

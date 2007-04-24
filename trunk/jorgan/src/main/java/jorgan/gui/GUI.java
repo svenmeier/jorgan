@@ -24,7 +24,7 @@ public class GUI implements UI {
 	private boolean useSystemLookAndFeel = true;
 
 	public GUI() {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 	}
 
 	/**

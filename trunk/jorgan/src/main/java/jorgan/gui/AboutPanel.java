@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 import javax.swing.ImageIcon;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -33,14 +32,15 @@ import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
 import jorgan.App;
-import jorgan.util.I18N;
+import jorgan.swing.StandardDialog;
+import bias.Context;
 
 /**
  * Panel that displays information about jOrgan.
  */
 public class AboutPanel extends JPanel {
 
-	private static I18N i18n = I18N.get(AboutPanel.class);
+	private static Context context = App.getBias().get(AboutPanel.class);
 
 	/**
 	 * The label used to display the version of jOrgan.
@@ -92,20 +92,22 @@ public class AboutPanel extends JPanel {
 	/**
 	 * Utility method to show an about panel in a dialog.
 	 * 
-	 * @param parent
-	 *            the frame to use for the dialogs parent
+	 * @param owner
+	 *            owning frame
 	 */
-	public static void showInDialog(JFrame parent) {
+	public static void showInDialog(JFrame owner) {
 
 		AboutPanel aboutPanel = new AboutPanel();
 
-		JDialog dialog = new JDialog(parent, i18n.getString("title"), true);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		dialog.setContentPane(aboutPanel);
+		StandardDialog dialog = new StandardDialog(owner);
+
+		context.get("dialog").getValues(dialog);
+
+		dialog.setBody(aboutPanel);
 		dialog.setResizable(false);
-		dialog.pack();
-		dialog.setLocationRelativeTo(parent);
+		dialog.setBounds(null);
 		dialog.setVisible(true);
+		dialog.dispose();
 	}
 
 	private static JWindow splash;

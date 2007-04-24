@@ -213,7 +213,7 @@ public class MemoryPanel extends DockedPanel {
 	private class NextAction extends AbstractAction implements
 			ListSelectionListener {
 		private NextAction() {
-			putValue(Action.NAME, i18n.getString("nextAction.name"));
+			putValue(Action.NAME, i18n.getString("nextAction/name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/next.gif")));
 
@@ -234,7 +234,7 @@ public class MemoryPanel extends DockedPanel {
 	private class PreviousAction extends AbstractAction implements
 			ListSelectionListener {
 		private PreviousAction() {
-			putValue(Action.NAME, i18n.getString("previousAction.name"));
+			putValue(Action.NAME, i18n.getString("previousAction/name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/previous.gif")));
 
@@ -255,7 +255,7 @@ public class MemoryPanel extends DockedPanel {
 	private class SwapAction extends AbstractAction implements
 			ListSelectionListener {
 		private SwapAction() {
-			putValue(Action.NAME, i18n.getString("swapAction.name"));
+			putValue(Action.NAME, i18n.getString("swapAction/name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/swap.gif")));
 
@@ -277,7 +277,7 @@ public class MemoryPanel extends DockedPanel {
 	private class ClearAction extends AbstractAction implements
 			ListSelectionListener {
 		private ClearAction() {
-			putValue(Action.NAME, i18n.getString("clearAction.name"));
+			putValue(Action.NAME, i18n.getString("clearAction/name"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/clear.gif")));
 
@@ -297,8 +297,8 @@ public class MemoryPanel extends DockedPanel {
 
 		private boolean confirm() {
 			return JOptionPane.showConfirmDialog(MemoryPanel.this, i18n
-					.getString("confirmDialog.message"), i18n
-					.getString("confirmDialog.title"), JOptionPane.YES_NO_OPTION,
+					.getString("confirmDialog/message"), i18n
+					.getString("confirmDialog/title"), JOptionPane.YES_NO_OPTION,
 					JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
 		}
 

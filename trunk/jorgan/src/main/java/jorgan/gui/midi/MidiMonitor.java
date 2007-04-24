@@ -125,13 +125,13 @@ public class MidiMonitor extends DockedPanel {
 	 * Constructor.
 	 */
 	public MidiMonitor() {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		addTool(new DeviceAction());
 
 		addToolSeparator();
 
-		hexButton.setToolTipText(i18n.getString("hexButton.toolTipText"));
+		hexButton.setToolTipText(i18n.getString("hexButton/toolTipText"));
 		hexButton.setIcon(new ImageIcon(getClass().getResource(
 				"/jorgan/gui/img/hexadecimal.gif")));
 		hexButton.addItemListener(new ItemListener() {
@@ -143,7 +143,7 @@ public class MidiMonitor extends DockedPanel {
 		baseGroup.add(hexButton);
 		addTool(hexButton);
 
-		decButton.setToolTipText(i18n.getString("decButton.toolTipText"));
+		decButton.setToolTipText(i18n.getString("decButton/toolTipText"));
 		decButton.setIcon(new ImageIcon(getClass().getResource(
 				"/jorgan/gui/img/decimal.gif")));
 		decButton.addItemListener(new ItemListener() {
@@ -157,7 +157,7 @@ public class MidiMonitor extends DockedPanel {
 		addToolSeparator();
 
 		scrollLockButton.setToolTipText(i18n
-				.getString("scrollLockButton.toolTipText"));
+				.getString("scrollLockButton/toolTipText"));
 		scrollLockButton.setIcon(new ImageIcon(getClass().getResource(
 				"/jorgan/gui/img/scrollLock.gif")));
 		addTool(scrollLockButton);
@@ -187,9 +187,9 @@ public class MidiMonitor extends DockedPanel {
 				(JFrame) SwingUtilities.getWindowAncestor(this));
 		selectionDialog.addCancelAction();
 		selectionDialog.addOKAction();
-		selectionDialog.setTitle(i18n.getString("selectionDialog.title"));
+		selectionDialog.setTitle(i18n.getString("selectionDialog/title"));
 		selectionDialog.setDescription(i18n
-				.getString("selectionDialog.description"));
+				.getString("selectionDialog/description"));
 		if (selectionPanel == null) {
 			selectionPanel = new DeviceSelectionPanel();
 		}
@@ -496,7 +496,7 @@ public class MidiMonitor extends DockedPanel {
 	private class DeviceAction extends AbstractAction {
 		private DeviceAction() {
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("deviceAction.shortDescription"));
+					.getString("deviceAction/shortDescription"));
 
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/filter.gif")));
@@ -510,7 +510,7 @@ public class MidiMonitor extends DockedPanel {
 	private class ClearAction extends AbstractAction {
 		private ClearAction() {
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("clearAction.shortDescription"));
+					.getString("clearAction/shortDescription"));
 
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/clear.gif")));

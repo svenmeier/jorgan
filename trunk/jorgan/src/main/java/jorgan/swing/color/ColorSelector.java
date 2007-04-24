@@ -27,14 +27,16 @@ import javax.swing.JButton;
 import javax.swing.JColorChooser;
 import javax.swing.JPanel;
 
-import jorgan.util.I18N;
+import jorgan.App;
+import bias.Context;
+import bias.util.MessageBuilder;
 
 /**
  * Selector of a color.
  */
 public class ColorSelector extends JPanel {
 
-	private static I18N i18n = I18N.get(ColorSelector.class);
+	private static Context context = App.getBias().get(ColorSelector.class);
 
 	/**
 	 * The selected color.
@@ -80,7 +82,7 @@ public class ColorSelector extends JPanel {
 		button.setHorizontalAlignment(JButton.LEFT);
 		button.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
-				String title = i18n.getString("colorChooser.title");
+				String title = MessageBuilder.get(context.get("title")).build();
 				Color newColor = JColorChooser.showDialog(ColorSelector.this,
 						title, color);
 				if (newColor != null) {

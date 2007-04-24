@@ -51,7 +51,7 @@ public class MidiMerger extends Loopback {
 	public MidiMerger(MidiDevice.Info info) {
 		super(info, false, true);
 		
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 	}
 
 	/**

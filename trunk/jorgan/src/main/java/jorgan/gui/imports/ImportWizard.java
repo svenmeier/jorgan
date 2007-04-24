@@ -90,7 +90,7 @@ public class ImportWizard extends BasicWizard {
 		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
 
 		public String getDescription() {
-			return i18n.getString("providerSelectionPage.description");
+			return i18n.getString("providerSelectionPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -144,7 +144,7 @@ public class ImportWizard extends BasicWizard {
 		}
 
 		public String getDescription() {
-			return i18n.getString("stopSelectionPage.description");
+			return i18n.getString("stopSelectionPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -180,9 +180,9 @@ public class ImportWizard extends BasicWizard {
 
 		dialog.setWizard(new ImportWizard(organ));
 
-		App.getBias().register(dialog);
+		App.getBias().getValues(dialog);
 		dialog.setVisible(true);
-		App.getBias().changed(dialog);
+		App.getBias().setValues(dialog);
 
 		dialog.dispose();
 

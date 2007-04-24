@@ -56,7 +56,7 @@ public class Elements {
 	 * @return the display name
 	 */
 	public static String getDisplayName(Class<? extends Element> elementClass, String property) {
-		return getString(classWithoutPackage(elementClass) + "." + property);
+		return getString(classWithoutPackage(elementClass) + "/" + property);
 	}
 
 	private static String getString(String classAndProperty) {

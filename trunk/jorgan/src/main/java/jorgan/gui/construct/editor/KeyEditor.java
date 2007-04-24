@@ -122,12 +122,12 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		}
 
 		JOptionPane keyOptionPane = new JOptionPane(i18n
-				.getString("keyOptionPane.message"),
+				.getString("keyOptionPane/message"),
 				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("keyOptionPane.cancel") });
+						.getString("keyOptionPane/cancel") });
 
 		dialog = keyOptionPane.createDialog(panel, i18n
-				.getString("keyOptionPane.title"));
+				.getString("keyOptionPane/title"));
 		dialog.setVisible(true);
 		dialog = null;
 

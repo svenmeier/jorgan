@@ -113,7 +113,7 @@ public class DispositionStream {
 		xstream.registerConverter(new KeyConverter());
 		xstream.registerConverter(new BooleanArrayConverter());
 
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 	}
 
 	public Organ read(File file) throws IOException {
@@ -215,7 +215,7 @@ public class DispositionStream {
 			// ignoe
 		}
 
-		App.getBias().changed(this);
+		App.getBias().setValues(this);
 	}
 
 	public int getHistorySize() {

@@ -141,7 +141,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class AllAction extends AbstractAction {
 
 		private AllAction() {
-			putValue(Action.NAME, i18n.getString("allAction.name"));
+			putValue(Action.NAME, i18n.getString("allAction/name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -153,7 +153,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class NoneAction extends AbstractAction {
 
 		private NoneAction() {
-			putValue(Action.NAME, i18n.getString("noneAction.name"));
+			putValue(Action.NAME, i18n.getString("noneAction/name"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {

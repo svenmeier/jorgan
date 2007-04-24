@@ -56,12 +56,12 @@ public class PlayerCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		warnDeviceCheckBox.setText(i18n.getString("warnDeviceCheckBox.text"));
+		warnDeviceCheckBox.setText(i18n.getString("warnDeviceCheckBox/text"));
 		panel.add(warnDeviceCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		warnMessageCheckBox.setText(i18n.getString("warnMessageCheckBox.text"));
+		warnMessageCheckBox.setText(i18n.getString("warnMessageCheckBox/text"));
 		panel.add(warnMessageCheckBox, builder.nextColumn());
 
 		builder.nextRow();

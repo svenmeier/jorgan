@@ -55,7 +55,7 @@ public class MidiMonitorCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("maxLabel.text")), builder
+		panel.add(new JLabel(i18n.getString("maxLabel/text")), builder
 				.nextColumn());
 		panel.add(maxSpinner, builder.nextColumn());
 

@@ -53,7 +53,7 @@ public class AppCategory extends JOrganCategory {
 		builder.nextRow();
 
 		openRecentOnStartupCheckBox.setText(i18n
-				.getString("openRecentOnStartupCheckBox.text"));
+				.getString("openRecentOnStartupCheckBox/text"));
 		panel.add(openRecentOnStartupCheckBox, builder.nextColumn()
 				.gridWidthRemainder());
 

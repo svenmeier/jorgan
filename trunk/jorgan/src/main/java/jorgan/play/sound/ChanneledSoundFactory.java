@@ -43,7 +43,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
 			throw new IllegalArgumentException("pool must not be null");
 		}
 
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		this.pool = pool;
 

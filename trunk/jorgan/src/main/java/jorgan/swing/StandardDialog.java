@@ -23,13 +23,13 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,16 +41,17 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
+import jorgan.App;
 import jorgan.swing.border.RuleBorder;
 import jorgan.swing.text.MultiLineLabel;
-import jorgan.util.I18N;
+import bias.Context;
 
 /**
  * A standard dialog.
  */
 public class StandardDialog extends JDialog {
 
-	private static I18N i18n = I18N.get(StandardDialog.class);
+	private static Context context = App.getBias().get(StandardDialog.class);
 
 	/**
 	 * The label holding the description.
@@ -207,14 +208,18 @@ public class StandardDialog extends JDialog {
 	 * Add an action for OK.
 	 */
 	public void addOKAction() {
-		addAction(new OKAction(), true);
+		OKAction okAction = new OKAction();
+		context.get("okAction").getValues(okAction);
+		addAction(okAction, true);
 	}
 
 	/**
 	 * Add an action for cancel.
 	 */
 	public void addCancelAction() {
-		addAction(new CancelAction(), false);
+		CancelAction cancelAction = new CancelAction();
+		context.get("cancelAction").getValues(cancelAction);
+		addAction(cancelAction, false);
 	}
 
 	/**
@@ -251,7 +256,7 @@ public class StandardDialog extends JDialog {
 		Dimension dim = getPreferredSize();
 
 		setSize(dim.width, dim.height);
-		
+
 		setLocationRelativeTo(getOwner());
 	}
 
@@ -287,8 +292,17 @@ public class StandardDialog extends JDialog {
 		return cancelled;
 	}
 
+	public void setBounds(Rectangle bounds) {
+		if (bounds == null) {
+			pack();
+			setLocationRelativeTo(getOwner());
+		} else {
+			super.setBounds(bounds);
+		}
+	}
+
 	/**
-	 * Guarantee that the size of this dialog is greaten than the preferred
+	 * Guarantee that the size of this dialog is greater than the preferred
 	 * size.
 	 */
 	private void guaranteePreferredSize() {
@@ -310,6 +324,7 @@ public class StandardDialog extends JDialog {
 		private ButtonPane() {
 			setLayout(new BorderLayout());
 			setBorder(new RuleBorder(RuleBorder.TOP));
+			setVisible(false);
 
 			gridPanel
 					.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -317,6 +332,8 @@ public class StandardDialog extends JDialog {
 		}
 
 		private JButton add(Action action) {
+			setVisible(true);
+			
 			JButton button = new JButton(action);
 
 			gridPanel.add(button);
@@ -327,22 +344,14 @@ public class StandardDialog extends JDialog {
 		}
 	}
 
-	private class CancelAction extends AbstractAction {
-
-		private CancelAction() {
-			putValue(Action.NAME, i18n.getString("cancelAction.name"));
-		}
+	private class CancelAction extends BaseAction {
 
 		public void actionPerformed(ActionEvent ev) {
 			onCancel();
 		}
 	}
 
-	private class OKAction extends AbstractAction {
-
-		private OKAction() {
-			putValue(Action.NAME, i18n.getString("okAction.name"));
-		}
+	private class OKAction extends BaseAction {
 
 		public void actionPerformed(ActionEvent ev) {
 			onOK();
@@ -362,5 +371,14 @@ public class StandardDialog extends JDialog {
 		}
 
 		return SwingUtilities.getWindowAncestor(component);
+	}
+
+	public static StandardDialog create(Component owner) {
+		Window window = getWindow(owner);
+		if (window instanceof JDialog) {
+			return new StandardDialog((JDialog) window);
+		} else {
+			return new StandardDialog((JFrame) window);
+		}
 	}
 }

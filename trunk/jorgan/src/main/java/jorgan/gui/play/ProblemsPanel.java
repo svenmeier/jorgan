@@ -262,9 +262,9 @@ public class ProblemsPanel extends DockedPanel {
 	private class GotoAction extends AbstractAction {
 
 		private GotoAction() {
-			putValue(Action.NAME, i18n.getString("gotoAction.name"));
+			putValue(Action.NAME, i18n.getString("gotoAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("gotoAction.shortDescription"));
+					.getString("gotoAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(ProblemsPanel.class
 					.getResource("/jorgan/gui/img/goto.gif")));
 		}

@@ -152,7 +152,7 @@ public class OrganFrame extends JFrame {
 	 * Create a new organFrame.
 	 */
 	public OrganFrame() {
-		App.getBias().register(this);
+		App.getBias().getValues(this);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -168,7 +168,7 @@ public class OrganFrame extends JFrame {
 		toolBar.addSeparator();
 
 		constructButton.setToolTipText(i18n
-				.getString("constructButton.toolTipText"));
+				.getString("constructButton/toolTipText"));
 		constructButton.setIcon(new ImageIcon(getClass().getResource(
 				"img/construct.gif")));
 		constructButton.addItemListener(new ItemListener() {
@@ -213,11 +213,11 @@ public class OrganFrame extends JFrame {
 
 		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
 
-		JMenu fileMenu = new JMenu(i18n.getString("fileMenu.text"));
+		JMenu fileMenu = new JMenu(i18n.getString("fileMenu/text"));
 		menuBar.add(fileMenu);
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
-		recentsMenu.setText(i18n.getString("recentsMenu.text"));
+		recentsMenu.setText(i18n.getString("recentsMenu/text"));
 		fileMenu.add(recentsMenu);
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
@@ -229,7 +229,7 @@ public class OrganFrame extends JFrame {
 			fileMenu.add(exitAction);
 		}
 
-		JMenu viewMenu = new JMenu(i18n.getString("viewMenu.text"));
+		JMenu viewMenu = new JMenu(i18n.getString("viewMenu/text"));
 		menuBar.add(viewMenu);
 		viewMenu.add(fullScreenAction);
 		viewMenu.addSeparator();
@@ -244,7 +244,7 @@ public class OrganFrame extends JFrame {
 			viewMenu.add(configurationAction);
 		}
 
-		JMenu helpMenu = new JMenu(i18n.getString("helpMenu.text"));
+		JMenu helpMenu = new JMenu(i18n.getString("helpMenu/text"));
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
 		helpMenu.add(aboutAction);
@@ -306,7 +306,7 @@ public class OrganFrame extends JFrame {
 			}
 			session.getPlay().dispose();
 
-			App.getBias().changed(this);
+			App.getBias().setValues(this);
 
 			setVisible(false);
 		}
@@ -509,7 +509,7 @@ public class OrganFrame extends JFrame {
 		String message = MessageFormat.format(i18n.getString(key), args);
 
 		JOptionPane.showMessageDialog(this, message, i18n
-				.getString("message.title"), JOptionPane.ERROR_MESSAGE);
+				.getString("message/title"), JOptionPane.ERROR_MESSAGE);
 	}
 
 	/**
@@ -517,9 +517,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class NewAction extends AbstractAction {
 		private NewAction() {
-			putValue(Action.NAME, i18n.getString("newAction.name"));
+			putValue(Action.NAME, i18n.getString("newAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("newAction.shortDescription"));
+					.getString("newAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/new.gif")));
 		}
@@ -560,9 +560,9 @@ public class OrganFrame extends JFrame {
 		private DebugPanel debugPanel = new DebugPanel();
 
 		private DebugAction() {
-			putValue(Action.NAME, i18n.getString("debugAction.name"));
+			putValue(Action.NAME, i18n.getString("debugAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("debugAction.shortDescription"));
+					.getString("debugAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/debug.gif")));
 		}
@@ -577,9 +577,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class OpenAction extends AbstractAction {
 		private OpenAction() {
-			putValue(Action.NAME, i18n.getString("openAction.name"));
+			putValue(Action.NAME, i18n.getString("openAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("openAction.shortDescription"));
+					.getString("openAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/open.gif")));
 		}
@@ -601,9 +601,9 @@ public class OrganFrame extends JFrame {
 		private boolean registrationChanges = false;
 
 		private SaveAction() {
-			putValue(Action.NAME, i18n.getString("saveAction.name"));
+			putValue(Action.NAME, i18n.getString("saveAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("saveAction.shortDescription"));
+					.getString("saveAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/save.gif")));
 		}
@@ -682,9 +682,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class SaveAsAction extends AbstractAction {
 		private SaveAsAction() {
-			putValue(Action.NAME, i18n.getString("saveAsAction.name"));
+			putValue(Action.NAME, i18n.getString("saveAsAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("saveAsAction.shortDescription"));
+					.getString("saveAsAction/shortDescription"));
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"img/saveAs.gif")));
 		}
@@ -699,9 +699,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class AboutAction extends AbstractAction {
 		private AboutAction() {
-			putValue(Action.NAME, i18n.getString("aboutAction.name"));
+			putValue(Action.NAME, i18n.getString("aboutAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("aboutAction.shortDescription"));
+					.getString("aboutAction/shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -714,9 +714,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class WebsiteAction extends AbstractAction {
 		private WebsiteAction() {
-			putValue(Action.NAME, i18n.getString("websiteAction.name"));
+			putValue(Action.NAME, i18n.getString("websiteAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("websiteAction.shortDescription"));
+					.getString("websiteAction/shortDescription"));
 
 			setEnabled(Browser.isSupported());
 		}
@@ -731,9 +731,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class ImportAction extends AbstractAction {
 		private ImportAction() {
-			putValue(Action.NAME, i18n.getString("importAction.name"));
+			putValue(Action.NAME, i18n.getString("importAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("importAction.shortDescription"));
+					.getString("importAction/shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -746,9 +746,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class PreferencesAction extends AbstractAction {
 		private PreferencesAction() {
-			putValue(Action.NAME, i18n.getString("preferencesAction.name"));
+			putValue(Action.NAME, i18n.getString("preferencesAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("preferencesAction.shortDescription"));
+					.getString("preferencesAction/shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -765,9 +765,9 @@ public class OrganFrame extends JFrame {
 		private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
 
 		private FullScreenAction() {
-			putValue(Action.NAME, i18n.getString("fullScreenAction.name"));
+			putValue(Action.NAME, i18n.getString("fullScreenAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("fullScreenAction.shortDescription"));
+					.getString("fullScreenAction/shortDescription"));
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
@@ -831,9 +831,9 @@ public class OrganFrame extends JFrame {
 	 */
 	private class ExitAction extends AbstractAction {
 		private ExitAction() {
-			putValue(Action.NAME, i18n.getString("exitAction.name"));
+			putValue(Action.NAME, i18n.getString("exitAction/name"));
 			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("exitAction.shortDescription"));
+					.getString("exitAction/shortDescription"));
 		}
 
 		public void actionPerformed(ActionEvent ev) {

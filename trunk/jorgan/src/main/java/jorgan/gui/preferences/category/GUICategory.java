@@ -59,13 +59,13 @@ public class GUICategory extends JOrganCategory {
 		builder.nextRow();
 
 		useSystemLookAndFeelCheckBox.setText(i18n
-				.getString("useSystemLookAndFeelCheckBox.text"));
+				.getString("useSystemLookAndFeelCheckBox/text"));
 		panel.add(useSystemLookAndFeelCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
 		showAboutOnStartupCheckBox.setText(i18n
-				.getString("showAboutOnStartupCheckBox.text"));
+				.getString("showAboutOnStartupCheckBox/text"));
 		panel.add(showAboutOnStartupCheckBox, builder.nextColumn());
 
 		builder.nextRow();
