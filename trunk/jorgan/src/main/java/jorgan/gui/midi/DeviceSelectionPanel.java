@@ -30,24 +30,23 @@ import javax.swing.tree.TreePath;
 
 import jorgan.sound.midi.DevicePool;
 import jorgan.swing.tree.CheckedTreeCell;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A panel to select a MIDI device.
  */
 public class DeviceSelectionPanel extends JPanel {
 
-	private I18N i18n = I18N.get(DeviceSelectionPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			DeviceSelectionPanel.class);
 
 	private JTree deviceTree = new JTree();
 
 	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-	private DefaultMutableTreeNode in = new DefaultMutableTreeNode(i18n
-			.getString("input"));
+	private DefaultMutableTreeNode in = new DefaultMutableTreeNode();
 
-	private DefaultMutableTreeNode out = new DefaultMutableTreeNode(i18n
-			.getString("output"));
+	private DefaultMutableTreeNode out = new DefaultMutableTreeNode();
 
 	private String deviceName = null;
 
@@ -59,6 +58,9 @@ public class DeviceSelectionPanel extends JPanel {
 	public DeviceSelectionPanel() {
 		setLayout(new BorderLayout());
 
+		config.get("input").read(in);
+		config.get("output").read(out);
+		
 		deviceTree.setShowsRootHandles(true);
 		deviceTree.setRootVisible(false);
 		deviceTree.setEditable(true);

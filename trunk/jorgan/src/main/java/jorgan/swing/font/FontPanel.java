@@ -27,10 +27,9 @@ import java.util.logging.Logger;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import jorgan.App;
 import jorgan.swing.EditableList;
 import jorgan.swing.GridBuilder;
-import bias.Context;
+import bias.Configuration;
 
 /**
  * A panel for a font selection.
@@ -39,7 +38,8 @@ class FontPanel extends JPanel {
 
 	private static Logger logger = Logger.getLogger(FontPanel.class.getName());
 
-	private static Context context = App.getBias().get(FontPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			FontPanel.class);
 
 	private static String[] sizes = new String[] { "8", "10", "12", "14", "16",
 			"18", "24" };
@@ -68,9 +68,9 @@ class FontPanel extends JPanel {
 
 		builder.nextRow();
 
-		context.get("familyLabel").getValues(familyLabel);
-		context.get("sizeLabel").getValues(sizeLabel);
-		context.get("styleLabel").getValues(styleLabel);
+		config.get("familyLabel").read(familyLabel);
+		config.get("sizeLabel").read(sizeLabel);
+		config.get("styleLabel").read(styleLabel);
 
 		add(familyLabel, builder.nextColumn());
 		add(sizeLabel, builder.nextColumn());
@@ -85,7 +85,7 @@ class FontPanel extends JPanel {
 		sizeList.setValues(sizes);
 		add(sizeList, builder.nextColumn().fillBoth());
 
-		context.get("stylesList").getValues(stylesList);
+		config.get("stylesList").read(stylesList);
 		add(stylesList, builder.nextColumn().fillBoth());
 	}
 

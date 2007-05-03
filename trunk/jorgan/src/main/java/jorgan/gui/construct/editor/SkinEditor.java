@@ -18,9 +18,9 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 
-import jorgan.skin.*;
+import jorgan.skin.SkinManager;
 
 /**
  * Property editor for a skin property.

@@ -20,14 +20,15 @@ package jorgan.gui.construct.editor;
 
 import java.beans.PropertyEditorSupport;
 
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * Property editor for a boolean property.
  */
 public class BooleanEditor extends PropertyEditorSupport {
 
-	private I18N i18n = I18N.get(BooleanEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			BooleanEditor.class);
 
 	private String[] tags;
 

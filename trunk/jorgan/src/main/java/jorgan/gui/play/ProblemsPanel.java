@@ -19,14 +19,11 @@
 package jorgan.gui.play;
 
 import java.awt.event.ActionEvent;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
@@ -40,17 +37,20 @@ import jorgan.gui.OrganSession;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
-import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
+import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Panel shows the problems.
  */
 public class ProblemsPanel extends DockedPanel {
 
-	private static I18N i18n = I18N.get(ProblemsPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ProblemsPanel.class);
 
 	/**
 	 * Icon used for indication of a warning.
@@ -225,10 +225,8 @@ public class ProblemsPanel extends DockedPanel {
 			this.element = element;
 			this.problem = problem;
 
-			String pattern = i18n.getString(problem.toString());
-
-			message = MessageFormat.format(pattern, new Object[] { problem
-					.getValue() });
+			message = config.get(problem.toString()).read(new MessageBuilder())
+					.build(problem.getValue());
 		}
 
 		private Element getElement() {
@@ -259,14 +257,10 @@ public class ProblemsPanel extends DockedPanel {
 		}
 	}
 
-	private class GotoAction extends AbstractAction {
+	private class GotoAction extends BaseAction {
 
 		private GotoAction() {
-			putValue(Action.NAME, i18n.getString("gotoAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("gotoAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(ProblemsPanel.class
-					.getResource("/jorgan/gui/img/goto.gif")));
+			config.get("gotoAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

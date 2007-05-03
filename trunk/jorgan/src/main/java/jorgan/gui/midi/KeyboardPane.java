@@ -38,14 +38,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
 
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A keyboard.
  */
 public class KeyboardPane extends JComponent {
 
-	private static final I18N i18n = I18N.get(KeyboardPane.class);
+	private static Configuration config = Configuration.getRoot().get(
+			KeyboardPane.class);
 
 	private static final int C = 0;
 
@@ -387,9 +388,10 @@ public class KeyboardPane extends JComponent {
 		ButtonGroup channelGroup = new ButtonGroup();
 		ChannelHandler channelHandler = new ChannelHandler();
 		for (int c = 0; c < 16; c++) {
-			channelMenuItems[c] = new JCheckBoxMenuItem(i18n
-					.getString("channelMenuItem/text")
-					+ " " + (c + 1));
+			channelMenuItems[c] = new JCheckBoxMenuItem();
+			config.get("channelMenuItem").read(channelMenuItems[c]);
+			channelMenuItems[c].setText(channelMenuItems[c].getText() + " "
+					+ (c + 1));
 			channelMenuItems[c].getModel().setGroup(channelGroup);
 			channelMenuItems[c].putClientProperty(channelHandler,
 					new Integer(c));
@@ -399,8 +401,8 @@ public class KeyboardPane extends JComponent {
 
 		popupMenu.addSeparator();
 
-		velocityMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("velocityMenuItem/text"));
+		velocityMenuItem = new JCheckBoxMenuItem();
+		config.get("velocityMenuItem").read(velocityMenuItem);
 		velocityMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendVelocity = velocityMenuItem.isSelected();
@@ -408,8 +410,8 @@ public class KeyboardPane extends JComponent {
 		});
 		popupMenu.add(velocityMenuItem);
 
-		polyPressureMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("polyPressureMenuItem/text"));
+		polyPressureMenuItem = new JCheckBoxMenuItem();
+		config.get("polyPressureMenuItem").read(polyPressureMenuItem);
 		polyPressureMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendPolyPressure = polyPressureMenuItem.isSelected();
@@ -417,8 +419,8 @@ public class KeyboardPane extends JComponent {
 		});
 		popupMenu.add(polyPressureMenuItem);
 
-		channelPressureMenuItem = new JCheckBoxMenuItem(i18n
-				.getString("channelPressureMenuItem/text"));
+		channelPressureMenuItem = new JCheckBoxMenuItem();
+		config.get("channelPressureMenuItem").read(channelPressureMenuItem);
 		channelPressureMenuItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				sendChannelPressure = channelPressureMenuItem.isSelected();

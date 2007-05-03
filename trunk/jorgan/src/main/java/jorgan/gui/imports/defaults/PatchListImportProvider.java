@@ -25,29 +25,46 @@ import javax.swing.JPanel;
 
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A provider for an import from a patch list.
  */
 public class PatchListImportProvider implements ImportProvider {
 
-	private static I18N i18n = I18N.get(PatchListImportProvider.class);
-	
+	private static Configuration config = Configuration.getRoot().get(
+			PatchListImportProvider.class);
+
 	private PatchListPanel panel = new PatchListPanel();
 
 	private List<Stop> stops = new ArrayList<Stop>();
+
+	private String name;
+
+	private String description;
+
+	public PatchListImportProvider() {
+		config.read(this);
+	}
 
 	public JPanel getOptionsPanel() {
 		return panel;
 	}
 
 	public String getName() {
-		return i18n.getString("name");
+		return name;
 	}
 
 	public String getDescription() {
-		return i18n.getString("description");
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean hasStops() {

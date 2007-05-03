@@ -24,21 +24,21 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Reference;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A wizard for creating of elements.
  */
 public class CreateElementWizard extends BasicWizard {
 
-	private static I18N i18n = I18N.get(CreateElementWizard.class);
+	private static Configuration config = Configuration.getRoot().get(
+			CreateElementWizard.class);
 
 	private Organ organ;
 
@@ -109,15 +109,12 @@ public class CreateElementWizard extends BasicWizard {
 		 * Constructor.
 		 */
 		public ElementPage() {
+			config.get("elementPage").read(this);
 
 			elementPanel.setElementClasses(Organ.getElementClasses());
 			if (prototype != null) {
 				elementPanel.setElementClass(prototype.getClass());
 			}
-		}
-
-		public String getDescription() {
-			return i18n.getString("elementPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -158,8 +155,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
-		public String getDescription() {
-			return i18n.getString("referencesToPage/description");
+		public ReferencesToPage() {
+			config.get("referencesToPage").read(this);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -196,8 +193,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
-		public String getDescription() {
-			return i18n.getString("referencedFromPage/description");
+		public ReferencedByPage() {
+			config.get("referencedFromPage").read(this);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -239,13 +236,12 @@ public class CreateElementWizard extends BasicWizard {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 
-		dialog.setTitle(i18n.getString("title"));
 
 		dialog.setWizard(new CreateElementWizard(organ, prototype));
 
-		App.getBias().getValues(dialog);
+		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
-		App.getBias().setValues(dialog);
+		config.get("dialog").write(dialog);
 
 		dialog.dispose();
 

@@ -26,10 +26,6 @@ public class AlignCenterHorizontalLayout extends ViewLayout {
 
     private int x;
 
-    public AlignCenterHorizontalLayout() {
-        super("alignCenterHorizontal");
-    }
-
     protected void init(View pressed, List<View> views) {
         x = pressed.getX() + pressed.getWidth() / 2;
     }

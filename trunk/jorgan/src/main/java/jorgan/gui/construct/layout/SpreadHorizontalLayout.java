@@ -32,10 +32,6 @@ public class SpreadHorizontalLayout extends ViewLayout {
 
 	private int count;
 
-	public SpreadHorizontalLayout() {
-		super("spreadHorizontal");
-	}
-
 	protected void init(View pressed, List<View> views) {
 
 		Collections.sort(views, new Comparator<View>() {

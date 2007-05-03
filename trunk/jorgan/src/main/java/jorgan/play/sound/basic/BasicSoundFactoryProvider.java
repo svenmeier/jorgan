@@ -21,9 +21,9 @@ package jorgan.play.sound.basic;
 // jorgan
 import javax.sound.midi.MidiUnavailableException;
 
-import jorgan.sound.midi.ChannelPool;
-import jorgan.play.sound.*;
+import jorgan.play.sound.SoundFactory;
 import jorgan.play.sound.spi.SoundFactoryProvider;
+import jorgan.sound.midi.ChannelPool;
 
 /**
  * A provider of default sound factories.

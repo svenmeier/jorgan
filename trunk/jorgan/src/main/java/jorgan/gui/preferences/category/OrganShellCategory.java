@@ -35,9 +35,10 @@ import javax.swing.border.TitledBorder;
 import jorgan.shell.Interpreter;
 import jorgan.shell.OrganShell;
 import jorgan.swing.GridBuilder;
-import jorgan.util.I18N;
 import bias.swing.Category;
 import bias.swing.PropertyModel;
+
+import com.sun.imageio.plugins.common.I18N;
 
 /**
  * {@link OrganShell} category.

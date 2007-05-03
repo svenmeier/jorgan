@@ -18,7 +18,7 @@
  */
 package jorgan;
 
-import java.io.*;
+import java.io.File;
 
 /**
  * Definition of a user interface (UI).

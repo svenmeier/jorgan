@@ -19,6 +19,7 @@
 package jorgan.gui.file;
 
 import java.io.File;
+
 import javax.swing.filechooser.FileFilter;
 
 /**

@@ -18,7 +18,8 @@
  */
 package jorgan.io;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileFilter;
 
 /**
  * Filter for dispositions.

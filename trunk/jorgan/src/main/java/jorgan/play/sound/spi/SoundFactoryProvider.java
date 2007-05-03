@@ -20,7 +20,7 @@ package jorgan.play.sound.spi;
 
 import javax.sound.midi.MidiUnavailableException;
 
-import jorgan.play.sound.*;
+import jorgan.play.sound.SoundFactory;
 
 /**
  * A provider of sound factories.

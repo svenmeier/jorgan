@@ -28,12 +28,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.AbstractListModel;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
@@ -48,29 +44,18 @@ import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
+import jorgan.swing.BaseAction;
 import jorgan.swing.list.ListUtils;
-import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
+import bias.Configuration;
 
 /**
  * Panel shows the references of elements.
  */
 public class ReferencesPanel extends DockedPanel {
 
-	private static final I18N i18n = I18N.get(ReferencesPanel.class);
-
-	private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/sortName.gif"));
-
-	private static final Icon sortTypeIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/sortType.gif"));
-
-	private static final Icon referencesToIcon = new ImageIcon(
-			ElementsPanel.class.getResource("/jorgan/gui/img/referencesTo.gif"));
-
-	private static final Icon referencedFromIcon = new ImageIcon(
-			ElementsPanel.class
-					.getResource("/jorgan/gui/img/referencedFrom.gif"));
+	private static Configuration config = Configuration.getRoot().get(
+			ReferencesPanel.class);
 
 	/**
 	 * The edited organ.
@@ -90,15 +75,13 @@ public class ReferencesPanel extends DockedPanel {
 
 	private JList list = new JList();
 
-	private JToggleButton referencesToButton = new JToggleButton(
-			referencesToIcon);
+	private JToggleButton referencesToButton = new JToggleButton();
 
-	private JToggleButton referencedFromButton = new JToggleButton(
-			referencedFromIcon);
+	private JToggleButton referencedFromButton = new JToggleButton();
 
-	private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
+	private JToggleButton sortNameButton = new JToggleButton();
 
-	private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
+	private JToggleButton sortTypeButton = new JToggleButton();
 
 	private ReferencesModel referencesModel = new ReferencesModel();
 
@@ -112,9 +95,8 @@ public class ReferencesPanel extends DockedPanel {
 
 		addToolSeparator();
 
+		config.get("sortNameButton").read(sortNameButton);
 		sortNameButton.setSelected(true);
-		sortNameButton.setToolTipText(i18n
-				.getString("sortNameButton/toolTipText"));
 		sortNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (sortNameButton.isSelected()) {
@@ -125,8 +107,7 @@ public class ReferencesPanel extends DockedPanel {
 		});
 		addTool(sortNameButton);
 
-		sortTypeButton.setToolTipText(i18n
-				.getString("sortTypeButton/toolTipText"));
+		config.get("sortTypeButton").read(sortTypeButton);
 		sortTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (sortTypeButton.isSelected()) {
@@ -140,8 +121,7 @@ public class ReferencesPanel extends DockedPanel {
 		addToolSeparator();
 
 		ButtonGroup toFromGroup = new ButtonGroup();
-		referencesToButton.setToolTipText(i18n
-				.getString("referencesToButton/toolTipText"));
+		config.get("referencesToButton").read(referencesToButton);
 		referencesToButton.getModel().setGroup(toFromGroup);
 		referencesToButton.setSelected(true);
 		referencesToButton.getModel().addItemListener(new ItemListener() {
@@ -151,8 +131,7 @@ public class ReferencesPanel extends DockedPanel {
 		});
 		addTool(referencesToButton);
 
-		referencedFromButton.setToolTipText(i18n
-				.getString("referencedFromButton/toolTipText"));
+		config.get("referencedFromButton").read(referencedFromButton);
 		referencedFromButton.getModel().setGroup(toFromGroup);
 		addTool(referencedFromButton);
 
@@ -351,14 +330,10 @@ public class ReferencesPanel extends DockedPanel {
 		}
 	}
 
-	private class AddAction extends AbstractAction {
+	private class AddAction extends BaseAction {
 
 		private AddAction() {
-			putValue(Action.NAME, i18n.getString("addAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("addAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-					.getResource("/jorgan/gui/img/add.gif")));
+			config.get("addAction").read(this);
 
 			setEnabled(false);
 		}
@@ -375,15 +350,11 @@ public class ReferencesPanel extends DockedPanel {
 		}
 	}
 
-	private class RemoveAction extends AbstractAction implements
+	private class RemoveAction extends BaseAction implements
 			ListSelectionListener {
 
 		private RemoveAction() {
-			putValue(Action.NAME, i18n.getString("removeAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("removeAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-					.getResource("/jorgan/gui/img/remove.gif")));
+			config.get("removeAction").read(this);
 
 			setEnabled(false);
 		}

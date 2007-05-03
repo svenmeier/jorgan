@@ -18,9 +18,11 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.text.*;
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Component;
+import java.text.ParseException;
+
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * Property editor for numbers.

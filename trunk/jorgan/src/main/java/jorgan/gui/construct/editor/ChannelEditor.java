@@ -28,8 +28,6 @@ import java.text.ParseException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
@@ -38,7 +36,8 @@ import javax.swing.SwingUtilities;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.sound.midi.ShortMessageRecorder;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * A property editor for a channel property.
@@ -46,7 +45,8 @@ import jorgan.util.I18N;
 public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static I18N i18n = I18N.get(ChannelEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ChannelEditor.class);
 
 	private Keyboard keyboard;
 
@@ -56,7 +56,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 
 	private JButton button = new JButton("...");
 
-	private JDialog dialog;
+	private MessageBox box;
 
 	private ShortMessageRecorder recorder;
 
@@ -107,15 +107,10 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane channelOptionPane = new JOptionPane(i18n
-				.getString("channelOptionPane/message"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("channelOptionPane/cancel") });
-
-		dialog = channelOptionPane.createDialog(panel, i18n
-				.getString("channelOptionPane/title"));
-		dialog.setVisible(true);
-		dialog = null;
+		box = new MessageBox(MessageBox.OPTION_CANCEL);
+		config.get("recorder").read(box).show(panel);
+		box.show(panel);
+		box = null;
 
 		recorder.close();
 	}
@@ -157,7 +152,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 				channel = message.getChannel();
 
 				SwingUtilities.invokeLater(this);
-				
+
 				return false;
 			}
 			return true;
@@ -167,7 +162,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 
 			spinner.setValue(new Integer(channel + 1));
 
-			dialog.setVisible(false);
+			box.hide();
 		}
 	}
 }

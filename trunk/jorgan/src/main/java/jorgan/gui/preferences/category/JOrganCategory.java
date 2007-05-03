@@ -27,6 +27,6 @@ import bias.swing.AbstractCategory;
 public abstract class JOrganCategory extends AbstractCategory {
 
 	protected JOrganCategory() {
-		super(App.getBias().getStore());
+		super(Configuration.getRoot().getStore());
 	}
 }

@@ -21,15 +21,18 @@ package jorgan.play.sound;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.App;
 import jorgan.sound.midi.Channel;
 import jorgan.sound.midi.ChannelPool;
+import bias.Configuration;
 
 /**
  * An abstract base class for sound factories that are based on channels.
  */
 public abstract class ChanneledSoundFactory extends SoundFactory {
 
+	private static Configuration config = Configuration.getRoot().get(
+			ChanneledSoundFactory.class);
+	
 	private boolean sendAllNotesOff;
 
 	/**
@@ -43,7 +46,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
 			throw new IllegalArgumentException("pool must not be null");
 		}
 
-		App.getBias().getValues(this);
+		config.read(this);
 
 		this.pool = pool;
 

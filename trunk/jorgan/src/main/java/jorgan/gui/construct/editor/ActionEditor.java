@@ -20,14 +20,15 @@ package jorgan.gui.construct.editor;
 
 import java.beans.PropertyEditorSupport;
 
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * Property editor for an action property of a <code>Keyable</code>.
  */
 public class ActionEditor extends PropertyEditorSupport {
 
-	private static I18N i18n = I18N.get(ActionEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ActionEditor.class);
 
 	private String[] tags;
 

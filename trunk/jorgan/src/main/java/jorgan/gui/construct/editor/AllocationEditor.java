@@ -20,14 +20,15 @@ package jorgan.gui.construct.editor;
 
 import java.beans.PropertyEditorSupport;
 
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * Property editor for an allocation property.
  */
 public class AllocationEditor extends PropertyEditorSupport {
 
-	private static I18N i18n = I18N.get(AllocationEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			AllocationEditor.class);
 
 	private String[] tags;
 

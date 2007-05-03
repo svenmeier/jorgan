@@ -36,18 +36,17 @@ import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.gui.Elements;
 import jorgan.swing.GridBuilder;
-import bias.Context;
+import bias.Configuration;
 
 /**
  * A panel for an element.
  */
 public class ElementCreationPanel extends JPanel {
 
-	private Context context = App.getBias().get(ElementCreationPanel.class);
+	private Configuration config = Configuration.getRoot().get(ElementCreationPanel.class);
 
 	protected Insets standardInsets = new Insets(2, 2, 2, 2);
 
@@ -71,7 +70,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow();
 
-		context.get("nameLabel").getValues(nameLabel);
+		config.get("nameLabel").read(nameLabel);
 		add(nameLabel, builder.nextColumn());
 
 		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -92,7 +91,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow(1.0d);
 
-		context.get("typeLabel").getValues(typeLabel);
+		config.get("typeLabel").read(typeLabel);
 		add(typeLabel, builder.nextColumn().alignNorthWest());
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

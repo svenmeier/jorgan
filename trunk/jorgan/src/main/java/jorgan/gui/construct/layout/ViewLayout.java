@@ -21,28 +21,24 @@ package jorgan.gui.construct.layout;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 
 import jorgan.gui.console.View;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * The Layout for views.
  */
 public abstract class ViewLayout {
 
-	private static final I18N i18n = I18N.get(ViewLayout.class);
-
+	private static Configuration config = Configuration.getRoot().get(
+			ViewLayout.class);
+	
 	private String name;
 
 	private Icon icon;
 
-	protected ViewLayout(String key) {
-		if (key != null) {
-			this.name = i18n.getString(key);
-			this.icon = new ImageIcon(View.class.getResource("/jorgan/gui/img/"
-					+ key + ".gif"));
-		}
+	protected ViewLayout() {
+		config.read(this);
 	}
 
 	/**
@@ -61,6 +57,14 @@ public abstract class ViewLayout {
 	 */
 	public Icon getIcon() {
 		return icon;
+	}
+
+	public void setIcon(Icon icon) {
+		this.icon = icon;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	/**

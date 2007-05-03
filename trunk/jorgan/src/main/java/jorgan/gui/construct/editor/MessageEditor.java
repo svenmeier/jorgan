@@ -28,8 +28,6 @@ import java.util.StringTokenizer;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
@@ -38,7 +36,8 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Message;
 import jorgan.sound.midi.ShortMessageRecorder;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * PropertyEditor for a message property.
@@ -46,7 +45,8 @@ import jorgan.util.I18N;
 public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static I18N i18n = I18N.get(MessageEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			MessageEditor.class);
 
 	private String device;
 
@@ -56,7 +56,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 
 	private JButton button = new JButton("...");
 
-	private JDialog dialog;
+	private MessageBox box;
 
 	/**
 	 * Constructor.
@@ -140,16 +140,10 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane messageOptionPane = new JOptionPane(i18n
-				.getString("messageOptionPane/message"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("messageOptionPane/cancel") });
-
-		dialog = messageOptionPane.createDialog(panel.getTopLevelAncestor(),
-				i18n.getString("messageOptionPane/title"));
-		dialog.setVisible(true);
-		dialog.dispose();
-		dialog = null;
+		box = new MessageBox(MessageBox.OPTION_CANCEL);
+		config.get("recorder").read(box).show(panel);
+		box.show(panel);
+		box = null;
 
 		recorder.close();
 	}
@@ -208,7 +202,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			data2 = message.getData2();
 
 			SwingUtilities.invokeLater(this);
-			
+
 			return false;
 		}
 
@@ -217,7 +211,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 
 			textField.setText(format(message));
 
-			dialog.setVisible(false);
+			box.hide();
 		}
 	}
 }

@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -41,9 +40,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import bias.Context;
-
-import jorgan.App;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
@@ -63,22 +59,21 @@ import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.BaseAction;
-import jorgan.util.I18N;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
 import swingx.docking.Dockable;
 import swingx.docking.DockingPane;
 import swingx.docking.border.Eclipse3Border;
 import swingx.docking.persistence.XMLPersister;
+import bias.Configuration;
 
 /**
  * Panel for display and editing of an organ.
  */
 public class OrganPanel extends JPanel {
 
-	private static Context context = App.getBias().get(OrganPanel.class);
-	
-	private static I18N i18n = I18N.get(OrganPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			OrganPanel.class);
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
@@ -185,7 +180,7 @@ public class OrganPanel extends JPanel {
 	 * Create a new organPanel.
 	 */
 	public OrganPanel() {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		setLayout(new BorderLayout());
 
@@ -369,7 +364,7 @@ public class OrganPanel extends JPanel {
 
 			updateHistory();
 
-			App.getBias().setValues(this);
+			config.write(this);
 		}
 	}
 
@@ -527,7 +522,7 @@ public class OrganPanel extends JPanel {
 					"img/" + key + ".gif"));
 			putValue(Action.SMALL_ICON, icon);
 
-			context.get(key + "Dockable").getValues(this);
+			config.get(key + "Dockable").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -553,13 +548,9 @@ public class OrganPanel extends JPanel {
 	/**
 	 * The action that steps back to the previous element.
 	 */
-	private class BackAction extends AbstractAction {
+	private class BackAction extends BaseAction {
 		private BackAction() {
-			putValue(Action.NAME, i18n.getString("backAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("backAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/back.gif")));
+			config.get("backAction").read(this);
 
 			setEnabled(false);
 		}
@@ -572,13 +563,9 @@ public class OrganPanel extends JPanel {
 	/**
 	 * The action that steps forward to the next element.
 	 */
-	private class ForwardAction extends AbstractAction {
+	private class ForwardAction extends BaseAction {
 		private ForwardAction() {
-			putValue(Action.NAME, i18n.getString("forwardAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("forwardAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/forward.gif")));
+			config.get("forwardAction").read(this);
 
 			setEnabled(false);
 		}

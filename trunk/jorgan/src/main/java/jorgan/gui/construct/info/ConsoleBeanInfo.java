@@ -20,9 +20,9 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Console;
 import jorgan.gui.construct.editor.InDeviceEditor;
-import jorgan.gui.construct.editor.ZoomEditor;
 import jorgan.gui.construct.editor.ScreenEditor;
 import jorgan.gui.construct.editor.SkinEditor;
+import jorgan.gui.construct.editor.ZoomEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Organ}.

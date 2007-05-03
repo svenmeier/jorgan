@@ -33,7 +33,6 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
-import jorgan.App;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
@@ -62,6 +61,7 @@ import jorgan.io.disposition.History;
 import jorgan.io.disposition.KeyConverter;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
+import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -71,6 +71,9 @@ import com.thoughtworks.xstream.io.xml.DomDriver;
  * A {@link jorgan.disposition.Organ} streamer.
  */
 public class DispositionStream {
+
+	private static Configuration config = Configuration.getRoot().get(
+			DispositionStream.class);
 
 	private XStream xstream = new XStream(new DomDriver());
 
@@ -113,7 +116,7 @@ public class DispositionStream {
 		xstream.registerConverter(new KeyConverter());
 		xstream.registerConverter(new BooleanArrayConverter());
 
-		App.getBias().getValues(this);
+		config.read(this);
 	}
 
 	public Organ read(File file) throws IOException {
@@ -215,7 +218,7 @@ public class DispositionStream {
 			// ignoe
 		}
 
-		App.getBias().setValues(this);
+		config.write(this);
 	}
 
 	public int getHistorySize() {

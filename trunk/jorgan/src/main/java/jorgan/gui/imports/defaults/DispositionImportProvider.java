@@ -23,12 +23,10 @@ import java.awt.Insets;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -40,27 +38,45 @@ import jorgan.io.DispositionStream;
 import jorgan.io.riff.RiffFormatException;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * A provider for an import from a disposition.
  */
 public class DispositionImportProvider implements ImportProvider {
 
-	private I18N i18n = I18N.get(DispositionImportProvider.class);
+	private static Configuration config = Configuration.getRoot().get(
+			DispositionImportProvider.class);
 
 	private OptionsPanel panel = new OptionsPanel();
+
+	private String name;
+
+	private String description;
+
+	public DispositionImportProvider() {
+		config.read(this);
+	}
 
 	public JPanel getOptionsPanel() {
 		return panel;
 	}
 
 	public String getName() {
-		return i18n.getString("name");
+		return name;
 	}
 
 	public String getDescription() {
-		return i18n.getString("description");
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public boolean hasStops() {
@@ -77,11 +93,9 @@ public class DispositionImportProvider implements ImportProvider {
 			try {
 				stops = readStops(file);
 			} catch (IOException ex) {
-				panel.showException("exception.general", new String[] { file
-						.getPath() }, ex);
+				panel.showMessage("exception/general", file.getPath());
 			} catch (Exception ex) {
-				panel.showException("exception.invalid", new String[] { file
-						.getPath() }, ex);
+				panel.showMessage("exception/invalid", file.getPath());
 			}
 		}
 
@@ -135,7 +149,7 @@ public class DispositionImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			fileLabel.setText(i18n.getString("optionsPanel/fileLabel/text"));
+			config.get("optionsPanel/fileLabel").read(fileLabel);
 			add(fileLabel, builder.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
@@ -146,23 +160,10 @@ public class DispositionImportProvider implements ImportProvider {
 			add(fileSelector, builder.nextColumn().fillHorizontal());
 		}
 
-		/**
-		 * Show an exception.
-		 * 
-		 * @param message
-		 *            message of exception
-		 * @param args
-		 *            arguments of message
-		 * @param exception
-		 *            the exception
-		 */
-		public void showException(String message, Object[] args,
-				Exception exception) {
-
-			message = MessageFormat.format(i18n.getString(message), args);
-
-			JOptionPane.showMessageDialog(this, message, i18n
-					.getString("exception/title"), JOptionPane.ERROR_MESSAGE);
+		public void showMessage(String key, Object... args) {
+			MessageBox box = config.get(key).read(
+					new MessageBox(MessageBox.OPTIONS_OK));
+			box.show(panel);
 		}
 	}
 }

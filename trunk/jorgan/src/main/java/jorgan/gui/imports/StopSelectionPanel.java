@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JPanel;
@@ -36,15 +35,17 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Stop;
+import jorgan.swing.BaseAction;
 import jorgan.swing.table.TableUtils;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A selection of stops.
  */
 public class StopSelectionPanel extends JPanel {
 
-	private static I18N i18n = I18N.get(StopSelectionPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			StopSelectionPanel.class);
 
 	private Action allAction = new AllAction();
 
@@ -116,10 +117,10 @@ public class StopSelectionPanel extends JPanel {
 		return selectedStops;
 	}
 
-	private class AllAction extends AbstractAction {
+	private class AllAction extends BaseAction {
 
 		private AllAction() {
-			putValue(Action.NAME, i18n.getString("allAction/name"));
+			config.get("allAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -127,10 +128,10 @@ public class StopSelectionPanel extends JPanel {
 		}
 	}
 
-	private class NoneAction extends AbstractAction {
+	private class NoneAction extends BaseAction {
 
 		private NoneAction() {
-			putValue(Action.NAME, i18n.getString("noneAction/name"));
+			config.get("noneAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -138,8 +139,23 @@ public class StopSelectionPanel extends JPanel {
 		}
 	}
 
-	private class StopModel extends AbstractTableModel {
+	public class StopModel extends AbstractTableModel {
 
+		private String name;
+		private String program;
+		
+		public StopModel() {
+			config.get("stopModel").read(this);
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public void setProgram(String program) {
+			this.program = program;
+		}
+		
 		public Class<?> getColumnClass(int columnIndex) {
 
 			return String.class;
@@ -147,9 +163,9 @@ public class StopSelectionPanel extends JPanel {
 
 		public String getColumnName(int column) {
 			if (column == 0) {
-				return i18n.getString("stopName");
+				return name;
 			} else {
-				return i18n.getString("stopProgram");
+				return program;
 			}
 		}
 

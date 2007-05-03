@@ -24,10 +24,7 @@ import java.util.logging.Logger;
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
 import jorgan.shell.OrganShell;
-import bias.Bias;
-import bias.Context;
-import bias.Store;
-import bias.store.CompositeStore;
+import bias.Configuration;
 import bias.store.DefaultingStore;
 import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
@@ -38,11 +35,12 @@ import bias.store.ResourceBundlesStore;
  */
 public class App {
 
+	private static Configuration configuration = Configuration.getRoot().get(
+			App.class);
+
 	private static Logger logger = Logger.getLogger(App.class.getName());
 
 	private static App instance;
-
-	private static Context bias;
 
 	private String version;
 
@@ -129,28 +127,26 @@ public class App {
 			System.exit(1);
 		}
 
-		bias = new Bias(createStore());
+		initConfiguration();
 
 		instance = new App();
-		App.getBias().getValues(instance);
+		configuration.read(instance);
 		instance.start(arguments);
 
 		System.exit(0);
 	}
 
-	private static Store createStore() {
-		Store preferences = new DefaultingStore(PreferencesStore.user(),
-				new PropertiesStore(App.class, "app.properties"));
-		Store i18n = new ResourceBundlesStore("i18n");
+	private static void initConfiguration() {
+		Configuration configuration = Configuration.getRoot();
 
-		return new CompositeStore(preferences, i18n);
+		configuration
+				.addStore(new PropertiesStore(App.class, "app.properties"));
+		configuration.addStore(new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(App.class, "preferences.properties")));
+		configuration.addStore(new ResourceBundlesStore("i18n"));
 	}
 
 	public static App getInstance() {
 		return instance;
-	}
-
-	public static Context getBias() {
-		return bias;
 	}
 }

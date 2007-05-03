@@ -18,9 +18,11 @@
  */
 package jorgan.disposition.event;
 
-import java.util.*;
+import java.util.EventObject;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
+import jorgan.disposition.Reference;
 
 /**
  * Event describing the change of an organ.

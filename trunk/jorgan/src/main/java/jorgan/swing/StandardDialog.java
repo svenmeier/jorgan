@@ -41,17 +41,16 @@ import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
 
-import jorgan.App;
 import jorgan.swing.border.RuleBorder;
 import jorgan.swing.text.MultiLineLabel;
-import bias.Context;
+import bias.Configuration;
 
 /**
  * A standard dialog.
  */
 public class StandardDialog extends JDialog {
 
-	private static Context context = App.getBias().get(StandardDialog.class);
+	private static Configuration config = Configuration.getRoot().get(StandardDialog.class);
 
 	/**
 	 * The label holding the description.
@@ -209,7 +208,7 @@ public class StandardDialog extends JDialog {
 	 */
 	public void addOKAction() {
 		OKAction okAction = new OKAction();
-		context.get("okAction").getValues(okAction);
+		config.get("okAction").read(okAction);
 		addAction(okAction, true);
 	}
 
@@ -218,7 +217,7 @@ public class StandardDialog extends JDialog {
 	 */
 	public void addCancelAction() {
 		CancelAction cancelAction = new CancelAction();
-		context.get("cancelAction").getValues(cancelAction);
+		config.get("cancelAction").read(cancelAction);
 		addAction(cancelAction, false);
 	}
 

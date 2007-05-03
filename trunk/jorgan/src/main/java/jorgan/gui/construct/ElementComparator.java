@@ -22,7 +22,17 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import jorgan.disposition.*;
+import jorgan.disposition.Combination;
+import jorgan.disposition.Console;
+import jorgan.disposition.Coupler;
+import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
+import jorgan.disposition.Label;
+import jorgan.disposition.SoundSource;
+import jorgan.disposition.Stop;
+import jorgan.disposition.Swell;
+import jorgan.disposition.Tremulant;
+import jorgan.disposition.Variation;
 
 /**
  * Comparator of elements.

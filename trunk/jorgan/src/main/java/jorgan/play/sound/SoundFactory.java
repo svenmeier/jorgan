@@ -18,12 +18,14 @@
  */
 package jorgan.play.sound;
 
-import java.util.*;
-import javax.sound.midi.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-import sun.misc.Service;
+import javax.sound.midi.MidiUnavailableException;
 
 import jorgan.play.sound.spi.SoundFactoryProvider;
+import sun.misc.Service;
 
 /**
  * An factory of sounds.

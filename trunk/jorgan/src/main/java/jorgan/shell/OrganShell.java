@@ -36,7 +36,7 @@ import jorgan.play.OrganPlay;
 import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
-import bias.Context;
+import bias.Configuration;
 import bias.util.MessageBuilder;
 
 /**
@@ -47,7 +47,8 @@ public class OrganShell implements UI {
 	private static final Logger logger = Logger.getLogger(OrganShell.class
 			.getName());
 
-	private static Context context = App.getBias().get(OrganShell.class);
+	private static Configuration config = Configuration.getRoot().get(
+			OrganShell.class);
 
 	private File file;
 
@@ -67,7 +68,7 @@ public class OrganShell implements UI {
 	 * Create a new organShell.
 	 */
 	public OrganShell() {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		List<Command> commands = new ArrayList<Command>();
 		commands.add(new HelpCommand());
@@ -79,7 +80,7 @@ public class OrganShell implements UI {
 		commands.add(new ExitCommand());
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
-		context.get("interpreter").getValues(interpreter);
+		config.get("interpreter").read(interpreter);
 	}
 
 	/**
@@ -199,7 +200,7 @@ public class OrganShell implements UI {
 	 */
 	protected void writeMessage(String key, Object... args) {
 
-		String text = MessageBuilder.get(context.get(key)).build(args);
+		String text = config.get(key).read(new MessageBuilder()).build(args);
 
 		interpreter.writeln(text);
 	}
@@ -430,7 +431,7 @@ public class OrganShell implements UI {
 		private String longDescription;
 
 		protected AbstractCommand() {
-			context.get(getPrefix()).getValues(this);
+			config.get(getPrefix()).read(this);
 		}
 
 		protected abstract String getPrefix();

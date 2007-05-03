@@ -18,7 +18,7 @@
  */
 package jorgan.io.soundfont;
 
-import jorgan.io.riff.*;
+import jorgan.io.riff.RiffFormatException;
 
 public class SoundfontFormatException extends RiffFormatException {
 
