@@ -26,9 +26,10 @@ import javax.swing.JPanel;
 
 import jorgan.gui.GUI;
 import jorgan.swing.GridBuilder;
-import jorgan.util.I18N;
 import bias.swing.Category;
 import bias.swing.PropertyModel;
+
+import com.sun.imageio.plugins.common.I18N;
 
 /**
  * {@link GUI} category.

@@ -26,10 +26,6 @@ public class AlignCenterVerticalLayout extends ViewLayout {
 
     private int y;
 
-    public AlignCenterVerticalLayout() {
-        super("alignCenterVertical");
-    }
-
     protected void init(View pressed, List<View> views) {
         y = pressed.getY() + pressed.getHeight() / 2;
     }

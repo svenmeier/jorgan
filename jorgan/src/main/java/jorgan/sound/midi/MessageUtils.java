@@ -18,7 +18,8 @@
  */
 package jorgan.sound.midi;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 
 /**
  * BugFix for the JavaSound midi implementation.

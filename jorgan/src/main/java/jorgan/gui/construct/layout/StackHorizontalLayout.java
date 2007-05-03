@@ -31,8 +31,6 @@ public class StackHorizontalLayout extends ViewLayout {
 	private int y;
 
 	public StackHorizontalLayout(int grid) {
-		super(null);
-
 		this.grid = grid;
 	}
 

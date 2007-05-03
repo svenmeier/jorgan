@@ -18,8 +18,14 @@
  */
 package jorgan.sound.midi;
 
-import java.util.*;
-import javax.sound.midi.*;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 
 /**
  * A pool of channels.

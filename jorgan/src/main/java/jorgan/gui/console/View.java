@@ -28,7 +28,6 @@ import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
-import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
@@ -36,11 +35,15 @@ import jorgan.gui.Elements;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
+import bias.Configuration;
 
 /**
  * Base class of all views representing a view on one element of an organ.
  */
 public class View {
+
+	private static Configuration config = Configuration.getRoot().get(
+			View.class);
 
 	/**
 	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
@@ -94,7 +97,7 @@ public class View {
 
 		this.element = element;
 
-		App.getBias().getValues(this);
+		config.read(this);
 	}
 
 	protected void setText(String name, String text) {
@@ -185,7 +188,7 @@ public class View {
 			initStyle();
 
 			repaint();
-		}		
+		}
 	}
 
 	protected void initLocation() {
@@ -318,7 +321,7 @@ public class View {
 
 	public void setDefaultColor(Color color) {
 		this.defaultColor = color;
-		
+
 		changeUpdate(null);
 	}
 
@@ -328,7 +331,7 @@ public class View {
 
 	public void setDefaultFont(Font font) {
 		this.defaultFont = font;
-		
+
 		changeUpdate(null);
 	}
 
@@ -338,7 +341,7 @@ public class View {
 
 	public void setShortcutColor(Color shortcutColor) {
 		this.shortcutColor = shortcutColor;
-		
+
 		changeUpdate(null);
 	}
 
@@ -348,7 +351,7 @@ public class View {
 
 	public void setShortcutFont(Font shortcutFont) {
 		this.shortcutFont = shortcutFont;
-		
+
 		changeUpdate(null);
 	}
 
@@ -358,7 +361,7 @@ public class View {
 
 	public void setShowShortcut(boolean showShortcut) {
 		this.showShortcut = showShortcut;
-		
+
 		changeUpdate(null);
 	}
 }

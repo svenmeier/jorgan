@@ -18,7 +18,7 @@
  */
 package jorgan.sound.midi;
 
-import javax.sound.midi.*;
+import javax.sound.midi.MidiMessage;
 
 /**
  * Logger of MIDI.

@@ -21,10 +21,6 @@ package jorgan.gui.play;
 import java.awt.event.ActionEvent;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -35,17 +31,21 @@ import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganSession;
+import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
-import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
+import bias.Configuration;
+import bias.swing.MessageBox;
+import bias.util.MessageBuilder;
 
 /**
  * Panel for editing of a {@link jorgan.disposition.Memory}.
  */
 public class MemoryPanel extends DockedPanel {
 
-	private static I18N i18n = I18N.get(MemoryPanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			MemoryPanel.class);
 
 	private JTable table = new JTable();
 
@@ -116,7 +116,8 @@ public class MemoryPanel extends DockedPanel {
 		table.setVisible(memory != null);
 
 		if (memory == null) {
-			setMessage(i18n.getString("noMemory"));
+			setMessage(config.get("noMemory").read(new MessageBuilder())
+					.build());
 		} else {
 			setMessage(null);
 
@@ -210,12 +211,10 @@ public class MemoryPanel extends DockedPanel {
 		}
 	}
 
-	private class NextAction extends AbstractAction implements
+	private class NextAction extends BaseAction implements
 			ListSelectionListener {
 		private NextAction() {
-			putValue(Action.NAME, i18n.getString("nextAction/name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/next.gif")));
+			config.get("nextAction").read(this);
 
 			setEnabled(false);
 
@@ -231,12 +230,10 @@ public class MemoryPanel extends DockedPanel {
 		}
 	}
 
-	private class PreviousAction extends AbstractAction implements
+	private class PreviousAction extends BaseAction implements
 			ListSelectionListener {
 		private PreviousAction() {
-			putValue(Action.NAME, i18n.getString("previousAction/name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/previous.gif")));
+			config.get("previousAction").read(this);
 
 			setEnabled(false);
 
@@ -252,12 +249,10 @@ public class MemoryPanel extends DockedPanel {
 		}
 	}
 
-	private class SwapAction extends AbstractAction implements
+	private class SwapAction extends BaseAction implements
 			ListSelectionListener {
 		private SwapAction() {
-			putValue(Action.NAME, i18n.getString("swapAction/name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/swap.gif")));
+			config.get("swapAction").read(this);
 
 			setEnabled(false);
 
@@ -274,12 +269,10 @@ public class MemoryPanel extends DockedPanel {
 		}
 	}
 
-	private class ClearAction extends AbstractAction implements
+	private class ClearAction extends BaseAction implements
 			ListSelectionListener {
 		private ClearAction() {
-			putValue(Action.NAME, i18n.getString("clearAction/name"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/clear.gif")));
+			config.get("clearAction").read(this);
 
 			setEnabled(false);
 
@@ -296,10 +289,10 @@ public class MemoryPanel extends DockedPanel {
 		}
 
 		private boolean confirm() {
-			return JOptionPane.showConfirmDialog(MemoryPanel.this, i18n
-					.getString("confirmDialog/message"), i18n
-					.getString("confirmDialog/title"), JOptionPane.YES_NO_OPTION,
-					JOptionPane.WARNING_MESSAGE) == JOptionPane.YES_OPTION;
+
+			MessageBox box = config.get("confirm").read(
+					new MessageBox(MessageBox.OPTIONS_YES_NO));
+			return box.show(MemoryPanel.this) == MessageBox.OPTION_YES;
 		}
 
 		public void valueChanged(ListSelectionEvent e) {

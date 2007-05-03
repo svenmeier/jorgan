@@ -29,8 +29,6 @@ public class StackVerticalLayout extends ViewLayout {
 	private int y;
 
 	public StackVerticalLayout(int x, int y, int grid) {
-		super(null);
-
 		this.grid = grid;
 
 		this.x = x - (x % grid);

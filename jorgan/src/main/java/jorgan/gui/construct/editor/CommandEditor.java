@@ -18,7 +18,7 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 
 /**
  * Property editor for a boolean property.

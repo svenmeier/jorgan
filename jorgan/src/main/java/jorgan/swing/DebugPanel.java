@@ -37,7 +37,7 @@ public class DebugPanel extends JPanel {
 		handler.setFormatter(new SimpleFormatter());
 
 		textArea.setEditable(false);
-		
+
 		JScrollPane scrollPane = new JScrollPane(textArea);
 		scrollPane.setPreferredSize(new Dimension(400, 400));
 		add(scrollPane, BorderLayout.CENTER);
@@ -78,7 +78,7 @@ public class DebugPanel extends JPanel {
 		}
 	}
 
-	private class ClearAction extends AbstractAction {
+	private class ClearAction extends BaseAction {
 		private ClearAction() {
 			putValue(AbstractAction.NAME, "Clear");
 		}
@@ -88,7 +88,7 @@ public class DebugPanel extends JPanel {
 		}
 	}
 
-	private class CopyAction extends AbstractAction {
+	private class CopyAction extends BaseAction {
 		private CopyAction() {
 			putValue(AbstractAction.NAME, "Copy to Clipboard");
 		}

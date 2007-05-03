@@ -26,10 +26,6 @@ public class AlignBottomLayout extends ViewLayout {
 
     private int y;
 
-    public AlignBottomLayout() {
-        super("alignBottom");
-    }
-
     protected void init(View pressed, List<View> views) {
         y = pressed.getY() + pressed.getHeight();
     }

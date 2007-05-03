@@ -27,17 +27,17 @@ import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import jorgan.App;
 import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
-import bias.Context;
+import bias.Configuration;
 
 /**
  * A dialog showing a wizard.
  */
 public class WizardDialog extends StandardDialog {
 
-	private static Context context = App.getBias().get(WizardDialog.class);
+	private static Configuration config = Configuration.getRoot().get(
+			WizardDialog.class);
 
 	private Action previousAction = new PreviousAction();
 
@@ -75,13 +75,13 @@ public class WizardDialog extends StandardDialog {
 
 	private void init() {
 
-		context.getValues(this);
+		config.read(this);
 
-		context.get("previousAction").getValues(previousAction);
+		config.get("previousAction").read(previousAction);
 		addAction(previousAction);
-		context.get("nextAction").getValues(nextAction);
+		config.get("nextAction").read(nextAction);
 		addAction(nextAction);
-		context.get("finishAction").getValues(finishAction);
+		config.get("finishAction").read(finishAction);
 		addAction(finishAction, true);
 		addCancelAction();
 

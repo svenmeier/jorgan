@@ -8,15 +8,18 @@ import java.io.File;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import jorgan.App;
 import jorgan.UI;
 import spin.over.SpinOverEvaluator;
+import bias.Configuration;
 
 /**
  * Graphical UI implementation.
  */
 public class GUI implements UI {
 
+	private static Configuration config = Configuration.getRoot()
+			.get(GUI.class);
+	
 	private FrameDisposer disposer = new FrameDisposer();
 
 	private boolean showAboutOnStartup = true;
@@ -24,7 +27,7 @@ public class GUI implements UI {
 	private boolean useSystemLookAndFeel = true;
 
 	public GUI() {
-		App.getBias().getValues(this);
+		config.read(this);
 	}
 
 	/**

@@ -23,17 +23,13 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -44,23 +40,25 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.App;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.KeyFormat;
 import jorgan.sound.midi.MessageUtils;
 import jorgan.sound.midi.MidiLogger;
+import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
 import jorgan.swing.table.TableUtils;
-import jorgan.util.I18N;
 import spin.Spin;
 import swingx.docking.DockedPanel;
+import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * A monitor of MIDI messages.
  */
 public class MidiMonitor extends DockedPanel {
 
-	private static final I18N i18n = I18N.get(MidiMonitor.class);
+	private static final Configuration config = Configuration.getRoot().get(
+			MidiMonitor.class);
 
 	private static final KeyFormat keyFormat = new KeyFormat();
 
@@ -125,15 +123,13 @@ public class MidiMonitor extends DockedPanel {
 	 * Constructor.
 	 */
 	public MidiMonitor() {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		addTool(new DeviceAction());
 
 		addToolSeparator();
 
-		hexButton.setToolTipText(i18n.getString("hexButton/toolTipText"));
-		hexButton.setIcon(new ImageIcon(getClass().getResource(
-				"/jorgan/gui/img/hexadecimal.gif")));
+		config.get("hexButton").read(hexButton);
 		hexButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				model.fireTableDataChanged();
@@ -143,9 +139,7 @@ public class MidiMonitor extends DockedPanel {
 		baseGroup.add(hexButton);
 		addTool(hexButton);
 
-		decButton.setToolTipText(i18n.getString("decButton/toolTipText"));
-		decButton.setIcon(new ImageIcon(getClass().getResource(
-				"/jorgan/gui/img/decimal.gif")));
+		config.get("decButton").read(decButton);
 		decButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				model.fireTableDataChanged();
@@ -156,10 +150,7 @@ public class MidiMonitor extends DockedPanel {
 
 		addToolSeparator();
 
-		scrollLockButton.setToolTipText(i18n
-				.getString("scrollLockButton/toolTipText"));
-		scrollLockButton.setIcon(new ImageIcon(getClass().getResource(
-				"/jorgan/gui/img/scrollLock.gif")));
+		config.get("scrollLockButton").read(scrollLockButton);
 		addTool(scrollLockButton);
 
 		addToolSeparator();
@@ -183,20 +174,19 @@ public class MidiMonitor extends DockedPanel {
 	private DeviceSelectionPanel selectionPanel;
 
 	protected void selectDevice() {
+		if (selectionPanel == null) {
+			selectionPanel = new DeviceSelectionPanel();
+		}
+		selectionPanel.setDevice(deviceName, deviceOut);
+
 		StandardDialog selectionDialog = new StandardDialog(
 				(JFrame) SwingUtilities.getWindowAncestor(this));
 		selectionDialog.addCancelAction();
 		selectionDialog.addOKAction();
-		selectionDialog.setTitle(i18n.getString("selectionDialog/title"));
-		selectionDialog.setDescription(i18n
-				.getString("selectionDialog/description"));
-		if (selectionPanel == null) {
-			selectionPanel = new DeviceSelectionPanel();
-		}
 		selectionDialog.setBody(selectionPanel);
-		selectionPanel.setDevice(deviceName, deviceOut);
-		selectionDialog.autoPosition();
+		config.get("selectionDialog").read(selectionDialog);
 		selectionDialog.setVisible(true);
+		config.get("selectionDialog").write(selectionDialog);
 
 		if (!selectionDialog.wasCancelled()) {
 			setDevice(selectionPanel.getDeviceName(), selectionPanel
@@ -245,12 +235,11 @@ public class MidiMonitor extends DockedPanel {
 	protected void updateMessagesLabel() {
 		String message;
 		if (deviceName == null) {
-			message = i18n.getString("noDeviceMessage");
+			message = config.get("noDevice").read(new MessageBuilder()).build();
 		} else {
-			message = MessageFormat.format(i18n.getString("deviceMessage"),
-					new Object[] { deviceName,
-							deviceOut ? new Integer(1) : new Integer(0),
-							open ? new Integer(1) : new Integer(0) });
+			message = config.get("device").read(new MessageBuilder()).build(
+					deviceName, deviceOut ? new Integer(1) : new Integer(0),
+					open ? new Integer(1) : new Integer(0));
 		}
 		setMessage(message);
 	}
@@ -493,13 +482,9 @@ public class MidiMonitor extends DockedPanel {
 		}
 	}
 
-	private class DeviceAction extends AbstractAction {
+	private class DeviceAction extends BaseAction {
 		private DeviceAction() {
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("deviceAction/shortDescription"));
-
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/filter.gif")));
+			config.get("deviceAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -507,13 +492,9 @@ public class MidiMonitor extends DockedPanel {
 		}
 	}
 
-	private class ClearAction extends AbstractAction {
+	private class ClearAction extends BaseAction {
 		private ClearAction() {
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("clearAction/shortDescription"));
-
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/clear.gif")));
+			config.get("clearAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {

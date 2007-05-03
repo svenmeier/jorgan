@@ -21,10 +21,14 @@ package jorgan.gui.construct.editor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Insets;
-import java.awt.event.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.*;
+import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
 
 /**
  * PropertyEditor for a file property.

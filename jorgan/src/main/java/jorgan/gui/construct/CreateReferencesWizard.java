@@ -24,20 +24,20 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A wizard for creating of references.
  */
 public class CreateReferencesWizard extends BasicWizard {
 
-	private static I18N i18n = I18N.get(CreateReferencesWizard.class);
+	private static Configuration config = Configuration.getRoot().get(
+			CreateReferencesWizard.class);
 
 	private Organ organ;
 
@@ -98,13 +98,10 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		private ReferencesToPage() {
+			config.get("referencesToPage").read(this);
 
 			elementsSelectionPanel.setElements(organ
 					.getReferenceToCandidates(element));
-		}
-
-		public String getDescription() {
-			return i18n.getString("referencesToPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -126,13 +123,10 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		private ReferencedByPage() {
+			config.get("referencedFromPage").read(this);
 
 			elementsSelectionPanel.setElements(organ
 					.getReferencedFromCandidates(element));
-		}
-
-		public String getDescription() {
-			return i18n.getString("referencedFromPage/description");
 		}
 
 		protected JComponent getComponentImpl() {
@@ -160,14 +154,11 @@ public class CreateReferencesWizard extends BasicWizard {
 			Element element) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
-
-		dialog.setTitle(i18n.getString("title"));
-
 		dialog.setWizard(new CreateReferencesWizard(organ, element));
 
-		App.getBias().getValues(dialog);
+		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
-		App.getBias().setValues(dialog);
+		config.get("dialog").write(dialog);
 
 		dialog.dispose();
 

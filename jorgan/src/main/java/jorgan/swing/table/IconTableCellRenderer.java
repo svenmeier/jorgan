@@ -18,9 +18,12 @@
  */
 package jorgan.swing.table;
 
-import java.util.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  * A renderer for icons in a {@link javax.swing.JTable}. <br>

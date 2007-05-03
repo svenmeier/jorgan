@@ -18,10 +18,11 @@
  */
 package jorgan.play.event;
 
-import java.util.*;
+import java.util.EventObject;
 
 import jorgan.disposition.Element;
-import jorgan.play.*;
+import jorgan.play.OrganPlay;
+import jorgan.play.Problem;
 
 /**
  * Event of a player.

@@ -29,14 +29,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * Panel that displays input and output.
  */
 public class PlayMonitor extends JPanel {
 
-	private static I18N i18n = I18N.get(PlayMonitor.class);
+	private static Configuration config = Configuration.getRoot().get(PlayMonitor.class);
 
 	private static Icon noneIcon = new ImageIcon(PlayMonitor.class
 			.getResource("/jorgan/gui/img/none.gif"));
@@ -63,14 +63,14 @@ public class PlayMonitor extends JPanel {
 
 		add(inLabel, null);
 
+		config.get("inLabel").read(inLabel);
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		inLabel.setIcon(noneIcon);
-		inLabel.setToolTipText(i18n.getString("inLabel/toolTipText"));
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 
+		config.get("outLabel").read(outLabel);
 		outLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		outLabel.setIcon(noneIcon);
-		outLabel.setToolTipText(i18n.getString("outLabel/toolTipText"));
 		add(outLabel, null);
 
 		inTimer = new Timer(500, new ActionListener() {

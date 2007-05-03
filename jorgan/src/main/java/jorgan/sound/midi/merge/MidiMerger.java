@@ -28,15 +28,18 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
-import jorgan.App;
 import jorgan.sound.midi.DevicePool;
 import jorgan.sound.midi.Loopback;
+import bias.Configuration;
 
 /**
  * <code>MidiDevice</code> for merging of mutiple other devices.
  */
 public class MidiMerger extends Loopback {
 
+	private static Configuration config = Configuration.getRoot().get(
+			MidiMerger.class);
+	
 	/**
 	 * The list of inputs to merge.
 	 */
@@ -51,7 +54,7 @@ public class MidiMerger extends Loopback {
 	public MidiMerger(MidiDevice.Info info) {
 		super(info, false, true);
 		
-		App.getBias().getValues(this);
+		config.read(this);
 	}
 
 	/**

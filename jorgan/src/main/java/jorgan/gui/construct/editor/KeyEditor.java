@@ -29,9 +29,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.AbstractSpinnerModel;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFormattedTextField;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SwingUtilities;
@@ -41,7 +39,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Key;
 import jorgan.disposition.Keyboard;
 import jorgan.sound.midi.ShortMessageRecorder;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * Property editor for a key property.
@@ -49,7 +48,8 @@ import jorgan.util.I18N;
 public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		ActionListener {
 
-	private static I18N i18n = I18N.get(KeyEditor.class);
+	private static Configuration config = Configuration.getRoot().get(
+			KeyEditor.class);
 
 	private Keyboard keyboard;
 
@@ -63,7 +63,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 
 	private JButton button = new JButton("...");
 
-	private JDialog dialog;
+	private MessageBox box;
 
 	private ShortMessageRecorder recorder;
 
@@ -121,15 +121,10 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		JOptionPane keyOptionPane = new JOptionPane(i18n
-				.getString("keyOptionPane/message"),
-				JOptionPane.INFORMATION_MESSAGE, -1, null, new Object[] { i18n
-						.getString("keyOptionPane/cancel") });
-
-		dialog = keyOptionPane.createDialog(panel, i18n
-				.getString("keyOptionPane/title"));
-		dialog.setVisible(true);
-		dialog = null;
+		box = new MessageBox(MessageBox.OPTION_CANCEL);
+		config.get("recorder").read(box).show(panel);
+		box.show(panel);
+		box = null;
 
 		recorder.close();
 	}
@@ -218,7 +213,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 				pitch = message.getData1();
 
 				SwingUtilities.invokeLater(this);
-				
+
 				return false;
 			}
 			return true;
@@ -229,7 +224,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 
 			spinner.setValue(key);
 
-			dialog.setVisible(false);
+			box.hide();
 		}
 	}
 }

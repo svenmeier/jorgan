@@ -18,7 +18,7 @@
  */
 package jorgan.io.riff;
 
-import java.io.*;
+import java.io.IOException;
 
 public class RiffFormatException extends IOException {
 

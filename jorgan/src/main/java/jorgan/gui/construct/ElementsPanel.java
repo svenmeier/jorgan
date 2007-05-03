@@ -26,11 +26,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -45,24 +41,20 @@ import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.swing.BaseAction;
 import jorgan.util.Generics;
-import jorgan.util.I18N;
 import swingx.docking.DockedPanel;
 import swingx.list.AbstractDnDListModel;
 import swingx.list.DnDList;
+import bias.Configuration;
 
 /**
  * Panel shows all elements.
  */
 public class ElementsPanel extends DockedPanel {
 
-	private static final I18N i18n = I18N.get(ElementsPanel.class);
-
-	private static final Icon sortNameIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/sortName.gif"));
-
-	private static final Icon sortTypeIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/sortType.gif"));
+	private static Configuration config = Configuration.getRoot().get(
+			ElementsPanel.class);
 
 	/**
 	 * The edited organ.
@@ -80,9 +72,9 @@ public class ElementsPanel extends DockedPanel {
 
 	private DnDList list = new DnDList();
 
-	private JToggleButton sortNameButton = new JToggleButton(sortNameIcon);
+	private JToggleButton sortNameButton = new JToggleButton();
 
-	private JToggleButton sortTypeButton = new JToggleButton(sortTypeIcon);
+	private JToggleButton sortTypeButton = new JToggleButton();
 
 	private ElementsModel elementsModel = new ElementsModel();
 
@@ -100,9 +92,8 @@ public class ElementsPanel extends DockedPanel {
 		addToolSeparator();
 
 		ButtonGroup sortGroup = new ButtonGroup();
+		config.get("sortNameButton").read(sortNameButton);
 		sortNameButton.getModel().setGroup(sortGroup);
-		sortNameButton.setToolTipText(i18n
-				.getString("sortNameButton/toolTipText"));
 		sortNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
@@ -110,10 +101,9 @@ public class ElementsPanel extends DockedPanel {
 		});
 		addTool(sortNameButton);
 
+		config.get("sortTypeButton").read(sortTypeButton);
 		sortTypeButton.getModel().setGroup(sortGroup);
 		sortTypeButton.setSelected(true);
-		sortTypeButton.setToolTipText(i18n
-				.getString("sortTypeButton/toolTipText"));
 		sortTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
@@ -354,14 +344,10 @@ public class ElementsPanel extends DockedPanel {
 		}
 	}
 
-	private class AddAction extends AbstractAction {
+	private class AddAction extends BaseAction {
 
 		private AddAction() {
-			putValue(Action.NAME, i18n.getString("addAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("addAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-					.getResource("/jorgan/gui/img/add.gif")));
+			config.get("addAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -377,14 +363,10 @@ public class ElementsPanel extends DockedPanel {
 		}
 	}
 
-	private class RemoveAction extends AbstractAction {
+	private class RemoveAction extends BaseAction {
 
 		private RemoveAction() {
-			putValue(Action.NAME, i18n.getString("removeAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("removeAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(ElementsPanel.class
-					.getResource("/jorgan/gui/img/remove.gif")));
+			config.get("removeAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

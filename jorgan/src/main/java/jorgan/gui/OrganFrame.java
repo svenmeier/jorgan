@@ -29,7 +29,6 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -37,21 +36,17 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import jorgan.App;
 import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganEvent;
@@ -59,11 +54,14 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
+import jorgan.swing.BaseAction;
 import jorgan.swing.Browser;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.swing.MessageBox;
+import bias.util.MessageBuilder;
 
 /**
  * The jOrgan frame.
@@ -72,7 +70,8 @@ public class OrganFrame extends JFrame {
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
-	private static I18N i18n = I18N.get(OrganFrame.class);
+	private static Configuration config = Configuration.getRoot().get(
+			OrganFrame.class);
 
 	public static final int REGISTRATION_CHANGES_CONFIRM = 0;
 
@@ -152,7 +151,7 @@ public class OrganFrame extends JFrame {
 	 * Create a new organFrame.
 	 */
 	public OrganFrame() {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -167,10 +166,7 @@ public class OrganFrame extends JFrame {
 
 		toolBar.addSeparator();
 
-		constructButton.setToolTipText(i18n
-				.getString("constructButton/toolTipText"));
-		constructButton.setIcon(new ImageIcon(getClass().getResource(
-				"img/construct.gif")));
+		config.get("constructButton").read(constructButton);
 		constructButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (constructButton.isSelected()) {
@@ -213,11 +209,12 @@ public class OrganFrame extends JFrame {
 
 		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
 
-		JMenu fileMenu = new JMenu(i18n.getString("fileMenu/text"));
+		JMenu fileMenu = new JMenu();
+		config.get("fileMenu").read(fileMenu);
 		menuBar.add(fileMenu);
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
-		recentsMenu.setText(i18n.getString("recentsMenu/text"));
+		config.get("recentsMenu").read(recentsMenu);
 		fileMenu.add(recentsMenu);
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
@@ -229,7 +226,8 @@ public class OrganFrame extends JFrame {
 			fileMenu.add(exitAction);
 		}
 
-		JMenu viewMenu = new JMenu(i18n.getString("viewMenu/text"));
+		JMenu viewMenu = new JMenu();
+		config.get("viewMenu").read(viewMenu);
 		menuBar.add(viewMenu);
 		viewMenu.add(fullScreenAction);
 		viewMenu.addSeparator();
@@ -244,7 +242,8 @@ public class OrganFrame extends JFrame {
 			viewMenu.add(configurationAction);
 		}
 
-		JMenu helpMenu = new JMenu(i18n.getString("helpMenu/text"));
+		JMenu helpMenu = new JMenu();
+		config.get("helpMenu").read(helpMenu);
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
 		helpMenu.add(aboutAction);
@@ -306,7 +305,7 @@ public class OrganFrame extends JFrame {
 			}
 			session.getPlay().dispose();
 
-			App.getBias().setValues(this);
+			config.write(this);
 
 			setVisible(false);
 		}
@@ -390,11 +389,11 @@ public class OrganFrame extends JFrame {
 				fullScreenAction.goFullScreen();
 			}
 		} catch (IOException ex) {
-			showMessage("openOrganException", new String[] { file.getName() });
+			showBoxMessage("openOrganException", file.getName());
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
-			showMessage("openOrganInvalid", new String[] { file.getName() });
+			showBoxMessage("openOrganInvalid", file.getName());
 		}
 	}
 
@@ -427,17 +426,17 @@ public class OrganFrame extends JFrame {
 			saveAction.clearChanges();
 
 			buildRecentsMenu();
-			showStatus("organSaved", new Object[0]);
+			showStatusMessage("organSaved", new Object[0]);
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showMessage("saveOrganException", new String[] { file.getName() });
+			showBoxMessage("saveOrganException", file.getName());
 
 			return false;
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showMessage("saveOrganInvalid", new String[] { file.getName() });
+			showBoxMessage("saveOrganInvalid", file.getName());
 
 			return false;
 		}
@@ -456,10 +455,10 @@ public class OrganFrame extends JFrame {
 		if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 			File file = jorgan.io.DispositionFileFilter.addSuffix(chooser
 					.getSelectedFile());
-			if (!file.exists()
-					|| JOptionPane.showConfirmDialog(OrganFrame.this, i18n
-							.getString("saveOrganAsConfirmReplace"), "jOrgan",
-							JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+
+			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
+			config.get("saveOrganAsConfirmReplace").read(box);
+			if (!file.exists() || box.show(this) == MessageBox.OPTION_YES) {
 				return saveOrgan(file);
 			}
 		}
@@ -474,12 +473,13 @@ public class OrganFrame extends JFrame {
 	public boolean canCloseOrgan() {
 		if (saveAction.hasChanges()) {
 			if (saveAction.confirmChanges()) {
-				int option = JOptionPane.showConfirmDialog(this, i18n
-						.getString("closeOrganConfirmChanges"), "jOrgan",
-						JOptionPane.YES_NO_CANCEL_OPTION);
-				if (option == JOptionPane.CANCEL_OPTION) {
+				MessageBox box = new MessageBox(
+						MessageBox.OPTIONS_YES_NO_CANCEL);
+				config.get("closeOrganConfirmChanges").read(box);
+				int option = box.show(this);
+				if (option == MessageBox.OPTION_CANCEL) {
 					return false;
-				} else if (option == JOptionPane.NO_OPTION) {
+				} else if (option == MessageBox.OPTION_NO) {
 					return true;
 				}
 			}
@@ -489,39 +489,23 @@ public class OrganFrame extends JFrame {
 		return true;
 	}
 
-	protected void showStatus(String message, Object[] args) {
+	protected void showStatusMessage(String key, Object... args) {
 
-		message = MessageFormat.format(i18n.getString(message), args);
-
-		statusBar.setStatus(message);
+		statusBar.setStatus(config.get(key).read(new MessageBuilder()).build(
+				args));
 	}
 
-	/**
-	 * Show a message.
-	 * 
-	 * @param key
-	 *            identifier of message
-	 * @param args
-	 *            arguments of message
-	 */
-	protected void showMessage(String key, Object[] args) {
+	protected void showBoxMessage(String key, Object... args) {
 
-		String message = MessageFormat.format(i18n.getString(key), args);
-
-		JOptionPane.showMessageDialog(this, message, i18n
-				.getString("message/title"), JOptionPane.ERROR_MESSAGE);
+		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this);
 	}
 
 	/**
 	 * The action that initiates a new organ.
 	 */
-	private class NewAction extends AbstractAction {
+	private class NewAction extends BaseAction {
 		private NewAction() {
-			putValue(Action.NAME, i18n.getString("newAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("newAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/new.gif")));
+			config.get("newAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -532,7 +516,7 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that opens the recent organ.
 	 */
-	private class RecentAction extends AbstractAction {
+	private class RecentAction extends BaseAction {
 		private RecentAction(int number, File file) {
 			String name = file.getPath();
 
@@ -555,16 +539,12 @@ public class OrganFrame extends JFrame {
 		}
 	}
 
-	private class DebugAction extends AbstractAction {
+	private class DebugAction extends BaseAction {
 
 		private DebugPanel debugPanel = new DebugPanel();
 
 		private DebugAction() {
-			putValue(Action.NAME, i18n.getString("debugAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("debugAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/debug.gif")));
+			config.get("debugAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -575,13 +555,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that opens an organ.
 	 */
-	private class OpenAction extends AbstractAction {
+	private class OpenAction extends BaseAction {
 		private OpenAction() {
-			putValue(Action.NAME, i18n.getString("openAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("openAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/open.gif")));
+			config.get("openAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -594,18 +570,14 @@ public class OrganFrame extends JFrame {
 	 * that the methods of this listeners are called on the EDT, although a
 	 * change in the organ might be triggered by a change on a MIDI thread.
 	 */
-	private class SaveAction extends AbstractAction implements OrganListener {
+	private class SaveAction extends BaseAction implements OrganListener {
 
 		private boolean dispositionChanges = false;
 
 		private boolean registrationChanges = false;
 
 		private SaveAction() {
-			putValue(Action.NAME, i18n.getString("saveAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("saveAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/save.gif")));
+			config.get("saveAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -680,13 +652,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that saves an organ under a new name.
 	 */
-	private class SaveAsAction extends AbstractAction {
+	private class SaveAsAction extends BaseAction {
 		private SaveAsAction() {
-			putValue(Action.NAME, i18n.getString("saveAsAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("saveAsAction/shortDescription"));
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"img/saveAs.gif")));
+			config.get("saveAsAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -697,11 +665,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that shows information about jOrgan.
 	 */
-	private class AboutAction extends AbstractAction {
+	private class AboutAction extends BaseAction {
 		private AboutAction() {
-			putValue(Action.NAME, i18n.getString("aboutAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("aboutAction/shortDescription"));
+			config.get("aboutAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -712,11 +678,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that shows the jOrgan website.
 	 */
-	private class WebsiteAction extends AbstractAction {
+	private class WebsiteAction extends BaseAction {
 		private WebsiteAction() {
-			putValue(Action.NAME, i18n.getString("websiteAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("websiteAction/shortDescription"));
+			config.get("websiteAction").read(this);
 
 			setEnabled(Browser.isSupported());
 		}
@@ -729,11 +693,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that starts an import.
 	 */
-	private class ImportAction extends AbstractAction {
+	private class ImportAction extends BaseAction {
 		private ImportAction() {
-			putValue(Action.NAME, i18n.getString("importAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("importAction/shortDescription"));
+			config.get("importAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -744,11 +706,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that shows the preferences.
 	 */
-	private class PreferencesAction extends AbstractAction {
+	private class PreferencesAction extends BaseAction {
 		private PreferencesAction() {
-			putValue(Action.NAME, i18n.getString("preferencesAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("preferencesAction/shortDescription"));
+			config.get("preferencesAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -759,15 +719,13 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that initiates full screen.
 	 */
-	private class FullScreenAction extends AbstractAction implements
+	private class FullScreenAction extends BaseAction implements
 			ComponentListener {
 
 		private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
 
 		private FullScreenAction() {
-			putValue(Action.NAME, i18n.getString("fullScreenAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("fullScreenAction/shortDescription"));
+			config.get("fullScreenAction").read(this);
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
@@ -779,7 +737,7 @@ public class OrganFrame extends JFrame {
 				goFullScreen();
 
 				if (dialogs.isEmpty()) {
-					showMessage("noFullScreen", new Object[0]);
+					showBoxMessage("noFullScreen");
 				}
 			}
 		}
@@ -829,11 +787,9 @@ public class OrganFrame extends JFrame {
 	/**
 	 * The action that exits jOrgan.
 	 */
-	private class ExitAction extends AbstractAction {
+	private class ExitAction extends BaseAction {
 		private ExitAction() {
-			putValue(Action.NAME, i18n.getString("exitAction/name"));
-			putValue(Action.SHORT_DESCRIPTION, i18n
-					.getString("exitAction/shortDescription"));
+			config.get("exitAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

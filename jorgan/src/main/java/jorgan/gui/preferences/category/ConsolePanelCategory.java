@@ -31,9 +31,10 @@ import javax.swing.SpinnerNumberModel;
 import jorgan.gui.ConsolePanel;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.color.ColorSelector;
-import jorgan.util.I18N;
 import bias.swing.Category;
 import bias.swing.PropertyModel;
+
+import com.sun.imageio.plugins.common.I18N;
 
 /**
  * {@link ConsolePanel} category.

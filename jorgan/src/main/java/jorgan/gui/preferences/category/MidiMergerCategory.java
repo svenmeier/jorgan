@@ -36,9 +36,10 @@ import jorgan.sound.midi.merge.MidiMerger;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
-import jorgan.util.I18N;
 import bias.swing.Category;
 import bias.swing.PropertyModel;
+
+import com.sun.imageio.plugins.common.I18N;
 
 /**
  * {@link MidiMerger} category.

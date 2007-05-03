@@ -26,16 +26,16 @@ import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 
-import jorgan.App;
 import jorgan.swing.StandardDialog;
-import bias.Context;
+import bias.Configuration;
 
 /**
  * Selector of a font.
  */
 public class FontSelector extends JPanel {
 
-	private static Context context = App.getBias().get(FontSelector.class);
+	private static Configuration config = Configuration.getRoot().get(
+			FontSelector.class);
 
 	/**
 	 * The button used to edit the selected font.
@@ -55,7 +55,7 @@ public class FontSelector extends JPanel {
 			public void actionPerformed(ActionEvent ev) {
 				StandardDialog dialog = StandardDialog
 						.create(FontSelector.this);
-				context.get("dialog").getValues(dialog);
+				config.get("dialog").read(dialog);
 
 				dialog.setVisible(true);
 

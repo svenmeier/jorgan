@@ -24,17 +24,13 @@ import jorgan.gui.console.View;
 
 public class AlignLeftLayout extends ViewLayout {
 
-  private int x;
-  
-  public AlignLeftLayout() {
-    super("alignLeft");
-  }
+	private int x;
 
-  protected void init(View pressed, List<View> views) {
-    x = pressed.getX();
-  }
-  
-  protected void visit(View view, int index) {
-      changePosition(view, x, view.getY());
-  } 
+	protected void init(View pressed, List<View> views) {
+		x = pressed.getX();
+	}
+
+	protected void visit(View view, int index) {
+		changePosition(view, x, view.getY());
+	}
 }

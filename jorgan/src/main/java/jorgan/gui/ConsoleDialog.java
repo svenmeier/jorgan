@@ -29,8 +29,6 @@ import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.ButtonGroup;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
@@ -43,15 +41,16 @@ import javax.swing.Timer;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
+import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * JDialog subclass to show a console <em>full screen</em>.
  */
 public class ConsoleDialog extends JDialog {
 
-	private static I18N i18n = I18N.get(ConsoleDialog.class);
+	private static Configuration config = Configuration.getRoot().get(ConsoleDialog.class);
 
 	/**
 	 * The handler of mouse events.
@@ -207,10 +206,10 @@ public class ConsoleDialog extends JDialog {
 		}
 	}
 
-	private class CloseAction extends AbstractAction {
+	private class CloseAction extends BaseAction {
 
 		private CloseAction() {
-			putValue(Action.NAME, i18n.getString("closeAction/name"));
+			config.get("closeAction").read(this);
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);

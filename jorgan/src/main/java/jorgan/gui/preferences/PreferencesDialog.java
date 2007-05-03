@@ -24,9 +24,8 @@ import java.awt.Window;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import jorgan.App;
 import jorgan.swing.StandardDialog;
-import jorgan.util.I18N;
+import bias.Configuration;
 import bias.swing.CategoriesPanel;
 
 /**
@@ -34,7 +33,8 @@ import bias.swing.CategoriesPanel;
  */
 public class PreferencesDialog extends StandardDialog {
 
-	private static I18N i18n = I18N.get(PreferencesDialog.class);
+	private static Configuration config = Configuration.getRoot().get(
+			PreferencesDialog.class);
 
 	private CategoriesPanel categoriesPanel = new CategoriesPanel();
 
@@ -57,8 +57,6 @@ public class PreferencesDialog extends StandardDialog {
 	}
 
 	private void init() {
-		setTitle(i18n.getString("title"));
-
 		categoriesPanel.setCategories(new CoreCategoryProvider()
 				.getCategories());
 		setBody(categoriesPanel);
@@ -93,9 +91,9 @@ public class PreferencesDialog extends StandardDialog {
 			throw new Error("unable to get window ancestor");
 		}
 
-		App.getBias().getValues(dialog);
+		config.read(dialog);
 		dialog.setVisible(true);
-		App.getBias().setValues(dialog);
+		config.write(dialog);
 		dialog.dispose();
 	}
 }

@@ -18,9 +18,9 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 
-import jorgan.play.sound.*;
+import jorgan.play.sound.SoundFactory;
 
 /**
  * Property editor for a soundFactoryType property.

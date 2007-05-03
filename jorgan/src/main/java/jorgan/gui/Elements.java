@@ -1,19 +1,21 @@
 package jorgan.gui;
 
-import java.util.MissingResourceException;
-import java.util.logging.Logger;
+import java.util.HashMap;
+import java.util.Map;
 
 import jorgan.disposition.Element;
-import jorgan.util.I18N;
+import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Element <code>i18n</code> utilities.
  */
 public class Elements {
 
-	private static Logger logger = Logger.getLogger(Elements.class.getName());
+	private static Configuration config = Configuration.getRoot().get(
+			Elements.class);
 
-	private static I18N i18n = I18N.get(Elements.class);
+	private static Map<String, String> messages = new HashMap<String, String>();
 
 	private Elements() {
 	}
@@ -43,7 +45,7 @@ public class Elements {
 	 * @return the display name
 	 */
 	public static String getDisplayName(Class<? extends Element> elementClass) {
-		return getString(classWithoutPackage(elementClass));
+		return getMessage(classWithoutPackage(elementClass));
 	}
 
 	/**
@@ -55,18 +57,18 @@ public class Elements {
 	 *            properyt
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<? extends Element> elementClass, String property) {
-		return getString(classWithoutPackage(elementClass) + "/" + property);
+	public static String getDisplayName(Class<? extends Element> elementClass,
+			String property) {
+		return getMessage(classWithoutPackage(elementClass) + "." + property);
 	}
 
-	private static String getString(String classAndProperty) {
-		try {
-			return i18n.getString(classAndProperty);
-		} catch (MissingResourceException ex) {
-			logger.info("missing resource '" + classAndProperty + "'");
-
-			return classAndProperty;
+	private static String getMessage(String key) {
+		String message = messages.get(key);
+		if (message == null) {
+			message = config.get(key).read(new MessageBuilder()).build();
+			messages.put(key, message);
 		}
+		return message;
 	}
 
 	private static String classWithoutPackage(Class clazz) {

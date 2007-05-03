@@ -23,21 +23,21 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import jorgan.App;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
-import jorgan.util.I18N;
+import bias.Configuration;
 
 /**
  * A wizard for importing of sounds.
  */
 public class ImportWizard extends BasicWizard {
 
-	private static I18N i18n = I18N.get(ImportWizard.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ImportWizard.class);
 
 	private Organ organ;
 
@@ -89,8 +89,8 @@ public class ImportWizard extends BasicWizard {
 
 		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
 
-		public String getDescription() {
-			return i18n.getString("providerSelectionPage/description");
+		public ProviderSelectionPage() {
+			config.get("providerSelectionPage").read(this);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -139,12 +139,12 @@ public class ImportWizard extends BasicWizard {
 
 		private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
 
-		public void enteringFromPrevious() {
-			stopSelectionPanel.setStops(stops);
+		public StopSelectionPage() {
+			config.get("stopSelectionPage").read(this);
 		}
 
-		public String getDescription() {
-			return i18n.getString("stopSelectionPage/description");
+		public void enteringFromPrevious() {
+			stopSelectionPanel.setStops(stops);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -176,13 +176,13 @@ public class ImportWizard extends BasicWizard {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 
-		dialog.setTitle(i18n.getString("title"));
+		config.get("dialog").read(dialog);
 
 		dialog.setWizard(new ImportWizard(organ));
 
-		App.getBias().getValues(dialog);
+		config.read(dialog);
 		dialog.setVisible(true);
-		App.getBias().setValues(dialog);
+		config.write(dialog);
 
 		dialog.dispose();
 

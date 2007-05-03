@@ -18,9 +18,9 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.*;
+import java.beans.PropertyEditorSupport;
 
-import jorgan.sound.midi.*;
+import jorgan.sound.midi.DevicePool;
 
 /**
  * Property editor for an output device property.

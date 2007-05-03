@@ -23,7 +23,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
-import javax.swing.*;
+import javax.swing.JList;
+import javax.swing.JPopupMenu;
 
 /**
  * Utility method for lists.

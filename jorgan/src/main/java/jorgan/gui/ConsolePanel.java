@@ -44,7 +44,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -57,7 +56,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 
-import jorgan.App;
 import jorgan.disposition.Activateable;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -91,16 +89,18 @@ import jorgan.play.event.PlayListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
+import jorgan.swing.BaseAction;
 import jorgan.swing.TweakMac;
-import jorgan.util.I18N;
 import swingx.dnd.ObjectTransferable;
+import bias.Configuration;
 
 /**
  * Panel that manages views to display a console of an organ.
  */
 public class ConsolePanel extends JComponent implements Scrollable {
 
-	private static final I18N i18n = I18N.get(ConsolePanel.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ConsolePanel.class);
 
 	/**
 	 * The organ of the edited console.
@@ -228,7 +228,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * Create a view panel.
 	 */
 	public ConsolePanel() {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		// must report to be opaque so containing scrollPane can use blitting
 		setOpaque(true);
@@ -239,7 +239,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		ToolTipManager.sharedInstance().registerComponent(this);
 		new DropTarget(this, dropTargetListener);
 
-		alignMenu.setText(i18n.getString("alignMenu/text"));
+		config.get("alignMenu").read(alignMenu);
 		menu.add(alignMenu);
 
 		alignMenu.add(alignLeftAction);
@@ -249,13 +249,13 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		alignMenu.add(alignCenterVerticalAction);
 		alignMenu.add(alignBottomAction);
 
-		spreadMenu.setText(i18n.getString("spreadMenu/text"));
+		config.get("spreadMenu").read(spreadMenu);
 		menu.add(spreadMenu);
 
 		spreadMenu.add(spreadHorizontalAction);
 		spreadMenu.add(spreadVerticalAction);
 
-		arrangeMenu.setText(i18n.getString("arrangeMenu/text"));
+		config.get("arrangeMenu").read(arrangeMenu);
 		menu.add(arrangeMenu);
 
 		arrangeMenu.add(arrangeToFrontAction);
@@ -1193,9 +1193,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 	}
 
-	private class ArrangeToFrontAction extends AbstractAction {
+	private class ArrangeToFrontAction extends BaseAction {
 		private ArrangeToFrontAction() {
-			putValue(Action.NAME, i18n.getString("arrangeToFrontAction/name"));
+			config.get("arrangeToFrontAction").read(this);
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/arrangeFront.gif")));
 		}
@@ -1207,9 +1207,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 	}
 
-	private class ArrangeToBackAction extends AbstractAction {
+	private class ArrangeToBackAction extends BaseAction {
 		private ArrangeToBackAction() {
-			putValue(Action.NAME, i18n.getString("arrangeToBackAction/name"));
+			config.get("arrangeToBackAction").read(this);
 			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
 					"/jorgan/gui/img/arrangeBack.gif")));
 		}
@@ -1221,9 +1221,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 	}
 
-	private class ArrangeHideAction extends AbstractAction {
+	private class ArrangeHideAction extends BaseAction {
 		private ArrangeHideAction() {
-			putValue(Action.NAME, i18n.getString("arrangeHideAction/name"));
+			config.get("arrangeHideAction").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1236,7 +1236,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	/**
 	 * The action for layouts.
 	 */
-	private class LayoutAction extends AbstractAction {
+	private class LayoutAction extends BaseAction {
 
 		private ViewLayout layout;
 

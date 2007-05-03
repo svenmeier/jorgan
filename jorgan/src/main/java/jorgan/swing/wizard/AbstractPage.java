@@ -34,6 +34,8 @@ public abstract class AbstractPage implements Page {
 	private Wizard wizard;
 	
 	private JComponent component;
+	
+	private String description;
 
 	/**
 	 * Set the wizard.
@@ -100,9 +102,13 @@ public abstract class AbstractPage implements Page {
 	 * @return description
 	 */
 	public String getDescription() {
-		return null;
+		return description;
 	}
 
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 	/**
 	 * Default implementation allows leaving to next page.
 	 */

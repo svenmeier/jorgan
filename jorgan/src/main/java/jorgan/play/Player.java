@@ -23,14 +23,17 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.App;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
+import bias.Configuration;
 
 /**
  * Abstract base class for all players.
  */
 public abstract class Player {
+
+	private static Configuration config = Configuration.getRoot().get(
+			Player.class);
 
 	private OrganPlay organPlay;
 
@@ -61,7 +64,7 @@ public abstract class Player {
 	 * Create a player for the given element.
 	 */
 	public Player(Element element) {
-		App.getBias().getValues(this);
+		config.read(this);
 
 		this.element = element;
 	}

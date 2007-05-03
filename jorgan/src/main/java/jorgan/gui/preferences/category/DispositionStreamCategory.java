@@ -28,9 +28,10 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.io.DispositionStream;
 import jorgan.swing.GridBuilder;
-import jorgan.util.I18N;
 import bias.swing.Category;
 import bias.swing.PropertyModel;
+
+import com.sun.imageio.plugins.common.I18N;
 
 /**
  * {@link DispositionStream} category.
