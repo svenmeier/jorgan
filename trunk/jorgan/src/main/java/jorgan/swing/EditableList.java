@@ -111,7 +111,7 @@ public class EditableList extends JPanel {
 	 * @param values
 	 *            the list values
 	 */
-	public void setValues(String[] values) {
+	public void setValuesAsArray(String[] values) {
 		setValues(Arrays.asList(values));
 	}
 

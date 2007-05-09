@@ -26,28 +26,30 @@ import javax.swing.JPanel;
 
 import jorgan.play.Player;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link Player} category.
  */
 public class PlayerCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(PlayerCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			PlayerCategory.class);
 
-	private PropertyModel warnDevice = getModel(Player.class, "warnDevice");
+	private Model warnDevice = getModel("jorgan/play/Player", new Property(
+			Player.class, "warnDevice"));
 
-	private PropertyModel warnMessage = getModel(Player.class, "warnMessage");
+	private Model warnMessage = getModel("jorgan/play/Player", new Property(
+			Player.class, "warnMessage"));
 
 	private JCheckBox warnDeviceCheckBox = new JCheckBox();
 
 	private JCheckBox warnMessageCheckBox = new JCheckBox();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public PlayerCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -57,12 +59,12 @@ public class PlayerCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		warnDeviceCheckBox.setText(i18n.getString("warnDeviceCheckBox/text"));
+		config.get("warnDeviceCheckBox").read(warnDeviceCheckBox);
 		panel.add(warnDeviceCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		warnMessageCheckBox.setText(i18n.getString("warnMessageCheckBox/text"));
+		config.get("warnMessageCheckBox").read(warnMessageCheckBox);
 		panel.add(warnMessageCheckBox, builder.nextColumn());
 
 		builder.nextRow();

@@ -55,11 +55,20 @@ public class FontSelector extends JPanel {
 			public void actionPerformed(ActionEvent ev) {
 				StandardDialog dialog = StandardDialog
 						.create(FontSelector.this);
-				config.get("dialog").read(dialog);
+				dialog.addCancelAction();
+				dialog.addOKAction();
+				dialog.setBody(panel);
 
+				config.get("dialog").read(dialog);			
 				dialog.setVisible(true);
+				config.get("dialog").write(dialog);			
+				
+				dialog.setBody(null);
+				dialog.dispose();
 
-				setSelectedFont(getSelectedFont());
+				if (!dialog.wasCancelled()) {
+					setSelectedFont(getSelectedFont());
+				}
 			}
 		});
 		add(button, BorderLayout.CENTER);

@@ -26,24 +26,24 @@ import javax.swing.JPanel;
 
 import jorgan.App;
 import jorgan.swing.GridBuilder;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.Configuration;
+import bias.util.Property;
 
 /**
  * {@link jorgan.App} category.
  */
 public class AppCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(AppCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			AppCategory.class);
 
-	private PropertyModel openRecentOnStartup = getModel(App.class,
-			"openRecentOnStartup");
+	private Model openRecentOnStartup = getModel("jorgan/App", new Property(
+			App.class, "openRecentOnStartup"));
 
 	private JCheckBox openRecentOnStartupCheckBox = new JCheckBox();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public AppCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -53,8 +53,8 @@ public class AppCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		openRecentOnStartupCheckBox.setText(i18n
-				.getString("openRecentOnStartupCheckBox/text"));
+		config.get("openRecentOnStartupCheckBox").read(
+				openRecentOnStartupCheckBox);
 		panel.add(openRecentOnStartupCheckBox, builder.nextColumn()
 				.gridWidthRemainder());
 

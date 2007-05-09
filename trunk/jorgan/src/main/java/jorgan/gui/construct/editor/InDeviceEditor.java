@@ -27,28 +27,28 @@ import jorgan.sound.midi.DevicePool;
  */
 public class InDeviceEditor extends PropertyEditorSupport {
 
-  private String[] tags;
+	private String[] tags;
 
-  public InDeviceEditor() {
-    String[] deviceNames = DevicePool.getMidiDeviceNames(false);
+	public InDeviceEditor() {
+		String[] deviceNames = DevicePool.getMidiDeviceNames(false);
 
-    tags = new String[1 + deviceNames.length];
+		tags = new String[1 + deviceNames.length];
 
-    System.arraycopy(deviceNames, 0, tags, 1, deviceNames.length);
-  }
+		System.arraycopy(deviceNames, 0, tags, 1, deviceNames.length);
+	}
 
-  public String[] getTags() {
+	public String[] getTags() {
 
-    return tags;
-  }
+		return tags;
+	}
 
-  public String getAsText() {
+	public String getAsText() {
 
-    return (String)getValue();
-  }
+		return (String) getValue();
+	}
 
-  public void setAsText(String string) {
+	public void setAsText(String string) {
 
-    setValue(string);
-  }
+		setValue(string);
+	}
 }

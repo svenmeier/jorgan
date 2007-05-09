@@ -36,12 +36,14 @@ public class BooleanEditor extends PropertyEditorSupport {
 	 * Constructor.
 	 */
 	public BooleanEditor() {
-		tags = new String[] { i18n.getString("true"), i18n.getString("false") };
-
+		config.read(this);
 	}
 
+	public void setTags(String[] tags) {
+		this.tags = tags;
+	}
+	
 	public String[] getTags() {
-
 		return tags;
 	}
 

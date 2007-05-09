@@ -31,6 +31,7 @@ import javax.swing.tree.TreePath;
 import jorgan.sound.midi.DevicePool;
 import jorgan.swing.tree.CheckedTreeCell;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * A panel to select a MIDI device.
@@ -44,9 +45,9 @@ public class DeviceSelectionPanel extends JPanel {
 
 	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-	private DefaultMutableTreeNode in = new DefaultMutableTreeNode();
+	private DefaultMutableTreeNode in;
 
-	private DefaultMutableTreeNode out = new DefaultMutableTreeNode();
+	private DefaultMutableTreeNode out;
 
 	private String deviceName = null;
 
@@ -58,15 +59,19 @@ public class DeviceSelectionPanel extends JPanel {
 	public DeviceSelectionPanel() {
 		setLayout(new BorderLayout());
 
-		config.get("input").read(in);
-		config.get("output").read(out);
-		
+		in = new DefaultMutableTreeNode(config.get("in").read(
+				new MessageBuilder()).build());
+		out = new DefaultMutableTreeNode(config.get("out").read(
+				new MessageBuilder()).build());
+
 		deviceTree.setShowsRootHandles(true);
 		deviceTree.setRootVisible(false);
 		deviceTree.setEditable(true);
 		deviceTree.setCellRenderer(new MidiDeviceCell());
 		deviceTree.setCellEditor(new MidiDeviceCell());
 		deviceTree.setModel(createModel());
+		deviceTree.expandPath(new TreePath(in.getPath()));
+		deviceTree.expandPath(new TreePath(out.getPath()));
 		add(new JScrollPane(deviceTree), BorderLayout.CENTER);
 	}
 
@@ -162,12 +167,6 @@ public class DeviceSelectionPanel extends JPanel {
 	}
 
 	private class MidiDeviceCell extends CheckedTreeCell {
-
-		protected boolean isCheckable(Object value) {
-			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
-
-			return !node.getAllowsChildren();
-		}
 
 		protected boolean isChecked(Object value) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;

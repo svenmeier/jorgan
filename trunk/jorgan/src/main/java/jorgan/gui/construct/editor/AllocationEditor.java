@@ -36,8 +36,11 @@ public class AllocationEditor extends PropertyEditorSupport {
 	 * Constructor.
 	 */
 	public AllocationEditor() {
-		tags = new String[] { i18n.getString("firstAvailable"),
-				i18n.getString("allAvailable") };
+		config.read(this);
+	}
+
+	public void setTags(String[] tags) {
+		this.tags = tags;
 	}
 
 	public String[] getTags() {

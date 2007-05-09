@@ -21,7 +21,6 @@ package jorgan.gui.preferences.category;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.MessageFormat;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
@@ -35,22 +34,24 @@ import javax.swing.border.TitledBorder;
 import jorgan.shell.Interpreter;
 import jorgan.shell.OrganShell;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.MessageBuilder;
+import bias.util.Property;
 
 /**
  * {@link OrganShell} category.
  */
 public class OrganShellCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(OrganShellCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			OrganShellCategory.class);
 
-	private PropertyModel encoding = getModel(OrganShell.class, "encoding");
+	private Model encoding = getModel("jorgan/shell/OrganShell", new Property(
+			OrganShell.class, "encoding"));
 
-	private PropertyModel useDefaultEncoding = getModel(OrganShell.class,
-			"useDefaultEncoding");
+	private Model useDefaultEncoding = getModel("jorgan/shell/OrganShell",
+			new Property(OrganShell.class, "useDefaultEncoding"));
 
 	private JRadioButton encodingDefaultRadioButton = new JRadioButton();
 
@@ -59,6 +60,10 @@ public class OrganShellCategory extends JOrganCategory {
 	private ButtonGroup buttonGroup = new ButtonGroup();
 
 	private JComboBox encodingComboBox = new JComboBox();
+
+	public OrganShellCategory() {
+		config.read(this);
+	}
 
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
@@ -74,33 +79,28 @@ public class OrganShellCategory extends JOrganCategory {
 		return panel;
 	}
 
-	protected String createName() {
-		return i18n.getString("name");
-	}
-
 	private JPanel createEncodingPanel() {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-				i18n.getString("encodingPanel/title")));
+		panel.setBorder(config.get("encodingPanel").read(
+				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
 
-		String defaultEncoding = System.getProperty("file.encoding");
-		encodingDefaultRadioButton.setText(MessageFormat.format(i18n
-				.getString("encodingDefaultRadioButton/text"),
-				new Object[] { defaultEncoding }));
+		String message = config.get("encodingDefault").read(
+				new MessageBuilder())
+				.build(System.getProperty("file.encoding"));
+		encodingDefaultRadioButton.setText(message);
 		buttonGroup.add(encodingDefaultRadioButton);
 		panel.add(encodingDefaultRadioButton, builder.nextColumn()
 				.gridWidthRemainder());
 
 		builder.nextRow();
 
-		encodingOtherRadioButton.setText(i18n
-				.getString("encodingOtherRadioButton/text"));
+		config.get("encodingOtherRadioButton").read(encodingOtherRadioButton);
 		buttonGroup.add(encodingOtherRadioButton);
 		encodingOtherRadioButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {

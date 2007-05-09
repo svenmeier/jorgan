@@ -175,14 +175,11 @@ public class ImportWizard extends BasicWizard {
 	public static void showInDialog(Component owner, Organ organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
-
-		config.get("dialog").read(dialog);
-
 		dialog.setWizard(new ImportWizard(organ));
 
-		config.read(dialog);
+		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
-		config.write(dialog);
+		config.get("dialog").write(dialog);
 
 		dialog.dispose();
 

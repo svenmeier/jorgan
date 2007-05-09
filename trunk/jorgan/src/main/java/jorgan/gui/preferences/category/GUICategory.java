@@ -26,30 +26,30 @@ import javax.swing.JPanel;
 
 import jorgan.gui.GUI;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link GUI} category.
  */
 public class GUICategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(GUICategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			GUICategory.class);
 
-	private PropertyModel useSystemLookAndFeel = getModel(GUI.class,
-			"useSystemLookAndFeel");
+	private Model useSystemLookAndFeel = getModel("jorgan/gui/GUI",
+			new Property(GUI.class, "useSystemLookAndFeel"));
 
-	private PropertyModel showAboutOnStartup = getModel(GUI.class,
-			"showAboutOnStartup");
+	private Model showAboutOnStartup = getModel("jorgan/gui/GUI", new Property(
+			GUI.class, "showAboutOnStartup"));
 
 	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public GUICategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -59,14 +59,14 @@ public class GUICategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		useSystemLookAndFeelCheckBox.setText(i18n
-				.getString("useSystemLookAndFeelCheckBox/text"));
+		config.get("useSystemLookAndFeelCheckBox").read(
+				useSystemLookAndFeelCheckBox);
 		panel.add(useSystemLookAndFeelCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		showAboutOnStartupCheckBox.setText(i18n
-				.getString("showAboutOnStartupCheckBox/text"));
+		config.get("showAboutOnStartupCheckBox").read(
+				showAboutOnStartupCheckBox);
 		panel.add(showAboutOnStartupCheckBox, builder.nextColumn());
 
 		builder.nextRow();

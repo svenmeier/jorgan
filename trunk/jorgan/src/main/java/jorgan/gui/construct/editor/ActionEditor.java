@@ -30,18 +30,19 @@ public class ActionEditor extends PropertyEditorSupport {
 	private static Configuration config = Configuration.getRoot().get(
 			ActionEditor.class);
 
-	private String[] tags;
+	private String[] tags = new String[7];
 
 	/**
 	 * Constructor.
 	 */
 	public ActionEditor() {
-		tags = new String[] { i18n.getString("straight"),
-				i18n.getString("constant"), i18n.getString("highest"),
-				i18n.getString("lowest"), i18n.getString("sustain"),
-				i18n.getString("sostenuto"), i18n.getString("inverse") };
+		config.read(this);
 	}
 
+	public void setTags(String[] tags) {
+		this.tags = tags;
+	}
+	
 	public String[] getTags() {
 		return tags;
 	}

@@ -26,25 +26,26 @@ import javax.swing.JPanel;
 
 import jorgan.play.sound.ChanneledSoundFactory;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link ChanneledSoundFactory} category.
  */
 public class ChanneledSoundFactoryCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(ChanneledSoundFactoryCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ChanneledSoundFactoryCategory.class);
 
-	private PropertyModel sendAllNotesOff = getModel(
-			ChanneledSoundFactory.class, "sendAllNotesOff");
+	private Model sendAllNotesOff = getModel(
+			"jorgan/play/sound/ChanneledSoundFactory", new Property(
+					ChanneledSoundFactory.class, "sendAllNotesOff"));
 
 	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public ChanneledSoundFactoryCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -54,8 +55,7 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		sendAllNotesOffCheckBox.setText(i18n
-				.getString("sendAllNotesOffCheckBox/text"));
+		config.get("sendAllNotesOffCheckBox").read(sendAllNotesOffCheckBox);
 		panel.add(sendAllNotesOffCheckBox, builder.nextColumn());
 
 		builder.nextRow();

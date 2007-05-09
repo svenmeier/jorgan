@@ -18,7 +18,7 @@
  */
 package jorgan.gui.preferences.category;
 
-import jorgan.App;
+import bias.Configuration;
 import bias.swing.AbstractCategory;
 
 /**
@@ -27,6 +27,6 @@ import bias.swing.AbstractCategory;
 public abstract class JOrganCategory extends AbstractCategory {
 
 	protected JOrganCategory() {
-		super(Configuration.getRoot().getStore());
+		super(Configuration.getRoot().getStores().get(1));
 	}
 }

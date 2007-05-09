@@ -30,7 +30,7 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
 	 * Cosntructor.
 	 */
 	public CheckedTreeCell() {
-		this(new DefaultTreeCellRenderer());
+		this(createDefaultTreeCellRenderer());
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
 	public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
 		Component component = renderer.getTreeCellRendererComponent(tree, convertValue(value), selected, expanded, leaf, row, hasFocus);
 		
-		if (isCheckable(value)) {
+		if (isCheckable(value, leaf)) {
 			panel.removeAll();
 			
 			updating = true;
@@ -74,8 +74,8 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
 		}
 	}
 	
-	protected boolean isCheckable(Object value) {
-		return true;
+	protected boolean isCheckable(Object value, boolean leaf) {
+		return leaf;
 	}
 	
 	protected boolean isChecked(Object value) {
@@ -94,7 +94,7 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
     	
 		Component component = renderer.getTreeCellRendererComponent(tree, convertValue(value), true, expanded, leaf, row, true);
 
-		if (isCheckable(value)) {
+		if (isCheckable(value, leaf)) {
 			panel.removeAll();
 			
 			updating = true;
@@ -115,4 +115,12 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
     public Object getCellEditorValue() {    	
     	return Boolean.valueOf(checkBox.isSelected());
     }
+    
+	private static TreeCellRenderer createDefaultTreeCellRenderer() {
+		DefaultTreeCellRenderer renderer = new DefaultTreeCellRenderer();
+		
+		renderer.setLeafIcon(null);
+		
+		return renderer;
+	}
 }

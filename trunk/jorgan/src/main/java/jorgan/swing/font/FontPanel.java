@@ -78,11 +78,11 @@ class FontPanel extends JPanel {
 
 		builder.nextRow(1.0d);
 
-		familyList.setValues(GraphicsEnvironment.getLocalGraphicsEnvironment()
-				.getAvailableFontFamilyNames());
+		familyList.setValuesAsArray(GraphicsEnvironment
+				.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
 		add(familyList, builder.nextColumn().fillBoth());
 
-		sizeList.setValues(sizes);
+		sizeList.setValuesAsArray(sizes);
 		add(sizeList, builder.nextColumn().fillBoth());
 
 		config.get("stylesList").read(stylesList);

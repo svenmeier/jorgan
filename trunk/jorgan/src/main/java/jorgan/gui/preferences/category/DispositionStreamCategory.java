@@ -28,23 +28,23 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.io.DispositionStream;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link DispositionStream} category.
  */
 public class DispositionStreamCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(DispositionStreamCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			DispositionStreamCategory.class);
 
-	private PropertyModel recentMax = getModel(DispositionStream.class,
-			"recentMax");
+	private Model recentMax = getModel("jorgan/io/DispositionStream",
+			new Property(DispositionStream.class, "recentMax"));
 
-	private PropertyModel historySize = getModel(DispositionStream.class,
-			"historySize");
+	private Model historySize = getModel("jorgan/io/DispositionStream",
+			new Property(DispositionStream.class, "historySize"));
 
 	private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
 			0, 100, 1));
@@ -52,8 +52,8 @@ public class DispositionStreamCategory extends JOrganCategory {
 	private JSpinner historySizeSpinner = new JSpinner(new SpinnerNumberModel(
 			0, 0, 255, 1));
 
-	protected String createName() {
-		return i18n.getString("name");
+	public DispositionStreamCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -63,14 +63,14 @@ public class DispositionStreamCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("recentsSizeSpinner/label")),
-				builder.nextColumn());
+		panel.add(config.get("recentsSizeSpinner").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(recentMaxSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("historySizeSpinner/label")),
-				builder.nextColumn());
+		panel.add(config.get("historySizeSpinner").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(historySizeSpinner, builder.nextColumn());
 
 		return panel;
