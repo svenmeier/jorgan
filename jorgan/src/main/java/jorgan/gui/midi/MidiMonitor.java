@@ -157,6 +157,7 @@ public class MidiMonitor extends DockedPanel {
 
 		addTool(new ClearAction());
 
+		config.get("model").read(model);
 		table.setModel(model);
 		TableUtils.pleasantLookAndFeel(table);
 		setScrollableBody(table, true, false);
@@ -298,17 +299,21 @@ public class MidiMonitor extends DockedPanel {
 		}
 	}
 
-	private class MessagesModel extends AbstractTableModel {
+	public class MessagesModel extends AbstractTableModel {
 
-		private String[] names = new String[] { "Status", "Data 1", "Data 2",
-				"Channel", "Note", "Event" };
+		private String[] columnNames = new String[] { "Status", "Data 1",
+				"Data 2", "Channel", "Note", "Event" };
 
 		public int getColumnCount() {
-			return names.length;
+			return 6;
+		}
+
+		public void setColumnNames(String[] columnNames) {
+			this.columnNames = columnNames;
 		}
 
 		public String getColumnName(int column) {
-			return names[column];
+			return columnNames[column];
 		}
 
 		public int getRowCount() {

@@ -31,28 +31,29 @@ import javax.swing.SpinnerNumberModel;
 import jorgan.gui.ConsolePanel;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.color.ColorSelector;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link ConsolePanel} category.
  */
 public class ConsolePanelCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(ConsolePanelCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ConsolePanelCategory.class);
 
-	private PropertyModel grid = getModel(ConsolePanel.class, "grid");
+	private Model grid = getModel("jorgan/gui/ConsolePanel", new Property(
+			ConsolePanel.class, "grid"));
 
-	private PropertyModel interpolate = getModel(ConsolePanel.class,
-			"interpolate");
+	private Model interpolate = getModel("jorgan/gui/ConsolePanel",
+			new Property(ConsolePanel.class, "interpolate"));
 
-	private PropertyModel background = getModel(ConsolePanel.class,
-			"background");
+	private Model background = getModel("jorgan/gui/ConsolePanel",
+			new Property(ConsolePanel.class, "background"));
 
-	private PropertyModel foreground = getModel(ConsolePanel.class,
-			"foreground");
+	private Model foreground = getModel("jorgan/gui/ConsolePanel",
+			new Property(ConsolePanel.class, "foreground"));
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			256, 1));
@@ -63,8 +64,8 @@ public class ConsolePanelCategory extends JOrganCategory {
 
 	private ColorSelector foregroundSelector = new ColorSelector();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public ConsolePanelCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -74,26 +75,26 @@ public class ConsolePanelCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("gridSpinner/label")), builder
+		panel.add(config.get("gridSpinner").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(gridSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		interpolateCheckBox.setText(i18n.getString("interpolateCheckBox/text"));
+		config.get("interpolateCheckBox").read(interpolateCheckBox);
 		panel.add(interpolateCheckBox, builder.nextColumn()
 				.gridWidthRemainder());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("backgroundSelector/label")),
-				builder.nextColumn());
+		panel.add(config.get("backgroundSelector").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(backgroundSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("foregroundSelector/label")),
-				builder.nextColumn());
+		panel.add(config.get("foregroundSelector").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(foregroundSelector, builder.nextColumn());
 
 		return panel;

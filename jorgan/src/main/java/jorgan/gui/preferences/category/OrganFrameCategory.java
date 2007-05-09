@@ -30,23 +30,23 @@ import javax.swing.border.TitledBorder;
 
 import jorgan.gui.OrganFrame;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link OrganFrame} category.
  */
 public class OrganFrameCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(OrganFrameCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			OrganFrameCategory.class);
 
-	private PropertyModel fullScreenOnLoad = getModel(OrganFrame.class,
-			"fullScreenOnLoad");
+	private Model fullScreenOnLoad = getModel("jorgan/gui/OrganFrame",
+			new Property(OrganFrame.class, "fullScreenOnLoad"));
 
-	private PropertyModel handleRegistrationChanges = getModel(
-			OrganFrame.class, "handleRegistrationChanges");
+	private Model handleRegistrationChanges = getModel("jorgan/gui/OrganFrame",
+			new Property(OrganFrame.class, "handleRegistrationChanges"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
@@ -58,8 +58,8 @@ public class OrganFrameCategory extends JOrganCategory {
 
 	private JRadioButton ignoreChangesRadioButton = new JRadioButton();
 
-	public String createName() {
-		return i18n.getString("name");
+	public OrganFrameCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -69,8 +69,7 @@ public class OrganFrameCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		fullScreenOnLoadCheckBox.setText(i18n
-				.getString("fullScreenOnLoadCheckBox/text"));
+		config.get("fullScreenOnLoadCheckBox").read(fullScreenOnLoadCheckBox);
 		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn());
 
 		builder.nextRow();
@@ -86,30 +85,27 @@ public class OrganFrameCategory extends JOrganCategory {
 	private JPanel createChangesPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-				i18n.getString("changesPanel/title")));
+		panel.setBorder(config.get("changesPanel").read(
+				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
 		builder.nextRow();
 
+		config.get("confirmChangesRadioButton").read(confirmChangesRadioButton);
 		confirmChangesRadioButton.getModel().setGroup(changesGroup);
-		confirmChangesRadioButton.setText(i18n
-				.getString("confirmChangesRadioButton/text"));
 		panel.add(confirmChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
+		config.get("saveChangesRadioButton").read(saveChangesRadioButton);
 		saveChangesRadioButton.getModel().setGroup(changesGroup);
-		saveChangesRadioButton.setText(i18n
-				.getString("saveChangesRadioButton/text"));
 		panel.add(saveChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
+		config.get("ignoreChangesRadioButton").read(ignoreChangesRadioButton);
 		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
-		ignoreChangesRadioButton.setText(i18n
-				.getString("ignoreChangesRadioButton/text"));
 		panel.add(ignoreChangesRadioButton, builder.nextColumn());
 
 		return panel;

@@ -27,26 +27,26 @@ import jorgan.play.sound.SoundFactory;
  */
 public class SoundFactoryTypeEditor extends PropertyEditorSupport {
 
-  private String[] tags;
+	private String[] tags;
 
-  public String[] getTags() {
-    if (tags == null) {
-      String[] types = SoundFactory.getFactoryTypes();
+	public String[] getTags() {
+		if (tags == null) {
+			String[] types = SoundFactory.getFactoryTypes();
 
-      tags = new String[1 + types.length];
+			tags = new String[1 + types.length];
 
-      System.arraycopy(types, 0, tags, 1, types.length);
-    }
-    return tags;
-  }
+			System.arraycopy(types, 0, tags, 1, types.length);
+		}
+		return tags;
+	}
 
-  public String getAsText() {
+	public String getAsText() {
 
-    return (String)getValue();
-  }
+		return (String) getValue();
+	}
 
-  public void setAsText(String string) {
+	public void setAsText(String string) {
 
-    setValue(string);
-  }
+		setValue(string);
+	}
 }

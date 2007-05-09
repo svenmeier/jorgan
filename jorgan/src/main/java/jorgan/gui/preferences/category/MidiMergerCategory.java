@@ -36,19 +36,20 @@ import jorgan.sound.midi.merge.MidiMerger;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link MidiMerger} category.
  */
 public class MidiMergerCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(MidiMergerCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			MidiMergerCategory.class);
 
-	private PropertyModel inputs = getModel(MidiMerger.class, "inputs");
+	private Model inputs = getModel("jorgan/sound/midi/merge/MidiMerger",
+			new Property(MidiMerger.class, "inputs"));
 
 	/**
 	 * All available inputs.
@@ -69,8 +70,8 @@ public class MidiMergerCategory extends JOrganCategory {
 	 */
 	private MergeInputsModel mergeInputsModel = new MergeInputsModel();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public MidiMergerCategory() {
+		config.read(this);
 	}
 
 	public Class<? extends Category> getParentCategory() {
@@ -80,7 +81,7 @@ public class MidiMergerCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout(10, 10));
 
-		panel.add(new MultiLineLabel(i18n.getString("description")),
+		panel.add(config.get("descriptionLabel").read(new MultiLineLabel()),
 				BorderLayout.NORTH);
 
 		scrollPane.setPreferredSize(new Dimension(0, 0));
@@ -100,16 +101,14 @@ public class MidiMergerCategory extends JOrganCategory {
 	 */
 	private class MergeInputsModel extends AbstractTableModel {
 
+		private String[] columnNames = new String[]{"1", "2", "3"};
+		
+		public void setColumnNames(String[] names) {
+			this.columnNames = names;
+		}
+		
 		public String getColumnName(int column) {
-			switch (column) {
-			case 0:
-				return " ";
-			case 1:
-				return i18n.getString("device");
-			case 2:
-				return i18n.getString("channel");
-			}
-			return null;
+			return columnNames[column];
 		}
 
 		public Class<?> getColumnClass(int column) {

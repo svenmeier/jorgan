@@ -25,39 +25,39 @@ import java.beans.PropertyEditorSupport;
  */
 public class CommandEditor extends PropertyEditorSupport {
 
-  private String[] tags;
+	private String[] tags;
 
-  public CommandEditor() {
-    tags = new String[]{"NOTE_ON", "POLY_PRESSURE"};   
-  }
+	public CommandEditor() {
+		tags = new String[] { "NOTE_ON", "POLY_PRESSURE" };
+	}
 
-  public String[] getTags() {
-    return tags;
-  }
+	public String[] getTags() {
+		return tags;
+	}
 
-  public String getAsText() {
+	public String getAsText() {
 
-    Integer value = (Integer)getValue();
-    if (value == null) {
-      return "";
-    } else {
-      if (value.intValue() == 144) {
-        return tags[0];
-      } else if (value.intValue() == 160) {
-        return tags[1];
-      }
-      throw new IllegalStateException("unkown command");
-    }
-  }
+		Integer value = (Integer) getValue();
+		if (value == null) {
+			return "";
+		} else {
+			if (value.intValue() == 144) {
+				return tags[0];
+			} else if (value.intValue() == 160) {
+				return tags[1];
+			}
+			throw new IllegalStateException("unkown command");
+		}
+	}
 
-  public void setAsText(String string) {
+	public void setAsText(String string) {
 
-    if (tags[0].equals(string)) {
-      setValue(new Integer(144));
-    } else if (tags[1].equals(string)) {
-      setValue(new Integer(160));
-    } else {
-        throw new IllegalArgumentException("unkown command");
-    }
-  }
+		if (tags[0].equals(string)) {
+			setValue(new Integer(144));
+		} else if (tags[1].equals(string)) {
+			setValue(new Integer(160));
+		} else {
+			throw new IllegalArgumentException("unkown command");
+		}
+	}
 }

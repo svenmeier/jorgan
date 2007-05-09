@@ -35,28 +35,32 @@ import jorgan.gui.console.View;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link View} cateogry.
  */
 public class ViewCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(ViewCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ViewCategory.class);
 
-	private PropertyModel defaultColor = getModel(View.class, "defaultColor");
+	private Model defaultColor = getModel("jorgan/gui/console/View",
+			new Property(View.class, "defaultColor"));
 
-	private PropertyModel defaultFont = getModel(View.class, "defaultFont");
+	private Model defaultFont = getModel("jorgan/gui/console/View",
+			new Property(View.class, "defaultFont"));
 
-	private PropertyModel showShortcut = getModel(View.class, "showShortcut");
+	private Model showShortcut = getModel("jorgan/gui/console/View",
+			new Property(View.class, "showShortcut"));
 
-	private PropertyModel shortcutColor = getModel(View.class,
-			"shortcutColor");
+	private Model shortcutColor = getModel("jorgan/gui/console/View",
+			new Property(View.class, "shortcutColor"));
 
-	private PropertyModel shortcutFont = getModel(View.class, "shortcutFont");
+	private Model shortcutFont = getModel("jorgan/gui/console/View",
+			new Property(View.class, "shortcutFont"));
 
 	private ColorSelector defaultColorSelector = new ColorSelector();
 
@@ -68,8 +72,8 @@ public class ViewCategory extends JOrganCategory {
 
 	private FontSelector shortcutFontSelector = new FontSelector();
 
-	protected String createName() {
-		return i18n.getString("name");
+	public ViewCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -79,14 +83,14 @@ public class ViewCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("defaultColorSelector/label")),
+		panel.add(config.get("defaultColorSelector").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(defaultColorSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("defaultFontSelector/label")),
-				builder.nextColumn());
+		panel.add(config.get("defaultFontSelector").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(defaultFontSelector, builder.nextColumn().fillHorizontal());
 
 		builder.nextRow();
@@ -101,15 +105,14 @@ public class ViewCategory extends JOrganCategory {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(new TitledBorder(BorderFactory.createEtchedBorder(),
-				i18n.getString("shortcutPanel/title")));
+		panel.setBorder(config.get("shortcutPanel").read(
+				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
 
-		showShortcutCheckBox.setText(i18n
-				.getString("showShortcutCheckBox/text"));
+		config.get("showShortcutCheckBox").read(showShortcutCheckBox);
 		showShortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
 				shortcutColorSelector.setEnabled(showShortcutCheckBox
@@ -123,13 +126,13 @@ public class ViewCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("shortcutColorSelector/label")),
+		panel.add(config.get("shortcutColorSelector").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(shortcutColorSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("shortcutFontSelector/label")),
+		panel.add(config.get("shortcutFontSelector").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(shortcutFontSelector, builder.nextColumn().fillHorizontal());
 

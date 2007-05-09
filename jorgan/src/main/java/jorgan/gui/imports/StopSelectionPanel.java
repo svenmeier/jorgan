@@ -141,19 +141,14 @@ public class StopSelectionPanel extends JPanel {
 
 	public class StopModel extends AbstractTableModel {
 
-		private String name;
-		private String program;
+		private String[] columnNames;
 		
 		public StopModel() {
 			config.get("stopModel").read(this);
 		}
 		
-		public void setName(String name) {
-			this.name = name;
-		}
-		
-		public void setProgram(String program) {
-			this.program = program;
+		public void setColumnNames(String[] columnNames) {
+			this.columnNames = columnNames;
 		}
 		
 		public Class<?> getColumnClass(int columnIndex) {
@@ -162,11 +157,7 @@ public class StopSelectionPanel extends JPanel {
 		}
 
 		public String getColumnName(int column) {
-			if (column == 0) {
-				return name;
-			} else {
-				return program;
-			}
+			return columnNames[column];
 		}
 
 		public int getColumnCount() {

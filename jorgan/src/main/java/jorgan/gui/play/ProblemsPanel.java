@@ -81,6 +81,7 @@ public class ProblemsPanel extends DockedPanel {
 	 */
 	public ProblemsPanel() {
 
+		config.get("problemsModel").read(problemsModel);
 		table.setModel(problemsModel);
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
@@ -141,17 +142,21 @@ public class ProblemsPanel extends DockedPanel {
 		}
 	}
 
-	private class ProblemsModel extends AbstractTableModel implements
+	public class ProblemsModel extends AbstractTableModel implements
 			PlayListener {
 
-		private String[] columns = new String[] { " ", "Description", "Element" };
+		private String[] columnNames = new String[3];
 
 		public int getColumnCount() {
-			return columns.length;
+			return 3;
+		}
+
+		public void setColumnNames(String[] columnNames) {
+			this.columnNames = columnNames;
 		}
 
 		public String getColumnName(int column) {
-			return columns[column];
+			return columnNames[column];
 		}
 
 		public int getRowCount() {

@@ -28,25 +28,26 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.midi.MidiMonitor;
 import jorgan.swing.GridBuilder;
+import bias.Configuration;
 import bias.swing.Category;
-import bias.swing.PropertyModel;
-
-import com.sun.imageio.plugins.common.I18N;
+import bias.util.Property;
 
 /**
  * {@link MidiMonitor} category.
  */
 public class MidiMonitorCategory extends JOrganCategory {
 
-	private static I18N i18n = I18N.get(MidiMonitorCategory.class);
+	private static Configuration config = Configuration.getRoot().get(
+			MidiMonitorCategory.class);
 
-	private PropertyModel max = getModel(MidiMonitor.class, "max");
+	private Model max = getModel("jorgan/gui/midi/MidiMonitor", new Property(
+			MidiMonitor.class, "max"));
 
 	private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			Integer.MAX_VALUE, 50));
 
-	protected String createName() {
-		return i18n.getString("name");
+	public MidiMonitorCategory() {
+		config.read(this);
 	}
 
 	protected JComponent createComponent() {
@@ -56,7 +57,7 @@ public class MidiMonitorCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(new JLabel(i18n.getString("maxLabel/text")), builder
+		panel.add(config.get("maxLabel").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(maxSpinner, builder.nextColumn());
 
