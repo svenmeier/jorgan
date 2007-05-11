@@ -90,7 +90,7 @@ public class ImportWizard extends BasicWizard {
 		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
 
 		public ProviderSelectionPage() {
-			config.get("providerSelectionPage").read(this);
+			config.get("providerSelection").read(this);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -140,7 +140,7 @@ public class ImportWizard extends BasicWizard {
 		private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
 
 		public StopSelectionPage() {
-			config.get("stopSelectionPage").read(this);
+			config.get("stopSelection").read(this);
 		}
 
 		public void enteringFromPrevious() {

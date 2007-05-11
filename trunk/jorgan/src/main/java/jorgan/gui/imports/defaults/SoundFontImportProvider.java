@@ -154,8 +154,6 @@ public class SoundFontImportProvider implements ImportProvider {
 		 */
 		protected Insets insets = new Insets(2, 2, 2, 2);
 
-		private JLabel fileLabel = new JLabel();
-
 		private FileSelector fileSelector = new FileSelector();
 
 		/**
@@ -168,8 +166,7 @@ public class SoundFontImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			config.get("optionsPanel/fileLabel").read(fileLabel);
-			add(fileLabel, builder.nextColumn());
+			add(config.get("options/file").read(new JLabel()), builder.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {

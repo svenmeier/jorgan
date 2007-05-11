@@ -98,7 +98,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		private ReferencesToPage() {
-			config.get("referencesToPage").read(this);
+			config.get("referencesTo").read(this);
 
 			elementsSelectionPanel.setElements(organ
 					.getReferenceToCandidates(element));
@@ -123,7 +123,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		private ReferencedByPage() {
-			config.get("referencedFromPage").read(this);
+			config.get("referencedBy").read(this);
 
 			elementsSelectionPanel.setElements(organ
 					.getReferencedFromCandidates(element));

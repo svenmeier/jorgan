@@ -40,8 +40,7 @@ public class MidiMonitorCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMonitorCategory.class);
 
-	private Model max = getModel("jorgan/gui/midi/MidiMonitor", new Property(
-			MidiMonitor.class, "max"));
+	private Model max = getModel(new Property(MidiMonitor.class, "max"));
 
 	private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			Integer.MAX_VALUE, 50));
@@ -57,7 +56,7 @@ public class MidiMonitorCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("maxLabel").read(new JLabel()), builder
+		panel.add(config.get("max").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(maxSpinner, builder.nextColumn());
 

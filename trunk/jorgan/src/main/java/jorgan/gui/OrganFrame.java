@@ -166,7 +166,7 @@ public class OrganFrame extends JFrame {
 
 		toolBar.addSeparator();
 
-		config.get("constructButton").read(constructButton);
+		config.get("construct").read(constructButton);
 		constructButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (constructButton.isSelected()) {
@@ -505,7 +505,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class NewAction extends BaseAction {
 		private NewAction() {
-			config.get("newAction").read(this);
+			config.get("new").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -544,7 +544,7 @@ public class OrganFrame extends JFrame {
 		private DebugPanel debugPanel = new DebugPanel();
 
 		private DebugAction() {
-			config.get("debugAction").read(this);
+			config.get("debug").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -557,7 +557,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class OpenAction extends BaseAction {
 		private OpenAction() {
-			config.get("openAction").read(this);
+			config.get("open").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -577,7 +577,7 @@ public class OrganFrame extends JFrame {
 		private boolean registrationChanges = false;
 
 		private SaveAction() {
-			config.get("saveAction").read(this);
+			config.get("save").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -654,7 +654,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class SaveAsAction extends BaseAction {
 		private SaveAsAction() {
-			config.get("saveAsAction").read(this);
+			config.get("saveAs").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -667,7 +667,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class AboutAction extends BaseAction {
 		private AboutAction() {
-			config.get("aboutAction").read(this);
+			config.get("about").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -680,7 +680,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class WebsiteAction extends BaseAction {
 		private WebsiteAction() {
-			config.get("websiteAction").read(this);
+			config.get("website").read(this);
 
 			setEnabled(Browser.isSupported());
 		}
@@ -695,7 +695,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class ImportAction extends BaseAction {
 		private ImportAction() {
-			config.get("importAction").read(this);
+			config.get("import").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -708,7 +708,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class PreferencesAction extends BaseAction {
 		private PreferencesAction() {
-			config.get("preferencesAction").read(this);
+			config.get("preferences").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -725,7 +725,7 @@ public class OrganFrame extends JFrame {
 		private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
 
 		private FullScreenAction() {
-			config.get("fullScreenAction").read(this);
+			config.get("fullScreen").read(this);
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
@@ -789,7 +789,7 @@ public class OrganFrame extends JFrame {
 	 */
 	private class ExitAction extends BaseAction {
 		private ExitAction() {
-			config.get("exitAction").read(this);
+			config.get("exit").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

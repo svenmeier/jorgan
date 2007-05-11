@@ -61,14 +61,13 @@ public class PlayMonitor extends JPanel {
 	public PlayMonitor() {
 		setLayout(new GridLayout(0, 2));
 
-		add(inLabel, null);
-
-		config.get("inLabel").read(inLabel);
+		config.get("in").read(inLabel);
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		inLabel.setIcon(noneIcon);
 		inLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
+		add(inLabel, null);
 
-		config.get("outLabel").read(outLabel);
+		config.get("out").read(outLabel);
 		outLabel.setBorder(BorderFactory.createEmptyBorder(1, 2, 1, 2));
 		outLabel.setIcon(noneIcon);
 		add(outLabel, null);

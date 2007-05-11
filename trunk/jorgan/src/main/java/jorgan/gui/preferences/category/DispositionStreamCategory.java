@@ -40,11 +40,11 @@ public class DispositionStreamCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			DispositionStreamCategory.class);
 
-	private Model recentMax = getModel("jorgan/io/DispositionStream",
-			new Property(DispositionStream.class, "recentMax"));
+	private Model recentMax = getModel(new Property(DispositionStream.class,
+			"recentMax"));
 
-	private Model historySize = getModel("jorgan/io/DispositionStream",
-			new Property(DispositionStream.class, "historySize"));
+	private Model historySize = getModel(new Property(DispositionStream.class,
+			"historySize"));
 
 	private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
 			0, 100, 1));
@@ -63,13 +63,13 @@ public class DispositionStreamCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("recentsSizeSpinner").read(new JLabel()), builder
+		panel.add(config.get("recentsSize").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(recentMaxSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(config.get("historySizeSpinner").read(new JLabel()), builder
+		panel.add(config.get("historySize").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(historySizeSpinner, builder.nextColumn());
 

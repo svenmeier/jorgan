@@ -42,11 +42,11 @@ public class OrganFrameCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			OrganFrameCategory.class);
 
-	private Model fullScreenOnLoad = getModel("jorgan/gui/OrganFrame",
-			new Property(OrganFrame.class, "fullScreenOnLoad"));
+	private Model fullScreenOnLoad = getModel(new Property(OrganFrame.class,
+			"fullScreenOnLoad"));
 
-	private Model handleRegistrationChanges = getModel("jorgan/gui/OrganFrame",
-			new Property(OrganFrame.class, "handleRegistrationChanges"));
+	private Model handleRegistrationChanges = getModel(new Property(
+			OrganFrame.class, "handleRegistrationChanges"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
@@ -69,7 +69,7 @@ public class OrganFrameCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("fullScreenOnLoadCheckBox").read(fullScreenOnLoadCheckBox);
+		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
 		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn());
 
 		builder.nextRow();
@@ -85,26 +85,26 @@ public class OrganFrameCategory extends JOrganCategory {
 	private JPanel createChangesPanel() {
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("changesPanel").read(
+		panel.setBorder(config.get("changes").read(
 				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
 
 		builder.nextRow();
 
-		config.get("confirmChangesRadioButton").read(confirmChangesRadioButton);
+		config.get("confirmChanges").read(confirmChangesRadioButton);
 		confirmChangesRadioButton.getModel().setGroup(changesGroup);
 		panel.add(confirmChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
-		config.get("saveChangesRadioButton").read(saveChangesRadioButton);
+		config.get("saveChanges").read(saveChangesRadioButton);
 		saveChangesRadioButton.getModel().setGroup(changesGroup);
 		panel.add(saveChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
-		config.get("ignoreChangesRadioButton").read(ignoreChangesRadioButton);
+		config.get("ignoreChanges").read(ignoreChangesRadioButton);
 		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
 		panel.add(ignoreChangesRadioButton, builder.nextColumn());
 

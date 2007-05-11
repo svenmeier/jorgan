@@ -142,7 +142,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class AllAction extends BaseAction {
 
 		private AllAction() {
-			config.get("allAction").read(this);
+			config.get("all").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -154,7 +154,7 @@ public class ElementsSelectionPanel extends JPanel {
 	private class NoneAction extends BaseAction {
 
 		private NoneAction() {
-			config.get("noneAction").read(this);
+			config.get("none").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
