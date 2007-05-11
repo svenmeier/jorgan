@@ -47,19 +47,19 @@ public class ViewCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ViewCategory.class);
 
-	private Model defaultColor = getModel("jorgan/gui/console/View",
+	private Model defaultColor = getModel(
 			new Property(View.class, "defaultColor"));
 
-	private Model defaultFont = getModel("jorgan/gui/console/View",
+	private Model defaultFont = getModel(
 			new Property(View.class, "defaultFont"));
 
-	private Model showShortcut = getModel("jorgan/gui/console/View",
-			new Property(View.class, "showShortcut"));
+	private Model showShortcut = getModel(new Property(View.class,
+			"showShortcut"));
 
-	private Model shortcutColor = getModel("jorgan/gui/console/View",
+	private Model shortcutColor = getModel(
 			new Property(View.class, "shortcutColor"));
 
-	private Model shortcutFont = getModel("jorgan/gui/console/View",
+	private Model shortcutFont = getModel(
 			new Property(View.class, "shortcutFont"));
 
 	private ColorSelector defaultColorSelector = new ColorSelector();
@@ -83,13 +83,13 @@ public class ViewCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("defaultColorSelector").read(new JLabel()),
+		panel.add(config.get("defaultColor").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(defaultColorSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(config.get("defaultFontSelector").read(new JLabel()), builder
+		panel.add(config.get("defaultFont").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(defaultFontSelector, builder.nextColumn().fillHorizontal());
 
@@ -105,14 +105,14 @@ public class ViewCategory extends JOrganCategory {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("shortcutPanel").read(
+		panel.setBorder(config.get("shortcut").read(
 				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
 
-		config.get("showShortcutCheckBox").read(showShortcutCheckBox);
+		config.get("showShortcut").read(showShortcutCheckBox);
 		showShortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
 				shortcutColorSelector.setEnabled(showShortcutCheckBox
@@ -126,13 +126,13 @@ public class ViewCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("shortcutColorSelector").read(new JLabel()),
+		panel.add(config.get("shortcutColor").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(shortcutColorSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(config.get("shortcutFontSelector").read(new JLabel()),
+		panel.add(config.get("shortcutFont").read(new JLabel()),
 				builder.nextColumn());
 		panel.add(shortcutFontSelector, builder.nextColumn().fillHorizontal());
 

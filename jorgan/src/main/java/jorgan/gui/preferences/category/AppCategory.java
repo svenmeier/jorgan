@@ -37,8 +37,8 @@ public class AppCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			AppCategory.class);
 
-	private Model openRecentOnStartup = getModel("jorgan/App", new Property(
-			App.class, "openRecentOnStartup"));
+	private Model openRecentOnStartup = getModel(new Property(App.class,
+			"openRecentOnStartup"));
 
 	private JCheckBox openRecentOnStartupCheckBox = new JCheckBox();
 
@@ -53,7 +53,7 @@ public class AppCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("openRecentOnStartupCheckBox").read(
+		config.get("openRecentOnStartup").read(
 				openRecentOnStartupCheckBox);
 		panel.add(openRecentOnStartupCheckBox, builder.nextColumn()
 				.gridWidthRemainder());

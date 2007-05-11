@@ -77,11 +77,11 @@ public class ReferencesPanel extends DockedPanel {
 
 	private JToggleButton referencesToButton = new JToggleButton();
 
-	private JToggleButton referencedFromButton = new JToggleButton();
+	private JToggleButton referencedByButton = new JToggleButton();
 
-	private JToggleButton sortNameButton = new JToggleButton();
+	private JToggleButton sortByNameButton = new JToggleButton();
 
-	private JToggleButton sortTypeButton = new JToggleButton();
+	private JToggleButton sortByTypeButton = new JToggleButton();
 
 	private ReferencesModel referencesModel = new ReferencesModel();
 
@@ -95,33 +95,33 @@ public class ReferencesPanel extends DockedPanel {
 
 		addToolSeparator();
 
-		config.get("sortNameButton").read(sortNameButton);
-		sortNameButton.setSelected(true);
-		sortNameButton.addItemListener(new ItemListener() {
+		config.get("sortByName").read(sortByNameButton);
+		sortByNameButton.setSelected(true);
+		sortByNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (sortNameButton.isSelected()) {
-					sortTypeButton.setSelected(false);
+				if (sortByNameButton.isSelected()) {
+					sortByTypeButton.setSelected(false);
 				}
 				updateReferences();
 			}
 		});
-		addTool(sortNameButton);
+		addTool(sortByNameButton);
 
-		config.get("sortTypeButton").read(sortTypeButton);
-		sortTypeButton.addItemListener(new ItemListener() {
+		config.get("sortByType").read(sortByTypeButton);
+		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (sortTypeButton.isSelected()) {
-					sortNameButton.setSelected(false);
+				if (sortByTypeButton.isSelected()) {
+					sortByNameButton.setSelected(false);
 				}
 				updateReferences();
 			}
 		});
-		addTool(sortTypeButton);
+		addTool(sortByTypeButton);
 
 		addToolSeparator();
 
 		ButtonGroup toFromGroup = new ButtonGroup();
-		config.get("referencesToButton").read(referencesToButton);
+		config.get("referencesTo").read(referencesToButton);
 		referencesToButton.getModel().setGroup(toFromGroup);
 		referencesToButton.setSelected(true);
 		referencesToButton.getModel().addItemListener(new ItemListener() {
@@ -131,9 +131,9 @@ public class ReferencesPanel extends DockedPanel {
 		});
 		addTool(referencesToButton);
 
-		config.get("referencedFromButton").read(referencedFromButton);
-		referencedFromButton.getModel().setGroup(toFromGroup);
-		addTool(referencedFromButton);
+		config.get("referencedBy").read(referencedByButton);
+		referencedByButton.getModel().setGroup(toFromGroup);
+		addTool(referencedByButton);
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setModel(referencesModel);
@@ -217,10 +217,10 @@ public class ReferencesPanel extends DockedPanel {
 				}
 			}
 
-			if (sortNameButton.isSelected()) {
+			if (sortByNameButton.isSelected()) {
 				Collections.sort(rows, new RowComparator(new ElementComparator(
 						true)));
-			} else if (sortTypeButton.isSelected()) {
+			} else if (sortByTypeButton.isSelected()) {
 				Collections.sort(rows, new RowComparator(new ElementComparator(
 						false)));
 			}
@@ -239,7 +239,7 @@ public class ReferencesPanel extends DockedPanel {
 			if (showReferencesTo) {
 				referencesToButton.setSelected(true);
 			} else {
-				referencedFromButton.setSelected(true);
+				referencedByButton.setSelected(true);
 			}
 		}
 	}
@@ -333,7 +333,7 @@ public class ReferencesPanel extends DockedPanel {
 	private class AddAction extends BaseAction {
 
 		private AddAction() {
-			config.get("addAction").read(this);
+			config.get("add").read(this);
 
 			setEnabled(false);
 		}
@@ -354,7 +354,7 @@ public class ReferencesPanel extends DockedPanel {
 			ListSelectionListener {
 
 		private RemoveAction() {
-			config.get("removeAction").read(this);
+			config.get("remove").read(this);
 
 			setEnabled(false);
 		}

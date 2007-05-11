@@ -43,16 +43,16 @@ public class ConsolePanelCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanelCategory.class);
 
-	private Model grid = getModel("jorgan/gui/ConsolePanel", new Property(
+	private Model grid = getModel(new Property(
 			ConsolePanel.class, "grid"));
 
-	private Model interpolate = getModel("jorgan/gui/ConsolePanel",
-			new Property(ConsolePanel.class, "interpolate"));
+	private Model interpolate = getModel(new Property(ConsolePanel.class,
+			"interpolate"));
 
-	private Model background = getModel("jorgan/gui/ConsolePanel",
+	private Model background = getModel(
 			new Property(ConsolePanel.class, "background"));
 
-	private Model foreground = getModel("jorgan/gui/ConsolePanel",
+	private Model foreground = getModel(
 			new Property(ConsolePanel.class, "foreground"));
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
@@ -75,25 +75,25 @@ public class ConsolePanelCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("gridSpinner").read(new JLabel()), builder
+		panel.add(config.get("grid").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(gridSpinner, builder.nextColumn());
 
 		builder.nextRow();
 
-		config.get("interpolateCheckBox").read(interpolateCheckBox);
+		config.get("interpolate").read(interpolateCheckBox);
 		panel.add(interpolateCheckBox, builder.nextColumn()
 				.gridWidthRemainder());
 
 		builder.nextRow();
 
-		panel.add(config.get("backgroundSelector").read(new JLabel()), builder
+		panel.add(config.get("background").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(backgroundSelector, builder.nextColumn());
 
 		builder.nextRow();
 
-		panel.add(config.get("foregroundSelector").read(new JLabel()), builder
+		panel.add(config.get("foreground").read(new JLabel()), builder
 				.nextColumn());
 		panel.add(foregroundSelector, builder.nextColumn());
 

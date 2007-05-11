@@ -214,7 +214,7 @@ public class MemoryPanel extends DockedPanel {
 	private class NextAction extends BaseAction implements
 			ListSelectionListener {
 		private NextAction() {
-			config.get("nextAction").read(this);
+			config.get("next").read(this);
 
 			setEnabled(false);
 
@@ -233,7 +233,7 @@ public class MemoryPanel extends DockedPanel {
 	private class PreviousAction extends BaseAction implements
 			ListSelectionListener {
 		private PreviousAction() {
-			config.get("previousAction").read(this);
+			config.get("previous").read(this);
 
 			setEnabled(false);
 
@@ -252,7 +252,7 @@ public class MemoryPanel extends DockedPanel {
 	private class SwapAction extends BaseAction implements
 			ListSelectionListener {
 		private SwapAction() {
-			config.get("swapAction").read(this);
+			config.get("swap").read(this);
 
 			setEnabled(false);
 
@@ -272,7 +272,7 @@ public class MemoryPanel extends DockedPanel {
 	private class ClearAction extends BaseAction implements
 			ListSelectionListener {
 		private ClearAction() {
-			config.get("clearAction").read(this);
+			config.get("clear").read(this);
 
 			setEnabled(false);
 

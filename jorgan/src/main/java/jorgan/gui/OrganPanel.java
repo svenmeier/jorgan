@@ -522,7 +522,7 @@ public class OrganPanel extends JPanel {
 					"img/" + key + ".gif"));
 			putValue(Action.SMALL_ICON, icon);
 
-			config.get(key + "Dockable").read(this);
+			config.get(key).read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -550,7 +550,7 @@ public class OrganPanel extends JPanel {
 	 */
 	private class BackAction extends BaseAction {
 		private BackAction() {
-			config.get("backAction").read(this);
+			config.get("back").read(this);
 
 			setEnabled(false);
 		}
@@ -565,7 +565,7 @@ public class OrganPanel extends JPanel {
 	 */
 	private class ForwardAction extends BaseAction {
 		private ForwardAction() {
-			config.get("forwardAction").read(this);
+			config.get("forward").read(this);
 
 			setEnabled(false);
 		}

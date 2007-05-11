@@ -34,7 +34,7 @@ import bias.Configuration;
 /**
  * A panel for a font selection.
  */
-class FontPanel extends JPanel {
+public class FontPanel extends JPanel {
 
 	private static Logger logger = Logger.getLogger(FontPanel.class.getName());
 
@@ -57,6 +57,8 @@ class FontPanel extends JPanel {
 	private EditableList stylesList = new EditableList();
 
 	private Font font;
+	
+	private String[] styles = new String[4];
 
 	/**
 	 * Constructor.
@@ -68,9 +70,11 @@ class FontPanel extends JPanel {
 
 		builder.nextRow();
 
-		config.get("familyLabel").read(familyLabel);
-		config.get("sizeLabel").read(sizeLabel);
-		config.get("styleLabel").read(styleLabel);
+		config.read(this);
+
+		config.get("family").read(familyLabel);
+		config.get("size").read(sizeLabel);
+		config.get("style").read(styleLabel);
 
 		add(familyLabel, builder.nextColumn());
 		add(sizeLabel, builder.nextColumn());
@@ -85,10 +89,14 @@ class FontPanel extends JPanel {
 		sizeList.setValuesAsArray(sizes);
 		add(sizeList, builder.nextColumn().fillBoth());
 
-		config.get("stylesList").read(stylesList);
+		stylesList.setValuesAsArray(styles);
 		add(stylesList, builder.nextColumn().fillBoth());
 	}
 
+	public void setStyles(String[] styles) {
+		this.styles = styles;
+	}
+	
 	/**
 	 * Set the selected font.
 	 * 
@@ -131,6 +139,6 @@ class FontPanel extends JPanel {
 	 * @return formatted style
 	 */
 	public String formatStyle(int style) {
-		return stylesList.getValues().get(font.getStyle());
+		return styles[font.getStyle()];
 	}
 }

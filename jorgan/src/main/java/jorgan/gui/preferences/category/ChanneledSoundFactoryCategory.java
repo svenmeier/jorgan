@@ -38,9 +38,8 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ChanneledSoundFactoryCategory.class);
 
-	private Model sendAllNotesOff = getModel(
-			"jorgan/play/sound/ChanneledSoundFactory", new Property(
-					ChanneledSoundFactory.class, "sendAllNotesOff"));
+	private Model sendAllNotesOff = getModel(new Property(
+			ChanneledSoundFactory.class, "sendAllNotesOff"));
 
 	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
@@ -55,7 +54,7 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("sendAllNotesOffCheckBox").read(sendAllNotesOffCheckBox);
+		config.get("sendAllNotesOff").read(sendAllNotesOffCheckBox);
 		panel.add(sendAllNotesOffCheckBox, builder.nextColumn());
 
 		builder.nextRow();

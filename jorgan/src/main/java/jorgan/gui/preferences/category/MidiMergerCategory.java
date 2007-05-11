@@ -48,8 +48,7 @@ public class MidiMergerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerCategory.class);
 
-	private Model inputs = getModel("jorgan/sound/midi/merge/MidiMerger",
-			new Property(MidiMerger.class, "inputs"));
+	private Model inputs = getModel(new Property(MidiMerger.class, "inputs"));
 
 	/**
 	 * All available inputs.
@@ -68,10 +67,12 @@ public class MidiMergerCategory extends JOrganCategory {
 	/**
 	 * The table model for the mergeInputs.
 	 */
-	private MergeInputsModel mergeInputsModel = new MergeInputsModel();
+	private InputsModel tableModel = new InputsModel();
 
 	public MidiMergerCategory() {
 		config.read(this);
+
+		config.get("table").read(tableModel);
 	}
 
 	public Class<? extends Category> getParentCategory() {
@@ -81,13 +82,13 @@ public class MidiMergerCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout(10, 10));
 
-		panel.add(config.get("descriptionLabel").read(new MultiLineLabel()),
+		panel.add(config.get("description").read(new MultiLineLabel()),
 				BorderLayout.NORTH);
 
 		scrollPane.setPreferredSize(new Dimension(0, 0));
 		panel.add(scrollPane, BorderLayout.CENTER);
 
-		table.setModel(mergeInputsModel);
+		table.setModel(tableModel);
 		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
 		TableUtils.pleasantLookAndFeel(table);
 		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
@@ -99,14 +100,22 @@ public class MidiMergerCategory extends JOrganCategory {
 	/**
 	 * The table model for handling of inputs to the Midi-Merger.
 	 */
-	private class MergeInputsModel extends AbstractTableModel {
+	public class InputsModel extends AbstractTableModel {
 
-		private String[] columnNames = new String[]{"1", "2", "3"};
-		
+		private String[] columnNames = new String[getColumnCount()];
+
 		public void setColumnNames(String[] names) {
+			if (columnNames.length != this.columnNames.length) {
+				throw new IllegalArgumentException("length "
+						+ columnNames.length);
+			}
 			this.columnNames = names;
 		}
-		
+
+		public int getColumnCount() {
+			return 3;
+		}
+
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}
@@ -121,10 +130,6 @@ public class MidiMergerCategory extends JOrganCategory {
 				return Integer.class;
 			}
 			return null;
-		}
-
-		public int getColumnCount() {
-			return 3;
 		}
 
 		public int getRowCount() {
@@ -213,7 +218,7 @@ public class MidiMergerCategory extends JOrganCategory {
 			}
 		}
 
-		mergeInputsModel.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
 	}
 
 	protected void write() {

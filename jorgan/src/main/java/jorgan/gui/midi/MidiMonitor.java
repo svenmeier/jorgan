@@ -117,7 +117,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private JToggleButton scrollLockButton = new JToggleButton();
 
-	private MessagesModel model = new MessagesModel();
+	private MessagesModel tableModel = new MessagesModel();
 
 	/**
 	 * Constructor.
@@ -129,20 +129,20 @@ public class MidiMonitor extends DockedPanel {
 
 		addToolSeparator();
 
-		config.get("hexButton").read(hexButton);
+		config.get("hex").read(hexButton);
 		hexButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				model.fireTableDataChanged();
+				tableModel.fireTableDataChanged();
 			}
 		});
 		hexButton.setSelected(true);
 		baseGroup.add(hexButton);
 		addTool(hexButton);
 
-		config.get("decButton").read(decButton);
+		config.get("decimal").read(decButton);
 		decButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				model.fireTableDataChanged();
+				tableModel.fireTableDataChanged();
 			}
 		});
 		baseGroup.add(decButton);
@@ -150,15 +150,15 @@ public class MidiMonitor extends DockedPanel {
 
 		addToolSeparator();
 
-		config.get("scrollLockButton").read(scrollLockButton);
+		config.get("scrollLock").read(scrollLockButton);
 		addTool(scrollLockButton);
 
 		addToolSeparator();
 
 		addTool(new ClearAction());
 
-		config.get("model").read(model);
-		table.setModel(model);
+		config.get("table").read(tableModel);
+		table.setModel(tableModel);
 		TableUtils.pleasantLookAndFeel(table);
 		setScrollableBody(table, true, false);
 
@@ -236,9 +236,9 @@ public class MidiMonitor extends DockedPanel {
 	protected void updateMessagesLabel() {
 		String message;
 		if (deviceName == null) {
-			message = config.get("noDevice").read(new MessageBuilder()).build();
+			message = config.get("noStatus").read(new MessageBuilder()).build();
 		} else {
-			message = config.get("device").read(new MessageBuilder()).build(
+			message = config.get("status").read(new MessageBuilder()).build(
 					deviceName, deviceOut ? new Integer(1) : new Integer(0),
 					open ? new Integer(1) : new Integer(0));
 		}
@@ -258,7 +258,7 @@ public class MidiMonitor extends DockedPanel {
 	public void clear() {
 		messages.clear();
 
-		model.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
 	}
 
 	private class InternalMidiLogger implements MidiLogger {
@@ -281,7 +281,7 @@ public class MidiMonitor extends DockedPanel {
 
 				int row = messages.size() - 1;
 
-				model.fireTableRowsInserted(row, row);
+				tableModel.fireTableRowsInserted(row, row);
 
 				if (!scrollLockButton.isSelected()) {
 					table.scrollRectToVisible(table.getCellRect(row, 0, true));
@@ -293,7 +293,7 @@ public class MidiMonitor extends DockedPanel {
 						messages.remove(0);
 					}
 
-					model.fireTableRowsDeleted(0, over - 1);
+					tableModel.fireTableRowsDeleted(0, over - 1);
 				}
 			}
 		}
@@ -301,14 +301,16 @@ public class MidiMonitor extends DockedPanel {
 
 	public class MessagesModel extends AbstractTableModel {
 
-		private String[] columnNames = new String[] { "Status", "Data 1",
-				"Data 2", "Channel", "Note", "Event" };
+		private String[] columnNames = new String[getColumnCount()];
 
 		public int getColumnCount() {
 			return 6;
 		}
 
 		public void setColumnNames(String[] columnNames) {
+			if (columnNames.length != this.columnNames.length) {
+				throw new IllegalArgumentException("length " + columnNames.length);
+			}
 			this.columnNames = columnNames;
 		}
 
@@ -489,7 +491,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private class DeviceAction extends BaseAction {
 		private DeviceAction() {
-			config.get("deviceAction").read(this);
+			config.get("device").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -499,7 +501,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private class ClearAction extends BaseAction {
 		private ClearAction() {
-			config.get("clearAction").read(this);
+			config.get("clear").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {

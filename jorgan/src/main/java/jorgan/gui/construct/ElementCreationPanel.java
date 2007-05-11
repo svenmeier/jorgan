@@ -70,7 +70,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow();
 
-		config.get("nameLabel").read(nameLabel);
+		config.get("name").read(nameLabel);
 		add(nameLabel, builder.nextColumn());
 
 		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
@@ -91,7 +91,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow(1.0d);
 
-		config.get("typeLabel").read(typeLabel);
+		config.get("type").read(typeLabel);
 		add(typeLabel, builder.nextColumn().alignNorthWest());
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);

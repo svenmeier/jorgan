@@ -55,7 +55,7 @@ public class StopSelectionPanel extends JPanel {
 
 	private JTable table = new JTable();
 
-	private StopModel stopModel = new StopModel();
+	private StopModel tableModel = new StopModel();
 
 	private List<Stop> stops = new ArrayList<Stop>();
 
@@ -67,7 +67,7 @@ public class StopSelectionPanel extends JPanel {
 
 		add(scrollPane, BorderLayout.CENTER);
 
-		table.setModel(stopModel);
+		table.setModel(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
@@ -98,7 +98,7 @@ public class StopSelectionPanel extends JPanel {
 	public void setStops(List<Stop> stops) {
 		this.stops = stops;
 
-		stopModel.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class StopSelectionPanel extends JPanel {
 	private class AllAction extends BaseAction {
 
 		private AllAction() {
-			config.get("allAction").read(this);
+			config.get("all").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -131,7 +131,7 @@ public class StopSelectionPanel extends JPanel {
 	private class NoneAction extends BaseAction {
 
 		private NoneAction() {
-			config.get("noneAction").read(this);
+			config.get("none").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -141,13 +141,16 @@ public class StopSelectionPanel extends JPanel {
 
 	public class StopModel extends AbstractTableModel {
 
-		private String[] columnNames;
+		private String[] columnNames = new String[getColumnCount()];
 		
 		public StopModel() {
-			config.get("stopModel").read(this);
+			config.get("table").read(this);
 		}
 		
 		public void setColumnNames(String[] columnNames) {
+			if (columnNames.length != this.columnNames.length) {
+				throw new IllegalArgumentException("length " + columnNames.length);
+			}
 			this.columnNames = columnNames;
 		}
 		

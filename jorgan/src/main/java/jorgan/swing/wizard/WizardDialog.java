@@ -77,11 +77,11 @@ public class WizardDialog extends StandardDialog {
 
 		config.read(this);
 
-		config.get("previousAction").read(previousAction);
+		config.get("previous").read(previousAction);
 		addAction(previousAction);
-		config.get("nextAction").read(nextAction);
+		config.get("next").read(nextAction);
 		addAction(nextAction);
-		config.get("finishAction").read(finishAction);
+		config.get("finish").read(finishAction);
 		addAction(finishAction, true);
 		addCancelAction();
 

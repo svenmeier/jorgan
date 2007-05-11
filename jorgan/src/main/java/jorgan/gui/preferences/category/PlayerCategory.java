@@ -38,11 +38,11 @@ public class PlayerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			PlayerCategory.class);
 
-	private Model warnDevice = getModel("jorgan/play/Player", new Property(
+	private Model warnDevice = getModel(new Property(
 			Player.class, "warnDevice"));
 
-	private Model warnMessage = getModel("jorgan/play/Player", new Property(
-			Player.class, "warnMessage"));
+	private Model warnMessage = getModel(new Property(Player.class,
+			"warnMessage"));
 
 	private JCheckBox warnDeviceCheckBox = new JCheckBox();
 
@@ -59,12 +59,12 @@ public class PlayerCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("warnDeviceCheckBox").read(warnDeviceCheckBox);
+		config.get("warnDevice").read(warnDeviceCheckBox);
 		panel.add(warnDeviceCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		config.get("warnMessageCheckBox").read(warnMessageCheckBox);
+		config.get("warnMessage").read(warnMessageCheckBox);
 		panel.add(warnMessageCheckBox, builder.nextColumn());
 
 		builder.nextRow();

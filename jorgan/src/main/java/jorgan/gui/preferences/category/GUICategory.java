@@ -38,10 +38,10 @@ public class GUICategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			GUICategory.class);
 
-	private Model useSystemLookAndFeel = getModel("jorgan/gui/GUI",
-			new Property(GUI.class, "useSystemLookAndFeel"));
+	private Model useSystemLookAndFeel = getModel(new Property(GUI.class,
+			"useSystemLookAndFeel"));
 
-	private Model showAboutOnStartup = getModel("jorgan/gui/GUI", new Property(
+	private Model showAboutOnStartup = getModel(new Property(
 			GUI.class, "showAboutOnStartup"));
 
 	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
@@ -59,13 +59,13 @@ public class GUICategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("useSystemLookAndFeelCheckBox").read(
+		config.get("useSystemLookAndFeel").read(
 				useSystemLookAndFeelCheckBox);
 		panel.add(useSystemLookAndFeelCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
-		config.get("showAboutOnStartupCheckBox").read(
+		config.get("showAboutOnStartup").read(
 				showAboutOnStartupCheckBox);
 		panel.add(showAboutOnStartupCheckBox, builder.nextColumn());
 

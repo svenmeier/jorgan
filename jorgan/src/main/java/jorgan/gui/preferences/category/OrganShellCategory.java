@@ -47,11 +47,11 @@ public class OrganShellCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			OrganShellCategory.class);
 
-	private Model encoding = getModel("jorgan/shell/OrganShell", new Property(
+	private Model encoding = getModel(new Property(
 			OrganShell.class, "encoding"));
 
-	private Model useDefaultEncoding = getModel("jorgan/shell/OrganShell",
-			new Property(OrganShell.class, "useDefaultEncoding"));
+	private Model useDefaultEncoding = getModel(new Property(OrganShell.class,
+			"useDefaultEncoding"));
 
 	private JRadioButton encodingDefaultRadioButton = new JRadioButton();
 
@@ -100,7 +100,7 @@ public class OrganShellCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("encodingOtherRadioButton").read(encodingOtherRadioButton);
+		config.get("encodingOther").read(encodingOtherRadioButton);
 		buttonGroup.add(encodingOtherRadioButton);
 		encodingOtherRadioButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {

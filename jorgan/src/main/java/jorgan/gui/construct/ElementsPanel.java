@@ -72,9 +72,9 @@ public class ElementsPanel extends DockedPanel {
 
 	private DnDList list = new DnDList();
 
-	private JToggleButton sortNameButton = new JToggleButton();
+	private JToggleButton sortByNameButton = new JToggleButton();
 
-	private JToggleButton sortTypeButton = new JToggleButton();
+	private JToggleButton sortByTypeButton = new JToggleButton();
 
 	private ElementsModel elementsModel = new ElementsModel();
 
@@ -92,24 +92,24 @@ public class ElementsPanel extends DockedPanel {
 		addToolSeparator();
 
 		ButtonGroup sortGroup = new ButtonGroup();
-		config.get("sortNameButton").read(sortNameButton);
-		sortNameButton.getModel().setGroup(sortGroup);
-		sortNameButton.addItemListener(new ItemListener() {
+		config.get("sortByName").read(sortByNameButton);
+		sortByNameButton.getModel().setGroup(sortGroup);
+		sortByNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
 			}
 		});
-		addTool(sortNameButton);
+		addTool(sortByNameButton);
 
-		config.get("sortTypeButton").read(sortTypeButton);
-		sortTypeButton.getModel().setGroup(sortGroup);
-		sortTypeButton.setSelected(true);
-		sortTypeButton.addItemListener(new ItemListener() {
+		config.get("sortByType").read(sortByTypeButton);
+		sortByTypeButton.getModel().setGroup(sortGroup);
+		sortByTypeButton.setSelected(true);
+		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				setOrgan(session);
 			}
 		});
-		addTool(sortTypeButton);
+		addTool(sortByTypeButton);
 
 		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
@@ -159,9 +159,9 @@ public class ElementsPanel extends DockedPanel {
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
 					.getElements());
-			if (sortNameButton.isSelected()) {
+			if (sortByNameButton.isSelected()) {
 				Collections.sort(elements, new ElementComparator(true));
-			} else if (sortTypeButton.isSelected()) {
+			} else if (sortByTypeButton.isSelected()) {
 				Collections.sort(elements, new ElementComparator(false));
 			}
 			elementsModel.update();
@@ -319,7 +319,7 @@ public class ElementsPanel extends DockedPanel {
 			int index = elements.size() - 1;
 			fireIntervalAdded(this, index, index);
 
-			Collections.sort(elements, new ElementComparator(sortNameButton
+			Collections.sort(elements, new ElementComparator(sortByNameButton
 					.isSelected()));
 			fireContentsChanged(this, 0, index);
 
@@ -347,7 +347,7 @@ public class ElementsPanel extends DockedPanel {
 	private class AddAction extends BaseAction {
 
 		private AddAction() {
-			config.get("addAction").read(this);
+			config.get("add").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -366,7 +366,7 @@ public class ElementsPanel extends DockedPanel {
 	private class RemoveAction extends BaseAction {
 
 		private RemoveAction() {
-			config.get("removeAction").read(this);
+			config.get("remove").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

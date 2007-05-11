@@ -109,7 +109,7 @@ public class CreateElementWizard extends BasicWizard {
 		 * Constructor.
 		 */
 		public ElementPage() {
-			config.get("elementPage").read(this);
+			config.get("element").read(this);
 
 			elementPanel.setElementClasses(Organ.getElementClasses());
 			if (prototype != null) {
@@ -156,7 +156,7 @@ public class CreateElementWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		public ReferencesToPage() {
-			config.get("referencesToPage").read(this);
+			config.get("referencesTo").read(this);
 		}
 
 		protected JComponent getComponentImpl() {
@@ -194,7 +194,7 @@ public class CreateElementWizard extends BasicWizard {
 		private ElementsSelectionPanel elementsSelectionPanel = new ElementsSelectionPanel();
 
 		public ReferencedByPage() {
-			config.get("referencedFromPage").read(this);
+			config.get("referencedBy").read(this);
 		}
 
 		protected JComponent getComponentImpl() {

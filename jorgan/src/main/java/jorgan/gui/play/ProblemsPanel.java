@@ -68,7 +68,7 @@ public class ProblemsPanel extends DockedPanel {
 
 	private JTable table = new JTable();
 
-	private ProblemsModel problemsModel = new ProblemsModel();
+	private ProblemsModel tableModel = new ProblemsModel();
 
 	private List<Row> rows = new ArrayList<Row>();
 
@@ -81,8 +81,8 @@ public class ProblemsPanel extends DockedPanel {
 	 */
 	public ProblemsPanel() {
 
-		config.get("problemsModel").read(problemsModel);
-		table.setModel(problemsModel);
+		config.get("table").read(tableModel);
+		table.setModel(tableModel);
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
 		TableUtils.pleasantLookAndFeel(table);
@@ -103,7 +103,7 @@ public class ProblemsPanel extends DockedPanel {
 	 */
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
-			this.session.removePlayerListener(problemsModel);
+			this.session.removePlayerListener(tableModel);
 
 			rows.clear();
 		}
@@ -111,7 +111,7 @@ public class ProblemsPanel extends DockedPanel {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addPlayerListener(problemsModel);
+			this.session.addPlayerListener(tableModel);
 
 			Organ organ = this.session.getOrgan();
 			for (int e = 0; e < organ.getElementCount(); e++) {
@@ -119,7 +119,7 @@ public class ProblemsPanel extends DockedPanel {
 			}
 		}
 
-		problemsModel.fireTableDataChanged();
+		tableModel.fireTableDataChanged();
 	}
 
 	private void addProblems(Element element) {
@@ -145,13 +145,16 @@ public class ProblemsPanel extends DockedPanel {
 	public class ProblemsModel extends AbstractTableModel implements
 			PlayListener {
 
-		private String[] columnNames = new String[3];
+		private String[] columnNames = new String[getColumnCount()];
 
 		public int getColumnCount() {
 			return 3;
 		}
 
 		public void setColumnNames(String[] columnNames) {
+			if (columnNames.length != this.columnNames.length) {
+				throw new IllegalArgumentException("length " + columnNames.length);
+			}
 			this.columnNames = columnNames;
 		}
 
@@ -188,13 +191,13 @@ public class ProblemsPanel extends DockedPanel {
 
 			addProblems(ev.getElement());
 
-			problemsModel.fireTableDataChanged();
+			tableModel.fireTableDataChanged();
 		}
 
 		public void playerRemoved(PlayEvent ev) {
 			removeProblems(ev.getElement());
 
-			problemsModel.fireTableDataChanged();
+			tableModel.fireTableDataChanged();
 		}
 
 		public void problemAdded(PlayEvent ev) {
@@ -265,7 +268,7 @@ public class ProblemsPanel extends DockedPanel {
 	private class GotoAction extends BaseAction {
 
 		private GotoAction() {
-			config.get("gotoAction").read(this);
+			config.get("goto").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

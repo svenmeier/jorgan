@@ -208,7 +208,7 @@ public class StandardDialog extends JDialog {
 	 */
 	public void addOKAction() {
 		OKAction okAction = new OKAction();
-		config.get("okAction").read(okAction);
+		config.get("ok").read(okAction);
 		addAction(okAction, true);
 	}
 
@@ -217,7 +217,7 @@ public class StandardDialog extends JDialog {
 	 */
 	public void addCancelAction() {
 		CancelAction cancelAction = new CancelAction();
-		config.get("cancelAction").read(cancelAction);
+		config.get("cancel").read(cancelAction);
 		addAction(cancelAction, false);
 	}
 
