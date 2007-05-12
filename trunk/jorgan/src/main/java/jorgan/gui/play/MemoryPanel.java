@@ -290,7 +290,7 @@ public class MemoryPanel extends DockedPanel {
 
 		private boolean confirm() {
 
-			MessageBox box = config.get("confirm").read(
+			MessageBox box = config.get("clearConfirm").read(
 					new MessageBox(MessageBox.OPTIONS_YES_NO));
 			return box.show(MemoryPanel.this) == MessageBox.OPTION_YES;
 		}
