@@ -1,9 +1,8 @@
-package jorgan.gui;
+package jorgan.disposition;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import jorgan.disposition.Element;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 

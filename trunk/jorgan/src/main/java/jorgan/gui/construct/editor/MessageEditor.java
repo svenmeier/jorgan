@@ -57,11 +57,15 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 	private JButton button = new JButton("...");
 
 	private MessageBox box;
+	
+	private boolean hex = false;
 
 	/**
 	 * Constructor.
 	 */
 	public MessageEditor() {
+		config.read(this);
+		
 		panel.setLayout(new BorderLayout());
 
 		button.setFocusable(false);
@@ -73,6 +77,14 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		panel.add(textField, BorderLayout.CENTER);
 	}
 
+	public void setHex(boolean hex) {
+		this.hex = hex;
+	}
+	
+	public boolean getHex() {
+		return hex;
+	}
+	
 	public void setElement(Element element) {
 
 		device = null;
@@ -108,9 +120,9 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 				String token1 = tokens.nextToken().trim();
 				String token2 = tokens.nextToken().trim();
 
-				int status = Integer.parseInt(token0);
-				int data1 = parseData(token1);
-				int data2 = parseData(token2);
+				int status = parseData(token0, false);
+				int data1 = parseData(token1, true);
+				int data2 = parseData(token2, true);
 
 				message = new Message(status, data1, data2);
 			}
@@ -121,11 +133,17 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		return message;
 	}
 
-	private int parseData(String token) {
-		if ("*".equals(token)) {
-			return Message.WILDCARD_ANY;
-		} else if ("+".equals(token)) {
-			return Message.WILDCARD_POSITIVE;
+	private int parseData(String token, boolean wildcards) {
+		if (wildcards) {
+			if ("*".equals(token)) {
+				return Message.WILDCARD_ANY;
+			}
+			if ("+".equals(token)) {
+				return Message.WILDCARD_POSITIVE;
+			}
+		}
+		if (hex) {
+			return Integer.parseInt(token, 16);
 		} else {
 			return Integer.parseInt(token);
 		}
@@ -151,8 +169,17 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 	private String formatData(int data) {
 		if (data == Message.WILDCARD_ANY) {
 			return "*";
-		} else if (data == Message.WILDCARD_POSITIVE) {
+		}
+		if (data == Message.WILDCARD_POSITIVE) {
 			return "+";
+		}
+		
+		if (hex) {
+			String string = Integer.toString(data, 16).toUpperCase();
+			if (string.length() == 1) {
+				string = "0" + string;
+			}
+			return string;
 		} else {
 			return Integer.toString(data);
 		}
@@ -165,7 +192,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		} else {
 			StringBuffer buffer = new StringBuffer();
 
-			buffer.append(message.getStatus());
+			buffer.append(formatData(message.getStatus()));
 
 			buffer.append(", ");
 

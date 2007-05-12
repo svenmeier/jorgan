@@ -37,7 +37,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
-import jorgan.gui.Elements;
+import jorgan.disposition.Elements;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 

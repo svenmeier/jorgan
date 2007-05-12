@@ -42,6 +42,7 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;

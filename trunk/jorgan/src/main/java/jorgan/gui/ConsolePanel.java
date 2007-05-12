@@ -45,7 +45,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.Action;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
 import javax.swing.JPopupMenu;
@@ -1195,9 +1194,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeToFrontAction extends BaseAction {
 		private ArrangeToFrontAction() {
-			config.get("arrangeToFrontAction").read(this);
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/arrangeFront.gif")));
+			config.get("arrangeToFront").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1209,9 +1206,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeToBackAction extends BaseAction {
 		private ArrangeToBackAction() {
-			config.get("arrangeToBackAction").read(this);
-			putValue(Action.SMALL_ICON, new ImageIcon(getClass().getResource(
-					"/jorgan/gui/img/arrangeBack.gif")));
+			config.get("arrangeToBack").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -1223,7 +1218,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 	private class ArrangeHideAction extends BaseAction {
 		private ArrangeHideAction() {
-			config.get("arrangeHideAction").read(this);
+			config.get("arrangeHide").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {

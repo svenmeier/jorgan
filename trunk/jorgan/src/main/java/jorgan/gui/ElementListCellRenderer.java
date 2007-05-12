@@ -15,6 +15,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JList;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.gui.construct.ElementsPanel;
 import jorgan.swing.list.CommentedCellRenderer;
 
