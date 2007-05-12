@@ -33,28 +33,19 @@ import javax.swing.SwingUtilities;
 
 import jorgan.App;
 import jorgan.swing.StandardDialog;
-import bias.Configuration;
 
 /**
  * Panel that displays information about jOrgan.
  */
 public class AboutPanel extends JPanel {
 
-	private static Configuration config = Configuration.getRoot().get(AboutPanel.class);
-
 	/**
-	 * The label used to display the version of jOrgan.
-	 */
-	private JLabel label = new JLabel();
-
-	/**
-	 * Creata an about panel.
+	 * Create an about panel.
 	 */
 	public AboutPanel() {
 		setLayout(new BorderLayout());
 
-		label.setIcon(createIcon());
-		add(label);
+		add(new JLabel(createIcon()));
 	}
 
 	private ImageIcon createIcon() {
@@ -100,8 +91,6 @@ public class AboutPanel extends JPanel {
 		AboutPanel aboutPanel = new AboutPanel();
 
 		StandardDialog dialog = new StandardDialog(owner);
-
-		config.get("dialog").read(dialog);
 
 		dialog.setBody(aboutPanel);
 		dialog.setResizable(false);

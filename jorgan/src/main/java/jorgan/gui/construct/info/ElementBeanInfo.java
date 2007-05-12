@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.gui.Elements;
+import jorgan.disposition.Elements;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.editor.StyleEditor;
 

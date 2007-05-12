@@ -29,9 +29,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
-import jorgan.gui.Elements;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;

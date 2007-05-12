@@ -41,6 +41,7 @@ import javax.swing.Timer;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.Elements;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
 import bias.Configuration;

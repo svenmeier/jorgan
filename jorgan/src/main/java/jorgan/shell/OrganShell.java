@@ -98,11 +98,9 @@ public class OrganShell implements UI {
 
 				writeEncoding();
 			} catch (UnsupportedEncodingException ex) {
-				writeMessage("unsupportedEncoding", encoding);
+				writeMessage("encodingUnsupported", encoding);
 			}
 		}
-
-		writeMessage("help");
 
 		if (file != null) {
 			openOrgan(file);
@@ -125,14 +123,14 @@ public class OrganShell implements UI {
 
 			setOrgan(organ);
 
-			writeMessage("organOpened", DispositionFileFilter
+			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));
 		} catch (IOException ex) {
-			writeMessage("openOrganException", file.getName());
+			writeMessage("openException", file.getName());
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
-			writeMessage("openOrganInvalid", file.getName());
+			writeMessage("openInvalid", file.getName());
 		}
 	}
 
@@ -170,9 +168,9 @@ public class OrganShell implements UI {
 		try {
 			new DispositionStream().write(organ, file);
 
-			writeMessage("organSaved");
+			writeMessage("saveConfirm");
 		} catch (Exception ex) {
-			writeMessage("saveOrganException", file.getName());
+			writeMessage("saveException", file.getName());
 		}
 	}
 
@@ -183,9 +181,7 @@ public class OrganShell implements UI {
 			for (int p = 0; p < problems.size(); p++) {
 				Problem problem = (Problem) problems.get(p);
 
-				String pattern = "problem/" + problem;
-
-				writeMessage(pattern, element.getName(), problem.getValue());
+				writeMessage(problem.toString(), element.getName(), problem.getValue());
 			}
 		}
 	}
@@ -208,9 +204,9 @@ public class OrganShell implements UI {
 	private void writeEncoding() {
 		if (useDefaultEncoding) {
 			String defaultEncoding = System.getProperty("file.encoding");
-			writeMessage("defaultEncoding", defaultEncoding);
+			writeMessage("encodingDefault", defaultEncoding);
 		} else {
-			writeMessage("currentEncoding", encoding);
+			writeMessage("encodingCurrent", encoding);
 		}
 	}
 
@@ -218,13 +214,13 @@ public class OrganShell implements UI {
 	 * The command for opening of a disposition.
 	 */
 	private class OpenCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "openCommand";
+		public String getKey() {
+			return "open";
 		}
 
 		public void execute(String param) {
 			if (param == null) {
-				writeMessage("openCommand/format");
+				writeMessage("openParameter");
 				return;
 			}
 			openOrgan(new File(param));
@@ -235,19 +231,23 @@ public class OrganShell implements UI {
 	 * The command for closing of a disposition.
 	 */
 	private class CloseCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "closeCommand";
+		public String getKey() {
+			return "close";
 		}
 
 		public void execute(String param) {
+			if (param != null) {
+				writeMessage("closeParameter");
+				return;
+			}
 			if (file == null) {
-				writeMessage("closeCommand/file");
+				writeMessage("closeNone");
 				return;
 			}
 			file = null;
 			setOrgan(null);
 
-			writeMessage("closeCommand/confirm");
+			writeMessage("closeConfirm");
 		}
 	}
 
@@ -255,17 +255,17 @@ public class OrganShell implements UI {
 	 * The command to save the current disposition.
 	 */
 	private class SaveCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "saveCommand";
+		public String getKey() {
+			return "save";
 		}
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("saveCommand/format");
+				writeMessage("saveParameter");
 				return;
 			}
 			if (file == null) {
-				writeMessage("saveCommand/file");
+				writeMessage("saveNone");
 				return;
 			}
 			saveOrgan();
@@ -276,8 +276,8 @@ public class OrganShell implements UI {
 	 * The help command.
 	 */
 	private class HelpCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "helpCommand";
+		public String getKey() {
+			return "help";
 		}
 
 		public void execute(String param) {
@@ -285,7 +285,7 @@ public class OrganShell implements UI {
 				Command command = interpreter.getCommand(param);
 				interpreter.writeln(command.getLongDescription());
 			} else {
-				writeMessage("helpCommand/header");
+				writeMessage("helpHeader");
 				int length = 0;
 				for (int c = 0; c < interpreter.getCommandCount(); c++) {
 					Command command = interpreter.getCommand(c);
@@ -294,10 +294,10 @@ public class OrganShell implements UI {
 				for (int c = 0; c < interpreter.getCommandCount(); c++) {
 					Command command = interpreter.getCommand(c);
 					String name = pad(command.getName(), length);
-					writeMessage("helpCommand/body", name, command
+					writeMessage("helpElement", name, command
 							.getDescription());
 				}
-				writeMessage("helpCommand/footer");
+				writeMessage("helpFooter");
 			}
 		}
 	}
@@ -306,8 +306,8 @@ public class OrganShell implements UI {
 	 * The command to show/change current encoding.
 	 */
 	private class EncodingCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "encodingCommand";
+		public String getKey() {
+			return "encoding";
 		}
 
 		public void execute(String param) {
@@ -325,7 +325,7 @@ public class OrganShell implements UI {
 						encoding = param;
 					}
 				} catch (UnsupportedEncodingException ex) {
-					writeMessage("unsupportedEncoding", param);
+					writeMessage("encodingUnsupported", param);
 					return;
 				}
 			}
@@ -338,23 +338,23 @@ public class OrganShell implements UI {
 	 * The command to show recent dispositions and opening a recent disposition.
 	 */
 	private class RecentCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "recentCommand";
+		public String getKey() {
+			return "recent";
 		}
 
 		public void execute(String param) {
 			List recents = new DispositionStream().getRecentFiles();
 			if (recents.size() == 0) {
-				writeMessage("recentCommand/none");
+				writeMessage("recentNone");
 				return;
 			}
 
 			if (param == null) {
-				writeMessage("recentCommand/header");
+				writeMessage("recentHeader");
 
 				for (int r = 0; r < recents.size(); r++) {
 					File recent = (File) recents.get(r);
-					writeMessage("recentCommand/list", new Object[] {
+					writeMessage("recentElement", new Object[] {
 							new Integer(r + 1), recent });
 				}
 			} else {
@@ -365,7 +365,7 @@ public class OrganShell implements UI {
 				} catch (Exception ex) {
 					Integer from = new Integer(1);
 					Integer to = new Integer(recents.size());
-					writeMessage("recentCommand/format", new Object[] { from,
+					writeMessage("recentParameter", new Object[] { from,
 							to });
 				}
 			}
@@ -376,13 +376,13 @@ public class OrganShell implements UI {
 	 * The command to exit jOrgan.
 	 */
 	private class ExitCommand extends AbstractCommand {
-		public String getPrefix() {
-			return "exitCommand";
+		public String getKey() {
+			return "exit";
 		}
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("exitCommand/format");
+				writeMessage("exitParameter");
 				return;
 			}
 
@@ -392,7 +392,7 @@ public class OrganShell implements UI {
 				organPlay = null;
 			}
 
-			writeMessage("exitCommand/confirm");
+			writeMessage("exitConfirm");
 
 			interpreter.stop();
 		}
@@ -415,7 +415,7 @@ public class OrganShell implements UI {
 		}
 
 		public void execute(String param) {
-			writeMessage("unknownCommand");
+			writeMessage("unknown");
 		}
 	}
 
@@ -431,10 +431,10 @@ public class OrganShell implements UI {
 		private String longDescription;
 
 		protected AbstractCommand() {
-			config.get(getPrefix()).read(this);
+			config.get(getKey()).read(this);
 		}
 
-		protected abstract String getPrefix();
+		protected abstract String getKey();
 
 		public String getName() {
 			return name;
