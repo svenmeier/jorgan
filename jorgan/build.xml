@@ -40,6 +40,17 @@
         </copy>        	
     </target>
 
+	<target name="newLanguage" depends="clean">
+		<input message="Enter language code (e.g. 'de' without quotes)" addproperty="language"/>
+
+		<copy todir="./build" filtering="true">
+            <fileset dir="./src" >
+                <include name="**/i18n.properties" />
+            </fileset>
+			<globmapper from="*.properties" to="*_${language}.properties"/>
+        </copy>        	
+	</target>
+	
     <target name="dist" description="Set up the distribution" depends="clean, build" >
         <mkdir dir="./dist/marshal" />
 
