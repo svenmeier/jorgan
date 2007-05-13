@@ -210,7 +210,7 @@ public class ConsoleDialog extends JDialog {
 	private class CloseAction extends BaseAction {
 
 		private CloseAction() {
-			config.get("closeAction").read(this);
+			config.get("close").read(this);
 
 			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
