@@ -39,6 +39,7 @@ import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Regulator;
+import jorgan.disposition.Sequence;
 import jorgan.disposition.SoundSource;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Swell;
@@ -308,6 +309,8 @@ public class OrganPlay {
 			player = new CaptorPlayer((Captor) element);
 		} else if (element instanceof Memory) {
 			player = new MemoryPlayer((Memory) element);
+		} else if (element instanceof Sequence) {
+			player = new SequencePlayer((Sequence) element);
 		}
 
 		if (player != null) {
