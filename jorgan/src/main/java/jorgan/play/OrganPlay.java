@@ -36,6 +36,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
+import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.SoundSource;
@@ -305,6 +306,8 @@ public class OrganPlay {
 			player = new KeyerPlayer((Keyer) element);
 		} else if (element instanceof Captor) {
 			player = new CaptorPlayer((Captor) element);
+		} else if (element instanceof Memory) {
+			player = new MemoryPlayer((Memory) element);
 		}
 
 		if (player != null) {
