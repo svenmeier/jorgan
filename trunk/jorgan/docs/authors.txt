@@ -10,6 +10,7 @@ The team behind jOrgan (sorted by last name) :
       . Crew Glazjev <thorgeir@tut.by> (Russian translation)
       . Giacomo Mazzullo <giacmazz@tiscalinet.it> (Italian translation)
       . Kristian Skordal Thorsen <kristian.thorsen@bigfoot.com> (Norwegian translation)
+      . Martin Slavik <martin.slavik@tul.cz> (Czech translation)
 
     User Feedback and Food for Thought :
       . Graham Harrison <fg.harrison@virgin.net>
