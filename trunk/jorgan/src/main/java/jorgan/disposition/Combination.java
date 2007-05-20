@@ -18,6 +18,8 @@
  */
 package jorgan.disposition;
 
+import java.util.Arrays;
+
 
 public class Combination extends Initiator {
 
@@ -134,8 +136,10 @@ public class Combination extends Initiator {
 
 		private boolean[] activated = new boolean[128];
 
-		public CombinationReference(Activateable registratable) {
-			super(registratable);
+		public CombinationReference(Activateable activateable) {
+			super(activateable);
+			
+			Arrays.fill(activated, true);
 		}
 
 		public void setActive(int index, boolean active) {
