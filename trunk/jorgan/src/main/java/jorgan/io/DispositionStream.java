@@ -149,9 +149,13 @@ public class DispositionStream {
 	}
 
 	public void write(Organ organ, File file) throws IOException {
-		new History(file, historySize).add();
 
-		write(organ, new FileOutputStream(file));
+		File temp = new File(file.getAbsoluteFile().getParentFile(), "." + file.getName());
+		write(organ, new FileOutputStream(temp));
+		
+		new History(file).move(historySize);
+
+		temp.renameTo(file);
 
 		addRecentFile(file);
 	}

@@ -38,20 +38,27 @@ public class History {
 
 	private List<Integer> existingNumbers;
 
-	private int max;
-
-	public History(File file, int max) {
+	/**
+	 * Create a history for the given file.
+	 * 
+	 * @param file
+	 *            file to create history for
+	 */
+	public History(File file) {
 		this.file = file;
 
-		this.parent = file.getParentFile();
+		this.parent = file.getAbsoluteFile().getParentFile();
 
 		existingNumbers = getExistingNumbers();
 	}
 
 	/**
-	 * Add an additional history.
+	 * Move ths file to the history.
+	 * 
+	 * @param max
+	 *            maximum count of histories
 	 */
-	public void add() {
+	public void move(int max) {
 
 		if (file.exists()) {
 
@@ -59,6 +66,8 @@ public class History {
 
 			if (max > 0) {
 				addHistory();
+			} else {
+				file.delete();
 			}
 		}
 	}
@@ -92,22 +101,22 @@ public class History {
 		return numbers;
 	}
 
-	private File getBackup(Integer number) {
+	private File getHistory(Integer number) {
 		return new File(parent, "\\." + file.getName() + "~" + number);
 	}
 
 	private void deleteExceedingHistories(int max) {
 		Collections.sort(existingNumbers, new Comparator<Integer>() {
 			public int compare(Integer integer1, Integer integer2) {
-				File file1 = getBackup(integer1);
-				File file2 = getBackup(integer2);
+				File file1 = getHistory(integer1);
+				File file2 = getHistory(integer2);
 
 				return (int) (file2.lastModified() - file1.lastModified());
 			}
 		});
 
 		for (int n = existingNumbers.size() - 1; n >= max; n--) {
-			getBackup(existingNumbers.get(n)).delete();
+			getHistory(existingNumbers.get(n)).delete();
 			existingNumbers.remove(n);
 		}
 	}
@@ -126,6 +135,6 @@ public class History {
 			}
 		}
 
-		file.renameTo(getBackup(new Integer(free)));
+		file.renameTo(getHistory(new Integer(free)));
 	}
 }
