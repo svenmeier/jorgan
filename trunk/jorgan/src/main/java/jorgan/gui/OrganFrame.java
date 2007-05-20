@@ -497,7 +497,7 @@ public class OrganFrame extends JFrame {
 
 	protected void showBoxMessage(String key, Object... args) {
 
-		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this);
+		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this, args);
 	}
 
 	/**
