@@ -66,7 +66,7 @@ public class MidiMonitorCategory extends JOrganCategory {
 	}
 
 	public Class<? extends Category> getParentCategory() {
-		return PlayerCategory.class;
+		return ChanneledSoundFactoryCategory.class;
 	}
 
 	protected void read() {
