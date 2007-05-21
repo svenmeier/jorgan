@@ -385,6 +385,7 @@ public class OrganFrame extends JFrame {
 			setOrgan(new OrganSession(organ));
 
 			buildRecentsMenu();
+			
 			if (fullScreenOnLoad) {
 				fullScreenAction.goFullScreen();
 			}
