@@ -50,7 +50,8 @@ import bias.Configuration;
  */
 public class StandardDialog extends JDialog {
 
-	private static Configuration config = Configuration.getRoot().get(StandardDialog.class);
+	private static Configuration config = Configuration.getRoot().get(
+			StandardDialog.class);
 
 	/**
 	 * The label holding the description.
@@ -136,7 +137,6 @@ public class StandardDialog extends JDialog {
 		contentPane.add(descriptionLabel, BorderLayout.NORTH);
 
 		bodyWrapper.setLayout(new BorderLayout());
-		bodyWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		contentPane.add(bodyWrapper, BorderLayout.CENTER);
 
 		contentPane.add(buttonPane, BorderLayout.SOUTH);
@@ -246,6 +246,8 @@ public class StandardDialog extends JDialog {
 		if (isDefault) {
 			getRootPane().setDefaultButton(button);
 		}
+
+		bodyWrapper.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 	}
 
 	/**
@@ -332,7 +334,7 @@ public class StandardDialog extends JDialog {
 
 		private JButton add(Action action) {
 			setVisible(true);
-			
+
 			JButton button = new JButton(action);
 
 			gridPanel.add(button);
