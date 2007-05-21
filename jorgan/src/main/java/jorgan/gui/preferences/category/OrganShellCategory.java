@@ -83,7 +83,7 @@ public class OrganShellCategory extends JOrganCategory {
 
 		JPanel panel = new JPanel();
 		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("encodingPanel").read(
+		panel.setBorder(config.get("encoding").read(
 				new TitledBorder(BorderFactory.createEtchedBorder())));
 
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
