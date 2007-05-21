@@ -27,7 +27,9 @@ public class MergeInput {
 	public MergeInput(String device) {
 
 		int colon = device.indexOf(':');
-		if (colon != -1) {
+		if (colon == -1) {
+			this.channel = -1;
+		} else {
 			this.channel = Integer.parseInt(device.substring(0, colon));
 
 			device = device.substring(colon + 1);
