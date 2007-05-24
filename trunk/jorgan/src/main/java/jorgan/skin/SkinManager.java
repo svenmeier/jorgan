@@ -146,7 +146,7 @@ public class SkinManager implements ISkinManager {
 
 		public URL getURL(String name) {
 			try {
-				return new File(directory, name).toURL();
+				return new File(directory, name).toURI().toURL();
 			} catch (MalformedURLException ex) {
 				return null;
 			}
@@ -166,7 +166,7 @@ public class SkinManager implements ISkinManager {
 
 		public URL getURL(String name) {
 			try {
-				return new URL("jar:" + file.toURL() + "!/" + name);
+				return new URL("jar:" + file.toURI().toURL() + "!/" + name);
 			} catch (MalformedURLException ex) {
 				return null;
 			}
@@ -175,7 +175,7 @@ public class SkinManager implements ISkinManager {
 
 	/**
 	 * Get the singleton instance.
-	 * 
+	 *
 	 * @return manager of {@Skin}s.
 	 */
 	public static SkinManager instance() {

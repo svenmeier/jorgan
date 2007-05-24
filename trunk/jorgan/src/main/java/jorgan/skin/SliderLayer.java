@@ -113,6 +113,6 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	}
 
 	public Object clone() {
-		return (SliderLayer) super.clone();
+		return super.clone();
 	}
 }

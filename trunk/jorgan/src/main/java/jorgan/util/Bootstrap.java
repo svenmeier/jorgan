@@ -199,10 +199,10 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 				if (file.isDirectory()) {
 					File[] files = file.listFiles();
 					for (int i = 0; i < files.length; i++) {
-						urls.add(files[i].toURL());
+						urls.add(files[i].toURI().toURL());
 					}
 				} else {
-					urls.add(file.toURL());
+					urls.add(file.toURI().toURL());
 				}
 			}
 		}

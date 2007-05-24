@@ -61,6 +61,6 @@ public class ButtonLayer extends CompositeLayer implements Cloneable {
     }
 
     public Object clone() {
-        return (ButtonLayer) super.clone();
+        return super.clone();
     }
 }
