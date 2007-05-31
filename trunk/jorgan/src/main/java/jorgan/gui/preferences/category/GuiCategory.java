@@ -28,19 +28,35 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
+import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
+import jorgan.gui.construct.editor.MessageEditor;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
 
 /**
- * {@link OrganFrame} category.
+ * {@link GUI} category.
  */
-public class OrganFrameCategory extends JOrganCategory {
+public class GuiCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			OrganFrameCategory.class);
+			GuiCategory.class);
+
+	private Model useSystemLookAndFeel = getModel(new Property(GUI.class,
+			"useSystemLookAndFeel"));
+
+	private Model showAboutOnStartup = getModel(new Property(GUI.class,
+			"showAboutOnStartup"));
+
+	private Model hexMessage = getModel(new Property(MessageEditor.class, "hex"));
+
+	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
+
+	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
+
+	private JCheckBox hexMessageCheckBox = new JCheckBox();
 
 	private Model fullScreenOnLoad = getModel(new Property(OrganFrame.class,
 			"fullScreenOnLoad"));
@@ -58,7 +74,7 @@ public class OrganFrameCategory extends JOrganCategory {
 
 	private JRadioButton ignoreChangesRadioButton = new JRadioButton();
 
-	public OrganFrameCategory() {
+	public GuiCategory() {
 		config.read(this);
 	}
 
@@ -69,6 +85,16 @@ public class OrganFrameCategory extends JOrganCategory {
 
 		builder.nextRow();
 
+		config.get("useSystemLookAndFeel").read(useSystemLookAndFeelCheckBox);
+		panel.add(useSystemLookAndFeelCheckBox, builder.nextColumn());
+
+		builder.nextRow();
+
+		config.get("showAboutOnStartup").read(showAboutOnStartupCheckBox);
+		panel.add(showAboutOnStartupCheckBox, builder.nextColumn());
+
+		builder.nextRow();
+
 		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
 		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn());
 
@@ -76,6 +102,11 @@ public class OrganFrameCategory extends JOrganCategory {
 
 		panel.add(createChangesPanel(), builder.nextColumn()
 				.gridWidthRemainder().fillHorizontal());
+
+		builder.nextRow();
+
+		config.get("hexMessage").read(hexMessageCheckBox);
+		panel.add(hexMessageCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
@@ -112,10 +143,17 @@ public class OrganFrameCategory extends JOrganCategory {
 	}
 
 	public Class<? extends Category> getParentCategory() {
-		return GUICategory.class;
+		return AppCategory.class;
 	}
 
 	protected void read() {
+		useSystemLookAndFeelCheckBox.setSelected((Boolean) useSystemLookAndFeel
+				.getValue());
+		showAboutOnStartupCheckBox.setSelected((Boolean) showAboutOnStartup
+				.getValue());
+		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
+				.getValue());
+
 		switch ((Integer) handleRegistrationChanges.getValue()) {
 		case OrganFrame.REGISTRATION_CHANGES_CONFIRM:
 			confirmChangesRadioButton.setSelected(true);
@@ -127,11 +165,16 @@ public class OrganFrameCategory extends JOrganCategory {
 			ignoreChangesRadioButton.setSelected(true);
 			break;
 		}
-		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
-				.getValue());
+		
+		hexMessageCheckBox.setSelected((Boolean) hexMessage.getValue());
 	}
 
 	protected void write() {
+		useSystemLookAndFeel
+				.setValue(useSystemLookAndFeelCheckBox.isSelected());
+		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
+		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
+
 		int handle = 0;
 		if (confirmChangesRadioButton.isSelected()) {
 			handle = OrganFrame.REGISTRATION_CHANGES_CONFIRM;
@@ -141,6 +184,7 @@ public class OrganFrameCategory extends JOrganCategory {
 			handle = OrganFrame.REGISTRATION_CHANGES_IGNORE;
 		}
 		handleRegistrationChanges.setValue(handle);
-		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
+		
+		hexMessage.setValue(hexMessageCheckBox.isSelected());
 	}
 }

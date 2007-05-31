@@ -20,10 +20,16 @@ package jorgan.gui.preferences.category;
 
 import java.awt.GridBagLayout;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
+import javax.swing.border.TitledBorder;
 
+import jorgan.gui.midi.MidiMonitor;
 import jorgan.play.sound.ChanneledSoundFactory;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
@@ -31,19 +37,24 @@ import bias.swing.Category;
 import bias.util.Property;
 
 /**
- * {@link ChanneledSoundFactory} category.
+ * Category.
  */
-public class ChanneledSoundFactoryCategory extends JOrganCategory {
+public class MidiCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ChanneledSoundFactoryCategory.class);
+			MidiCategory.class);
 
 	private Model sendAllNotesOff = getModel(new Property(
 			ChanneledSoundFactory.class, "sendAllNotesOff"));
 
+	private Model monitorMax = getModel(new Property(MidiMonitor.class, "max"));
+
 	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
 
-	public ChanneledSoundFactoryCategory() {
+	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
+			Integer.MAX_VALUE, 50));
+
+	public MidiCategory() {
 		config.read(this);
 	}
 
@@ -59,9 +70,32 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 
 		builder.nextRow();
 
+		panel.add(createMonitorPanel(), builder.nextColumn()
+				.gridWidthRemainder().fillHorizontal());
+
+		builder.nextRow();
+
 		return panel;
 	}
 
+	private JPanel createMonitorPanel() {
+		JPanel panel = new JPanel();
+		panel.setLayout(new GridBagLayout());
+		panel.setBorder(config.get("monitor").read(
+				new TitledBorder(BorderFactory.createEtchedBorder())));
+
+		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+
+		builder.nextRow();
+	
+		panel.add(config.get("monitorMax").read(new JLabel()), builder.nextColumn());
+		panel.add(monitorMaxSpinner, builder.nextColumn());
+
+		builder.nextRow();
+		
+		return panel;
+	}
+	
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
@@ -69,9 +103,13 @@ public class ChanneledSoundFactoryCategory extends JOrganCategory {
 	protected void read() {
 		sendAllNotesOffCheckBox.setSelected((Boolean) sendAllNotesOff
 				.getValue());
+
+		monitorMaxSpinner.setValue(monitorMax.getValue());
 	}
 
 	protected void write() {
 		sendAllNotesOff.setValue(sendAllNotesOffCheckBox.isSelected());
+
+		monitorMax.setValue(monitorMaxSpinner.getValue());
 	}
 }

@@ -42,10 +42,10 @@ import bias.util.Property;
 /**
  * {@link OrganShell} category.
  */
-public class OrganShellCategory extends JOrganCategory {
+public class ShellCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			OrganShellCategory.class);
+			ShellCategory.class);
 
 	private Model encoding = getModel(new Property(
 			OrganShell.class, "encoding"));
@@ -61,7 +61,7 @@ public class OrganShellCategory extends JOrganCategory {
 
 	private JComboBox encodingComboBox = new JComboBox();
 
-	public OrganShellCategory() {
+	public ShellCategory() {
 		config.read(this);
 	}
 
