@@ -113,9 +113,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			StringTokenizer tokens = new StringTokenizer(textField.getText(),
 					",");
 
-			if (tokens.countTokens() == 0) {
-				message = null;
-			} else {
+			if (tokens.countTokens() != 0) {
 				String token0 = tokens.nextToken().trim();
 				String token1 = tokens.nextToken().trim();
 				String token2 = tokens.nextToken().trim();
