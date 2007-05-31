@@ -76,7 +76,7 @@ public class MidiMergerCategory extends JOrganCategory {
 	}
 
 	public Class<? extends Category> getParentCategory() {
-		return ChanneledSoundFactoryCategory.class;
+		return MidiCategory.class;
 	}
 
 	protected JComponent createComponent() {
