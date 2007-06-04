@@ -203,7 +203,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		String[] devices = DevicePool.getMidiDeviceNames(false);
 		for (String device : devices) {
 			if (!MidiMergerProvider.INFO.getName().equals(device)) {
-				allInputs.add(new MergeInput(device));
+				allInputs.add(new MergeInput(device, -1));
 			}
 		}
 
