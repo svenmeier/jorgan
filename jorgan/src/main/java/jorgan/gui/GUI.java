@@ -4,6 +4,8 @@ import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
@@ -17,9 +19,11 @@ import bias.Configuration;
  */
 public class GUI implements UI {
 
+	private static Logger log = Logger.getLogger(GUI.class.getName());
+
 	private static Configuration config = Configuration.getRoot()
 			.get(GUI.class);
-	
+
 	private FrameDisposer disposer = new FrameDisposer();
 
 	private boolean showAboutOnStartup = true;
@@ -67,13 +71,18 @@ public class GUI implements UI {
 	}
 
 	private void initSwing() {
-		if (useSystemLookAndFeel) {
-			try {
-				UIManager.setLookAndFeel(UIManager
-						.getSystemLookAndFeelClassName());
-			} catch (Exception ex) {
-				// keep default look and feel
+		String plaf = null;
+		try {
+			if (useSystemLookAndFeel) {
+				plaf = UIManager.getSystemLookAndFeelClassName();
+			} else {
+				plaf = UIManager.getCrossPlatformLookAndFeelClassName();
 			}
+
+			log.log(Level.INFO, "setting plaf '" + plaf + "'");
+			UIManager.setLookAndFeel(plaf);
+		} catch (Exception ex) {
+			log.log(Level.WARNING, "unable to set plaf '" + plaf + "'", ex);
 		}
 
 		Toolkit.getDefaultToolkit().setDynamicLayout(true);
