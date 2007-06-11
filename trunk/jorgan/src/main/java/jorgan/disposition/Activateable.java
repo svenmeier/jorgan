@@ -23,7 +23,7 @@ package jorgan.disposition;
  */
 public abstract class Activateable extends Momentary {
 
-	private boolean active = true;
+	private boolean active = false;
 
 	private boolean locking = true;
 
