@@ -24,18 +24,19 @@ public class MergeInput {
 
 	private int channel;
 
-	public MergeInput(String device) {
+	/**
+	 * @param channelColonDevice	channel and device separated by a colon
+	 * @see #toString()
+	 */
+	public MergeInput(String channelColonDevice) {
 
-		int colon = device.indexOf(':');
+		int colon = channelColonDevice.indexOf(':');
 		if (colon == -1) {
-			this.channel = -1;
-		} else {
-			this.channel = Integer.parseInt(device.substring(0, colon));
-
-			device = device.substring(colon + 1);
+			throw new IllegalArgumentException("channel and device expected in'" + channelColonDevice);
 		}
-
-		this.device = device;
+		
+		this.channel = Integer.parseInt(channelColonDevice.substring(0, colon));
+		this.device = channelColonDevice.substring(colon + 1);
 	}
 
 	public MergeInput(String device, int channel) {
