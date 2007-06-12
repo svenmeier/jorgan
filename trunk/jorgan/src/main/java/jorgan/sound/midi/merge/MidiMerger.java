@@ -186,7 +186,7 @@ public class MidiMerger extends Loopback {
 	 */
 	public void setInputs(List<MergeInput> inputs) {
 		if (inputs == null) {
-			throw new IllegalArgumentException("mergeInputs must not be null");
+			throw new IllegalArgumentException("inputs must not be null");
 		}
 
 		this.inputs = inputs;
