@@ -133,7 +133,7 @@ public class DispositionStream {
 		try {
 			InputStream converted = Conversion.convertAll(in);
 
-			Reader reader = new InputStreamReader(converted);
+			Reader reader = new InputStreamReader(converted, "UTF-8");
 
 			organ = (Organ) xstream.fromXML(reader);
 		} catch (TransformerException ex) {
