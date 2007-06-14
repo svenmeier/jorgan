@@ -22,55 +22,9 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
 /**
- * BugFix for the JavaSound midi implementation.
+ * Utils for messages.
  */
 public class MessageUtils {
-
-	/**
-	 * Workaround for BUG #4716323 in JavaSound:<br>
-	 * ShortMessage.getStatus() delivers bogus value so compute the status from
-	 * <code>command OR channel</code> instead - fixed in 1.4.2 (mantis).
-	 * 
-	 * @param message
-	 *            message to get status from
-	 * @return status of message
-	 * @deprecated
-	 */
-	public static int getStatusBugFix(ShortMessage message) {
-		return message.getCommand() | message.getChannel();
-	}
-
-	/**
-	 * Reminder for Bug #4851018 in JavaSound:<br>
-	 * Don't use MidiMessage.getMessage() as it may return bogus values from
-	 * external devices - fixed in 1.5 (Tiger).
-	 * 
-	 * @param message
-	 *            message to get message from
-	 * @return never
-	 * @throws java.lang.UnsupportedOperationException
-	 *             always
-	 * @deprecated
-	 */
-	public static byte[] getMessageBugFix(ShortMessage message) {
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Reminder for Bug #4851018 in JavaSound:<br>
-	 * Don't use MidiMessage.getLength() as it may return bogus values from
-	 * external devices - fixed in 1.5 (Tiger).
-	 * 
-	 * @param message
-	 *            message to get message from
-	 * @return never
-	 * @throws java.lang.UnsupportedOperationException
-	 *             always
-	 * @deprecated
-	 */
-	public static int getLengthBugFix(ShortMessage message) {
-		throw new UnsupportedOperationException();
-	}
 
 	/**
 	 * Test if the given message is a {@link ShortMessage}.
@@ -83,7 +37,7 @@ public class MessageUtils {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
-			int status = getStatusBugFix(shortMessage);
+			int status = shortMessage.getStatus();
 			if (status != ShortMessage.ACTIVE_SENSING
 					&& status != ShortMessage.TIMING_CLOCK) {
 				return true;
