@@ -10,7 +10,7 @@
 		</organ>
 	</xsl:template>
 
-	<xsl:template match="console|label|keyboard|soundSource|stop|coupler|combination|captor|swell|tremulant|variation|sequence|activator|regulator|keyer|memory|incrementer">
+	<xsl:template match="console|label|keyboard|soundSource|stop|coupler|combination|captor|swell|tremulant|variation|sequence|activator|regulator|keyer|incrementer">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|*[not(name() = 'reference')]"/>
 	        <references>
@@ -40,6 +40,22 @@
 				</reference>
 			</xsl:otherwise>
 		</xsl:choose>
+	</xsl:template>
+	
+	<xsl:template match="memory">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|*[not(name() = 'title' or name() = 'reference')]"/>
+	        <titles>
+	        	<xsl:for-each select="title">
+	        		<string>
+						<xsl:value-of select="node()"/>
+	        		</string>
+	        	</xsl:for-each>
+	        </titles>
+	        <references>
+				<xsl:apply-templates select="reference"/>
+	        </references>
+		</xsl:copy>
 	</xsl:template>
 	
 	<xsl:template match="@*|node()">
