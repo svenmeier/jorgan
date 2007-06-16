@@ -19,7 +19,7 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Incrementer;
-import jorgan.gui.construct.editor.NumberEditor;
+import jorgan.gui.construct.editor.DelayEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Incrementer}.
@@ -29,6 +29,6 @@ public class IncrementerBeanInfo extends InitiatorBeanInfo {
     protected void registerProperties() {
         super.registerProperties();
 
-        add("delta", Incrementer.class, NumberEditor.class);
+        add("delta", Incrementer.class, DelayEditor.class);
     }
 }

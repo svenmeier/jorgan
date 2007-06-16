@@ -25,49 +25,48 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 /**
- * Property editor for numbers.
+ * Property editor for delay.
  */
-public class NumberEditor extends CustomEditor {
+public class DelayEditor extends CustomEditor {
 
-  private JSpinner spinner;
+	private JSpinner spinner;
 
-  public NumberEditor() {
+	public DelayEditor() {
 
-    spinner = new JSpinner(new SpinnerNumberModel(0, getMinimum(), getMaximum(), 1));
-    spinner.setBorder(null);
+		spinner = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE,
+				1));
+		spinner.setBorder(null);
 
-    JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-    editor.getTextField().setBorder(null);
-  }
+		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+				.getEditor();
+		editor.getTextField().setBorder(null);
+	}
 
-  protected int getMinimum() {
-    return Integer.MIN_VALUE;
-  }
+	public String format(Object value) {
+		if (value == null) {
+			return "";
+		} else {
+			return "" + value;
+		}
+	}
 
-  protected int getMaximum() {
-    return Integer.MAX_VALUE;
-  }
+	public Component getCustomEditor(Object value) {
 
-  public String format(Object value) {
-    return "" + value;
-  }
-  
-  public Component getCustomEditor(Object value) {
+		spinner.setValue(value);
 
-    spinner.setValue(value);
+		return spinner;
+	}
 
-    return spinner;
-  }
+	public Object getEditedValue() {
 
-  public Object getEditedValue() {
+		try {
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.commitEdit();
+		} catch (ParseException ex) {
+			// invalid value so keep previous value
+		}
 
-    try {
-      JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor)spinner.getEditor();
-      editor.commitEdit();
-    } catch (ParseException ex) {
-      // invalid value so keep previous value
-    }
-
-    return spinner.getValue();
-  }
+		return spinner.getValue();
+	}
 }

@@ -20,9 +20,9 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.SoundSource;
 import jorgan.gui.construct.editor.DataEditor;
+import jorgan.gui.construct.editor.DelayEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.OutDeviceEditor;
-import jorgan.gui.construct.editor.PositiveNumberEditor;
 import jorgan.gui.construct.editor.SoundFactoryTypeEditor;
 
 /**
@@ -33,7 +33,7 @@ public class SoundSourceBeanInfo extends ElementBeanInfo {
     protected void registerProperties() {
         super.registerProperties();
 
-        add("delay", SoundSource.class, PositiveNumberEditor.class);
+        add("delay", SoundSource.class, DelayEditor.class);
         add("device", SoundSource.class, OutDeviceEditor.class);
         add("type", SoundSource.class, SoundFactoryTypeEditor.class);
         add("bank", SoundSource.class, DataEditor.class);

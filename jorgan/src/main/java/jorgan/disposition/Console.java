@@ -24,16 +24,6 @@ package jorgan.disposition;
 public class Console extends Element {
 
 	/**
-	 * The maximum supported zoom.
-	 */
-	public static final float MAX_ZOOM = 2.0f;
-
-	/**
-	 * The minimum supported zoom.
-	 */
-	public static final float MIN_ZOOM = 0.5f;
-
-	/**
 	 * The device for input.
 	 */
 	private String device;
@@ -42,11 +32,6 @@ public class Console extends Element {
 	 * The skin.
 	 */
 	private String skin;
-
-	/**
-	 * The zoom.
-	 */
-	private float zoom = 1.0f;
 
 	private String screen;
 
@@ -66,10 +51,6 @@ public class Console extends Element {
 		return skin;
 	}
 
-	public float getZoom() {
-		return zoom;
-	}
-
 	public String getScreen() {
 		return screen;
 	}
@@ -82,19 +63,6 @@ public class Console extends Element {
 
 	public void setSkin(String skin) {
 		this.skin = skin;
-
-		fireElementChanged(true);
-	}
-
-	public void setZoom(float zoom) {
-		if (zoom < MIN_ZOOM) {
-			zoom = MIN_ZOOM;
-		}
-		if (zoom > MAX_ZOOM) {
-			zoom = MAX_ZOOM;
-		}
-
-		this.zoom = zoom;
 
 		fireElementChanged(true);
 	}

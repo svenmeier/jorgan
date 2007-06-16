@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.CommandEditor;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.InDeviceEditor;
 import jorgan.gui.construct.editor.KeyEditor;
-import jorgan.gui.construct.editor.NumberEditor;
+import jorgan.gui.construct.editor.DelayEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyboard}.
@@ -39,7 +39,7 @@ public class KeyboardBeanInfo extends ElementBeanInfo {
         add("threshold", Keyboard.class, DataEditor.class);
         add("from", Keyboard.class, KeyEditor.class);
         add("to", Keyboard.class, KeyEditor.class);
-        add("transpose", Keyboard.class, NumberEditor.class);
+        add("transpose", Keyboard.class, DelayEditor.class);
         add("device", Keyboard.class, InDeviceEditor.class);
     }
 }
