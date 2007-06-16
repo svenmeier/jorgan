@@ -330,7 +330,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 					return value;
 				} catch (Exception ex) {
-					logger.log(Level.FINER, "unable to get property value", ex);
+					logger.log(Level.WARNING, "unable to get property value", ex);
 				}
 				return null;
 			}
@@ -351,7 +351,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 					Object bean = beans.get(b);
 					method.invoke(bean, new Object[] { aValue });
 				} catch (Exception ex) {
-					logger.log(Level.FINER, "unable to set property value", ex);
+					logger.log(Level.WARNING, "unable to set property value", ex);
 				}
 			}
 		}
@@ -436,7 +436,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 						editor.setAsText((String) comboBox.getSelectedItem());
 					}
 				} catch (IllegalArgumentException ex) {
-					logger.log(Level.FINER, "unable to get value", ex);
+					logger.log(Level.WARNING, "unable to get value", ex);
 				}
 			}
 			return editor.getValue();

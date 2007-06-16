@@ -18,46 +18,56 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.beans.PropertyEditorSupport;
+import java.awt.Component;
 import java.text.NumberFormat;
 import java.text.ParseException;
+
+import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 /**
  * PropertyEditor for a scale property.
  */
-public class ZoomEditor extends PropertyEditorSupport {
+public class ZoomEditor extends CustomEditor {
 
-    private NumberFormat numberFormat = NumberFormat.getNumberInstance();
+	private JSpinner spinner;
 
-    private NumberFormat percentFormat = NumberFormat.getPercentInstance();
+	private NumberFormat format = NumberFormat.getPercentInstance();
 
-    public String getAsText() {
+	public ZoomEditor() {
+		spinner = new JSpinner(new SpinnerNumberModel(100, 50, 100, 1));
+		spinner.setBorder(null);
 
-        Float ff = (Float) getValue();
+		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+				.getEditor();
+		editor.getTextField().setBorder(null);
+	}
 
-        if (ff == null) {
-            return "";
-        } else {
-            return percentFormat.format(ff);
-        }
-    }
+	public String format(Object value) {
+		if (value == null) {
+			return "";
+		} else {
+			return format.format(value);
+		}
+	}
 
-    public void setAsText(String text) throws IllegalArgumentException {
-        if (text == null || "".equals(text)) {
-            setValue(null);
-        } else {
-            float value;
-            try {
-                value = percentFormat.parse(text).floatValue();
-            } catch (ParseException noPercent) {
-                try {
-                    value = numberFormat.parse(text).floatValue() / 100f;
-                } catch (ParseException noNumber) {
-                    throw new IllegalArgumentException("unable to set as text");
-                }
-            }
+	public Component getCustomEditor(Object value) {
 
-            setValue(new Float(value));
-        }
-    }
+		spinner.setValue(Math.round(100 * ((Number)value).floatValue()));
+
+		return spinner;
+	}
+
+	public Object getEditedValue() {
+
+		try {
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.commitEdit();
+		} catch (ParseException ex) {
+			// invalid value so keep previous value
+		}
+
+		return (((Number)spinner.getValue()).floatValue() / 100);
+	}
 }

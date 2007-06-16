@@ -30,6 +30,16 @@ import java.util.Set;
 public abstract class Element implements Cloneable {
 
 	/**
+	 * The maximum supported zoom.
+	 */
+	public static final float MAX_ZOOM = 1.0f;
+
+	/**
+	 * The minimum supported zoom.
+	 */
+	public static final float MIN_ZOOM = 0.5f;
+
+	/**
 	 * The organ this element belongs to.
 	 */
 	private Organ organ;
@@ -45,11 +55,16 @@ public abstract class Element implements Cloneable {
 	private String description = "";
 
 	private String style;
-
+	
 	/**
 	 * The references to other elements.
 	 */
 	protected List<Reference> references = new ArrayList<Reference>();
+
+	/**
+	 * The zoom.
+	 */
+	private float zoom = 1.0f;
 
 	/**
 	 * Test if this element can reference the given element. <br>
@@ -321,5 +336,22 @@ public abstract class Element implements Cloneable {
 
 	public Set<Element> getReferrer() {
 		return getReferrer(Element.class);
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(float zoom) {
+		if (zoom < MIN_ZOOM) {
+			zoom = MIN_ZOOM;
+		}
+		if (zoom > MAX_ZOOM) {
+			zoom = MAX_ZOOM;
+		}
+	
+		this.zoom = zoom;
+	
+		fireElementChanged(true);
 	}
 }

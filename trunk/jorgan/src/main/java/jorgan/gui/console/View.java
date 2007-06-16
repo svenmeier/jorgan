@@ -25,6 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
+import java.awt.geom.AffineTransform;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -57,6 +58,8 @@ public class View {
 	public static final String TEXT_DESCRIPTION = "description";
 
 	protected Dimension size = new Dimension();
+
+	private float zoom;
 
 	protected Point location = new Point();
 
@@ -164,8 +167,10 @@ public class View {
 	 */
 	public boolean contains(int x, int y) {
 
-		return (location.x < x) && (location.x + size.width > x)
-				&& (location.y < y) && (location.y + size.height > y);
+		return (location.x < x)
+				&& (location.x + Math.round(size.width * zoom) > x)
+				&& (location.y < y)
+				&& (location.y + Math.round(size.height * zoom) > y);
 	}
 
 	/**
@@ -214,6 +219,8 @@ public class View {
 		style.setView(this);
 
 		size = style.getSize();
+		
+		zoom = element.getZoom();
 	}
 
 	protected void repaint() {
@@ -244,7 +251,7 @@ public class View {
 	 * @return width
 	 */
 	public int getWidth() {
-		return size.width;
+		return Math.round(size.width * zoom);
 	}
 
 	/**
@@ -253,7 +260,7 @@ public class View {
 	 * @return height
 	 */
 	public int getHeight() {
-		return size.height;
+		return Math.round(size.height * zoom);
 	}
 
 	/**
@@ -263,11 +270,23 @@ public class View {
 	 *            graphics to paint on
 	 */
 	public void paint(Graphics2D g) {
-		g.translate(location.x, location.y);
+		if (zoom == 1.0f) {
+			// premature optimization ??
+			g.translate(location.x, location.y);
 
-		style.draw(g, size);
+			style.draw(g, size);
 
-		g.translate(-location.x, -location.y);
+			g.translate(-location.x, -location.y);
+		} else {
+			AffineTransform transform = g.getTransform();
+			
+			g.translate(location.x, location.y);
+			g.scale(zoom, zoom);
+
+			style.draw(g, size);
+
+			g.setTransform(transform);
+		}
 	}
 
 	/**
@@ -281,19 +300,23 @@ public class View {
 	 */
 	public final boolean isPressable(int x, int y) {
 
-		return style.isPressable(x - location.x, y - location.y, size);
+		return style.isPressable(Math.round((x - location.x) / zoom), Math
+				.round((y - location.y) / zoom), size);
 	}
 
 	public final void mousePressed(int x, int y) {
-		style.mousePressed(x - location.x, y - location.y, size);
+		style.mousePressed(Math.round((x - location.x) / zoom), Math
+				.round((y - location.y) / zoom), size);
 	}
 
 	public final void mouseDragged(int x, int y) {
-		style.mouseDragged(x - location.x, y - location.y, size);
+		style.mouseDragged(Math.round((x - location.x) / zoom), Math
+				.round((y - location.y) / zoom), size);
 	}
 
 	public final void mouseReleased(int x, int y) {
-		style.mouseReleased(x - location.x, y - location.y, size);
+		style.mouseReleased(Math.round((x - location.x) / zoom), Math
+				.round((y - location.y) / zoom), size);
 	}
 
 	public void keyPressed(KeyEvent ev) {
