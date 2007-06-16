@@ -23,7 +23,7 @@ import jorgan.disposition.Sequence;
 /**
  * A player for a {@link Sequence}.
  */
-public class SequencePlayer extends ContinuousPlayer {
+public class SequencePlayer extends ContinuousPlayer<Sequence> {
 
 	public SequencePlayer(Sequence sequence) {
 		super(sequence);

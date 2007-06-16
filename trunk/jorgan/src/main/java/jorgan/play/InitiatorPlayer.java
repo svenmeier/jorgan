@@ -27,7 +27,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
  */
-public class InitiatorPlayer extends Player {
+public class InitiatorPlayer extends Player<Initiator> {
 
 	private static final Problem warningMessage = new Problem(Problem.WARNING,
 			"message");
@@ -37,7 +37,7 @@ public class InitiatorPlayer extends Player {
 	}
 
 	public void messageReceived(ShortMessage shortMessage) {
-		Initiator initiator = (Initiator) getElement();
+		Initiator initiator = getElement();
 
 		Message message = initiator.getMessage();
 		if (message != null
@@ -52,7 +52,7 @@ public class InitiatorPlayer extends Player {
 
 	public void elementChanged(OrganEvent event) {
 
-		Initiator initiator = (Initiator) getElement();
+		Initiator initiator = getElement();
 
 		if (initiator.getMessage() == null && getWarnMessage()) {
 			addProblem(warningMessage.value(null));

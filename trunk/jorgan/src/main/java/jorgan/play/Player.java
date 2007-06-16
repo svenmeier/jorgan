@@ -30,7 +30,7 @@ import bias.Configuration;
 /**
  * Abstract base class for all players.
  */
-public abstract class Player {
+public abstract class Player<E extends Element> {
 
 	private static Configuration config = Configuration.getRoot().get(
 			Player.class);
@@ -40,7 +40,7 @@ public abstract class Player {
 	/**
 	 * The element played by this player.
 	 */
-	private Element element;
+	private E element;
 
 	/**
 	 * Is this player open.
@@ -63,7 +63,7 @@ public abstract class Player {
 	/**
 	 * Create a player for the given element.
 	 */
-	public Player(Element element) {
+	public Player(E element) {
 		config.read(this);
 
 		this.element = element;
@@ -204,7 +204,7 @@ public abstract class Player {
 	public void messageReceived(ShortMessage message) {
 	}
 
-	public Element getElement() {
+	public E getElement() {
 		return element;
 	}
 

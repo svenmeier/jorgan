@@ -23,7 +23,7 @@ import jorgan.disposition.Memory;
 /**
  * A player for a {@link Memory}.
  */
-public class MemoryPlayer extends ContinuousPlayer {
+public class MemoryPlayer extends ContinuousPlayer<Memory> {
 
 	public MemoryPlayer(Memory memory) {
 		super(memory);

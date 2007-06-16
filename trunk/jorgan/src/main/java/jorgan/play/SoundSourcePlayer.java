@@ -35,7 +35,7 @@ import jorgan.play.sound.SoundWrapper;
 /**
  * A player of a {@link jorgan.disposition.SoundSource}.
  */
-public class SoundSourcePlayer extends Player {
+public class SoundSourcePlayer extends Player<SoundSource> {
 
 	private static final Problem warningDevice = new Problem(Problem.WARNING,
 			"device");
@@ -63,7 +63,7 @@ public class SoundSourcePlayer extends Player {
 	 * Aquire soundFactory.
 	 */
 	protected void openImpl() {
-		SoundSource soundSource = (SoundSource) getElement();
+		SoundSource soundSource = getElement();
 
 		removeProblem(errorDevice);
 		removeProblem(errorType);
@@ -97,7 +97,7 @@ public class SoundSourcePlayer extends Player {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		SoundSource soundSource = (SoundSource) getElement();
+		SoundSource soundSource = getElement();
 
 		if (soundSource.getDevice() == null && getWarnDevice()) {
 			removeProblem(errorDevice);
@@ -115,7 +115,7 @@ public class SoundSourcePlayer extends Player {
 	 */
 	public Sound createSound(int program) {
 
-		SoundSource soundSource = (SoundSource) getElement();
+		SoundSource soundSource = getElement();
 
 		Sound sound = null;
 		if (factory != null) {

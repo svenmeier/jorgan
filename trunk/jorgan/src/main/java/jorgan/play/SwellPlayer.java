@@ -29,7 +29,7 @@ import jorgan.play.sound.SoundWrapper;
 /**
  * A player for a swell.
  */
-public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
+public class SwellPlayer extends ContinuousPlayer<Swell> implements SoundEffectPlayer {
 
     private List<SwellSound> sounds = new ArrayList<SwellSound>();
 
@@ -84,7 +84,7 @@ public class SwellPlayer extends ContinuousPlayer implements SoundEffectPlayer {
         }
 
         private void flush() {
-            Swell swell = (Swell) getElement();
+            Swell swell = getElement();
 
             boolean output = false;
 

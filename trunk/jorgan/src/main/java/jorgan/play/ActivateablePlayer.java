@@ -27,7 +27,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * An abstract base class for players that control activateable elements.
  */
-public abstract class ActivateablePlayer extends Player {
+public abstract class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
 	private static final Problem warningActivateMessage = new Problem(
 			Problem.WARNING, "activateMessage");
@@ -37,7 +37,7 @@ public abstract class ActivateablePlayer extends Player {
 
 	private int activations = 0;
 
-	public ActivateablePlayer(Activateable activateable) {
+	public ActivateablePlayer(E activateable) {
 		super(activateable);
 	}
 
@@ -60,13 +60,13 @@ public abstract class ActivateablePlayer extends Player {
 	}
 
 	protected boolean isActive() {
-		Activateable activateable = (Activateable) getElement();
+		Activateable activateable = getElement();
 
 		return activations > 0 || activateable.isActive();
 	}
 
 	public void messageReceived(ShortMessage message) {
-		Activateable activateable = (Activateable) getElement();
+		Activateable activateable = getElement();
 
 		if (activateable.isActive()) {
 			Message offMessage = activateable.getDeactivateMessage();
@@ -94,7 +94,7 @@ public abstract class ActivateablePlayer extends Player {
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
 
-		Activateable activateable = (Activateable) getElement();
+		Activateable activateable = getElement();
 
 		if ((activateable.getActivateMessage() == null)
 				&& getWarnMessage()) {

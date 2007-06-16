@@ -25,7 +25,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for an {@link Activator}
  */
-public class ActivatorPlayer extends ActivateablePlayer {
+public class ActivatorPlayer extends ActivateablePlayer<Activator> {
 
     private boolean activating = false;
 
@@ -41,7 +41,7 @@ public class ActivatorPlayer extends ActivateablePlayer {
 
     public void elementChanged(OrganEvent event) {
         if (isOpen()) {
-            Activator activator = (Activator) getElement();
+            Activator activator = getElement();
             if (isActive()) {
                 if (!activating) {
                     for (int r = 0; r < activator.getReferenceCount(); r++) {

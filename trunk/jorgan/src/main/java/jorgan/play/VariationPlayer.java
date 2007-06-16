@@ -29,7 +29,7 @@ import jorgan.play.sound.SoundWrapper;
 /**
  * A player for an variation.
  */
-public class VariationPlayer extends ActivateablePlayer implements
+public class VariationPlayer extends ActivateablePlayer<Variation> implements
         SoundEffectPlayer {
 
     private List<VariationSound> sounds = new ArrayList<VariationSound>();
@@ -75,7 +75,7 @@ public class VariationPlayer extends ActivateablePlayer implements
         }
 
         private void flush() {
-            Variation variation = (Variation) getElement();
+            Variation variation = getElement();
 
             int program = this.program;
             if (isActive()) {
