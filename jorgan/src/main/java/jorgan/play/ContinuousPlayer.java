@@ -27,17 +27,17 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for a swell.
  */
-public class ContinuousPlayer extends Player {
+public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private static final Problem warningMessage = new Problem(Problem.WARNING,
 			"message");
 
-	public ContinuousPlayer(Continuous slider) {
+	public ContinuousPlayer(E slider) {
 		super(slider);
 	}
 
 	public void messageReceived(ShortMessage shortMessage) {
-		Continuous slider = (Continuous) getElement();
+		Continuous slider = getElement();
 
 		Message message = slider.getMessage();
 		if (message != null
@@ -61,7 +61,7 @@ public class ContinuousPlayer extends Player {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		Continuous slider = (Continuous) getElement();
+		Continuous slider = getElement();
 
 		if (slider.getMessage() == null && getWarnMessage()) {
 			addProblem(warningMessage.value(null));

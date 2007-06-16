@@ -24,7 +24,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for a keyable.
  */
-public abstract class KeyablePlayer extends ActivateablePlayer {
+public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlayer<E> {
 
     private static final int ACTIVATE_VELOCITY = 0;
 
@@ -35,12 +35,12 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
 
     private Action action;
 
-    public KeyablePlayer(Keyable keyable) {
+    public KeyablePlayer(E keyable) {
         super(keyable);
     }
 
     protected void openImpl() {
-        Keyable keyable = (Keyable) getElement();
+        Keyable keyable = getElement();
 
         switch (keyable.getAction()) {
         case Keyable.ACTION_STRAIGHT:
@@ -92,7 +92,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
 
     public void keyDown(int pitch, int velocity) {
 
-        Keyable keyable = (Keyable) getElement();
+        Keyable keyable = getElement();
         pitch += keyable.getTranspose();
 
         if (pitch >= 0 && pitch <= 127) {
@@ -104,7 +104,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
     }
 
     public void keyUp(int pitch) {
-        Keyable keyable = (Keyable) getElement();
+        Keyable keyable = getElement();
 
         pitch += keyable.getTranspose();
         if (pitch >= 0 && pitch <= 127) {
@@ -295,7 +295,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
         public void keyDown(int pitch, int velocity) {
             if (activated) {
                 if (!hasPitch()) {
-                    Keyable keyable = (Keyable) getElement();
+                    Keyable keyable = getElement();
 
                     KeyablePlayer.this.activateKey(60 + keyable.getTranspose(),
                             velocity);
@@ -306,7 +306,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
         public void keyUp(int pitch) {
             if (activated) {
                 if (!hasPitch()) {
-                    Keyable keyable = (Keyable) getElement();
+                    Keyable keyable = getElement();
 
                     KeyablePlayer.this.deactivateKey(60 + keyable
                             .getTranspose());
@@ -318,7 +318,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
             KeyablePlayer.this.activated();
 
             if (hasPitch()) {
-                Keyable keyable = (Keyable) getElement();
+                Keyable keyable = getElement();
                 KeyablePlayer.this.activateKey(60 + keyable.getTranspose(),
                         ACTIVATE_VELOCITY);
             }
@@ -326,7 +326,7 @@ public abstract class KeyablePlayer extends ActivateablePlayer {
 
         public void deactivated() {
             if (hasPitch()) {
-                Keyable keyable = (Keyable) getElement();
+                Keyable keyable = getElement();
                 KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
             }
 

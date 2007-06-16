@@ -20,14 +20,14 @@ package jorgan.play;
 
 import jorgan.disposition.Coupler;
 
-public class CouplerPlayer extends KeyablePlayer {
+public class CouplerPlayer extends KeyablePlayer<Coupler> {
 
     public CouplerPlayer(Coupler coupler) {
         super(coupler);
     }
 
     protected void activateKey(int pitch, int velocity) {
-        Coupler coupler = (Coupler) getElement();
+        Coupler coupler = getElement();
         if (coupler.getVelocity() != 0) {
             velocity = coupler.getVelocity();
         }
@@ -40,7 +40,7 @@ public class CouplerPlayer extends KeyablePlayer {
     }
 
     protected void deactivateKey(int pitch) {
-        Coupler coupler = (Coupler) getElement();
+        Coupler coupler = getElement();
         for (int e = 0; e < coupler.getReferenceCount(); e++) {
             KeyablePlayer keyablePlayer = (KeyablePlayer) getOrganPlay()
                     .getPlayer(coupler.getReference(e).getElement());

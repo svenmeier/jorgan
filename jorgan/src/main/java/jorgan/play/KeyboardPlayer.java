@@ -32,7 +32,7 @@ import jorgan.sound.midi.DevicePool;
 /**
  * A player of an keyboard.
  */
-public class KeyboardPlayer extends Player {
+public class KeyboardPlayer extends Player<Keyboard> {
 
 	private static final Problem warningDevice = new Problem(Problem.WARNING,
 			"device");
@@ -66,7 +66,7 @@ public class KeyboardPlayer extends Player {
 	}
 
 	protected void openImpl() {
-		Keyboard keyboard = (Keyboard) getElement();
+		Keyboard keyboard = getElement();
 
 		removeProblem(errorDevice);
 
@@ -104,7 +104,7 @@ public class KeyboardPlayer extends Player {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		Keyboard keyboard = (Keyboard) getElement();
+		Keyboard keyboard = getElement();
 
 		if (keyboard.getDevice() == null && getWarnDevice()) {
 			removeProblem(errorDevice);
@@ -115,7 +115,7 @@ public class KeyboardPlayer extends Player {
 	}
 
 	protected void input(ShortMessage message) {
-		Keyboard keyboard = (Keyboard) getElement();
+		Keyboard keyboard = getElement();
 
 		if (isNoteMessage(message)
 				&& keyboard.getChannel() == message.getChannel()) {
@@ -161,7 +161,7 @@ public class KeyboardPlayer extends Player {
 		if (pitch >= 0 && pitch <= 127 && !pressedKeys[pitch]) {
 			pressedKeys[pitch] = true;
 
-			Keyboard keyboard = (Keyboard) getElement();
+			Keyboard keyboard = getElement();
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
@@ -178,7 +178,7 @@ public class KeyboardPlayer extends Player {
 		if (pitch >= 0 && pitch <= 127 && pressedKeys[pitch]) {
 			pressedKeys[pitch] = false;
 
-			Keyboard keyboard = (Keyboard) getElement();
+			Keyboard keyboard = getElement();
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();

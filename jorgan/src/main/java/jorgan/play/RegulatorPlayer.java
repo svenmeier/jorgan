@@ -24,7 +24,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for a {@link Regulator}.
  */
-public class RegulatorPlayer extends ContinuousPlayer {
+public class RegulatorPlayer extends ContinuousPlayer<Regulator> {
 
     private ActivateablePlayer player;
 
@@ -42,7 +42,7 @@ public class RegulatorPlayer extends ContinuousPlayer {
         super.elementChanged(event);
 
         if (isOpen()) {
-            Regulator regulator = (Regulator) getElement();
+            Regulator regulator = getElement();
 
             if (regulator.getReferenceCount() > 0) {
                 int current = (regulator.getValue()

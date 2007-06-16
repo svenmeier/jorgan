@@ -25,7 +25,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player of a keyer.
  */
-public class KeyerPlayer extends ActivateablePlayer {
+public class KeyerPlayer extends ActivateablePlayer<Keyer> {
 
     private boolean keying = false;
 
@@ -43,7 +43,7 @@ public class KeyerPlayer extends ActivateablePlayer {
         super.elementChanged(event);
 
         if (isOpen()) {
-            Keyer keyer = (Keyer) getElement();
+            Keyer keyer = getElement();
 
             if (isActive()) {
                 if (!keying) {

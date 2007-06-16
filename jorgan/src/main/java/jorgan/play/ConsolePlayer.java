@@ -31,7 +31,7 @@ import jorgan.sound.midi.DevicePool;
 /**
  * A player of an console.
  */
-public class ConsolePlayer extends Player {
+public class ConsolePlayer extends Player<Console> {
 
 	private static final Problem warningDevice = new Problem(Problem.WARNING,
 			"device");
@@ -54,7 +54,7 @@ public class ConsolePlayer extends Player {
 	}
 
 	protected void openImpl() {
-		Console console = (Console) getElement();
+		Console console = getElement();
 
 		removeProblem(errorDevice);
 
@@ -83,7 +83,7 @@ public class ConsolePlayer extends Player {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		Console console = (Console) getElement();
+		Console console = getElement();
 
 		if (console.getDevice() == null && getWarnDevice()) {
 			removeProblem(errorDevice);
@@ -94,7 +94,7 @@ public class ConsolePlayer extends Player {
 	}
 
 	protected void input(ShortMessage message) {
-		Console console = (Console) getElement();
+		Console console = getElement();
 
 		for (int r = 0; r < console.getReferenceCount(); r++) {
 			Reference reference = console.getReference(r);

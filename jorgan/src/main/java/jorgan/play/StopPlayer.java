@@ -28,7 +28,7 @@ import jorgan.play.sound.Sound;
 /**
  * A player for a stop.
  */
-public class StopPlayer extends KeyablePlayer {
+public class StopPlayer extends KeyablePlayer<Stop> {
 
     private static Problem warningProgram = new Problem(Problem.WARNING,
             "program");
@@ -50,7 +50,7 @@ public class StopPlayer extends KeyablePlayer {
 
     protected void activated() {
 
-        Stop stop = (Stop) getElement();
+        Stop stop = getElement();
 
         boolean silentSound = false;
 
@@ -107,7 +107,7 @@ public class StopPlayer extends KeyablePlayer {
 
     protected void activateKey(int pitch, int velocity) {
         if (sound != null) {
-            Stop stop = (Stop) getElement();
+            Stop stop = getElement();
             if (stop.getVelocity() != 0) {
                 velocity = stop.getVelocity();
             }

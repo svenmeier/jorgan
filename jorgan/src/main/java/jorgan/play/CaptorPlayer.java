@@ -23,7 +23,7 @@ import jorgan.disposition.Captor;
 /**
  * A player for a {@link Captor}.
  */
-public class CaptorPlayer extends ActivateablePlayer {
+public class CaptorPlayer extends ActivateablePlayer<Captor> {
 
 	public CaptorPlayer(Captor captor) {
 		super(captor);
