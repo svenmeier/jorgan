@@ -31,7 +31,7 @@ import jorgan.skin.TextLayer;
 /**
  * A view for a continuous.
  */
-public class ContinuousView extends View {
+public class ContinuousView<E extends Continuous> extends View<E> {
 
 	/**
 	 * The key of the {@link Continuous#getValue()} text for {@link TextLayer}s.
@@ -53,18 +53,14 @@ public class ContinuousView extends View {
 	 * @param continuous
 	 *            continuous to view
 	 */
-	public ContinuousView(Continuous continuous) {
+	public ContinuousView(E continuous) {
 		super(continuous);
-	}
-
-	protected Continuous getContinuous() {
-		return (Continuous) getElement();
 	}
 
 	protected void initTexts() {
 		super.initTexts();
 
-		int value = getContinuous().getValue();
+		int value = getElement().getValue();
 
 		setText(TEXT_VALUE, valueFormat.format(value + 1));
 		setText(TEXT_POSITION, positionFormat.format(value / 127.0d));
@@ -76,7 +72,7 @@ public class ContinuousView extends View {
 	 * @return the current position
 	 */
 	public double getSliderPosition() {
-		return getContinuous().getValue() / 127.0d;
+		return getElement().getValue() / 127.0d;
 	}
 
 	/**
@@ -86,15 +82,15 @@ public class ContinuousView extends View {
 	 *            the new position
 	 */
 	public void sliderPositioned(double position) {
-		getContinuous().setValue((int) (position * 127));
+		getElement().setValue((int) (position * 127));
 	}
 
 	/**
 	 * The {@link jorgan.skin.SliderLayer} was released.
 	 */
 	public void sliderReleased() {
-		if (!getContinuous().isLocking()) {
-			getContinuous().setValue(0);
+		if (!getElement().isLocking()) {
+			getElement().setValue(0);
 		}
 	}
 
