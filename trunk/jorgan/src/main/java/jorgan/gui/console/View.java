@@ -41,7 +41,7 @@ import bias.Configuration;
 /**
  * Base class of all views representing a view on one element of an organ.
  */
-public class View {
+public class View<E extends Element> {
 
 	private static Configuration config = Configuration.getRoot().get(
 			View.class);
@@ -86,7 +86,7 @@ public class View {
 	/**
 	 * The element represented by this view.
 	 */
-	private Element element;
+	private E element;
 
 	private Map<String, String> texts = new HashMap<String, String>();
 
@@ -96,7 +96,7 @@ public class View {
 	 * @param element
 	 *            element to create view for
 	 */
-	public View(Element element) {
+	public View(E element) {
 
 		this.element = element;
 
@@ -152,7 +152,7 @@ public class View {
 	 * 
 	 * @return the element
 	 */
-	public Element getElement() {
+	public E getElement() {
 		return element;
 	}
 

@@ -497,9 +497,9 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		} else if (element instanceof Memory) {
 			view = new MemoryView((Memory) element);
 		} else if (element instanceof Continuous) {
-			view = new ContinuousView((Continuous) element);
+			view = new ContinuousView<Continuous>((Continuous) element);
 		} else {
-			view = new View(element);
+			view = new View<Element>(element);
 		}
 
 		viewsByElement.put(element, view);
@@ -1267,7 +1267,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		return new Point(console.getX(element), console.getY(element));
 	}
 
-	private class ConsoleView extends View {
+	private class ConsoleView extends View<Console> {
 		private ConsoleView(Console console) {
 			super(console);
 		}

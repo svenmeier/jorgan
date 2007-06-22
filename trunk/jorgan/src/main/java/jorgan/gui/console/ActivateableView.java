@@ -30,7 +30,7 @@ import jorgan.skin.TextLayer;
 /**
  * A view for an activateable.
  */
-public class ActivateableView extends MomentaryView {
+public class ActivateableView extends MomentaryView<Activateable> {
 
 	/**
 	 * Constructor.
@@ -42,12 +42,8 @@ public class ActivateableView extends MomentaryView {
 		super(activateable);
 	}
 
-	protected Activateable getActivateable() {
-		return (Activateable) getElement();
-	}
-
 	protected void shortcutPressed() {
-		Activateable activateable = getActivateable();
+		Activateable activateable = getElement();
 
 		if (activateable.isLocking()) {
 			activateable.setActive(!activateable.isActive());
@@ -57,7 +53,7 @@ public class ActivateableView extends MomentaryView {
 	}
 
 	protected void shortcutReleased() {
-		Activateable activateable = getActivateable();
+		Activateable activateable = getElement();
 
 		if (!activateable.isLocking()) {
 			activateable.setActive(false);
@@ -65,16 +61,16 @@ public class ActivateableView extends MomentaryView {
 	}
 
 	public boolean isButtonPressed() {
-		return getActivateable().isActive();
+		return getElement().isActive();
 	}
 
 	public void buttonPressed() {
-		getActivateable().setActive(!getActivateable().isActive());
+		getElement().setActive(!getElement().isActive());
 	}
 
 	public void buttonReleased() {
-		if (!getActivateable().isLocking()) {
-			getActivateable().setActive(false);
+		if (!getElement().isLocking()) {
+			getElement().setActive(false);
 		}
 	}
 

@@ -24,7 +24,7 @@ import jorgan.skin.TextLayer;
 /**
  * A view that shows a {@link Memory}.
  */
-public class MemoryView extends ContinuousView {
+public class MemoryView extends ContinuousView<Memory> {
 
 	/**
 	 * The key of the {@link Memory#getTitle()} text for {@link TextLayer}s.
@@ -41,13 +41,9 @@ public class MemoryView extends ContinuousView {
 		super(memory);
 	}
 
-	protected Memory getMemory() {
-		return (Memory) getElement();
-	}
-
 	protected void initTexts() {
 		super.initTexts();
 
-		setText(TEXT_TITLE, getMemory().getTitle());
+		setText(TEXT_TITLE, getElement().getTitle());
 	}
 }

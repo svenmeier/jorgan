@@ -32,7 +32,7 @@ import jorgan.skin.TextLayer;
  * 
  * @see jorgan.disposition.Initiator
  */
-public class InitiatorView extends MomentaryView {
+public class InitiatorView extends MomentaryView<Initiator> {
 
 	private boolean pressed;
 
@@ -46,12 +46,8 @@ public class InitiatorView extends MomentaryView {
 		super(initiator);
 	}
 
-	protected Initiator getInitiator() {
-		return (Initiator) getElement();
-	}
-
 	protected void shortcutPressed() {
-		Initiator initiator = getInitiator();
+		Initiator initiator = getElement();
 
 		initiator.initiate();
 	}
@@ -61,7 +57,7 @@ public class InitiatorView extends MomentaryView {
 	}
 
 	public void buttonPressed() {
-		getInitiator().initiate();
+		getElement().initiate();
 
 		pressed = true;
 		repaint();

@@ -27,24 +27,20 @@ import jorgan.disposition.Shortcut;
 /**
  * A view for a {@link Momentary}.
  */
-public abstract class MomentaryView extends View {
+public abstract class MomentaryView<E extends Momentary> extends View<E> {
 
 	/**
 	 * Constructor.
 	 * 
 	 * @param momentary	the momentary to view
 	 */
-	public MomentaryView(Momentary momentary) {
+	public MomentaryView(E momentary) {
 		super(momentary);
-	}
-
-	protected Momentary getMomentary() {
-		return (Momentary) getElement();
 	}
 
 	public void keyPressed(KeyEvent ev) {
 
-		Momentary momentary = getMomentary();
+		Momentary momentary = getElement();
 
 		Shortcut shortcut = momentary.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
@@ -54,7 +50,7 @@ public abstract class MomentaryView extends View {
 
 	public void keyReleased(KeyEvent ev) {
 
-		Momentary momentary = getMomentary();
+		Momentary momentary = getElement();
 
 		Shortcut shortcut = momentary.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
@@ -93,7 +89,7 @@ public abstract class MomentaryView extends View {
 
 	protected void paintShortcut(Graphics2D g) {
 		if (isShowShortcut()) {
-			Shortcut shortcut = getMomentary().getShortcut();
+			Shortcut shortcut = getElement().getShortcut();
 			if (shortcut != null) {
 				g.setFont(getShortcutFont());
 				g.setColor(getShortcutColor());
