@@ -18,12 +18,17 @@
  */
 package jorgan.gui.construct.info;
 
+import jorgan.disposition.Memory;
+import jorgan.gui.construct.editor.StringEditor;
+
 /**
  * BeanInfo for {@link jorgan.disposition.Memory}.
  */
 public class MemoryBeanInfo extends ContinuousBeanInfo {
 
-    protected void registerProperties() {
-        super.registerProperties();
-    }
+	protected void registerProperties() {
+		super.registerProperties();
+
+		add("title", Memory.class, StringEditor.class);
+	}
 }
