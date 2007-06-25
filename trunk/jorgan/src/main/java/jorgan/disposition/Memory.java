@@ -36,6 +36,10 @@ public class Memory extends Continuous {
 		return titles[getValue()];
 	}
 
+	public void setTitle(String title) {
+		titles[getValue()] = title;
+	}
+
 	public String getTitle(int index) {
 		if (index < 0 || index > 127) {
 			throw new IllegalArgumentException(
