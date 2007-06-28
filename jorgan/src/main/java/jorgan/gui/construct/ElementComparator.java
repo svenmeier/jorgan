@@ -18,75 +18,53 @@
  */
 package jorgan.gui.construct;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
-import jorgan.disposition.Combination;
-import jorgan.disposition.Console;
-import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.disposition.Label;
-import jorgan.disposition.SoundSource;
-import jorgan.disposition.Stop;
-import jorgan.disposition.Swell;
-import jorgan.disposition.Tremulant;
-import jorgan.disposition.Variation;
+import jorgan.disposition.Organ;
 
 /**
  * Comparator of elements.
  */
 public class ElementComparator implements Comparator<Element> {
 
-    private static List<Class> types = new ArrayList<Class>();
+	private static List<Class<? extends Element>> types = Organ
+			.getElementClasses();
 
-    static {
-        types.add(Console.class);
-        types.add(Label.class);
-        types.add(Keyboard.class);
-        types.add(SoundSource.class);
-        types.add(Stop.class);
-        types.add(Coupler.class);
-        types.add(Swell.class);
-        types.add(Tremulant.class);
-        types.add(Variation.class);
-        types.add(Combination.class);
-    }
+	private boolean alphabet;
 
-    private boolean alphabet;
+	public ElementComparator(boolean alphabet) {
+		this.alphabet = alphabet;
+	}
 
-    public ElementComparator(boolean alphabet) {
-        this.alphabet = alphabet;
-    }
+	public int compare(Element e1, Element e2) {
 
-    public int compare(Element e1, Element e2) {
+		if (alphabet) {
+			int result = compareAlphabetical(e1, e2);
+			if (result == 0) {
+				result = compareType(e1, e2);
+			}
+			return result;
+		} else {
+			int result = compareType(e1, e2);
+			if (result == 0) {
+				result = compareAlphabetical(e1, e2);
+			}
+			return result;
+		}
+	}
 
-        if (alphabet) {
-            int result = compareAlphabetical(e1, e2);
-            if (result == 0) {
-                result = compareType(e1, e2);
-            }
-            return result;
-        } else {
-            int result = compareType(e1, e2);
-            if (result == 0) {
-                result = compareAlphabetical(e1, e2);
-            }
-            return result;
-        }
-    }
+	public int compareAlphabetical(Element e1, Element e2) {
 
-    public int compareAlphabetical(Element e1, Element e2) {
+		return e1.getName().compareTo(e2.getName());
+	}
 
-        return e1.getName().compareTo(e2.getName());
-    }
+	public int compareType(Element e1, Element e2) {
 
-    public int compareType(Element e1, Element e2) {
+		int index1 = types.indexOf(e1.getClass());
+		int index2 = types.indexOf(e2.getClass());
 
-        int index1 = types.indexOf(e1.getClass());
-        int index2 = types.indexOf(e2.getClass());
-
-        return index1 - index2;
-    }
+		return index1 - index2;
+	}
 }
