@@ -201,7 +201,7 @@ public abstract class Player<E extends Element> {
 	public void elementChanged(OrganEvent event) {
 	}
 
-	public void messageReceived(ShortMessage message) {
+	public void messageReceived(ShortMessage shortMessage) {
 	}
 
 	public E getElement() {

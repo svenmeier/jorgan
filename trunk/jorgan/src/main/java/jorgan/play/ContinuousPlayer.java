@@ -41,7 +41,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 		Message message = slider.getMessage();
 		if (message != null
-				&& message.match(message.getStatus(), shortMessage.getData1(),
+				&& message.match(shortMessage.getStatus(), shortMessage.getData1(),
 						shortMessage.getData2())) {
 
 			int position = message.wildcard(shortMessage.getData1(),
