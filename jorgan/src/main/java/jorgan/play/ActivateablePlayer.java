@@ -65,14 +65,14 @@ public abstract class ActivateablePlayer<E extends Activateable> extends Player<
 		return activations > 0 || activateable.isActive();
 	}
 
-	public void messageReceived(ShortMessage message) {
+	public void messageReceived(ShortMessage shortMessage) {
 		Activateable activateable = getElement();
 
 		if (activateable.isActive()) {
 			Message offMessage = activateable.getDeactivateMessage();
 			if (offMessage != null
-					&& offMessage.match(message.getStatus(),
-							message.getData1(), message.getData2())) {
+					&& offMessage.match(shortMessage.getStatus(),
+							shortMessage.getData1(), shortMessage.getData2())) {
 
 				fireInputAccepted();
 
@@ -81,8 +81,8 @@ public abstract class ActivateablePlayer<E extends Activateable> extends Player<
 		} else {
 			Message onMessage = activateable.getActivateMessage();
 			if (onMessage != null
-					&& onMessage.match(message.getStatus(), message.getData1(),
-							message.getData2())) {
+					&& onMessage.match(shortMessage.getStatus(), shortMessage.getData1(),
+							shortMessage.getData2())) {
 
 				fireInputAccepted();
 

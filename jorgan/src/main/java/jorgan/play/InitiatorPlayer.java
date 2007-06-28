@@ -41,7 +41,7 @@ public class InitiatorPlayer extends Player<Initiator> {
 
 		Message message = initiator.getMessage();
 		if (message != null
-				&& message.match(message.getStatus(), shortMessage.getData1(),
+				&& message.match(shortMessage.getStatus(), shortMessage.getData1(),
 						shortMessage.getData2())) {
 
 			fireInputAccepted();
