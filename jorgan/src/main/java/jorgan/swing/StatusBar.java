@@ -24,7 +24,7 @@ import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
+import javax.swing.JSeparator;
 import javax.swing.border.EmptyBorder;
 
 /**
@@ -34,7 +34,7 @@ public class StatusBar extends JPanel {
 
 	private JLabel label = new JLabel();
 
-	private JToolBar toolBar = new JToolBar();
+	private JPanel toolBar = new JPanel();
 
 	/**
 	 * Create a status bar.
@@ -47,7 +47,6 @@ public class StatusBar extends JPanel {
 		label.setText(" ");
 		add(label, BorderLayout.CENTER);
 
-		toolBar.setFloatable(false);
 		add(toolBar, BorderLayout.EAST);
 	}
 
@@ -59,8 +58,7 @@ public class StatusBar extends JPanel {
 	 */
 	public void addStatus(JComponent status) {
 
-		toolBar.addSeparator();
-
+		toolBar.add(new JSeparator());
 		toolBar.add(status);
 
 		toolBar.repaint();
