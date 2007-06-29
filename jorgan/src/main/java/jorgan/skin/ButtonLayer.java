@@ -28,7 +28,7 @@ import jorgan.gui.console.MomentaryView;
  */
 public class ButtonLayer extends CompositeLayer implements Cloneable {
 
-    protected void drawChildren(Graphics2D g, Dimension dimension) {
+	protected void drawChildren(Graphics2D g, Dimension dimension) {
         if (getChildCount() > 0) {
             int index = 0;
 
@@ -42,10 +42,6 @@ public class ButtonLayer extends CompositeLayer implements Cloneable {
 
             layer.draw(g, dimension);
         }
-    }
-
-    protected boolean isPressable() {
-        return true;
     }
 
     public void mousePressed(int x, int y, Dimension size) {

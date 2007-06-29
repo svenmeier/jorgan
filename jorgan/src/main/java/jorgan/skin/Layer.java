@@ -67,6 +67,8 @@ public abstract class Layer implements Cloneable {
 
     private Insets padding = new Insets(0, 0, 0, 0);
 
+	private boolean enabled = false;
+	
     private transient Resolver resolver;
 
     protected transient View view;
@@ -227,17 +229,21 @@ public abstract class Layer implements Cloneable {
         return 0;
     }
 
+	public void setEnabled(boolean enabled) {
+		this.enabled = enabled;
+	}
+	
+    public boolean isEnabled() {
+        return enabled;
+    }
+
     public boolean isPressable(int x, int y, Dimension dimension) {
-        if (isPressable()) {
+        if (isEnabled()) {
             Rectangle rectangle = getUnpaddedBounds(dimension);
 
             return rectangle.contains(x, y);
         }
 
-        return false;
-    }
-
-    protected boolean isPressable() {
         return false;
     }
 

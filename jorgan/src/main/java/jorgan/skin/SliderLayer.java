@@ -69,10 +69,6 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 		}
 	}
 
-	protected boolean isPressable() {
-		return true;
-	}
-
 	public void mousePressed(int x, int y, Dimension size) {
 		mouseDragged(x, y, size);
 	}
