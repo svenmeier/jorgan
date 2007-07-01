@@ -196,6 +196,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 				editors = getEditors(descriptors);
 			} catch (IntrospectionException ex) {
+				logger.log(Level.WARNING, "unable to introspect", ex);
+
 				descriptors = null;
 				editors = null;
 			}
