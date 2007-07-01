@@ -21,18 +21,18 @@ package jorgan.gui.construct.info;
 import jorgan.disposition.Keyable;
 import jorgan.gui.construct.editor.ActionEditor;
 import jorgan.gui.construct.editor.DataEditor;
-import jorgan.gui.construct.editor.DelayEditor;
+import jorgan.gui.construct.editor.TransposeEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.
  */
 public class KeyableBeanInfo extends ActivateableBeanInfo {
 
-    protected void registerProperties() {
-        super.registerProperties();
+	protected void registerProperties() {
+		super.registerProperties();
 
-        add("action", Keyable.class, ActionEditor.class);
-        add("velocity", Keyable.class, DataEditor.class);
-        add("transpose", Keyable.class, DelayEditor.class);
-    }
+		add("action", Keyable.class, ActionEditor.class);
+		add("velocity", Keyable.class, DataEditor.class);
+		add("transpose", Keyable.class, TransposeEditor.class);
+	}
 }
