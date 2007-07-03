@@ -96,14 +96,15 @@ public class ActivateableView extends MomentaryView<Activateable> {
 	}
 
 	private Layer createButtonLayer() {
-		ButtonLayer buttonLayer = new ButtonLayer();
-		buttonLayer.setFill(ButtonLayer.BOTH);
+		ButtonLayer layer = new ButtonLayer();
+		layer.setEnabled(true);
+		layer.setFill(ButtonLayer.BOTH);
 
-		buttonLayer.addChild(createCheckLayer(false));
+		layer.addChild(createCheckLayer(false));
 
-		buttonLayer.addChild(createCheckLayer(true));
+		layer.addChild(createCheckLayer(true));
 
-		return buttonLayer;
+		return layer;
 	}
 
 	private Layer createCheckLayer(final boolean activated) {

@@ -90,14 +90,15 @@ public class InitiatorView extends MomentaryView<Initiator> {
 
 	private Layer createButtonLayer() {
 
-		ButtonLayer buttonLayer = new ButtonLayer();
-		buttonLayer.setFill(ButtonLayer.BOTH);
+		ButtonLayer layer = new ButtonLayer();
+		layer.setEnabled(true);
+		layer.setFill(ButtonLayer.BOTH);
 
-		buttonLayer.addChild(createBorderLayer(false));
+		layer.addChild(createBorderLayer(false));
 
-		buttonLayer.addChild(createBorderLayer(true));
+		layer.addChild(createBorderLayer(true));
 
-		return buttonLayer;
+		return layer;
 	}
 
 	private Layer createBorderLayer(final boolean pressed) {
