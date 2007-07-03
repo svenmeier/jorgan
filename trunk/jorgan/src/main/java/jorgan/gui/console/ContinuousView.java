@@ -126,6 +126,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	protected SliderLayer createSliderLayer() {
 		SliderLayer layer = new SliderLayer();
+		layer.setEnabled(true);
 		layer.setFill(Layer.BOTH);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 
