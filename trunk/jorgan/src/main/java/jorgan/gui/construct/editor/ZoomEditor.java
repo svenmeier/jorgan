@@ -35,7 +35,7 @@ public class ZoomEditor extends CustomEditor {
 	private NumberFormat format = NumberFormat.getPercentInstance();
 
 	public ZoomEditor() {
-		spinner = new JSpinner(new SpinnerNumberModel(100, 50, 100, 1));
+		spinner = new JSpinner(new SpinnerNumberModel(100, 50, 150, 1));
 		spinner.setBorder(null);
 
 		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
