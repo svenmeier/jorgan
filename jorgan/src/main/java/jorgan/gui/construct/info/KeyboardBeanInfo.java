@@ -24,22 +24,22 @@ import jorgan.gui.construct.editor.CommandEditor;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.InDeviceEditor;
 import jorgan.gui.construct.editor.KeyEditor;
-import jorgan.gui.construct.editor.DelayEditor;
+import jorgan.gui.construct.editor.TransposeEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyboard}.
  */
 public class KeyboardBeanInfo extends ElementBeanInfo {
 
-    protected void registerProperties() {
-        super.registerProperties();
+	protected void registerProperties() {
+		super.registerProperties();
 
-        add("channel", Keyboard.class, ChannelEditor.class);
-        add("command", Keyboard.class, CommandEditor.class);
-        add("threshold", Keyboard.class, DataEditor.class);
-        add("from", Keyboard.class, KeyEditor.class);
-        add("to", Keyboard.class, KeyEditor.class);
-        add("transpose", Keyboard.class, DelayEditor.class);
-        add("device", Keyboard.class, InDeviceEditor.class);
-    }
+		add("channel", Keyboard.class, ChannelEditor.class);
+		add("command", Keyboard.class, CommandEditor.class);
+		add("threshold", Keyboard.class, DataEditor.class);
+		add("from", Keyboard.class, KeyEditor.class);
+		add("to", Keyboard.class, KeyEditor.class);
+		add("transpose", Keyboard.class, TransposeEditor.class);
+		add("device", Keyboard.class, InDeviceEditor.class);
+	}
 }
