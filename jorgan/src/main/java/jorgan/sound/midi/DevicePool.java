@@ -281,9 +281,12 @@ public class DevicePool {
 
 		public Transmitter getTransmitter() throws MidiUnavailableException {
 			return new TransmitterWrapper(super.getTransmitter()) {
+
 				protected void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
+					// TODO if multiple transmitters are get, we will log multiple
+					// times :(
 					for (int l = 0; l < inLoggers.size(); l++) {
 						inLoggers.get(l).log(message);
 					}
