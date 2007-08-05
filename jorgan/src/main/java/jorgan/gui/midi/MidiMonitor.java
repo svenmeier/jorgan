@@ -30,12 +30,10 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.ButtonGroup;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -180,8 +178,7 @@ public class MidiMonitor extends DockedPanel {
 		}
 		selectionPanel.setDevice(deviceName, deviceOut);
 
-		StandardDialog selectionDialog = new StandardDialog(
-				(JFrame) SwingUtilities.getWindowAncestor(this));
+		StandardDialog selectionDialog = StandardDialog.create(this);
 		selectionDialog.addCancelAction();
 		selectionDialog.addOKAction();
 		selectionDialog.setBody(selectionPanel);
