@@ -55,7 +55,7 @@ import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
 import jorgan.swing.BaseAction;
-import jorgan.swing.Browser;
+import jorgan.swing.Desktop;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
 import jorgan.swing.TweakMac;
@@ -683,11 +683,11 @@ public class OrganFrame extends JFrame {
 		private WebsiteAction() {
 			config.get("website").read(this);
 
-			setEnabled(Browser.isSupported());
+			setEnabled(Desktop.isSupported());
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			Browser.open("http://jorgan.sourceforge.net");
+			Desktop.browse("http://jorgan.sourceforge.net");
 		}
 	}
 
