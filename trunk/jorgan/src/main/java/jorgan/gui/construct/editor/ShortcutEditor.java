@@ -18,11 +18,17 @@
  */
 package jorgan.gui.construct.editor;
 
+import java.awt.BorderLayout;
 import java.awt.Component;
+import java.awt.Insets;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
+import javax.swing.JButton;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import jorgan.disposition.Shortcut;
@@ -30,10 +36,26 @@ import jorgan.disposition.Shortcut;
 /**
  * PropertyEditor for a shortcut property.
  */
-public class ShortcutEditor extends CustomEditor {
+public class ShortcutEditor extends CustomEditor implements ActionListener {
 
+	private JPanel panel = new JPanel();
+	
+	private JButton button = new JButton("\u2190");
+		
 	private ShortcutField shortcutField = new ShortcutField();
 
+	public ShortcutEditor() {
+		panel.setLayout(new BorderLayout());
+
+		button.setFocusable(false);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(this);
+		panel.add(button, BorderLayout.EAST);
+
+		shortcutField.setBorder(null);
+		panel.add(shortcutField, BorderLayout.CENTER);
+	}
+	
 	public String format(Object value) {
 
 		Shortcut shortcut = (Shortcut) value;
@@ -49,13 +71,17 @@ public class ShortcutEditor extends CustomEditor {
 
 		shortcutField.setShortcut((Shortcut) value);
 
-		return shortcutField;
+		return panel;
 	}
 
 	public Object getEditedValue() {
 		return shortcutField.getShortcut();
 	}
 
+	public void actionPerformed(ActionEvent e) {
+		shortcutField.setShortcut(null);
+	}
+	
 	private class ShortcutField extends JTextField implements
 			KeyEventDispatcher {
 
@@ -63,6 +89,7 @@ public class ShortcutEditor extends CustomEditor {
 
 		private ShortcutField() {
 			setBorder(null);
+			setEnabled(false);
 		}
 
 		public void addNotify() {
@@ -105,8 +132,9 @@ public class ShortcutEditor extends CustomEditor {
 		}
 
 		public boolean dispatchKeyEvent(KeyEvent e) {
-			if (e.getID() == KeyEvent.KEY_PRESSED) {
-				setShortcut(Shortcut.createShortCut(e));
+			Shortcut shortcut = Shortcut.createShortCut(e);
+			if (shortcut != null) {
+				setShortcut(shortcut);
 			}
 			return true;
 		}
