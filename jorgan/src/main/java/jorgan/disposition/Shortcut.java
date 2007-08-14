@@ -25,7 +25,7 @@ import java.awt.event.KeyEvent;
  */
 public class Shortcut {
 
-    private char character = KeyEvent.CHAR_UNDEFINED;
+    private char character = 0x0000;
 
     private int code = KeyEvent.VK_UNDEFINED;
 
@@ -88,7 +88,7 @@ public class Shortcut {
     }
 
     public boolean match(char character, int code, int modifiers, int location) {
-        if (this.code == KeyEvent.VK_UNDEFINED) {
+        if (characterFallback()) {
             return this.character == character;
         } else {
             return this.code == code && this.modifiers == modifiers
