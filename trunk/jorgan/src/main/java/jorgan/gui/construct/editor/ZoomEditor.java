@@ -25,6 +25,8 @@ import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import jorgan.disposition.Element;
+
 /**
  * PropertyEditor for a scale property.
  */
@@ -35,7 +37,7 @@ public class ZoomEditor extends CustomEditor {
 	private NumberFormat format = NumberFormat.getPercentInstance();
 
 	public ZoomEditor() {
-		spinner = new JSpinner(new SpinnerNumberModel(100, 50, 150, 1));
+		spinner = new JSpinner(new SpinnerNumberModel(100, Element.MIN_ZOOM * 100, Element.MAX_ZOOM * 100, 1));
 		spinner.setBorder(null);
 
 		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner

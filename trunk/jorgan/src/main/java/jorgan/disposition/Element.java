@@ -32,7 +32,7 @@ public abstract class Element implements Cloneable {
 	/**
 	 * The maximum supported zoom.
 	 */
-	public static final float MAX_ZOOM = 1.0f;
+	public static final float MAX_ZOOM = 1.5f;
 
 	/**
 	 * The minimum supported zoom.
