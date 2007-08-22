@@ -46,8 +46,10 @@ public class ActivateableView extends MomentaryView<Activateable> {
 		Activateable activateable = getElement();
 
 		if (activateable.isLocking()) {
-			activateable.setActive(!activateable.isActive());
+			// do nothing - activate/deactivate on release instead)
 		} else {
+			// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys cannot
+			// be used for non-locking activateables :(
 			activateable.setActive(true);
 		}
 	}
@@ -55,7 +57,9 @@ public class ActivateableView extends MomentaryView<Activateable> {
 	protected void shortcutReleased() {
 		Activateable activateable = getElement();
 
-		if (!activateable.isLocking()) {
+		if (activateable.isLocking()) {
+			activateable.setActive(!activateable.isActive());
+		} else {
 			activateable.setActive(false);
 		}
 	}

@@ -33,12 +33,14 @@ public class Shortcut {
 
     private int location = KeyEvent.KEY_LOCATION_STANDARD;
 
-    public Shortcut(char character) {
+    public Shortcut(char character, int modifiers, int location) {
         if (character == KeyEvent.CHAR_UNDEFINED) {
             throw new IllegalArgumentException(
                     "character must not be undefined");
         }
         this.character = character;
+        this.modifiers = modifiers;
+        this.location = location;
     }
 
     public Shortcut(int code, int modifiers, int location) {
@@ -84,27 +86,27 @@ public class Shortcut {
         int modifiers = ev.getModifiers();
         int location = ev.getKeyLocation();
 
-        return match(character, code, modifiers, location);
-    }
-
-    public boolean match(char character, int code, int modifiers, int location) {
+    	if (this.modifiers != modifiers
+                || this.location != location) {
+    		return false;
+    	}
+    		
         if (characterFallback()) {
             return this.character == character;
         } else {
-            return this.code == code && this.modifiers == modifiers
-                    && this.location == location;
+            return this.code == code;
         }
     }
 
     public String toString() {
-        String string = "";
+        String string = KeyEvent.getKeyModifiersText(modifiers);
+        if (string.length() > 0) {
+            string += "+";
+        }
+        
         if (characterFallback()) {
-            string += character;
+            string += Character.toUpperCase(character);
         } else {
-            string += KeyEvent.getKeyModifiersText(modifiers);
-            if (string.length() > 0) {
-                string += "+";
-            }
             string += KeyEvent.getKeyText(code);
         }
 
@@ -117,18 +119,12 @@ public class Shortcut {
         int modifiers = ev.getModifiers();
         int location = ev.getKeyLocation();
 
-        return createShortcut(character, code, modifiers, location);
-    }
-
-    public static Shortcut createShortcut(char character, int code,
-            int modifiers, int location) {
-
         if (!isModifier(code)) {
-            if (code != KeyEvent.VK_UNDEFINED) {
-                return new Shortcut(code, modifiers, location);
-            } else if (character != KeyEvent.CHAR_UNDEFINED) {
-                return new Shortcut(character);
-            }
+	        if (code != KeyEvent.VK_UNDEFINED) {
+	            return new Shortcut(code, modifiers, location);
+	        } else if (character != KeyEvent.CHAR_UNDEFINED) {
+                return new Shortcut(character, modifiers, location);
+	        }
         }
         return null;
     }
@@ -138,4 +134,8 @@ public class Shortcut {
                 || code == KeyEvent.VK_META || code == KeyEvent.VK_ALT_GRAPH
                 || code == KeyEvent.VK_ALT;
     }
+
+	public static boolean maybeShortcut(KeyEvent e) {
+		return !isModifier(e.getKeyCode()) && e.getID() != KeyEvent.KEY_TYPED;
+	}
 }
