@@ -1164,19 +1164,16 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			if (constructing) {
 				return false;
 			}
-			if (Shortcut.isModifier(e.getKeyCode())) {
+			
+			if (!Shortcut.maybeShortcut(e)) {
 				return false;
 			}
-
-			if (e.getID() == KeyEvent.KEY_TYPED) {
-				return false;
-			}
-			boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
-
+			
 			if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
 					.getFocusedWindow() == SwingUtilities
 					.getWindowAncestor(ConsolePanel.this)) {
 
+				boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
 				for (Reference reference : console.getReferences()) {
 					View view = getView(reference.getElement());
 

@@ -46,7 +46,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 		super(initiator);
 	}
 
-	protected void shortcutPressed() {
+	protected void shortcutReleased() {
 		Initiator initiator = getElement();
 
 		initiator.initiate();

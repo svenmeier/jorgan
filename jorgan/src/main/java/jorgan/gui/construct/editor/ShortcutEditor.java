@@ -21,7 +21,7 @@ package jorgan.gui.construct.editor;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Insets;
-import java.awt.KeyEventDispatcher;
+import java.awt.KeyEventPostProcessor;
 import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -83,7 +83,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 	}
 	
 	private class ShortcutField extends JTextField implements
-			KeyEventDispatcher {
+		KeyEventPostProcessor {
 
 		private Shortcut shortcut;
 
@@ -96,12 +96,12 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 			super.addNotify();
 
 			KeyboardFocusManager.getCurrentKeyboardFocusManager()
-					.addKeyEventDispatcher(this);
+					.addKeyEventPostProcessor(this);
 		}
 
 		public void removeNotify() {
 			KeyboardFocusManager.getCurrentKeyboardFocusManager()
-					.removeKeyEventDispatcher(this);
+					.removeKeyEventPostProcessor(this);
 
 			super.removeNotify();
 		}
@@ -131,12 +131,17 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 			return shortcut;
 		}
 
-		public boolean dispatchKeyEvent(KeyEvent e) {
-			Shortcut shortcut = Shortcut.createShortCut(e);
-			if (shortcut != null) {
-				setShortcut(shortcut);
+		public boolean postProcessKeyEvent(KeyEvent e) {
+	        
+			if (e.getID() == KeyEvent.KEY_RELEASED) {
+				Shortcut shortcut = Shortcut.createShortCut(e);
+				if (shortcut != null) {
+					setShortcut(shortcut);
+					return true;
+				}			
 			}
-			return true;
+
+			return false;
 		}
 	}
 }
