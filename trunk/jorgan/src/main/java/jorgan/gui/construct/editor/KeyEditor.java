@@ -121,7 +121,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			return;
 		}
 
-		box = new MessageBox(MessageBox.OPTION_CANCEL);
+		box = new MessageBox(MessageBox.OPTIONS_OK);
 		config.get("recorder").read(box).show(panel);
 		box.show(panel);
 		box = null;
