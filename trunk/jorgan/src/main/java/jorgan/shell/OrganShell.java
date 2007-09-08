@@ -90,7 +90,7 @@ public class OrganShell implements UI {
 	 *            optional file that contains an organ
 	 */
 	public void display(File file) {
-		writeMessage("splash", App.getInstance().getVersion());
+		writeMessage("splash", App.getVersion());
 
 		if (!useDefaultEncoding) {
 			try {
