@@ -72,7 +72,7 @@ public class AboutPanel extends JPanel {
 
 	private void addVersion(Graphics2D g, int width, int height) {
 
-		String version = App.getInstance().getVersion();
+		String version = App.getVersion();
 
 		g.setFont(new Font("Sans Serif", Font.PLAIN, 14));
 		g.setColor(Color.black);

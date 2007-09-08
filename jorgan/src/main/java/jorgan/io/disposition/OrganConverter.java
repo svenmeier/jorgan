@@ -62,7 +62,7 @@ public class OrganConverter implements Converter {
 	 *            writer
 	 */
 	protected void marshallVersion(HierarchicalStreamWriter writer) {
-		writer.addAttribute("version", App.getInstance().getVersion());
+		writer.addAttribute("version", App.getVersion());
 	}
 
 	/**

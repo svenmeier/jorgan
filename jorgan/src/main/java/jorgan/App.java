@@ -19,16 +19,23 @@
 package jorgan;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.List;
 import java.util.logging.Logger;
 
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
 import jorgan.shell.OrganShell;
 import bias.Configuration;
+import bias.store.CLIStore;
 import bias.store.DefaultingStore;
 import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
 import bias.store.ResourceBundlesStore;
+import bias.util.cli.ArgsParser;
+import bias.util.cli.Option;
+import bias.util.cli.ParseException;
+import bias.util.cli.option.Switch;
 
 /**
  * The jOrgan application.
@@ -40,14 +47,25 @@ public class App {
 
 	private static Logger logger = Logger.getLogger(App.class.getName());
 
-	private static App instance;
-
-	private String version;
+	private static String version;
 
 	private boolean openRecentOnStartup = false;
 
-	public void start(Arguments arguments) {
-		File file = arguments.getFile();
+	private boolean headless = false;
+
+	public void setHeadless(boolean headless) {
+		this.headless = headless;
+	}
+
+	public void setOpenRecentOnStartup(boolean openRecentOnStartup) {
+		this.openRecentOnStartup = openRecentOnStartup;
+	}
+
+	public void setVersion(String version) {
+		App.version = version;
+	}
+
+	public void start(File file) {
 		if (file == null && openRecentOnStartup) {
 			file = new DispositionStream().getRecentFile();
 		}
@@ -55,7 +73,7 @@ public class App {
 		info();
 
 		UI ui;
-		if (arguments.getHeadless()) {
+		if (headless) {
 			ui = new OrganShell();
 		} else {
 			ui = new GUI();
@@ -92,24 +110,31 @@ public class App {
 		buffer.append(System.getProperty(key));
 	}
 
-	public boolean getOpenRecentOnStartup() {
-		return openRecentOnStartup;
-	}
+	private static Collection<Option<?>> initConfiguration() {
+		Configuration configuration = Configuration.getRoot();
 
-	public void setOpenRecentOnStartup(boolean openRecentOnStartup) {
-		this.openRecentOnStartup = openRecentOnStartup;
+		configuration
+				.addStore(new PropertiesStore(App.class, "app.properties"));
+		configuration.addStore(new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(App.class, "preferences.properties")));
+		configuration.addStore(new ResourceBundlesStore("i18n"));
+		
+		CLIStore cliStore = new CLIStore();
+		Switch headless = new Switch('l');
+		headless.setLongName("headless");
+		headless.setDescription("start without a graphical UI");
+		cliStore.put("jorgan/App/headless", headless);
+		configuration.addStore(cliStore);
+		
+		return cliStore.getOptions();
 	}
-
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
+	
 	/**
 	 * Get the current version of jOrgan.
 	 * 
 	 * @return the current version
 	 */
-	public String getVersion() {
+	public static String getVersion() {
 		return version;
 	}
 
@@ -121,32 +146,32 @@ public class App {
 	 */
 	public static void main(String[] args) {
 
-		Arguments arguments = new Arguments();
-		if (!arguments.parse(args)) {
-			arguments.printUsage();
+		Collection<Option<?>> options = initConfiguration();
+
+		ArgsParser parser = new ArgsParser("java -jar jOrgan.jar",
+				"[disposition]", options);
+		parser.addOption(parser.new HelpOption());
+
+		List<String> operands = null;
+		try {
+			operands = parser.parse(args);
+		} catch (ParseException ex) {
+			ex.write();
 			System.exit(1);
 		}
 
-		initConfiguration();
+		File file = null;
+		if (operands.size() == 1) {
+			file = new File(operands.get(0));
+		} else if (operands.size() > 1) {
+			parser.writeUsage();
+			System.exit(1);
+		}
 
-		instance = new App();
-		configuration.read(instance);
-		instance.start(arguments);
+		App app = new App();
+		configuration.read(app);
+		app.start(file);
 
 		System.exit(0);
-	}
-
-	private static void initConfiguration() {
-		Configuration configuration = Configuration.getRoot();
-
-		configuration
-				.addStore(new PropertiesStore(App.class, "app.properties"));
-		configuration.addStore(new DefaultingStore(PreferencesStore.user(),
-				new PropertiesStore(App.class, "preferences.properties")));
-		configuration.addStore(new ResourceBundlesStore("i18n"));
-	}
-
-	public static App getInstance() {
-		return instance;
 	}
 }
