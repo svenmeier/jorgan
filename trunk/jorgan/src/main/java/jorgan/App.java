@@ -21,7 +21,6 @@ package jorgan;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
@@ -44,8 +43,6 @@ public class App {
 
 	private static Configuration configuration = Configuration.getRoot().get(
 			App.class);
-
-	private static Logger logger = Logger.getLogger(App.class.getName());
 
 	private static String version;
 
@@ -70,8 +67,6 @@ public class App {
 			file = new DispositionStream().getRecentFile();
 		}
 
-		info();
-
 		UI ui;
 		if (headless) {
 			ui = new OrganShell();
@@ -81,35 +76,11 @@ public class App {
 		ui.display(file);
 	}
 
-	private void info() {
-		StringBuffer buffer = new StringBuffer();
-
-		buffer.append("jOrgan " + version);
-		info(buffer, "os.arch");
-		info(buffer, "os.name");
-		info(buffer, "os.version");
-
-		info(buffer, "java.home");
-		info(buffer, "java.version");
-		info(buffer, "java.runtime.name");
-		info(buffer, "java.runtime.version");
-
-		info(buffer, "user.dir");
-		info(buffer, "user.home");
-		info(buffer, "user.country");
-		info(buffer, "user.language");
-		info(buffer, "user.name");
-
-		logger.info(buffer.toString());
-	}
-
-	private void info(StringBuffer buffer, String key) {
-		buffer.append("\n");
-		buffer.append(key);
-		buffer.append(" = ");
-		buffer.append(System.getProperty(key));
-	}
-
+	/**
+	 * Initialize the configuration.
+	 * 
+	 * @return the command line options of the configuration
+	 */
 	private static Collection<Option<?>> initConfiguration() {
 		Configuration configuration = Configuration.getRoot();
 
@@ -118,17 +89,17 @@ public class App {
 		configuration.addStore(new DefaultingStore(PreferencesStore.user(),
 				new PropertiesStore(App.class, "preferences.properties")));
 		configuration.addStore(new ResourceBundlesStore("i18n"));
-		
+
 		CLIStore cliStore = new CLIStore();
 		Switch headless = new Switch('l');
 		headless.setLongName("headless");
 		headless.setDescription("start without a graphical UI");
 		cliStore.put("jorgan/App/headless", headless);
 		configuration.addStore(cliStore);
-		
+
 		return cliStore.getOptions();
 	}
-	
+
 	/**
 	 * Get the current version of jOrgan.
 	 * 
@@ -170,6 +141,9 @@ public class App {
 
 		App app = new App();
 		configuration.read(app);
+
+		new Info().log();
+
 		app.start(file);
 
 		System.exit(0);
