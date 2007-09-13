@@ -362,6 +362,7 @@ public class OrganPlay {
 
 	private class EventHandler extends OrganAdapter {
 
+		@Override
 		public void elementChanged(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
 				Player player = getPlayer(event.getElement());
@@ -371,12 +372,14 @@ public class OrganPlay {
 			}
 		}
 
+		@Override
 		public void elementAdded(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
 				createPlayer(event.getElement());
 			}
 		}
 
+		@Override
 		public void elementRemoved(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
 				dropPlayer(event.getElement());

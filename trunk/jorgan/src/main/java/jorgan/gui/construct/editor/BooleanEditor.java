@@ -43,10 +43,12 @@ public class BooleanEditor extends PropertyEditorSupport {
 		this.tags = tags;
 	}
 	
+	@Override
 	public String[] getTags() {
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		Boolean value = (Boolean) getValue();
@@ -61,6 +63,7 @@ public class BooleanEditor extends PropertyEditorSupport {
 		}
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		if (tags[0].equals(string)) {

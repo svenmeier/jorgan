@@ -76,6 +76,7 @@ public class FontSelector extends JPanel {
 		setSelectedFont(new Font("Arial", Font.PLAIN, 12));
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		button.setEnabled(enabled);
 	}

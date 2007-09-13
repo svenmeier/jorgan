@@ -53,6 +53,7 @@ public class ConsolePlayer extends Player<Console> {
 		super(console);
 	}
 
+	@Override
 	protected void openImpl() {
 		Console console = getElement();
 
@@ -72,6 +73,7 @@ public class ConsolePlayer extends Player<Console> {
 		}
 	}
 
+	@Override
 	protected void closeImpl() {
 		if (transmitter != null) {
 			transmitter.close();
@@ -82,6 +84,7 @@ public class ConsolePlayer extends Player<Console> {
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 		Console console = getElement();
 
@@ -93,6 +96,7 @@ public class ConsolePlayer extends Player<Console> {
 		}
 	}
 
+	@Override
 	protected void input(ShortMessage message) {
 		Console console = getElement();
 

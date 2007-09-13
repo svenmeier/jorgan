@@ -42,6 +42,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 		super(activateable);
 	}
 
+	@Override
 	protected void shortcutPressed() {
 		Activateable activateable = getElement();
 
@@ -54,6 +55,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 		}
 	}
 
+	@Override
 	protected void shortcutReleased() {
 		Activateable activateable = getElement();
 
@@ -64,20 +66,24 @@ public class ActivateableView extends MomentaryView<Activateable> {
 		}
 	}
 
+	@Override
 	public boolean isButtonPressed() {
 		return getElement().isActive();
 	}
 
+	@Override
 	public void buttonPressed() {
 		getElement().setActive(!getElement().isActive());
 	}
 
+	@Override
 	public void buttonReleased() {
 		if (!getElement().isLocking()) {
 			getElement().setActive(false);
 		}
 	}
 
+	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
@@ -113,6 +119,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 
 	private Layer createCheckLayer(final boolean activated) {
 		Layer layer = new Layer() {
+			@Override
 			protected void draw(Graphics2D g, int x, int y, int width,
 					int height) {
 				g.setColor(getDefaultColor());

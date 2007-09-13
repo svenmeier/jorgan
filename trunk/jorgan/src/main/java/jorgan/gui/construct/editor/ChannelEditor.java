@@ -83,6 +83,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		keyboard = (Keyboard) element;
 	}
 
+	@Override
 	protected String format(Object value) {
 		if (value == null) {
 			return "";
@@ -91,6 +92,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		}
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		spinner.setValue(new Integer(((Integer) value).intValue() + 1));
@@ -115,6 +117,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 		recorder.close();
 	}
 
+	@Override
 	protected Object getEditedValue() {
 		try {
 			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
@@ -147,6 +150,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
+		@Override
 		public boolean messageRecorded(ShortMessage message) {
 			if (message.getCommand() == ShortMessage.NOTE_ON) {
 				channel = message.getChannel();

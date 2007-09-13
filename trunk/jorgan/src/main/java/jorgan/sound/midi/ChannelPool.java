@@ -109,7 +109,8 @@ public abstract class ChannelPool {
         this.device = DevicePool.getMidiDevice(deviceName, true);
       }
 
-      public String getDeviceName() {
+      @Override
+	public String getDeviceName() {
         return deviceName;
       }
 
@@ -120,7 +121,8 @@ public abstract class ChannelPool {
        *
        * @throws MidiUnavailableException if device is not available
        */
-      public void open() throws MidiUnavailableException {
+      @Override
+	public void open() throws MidiUnavailableException {
         if (opened == 0) {
           device.open();
 
@@ -134,7 +136,8 @@ public abstract class ChannelPool {
        * 
        * @return         created channel or <code>null</code> if no channel is available
        */
-      public Channel createChannel(int[] blocked) {
+      @Override
+	public Channel createChannel(int[] blocked) {
 
         if (opened == 0) {
             throw new IllegalStateException("not opened");
@@ -158,7 +161,8 @@ public abstract class ChannelPool {
       /**
        * Close this pool of channels.
        */
-      public void close() {
+      @Override
+	public void close() {
         opened--;
 
         if (opened == 0) {
@@ -237,11 +241,13 @@ public abstract class ChannelPool {
         this.pool = pool;
       }
 
-      public String getDeviceName() {
+      @Override
+	public String getDeviceName() {
         return pool.getDeviceName();
       }
 
-      public void open() throws MidiUnavailableException {
+      @Override
+	public void open() throws MidiUnavailableException {
         assertClosed();
         
         pool.open();
@@ -254,7 +260,8 @@ public abstract class ChannelPool {
        * 
        * @return         created channel or <code>null</code> if no channel is available
        */
-      public Channel createChannel(int[] blocked) {
+      @Override
+	public Channel createChannel(int[] blocked) {
         assertOpen();
         
         return pool.createChannel(blocked);
@@ -263,7 +270,8 @@ public abstract class ChannelPool {
       /**
        * Close this pool of channels.
        */
-      public void close() {
+      @Override
+	public void close() {
         assertOpen();
         
         pool.close();

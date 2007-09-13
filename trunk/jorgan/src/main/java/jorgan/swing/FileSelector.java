@@ -96,6 +96,7 @@ public class FileSelector extends JPanel {
 		add(button, BorderLayout.EAST);
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		textField.setEnabled(enabled);
 		button.setEnabled(enabled);

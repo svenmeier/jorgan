@@ -57,7 +57,8 @@ public class Problem {
         return this;
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (object == null || !(object instanceof Problem)) {
             return false;
         }
@@ -74,11 +75,13 @@ public class Problem {
         return true;
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return toString().hashCode();
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         return level + "." + property;
     }
 }

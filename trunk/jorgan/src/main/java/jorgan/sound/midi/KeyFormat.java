@@ -29,7 +29,8 @@ public class KeyFormat extends Format {
 
   private static final String[] names = new String[]{"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"};
 
-  public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
+  @Override
+public StringBuffer format(Object obj, StringBuffer toAppendTo, FieldPosition pos) {
 
     if (!(obj instanceof Integer)) {
         throw new IllegalArgumentException(obj.toString());
@@ -46,7 +47,8 @@ public class KeyFormat extends Format {
     return toAppendTo;
   }
 
-  public Object parseObject(String source, ParsePosition pos) {
+  @Override
+public Object parseObject(String source, ParsePosition pos) {
     try {
       int pitch;
       

@@ -171,6 +171,7 @@ public class DevicePool {
 			super(device);
 		}
 
+		@Override
 		public void close() {
 			assertOpen();
 
@@ -179,6 +180,7 @@ public class DevicePool {
 			open = false;
 		}
 
+		@Override
 		public void open() throws MidiUnavailableException {
 			assertClosed();
 
@@ -187,15 +189,18 @@ public class DevicePool {
 			open = true;
 		}
 
+		@Override
 		public boolean isOpen() {
 			return open;
 		}
 
+		@Override
 		public Receiver getReceiver() throws MidiUnavailableException {
 			assertOpen();
 			return super.getReceiver();
 		}
 
+		@Override
 		public Transmitter getTransmitter() throws MidiUnavailableException {
 			assertOpen();
 			return super.getTransmitter();
@@ -225,6 +230,7 @@ public class DevicePool {
 			this.out = out;
 		}
 
+		@Override
 		public boolean equals(Object obj) {
 
 			if (!(obj instanceof DeviceKey)) {
@@ -236,6 +242,7 @@ public class DevicePool {
 			return key.deviceName.equals(deviceName) && key.out == out;
 		}
 
+		@Override
 		public int hashCode() {
 			return deviceName.hashCode();
 		}
@@ -253,6 +260,7 @@ public class DevicePool {
 			super(device);
 		}
 
+		@Override
 		public void open() throws MidiUnavailableException {
 			if (openCount == 0) {
 				super.open();
@@ -267,8 +275,10 @@ public class DevicePool {
 			openCount++;
 		}
 
+		@Override
 		public Receiver getReceiver() throws MidiUnavailableException {
 			return new ReceiverWrapper(super.getReceiver()) {
+				@Override
 				public void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
@@ -279,9 +289,11 @@ public class DevicePool {
 			};
 		}
 
+		@Override
 		public Transmitter getTransmitter() throws MidiUnavailableException {
 			return new TransmitterWrapper(super.getTransmitter()) {
 
+				@Override
 				protected void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
@@ -294,6 +306,7 @@ public class DevicePool {
 			};
 		}
 
+		@Override
 		public void close() {
 			openCount--;
 

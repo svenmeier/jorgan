@@ -29,6 +29,7 @@ public class SoundFactoryTypeEditor extends PropertyEditorSupport {
 
 	private String[] tags;
 
+	@Override
 	public String[] getTags() {
 		if (tags == null) {
 			String[] types = SoundFactory.getFactoryTypes();
@@ -40,11 +41,13 @@ public class SoundFactoryTypeEditor extends PropertyEditorSupport {
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		return (String) getValue();
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		setValue(string);

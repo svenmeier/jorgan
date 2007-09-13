@@ -264,6 +264,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		setConstructing(true);
 	}
 
+	@Override
 	public void addNotify() {
 		super.addNotify();
 
@@ -271,6 +272,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 				.addKeyEventPostProcessor(shortcutHandler);
 	}
 
+	@Override
 	public void removeNotify() {
 		KeyboardFocusManager.getCurrentKeyboardFocusManager()
 				.removeKeyEventPostProcessor(shortcutHandler);
@@ -592,6 +594,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * 
 	 * @return the preferred size
 	 */
+	@Override
 	public Dimension getPreferredSize() {
 
 		int x = 0;
@@ -629,6 +632,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 * @param graphics
 	 *            graphics to paint on
 	 */
+	@Override
 	public void paintComponent(Graphics graphics) {
 		Graphics2D graphics2D = (Graphics2D) graphics;
 
@@ -688,6 +692,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 */
 	private class InternalOrganListener extends OrganAdapter {
 
+		@Override
 		public void elementChanged(final OrganEvent event) {
 			Element element = event.getElement();
 
@@ -710,6 +715,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void elementAdded(OrganEvent event) {
 
 			Element element = event.getElement();
@@ -719,6 +725,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void elementRemoved(OrganEvent event) {
 
 			Element element = event.getElement();
@@ -728,6 +735,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void referenceChanged(OrganEvent event) {
 
 			if (event.getElement() == console) {
@@ -735,12 +743,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void referenceAdded(OrganEvent event) {
 			if (event.getElement() == console) {
 				createView(event.getReference().getElement());
 			}
 		}
 
+		@Override
 		public void referenceRemoved(OrganEvent event) {
 			if (event.getElement() == console) {
 				dropView(event.getReference().getElement());
@@ -795,6 +805,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 					.getMenuShortcutKeyMask()) != 0;
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 
 			mouseFrom = e.getPoint();
@@ -825,6 +836,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			showPopup(e);
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			Element element = getElement(screenToView(e.getX()), screenToView(e
 					.getY()));
@@ -835,6 +847,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 
 			if (pressedElement == null) {
@@ -900,6 +913,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			return (pos + grid / 2) / grid * grid;
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (pressedElement == null) {
 				if (mouseTo != null) {
@@ -917,6 +931,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			showPopup(e);
 		}
 
+		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (pressedElement != null) {
 				if (isMultiSelect(e) && wasSelected) {
@@ -1013,6 +1028,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		View view;
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			int x = screenToView(e.getX());
 			int y = screenToView(e.getY());
@@ -1027,6 +1043,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			setToolTipText(null);
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 			View view = getView(screenToView(e.getX()), screenToView(e.getY()));
 
@@ -1048,6 +1065,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			setToolTipText(tooltip);
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (view != null) {
 				int x = screenToView(e.getX());
@@ -1057,6 +1075,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			}
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (view != null) {
 				int x = screenToView(e.getX());
@@ -1073,10 +1092,12 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	 */
 	private class ElementDropTargetListener extends DropTargetAdapter {
 
+		@Override
 		public void dropActionChanged(DropTargetDragEvent dtde) {
 			dragOver(dtde);
 		}
 
+		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
 			if (TweakMac.isMac()) {
 				dtde.acceptDrag(DnDConstants.ACTION_LINK);
@@ -1269,14 +1290,17 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			super(console);
 		}
 
+		@Override
 		protected void initLocation() {
 			location = new Point(0, 0);
 		}
 
+		@Override
 		protected Style createDefaultStyle() {
 			return new Style();
 		}
 
+		@Override
 		public void paint(Graphics2D g) {
 			if (size.width > 0 && size.height > 0) {
 				Rectangle clip = g.getClipBounds();

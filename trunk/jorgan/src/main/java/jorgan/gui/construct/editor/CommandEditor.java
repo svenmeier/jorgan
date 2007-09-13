@@ -31,10 +31,12 @@ public class CommandEditor extends PropertyEditorSupport {
 		tags = new String[] { "NOTE_ON", "POLY_PRESSURE" };
 	}
 
+	@Override
 	public String[] getTags() {
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		Integer value = (Integer) getValue();
@@ -50,6 +52,7 @@ public class CommandEditor extends PropertyEditorSupport {
 		}
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		if (tags[0].equals(string)) {

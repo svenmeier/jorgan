@@ -113,6 +113,7 @@ public class ElementsPanel extends DockedPanel {
 
 		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
+			@Override
 			protected OrganSession getOrgan() {
 				return session;
 			}
@@ -252,6 +253,7 @@ public class ElementsPanel extends DockedPanel {
 			return elements.get(index);
 		}
 
+		@Override
 		public int indexOf(Object element) {
 			return elements.indexOf(element);
 		}
@@ -262,13 +264,16 @@ public class ElementsPanel extends DockedPanel {
 			return size;
 		}
 
+		@Override
 		public int getDropActions(Transferable transferable, int index) {
 			return 0;
 		}
 
+		@Override
 		protected void insertElementAt(Object element, int index) {
 		}
 
+		@Override
 		protected void removeElement(Object element) {
 		}
 

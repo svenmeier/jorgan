@@ -26,7 +26,8 @@ import jorgan.gui.construct.editor.DeltaEditor;
  */
 public class IncrementerBeanInfo extends InitiatorBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("delta", Incrementer.class, DeltaEditor.class);

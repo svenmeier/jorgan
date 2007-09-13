@@ -37,16 +37,19 @@ public class InDeviceEditor extends PropertyEditorSupport {
 		System.arraycopy(deviceNames, 0, tags, 1, deviceNames.length);
 	}
 
+	@Override
 	public String[] getTags() {
 
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		return (String) getValue();
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		setValue(string);

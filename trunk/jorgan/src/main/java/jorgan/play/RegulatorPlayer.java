@@ -32,13 +32,15 @@ public class RegulatorPlayer extends ContinuousPlayer<Regulator> {
         super(regulator);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         super.closeImpl();
 
         player = null;
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         super.elementChanged(event);
 
         if (isOpen()) {

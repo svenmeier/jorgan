@@ -75,10 +75,12 @@ public class MidiMergerCategory extends JOrganCategory {
 		config.get("table").read(tableModel);
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return MidiCategory.class;
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout(10, 10));
 
@@ -116,10 +118,12 @@ public class MidiMergerCategory extends JOrganCategory {
 			return 3;
 		}
 
+		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}
 
+		@Override
 		public Class<?> getColumnClass(int column) {
 			switch (column) {
 			case 0:
@@ -151,6 +155,7 @@ public class MidiMergerCategory extends JOrganCategory {
 			return null;
 		}
 
+		@Override
 		public boolean isCellEditable(int row, int column) {
 			MergeInput input = allInputs.get(row);
 
@@ -158,6 +163,7 @@ public class MidiMergerCategory extends JOrganCategory {
 					|| (selectedInputs.contains(input) && column == 2);
 		}
 
+		@Override
 		public void setValueAt(Object aValue, int row, int column) {
 			MergeInput input = allInputs.get(row);
 
@@ -195,6 +201,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		return -1;
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	protected void read() {
 		// create inputs for all devices (excluding MidiMerger)
@@ -221,6 +228,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		tableModel.fireTableDataChanged();
 	}
 
+	@Override
 	protected void write() {
 		inputs.setValue(selectedInputs);
 	}

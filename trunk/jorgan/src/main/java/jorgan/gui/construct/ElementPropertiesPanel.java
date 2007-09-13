@@ -104,12 +104,14 @@ public class ElementPropertiesPanel extends DockedPanel {
 			}
 		}
 
+		@Override
 		public void elementChanged(OrganEvent event) {
 			if (propertiesPanel.getBeans().contains(event.getElement())) {
 				updateProperties();
 			}
 		}
 
+		@Override
 		public void referenceAdded(OrganEvent event) {
 			List beans = propertiesPanel.getBeans();
 			if (beans.contains(event.getElement())
@@ -118,6 +120,7 @@ public class ElementPropertiesPanel extends DockedPanel {
 			}
 		}
 
+		@Override
 		public void referenceRemoved(OrganEvent event) {
 			List beans = propertiesPanel.getBeans();
 			if (beans.contains(event.getElement())
@@ -152,6 +155,7 @@ public class ElementPropertiesPanel extends DockedPanel {
 
 	private class ElementCustomizer extends DefaultBeanCustomizer {
 
+		@Override
 		public BeanInfo getBeanInfo(Class beanClass)
 				throws IntrospectionException {
 			Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
@@ -159,6 +163,7 @@ public class ElementPropertiesPanel extends DockedPanel {
 			return super.getBeanInfo(beanClass);
 		}
 
+		@Override
 		public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
 				throws IntrospectionException {
 			PropertyEditor editor = super.getPropertyEditor(descriptor);

@@ -33,13 +33,15 @@ public class KeyerPlayer extends ActivateablePlayer<Keyer> {
         super(keyer);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         super.closeImpl();
 
         keying = false;
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         super.elementChanged(event);
 
         if (isOpen()) {

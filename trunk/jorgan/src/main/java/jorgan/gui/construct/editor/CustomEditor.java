@@ -26,14 +26,17 @@ import java.beans.PropertyEditorSupport;
  */
 public abstract class CustomEditor extends PropertyEditorSupport {
 
+	@Override
 	public final String getAsText() {
 		return format(super.getValue());
 	}
 
+	@Override
 	public final boolean supportsCustomEditor() {
 		return true;
 	}
 
+	@Override
 	public final Component getCustomEditor() {
 
 		return getCustomEditor(super.getValue());
@@ -48,6 +51,7 @@ public abstract class CustomEditor extends PropertyEditorSupport {
 	 */
 	protected abstract Component getCustomEditor(Object value);
 
+	@Override
 	public final Object getValue() {
 
 		Object editedValue = getEditedValue();

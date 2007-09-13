@@ -70,7 +70,8 @@ public class TextLayer extends Layer {
      * 
      * @return width    the text's width
      */
-    protected int calcWidth() {
+    @Override
+	protected int calcWidth() {
         return linesWidth;
     }
 
@@ -79,7 +80,8 @@ public class TextLayer extends Layer {
      * 
      * @return height   the text's heigth
      */
-    protected int calcHeight() {
+    @Override
+	protected int calcHeight() {
         return linesHeight;
     }
 
@@ -109,7 +111,8 @@ public class TextLayer extends Layer {
         this.alignment = alignment;
     }
 
-    public void setView(View view) {
+    @Override
+	public void setView(View view) {
         super.setView(view);
         
         Matcher matcher = pattern.matcher(this.text);
@@ -204,7 +207,8 @@ public class TextLayer extends Layer {
         }
     }
 
-    protected void draw(Graphics2D g, int x, int y, int width, int height) {
+    @Override
+	protected void draw(Graphics2D g, int x, int y, int width, int height) {
         g.setFont(font);
         g.setColor(color);
 
@@ -241,7 +245,8 @@ public class TextLayer extends Layer {
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, wasAntialiased);
     }
 
-    public Object clone() {
+    @Override
+	public Object clone() {
         TextLayer clone = (TextLayer) super.clone();
 
         return clone;

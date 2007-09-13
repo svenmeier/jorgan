@@ -63,6 +63,7 @@ public class MultiLineLabel extends JTextArea {
 		setBackground(new JLabel().getBackground());
 	}
 
+	@Override
 	public Dimension getPreferredSize() {
 		Dimension dim = super.getPreferredSize();
 

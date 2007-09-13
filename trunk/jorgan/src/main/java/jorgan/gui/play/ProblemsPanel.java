@@ -158,6 +158,7 @@ public class ProblemsPanel extends DockedPanel {
 			this.columnNames = columnNames;
 		}
 
+		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}
@@ -249,10 +250,12 @@ public class ProblemsPanel extends DockedPanel {
 			return message;
 		}
 
+		@Override
 		public int hashCode() {
 			return element.hashCode() + problem.hashCode();
 		}
 
+		@Override
 		public boolean equals(Object object) {
 			if (!(object instanceof Row)) {
 				return false;

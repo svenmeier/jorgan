@@ -52,6 +52,7 @@ public class PlayerCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -72,15 +73,18 @@ public class PlayerCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
 
+	@Override
 	protected void read() {
 		warnDeviceCheckBox.setSelected((Boolean) warnDevice.getValue());
 		warnMessageCheckBox.setSelected((Boolean) warnMessage.getValue());
 	}
 
+	@Override
 	protected void write() {
 		warnDevice.setValue(warnDeviceCheckBox.isSelected());
 		warnMessage.setValue(warnMessageCheckBox.isSelected());

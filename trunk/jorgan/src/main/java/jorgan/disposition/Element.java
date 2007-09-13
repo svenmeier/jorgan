@@ -281,6 +281,7 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
+	@Override
 	public String toString() {
 		return getName();
 	}
@@ -304,6 +305,7 @@ public abstract class Element implements Cloneable {
 	/**
 	 * All elements are cloneable for prototyping support.
 	 */
+	@Override
 	public Object clone() {
 		try {
 			Element clone = (Element) super.clone();

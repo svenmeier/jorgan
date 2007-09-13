@@ -31,6 +31,7 @@ import jorgan.gui.construct.editor.TransposeEditor;
  */
 public class KeyboardBeanInfo extends ElementBeanInfo {
 
+	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 

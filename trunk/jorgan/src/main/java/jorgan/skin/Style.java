@@ -36,7 +36,8 @@ public class Style extends CompositeLayer implements Cloneable {
         return name;
     }
 
-    public Object clone() {
+    @Override
+	public Object clone() {
         Style clone = (Style) super.clone();
 
         return clone;

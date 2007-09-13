@@ -26,7 +26,8 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
         super(coupler);
     }
 
-    protected void activateKey(int pitch, int velocity) {
+    @Override
+	protected void activateKey(int pitch, int velocity) {
         Coupler coupler = getElement();
         if (coupler.getVelocity() != 0) {
             velocity = coupler.getVelocity();
@@ -39,7 +40,8 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
         }
     }
 
-    protected void deactivateKey(int pitch) {
+    @Override
+	protected void deactivateKey(int pitch) {
         Coupler coupler = getElement();
         for (int e = 0; e < coupler.getReferenceCount(); e++) {
             KeyablePlayer keyablePlayer = (KeyablePlayer) getOrganPlay()

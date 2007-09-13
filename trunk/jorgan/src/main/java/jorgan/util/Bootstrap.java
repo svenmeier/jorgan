@@ -244,6 +244,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 				+ " found");
 	}
 
+	@Override
 	public void uncaughtException(Thread t, Throwable e) {
 		if (e instanceof ThreadDeath) {
 			return;

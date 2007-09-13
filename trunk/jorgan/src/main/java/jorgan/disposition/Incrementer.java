@@ -25,10 +25,12 @@ public class Incrementer extends Initiator {
 
 	private int delta = 1;
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return Continuous.class.isAssignableFrom(clazz);
 	}
 
+	@Override
 	public void initiate() {
 		for (Reference reference : references) {
 			Continuous continuous = (Continuous) reference.getElement();

@@ -93,6 +93,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		keyboard = (Keyboard) element;
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		spinner.setValue(value);
@@ -101,6 +102,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		return panel;
 	}
 
+	@Override
 	protected Object getEditedValue() {
 		try {
 			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
@@ -129,6 +131,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 		recorder.close();
 	}
 
+	@Override
 	protected String format(Object value) {
 		return formatter.valueToString(value);
 	}
@@ -168,6 +171,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 	}
 
 	private class KeyFormatter extends JFormattedTextField.AbstractFormatter {
+		@Override
 		public Object stringToValue(String text) throws ParseException {
 			if ("".equals(text)) {
 				return null;
@@ -181,6 +185,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			}
 		}
 
+		@Override
 		public String valueToString(Object value) {
 			if (value == null) {
 				return "";
@@ -208,6 +213,7 @@ public class KeyEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
+		@Override
 		public boolean messageRecorded(ShortMessage message) {
 			if (message.getCommand() == ShortMessage.NOTE_ON) {
 				pitch = message.getData1();

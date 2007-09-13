@@ -78,6 +78,7 @@ public class GuiCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -142,10 +143,12 @@ public class GuiCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
 
+	@Override
 	protected void read() {
 		useSystemLookAndFeelCheckBox.setSelected((Boolean) useSystemLookAndFeel
 				.getValue());
@@ -169,6 +172,7 @@ public class GuiCategory extends JOrganCategory {
 		hexMessageCheckBox.setSelected((Boolean) hexMessage.getValue());
 	}
 
+	@Override
 	protected void write() {
 		useSystemLookAndFeel
 				.setValue(useSystemLookAndFeelCheckBox.isSelected());

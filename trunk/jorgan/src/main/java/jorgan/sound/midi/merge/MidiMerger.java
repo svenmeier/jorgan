@@ -60,6 +60,7 @@ public class MidiMerger extends Loopback {
 	/**
 	 * Overriden to create receivers for all devices to merge.
 	 */
+	@Override
 	public void open() throws MidiUnavailableException {
 		super.open();
 
@@ -123,6 +124,7 @@ public class MidiMerger extends Loopback {
 		/**
 		 * Apply channel mapping.
 		 */
+		@Override
 		protected MidiMessage filter(MidiMessage message) {
 			if (message instanceof ShortMessage) {
 				message = mapChannel((ShortMessage) message);
@@ -159,6 +161,7 @@ public class MidiMerger extends Loopback {
 		/**
 		 * Closing this receiver also closes the device listened to.
 		 */
+		@Override
 		public void close() {
 			super.close();
 

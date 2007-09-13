@@ -27,7 +27,8 @@ public class Keyer extends Activateable {
 
     private int velocity = 100;
 
-    protected boolean canReference(Class clazz) {
+    @Override
+	protected boolean canReference(Class clazz) {
         return Keyable.class.isAssignableFrom(clazz);
     }
 

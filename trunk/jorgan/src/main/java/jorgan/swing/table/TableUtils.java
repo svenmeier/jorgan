@@ -112,6 +112,7 @@ public class TableUtils {
 	public static void addActionListener(final JTable table,
 			final ActionListener listener) {
 		table.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (table.getSelectedRowCount() == 1) {
@@ -133,10 +134,12 @@ public class TableUtils {
 	 */
 	public static void addPopup(final JTable table, final JPopupMenu popup) {
 		table.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				checkPopup(e);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				checkPopup(e);
 			}

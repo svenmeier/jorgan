@@ -62,6 +62,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
 	 * 
 	 * @return sound
 	 */
+	@Override
 	public Sound createSound() {
 		Channel channel = pool.createChannel(getBlockedChannels());
 
@@ -84,6 +85,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
 	/**
 	 * Close this factory.
 	 */
+	@Override
 	public void close() {
 		pool.close();
 		pool = null;
@@ -123,6 +125,7 @@ public abstract class ChanneledSoundFactory extends SoundFactory {
 		/**
 		 * Stop this sound.
 		 */
+		@Override
 		public void stop() {
 			if (channel == null) {
 				throw new IllegalStateException("already stopped");

@@ -28,7 +28,8 @@ import jorgan.gui.construct.editor.SkinEditor;
  */
 public class ConsoleBeanInfo extends ElementBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("device", Console.class, InDeviceEditor.class);

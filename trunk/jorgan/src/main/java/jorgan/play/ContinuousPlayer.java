@@ -36,6 +36,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		super(slider);
 	}
 
+	@Override
 	public void messageReceived(ShortMessage shortMessage) {
 		Continuous slider = getElement();
 
@@ -60,6 +61,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 		Continuous slider = getElement();
 

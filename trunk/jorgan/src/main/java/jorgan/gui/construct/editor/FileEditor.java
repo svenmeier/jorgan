@@ -53,14 +53,16 @@ public class FileEditor extends CustomEditor implements ActionListener {
     panel.add(textField, BorderLayout.CENTER);
   }
 
-  public Component getCustomEditor(Object value) {
+  @Override
+public Component getCustomEditor(Object value) {
 
     textField.setText(format(value));
 
     return panel;
   }
 
-  protected Object getEditedValue() {
+  @Override
+protected Object getEditedValue() {
 
     String file = textField.getText();
     if ("".equals(file)) {
@@ -88,7 +90,8 @@ public class FileEditor extends CustomEditor implements ActionListener {
     }
   }
 
-  protected String format(Object value) {
+  @Override
+protected String format(Object value) {
       
     if (value == null) {
       return "";

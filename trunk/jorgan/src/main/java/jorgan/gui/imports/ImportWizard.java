@@ -66,6 +66,7 @@ public class ImportWizard extends BasicWizard {
 	 * 
 	 * @return <code>true</code> if stops are selected
 	 */
+	@Override
 	public boolean allowsFinish() {
 		return selectedStops != null && selectedStops.size() > 0;
 	}
@@ -73,6 +74,7 @@ public class ImportWizard extends BasicWizard {
 	/**
 	 * Finish.
 	 */
+	@Override
 	protected boolean finishImpl() {
 
 		for (int s = 0; s < selectedStops.size(); s++) {
@@ -93,14 +95,17 @@ public class ImportWizard extends BasicWizard {
 			config.get("providerSelection").read(this);
 		}
 
+		@Override
 		protected JComponent getComponentImpl() {
 			return providerSelectionPanel;
 		}
 
+		@Override
 		public boolean allowsNext() {
 			return providerSelectionPanel.getSelectedImportProvider() != null;
 		}
 
+		@Override
 		public boolean leavingToNext() {
 			provider = providerSelectionPanel.getSelectedImportProvider();
 
@@ -113,18 +118,22 @@ public class ImportWizard extends BasicWizard {
 	 */
 	private class ImportOptionsPage extends AbstractPage {
 
+		@Override
 		public String getDescription() {
 			return provider.getDescription();
 		}
 
+		@Override
 		protected JComponent getComponentImpl() {
 			return provider.getOptionsPanel();
 		}
 
+		@Override
 		public boolean allowsNext() {
 			return provider.hasStops();
 		}
 
+		@Override
 		public boolean leavingToNext() {
 			stops = provider.getStops();
 
@@ -143,20 +152,24 @@ public class ImportWizard extends BasicWizard {
 			config.get("stopSelection").read(this);
 		}
 
+		@Override
 		public void enteringFromPrevious() {
 			stopSelectionPanel.setStops(stops);
 		}
 
+		@Override
 		protected JComponent getComponentImpl() {
 			return stopSelectionPanel;
 		}
 
+		@Override
 		public boolean leavingToPrevious() {
 			selectedStops = null;
 
 			return true;
 		}
 
+		@Override
 		protected void changing() {
 			selectedStops = stopSelectionPanel.getSelectedStops();
 

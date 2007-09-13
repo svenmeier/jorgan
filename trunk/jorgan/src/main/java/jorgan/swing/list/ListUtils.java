@@ -43,6 +43,7 @@ public class ListUtils {
 	public static void addActionListener(final JList list,
 			final ActionListener listener) {
 		list.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mouseClicked(MouseEvent e) {
 				if (e.getClickCount() == 2) {
 					if (list.getSelectedIndex() != -1) {
@@ -64,10 +65,12 @@ public class ListUtils {
 	 */
 	public static void addPopup(final JList list, final JPopupMenu popup) {
 		list.addMouseListener(new MouseAdapter() {
+			@Override
 			public void mousePressed(MouseEvent e) {
 				checkPopup(e);
 			}
 
+			@Override
 			public void mouseReleased(MouseEvent e) {
 				checkPopup(e);
 			}

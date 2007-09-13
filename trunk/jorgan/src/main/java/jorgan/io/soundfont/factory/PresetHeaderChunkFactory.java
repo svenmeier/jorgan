@@ -42,6 +42,7 @@ public class PresetHeaderChunkFactory extends ChunkFactory {
 	 *            length of data contained in the chunk
 	 * @return representation of the preset header of a soundfont
 	 */
+	@Override
 	public Chunk createChunk(String id, int dataLength, RiffReader reader)
 			throws RiffFormatException {
 

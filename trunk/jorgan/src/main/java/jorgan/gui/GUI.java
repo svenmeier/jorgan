@@ -108,6 +108,7 @@ public class GUI implements UI {
 			this.frame = frame;
 		}
 
+		@Override
 		public synchronized void componentHidden(ComponentEvent e) {
 			frame.dispose();
 

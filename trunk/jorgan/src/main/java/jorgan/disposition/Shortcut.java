@@ -98,7 +98,8 @@ public class Shortcut {
         }
     }
 
-    public String toString() {
+    @Override
+	public String toString() {
         String string = KeyEvent.getKeyModifiersText(modifiers);
         if (string.length() > 0) {
             string += "+";

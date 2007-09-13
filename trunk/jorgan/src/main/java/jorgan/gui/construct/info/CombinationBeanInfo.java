@@ -23,7 +23,8 @@ package jorgan.gui.construct.info;
  */
 public class CombinationBeanInfo extends InitiatorBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
     }
 }

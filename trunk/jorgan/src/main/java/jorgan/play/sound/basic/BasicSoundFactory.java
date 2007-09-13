@@ -42,6 +42,7 @@ public class BasicSoundFactory extends ChanneledSoundFactory {
 	 *            channel to use for sound
 	 * @return sound
 	 */
+	@Override
 	protected Sound createSoundImpl(Channel channel) {
 		return new BasicSound(channel);
 	}
@@ -117,10 +118,12 @@ public class BasicSoundFactory extends ChanneledSoundFactory {
 			sendMessage(ShortMessage.CONTROL_CHANGE, CONTROL_BRIGHTNESS, cutoff);
 		}
 
+		@Override
 		protected void noteOnImpl(int pitch, int velocity) {
 			sendMessage(ShortMessage.NOTE_ON, pitch, velocity);
 		}
 
+		@Override
 		protected void noteOffImpl(int pitch) {
 			sendMessage(ShortMessage.NOTE_OFF, pitch, UNUSED_DATA);
 		}

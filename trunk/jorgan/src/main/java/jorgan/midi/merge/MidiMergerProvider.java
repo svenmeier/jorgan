@@ -42,11 +42,13 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 	 */
 	private static MidiMerger midiMerger;
 
+	@Override
 	public MidiDevice.Info[] getDeviceInfo() {
 
 		return new MidiDevice.Info[] { INFO };
 	}
 
+	@Override
 	public MidiDevice getDevice(MidiDevice.Info info) {
 		if (MidiMergerProvider.INFO == info) {
 			if (midiMerger == null) {

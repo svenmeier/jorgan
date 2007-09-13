@@ -41,6 +41,7 @@ public class TransposeEditor extends CustomEditor {
 		editor.getTextField().setBorder(null);
 	}
 
+	@Override
 	public String format(Object value) {
 		if (value == null) {
 			return "";
@@ -49,6 +50,7 @@ public class TransposeEditor extends CustomEditor {
 		}
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		spinner.setValue(value);
@@ -56,6 +58,7 @@ public class TransposeEditor extends CustomEditor {
 		return spinner;
 	}
 
+	@Override
 	public Object getEditedValue() {
 
 		try {

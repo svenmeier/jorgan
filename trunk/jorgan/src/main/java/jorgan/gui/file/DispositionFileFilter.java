@@ -29,11 +29,13 @@ public class DispositionFileFilter extends FileFilter {
 
   private jorgan.io.DispositionFileFilter filter = new jorgan.io.DispositionFileFilter();
 
-  public boolean accept(File file) {
+  @Override
+public boolean accept(File file) {
     return filter.accept(file);
   }
 
-  public String getDescription() {
+  @Override
+public String getDescription() {
     return "Disposition File";
   }
 }

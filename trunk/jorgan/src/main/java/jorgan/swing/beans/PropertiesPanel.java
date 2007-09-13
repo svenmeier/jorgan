@@ -293,6 +293,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private class ElementTableModel extends AbstractTableModel implements
 			ListSelectionListener {
+		@Override
 		public String getColumnName(int column) {
 			return null;
 		}
@@ -338,6 +339,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			}
 		}
 
+		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			if (columnIndex == 0) {
 				return false;
@@ -345,6 +347,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			return (descriptors[rowIndex].getWriteMethod() != null && editors[rowIndex] != null);
 		}
 
+		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			Method method = descriptors[rowIndex].getWriteMethod();
 

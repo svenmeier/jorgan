@@ -36,6 +36,7 @@ public class InitiatorPlayer extends Player<Initiator> {
 		super(initiator);
 	}
 
+	@Override
 	public void messageReceived(ShortMessage shortMessage) {
 		Initiator initiator = getElement();
 
@@ -50,6 +51,7 @@ public class InitiatorPlayer extends Player<Initiator> {
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 
 		Initiator initiator = getElement();

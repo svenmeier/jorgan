@@ -143,6 +143,7 @@ public class StandardDialog extends JDialog {
 
 		setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 		addWindowListener(new WindowAdapter() {
+			@Override
 			public void windowClosing(WindowEvent ev) {
 				onCancel();
 			}
@@ -293,6 +294,7 @@ public class StandardDialog extends JDialog {
 		return cancelled;
 	}
 
+	@Override
 	public void setBounds(Rectangle bounds) {
 		if (bounds == null) {
 			pack();

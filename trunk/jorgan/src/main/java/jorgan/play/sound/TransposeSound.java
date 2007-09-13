@@ -36,14 +36,16 @@ public class TransposeSound extends SoundWrapper {
     this.transpose = transpose;
   }
   
-  public void noteOff(int pitch) {
+  @Override
+public void noteOff(int pitch) {
     pitch += transpose;
     if (pitch >= 0 && pitch <= 127) {
       sound.noteOff(pitch);
     }
   }
 
-  public void noteOn(int pitch, int velocity) {
+  @Override
+public void noteOn(int pitch, int velocity) {
     pitch += transpose;
     if (pitch >= 0 && pitch <= 127) {
       sound.noteOn(pitch, velocity);

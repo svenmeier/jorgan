@@ -57,6 +57,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		super(continuous);
 	}
 
+	@Override
 	protected void initTexts() {
 		super.initTexts();
 
@@ -94,6 +95,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		}
 	}
 
+	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 

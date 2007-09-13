@@ -37,11 +37,13 @@ public class SwellPlayer extends ContinuousPlayer<Swell> implements SoundEffectP
         super(swell);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         sounds.clear();
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         super.elementChanged(event);
 
         if (isOpen()) {
@@ -71,13 +73,15 @@ public class SwellPlayer extends ContinuousPlayer<Swell> implements SoundEffectP
             sounds.add(this);
         }
 
-        public void setVolume(int volume) {
+        @Override
+		public void setVolume(int volume) {
             this.volume = volume;
 
             flush();
         }
 
-        public void stop() {
+        @Override
+		public void stop() {
             super.stop();
 
             sounds.remove(this);

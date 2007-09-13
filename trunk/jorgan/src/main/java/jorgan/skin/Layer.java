@@ -133,7 +133,8 @@ public abstract class Layer implements Cloneable {
     protected void draw(Graphics2D g, int x, int y, int width, int height) {
     }
 
-    public Object clone() {
+    @Override
+	public Object clone() {
         try {
             Layer clone = (Layer) super.clone();
 

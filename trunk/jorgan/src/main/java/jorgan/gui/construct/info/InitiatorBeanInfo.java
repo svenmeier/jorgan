@@ -26,7 +26,8 @@ import jorgan.gui.construct.editor.MessageEditor;
  */
 public class InitiatorBeanInfo extends MomentaryBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("message", Initiator.class, MessageEditor.class);

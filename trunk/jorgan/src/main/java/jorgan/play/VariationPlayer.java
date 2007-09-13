@@ -38,13 +38,15 @@ public class VariationPlayer extends ActivateablePlayer<Variation> implements
         super(variation);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         super.closeImpl();
 
         sounds.clear();
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         super.elementChanged(event);
 
         if (isOpen()) {
@@ -68,7 +70,8 @@ public class VariationPlayer extends ActivateablePlayer<Variation> implements
             sounds.add(this);
         }
 
-        public void setProgram(int program) {
+        @Override
+		public void setProgram(int program) {
             this.program = program;
 
             flush();
@@ -87,7 +90,8 @@ public class VariationPlayer extends ActivateablePlayer<Variation> implements
             fireOutputProduced();
         }
 
-        public void stop() {
+        @Override
+		public void stop() {
             super.stop();
 
             sounds.remove(this);

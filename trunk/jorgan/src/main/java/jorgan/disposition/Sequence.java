@@ -23,11 +23,13 @@ package jorgan.disposition;
  */
 public class Sequence extends Continuous implements Combination.Observer {
 
-    protected boolean canReference(Class clazz) {
+    @Override
+	protected boolean canReference(Class clazz) {
         return Combination.class == clazz;
     }
     
-    protected boolean canReferenceDuplicates() {
+    @Override
+	protected boolean canReferenceDuplicates() {
         return true;
     }
 
@@ -48,7 +50,8 @@ public class Sequence extends Continuous implements Combination.Observer {
         }
     }
     
-    public void setValue(int position) {
+    @Override
+	public void setValue(int position) {
         int oldPosition = getValue();
         
         super.setValue(position);
@@ -61,7 +64,8 @@ public class Sequence extends Continuous implements Combination.Observer {
         }
     }
     
-    protected int limitIncrement(int position) {
+    @Override
+	protected int limitIncrement(int position) {
         return super.limitIncrement(Math.min(position, getReferenceCount() - 1));
     }
 }

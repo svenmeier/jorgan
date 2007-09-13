@@ -26,7 +26,8 @@ import jorgan.gui.construct.editor.DataEditor;
  */
 public class TremulantBeanInfo extends ActivateableBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("amplitude", Tremulant.class, DataEditor.class);

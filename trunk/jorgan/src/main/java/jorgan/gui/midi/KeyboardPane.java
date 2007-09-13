@@ -270,6 +270,7 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Paint the keys.
 	 */
+	@Override
 	protected void paintComponent(Graphics g) {
 
 		Dimension preferredSize = getPreferredSize();
@@ -288,6 +289,7 @@ public class KeyboardPane extends JComponent {
 
 		private boolean wasPressed;
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 
 			Dimension preferredSize = getPreferredSize();
@@ -300,6 +302,7 @@ public class KeyboardPane extends JComponent {
 			showPopup(e);
 		}
 
+		@Override
 		public void mouseDragged(MouseEvent e) {
 
 			Dimension preferredSize = getPreferredSize();
@@ -310,6 +313,7 @@ public class KeyboardPane extends JComponent {
 			setKey(getKey(x, y), y);
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (e.isControlDown() && !wasPressed) {
 				key = null;
@@ -546,6 +550,7 @@ public class KeyboardPane extends JComponent {
 			super(pitch, x, blackWidth, blackHeight);
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			g.setColor(Color.BLACK);
 			g.fillRect(x, 0, blackWidth, blackHeight);
@@ -577,6 +582,7 @@ public class KeyboardPane extends JComponent {
 			super(pitch, x, whiteWidth, whiteHeight);
 		}
 
+		@Override
 		public void paint(Graphics g) {
 			if (pressed) {
 				g.setColor(Color.LIGHT_GRAY);

@@ -33,13 +33,15 @@ public class ActivatorPlayer extends ActivateablePlayer<Activator> {
         super(activator);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         super.closeImpl();
 
         activating = false;
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         if (isOpen()) {
             Activator activator = getElement();
             if (isActive()) {
