@@ -35,6 +35,7 @@ public class StackVerticalLayout extends ViewLayout {
 		this.y = y - (y % grid);
 	}
 
+	@Override
 	protected void visit(View view, int index) {
 		changePosition(view, x, y);
 

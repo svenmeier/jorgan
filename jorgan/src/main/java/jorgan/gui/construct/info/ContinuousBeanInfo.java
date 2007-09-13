@@ -28,7 +28,8 @@ import jorgan.gui.construct.editor.MessageEditor;
  */
 public class ContinuousBeanInfo extends ElementBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("value", Continuous.class, DataEditor.class);

@@ -97,6 +97,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		}
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		textField.setText(format(value));
@@ -105,6 +106,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		return panel;
 	}
 
+	@Override
 	protected Object getEditedValue() {
 
 		Message message = null;
@@ -182,6 +184,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 		}
 	}
 
+	@Override
 	protected String format(Object value) {
 		Message message = (Message) value;
 		if (message == null) {
@@ -220,6 +223,7 @@ public class MessageEditor extends CustomEditor implements ElementAwareEditor,
 			super(deviceName);
 		}
 
+		@Override
 		public boolean messageRecorded(ShortMessage message) {
 			status = message.getCommand() | message.getChannel();
 			data1 = message.getData1();

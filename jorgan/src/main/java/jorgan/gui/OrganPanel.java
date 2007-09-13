@@ -456,6 +456,7 @@ public class OrganPanel extends JPanel {
 	 */
 	private class InternalOrganListener extends OrganAdapter {
 
+		@Override
 		public void elementChanged(OrganEvent event) {
 			jorgan.disposition.Element element = event.getElement();
 
@@ -464,6 +465,7 @@ public class OrganPanel extends JPanel {
 			}
 		}
 
+		@Override
 		public void elementAdded(OrganEvent event) {
 
 			jorgan.disposition.Element element = event.getElement();
@@ -473,6 +475,7 @@ public class OrganPanel extends JPanel {
 			}
 		}
 
+		@Override
 		public void elementRemoved(OrganEvent event) {
 
 			jorgan.disposition.Element element = event.getElement();
@@ -585,6 +588,7 @@ public class OrganPanel extends JPanel {
 			super(outer, writer);
 		}
 
+		@Override
 		protected JComponent resolveComponent(Object key) {
 			if (KEY_CONSOLES.equals(key)) {
 				return inner;
@@ -593,6 +597,7 @@ public class OrganPanel extends JPanel {
 			}
 		}
 
+		@Override
 		protected Dockable resolveDockable(Object key) {
 			if (KEY_KEYBOARD.equals(key)) {
 				return keyboardDockable;
@@ -616,6 +621,7 @@ public class OrganPanel extends JPanel {
 	}
 
 	private class BordererDockingPane extends DockingPane {
+		@Override
 		protected Dock createDockImpl() {
 			Dock dock = super.createDockImpl();
 			dock.setBorder(new Eclipse3Border());

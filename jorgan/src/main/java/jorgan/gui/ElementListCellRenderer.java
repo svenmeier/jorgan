@@ -55,6 +55,7 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 		return (Element) object;
 	}
 
+	@Override
 	protected String getComment(Object value, int index, boolean isSelected) {
 		Element element = getElement(value);
 
@@ -81,6 +82,7 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	private class WrappedRenderer extends DefaultListCellRenderer {
 		private StringBuffer text = new StringBuffer();
 
+		@Override
 		public Component getListCellRendererComponent(JList list, Object value,
 				int index, boolean isSelected, boolean cellHasFocus) {
 

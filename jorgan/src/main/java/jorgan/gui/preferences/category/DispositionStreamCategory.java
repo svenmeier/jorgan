@@ -56,6 +56,7 @@ public class DispositionStreamCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -76,15 +77,18 @@ public class DispositionStreamCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
 
+	@Override
 	protected void read() {
 		recentMaxSpinner.setValue(recentMax.getValue());
 		historySizeSpinner.setValue(historySize.getValue());
 	}
 
+	@Override
 	protected void write() {
 		recentMax.setValue(recentMaxSpinner.getValue());
 		historySize.setValue(historySizeSpinner.getValue());

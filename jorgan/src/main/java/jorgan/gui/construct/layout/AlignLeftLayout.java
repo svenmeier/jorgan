@@ -26,10 +26,12 @@ public class AlignLeftLayout extends ViewLayout {
 
 	private int x;
 
+	@Override
 	protected void init(View pressed, List<View> views) {
 		x = pressed.getX();
 	}
 
+	@Override
 	protected void visit(View view, int index) {
 		changePosition(view, x, view.getY());
 	}

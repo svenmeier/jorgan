@@ -48,41 +48,51 @@ public class DelayedSound extends SoundWrapper {
         this.delay = delay;
     }
 
-    public void noteOff(final int pitch) {
+    @Override
+	public void noteOff(final int pitch) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.noteOff(pitch);
             }
         };
     }
 
-    public void noteOn(final int pitch, final int velocity) {
+    @Override
+	public void noteOn(final int pitch, final int velocity) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.noteOn(pitch, velocity);
             }
         };
     }
 
-    public void setCutoff(final int cutoff) {
+    @Override
+	public void setCutoff(final int cutoff) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setCutoff(cutoff);
             }
         };
     }
 
-    public void setModulation(final int amplitude, final int frequency) {
+    @Override
+	public void setModulation(final int amplitude, final int frequency) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setModulation(amplitude, frequency);
             }
         };
     }
 
-    public void setPan(final int pan) {
+    @Override
+	public void setPan(final int pan) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setPan(pan);
             }
         };
@@ -90,31 +100,38 @@ public class DelayedSound extends SoundWrapper {
 
     public void setBend(final int bend) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setPitchBend(bend);
             }
         };
     }
 
-    public void setProgram(final int program) {
+    @Override
+	public void setProgram(final int program) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setProgram(program);
             }
         };
     }
 
-    public void setVolume(final int volume) {
+    @Override
+	public void setVolume(final int volume) {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.setVolume(volume);
             }
         };
     }
 
-    public void stop() {
+    @Override
+	public void stop() {
         new DelayedInvocation() {
-            public void now() {
+            @Override
+			public void now() {
                 sound.stop();
             }
         };

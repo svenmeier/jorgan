@@ -166,10 +166,12 @@ public class MemoryPanel extends DockedPanel {
 			return memory.getTitle(rowIndex);
 		}
 
+		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return (columnIndex == 1);
 		}
 
+		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			memory.setTitle(rowIndex, (String) aValue);
 		}

@@ -23,7 +23,8 @@ package jorgan.gui.construct.info;
  */
 public class SequenceBeanInfo extends ContinuousBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
     }
 }

@@ -62,6 +62,7 @@ public class SoundSourcePlayer extends Player<SoundSource> {
 	/**
 	 * Aquire soundFactory.
 	 */
+	@Override
 	protected void openImpl() {
 		SoundSource soundSource = getElement();
 
@@ -87,6 +88,7 @@ public class SoundSourcePlayer extends Player<SoundSource> {
 	/**
 	 * Release soundFactory.
 	 */
+	@Override
 	protected void closeImpl() {
 		if (factory != null) {
 			factory.close();
@@ -96,6 +98,7 @@ public class SoundSourcePlayer extends Player<SoundSource> {
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 		SoundSource soundSource = getElement();
 
@@ -158,6 +161,7 @@ public class SoundSourcePlayer extends Player<SoundSource> {
 			initCount++;
 		}
 
+		@Override
 		public void stop() {
 			initCount--;
 

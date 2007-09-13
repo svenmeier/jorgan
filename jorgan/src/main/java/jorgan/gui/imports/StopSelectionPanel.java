@@ -154,11 +154,13 @@ public class StopSelectionPanel extends JPanel {
 			this.columnNames = columnNames;
 		}
 		
+		@Override
 		public Class<?> getColumnClass(int columnIndex) {
 
 			return String.class;
 		}
 
+		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}

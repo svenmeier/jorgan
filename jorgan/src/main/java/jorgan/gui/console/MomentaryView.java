@@ -38,6 +38,7 @@ public abstract class MomentaryView<E extends Momentary> extends View<E> {
 		super(momentary);
 	}
 
+	@Override
 	public void keyPressed(KeyEvent ev) {
 
 		Momentary momentary = getElement();
@@ -48,6 +49,7 @@ public abstract class MomentaryView<E extends Momentary> extends View<E> {
 		}
 	}
 
+	@Override
 	public void keyReleased(KeyEvent ev) {
 
 		Momentary momentary = getElement();
@@ -81,6 +83,7 @@ public abstract class MomentaryView<E extends Momentary> extends View<E> {
 	 */
 	public abstract void buttonReleased();
 
+	@Override
 	public void paint(Graphics2D g) {
 		super.paint(g);
 

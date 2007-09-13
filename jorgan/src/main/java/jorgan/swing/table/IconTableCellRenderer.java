@@ -97,6 +97,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	/**
 	 * Overriden for icon specific behaviour.
 	 */
+	@Override
 	protected void setValue(Object value) {
 
 		Icon icon = defaultIcon;

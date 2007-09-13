@@ -72,11 +72,13 @@ public class VirtualKeyboard extends JPanel {
 		 */
 		private static Keyboard keyboard;
 
+		@Override
 		public MidiDevice.Info[] getDeviceInfo() {
 
 			return new MidiDevice.Info[] { INFO };
 		}
 
+		@Override
 		public MidiDevice getDevice(MidiDevice.Info info) {
 			if (INFO == info) {
 				return getKeyboard();
@@ -102,6 +104,7 @@ public class VirtualKeyboard extends JPanel {
 				super(Provider.INFO, false, true);
 			}
 
+			@Override
 			protected synchronized void loopbackMessage(MidiMessage message,
 					long timestamp) {
 				super.loopbackMessage(message, timestamp);

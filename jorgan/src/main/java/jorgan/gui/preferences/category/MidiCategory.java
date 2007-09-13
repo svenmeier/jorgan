@@ -58,6 +58,7 @@ public class MidiCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -96,10 +97,12 @@ public class MidiCategory extends JOrganCategory {
 		return panel;
 	}
 	
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
 
+	@Override
 	protected void read() {
 		sendAllNotesOffCheckBox.setSelected((Boolean) sendAllNotesOff
 				.getValue());
@@ -107,6 +110,7 @@ public class MidiCategory extends JOrganCategory {
 		monitorMaxSpinner.setValue(monitorMax.getValue());
 	}
 
+	@Override
 	protected void write() {
 		sendAllNotesOff.setValue(sendAllNotesOffCheckBox.isSelected());
 

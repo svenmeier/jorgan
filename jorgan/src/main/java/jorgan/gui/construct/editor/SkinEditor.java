@@ -33,17 +33,20 @@ public class SkinEditor extends PropertyEditorSupport {
         tags = SkinManager.instance().getSkinNames();
     }
 
-    public String[] getTags() {
+    @Override
+	public String[] getTags() {
 
         return tags;
     }
 
-    public String getAsText() {
+    @Override
+	public String getAsText() {
 
         return (String) getValue();
     }
 
-    public void setAsText(String string) {
+    @Override
+	public void setAsText(String string) {
 
         setValue(string);
     }

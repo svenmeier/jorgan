@@ -38,13 +38,15 @@ public class TremulantPlayer extends ActivateablePlayer<Tremulant> implements
         super(tremulant);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
         super.closeImpl();
 
         sounds.clear();
     }
 
-    public void elementChanged(OrganEvent event) {
+    @Override
+	public void elementChanged(OrganEvent event) {
         super.elementChanged(event);
 
         if (isOpen()) {
@@ -82,7 +84,8 @@ public class TremulantPlayer extends ActivateablePlayer<Tremulant> implements
             fireOutputProduced();
         }
 
-        public void stop() {
+        @Override
+		public void stop() {
             super.stop();
 
             sounds.remove(this);

@@ -138,10 +138,12 @@ public class ReferencesPanel extends DockedPanel {
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setModel(referencesModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
+			@Override
 			protected OrganSession getOrgan() {
 				return session;
 			}
 
+			@Override
 			protected Element getElement(Object object) {
 				Row row = (Row) object;
 

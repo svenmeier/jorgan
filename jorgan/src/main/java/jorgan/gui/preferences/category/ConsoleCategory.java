@@ -98,6 +98,7 @@ public class ConsoleCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -203,10 +204,12 @@ public class ConsoleCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return GuiCategory.class;
 	}
 
+	@Override
 	protected void read() {
 
 		gridSpinner.setValue(grid.getValue());
@@ -223,6 +226,7 @@ public class ConsoleCategory extends JOrganCategory {
 		shortcutFontSelector.setSelectedFont((Font) shortcutFont.getValue());
 	}
 
+	@Override
 	protected void write() {
 
 		grid.setValue(gridSpinner.getValue());

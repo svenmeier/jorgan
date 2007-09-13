@@ -64,9 +64,11 @@ public class DebugPanel extends JPanel {
 	}
 
 	private class InternalHandler extends Handler {
+		@Override
 		public void flush() {
 		}
 
+		@Override
 		public void publish(LogRecord record) {
 			String msg = getFormatter().format(record);
 
@@ -74,6 +76,7 @@ public class DebugPanel extends JPanel {
 			textArea.setCaretPosition(textArea.getDocument().getLength());
 		}
 
+		@Override
 		public void close() throws SecurityException {
 		}
 	}

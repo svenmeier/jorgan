@@ -32,7 +32,8 @@ public class SpreadVerticalLayout extends ViewLayout {
 
     private int count;
 
-    protected void init(View pressed, List<View> views) {
+    @Override
+	protected void init(View pressed, List<View> views) {
 
         Collections.sort(views, new Comparator<View>() {
             public int compare(View view1, View view2) {
@@ -49,7 +50,8 @@ public class SpreadVerticalLayout extends ViewLayout {
         height = bottom.getY() + bottom.getHeight() / 2 - y;
     }
 
-    protected void visit(View view, int index) {
+    @Override
+	protected void visit(View view, int index) {
         changePosition(view, view.getX(), y + (height * index / (count - 1))
                 - view.getHeight() / 2);
     }

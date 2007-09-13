@@ -86,7 +86,8 @@ public class CheckedTreeCell extends AbstractCellEditor implements TreeCellEdito
     	return value;
     }
 
-    public boolean shouldSelectCell(EventObject anEvent) {
+    @Override
+	public boolean shouldSelectCell(EventObject anEvent) {
     	return true;
     }
     

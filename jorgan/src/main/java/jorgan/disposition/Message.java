@@ -79,7 +79,8 @@ public class Message implements Serializable {
         return isWildcard(data1) || isWildcard(data2);
     }
 
-    public boolean equals(Object object) {
+    @Override
+	public boolean equals(Object object) {
         if (object == null || !(object instanceof Message)) {
             return false;
         }
@@ -88,7 +89,8 @@ public class Message implements Serializable {
         return (this.status == message.status && this.data1 == message.data1 && this.data2 == message.data2);
     }
 
-    public int hashCode() {
+    @Override
+	public int hashCode() {
         return (status + data1 + data2);
     }
 

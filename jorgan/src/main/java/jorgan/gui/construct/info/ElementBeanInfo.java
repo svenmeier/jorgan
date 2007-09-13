@@ -37,6 +37,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 
 	private List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
 
+	@Override
 	public final PropertyDescriptor[] getPropertyDescriptors() {
 
 		descriptors.clear();
@@ -46,6 +47,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		return descriptors.toArray(new PropertyDescriptor[descriptors.size()]);
 	}
 
+	@Override
 	public int getDefaultPropertyIndex() {
 		return 0;
 	}

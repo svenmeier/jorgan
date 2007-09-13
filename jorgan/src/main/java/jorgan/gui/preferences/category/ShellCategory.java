@@ -65,6 +65,7 @@ public class ShellCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -118,10 +119,12 @@ public class ShellCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
 	}
 
+	@Override
 	protected void read() {
 		encodingDefaultRadioButton.setSelected((Boolean) useDefaultEncoding
 				.getValue());
@@ -129,6 +132,7 @@ public class ShellCategory extends JOrganCategory {
 		encodingComboBox.setSelectedItem(encoding.getValue());
 	}
 
+	@Override
 	protected void write() {
 		useDefaultEncoding.setValue(encodingDefaultRadioButton.isSelected());
 		encoding.setValue(encodingComboBox.getSelectedItem());

@@ -28,6 +28,7 @@ import jorgan.gui.construct.editor.TransposeEditor;
  */
 public class KeyableBeanInfo extends ActivateableBeanInfo {
 
+	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 

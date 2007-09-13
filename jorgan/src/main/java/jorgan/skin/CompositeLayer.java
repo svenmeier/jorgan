@@ -53,7 +53,8 @@ public class CompositeLayer extends Layer {
     	return Collections.unmodifiableList(layers);
     }
     
-    public Dimension getSize() {
+    @Override
+	public Dimension getSize() {
         Dimension dimension = super.getSize();
 
         for (int l = 0; l < layers.size(); l++) {
@@ -67,7 +68,8 @@ public class CompositeLayer extends Layer {
         return dimension;
     }
 
-    public void setView(View view) {
+    @Override
+	public void setView(View view) {
         super.setView(view);
 
         for (int l = 0; l < layers.size(); l++) {
@@ -77,7 +79,8 @@ public class CompositeLayer extends Layer {
         }
     }
 
-    public boolean isPressable(int x, int y, Dimension dimension) {
+    @Override
+	public boolean isPressable(int x, int y, Dimension dimension) {
         if (super.isPressable(x, y, dimension)) {
             return true;
         }
@@ -91,7 +94,8 @@ public class CompositeLayer extends Layer {
         return false;
     }
 
-    public void mousePressed(int x, int y, Dimension size) {
+    @Override
+	public void mousePressed(int x, int y, Dimension size) {
         super.mousePressed(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
@@ -101,7 +105,8 @@ public class CompositeLayer extends Layer {
         }
     }
 
-    public void mouseDragged(int x, int y, Dimension size) {
+    @Override
+	public void mouseDragged(int x, int y, Dimension size) {
         super.mouseDragged(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
@@ -111,7 +116,8 @@ public class CompositeLayer extends Layer {
         }
     }
 
-    public void mouseReleased(int x, int y, Dimension size) {
+    @Override
+	public void mouseReleased(int x, int y, Dimension size) {
         super.mouseReleased(x, y, size);
 
         for (int l = 0; l < layers.size(); l++) {
@@ -121,7 +127,8 @@ public class CompositeLayer extends Layer {
         }
     }
 
-    public void draw(Graphics2D g, Dimension dimension) {
+    @Override
+	public void draw(Graphics2D g, Dimension dimension) {
         super.draw(g, dimension);
 
         drawChildren(g, dimension);
@@ -135,7 +142,8 @@ public class CompositeLayer extends Layer {
         }
     }
 
-    public Object clone() {
+    @Override
+	public Object clone() {
         CompositeLayer clone = (CompositeLayer) super.clone();
 
         clone.layers = new ArrayList<Layer>();

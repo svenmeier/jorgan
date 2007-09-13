@@ -26,7 +26,8 @@ import jorgan.gui.construct.editor.ShortcutEditor;
  */
 public class MomentaryBeanInfo extends ElementBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("shortcut", Momentary.class, ShortcutEditor.class);

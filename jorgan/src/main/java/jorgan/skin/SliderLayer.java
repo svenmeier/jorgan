@@ -47,6 +47,7 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 		return direction;
 	}
 
+	@Override
 	protected void drawChildren(Graphics2D g, Dimension dimension) {
 		if (getChildCount() > 0) {
 			double position = 0.0d;
@@ -69,10 +70,12 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 		}
 	}
 
+	@Override
 	public void mousePressed(int x, int y, Dimension size) {
 		mouseDragged(x, y, size);
 	}
 
+	@Override
 	public void mouseDragged(int x, int y, Dimension size) {
 		Rectangle rectangle = getUnpaddedBounds(size);
 
@@ -102,12 +105,14 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 		}
 	}
 
+	@Override
 	public void mouseReleased(int x, int y, Dimension size) {
 		if (view instanceof ContinuousView) {
 			((ContinuousView) view).sliderReleased();
 		}
 	}
 
+	@Override
 	public Object clone() {
 		return super.clone();
 	}

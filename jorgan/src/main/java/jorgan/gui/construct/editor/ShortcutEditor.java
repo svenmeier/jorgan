@@ -56,6 +56,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		panel.add(shortcutField, BorderLayout.CENTER);
 	}
 	
+	@Override
 	public String format(Object value) {
 
 		Shortcut shortcut = (Shortcut) value;
@@ -67,6 +68,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		}
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		shortcutField.setShortcut((Shortcut) value);
@@ -74,6 +76,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		return panel;
 	}
 
+	@Override
 	public Object getEditedValue() {
 		return shortcutField.getShortcut();
 	}
@@ -92,6 +95,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 			setEnabled(false);
 		}
 
+		@Override
 		public void addNotify() {
 			super.addNotify();
 
@@ -99,6 +103,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 					.addKeyEventPostProcessor(this);
 		}
 
+		@Override
 		public void removeNotify() {
 			KeyboardFocusManager.getCurrentKeyboardFocusManager()
 					.removeKeyEventPostProcessor(this);

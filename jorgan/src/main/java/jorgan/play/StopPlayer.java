@@ -39,7 +39,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
         super(stop);
     }
 
-    protected void closeImpl() {
+    @Override
+	protected void closeImpl() {
 
         super.closeImpl();
 
@@ -48,7 +49,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
         removeProblem(warningProgram);
     }
 
-    protected void activated() {
+    @Override
+	protected void activated() {
 
         Stop stop = getElement();
 
@@ -105,7 +107,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
         super.activated();
     }
 
-    protected void activateKey(int pitch, int velocity) {
+    @Override
+	protected void activateKey(int pitch, int velocity) {
         if (sound != null) {
             Stop stop = getElement();
             if (stop.getVelocity() != 0) {
@@ -118,7 +121,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
         }
     }
 
-    protected void deactivated() {
+    @Override
+	protected void deactivated() {
         super.deactivated();
 
         sound.stop();
@@ -129,7 +133,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
         removeProblem(warningProgram);
     }
 
-    protected void deactivateKey(int pitch) {
+    @Override
+	protected void deactivateKey(int pitch) {
         if (sound != null) {
             sound.noteOff(pitch);
 

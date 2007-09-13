@@ -44,6 +44,7 @@ public class StyleEditor extends PropertyEditorSupport implements
 		}
 	}
 
+	@Override
 	public String[] getTags() {
 
 		String[] tags = new String[0];
@@ -58,6 +59,7 @@ public class StyleEditor extends PropertyEditorSupport implements
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		String style = (String) getValue();
@@ -69,6 +71,7 @@ public class StyleEditor extends PropertyEditorSupport implements
 		}
 	}
 
+	@Override
 	public void setAsText(String text) {
 
 		if (text == null || "".equals(text)) {

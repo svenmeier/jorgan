@@ -311,6 +311,7 @@ public class MidiMonitor extends DockedPanel {
 			this.columnNames = columnNames;
 		}
 
+		@Override
 		public String getColumnName(int column) {
 			return columnNames[column];
 		}
@@ -467,6 +468,7 @@ public class MidiMonitor extends DockedPanel {
 			setHorizontalAlignment(alignment);
 		}
 
+		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {

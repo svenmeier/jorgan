@@ -56,6 +56,7 @@ public class MergeInput {
 		this.channel = channel;
 	}
 
+	@Override
 	public String toString() {
 		return channel + ":" + device;
 	}

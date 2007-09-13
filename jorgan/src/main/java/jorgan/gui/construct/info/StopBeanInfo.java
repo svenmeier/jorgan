@@ -27,7 +27,8 @@ import jorgan.gui.construct.editor.DataEditor;
  */
 public class StopBeanInfo extends KeyableBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("program", Stop.class, DataEditor.class);

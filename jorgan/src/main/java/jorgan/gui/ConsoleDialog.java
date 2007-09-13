@@ -152,10 +152,12 @@ public class ConsoleDialog extends JDialog {
 			timer = new Timer(50, this);
 		}
 
+		@Override
 		public void mousePressed(MouseEvent e) {
 			checkPopup(e);
 		}
 
+		@Override
 		public void mouseReleased(MouseEvent e) {
 			checkPopup(e);
 		}
@@ -166,12 +168,14 @@ public class ConsoleDialog extends JDialog {
 			}
 		}
 
+		@Override
 		public void mouseExited(MouseEvent e) {
 			if (timer.isRunning()) {
 				timer.stop();
 			}
 		}
 
+		@Override
 		public void mouseMoved(MouseEvent e) {
 
 			if (popup.isVisible()) {

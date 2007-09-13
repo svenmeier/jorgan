@@ -30,7 +30,8 @@ import jorgan.gui.construct.editor.SoundFactoryTypeEditor;
  */
 public class SoundSourceBeanInfo extends ElementBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("delay", SoundSource.class, DelayEditor.class);

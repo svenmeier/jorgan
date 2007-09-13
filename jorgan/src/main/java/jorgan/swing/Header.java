@@ -75,14 +75,16 @@ public class Header extends JLabel {
    * Overriden to replace empty or <code>null</code> text with a single
    * whitespace. This prevents this header to shrink.
    */
-  public void setText(String text) {
+  @Override
+public void setText(String text) {
     if (text == null || "".equals(text)) {
       text = " ";
     }
     super.setText(text);
   }
   
-  public void paintComponent(Graphics g) {
+  @Override
+public void paintComponent(Graphics g) {
     Graphics2D graphics = (Graphics2D)g;
     
     int   width      = getWidth();

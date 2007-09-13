@@ -95,6 +95,7 @@ public class ColorSelector extends JPanel {
 		setSelectedColor(Color.black);
 	}
 
+	@Override
 	public void setEnabled(boolean enabled) {
 		button.setEnabled(enabled);
 	}

@@ -57,14 +57,16 @@ public class OrganSession {
         this.selectionModel = new ElementSelectionModel();
         this.organ.addOrganListener((OrganListener) Spin
                 .over(new OrganAdapter() {
-                    public void elementAdded(OrganEvent event) {
+                    @Override
+					public void elementAdded(OrganEvent event) {
 
                         Element element = event.getElement();
 
                         selectionModel.setSelectedElement(element);
                     }
 
-                    public void elementRemoved(OrganEvent event) {
+                    @Override
+					public void elementRemoved(OrganEvent event) {
 
                         Element element = event.getElement();
 

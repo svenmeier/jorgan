@@ -47,6 +47,7 @@ public class SoundfontReader extends RiffReader {
 	 * @param chunk
 	 *            riffChunk to check
 	 */
+	@Override
 	protected void checkFormat(RiffChunk chunk) throws SoundfontFormatException {
 		try {
 			getPresets(chunk);

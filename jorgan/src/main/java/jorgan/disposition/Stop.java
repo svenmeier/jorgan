@@ -57,6 +57,7 @@ public class Stop extends Keyable {
 
 	private int bend = DEFAULT_BEND;
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return SoundEffect.class.isAssignableFrom(clazz)
 				|| SoundSource.class.isAssignableFrom(clazz);

@@ -45,6 +45,7 @@ public class ZoomEditor extends CustomEditor {
 		editor.getTextField().setBorder(null);
 	}
 
+	@Override
 	public String format(Object value) {
 		if (value == null) {
 			return "";
@@ -53,6 +54,7 @@ public class ZoomEditor extends CustomEditor {
 		}
 	}
 
+	@Override
 	public Component getCustomEditor(Object value) {
 
 		spinner.setValue(Math.round(100 * ((Number)value).floatValue()));
@@ -60,6 +62,7 @@ public class ZoomEditor extends CustomEditor {
 		return spinner;
 	}
 
+	@Override
 	public Object getEditedValue() {
 
 		try {

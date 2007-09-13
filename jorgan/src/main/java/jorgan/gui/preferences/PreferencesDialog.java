@@ -65,6 +65,7 @@ public class PreferencesDialog extends StandardDialog {
 		addCancelAction();
 	}
 
+	@Override
 	public void onOK() {
 		categoriesPanel.applyAll();
 

@@ -41,6 +41,7 @@ public class MemoryView extends ContinuousView<Memory> {
 		super(memory);
 	}
 
+	@Override
 	protected void initTexts() {
 		super.initTexts();
 

@@ -46,16 +46,19 @@ public class InitiatorView extends MomentaryView<Initiator> {
 		super(initiator);
 	}
 
+	@Override
 	protected void shortcutReleased() {
 		Initiator initiator = getElement();
 
 		initiator.initiate();
 	}
 
+	@Override
 	public boolean isButtonPressed() {
 		return pressed;
 	}
 
+	@Override
 	public void buttonPressed() {
 		getElement().initiate();
 
@@ -63,11 +66,13 @@ public class InitiatorView extends MomentaryView<Initiator> {
 		repaint();
 	}
 
+	@Override
 	public void buttonReleased() {
 		pressed = false;
 		repaint();
 	}
 
+	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
@@ -103,6 +108,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 
 	private Layer createBorderLayer(final boolean pressed) {
 		Layer layer = new Layer() {
+			@Override
 			protected void draw(Graphics2D g, int x, int y, int width,
 					int height) {
 

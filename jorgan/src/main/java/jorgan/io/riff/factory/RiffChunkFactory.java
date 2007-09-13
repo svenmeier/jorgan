@@ -27,6 +27,7 @@ import jorgan.io.riff.RiffChunk;
  */
 public class RiffChunkFactory extends ListChunkFactory {
 
+	@Override
 	protected ListChunk createChunk(String id, int dataLength, String type) {
 		return new RiffChunk(id, dataLength, type);
 	}

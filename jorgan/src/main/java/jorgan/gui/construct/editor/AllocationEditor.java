@@ -43,10 +43,12 @@ public class AllocationEditor extends PropertyEditorSupport {
 		this.tags = tags;
 	}
 
+	@Override
 	public String[] getTags() {
 		return tags;
 	}
 
+	@Override
 	public String getAsText() {
 
 		Integer value = (Integer) getValue();
@@ -57,6 +59,7 @@ public class AllocationEditor extends PropertyEditorSupport {
 		}
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		for (int t = 0; t < tags.length; t++) {

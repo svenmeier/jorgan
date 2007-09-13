@@ -45,6 +45,7 @@ public class Keyboard extends Element {
 
 	private int threshold = 0;
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return Keyable.class.isAssignableFrom(clazz);
 	}

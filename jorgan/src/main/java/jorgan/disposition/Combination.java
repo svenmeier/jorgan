@@ -23,14 +23,17 @@ import java.util.Arrays;
 
 public class Combination extends Initiator {
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return Activateable.class.isAssignableFrom(clazz);
 	}
 
+	@Override
 	protected Reference createReference(Element element) {
 		return new CombinationReference((Activateable) element);
 	}
 
+	@Override
 	public void initiate() {
 		for (Captor captor : getReferrer(Captor.class)) {
 			if (captor.isActive()) {

@@ -26,6 +26,7 @@ import jorgan.gui.construct.editor.StringEditor;
  */
 public class MemoryBeanInfo extends ContinuousBeanInfo {
 
+	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 

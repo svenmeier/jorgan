@@ -98,6 +98,7 @@ public class Key implements Comparable, Serializable {
 		return compareTo(key) >= 0;
 	}
 
+	@Override
 	public boolean equals(Object key) {
 		if (key == null || !(key instanceof Key)) {
 			return false;
@@ -105,6 +106,7 @@ public class Key implements Comparable, Serializable {
 		return this.pitch == ((Key) key).pitch;
 	}
 
+	@Override
 	public int hashCode() {
 		return pitch;
 	}

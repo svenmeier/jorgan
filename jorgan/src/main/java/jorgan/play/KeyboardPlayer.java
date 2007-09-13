@@ -65,6 +65,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		super(keyboard);
 	}
 
+	@Override
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
 
@@ -87,6 +88,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
+	@Override
 	protected void closeImpl() {
 		if (in != null) {
 			if (transmitter != null) {
@@ -103,6 +105,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 		Keyboard keyboard = getElement();
 
@@ -114,6 +117,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
+	@Override
 	protected void input(ShortMessage message) {
 		Keyboard keyboard = getElement();
 

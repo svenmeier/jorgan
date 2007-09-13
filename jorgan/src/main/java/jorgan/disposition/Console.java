@@ -35,10 +35,12 @@ public class Console extends Element {
 
 	private String screen;
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return Element.class.isAssignableFrom(clazz) && Console.class != clazz;
 	}
 
+	@Override
 	protected Reference createReference(Element element) {
 		return new ConsoleReference(element);
 	}

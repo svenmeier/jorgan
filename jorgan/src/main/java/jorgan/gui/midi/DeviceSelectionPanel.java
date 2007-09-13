@@ -90,6 +90,7 @@ public class DeviceSelectionPanel extends JPanel {
 		}
 
 		return new DefaultTreeModel(root, true) {
+			@Override
 			public void valueForPathChanged(TreePath path, Object newValue) {
 				if (Boolean.TRUE.equals(newValue)) {
 					DefaultMutableTreeNode node = (DefaultMutableTreeNode) path
@@ -168,6 +169,7 @@ public class DeviceSelectionPanel extends JPanel {
 
 	private class MidiDeviceCell extends CheckedTreeCell {
 
+		@Override
 		protected boolean isChecked(Object value) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 

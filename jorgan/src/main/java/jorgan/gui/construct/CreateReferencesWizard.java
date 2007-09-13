@@ -68,6 +68,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	 * 
 	 * @return <code>true</code> if stops are selected
 	 */
+	@Override
 	public boolean allowsFinish() {
 		return referencesTo.size() > 0 || referencedFrom.size() > 0;
 	}
@@ -75,6 +76,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	/**
 	 * Finish.
 	 */
+	@Override
 	protected boolean finishImpl() {
 
 		for (int t = 0; t < referencesTo.size(); t++) {
@@ -104,10 +106,12 @@ public class CreateReferencesWizard extends BasicWizard {
 					.getReferenceToCandidates(element));
 		}
 
+		@Override
 		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
+		@Override
 		protected void changing() {
 			referencesTo = elementsSelectionPanel.getSelectedElements();
 
@@ -129,10 +133,12 @@ public class CreateReferencesWizard extends BasicWizard {
 					.getReferencedFromCandidates(element));
 		}
 
+		@Override
 		protected JComponent getComponentImpl() {
 			return elementsSelectionPanel;
 		}
 
+		@Override
 		protected void changing() {
 			referencedFrom = elementsSelectionPanel.getSelectedElements();
 

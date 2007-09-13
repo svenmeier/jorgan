@@ -26,7 +26,8 @@ import jorgan.gui.construct.editor.DataEditor;
  */
 public class SwellBeanInfo extends ContinuousBeanInfo {
 
-    protected void registerProperties() {
+    @Override
+	protected void registerProperties() {
         super.registerProperties();
 
         add("volume", Swell.class, DataEditor.class);

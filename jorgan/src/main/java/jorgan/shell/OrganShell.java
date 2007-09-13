@@ -214,6 +214,7 @@ public class OrganShell implements UI {
 	 * The command for opening of a disposition.
 	 */
 	private class OpenCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "open";
 		}
@@ -231,6 +232,7 @@ public class OrganShell implements UI {
 	 * The command for closing of a disposition.
 	 */
 	private class CloseCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "close";
 		}
@@ -255,6 +257,7 @@ public class OrganShell implements UI {
 	 * The command to save the current disposition.
 	 */
 	private class SaveCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "save";
 		}
@@ -276,6 +279,7 @@ public class OrganShell implements UI {
 	 * The help command.
 	 */
 	private class HelpCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "help";
 		}
@@ -306,6 +310,7 @@ public class OrganShell implements UI {
 	 * The command to show/change current encoding.
 	 */
 	private class EncodingCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "encoding";
 		}
@@ -338,6 +343,7 @@ public class OrganShell implements UI {
 	 * The command to show recent dispositions and opening a recent disposition.
 	 */
 	private class RecentCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "recent";
 		}
@@ -376,6 +382,7 @@ public class OrganShell implements UI {
 	 * The command to exit jOrgan.
 	 */
 	private class ExitCommand extends AbstractCommand {
+		@Override
 		public String getKey() {
 			return "exit";
 		}

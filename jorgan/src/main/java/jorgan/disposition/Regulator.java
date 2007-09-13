@@ -23,11 +23,13 @@ package jorgan.disposition;
  */
 public class Regulator extends Continuous {
 
-    protected boolean canReference(Class clazz) {
+    @Override
+	protected boolean canReference(Class clazz) {
         return Activateable.class.isAssignableFrom(clazz);
     }
     
-    protected boolean canReferenceDuplicates() {
+    @Override
+	protected boolean canReferenceDuplicates() {
         return true;
     }
 }

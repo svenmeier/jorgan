@@ -46,6 +46,7 @@ public class AppCategory extends JOrganCategory {
 		config.read(this);
 	}
 
+	@Override
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
@@ -61,11 +62,13 @@ public class AppCategory extends JOrganCategory {
 		return panel;
 	}
 
+	@Override
 	protected void read() {
 		openRecentOnStartupCheckBox.setSelected((Boolean) openRecentOnStartup
 				.getValue());
 	}
 
+	@Override
 	protected void write() {
 		openRecentOnStartup.setValue(openRecentOnStartupCheckBox.isSelected());
 	}

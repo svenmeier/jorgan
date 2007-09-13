@@ -29,6 +29,7 @@ public class ScreenEditor extends PropertyEditorSupport {
 
 	private String[] tags;
 
+	@Override
 	public String[] getTags() {
 		if (tags == null) {
 			GraphicsEnvironment environment = GraphicsEnvironment
@@ -44,11 +45,13 @@ public class ScreenEditor extends PropertyEditorSupport {
 		return tags;
 	}
 	
+	@Override
 	public String getAsText() {
 
 		return (String) getValue();
 	}
 
+	@Override
 	public void setAsText(String string) {
 
 		setValue(string);

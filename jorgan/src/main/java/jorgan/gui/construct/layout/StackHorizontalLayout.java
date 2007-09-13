@@ -34,12 +34,14 @@ public class StackHorizontalLayout extends ViewLayout {
 		this.grid = grid;
 	}
 
+	@Override
 	protected void init(View pressed, List<View> views) {
 
 		x = pressed.getX() - (x % grid);
 		y = pressed.getY() - (y % grid);
 	}
 
+	@Override
 	protected void visit(View view, int index) {
 		changePosition(view, x, y);
 

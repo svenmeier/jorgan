@@ -26,11 +26,13 @@ public class AlignTopLayout extends ViewLayout {
 
     private int y;
 
-    protected void init(View pressed, List<View> views) {
+    @Override
+	protected void init(View pressed, List<View> views) {
         y = pressed.getY();
     }
 
-    protected void visit(View view, int index) {
+    @Override
+	protected void visit(View view, int index) {
         changePosition(view, view.getX(), y);
     }
 }

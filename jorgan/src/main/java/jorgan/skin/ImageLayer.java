@@ -61,7 +61,8 @@ public class ImageLayer extends Layer {
      * 
      * @return the image's height
      */
-    protected int calcHeight() {
+    @Override
+	protected int calcHeight() {
         return image.getHeight(null);
     }
 
@@ -70,11 +71,13 @@ public class ImageLayer extends Layer {
      * 
      * @return the image's width
      */
-    protected int calcWidth() {
+    @Override
+	protected int calcWidth() {
         return image.getWidth(null);
     }
 
-    public void setView(View view) {
+    @Override
+	public void setView(View view) {
         super.setView(view);
         
         if (image == null) {
@@ -82,7 +85,8 @@ public class ImageLayer extends Layer {
         }
     }
 
-    protected void draw(Graphics2D g, int x, int y, int width, int height) {
+    @Override
+	protected void draw(Graphics2D g, int x, int y, int width, int height) {
 
         if (width == calcWidth() && height == calcHeight()
                 || border.equals(ZERO_BORDER)) {
@@ -134,7 +138,8 @@ public class ImageLayer extends Layer {
         g.drawImage(image, dx1, dy1, dx2, dy2, sx1, sy1, sx2, sy2, null);
     }
     
-    public Object clone() {
+    @Override
+	public Object clone() {
         ImageLayer clone = (ImageLayer) super.clone();
 
         clone.border = (Insets) border.clone();

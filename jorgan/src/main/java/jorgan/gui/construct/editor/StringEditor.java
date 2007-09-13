@@ -25,7 +25,8 @@ import java.beans.PropertyEditorSupport;
  */
 public class StringEditor extends PropertyEditorSupport {
 
-  public String getAsText() {
+  @Override
+public String getAsText() {
 
     String string = (String)getValue();
 
@@ -36,7 +37,8 @@ public class StringEditor extends PropertyEditorSupport {
     }
   }
 
-  public void setAsText(String text) throws IllegalArgumentException {
+  @Override
+public void setAsText(String text) throws IllegalArgumentException {
     setValue(text);
   }
 }

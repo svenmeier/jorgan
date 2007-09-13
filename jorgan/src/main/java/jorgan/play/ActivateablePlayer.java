@@ -41,6 +41,7 @@ public abstract class ActivateablePlayer<E extends Activateable> extends Player<
 		super(activateable);
 	}
 
+	@Override
 	protected void closeImpl() {
 		super.closeImpl();
 
@@ -65,6 +66,7 @@ public abstract class ActivateablePlayer<E extends Activateable> extends Player<
 		return activations > 0 || activateable.isActive();
 	}
 
+	@Override
 	public void messageReceived(ShortMessage shortMessage) {
 		Activateable activateable = getElement();
 
@@ -91,6 +93,7 @@ public abstract class ActivateablePlayer<E extends Activateable> extends Player<
 		}
 	}
 
+	@Override
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
 

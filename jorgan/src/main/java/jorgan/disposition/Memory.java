@@ -28,6 +28,7 @@ public class Memory extends Continuous {
 		Arrays.fill(titles, "");
 	}
 
+	@Override
 	protected boolean canReference(Class clazz) {
 		return Combination.class == clazz;
 	}
