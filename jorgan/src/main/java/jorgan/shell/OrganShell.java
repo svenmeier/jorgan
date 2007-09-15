@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.App;
+import jorgan.Info;
 import jorgan.UI;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
@@ -90,7 +90,7 @@ public class OrganShell implements UI {
 	 *            optional file that contains an organ
 	 */
 	public void display(File file) {
-		writeMessage("splash", App.getVersion());
+		writeMessage("splash", new Info().getVersion());
 
 		if (!useDefaultEncoding) {
 			try {

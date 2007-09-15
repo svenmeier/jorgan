@@ -31,7 +31,7 @@ import javax.swing.JPanel;
 import javax.swing.JWindow;
 import javax.swing.SwingUtilities;
 
-import jorgan.App;
+import jorgan.Info;
 import jorgan.swing.StandardDialog;
 
 /**
@@ -72,7 +72,7 @@ public class AboutPanel extends JPanel {
 
 	private void addVersion(Graphics2D g, int width, int height) {
 
-		String version = App.getVersion();
+		String version = new Info().getVersion();
 
 		g.setFont(new Font("Sans Serif", Font.PLAIN, 14));
 		g.setColor(Color.black);

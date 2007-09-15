@@ -5,7 +5,7 @@ package jorgan.io.disposition;
 
 import java.lang.reflect.Field;
 
-import jorgan.App;
+import jorgan.Info;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 
@@ -62,7 +62,7 @@ public class OrganConverter implements Converter {
 	 *            writer
 	 */
 	protected void marshallVersion(HierarchicalStreamWriter writer) {
-		writer.addAttribute("version", App.getVersion());
+		writer.addAttribute("version", new Info().getVersion());
 	}
 
 	/**

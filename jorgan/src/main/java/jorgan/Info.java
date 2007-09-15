@@ -20,14 +20,33 @@ package jorgan;
 
 import java.util.logging.Logger;
 
+import bias.Configuration;
+
 public class Info {
+
+	private static Configuration config = Configuration.getRoot().get(
+			Info.class);
 
 	private static Logger logger = Logger.getLogger(Info.class.getName());
 	
+	private String version;
+
+	public Info() {
+		config.read(this);
+	}
+	
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
+	public String getVersion() {
+		return version;
+	}
+
 	public void log() {
 		StringBuffer buffer = new StringBuffer();
 
-		buffer.append("jOrgan " + App.getVersion());
+		buffer.append("jOrgan " + version);
 		appendProperty(buffer, "os.arch");
 		appendProperty(buffer, "os.name");
 		appendProperty(buffer, "os.version");
