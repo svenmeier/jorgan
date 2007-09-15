@@ -44,8 +44,6 @@ public class App {
 	private static Configuration configuration = Configuration.getRoot().get(
 			App.class);
 
-	private static String version;
-
 	private boolean openRecentOnStartup = false;
 
 	private boolean headless = false;
@@ -56,10 +54,6 @@ public class App {
 
 	public void setOpenRecentOnStartup(boolean openRecentOnStartup) {
 		this.openRecentOnStartup = openRecentOnStartup;
-	}
-
-	public void setVersion(String version) {
-		App.version = version;
 	}
 
 	public void start(File file) {
@@ -101,15 +95,6 @@ public class App {
 	}
 
 	/**
-	 * Get the current version of jOrgan.
-	 * 
-	 * @return the current version
-	 */
-	public static String getVersion() {
-		return version;
-	}
-
-	/**
 	 * Main entrance to jOrgan.
 	 * 
 	 * @param args
@@ -139,12 +124,9 @@ public class App {
 			System.exit(1);
 		}
 
-		App app = new App();
-		configuration.read(app);
-
 		new Info().log();
 
-		app.start(file);
+		configuration.read(new App()).start(file);
 
 		System.exit(0);
 	}
