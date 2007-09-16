@@ -29,16 +29,12 @@ public class Info {
 
 	private static Logger logger = Logger.getLogger(Info.class.getName());
 	
-	private String version;
+	private String version = "";
 
 	public Info() {
 		config.read(this);
 	}
 	
-	public void setVersion(String version) {
-		this.version = version;
-	}
-
 	public String getVersion() {
 		return version;
 	}
