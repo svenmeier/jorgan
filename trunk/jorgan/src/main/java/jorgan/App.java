@@ -20,7 +20,6 @@ package jorgan;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.List;
 
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
@@ -32,9 +31,8 @@ import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
 import bias.store.ResourceBundlesStore;
 import bias.util.cli.ArgsParser;
+import bias.util.cli.CLIException;
 import bias.util.cli.Option;
-import bias.util.cli.ParseException;
-import bias.util.cli.option.Switch;
 
 /**
  * The jOrgan application.
@@ -75,7 +73,7 @@ public class App {
 	 * 
 	 * @return the command line options of the configuration
 	 */
-	private static Collection<Option<?>> initConfiguration() {
+	private static Collection<Option> initConfiguration() {
 		Configuration configuration = Configuration.getRoot();
 
 		configuration
@@ -85,10 +83,9 @@ public class App {
 		configuration.addStore(new ResourceBundlesStore("i18n"));
 
 		CLIStore cliStore = new CLIStore();
-		Switch headless = new Switch('l');
+		Option headless = cliStore.addSwitch("jorgan/App/headless", 'l');
 		headless.setLongName("headless");
 		headless.setDescription("start without a graphical UI");
-		cliStore.put("jorgan/App/headless", headless);
 		configuration.addStore(cliStore);
 
 		return cliStore.getOptions();
@@ -102,24 +99,24 @@ public class App {
 	 */
 	public static void main(String[] args) {
 
-		Collection<Option<?>> options = initConfiguration();
+		Collection<Option> options = initConfiguration();
 
 		ArgsParser parser = new ArgsParser("java -jar jOrgan.jar",
 				"[disposition]", options);
 		parser.addOption(parser.new HelpOption());
 
-		List<String> operands = null;
+		String[] operands = null;
 		try {
 			operands = parser.parse(args);
-		} catch (ParseException ex) {
+		} catch (CLIException ex) {
 			ex.write();
 			System.exit(1);
 		}
 
 		File file = null;
-		if (operands.size() == 1) {
-			file = new File(operands.get(0));
-		} else if (operands.size() > 1) {
+		if (operands.length == 1) {
+			file = new File(operands[0]);
+		} else if (operands.length > 1) {
 			parser.writeUsage();
 			System.exit(1);
 		}
