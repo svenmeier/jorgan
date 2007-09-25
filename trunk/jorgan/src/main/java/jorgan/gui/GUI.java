@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import jorgan.UI;
+import jorgan.swing.MacAdapter;
 import spin.over.SpinOverEvaluator;
 import bias.Configuration;
 
@@ -42,6 +43,8 @@ public class GUI implements UI {
 	 */
 	public void display(final File file) {
 
+		MacAdapter.getInstance().install("jOrgan");
+		
 		if (showAboutOnStartup) {
 			AboutPanel.showSplash();
 		}

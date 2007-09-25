@@ -74,6 +74,7 @@
         <copy todir="./dist/marshal/lib">
         	<fileset dir="./lib">
         		<include name="*.jar"/>
+	            <exclude name="AppleJavaExtensions.jar" />
         	</fileset>
         </copy>
 

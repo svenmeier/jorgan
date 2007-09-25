@@ -89,7 +89,7 @@ import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
-import jorgan.swing.TweakMac;
+import jorgan.swing.MacAdapter;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
 
@@ -1099,7 +1099,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
-			if (TweakMac.isMac()) {
+			if (MacAdapter.isMac()) {
 				dtde.acceptDrag(DnDConstants.ACTION_LINK);
 			} else {
 				// On Windows LINK is not accepted by default but user

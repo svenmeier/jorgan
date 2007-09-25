@@ -58,7 +58,7 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.Desktop;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.StatusBar;
-import jorgan.swing.TweakMac;
+import jorgan.swing.MacAdapter;
 import bias.Configuration;
 import bias.swing.MessageBox;
 import bias.util.MessageBuilder;
@@ -83,11 +83,6 @@ public class OrganFrame extends JFrame {
 	 * The suffix used for the frame title.
 	 */
 	private static final String TITEL_SUFFIX = "jOrgan";
-
-	/**
-	 * Tweak Mac Os X appearance.
-	 */
-	private TweakMac tweakMac;
 
 	/**
 	 * The toolBar of this frame.
@@ -208,7 +203,7 @@ public class OrganFrame extends JFrame {
 			}
 		});
 
-		tweakMac = new TweakMac(configurationAction, aboutAction, exitAction);
+		MacAdapter tweakMac = MacAdapter.getInstance();
 
 		JMenu fileMenu = new JMenu();
 		config.get("fileMenu").read(fileMenu);
@@ -222,7 +217,9 @@ public class OrganFrame extends JFrame {
 		fileMenu.add(saveAsAction);
 		fileMenu.addSeparator();
 		fileMenu.add(importAction);
-		if (!tweakMac.isTweaked()) {
+		if (tweakMac.isInstalled()) {
+			tweakMac.setQuitListener(exitAction);
+		} else {
 			fileMenu.addSeparator();
 			fileMenu.add(exitAction);
 		}
@@ -238,7 +235,9 @@ public class OrganFrame extends JFrame {
 		for (int a = 0; a < actions.size(); a++) {
 			viewMenu.add((Action) actions.get(a));
 		}
-		if (!tweakMac.isTweaked()) {
+		if (tweakMac.isInstalled()) {
+			tweakMac.setPreferencesListener(configurationAction);
+		} else {
 			viewMenu.addSeparator();
 			viewMenu.add(configurationAction);
 		}
@@ -247,7 +246,11 @@ public class OrganFrame extends JFrame {
 		config.get("helpMenu").read(helpMenu);
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
-		helpMenu.add(aboutAction);
+		if (tweakMac.isInstalled()) {
+			tweakMac.setAboutListener(aboutAction);
+		} else {
+			helpMenu.add(aboutAction);
+		}
 
 		buildRecentsMenu();
 
