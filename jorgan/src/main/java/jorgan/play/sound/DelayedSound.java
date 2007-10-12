@@ -205,7 +205,7 @@ public class DelayedSound extends SoundWrapper {
                             try {
                                 invocation.now();
                             } catch (RuntimeException ex) {
-                                logger.log(Level.INFO, "invocation failed", ex);
+                                logger.log(Level.WARNING, "invocation failed", ex);
                             }
                         } else {
                             wait(timeout);

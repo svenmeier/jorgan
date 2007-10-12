@@ -126,7 +126,7 @@ public class FontPanel extends JPanel {
 
 			font = new Font(family, style, size);
 		} catch (Exception ex) {
-			logger.log(Level.FINE, "font construction failed", ex);
+			logger.log(Level.WARNING, "font construction failed", ex);
 		}
 		return font;
 	}
