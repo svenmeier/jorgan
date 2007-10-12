@@ -309,6 +309,8 @@ public class OrganFrame extends JFrame {
 			}
 			session.getPlay().dispose();
 
+			organPanel.closing();
+			
 			config.write(this);
 
 			setVisible(false);
