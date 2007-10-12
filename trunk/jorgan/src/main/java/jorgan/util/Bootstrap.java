@@ -74,7 +74,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 					new Class[] { String[].class });
 			method.invoke(null, new Object[] { args });
 		} catch (Throwable t) {
-			logger.log(Level.INFO, "bootstrapping failed", t);
+			logger.log(Level.WARNING, "bootstrapping failed", t);
 		}
 	}
 
@@ -133,7 +133,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 				// /C:/Program Files/FooMatic/./lib
 				return jarFile.getParentFile();
 			} catch (Exception ex) {
-				logger.log(Level.INFO, "detecting bootstrap directory failed",
+				logger.log(Level.WARNING, "detecting bootstrap directory failed",
 						ex);
 			}
 		}
@@ -249,6 +249,6 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 		if (e instanceof ThreadDeath) {
 			return;
 		}
-		logger.log(Level.SEVERE, "uncaught exception", e);
+		logger.log(Level.WARNING, "uncaught exception", e);
 	}
 }
