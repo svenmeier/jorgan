@@ -380,7 +380,8 @@ public class OrganPanel extends JPanel {
 			Reader reader = new StringReader(docking);
 			OrganPanelPersister persister = new OrganPanelPersister(reader);
 			persister.load();
-		} catch (Exception keepStandardDocking) {
+		} catch (Exception ex) {
+			logger.log(Level.WARNING, "unable to load docking", ex);
 			try {
 				String dockingXml;
 				if (constructing) {
@@ -410,7 +411,7 @@ public class OrganPanel extends JPanel {
 				playDocking = docking;
 			}
 		} catch (Exception ex) {
-			logger.log(Level.FINE, "unable to save docking", ex);
+			logger.log(Level.WARNING, "unable to save docking", ex);
 		}
 	}
 
@@ -643,5 +644,10 @@ public class OrganPanel extends JPanel {
 
 	public void setPlayDocking(String playDocking) {
 		this.playDocking = playDocking;
+	}
+
+	public void closing() {
+		saveDocking();
+		config.write(this);
 	}
 }
