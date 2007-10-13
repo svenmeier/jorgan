@@ -22,8 +22,11 @@ import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
@@ -44,15 +47,14 @@ public class GuiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			GuiCategory.class);
 
-	private Model useSystemLookAndFeel = getModel(new Property(GUI.class,
-			"useSystemLookAndFeel"));
+	private Model lookAndFeel = getModel(new Property(GUI.class, "lookAndFeel"));
 
 	private Model showAboutOnStartup = getModel(new Property(GUI.class,
 			"showAboutOnStartup"));
 
 	private Model hexMessage = getModel(new Property(MessageEditor.class, "hex"));
 
-	private JCheckBox useSystemLookAndFeelCheckBox = new JCheckBox();
+	private JComboBox lookAndFeelComboBox = new JComboBox();
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
@@ -86,18 +88,20 @@ public class GuiCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("useSystemLookAndFeel").read(useSystemLookAndFeelCheckBox);
-		panel.add(useSystemLookAndFeelCheckBox, builder.nextColumn());
+		panel.add(config.get("lookAndFeel").read(new JLabel()), builder.nextColumn());
+		lookAndFeelComboBox
+				.setModel(new DefaultComboBoxModel(GUI.LAF.values()));
+		panel.add(lookAndFeelComboBox, builder.nextColumn());
 
 		builder.nextRow();
 
 		config.get("showAboutOnStartup").read(showAboutOnStartupCheckBox);
-		panel.add(showAboutOnStartupCheckBox, builder.nextColumn());
+		panel.add(showAboutOnStartupCheckBox, builder.nextColumn().gridWidthRemainder());
 
 		builder.nextRow();
 
 		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
-		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn());
+		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn().gridWidthRemainder());
 
 		builder.nextRow();
 
@@ -107,7 +111,7 @@ public class GuiCategory extends JOrganCategory {
 		builder.nextRow();
 
 		config.get("hexMessage").read(hexMessageCheckBox);
-		panel.add(hexMessageCheckBox, builder.nextColumn());
+		panel.add(hexMessageCheckBox, builder.nextColumn().gridWidthRemainder());
 
 		builder.nextRow();
 
@@ -150,8 +154,7 @@ public class GuiCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		useSystemLookAndFeelCheckBox.setSelected((Boolean) useSystemLookAndFeel
-				.getValue());
+		lookAndFeelComboBox.setSelectedItem(lookAndFeel.getValue());
 		showAboutOnStartupCheckBox.setSelected((Boolean) showAboutOnStartup
 				.getValue());
 		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
@@ -168,14 +171,13 @@ public class GuiCategory extends JOrganCategory {
 			ignoreChangesRadioButton.setSelected(true);
 			break;
 		}
-		
+
 		hexMessageCheckBox.setSelected((Boolean) hexMessage.getValue());
 	}
 
 	@Override
 	protected void write() {
-		useSystemLookAndFeel
-				.setValue(useSystemLookAndFeelCheckBox.isSelected());
+		lookAndFeel.setValue(lookAndFeelComboBox.getSelectedItem());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 
@@ -188,7 +190,7 @@ public class GuiCategory extends JOrganCategory {
 			handle = OrganFrame.REGISTRATION_CHANGES_IGNORE;
 		}
 		handleRegistrationChanges.setValue(handle);
-		
+
 		hexMessage.setValue(hexMessageCheckBox.isSelected());
 	}
 }

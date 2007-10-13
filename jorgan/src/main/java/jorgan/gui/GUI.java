@@ -29,7 +29,7 @@ public class GUI implements UI {
 
 	private boolean showAboutOnStartup = true;
 
-	private boolean useSystemLookAndFeel = true;
+	private LAF lookAndFeel = LAF.DEFAULT;
 
 	public GUI() {
 		config.read(this);
@@ -76,14 +76,22 @@ public class GUI implements UI {
 	private void initSwing() {
 		String plaf = null;
 		try {
-			if (useSystemLookAndFeel) {
+			switch (lookAndFeel) {
+			case DEFAULT:
+				// nothing
+				break;
+			case SYSTEM:
 				plaf = UIManager.getSystemLookAndFeelClassName();
-			} else {
+				break;
+			case CROSS_PLATFORM:
 				plaf = UIManager.getCrossPlatformLookAndFeelClassName();
+				break;
 			}
 
-			log.log(Level.INFO, "setting plaf '" + plaf + "'");
-			UIManager.setLookAndFeel(plaf);
+			if (plaf != null) {
+				log.log(Level.INFO, "setting plaf '" + plaf + "'");
+				UIManager.setLookAndFeel(plaf);
+			}
 		} catch (Exception ex) {
 			log.log(Level.WARNING, "unable to set plaf '" + plaf + "'", ex);
 		}
@@ -139,11 +147,15 @@ public class GUI implements UI {
 		this.showAboutOnStartup = showAboutOnStartup;
 	}
 
-	public boolean getUseSystemLookAndFeel() {
-		return useSystemLookAndFeel;
+	public LAF getLookAndFeel() {
+		return lookAndFeel;
 	}
 
-	public void setUseSystemLookAndFeel(boolean useSystemLookAndFeel) {
-		this.useSystemLookAndFeel = useSystemLookAndFeel;
+	public void setLookAndFeel(LAF lookAndFeel) {
+		this.lookAndFeel = lookAndFeel;
+	}
+	
+	public static enum LAF {
+		DEFAULT, SYSTEM, CROSS_PLATFORM
 	}
 }
