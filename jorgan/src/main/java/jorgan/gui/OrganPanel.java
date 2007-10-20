@@ -370,32 +370,36 @@ public class OrganPanel extends JPanel {
 	}
 
 	protected void loadDocking() {
-		try {
-			String docking;
-			if (constructing) {
-				docking = constructDocking;
-			} else {
-				docking = playDocking;
-			}
-			Reader reader = new StringReader(docking);
-			OrganPanelPersister persister = new OrganPanelPersister(reader);
-			persister.load();
-		} catch (Exception ex) {
-			logger.log(Level.WARNING, "unable to load docking", ex);
+		String docking;
+		if (constructing) {
+			docking = constructDocking;
+		} else {
+			docking = playDocking;
+		}
+		if (docking != null) {
 			try {
-				String dockingXml;
-				if (constructing) {
-					dockingXml = "construct.xml";
-				} else {
-					dockingXml = "play.xml";
-				}
-				Reader reader = new InputStreamReader(getClass()
-						.getResourceAsStream(dockingXml));
+				Reader reader = new StringReader(docking);
 				OrganPanelPersister persister = new OrganPanelPersister(reader);
 				persister.load();
-			} catch (Exception error) {
-				throw new Error("unable to load default docking");
+				return;
+			} catch (Exception ex) {
+				logger.log(Level.WARNING, "unable to load docking", ex);
 			}
+		}
+		
+		String dockingXml;
+		if (constructing) {
+			dockingXml = "construct.xml";
+		} else {
+			dockingXml = "play.xml";
+		}
+		try {
+			Reader reader = new InputStreamReader(getClass()
+					.getResourceAsStream(dockingXml));
+			OrganPanelPersister persister = new OrganPanelPersister(reader);
+			persister.load();
+		} catch (Exception error) {
+			throw new Error("unable to load default docking");
 		}
 	}
 
