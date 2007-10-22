@@ -30,7 +30,7 @@ import jorgan.io.riff.RiffReader;
 public class ListChunkFactory extends ChunkFactory {
 
 	@Override
-	public Chunk createChunk(String id, int dataLength, RiffReader reader)
+	public ListChunk createChunk(String id, int dataLength, RiffReader reader)
 			throws RiffFormatException {
 		String type = reader.readId();
 
