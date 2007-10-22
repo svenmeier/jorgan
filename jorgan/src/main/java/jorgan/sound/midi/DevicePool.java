@@ -66,11 +66,9 @@ public class DevicePool {
 
 		SharedDevice sharedDevice = sharedDevices.get(key);
 		if (sharedDevice == null) {
-			MidiDevice[] devices = getMidiDevices(out);
-
-			for (int d = 0; d < devices.length; d++) {
-				if (name.equals(devices[d].getDeviceInfo().getName())) {
-					sharedDevice = new SharedDevice(devices[d]);
+			for (MidiDevice device : getMidiDevices(out)) {
+				if (name.equals(device.getDeviceInfo().getName())) {
+					sharedDevice = new SharedDevice(device);
 
 					sharedDevices.put(key, sharedDevice);
 
@@ -97,12 +95,10 @@ public class DevicePool {
 	 */
 	private static MidiDevice[] getMidiDevices(boolean out)
 			throws MidiUnavailableException {
-		MidiDevice.Info[] infos = MidiSystem.getMidiDeviceInfo();
 
 		List<MidiDevice> devices = new ArrayList<MidiDevice>();
 
-		for (int i = 0; i < infos.length; i++) {
-			MidiDevice.Info info = infos[i];
+		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
 
 			MidiDevice device = MidiSystem.getMidiDevice(info);
 			if (out && device.getMaxReceivers() != 0 || !out
@@ -124,20 +120,19 @@ public class DevicePool {
 	 */
 	public static String[] getMidiDeviceNames(boolean out) {
 
-		String[] names = null;
 		try {
-			MidiDevice[] devices = getMidiDevices(out);
-
-			names = new String[devices.length];
-
-			for (int d = 0; d < devices.length; d++) {
-				names[d] = devices[d].getDeviceInfo().getName();
+			List<String> names = new ArrayList<String>();
+			for (MidiDevice device : getMidiDevices(out)) {
+				String name = device.getDeviceInfo().getName();
+				if (!names.contains(name)) {
+					names.add(name);
+				}
 			}
-		} catch (MidiUnavailableException ex) {
-			names = new String[0];
-		}
 
-		return names;
+			return names.toArray(new String[names.size()]);
+		} catch (MidiUnavailableException ex) {
+			return new String[0];
+		}
 	}
 
 	public static boolean addLogger(MidiLogger logger, String name, boolean out)
@@ -265,11 +260,11 @@ public class DevicePool {
 			if (openCount == 0) {
 				super.open();
 
-				for (int l = 0; l < inLoggers.size(); l++) {
-					inLoggers.get(l).opened();
+				for (MidiLogger inLogger : inLoggers) {
+					inLogger.opened();
 				}
-				for (int l = 0; l < outLoggers.size(); l++) {
-					outLoggers.get(l).opened();
+				for (MidiLogger outLogger : outLoggers) {
+					outLogger.opened();
 				}
 			}
 			openCount++;
@@ -282,8 +277,8 @@ public class DevicePool {
 				public void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
-					for (int l = 0; l < outLoggers.size(); l++) {
-						outLoggers.get(l).log(message);
+					for (MidiLogger outLogger : outLoggers) {
+						outLogger.log(message);
 					}
 				}
 			};
@@ -297,10 +292,10 @@ public class DevicePool {
 				protected void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
-					// TODO if multiple transmitters are get, we will log multiple
-					// times :(
-					for (int l = 0; l < inLoggers.size(); l++) {
-						inLoggers.get(l).log(message);
+					// TODO if multiple transmitters are get, we will log
+					// multiple times :(
+					for (MidiLogger inLogger : inLoggers) {
+						inLogger.log(message);
 					}
 				}
 			};
@@ -313,11 +308,11 @@ public class DevicePool {
 			if (openCount == 0) {
 				super.close();
 
-				for (int l = 0; l < inLoggers.size(); l++) {
-					inLoggers.get(l).closed();
+				for (MidiLogger inLogger : inLoggers) {
+					inLogger.closed();
 				}
-				for (int l = 0; l < outLoggers.size(); l++) {
-					outLoggers.get(l).closed();
+				for (MidiLogger outLogger : outLoggers) {
+					outLogger.closed();
 				}
 			}
 		}
