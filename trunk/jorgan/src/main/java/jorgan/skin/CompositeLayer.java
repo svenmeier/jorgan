@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 /**
@@ -69,7 +70,7 @@ public class CompositeLayer extends Layer {
     }
 
     @Override
-	public void setView(View view) {
+	public void setView(View<? extends Element> view) {
         super.setView(view);
 
         for (int l = 0; l < layers.size(); l++) {

@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.imageio.spi.ServiceRegistry;
 import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -33,7 +34,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.imports.spi.ImportProvider;
-import sun.misc.Service;
 
 /**
  * A selection of an import method.
@@ -102,7 +102,7 @@ public class ProviderSelectionPanel extends JPanel {
 	public static List<ImportProvider> lookupImportProviders() {
 		ArrayList<ImportProvider> providers = new ArrayList<ImportProvider>();
 
-		Iterator iterator = Service.providers(ImportProvider.class);
+		Iterator iterator = ServiceRegistry.lookupProviders(ImportProvider.class);
 
 		while (iterator.hasNext()) {
 			providers.add((ImportProvider)iterator.next());

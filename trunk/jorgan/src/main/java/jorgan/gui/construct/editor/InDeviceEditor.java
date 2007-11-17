@@ -20,7 +20,7 @@ package jorgan.gui.construct.editor;
 
 import java.beans.PropertyEditorSupport;
 
-import jorgan.sound.midi.DevicePool;
+import jorgan.midi.DevicePool;
 
 /**
  * Property editor for a input device property.

@@ -27,13 +27,14 @@ public class Incrementer extends Initiator {
 
 	@Override
 	protected boolean canReference(Class clazz) {
-		return Continuous.class.isAssignableFrom(clazz);
+		return IndexedContinuous.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	public void initiate() {
 		for (Reference reference : references) {
-			Continuous continuous = (Continuous) reference.getElement();
+			IndexedContinuous continuous = (IndexedContinuous) reference
+					.getElement();
 
 			continuous.increment(delta);
 		}

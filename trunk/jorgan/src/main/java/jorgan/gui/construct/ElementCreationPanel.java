@@ -19,7 +19,6 @@
 package jorgan.gui.construct;
 
 import java.awt.GridBagLayout;
-import java.awt.Insets;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -46,15 +45,10 @@ import bias.Configuration;
  */
 public class ElementCreationPanel extends JPanel {
 
-	private Configuration config = Configuration.getRoot().get(ElementCreationPanel.class);
-
-	protected Insets standardInsets = new Insets(2, 2, 2, 2);
-
-	private JLabel nameLabel = new JLabel();
+	private Configuration config = Configuration.getRoot().get(
+			ElementCreationPanel.class);
 
 	private JTextField nameTextField = new JTextField();
-
-	private JLabel typeLabel = new JLabel();
 
 	private JList typeList = new JList();
 
@@ -70,8 +64,7 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow();
 
-		config.get("name").read(nameLabel);
-		add(nameLabel, builder.nextColumn());
+		add(config.get("name").read(new JLabel()), builder.nextColumn());
 
 		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -91,8 +84,8 @@ public class ElementCreationPanel extends JPanel {
 
 		builder.nextRow(1.0d);
 
-		config.get("type").read(typeLabel);
-		add(typeLabel, builder.nextColumn().alignNorthWest());
+		add(config.get("type").read(new JLabel()), builder.nextColumn()
+				.alignNorthWest());
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {

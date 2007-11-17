@@ -18,8 +18,7 @@
  */
 package jorgan.play;
 
-// jorgan
-import jorgan.play.sound.Sound;
+import jorgan.midi.channel.Channel;
 
 /**
  * A player that controls effects on sounds.
@@ -27,11 +26,11 @@ import jorgan.play.sound.Sound;
 interface SoundEffectPlayer {
 
     /**
-     * Effect a sound.
+     * Effect a channel.
      * 
-     * @param sound
-     *            sound to effect
-     * @return effected sound
+     * @param channel
+     *            channel to effect
+     * @return effected channel
      */
-    public Sound effectSound(Sound sound);
+    public Channel effectSound(Channel channel);
 }

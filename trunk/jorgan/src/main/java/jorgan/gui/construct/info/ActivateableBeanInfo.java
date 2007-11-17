@@ -20,20 +20,17 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Activateable;
 import jorgan.gui.construct.editor.BooleanEditor;
-import jorgan.gui.construct.editor.MessageEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Activateable}.
  */
 public class ActivateableBeanInfo extends MomentaryBeanInfo {
 
-    @Override
+	@Override
 	protected void registerProperties() {
-        super.registerProperties();
+		super.registerProperties();
 
-        add("activateMessage", Activateable.class, MessageEditor.class);
-        add("deactivateMessage", Activateable.class, MessageEditor.class);
-        add("active", Activateable.class, BooleanEditor.class);
-        add("locking", Activateable.class, BooleanEditor.class);
-    }
+		add("active", Activateable.class, BooleanEditor.class);
+		add("locking", Activateable.class, BooleanEditor.class);
+	}
 }

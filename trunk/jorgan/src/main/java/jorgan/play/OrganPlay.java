@@ -40,16 +40,15 @@ import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
-import jorgan.disposition.SoundSource;
+import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
-import jorgan.disposition.Swell;
-import jorgan.disposition.Tremulant;
-import jorgan.disposition.Variation;
+import jorgan.disposition.ContinuousEffect;
+import jorgan.disposition.ActivateableEffect;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.MessageUtils;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
-import jorgan.sound.midi.MessageUtils;
 
 /**
  * A play of an organ.
@@ -281,36 +280,34 @@ public class OrganPlay {
 	protected void createPlayer(Element element) {
 		Player player = null;
 
-		if (element instanceof Keyboard) {
-			player = new KeyboardPlayer((Keyboard) element);
-		} else if (element instanceof SoundSource) {
-			player = new SoundSourcePlayer((SoundSource) element);
-		} else if (element instanceof Console) {
+		if (element instanceof Console) {
 			player = new ConsolePlayer((Console) element);
-		} else if (element instanceof Activator) {
-			player = new ActivatorPlayer((Activator) element);
+		} else if (element instanceof Keyboard) {
+			player = new KeyboardPlayer((Keyboard) element);
+		} else if (element instanceof Keyer) {
+			player = new KeyerPlayer((Keyer) element);
 		} else if (element instanceof Stop) {
 			player = new StopPlayer((Stop) element);
 		} else if (element instanceof Coupler) {
 			player = new CouplerPlayer((Coupler) element);
-		} else if (element instanceof Swell) {
-			player = new SwellPlayer((Swell) element);
+		} else if (element instanceof Rank) {
+			player = new RankPlayer((Rank) element);
+		} else if (element instanceof ContinuousEffect) {
+			player = new ContinuousEffectPlayer((ContinuousEffect) element);
+		} else if (element instanceof ActivateableEffect) {
+			player = new ActivateableEffectPlayer((ActivateableEffect) element);
+		} else if (element instanceof Activator) {
+			player = new ActivateablePlayer<Activator>((Activator) element);
 		} else if (element instanceof Regulator) {
-			player = new RegulatorPlayer((Regulator) element);
-		} else if (element instanceof Tremulant) {
-			player = new TremulantPlayer((Tremulant) element);
-		} else if (element instanceof Variation) {
-			player = new VariationPlayer((Variation) element);
+			player = new ContinuousPlayer<Regulator>((Regulator) element);
 		} else if (element instanceof Initiator) {
-			player = new InitiatorPlayer((Initiator) element);
-		} else if (element instanceof Keyer) {
-			player = new KeyerPlayer((Keyer) element);
+			player = new InitiatorPlayer<Initiator>((Initiator) element);
 		} else if (element instanceof Captor) {
-			player = new CaptorPlayer((Captor) element);
+			player = new ActivateablePlayer<Captor>((Captor) element);
 		} else if (element instanceof Memory) {
-			player = new MemoryPlayer((Memory) element);
+			player = new ContinuousPlayer<Memory>((Memory) element);
 		} else if (element instanceof Sequence) {
-			player = new SequencePlayer((Sequence) element);
+			player = new ContinuousPlayer<Sequence>((Sequence) element);
 		}
 
 		if (player != null) {
@@ -341,7 +338,7 @@ public class OrganPlay {
 	 * @param player
 	 *            player to forward messages to
 	 * @return receiver
-	 * @see jorgan.play.Player#input(javax.sound.midi.ShortMessage)
+	 * @see jorgan.play.Player#received(javax.sound.midi.ShortMessage)
 	 */
 	protected Receiver createReceiver(final Player player) {
 		return new Receiver() {
@@ -352,7 +349,7 @@ public class OrganPlay {
 				synchronized (RECEIVER_LOCK) {
 					if (open && MessageUtils.isShortMessage(message)) {
 						synchronized (CHANGE_LOCK) {
-							player.input((ShortMessage) message);
+							player.received((ShortMessage) message);
 						}
 					}
 				}

@@ -29,9 +29,9 @@ public class OrganAdapter implements OrganListener {
 
   public void elementRemoved(OrganEvent event) { }
 
-  public void referenceChanged(OrganEvent event) { }
+  public final void referenceChanged(OrganEvent event) { }
 
-  public void referenceAdded(OrganEvent event) { }
+  public final void referenceAdded(OrganEvent event) { }
 
-  public void referenceRemoved(OrganEvent event) { }
+  public final void referenceRemoved(OrganEvent event) { }
 }

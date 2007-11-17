@@ -20,10 +20,7 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Keyboard;
 import jorgan.gui.construct.editor.ChannelEditor;
-import jorgan.gui.construct.editor.CommandEditor;
-import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.InDeviceEditor;
-import jorgan.gui.construct.editor.KeyEditor;
 import jorgan.gui.construct.editor.TransposeEditor;
 
 /**
@@ -36,10 +33,6 @@ public class KeyboardBeanInfo extends ElementBeanInfo {
 		super.registerProperties();
 
 		add("channel", Keyboard.class, ChannelEditor.class);
-		add("command", Keyboard.class, CommandEditor.class);
-		add("threshold", Keyboard.class, DataEditor.class);
-		add("from", Keyboard.class, KeyEditor.class);
-		add("to", Keyboard.class, KeyEditor.class);
 		add("transpose", Keyboard.class, TransposeEditor.class);
 		add("device", Keyboard.class, InDeviceEditor.class);
 	}

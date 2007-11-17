@@ -24,6 +24,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.net.URL;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 /**
@@ -31,232 +32,244 @@ import jorgan.gui.console.View;
  */
 public abstract class Layer implements Cloneable {
 
-    public static final int CENTER = 0;
+	public static final int CENTER = 0;
 
-    public static final int TOP = 1;
+	public static final int TOP = 1;
 
-    public static final int TOP_RIGHT = 2;
+	public static final int TOP_RIGHT = 2;
 
-    public static final int RIGHT = 3;
+	public static final int RIGHT = 3;
 
-    public static final int BOTTOM_RIGHT = 4;
-    
-    public static final int BOTTOM = 5;
+	public static final int BOTTOM_RIGHT = 4;
 
-    public static final int BOTTOM_LEFT = 6;
+	public static final int BOTTOM = 5;
 
-    public static final int LEFT = 7;
-    
-    public static final int TOP_LEFT = 8;
+	public static final int BOTTOM_LEFT = 6;
 
-    public static final int NONE = 0;
+	public static final int LEFT = 7;
 
-    public static final int HORIZONAL = 1;
+	public static final int TOP_LEFT = 8;
 
-    public static final int VERTICAL = 2;
+	public static final int NONE = 0;
 
-    public static final int BOTH = 3;
+	public static final int HORIZONAL = 1;
 
-    private int anchor = CENTER;
+	public static final int VERTICAL = 2;
 
-    private int fill = NONE;
+	public static final int BOTH = 3;
 
-    private int width;
+	private int anchor = CENTER;
 
-    private int height;
+	private int fill = NONE;
 
-    private Insets padding = new Insets(0, 0, 0, 0);
+	private int width;
 
-	private boolean enabled = false;
-	
-    private transient Resolver resolver;
+	private int height;
 
-    protected transient View view;
+	private Insets padding = new Insets(0, 0, 0, 0);
 
-    public void setResolver(Resolver resolver) {
-        this.resolver = resolver;
-    }
+	private String binding = null;
 
-    public URL resolve(String name) {
-        return this.resolver.resolve(name);
-    }
+	private transient Resolver resolver;
 
-    public void setView(View view) {
-        this.view = view;
-    }
+	protected transient View<? extends Element> view;
 
-    public View getView() {
-        return view;
-    }
-    
-    public void draw(Graphics2D g, Dimension dimension) {
+	public void setResolver(Resolver resolver) {
+		this.resolver = resolver;
+	}
 
-        Rectangle rectangle = getUnpaddedBounds(dimension);
+	public URL resolve(String name) {
+		return this.resolver.resolve(name);
+	}
 
-        draw(g, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
-    }
+	public void setView(View<? extends Element> view) {
+		this.view = view;
+	}
 
-    protected Rectangle getUnpaddedBounds(Dimension size) {
-        Rectangle rectangle = new Rectangle(0, 0, getUnpaddedWidth(),
-                getUnpadddedHeight());
+	public View getView() {
+		return view;
+	}
 
-        if (fill == BOTH || fill == HORIZONAL) {
-            rectangle.width = size.width - padding.left - padding.right;
-        }
-        if (fill == BOTH || fill == VERTICAL) {
-            rectangle.height = size.height - padding.top - padding.bottom;
-        }
+	public void draw(Graphics2D g, Dimension dimension) {
 
-        if (anchor == TOP_LEFT || anchor == LEFT || anchor == BOTTOM_LEFT) {
-            rectangle.x = padding.left;
-        } else if (anchor == TOP_RIGHT || anchor == RIGHT || anchor == BOTTOM_RIGHT) {
-            rectangle.x = size.width - padding.right - rectangle.width;
-        } else {
-            rectangle.x = padding.left
-                    + (size.width - padding.left - padding.right) / 2
-                    - rectangle.width / 2;
-        }
+		Rectangle rectangle = getUnpaddedBounds(dimension);
 
-        if (anchor == TOP_LEFT || anchor == TOP || anchor == TOP_RIGHT) {
-            rectangle.y = padding.top;
-        } else if (anchor == BOTTOM_LEFT || anchor == BOTTOM || anchor == BOTTOM_RIGHT) {
-            rectangle.y = size.height - padding.bottom - rectangle.height;
-        } else {
-            rectangle.y = padding.top
-                    + (size.height - padding.top - padding.bottom) / 2
-                    - rectangle.height / 2;
-        }
+		draw(g, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
+	}
 
-        return rectangle;
-    }
+	protected Rectangle getUnpaddedBounds(Dimension size) {
+		Rectangle rectangle = new Rectangle(0, 0, getUnpaddedWidth(),
+				getUnpadddedHeight());
 
-    protected void draw(Graphics2D g, int x, int y, int width, int height) {
-    }
+		if (fill == BOTH || fill == HORIZONAL) {
+			rectangle.width = size.width - padding.left - padding.right;
+		}
+		if (fill == BOTH || fill == VERTICAL) {
+			rectangle.height = size.height - padding.top - padding.bottom;
+		}
 
-    @Override
+		if (anchor == TOP_LEFT || anchor == LEFT || anchor == BOTTOM_LEFT) {
+			rectangle.x = padding.left;
+		} else if (anchor == TOP_RIGHT || anchor == RIGHT
+				|| anchor == BOTTOM_RIGHT) {
+			rectangle.x = size.width - padding.right - rectangle.width;
+		} else {
+			rectangle.x = padding.left
+					+ (size.width - padding.left - padding.right) / 2
+					- rectangle.width / 2;
+		}
+
+		if (anchor == TOP_LEFT || anchor == TOP || anchor == TOP_RIGHT) {
+			rectangle.y = padding.top;
+		} else if (anchor == BOTTOM_LEFT || anchor == BOTTOM
+				|| anchor == BOTTOM_RIGHT) {
+			rectangle.y = size.height - padding.bottom - rectangle.height;
+		} else {
+			rectangle.y = padding.top
+					+ (size.height - padding.top - padding.bottom) / 2
+					- rectangle.height / 2;
+		}
+
+		return rectangle;
+	}
+
+	protected void draw(Graphics2D g, int x, int y, int width, int height) {
+	}
+
+	@Override
 	public Object clone() {
-        try {
-            Layer clone = (Layer) super.clone();
+		try {
+			Layer clone = (Layer) super.clone();
 
-            clone.setPadding(new Insets(padding.top, padding.left,
-                    padding.bottom, padding.right));
+			clone.setPadding(new Insets(padding.top, padding.left,
+					padding.bottom, padding.right));
 
-            return clone;
-        } catch (CloneNotSupportedException ex) {
-            throw new Error();
-        }
-    }
+			return clone;
+		} catch (CloneNotSupportedException ex) {
+			throw new Error();
+		}
+	}
 
-    public void setFill(int fill) {
-        this.fill = fill;
-    }
+	public void setFill(int fill) {
+		this.fill = fill;
+	}
 
-    public int getFill() {
-        return fill;
+	public int getFill() {
+		return fill;
 
-    }
+	}
 
-    public void setPadding(Insets padding) {
-        this.padding = padding;
-    }
+	public void setPadding(Insets padding) {
+		this.padding = padding;
+	}
 
-    public Insets getPadding() {
-        return padding;
-    }
+	public Insets getPadding() {
+		return padding;
+	}
 
-    public void setAnchor(int anchor) {
-        this.anchor = anchor;
-    }
+	public void setAnchor(int anchor) {
+		this.anchor = anchor;
+	}
 
-    public int getAnchor() {
-        return anchor;
-    }
+	public int getAnchor() {
+		return anchor;
+	}
 
-    public Dimension getSize() {
-        return new Dimension(getUnpaddedWidth() + padding.left + padding.right,
-                getUnpadddedHeight() + padding.top + padding.bottom);
+	public Dimension getSize() {
+		return new Dimension(getUnpaddedWidth() + padding.left + padding.right,
+				getUnpadddedHeight() + padding.top + padding.bottom);
 
-    }
+	}
 
-    public int getHeight() {
-        return height;
-    }
+	public int getHeight() {
+		return height;
+	}
 
-    public int getWidth() {
-        return width;
-    }
+	public int getWidth() {
+		return width;
+	}
 
-    public void setHeight(int height) {
-        this.height = height;
-    }
+	public void setHeight(int height) {
+		this.height = height;
+	}
 
-    public void setWidth(int width) {
-        this.width = width;
-    }
+	public void setWidth(int width) {
+		this.width = width;
+	}
 
-    protected int getUnpaddedWidth() {
-        if (this.width == 0) {
-            return calcWidth();
-        } else {
-            return this.width;
-        }
-    }
+	protected int getUnpaddedWidth() {
+		if (this.width == 0) {
+			return calcWidth();
+		} else {
+			return this.width;
+		}
+	}
 
-    /**
-     * Calculate the width in case is is not explicitely set, i.e. it is
-     * <code>0</code>.
-     * 
-     * @return the calculated width
-     */
-    protected int calcWidth() {
-        return 0;
-    }
+	/**
+	 * Calculate the width in case is is not explicitely set, i.e. it is
+	 * <code>0</code>.
+	 * 
+	 * @return the calculated width
+	 */
+	protected int calcWidth() {
+		return 0;
+	}
 
-    protected int getUnpadddedHeight() {
-        if (this.width == 0) {
-            return calcHeight();
-        } else {
-            return this.height;
-        }
-    }
+	protected int getUnpadddedHeight() {
+		if (this.width == 0) {
+			return calcHeight();
+		} else {
+			return this.height;
+		}
+	}
 
-    /**
-     * Calculate the height in case is is not explicitely set, i.e. it is
-     * <code>0</code>.
-     * 
-     * @return the calculated height
-     */
-    protected int calcHeight() {
-        return 0;
-    }
+	/**
+	 * Calculate the height in case is is not explicitely set, i.e. it is
+	 * <code>0</code>.
+	 * 
+	 * @return the calculated height
+	 */
+	protected int calcHeight() {
+		return 0;
+	}
 
-	public void setEnabled(boolean enabled) {
-		this.enabled = enabled;
+	public boolean isPressable(int x, int y, Dimension dimension) {
+		ViewBinding binding = getBinding(ViewBinding.class); 
+		if (binding != null && binding.isPressable()) {
+			Rectangle rectangle = getUnpaddedBounds(dimension);
+
+			return rectangle.contains(x, y);
+		}
+
+		return false;
+	}
+
+	public void mousePressed(int x, int y, Dimension size) {
+	}
+
+	public void mouseDragged(int x, int y, Dimension size) {
+	}
+
+	public void mouseReleased(int x, int y, Dimension size) {
+	}
+
+	protected void released() {
+	}
+
+	public String getBinding() {
+		return binding;
+	}
+
+	public void setBinding(String binding) {
+		this.binding = binding;
+	}
+
+	protected <C> C getBinding(Class<C> clazz) {
+		return view.getBinding(binding, clazz);
 	}
 	
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public boolean isPressable(int x, int y, Dimension dimension) {
-        if (isEnabled()) {
-            Rectangle rectangle = getUnpaddedBounds(dimension);
-
-            return rectangle.contains(x, y);
-        }
-
-        return false;
-    }
-
-    public void mousePressed(int x, int y, Dimension size) {
-    }
-
-    public void mouseDragged(int x, int y, Dimension size) {
-    }
-
-    public void mouseReleased(int x, int y, Dimension size) {
-    }
-
-    protected void released() {
+    public static interface ViewBinding {
+    	
+    	public boolean isPressable();
     }
 }

@@ -30,6 +30,7 @@ import javax.swing.table.AbstractTableModel;
 import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.OrganAware;
 import jorgan.gui.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
@@ -42,7 +43,7 @@ import bias.util.MessageBuilder;
 /**
  * Panel for editing of a {@link jorgan.disposition.Memory}.
  */
-public class MemoryPanel extends DockedPanel {
+public class MemoryPanel extends DockedPanel implements OrganAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MemoryPanel.class);
@@ -129,7 +130,7 @@ public class MemoryPanel extends DockedPanel {
 		// remove listener to avoid infinite loop
 		table.getSelectionModel().removeListSelectionListener(model);
 
-		int index = memory.getValue();
+		int index = memory.getIndex();
 		if (index != table.getSelectedRow()) {
 			if (table.getCellEditor() != null) {
 				table.getCellEditor().cancelCellEditing();
@@ -155,7 +156,7 @@ public class MemoryPanel extends DockedPanel {
 			if (memory == null) {
 				return 0;
 			} else {
-				return 128;
+				return memory.getSize();
 			}
 		}
 
@@ -194,20 +195,11 @@ public class MemoryPanel extends DockedPanel {
 			}
 		}
 
-		public void referenceAdded(OrganEvent event) {
-		}
-
-		public void referenceChanged(OrganEvent event) {
-		}
-
-		public void referenceRemoved(OrganEvent event) {
-		}
-
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {
 				int row = table.getSelectedRow();
 				if (row != -1 && row != memory.getValue()) {
-					memory.setValue(row);
+					memory.setIndex(row);
 				}
 			}
 		}

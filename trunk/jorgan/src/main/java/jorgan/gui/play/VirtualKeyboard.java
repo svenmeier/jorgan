@@ -27,8 +27,8 @@ import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.swing.JPanel;
 
 import jorgan.gui.midi.KeyboardPane;
-import jorgan.sound.midi.DeviceInfo;
-import jorgan.sound.midi.Loopback;
+import jorgan.midi.DeviceInfo;
+import jorgan.midi.Loopback;
 
 /**
  * A virtual keyboard.

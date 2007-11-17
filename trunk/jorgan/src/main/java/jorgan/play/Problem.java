@@ -21,67 +21,54 @@ package jorgan.play;
 /**
  * Problem of a player.
  */
-public class Problem {
+public abstract class Problem {
 
-    public static final String WARNING = "warning";
+	private String property;
 
-    public static final String ERROR = "error";
+	private Object value;
 
-    private String level;
+	protected Problem(String property) {
 
-    private String property;
+		this.property = property;
+	}
 
-    private Object value;
+	protected Problem(String property, Object value) {
 
-    public Problem(String level, String property) {
+		this.property = property;
+		this.value = value;
+	}
 
-        this.level = level;
-        this.property = property;
-    }
+	public String getProperty() {
+		return property;
+	}
 
-    public String getLevel() {
-        return level;
-    }
+	public Object getValue() {
+		return value;
+	}
 
-    public String getProperty() {
-        return property;
-    }
-
-    public Object getValue() {
-        return value;
-    }
-
-    public Problem value(Object value) {
-        this.value = value;
-
-        return this;
-    }
-
-    @Override
+	@Override
 	public boolean equals(Object object) {
-        if (object == null || !(object instanceof Problem)) {
-            return false;
-        }
+		if (object == null || !(object.getClass() == this.getClass())) {
+			return false;
+		}
 
-        Problem problem = (Problem) object;
+		Problem problem = (Problem) object;
 
-        if (this.level != problem.level) {
-            return false;
-        }
-        if (!this.property.equals(problem.property)) {
-            return false;
-        }
+		if (!this.property.equals(problem.property)) {
+			return false;
+		}
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
+	@Override
 	public int hashCode() {
-        return toString().hashCode();
-    }
+		return toString().hashCode();
+	}
 
-    @Override
+	@Override
 	public String toString() {
-        return level + "." + property;
-    }
+		String name = getClass().getName();
+		return name.substring(name.lastIndexOf('.') + 1) + "." + property;
+	}
 }

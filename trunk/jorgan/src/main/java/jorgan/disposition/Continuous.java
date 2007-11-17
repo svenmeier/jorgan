@@ -18,20 +18,16 @@
  */
 package jorgan.disposition;
 
+import java.util.List;
+
 /**
  * A continuous element.
  */
 public abstract class Continuous extends Element {
 
-	private Message message;
-
 	private boolean locking = true;
 
-	private boolean reverse = false;
-
-	private int value = 0;
-
-	private int threshold = 0;
+	private float value = 0.0f;
 
 	public boolean isLocking() {
 		return locking;
@@ -43,70 +39,30 @@ public abstract class Continuous extends Element {
 		fireElementChanged(true);
 	}
 
-	public Message getMessage() {
-		return message;
-	}
-
-	public void setMessage(Message message) {
-		if (message != null && !message.hasWildcard()) {
-			message = new Message(message.getStatus(), message.getData1(), -1);
-		}
-		this.message = message;
-
-		fireElementChanged(true);
-	}
-
-	public void setValue(int position) {
-		if (position < 0 || position > 127) {
-			throw new IllegalArgumentException(
-					"position must be between 0 and 127");
+	public void setValue(float value) {
+		if (value < 0.0f || value > 1.0f) {
+			throw new IllegalArgumentException("value must be between 0 and 1");
 		}
 
-		this.value = position;
+		this.value = value;
 
 		fireElementChanged(false);
 	}
 
-	public int getValue() {
+	public float getValue() {
 		return value;
 	}
 
-	public int getThreshold() {
-		return threshold;
+	public List<Class<? extends Matcher>> getMessageClasses() {
+		List<Class<? extends Matcher>> names = super.getMessageClasses();
+
+		names.add(Change.class);
+
+		return names;
 	}
 
-	public void setThreshold(int granularity) {
-		this.threshold = granularity;
+	public static class Change extends Matcher {
 
-		fireElementChanged(true);
-	}
-
-	public boolean isReverse() {
-		return reverse;
-	}
-
-	public void setReverse(boolean reverse) {
-		this.reverse = reverse;
-
-		fireElementChanged(true);
-	}
-
-	public void increment(int delta) {
-		int position = getValue();
-		if (delta > 0) {
-			position += delta;
-			position -= (position % delta);
-		} else {
-			position += delta - 1;
-			if (position >= 0) {
-				position -= delta + (position % delta);
-			}
-		}
-
-		setValue(limitIncrement(position));
-	}
-
-	protected int limitIncrement(int position) {
-		return Math.max(0, Math.min(127, position));
+		public transient float value;
 	}
 }

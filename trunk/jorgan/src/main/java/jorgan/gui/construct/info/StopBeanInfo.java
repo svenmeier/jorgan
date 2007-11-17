@@ -18,23 +18,14 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Stop;
-import jorgan.gui.construct.editor.AllocationEditor;
-import jorgan.gui.construct.editor.DataEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Stop}.
  */
 public class StopBeanInfo extends KeyableBeanInfo {
 
-    @Override
+	@Override
 	protected void registerProperties() {
-        super.registerProperties();
-
-        add("program", Stop.class, DataEditor.class);
-        add("allocation", Stop.class, AllocationEditor.class);
-        add("volume", Stop.class, DataEditor.class);
-        add("pan", Stop.class, DataEditor.class);
-        add("bend", Stop.class, DataEditor.class);
-    }
+		super.registerProperties();
+	}
 }

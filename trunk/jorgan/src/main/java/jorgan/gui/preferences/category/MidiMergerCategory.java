@@ -29,10 +29,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.midi.DevicePool;
+import jorgan.midi.merge.MergeInput;
+import jorgan.midi.merge.MidiMerger;
 import jorgan.midi.merge.MidiMergerProvider;
-import jorgan.sound.midi.DevicePool;
-import jorgan.sound.midi.merge.MergeInput;
-import jorgan.sound.midi.merge.MidiMerger;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;

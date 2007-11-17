@@ -36,6 +36,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
+import jorgan.gui.OrganAware;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -51,7 +52,7 @@ import bias.Configuration;
 /**
  * Panel shows all elements.
  */
-public class ElementsPanel extends DockedPanel {
+public class ElementsPanel extends DockedPanel implements OrganAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ElementsPanel.class);
@@ -337,15 +338,6 @@ public class ElementsPanel extends DockedPanel {
 			elements.remove(event.getElement());
 
 			fireIntervalRemoved(this, index, index);
-		}
-
-		public void referenceAdded(OrganEvent event) {
-		}
-
-		public void referenceChanged(OrganEvent event) {
-		}
-
-		public void referenceRemoved(OrganEvent event) {
 		}
 	}
 

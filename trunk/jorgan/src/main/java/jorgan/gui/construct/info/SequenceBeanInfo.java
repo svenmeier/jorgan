@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Sequence}.
  */
-public class SequenceBeanInfo extends ContinuousBeanInfo {
+public class SequenceBeanInfo extends IndexedContinuousBeanInfo {
 
     @Override
 	protected void registerProperties() {

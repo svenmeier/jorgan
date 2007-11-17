@@ -18,32 +18,23 @@
  */
 package jorgan.disposition;
 
+import java.util.List;
+
 /**
  * A keyboard.
- * 
- * TODO extends:
- * 
- * @see jorgan.disposition.Activateable
  */
-public class Keyboard extends Element {
-
-	public static final int COMMAND_NOTE_ON = 144;
-
-	public static final int COMMAND_POLY_PRESSURE = 160;
+public class Keyboard extends Element implements Input {
 
 	private String device = null;
-
-	private Key from = null;
-
-	private Key to = null;
 
 	private int transpose = 0;
 
 	private int channel = 0;
 
-	private int command = COMMAND_NOTE_ON;
-
-	private int threshold = 0;
+	public Keyboard() {
+		addMessage(new Press().pattern("144, pitch:0-127, velocity:0-127"));
+		addMessage(new Release().pattern("128, pitch:0-127, 0-127"));
+	}
 
 	@Override
 	protected boolean canReference(Class clazz) {
@@ -83,46 +74,24 @@ public class Keyboard extends Element {
 		return transpose;
 	}
 
-	public void setFrom(Key from) {
-		this.from = from;
+	public List<Class<? extends Matcher>> getMessageClasses() {
+		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
-		fireElementChanged(true);
+		names.add(Press.class);
+		names.add(Release.class);
+
+		return names;
 	}
 
-	public void setTo(Key to) {
-		this.to = to;
+	public static class Press extends Matcher {
 
-		fireElementChanged(true);
+		public transient int pitch;
+
+		public transient int velocity;
 	}
 
-	public Key getFrom() {
-		return from;
-	}
+	public static class Release extends Matcher {
 
-	public Key getTo() {
-		return to;
-	}
-
-	public int getCommand() {
-		return command;
-	}
-
-	public int getThreshold() {
-		return threshold;
-	}
-
-	public void setCommand(int command) {
-		if (command != COMMAND_NOTE_ON && command != COMMAND_POLY_PRESSURE) {
-			throw new IllegalArgumentException("command '" + command + "'");
-		}
-		this.command = command;
-
-		fireElementChanged(true);
-	}
-
-	public void setThreshold(int threshold) {
-		this.threshold = threshold;
-
-		fireElementChanged(true);
+		public transient int pitch;
 	}
 }

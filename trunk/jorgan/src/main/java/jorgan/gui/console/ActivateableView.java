@@ -32,6 +32,10 @@ import jorgan.skin.TextLayer;
  */
 public class ActivateableView extends MomentaryView<Activateable> {
 
+	public static final String BINDING_ACTIVE = "active";
+
+	public static final String BINDING_ACTIVATED = "activated";
+
 	/**
 	 * Constructor.
 	 * 
@@ -40,6 +44,47 @@ public class ActivateableView extends MomentaryView<Activateable> {
 	 */
 	public ActivateableView(Activateable activateable) {
 		super(activateable);
+	}
+
+	@Override
+	protected void initBindings() {
+		super.initBindings();
+
+		setBinding(BINDING_ACTIVE, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return true;
+			}
+
+			public boolean isPressed() {
+				return getElement().isActive();
+			}
+
+			public void pressed() {
+				getElement().setActive(!getElement().isActive());
+			}
+
+			public void released() {
+				if (!getElement().isLocking()) {
+					getElement().setActive(false);
+				}
+			};
+		});
+
+		setBinding(BINDING_ACTIVATED, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+
+			public boolean isPressed() {
+				return getElement().isActivated();
+			}
+
+			public void pressed() {
+			}
+
+			public void released() {
+			};
+		});
 	}
 
 	@Override
@@ -67,23 +112,6 @@ public class ActivateableView extends MomentaryView<Activateable> {
 	}
 
 	@Override
-	public boolean isButtonPressed() {
-		return getElement().isActive();
-	}
-
-	@Override
-	public void buttonPressed() {
-		getElement().setActive(!getElement().isActive());
-	}
-
-	@Override
-	public void buttonReleased() {
-		if (!getElement().isLocking()) {
-			getElement().setActive(false);
-		}
-	}
-
-	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
@@ -96,7 +124,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 
 	private Layer createTextLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setText("${" + TEXT_NAME + "}");
+		layer.setBinding(CONTROL_NAME);
 		layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
 		layer.setAnchor(TextLayer.LEFT);
 		layer.setFont(getDefaultFont());
@@ -107,7 +135,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 
 	private Layer createButtonLayer() {
 		ButtonLayer layer = new ButtonLayer();
-		layer.setEnabled(true);
+		layer.setBinding(BINDING_ACTIVE);
 		layer.setFill(ButtonLayer.BOTH);
 
 		layer.addChild(createCheckLayer(false));

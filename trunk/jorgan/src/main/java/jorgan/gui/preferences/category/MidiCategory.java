@@ -21,7 +21,6 @@ package jorgan.gui.preferences.category;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -30,7 +29,6 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 
 import jorgan.gui.midi.MidiMonitor;
-import jorgan.play.sound.ChanneledSoundFactory;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 import bias.swing.Category;
@@ -44,15 +42,10 @@ public class MidiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiCategory.class);
 
-	private Model sendAllNotesOff = getModel(new Property(
-			ChanneledSoundFactory.class, "sendAllNotesOff"));
-
 	private Model monitorMax = getModel(new Property(MidiMonitor.class, "max"));
 
-	private JCheckBox sendAllNotesOffCheckBox = new JCheckBox();
-
-	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
-			Integer.MAX_VALUE, 50));
+	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
+			1, Integer.MAX_VALUE, 50));
 
 	public MidiCategory() {
 		config.read(this);
@@ -63,11 +56,6 @@ public class MidiCategory extends JOrganCategory {
 		JPanel panel = new JPanel(new GridBagLayout());
 
 		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
-
-		builder.nextRow();
-
-		config.get("sendAllNotesOff").read(sendAllNotesOffCheckBox);
-		panel.add(sendAllNotesOffCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
@@ -88,15 +76,16 @@ public class MidiCategory extends JOrganCategory {
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
-	
-		panel.add(config.get("monitorMax").read(new JLabel()), builder.nextColumn());
+
+		panel.add(config.get("monitorMax").read(new JLabel()), builder
+				.nextColumn());
 		panel.add(monitorMaxSpinner, builder.nextColumn());
 
 		builder.nextRow();
-		
+
 		return panel;
 	}
-	
+
 	@Override
 	public Class<? extends Category> getParentCategory() {
 		return AppCategory.class;
@@ -104,16 +93,11 @@ public class MidiCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		sendAllNotesOffCheckBox.setSelected((Boolean) sendAllNotesOff
-				.getValue());
-
 		monitorMaxSpinner.setValue(monitorMax.getValue());
 	}
 
 	@Override
 	protected void write() {
-		sendAllNotesOff.setValue(sendAllNotesOffCheckBox.isSelected());
-
 		monitorMax.setValue(monitorMaxSpinner.getValue());
 	}
 }

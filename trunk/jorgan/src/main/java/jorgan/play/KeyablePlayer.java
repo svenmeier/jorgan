@@ -66,7 +66,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
             action = new SostenutoAction();
             break;
         default:
-            throw new Error("unexpected keyable action '" + keyable.getAction()
+            throw new IllegalStateException("unexpected keyable action '" + keyable.getAction()
                     + "'");
         }
     }
@@ -144,7 +144,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
         }
 
         protected boolean shouldActivate() {
-            return isActive();
+            return getElement().isActivated();
         }
 
         public void keyDown(int pitch, int velocity) {
@@ -183,7 +183,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
     private class InverseAction extends Action {
         @Override
 		protected boolean shouldActivate() {
-            return !isActive();
+            return !getElement().isActivated();
         }
     }
 

@@ -633,18 +633,6 @@ public class OrganFrame extends JFrame {
 			analyseEvent(event);
 		}
 
-		public void referenceAdded(OrganEvent event) {
-			analyseEvent(event);
-		}
-
-		public void referenceChanged(OrganEvent event) {
-			analyseEvent(event);
-		}
-
-		public void referenceRemoved(OrganEvent event) {
-			analyseEvent(event);
-		}
-
 		private void analyseEvent(final OrganEvent event) {
 			if (event.isDispositionChange()) {
 				dispositionChanges = true;

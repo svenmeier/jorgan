@@ -18,18 +18,14 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Initiator;
-import jorgan.gui.construct.editor.MessageEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Initiator}.
  */
 public class InitiatorBeanInfo extends MomentaryBeanInfo {
 
-    @Override
+	@Override
 	protected void registerProperties() {
-        super.registerProperties();
-
-        add("message", Initiator.class, MessageEditor.class);
-    }
+		super.registerProperties();
+	}
 }

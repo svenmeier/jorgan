@@ -43,25 +43,4 @@ public interface OrganListener {
    * @param event   event describing the change
    */
   public void elementRemoved(OrganEvent event);
-
-  /**
-   * A reference was changed.
-   *
-   * @param event   event describing the change
-   */
-  public void referenceChanged(OrganEvent event);
-
-  /**
-   * A reference was added to the organ.
-   *
-   * @param event   event describing the change
-   */
-  public void referenceAdded(OrganEvent event);
-
-  /**
-   * A reference was removed from the organ.
-   *
-   * @param event   event describing the change
-   */
-  public void referenceRemoved(OrganEvent event);
 }

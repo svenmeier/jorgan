@@ -18,57 +18,28 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.ShortMessage;
-
 import jorgan.disposition.Continuous;
-import jorgan.disposition.Message;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
+import jorgan.disposition.Continuous.Change;
 
 /**
  * A player for a swell.
  */
 public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
-	private static final Problem warningMessage = new Problem(Problem.WARNING,
-			"message");
-
 	public ContinuousPlayer(E slider) {
 		super(slider);
 	}
 
 	@Override
-	public void messageReceived(ShortMessage shortMessage) {
-		Continuous slider = getElement();
+	protected void input(Matcher matcher) throws MatcherException {
+		Continuous continuous = getElement();
 
-		Message message = slider.getMessage();
-		if (message != null
-				&& message.match(shortMessage.getStatus(), shortMessage.getData1(),
-						shortMessage.getData2())) {
-
-			int position = message.wildcard(shortMessage.getData1(),
-					shortMessage.getData2());
-			if (position != -1) {
-				if (slider.isReverse()) {
-					position = 127 - position;
-				}
-				if (Math.abs(slider.getValue() - position) > slider
-						.getThreshold()) {
-					fireInputAccepted();
-
-					slider.setValue(position);
-				}
-			}
+		if (matcher instanceof Change) {
+			continuous.setValue(((Change)matcher).value);
 		}
-	}
 
-	@Override
-	public void elementChanged(OrganEvent event) {
-		Continuous slider = getElement();
-
-		if (slider.getMessage() == null && getWarnMessage()) {
-			addProblem(warningMessage.value(null));
-		} else {
-			removeProblem(warningMessage);
-		}
+		super.input(matcher);
 	}
 }

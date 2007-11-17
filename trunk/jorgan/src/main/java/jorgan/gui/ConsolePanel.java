@@ -697,16 +697,28 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			Element element = event.getElement();
 
 			if (element == console) {
-				initSkin();
+				if ("reference".equals(event.getName())) {
+					Reference reference = (Reference)event.getValue();
+					
+					if (console.references(reference.getElement()) && getView(reference.getElement()) == null) {
+						createView(reference.getElement());
+					} else if (!console.references(reference.getElement()) && getView(reference.getElement()) != null) {
+						dropView(reference.getElement());
+					} else {
+						getView(reference.getElement()).changeUpdate(event);
+					}
+				} else {
+					initSkin();
 
-				consoleView.changeUpdate(event);
-				for (Reference reference : console.getReferences()) {
-					View view = getView(reference.getElement());
-					view.changeUpdate(event);
+					consoleView.changeUpdate(event);
+					for (Reference reference : console.getReferences()) {
+						View view = getView(reference.getElement());
+						view.changeUpdate(event);
+					}
+
+					repaint();
+					revalidate();
 				}
-
-				repaint();
-				revalidate();
 			} else {
 				View view = getView(element);
 				if (view != null) {
@@ -732,28 +744,6 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 			if (getView(element) != null) {
 				dropView(element);
-			}
-		}
-
-		@Override
-		public void referenceChanged(OrganEvent event) {
-
-			if (event.getElement() == console) {
-				getView(event.getReference().getElement()).changeUpdate(event);
-			}
-		}
-
-		@Override
-		public void referenceAdded(OrganEvent event) {
-			if (event.getElement() == console) {
-				createView(event.getReference().getElement());
-			}
-		}
-
-		@Override
-		public void referenceRemoved(OrganEvent event) {
-			if (event.getElement() == console) {
-				dropView(event.getReference().getElement());
 			}
 		}
 	}

@@ -32,9 +32,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.Action;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -43,11 +41,11 @@ import javax.swing.border.EmptyBorder;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.construct.ElementPropertiesPanel;
 import jorgan.gui.construct.ElementsPanel;
+import jorgan.gui.construct.MessagesPanel;
 import jorgan.gui.construct.ReferencesPanel;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -56,7 +54,6 @@ import jorgan.gui.play.MemoryPanel;
 import jorgan.gui.play.PlayMonitor;
 import jorgan.gui.play.ProblemsPanel;
 import jorgan.gui.play.VirtualKeyboard;
-import jorgan.play.Problem;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.BaseAction;
@@ -78,24 +75,6 @@ public class OrganPanel extends JPanel {
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
-	private static final String KEY_CONSOLES = "consoles";
-
-	private static final String KEY_PROBLEMS = "problems";
-
-	private static final String KEY_KEYBOARD = "keyboard";
-
-	private static final String KEY_MIDI_MONITOR = "midiMonitor";
-
-	private static final String KEY_ELEMENTS = "elements";
-
-	private static final String KEY_REFERENCES = "references";
-
-	private static final String KEY_PROPERTIES = "properties";
-
-	private static final String KEY_MEMORY = "memory";
-
-	private static final String KEY_SKINS = "skins";
-
 	private boolean constructing = false;
 
 	/**
@@ -116,62 +95,27 @@ public class OrganPanel extends JPanel {
 	/**
 	 * The listener to events sent by the player.
 	 */
-	private PlayListener playerListener = new InternalPlayerListener();
+	private PlayListener playListener = new InternalPlayListener();
 
 	/*
 	 * The outer dockingPane that holds all views.
 	 */
-	private DockingPane outer = new BordererDockingPane();
+	private DockingPane viewDocking = new BordererDockingPane();
+
+	private Map<String, View> views = new HashMap<String, View>();
 
 	/*
 	 * The innter dockingPane that holds all consoles.
 	 */
-	private DockingPane inner = new BordererDockingPane();
+	private DockingPane consoleDocking = new BordererDockingPane();
 
-	private ElementPropertiesPanel propertiesPanel = new ElementPropertiesPanel();
-
-	private ElementsPanel elementsPanel = new ElementsPanel();
-
-	private ReferencesPanel referencesPanel = new ReferencesPanel();
-
-	private ProblemsPanel problemsPanel = new ProblemsPanel();
-
-	private VirtualKeyboard virtualKeyboard = new VirtualKeyboard();
-
-	private MidiMonitor midiMonitor = new MidiMonitor();
-
-	private PlayMonitor playMonitor = new PlayMonitor();
-
-	private MemoryPanel memoryPanel = new MemoryPanel();
-
-	private ActionDockable problemsDockable = new ActionDockable(KEY_PROBLEMS,
-			problemsPanel);
-
-	private ActionDockable keyboardDockable = new ActionDockable(KEY_KEYBOARD,
-			virtualKeyboard);
-
-	private ActionDockable midiMonitorDockable = new ActionDockable(
-			KEY_MIDI_MONITOR, midiMonitor);
-
-	private ActionDockable elementsDockable = new ActionDockable(KEY_ELEMENTS,
-			elementsPanel);
-
-	private ActionDockable referencesDockable = new ActionDockable(
-			KEY_REFERENCES, referencesPanel);
-
-	private ActionDockable propertiesDockable = new ActionDockable(
-			KEY_PROPERTIES, propertiesPanel);
-
-	private ActionDockable memoryDockable = new ActionDockable(KEY_MEMORY,
-			memoryPanel);
-
-	private ActionDockable skinsDockable = new ActionDockable(KEY_SKINS, null);
-
-	private Map<Console, DefaultDockable> consoleDockables = new HashMap<Console, DefaultDockable>();
+	private Map<Console, DefaultDockable> consolesMap = new HashMap<Console, DefaultDockable>();
 
 	private BackAction backAction = new BackAction();
 
 	private ForwardAction forwardAction = new ForwardAction();
+
+	private PlayMonitor playMonitor = new PlayMonitor();
 
 	private String playDocking;
 
@@ -185,13 +129,17 @@ public class OrganPanel extends JPanel {
 
 		setLayout(new BorderLayout());
 
-		outer.setBorder(new EmptyBorder(2, 2, 2, 2));
-		add(outer, BorderLayout.CENTER);
+		viewDocking.setBorder(new EmptyBorder(2, 2, 2, 2));
+		add(viewDocking, BorderLayout.CENTER);
 
-		elementsDockable.setEnabled(false);
-		referencesDockable.setEnabled(false);
-		propertiesDockable.setEnabled(false);
-		skinsDockable.setEnabled(false);
+		new View("properties", new ElementPropertiesPanel(), true);
+		new View("elements", new ElementsPanel(), true);
+		new View("references", new ReferencesPanel(), true);
+		new View("messages", new MessagesPanel(), true);
+		new View("problems", new ProblemsPanel(), false);
+		new View("keyboard", new VirtualKeyboard(), false);
+		new View("midiMonitor", new MidiMonitor(), false);
+		new View("memory", new MemoryPanel(), false);
 
 		loadDocking();
 	}
@@ -230,14 +178,10 @@ public class OrganPanel extends JPanel {
 	 */
 	public List getMenuWidgets() {
 		List<Object> actions = new ArrayList<Object>();
-		actions.add(problemsDockable);
-		actions.add(keyboardDockable);
-		actions.add(midiMonitorDockable);
-		actions.add(memoryDockable);
-		actions.add(elementsDockable);
-		actions.add(propertiesDockable);
-		actions.add(referencesDockable);
-		actions.add(skinsDockable);
+
+		for (String key : views.keySet()) {
+			actions.add(views.get(key));
+		}
 
 		return actions;
 	}
@@ -251,14 +195,14 @@ public class OrganPanel extends JPanel {
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(organListener);
-			this.session.removePlayerListener(playerListener);
+			this.session.removePlayerListener(playListener);
 			this.session.removeSelectionListener(selectionListener);
 
-			propertiesPanel.setOrgan(null);
-			referencesPanel.setOrgan(null);
-			elementsPanel.setOrgan(null);
-			problemsPanel.setOrgan(null);
-			memoryPanel.setOrgan(null);
+			for (View dockable : views.values()) {
+				if (dockable.getComponent() instanceof OrganAware) {
+					((OrganAware) dockable.getComponent()).setOrgan(null);
+				}
+			}
 
 			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
 				Element element = this.session.getOrgan().getElement(e);
@@ -274,14 +218,15 @@ public class OrganPanel extends JPanel {
 			setConstructing(!this.session.getPlay().isOpen());
 
 			this.session.addOrganListener(organListener);
-			this.session.addPlayerListener(playerListener);
+			this.session.addPlayerListener(playListener);
 			this.session.addSelectionListener(selectionListener);
 
-			propertiesPanel.setOrgan(this.session);
-			referencesPanel.setOrgan(this.session);
-			elementsPanel.setOrgan(this.session);
-			problemsPanel.setOrgan(this.session);
-			memoryPanel.setOrgan(this.session);
+			for (View dockable : views.values()) {
+				if (dockable.getComponent() instanceof OrganAware) {
+					((OrganAware) dockable.getComponent())
+							.setOrgan(this.session);
+				}
+			}
 
 			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
 				Element element = this.session.getOrgan().getElement(e);
@@ -316,21 +261,21 @@ public class OrganPanel extends JPanel {
 		DefaultDockable dockable = new DefaultDockable(scrollPane, Elements
 				.getDisplayName(console));
 
-		inner.putDockable(console, dockable);
+		consoleDocking.putDockable(console, dockable);
 
-		consoleDockables.put(console, dockable);
+		consolesMap.put(console, dockable);
 	}
 
 	protected void updateConsoleDockable(Console console) {
-		DefaultDockable dockable = consoleDockables.get(console);
+		DefaultDockable dockable = consolesMap.get(console);
 
 		dockable.setName(Elements.getDisplayName(console));
 
-		inner.putDockable(console, dockable);
+		consoleDocking.putDockable(console, dockable);
 	}
 
 	protected void removeConsoleDockable(Console console) {
-		Dockable dockable = consoleDockables.remove(console);
+		Dockable dockable = consolesMap.remove(console);
 
 		JScrollPane scrollPane = (JScrollPane) dockable.getComponent();
 		ConsolePanel consolePanel = (ConsolePanel) scrollPane.getViewport()
@@ -338,7 +283,7 @@ public class OrganPanel extends JPanel {
 		consolePanel.setConsole(null);
 		consolePanel.setOrgan(null);
 
-		inner.removeDockable(console);
+		consoleDocking.removeDockable(console);
 	}
 
 	/**
@@ -359,9 +304,9 @@ public class OrganPanel extends JPanel {
 
 			loadDocking();
 
-			elementsDockable.setEnabled(constructing);
-			referencesDockable.setEnabled(constructing);
-			propertiesDockable.setEnabled(constructing);
+			for (View dockable : views.values()) {
+				dockable.update();
+			}
 
 			updateHistory();
 
@@ -386,7 +331,7 @@ public class OrganPanel extends JPanel {
 				logger.log(Level.WARNING, "unable to load docking", ex);
 			}
 		}
-		
+
 		String dockingXml;
 		if (constructing) {
 			dockingXml = "construct.xml";
@@ -419,10 +364,40 @@ public class OrganPanel extends JPanel {
 		}
 	}
 
+	public String getConstructDocking() {
+		return constructDocking;
+	}
+
+	public void setConstructDocking(String constructDocking) {
+		this.constructDocking = constructDocking;
+	}
+
+	public String getPlayDocking() {
+		return playDocking;
+	}
+
+	public void setPlayDocking(String playDocking) {
+		this.playDocking = playDocking;
+	}
+
+	public void closing() {
+		saveDocking();
+		config.write(this);
+	}
+
+	private class BordererDockingPane extends DockingPane {
+		@Override
+		protected Dock createDockImpl() {
+			Dock dock = super.createDockImpl();
+			dock.setBorder(new Eclipse3Border());
+			return dock;
+		}
+	}
+
 	/**
 	 * The listener to events of the player.
 	 */
-	private class InternalPlayerListener implements PlayListener {
+	private class InternalPlayListener implements PlayListener {
 
 		public void inputAccepted() {
 			playMonitor.input();
@@ -439,8 +414,9 @@ public class OrganPanel extends JPanel {
 		}
 
 		public void problemAdded(PlayEvent ev) {
-			if (Problem.ERROR.equals(ev.getProblem().getLevel())) {
-				outer.putDockable(KEY_PROBLEMS, problemsDockable);
+			if (ev.getProblem() instanceof jorgan.play.Error) {
+				View dockable = views.get("problems");
+				viewDocking.putDockable(dockable.getKey(), dockable);
 			}
 		}
 
@@ -459,9 +435,8 @@ public class OrganPanel extends JPanel {
 	/**
 	 * The listener to organ events.
 	 */
-	private class InternalOrganListener extends OrganAdapter {
+	private class InternalOrganListener implements OrganListener {
 
-		@Override
 		public void elementChanged(OrganEvent event) {
 			jorgan.disposition.Element element = event.getElement();
 
@@ -470,7 +445,6 @@ public class OrganPanel extends JPanel {
 			}
 		}
 
-		@Override
 		public void elementAdded(OrganEvent event) {
 
 			jorgan.disposition.Element element = event.getElement();
@@ -480,7 +454,6 @@ public class OrganPanel extends JPanel {
 			}
 		}
 
-		@Override
 		public void elementRemoved(OrganEvent event) {
 
 			jorgan.disposition.Element element = event.getElement();
@@ -502,13 +475,12 @@ public class OrganPanel extends JPanel {
 				if (element instanceof Console) {
 					Console console = (Console) element;
 
-					Dockable dockable = consoleDockables.get(console);
+					Dockable dockable = consolesMap.get(console);
 					if (dockable == null) {
 						addConsoleDockable(console);
-
-						dockable = consoleDockables.get(console);
+					} else {
+						consoleDocking.putDockable(console, dockable);
 					}
-					inner.putDockable(console, dockable);
 				}
 			}
 
@@ -516,26 +488,35 @@ public class OrganPanel extends JPanel {
 		}
 	}
 
-	private class ActionDockable extends BaseAction implements Dockable {
+	private class View extends BaseAction implements Dockable {
 
 		private String key;
 
 		private JComponent component;
 
-		private Icon icon;
+		private boolean constructionOnly;
 
-		private ActionDockable(String key, JComponent component) {
+		private View(String key, JComponent component, boolean constructionOnly) {
 			this.key = key;
 			this.component = component;
-			this.icon = new ImageIcon(getClass().getResource(
-					"img/" + key + ".gif"));
-			putValue(Action.SMALL_ICON, icon);
+			this.constructionOnly = constructionOnly;
 
 			config.get(key).read(this);
+
+			views.put(key, this);
+			update();
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public void update() {
+			setEnabled(!constructionOnly || constructing);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			outer.putDockable(key, this);
+			viewDocking.putDockable(key, this);
 		}
 
 		public void closed() {
@@ -550,7 +531,7 @@ public class OrganPanel extends JPanel {
 		}
 
 		public Icon getIcon() {
-			return icon;
+			return getSmallIcon();
 		}
 	}
 
@@ -586,17 +567,17 @@ public class OrganPanel extends JPanel {
 
 	private class OrganPanelPersister extends XMLPersister {
 		private OrganPanelPersister(Reader reader) {
-			super(outer, reader);
+			super(viewDocking, reader);
 		}
 
 		private OrganPanelPersister(Writer writer) {
-			super(outer, writer);
+			super(viewDocking, writer);
 		}
 
 		@Override
 		protected JComponent resolveComponent(Object key) {
-			if (KEY_CONSOLES.equals(key)) {
-				return inner;
+			if ("consoles".equals(key)) {
+				return consoleDocking;
 			} else {
 				return null;
 			}
@@ -604,54 +585,7 @@ public class OrganPanel extends JPanel {
 
 		@Override
 		protected Dockable resolveDockable(Object key) {
-			if (KEY_KEYBOARD.equals(key)) {
-				return keyboardDockable;
-			} else if (KEY_PROBLEMS.equals(key)) {
-				return problemsDockable;
-			} else if (KEY_MIDI_MONITOR.equals(key)) {
-				return midiMonitorDockable;
-			} else if (KEY_MEMORY.equals(key)) {
-				return memoryDockable;
-			} else if (constructing) {
-				if (KEY_ELEMENTS.equals(key)) {
-					return elementsDockable;
-				} else if (KEY_REFERENCES.equals(key)) {
-					return referencesDockable;
-				} else if (KEY_PROPERTIES.equals(key)) {
-					return propertiesDockable;
-				}
-			}
-			return null;
+			return views.get(key);
 		}
-	}
-
-	private class BordererDockingPane extends DockingPane {
-		@Override
-		protected Dock createDockImpl() {
-			Dock dock = super.createDockImpl();
-			dock.setBorder(new Eclipse3Border());
-			return dock;
-		}
-	}
-
-	public String getConstructDocking() {
-		return constructDocking;
-	}
-
-	public void setConstructDocking(String constructDocking) {
-		this.constructDocking = constructDocking;
-	}
-
-	public String getPlayDocking() {
-		return playDocking;
-	}
-
-	public void setPlayDocking(String playDocking) {
-		this.playDocking = playDocking;
-	}
-
-	public void closing() {
-		saveDocking();
-		config.write(this);
 	}
 }

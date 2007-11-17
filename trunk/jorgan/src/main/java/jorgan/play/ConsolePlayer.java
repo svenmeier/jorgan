@@ -26,18 +26,12 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Console;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.DevicePool;
+import jorgan.midi.DevicePool;
 
 /**
  * A player of an console.
  */
 public class ConsolePlayer extends Player<Console> {
-
-	private static final Problem warningDevice = new Problem(Problem.WARNING,
-			"device");
-
-	private static final Problem errorDevice = new Problem(Problem.ERROR,
-			"device");
 
 	/**
 	 * The midiDevice to receive input from.
@@ -57,7 +51,7 @@ public class ConsolePlayer extends Player<Console> {
 	protected void openImpl() {
 		Console console = getElement();
 
-		removeProblem(errorDevice);
+		removeProblem(new Error("device"));
 
 		String device = console.getDevice();
 		if (device != null) {
@@ -68,7 +62,7 @@ public class ConsolePlayer extends Player<Console> {
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(errorDevice.value(device));
+				addProblem(new Error("device", device));
 			}
 		}
 	}
@@ -86,26 +80,31 @@ public class ConsolePlayer extends Player<Console> {
 
 	@Override
 	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+		
 		Console console = getElement();
 
 		if (console.getDevice() == null && getWarnDevice()) {
-			removeProblem(errorDevice);
-			addProblem(warningDevice.value(null));
+			removeProblem(new Error("device"));
+			addProblem(new Warning("device"));
 		} else {
-			removeProblem(warningDevice);
+			removeProblem(new Warning("device"));
 		}
 	}
 
 	@Override
-	protected void input(ShortMessage message) {
+	public void received(ShortMessage message) {
 		Console console = getElement();
 
-		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Reference reference = console.getReference(r);
+		if (console.getChannel() == message.getChannel()) {
+			for (int r = 0; r < console.getReferenceCount(); r++) {
+				Reference reference = console.getReference(r);
 
-			Player player = getOrganPlay().getPlayer(reference.getElement());
-			if (player != null) {
-				player.messageReceived(message);
+				Player player = getOrganPlay()
+						.getPlayer(reference.getElement());
+				if (player != null && !(player instanceof ConsolePlayer)) {
+					player.input(message.getCommand(), message.getData1(), message.getData2());
+				}
 			}
 		}
 	}

@@ -18,48 +18,28 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.ShortMessage;
-
 import jorgan.disposition.Initiator;
-import jorgan.disposition.Message;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
+import jorgan.disposition.Initiator.Initiate;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
  */
-public class InitiatorPlayer extends Player<Initiator> {
+public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 
-	private static final Problem warningMessage = new Problem(Problem.WARNING,
-			"message");
-
-	public InitiatorPlayer(Initiator initiator) {
-		super(initiator);
+	public InitiatorPlayer(E e) {
+		super(e);
 	}
 
 	@Override
-	public void messageReceived(ShortMessage shortMessage) {
+	protected void input(Matcher matcher) throws MatcherException {
 		Initiator initiator = getElement();
 
-		Message message = initiator.getMessage();
-		if (message != null
-				&& message.match(shortMessage.getStatus(), shortMessage.getData1(),
-						shortMessage.getData2())) {
-
-			fireInputAccepted();
-
+		if (matcher instanceof Initiate) {
 			initiator.initiate();
 		}
-	}
 
-	@Override
-	public void elementChanged(OrganEvent event) {
-
-		Initiator initiator = getElement();
-
-		if (initiator.getMessage() == null && getWarnMessage()) {
-			addProblem(warningMessage.value(null));
-		} else {
-			removeProblem(warningMessage);
-		}
+		super.input(matcher);
 	}
 }

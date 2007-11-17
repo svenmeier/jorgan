@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 /**
@@ -77,7 +78,7 @@ public class ImageLayer extends Layer {
     }
 
     @Override
-	public void setView(View view) {
+	public void setView(View<? extends Element> view) {
         super.setView(view);
         
         if (image == null) {

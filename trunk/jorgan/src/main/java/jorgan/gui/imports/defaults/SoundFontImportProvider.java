@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jorgan.disposition.Stop;
+import jorgan.disposition.Rank;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.riff.RiffChunk;
 import jorgan.io.riff.RiffFormatException;
@@ -82,19 +82,19 @@ public class SoundFontImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasStops() {
+	public boolean hasRanks() {
 		File file = panel.fileSelector.getSelectedFile();
 
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List<Stop> getStops() {
-		List<Stop> stops = new ArrayList<Stop>();
+	public List<Rank> getRanks() {
+		List<Rank> ranks = new ArrayList<Rank>();
 
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
 			try {
-				stops = readStops(file);
+				ranks = readRanks(file);
 			} catch (RiffFormatException ex) {
 				panel.showMessage("exception/invalid", file.getPath());
 			} catch (IOException ex) {
@@ -102,22 +102,22 @@ public class SoundFontImportProvider implements ImportProvider {
 			}
 		}
 
-		return stops;
+		return ranks;
 	}
 
 	/**
-	 * Read stops from the given soundfont file.
+	 * Read ranks from the given soundfont file.
 	 * 
 	 * @param file
 	 *            file to read from
-	 * @return list of stops
+	 * @return list of ranks
 	 * @throws IOException
 	 * @throws RiffFormatException
 	 */
-	private List<Stop> readStops(File file) throws IOException,
+	private List<Rank> readRanks(File file) throws IOException,
 			RiffFormatException {
 
-		ArrayList<Stop> stops = new ArrayList<Stop>();
+		ArrayList<Rank> ranks = new ArrayList<Rank>();
 
 		InputStream input = null;
 		try {
@@ -130,10 +130,10 @@ public class SoundFontImportProvider implements ImportProvider {
 			for (int p = 0; p < presets.size(); p++) {
 				Preset preset = presets.get(p);
 
-				Stop stop = new Stop();
-				stop.setName(preset.getName());
-				stop.setProgram(preset.getProgram());
-				stops.add(stop);
+				Rank rank = new Rank();
+				rank.setName(preset.getName());
+				rank.setProgram(preset.getProgram());
+				ranks.add(rank);
 			}
 		} finally {
 			if (input != null) {
@@ -141,7 +141,7 @@ public class SoundFontImportProvider implements ImportProvider {
 			}
 		}
 
-		return stops;
+		return ranks;
 	}
 
 	/**
@@ -166,11 +166,12 @@ public class SoundFontImportProvider implements ImportProvider {
 
 			builder.nextRow(1.0d);
 
-			add(config.get("options/file").read(new JLabel()), builder.nextColumn());
+			add(config.get("options/file").read(new JLabel()), builder
+					.nextColumn());
 
 			fileSelector.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
-					firePropertyChange("stops", null, null);
+					firePropertyChange("ranks", null, null);
 				}
 			});
 			add(fileSelector, builder.nextColumn().fillHorizontal());

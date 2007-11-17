@@ -23,7 +23,6 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
-import java.util.List;
 
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -31,6 +30,7 @@ import javax.swing.event.ChangeListener;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.gui.OrganAware;
 import jorgan.gui.OrganSession;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.event.ElementSelectionEvent;
@@ -42,7 +42,8 @@ import swingx.docking.DockedPanel;
 /**
  * Panel shows the properties of elements.
  */
-public class ElementPropertiesPanel extends DockedPanel {
+public class ElementPropertiesPanel extends DockedPanel implements
+		OrganAware {
 
 	private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
 
@@ -107,24 +108,6 @@ public class ElementPropertiesPanel extends DockedPanel {
 		@Override
 		public void elementChanged(OrganEvent event) {
 			if (propertiesPanel.getBeans().contains(event.getElement())) {
-				updateProperties();
-			}
-		}
-
-		@Override
-		public void referenceAdded(OrganEvent event) {
-			List beans = propertiesPanel.getBeans();
-			if (beans.contains(event.getElement())
-					|| beans.contains(event.getReference().getElement())) {
-				updateProperties();
-			}
-		}
-
-		@Override
-		public void referenceRemoved(OrganEvent event) {
-			List beans = propertiesPanel.getBeans();
-			if (beans.contains(event.getElement())
-					|| beans.contains(event.getReference().getElement())) {
 				updateProperties();
 			}
 		}

@@ -20,22 +20,18 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Continuous;
 import jorgan.gui.construct.editor.BooleanEditor;
-import jorgan.gui.construct.editor.DataEditor;
-import jorgan.gui.construct.editor.MessageEditor;
+import jorgan.gui.construct.editor.ValueEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Continuous}.
  */
 public class ContinuousBeanInfo extends ElementBeanInfo {
 
-    @Override
+	@Override
 	protected void registerProperties() {
-        super.registerProperties();
+		super.registerProperties();
 
-        add("value", Continuous.class, DataEditor.class);
-        add("message", Continuous.class, MessageEditor.class);
-        add("reverse", Continuous.class, BooleanEditor.class);
-        add("threshold", Continuous.class, DataEditor.class);
-        add("locking", Continuous.class, BooleanEditor.class);
-    }
+		add("value", Continuous.class, ValueEditor.class);
+		add("locking", Continuous.class, BooleanEditor.class);
+	}
 }

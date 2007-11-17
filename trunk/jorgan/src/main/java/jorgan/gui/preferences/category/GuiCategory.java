@@ -33,7 +33,6 @@ import javax.swing.border.TitledBorder;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
-import jorgan.gui.construct.editor.MessageEditor;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 import bias.swing.Category;
@@ -52,13 +51,9 @@ public class GuiCategory extends JOrganCategory {
 	private Model showAboutOnStartup = getModel(new Property(GUI.class,
 			"showAboutOnStartup"));
 
-	private Model hexMessage = getModel(new Property(MessageEditor.class, "hex"));
-
 	private JComboBox lookAndFeelComboBox = new JComboBox();
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
-
-	private JCheckBox hexMessageCheckBox = new JCheckBox();
 
 	private Model fullScreenOnLoad = getModel(new Property(OrganFrame.class,
 			"fullScreenOnLoad"));
@@ -88,7 +83,8 @@ public class GuiCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		panel.add(config.get("lookAndFeel").read(new JLabel()), builder.nextColumn());
+		panel.add(config.get("lookAndFeel").read(new JLabel()), builder
+				.nextColumn());
 		lookAndFeelComboBox
 				.setModel(new DefaultComboBoxModel(GUI.LAF.values()));
 		panel.add(lookAndFeelComboBox, builder.nextColumn());
@@ -96,12 +92,14 @@ public class GuiCategory extends JOrganCategory {
 		builder.nextRow();
 
 		config.get("showAboutOnStartup").read(showAboutOnStartupCheckBox);
-		panel.add(showAboutOnStartupCheckBox, builder.nextColumn().gridWidthRemainder());
+		panel.add(showAboutOnStartupCheckBox, builder.nextColumn()
+				.gridWidthRemainder());
 
 		builder.nextRow();
 
 		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
-		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn().gridWidthRemainder());
+		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn()
+				.gridWidthRemainder());
 
 		builder.nextRow();
 
@@ -109,9 +107,6 @@ public class GuiCategory extends JOrganCategory {
 				.gridWidthRemainder().fillHorizontal());
 
 		builder.nextRow();
-
-		config.get("hexMessage").read(hexMessageCheckBox);
-		panel.add(hexMessageCheckBox, builder.nextColumn().gridWidthRemainder());
 
 		builder.nextRow();
 
@@ -171,8 +166,6 @@ public class GuiCategory extends JOrganCategory {
 			ignoreChangesRadioButton.setSelected(true);
 			break;
 		}
-
-		hexMessageCheckBox.setSelected((Boolean) hexMessage.getValue());
 	}
 
 	@Override
@@ -190,7 +183,5 @@ public class GuiCategory extends JOrganCategory {
 			handle = OrganFrame.REGISTRATION_CHANGES_IGNORE;
 		}
 		handleRegistrationChanges.setValue(handle);
-
-		hexMessage.setValue(hexMessageCheckBox.isSelected());
 	}
 }

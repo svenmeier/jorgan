@@ -50,14 +50,13 @@ public class Organ {
 			classes.add(Console.class);
 			classes.add(Label.class);
 			classes.add(Keyboard.class);
-			classes.add(SoundSource.class);
+			classes.add(Rank.class);
 			classes.add(Stop.class);
 			classes.add(Coupler.class);
 			classes.add(Combination.class);
 			classes.add(Captor.class);
-			classes.add(Swell.class);
-			classes.add(Tremulant.class);
-			classes.add(Variation.class);
+			classes.add(ContinuousEffect.class);
+			classes.add(ActivateableEffect.class);
 			classes.add(Sequence.class);
 			classes.add(Activator.class);
 			classes.add(Regulator.class);
@@ -138,9 +137,9 @@ public class Organ {
 		fireElementRemoved(element);
 	}
 
-	protected void fireElementChanged(Element element, boolean dispositionChange) {
+	protected void fireElementChanged(Element element, String name, Object value, boolean dispositionChange) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, dispositionChange);
+			OrganEvent event = new OrganEvent(this, element, name, value,dispositionChange);
 			for (OrganListener listener : listeners) {
 
 				listener.elementChanged(event);
@@ -150,7 +149,7 @@ public class Organ {
 
 	protected void fireElementAdded(Element element) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, true);
+			OrganEvent event = new OrganEvent(this, element, null, null, true);
 			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
 
 				listener.elementAdded(event);
@@ -160,42 +159,10 @@ public class Organ {
 
 	protected void fireElementRemoved(Element element) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, true);
+			OrganEvent event = new OrganEvent(this, element, null, null, true);
 			for (OrganListener listener : listeners) {
 
 				listener.elementRemoved(event);
-			}
-		}
-	}
-
-	protected void fireReferenceChanged(Element element, Reference reference,
-			boolean dispositionChange) {
-		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, reference,
-					dispositionChange);
-			for (OrganListener listener : listeners) {
-				listener.referenceChanged(event);
-			}
-		}
-	}
-
-	protected void fireReferenceAdded(Element element, Reference reference) {
-		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, reference, true);
-			for (OrganListener listener : listeners) {
-
-				listener.referenceAdded(event);
-			}
-		}
-	}
-
-	protected void fireReferenceRemoved(Element element, Reference reference) {
-		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, reference, true);
-			for (int l = 0; l < listeners.size(); l++) {
-				OrganListener listener = listeners.get(l);
-
-				listener.referenceRemoved(event);
 			}
 		}
 	}
