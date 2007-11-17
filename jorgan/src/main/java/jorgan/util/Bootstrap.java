@@ -68,7 +68,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 			ClassLoader classloader = new URLClassLoader(classpath);
 			Thread.currentThread().setContextClassLoader(classloader);
 
-			Class clazz = classloader.loadClass(getClass(manifest));
+			Class<?> clazz = classloader.loadClass(getClass(manifest));
 
 			Method method = clazz.getMethod("main",
 					new Class[] { String[].class });

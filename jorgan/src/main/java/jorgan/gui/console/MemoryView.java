@@ -18,6 +18,9 @@
  */
 package jorgan.gui.console;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import jorgan.disposition.Memory;
 import jorgan.skin.TextLayer;
 
@@ -29,8 +32,15 @@ public class MemoryView extends ContinuousView<Memory> {
 	/**
 	 * The key of the {@link Memory#getTitle()} text for {@link TextLayer}s.
 	 */
-	public static final String TEXT_TITLE = "title";
+	public static final String BINDING_TITLE = "title";
 
+	/**
+	 * The key of the {@link Memory#getIndex()} text for {@link TextLayer}s.
+	 */
+	public static final String BINDING_INDEX = "index";
+	
+	private NumberFormat indexFormat = new DecimalFormat("000");
+	
 	/**
 	 * Constructor.
 	 * 
@@ -42,9 +52,25 @@ public class MemoryView extends ContinuousView<Memory> {
 	}
 
 	@Override
-	protected void initTexts() {
-		super.initTexts();
+	protected void initBindings() {
+		super.initBindings();
 
-		setText(TEXT_TITLE, getElement().getTitle());
+		setBinding(BINDING_TITLE, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+			public String getText() {
+				return getElement().getTitle();
+			}
+		});
+		
+		setBinding(BINDING_INDEX, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+			public String getText() {
+				return indexFormat.format(getElement().getIndex() + 1);
+			}
+		});
 	}
 }

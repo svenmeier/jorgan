@@ -22,8 +22,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-import jorgan.gui.console.ContinuousView;
-
 /**
  * Style.
  */
@@ -52,8 +50,9 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 		if (getChildCount() > 0) {
 			double position = 0.0d;
 
-			if (view instanceof ContinuousView) {
-				position = ((ContinuousView) view).getSliderPosition();
+			Binding binding = getBinding(Binding.class);
+			if (binding != null) {
+				position = binding.getPosition();
 			}
 
 			int index;
@@ -79,41 +78,51 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	public void mouseDragged(int x, int y, Dimension size) {
 		Rectangle rectangle = getUnpaddedBounds(size);
 
-		double position = 0.0d;
+		float position = 0.0f;
 
 		switch (direction) {
 		case DIRECTION_LEFT_RIGHT:
-			position = (double) (x - rectangle.x) / rectangle.width;
+			position = (float) (x - rectangle.x) / rectangle.width;
 			break;
 		case DIRECTION_RIGHT_LEFT:
-			position = (double) (rectangle.width - (x - rectangle.x))
+			position = (float) (rectangle.width - (x - rectangle.x))
 					/ rectangle.width;
 			break;
 		case DIRECTION_TOP_BOTTOM:
-			position = (double) (y - rectangle.y) / rectangle.height;
+			position = (float) (y - rectangle.y) / rectangle.height;
 			break;
 		case DIRECTION_BOTTOM_TOP:
-			position = (double) (rectangle.height - (y - rectangle.y))
+			position = (float) (rectangle.height - (y - rectangle.y))
 					/ rectangle.height;
 			break;
 		}
 
-		if (view instanceof ContinuousView) {
-			position = Math.max(0.0d, position);
-			position = Math.min(1.0d, position);
-			((ContinuousView) view).sliderPositioned(position);
+		Binding binding = getBinding(Binding.class);
+		if (binding != null) {
+			position = Math.max(0.0f, position);
+			position = Math.min(1.0f, position);
+			binding.setPosition(position);
 		}
 	}
 
 	@Override
 	public void mouseReleased(int x, int y, Dimension size) {
-		if (view instanceof ContinuousView) {
-			((ContinuousView) view).sliderReleased();
+		Binding binding = getBinding(Binding.class);
+		if (binding != null) {
+			binding.released();
 		}
 	}
 
 	@Override
 	public Object clone() {
 		return super.clone();
+	}
+
+	public static interface Binding extends ViewBinding {
+		public double getPosition();
+
+		public void setPosition(float position);
+
+		public void released();
 	}
 }

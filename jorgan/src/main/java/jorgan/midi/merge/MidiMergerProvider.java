@@ -21,13 +21,13 @@ package jorgan.midi.merge;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.sound.midi.DeviceInfo;
-import jorgan.sound.midi.merge.MidiMerger;
+import jorgan.midi.DeviceInfo;
+import jorgan.midi.merge.MidiMerger;
 
 /**
  * The provider of <code>MidiMerger</code> devices.
  * 
- * @see jorgan.sound.midi.merge.MidiMerger
+ * @see jorgan.midi.merge.MidiMerger
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 

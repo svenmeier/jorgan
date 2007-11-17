@@ -25,7 +25,6 @@ import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -41,6 +40,7 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
+import jorgan.gui.OrganAware;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
@@ -52,7 +52,7 @@ import bias.Configuration;
 /**
  * Panel shows the references of elements.
  */
-public class ReferencesPanel extends DockedPanel {
+public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ReferencesPanel.class);
@@ -61,6 +61,8 @@ public class ReferencesPanel extends DockedPanel {
 	 * The edited organ.
 	 */
 	private OrganSession session;
+
+	private Element element;
 
 	private List<Row> rows = new ArrayList<Row>();
 
@@ -194,23 +196,22 @@ public class ReferencesPanel extends DockedPanel {
 	}
 
 	private void updateReferences() {
-
+		element = null;
 		rows.clear();
 		referencesModel.update();
+		list.setVisible(false);
 
 		if (session != null
 				&& session.getSelectionModel().getSelectionCount() == 1) {
-			Element element = session.getSelectionModel().getSelectedElement();
+
+			element = session.getSelectionModel().getSelectedElement();
 
 			if (getShowReferencesTo()) {
-				for (int r = 0; r < element.getReferenceCount(); r++) {
-					rows.add(new Row(element, element.getReference(r)));
+				for (Reference reference : element.getReferences()) {
+					rows.add(new Row(element, reference));
 				}
 			} else {
-				Iterator iterator = element.getReferrer().iterator();
-				while (iterator.hasNext()) {
-					Element referrer = (Element) iterator.next();
-
+				for (Element referrer : element.getReferrer()) {
 					List references = referrer.getReferences(element);
 					for (int r = 0; r < references.size(); r++) {
 						rows.add(new Row(referrer, (Reference) references
@@ -229,8 +230,6 @@ public class ReferencesPanel extends DockedPanel {
 			referencesModel.update();
 
 			list.setVisible(true);
-		} else {
-			list.setVisible(false);
 		}
 
 		addAction.update();
@@ -268,26 +267,18 @@ public class ReferencesPanel extends DockedPanel {
 	private class ReferencesModel extends AbstractListModel implements
 			OrganListener {
 
-		private int size = -1;
+		private int size = 0;
 
 		private void update() {
-			if (size != -1) {
-				if (rows.size() > size) {
-					fireIntervalAdded(this, size, rows.size() - 1);
-				} else if (rows.size() < size) {
-					fireIntervalRemoved(this, rows.size(), size - 1);
-				}
-				size = rows.size();
+			if (rows.size() > size) {
+				fireIntervalAdded(this, size, rows.size() - 1);
+			} else if (rows.size() < size) {
+				fireIntervalRemoved(this, rows.size(), size - 1);
 			}
+			size = rows.size();
 		}
 
 		public int getSize() {
-
-			if (rows == null) {
-				size = 0;
-			} else {
-				size = rows.size();
-			}
 			return size;
 		}
 
@@ -302,33 +293,9 @@ public class ReferencesPanel extends DockedPanel {
 		}
 
 		public void elementChanged(final OrganEvent event) {
-			int index = rows.indexOf(event.getElement());
-			if (index != -1) {
-				fireContentsChanged(this, index, index);
+			if (event.getElement() == element) {
+				updateReferences();
 			}
-		}
-
-		public void fireRemoved(int count) {
-			if (count > 0) {
-				fireIntervalRemoved(this, 0, count - 1);
-			}
-		}
-
-		public void fireAdded(int count) {
-			if (count > 0) {
-				fireIntervalAdded(this, 0, count - 1);
-			}
-		}
-
-		public void referenceChanged(OrganEvent event) {
-		}
-
-		public void referenceAdded(OrganEvent event) {
-			updateReferences();
-		}
-
-		public void referenceRemoved(OrganEvent event) {
-			updateReferences();
 		}
 	}
 
@@ -342,13 +309,11 @@ public class ReferencesPanel extends DockedPanel {
 
 		public void actionPerformed(ActionEvent ev) {
 			CreateReferencesWizard.showInDialog(ReferencesPanel.this, session
-					.getOrgan(), session.getSelectionModel()
-					.getSelectedElement());
+					.getOrgan(), element);
 		}
 
 		public void update() {
-			setEnabled(session != null
-					&& session.getSelectionModel().getSelectionCount() == 1);
+			setEnabled(element != null);
 		}
 	}
 

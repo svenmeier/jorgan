@@ -34,6 +34,8 @@ import jorgan.skin.TextLayer;
  */
 public class InitiatorView extends MomentaryView<Initiator> {
 
+	public static final String BINDING_INITIATE = "initiate";
+
 	private boolean pressed;
 
 	/**
@@ -47,29 +49,34 @@ public class InitiatorView extends MomentaryView<Initiator> {
 	}
 
 	@Override
+	protected void initBindings() {
+		super.initBindings();
+		
+		setBinding(BINDING_INITIATE, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return true;
+			}
+			public boolean isPressed() {
+				return pressed;
+			}
+			public void pressed() {
+				getElement().initiate();
+
+				pressed = true;
+				repaint();
+			}
+			public void released() {
+				pressed = false;
+				repaint();
+			};
+		});
+	}
+	
+	@Override
 	protected void shortcutReleased() {
 		Initiator initiator = getElement();
 
 		initiator.initiate();
-	}
-
-	@Override
-	public boolean isButtonPressed() {
-		return pressed;
-	}
-
-	@Override
-	public void buttonPressed() {
-		getElement().initiate();
-
-		pressed = true;
-		repaint();
-	}
-
-	@Override
-	public void buttonReleased() {
-		pressed = false;
-		repaint();
 	}
 
 	@Override
@@ -85,7 +92,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 
 	private Layer createTextLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setText("${" + TEXT_NAME + "}");
+		layer.setBinding(CONTROL_NAME);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
@@ -96,7 +103,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 	private Layer createButtonLayer() {
 
 		ButtonLayer layer = new ButtonLayer();
-		layer.setEnabled(true);
+		layer.setBinding(BINDING_INITIATE);
 		layer.setFill(ButtonLayer.BOTH);
 
 		layer.addChild(createBorderLayer(false));

@@ -33,32 +33,11 @@ import java.util.List;
 
 import javax.xml.transform.TransformerException;
 
-import jorgan.disposition.Activator;
-import jorgan.disposition.Captor;
-import jorgan.disposition.Combination;
-import jorgan.disposition.Console;
-import jorgan.disposition.Coupler;
-import jorgan.disposition.Incrementer;
-import jorgan.disposition.Keyboard;
-import jorgan.disposition.Keyer;
-import jorgan.disposition.Label;
-import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Reference;
-import jorgan.disposition.Regulator;
-import jorgan.disposition.Sequence;
-import jorgan.disposition.SoundSource;
-import jorgan.disposition.Stop;
-import jorgan.disposition.Swell;
-import jorgan.disposition.Tremulant;
-import jorgan.disposition.Variation;
-import jorgan.disposition.Combination.CombinationReference;
-import jorgan.disposition.Console.ConsoleReference;
 import jorgan.io.disposition.BooleanArrayConverter;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.ElementConverter;
 import jorgan.io.disposition.History;
-import jorgan.io.disposition.KeyConverter;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
 import bias.Configuration;
@@ -66,6 +45,8 @@ import bias.Configuration;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.mapper.Mapper;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * A {@link jorgan.disposition.Organ} streamer.
@@ -75,7 +56,12 @@ public class DispositionStream {
 	private static Configuration config = Configuration.getRoot().get(
 			DispositionStream.class);
 
-	private XStream xstream = new XStream(new DomDriver());
+	private XStream xstream = new XStream(new DomDriver()) {
+		@Override
+		protected MapperWrapper wrapMapper(MapperWrapper next) {
+			return new PackageStrippingMapper(next);
+		}
+	};
 
 	private int recentMax = 4;
 
@@ -88,32 +74,9 @@ public class DispositionStream {
 	public DispositionStream() {
 		xstream.setMode(XStream.NO_REFERENCES);
 
-		xstream.alias("organ", Organ.class);
-		xstream.alias("console", Console.class);
-		xstream.alias("consoleReference", ConsoleReference.class);
-		xstream.alias("label", Label.class);
-		xstream.alias("keyboard", Keyboard.class);
-		xstream.alias("soundSource", SoundSource.class);
-		xstream.alias("stop", Stop.class);
-		xstream.alias("coupler", Coupler.class);
-		xstream.alias("combination", Combination.class);
-		xstream.alias("combinationReference", CombinationReference.class);
-		xstream.alias("captor", Captor.class);
-		xstream.alias("swell", Swell.class);
-		xstream.alias("tremulant", Tremulant.class);
-		xstream.alias("variation", Variation.class);
-		xstream.alias("sequence", Sequence.class);
-		xstream.alias("activator", Activator.class);
-		xstream.alias("regulator", Regulator.class);
-		xstream.alias("keyer", Keyer.class);
-		xstream.alias("memory", Memory.class);
-		xstream.alias("incrementer", Incrementer.class);
-		xstream.alias("reference", Reference.class);
-
 		xstream.registerConverter(new OrganConverter(xstream));
 		xstream.registerConverter(new ElementConverter(xstream));
 		xstream.registerConverter(new ReferenceConverter(xstream));
-		xstream.registerConverter(new KeyConverter());
 		xstream.registerConverter(new BooleanArrayConverter());
 
 		config.read(this);
@@ -150,9 +113,10 @@ public class DispositionStream {
 
 	public void write(Organ organ, File file) throws IOException {
 
-		File temp = new File(file.getAbsoluteFile().getParentFile(), "." + file.getName());
+		File temp = new File(file.getAbsoluteFile().getParentFile(), "."
+				+ file.getName());
 		write(organ, new FileOutputStream(temp));
-		
+
 		new History(file).move(historySize);
 
 		temp.renameTo(file);
@@ -231,5 +195,41 @@ public class DispositionStream {
 
 	public void setHistorySize(int historySize) {
 		this.historySize = historySize;
+	}
+
+	private class PackageStrippingMapper extends MapperWrapper {
+
+		private final String PREFIX = "jorgan.disposition";
+
+		private Mapper wrapped;
+
+		public PackageStrippingMapper(Mapper wrapped) {
+			super(wrapped);
+			this.wrapped = wrapped;
+		}
+
+		public String serializedClass(Class type) {
+			if (type.getPackage().getName().startsWith(PREFIX)) {
+				String temp = type.getName();
+
+				temp = Character.toLowerCase(temp.charAt(PREFIX.length() + 1))
+						+ temp.substring(PREFIX.length() + 2);
+
+				return temp.replace('$', '-');
+			} else {
+				return wrapped.serializedClass(type);
+			}
+		}
+
+		public Class realClass(String name) {
+			String temp = PREFIX + '.' + Character.toUpperCase(name.charAt(0))
+					+ name.substring(1);
+
+			try {
+				return wrapped.realClass(temp.replace('-', '$'));
+			} catch (Exception ex) {
+				return wrapped.realClass(name);
+			}
+		}
 	}
 }

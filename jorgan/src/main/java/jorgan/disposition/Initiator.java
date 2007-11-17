@@ -18,19 +18,20 @@
  */
 package jorgan.disposition;
 
+import java.util.List;
+
 public abstract class Initiator extends Momentary {
 
-	private Message message;
-
-	public Message getMessage() {
-		return message;
-	}
-
-	public void setMessage(Message message) {
-		this.message = message;
-
-		fireElementChanged(true);
-	}
-
 	public abstract void initiate();
+
+	public List<Class<? extends Matcher>> getMessageClasses() {
+		List<Class<? extends Matcher>> names = super.getMessageClasses();
+
+		names.add(Initiate.class);
+
+		return names;
+	}
+
+	public static class Initiate extends Matcher {
+	}
 }

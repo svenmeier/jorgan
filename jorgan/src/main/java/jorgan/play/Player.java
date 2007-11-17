@@ -24,7 +24,10 @@ import java.util.List;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.channel.Channel;
 import bias.Configuration;
 
 /**
@@ -49,8 +52,6 @@ public abstract class Player<E extends Element> {
 
 	private boolean warnDevice;
 
-	private boolean warnMessage;
-
 	/**
 	 * The problems.
 	 */
@@ -59,6 +60,10 @@ public abstract class Player<E extends Element> {
 	private int errorCount = 0;
 
 	private int warningCount = 0;
+
+	private boolean warnMessages;
+
+	private int[] data = new int[3];
 
 	/**
 	 * Create a player for the given element.
@@ -126,20 +131,16 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	protected void input(ShortMessage message) {
-
-	}
-
 	protected void addProblem(Problem problem) {
 		if (problem == null) {
 			throw new IllegalArgumentException("problem must not be null");
 		}
 		if (!problems.contains(problem)) {
 			problems.add(problem);
-			if (Problem.WARNING.equals(problem.getLevel())) {
+			if (problem instanceof Warning) {
 				warningCount++;
 			}
-			if (Problem.ERROR.equals(problem.getLevel())) {
+			if (problem instanceof Error) {
 				errorCount++;
 			}
 			fireProblemAdded(problem);
@@ -152,10 +153,10 @@ public abstract class Player<E extends Element> {
 		}
 		if (problems.contains(problem)) {
 			problems.remove(problem);
-			if (Problem.WARNING.equals(problem.getLevel())) {
+			if (problem instanceof Warning) {
 				warningCount--;
 			}
-			if (Problem.ERROR.equals(problem.getLevel())) {
+			if (problem instanceof Error) {
 				errorCount--;
 			}
 			fireProblemsRemoved(problem);
@@ -174,18 +175,6 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	protected void fireInputAccepted() {
-		if (organPlay != null) {
-			organPlay.fireInputAccepted();
-		}
-	}
-
-	protected void fireOutputProduced() {
-		if (organPlay != null) {
-			organPlay.fireOutputProduced();
-		}
-	}
-
 	public boolean hasWarnings() {
 		return warningCount > 0;
 	}
@@ -199,9 +188,52 @@ public abstract class Player<E extends Element> {
 	}
 
 	public void elementChanged(OrganEvent event) {
+		removeProblem(new Error("messages"));
+
+		if (!element.hasMessages() && warnMessages) {
+			addProblem(new Warning("messages"));
+		} else {
+			removeProblem(new Warning("messages"));
+		}
 	}
 
-	public void messageReceived(ShortMessage shortMessage) {
+	public final void input(int command, int data1, int data2) {
+		Element element = getElement();
+
+		data[0] = command;
+		data[1] = data1;
+		data[2] = data2;
+
+		try {
+			for (Matcher matcher : element.getMessages()) {
+				if (matcher.input(data)) {
+					input(matcher);
+
+					if (organPlay != null) {
+						organPlay.fireInputAccepted();
+					}
+				}
+			}
+		} catch (MatcherException ex) {
+			addProblem(new Error("messages", ex.getPattern()));
+		}
+	}
+
+	protected void input(Matcher matcher) throws MatcherException {
+
+	}
+
+	protected final void output(Matcher matcher, Channel channel) {
+		try {
+			matcher.output(data);
+			channel.sendMessage(data[0], data[1], data[2]);
+
+			if (organPlay != null) {
+				organPlay.fireOutputProduced();
+			}
+		} catch (MatcherException ex) {
+			addProblem(new Error("messages", ex.getPattern()));
+		}
 	}
 
 	public E getElement() {
@@ -216,11 +248,14 @@ public abstract class Player<E extends Element> {
 		this.warnDevice = warnDevice;
 	}
 
-	public boolean getWarnMessage() {
-		return warnMessage;
+	public boolean getWarnRules() {
+		return warnMessages;
 	}
 
-	public void setWarnMessage(boolean warnMessage) {
-		this.warnMessage = warnMessage;
+	public void setWarnRules(boolean warnRules) {
+		this.warnMessages = warnRules;
+	}
+
+	public void received(ShortMessage message) {
 	}
 }

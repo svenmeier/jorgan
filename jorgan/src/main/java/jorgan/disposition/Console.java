@@ -21,13 +21,15 @@ package jorgan.disposition;
 /**
  * A console.
  */
-public class Console extends Element {
+public class Console extends Element implements Input {
 
 	/**
 	 * The device for input.
 	 */
 	private String device;
 
+	private int channel = 0;
+	
 	/**
 	 * The skin.
 	 */
@@ -42,9 +44,22 @@ public class Console extends Element {
 
 	@Override
 	protected Reference createReference(Element element) {
-		return new ConsoleReference(element);
+		return new Reference(element);
 	}
 
+	public int getChannel() {
+		return channel;
+	}
+
+	public void setChannel(int channel) {
+		if (channel < 0 || channel > 15) {
+			throw new IllegalArgumentException("channel '" + channel + "'");
+		}
+		this.channel = channel;
+
+		fireElementChanged(true);
+	}
+	
 	public String getDevice() {
 		return device;
 	}
@@ -76,16 +91,16 @@ public class Console extends Element {
 	}
 
 	public void setLocation(Element element, int x, int y) {
-		ConsoleReference reference = (ConsoleReference) getReference(element);
+		Reference reference = (Reference) getReference(element);
 
 		reference.setX(x);
 		reference.setY(y);
 
-		fireReferenceChanged(reference, true);
+		fireChanged("reference", reference, true);
 	}
 
 	public int getX(Element element) {
-		ConsoleReference reference = (ConsoleReference) getReference(element);
+		Reference reference = (Reference) getReference(element);
 
 		return reference.getX();
 	}
@@ -94,7 +109,7 @@ public class Console extends Element {
 		if (element == this) {
 			return 0;
 		} else {
-			ConsoleReference reference = (ConsoleReference) getReference(element);
+			Reference reference = (Reference) getReference(element);
 
 			return reference.getY();
 		}
@@ -103,13 +118,13 @@ public class Console extends Element {
 	/**
 	 * A reference of a console to another element.
 	 */
-	public static class ConsoleReference extends Reference {
+	public static class Reference extends jorgan.disposition.Reference {
 
 		private int x;
 
 		private int y;
 
-		public ConsoleReference(Element element) {
+		public Reference(Element element) {
 			super(element);
 		}
 
@@ -137,7 +152,7 @@ public class Console extends Element {
 	 *            element to move to front
 	 */
 	public void toFront(Element element) {
-		Reference reference = getReference(element);
+		jorgan.disposition.Reference reference = getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
@@ -155,7 +170,7 @@ public class Console extends Element {
 	 *            element to move to back
 	 */
 	public void toBack(Element element) {
-		Reference reference = getReference(element);
+		jorgan.disposition.Reference reference = getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}

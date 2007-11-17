@@ -34,8 +34,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.sound.midi.ShortMessageRecorder;
+import jorgan.disposition.Input;
+import jorgan.midi.ShortMessageRecorder;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
@@ -48,7 +48,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 	private static Configuration config = Configuration.getRoot().get(
 			ChannelEditor.class);
 
-	private Keyboard keyboard;
+	private Input input;
 
 	private JPanel panel = new JPanel();
 
@@ -80,7 +80,7 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 	}
 
 	public void setElement(Element element) {
-		keyboard = (Keyboard) element;
+		this.input = (Input) element;
 	}
 
 	@Override
@@ -96,14 +96,14 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 	public Component getCustomEditor(Object value) {
 
 		spinner.setValue(new Integer(((Integer) value).intValue() + 1));
-		button.setEnabled(keyboard.getDevice() != null);
+		button.setEnabled(input.getDevice() != null);
 
 		return panel;
 	}
 
 	public void actionPerformed(ActionEvent ev) {
 		try {
-			recorder = new ChannelRecorder(keyboard.getDevice());
+			recorder = new ChannelRecorder(input.getDevice());
 		} catch (MidiUnavailableException ex) {
 			// cannot record
 			return;

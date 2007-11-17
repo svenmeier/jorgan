@@ -19,7 +19,7 @@ public class Desktop {
 	public static boolean isSupported() {
 		if (supported == null) {
 			try {
-				Class clazz = Class.forName("java.awt.Desktop");
+				Class<?> clazz = Class.forName("java.awt.Desktop");
 
 				desktop = clazz.getMethod("getDesktop", new Class[0]).invoke(
 						null, new Object[0]);

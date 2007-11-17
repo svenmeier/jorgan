@@ -24,7 +24,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Organ;
-import jorgan.disposition.Stop;
+import jorgan.disposition.Rank;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
@@ -43,9 +43,9 @@ public class ImportWizard extends BasicWizard {
 
 	private ImportProvider provider;
 
-	private List<Stop> stops;
+	private List<Rank> ranks;
 
-	private List<Stop> selectedStops;
+	private List<Rank> selectedRanks;
 
 	/**
 	 * Create a new wizard.
@@ -58,17 +58,17 @@ public class ImportWizard extends BasicWizard {
 
 		addPage(new ProviderSelectionPage());
 		addPage(new ImportOptionsPage());
-		addPage(new StopSelectionPage());
+		addPage(new RankSelectionPage());
 	}
 
 	/**
-	 * Allows finish only if stops are selected.
+	 * Allows finish only if ranks are selected.
 	 * 
-	 * @return <code>true</code> if stops are selected
+	 * @return <code>true</code> if ranks are selected
 	 */
 	@Override
 	public boolean allowsFinish() {
-		return selectedStops != null && selectedStops.size() > 0;
+		return selectedRanks != null && selectedRanks.size() > 0;
 	}
 
 	/**
@@ -77,8 +77,8 @@ public class ImportWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		for (int s = 0; s < selectedStops.size(); s++) {
-			organ.addElement(selectedStops.get(s));
+		for (int s = 0; s < selectedRanks.size(); s++) {
+			organ.addElement(selectedRanks.get(s));
 		}
 
 		return true;
@@ -130,48 +130,48 @@ public class ImportWizard extends BasicWizard {
 
 		@Override
 		public boolean allowsNext() {
-			return provider.hasStops();
+			return provider.hasRanks();
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			stops = provider.getStops();
+			ranks = provider.getRanks();
 
-			return stops.size() > 0;
+			return ranks.size() > 0;
 		}
 	}
 
 	/**
-	 * Page for selecting of stops to import.
+	 * Page for selecting of ranks to import.
 	 */
-	private class StopSelectionPage extends AbstractPage {
+	private class RankSelectionPage extends AbstractPage {
 
-		private StopSelectionPanel stopSelectionPanel = new StopSelectionPanel();
+		private RankSelectionPanel rankSelectionPanel = new RankSelectionPanel();
 
-		public StopSelectionPage() {
-			config.get("stopSelection").read(this);
+		public RankSelectionPage() {
+			config.get("rankSelection").read(this);
 		}
 
 		@Override
 		public void enteringFromPrevious() {
-			stopSelectionPanel.setStops(stops);
+			rankSelectionPanel.setRanks(ranks);
 		}
 
 		@Override
 		protected JComponent getComponentImpl() {
-			return stopSelectionPanel;
+			return rankSelectionPanel;
 		}
 
 		@Override
 		public boolean leavingToPrevious() {
-			selectedStops = null;
+			selectedRanks = null;
 
 			return true;
 		}
 
 		@Override
 		protected void changing() {
-			selectedStops = stopSelectionPanel.getSelectedStops();
+			selectedRanks = rankSelectionPanel.getSelectedRanks();
 
 			super.changing();
 		}

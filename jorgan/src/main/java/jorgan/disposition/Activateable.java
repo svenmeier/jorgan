@@ -18,6 +18,8 @@
  */
 package jorgan.disposition;
 
+import java.util.List;
+
 /**
  * Abstract base class for an activateable elements.
  */
@@ -26,10 +28,6 @@ public abstract class Activateable extends Momentary {
 	private boolean active = false;
 
 	private boolean locking = true;
-
-	private Message activateMessage;
-
-	private Message deactivateMessage;
 
 	public void setActive(boolean active) {
 		if (this.active != active) {
@@ -53,23 +51,52 @@ public abstract class Activateable extends Momentary {
 		fireElementChanged(true);
 	}
 
-	public Message getActivateMessage() {
-		return activateMessage;
+	/**
+	 * Is this element activated, either explicitely through
+	 * {@link #setActive(boolean)} or from a referencing {@link Activating}.
+	 * 
+	 * @return <code>true</code> if activated
+	 * 
+	 * @see Activating#activates(Activateable)
+	 */
+	public boolean isActivated() {
+		if (active) {
+			return true;
+		}
+
+		for (Activating activating : getReferrer(Activating.class)) {
+			if (activating.activates(this)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
-	public Message getDeactivateMessage() {
-		return deactivateMessage;
+	/**
+	 * If a referring {@link Activating} changes, this element changes too.
+	 * 
+	 * @see #isActivated()
+	 */
+	@Override
+	public void referrerChanged(Element element) {
+		if (element instanceof Activating) {
+			fireElementChanged(false);
+		}
 	}
 
-	public void setActivateMessage(Message message) {
-		this.activateMessage = message;
+	public List<Class<? extends Matcher>> getMessageClasses() {
+		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
-		fireElementChanged(true);
+		names.add(Activate.class);
+		names.add(Dectivate.class);
+
+		return names;
 	}
 
-	public void setDeactivateMessage(Message message) {
-		this.deactivateMessage = message;
+	public static class Activate extends Matcher {
+	}
 
-		fireElementChanged(true);
+	public static class Dectivate extends Matcher {
 	}
 }

@@ -19,17 +19,19 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Memory;
+import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.StringEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Memory}.
  */
-public class MemoryBeanInfo extends ContinuousBeanInfo {
+public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
 		add("title", Memory.class, StringEditor.class);
+		add("size", Memory.class, IntegerEditor.class);
 	}
 }

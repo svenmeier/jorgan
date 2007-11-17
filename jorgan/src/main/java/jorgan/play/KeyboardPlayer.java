@@ -24,26 +24,23 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Key;
 import jorgan.disposition.Keyboard;
+import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
+import jorgan.disposition.Keyboard.Press;
+import jorgan.disposition.Keyboard.Release;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.sound.midi.DevicePool;
+import jorgan.midi.DevicePool;
 
 /**
  * A player of an keyboard.
  */
 public class KeyboardPlayer extends Player<Keyboard> {
 
-	private static final Problem warningDevice = new Problem(Problem.WARNING,
-			"device");
-
-	private static final Problem errorDevice = new Problem(Problem.ERROR,
-			"device");
-
 	/**
 	 * The currently pressed keys.
 	 */
-	private boolean[] pressedKeys = new boolean[128];
+	private boolean[] pressed = new boolean[128];
 
 	/**
 	 * The midiDevice to receive input from.
@@ -69,7 +66,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
 
-		removeProblem(errorDevice);
+		removeProblem(new Warning("device"));
 
 		String device = keyboard.getDevice();
 		if (device != null) {
@@ -83,7 +80,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 				transmitter = this.in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(errorDevice.value(device));
+				addProblem(new Error("device", device));
 			}
 		}
 	}
@@ -100,72 +97,43 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			in = null;
 		}
 
-		for (int p = 0; p < pressedKeys.length; p++) {
-			pressedKeys[p] = false;
+		for (int p = 0; p < pressed.length; p++) {
+			pressed[p] = false;
 		}
 	}
 
 	@Override
 	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+		
 		Keyboard keyboard = getElement();
 
 		if (keyboard.getDevice() == null && getWarnDevice()) {
-			removeProblem(errorDevice);
-			addProblem(warningDevice.value(null));
+			removeProblem(new Error("device"));
+			addProblem(new Warning("device"));
 		} else {
-			removeProblem(warningDevice);
+			removeProblem(new Warning("device"));
 		}
 	}
 
 	@Override
-	protected void input(ShortMessage message) {
-		Keyboard keyboard = getElement();
-
-		if (isNoteMessage(message)
-				&& keyboard.getChannel() == message.getChannel()) {
-
-			int command = message.getCommand();
-			int pitch = message.getData1();
-			int velocity = message.getData2();
-
-			Key key = new Key(pitch);
-			if ((keyboard.getFrom() == null || keyboard.getFrom()
-					.lessEqual(key))
-					&& (keyboard.getTo() == null || keyboard.getTo()
-							.greaterEqual(key))) {
-
-				pitch += keyboard.getTranspose();
-
-				if (command == keyboard.getCommand()) {
-					if (velocity > keyboard.getThreshold()) {
-						keyDown(pitch, velocity);
-					} else {
-						keyUp(pitch);
-					}
-					fireInputAccepted();
-				} else {
-					if (command == ShortMessage.NOTE_OFF
-							|| command == ShortMessage.NOTE_ON && velocity == 0) {
-						keyUp(pitch);
-
-						fireInputAccepted();
-					}
-				}
-			}
+	protected void input(Matcher matcher) throws MatcherException {
+		if (matcher instanceof Press) {
+			press(((Press)matcher).pitch, ((Press)matcher).velocity);
+		} else if (matcher instanceof Release) {
+			release(((Release)matcher).pitch);
 		}
+
+		super.input(matcher);
 	}
 
-	protected boolean isNoteMessage(ShortMessage message) {
-		int status = message.getStatus();
+	private void press(int pitch, int velocity) {
+		Keyboard keyboard = getElement();
+		
+		pitch = pitch + keyboard.getTranspose();
 
-		return (status >= 0x80 && status < 0xb0);
-	}
-
-	protected void keyDown(int pitch, int velocity) {
-		if (pitch >= 0 && pitch <= 127 && !pressedKeys[pitch]) {
-			pressedKeys[pitch] = true;
-
-			Keyboard keyboard = getElement();
+		if (pitch >= 0 && pitch <= 127 && !pressed[pitch]) {
+			pressed[pitch] = true;
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
@@ -178,11 +146,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	protected void keyUp(int pitch) {
-		if (pitch >= 0 && pitch <= 127 && pressedKeys[pitch]) {
-			pressedKeys[pitch] = false;
+	private void release(int pitch) {
 
-			Keyboard keyboard = getElement();
+		Keyboard keyboard = getElement();
+
+		pitch = pitch + keyboard.getTranspose();
+
+		if (pitch >= 0 && pitch <= 127 && pressed[pitch]) {
+			pressed[pitch] = false;
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
@@ -192,6 +163,15 @@ public class KeyboardPlayer extends Player<Keyboard> {
 					((KeyablePlayer) player).keyUp(pitch);
 				}
 			}
+		}
+	}
+
+	@Override
+	public void received(ShortMessage message) {
+		Keyboard keyboard = getElement();
+
+		if (keyboard.getChannel() == message.getChannel()) {
+			input(message.getCommand(), message.getData1(), message.getData2());
 		}
 	}
 }

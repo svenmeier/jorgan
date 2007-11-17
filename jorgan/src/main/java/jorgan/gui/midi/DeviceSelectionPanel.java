@@ -28,7 +28,7 @@ import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
 
-import jorgan.sound.midi.DevicePool;
+import jorgan.midi.DevicePool;
 import jorgan.swing.tree.CheckedTreeCell;
 import bias.Configuration;
 import bias.util.MessageBuilder;

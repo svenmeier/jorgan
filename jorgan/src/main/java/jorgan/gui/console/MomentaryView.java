@@ -66,23 +66,6 @@ public abstract class MomentaryView<E extends Momentary> extends View<E> {
 	protected void shortcutReleased() {
 	}
 
-	/**
-	 * Is the {@link jorgan.skin.ButtonLayer} currently pressed.
-	 * 
-	 * @return 	pressed
-	 */
-	public abstract boolean isButtonPressed();
-
-	/**
-	 * The {@link jorgan.skin.ButtonLayer} was pressed.
-	 */
-	public abstract void buttonPressed();
-
-	/**
-	 * The {@link jorgan.skin.ButtonLayer} was released.
-	 */
-	public abstract void buttonReleased();
-
 	@Override
 	public void paint(Graphics2D g) {
 		super.paint(g);

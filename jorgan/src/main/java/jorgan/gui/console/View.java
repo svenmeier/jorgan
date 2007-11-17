@@ -49,13 +49,13 @@ public class View<E extends Element> {
 	/**
 	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
 	 */
-	public static final String TEXT_NAME = "name";
+	public static final String CONTROL_NAME = "name";
 
 	/**
 	 * The key of the {@link Element#getDescription()} text for
 	 * {@link TextLayer}s.
 	 */
-	public static final String TEXT_DESCRIPTION = "description";
+	public static final String CONTROL_DESCRIPTION = "description";
 
 	protected Dimension size = new Dimension();
 
@@ -88,7 +88,7 @@ public class View<E extends Element> {
 	 */
 	private E element;
 
-	private Map<String, String> texts = new HashMap<String, String>();
+	private Map<String, Object> bindings = new HashMap<String, Object>();
 
 	/**
 	 * Create a view for the given element.
@@ -103,25 +103,26 @@ public class View<E extends Element> {
 		config.read(this);
 	}
 
-	protected void setText(String name, String text) {
-		texts.put(name, text);
+	protected void setBinding(String name, Object binding) {
+		bindings.put(name, binding);
 	}
 
 	/**
-	 * Get the text for the given key.
+	 * Get the binding for the given key.
 	 * 
 	 * @param key
-	 *            key to get text for
-	 * @return text
+	 *            key to get binding for
+	 * @return binding
 	 */
-	public String getText(String key) {
-		String text = texts.get(key);
+	public <T> T getBinding(String key, Class<T> type) {
+		Object binding = bindings.get(key);
 
-		if (text == null) {
-			text = "";
+		if (binding != null) {
+			if (!type.isInstance(binding)) {
+				binding = null;
+			}
 		}
-
-		return text;
+		return type.cast(binding);
 	}
 
 	/**
@@ -188,7 +189,7 @@ public class View<E extends Element> {
 
 			initLocation();
 
-			initTexts();
+			initBindings();
 
 			initStyle();
 
@@ -200,9 +201,24 @@ public class View<E extends Element> {
 		location = consolePanel.getLocation(element);
 	}
 
-	protected void initTexts() {
-		setText(TEXT_NAME, Elements.getDisplayName(getElement()));
-		setText(TEXT_DESCRIPTION, getElement().getDescription());
+	protected void initBindings() {
+		setBinding(CONTROL_NAME, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+			public String getText() {
+				return Elements.getDisplayName(getElement());
+			}
+		});
+
+		setBinding(CONTROL_DESCRIPTION, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+			public String getText() {
+				return getElement().getDescription();
+			}
+		});
 	}
 
 	protected void initStyle() {
@@ -219,7 +235,7 @@ public class View<E extends Element> {
 		style.setView(this);
 
 		size = style.getSize();
-		
+
 		zoom = element.getZoom();
 	}
 
@@ -279,7 +295,7 @@ public class View<E extends Element> {
 			g.translate(-location.x, -location.y);
 		} else {
 			AffineTransform transform = g.getTransform();
-			
+
 			g.translate(location.x, location.y);
 			g.scale(zoom, zoom);
 
@@ -329,7 +345,7 @@ public class View<E extends Element> {
 		Style style = new Style();
 
 		TextLayer layer = new TextLayer();
-		layer.setText("${" + TEXT_NAME + "}");
+		layer.setBinding(CONTROL_NAME);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());

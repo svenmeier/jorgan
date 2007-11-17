@@ -23,6 +23,8 @@ package jorgan.disposition;
  */
 public abstract class Keyable extends Activateable {
 
+	// TODO make action subclasses with real behavior
+	// TODO allow multiple actions
 	public static final int ACTION_STRAIGHT = 0;
 
 	public static final int ACTION_PITCH_CONSTANT = 1;

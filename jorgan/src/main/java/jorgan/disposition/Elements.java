@@ -43,7 +43,7 @@ public class Elements {
 	 *            class of elements to get display name for
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<? extends Element> elementClass) {
+	public static String getDisplayName(Class<?> elementClass) {
 		return getMessage(classWithoutPackage(elementClass));
 	}
 
@@ -56,7 +56,7 @@ public class Elements {
 	 *            properyt
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<? extends Element> elementClass,
+	public static String getDisplayName(Class<?> elementClass,
 			String property) {
 		return getMessage(classWithoutPackage(elementClass) + "." + property);
 	}
@@ -77,8 +77,6 @@ public class Elements {
 		if (index != -1) {
 			name = name.substring(index + 1);
 		}
-
-		name = Character.toLowerCase(name.charAt(0)) + name.substring(1);
 
 		return name;
 	}

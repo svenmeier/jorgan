@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import jorgan.disposition.Stop;
+import jorgan.disposition.Rank;
 
 /**
  * A provider of an import.
@@ -35,7 +35,7 @@ public interface ImportProvider {
 
 	public String getDescription();
 
-	public abstract boolean hasStops();
+	public abstract boolean hasRanks();
 
-	public abstract List<Stop> getStops();
+	public abstract List<Rank> getRanks();
 }

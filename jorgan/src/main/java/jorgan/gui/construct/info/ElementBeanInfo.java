@@ -23,7 +23,6 @@ import java.beans.SimpleBeanInfo;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.construct.editor.StringEditor;
@@ -60,8 +59,8 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		add("description", Element.class, StringEditor.class);
 
 		add("style", Element.class, StyleEditor.class);
-		
-        add("zoom", Console.class, ZoomEditor.class);
+
+		add("zoom", Element.class, ZoomEditor.class);
 	}
 
 	protected void add(String name, Class<? extends Element> clazz, Class editor) {

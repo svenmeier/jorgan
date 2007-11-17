@@ -33,19 +33,9 @@ import jorgan.skin.TextLayer;
  */
 public class ContinuousView<E extends Continuous> extends View<E> {
 
-	/**
-	 * The key of the {@link Continuous#getValue()} text for {@link TextLayer}s.
-	 */
-	public static final String TEXT_VALUE = "value";
+	public static final String BINDING_VALUE = "value";
 
-	/**
-	 * The key of the position text for {@link TextLayer}s.
-	 */
-	public static final String TEXT_POSITION = "position";
-
-	private NumberFormat valueFormat = new DecimalFormat("000");
-
-	private NumberFormat positionFormat = NumberFormat.getPercentInstance();
+	private NumberFormat valueFormat = new DecimalFormat("0.0");
 
 	/**
 	 * Constructor.
@@ -58,41 +48,10 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 	}
 
 	@Override
-	protected void initTexts() {
-		super.initTexts();
+	protected void initBindings() {
+		super.initBindings();
 
-		int value = getElement().getValue();
-
-		setText(TEXT_VALUE, valueFormat.format(value + 1));
-		setText(TEXT_POSITION, positionFormat.format(value / 127.0d));
-	}
-
-	/**
-	 * Get the position for a {@link SliderLayer}.
-	 * 
-	 * @return the current position
-	 */
-	public double getSliderPosition() {
-		return getElement().getValue() / 127.0d;
-	}
-
-	/**
-	 * The {@link jorgan.skin.SliderLayer} was positioned.
-	 * 
-	 * @param position
-	 *            the new position
-	 */
-	public void sliderPositioned(double position) {
-		getElement().setValue((int) (position * 127));
-	}
-
-	/**
-	 * The {@link jorgan.skin.SliderLayer} was released.
-	 */
-	public void sliderReleased() {
-		if (!getElement().isLocking()) {
-			getElement().setValue(0);
-		}
+		setBinding(BINDING_VALUE, new ValueBindings());
 	}
 
 	@Override
@@ -108,7 +67,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	protected TextLayer createTextNameLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setText("${" + TEXT_NAME + "}");
+		layer.setBinding(CONTROL_NAME);
 		layer.setPadding(new Insets(4, 4, 4 + getDefaultFont().getSize(), 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
@@ -118,7 +77,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	protected TextLayer createTextValueLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setText("${" + TEXT_VALUE + "}");
+		layer.setBinding(BINDING_VALUE);
 		layer.setPadding(new Insets(4 + getDefaultFont().getSize(), 4, 4, 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
@@ -128,10 +87,35 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	protected SliderLayer createSliderLayer() {
 		SliderLayer layer = new SliderLayer();
-		layer.setEnabled(true);
+		layer.setBinding(BINDING_VALUE);
 		layer.setFill(Layer.BOTH);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 
 		return layer;
 	}
+	
+	private class ValueBindings implements TextLayer.Binding, SliderLayer.Binding {
+		
+		public boolean isPressable() {
+			return true;
+		}
+		
+		public String getText() {
+			return valueFormat.format(getElement().getValue());
+		}
+
+		public double getPosition() {
+			return getElement().getValue() / 127.0d;
+		}
+
+		public void setPosition(float position) {
+			getElement().setValue(position);
+		}
+
+		public void released() {
+			if (!getElement().isLocking()) {
+				getElement().setValue(0);
+			}
+		}
+	};
 }

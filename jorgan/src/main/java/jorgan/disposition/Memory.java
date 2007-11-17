@@ -20,9 +20,9 @@ package jorgan.disposition;
 
 import java.util.Arrays;
 
-public class Memory extends Continuous {
+public class Memory extends IndexedContinuous {
 
-	private String[] titles = new String[128];
+	private String[] titles = new String[100];
 
 	public Memory() {
 		Arrays.fill(titles, "");
@@ -34,28 +34,43 @@ public class Memory extends Continuous {
 	}
 
 	public String getTitle() {
-		return titles[getValue()];
+		return titles[getIndex()];
 	}
 
-	public void setTitle(String title) {
-		titles[getValue()] = title;
+	public void setTitle(String index) {
+		titles[getIndex()] = index;
+	}
+
+	public void setSize(int size) {
+		if (size != titles.length) {
+			String[] strings = new String[size];
+			System.arraycopy(titles, 0, strings, 0, Math.min(strings.length,
+					titles.length));
+			titles = strings;
+
+			fireElementChanged(true);
+		}
+	}
+
+	public int getSize() {
+		return titles.length;
 	}
 
 	public String getTitle(int index) {
-		if (index < 0 || index > 127) {
-			throw new IllegalArgumentException(
-					"index has to be between 0 and 127");
+		if (index < 0 || index > titles.length) {
+			throw new IllegalArgumentException("index has to be between 0 and "
+					+ titles.length);
 		}
 		return titles[index];
 	}
 
 	public void setTitle(int index, String title) {
-		if (index < 0 || index > 127) {
-			throw new IllegalArgumentException(
-					"index has to be between 0 and 127");
+		if (index < 0 || index > titles.length) {
+			throw new IllegalArgumentException("index has to be between 0 and "
+					+ titles.length);
 		}
 		if (title == null) {
-			throw new IllegalArgumentException("level must not be null");
+			throw new IllegalArgumentException("title must not be null");
 		}
 		titles[index] = title;
 

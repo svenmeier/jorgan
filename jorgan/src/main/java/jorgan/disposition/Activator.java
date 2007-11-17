@@ -21,10 +21,19 @@ package jorgan.disposition;
 /**
  * An activator.
  */
-public class Activator extends Activateable {
+public class Activator extends Activateable implements Activating {
 
 	@Override
 	protected boolean canReference(Class clazz) {
 		return Activateable.class.isAssignableFrom(clazz);
 	}
+	
+	public boolean activates(Element activateable) {
+		if (!references(activateable)) {
+			throw new IllegalArgumentException("does not reference '" + activateable
+					+ "'");
+		}
+		
+		return isActivated();
+	}	
 }

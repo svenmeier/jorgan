@@ -18,99 +18,35 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.ShortMessage;
-
 import jorgan.disposition.Activateable;
-import jorgan.disposition.Message;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
+import jorgan.disposition.Activateable.Activate;
+import jorgan.disposition.ActivateableEffect.Deactivated;
 
 /**
  * An abstract base class for players that control activateable elements.
  */
-public abstract class ActivateablePlayer<E extends Activateable> extends Player<E> {
-
-	private static final Problem warningActivateMessage = new Problem(
-			Problem.WARNING, "activateMessage");
-
-	private static final Problem warningDeactivateMessage = new Problem(
-			Problem.WARNING, "deactivateMessage");
-
-	private int activations = 0;
+public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
 	public ActivateablePlayer(E activateable) {
 		super(activateable);
 	}
 
 	@Override
-	protected void closeImpl() {
-		super.closeImpl();
-
-		activations = 0;
-	}
-
-	public void activate() {
-		activations++;
-
-		elementChanged(null);
-	}
-
-	public void deactivate() {
-		activations--;
-
-		elementChanged(null);
-	}
-
-	protected boolean isActive() {
+	protected void input(Matcher matcher) throws MatcherException {
 		Activateable activateable = getElement();
 
-		return activations > 0 || activateable.isActive();
-	}
-
-	@Override
-	public void messageReceived(ShortMessage shortMessage) {
-		Activateable activateable = getElement();
-
-		if (activateable.isActive()) {
-			Message offMessage = activateable.getDeactivateMessage();
-			if (offMessage != null
-					&& offMessage.match(shortMessage.getStatus(),
-							shortMessage.getData1(), shortMessage.getData2())) {
-
-				fireInputAccepted();
-
-				activateable.setActive(false);
-			}
-		} else {
-			Message onMessage = activateable.getActivateMessage();
-			if (onMessage != null
-					&& onMessage.match(shortMessage.getStatus(), shortMessage.getData1(),
-							shortMessage.getData2())) {
-
-				fireInputAccepted();
-
+		if (matcher instanceof Activate) {
+			if (!activateable.isActive()) {
 				activateable.setActive(true);
 			}
-		}
-	}
-
-	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
-
-		Activateable activateable = getElement();
-
-		if ((activateable.getActivateMessage() == null)
-				&& getWarnMessage()) {
-			addProblem(warningActivateMessage.value(null));
-		} else {
-			removeProblem(warningActivateMessage);
+		} else if (matcher instanceof Deactivated) {
+			if (activateable.isActive()) {
+				activateable.setActive(false);
+			}
 		}
 
-		if ((activateable.getDeactivateMessage() == null)
-				&& getWarnMessage()) {
-			addProblem(warningDeactivateMessage.value(null));
-		} else {
-			removeProblem(warningDeactivateMessage);
-		}
+		super.input(matcher);
 	}
 }

@@ -21,15 +21,32 @@ package jorgan.disposition;
 /**
  * An regulator of {@link jorgan.disposition.Activateable}s.
  */
-public class Regulator extends Continuous {
+public class Regulator extends Continuous implements Activating {
 
-    @Override
+	@Override
 	protected boolean canReference(Class clazz) {
-        return Activateable.class.isAssignableFrom(clazz);
-    }
-    
-    @Override
+		return Activateable.class.isAssignableFrom(clazz);
+	}
+
+	@Override
 	protected boolean canReferenceDuplicates() {
-        return true;
-    }
+		return true;
+	}
+
+	public int getIndex() {
+		return Math.round((getSize() - 1) * getValue());
+	}
+
+	public int getSize() {
+		return getReferenceCount();
+	}    
+	
+	public boolean activates(Element activateable) {
+		if (!references(activateable)) {
+			throw new IllegalArgumentException("does not reference '" + activateable
+					+ "'");
+		}
+
+		return getReference(getIndex()).getElement() == activateable;
+	}
 }

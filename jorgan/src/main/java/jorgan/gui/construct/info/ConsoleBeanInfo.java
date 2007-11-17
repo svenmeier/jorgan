@@ -19,6 +19,7 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Console;
+import jorgan.gui.construct.editor.ChannelEditor;
 import jorgan.gui.construct.editor.InDeviceEditor;
 import jorgan.gui.construct.editor.ScreenEditor;
 import jorgan.gui.construct.editor.SkinEditor;
@@ -28,12 +29,13 @@ import jorgan.gui.construct.editor.SkinEditor;
  */
 public class ConsoleBeanInfo extends ElementBeanInfo {
 
-    @Override
+	@Override
 	protected void registerProperties() {
-        super.registerProperties();
+		super.registerProperties();
 
-        add("device", Console.class, InDeviceEditor.class);
-        add("skin", Console.class, SkinEditor.class);
-        add("screen", Console.class, ScreenEditor.class);
-    }
+		add("device", Console.class, InDeviceEditor.class);
+		add("channel", Console.class, ChannelEditor.class);
+		add("skin", Console.class, SkinEditor.class);
+		add("screen", Console.class, ScreenEditor.class);
+	}
 }

@@ -21,8 +21,6 @@ package jorgan.skin;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 
-import jorgan.gui.console.MomentaryView;
-
 /**
  * A layer for a {@link jorgan.disposition.Momentary}.
  */
@@ -33,10 +31,9 @@ public class ButtonLayer extends CompositeLayer implements Cloneable {
         if (getChildCount() > 0) {
             int index = 0;
 
-            if (view instanceof MomentaryView) {
-                if (((MomentaryView) view).isButtonPressed()) {
-                    index++;
-                }
+            Binding binding = getBinding(Binding.class);
+            if (binding != null && binding.isPressed()) {
+                index++;
             }
 
             Layer layer = getChild(Math.min(getChildCount() - 1, index));
@@ -47,20 +44,29 @@ public class ButtonLayer extends CompositeLayer implements Cloneable {
 
     @Override
 	public void mousePressed(int x, int y, Dimension size) {
-        if (view instanceof MomentaryView) {
-            ((MomentaryView) view).buttonPressed();
+        Binding binding = getBinding(Binding.class);
+        if (binding != null) {
+        	 binding.pressed();
         }
     }
 
     @Override
 	public void mouseReleased(int x, int y, Dimension size) {
-        if (view instanceof MomentaryView) {
-            ((MomentaryView) view).buttonReleased();
+        Binding binding = getBinding(Binding.class);
+        if (binding != null) {
+        	 binding.released();
         }
     }
 
     @Override
 	public Object clone() {
         return super.clone();
+    }
+    
+    public static interface Binding extends ViewBinding {
+    	
+    	public boolean isPressed();
+    	public void pressed();
+    	public void released();
     }
 }

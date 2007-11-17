@@ -55,11 +55,13 @@ public abstract class Element implements Cloneable {
 	private String description = "";
 
 	private String style;
-	
+
 	/**
 	 * The references to other elements.
 	 */
 	protected List<Reference> references = new ArrayList<Reference>();
+
+	private List<Matcher> messages = new ArrayList<Matcher>();
 
 	/**
 	 * The zoom.
@@ -130,7 +132,7 @@ public abstract class Element implements Cloneable {
 		}
 		references.add(reference);
 
-		fireReferenceAdded(reference);
+		fireChanged("reference", reference, true);
 	}
 
 	protected Reference createReference(Element element) {
@@ -189,7 +191,7 @@ public abstract class Element implements Cloneable {
 
 		references.remove(reference);
 
-		fireReferenceRemoved(reference);
+		fireChanged("reference", reference, true);
 	}
 
 	public Reference getReference(int index) {
@@ -254,7 +256,11 @@ public abstract class Element implements Cloneable {
 	 */
 	protected void fireElementChanged(boolean dispositionChange) {
 		if (organ != null) {
-			organ.fireElementChanged(this, dispositionChange);
+			organ.fireElementChanged(this, null, null, dispositionChange);
+		}
+
+		for (Reference reference : getReferences()) {
+			reference.getElement().referrerChanged(this);
 		}
 	}
 
@@ -262,22 +268,14 @@ public abstract class Element implements Cloneable {
 	 * Convenience method to fire an event in response to a change of this
 	 * element.
 	 */
-	protected void fireReferenceChanged(Reference reference,
+	protected void fireChanged(String name, Object value,
 			boolean dispositionChange) {
 		if (organ != null) {
-			organ.fireReferenceChanged(this, reference, dispositionChange);
+			organ.fireElementChanged(this, name, value, dispositionChange);
 		}
-	}
 
-	protected void fireReferenceAdded(Reference reference) {
-		if (organ != null) {
-			organ.fireReferenceAdded(this, reference);
-		}
-	}
-
-	protected void fireReferenceRemoved(Reference reference) {
-		if (organ != null) {
-			organ.fireReferenceRemoved(this, reference);
+		for (Reference reference : getReferences()) {
+			reference.getElement().referrerChanged(this);
 		}
 	}
 
@@ -351,9 +349,53 @@ public abstract class Element implements Cloneable {
 		if (zoom > MAX_ZOOM) {
 			zoom = MAX_ZOOM;
 		}
-	
+
 		this.zoom = zoom;
-	
+
 		fireElementChanged(true);
 	}
+
+	/**
+	 * Notification that a referrer has changed. <br>
+	 * This default implementation does nothing.
+	 */
+	public void referrerChanged(Element element) {
+	}
+
+	public List<Class<? extends Matcher>> getMessageClasses() {
+		return new ArrayList<Class<? extends Matcher>>();
+	}
+
+	public List<Matcher> getMessages() {
+		return Collections.unmodifiableList(messages);
+	}
+
+	public boolean hasMessages() {
+		return !messages.isEmpty();
+	}
+
+	public void addMessage(Matcher matcher) {
+		this.messages.add(matcher);
+
+		fireChanged("message", matcher, true);
+	}
+
+	public void removeMessage(Matcher matcher) {
+		this.messages.remove(matcher);
+
+		fireChanged("message", matcher, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	public <E> List<E> getMessages(Class<E> clazz) {
+		List<E> messages = new ArrayList<E>();
+
+		for (Matcher matcher : this.messages) {
+			if (matcher.getClass() == clazz) {
+				messages.add((E) matcher);
+			}
+		}
+		return messages;
+	}
+
 }

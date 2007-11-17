@@ -38,10 +38,10 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.sound.midi.DevicePool;
-import jorgan.sound.midi.KeyFormat;
-import jorgan.sound.midi.MessageUtils;
-import jorgan.sound.midi.MidiLogger;
+import jorgan.midi.DevicePool;
+import jorgan.midi.KeyFormat;
+import jorgan.midi.MessageUtils;
+import jorgan.midi.MidiLogger;
 import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
 import jorgan.swing.table.TableUtils;

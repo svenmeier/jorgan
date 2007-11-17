@@ -31,10 +31,13 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
+import jorgan.gui.OrganAware;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.OrganSession;
 import jorgan.play.Problem;
+import jorgan.play.Warning;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.BaseAction;
@@ -47,7 +50,7 @@ import bias.util.MessageBuilder;
 /**
  * Panel shows the problems.
  */
-public class ProblemsPanel extends DockedPanel {
+public class ProblemsPanel extends DockedPanel implements OrganAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ProblemsPanel.class);
@@ -86,9 +89,9 @@ public class ProblemsPanel extends DockedPanel {
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
 		TableUtils.pleasantLookAndFeel(table);
-		Map<String, Icon> iconMap = new HashMap<String, Icon>();
-		iconMap.put("warning", warningIcon);
-		iconMap.put("error", errorIcon);
+		Map<Class, Icon> iconMap = new HashMap<Class, Icon>();
+		iconMap.put(Warning.class, warningIcon);
+		iconMap.put(jorgan.play.Error.class, errorIcon);
 		IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
 		setScrollableBody(table, true, false);
 
@@ -153,7 +156,8 @@ public class ProblemsPanel extends DockedPanel {
 
 		public void setColumnNames(String[] columnNames) {
 			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length " + columnNames.length);
+				throw new IllegalArgumentException("length "
+						+ columnNames.length);
 			}
 			this.columnNames = columnNames;
 		}
@@ -172,11 +176,11 @@ public class ProblemsPanel extends DockedPanel {
 
 			switch (columnIndex) {
 			case 0:
-				return row.getProblem().getLevel();
+				return row.getProblem().getClass();
 			case 1:
 				return row.getMessage();
 			case 2:
-				return row.getElement();
+				return Elements.getDisplayName(row.getElement());
 			}
 
 			return null;

@@ -32,7 +32,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.Organ;
-import jorgan.disposition.Stop;
+import jorgan.disposition.Rank;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionStream;
 import jorgan.io.riff.RiffFormatException;
@@ -79,19 +79,19 @@ public class DispositionImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasStops() {
+	public boolean hasRanks() {
 		File file = panel.fileSelector.getSelectedFile();
 
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List<Stop> getStops() {
-		List<Stop> stops = new ArrayList<Stop>();
+	public List<Rank> getRanks() {
+		List<Rank> ranks = new ArrayList<Rank>();
 
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
 			try {
-				stops = readStops(file);
+				ranks = readRanks(file);
 			} catch (IOException ex) {
 				panel.showMessage("exception/general", file.getPath());
 			} catch (Exception ex) {
@@ -99,30 +99,30 @@ public class DispositionImportProvider implements ImportProvider {
 			}
 		}
 
-		return stops;
+		return ranks;
 	}
 
 	/**
-	 * Read stops from the given disposition file.
+	 * Read ranks from the given disposition file.
 	 * 
 	 * @param file
 	 *            file to read from
-	 * @return list of stops
+	 * @return list of ranks
 	 * @throws IOException
 	 * @throws XMLFormatException
 	 */
-	private List<Stop> readStops(File file) throws IOException,
+	private List<Rank> readRanks(File file) throws IOException,
 			RiffFormatException {
 
 		Organ organ = new DispositionStream().read(new FileInputStream(file));
 
-		List<Stop> stops = organ.getElements(Stop.class);
+		List<Rank> ranks = organ.getElements(Rank.class);
 
-		for (int s = 0; s < stops.size(); s++) {
-			organ.removeElement(stops.get(s));
+		for (int s = 0; s < ranks.size(); s++) {
+			organ.removeElement(ranks.get(s));
 		}
 
-		return stops;
+		return ranks;
 	}
 
 	/**
@@ -152,7 +152,7 @@ public class DispositionImportProvider implements ImportProvider {
 
 			fileSelector.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
-					firePropertyChange("stops", null, null);
+					firePropertyChange("ranks", null, null);
 				}
 			});
 			add(fileSelector, builder.nextColumn().fillHorizontal());

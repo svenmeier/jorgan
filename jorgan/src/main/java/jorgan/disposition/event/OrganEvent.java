@@ -22,72 +22,82 @@ import java.util.EventObject;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Reference;
 
 /**
  * Event describing the change of an organ.
  */
 public class OrganEvent extends EventObject {
 
-  /**
-   * Does this event indicate a disposition change.
-   */
-  private boolean dispositionChange;
+	/**
+	 * Does this event indicate a disposition change.
+	 */
+	private boolean dispositionChange;
 
-  /**
-   * The the element that was changed, added or removed.
-   */
-  private Element element;
+	/**
+	 * The the element that was changed, added or removed.
+	 */
+	private Element element;
 
-  /**
-   * The reference that was changed, added or removed.
-   */
-  private Reference reference;
-  
-  /**
-   * Create a new event in case of a change of an element.
-   *
-   * @param organ   the organ that is the source of this event
-   * @param element the changed element
-   */
-  public OrganEvent(Organ organ, Element element, boolean dispositionChange) {
-    this(organ, element, null, dispositionChange);
-  }
+	/**
+	 * Name of change.
+	 */
+	private String name;
 
-  /**
-   * Create a new event in case of a change of a reference.
-   *
-   * @param organ     the organ that is the source of this event
-   * @param element   the owning element of the reference
-   * @param reference the changed reference
-   */
-  public OrganEvent(Organ organ, Element element, Reference reference, boolean dispositionChange) {
-    super(organ);
-    
-    this.element           = element;
-    this.reference         = reference;
-    this.dispositionChange = dispositionChange;
-  }
+	/**
+	 * Value of change.
+	 */
+	private Object value;
 
-  /**
-   * Get the element.
-   *
-   * @return  the element
-   */
-  public Element getElement() {
-    return element;
-  }
- 
-  /**
-   * Get the reference
-   *
-   * @return  the reference
-   */
-  public Reference getReference() {
-    return reference;
-  }
- 
-  public boolean isDispositionChange() {
-    return dispositionChange;
-  }
+	/**
+	 * Create a new event in case of a change of a reference.
+	 * 
+	 * @param organ
+	 *            the organ that is the source of this event
+	 * @param element
+	 *            the owning element of the reference
+	 * @param name
+	 *            name of change
+	 * @param value
+	 *            value of change
+	 */
+	public OrganEvent(Organ organ, Element element, String name, Object value,
+			boolean dispositionChange) {
+		super(organ);
+
+		this.element = element;
+		this.name = name;
+		this.value = value;
+		this.dispositionChange = dispositionChange;
+	}
+
+	/**
+	 * Get the element.
+	 * 
+	 * @return the element
+	 */
+	public Element getElement() {
+		return element;
+	}
+
+	/**
+	 * Get the name
+	 * 
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * Get the value
+	 * 
+	 * @return the value
+	 */
+	public Object getValue() {
+		return value;
+	}
+
+	public boolean isDispositionChange() {
+		return dispositionChange;
+	}
 }

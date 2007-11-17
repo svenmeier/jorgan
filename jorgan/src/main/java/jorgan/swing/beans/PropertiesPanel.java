@@ -95,8 +95,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		PropertyCellRenderer nameRenderer = new PropertyCellRenderer(true);
-		PropertyCellRenderer valueRenderer = new PropertyCellRenderer(false);
+		PropertyCellRenderer nameRenderer = new PropertyCellRenderer();
+		PropertyCellRenderer valueRenderer = new PropertyCellRenderer();
 		table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
 		table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
 		table.getColumnModel().getColumn(1).setCellEditor(
@@ -451,18 +451,10 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	private class PropertyCellRenderer extends JLabel implements
 			TableCellRenderer {
 
-		private boolean name;
-
-		private PropertyCellRenderer(boolean name) {
-			this.name = name;
-
+		private PropertyCellRenderer() {
 			setOpaque(true);
 			setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
-			if (name) {
-				setText("name");
-			} else {
-				setText("value");
-			}
+			setText("Dummy");
 		}
 
 		public Component getTableCellRendererComponent(JTable table,
@@ -477,7 +469,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			}
 			setFont(table.getFont());
 
-			if (name) {
+			if (column == 0) {
 				setText((String) value);
 				setToolTipText(null);
 				if (row == beanInfo.getDefaultPropertyIndex()) {
