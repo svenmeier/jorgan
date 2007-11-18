@@ -38,8 +38,6 @@ public class CreateMessageWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			CreateMessageWizard.class);
 
-	private Organ organ;
-
 	private Element element;
 
 	private Matcher matcher;
@@ -53,7 +51,6 @@ public class CreateMessageWizard extends BasicWizard {
 	 *            the element to create references for
 	 */
 	public CreateMessageWizard(Organ organ, Element element) {
-		this.organ = organ;
 		this.element = element;
 
 		addPage(new MessagePage());

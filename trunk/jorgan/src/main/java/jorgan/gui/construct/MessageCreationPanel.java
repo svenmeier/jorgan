@@ -19,10 +19,20 @@
 package jorgan.gui.construct;
 
 import java.awt.GridBagLayout;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.AbstractListModel;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
+import jorgan.disposition.Elements;
 import jorgan.disposition.Matcher;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
@@ -35,6 +45,8 @@ public class MessageCreationPanel extends JPanel {
 	private Configuration config = Configuration.getRoot().get(
 			MessageCreationPanel.class);
 
+	private JList typeList = new JList();
+
 	private List<Class<? extends Matcher>> messageClasses;
 
 	/**
@@ -46,6 +58,18 @@ public class MessageCreationPanel extends JPanel {
 		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
 
 		builder.nextRow();
+
+		add(config.get("type").read(new JLabel()), builder.nextColumn()
+				.alignNorthWest());
+
+		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		typeList.addListSelectionListener(new ListSelectionListener() {
+			public void valueChanged(ListSelectionEvent e) {
+				firePropertyChange("elementClass", null, null);
+			}
+		});
+		add(new JScrollPane(typeList), builder.nextColumn()
+				.gridWidthRemainder().gridHeight(2).fillBoth());
 	}
 
 	/**
@@ -56,6 +80,9 @@ public class MessageCreationPanel extends JPanel {
 	 */
 	public void setMessageClasses(List<Class<? extends Matcher>> messageClasses) {
 		this.messageClasses = messageClasses;
+
+		Collections.sort(messageClasses, new TypeComparator());
+		typeList.setModel(new TypeListModel());
 	}
 
 	/**
@@ -64,6 +91,40 @@ public class MessageCreationPanel extends JPanel {
 	 * @return the matcher
 	 */
 	public Matcher getMatcher() {
-		return null;
+		int index = typeList.getSelectedIndex();
+
+		if (index == -1) {
+			return null;
+		} else {
+			try {
+				return messageClasses.get(index).newInstance();
+			} catch (Exception ex) {
+				throw new Error(ex);
+			}
+		}
+	}
+
+	private class TypeListModel extends AbstractListModel {
+
+		public int getSize() {
+			return messageClasses.size();
+		}
+
+		public Object getElementAt(int index) {
+			return Elements.getDisplayName(messageClasses.get(index));
+		}
+	}
+
+	private class TypeComparator implements
+			Comparator<Class<? extends Matcher>> {
+
+		public int compare(Class<? extends Matcher> c1,
+				Class<? extends Matcher> c2) {
+
+			String name1 = Elements.getDisplayName(c1);
+			String name2 = Elements.getDisplayName(c2);
+
+			return name1.compareTo(name2);
+		}
 	}
 }
