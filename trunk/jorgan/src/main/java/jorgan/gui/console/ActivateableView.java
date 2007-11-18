@@ -34,7 +34,7 @@ public class ActivateableView extends MomentaryView<Activateable> {
 
 	public static final String BINDING_ACTIVE = "active";
 
-	public static final String BINDING_ACTIVATED = "activated";
+	public static final String BINDING_ENGAGED = "engaged";
 
 	/**
 	 * Constructor.
@@ -70,13 +70,13 @@ public class ActivateableView extends MomentaryView<Activateable> {
 			};
 		});
 
-		setBinding(BINDING_ACTIVATED, new ButtonLayer.Binding() {
+		setBinding(BINDING_ENGAGED, new ButtonLayer.Binding() {
 			public boolean isPressable() {
 				return false;
 			}
 
 			public boolean isPressed() {
-				return getElement().isActivated();
+				return getElement().isEngaged();
 			}
 
 			public void pressed() {

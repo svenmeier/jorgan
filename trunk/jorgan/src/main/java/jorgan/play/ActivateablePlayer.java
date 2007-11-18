@@ -22,7 +22,7 @@ import jorgan.disposition.Activateable;
 import jorgan.disposition.Matcher;
 import jorgan.disposition.MatcherException;
 import jorgan.disposition.Activateable.Activate;
-import jorgan.disposition.ActivateableEffect.Deactivated;
+import jorgan.disposition.ActivateableEffect.Disengaged;
 
 /**
  * An abstract base class for players that control activateable elements.
@@ -41,7 +41,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 			if (!activateable.isActive()) {
 				activateable.setActive(true);
 			}
-		} else if (matcher instanceof Deactivated) {
+		} else if (matcher instanceof Disengaged) {
 			if (activateable.isActive()) {
 				activateable.setActive(false);
 			}

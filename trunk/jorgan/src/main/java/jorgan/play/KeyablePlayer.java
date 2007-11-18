@@ -144,7 +144,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
         }
 
         protected boolean shouldActivate() {
-            return getElement().isActivated();
+            return getElement().isEngaged();
         }
 
         public void keyDown(int pitch, int velocity) {
@@ -183,7 +183,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
     private class InverseAction extends Action {
         @Override
 		protected boolean shouldActivate() {
-            return !getElement().isActivated();
+            return !getElement().isEngaged();
         }
     }
 

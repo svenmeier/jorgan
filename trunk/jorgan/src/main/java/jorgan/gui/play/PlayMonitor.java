@@ -41,11 +41,11 @@ public class PlayMonitor extends JPanel {
 	private static Icon noneIcon = new ImageIcon(PlayMonitor.class
 			.getResource("/jorgan/gui/img/none.gif"));
 
-	private static Icon inIcon = new ImageIcon(PlayMonitor.class
-			.getResource("/jorgan/gui/img/in.gif"));
+	private static Icon inputIcon = new ImageIcon(PlayMonitor.class
+			.getResource("/jorgan/gui/img/input.gif"));
 
-	private static Icon outIcon = new ImageIcon(PlayMonitor.class
-			.getResource("/jorgan/gui/img/out.gif"));
+	private static Icon outputIcon = new ImageIcon(PlayMonitor.class
+			.getResource("/jorgan/gui/img/output.gif"));
 
 	private JLabel inLabel = new JLabel();
 
@@ -91,7 +91,7 @@ public class PlayMonitor extends JPanel {
 	 * Notify about input.
 	 */
 	public void input() {
-		inLabel.setIcon(inIcon);
+		inLabel.setIcon(inputIcon);
 		inTimer.restart();
 	}
 
@@ -99,7 +99,7 @@ public class PlayMonitor extends JPanel {
 	 * Notify about output.
 	 */
 	public void output() {
-		outLabel.setIcon(outIcon);
+		outLabel.setIcon(outputIcon);
 		outTimer.restart();
 	}
 }

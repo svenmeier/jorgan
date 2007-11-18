@@ -19,15 +19,9 @@
 package jorgan.disposition;
 
 /**
- * An element that activates {@link Activateable}s.
+ * An engageable.
  */
-public interface Activating {
+public interface Engaging {
 
-	/**
-	 * Is the given activateable currently activated by this element.
-	 * 
-	 * @param element
-	 * @see Activateable#isEngaged()
-	 */
-	public boolean activates(Element element);
+	public boolean isEngaged();
 }

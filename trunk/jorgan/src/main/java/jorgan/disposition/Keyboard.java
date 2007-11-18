@@ -83,14 +83,14 @@ public class Keyboard extends Element implements Input {
 		return names;
 	}
 
-	public static class Press extends Matcher {
+	public static class Press extends InputMessage {
 
 		public transient int pitch;
 
 		public transient int velocity;
 	}
 
-	public static class Release extends Matcher {
+	public static class Release extends InputMessage {
 
 		public transient int pitch;
 	}

@@ -18,6 +18,7 @@
  */
 package jorgan.swing.table;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -65,7 +66,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 */
 	public IconTableCellRenderer(Icon defaultIcon) {
 
-		this(null, defaultIcon);
+		this(defaultIcon, new HashMap<Object, Icon>());
 	}
 
 	/**
@@ -75,23 +76,23 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 * @param icons
 	 *            a map defining the mapping from values to icons
 	 */
-	public IconTableCellRenderer(Map icons) {
+	public IconTableCellRenderer(Map<?, Icon> icons) {
 
-		this(icons, (Icon) icons.values().iterator().next());
+		this((Icon) icons.values().iterator().next(), icons);
 	}
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param icons
-	 *            a map defining the mapping from values to icons
 	 * @param defaultIcon
 	 *            icon to use for all unknown values
+	 * @param icons
+	 *            a map defining the mapping from values to icons
 	 */
-	public IconTableCellRenderer(Map icons, Icon defaultIcon) {
+	public IconTableCellRenderer(Icon defaultIcon, Map<?, Icon> icons) {
 
-		this.icons = icons;
 		this.defaultIcon = defaultIcon;
+		this.icons = icons;
 	}
 
 	/**
@@ -101,72 +102,13 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	protected void setValue(Object value) {
 
 		Icon icon = defaultIcon;
-		if (icons != null && value != null) {
+		if (value != null) {
 			icon = (Icon) icons.get(value);
 			if (icon == null) {
 				icon = defaultIcon;
 			}
 		}
 		setIcon(icon);
-	}
-
-	/**
-	 * Convinience method for configuration of a JTable. <br>
-	 * A renderer is created for the specified icon and set up as the renderer
-	 * for specified column. For further details see
-	 * {@link #configureTableColumn(JTable, int, IconTableCellRenderer)}.
-	 * 
-	 * @param table
-	 *            table to configure
-	 * @param columnIndex
-	 *            index of column in model
-	 * @param icon
-	 *            icon
-	 */
-	public static void configureTableColumn(JTable table, int columnIndex,
-			Icon icon) {
-		configureTableColumn(table, columnIndex,
-				new IconTableCellRenderer(icon));
-	}
-
-	/**
-	 * Convenience method for configuration of a JTable. <br>
-	 * A renderer is created for the specified icon and set up as the renderer
-	 * for specified column. For further details see
-	 * {@link #configureTableColumn(JTable, int, IconTableCellRenderer)}.
-	 * 
-	 * @param table
-	 *            table to configure
-	 * @param columnIndex
-	 *            index of column in model
-	 * @param icons
-	 *            map for mapping of values to icons
-	 */
-	public static void configureTableColumn(JTable table, int columnIndex,
-			Map icons) {
-		configureTableColumn(table, columnIndex, new IconTableCellRenderer(
-				icons));
-	}
-
-	/**
-	 * Convenience method for configuration of a JTable. <br>
-	 * A renderer is created for the specified icon and set up as the renderer
-	 * for specified column. For further details see
-	 * {@link #configureTableColumn(JTable, int, IconTableCellRenderer)}.
-	 * 
-	 * @param table
-	 *            table to configure
-	 * @param columnIndex
-	 *            index of column in model
-	 * @param icons
-	 *            map for mapping of values to icons
-	 * @param defaultIcon
-	 *            icon to use as default
-	 */
-	public static void configureTableColumn(JTable table, int columnIndex,
-			Map icons, Icon defaultIcon) {
-		configureTableColumn(table, columnIndex, new IconTableCellRenderer(
-				icons, defaultIcon));
 	}
 
 	/**
@@ -178,22 +120,16 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 *            table to configure
 	 * @param columnIndex
 	 *            index of column in model
-	 * @param renderer
-	 *            renderer to use in configuration
 	 */
-	public static void configureTableColumn(JTable table, int columnIndex,
-			IconTableCellRenderer renderer) {
+	public void configureTableColumn(JTable table, int columnIndex) {
 
-		Object value = renderer.defaultIcon;
-
-		renderer
-				.getTableCellRendererComponent(table, value, false, false, 0, 0);
+		getTableCellRendererComponent(table, defaultIcon, false, false, 0, 0);
 
 		columnIndex = table.convertColumnIndexToView(columnIndex);
 
 		TableColumn column = table.getColumnModel().getColumn(columnIndex);
-		column.setCellRenderer(renderer);
-		column.setMaxWidth(renderer.getPreferredSize().width);
+		column.setCellRenderer(this);
+		column.setMaxWidth(this.getPreferredSize().width);
 		column.setResizable(false);
 	}
 }

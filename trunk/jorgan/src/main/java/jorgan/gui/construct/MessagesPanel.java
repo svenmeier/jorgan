@@ -20,8 +20,12 @@ package jorgan.gui.construct;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -30,14 +34,17 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Matcher;
+import jorgan.disposition.Element.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.MessageTableCellRenderer;
 import jorgan.gui.OrganAware;
+import jorgan.gui.OrganPanel;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import swingx.docking.DockedPanel;
@@ -50,6 +57,15 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MessagesPanel.class);
+
+	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/input.gif"));
+
+	/**
+	 * Icon used for indication of an error.
+	 */
+	private static final Icon outputIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/output.gif"));
 
 	/**
 	 * The edited organ.
@@ -84,11 +100,16 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(messagesModel);
 		table.getSelectionModel().addListSelectionListener(removeAction);
-		table.getColumnModel().getColumn(0).setCellRenderer(
+		Map<Boolean, Icon> iconMap = new HashMap<Boolean, Icon>();
+		iconMap.put(true, inputIcon);
+		iconMap.put(false, outputIcon);
+		new IconTableCellRenderer(inputIcon, iconMap).configureTableColumn(
+				table, 0);
+		table.getColumnModel().getColumn(1).setCellRenderer(
 				new MessageTableCellRenderer());
-		table.getColumnModel().getColumn(0).setCellRenderer(
+		table.getColumnModel().getColumn(2).setCellRenderer(
 				new MessageTableCellRenderer());
-		table.getColumnModel().getColumn(1).setCellEditor(
+		table.getColumnModel().getColumn(2).setCellEditor(
 				new StringCellEditor());
 		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
@@ -171,7 +192,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		}
 
 		public int getColumnCount() {
-			return 2;
+			return 3;
 		}
 
 		public int getRowCount() {
@@ -180,13 +201,15 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1;
+			return columnIndex == 2;
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Matcher matcher = matchers.get(rowIndex);
 
 			if (columnIndex == 0) {
+				return InputMessage.class.isAssignableFrom(matcher.getClass());
+			} else if (columnIndex == 1) {
 				return matcher.getClass();
 			} else {
 				return matcher.getPattern();
@@ -197,7 +220,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			Matcher matcher = matchers.get(rowIndex);
 
-			if (columnIndex == 1) {
+			if (columnIndex == 2) {
 				matcher.setPattern((String) aValue);
 			}
 		}

@@ -17,6 +17,7 @@
           </slice>
           <slice orientation="3" weight="0.25">
             <dock>
+              <dockable key="messages" null="true"/>
               <dockable key="midiMonitor" null="true"/>
               <dockable key="problems" selected="true"/>
             </dock>

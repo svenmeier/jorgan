@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A rank.
  */
-public class Rank extends Element {
+public class Rank extends Element implements Engaging {
 
 	private String device;
 
@@ -32,16 +32,16 @@ public class Rank extends Element {
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Used().pattern("176, 121, 0"));
-		addMessage(new Used().pattern("176, 0, 0"));
-		addMessage(new Used().pattern("192, 0, 0"));
-		addMessage(new Unused().pattern("176, 123, 0"));
+		addMessage(new Engaged().pattern("176, 121, 0"));
+		addMessage(new Engaged().pattern("176, 0, 0"));
+		addMessage(new Engaged().pattern("192, 0, 0"));
+		addMessage(new Disengaged().pattern("176, 123, 0"));
 		addMessage(new Played().pattern("144, pitch:0-127, velocity:0-127"));
 		addMessage(new Muted().pattern("128, pitch:0-127, 0"));
 	}
 
 	public void setProgram(int program) {
-		addMessage(new Used().pattern("192, " + program + ", 0"));
+		addMessage(new Engaged().pattern("192, " + program + ", 0"));
 	}
 
 	public int getProgram() {
@@ -91,9 +91,16 @@ public class Rank extends Element {
 		fireElementChanged(true);
 	}
 
-	public boolean isUsed() {
+	/**
+	 * Is this element angaged through a referencing {@link Stop}.
+	 * 
+	 * @return <code>true</code> if engaged
+	 * 
+	 * @see Stop#plays(Rank)
+	 */
+	public boolean isEngaged() {
 		for (Stop stop : getReferrer(Stop.class)) {
-			if (stop.uses(this)) {
+			if (stop.plays(this)) {
 				return true;
 			}
 		}
@@ -104,7 +111,7 @@ public class Rank extends Element {
 	/**
 	 * If a referring {@link Stop} changes, this element changes too.
 	 * 
-	 * @see #isUsed()
+	 * @see #isEngaged()
 	 */
 	@Override
 	public void referrerChanged(Element element) {
@@ -116,28 +123,28 @@ public class Rank extends Element {
 	public List<Class<? extends Matcher>> getMessageClasses() {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
-		names.add(Used.class);
-		names.add(Unused.class);
+		names.add(Engaged.class);
+		names.add(Disengaged.class);
 		names.add(Played.class);
 		names.add(Muted.class);
 
 		return names;
 	}
 
-	public static class Used extends Matcher {
+	public static class Engaged extends OutputMessage {
 	}
 
-	public static class Unused extends Matcher {
+	public static class Disengaged extends OutputMessage {
 	}
 
-	public static class Played extends Matcher {
+	public static class Played extends OutputMessage {
 
 		public transient int pitch;
 
 		public transient int velocity;
 	}
 
-	public static class Muted extends Matcher {
+	public static class Muted extends OutputMessage {
 
 		public transient int pitch;
 	}

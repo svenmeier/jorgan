@@ -25,8 +25,8 @@ import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Rank.Muted;
 import jorgan.disposition.Rank.Played;
-import jorgan.disposition.Rank.Unused;
-import jorgan.disposition.Rank.Used;
+import jorgan.disposition.Rank.Disengaged;
+import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
@@ -68,7 +68,7 @@ public class RankPlayer extends Player<Rank> {
 	@Override
 	protected void closeImpl() {
 		if (channel != null) {
-			unused();
+			disengaged();
 		}
 
 		for (int n = 0; n < played.length; n++) {
@@ -82,7 +82,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 	}
 
-	private void used() {
+	private void engaged() {
 		Rank rank = getElement();
 
 		channel = channelPool.createChannel(new RankChannelFilter());
@@ -103,17 +103,17 @@ public class RankPlayer extends Player<Rank> {
 			}
 		}
 
-		for (Used used : getElement().getMessages(Used.class)) {
-			output(used, channel);
+		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
+			output(engaged, channel);
 		}
 	}
 
-	private void unused() {
+	private void disengaged() {
 		removeProblem(new Error("channels"));
 		removeProblem(new Warning("channels"));
 
-		for (Unused unused : getElement().getMessages(Unused.class)) {
-			output(unused, channel);
+		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
+			output(disengaged, channel);
 		}
 
 		channel.release();
@@ -133,17 +133,17 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		if (channelPool != null) {
-			if (channel == null && rank.isUsed()) {
-				used();
-			} else if (channel != null && !rank.isUsed()) {
-				unused();
+			if (channel == null && rank.isEngaged()) {
+				engaged();
+			} else if (channel != null && !rank.isEngaged()) {
+				disengaged();
 			}
 		}
 	}
 
 	public void play(int pitch, int velocity) {
 		if (channel == null) {
-			used();
+			engaged();
 		}
 
 		if (played[pitch] == 0) {

@@ -28,15 +28,15 @@ public class ActivateableEffect extends Activateable implements SoundEffect {
 	public List<Class<? extends Matcher>> getMessageClasses() {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
-		names.add(Activated.class);
-		names.add(Deactivated.class);
+		names.add(Engaged.class);
+		names.add(Disengaged.class);
 
 		return names;
 	}
 
-	public static class Activated extends Matcher {
+	public static class Engaged extends OutputMessage {
 	}
 
-	public static class Deactivated extends Matcher {
+	public static class Disengaged extends OutputMessage {
 	}
 }

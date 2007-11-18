@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * Abstract base class for an activateable elements.
  */
-public abstract class Activateable extends Momentary {
+public abstract class Activateable extends Momentary implements Engaging {
 
 	private boolean active = false;
 
@@ -52,14 +52,15 @@ public abstract class Activateable extends Momentary {
 	}
 
 	/**
-	 * Is this element activated, either explicitely through
+	 * Is this element angaged, either explicitely through
 	 * {@link #setActive(boolean)} or from a referencing {@link Activating}.
 	 * 
-	 * @return <code>true</code> if activated
+	 * @return <code>true</code> if engaged
 	 * 
+	 * @see #setActive(boolean)
 	 * @see Activating#activates(Activateable)
 	 */
-	public boolean isActivated() {
+	public boolean isEngaged() {
 		if (active) {
 			return true;
 		}
@@ -76,7 +77,7 @@ public abstract class Activateable extends Momentary {
 	/**
 	 * If a referring {@link Activating} changes, this element changes too.
 	 * 
-	 * @see #isActivated()
+	 * @see #isEngaged()
 	 */
 	@Override
 	public void referrerChanged(Element element) {
@@ -89,14 +90,14 @@ public abstract class Activateable extends Momentary {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
 		names.add(Activate.class);
-		names.add(Dectivate.class);
+		names.add(Deactivate.class);
 
 		return names;
 	}
 
-	public static class Activate extends Matcher {
+	public static class Activate extends InputMessage {
 	}
 
-	public static class Dectivate extends Matcher {
+	public static class Deactivate extends InputMessage {
 	}
 }

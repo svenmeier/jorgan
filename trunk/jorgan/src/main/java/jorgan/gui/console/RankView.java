@@ -16,18 +16,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.console;
+
+import jorgan.disposition.Rank;
+import jorgan.skin.ButtonLayer;
 
 /**
- * An element that activates {@link Activateable}s.
+ * A view for a rank.
  */
-public interface Activating {
+public class RankView extends View<Rank> {
+
+	public static final String BINDING_ENGAGED = "engaged";
 
 	/**
-	 * Is the given activateable currently activated by this element.
+	 * Constructor.
 	 * 
-	 * @param element
-	 * @see Activateable#isEngaged()
+	 * @param rank
+	 *            the rank to view
 	 */
-	public boolean activates(Element element);
+	public RankView(Rank rank) {
+		super(rank);
+	}
+
+	@Override
+	protected void initBindings() {
+		super.initBindings();
+
+		setBinding(BINDING_ENGAGED, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+
+			public boolean isPressed() {
+				return getElement().isEngaged();
+			}
+
+			public void pressed() {
+			}
+
+			public void released() {
+			};
+		});
+	}
 }
