@@ -34,6 +34,6 @@ public class Activator extends Activateable implements Activating {
 					+ "'");
 		}
 		
-		return isActivated();
+		return isEngaged();
 	}	
 }

@@ -398,4 +398,9 @@ public abstract class Element implements Cloneable {
 		return messages;
 	}
 
+	public static abstract class InputMessage extends Matcher {
+	}
+	
+	public static abstract class OutputMessage extends Matcher {
+	}
 }

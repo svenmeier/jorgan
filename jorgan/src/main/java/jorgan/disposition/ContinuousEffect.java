@@ -33,6 +33,6 @@ public class ContinuousEffect extends Continuous implements SoundEffect {
 		return names;
 	}
 
-	public static class Changed extends Matcher {
+	public static class Changed extends OutputMessage {
 	}
 }

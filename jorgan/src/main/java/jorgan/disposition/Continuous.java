@@ -61,7 +61,7 @@ public abstract class Continuous extends Element {
 		return names;
 	}
 
-	public static class Change extends Matcher {
+	public static class Change extends InputMessage {
 
 		public transient float value;
 	}

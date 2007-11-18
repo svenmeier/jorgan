@@ -61,6 +61,7 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Memory;
+import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
@@ -70,6 +71,7 @@ import jorgan.gui.console.ActivateableView;
 import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
+import jorgan.gui.console.RankView;
 import jorgan.gui.console.View;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
@@ -500,6 +502,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			view = new MemoryView((Memory) element);
 		} else if (element instanceof Continuous) {
 			view = new ContinuousView<Continuous>((Continuous) element);
+		} else if (element instanceof Rank) {
+			view = new RankView((Rank) element);
 		} else {
 			view = new View<Element>(element);
 		}
@@ -698,11 +702,13 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 			if (element == console) {
 				if ("reference".equals(event.getName())) {
-					Reference reference = (Reference)event.getValue();
-					
-					if (console.references(reference.getElement()) && getView(reference.getElement()) == null) {
+					Reference reference = (Reference) event.getValue();
+
+					if (console.references(reference.getElement())
+							&& getView(reference.getElement()) == null) {
 						createView(reference.getElement());
-					} else if (!console.references(reference.getElement()) && getView(reference.getElement()) != null) {
+					} else if (!console.references(reference.getElement())
+							&& getView(reference.getElement()) != null) {
 						dropView(reference.getElement());
 					} else {
 						getView(reference.getElement()).changeUpdate(event);
@@ -1175,11 +1181,11 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			if (constructing) {
 				return false;
 			}
-			
+
 			if (!Shortcut.maybeShortcut(e)) {
 				return false;
 			}
-			
+
 			if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
 					.getFocusedWindow() == SwingUtilities
 					.getWindowAncestor(ConsolePanel.this)) {

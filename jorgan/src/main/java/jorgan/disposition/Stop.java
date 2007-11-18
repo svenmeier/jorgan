@@ -30,12 +30,12 @@ public class Stop extends Keyable {
 	}
 
 	/**
-	 * Is the given rank currently used by this element.
+	 * Is the given rank currently engaged by this element.
 	 * 
 	 * @param element
-	 * @see Rank#isUsed()
+	 * @see Rank#isEngaged()
 	 */
-	public boolean uses(Rank rank) {
-		return isActivated();
+	public boolean plays(Rank rank) {
+		return isEngaged();
 	}
 }

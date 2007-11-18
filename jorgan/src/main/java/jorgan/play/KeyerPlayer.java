@@ -47,7 +47,7 @@ public class KeyerPlayer extends ActivateablePlayer<Keyer> {
         if (isOpen()) {
             Keyer keyer = getElement();
 
-            if (keyer.isActivated()) {
+            if (keyer.isEngaged()) {
                 if (!keying) {
                     for (int e = 0; e < keyer.getReferenceCount(); e++) {
                         Element element = keyer.getReference(e).getElement();

@@ -92,7 +92,7 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 		Map<Class, Icon> iconMap = new HashMap<Class, Icon>();
 		iconMap.put(Warning.class, warningIcon);
 		iconMap.put(jorgan.play.Error.class, errorIcon);
-		IconTableCellRenderer.configureTableColumn(table, 0, iconMap);
+		new IconTableCellRenderer(iconMap).configureTableColumn(table, 0);
 		setScrollableBody(table, true, false);
 
 		popup.add(gotoAction);
