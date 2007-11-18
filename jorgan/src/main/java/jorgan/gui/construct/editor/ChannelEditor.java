@@ -152,13 +152,10 @@ public class ChannelEditor extends CustomEditor implements ElementAwareEditor,
 
 		@Override
 		public boolean messageRecorded(ShortMessage message) {
-			if (message.getCommand() == ShortMessage.NOTE_ON) {
-				channel = message.getChannel();
+			channel = message.getChannel();
 
-				SwingUtilities.invokeLater(this);
+			SwingUtilities.invokeLater(this);
 
-				return false;
-			}
 			return true;
 		}
 

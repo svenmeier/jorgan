@@ -86,6 +86,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		table.getSelectionModel().addListSelectionListener(removeAction);
 		table.getColumnModel().getColumn(0).setCellRenderer(
 				new MessageTableCellRenderer());
+		table.getColumnModel().getColumn(0).setCellRenderer(
+				new MessageTableCellRenderer());
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new StringCellEditor());
 		TableUtils.hideHeader(table);
