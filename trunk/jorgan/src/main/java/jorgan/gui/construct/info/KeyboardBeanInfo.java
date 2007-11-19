@@ -19,7 +19,6 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Keyboard;
-import jorgan.gui.construct.editor.ChannelEditor;
 import jorgan.gui.construct.editor.InDeviceEditor;
 import jorgan.gui.construct.editor.TransposeEditor;
 
@@ -32,7 +31,6 @@ public class KeyboardBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("channel", Keyboard.class, ChannelEditor.class);
 		add("transpose", Keyboard.class, TransposeEditor.class);
 		add("device", Keyboard.class, InDeviceEditor.class);
 	}

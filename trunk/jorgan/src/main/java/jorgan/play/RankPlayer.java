@@ -23,10 +23,10 @@ import javax.sound.midi.MidiUnavailableException;
 import jorgan.disposition.MatcherException;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
-import jorgan.disposition.Rank.Muted;
-import jorgan.disposition.Rank.Played;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
+import jorgan.disposition.Rank.Muted;
+import jorgan.disposition.Rank.Played;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
@@ -104,7 +104,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			output(engaged, channel);
+			output(engaged);
 		}
 	}
 
@@ -113,7 +113,7 @@ public class RankPlayer extends Player<Rank> {
 		removeProblem(new Warning("channels"));
 
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			output(disengaged, channel);
+			output(disengaged);
 		}
 
 		channel.release();
@@ -121,9 +121,14 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
+	protected void output(int status, int data1, int data2) {
+		channel.sendMessage(status & 0xF0, data1, data2);
+	}
+
+	@Override
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
-		
+
 		Rank rank = getElement();
 
 		if (rank.getDevice() == null && getWarnDevice()) {
@@ -150,7 +155,7 @@ public class RankPlayer extends Player<Rank> {
 			for (Played played : getElement().getMessages(Played.class)) {
 				played.pitch = pitch;
 				played.velocity = velocity;
-				output(played, channel);
+				output(played);
 			}
 		}
 		played[pitch]++;
@@ -165,7 +170,7 @@ public class RankPlayer extends Player<Rank> {
 		if (played[pitch] == 0) {
 			for (Muted muted : getElement().getMessages(Muted.class)) {
 				muted.pitch = pitch;
-				output(muted, channel);
+				output(muted);
 			}
 		}
 	}

@@ -28,8 +28,6 @@ public class Console extends Element implements Input {
 	 */
 	private String device;
 
-	private int channel = 0;
-	
 	/**
 	 * The skin.
 	 */
@@ -47,19 +45,6 @@ public class Console extends Element implements Input {
 		return new Reference(element);
 	}
 
-	public int getChannel() {
-		return channel;
-	}
-
-	public void setChannel(int channel) {
-		if (channel < 0 || channel > 15) {
-			throw new IllegalArgumentException("channel '" + channel + "'");
-		}
-		this.channel = channel;
-
-		fireElementChanged(true);
-	}
-	
 	public String getDevice() {
 		return device;
 	}

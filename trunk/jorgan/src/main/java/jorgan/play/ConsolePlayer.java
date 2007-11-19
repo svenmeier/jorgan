@@ -81,7 +81,7 @@ public class ConsolePlayer extends Player<Console> {
 	@Override
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
-		
+
 		Console console = getElement();
 
 		if (console.getDevice() == null && getWarnDevice()) {
@@ -96,16 +96,19 @@ public class ConsolePlayer extends Player<Console> {
 	public void received(ShortMessage message) {
 		Console console = getElement();
 
-		if (console.getChannel() == message.getChannel()) {
-			for (int r = 0; r < console.getReferenceCount(); r++) {
-				Reference reference = console.getReference(r);
+		for (int r = 0; r < console.getReferenceCount(); r++) {
+			Reference reference = console.getReference(r);
 
-				Player player = getOrganPlay()
-						.getPlayer(reference.getElement());
-				if (player != null && !(player instanceof ConsolePlayer)) {
-					player.input(message.getCommand(), message.getData1(), message.getData2());
-				}
+			Player player = getOrganPlay().getPlayer(reference.getElement());
+			if (player != null && !(player instanceof ConsolePlayer)) {
+				player.input(message.getCommand(), message.getData1(), message
+						.getData2());
 			}
 		}
+	}
+
+	@Override
+	protected void output(int status, int data1, int data2) {
+		// TODO write message into new midi output
 	}
 }

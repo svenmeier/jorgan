@@ -20,7 +20,6 @@ package jorgan.play;
 
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
 import jorgan.disposition.Initiator.Initiate;
 
 /**
@@ -33,7 +32,7 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) throws MatcherException {
+	protected void input(Matcher matcher) {
 		Initiator initiator = getElement();
 
 		if (matcher instanceof Initiate) {

@@ -28,11 +28,11 @@ public class ContinuousEffect extends Continuous implements SoundEffect {
 	public List<Class<? extends Matcher>> getMessageClasses() {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
-		names.add(Changed.class);
+		names.add(Changing.class);
 
 		return names;
 	}
 
-	public static class Changed extends OutputMessage {
+	public static class Changing extends OutputMessage {
 	}
 }
