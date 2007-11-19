@@ -18,10 +18,14 @@
  */
 package jorgan.play;
 
+import java.util.Set;
+
+import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
 import jorgan.disposition.Continuous.Change;
+import jorgan.disposition.Continuous.Changed;
+import jorgan.disposition.event.OrganEvent;
 
 /**
  * A player for a swell.
@@ -33,13 +37,30 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) throws MatcherException {
+	protected void input(Matcher matcher) {
 		Continuous continuous = getElement();
 
 		if (matcher instanceof Change) {
-			continuous.setValue(((Change)matcher).value);
+			continuous.setValue(((Change) matcher).value);
 		}
 
 		super.input(matcher);
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+
+		Continuous continuous = getElement();
+
+		Set<Console> consoles = continuous.getReferrer(Console.class);
+
+		for (Changed changed : getElement().getMessages(Changed.class)) {
+			changed.value = continuous.getValue();
+			for (Console console : consoles) {
+				// what channel ???
+				getOrganPlay().getPlayer(console).output(changed);
+			}
+		}
 	}
 }

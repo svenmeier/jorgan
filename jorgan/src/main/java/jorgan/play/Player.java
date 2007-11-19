@@ -27,7 +27,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Matcher;
 import jorgan.disposition.MatcherException;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.channel.Channel;
 import bias.Configuration;
 
 /**
@@ -219,14 +218,20 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	protected void input(Matcher matcher) throws MatcherException {
+	/**
+	 * Read input from the given matcher - default implementation does nothing.
+	 * 
+	 * @param matcher	matcher to read input from
+	 * @throws MatcherException
+	 */
+	protected void input(Matcher matcher) {
 
 	}
 
-	protected final void output(Matcher matcher, Channel channel) {
+	protected final void output(Matcher matcher) {
 		try {
 			matcher.output(data);
-			channel.sendMessage(data[0], data[1], data[2]);
+			output(data[0], data[1], data[2]);
 
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
@@ -234,6 +239,12 @@ public abstract class Player<E extends Element> {
 		} catch (MatcherException ex) {
 			addProblem(new Error("messages", ex.getPattern()));
 		}
+	}
+
+	/**
+	 * Write output - default implementation does nothing.
+	 */
+	protected void output(int status, int data1, int data2) {
 	}
 
 	public E getElement() {

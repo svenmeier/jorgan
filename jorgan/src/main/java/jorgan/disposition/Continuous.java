@@ -57,11 +57,17 @@ public abstract class Continuous extends Element {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
 		names.add(Change.class);
+		names.add(Changed.class);
 
 		return names;
 	}
 
 	public static class Change extends InputMessage {
+
+		public transient float value;
+	}
+
+	public static class Changed extends OutputMessage {
 
 		public transient float value;
 	}

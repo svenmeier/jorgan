@@ -91,6 +91,8 @@ public abstract class Activateable extends Momentary implements Engaging {
 
 		names.add(Activate.class);
 		names.add(Deactivate.class);
+		names.add(Activated.class);
+		names.add(Deactivated.class);
 
 		return names;
 	}
@@ -99,5 +101,11 @@ public abstract class Activateable extends Momentary implements Engaging {
 	}
 
 	public static class Deactivate extends InputMessage {
+	}
+	
+	public static class Activated extends OutputMessage {
+	}
+
+	public static class Deactivated extends OutputMessage {
 	}
 }

@@ -26,7 +26,6 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
 import jorgan.disposition.Keyboard.Press;
 import jorgan.disposition.Keyboard.Release;
 import jorgan.disposition.event.OrganEvent;
@@ -105,7 +104,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	@Override
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
-		
+
 		Keyboard keyboard = getElement();
 
 		if (keyboard.getDevice() == null && getWarnDevice()) {
@@ -117,11 +116,11 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) throws MatcherException {
+	protected void input(Matcher matcher) {
 		if (matcher instanceof Press) {
-			press(((Press)matcher).pitch, ((Press)matcher).velocity);
+			press(((Press) matcher).pitch, ((Press) matcher).velocity);
 		} else if (matcher instanceof Release) {
-			release(((Release)matcher).pitch);
+			release(((Release) matcher).pitch);
 		}
 
 		super.input(matcher);
@@ -129,7 +128,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	private void press(int pitch, int velocity) {
 		Keyboard keyboard = getElement();
-		
+
 		pitch = pitch + keyboard.getTranspose();
 
 		if (pitch >= 0 && pitch <= 127 && !pressed[pitch]) {
@@ -168,10 +167,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	public void received(ShortMessage message) {
-		Keyboard keyboard = getElement();
-
-		if (keyboard.getChannel() == message.getChannel()) {
-			input(message.getCommand(), message.getData1(), message.getData2());
-		}
+		input(message.getStatus(), message.getData1(), message.getData2());
 	}
 }

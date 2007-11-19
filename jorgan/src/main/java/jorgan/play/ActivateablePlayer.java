@@ -18,11 +18,16 @@
  */
 package jorgan.play;
 
+import java.util.Set;
+
 import jorgan.disposition.Activateable;
+import jorgan.disposition.Console;
 import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
 import jorgan.disposition.Activateable.Activate;
-import jorgan.disposition.ActivateableEffect.Disengaged;
+import jorgan.disposition.Activateable.Activated;
+import jorgan.disposition.Activateable.Deactivate;
+import jorgan.disposition.Activateable.Deactivated;
+import jorgan.disposition.event.OrganEvent;
 
 /**
  * An abstract base class for players that control activateable elements.
@@ -34,19 +39,42 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) throws MatcherException {
+	protected void input(Matcher matcher) {
 		Activateable activateable = getElement();
 
 		if (matcher instanceof Activate) {
 			if (!activateable.isActive()) {
 				activateable.setActive(true);
 			}
-		} else if (matcher instanceof Disengaged) {
+		} else if (matcher instanceof Deactivate) {
 			if (activateable.isActive()) {
 				activateable.setActive(false);
 			}
 		}
 
 		super.input(matcher);
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+
+		Activateable activateable = getElement();
+
+		Set<Console> consoles = activateable.getReferrer(Console.class);
+
+		Class<? extends Matcher> clazz;
+		if (activateable.isActive()) {
+			clazz = Activated.class;
+		} else {
+			clazz = Deactivated.class;
+		}
+
+		for (Matcher matcher : getElement().getMessages(clazz)) {
+			for (Console console : consoles) {
+				// what channel ???
+				getOrganPlay().getPlayer(console).output(matcher);
+			}
+		}
 	}
 }

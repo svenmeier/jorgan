@@ -23,10 +23,6 @@ package jorgan.disposition;
  */
 public interface Input {
 
-	public int getChannel();
-
-	public void setChannel(int channel);
-	
 	public String getDevice();
 	
 	public void setDevice(String device);	

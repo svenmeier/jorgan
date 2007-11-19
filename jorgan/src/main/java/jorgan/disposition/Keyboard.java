@@ -29,8 +29,6 @@ public class Keyboard extends Element implements Input {
 
 	private int transpose = 0;
 
-	private int channel = 0;
-
 	public Keyboard() {
 		addMessage(new Press().pattern("144, pitch:0-127, velocity:0-127"));
 		addMessage(new Release().pattern("128, pitch:0-127, 0-127"));
@@ -47,19 +45,6 @@ public class Keyboard extends Element implements Input {
 
 	public void setDevice(String device) {
 		this.device = device;
-
-		fireElementChanged(true);
-	}
-
-	public int getChannel() {
-		return channel;
-	}
-
-	public void setChannel(int channel) {
-		if (channel < 0 || channel > 15) {
-			throw new IllegalArgumentException("channel '" + channel + "'");
-		}
-		this.channel = channel;
 
 		fireElementChanged(true);
 	}
