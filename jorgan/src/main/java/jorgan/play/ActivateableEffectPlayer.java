@@ -30,6 +30,9 @@ import jorgan.midi.channel.ChannelWrapper;
 
 /**
  * A player for an {@link ActivateableEffect}.
+ * 
+ * TODO handle {@link ActivateableEffect.Engaged} and
+ * {@link ActivateableEffect.Disengaged}
  */
 public class ActivateableEffectPlayer extends
 		ActivateablePlayer<ActivateableEffect> implements SoundEffectPlayer {
