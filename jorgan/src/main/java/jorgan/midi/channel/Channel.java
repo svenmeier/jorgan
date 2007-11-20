@@ -18,6 +18,8 @@
  */
 package jorgan.midi.channel;
 
+import javax.sound.midi.ShortMessage;
+
 /**
  * A channel.
  * 
@@ -125,14 +127,10 @@ public interface Channel {
 	/**
 	 * Send a message.
 	 * 
-	 * @param command
-	 *            command
-	 * @param data1
-	 *            data1
-	 * @param data2
-	 *            data2
+	 * @param message
+	 *            message
 	 */
-	public void sendMessage(int command, int data1, int data2);
+	public void sendMessage(ShortMessage message);
 
 	public void release();
 }

@@ -32,7 +32,7 @@ public class RankBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("device", Rank.class, OutDeviceEditor.class);
+		add("output", Rank.class, OutDeviceEditor.class);
 		add("channels", Rank.class, MatcherEditor.class);
 		add("delay", Rank.class, DelayEditor.class);
 	}

@@ -29,8 +29,8 @@ public class Memory extends IndexedContinuous {
 	}
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Combination.class == clazz;
+	protected Class<?> references() {
+		return Combination.class;
 	}
 
 	public String getTitle() {

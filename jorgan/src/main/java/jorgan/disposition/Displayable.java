@@ -16,26 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.channel;
-
-import javax.sound.midi.ShortMessage;
+package jorgan.disposition;
 
 /**
- * A wrapper of a channel.
+ * A displayable element, i.e. one that can be referenced by a {@link Console}.
+ * 
+ * @see Console#canReference(Class)
  */
-public abstract class ChannelWrapper implements Channel {
-
-	private Channel channel;
-
-	protected ChannelWrapper(Channel channel) {
-		this.channel = channel;
-	}
-
-	public void sendMessage(ShortMessage message) {
-		channel.sendMessage(message);
-	}
-
-	public void release() {
-		channel.release();
-	}
+public interface Displayable {
 }

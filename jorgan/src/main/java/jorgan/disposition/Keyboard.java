@@ -23,9 +23,9 @@ import java.util.List;
 /**
  * A keyboard.
  */
-public class Keyboard extends Element implements Input {
+public class Keyboard extends Element {
 
-	private String device = null;
+	private String input = null;
 
 	private int transpose = 0;
 
@@ -35,16 +35,16 @@ public class Keyboard extends Element implements Input {
 	}
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Keyable.class.isAssignableFrom(clazz);
+	protected Class<?> references() {
+		return Keyable.class;
 	}
 
-	public String getDevice() {
-		return device;
+	public String getInput() {
+		return input;
 	}
 
-	public void setDevice(String device) {
-		this.device = device;
+	public void setInput(String input) {
+		this.input = input;
 
 		fireElementChanged(true);
 	}

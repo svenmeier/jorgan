@@ -18,8 +18,10 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
@@ -39,9 +41,19 @@ public class ConsolePlayer extends Player<Console> {
 	private MidiDevice in;
 
 	/**
-	 * The transmitter of the opened midiDevice.
+	 * The midiDevice to send output to.
+	 */
+	private MidiDevice out;
+
+	/**
+	 * The transmitter {@link #in}.
 	 */
 	private Transmitter transmitter;
+
+	/**
+	 * The receiver {@link #out}.
+	 */
+	private Receiver receiver;
 
 	public ConsolePlayer(Console console) {
 		super(console);
@@ -51,18 +63,31 @@ public class ConsolePlayer extends Player<Console> {
 	protected void openImpl() {
 		Console console = getElement();
 
-		removeProblem(new Error("device"));
+		removeProblem(new Error("input"));
+		removeProblem(new Error("output"));
 
-		String device = console.getDevice();
-		if (device != null) {
+		String input = console.getInput();
+		if (input != null) {
 			try {
-				in = DevicePool.getMidiDevice(device, false);
+				in = DevicePool.getMidiDevice(input, false);
 				in.open();
 
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("device", device));
+				addProblem(new Error("input", input));
+			}
+		}
+
+		String output = console.getOutput();
+		if (output != null) {
+			try {
+				out = DevicePool.getMidiDevice(output, true);
+				out.open();
+
+				receiver = out.getReceiver();
+			} catch (MidiUnavailableException ex) {
+				addProblem(new Error("output", input));
 			}
 		}
 	}
@@ -76,6 +101,14 @@ public class ConsolePlayer extends Player<Console> {
 			transmitter = null;
 			in = null;
 		}
+
+		if (receiver != null) {
+			receiver.close();
+			out.close();
+
+			receiver = null;
+			out = null;
+		}
 	}
 
 	@Override
@@ -84,11 +117,18 @@ public class ConsolePlayer extends Player<Console> {
 
 		Console console = getElement();
 
-		if (console.getDevice() == null && getWarnDevice()) {
-			removeProblem(new Error("device"));
-			addProblem(new Warning("device"));
+		if (console.getInput() == null && getWarnDevice()) {
+			removeProblem(new Error("input"));
+			addProblem(new Warning("input"));
 		} else {
-			removeProblem(new Warning("device"));
+			removeProblem(new Warning("input"));
+		}
+
+		if (console.getOutput() == null && getWarnDevice()) {
+			removeProblem(new Error("output"));
+			addProblem(new Warning("output"));
+		} else {
+			removeProblem(new Warning("output"));
 		}
 	}
 
@@ -99,8 +139,8 @@ public class ConsolePlayer extends Player<Console> {
 		for (int r = 0; r < console.getReferenceCount(); r++) {
 			Reference reference = console.getReference(r);
 
-			Player player = getOrganPlay().getPlayer(reference.getElement());
-			if (player != null && !(player instanceof ConsolePlayer)) {
+			Player<?> player = getOrganPlay().getPlayer(reference.getElement());
+			if (player != null) {
 				player.input(message.getCommand(), message.getData1(), message
 						.getData2());
 			}
@@ -108,7 +148,12 @@ public class ConsolePlayer extends Player<Console> {
 	}
 
 	@Override
-	protected void output(int status, int data1, int data2) {
-		// TODO write message into new midi output
+	protected void output(int status, int data1, int data2)
+			throws InvalidMidiDataException {
+
+		ShortMessage message = new ShortMessage();
+		message.setMessage(status, data1, data2);
+
+		receiver.send(message, -1);
 	}
 }

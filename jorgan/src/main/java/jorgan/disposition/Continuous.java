@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A continuous element.
  */
-public abstract class Continuous extends Element {
+public abstract class Continuous extends Element implements Displayable {
 
 	private boolean locking = true;
 

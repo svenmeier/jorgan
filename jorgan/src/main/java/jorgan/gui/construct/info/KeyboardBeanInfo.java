@@ -32,6 +32,6 @@ public class KeyboardBeanInfo extends ElementBeanInfo {
 		super.registerProperties();
 
 		add("transpose", Keyboard.class, TransposeEditor.class);
-		add("device", Keyboard.class, InDeviceEditor.class);
+		add("input", Keyboard.class, InDeviceEditor.class);
 	}
 }

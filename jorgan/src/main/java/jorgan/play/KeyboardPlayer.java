@@ -65,9 +65,9 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
 
-		removeProblem(new Warning("device"));
+		removeProblem(new Warning("input"));
 
-		String device = keyboard.getDevice();
+		String device = keyboard.getInput();
 		if (device != null) {
 			try {
 				// Important: assure successfull opening of MIDI device
@@ -79,7 +79,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 				transmitter = this.in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("device", device));
+				addProblem(new Error("input", device));
 			}
 		}
 	}
@@ -107,11 +107,11 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 		Keyboard keyboard = getElement();
 
-		if (keyboard.getDevice() == null && getWarnDevice()) {
-			removeProblem(new Error("device"));
-			addProblem(new Warning("device"));
+		if (keyboard.getInput() == null && getWarnDevice()) {
+			removeProblem(new Error("input"));
+			addProblem(new Warning("input"));
 		} else {
-			removeProblem(new Warning("device"));
+			removeProblem(new Warning("input"));
 		}
 	}
 
@@ -137,9 +137,9 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				Player player = getOrganPlay().getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>)getOrganPlay().getPlayer(element);
 				if (player != null) {
-					((KeyablePlayer) player).keyDown(pitch, velocity);
+					player.keyDown(pitch, velocity);
 				}
 			}
 		}
@@ -157,9 +157,9 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				Player player = getOrganPlay().getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>)getOrganPlay().getPlayer(element);
 				if (player != null) {
-					((KeyablePlayer) player).keyUp(pitch);
+					player.keyUp(pitch);
 				}
 			}
 		}

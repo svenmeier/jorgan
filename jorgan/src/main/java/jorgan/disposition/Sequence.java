@@ -24,8 +24,8 @@ package jorgan.disposition;
 public class Sequence extends IndexedContinuous implements Combination.Observer {
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Combination.class == clazz;
+	protected Class<?> references() {
+		return Combination.class;
 	}
 
 	@Override

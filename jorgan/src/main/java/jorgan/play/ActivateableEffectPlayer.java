@@ -21,6 +21,8 @@ package jorgan.play;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.ShortMessage;
+
 import jorgan.disposition.ActivateableEffect;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
@@ -29,8 +31,8 @@ import jorgan.midi.channel.ChannelWrapper;
 /**
  * A player for an {@link ActivateableEffect}.
  */
-public class ActivateableEffectPlayer extends ActivateablePlayer<ActivateableEffect> implements
-		SoundEffectPlayer {
+public class ActivateableEffectPlayer extends
+		ActivateablePlayer<ActivateableEffect> implements SoundEffectPlayer {
 
 	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
@@ -76,40 +78,41 @@ public class ActivateableEffectPlayer extends ActivateablePlayer<ActivateableEff
 		}
 
 		@Override
-		public void sendMessage(int command, int data1, int data2) {
-//			boolean effect = false;
-//			if (command == CONTROL_CHANGE && data1 == CONTROL_BANK_SELECT_MSB) {
-//				bank = data2;
-//				effect = true;
-//			}
-//
-//			if (command == PROGRAM_CHANGE) {
-//				program = data1;
-//				effect = true;
-//			}
-//
-//			if (effect) {
-//				flush();
-//			} else {
-				super.sendMessage(command, data1, data2);
-//			}
+		public void sendMessage(ShortMessage message) {
+			// boolean effect = false;
+			// if (command == CONTROL_CHANGE && data1 ==
+			// CONTROL_BANK_SELECT_MSB) {
+			// bank = data2;
+			// effect = true;
+			// }
+			//
+			// if (command == PROGRAM_CHANGE) {
+			// program = data1;
+			// effect = true;
+			// }
+			//
+			// if (effect) {
+			// flush();
+			// } else {
+			super.sendMessage(message);
+			// }
 		}
 
 		private void flush() {
-//			MomentaryEffect variation = getElement();
-//
-//			int bank = this.bank;
-//			int program = this.program;
-//
-//			if (variation.isActivated()) {
-//				bank += variation.getBank();
-//				program += variation.getProgram();
-//			}
-//
-//			super.sendMessage(CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB,
-//					bank % 128);
-//
-//			super.sendMessage(PROGRAM_CHANGE, program % 128, UNUSED_DATA);
+			// MomentaryEffect variation = getElement();
+			//
+			// int bank = this.bank;
+			// int program = this.program;
+			//
+			// if (variation.isActivated()) {
+			// bank += variation.getBank();
+			// program += variation.getProgram();
+			// }
+			//
+			// super.sendMessage(CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB,
+			// bank % 128);
+			//
+			// super.sendMessage(PROGRAM_CHANGE, program % 128, UNUSED_DATA);
 		}
 	}
 }

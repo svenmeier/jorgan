@@ -79,21 +79,24 @@ public abstract class Element implements Cloneable {
 	 * @see #canReference(Element)
 	 */
 	public boolean canReference(Element element) {
-		return element != this
-				&& (canReferenceDuplicates() || getReference(element) == null)
-				&& canReference(element.getClass());
+		if (element == this) {
+			return false;
+		}
+
+		if (!canReferenceDuplicates() && references(element)) {
+			return false;
+		}
+
+		Class<?> type = references();
+		if (type == null) {
+			return false;
+		}
+
+		return type.isAssignableFrom(element.getClass());
 	}
 
-	/**
-	 * Test if this element can reference elements of the given class.
-	 * 
-	 * @param clazz
-	 *            element class to test
-	 * @return <code>true</code> if elements of the given class can be
-	 *         referenced
-	 */
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return false;
+	protected Class<?> references() {
+		return null;
 	}
 
 	protected boolean canReferenceDuplicates() {
@@ -172,6 +175,18 @@ public abstract class Element implements Cloneable {
 		}
 
 		return filtered;
+	}
+
+	@SuppressWarnings("unchecked")
+	public <R> List<R> getReferences(Class<R> clazz) {
+		List<R> filter = new ArrayList<R>();
+
+		for (Reference reference : this.references) {
+			if (reference.getClass() == clazz) {
+				filter.add((R) reference);
+			}
+		}
+		return filter;
 	}
 
 	public final void unreference(Element element) {
@@ -387,12 +402,12 @@ public abstract class Element implements Cloneable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <E> List<E> getMessages(Class<E> clazz) {
-		List<E> messages = new ArrayList<E>();
+	public <M extends Matcher> List<M> getMessages(Class<M> clazz) {
+		List<M> messages = new ArrayList<M>();
 
 		for (Matcher matcher : this.messages) {
-			if (matcher.getClass() == clazz) {
-				messages.add((E) matcher);
+			if (clazz.isAssignableFrom(matcher.getClass())) {
+				messages.add((M) matcher);
 			}
 		}
 		return messages;
@@ -400,7 +415,7 @@ public abstract class Element implements Cloneable {
 
 	public static abstract class InputMessage extends Matcher {
 	}
-	
+
 	public static abstract class OutputMessage extends Matcher {
 	}
 }

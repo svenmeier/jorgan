@@ -23,9 +23,9 @@ import java.util.List;
 /**
  * A rank.
  */
-public class Rank extends Element implements Engaging {
+public class Rank extends Element implements Engaging, Displayable {
 
-	private String device;
+	private String output;
 
 	private Matcher channels = new Matcher();
 
@@ -50,16 +50,16 @@ public class Rank extends Element implements Engaging {
 	}
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return SoundEffect.class.isAssignableFrom(clazz);
+	protected Class<?> references() {
+		return SoundEffect.class;
 	}
 
-	public String getDevice() {
-		return device;
+	public String getOutput() {
+		return output;
 	}
 
-	public void setDevice(String device) {
-		this.device = device;
+	public void setOutput(String output) {
+		this.output = output;
 
 		fireElementChanged(true);
 	}
