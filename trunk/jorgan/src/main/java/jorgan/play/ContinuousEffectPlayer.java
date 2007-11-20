@@ -28,6 +28,8 @@ import jorgan.midi.channel.ChannelWrapper;
 
 /**
  * A player for a swell.
+ * 
+ * TODO handle {@link ContinuousEffect.Changing}
  */
 public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect> implements
 		SoundEffectPlayer {
