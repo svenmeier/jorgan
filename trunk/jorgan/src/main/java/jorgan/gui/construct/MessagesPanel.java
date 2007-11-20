@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
@@ -140,6 +141,11 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	}
 
 	private void updateMessages() {
+		CellEditor editor = table.getCellEditor();
+		if (editor != null) {
+			editor.stopCellEditing();
+		}
+		
 		element = null;
 		matchers.clear();
 		messagesModel.update();

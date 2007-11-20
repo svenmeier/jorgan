@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public abstract class Momentary extends Element {
+public abstract class Momentary extends Element implements Displayable {
 
     private Shortcut shortcut;
 

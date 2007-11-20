@@ -21,13 +21,18 @@ package jorgan.disposition;
 /**
  * A console.
  */
-public class Console extends Element implements Input {
+public class Console extends Element {
 
 	/**
-	 * The device for input.
+	 * The input device.
 	 */
-	private String device;
+	private String input;
 
+	/**
+	 * The output device.
+	 */
+	private String output;
+	
 	/**
 	 * The skin.
 	 */
@@ -36,8 +41,8 @@ public class Console extends Element implements Input {
 	private String screen;
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Element.class.isAssignableFrom(clazz) && Console.class != clazz;
+	protected Class<?> references() {
+		return Displayable.class;
 	}
 
 	@Override
@@ -45,8 +50,12 @@ public class Console extends Element implements Input {
 		return new Reference(element);
 	}
 
-	public String getDevice() {
-		return device;
+	public String getInput() {
+		return input;
+	}
+
+	public String getOutput() {
+		return output;
 	}
 
 	public String getSkin() {
@@ -57,8 +66,14 @@ public class Console extends Element implements Input {
 		return screen;
 	}
 
-	public void setDevice(String device) {
-		this.device = device;
+	public void setInput(String input) {
+		this.input = input;
+
+		fireElementChanged(true);
+	}
+
+	public void setOutput(String output) {
+		this.output = output;
 
 		fireElementChanged(true);
 	}

@@ -28,8 +28,8 @@ public class Keyer extends Activateable {
     private int velocity = 100;
 
     @Override
-	protected boolean canReference(Class clazz) {
-        return Keyable.class.isAssignableFrom(clazz);
+	protected Class<?> references() {
+        return Keyable.class;
     }
 
     public void setPitch(int pitch) {

@@ -36,6 +36,9 @@ import javax.sound.midi.Transmitter;
 public class DevicePool {
 
 	private static Map<DeviceKey, SharedDevice> sharedDevices = new HashMap<DeviceKey, SharedDevice>();
+	
+	public static final boolean OUT = true;
+	public static final boolean IN = false;
 
 	private DevicePool() {
 	}

@@ -21,8 +21,8 @@ package jorgan.disposition;
 public class Captor extends Activateable implements Combination.Observer {
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Combination.class == clazz;
+	protected Class<?> references() {
+		return Combination.class;
 	}
 
 	public void initiated(Combination initiator) {

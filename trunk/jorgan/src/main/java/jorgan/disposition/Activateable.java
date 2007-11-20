@@ -52,7 +52,7 @@ public abstract class Activateable extends Momentary implements Engaging {
 	}
 
 	/**
-	 * Is this element angaged, either explicitely through
+	 * Is this element engaged, either explicitely through
 	 * {@link #setActive(boolean)} or from a referencing {@link Activating}.
 	 * 
 	 * @return <code>true</code> if engaged
@@ -91,8 +91,8 @@ public abstract class Activateable extends Momentary implements Engaging {
 
 		names.add(Activate.class);
 		names.add(Deactivate.class);
-		names.add(Activated.class);
-		names.add(Deactivated.class);
+		names.add(Engaged.class);
+		names.add(Disengaged.class);
 
 		return names;
 	}
@@ -103,9 +103,9 @@ public abstract class Activateable extends Momentary implements Engaging {
 	public static class Deactivate extends InputMessage {
 	}
 	
-	public static class Activated extends OutputMessage {
+	public static class Engaged extends OutputMessage {
 	}
 
-	public static class Deactivated extends OutputMessage {
+	public static class Disengaged extends OutputMessage {
 	}
 }

@@ -24,9 +24,9 @@ import jorgan.disposition.Activateable;
 import jorgan.disposition.Console;
 import jorgan.disposition.Matcher;
 import jorgan.disposition.Activateable.Activate;
-import jorgan.disposition.Activateable.Activated;
+import jorgan.disposition.Activateable.Engaged;
 import jorgan.disposition.Activateable.Deactivate;
-import jorgan.disposition.Activateable.Deactivated;
+import jorgan.disposition.Activateable.Disengaged;
 import jorgan.disposition.event.OrganEvent;
 
 /**
@@ -65,14 +65,13 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
 		Class<? extends Matcher> clazz;
 		if (activateable.isActive()) {
-			clazz = Activated.class;
+			clazz = Engaged.class;
 		} else {
-			clazz = Deactivated.class;
+			clazz = Disengaged.class;
 		}
 
 		for (Matcher matcher : getElement().getMessages(clazz)) {
 			for (Console console : consoles) {
-				// what channel ???
 				getOrganPlay().getPlayer(console).output(matcher);
 			}
 		}

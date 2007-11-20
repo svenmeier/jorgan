@@ -212,10 +212,8 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 				}
 			} else {
 				for (Element referrer : element.getReferrer()) {
-					List references = referrer.getReferences(element);
-					for (int r = 0; r < references.size(); r++) {
-						rows.add(new Row(referrer, (Reference) references
-								.get(r)));
+					for (Reference reference : referrer.getReferences(element)) {
+						rows.add(new Row(referrer, reference));
 					}
 				}
 			}

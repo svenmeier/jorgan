@@ -19,7 +19,7 @@
 package jorgan.disposition;
 
 /**
- * An engageable.
+ * Can this element be engaged.
  */
 public interface Engaging {
 

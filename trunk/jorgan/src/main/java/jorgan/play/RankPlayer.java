@@ -18,7 +18,9 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.MatcherException;
 import jorgan.disposition.Rank;
@@ -54,13 +56,13 @@ public class RankPlayer extends Player<Rank> {
 	protected void openImpl() {
 		Rank rank = getElement();
 
-		removeProblem(new Error("device"));
-		if (rank.getDevice() != null) {
+		removeProblem(new Error("output"));
+		if (rank.getOutput() != null) {
 			try {
-				channelPool = ChannelPool.instance(rank.getDevice());
+				channelPool = ChannelPool.instance(rank.getOutput());
 				channelPool.open();
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("device", rank.getDevice()));
+				addProblem(new Error("output", rank.getOutput()));
 			}
 		}
 	}
@@ -121,8 +123,12 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void output(int status, int data1, int data2) {
-		channel.sendMessage(status & 0xF0, data1, data2);
+	protected void output(int status, int data1, int data2)
+			throws InvalidMidiDataException {
+		ShortMessage message = new ShortMessage();
+		message.setMessage(status, data1, data2);
+
+		channel.sendMessage(message);
 	}
 
 	@Override
@@ -131,10 +137,10 @@ public class RankPlayer extends Player<Rank> {
 
 		Rank rank = getElement();
 
-		if (rank.getDevice() == null && getWarnDevice()) {
-			addProblem(new Warning("device"));
+		if (rank.getOutput() == null && getWarnDevice()) {
+			addProblem(new Warning("output"));
 		} else {
-			removeProblem(new Warning("device"));
+			removeProblem(new Warning("output"));
 		}
 
 		if (channelPool != null) {
@@ -176,7 +182,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private class DeadChannel implements Channel {
-		public void sendMessage(int command, int data1, int data2) {
+		public void sendMessage(ShortMessage message) {
 		}
 
 		public void release() {

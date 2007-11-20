@@ -23,6 +23,8 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.midi.ShortMessage;
+
 /**
  * A delayed channel.
  */
@@ -51,12 +53,12 @@ public class DelayedChannel implements Channel {
 		this.delay = delay;
 	}
 
-	public void sendMessage(final int command, final int data1, final int data2) {
+	public void sendMessage(final ShortMessage message) {
 		new DelayedInvocation() {
 			@Override
 			public void now() {
 				if (channel != null) {
-					channel.sendMessage(command, data1, data2);
+					channel.sendMessage(message);
 				}
 			}
 		};

@@ -58,7 +58,6 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		for (Changed changed : getElement().getMessages(Changed.class)) {
 			changed.value = continuous.getValue();
 			for (Console console : consoles) {
-				// what channel ???
 				getOrganPlay().getPlayer(console).output(changed);
 			}
 		}

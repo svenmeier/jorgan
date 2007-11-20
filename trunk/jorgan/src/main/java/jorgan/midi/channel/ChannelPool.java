@@ -212,25 +212,20 @@ public abstract class ChannelPool {
 			}
 
 			/**
-			 * Convenience method to send a MIDI message.
+			 * Send a message.
 			 * 
-			 * @param command
-			 *            command
-			 * @param data1
-			 *            data1
-			 * @param data2
-			 *            data2
+			 * @param message
+			 *            message
 			 */
-			public void sendMessage(int command, int data1, int data2) {
+			public void sendMessage(ShortMessage message) {
 				if (receiver != null) {
 					try {
-						ShortMessage message = new ShortMessage();
-						message.setMessage(command, channel, data1, data2);
-						receiver.send(message, -1);
+						message.setMessage(message.getCommand(), channel,
+								message.getData1(), message.getData2());
 					} catch (InvalidMidiDataException ex) {
-						throw new RuntimeException(
-								"unexpected invalid midi data", ex);
+						throw new Error(ex);
 					}
+					receiver.send(message, -1);
 				}
 			}
 		}

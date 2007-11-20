@@ -23,8 +23,8 @@ import java.util.Arrays;
 public class Combination extends Initiator {
 
 	@Override
-	protected boolean canReference(Class clazz) {
-		return Activateable.class.isAssignableFrom(clazz);
+	protected Class<?> references() {
+		return Activateable.class;
 	}
 
 	@Override
@@ -48,9 +48,7 @@ public class Combination extends Initiator {
 
 		int level = getLevel();
 
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			Activateable registratable = reference.getRegistratable();
 
 			if (!reference.isActive(level)) {

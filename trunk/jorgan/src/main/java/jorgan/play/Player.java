@@ -21,11 +21,13 @@ package jorgan.play;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Matcher;
 import jorgan.disposition.MatcherException;
+import jorgan.disposition.Element.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import bias.Configuration;
 
@@ -204,9 +206,9 @@ public abstract class Player<E extends Element> {
 		data[2] = data2;
 
 		try {
-			for (Matcher matcher : element.getMessages()) {
-				if (matcher.input(data)) {
-					input(matcher);
+			for (InputMessage message : element.getMessages(InputMessage.class)) {
+				if (message.input(data)) {
+					input(message);
 
 					if (organPlay != null) {
 						organPlay.fireInputAccepted();
@@ -237,14 +239,16 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (MatcherException ex) {
-			addProblem(new Error("messages", ex.getPattern()));
+			addProblem(new Error("messages", matcher.getPattern()));
+		} catch (InvalidMidiDataException ex) {
+			addProblem(new Error("messages", matcher.getPattern()));
 		}
 	}
 
 	/**
 	 * Write output - default implementation does nothing.
 	 */
-	protected void output(int status, int data1, int data2) {
+	protected void output(int status, int data1, int data2) throws InvalidMidiDataException {
 	}
 
 	public E getElement() {
