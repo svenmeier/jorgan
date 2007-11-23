@@ -21,23 +21,36 @@ package jorgan.play;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.ShortMessage;
+
 import jorgan.disposition.ContinuousEffect;
+import jorgan.disposition.ContinuousEffect.Changing;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelWrapper;
 
 /**
  * A player for a swell.
- * 
- * TODO handle {@link ContinuousEffect.Changing}
  */
-public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect> implements
-		SoundEffectPlayer {
+public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
+		implements SoundEffectPlayer {
 
 	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
+	private transient Channel currentChannel;
+	
 	public ContinuousEffectPlayer(ContinuousEffect swell) {
 		super(swell);
+	}
+
+	public Channel effectSound(Channel channel) {
+		channel = new ChannelImpl(channel);
+		
+		// TODO would be sufficient to handle changing on new channel only
+		changing();
+		
+		return channel;
 	}
 
 	@Override
@@ -50,14 +63,29 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect> i
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			for (ChannelImpl channel : channels) {
-				channel.flush();
-			}
+			changing();
 		}
 	}
 
-	public Channel effectSound(Channel channel) {
-		return new ChannelImpl(channel);
+	private void changing() {
+		ContinuousEffect effect = getElement();
+
+		for (Changing changing : getElement().getMessages(Changing.class)) {
+			changing.value = effect.getValue();
+			for (Channel channel : channels) {
+				currentChannel = channel;
+				output(changing);
+			}
+		}
+	}
+	
+	@Override
+	protected void output(int status, int data1, int data2)
+			throws InvalidMidiDataException {
+		ShortMessage message = new ShortMessage();
+		message.setMessage(status, data1, data2);
+
+		currentChannel.sendMessage(message);
 	}
 
 	private class ChannelImpl extends ChannelWrapper {
@@ -71,62 +99,8 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect> i
 		@Override
 		public void release() {
 			super.release();
-			
+
 			channels.remove(this);
 		}
-		
-		private void flush() {
-
-		}
-
-//		private int volume = 127;
-//
-//		private int oldVolume = -1;
-//
-//		private int oldCutoff = -1;
-//
-//		@Override
-//		public void setVolume(int volume) {
-//			this.volume = volume;
-//
-//			flush();
-//		}
-//
-//		@Override
-//		public void stop() {
-//			super.stop();
-//
-//			channels.remove(this);
-//		}
-//
-//		private void flush() {
-//			Swell swell = getElement();
-//  
-//			boolean output = false;
-//			
-//			int newVolume = getValue(swell.getVolume(), swell.getValue()) volume / 127;
-//			if (newVolume != oldVolume) {
-//				sound.setVolume(newVolume); oldVolume = newVolume;
-//  
-//				output = true;
-//			}
-//
-//			// Change cutoff only if lower than max value, so user can choose to
-//			// not use
-//			// this feature in case of soundfonts with preset cutoff values.
-//			if (swell.getCutoff() < 127) {
-//				int newCutoff = getValue(swell.getCutoff(), swell.getValue());
-//				if (newCutoff != oldCutoff) {
-//					sound.setCutoff(newCutoff);
-//					oldCutoff = newCutoff;
-//					output = true;
-//				}
-//			}
-//  
-//		}
-//
-//		private int getValue(int base, int position) {
-//			return base + ((127 - base) * position / 127);
-//		}
 	}
 }

@@ -32,6 +32,6 @@ public abstract class Initiator extends Momentary {
 		return names;
 	}
 
-	public static class Initiate extends Matcher {
+	public static class Initiate extends InputMessage {
 	}
 }

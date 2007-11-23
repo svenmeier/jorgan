@@ -28,7 +28,7 @@ public class Matcher {
 
 	private transient Node[] nodes;
 
-	private String pattern;
+	private String pattern = "";
 
 	public Matcher pattern(String pattern) {
 		setPattern(pattern);
@@ -251,7 +251,11 @@ public class Matcher {
 				if (field.getType() == Integer.TYPE) {
 					setValue(data);
 				} else if (field.getType() == Float.TYPE) {
-					setValue((float) (data - from) / (to - from));
+					float value = (float) (data - from) / (to - from);
+					if (value == -0.0f) {
+						value = 0.0f;
+					}
+					setValue(value);
 				} else {
 					throw new Error("illegal type '" + field.getType() + "'");
 				}

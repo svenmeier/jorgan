@@ -32,9 +32,9 @@ public class Rank extends Element implements Engaging, Displayable {
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Engaged().pattern("176, 121, 0"));
 		addMessage(new Engaged().pattern("176, 0, 0"));
 		addMessage(new Engaged().pattern("192, 0, 0"));
+		addMessage(new Disengaged().pattern("176, 121, 0"));
 		addMessage(new Disengaged().pattern("176, 123, 0"));
 		addMessage(new Played().pattern("144, pitch:0-127, velocity:0-127"));
 		addMessage(new Muted().pattern("128, pitch:0-127, 0"));
@@ -142,10 +142,18 @@ public class Rank extends Element implements Engaging, Displayable {
 		public transient int pitch;
 
 		public transient int velocity;
+		
+		{
+			setPattern("status, pitch:data1, velocity:data2");
+		}		
 	}
 
 	public static class Muted extends OutputMessage {
 
 		public transient int pitch;
+		
+		{
+			setPattern("status, pitch:data1, data2");
+		}		
 	}
 }

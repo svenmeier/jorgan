@@ -41,7 +41,12 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		Continuous continuous = getElement();
 
 		if (matcher instanceof Change) {
-			continuous.setValue(((Change) matcher).value);
+			float value = ((Change) matcher).value;
+
+			if (Math.abs(continuous.getValue() - value) > continuous
+					.getThreshold()) {
+				continuous.setValue(((Change) matcher).value);
+			}
 		}
 
 		super.input(matcher);

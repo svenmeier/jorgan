@@ -50,8 +50,9 @@ import jorgan.gui.construct.ReferencesPanel;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.midi.MidiMonitor;
+import jorgan.gui.play.DescriptionPanel;
 import jorgan.gui.play.MemoryPanel;
-import jorgan.gui.play.PlayMonitor;
+import jorgan.gui.play.MessagesMonitor;
 import jorgan.gui.play.ProblemsPanel;
 import jorgan.gui.play.VirtualKeyboard;
 import jorgan.play.event.PlayEvent;
@@ -105,7 +106,7 @@ public class OrganPanel extends JPanel {
 	private Map<String, View> views = new HashMap<String, View>();
 
 	/*
-	 * The innter dockingPane that holds all consoles.
+	 * The inner dockingPane that holds all consoles.
 	 */
 	private DockingPane consoleDocking = new BordererDockingPane();
 
@@ -115,7 +116,7 @@ public class OrganPanel extends JPanel {
 
 	private ForwardAction forwardAction = new ForwardAction();
 
-	private PlayMonitor playMonitor = new PlayMonitor();
+	private MessagesMonitor playMonitor = new MessagesMonitor();
 
 	private String playDocking;
 
@@ -135,6 +136,7 @@ public class OrganPanel extends JPanel {
 		new View("properties", new ElementPropertiesPanel(), true);
 		new View("elements", new ElementsPanel(), true);
 		new View("references", new ReferencesPanel(), true);
+		new View("description", new DescriptionPanel(), true);
 		new View("messages", new MessagesPanel(), true);
 		new View("problems", new ProblemsPanel(), false);
 		new View("keyboard", new VirtualKeyboard(), false);

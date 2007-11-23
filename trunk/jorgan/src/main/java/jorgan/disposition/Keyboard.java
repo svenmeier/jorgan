@@ -73,10 +73,18 @@ public class Keyboard extends Element {
 		public transient int pitch;
 
 		public transient int velocity;
+		
+		{
+			setPattern("status, pitch:data1, velocity:data2");
+		}		
 	}
 
 	public static class Release extends InputMessage {
 
 		public transient int pitch;
+
+		{
+			setPattern("status, pitch:data1, data2");
+		}
 	}
 }

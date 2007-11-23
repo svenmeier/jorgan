@@ -18,6 +18,8 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -29,12 +31,15 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Matcher;
+import jorgan.disposition.MatcherException;
 import jorgan.disposition.Element.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
@@ -111,7 +116,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		table.getColumnModel().getColumn(2).setCellRenderer(
 				new MessageTableCellRenderer());
 		table.getColumnModel().getColumn(2).setCellEditor(
-				new StringCellEditor());
+				new PatternCellEditor());
 		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
 
@@ -284,6 +289,45 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(table.getSelectedRow() != -1);
+		}
+	}
+	
+	private class PatternCellEditor extends StringCellEditor {
+		private int row;
+		
+		public PatternCellEditor() {
+			getTextField().getDocument().addDocumentListener(new DocumentListener() {
+				public void changedUpdate(DocumentEvent e) {
+					init();
+				}
+				public void insertUpdate(DocumentEvent e) {
+					init();
+				}
+				public void removeUpdate(DocumentEvent e) {
+					init();
+				}
+				private void init() {
+					Matcher message = matchers.get(row);
+					String pattern = message.getPattern();
+					
+					message.setPattern(getTextField().getText());
+					try {
+						message.init(3);
+						getTextField().setForeground(Color.black);
+					} catch (MatcherException ex) {
+						getTextField().setForeground(Color.red);
+					}
+					
+					message.setPattern(pattern);
+				}
+			});
+		}
+		
+		public Component getTableCellEditorComponent(JTable table, Object value,
+				boolean isSelected, int row, int column) {
+			this.row = row;
+
+			return super.getTableCellEditorComponent(table, value, isSelected, row, column);
 		}
 	}
 }

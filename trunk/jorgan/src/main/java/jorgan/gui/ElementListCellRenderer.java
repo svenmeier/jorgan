@@ -59,7 +59,12 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	protected String getComment(Object value, int index, boolean isSelected) {
 		Element element = getElement(value);
 
-		return element.getDescription();
+		String comment = element.getDescription();
+		int newLine = comment.indexOf('\n');
+		if (newLine != -1) {
+			comment = comment.substring(0, newLine);
+		}
+		return comment;
 	}
 
 	protected OrganSession getOrgan() {

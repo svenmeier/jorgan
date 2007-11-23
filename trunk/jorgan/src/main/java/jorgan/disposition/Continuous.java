@@ -27,6 +27,8 @@ public abstract class Continuous extends Element implements Displayable {
 
 	private boolean locking = true;
 
+	private float threshold = 0.0f;
+	
 	private float value = 0.0f;
 
 	public boolean isLocking() {
@@ -53,6 +55,16 @@ public abstract class Continuous extends Element implements Displayable {
 		return value;
 	}
 
+	public float getThreshold() {
+		return threshold;
+	}
+
+	public void setThreshold(float threshold) {
+		this.threshold = threshold;
+
+		fireElementChanged(true);
+	}
+	
 	public List<Class<? extends Matcher>> getMessageClasses() {
 		List<Class<? extends Matcher>> names = super.getMessageClasses();
 
@@ -65,10 +77,18 @@ public abstract class Continuous extends Element implements Displayable {
 	public static class Change extends InputMessage {
 
 		public transient float value;
+
+		{
+			setPattern("status, value:data1, data2");
+		}		
 	}
 
 	public static class Changed extends OutputMessage {
 
 		public transient float value;
+		
+		{
+			setPattern("status, value:data1, data2");
+		}		
 	}
 }

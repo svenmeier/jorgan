@@ -43,9 +43,9 @@ public class CreateReferencesWizard extends BasicWizard {
 
 	private Element element;
 
-	private List referencesTo = new ArrayList();
+	private List<Element> referencesTo = new ArrayList<Element>();
 
-	private List referencedFrom = new ArrayList();
+	private List<Element> referencedFrom = new ArrayList<Element>();
 
 	/**
 	 * Create a new wizard.

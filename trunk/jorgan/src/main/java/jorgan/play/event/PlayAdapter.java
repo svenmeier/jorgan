@@ -16,23 +16,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.play.event;
 
-import jorgan.disposition.Continuous;
-import jorgan.gui.construct.editor.BooleanEditor;
-import jorgan.gui.construct.editor.ValueEditor;
+public class PlayAdapter implements PlayListener {
 
-/**
- * BeanInfo for {@link jorgan.disposition.Continuous}.
- */
-public class ContinuousBeanInfo extends ElementBeanInfo {
+	public void opened() {
 
-	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	}
 
-		add("value", Continuous.class, ValueEditor.class);
-		add("threshold", Continuous.class, ValueEditor.class);
-		add("locking", Continuous.class, BooleanEditor.class);
+	public void closed() {
+
+	}
+
+	public void playerAdded(PlayEvent ev) {
+
+	}
+
+	public void playerRemoved(PlayEvent ev) {
+
+	}
+
+	public void problemAdded(PlayEvent ev) {
+
+	}
+
+	public void problemRemoved(PlayEvent ev) {
+
+	}
+
+	public void inputAccepted() {
+
+	}
+
+	public void outputProduced() {
+
 	}
 }

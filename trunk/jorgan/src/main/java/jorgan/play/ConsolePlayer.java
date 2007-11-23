@@ -151,9 +151,11 @@ public class ConsolePlayer extends Player<Console> {
 	protected void output(int status, int data1, int data2)
 			throws InvalidMidiDataException {
 
-		ShortMessage message = new ShortMessage();
-		message.setMessage(status, data1, data2);
+		if (receiver != null) {
+			ShortMessage message = new ShortMessage();
+			message.setMessage(status, data1, data2);
 
-		receiver.send(message, -1);
+			receiver.send(message, -1);
+		}
 	}
 }

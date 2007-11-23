@@ -414,8 +414,14 @@ public abstract class Element implements Cloneable {
 	}
 
 	public static abstract class InputMessage extends Matcher {
+		{
+			setPattern("status, data1, data2");
+		}
 	}
 
 	public static abstract class OutputMessage extends Matcher {
+		{
+			setPattern("status, data1, data2");
+		}
 	}
 }
