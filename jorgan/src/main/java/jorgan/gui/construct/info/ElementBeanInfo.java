@@ -55,11 +55,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		// add name first so it's positioned at the default index
 		// @see #getDefaultPropertyIndex()
 		add("name", Element.class, StringEditor.class);
-
-		add("description", Element.class, StringEditor.class);
-
 		add("style", Element.class, StyleEditor.class);
-
 		add("zoom", Element.class, ZoomEditor.class);
 	}
 

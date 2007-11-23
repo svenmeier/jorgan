@@ -48,7 +48,7 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	@Override
 	protected void drawChildren(Graphics2D g, Dimension dimension) {
 		if (getChildCount() > 0) {
-			double position = 0.0d;
+			float position = 0.0f;
 
 			Binding binding = getBinding(Binding.class);
 			if (binding != null) {
@@ -58,9 +58,9 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 			int index;
 			if (getChildCount() == 2) {
 				// use first layer for position 0 only
-				index = position == 0.0d ? 0 : 1;
+				index = position == 0.0f ? 0 : 1;
 			} else {
-				index = (int) Math.round((getChildCount() - 1) * position);
+				index = Math.round((getChildCount() - 1) * position);
 			}
 
 			Layer layer = getChild(index);
@@ -119,7 +119,7 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	}
 
 	public static interface Binding extends ViewBinding {
-		public double getPosition();
+		public float getPosition();
 
 		public void setPosition(float position);
 

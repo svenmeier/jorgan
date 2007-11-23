@@ -21,33 +21,43 @@ package jorgan.play;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ActivateableEffect;
+import jorgan.disposition.ActivateableEffect.Disengaged;
+import jorgan.disposition.ActivateableEffect.Engaged;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelWrapper;
 
 /**
  * A player for an {@link ActivateableEffect}.
- * 
- * TODO handle {@link ActivateableEffect.Engaged} and
- * {@link ActivateableEffect.Disengaged}
  */
 public class ActivateableEffectPlayer extends
 		ActivateablePlayer<ActivateableEffect> implements SoundEffectPlayer {
 
 	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
+	private transient Channel currentChannel;
+
 	public ActivateableEffectPlayer(ActivateableEffect variation) {
 		super(variation);
 	}
 
-	@Override
-	protected void closeImpl() {
-		super.closeImpl();
+	public Channel effectSound(Channel channel) {
+		channel = new ChannelImpl(channel);
 
-		channels.clear();
+		// TODO would be sufficient to handle engaged/disengaged on new channel
+		// only
+		ActivateableEffect effect = getElement();
+		if (effect.isEngaged()) {
+			engaged();
+		} else {
+			disengaged();
+		}
+
+		return channel;
 	}
 
 	@Override
@@ -55,14 +65,47 @@ public class ActivateableEffectPlayer extends
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			for (ChannelImpl channel : channels) {
-				channel.flush();
+			ActivateableEffect effect = getElement();
+			if (effect.isEngaged()) {
+				engaged();
+			} else {
+				disengaged();
 			}
 		}
 	}
 
-	public Channel effectSound(Channel channel) {
-		return new ChannelImpl(channel);
+	private void engaged() {
+		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
+			for (Channel channel : channels) {
+				currentChannel = channel;
+				output(engaged);
+			}
+		}
+	}
+
+	private void disengaged() {
+		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
+			for (Channel channel : channels) {
+				currentChannel = channel;
+				output(disengaged);
+			}
+		}
+	}
+
+	@Override
+	protected void output(int status, int data1, int data2)
+			throws InvalidMidiDataException {
+		ShortMessage message = new ShortMessage();
+		message.setMessage(status, data1, data2);
+
+		currentChannel.sendMessage(message);
+	}
+
+	@Override
+	protected void closeImpl() {
+		super.closeImpl();
+
+		channels.clear();
 	}
 
 	private class ChannelImpl extends ChannelWrapper {
@@ -78,44 +121,6 @@ public class ActivateableEffectPlayer extends
 			super.release();
 
 			channels.remove(this);
-		}
-
-		@Override
-		public void sendMessage(ShortMessage message) {
-			// boolean effect = false;
-			// if (command == CONTROL_CHANGE && data1 ==
-			// CONTROL_BANK_SELECT_MSB) {
-			// bank = data2;
-			// effect = true;
-			// }
-			//
-			// if (command == PROGRAM_CHANGE) {
-			// program = data1;
-			// effect = true;
-			// }
-			//
-			// if (effect) {
-			// flush();
-			// } else {
-			super.sendMessage(message);
-			// }
-		}
-
-		private void flush() {
-			// MomentaryEffect variation = getElement();
-			//
-			// int bank = this.bank;
-			// int program = this.program;
-			//
-			// if (variation.isActivated()) {
-			// bank += variation.getBank();
-			// program += variation.getProgram();
-			// }
-			//
-			// super.sendMessage(CONTROL_CHANGE, CONTROL_BANK_SELECT_MSB,
-			// bank % 128);
-			//
-			// super.sendMessage(PROGRAM_CHANGE, program % 128, UNUSED_DATA);
 		}
 	}
 }

@@ -34,5 +34,10 @@ public class ContinuousEffect extends Continuous implements SoundEffect {
 	}
 
 	public static class Changing extends OutputMessage {
+		public transient float value;
+		
+		{
+			setPattern("status, value:data1, data2");
+		}		
 	}
 }

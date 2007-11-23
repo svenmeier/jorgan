@@ -23,7 +23,7 @@ import java.beans.PropertyEditorSupport;
 import jorgan.disposition.Matcher;
 
 /**
- * PropertyEditor for a string property.
+ * PropertyEditor for a matcher.
  */
 public class MatcherEditor extends PropertyEditorSupport {
 

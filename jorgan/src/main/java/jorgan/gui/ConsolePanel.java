@@ -1046,10 +1046,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			Cursor cursor = Cursor.getDefaultCursor();
 			String tooltip = null;
 			if (view != null) {
-				String description = view.getElement().getDescription();
-				if (!"".equals(description)) {
-					tooltip = description;
-				}
+				tooltip = getTooltip(view.getElement());
+				
 				int x = screenToView(e.getX());
 				int y = screenToView(e.getY());
 
@@ -1281,6 +1279,19 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		return new Point(console.getX(element), console.getY(element));
 	}
 
+	private String getTooltip(Element element) {
+		
+		String description = element.getDescription();
+		if ("".equals(description)) {
+			return null;
+		}
+		int newLine = description.indexOf('\n');
+		if (newLine != -1) {
+			description = description.substring(0, newLine);
+		}
+		return description;
+	}
+	
 	private class ConsoleView extends View<Console> {
 		private ConsoleView(Console console) {
 			super(console);

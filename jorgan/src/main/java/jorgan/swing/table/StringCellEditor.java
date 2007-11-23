@@ -48,6 +48,10 @@ public class StringCellEditor extends AbstractCellEditor implements
 		});
 	}
 
+	protected JTextField getTextField() {
+		return textField;
+	}
+	
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		textField.setText((String) value);

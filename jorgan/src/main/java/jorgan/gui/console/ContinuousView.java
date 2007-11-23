@@ -35,7 +35,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	public static final String BINDING_VALUE = "value";
 
-	private NumberFormat valueFormat = new DecimalFormat("0.0");
+	private NumberFormat valueFormat = new DecimalFormat("0.00");
 
 	/**
 	 * Constructor.
@@ -104,8 +104,8 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 			return valueFormat.format(getElement().getValue());
 		}
 
-		public double getPosition() {
-			return getElement().getValue() / 127.0d;
+		public float getPosition() {
+			return getElement().getValue();
 		}
 
 		public void setPosition(float position) {
