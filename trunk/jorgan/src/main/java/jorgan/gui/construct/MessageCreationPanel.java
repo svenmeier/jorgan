@@ -33,7 +33,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Elements;
-import jorgan.disposition.Matcher;
+import jorgan.disposition.Message;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 
@@ -47,7 +47,7 @@ public class MessageCreationPanel extends JPanel {
 
 	private JList typeList = new JList();
 
-	private List<Class<? extends Matcher>> messageClasses;
+	private List<Class<? extends Message>> messageClasses;
 
 	/**
 	 * Constructor.
@@ -78,7 +78,7 @@ public class MessageCreationPanel extends JPanel {
 	 * @param messageClasses
 	 *            the classes for the message to create
 	 */
-	public void setMessageClasses(List<Class<? extends Matcher>> messageClasses) {
+	public void setMessageClasses(List<Class<? extends Message>> messageClasses) {
 		this.messageClasses = messageClasses;
 
 		Collections.sort(messageClasses, new TypeComparator());
@@ -86,11 +86,11 @@ public class MessageCreationPanel extends JPanel {
 	}
 
 	/**
-	 * Get the matcher.
+	 * Get the message.
 	 * 
-	 * @return the matcher
+	 * @return the message
 	 */
-	public Matcher getMatcher() {
+	public Message getMessage() {
 		int index = typeList.getSelectedIndex();
 
 		if (index == -1) {
@@ -116,10 +116,10 @@ public class MessageCreationPanel extends JPanel {
 	}
 
 	private class TypeComparator implements
-			Comparator<Class<? extends Matcher>> {
+			Comparator<Class<? extends Message>> {
 
-		public int compare(Class<? extends Matcher> c1,
-				Class<? extends Matcher> c2) {
+		public int compare(Class<? extends Message> c1,
+				Class<? extends Message> c2) {
 
 			String name1 = Elements.getDisplayName(c1);
 			String name2 = Elements.getDisplayName(c2);

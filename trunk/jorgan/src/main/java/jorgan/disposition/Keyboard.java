@@ -20,18 +20,16 @@ package jorgan.disposition;
 
 import java.util.List;
 
+import jorgan.disposition.Message.InputMessage;
+
 /**
  * A keyboard.
  */
-public class Keyboard extends Element {
-
-	private String input = null;
-
-	private int transpose = 0;
+public class Keyboard extends Input {
 
 	public Keyboard() {
-		addMessage(new Press().pattern("144, pitch:0-127, velocity:0-127"));
-		addMessage(new Release().pattern("128, pitch:0-127, 0-127"));
+		addMessage(new Press());
+		addMessage(new Release());
 	}
 
 	@Override
@@ -39,28 +37,8 @@ public class Keyboard extends Element {
 		return Keyable.class;
 	}
 
-	public String getInput() {
-		return input;
-	}
-
-	public void setInput(String input) {
-		this.input = input;
-
-		fireElementChanged(true);
-	}
-
-	public void setTranspose(int transpose) {
-		this.transpose = transpose;
-
-		fireElementChanged(true);
-	}
-
-	public int getTranspose() {
-		return transpose;
-	}
-
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		List<Class<? extends Matcher>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Press.class);
 		names.add(Release.class);
@@ -70,21 +48,21 @@ public class Keyboard extends Element {
 
 	public static class Press extends InputMessage {
 
-		public transient int pitch;
+		public static final String PITCH = "pitch";
 
-		public transient int velocity;
-		
+		public static final String VELOCITY = "velocity";
+
 		{
-			setPattern("status, pitch:data1, velocity:data2");
-		}		
+			init("filter 144", "set pitch", "set velocity");
+		}
 	}
 
 	public static class Release extends InputMessage {
 
-		public transient int pitch;
+		public static final String PITCH = "pitch";
 
 		{
-			setPattern("status, pitch:data1, data2");
+			init("filter 128", "set pitch", "");
 		}
 	}
 }

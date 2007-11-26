@@ -18,15 +18,17 @@
  */
 package jorgan.play;
 
+import java.util.Map;
 import java.util.Set;
 
 import jorgan.disposition.Activateable;
 import jorgan.disposition.Console;
-import jorgan.disposition.Matcher;
 import jorgan.disposition.Activateable.Activate;
 import jorgan.disposition.Activateable.Activated;
 import jorgan.disposition.Activateable.Deactivate;
 import jorgan.disposition.Activateable.Deactivated;
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 
 /**
@@ -39,20 +41,20 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) {
+	protected void input(InputMessage message, Map<String, Float> values) {
 		Activateable activateable = getElement();
 
-		if (matcher instanceof Activate) {
+		if (message instanceof Activate) {
 			if (!activateable.isActive()) {
 				activateable.setActive(true);
 			}
-		} else if (matcher instanceof Deactivate) {
+		} else if (message instanceof Deactivate) {
 			if (activateable.isActive()) {
 				activateable.setActive(false);
 			}
+		} else {
+			super.input(message, values);
 		}
-
-		super.input(matcher);
 	}
 
 	@Override
@@ -63,16 +65,18 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
 		Set<Console> consoles = activateable.getReferrer(Console.class);
 
-		Class<? extends Matcher> clazz;
+		Class<? extends OutputMessage> clazz;
 		if (activateable.isActive()) {
 			clazz = Activated.class;
 		} else {
 			clazz = Deactivated.class;
 		}
 
-		for (Matcher matcher : getElement().getMessages(clazz)) {
+		for (OutputMessage message : getElement().getMessages(clazz)) {
+			Map<String, Float> values = getValues();
+
 			for (Console console : consoles) {
-				getOrganPlay().getPlayer(console).output(matcher);
+				getOrganPlay().getPlayer(console).output(message, values);
 			}
 		}
 	}

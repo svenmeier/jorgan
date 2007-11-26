@@ -18,9 +18,11 @@
  */
 package jorgan.play;
 
+import java.util.Map;
+
 import jorgan.disposition.Initiator;
-import jorgan.disposition.Matcher;
 import jorgan.disposition.Initiator.Initiate;
+import jorgan.disposition.Message.InputMessage;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
@@ -32,13 +34,13 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) {
+	protected void input(InputMessage message, Map<String, Float> values) {
 		Initiator initiator = getElement();
 
-		if (matcher instanceof Initiate) {
+		if (message instanceof Initiate) {
 			initiator.initiate();
+		} else {
+			super.input(message, values);
 		}
-
-		super.input(matcher);
 	}
 }

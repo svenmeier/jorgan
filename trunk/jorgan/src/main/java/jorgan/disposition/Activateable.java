@@ -20,6 +20,9 @@ package jorgan.disposition;
 
 import java.util.List;
 
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Message.OutputMessage;
+
 /**
  * Abstract base class for an activateable elements.
  */
@@ -86,8 +89,8 @@ public abstract class Activateable extends Momentary implements Engaging {
 		}
 	}
 
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		List<Class<? extends Matcher>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Activate.class);
 		names.add(Deactivate.class);

@@ -19,16 +19,19 @@
 package jorgan.play;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
-import jorgan.disposition.Element.InputMessage;
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.util.math.NumberProcessor;
+import jorgan.util.math.ProcessingException;
 import bias.Configuration;
 
 /**
@@ -64,7 +67,7 @@ public abstract class Player<E extends Element> {
 
 	private boolean warnMessages;
 
-	private int[] data = new int[3];
+	private Map<String, Float> values = new HashMap<String, Float>();
 
 	/**
 	 * Create a player for the given element.
@@ -81,6 +84,11 @@ public abstract class Player<E extends Element> {
 
 	public OrganPlay getOrganPlay() {
 		return organPlay;
+	}
+
+	protected Map<String, Float> getValues() {
+		values.clear();
+		return values;
 	}
 
 	/**
@@ -198,57 +206,77 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	public final void input(int command, int data1, int data2) {
+	public final void input(ShortMessage shortMessage) {
 		Element element = getElement();
-
-		data[0] = command;
-		data[1] = data1;
-		data[2] = data2;
 
 		try {
 			for (InputMessage message : element.getMessages(InputMessage.class)) {
-				if (message.input(data)) {
-					input(message);
+				Map<String, Float> values = getValues();
 
-					if (organPlay != null) {
-						organPlay.fireInputAccepted();
-					}
+				if (Float.isNaN(new NumberProcessor(message.getStatus())
+						.process(shortMessage.getStatus(), values))) {
+					continue;
 				}
+				if (Float.isNaN(new NumberProcessor(message.getData1())
+						.process(shortMessage.getData1(), values))) {
+					continue;
+				}
+				if (Float.isNaN(new NumberProcessor(message.getData2())
+						.process(shortMessage.getData2(), values))) {
+					continue;
+				}
+
+				input(message, values);
+
+				organPlay.fireInputAccepted();
 			}
-		} catch (MatcherException ex) {
+		} catch (ProcessingException ex) {
 			addProblem(new Error("messages", ex.getPattern()));
 		}
 	}
 
 	/**
-	 * Read input from the given matcher - default implementation does nothing.
+	 * Read input from the given message - default implementation does nothing.
 	 * 
-	 * @param matcher	matcher to read input from
-	 * @throws MatcherException
+	 * @param message
+	 *            message
 	 */
-	protected void input(Matcher matcher) {
+	protected void input(InputMessage message, Map<String, Float> values) {
 
 	}
 
-	protected final void output(Matcher matcher) {
+	protected final void output(OutputMessage message, Map<String, Float> values) {
 		try {
-			matcher.output(data);
-			output(data[0], data[1], data[2]);
+			float status = new NumberProcessor(message.getStatus()).process(
+					0.0f, values);
+			float data1 = new NumberProcessor(message.getData1()).process(0.0f,
+					values);
+			float data2 = new NumberProcessor(message.getData2()).process(0.0f,
+					values);
+
+			ShortMessage shortMessage;
+			try {
+				shortMessage = new ShortMessage();
+				shortMessage.setMessage(Math.round(status), Math.round(data1),
+						Math.round(data2));
+
+				output(shortMessage);
+			} catch (InvalidMidiDataException ex) {
+				addProblem(new Error("messages"));
+			}
 
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
 			}
-		} catch (MatcherException ex) {
-			addProblem(new Error("messages", matcher.getPattern()));
-		} catch (InvalidMidiDataException ex) {
-			addProblem(new Error("messages", matcher.getPattern()));
+		} catch (ProcessingException ex) {
+			addProblem(new Error("messages", ex.getPattern()));
 		}
 	}
 
 	/**
 	 * Write output - default implementation does nothing.
 	 */
-	protected void output(int status, int data1, int data2) throws InvalidMidiDataException {
+	protected void output(ShortMessage message) {
 	}
 
 	public E getElement() {

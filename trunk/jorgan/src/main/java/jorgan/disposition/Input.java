@@ -21,9 +21,17 @@ package jorgan.disposition;
 /**
  * A console.
  */
-public interface Input {
+public abstract class Input extends Element {
 
-	public String getDevice();
+	private String input;
+
+	public String getInput() {
+		return input;
+	}
 	
-	public void setDevice(String device);	
+	public void setInput(String input) {
+		this.input = input;
+
+		fireElementChanged(true);
+	}
 }

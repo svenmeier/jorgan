@@ -18,6 +18,8 @@
  */
 package jorgan.play;
 
+import java.util.Map;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
@@ -25,9 +27,9 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
-import jorgan.disposition.Matcher;
 import jorgan.disposition.Keyboard.Press;
 import jorgan.disposition.Keyboard.Release;
+import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 
@@ -116,28 +118,28 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) {
-		if (matcher instanceof Press) {
-			press(((Press) matcher).pitch, ((Press) matcher).velocity);
-		} else if (matcher instanceof Release) {
-			release(((Release) matcher).pitch);
+	protected void input(InputMessage message, Map<String, Float> values) {
+		if (message instanceof Press) {
+			press(Math.round(values.get(Press.PITCH)), Math.round(values
+					.get(Press.VELOCITY)));
+		} else if (message instanceof Release) {
+			release(Math.round(values.get(Release.PITCH)));
+		} else {
+			super.input(message, values);
 		}
-
-		super.input(matcher);
 	}
 
 	private void press(int pitch, int velocity) {
 		Keyboard keyboard = getElement();
 
-		pitch = pitch + keyboard.getTranspose();
-
-		if (pitch >= 0 && pitch <= 127 && !pressed[pitch]) {
+		if (!pressed[pitch]) {
 			pressed[pitch] = true;
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				KeyablePlayer<?> player = (KeyablePlayer<?>)getOrganPlay().getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>) getOrganPlay()
+						.getPlayer(element);
 				if (player != null) {
 					player.keyDown(pitch, velocity);
 				}
@@ -149,15 +151,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 		Keyboard keyboard = getElement();
 
-		pitch = pitch + keyboard.getTranspose();
-
-		if (pitch >= 0 && pitch <= 127 && pressed[pitch]) {
+		if (pressed[pitch]) {
 			pressed[pitch] = false;
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				KeyablePlayer<?> player = (KeyablePlayer<?>)getOrganPlay().getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>) getOrganPlay()
+						.getPlayer(element);
 				if (player != null) {
 					player.keyUp(pitch);
 				}
@@ -167,6 +168,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	public void received(ShortMessage message) {
-		input(message.getStatus(), message.getData1(), message.getData2());
+		input(message);
 	}
 }

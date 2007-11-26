@@ -18,7 +18,6 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -141,20 +140,14 @@ public class ConsolePlayer extends Player<Console> {
 
 			Player<?> player = getOrganPlay().getPlayer(reference.getElement());
 			if (player != null) {
-				player.input(message.getCommand(), message.getData1(), message
-						.getData2());
+				player.input(message);
 			}
 		}
 	}
 
 	@Override
-	protected void output(int status, int data1, int data2)
-			throws InvalidMidiDataException {
-
+	protected void output(ShortMessage message) {
 		if (receiver != null) {
-			ShortMessage message = new ShortMessage();
-			message.setMessage(status, data1, data2);
-
 			receiver.send(message, -1);
 		}
 	}

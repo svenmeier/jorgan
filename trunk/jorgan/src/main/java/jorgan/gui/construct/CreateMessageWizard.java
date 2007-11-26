@@ -23,7 +23,7 @@ import java.awt.Component;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Matcher;
+import jorgan.disposition.Message;
 import jorgan.disposition.Organ;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
@@ -40,7 +40,7 @@ public class CreateMessageWizard extends BasicWizard {
 
 	private Element element;
 
-	private Matcher matcher;
+	private Message message;
 
 	/**
 	 * Create a new wizard.
@@ -63,7 +63,7 @@ public class CreateMessageWizard extends BasicWizard {
 	 */
 	@Override
 	public boolean allowsFinish() {
-		return matcher != null;
+		return message != null;
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class CreateMessageWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		element.addMessage(matcher);
+		element.addMessage(message);
 
 		return true;
 	}
@@ -97,7 +97,7 @@ public class CreateMessageWizard extends BasicWizard {
 
 		@Override
 		protected void changing() {
-			matcher = messagePanel.getMatcher();
+			message = messagePanel.getMessage();
 
 			super.changing();
 		}
