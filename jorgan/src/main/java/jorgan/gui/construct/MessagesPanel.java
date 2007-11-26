@@ -18,8 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,19 +29,16 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Matcher;
-import jorgan.disposition.MatcherException;
-import jorgan.disposition.Element.InputMessage;
+import jorgan.disposition.Elements;
+import jorgan.disposition.Message;
+import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.MessageTableCellRenderer;
 import jorgan.gui.OrganAware;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.OrganSession;
@@ -80,7 +75,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private Element element;
 
-	private List<Matcher> matchers = new ArrayList<Matcher>();
+	private List<Message> messages = new ArrayList<Message>();
 
 	/**
 	 * The listener to selection changes.
@@ -111,12 +106,12 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		iconMap.put(false, outputIcon);
 		new IconTableCellRenderer(inputIcon, iconMap).configureTableColumn(
 				table, 0);
-		table.getColumnModel().getColumn(1).setCellRenderer(
-				new MessageTableCellRenderer());
-		table.getColumnModel().getColumn(2).setCellRenderer(
-				new MessageTableCellRenderer());
 		table.getColumnModel().getColumn(2).setCellEditor(
-				new PatternCellEditor());
+				new StringCellEditor());
+		table.getColumnModel().getColumn(3).setCellEditor(
+				new StringCellEditor());
+		table.getColumnModel().getColumn(4).setCellEditor(
+				new StringCellEditor());
 		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
 
@@ -150,9 +145,9 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		if (editor != null) {
 			editor.stopCellEditing();
 		}
-		
+
 		element = null;
-		matchers.clear();
+		messages.clear();
 		messagesModel.update();
 		table.setVisible(false);
 
@@ -161,8 +156,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 			element = session.getSelectionModel().getSelectedElement();
 
-			for (Matcher matcher : element.getMessages()) {
-				matchers.add(matcher);
+			for (Message message : element.getMessages()) {
+				messages.add(message);
 			}
 
 			messagesModel.update();
@@ -194,16 +189,16 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		private int size = 0;
 
 		private void update() {
-			if (matchers.size() > size) {
-				fireTableRowsInserted(size, matchers.size() - 1);
-			} else if (matchers.size() < size) {
-				fireTableRowsDeleted(matchers.size(), size - 1);
+			if (messages.size() > size) {
+				fireTableRowsInserted(size, messages.size() - 1);
+			} else if (messages.size() < size) {
+				fireTableRowsDeleted(messages.size(), size - 1);
 			}
-			size = matchers.size();
+			size = messages.size();
 		}
 
 		public int getColumnCount() {
-			return 3;
+			return 5;
 		}
 
 		public int getRowCount() {
@@ -212,27 +207,42 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 2;
+			return columnIndex >= 2;
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Matcher matcher = matchers.get(rowIndex);
+			Message message = messages.get(rowIndex);
 
-			if (columnIndex == 0) {
-				return InputMessage.class.isAssignableFrom(matcher.getClass());
-			} else if (columnIndex == 1) {
-				return matcher.getClass();
-			} else {
-				return matcher.getPattern();
+			switch (columnIndex) {
+			case 0:
+				return InputMessage.class.isAssignableFrom(message.getClass());
+			case 1:
+				return Elements.getDisplayName(message.getClass());
+			case 2:
+				return message.getStatus();
+			case 3:
+				return message.getData1();
+			case 4:
+				return message.getData2();
+			default:
+				throw new IllegalArgumentException("" + columnIndex);
 			}
 		}
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			Matcher matcher = matchers.get(rowIndex);
+			Message message = messages.get(rowIndex);
 
-			if (columnIndex == 2) {
-				matcher.setPattern((String) aValue);
+			switch (columnIndex) {
+			case 2:
+				message.setStatus((String) aValue);
+				break;
+			case 3:
+				message.setData1((String) aValue);
+				break;
+			case 4:
+				message.setData2((String) aValue);
+				break;
 			}
 		}
 
@@ -280,54 +290,15 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			int[] indices = table.getSelectedRows();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
-					Matcher matcher = matchers.get(indices[i]);
+					Message message = messages.get(indices[i]);
 
-					element.removeMessage(matcher);
+					element.removeMessage(message);
 				}
 			}
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(table.getSelectedRow() != -1);
-		}
-	}
-	
-	private class PatternCellEditor extends StringCellEditor {
-		private int row;
-		
-		public PatternCellEditor() {
-			getTextField().getDocument().addDocumentListener(new DocumentListener() {
-				public void changedUpdate(DocumentEvent e) {
-					init();
-				}
-				public void insertUpdate(DocumentEvent e) {
-					init();
-				}
-				public void removeUpdate(DocumentEvent e) {
-					init();
-				}
-				private void init() {
-					Matcher message = matchers.get(row);
-					String pattern = message.getPattern();
-					
-					message.setPattern(getTextField().getText());
-					try {
-						message.init(3);
-						getTextField().setForeground(Color.black);
-					} catch (MatcherException ex) {
-						getTextField().setForeground(Color.red);
-					}
-					
-					message.setPattern(pattern);
-				}
-			});
-		}
-		
-		public Component getTableCellEditorComponent(JTable table, Object value,
-				boolean isSelected, int row, int column) {
-			this.row = row;
-
-			return super.getTableCellEditorComponent(table, value, isSelected, row, column);
 		}
 	}
 }

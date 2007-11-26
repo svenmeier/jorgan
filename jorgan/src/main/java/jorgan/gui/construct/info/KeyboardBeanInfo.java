@@ -18,20 +18,14 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Keyboard;
-import jorgan.gui.construct.editor.InDeviceEditor;
-import jorgan.gui.construct.editor.TransposeEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyboard}.
  */
-public class KeyboardBeanInfo extends ElementBeanInfo {
+public class KeyboardBeanInfo extends InputBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
-
-		add("transpose", Keyboard.class, TransposeEditor.class);
-		add("input", Keyboard.class, InDeviceEditor.class);
 	}
 }

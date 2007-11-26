@@ -20,6 +20,8 @@ package jorgan.disposition;
 
 import java.util.List;
 
+import jorgan.disposition.Message.OutputMessage;
+
 /**
  * A rank.
  */
@@ -27,26 +29,62 @@ public class Rank extends Element implements Engaging, Displayable {
 
 	private String output;
 
-	private Matcher channels = new Matcher();
+	private String channels = "0-15";
 
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Engaged().pattern("176, 0, 0"));
-		addMessage(new Engaged().pattern("192, 0, 0"));
-		addMessage(new Disengaged().pattern("176, 121, 0"));
-		addMessage(new Disengaged().pattern("176, 123, 0"));
-		addMessage(new Played().pattern("144, pitch:0-127, velocity:0-127"));
-		addMessage(new Muted().pattern("128, pitch:0-127, 0"));
+		addMessage(new Engaged().init("176", "0", "0"));
+		addMessage(new Engaged().init("192", "0", "0"));
+		addMessage(new Disengaged().init("176", "121", "0"));
+		addMessage(new Disengaged().init("176", "123", "0"));
+		addMessage(new Played());
+		addMessage(new Muted());
 	}
 
+	/**
+	 * Convenience method to set the midi program.
+	 * 
+	 * @param program
+	 *            program to set
+	 */
 	public void setProgram(int program) {
-		addMessage(new Engaged().pattern("192, " + program + ", 0"));
+		Engaged engaged = getProgramChange();
+		if (engaged == null) {
+			engaged = new Engaged();
+			addMessage(engaged);
+		}
+		engaged.init("192", "" + program, "0");
 	}
 
+	/**
+	 * Convenience method to get the midi program.
+	 * 
+	 * @return the program
+	 */
 	public int getProgram() {
-		// TODO support convenience access to program (used in import)
-		return -1;
+		Engaged engaged = getProgramChange();
+		if (engaged != null) {
+			try {
+				return Integer.parseInt(engaged.getData1());
+			} catch (NumberFormatException ignore) {
+			}
+		}
+		return 0;
+	}
+
+	/**
+	 * Get the {@link Engaged} message sending a midi program change.
+	 * 
+	 * @return program change message
+	 */
+	private Engaged getProgramChange() {
+		for (Engaged engaged : getMessages(Engaged.class)) {
+			if ("192".equals(engaged.getStatus())) {
+				return engaged;
+			}
+		}
+		return null;
 	}
 
 	@Override
@@ -77,11 +115,11 @@ public class Rank extends Element implements Engaging, Displayable {
 		fireElementChanged(true);
 	}
 
-	public Matcher getChannels() {
+	public String getChannels() {
 		return channels;
 	}
 
-	public void setChannels(Matcher channels) {
+	public void setChannels(String channels) {
 		if (channels == null) {
 			throw new IllegalArgumentException("channels must not be null");
 		}
@@ -120,8 +158,8 @@ public class Rank extends Element implements Engaging, Displayable {
 		}
 	}
 
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		List<Class<? extends Matcher>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Engaged.class);
 		names.add(Disengaged.class);
@@ -139,21 +177,21 @@ public class Rank extends Element implements Engaging, Displayable {
 
 	public static class Played extends OutputMessage {
 
-		public transient int pitch;
+		public static final String VELOCITY = "velocity";
 
-		public transient int velocity;
-		
+		public static final String PITCH = "pitch";
+
 		{
-			setPattern("status, pitch:data1, velocity:data2");
-		}		
+			init("144", "get pitch", "get velocity");
+		}
 	}
 
 	public static class Muted extends OutputMessage {
 
-		public transient int pitch;
-		
+		public static final String PITCH = "pitch";
+
 		{
-			setPattern("status, pitch:data1, data2");
-		}		
+			init("128", "get pitch", "");
+		}
 	}
 }

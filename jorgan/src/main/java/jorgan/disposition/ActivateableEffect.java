@@ -20,13 +20,15 @@ package jorgan.disposition;
 
 import java.util.List;
 
+import jorgan.disposition.Message.OutputMessage;
+
 /**
  * A variation.
  */
 public class ActivateableEffect extends Activateable implements SoundEffect {
 
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		List<Class<? extends Matcher>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Engaged.class);
 		names.add(Disengaged.class);

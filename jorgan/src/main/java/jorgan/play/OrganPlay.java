@@ -64,7 +64,7 @@ public class OrganPlay {
 	/**
 	 * Element to player mapping.
 	 */
-	private Map<Element, Player> players = new HashMap<Element, Player>();
+	private Map<Element, Player<? extends Element>> players = new HashMap<Element, Player<? extends Element>>();
 
 	/**
 	 * The handler of organ and configuration events.
@@ -196,7 +196,7 @@ public class OrganPlay {
 		}
 	}
 
-	protected Player getPlayer(Element element) {
+	protected Player<? extends Element> getPlayer(Element element) {
 		return players.get(element);
 	}
 
@@ -233,7 +233,7 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player> iterator = players.values().iterator();
+			Iterator<Player<? extends Element>> iterator = players.values().iterator();
 			while (iterator.hasNext()) {
 				Player player = iterator.next();
 				player.open();
@@ -241,7 +241,7 @@ public class OrganPlay {
 
 			iterator = players.values().iterator();
 			while (iterator.hasNext()) {
-				Player player = iterator.next();
+				Player<? extends Element> player = iterator.next();
 				player.elementChanged(null);
 			}
 		}
@@ -267,9 +267,9 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player> iterator = players.values().iterator();
+			Iterator<Player<? extends Element>> iterator = players.values().iterator();
 			while (iterator.hasNext()) {
-				Player player = iterator.next();
+				Player<? extends Element> player = iterator.next();
 				player.close();
 			}
 		}
@@ -278,7 +278,7 @@ public class OrganPlay {
 	}
 
 	protected void createPlayer(Element element) {
-		Player player = null;
+		Player<? extends Element> player = null;
 
 		if (element instanceof Console) {
 			player = new ConsolePlayer((Console) element);

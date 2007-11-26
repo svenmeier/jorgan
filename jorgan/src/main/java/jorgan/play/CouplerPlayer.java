@@ -19,39 +19,42 @@
 package jorgan.play;
 
 import jorgan.disposition.Coupler;
+import jorgan.disposition.Keyable;
 import jorgan.disposition.Reference;
 
 public class CouplerPlayer extends KeyablePlayer<Coupler> {
 
-    public CouplerPlayer(Coupler coupler) {
-        super(coupler);
-    }
+	public CouplerPlayer(Coupler coupler) {
+		super(coupler);
+	}
 
-    @Override
+	@SuppressWarnings("unchecked")
+	@Override
 	protected void activateKey(int pitch, int velocity) {
-    	Coupler coupler = getElement();
+		Coupler coupler = getElement();
 
-    	if (coupler.getVelocity() != 0) {
-            velocity = coupler.getVelocity();
-        }
-    	
-        for (Reference reference : coupler.getReferences()) {
-            KeyablePlayer keyablePlayer = (KeyablePlayer) getOrganPlay()
-                    .getPlayer(reference.getElement());
+		if (coupler.getVelocity() != 0) {
+			velocity = coupler.getVelocity();
+		}
 
-            keyablePlayer.keyDown(pitch, velocity);
-        }
-    }
+		for (Reference reference : coupler.getReferences()) {
+			KeyablePlayer<? extends Keyable> keyablePlayer = (KeyablePlayer<? extends Keyable>) getOrganPlay()
+					.getPlayer(reference.getElement());
 
-    @Override
+			keyablePlayer.keyDown(pitch, velocity);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	protected void deactivateKey(int pitch) {
-        Coupler coupler = getElement();
+		Coupler coupler = getElement();
 
-        for (Reference reference : coupler.getReferences()) {
-            KeyablePlayer keyablePlayer = (KeyablePlayer) getOrganPlay()
-                    .getPlayer(reference.getElement());
+		for (Reference reference : coupler.getReferences()) {
+			KeyablePlayer<? extends Keyable> keyablePlayer = (KeyablePlayer<? extends Keyable>) getOrganPlay()
+					.getPlayer(reference.getElement());
 
-            keyablePlayer.keyUp(pitch);
-        }
-    }
+			keyablePlayer.keyUp(pitch);
+		}
+	}
 }

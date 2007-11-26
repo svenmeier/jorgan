@@ -16,31 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.editor;
+package jorgan.gui.construct.info;
 
-import java.beans.PropertyEditorSupport;
-
-import jorgan.disposition.Matcher;
+import jorgan.disposition.Input;
+import jorgan.gui.construct.editor.InDeviceEditor;
 
 /**
- * PropertyEditor for a matcher.
+ * BeanInfo for {@link jorgan.disposition.Input}.
  */
-public class MatcherEditor extends PropertyEditorSupport {
+public class InputBeanInfo extends ElementBeanInfo {
 
 	@Override
-	public String getAsText() {
+	protected void registerProperties() {
+		super.registerProperties();
 
-		Matcher matcher = (Matcher) getValue();
-
-		if (matcher == null) {
-			return "";
-		} else {
-			return matcher.getPattern();
-		}
-	}
-
-	@Override
-	public void setAsText(String text) throws IllegalArgumentException {
-		setValue(new Matcher().pattern(text));
+		add("input", Input.class, InDeviceEditor.class);
 	}
 }

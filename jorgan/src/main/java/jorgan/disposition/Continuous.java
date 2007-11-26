@@ -20,6 +20,9 @@ package jorgan.disposition;
 
 import java.util.List;
 
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Message.OutputMessage;
+
 /**
  * A continuous element.
  */
@@ -28,7 +31,7 @@ public abstract class Continuous extends Element implements Displayable {
 	private boolean locking = true;
 
 	private float threshold = 0.0f;
-	
+
 	private float value = 0.0f;
 
 	public boolean isLocking() {
@@ -64,9 +67,9 @@ public abstract class Continuous extends Element implements Displayable {
 
 		fireElementChanged(true);
 	}
-	
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		List<Class<? extends Matcher>> names = super.getMessageClasses();
+
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Change.class);
 		names.add(Changed.class);
@@ -76,19 +79,11 @@ public abstract class Continuous extends Element implements Displayable {
 
 	public static class Change extends InputMessage {
 
-		public transient float value;
-
-		{
-			setPattern("status, value:data1, data2");
-		}		
+		public static final String VALUE = "value";
 	}
 
 	public static class Changed extends OutputMessage {
 
-		public transient float value;
-		
-		{
-			setPattern("status, value:data1, data2");
-		}		
+		public static final String VALUE = "value";
 	}
 }

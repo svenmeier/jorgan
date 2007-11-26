@@ -18,11 +18,12 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.InvalidMidiDataException;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.MatcherException;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Rank.Disengaged;
@@ -34,6 +35,8 @@ import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
 import jorgan.midi.channel.ChannelPool;
 import jorgan.midi.channel.DelayedChannel;
+import jorgan.util.math.NumberProcessor;
+import jorgan.util.math.ProcessingException;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -87,11 +90,17 @@ public class RankPlayer extends Player<Rank> {
 	private void engaged() {
 		Rank rank = getElement();
 
-		channel = channelPool.createChannel(new RankChannelFilter());
+		try {
+			channel = channelPool.createChannel(new RankChannelFilter(rank
+					.getChannels()));
+		} catch (ProcessingException ex) {
+			addProblem(new Error("channels", rank.getChannels()));
+		}
+
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(new Warning("channels", rank.getChannels().getPattern()));
+			addProblem(new Warning("channels", rank.getChannels()));
 		} else {
 			for (Reference reference : rank.getReferences()) {
 				SoundEffectPlayer effectPlayer = (SoundEffectPlayer) getOrganPlay()
@@ -106,7 +115,8 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			output(engaged);
+			Map<String, Float> values = getValues();
+			output(engaged, values);
 		}
 	}
 
@@ -115,7 +125,8 @@ public class RankPlayer extends Player<Rank> {
 		removeProblem(new Warning("channels"));
 
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			output(disengaged);
+			Map<String, Float> values = getValues();
+			output(disengaged, values);
 		}
 
 		channel.release();
@@ -123,11 +134,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void output(int status, int data1, int data2)
-			throws InvalidMidiDataException {
-		ShortMessage message = new ShortMessage();
-		message.setMessage(status, data1, data2);
-
+	protected void output(ShortMessage message) {
 		channel.sendMessage(message);
 	}
 
@@ -159,9 +166,10 @@ public class RankPlayer extends Player<Rank> {
 
 		if (played[pitch] == 0) {
 			for (Played played : getElement().getMessages(Played.class)) {
-				played.pitch = pitch;
-				played.velocity = velocity;
-				output(played);
+				Map<String, Float> values = getValues();
+				values.put(Played.PITCH, (float) pitch);
+				values.put(Played.VELOCITY, (float) velocity);
+				output(played, values);
 			}
 		}
 		played[pitch]++;
@@ -175,8 +183,9 @@ public class RankPlayer extends Player<Rank> {
 		played[pitch]--;
 		if (played[pitch] == 0) {
 			for (Muted muted : getElement().getMessages(Muted.class)) {
-				muted.pitch = pitch;
-				output(muted);
+				Map<String, Float> values = getValues();
+				values.put(Muted.PITCH, (float) pitch);
+				output(muted, values);
 			}
 		}
 	}
@@ -190,15 +199,21 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private class RankChannelFilter implements ChannelFilter {
+
+		private NumberProcessor processor;
+
+		private Map<String, Float> values = new HashMap<String, Float>();
+
+		public RankChannelFilter(String pattern) throws ProcessingException {
+			this.processor = new NumberProcessor(pattern);
+		}
+
 		public boolean accept(int channel) {
 			try {
-				Rank rank = getElement();
-
-				return rank.getChannels().input(new int[] { channel });
-			} catch (MatcherException ex) {
-				addProblem(new Error("channels", ex.getPattern()));
+				return !Float.isNaN(processor.process(channel, values));
+			} catch (ProcessingException ex) {
+				return false;
 			}
-			return false;
 		}
 	}
 }

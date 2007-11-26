@@ -21,12 +21,7 @@ package jorgan.disposition;
 /**
  * A console.
  */
-public class Console extends Element {
-
-	/**
-	 * The input device.
-	 */
-	private String input;
+public class Console extends Input {
 
 	/**
 	 * The output device.
@@ -50,10 +45,6 @@ public class Console extends Element {
 		return new Reference(element);
 	}
 
-	public String getInput() {
-		return input;
-	}
-
 	public String getOutput() {
 		return output;
 	}
@@ -64,12 +55,6 @@ public class Console extends Element {
 
 	public String getScreen() {
 		return screen;
-	}
-
-	public void setInput(String input) {
-		this.input = input;
-
-		fireElementChanged(true);
 	}
 
 	public void setOutput(String output) {

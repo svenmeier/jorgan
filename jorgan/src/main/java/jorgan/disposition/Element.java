@@ -61,7 +61,7 @@ public abstract class Element implements Cloneable {
 	 */
 	protected List<Reference> references = new ArrayList<Reference>();
 
-	private List<Matcher> messages = new ArrayList<Matcher>();
+	private List<Message> messages = new ArrayList<Message>();
 
 	/**
 	 * The zoom.
@@ -377,11 +377,11 @@ public abstract class Element implements Cloneable {
 	public void referrerChanged(Element element) {
 	}
 
-	public List<Class<? extends Matcher>> getMessageClasses() {
-		return new ArrayList<Class<? extends Matcher>>();
+	public List<Class<? extends Message>> getMessageClasses() {
+		return new ArrayList<Class<? extends Message>>();
 	}
 
-	public List<Matcher> getMessages() {
+	public List<Message> getMessages() {
 		return Collections.unmodifiableList(messages);
 	}
 
@@ -389,39 +389,27 @@ public abstract class Element implements Cloneable {
 		return !messages.isEmpty();
 	}
 
-	public void addMessage(Matcher matcher) {
-		this.messages.add(matcher);
+	public void addMessage(Message message) {
+		this.messages.add(message);
 
-		fireChanged("message", matcher, true);
+		fireChanged("message", message, true);
 	}
 
-	public void removeMessage(Matcher matcher) {
-		this.messages.remove(matcher);
+	public void removeMessage(Message message) {
+		this.messages.remove(message);
 
-		fireChanged("message", matcher, true);
+		fireChanged("message", message, true);
 	}
 
 	@SuppressWarnings("unchecked")
-	public <M extends Matcher> List<M> getMessages(Class<M> clazz) {
+	public <M extends Message> List<M> getMessages(Class<M> clazz) {
 		List<M> messages = new ArrayList<M>();
 
-		for (Matcher matcher : this.messages) {
-			if (clazz.isAssignableFrom(matcher.getClass())) {
-				messages.add((M) matcher);
+		for (Message message : this.messages) {
+			if (clazz.isAssignableFrom(message.getClass())) {
+				messages.add((M) message);
 			}
 		}
 		return messages;
-	}
-
-	public static abstract class InputMessage extends Matcher {
-		{
-			setPattern("status, data1, data2");
-		}
-	}
-
-	public static abstract class OutputMessage extends Matcher {
-		{
-			setPattern("status, data1, data2");
-		}
 	}
 }

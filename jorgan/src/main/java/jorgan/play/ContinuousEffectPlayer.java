@@ -20,8 +20,8 @@ package jorgan.play;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ContinuousEffect;
@@ -71,20 +71,17 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
 		ContinuousEffect effect = getElement();
 
 		for (Changing changing : getElement().getMessages(Changing.class)) {
-			changing.value = effect.getValue();
+			Map<String, Float> values = getValues();
+			values.put(Changing.VALUE, effect.getValue());
 			for (Channel channel : channels) {
 				currentChannel = channel;
-				output(changing);
+				output(changing, values);
 			}
 		}
 	}
 	
 	@Override
-	protected void output(int status, int data1, int data2)
-			throws InvalidMidiDataException {
-		ShortMessage message = new ShortMessage();
-		message.setMessage(status, data1, data2);
-
+	protected void output(ShortMessage message) {
 		currentChannel.sendMessage(message);
 	}
 

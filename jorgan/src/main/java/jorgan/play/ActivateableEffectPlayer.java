@@ -20,8 +20,8 @@ package jorgan.play;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ActivateableEffect;
@@ -77,8 +77,10 @@ public class ActivateableEffectPlayer extends
 	private void engaged() {
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 			for (Channel channel : channels) {
+				Map<String, Float> values = getValues();
+
 				currentChannel = channel;
-				output(engaged);
+				output(engaged, values);
 			}
 		}
 	}
@@ -86,18 +88,16 @@ public class ActivateableEffectPlayer extends
 	private void disengaged() {
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
 			for (Channel channel : channels) {
+				Map<String, Float> values = getValues();
+
 				currentChannel = channel;
-				output(disengaged);
+				output(disengaged, values);
 			}
 		}
 	}
 
 	@Override
-	protected void output(int status, int data1, int data2)
-			throws InvalidMidiDataException {
-		ShortMessage message = new ShortMessage();
-		message.setMessage(status, data1, data2);
-
+	protected void output(ShortMessage message) {
 		currentChannel.sendMessage(message);
 	}
 

@@ -20,8 +20,8 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Rank;
 import jorgan.gui.construct.editor.DelayEditor;
-import jorgan.gui.construct.editor.MatcherEditor;
 import jorgan.gui.construct.editor.OutDeviceEditor;
+import jorgan.gui.construct.editor.StringEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Rank}.
@@ -33,7 +33,7 @@ public class RankBeanInfo extends ElementBeanInfo {
 		super.registerProperties();
 
 		add("output", Rank.class, OutDeviceEditor.class);
-		add("channels", Rank.class, MatcherEditor.class);
+		add("channels", Rank.class, StringEditor.class);
 		add("delay", Rank.class, DelayEditor.class);
 	}
 }

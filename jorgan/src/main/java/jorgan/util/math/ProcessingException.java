@@ -16,14 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.util.math;
 
-public class MatcherException extends Exception {
+public class ProcessingException extends Exception {
 
-	public MatcherException(String pattern) {
+	public ProcessingException(String pattern) {
 		super(pattern);
 	}
-	
+
+	public ProcessingException(String pattern, Exception cause) {
+		super(pattern, cause);
+	}
+
 	public String getPattern() {
 		return getMessage();
 	}

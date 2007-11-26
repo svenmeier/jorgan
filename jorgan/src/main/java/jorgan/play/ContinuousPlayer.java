@@ -18,13 +18,14 @@
  */
 package jorgan.play;
 
+import java.util.Map;
 import java.util.Set;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
-import jorgan.disposition.Matcher;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
+import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 
 /**
@@ -37,19 +38,19 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	}
 
 	@Override
-	protected void input(Matcher matcher) {
+	protected void input(InputMessage message, Map<String, Float> values) {
 		Continuous continuous = getElement();
 
-		if (matcher instanceof Change) {
-			float value = ((Change) matcher).value;
+		if (message instanceof Change) {
+			float value = values.get(Change.VALUE);
 
 			if (Math.abs(continuous.getValue() - value) > continuous
 					.getThreshold()) {
-				continuous.setValue(((Change) matcher).value);
+				continuous.setValue(value);
 			}
+		} else {
+			super.input(message, values);
 		}
-
-		super.input(matcher);
 	}
 
 	@Override
@@ -61,9 +62,11 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		Set<Console> consoles = continuous.getReferrer(Console.class);
 
 		for (Changed changed : getElement().getMessages(Changed.class)) {
-			changed.value = continuous.getValue();
+			Map<String, Float> values = getValues();
+			values.put(Changed.VALUE, continuous.getValue());
+
 			for (Console console : consoles) {
-				getOrganPlay().getPlayer(console).output(changed);
+				getOrganPlay().getPlayer(console).output(changed, values);
 			}
 		}
 	}
