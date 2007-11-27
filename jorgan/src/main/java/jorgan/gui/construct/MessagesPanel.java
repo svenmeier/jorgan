@@ -24,17 +24,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
 import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
+import javax.swing.SwingUtilities;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
+import jorgan.disposition.Input;
 import jorgan.disposition.Message;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
@@ -44,12 +52,15 @@ import jorgan.gui.OrganPanel;
 import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
+import jorgan.midi.DevicePool;
+import jorgan.midi.MessageUtils;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * Panel shows the messages of elements.
@@ -86,6 +97,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private RemoveAction removeAction = new RemoveAction();
 
+	private RecordAction recordAction = new RecordAction();
+
 	private JTable table = new JTable();
 
 	private MessagesModel messagesModel = new MessagesModel();
@@ -97,10 +110,13 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		addTool(addAction);
 		addTool(removeAction);
+		addToolSeparator();
+		addTool(recordAction);
 
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(messagesModel);
 		table.getSelectionModel().addListSelectionListener(removeAction);
+		table.getSelectionModel().addListSelectionListener(recordAction);
 		Map<Boolean, Icon> iconMap = new HashMap<Boolean, Icon>();
 		iconMap.put(true, inputIcon);
 		iconMap.put(false, outputIcon);
@@ -136,6 +152,16 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			this.session.addOrganListener(messagesModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
+
+		updateMessages();
+	}
+
+	private void updateCurrentMessage(ShortMessage shortMessage) {
+		int index = table.getSelectedRow();
+		Message message = messages.get(index);
+
+		message.init("filter " + shortMessage.getStatus(), "filter "
+				+ shortMessage.getData1(), "filter " + shortMessage.getData2());
 
 		updateMessages();
 	}
@@ -299,6 +325,82 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(table.getSelectedRow() != -1);
+		}
+	}
+
+	private class RecordAction extends BaseAction implements
+			ListSelectionListener {
+
+		private MessageBox dialog = new MessageBox(MessageBox.OPTIONS_OK);
+
+		private RecordAction() {
+			config.get("record").read(this);
+
+			config.get("record/dialog").read(dialog);
+
+			setEnabled(false);
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			int[] indices = table.getSelectedRows();
+			setEnabled(indices.length == 1
+					&& messages.get(indices[0]) instanceof InputMessage);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			Input input = null;
+			
+			if (element instanceof Input) {
+				input = (Input)element;
+			} else {
+				for (Element element : MessagesPanel.this.element.getReferrer()) {
+					if (element instanceof Input) {
+						input = (Input)element;
+					}
+				}
+			}
+
+			if (input != null) {
+				record(input.getInput());
+			}
+		}
+
+		private void record(String deviceName) {
+			try {
+				MidiDevice device = DevicePool.getMidiDevice(deviceName, false);
+
+				device.open();
+
+				Transmitter transmitter = device.getTransmitter();
+				transmitter.setReceiver(new Receiver() {
+					public void send(final MidiMessage message, long when) {
+						if (MessageUtils.isShortMessage(message)) {
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									if (isRecording()) {
+										updateCurrentMessage((ShortMessage) message);
+
+										dialog.hide();
+									}
+								}
+							});
+						}
+					}
+
+					public void close() {
+					}
+				});
+
+				dialog.show(MessagesPanel.this);
+
+				transmitter.close();
+				device.close();
+			} catch (MidiUnavailableException cannotRecord) {
+			}
+		}
+		
+		private boolean isRecording() {
+			return table.getSelectedRow() != -1;
 		}
 	}
 }

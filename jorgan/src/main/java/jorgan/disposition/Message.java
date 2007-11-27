@@ -3,6 +3,11 @@
  */
 package jorgan.disposition;
 
+import java.util.Map;
+
+import jorgan.util.math.NumberProcessor;
+import jorgan.util.math.ProcessingException;
+
 public abstract class Message {
 
 	private String status = "";
@@ -11,19 +16,28 @@ public abstract class Message {
 
 	private String data2 = "";
 
+	private transient NumberProcessor statusProcessor;
+
+	private transient NumberProcessor data1Processor;
+
+	private transient NumberProcessor data2Processor;
+
 	public Message init(String status, String data1, String data2) {
-		this.status = status;
-		this.data1 = data1;
-		this.data2 = data2;
+		setStatus(status);
+		setData1(data1);
+		setData2(data2);
+
 		return this;
 	}
-	
+
 	public String getData1() {
 		return data1;
 	}
 
 	public void setData1(String data1) {
 		this.data1 = data1;
+
+		data1Processor = null;
 	}
 
 	public String getData2() {
@@ -32,6 +46,8 @@ public abstract class Message {
 
 	public void setData2(String data2) {
 		this.data2 = data2;
+
+		data2Processor = null;
 	}
 
 	public String getStatus() {
@@ -40,11 +56,37 @@ public abstract class Message {
 
 	public void setStatus(String status) {
 		this.status = status;
+
+		statusProcessor = null;
 	}
-	
+
+	public float processStatus(float status, Map<String, Float> values)
+			throws ProcessingException {
+		if (statusProcessor == null) {
+			statusProcessor = new NumberProcessor(this.status);
+		}
+		return statusProcessor.process(status, values);
+	}
+
+	public float processData1(float data1, Map<String, Float> values)
+			throws ProcessingException {
+		if (data1Processor == null) {
+			data1Processor = new NumberProcessor(this.data1);
+		}
+		return data1Processor.process(data1, values);
+	}
+
+	public float processData2(float data2, Map<String, Float> values)
+			throws ProcessingException {
+		if (data2Processor == null) {
+			data2Processor = new NumberProcessor(this.data2);
+		}
+		return data2Processor.process(data2, values);
+	}
+
 	public static abstract class InputMessage extends Message {
 	}
-	
+
 	public static abstract class OutputMessage extends Message {
 	}
 }

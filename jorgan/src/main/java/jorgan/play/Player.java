@@ -30,7 +30,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.util.math.NumberProcessor;
 import jorgan.util.math.ProcessingException;
 import bias.Configuration;
 
@@ -213,16 +212,13 @@ public abstract class Player<E extends Element> {
 			for (InputMessage message : element.getMessages(InputMessage.class)) {
 				Map<String, Float> values = getValues();
 
-				if (Float.isNaN(new NumberProcessor(message.getStatus())
-						.process(shortMessage.getStatus(), values))) {
+				if (Float.isNaN(message.processStatus(shortMessage.getStatus(), values))) {
 					continue;
 				}
-				if (Float.isNaN(new NumberProcessor(message.getData1())
-						.process(shortMessage.getData1(), values))) {
+				if (Float.isNaN(message.processData1(shortMessage.getData1(), values))) {
 					continue;
 				}
-				if (Float.isNaN(new NumberProcessor(message.getData2())
-						.process(shortMessage.getData2(), values))) {
+				if (Float.isNaN(message.processData2(shortMessage.getData2(), values))) {
 					continue;
 				}
 
@@ -247,12 +243,9 @@ public abstract class Player<E extends Element> {
 
 	protected final void output(OutputMessage message, Map<String, Float> values) {
 		try {
-			float status = new NumberProcessor(message.getStatus()).process(
-					0.0f, values);
-			float data1 = new NumberProcessor(message.getData1()).process(0.0f,
-					values);
-			float data2 = new NumberProcessor(message.getData2()).process(0.0f,
-					values);
+			float status = message.processStatus(Float.NaN, values);
+			float data1 = message.processData1(Float.NaN, values);
+			float data2 = message.processData2(Float.NaN, values);
 
 			ShortMessage shortMessage;
 			try {

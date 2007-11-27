@@ -119,6 +119,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	protected void input(InputMessage message, Map<String, Float> values) {
+		// TODO what if values doesn't contain variable or variable is invalid?
 		if (message instanceof Press) {
 			press(Math.round(values.get(Press.PITCH)), Math.round(values
 					.get(Press.VELOCITY)));

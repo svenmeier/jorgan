@@ -209,11 +209,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		public boolean accept(int channel) {
-			try {
-				return !Float.isNaN(processor.process(channel, values));
-			} catch (ProcessingException ex) {
-				return false;
-			}
+			return !Float.isNaN(processor.process(channel, values));
 		}
 	}
 }

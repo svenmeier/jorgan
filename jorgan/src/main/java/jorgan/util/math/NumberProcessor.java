@@ -80,9 +80,7 @@ public class NumberProcessor {
 		}
 	}
 
-	public float process(float value, Map<String, Float> values)
-			throws ProcessingException {
-
+	public float process(float value, Map<String, Float> values) {
 		return root.process(value, values);
 	}
 
@@ -93,8 +91,7 @@ public class NumberProcessor {
 			this.next = node;
 		}
 
-		public final float process(float value, Map<String, Float> values)
-				throws ProcessingException {
+		public final float process(float value, Map<String, Float> values) {
 			float f = processImpl(value, values);
 			if (!Float.isNaN(f) && next != null) {
 				f = next.process(f, values);
@@ -102,8 +99,7 @@ public class NumberProcessor {
 			return f;
 		}
 
-		public abstract float processImpl(float value, Map<String, Float> values)
-				throws ProcessingException;
+		public abstract float processImpl(float value, Map<String, Float> values);
 	}
 
 	private class IdentityNode extends Node {
@@ -142,13 +138,13 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values)
-				throws ProcessingException {
+		public float processImpl(float value, Map<String, Float> values) {
 			Float temp = values.get(name);
 			if (temp == null) {
-				throw new ProcessingException(name);
+				return Float.NaN;
+			} else {
+				return temp;
 			}
-			return temp;
 		}
 	}
 
