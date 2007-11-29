@@ -18,8 +18,6 @@
  */
 package jorgan.play;
 
-import java.util.Map;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
@@ -32,6 +30,7 @@ import jorgan.disposition.Keyboard.Release;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
+import jorgan.util.math.ProcessingException;
 
 /**
  * A player of an keyboard.
@@ -118,15 +117,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Map<String, Float> values) {
-		// TODO what if values doesn't contain variable or variable is invalid?
+	protected void input(InputMessage message) throws ProcessingException {
 		if (message instanceof Press) {
-			press(Math.round(values.get(Press.PITCH)), Math.round(values
-					.get(Press.VELOCITY)));
+			press(Math.round(getParameter(Press.PITCH)), Math
+					.round(getParameter(Press.VELOCITY)));
 		} else if (message instanceof Release) {
-			release(Math.round(values.get(Release.PITCH)));
+			release(Math.round(getParameter(Release.PITCH)));
 		} else {
-			super.input(message, values);
+			super.input(message);
 		}
 	}
 

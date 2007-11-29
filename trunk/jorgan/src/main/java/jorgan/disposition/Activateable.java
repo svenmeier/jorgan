@@ -26,7 +26,7 @@ import jorgan.disposition.Message.OutputMessage;
 /**
  * Abstract base class for an activateable elements.
  */
-public abstract class Activateable extends Momentary implements Engaging {
+public abstract class Activateable extends Momentary implements Engageable {
 
 	private boolean active = false;
 

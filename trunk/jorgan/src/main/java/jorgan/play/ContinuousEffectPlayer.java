@@ -20,15 +20,17 @@ package jorgan.play;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ContinuousEffect;
-import jorgan.disposition.ContinuousEffect.Changing;
+import jorgan.disposition.ContinuousEffect.Engaging;
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.SoundEffect.Effect;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelWrapper;
+import jorgan.util.math.ProcessingException;
 
 /**
  * A player for a swell.
@@ -39,17 +41,17 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
 	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
 	private transient Channel currentChannel;
-	
+
 	public ContinuousEffectPlayer(ContinuousEffect swell) {
 		super(swell);
 	}
 
 	public Channel effectSound(Channel channel) {
 		channel = new ChannelImpl(channel);
-		
+
 		// TODO would be sufficient to handle changing on new channel only
-		changing();
-		
+		engaging();
+
 		return channel;
 	}
 
@@ -63,20 +65,28 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			changing();
+			engaging();
 		}
 	}
 
-	private void changing() {
+	private void engaging() {
 		ContinuousEffect effect = getElement();
 
-		for (Changing changing : getElement().getMessages(Changing.class)) {
-			Map<String, Float> values = getValues();
-			values.put(Changing.VALUE, effect.getValue());
+		for (Engaging engaging : getElement().getMessages(Engaging.class)) {
+			setParameter(Engaging.VALUE, effect.getValue());
 			for (Channel channel : channels) {
 				currentChannel = channel;
-				output(changing, values);
+				output(engaging);
 			}
+		}
+	}
+
+	@Override
+	protected void input(InputMessage message) throws ProcessingException {
+		if (message instanceof Effect) {
+			engaging();
+		} else {
+			super.input(message);
 		}
 	}
 	

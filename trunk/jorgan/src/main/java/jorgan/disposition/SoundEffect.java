@@ -18,6 +18,11 @@
  */
 package jorgan.disposition;
 
+import jorgan.disposition.Message.InputMessage;
+
 public interface SoundEffect {
 
+	public static class Effect extends InputMessage {
+		
+	}
 }

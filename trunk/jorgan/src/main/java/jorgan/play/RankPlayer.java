@@ -18,9 +18,6 @@
  */
 package jorgan.play;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
@@ -37,6 +34,7 @@ import jorgan.midi.channel.ChannelPool;
 import jorgan.midi.channel.DelayedChannel;
 import jorgan.util.math.NumberProcessor;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -115,8 +113,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			Map<String, Float> values = getValues();
-			output(engaged, values);
+			output(engaged);
 		}
 	}
 
@@ -125,8 +122,7 @@ public class RankPlayer extends Player<Rank> {
 		removeProblem(new Warning("channels"));
 
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			Map<String, Float> values = getValues();
-			output(disengaged, values);
+			output(disengaged);
 		}
 
 		channel.release();
@@ -165,16 +161,19 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		if (played[pitch] == 0) {
-			for (Played played : getElement().getMessages(Played.class)) {
-				Map<String, Float> values = getValues();
-				values.put(Played.PITCH, (float) pitch);
-				values.put(Played.VELOCITY, (float) velocity);
-				output(played, values);
-			}
+			played(pitch, velocity);
 		}
 		played[pitch]++;
 
 		totalNotes++;
+	}
+
+	private void played(int pitch, int velocity) {
+		for (Played played : getElement().getMessages(Played.class)) {
+			setParameter(Played.PITCH, (float) pitch);
+			setParameter(Played.VELOCITY, (float) velocity);
+			output(played);
+		}
 	}
 
 	public void mute(int pitch) {
@@ -182,11 +181,14 @@ public class RankPlayer extends Player<Rank> {
 
 		played[pitch]--;
 		if (played[pitch] == 0) {
-			for (Muted muted : getElement().getMessages(Muted.class)) {
-				Map<String, Float> values = getValues();
-				values.put(Muted.PITCH, (float) pitch);
-				output(muted, values);
-			}
+			muted(pitch);
+		}
+	}
+
+	private void muted(int pitch) {
+		for (Muted muted : getElement().getMessages(Muted.class)) {
+			setParameter(Muted.PITCH, (float) pitch);
+			output(muted);
 		}
 	}
 
@@ -198,18 +200,24 @@ public class RankPlayer extends Player<Rank> {
 		}
 	}
 
-	private class RankChannelFilter implements ChannelFilter {
+	private class RankChannelFilter implements ChannelFilter, Context {
 
 		private NumberProcessor processor;
-
-		private Map<String, Float> values = new HashMap<String, Float>();
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
 			this.processor = new NumberProcessor(pattern);
 		}
 
 		public boolean accept(int channel) {
-			return !Float.isNaN(processor.process(channel, values));
+			return !Float.isNaN(processor.process(channel, this));
+		}
+
+		public float get(String name) {
+			throw new UnsupportedOperationException();
+		}
+
+		public void set(String name, float value) {
+			throw new UnsupportedOperationException();
 		}
 	}
 }

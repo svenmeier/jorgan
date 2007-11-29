@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * Can this element be engaged.
  */
-public interface Engaging {
+public interface Engageable {
 
 	public boolean isEngaged();
 }

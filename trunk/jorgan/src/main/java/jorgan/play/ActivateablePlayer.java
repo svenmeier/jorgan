@@ -18,7 +18,6 @@
  */
 package jorgan.play;
 
-import java.util.Map;
 import java.util.Set;
 
 import jorgan.disposition.Activateable;
@@ -28,8 +27,8 @@ import jorgan.disposition.Activateable.Activated;
 import jorgan.disposition.Activateable.Deactivate;
 import jorgan.disposition.Activateable.Deactivated;
 import jorgan.disposition.Message.InputMessage;
-import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.util.math.ProcessingException;
 
 /**
  * An abstract base class for players that control activateable elements.
@@ -41,7 +40,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Map<String, Float> values) {
+	protected void input(InputMessage message) throws ProcessingException {
 		Activateable activateable = getElement();
 
 		if (message instanceof Activate) {
@@ -53,7 +52,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 				activateable.setActive(false);
 			}
 		} else {
-			super.input(message, values);
+			super.input(message);
 		}
 	}
 
@@ -63,20 +62,35 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
 		Activateable activateable = getElement();
 
+		if (activateable.isActive()) {
+			activated();
+		} else {
+			deactivated();
+		}
+	}
+
+	private void activated() {
+		Activateable activateable = getElement();
+
 		Set<Console> consoles = activateable.getReferrer(Console.class);
 
-		Class<? extends OutputMessage> clazz;
-		if (activateable.isActive()) {
-			clazz = Activated.class;
-		} else {
-			clazz = Deactivated.class;
-		}
-
-		for (OutputMessage message : getElement().getMessages(clazz)) {
-			Map<String, Float> values = getValues();
-
+		for (Activated message : getElement().getMessages(Activated.class)) {
 			for (Console console : consoles) {
-				getOrganPlay().getPlayer(console).output(message, values);
+				Player player = getOrganPlay().getPlayer(console);
+				player.output(message);
+			}
+		}
+	}
+
+	private void deactivated() {
+		Activateable activateable = getElement();
+
+		Set<Console> consoles = activateable.getReferrer(Console.class);
+
+		for (Deactivated message : getElement().getMessages(Deactivated.class)) {
+			for (Console console : consoles) {
+				Player player = getOrganPlay().getPlayer(console);
+				player.output(message);
 			}
 		}
 	}

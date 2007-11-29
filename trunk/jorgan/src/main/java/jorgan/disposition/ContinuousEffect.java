@@ -28,14 +28,15 @@ import jorgan.disposition.Message.OutputMessage;
 public class ContinuousEffect extends Continuous implements SoundEffect {
 
 	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+		List<Class<? extends Message>> messages = super.getMessageClasses();
 
-		names.add(Changing.class);
+		messages.add(Effect.class);
+		messages.add(Engaging.class);
 
-		return names;
+		return messages;
 	}
 
-	public static class Changing extends OutputMessage {
+	public static class Engaging extends OutputMessage {
 		public static final String VALUE = "value";
 	}
 }

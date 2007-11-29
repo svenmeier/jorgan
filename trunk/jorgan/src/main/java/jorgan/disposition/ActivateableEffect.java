@@ -28,12 +28,13 @@ import jorgan.disposition.Message.OutputMessage;
 public class ActivateableEffect extends Activateable implements SoundEffect {
 
 	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+		List<Class<? extends Message>> messages = super.getMessageClasses();
 
-		names.add(Engaged.class);
-		names.add(Disengaged.class);
+		messages.add(Effect.class);
+		messages.add(Engaged.class);
+		messages.add(Disengaged.class);
 
-		return names;
+		return messages;
 	}
 
 	public static class Engaged extends OutputMessage {

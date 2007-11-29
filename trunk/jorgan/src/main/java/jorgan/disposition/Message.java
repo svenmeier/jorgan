@@ -3,10 +3,9 @@
  */
 package jorgan.disposition;
 
-import java.util.Map;
-
 import jorgan.util.math.NumberProcessor;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 public abstract class Message {
 
@@ -60,28 +59,28 @@ public abstract class Message {
 		statusProcessor = null;
 	}
 
-	public float processStatus(float status, Map<String, Float> values)
+	public float processStatus(float status, Context context)
 			throws ProcessingException {
 		if (statusProcessor == null) {
 			statusProcessor = new NumberProcessor(this.status);
 		}
-		return statusProcessor.process(status, values);
+		return statusProcessor.process(status, context);
 	}
 
-	public float processData1(float data1, Map<String, Float> values)
+	public float processData1(float data1, Context context)
 			throws ProcessingException {
 		if (data1Processor == null) {
 			data1Processor = new NumberProcessor(this.data1);
 		}
-		return data1Processor.process(data1, values);
+		return data1Processor.process(data1, context);
 	}
 
-	public float processData2(float data2, Map<String, Float> values)
+	public float processData2(float data2, Context context)
 			throws ProcessingException {
 		if (data2Processor == null) {
 			data2Processor = new NumberProcessor(this.data2);
 		}
-		return data2Processor.process(data2, values);
+		return data2Processor.process(data2, context);
 	}
 
 	public static abstract class InputMessage extends Message {
