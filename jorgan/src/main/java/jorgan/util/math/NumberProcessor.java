@@ -18,8 +18,6 @@
  */
 package jorgan.util.math;
 
-import java.util.Map;
-
 /**
  * A processor of numbers.
  */
@@ -80,8 +78,8 @@ public class NumberProcessor {
 		}
 	}
 
-	public float process(float value, Map<String, Float> values) {
-		return root.process(value, values);
+	public float process(float value, Context context) {
+		return root.process(value, context);
 	}
 
 	private abstract class Node {
@@ -91,15 +89,15 @@ public class NumberProcessor {
 			this.next = node;
 		}
 
-		public final float process(float value, Map<String, Float> values) {
-			float f = processImpl(value, values);
+		public final float process(float value, Context context) {
+			float f = processImpl(value, context);
 			if (!Float.isNaN(f) && next != null) {
-				f = next.process(f, values);
+				f = next.process(f, context);
 			}
 			return f;
 		}
 
-		public abstract float processImpl(float value, Map<String, Float> values);
+		public abstract float processImpl(float value, Context context);
 	}
 
 	private class IdentityNode extends Node {
@@ -108,7 +106,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return value;
 		}
 	}
@@ -122,8 +120,8 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
-			values.put(name, value);
+		public float processImpl(float value, Context context) {
+			context.set(name, value);
 
 			return value;
 		}
@@ -132,19 +130,24 @@ public class NumberProcessor {
 	private class GetNode extends Node {
 
 		private String name;
+		private float defaultValue;
 
 		public GetNode(String name) throws Exception {
+			int space = name.indexOf(' ');
+			if (space != -1) {
+				defaultValue = Float.parseFloat(name.substring(space + 1));
+				name = name.substring(0, space);
+			}
 			this.name = name;
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
-			Float temp = values.get(name);
-			if (temp == null) {
-				return Float.NaN;
-			} else {
-				return temp;
+		public float processImpl(float value, Context context) {
+			value = context.get(name);
+			if (Float.isNaN(value)) {
+				value = this.defaultValue;
 			}
+			return value;
 		}
 	}
 
@@ -157,7 +160,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return this.value;
 		}
 	}
@@ -181,7 +184,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			if (value < Math.min(from, to)) {
 				return Float.NaN;
 			}
@@ -203,7 +206,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return value + this.value;
 		}
 	}
@@ -218,7 +221,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return value - this.value;
 		}
 	}
@@ -233,7 +236,7 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return value / this.value;
 		}
 	}
@@ -248,8 +251,14 @@ public class NumberProcessor {
 		}
 
 		@Override
-		public float processImpl(float value, Map<String, Float> values) {
+		public float processImpl(float value, Context context) {
 			return value * this.value;
 		}
+	}
+
+	public static interface Context {
+		public void set(String name, float value);
+		
+		public float get(String name);
 	}
 }

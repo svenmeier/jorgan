@@ -20,16 +20,18 @@ package jorgan.play;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ActivateableEffect;
 import jorgan.disposition.ActivateableEffect.Disengaged;
 import jorgan.disposition.ActivateableEffect.Engaged;
+import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.SoundEffect.Effect;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelWrapper;
+import jorgan.util.math.ProcessingException;
 
 /**
  * A player for an {@link ActivateableEffect}.
@@ -77,10 +79,8 @@ public class ActivateableEffectPlayer extends
 	private void engaged() {
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 			for (Channel channel : channels) {
-				Map<String, Float> values = getValues();
-
 				currentChannel = channel;
-				output(engaged, values);
+				output(engaged);
 			}
 		}
 	}
@@ -88,11 +88,23 @@ public class ActivateableEffectPlayer extends
 	private void disengaged() {
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
 			for (Channel channel : channels) {
-				Map<String, Float> values = getValues();
-
 				currentChannel = channel;
-				output(disengaged, values);
+				output(disengaged);
 			}
+		}
+	}
+
+	@Override
+	protected void input(InputMessage message) throws ProcessingException {
+		if (message instanceof Effect) {
+			ActivateableEffect effect = getElement();
+			if (effect.isEngaged()) {
+				engaged();
+			} else {
+				disengaged();
+			}
+		} else {
+			super.input(message);
 		}
 	}
 

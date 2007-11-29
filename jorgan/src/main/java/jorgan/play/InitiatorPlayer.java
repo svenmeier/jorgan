@@ -18,11 +18,10 @@
  */
 package jorgan.play;
 
-import java.util.Map;
-
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Initiator.Initiate;
 import jorgan.disposition.Message.InputMessage;
+import jorgan.util.math.ProcessingException;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
@@ -34,13 +33,13 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Map<String, Float> values) {
+	protected void input(InputMessage message) throws ProcessingException {
 		Initiator initiator = getElement();
 
 		if (message instanceof Initiate) {
 			initiator.initiate();
 		} else {
-			super.input(message, values);
+			super.input(message);
 		}
 	}
 }

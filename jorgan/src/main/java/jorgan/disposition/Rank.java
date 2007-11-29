@@ -25,7 +25,7 @@ import jorgan.disposition.Message.OutputMessage;
 /**
  * A rank.
  */
-public class Rank extends Element implements Engaging, Displayable {
+public class Rank extends Element implements Engageable, Displayable {
 
 	private String output;
 

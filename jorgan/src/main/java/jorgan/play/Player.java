@@ -31,6 +31,7 @@ import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 import bias.Configuration;
 
 /**
@@ -66,7 +67,7 @@ public abstract class Player<E extends Element> {
 
 	private boolean warnMessages;
 
-	private Map<String, Float> values = new HashMap<String, Float>();
+	private ContextImpl context = new ContextImpl();
 
 	/**
 	 * Create a player for the given element.
@@ -85,9 +86,12 @@ public abstract class Player<E extends Element> {
 		return organPlay;
 	}
 
-	protected Map<String, Float> getValues() {
-		values.clear();
-		return values;
+	protected float getParameter(String name) throws ProcessingException {
+		return context.get(name);
+	}
+
+	protected void setParameter(String name, float value) {
+		context.set(name, value);
 	}
 
 	/**
@@ -107,6 +111,8 @@ public abstract class Player<E extends Element> {
 			throw new IllegalStateException("already open");
 		}
 		open = true;
+
+		context.clear();
 
 		openImpl();
 	}
@@ -208,21 +214,24 @@ public abstract class Player<E extends Element> {
 	public final void input(ShortMessage shortMessage) {
 		Element element = getElement();
 
+		context.clear();
+
 		try {
 			for (InputMessage message : element.getMessages(InputMessage.class)) {
-				Map<String, Float> values = getValues();
+				if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
+						context))) {
+					continue;
+				}
+				if (Float.isNaN(message.processData1(shortMessage.getData1(),
+						context))) {
+					continue;
+				}
+				if (Float.isNaN(message.processData2(shortMessage.getData2(),
+						context))) {
+					continue;
+				}
 
-				if (Float.isNaN(message.processStatus(shortMessage.getStatus(), values))) {
-					continue;
-				}
-				if (Float.isNaN(message.processData1(shortMessage.getData1(), values))) {
-					continue;
-				}
-				if (Float.isNaN(message.processData2(shortMessage.getData2(), values))) {
-					continue;
-				}
-
-				input(message, values);
+				input(message);
 
 				organPlay.fireInputAccepted();
 			}
@@ -237,15 +246,15 @@ public abstract class Player<E extends Element> {
 	 * @param message
 	 *            message
 	 */
-	protected void input(InputMessage message, Map<String, Float> values) {
+	protected void input(InputMessage message) throws ProcessingException {
 
 	}
 
-	protected final void output(OutputMessage message, Map<String, Float> values) {
+	protected final void output(OutputMessage message) {
 		try {
-			float status = message.processStatus(Float.NaN, values);
-			float data1 = message.processData1(Float.NaN, values);
-			float data2 = message.processData2(Float.NaN, values);
+			float status = message.processStatus(Float.NaN, context);
+			float data1 = message.processData1(Float.NaN, context);
+			float data2 = message.processData2(Float.NaN, context);
 
 			ShortMessage shortMessage;
 			try {
@@ -294,4 +303,26 @@ public abstract class Player<E extends Element> {
 
 	public void received(ShortMessage message) {
 	}
+
+	private class ContextImpl implements Context {
+
+		private Map<String, Float> map = new HashMap<String, Float>();
+
+		public float get(String name) {
+			Float temp = map.get(name);
+			if (temp == null) {
+				return Float.NaN;
+			} else {
+				return temp;
+			}
+		}
+
+		public void set(String name, float value) {
+			map.put(name, value);
+		}
+
+		public void clear() {
+			map.clear();
+		}
+	};
 }
