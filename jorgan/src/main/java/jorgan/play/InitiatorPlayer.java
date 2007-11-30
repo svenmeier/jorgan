@@ -22,6 +22,7 @@ import jorgan.disposition.Initiator;
 import jorgan.disposition.Initiator.Initiate;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.
@@ -33,13 +34,14 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
 		Initiator initiator = getElement();
 
 		if (message instanceof Initiate) {
 			initiator.initiate();
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
 }

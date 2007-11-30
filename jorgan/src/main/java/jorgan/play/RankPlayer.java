@@ -41,6 +41,8 @@ import jorgan.util.math.NumberProcessor.Context;
  */
 public class RankPlayer extends Player<Rank> {
 
+	private PlayerContext context = new PlayerContext();
+
 	private ChannelPool channelPool;
 
 	private Channel channel;
@@ -101,10 +103,10 @@ public class RankPlayer extends Player<Rank> {
 			addProblem(new Warning("channels", rank.getChannels()));
 		} else {
 			for (Reference reference : rank.getReferences()) {
-				SoundEffectPlayer effectPlayer = (SoundEffectPlayer) getOrganPlay()
+				FilterPlayer effectPlayer = (FilterPlayer) getOrganPlay()
 						.getPlayer(reference.getElement());
 
-				channel = effectPlayer.effectSound(channel);
+				channel = effectPlayer.filter(channel);
 			}
 
 			if (rank.getDelay() > 0) {
@@ -113,7 +115,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			output(engaged);
+			output(engaged, context);
 		}
 	}
 
@@ -122,7 +124,7 @@ public class RankPlayer extends Player<Rank> {
 		removeProblem(new Warning("channels"));
 
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			output(disengaged);
+			output(disengaged, context);
 		}
 
 		channel.release();
@@ -130,7 +132,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void output(ShortMessage message) {
+	protected void output(ShortMessage message, Context context) {
 		channel.sendMessage(message);
 	}
 
@@ -169,10 +171,10 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void played(int pitch, int velocity) {
+		context.set(Played.PITCH, (float) pitch);
+		context.set(Played.VELOCITY, (float) velocity);
 		for (Played played : getElement().getMessages(Played.class)) {
-			setParameter(Played.PITCH, (float) pitch);
-			setParameter(Played.VELOCITY, (float) velocity);
-			output(played);
+			output(played, context);
 		}
 	}
 
@@ -186,9 +188,9 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void muted(int pitch) {
+		context.set(Muted.PITCH, (float) pitch);
 		for (Muted muted : getElement().getMessages(Muted.class)) {
-			setParameter(Muted.PITCH, (float) pitch);
-			output(muted);
+			output(muted, context);
 		}
 	}
 

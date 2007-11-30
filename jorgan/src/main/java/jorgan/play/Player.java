@@ -67,8 +67,6 @@ public abstract class Player<E extends Element> {
 
 	private boolean warnMessages;
 
-	private ContextImpl context = new ContextImpl();
-
 	/**
 	 * Create a player for the given element.
 	 */
@@ -84,14 +82,6 @@ public abstract class Player<E extends Element> {
 
 	public OrganPlay getOrganPlay() {
 		return organPlay;
-	}
-
-	protected float getParameter(String name) throws ProcessingException {
-		return context.get(name);
-	}
-
-	protected void setParameter(String name, float value) {
-		context.set(name, value);
 	}
 
 	/**
@@ -111,8 +101,6 @@ public abstract class Player<E extends Element> {
 			throw new IllegalStateException("already open");
 		}
 		open = true;
-
-		context.clear();
 
 		openImpl();
 	}
@@ -211,13 +199,13 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	public final void input(ShortMessage shortMessage) {
+	public final boolean input(ShortMessage shortMessage, Class<? extends InputMessage> messageClazz, Context context) {
+		boolean accepted = false;
+		
 		Element element = getElement();
 
-		context.clear();
-
 		try {
-			for (InputMessage message : element.getMessages(InputMessage.class)) {
+			for (InputMessage message : element.getMessages(messageClazz)) {
 				if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
 						context))) {
 					continue;
@@ -231,13 +219,16 @@ public abstract class Player<E extends Element> {
 					continue;
 				}
 
-				input(message);
+				input(message, context);
 
 				organPlay.fireInputAccepted();
+				accepted = true;
 			}
 		} catch (ProcessingException ex) {
 			addProblem(new Error("messages", ex.getPattern()));
 		}
+		
+		return accepted;
 	}
 
 	/**
@@ -246,11 +237,11 @@ public abstract class Player<E extends Element> {
 	 * @param message
 	 *            message
 	 */
-	protected void input(InputMessage message) throws ProcessingException {
+	protected void input(InputMessage message, Context context) throws ProcessingException {
 
 	}
 
-	protected final void output(OutputMessage message) {
+	protected final void output(OutputMessage message, Context context) {
 		try {
 			float status = message.processStatus(Float.NaN, context);
 			float data1 = message.processData1(Float.NaN, context);
@@ -262,7 +253,7 @@ public abstract class Player<E extends Element> {
 				shortMessage.setMessage(Math.round(status), Math.round(data1),
 						Math.round(data2));
 
-				output(shortMessage);
+				output(shortMessage, context);
 			} catch (InvalidMidiDataException ex) {
 				addProblem(new Error("messages"));
 			}
@@ -278,7 +269,7 @@ public abstract class Player<E extends Element> {
 	/**
 	 * Write output - default implementation does nothing.
 	 */
-	protected void output(ShortMessage message) {
+	protected void output(ShortMessage message, Context context) {
 	}
 
 	public E getElement() {
@@ -304,7 +295,7 @@ public abstract class Player<E extends Element> {
 	public void received(ShortMessage message) {
 	}
 
-	private class ContextImpl implements Context {
+	protected class PlayerContext implements Context {
 
 		private Map<String, Float> map = new HashMap<String, Float>();
 

@@ -101,7 +101,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private JTable table = new JTable();
 
-	private MessagesModel messagesModel = new MessagesModel();
+	private MessagesModel tableModel = new MessagesModel();
 
 	/**
 	 * Create a tree panel.
@@ -113,8 +113,9 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		addToolSeparator();
 		addTool(recordAction);
 
+		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.setModel(messagesModel);
+		table.setModel(tableModel);
 		table.getSelectionModel().addListSelectionListener(removeAction);
 		table.getSelectionModel().addListSelectionListener(recordAction);
 		Map<Boolean, Icon> iconMap = new HashMap<Boolean, Icon>();
@@ -128,7 +129,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 				new StringCellEditor());
 		table.getColumnModel().getColumn(4).setCellEditor(
 				new StringCellEditor());
-		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
 
 		setScrollableBody(table, true, false);
@@ -142,14 +142,14 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	 */
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(messagesModel);
+			this.session.removeOrganListener(tableModel);
 			this.session.removeSelectionListener(selectionHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(messagesModel);
+			this.session.addOrganListener(tableModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
 
@@ -174,7 +174,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		element = null;
 		messages.clear();
-		messagesModel.update();
+		tableModel.update();
 		table.setVisible(false);
 
 		if (session != null
@@ -186,7 +186,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 				messages.add(message);
 			}
 
-			messagesModel.update();
+			tableModel.update();
 
 			table.setVisible(true);
 		}
@@ -209,8 +209,10 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class MessagesModel extends AbstractTableModel implements
+	public class MessagesModel extends AbstractTableModel implements
 			OrganListener {
+
+		private String[] columnNames = new String[5];
 
 		private int size = 0;
 
@@ -223,6 +225,15 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			size = messages.size();
 		}
 
+		@Override
+		public String getColumnName(int column) {
+			return columnNames[column];
+		}
+
+		public void setColumnNames(String[] columnNames) {
+			this.columnNames = columnNames;
+		}
+		
 		public int getColumnCount() {
 			return 5;
 		}
@@ -349,13 +360,13 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			Input input = null;
-			
+
 			if (element instanceof Input) {
-				input = (Input)element;
+				input = (Input) element;
 			} else {
 				for (Element element : MessagesPanel.this.element.getReferrer()) {
 					if (element instanceof Input) {
-						input = (Input)element;
+						input = (Input) element;
 					}
 				}
 			}
@@ -398,7 +409,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			} catch (MidiUnavailableException cannotRecord) {
 			}
 		}
-		
+
 		private boolean isRecording() {
 			return table.getSelectedRow() != -1;
 		}

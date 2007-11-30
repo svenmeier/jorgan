@@ -20,7 +20,7 @@ package jorgan.gui.construct.info;
 
 
 /**
- * BeanInfo for {@link jorgan.disposition.ContinuousEffect}.
+ * BeanInfo for {@link jorgan.disposition.ContinuousFilter}.
  */
 public class ContinuousEffectBeanInfo extends ContinuousBeanInfo {
 

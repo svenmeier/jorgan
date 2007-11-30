@@ -31,11 +31,14 @@ import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player of an keyboard.
  */
 public class KeyboardPlayer extends Player<Keyboard> {
+
+	private PlayerContext context = new PlayerContext();
 
 	/**
 	 * The currently pressed keys.
@@ -117,14 +120,15 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
 		if (message instanceof Press) {
-			press(Math.round(getParameter(Press.PITCH)), Math
-					.round(getParameter(Press.VELOCITY)));
+			press(Math.round(context.get(Press.PITCH)), Math.round(context
+					.get(Press.VELOCITY)));
 		} else if (message instanceof Release) {
-			release(Math.round(getParameter(Release.PITCH)));
+			release(Math.round(context.get(Release.PITCH)));
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
 
@@ -167,6 +171,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	public void received(ShortMessage message) {
-		input(message);
+		input(message, InputMessage.class, context);
 	}
 }

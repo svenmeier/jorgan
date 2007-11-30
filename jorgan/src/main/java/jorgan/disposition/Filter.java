@@ -20,9 +20,9 @@ package jorgan.disposition;
 
 import jorgan.disposition.Message.InputMessage;
 
-public interface SoundEffect {
+public interface Filter {
 
-	public static class Effect extends InputMessage {
+	public static class Intercept extends InputMessage {
 		
 	}
 }

@@ -23,14 +23,14 @@ import java.util.List;
 import jorgan.disposition.Message.OutputMessage;
 
 /**
- * A variation.
+ * An activateable filter.
  */
-public class ActivateableEffect extends Activateable implements SoundEffect {
+public class ActivateableFilter extends Activateable implements Filter {
 
 	public List<Class<? extends Message>> getMessageClasses() {
 		List<Class<? extends Message>> messages = super.getMessageClasses();
 
-		messages.add(Effect.class);
+		messages.add(Intercept.class);
 		messages.add(Engaged.class);
 		messages.add(Disengaged.class);
 

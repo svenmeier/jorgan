@@ -23,37 +23,35 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.ActivateableEffect;
-import jorgan.disposition.ActivateableEffect.Disengaged;
-import jorgan.disposition.ActivateableEffect.Engaged;
+import jorgan.disposition.ActivateableFilter;
+import jorgan.disposition.ActivateableFilter.Disengaged;
+import jorgan.disposition.ActivateableFilter.Engaged;
+import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.Message.InputMessage;
-import jorgan.disposition.SoundEffect.Effect;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.channel.ChannelWrapper;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
- * A player for an {@link ActivateableEffect}.
+ * A player for an {@link ActivateableFilter}.
  */
-public class ActivateableEffectPlayer extends
-		ActivateablePlayer<ActivateableEffect> implements SoundEffectPlayer {
+public class ActivateableFilterPlayer extends
+		ActivateablePlayer<ActivateableFilter> implements FilterPlayer {
 
-	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
+	private List<ChannelFilter> channels = new ArrayList<ChannelFilter>();
 
-	private transient Channel currentChannel;
-
-	public ActivateableEffectPlayer(ActivateableEffect variation) {
+	public ActivateableFilterPlayer(ActivateableFilter variation) {
 		super(variation);
 	}
 
-	public Channel effectSound(Channel channel) {
-		channel = new ChannelImpl(channel);
+	public Channel filter(Channel channel) {
+		channel = new ChannelFilter(channel);
 
 		// TODO would be sufficient to handle engaged/disengaged on new channel
 		// only
-		ActivateableEffect effect = getElement();
-		if (effect.isEngaged()) {
+		ActivateableFilter filter = getElement();
+		if (filter.isEngaged()) {
 			engaged();
 		} else {
 			disengaged();
@@ -67,8 +65,8 @@ public class ActivateableEffectPlayer extends
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			ActivateableEffect effect = getElement();
-			if (effect.isEngaged()) {
+			ActivateableFilter filter = getElement();
+			if (filter.isEngaged()) {
 				engaged();
 			} else {
 				disengaged();
@@ -78,39 +76,38 @@ public class ActivateableEffectPlayer extends
 
 	private void engaged() {
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			for (Channel channel : channels) {
-				currentChannel = channel;
-				output(engaged);
+			for (ChannelFilter channel : channels) {
+				output(engaged, channel);
 			}
 		}
 	}
 
 	private void disengaged() {
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			for (Channel channel : channels) {
-				currentChannel = channel;
-				output(disengaged);
+			for (ChannelFilter channel : channels) {
+				output(disengaged, channel);
 			}
 		}
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
-		if (message instanceof Effect) {
-			ActivateableEffect effect = getElement();
-			if (effect.isEngaged()) {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
+		if (message instanceof Intercept) {
+			ActivateableFilter filter = getElement();
+			if (filter.isEngaged()) {
 				engaged();
 			} else {
 				disengaged();
 			}
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
 
 	@Override
-	protected void output(ShortMessage message) {
-		currentChannel.sendMessage(message);
+	protected void output(ShortMessage message, Context context) {
+		((ChannelFilter) context).sendFilteredMessage(message);
 	}
 
 	@Override
@@ -120,17 +117,28 @@ public class ActivateableEffectPlayer extends
 		channels.clear();
 	}
 
-	private class ChannelImpl extends ChannelWrapper {
+	private class ChannelFilter extends PlayerContext implements Channel {
 
-		public ChannelImpl(Channel channel) {
-			super(channel);
+		private Channel channel;
+
+		public ChannelFilter(Channel channel) {
+			this.channel = channel;
 
 			channels.add(this);
 		}
 
-		@Override
+		public void sendMessage(ShortMessage message) {
+			if (!input(message, Intercept.class, this)) {
+				channel.sendMessage(message);
+			}
+		}
+
+		public void sendFilteredMessage(ShortMessage message) {
+			channel.sendMessage(message);
+		}
+
 		public void release() {
-			super.release();
+			channel.release();
 
 			channels.remove(this);
 		}

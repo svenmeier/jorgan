@@ -89,7 +89,7 @@ public class Rank extends Element implements Engageable, Displayable {
 
 	@Override
 	protected Class<?> references() {
-		return SoundEffect.class;
+		return Filter.class;
 	}
 
 	public String getOutput() {

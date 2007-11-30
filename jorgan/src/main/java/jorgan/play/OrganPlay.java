@@ -42,8 +42,8 @@ import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
-import jorgan.disposition.ContinuousEffect;
-import jorgan.disposition.ActivateableEffect;
+import jorgan.disposition.ContinuousFilter;
+import jorgan.disposition.ActivateableFilter;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
@@ -292,10 +292,10 @@ public class OrganPlay {
 			player = new CouplerPlayer((Coupler) element);
 		} else if (element instanceof Rank) {
 			player = new RankPlayer((Rank) element);
-		} else if (element instanceof ContinuousEffect) {
-			player = new ContinuousEffectPlayer((ContinuousEffect) element);
-		} else if (element instanceof ActivateableEffect) {
-			player = new ActivateableEffectPlayer((ActivateableEffect) element);
+		} else if (element instanceof ContinuousFilter) {
+			player = new ContinuousFilterPlayer((ContinuousFilter) element);
+		} else if (element instanceof ActivateableFilter) {
+			player = new ActivateableFilterPlayer((ActivateableFilter) element);
 		} else if (element instanceof Activator) {
 			player = new ActivateablePlayer<Activator>((Activator) element);
 		} else if (element instanceof Regulator) {

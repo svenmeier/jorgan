@@ -29,18 +29,22 @@ import jorgan.disposition.Activateable.Deactivated;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * An abstract base class for players that control activateable elements.
  */
 public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 
+	private PlayerContext context = new PlayerContext();
+
 	public ActivateablePlayer(E activateable) {
 		super(activateable);
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
 		Activateable activateable = getElement();
 
 		if (message instanceof Activate) {
@@ -52,7 +56,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 				activateable.setActive(false);
 			}
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
 
@@ -77,7 +81,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 		for (Activated message : getElement().getMessages(Activated.class)) {
 			for (Console console : consoles) {
 				Player player = getOrganPlay().getPlayer(console);
-				player.output(message);
+				player.output(message, context);
 			}
 		}
 	}
@@ -90,7 +94,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 		for (Deactivated message : getElement().getMessages(Deactivated.class)) {
 			for (Console console : consoles) {
 				Player player = getOrganPlay().getPlayer(console);
-				player.output(message);
+				player.output(message, context);
 			}
 		}
 	}

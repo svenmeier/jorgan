@@ -55,8 +55,8 @@ public class Organ {
 			classes.add(Coupler.class);
 			classes.add(Combination.class);
 			classes.add(Captor.class);
-			classes.add(ContinuousEffect.class);
-			classes.add(ActivateableEffect.class);
+			classes.add(ContinuousFilter.class);
+			classes.add(ActivateableFilter.class);
 			classes.add(Sequence.class);
 			classes.add(Activator.class);
 			classes.add(Regulator.class);

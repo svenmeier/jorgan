@@ -16,27 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.play;
 
-import java.util.List;
-
-import jorgan.disposition.Message.OutputMessage;
+import jorgan.midi.channel.Channel;
 
 /**
- * A continuous effect.
+ * A player that controls effects on sounds.
  */
-public class ContinuousEffect extends Continuous implements SoundEffect {
+interface FilterPlayer {
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> messages = super.getMessageClasses();
-
-		messages.add(Effect.class);
-		messages.add(Engaging.class);
-
-		return messages;
-	}
-
-	public static class Engaging extends OutputMessage {
-		public static final String VALUE = "value";
-	}
+    /**
+     * Effect a channel.
+     * 
+     * @param channel
+     *            channel to effect
+     * @return effected channel
+     */
+    public Channel filter(Channel channel);
 }
