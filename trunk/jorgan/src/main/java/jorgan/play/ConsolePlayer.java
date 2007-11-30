@@ -26,13 +26,17 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Reference;
+import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player of an console.
  */
 public class ConsolePlayer extends Player<Console> {
+
+	private PlayerContext context = new PlayerContext();
 
 	/**
 	 * The midiDevice to receive input from.
@@ -140,13 +144,13 @@ public class ConsolePlayer extends Player<Console> {
 
 			Player<?> player = getOrganPlay().getPlayer(reference.getElement());
 			if (player != null) {
-				player.input(message);
+				player.input(message, InputMessage.class, context);
 			}
 		}
 	}
 
 	@Override
-	protected void output(ShortMessage message) {
+	protected void output(ShortMessage message, Context context) {
 		if (receiver != null) {
 			receiver.send(message, -1);
 		}

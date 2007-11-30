@@ -27,29 +27,33 @@ import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player for a swell.
  */
 public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
+	private PlayerContext context = new PlayerContext();
+
 	public ContinuousPlayer(E slider) {
 		super(slider);
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
 		Continuous continuous = getElement();
 
 		if (message instanceof Change) {
-			float value = getParameter(Change.VALUE);
+			float value = context.get(Change.VALUE);
 
 			if (Math.abs(continuous.getValue() - value) > continuous
 					.getThreshold()) {
 				continuous.setValue(value);
 			}
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
 
@@ -62,14 +66,14 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private void changed() {
 		Continuous continuous = getElement();
+		context.set(Changed.VALUE, continuous.getValue());
 
 		Set<Console> consoles = continuous.getReferrer(Console.class);
 
 		for (Changed changed : getElement().getMessages(Changed.class)) {
 			for (Console console : consoles) {
 				Player player = getOrganPlay().getPlayer(console);
-				player.setParameter(Changed.VALUE, continuous.getValue());
-				player.output(changed);
+				player.output(changed, context);
 			}
 		}
 	}

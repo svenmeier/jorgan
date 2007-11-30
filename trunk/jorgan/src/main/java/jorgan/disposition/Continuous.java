@@ -49,9 +49,11 @@ public abstract class Continuous extends Element implements Displayable {
 			throw new IllegalArgumentException("value must be between 0 and 1");
 		}
 
-		this.value = value;
+		if (this.value != value) {
+			this.value = value;
 
-		fireElementChanged(false);
+			fireElementChanged(false);
+		}
 	}
 
 	public float getValue() {

@@ -19,7 +19,7 @@
 package jorgan.gui.construct.info;
 
 /**
- * BeanInfo for {@link jorgan.disposition.ActivateableEffect}.
+ * BeanInfo for {@link jorgan.disposition.ActivateableFilter}.
  */
 public class ActivateableEffectBeanInfo extends ActivateableBeanInfo {
 

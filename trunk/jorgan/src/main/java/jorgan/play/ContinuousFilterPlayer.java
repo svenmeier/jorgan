@@ -23,31 +23,29 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.ContinuousEffect;
-import jorgan.disposition.ContinuousEffect.Engaging;
+import jorgan.disposition.ContinuousFilter;
+import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Message.InputMessage;
-import jorgan.disposition.SoundEffect.Effect;
+import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.channel.ChannelWrapper;
 import jorgan.util.math.ProcessingException;
+import jorgan.util.math.NumberProcessor.Context;
 
 /**
  * A player for a swell.
  */
-public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
-		implements SoundEffectPlayer {
+public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
+		implements FilterPlayer {
 
-	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
+	private List<ChannelFilter> channels = new ArrayList<ChannelFilter>();
 
-	private transient Channel currentChannel;
-
-	public ContinuousEffectPlayer(ContinuousEffect swell) {
+	public ContinuousFilterPlayer(ContinuousFilter swell) {
 		super(swell);
 	}
 
-	public Channel effectSound(Channel channel) {
-		channel = new ChannelImpl(channel);
+	public Channel filter(Channel channel) {
+		channel = new ChannelFilter(channel);
 
 		// TODO would be sufficient to handle changing on new channel only
 		engaging();
@@ -70,42 +68,53 @@ public class ContinuousEffectPlayer extends ContinuousPlayer<ContinuousEffect>
 	}
 
 	private void engaging() {
-		ContinuousEffect effect = getElement();
+		ContinuousFilter filter = getElement();
 
 		for (Engaging engaging : getElement().getMessages(Engaging.class)) {
-			setParameter(Engaging.VALUE, effect.getValue());
-			for (Channel channel : channels) {
-				currentChannel = channel;
-				output(engaging);
+			for (ChannelFilter channel : channels) {
+				channel.set(Engaging.VALUE, filter.getValue());
+				output(engaging, channel);
 			}
 		}
 	}
 
 	@Override
-	protected void input(InputMessage message) throws ProcessingException {
-		if (message instanceof Effect) {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
+		if (message instanceof Intercept) {
 			engaging();
 		} else {
-			super.input(message);
+			super.input(message, context);
 		}
 	}
-	
+
 	@Override
-	protected void output(ShortMessage message) {
-		currentChannel.sendMessage(message);
+	protected void output(ShortMessage message, Context context) {
+		((ChannelFilter) context).sendFilteredMessage(message);
 	}
 
-	private class ChannelImpl extends ChannelWrapper {
+	private class ChannelFilter extends PlayerContext implements Channel {
 
-		private ChannelImpl(Channel channel) {
-			super(channel);
+		private Channel channel;
+
+		public ChannelFilter(Channel channel) {
+			this.channel = channel;
 
 			channels.add(this);
 		}
 
-		@Override
+		public void sendMessage(ShortMessage message) {
+			if (!input(message, Intercept.class, this)) {
+				channel.sendMessage(message);
+			}
+		}
+
+		public void sendFilteredMessage(ShortMessage message) {
+			channel.sendMessage(message);
+		}
+
 		public void release() {
-			super.release();
+			channel.release();
 
 			channels.remove(this);
 		}
