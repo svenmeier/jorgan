@@ -55,6 +55,11 @@ public class Keyboard extends Input {
 		{
 			init("filter 144", "set pitch", "set velocity");
 		}
+		
+		@Override
+		protected int getOrder() {
+			return 0;
+		}
 	}
 
 	public static class Release extends InputMessage {
@@ -63,6 +68,11 @@ public class Keyboard extends Input {
 
 		{
 			init("filter 128", "set pitch", "");
+		}
+		
+		@Override
+		protected int getOrder() {
+			return 1;
 		}
 	}
 }

@@ -21,16 +21,16 @@ package jorgan.play;
 import jorgan.midi.channel.Channel;
 
 /**
- * A player that controls effects on sounds.
+ * A player that filters messages on a channel.
  */
 interface FilterPlayer {
 
     /**
-     * Effect a channel.
+     * Filter a channel.
      * 
      * @param channel
-     *            channel to effect
-     * @return effected channel
+     *            channel to filter
+     * @return filtered channel
      */
     public Channel filter(Channel channel);
 }

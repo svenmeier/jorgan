@@ -30,8 +30,8 @@ import jorgan.disposition.Keyboard.Release;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player of an keyboard.

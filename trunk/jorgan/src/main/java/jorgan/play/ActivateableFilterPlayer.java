@@ -30,8 +30,8 @@ import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player for an {@link ActivateableFilter}.

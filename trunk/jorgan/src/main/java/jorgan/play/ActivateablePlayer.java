@@ -28,8 +28,8 @@ import jorgan.disposition.Activateable.Deactivate;
 import jorgan.disposition.Activateable.Deactivated;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * An abstract base class for players that control activateable elements.
@@ -64,12 +64,14 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
 
-		Activateable activateable = getElement();
+		if (isOpen()) {
+			Activateable activateable = getElement();
 
-		if (activateable.isActive()) {
-			activated();
-		} else {
-			deactivated();
+			if (activateable.isActive()) {
+				activated();
+			} else {
+				deactivated();
+			}
 		}
 	}
 

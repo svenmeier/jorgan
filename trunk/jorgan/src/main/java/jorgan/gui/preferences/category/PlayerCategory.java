@@ -41,12 +41,12 @@ public class PlayerCategory extends JOrganCategory {
 	private Model warnDevice = getModel(new Property(
 			Player.class, "warnDevice"));
 
-	private Model warnMessage = getModel(new Property(Player.class,
-			"warnMessage"));
+	private Model warnMessages = getModel(new Property(Player.class,
+			"warnMessages"));
 
 	private JCheckBox warnDeviceCheckBox = new JCheckBox();
 
-	private JCheckBox warnMessageCheckBox = new JCheckBox();
+	private JCheckBox warnMessagesCheckBox = new JCheckBox();
 
 	public PlayerCategory() {
 		config.read(this);
@@ -65,8 +65,8 @@ public class PlayerCategory extends JOrganCategory {
 
 		builder.nextRow();
 
-		config.get("warnMessage").read(warnMessageCheckBox);
-		panel.add(warnMessageCheckBox, builder.nextColumn());
+		config.get("warnMessages").read(warnMessagesCheckBox);
+		panel.add(warnMessagesCheckBox, builder.nextColumn());
 
 		builder.nextRow();
 
@@ -81,12 +81,12 @@ public class PlayerCategory extends JOrganCategory {
 	@Override
 	protected void read() {
 		warnDeviceCheckBox.setSelected((Boolean) warnDevice.getValue());
-		warnMessageCheckBox.setSelected((Boolean) warnMessage.getValue());
+		warnMessagesCheckBox.setSelected((Boolean) warnMessages.getValue());
 	}
 
 	@Override
 	protected void write() {
 		warnDevice.setValue(warnDeviceCheckBox.isSelected());
-		warnMessage.setValue(warnMessageCheckBox.isSelected());
+		warnMessages.setValue(warnMessagesCheckBox.isSelected());
 	}
 }

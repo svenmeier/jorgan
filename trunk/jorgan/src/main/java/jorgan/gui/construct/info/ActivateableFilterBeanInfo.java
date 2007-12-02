@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.ActivateableFilter}.
  */
-public class ActivateableEffectBeanInfo extends ActivateableBeanInfo {
+public class ActivateableFilterBeanInfo extends ActivateableBeanInfo {
 
 	@Override
 	protected void registerProperties() {

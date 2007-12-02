@@ -25,16 +25,16 @@ import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
-import jorgan.disposition.Rank.Muted;
-import jorgan.disposition.Rank.Played;
+import jorgan.disposition.Rank.NoteMuted;
+import jorgan.disposition.Rank.NotePlayed;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
 import jorgan.midi.channel.ChannelPool;
 import jorgan.midi.channel.DelayedChannel;
-import jorgan.util.math.NumberProcessor;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.Processor;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -103,10 +103,10 @@ public class RankPlayer extends Player<Rank> {
 			addProblem(new Warning("channels", rank.getChannels()));
 		} else {
 			for (Reference reference : rank.getReferences()) {
-				FilterPlayer effectPlayer = (FilterPlayer) getOrganPlay()
+				FilterPlayer filterPlayer = (FilterPlayer) getOrganPlay()
 						.getPlayer(reference.getElement());
 
-				channel = effectPlayer.filter(channel);
+				channel = filterPlayer.filter(channel);
 			}
 
 			if (rank.getDelay() > 0) {
@@ -171,10 +171,10 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void played(int pitch, int velocity) {
-		context.set(Played.PITCH, (float) pitch);
-		context.set(Played.VELOCITY, (float) velocity);
-		for (Played played : getElement().getMessages(Played.class)) {
-			output(played, context);
+		context.set(NotePlayed.PITCH, (float) pitch);
+		context.set(NotePlayed.VELOCITY, (float) velocity);
+		for (NotePlayed notePlayed : getElement().getMessages(NotePlayed.class)) {
+			output(notePlayed, context);
 		}
 	}
 
@@ -188,9 +188,9 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void muted(int pitch) {
-		context.set(Muted.PITCH, (float) pitch);
-		for (Muted muted : getElement().getMessages(Muted.class)) {
-			output(muted, context);
+		context.set(NoteMuted.PITCH, (float) pitch);
+		for (NoteMuted noteMuted : getElement().getMessages(NoteMuted.class)) {
+			output(noteMuted, context);
 		}
 	}
 
@@ -204,10 +204,10 @@ public class RankPlayer extends Player<Rank> {
 
 	private class RankChannelFilter implements ChannelFilter, Context {
 
-		private NumberProcessor processor;
+		private Processor processor;
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
-			this.processor = new NumberProcessor(pattern);
+			this.processor = new Processor(pattern);
 		}
 
 		public boolean accept(int channel) {

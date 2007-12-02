@@ -16,38 +16,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.swing.text;
 
-import java.util.List;
-
-import jorgan.disposition.Message.OutputMessage;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
- * An activateable filter.
+ * A notifier of document changes.
  */
-public class ActivateableFilter extends Activateable implements Filter {
-
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> messages = super.getMessageClasses();
-
-		messages.add(Intercept.class);
-		messages.add(Engaged.class);
-		messages.add(Disengaged.class);
-
-		return messages;
+public class DocumentNotifier implements DocumentListener {
+	public void changedUpdate(DocumentEvent e) {
+		changed();
 	}
 
-	public static class Engaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 12;
-		}
+	public void insertUpdate(DocumentEvent e) {
+		changed();
 	}
 
-	public static class Disengaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 13;
-		}
+	public void removeUpdate(DocumentEvent e) {
+		changed();
+	}
+
+	protected void changed() {
 	}
 }
