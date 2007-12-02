@@ -23,6 +23,9 @@ import jorgan.disposition.Message.InputMessage;
 public interface Filter {
 
 	public static class Intercept extends InputMessage {
-		
+		@Override
+		protected int getOrder() {
+			return 5;
+		}
 	}
 }

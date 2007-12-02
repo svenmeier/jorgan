@@ -28,6 +28,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
@@ -35,6 +36,7 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.text.DocumentNotifier;
 import bias.Configuration;
 
 /**
@@ -44,6 +46,12 @@ public class MessageCreationPanel extends JPanel {
 
 	private Configuration config = Configuration.getRoot().get(
 			MessageCreationPanel.class);
+
+	private JTextField statusTextField = new JTextField();
+
+	private JTextField data1TextField = new JTextField();
+
+	private JTextField data2TextField = new JTextField();
 
 	private JList typeList = new JList();
 
@@ -55,21 +63,57 @@ public class MessageCreationPanel extends JPanel {
 	public MessageCreationPanel() {
 		super(new GridBagLayout());
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		GridBuilder builder = new GridBuilder(new double[] { 1.0d, 1.0d, 1.0d });
+
+		builder.nextRow();
+
+		add(config.get("status").read(new JLabel()), builder.nextColumn());
+
+		add(config.get("data1").read(new JLabel()), builder.nextColumn());
+
+		add(config.get("data2").read(new JLabel()), builder.nextColumn());
+
+		builder.nextRow();
+
+		statusTextField.getDocument().addDocumentListener(
+				new DocumentNotifier() {
+					public void changed() {
+						firePropertyChange("message", null, null);
+					}
+				});
+		add(statusTextField, builder.nextColumn().fillHorizontal());
+
+		data1TextField.getDocument().addDocumentListener(
+				new DocumentNotifier() {
+					public void changed() {
+						firePropertyChange("message", null, null);
+					}
+				});
+		add(data1TextField, builder.nextColumn().fillHorizontal());
+
+		data2TextField.getDocument().addDocumentListener(
+				new DocumentNotifier() {
+					public void changed() {
+						firePropertyChange("message", null, null);
+					}
+				});
+		add(data2TextField, builder.nextColumn().fillHorizontal());
 
 		builder.nextRow();
 
 		add(config.get("type").read(new JLabel()), builder.nextColumn()
-				.alignNorthWest());
+				.alignNorthWest().gridWidthRemainder());
+
+		builder.nextRow(1.0d);
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
-				firePropertyChange("elementClass", null, null);
+				firePropertyChange("message", null, null);
 			}
 		});
 		add(new JScrollPane(typeList), builder.nextColumn()
-				.gridWidthRemainder().gridHeight(2).fillBoth());
+				.gridWidthRemainder().fillBoth());
 	}
 
 	/**
@@ -91,17 +135,20 @@ public class MessageCreationPanel extends JPanel {
 	 * @return the message
 	 */
 	public Message getMessage() {
-		int index = typeList.getSelectedIndex();
+		Message message = null;
 
-		if (index == -1) {
-			return null;
-		} else {
+		int index = typeList.getSelectedIndex();
+		if (index != -1) {
 			try {
-				return messageClasses.get(index).newInstance();
+				message = messageClasses.get(index).newInstance();
+				message.setStatus(statusTextField.getText());
+				message.setData1(data1TextField.getText());
+				message.setData2(data2TextField.getText());
 			} catch (Exception ex) {
 				throw new Error(ex);
 			}
 		}
+		return message;
 	}
 
 	private class TypeListModel extends AbstractListModel {

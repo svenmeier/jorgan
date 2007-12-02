@@ -34,12 +34,25 @@ public class Rank extends Element implements Engageable, Displayable {
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Engaged().init("176", "0", "0"));
-		addMessage(new Engaged().init("192", "0", "0"));
-		addMessage(new Disengaged().init("176", "121", "0"));
-		addMessage(new Disengaged().init("176", "123", "0"));
-		addMessage(new Played());
-		addMessage(new Muted());
+		addMessage(new Engaged().init("get 176", "get 0", "get 0")); // control
+																		// change,
+																		// bank
+																		// select,
+																		// 0
+		addMessage(new Engaged().init("get 192", "get 0", "")); // program
+																// change, 0, -
+		addMessage(new Disengaged().init("get 176", "get 121", "")); // control
+																		// change,
+																		// reset,
+																		// -
+		addMessage(new Disengaged().init("get 176", "get 123", "")); // control
+																		// change,
+																		// all
+																		// notes
+																		// off,
+																		// -
+		addMessage(new NotePlayed());
+		addMessage(new NoteMuted());
 	}
 
 	/**
@@ -54,7 +67,7 @@ public class Rank extends Element implements Engageable, Displayable {
 			engaged = new Engaged();
 			addMessage(engaged);
 		}
-		engaged.init("192", "" + program, "0");
+		engaged.init("get 192", "get " + program, ""); // program change, 0, -
 	}
 
 	/**
@@ -66,8 +79,9 @@ public class Rank extends Element implements Engageable, Displayable {
 		Engaged engaged = getProgramChange();
 		if (engaged != null) {
 			try {
-				return Integer.parseInt(engaged.getData1());
-			} catch (NumberFormatException ignore) {
+				return Integer.parseInt(engaged.getData1().substring(
+						"get ".length()));
+			} catch (Exception ignore) {
 			}
 		}
 		return 0;
@@ -80,7 +94,7 @@ public class Rank extends Element implements Engageable, Displayable {
 	 */
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if ("192".equals(engaged.getStatus())) {
+			if ("get 192".equals(engaged.getStatus())) {
 				return engaged;
 			}
 		}
@@ -163,35 +177,53 @@ public class Rank extends Element implements Engageable, Displayable {
 
 		names.add(Engaged.class);
 		names.add(Disengaged.class);
-		names.add(Played.class);
-		names.add(Muted.class);
+		names.add(NotePlayed.class);
+		names.add(NoteMuted.class);
 
 		return names;
 	}
 
 	public static class Engaged extends OutputMessage {
+		@Override
+		protected int getOrder() {
+			return 10;
+		}
 	}
 
-	public static class Disengaged extends OutputMessage {
-	}
-
-	public static class Played extends OutputMessage {
+	public static class NotePlayed extends OutputMessage {
 
 		public static final String VELOCITY = "velocity";
 
 		public static final String PITCH = "pitch";
 
 		{
-			init("144", "get pitch", "get velocity");
+			init("get 144", "get pitch", "get velocity");
+		}
+
+		@Override
+		protected int getOrder() {
+			return 11;
 		}
 	}
 
-	public static class Muted extends OutputMessage {
+	public static class NoteMuted extends OutputMessage {
 
 		public static final String PITCH = "pitch";
 
 		{
-			init("128", "get pitch", "");
+			init("get 128", "get pitch", "");
+		}
+		
+		@Override
+		protected int getOrder() {
+			return 12;
+		}
+	}
+	
+	public static class Disengaged extends OutputMessage {
+		@Override
+		protected int getOrder() {
+			return 13;
 		}
 	}
 }

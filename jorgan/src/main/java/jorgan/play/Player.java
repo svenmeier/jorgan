@@ -30,8 +30,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.Message.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 import bias.Configuration;
 
 /**
@@ -56,6 +56,8 @@ public abstract class Player<E extends Element> {
 
 	private boolean warnDevice;
 
+	private boolean warnMessages;
+
 	/**
 	 * The problems.
 	 */
@@ -64,8 +66,6 @@ public abstract class Player<E extends Element> {
 	private int errorCount = 0;
 
 	private int warningCount = 0;
-
-	private boolean warnMessages;
 
 	/**
 	 * Create a player for the given element.
@@ -199,9 +199,10 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	public final boolean input(ShortMessage shortMessage, Class<? extends InputMessage> messageClazz, Context context) {
+	public final boolean input(ShortMessage shortMessage,
+			Class<? extends InputMessage> messageClazz, Context context) {
 		boolean accepted = false;
-		
+
 		Element element = getElement();
 
 		try {
@@ -227,7 +228,7 @@ public abstract class Player<E extends Element> {
 		} catch (ProcessingException ex) {
 			addProblem(new Error("messages", ex.getPattern()));
 		}
-		
+
 		return accepted;
 	}
 
@@ -237,7 +238,8 @@ public abstract class Player<E extends Element> {
 	 * @param message
 	 *            message
 	 */
-	protected void input(InputMessage message, Context context) throws ProcessingException {
+	protected void input(InputMessage message, Context context)
+			throws ProcessingException {
 
 	}
 
@@ -255,7 +257,8 @@ public abstract class Player<E extends Element> {
 
 				output(shortMessage, context);
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error("messages"));
+				addProblem(new Error("messages", message.getStatus() + ","
+						+ message.getData1() + "," + message.getData2()));
 			}
 
 			if (organPlay != null) {

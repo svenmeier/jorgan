@@ -26,8 +26,8 @@ import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player for a swell.
@@ -61,7 +61,9 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
 
-		changed();
+		if (isOpen()) {
+			changed();
+		}
 	}
 
 	private void changed() {

@@ -20,6 +20,7 @@ package jorgan.gui.construct;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -185,6 +186,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			for (Message message : element.getMessages()) {
 				messages.add(message);
 			}
+			Collections.sort(messages);
 
 			tableModel.update();
 
@@ -233,7 +235,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		public void setColumnNames(String[] columnNames) {
 			this.columnNames = columnNames;
 		}
-		
+
 		public int getColumnCount() {
 			return 5;
 		}

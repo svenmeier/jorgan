@@ -30,14 +30,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.text.DocumentNotifier;
 import bias.Configuration;
 
 /**
@@ -66,16 +65,8 @@ public class ElementCreationPanel extends JPanel {
 
 		add(config.get("name").read(new JLabel()), builder.nextColumn());
 
-		nameTextField.getDocument().addDocumentListener(new DocumentListener() {
-			public void changedUpdate(DocumentEvent e) {
-				firePropertyChange("elementName", null, null);
-			}
-
-			public void insertUpdate(DocumentEvent e) {
-				firePropertyChange("elementName", null, null);
-			}
-
-			public void removeUpdate(DocumentEvent e) {
+		nameTextField.getDocument().addDocumentListener(new DocumentNotifier() {
+			public void changed() {
 				firePropertyChange("elementName", null, null);
 			}
 		});

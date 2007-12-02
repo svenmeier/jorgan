@@ -21,8 +21,8 @@ package jorgan.play;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Initiator.Initiate;
 import jorgan.disposition.Message.InputMessage;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player for an {@link jorgan.disposition.Initiator}.

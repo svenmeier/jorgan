@@ -29,7 +29,7 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player of an console.

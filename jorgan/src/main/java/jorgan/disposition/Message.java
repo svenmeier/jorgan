@@ -3,11 +3,11 @@
  */
 package jorgan.disposition;
 
-import jorgan.util.math.NumberProcessor;
-import jorgan.util.math.ProcessingException;
-import jorgan.util.math.NumberProcessor.Context;
+import jorgan.midi.mpl.Processor;
+import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor.Context;
 
-public abstract class Message {
+public abstract class Message implements Comparable<Message> {
 
 	private String status = "";
 
@@ -15,11 +15,11 @@ public abstract class Message {
 
 	private String data2 = "";
 
-	private transient NumberProcessor statusProcessor;
+	private transient Processor statusProcessor;
 
-	private transient NumberProcessor data1Processor;
+	private transient Processor data1Processor;
 
-	private transient NumberProcessor data2Processor;
+	private transient Processor data2Processor;
 
 	public Message init(String status, String data1, String data2) {
 		setStatus(status);
@@ -62,7 +62,7 @@ public abstract class Message {
 	public float processStatus(float status, Context context)
 			throws ProcessingException {
 		if (statusProcessor == null) {
-			statusProcessor = new NumberProcessor(this.status);
+			statusProcessor = new Processor(this.status);
 		}
 		return statusProcessor.process(status, context);
 	}
@@ -70,7 +70,7 @@ public abstract class Message {
 	public float processData1(float data1, Context context)
 			throws ProcessingException {
 		if (data1Processor == null) {
-			data1Processor = new NumberProcessor(this.data1);
+			data1Processor = new Processor(this.data1);
 		}
 		return data1Processor.process(data1, context);
 	}
@@ -78,11 +78,17 @@ public abstract class Message {
 	public float processData2(float data2, Context context)
 			throws ProcessingException {
 		if (data2Processor == null) {
-			data2Processor = new NumberProcessor(this.data2);
+			data2Processor = new Processor(this.data2);
 		}
 		return data2Processor.process(data2, context);
 	}
 
+	public int compareTo(Message m) {
+		return getOrder() - m.getOrder();
+	}
+	
+	protected abstract int getOrder();
+	
 	public static abstract class InputMessage extends Message {
 	}
 
