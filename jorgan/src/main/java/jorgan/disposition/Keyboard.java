@@ -53,7 +53,7 @@ public class Keyboard extends Input {
 		public static final String VELOCITY = "velocity";
 
 		{
-			init("filter 144", "set pitch", "set velocity");
+			init("filter 144", "get pitch", "get velocity");
 		}
 		
 		@Override
@@ -67,7 +67,7 @@ public class Keyboard extends Input {
 		public static final String PITCH = "pitch";
 
 		{
-			init("filter 128", "set pitch", "");
+			init("filter 128", "get pitch", "");
 		}
 		
 		@Override

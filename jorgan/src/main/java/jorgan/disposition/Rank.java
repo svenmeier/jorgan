@@ -34,18 +34,18 @@ public class Rank extends Element implements Engageable, Displayable {
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Engaged().init("get 176", "get 0", "get 0")); // control
+		addMessage(new Engaged().init("set 176", "set 0", "set 0")); // control
 																		// change,
 																		// bank
 																		// select,
 																		// 0
-		addMessage(new Engaged().init("get 192", "get 0", "")); // program
+		addMessage(new Engaged().init("set 192", "set 0", "")); // program
 																// change, 0, -
-		addMessage(new Disengaged().init("get 176", "get 121", "")); // control
+		addMessage(new Disengaged().init("set 176", "set 121", "")); // control
 																		// change,
 																		// reset,
 																		// -
-		addMessage(new Disengaged().init("get 176", "get 123", "")); // control
+		addMessage(new Disengaged().init("set 176", "set 123", "")); // control
 																		// change,
 																		// all
 																		// notes
@@ -67,7 +67,7 @@ public class Rank extends Element implements Engageable, Displayable {
 			engaged = new Engaged();
 			addMessage(engaged);
 		}
-		engaged.init("get 192", "get " + program, ""); // program change, 0, -
+		engaged.init("set 192", "set " + program, ""); // program change, 0, -
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class Rank extends Element implements Engageable, Displayable {
 		if (engaged != null) {
 			try {
 				return Integer.parseInt(engaged.getData1().substring(
-						"get ".length()));
+						"set ".length()));
 			} catch (Exception ignore) {
 			}
 		}
@@ -197,7 +197,7 @@ public class Rank extends Element implements Engageable, Displayable {
 		public static final String PITCH = "pitch";
 
 		{
-			init("get 144", "get pitch", "get velocity");
+			init("set 144", "set pitch", "set velocity");
 		}
 
 		@Override
@@ -211,7 +211,7 @@ public class Rank extends Element implements Engageable, Displayable {
 		public static final String PITCH = "pitch";
 
 		{
-			init("get 128", "get pitch", "");
+			init("set 128", "set pitch", "");
 		}
 		
 		@Override

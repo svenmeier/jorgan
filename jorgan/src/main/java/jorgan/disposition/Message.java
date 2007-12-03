@@ -3,8 +3,8 @@
  */
 package jorgan.disposition;
 
-import jorgan.midi.mpl.Processor;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Processor;
 import jorgan.midi.mpl.Processor.Context;
 
 public abstract class Message implements Comparable<Message> {
@@ -86,9 +86,9 @@ public abstract class Message implements Comparable<Message> {
 	public int compareTo(Message m) {
 		return getOrder() - m.getOrder();
 	}
-	
+
 	protected abstract int getOrder();
-	
+
 	public static abstract class InputMessage extends Message {
 	}
 

@@ -226,7 +226,6 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 						false)));
 			}
 			referencesModel.update();
-
 			list.setVisible(true);
 		}
 
@@ -272,12 +271,14 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 				fireIntervalAdded(this, size, rows.size() - 1);
 			} else if (rows.size() < size) {
 				fireIntervalRemoved(this, rows.size(), size - 1);
+			} else {
+				fireContentsChanged(this, 0, rows.size());
 			}
 			size = rows.size();
 		}
 
 		public int getSize() {
-			return size;
+			return rows.size();
 		}
 
 		public Object getElementAt(int index) {

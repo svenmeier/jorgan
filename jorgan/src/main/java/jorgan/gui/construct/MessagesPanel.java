@@ -189,7 +189,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			Collections.sort(messages);
 
 			tableModel.update();
-
 			table.setVisible(true);
 		}
 
@@ -216,15 +215,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		private String[] columnNames = new String[5];
 
-		private int size = 0;
-
 		private void update() {
-			if (messages.size() > size) {
-				fireTableRowsInserted(size, messages.size() - 1);
-			} else if (messages.size() < size) {
-				fireTableRowsDeleted(messages.size(), size - 1);
-			}
-			size = messages.size();
+			fireTableDataChanged();
 		}
 
 		@Override
@@ -241,7 +233,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		}
 
 		public int getRowCount() {
-			return size;
+			return messages.size();
 		}
 
 		@Override
