@@ -80,12 +80,12 @@ public class CreateReferencesWizard extends BasicWizard {
 	protected boolean finishImpl() {
 
 		for (int t = 0; t < referencesTo.size(); t++) {
-			Element referenced = (Element) referencesTo.get(t);
+			Element referenced = referencesTo.get(t);
 			element.reference(referenced);
 		}
 
 		for (int f = 0; f < referencedFrom.size(); f++) {
-			Element referrer = (Element) referencedFrom.get(f);
+			Element referrer = referencedFrom.get(f);
 			referrer.reference(element);
 		}
 

@@ -78,7 +78,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 */
 	public IconTableCellRenderer(Map<?, Icon> icons) {
 
-		this((Icon) icons.values().iterator().next(), icons);
+		this(icons.values().iterator().next(), icons);
 	}
 
 	/**
