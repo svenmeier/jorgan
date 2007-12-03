@@ -171,8 +171,8 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void played(int pitch, int velocity) {
-		context.set(NotePlayed.PITCH, (float) pitch);
-		context.set(NotePlayed.VELOCITY, (float) velocity);
+		context.set(NotePlayed.PITCH, pitch);
+		context.set(NotePlayed.VELOCITY, velocity);
 		for (NotePlayed notePlayed : getElement().getMessages(NotePlayed.class)) {
 			output(notePlayed, context);
 		}
@@ -188,7 +188,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void muted(int pitch) {
-		context.set(NoteMuted.PITCH, (float) pitch);
+		context.set(NoteMuted.PITCH, pitch);
 		for (NoteMuted noteMuted : getElement().getMessages(NoteMuted.class)) {
 			output(noteMuted, context);
 		}
