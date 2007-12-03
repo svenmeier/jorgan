@@ -57,10 +57,10 @@ public class Processor {
 		term = term.substring(space + 1).trim();
 		if ("filter".equals(type)) {
 			return new Filter(term);
-		} else if ("set".equals(type)) {
-			return new Set(term);
 		} else if ("get".equals(type)) {
 			return new Get(term);
+		} else if ("set".equals(type)) {
+			return new Set(term);
 		} else if ("add".equals(type)) {
 			return new Add(term);
 		} else if ("sub".equals(type)) {
@@ -107,11 +107,11 @@ public class Processor {
 		}
 	}
 
-	private class Set extends Node {
+	private class Get extends Node {
 
 		private String name;
 
-		public Set(String term) {
+		public Get(String term) {
 			this.name = term;
 		}
 
@@ -154,15 +154,15 @@ public class Processor {
 		}
 	}
 
-	private class Get extends ValueNode {
+	private class Set extends ValueNode {
 
-		public Get(String term) throws Exception {
+		public Set(String term) throws Exception {
 			super(term);
 		}
 
 		@Override
 		public float processImpl(float value, Context context) {
-			return super.getValue(context);
+			return getValue(context);
 		}
 	}
 

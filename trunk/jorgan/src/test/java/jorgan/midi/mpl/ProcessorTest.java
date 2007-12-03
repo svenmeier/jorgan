@@ -9,7 +9,7 @@ import junit.framework.TestCase;
 /**
  * A test for the {@link Processor}.
  */
-public class NumberProcessorTest extends TestCase {
+public class ProcessorTest extends TestCase {
 
 	private Context context;
 
@@ -39,21 +39,21 @@ public class NumberProcessorTest extends TestCase {
 		assertEquals(1.0f, processor.process(1.0f, context));
 	}
 
-	public void testGetValue() throws Exception {
-		Processor processor = new Processor("get 8");
+	public void testSetValue() throws Exception {
+		Processor processor = new Processor("set 8");
 
 		assertEquals(8.0f, processor.process(0.0f, context));
 	}
 
-	public void testGetName() throws Exception {
-		Processor processor = new Processor("get test");
+	public void testSetName() throws Exception {
+		Processor processor = new Processor("set test");
 
 		context.set("test", 8.0f);
 		assertEquals(8.0f, processor.process(0.0f, context));
 	}
 
-	public void testGetNameValue() throws Exception {
-		Processor processor = new Processor("get test 8");
+	public void testSetNameValue() throws Exception {
+		Processor processor = new Processor("set test 8");
 
 		assertEquals(8.0f, processor.process(0.0f, context));
 	}
@@ -110,8 +110,8 @@ public class NumberProcessorTest extends TestCase {
 		assertEquals(50.0f, processor.process(10.0f, context));
 	}
 	
-	public void testSet() throws Exception {
-		Processor processor = new Processor("set test");
+	public void testGet() throws Exception {
+		Processor processor = new Processor("get test");
 
 		assertEquals(0.0f, processor.process(0.0f, context));
 		assertEquals(0.0f, context.get("test"));

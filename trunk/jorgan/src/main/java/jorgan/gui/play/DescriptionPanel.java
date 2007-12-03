@@ -18,10 +18,8 @@
  */
 package jorgan.gui.play;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 
-import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -33,11 +31,12 @@ import jorgan.gui.OrganSession;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayAdapter;
+import swingx.docking.DockedPanel;
 
 /**
  * Panel that displays the description of an element.
  */
-public class DescriptionPanel extends JPanel implements OrganAware {
+public class DescriptionPanel extends DockedPanel implements OrganAware {
 
 	private JTextArea textArea;
 
@@ -47,21 +46,21 @@ public class DescriptionPanel extends JPanel implements OrganAware {
 
 	private PlayHandler playHandler = new PlayHandler();
 
-	private Element element;	
-	
+	private Element element;
+
 	/**
 	 * Constructor.
 	 */
 	public DescriptionPanel() {
-		setLayout(new BorderLayout());
-
 		textArea = new JTextArea();
 		textArea.setEnabled(false);
 		textArea.setBackground(new Color(255, 255, 225));
 		textArea.setBorder(new EmptyBorder(5, 5, 5, 5));
 		textArea.setForeground(Color.BLACK);
 		textArea.setDisabledTextColor(Color.BLACK);
-		add(textArea, BorderLayout.CENTER);
+		textArea.setLineWrap(true);
+		textArea.setWrapStyleWord(true);
+		setScrollableBody(textArea, true, false);
 	}
 
 	/**
@@ -94,9 +93,12 @@ public class DescriptionPanel extends JPanel implements OrganAware {
 	private void read() {
 		if (element == null) {
 			textArea.setText("");
+			textArea.setEnabled(false);
 		} else {
 			textArea.setText(element.getDescription());
+			textArea.setEnabled(true);
 		}
+		textArea.setCaretPosition(0);
 	}
 
 	private void write() {
@@ -104,7 +106,7 @@ public class DescriptionPanel extends JPanel implements OrganAware {
 			element.setDescription(textArea.getText());
 		}
 	}
-	
+
 	/**
 	 * The handler of selections.
 	 */
@@ -113,9 +115,9 @@ public class DescriptionPanel extends JPanel implements OrganAware {
 
 		public void selectionChanged(ElementSelectionEvent ev) {
 			write();
-			
+
 			element = session.getSelectionModel().getSelectedElement();
-			
+
 			read();
 		}
 
@@ -135,7 +137,7 @@ public class DescriptionPanel extends JPanel implements OrganAware {
 		@Override
 		public void closed() {
 			write();
-			
+
 			textArea.setEnabled(true);
 		}
 	}
