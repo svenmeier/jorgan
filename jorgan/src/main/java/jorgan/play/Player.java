@@ -245,20 +245,19 @@ public abstract class Player<E extends Element> {
 
 	protected final void output(OutputMessage message, Context context) {
 		try {
-			float status = message.processStatus(Float.NaN, context);
-			float data1 = message.processData1(Float.NaN, context);
-			float data2 = message.processData2(Float.NaN, context);
+			int status = Math.round(message.processStatus(Float.NaN, context));
+			int data1 = Math.round(message.processData1(Float.NaN, context));
+			int data2 = Math.round(message.processData2(Float.NaN, context));
 
 			ShortMessage shortMessage;
 			try {
 				shortMessage = new ShortMessage();
-				shortMessage.setMessage(Math.round(status), Math.round(data1),
-						Math.round(data2));
+				shortMessage.setMessage(status, data1, data2);
 
 				output(shortMessage, context);
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error("messages", message.getStatus() + ","
-						+ message.getData1() + "," + message.getData2()));
+				addProblem(new Error("messages", status + "," + data1 + ","
+						+ data2));
 			}
 
 			if (organPlay != null) {

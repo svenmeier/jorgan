@@ -117,10 +117,9 @@ public class ProcessorTest extends TestCase {
 		assertEquals(0.0f, context.get("test"));
 	}
 
-	public void testFilter() throws Exception {
-		Processor processor = new Processor("filter 10-20");
+	public void testEqual() throws Exception {
+		Processor processor = new Processor("equal 10");
 
-		assertEquals(Float.NaN, processor.process(5.0f, context));
-		assertEquals(15.0f, processor.process(15.0f, context));
+		assertEquals(10.0f, processor.process(10.0f, context));
 	}
 }

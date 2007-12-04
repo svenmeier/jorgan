@@ -36,7 +36,7 @@ import java.beans.PropertyEditorManager;
 public class DefaultBeanCustomizer implements BeanCustomizer {
 
 	public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException {
-		return new SortingBeanInfo(Introspector.getBeanInfo(beanClass));
+		return new SortingBeanInfo(new WriteableBeanInfo(Introspector.getBeanInfo(beanClass)));
 	}
 
 	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
