@@ -55,8 +55,16 @@ public class Processor {
 		int space = term.indexOf(' ');
 		String type = term.substring(0, space).trim();
 		term = term.substring(space + 1).trim();
-		if ("filter".equals(type)) {
-			return new Filter(term);
+		if ("equal".equals(type)) {
+			return new Equal(term);
+		} else if ("greaterEqual".equals(type)) {
+			return new GreaterEqual(term);
+		} else if ("greater".equals(type)) {
+			return new Greater(term);
+		} else if ("lower".equals(type)) {
+			return new Lower(term);
+		} else if ("lowerEqual".equals(type)) {
+			return new LowerEqual(term);
 		} else if ("get".equals(type)) {
 			return new Get(term);
 		} else if ("set".equals(type)) {
@@ -214,34 +222,84 @@ public class Processor {
 		}
 	}
 
-	private class Filter extends Node {
+	private abstract class Condition extends Node {
 
-		private float from;
+		private float value;
 
-		private float to;
+		protected Condition(String term) throws Exception {
 
-		public Filter(String term) throws Exception {
-
-			int hyphen = term.indexOf('-');
-			if (hyphen == -1) {
-				this.from = Float.parseFloat(term);
-				this.to = this.from;
-			} else {
-				this.from = Float.parseFloat(term.substring(0, hyphen).trim());
-				this.to = Float.parseFloat(term.substring(hyphen + 1).trim());
-			}
+			this.value = Float.parseFloat(term);
 		}
 
 		@Override
 		public float processImpl(float value, Context context) {
-			if (value < Math.min(from, to)) {
+			if (isTrue(this.value, value)) {
+				return value;
+			} else {
 				return Float.NaN;
 			}
-			if (value > Math.max(from, to)) {
-				return Float.NaN;
-			}
+		}
 
-			return value;
+		protected abstract boolean isTrue(float condition, float value);
+	}
+
+	private class Equal extends Condition {
+
+		public Equal(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value == condition;
+		}
+	}
+
+	private class Greater extends Condition {
+
+		public Greater(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value > condition;
+		}
+	}
+
+	private class GreaterEqual extends Condition {
+
+		public GreaterEqual(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value >= condition;
+		}
+	}
+
+	private class LowerEqual extends Condition {
+
+		public LowerEqual(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value <= condition;
+		}
+	}
+
+	private class Lower extends Condition {
+
+		public Lower(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value < condition;
 		}
 	}
 

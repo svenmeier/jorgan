@@ -94,7 +94,7 @@ public class Rank extends Element implements Engageable, Displayable {
 	 */
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if ("get 192".equals(engaged.getStatus())) {
+			if ("set 192".equals(engaged.getStatus())) {
 				return engaged;
 			}
 		}
