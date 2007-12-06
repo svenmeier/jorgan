@@ -35,7 +35,7 @@ public class Combination extends Initiator {
 	@Override
 	public void initiate() {
 		for (Captor captor : getReferrer(Captor.class)) {
-			if (captor.isActive()) {
+			if (captor.isEngaged()) {
 				capture();
 				return;
 			}
