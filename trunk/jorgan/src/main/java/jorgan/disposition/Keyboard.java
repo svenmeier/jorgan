@@ -28,8 +28,8 @@ import jorgan.disposition.Message.InputMessage;
 public class Keyboard extends Input {
 
 	public Keyboard() {
-		addMessage(new Press());
-		addMessage(new Release());
+		addMessage(new PressKey());
+		addMessage(new ReleaseKey());
 	}
 
 	@Override
@@ -40,13 +40,13 @@ public class Keyboard extends Input {
 	public List<Class<? extends Message>> getMessageClasses() {
 		List<Class<? extends Message>> names = super.getMessageClasses();
 
-		names.add(Press.class);
-		names.add(Release.class);
+		names.add(PressKey.class);
+		names.add(ReleaseKey.class);
 
 		return names;
 	}
 
-	public static class Press extends InputMessage {
+	public static class PressKey extends InputMessage {
 
 		public static final String PITCH = "pitch";
 
@@ -62,7 +62,7 @@ public class Keyboard extends Input {
 		}
 	}
 
-	public static class Release extends InputMessage {
+	public static class ReleaseKey extends InputMessage {
 
 		public static final String PITCH = "pitch";
 

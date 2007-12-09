@@ -29,7 +29,7 @@ public class Rank extends Element implements Engageable, Displayable {
 
 	private String output;
 
-	private String channels = "0-15";
+	private String channels = "";
 
 	private int delay = 0;
 
