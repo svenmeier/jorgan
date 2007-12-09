@@ -266,6 +266,7 @@
   	<xsl:template match="soundSource">
 		<xsl:variable name="id" select="@id"/>
 		<xsl:variable name="bank" select="bank"/>
+		<xsl:variable name="bankMSB" select="bankMSB"/>
       	<xsl:for-each select="//stop[references/reference/@id = $id]">
 			<xsl:variable name="program" select="program"/>
 			<xsl:variable name="remainder" select="following::stop[program=$program and references/reference/@id = $id]"/>
@@ -295,7 +296,7 @@
 			        <rank-engaged>
 			          <status>set 176</status>
 			          <data1>set 0</data1>
-			          <data2>set <xsl:value-of select="$bank"/></data2>
+			          <data2>set <xsl:value-of select="$bank"/><xsl:value-of select="$bankMSB"/></data2>
 			        </rank-engaged>
 			        <rank-engaged>
 			          <status>set 192</status>
