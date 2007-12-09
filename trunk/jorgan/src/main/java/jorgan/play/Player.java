@@ -102,6 +102,8 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
+		removeProblem(new Error("messages"));
+		
 		openImpl();
 	}
 
@@ -245,9 +247,9 @@ public abstract class Player<E extends Element> {
 
 	protected final void output(OutputMessage message, Context context) {
 		try {
-			int status = Math.round(message.processStatus(Float.NaN, context));
-			int data1 = Math.round(message.processData1(Float.NaN, context));
-			int data2 = Math.round(message.processData2(Float.NaN, context));
+			int status = Math.round(message.processStatus(0.0f, context));
+			int data1 = Math.round(message.processData1(0.0f, context));
+			int data2 = Math.round(message.processData2(0.0f, context));
 
 			ShortMessage shortMessage;
 			try {
