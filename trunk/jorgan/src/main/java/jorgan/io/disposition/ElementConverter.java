@@ -1,5 +1,20 @@
-/**
- * 
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package jorgan.io.disposition;
 
@@ -9,6 +24,7 @@ import java.util.Map;
 import jorgan.disposition.Element;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -125,11 +141,19 @@ public class ElementConverter implements Converter {
 		}
 
 		public void putElement(String id, Element element) {
-			map.put(id, element);
+			Element previous = map.put(id, element);
+			if (previous != null) {
+				throw new ConversionException("duplicate id '" + id + "'");
+			}
 		}
 
 		public Element getElement(String id) {
-			return map.get(id);
+			
+			Element element = map.get(id);
+			if (element == null) {
+				throw new ConversionException("unkown element id '" + id + "'");
+			}
+			return element;
 		}
 	}
 }

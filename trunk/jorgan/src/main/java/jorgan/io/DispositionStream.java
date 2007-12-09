@@ -39,13 +39,13 @@ import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.ElementConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
+import jorgan.io.disposition.PackageStrippingMapper;
 import jorgan.io.disposition.ReferenceConverter;
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
-import com.thoughtworks.xstream.mapper.Mapper;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
@@ -195,41 +195,5 @@ public class DispositionStream {
 
 	public void setHistorySize(int historySize) {
 		this.historySize = historySize;
-	}
-
-	private class PackageStrippingMapper extends MapperWrapper {
-
-		private final String PREFIX = "jorgan.disposition";
-
-		private Mapper wrapped;
-
-		public PackageStrippingMapper(Mapper wrapped) {
-			super(wrapped);
-			this.wrapped = wrapped;
-		}
-
-		public String serializedClass(Class type) {
-			if (type.getPackage().getName().startsWith(PREFIX)) {
-				String temp = type.getName();
-
-				temp = Character.toLowerCase(temp.charAt(PREFIX.length() + 1))
-						+ temp.substring(PREFIX.length() + 2);
-
-				return temp.replace('$', '-');
-			} else {
-				return wrapped.serializedClass(type);
-			}
-		}
-
-		public Class realClass(String name) {
-			String temp = PREFIX + '.' + Character.toUpperCase(name.charAt(0))
-					+ name.substring(1);
-
-			try {
-				return wrapped.realClass(temp.replace('-', '$'));
-			} catch (Exception ex) {
-				return wrapped.realClass(name);
-			}
-		}
 	}
 }
