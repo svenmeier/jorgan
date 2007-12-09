@@ -97,7 +97,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private String deviceName;
 
-	private boolean deviceOut;
+	private int direction;
 
 	private boolean open;
 
@@ -167,7 +167,7 @@ public class MidiMonitor extends DockedPanel {
 		prepareColumn(4, 10, SwingConstants.RIGHT);
 		prepareColumn(5, 100, SwingConstants.LEFT);
 
-		setDevice(null, false);
+		setDevice(null, DevicePool.IN);
 	}
 
 	private DeviceSelectionPanel selectionPanel;
@@ -176,7 +176,7 @@ public class MidiMonitor extends DockedPanel {
 		if (selectionPanel == null) {
 			selectionPanel = new DeviceSelectionPanel();
 		}
-		selectionPanel.setDevice(deviceName, deviceOut);
+		selectionPanel.setDevice(deviceName, direction);
 
 		StandardDialog selectionDialog = StandardDialog.create(this);
 		selectionDialog.addCancelAction();
@@ -188,7 +188,7 @@ public class MidiMonitor extends DockedPanel {
 
 		if (!selectionDialog.wasCancelled()) {
 			setDevice(selectionPanel.getDeviceName(), selectionPanel
-					.getDeviceOut());
+					.getDirection());
 		}
 	}
 
@@ -197,29 +197,29 @@ public class MidiMonitor extends DockedPanel {
 	 * 
 	 * @param name
 	 *            name of device to log
-	 * @param out
+	 * @param direction
 	 *            should <code>out</code> or <code>in</code> be logged
 	 */
-	public void setDevice(String name, boolean out) {
+	public void setDevice(String name, int direction) {
 		if (this.deviceName == null && name != null || this.deviceName != null
-				&& !this.deviceName.equals(name) || this.deviceOut != out) {
+				&& !this.deviceName.equals(name) || this.direction != direction) {
 
 			if (this.deviceName != null) {
 				try {
 					DevicePool.removeLogger((MidiLogger) Spin.over(logger),
-							this.deviceName, this.deviceOut);
+							this.deviceName, this.direction);
 				} catch (MidiUnavailableException ex) {
 					throw new Error();
 				}
 			}
 
 			this.deviceName = name;
-			this.deviceOut = out;
+			this.direction = direction;
 
 			if (this.deviceName != null) {
 				try {
 					open = DevicePool.addLogger((MidiLogger) Spin.over(logger),
-							name, out);
+							name, direction);
 				} catch (MidiUnavailableException ex) {
 					this.deviceName = null;
 				}
@@ -236,7 +236,7 @@ public class MidiMonitor extends DockedPanel {
 			message = config.get("noStatus").read(new MessageBuilder()).build();
 		} else {
 			message = config.get("status").read(new MessageBuilder()).build(
-					deviceName, deviceOut ? new Integer(1) : new Integer(0),
+					deviceName, direction,
 					open ? new Integer(1) : new Integer(0));
 		}
 		setMessage(message);
@@ -306,7 +306,8 @@ public class MidiMonitor extends DockedPanel {
 
 		public void setColumnNames(String[] columnNames) {
 			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length " + columnNames.length);
+				throw new IllegalArgumentException("length "
+						+ columnNames.length);
 			}
 			this.columnNames = columnNames;
 		}

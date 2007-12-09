@@ -111,7 +111,7 @@ public class MidiMerger extends Loopback {
 
 			// Important: assure successfull opening of MIDI device
 			// before storing reference in instance variable
-			MidiDevice toBeOpened = DevicePool.getMidiDevice(device, false);
+			MidiDevice toBeOpened = DevicePool.getMidiDevice(device, DevicePool.IN);
 			toBeOpened.open();
 			this.device = toBeOpened;
 

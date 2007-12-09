@@ -19,9 +19,7 @@
 package jorgan.midi;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
@@ -35,10 +33,11 @@ import javax.sound.midi.Transmitter;
  */
 public class DevicePool {
 
-	private static Map<DeviceKey, SharedDevice> sharedDevices = new HashMap<DeviceKey, SharedDevice>();
-	
-	public static final boolean OUT = true;
-	public static final boolean IN = false;
+	private static List<PooledDevice> devices = new ArrayList<PooledDevice>();
+
+	public static final int IN = 0;
+
+	public static final int OUT = 1;
 
 	private DevicePool() {
 	}
@@ -48,124 +47,103 @@ public class DevicePool {
 	 * 
 	 * @param name
 	 *            name of device to get
-	 * @param out
+	 * @param direction
 	 *            if <code>true</code> device should support midi-out,
 	 *            otherwise it should support midi-in.
 	 * @return the named device
 	 * @throws MidiUnavailableException
 	 */
-	public static MidiDevice getMidiDevice(String name, boolean out)
+	public static MidiDevice getMidiDevice(String name, int direction)
 			throws MidiUnavailableException {
 
-		SharedDevice sharedDevice = getSharedDevice(name, out);
+		PooledDevice sharedDevice = getPooledDevice(name, direction);
+		if (sharedDevice == null) {
+			initDevicePool(direction);
+
+			sharedDevice = getPooledDevice(name, direction);
+			if (sharedDevice == null) {
+				throw new MidiUnavailableException(name);
+			}
+		}
 
 		return new ProxyDevice(sharedDevice);
 	}
 
-	private static SharedDevice getSharedDevice(String name, boolean out)
-			throws MidiUnavailableException {
+	private static PooledDevice getPooledDevice(String name, int out) {
 
-		DeviceKey key = new DeviceKey(name, out);
-
-		SharedDevice sharedDevice = sharedDevices.get(key);
-		if (sharedDevice == null) {
-			for (MidiDevice device : getMidiDevices(out)) {
-				if (name.equals(device.getDeviceInfo().getName())) {
-					sharedDevice = new SharedDevice(device);
-
-					sharedDevices.put(key, sharedDevice);
-
-					break;
+		for (PooledDevice device : devices) {
+			if (device.name().equals(name)) {
+				if (device.supports(out)) {
+					return device;
 				}
 			}
 		}
-
-		if (sharedDevice == null) {
-			throw new MidiUnavailableException(name);
-		}
-
-		return sharedDevice;
+		return null;
 	}
 
 	/**
-	 * Get all devices that support midi-out or midi-in.
+	 * Initialize the pool of devices for the given direction.
 	 * 
-	 * @param out
-	 *            if <code>true</code> devices should support midi-out,
-	 *            otherwise they should support midi-in.
-	 * @return list of devices
-	 * @throws MidiUnavailableException
+	 * @param direction
+	 *            {@link IN} or {@link OUT}
 	 */
-	private static MidiDevice[] getMidiDevices(boolean out)
-			throws MidiUnavailableException {
-
-		List<MidiDevice> devices = new ArrayList<MidiDevice>();
-
+	private static void initDevicePool(int direction) {
 		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
-
-			MidiDevice device = MidiSystem.getMidiDevice(info);
-			if (out && device.getMaxReceivers() != 0 || !out
-					&& device.getMaxTransmitters() != 0) {
-				devices.add(device);
+			PooledDevice device = getPooledDevice(info.getName(), direction);
+			if (device == null) {
+				try {
+					device = new PooledDevice(info.getName(), MidiSystem
+							.getMidiDevice(info));
+				} catch (MidiUnavailableException skipDevice) {
+					continue;
+				}
+				if (device.supports(direction)) {
+					devices.add(device);
+				}
 			}
 		}
-
-		return devices.toArray(new MidiDevice[0]);
 	}
 
 	/**
 	 * Get the name of all devices that support midi-out or midi-in.
 	 * 
-	 * @param out
-	 *            if <code>true</code> devices should support midi-out,
-	 *            otherwise they should support midi-in.
+	 * @param direction
+	 *            direction of midi, {@link IN} or {@link OUT}
 	 * @return list of device names
 	 */
-	public static String[] getMidiDeviceNames(boolean out) {
+	public static String[] getMidiDeviceNames(int direction) {
+		initDevicePool(direction);
 
-		try {
-			List<String> names = new ArrayList<String>();
-			for (MidiDevice device : getMidiDevices(out)) {
-				String name = device.getDeviceInfo().getName();
-				if (!names.contains(name)) {
-					names.add(name);
-				}
+		List<String> names = new ArrayList<String>();
+		for (PooledDevice device : devices) {
+			if (device.supports(direction)) {
+				names.add(device.name);
 			}
-
-			return names.toArray(new String[names.size()]);
-		} catch (MidiUnavailableException ex) {
-			return new String[0];
 		}
+
+		return names.toArray(new String[names.size()]);
 	}
 
-	public static boolean addLogger(MidiLogger logger, String name, boolean out)
-			throws MidiUnavailableException {
-		SharedDevice device = getSharedDevice(name, out);
+	public static boolean addLogger(MidiLogger logger, String name,
+			int direction) throws MidiUnavailableException {
+		PooledDevice device = getPooledDevice(name, direction);
 
-		if (out) {
-			device.outLoggers.add(logger);
-		} else {
-			device.inLoggers.add(logger);
-		}
+		device.addLogger(logger, direction);
 
 		return device.isOpen();
 	}
 
-	public static void removeLogger(MidiLogger logger, String name, boolean out)
-			throws MidiUnavailableException {
-		SharedDevice device = getSharedDevice(name, out);
+	public static void removeLogger(MidiLogger logger, String name,
+			int direction) throws MidiUnavailableException {
+		PooledDevice device = getPooledDevice(name, direction);
 
-		if (out) {
-			device.outLoggers.remove(logger);
-		} else {
-			device.inLoggers.remove(logger);
-		}
+		device.removeLogger(logger, direction);
 	}
 
 	private static class ProxyDevice extends DeviceWrapper {
 		private boolean open = false;
 
-		private ProxyDevice(SharedDevice device) {
+		private ProxyDevice(PooledDevice device) {
 			super(device);
 		}
 
@@ -217,36 +195,10 @@ public class DevicePool {
 		}
 	}
 
-	private static class DeviceKey {
-
-		private String deviceName;
-
-		private boolean out;
-
-		public DeviceKey(String deviceName, boolean out) {
-			this.deviceName = deviceName;
-			this.out = out;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-
-			if (!(obj instanceof DeviceKey)) {
-				return false;
-			}
-
-			DeviceKey key = (DeviceKey) obj;
-
-			return key.deviceName.equals(deviceName) && key.out == out;
-		}
-
-		@Override
-		public int hashCode() {
-			return deviceName.hashCode();
-		}
-	}
-
-	private static class SharedDevice extends DeviceWrapper {
+	/**
+	 * A pooled device.
+	 */
+	private static class PooledDevice extends DeviceWrapper {
 
 		private List<MidiLogger> inLoggers = new ArrayList<MidiLogger>();
 
@@ -254,8 +206,47 @@ public class DevicePool {
 
 		private int openCount;
 
-		public SharedDevice(MidiDevice device) {
+		private boolean out;
+
+		private boolean in;
+
+		private String name;
+
+		public PooledDevice(String name, MidiDevice device) {
 			super(device);
+
+			this.name = name;
+
+			this.out = device.getMaxReceivers() != 0;
+			this.in = device.getMaxTransmitters() != 0;
+		}
+
+		public String name() {
+			return name;
+		}
+
+		public boolean supports(int direction) {
+			return this.out && direction == OUT || this.in && direction == IN;
+		}
+
+		public void addLogger(MidiLogger logger, int direction) {
+			if (direction == IN) {
+				inLoggers.add(logger);
+			} else if (direction == OUT) {
+				outLoggers.add(logger);
+			} else {
+				throw new IllegalArgumentException("direction " + direction);
+			}
+		}
+
+		public void removeLogger(MidiLogger logger, int direction) {
+			if (direction == IN) {
+				inLoggers.remove(logger);
+			} else if (direction == OUT) {
+				outLoggers.remove(logger);
+			} else {
+				throw new IllegalArgumentException("direction " + direction);
+			}
 		}
 
 		@Override

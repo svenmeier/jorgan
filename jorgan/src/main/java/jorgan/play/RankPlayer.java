@@ -59,11 +59,16 @@ public class RankPlayer extends Player<Rank> {
 	protected void openImpl() {
 		Rank rank = getElement();
 
+		removeProblem(new Error("channels"));
+		removeProblem(new Warning("channels"));
 		removeProblem(new Error("output"));
 		if (rank.getOutput() != null) {
 			try {
-				channelPool = ChannelPool.instance(rank.getOutput());
-				channelPool.open();
+				// Important: assure successfull opening of MIDI device
+				// before storing reference in instance variable
+				ChannelPool toBeOpened = ChannelPool.instance(rank.getOutput());
+				toBeOpened.open();
+				channelPool = toBeOpened;
 			} catch (MidiUnavailableException ex) {
 				addProblem(new Error("output", rank.getOutput()));
 			}
@@ -120,9 +125,6 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void disengaged() {
-		removeProblem(new Error("channels"));
-		removeProblem(new Warning("channels"));
-
 		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
 			output(disengaged, context);
 		}
