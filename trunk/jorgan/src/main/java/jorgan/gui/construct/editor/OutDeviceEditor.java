@@ -32,7 +32,7 @@ public class OutDeviceEditor extends PropertyEditorSupport {
 	@Override
 	public String[] getTags() {
 		if (tags == null) {
-			String[] deviceNames = DevicePool.getMidiDeviceNames(true);
+			String[] deviceNames = DevicePool.getMidiDeviceNames(DevicePool.OUT);
 
 			tags = new String[1 + deviceNames.length];
 

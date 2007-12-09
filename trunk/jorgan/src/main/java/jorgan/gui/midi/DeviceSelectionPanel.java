@@ -45,13 +45,13 @@ public class DeviceSelectionPanel extends JPanel {
 
 	private DefaultMutableTreeNode root = new DefaultMutableTreeNode();
 
-	private DefaultMutableTreeNode in;
+	private DefaultMutableTreeNode inRoot;
 
-	private DefaultMutableTreeNode out;
+	private DefaultMutableTreeNode outRoot;
 
 	private String deviceName = null;
 
-	private boolean deviceOut = false;
+	private int direction;
 
 	/**
 	 * Create this panel.
@@ -59,9 +59,9 @@ public class DeviceSelectionPanel extends JPanel {
 	public DeviceSelectionPanel() {
 		setLayout(new BorderLayout());
 
-		in = new DefaultMutableTreeNode(config.get("in").read(
+		inRoot = new DefaultMutableTreeNode(config.get("inRoot").read(
 				new MessageBuilder()).build());
-		out = new DefaultMutableTreeNode(config.get("out").read(
+		outRoot = new DefaultMutableTreeNode(config.get("outRoot").read(
 				new MessageBuilder()).build());
 
 		deviceTree.setShowsRootHandles(true);
@@ -70,23 +70,23 @@ public class DeviceSelectionPanel extends JPanel {
 		deviceTree.setCellRenderer(new MidiDeviceCell());
 		deviceTree.setCellEditor(new MidiDeviceCell());
 		deviceTree.setModel(createModel());
-		deviceTree.expandPath(new TreePath(in.getPath()));
-		deviceTree.expandPath(new TreePath(out.getPath()));
+		deviceTree.expandPath(new TreePath(inRoot.getPath()));
+		deviceTree.expandPath(new TreePath(outRoot.getPath()));
 		add(new JScrollPane(deviceTree), BorderLayout.CENTER);
 	}
 
 	protected TreeModel createModel() {
-		root.add(in);
-		root.add(out);
+		root.add(inRoot);
+		root.add(outRoot);
 
-		String[] inDevices = DevicePool.getMidiDeviceNames(false);
+		String[] inDevices = DevicePool.getMidiDeviceNames(DevicePool.IN);
 		for (int i = 0; i < inDevices.length; i++) {
-			in.add(new DefaultMutableTreeNode(inDevices[i], false));
+			inRoot.add(new DefaultMutableTreeNode(inDevices[i], false));
 		}
 
-		String[] outDevices = DevicePool.getMidiDeviceNames(true);
+		String[] outDevices = DevicePool.getMidiDeviceNames(DevicePool.OUT);
 		for (int o = 0; o < outDevices.length; o++) {
-			out.add(new DefaultMutableTreeNode(outDevices[o], false));
+			outRoot.add(new DefaultMutableTreeNode(outDevices[o], false));
 		}
 
 		return new DefaultTreeModel(root, true) {
@@ -97,9 +97,10 @@ public class DeviceSelectionPanel extends JPanel {
 							.getLastPathComponent();
 
 					setDevice((String) node.getUserObject(),
-							node.getParent() == out);
+							node.getParent() == outRoot ? DevicePool.OUT
+									: DevicePool.IN);
 				} else {
-					setDevice(null, false);
+					setDevice(null, DevicePool.IN);
 				}
 			}
 		};
@@ -114,31 +115,32 @@ public class DeviceSelectionPanel extends JPanel {
 	 *            is the device selected for <code>out</code> of
 	 *            <code>in</code>
 	 */
-	public void setDevice(String name, boolean out) {
+	public void setDevice(String name, int direction) {
 		DefaultTreeModel model = (DefaultTreeModel) deviceTree.getModel();
 
 		if (this.deviceName != null) {
 			DefaultMutableTreeNode node = getNode(this.deviceName,
-					this.deviceOut);
+					this.direction);
 			if (node != null) {
 				model.nodeChanged(node);
 			}
 		}
 
 		this.deviceName = name;
-		this.deviceOut = out;
+		this.direction = direction;
 
 		if (this.deviceName != null) {
 			DefaultMutableTreeNode node = getNode(this.deviceName,
-					this.deviceOut);
+					this.direction);
 			if (node != null) {
 				model.nodeChanged(node);
 			}
 		}
 	}
 
-	protected DefaultMutableTreeNode getNode(String name, boolean out) {
-		DefaultMutableTreeNode parent = out ? this.out : this.in;
+	protected DefaultMutableTreeNode getNode(String name, int direction) {
+		DefaultMutableTreeNode parent = (direction == DevicePool.OUT) ? this.outRoot
+				: this.inRoot;
 		for (int n = 0; n < parent.getChildCount(); n++) {
 			DefaultMutableTreeNode child = (DefaultMutableTreeNode) parent
 					.getChildAt(n);
@@ -154,8 +156,8 @@ public class DeviceSelectionPanel extends JPanel {
 	 * 
 	 * @return <code>true</code> if selected for out
 	 */
-	public boolean getDeviceOut() {
-		return deviceOut;
+	public int getDirection() {
+		return direction;
 	}
 
 	/**
@@ -174,7 +176,9 @@ public class DeviceSelectionPanel extends JPanel {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
 
 			return node.getUserObject() == deviceName
-					&& ((node.getParent() == out) == deviceOut);
+					&& (direction == DevicePool.OUT
+							&& (node.getParent() == outRoot) || direction == DevicePool.IN
+							&& (node.getParent() == inRoot));
 		}
 	}
 }

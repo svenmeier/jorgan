@@ -25,8 +25,8 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
-import jorgan.disposition.Keyboard.Press;
-import jorgan.disposition.Keyboard.Release;
+import jorgan.disposition.Keyboard.PressKey;
+import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
@@ -71,19 +71,19 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 		removeProblem(new Warning("input"));
 
-		String device = keyboard.getInput();
-		if (device != null) {
+		String input = keyboard.getInput();
+		if (input != null) {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(device, false);
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(input, DevicePool.IN);
 				toBeOpened.open();
 				this.in = toBeOpened;
 
 				transmitter = this.in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("input", device));
+				addProblem(new Error("input", input));
 			}
 		}
 	}
@@ -122,11 +122,11 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	@Override
 	protected void input(InputMessage message, Context context)
 			throws ProcessingException {
-		if (message instanceof Press) {
-			press(Math.round(context.get(Press.PITCH)), Math.round(context
-					.get(Press.VELOCITY)));
-		} else if (message instanceof Release) {
-			release(Math.round(context.get(Release.PITCH)));
+		if (message instanceof PressKey) {
+			press(Math.round(context.get(PressKey.PITCH)), Math.round(context
+					.get(PressKey.VELOCITY)));
+		} else if (message instanceof ReleaseKey) {
+			release(Math.round(context.get(ReleaseKey.PITCH)));
 		} else {
 			super.input(message, context);
 		}

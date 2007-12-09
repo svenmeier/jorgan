@@ -112,7 +112,7 @@ public abstract class ChannelPool {
 
 			this.deviceName = deviceName;
 
-			this.device = DevicePool.getMidiDevice(deviceName, true);
+			this.device = DevicePool.getMidiDevice(deviceName, DevicePool.OUT);
 		}
 
 		@Override

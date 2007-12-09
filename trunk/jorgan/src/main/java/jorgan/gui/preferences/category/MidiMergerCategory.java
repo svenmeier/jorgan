@@ -207,7 +207,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		// create inputs for all devices (excluding MidiMerger)
 		allInputs = new ArrayList<MergeInput>();
 
-		String[] devices = DevicePool.getMidiDeviceNames(false);
+		String[] devices = DevicePool.getMidiDeviceNames(DevicePool.IN);
 		for (String device : devices) {
 			if (!MidiMergerProvider.INFO.getName().equals(device)) {
 				allInputs.add(new MergeInput(device, -1));

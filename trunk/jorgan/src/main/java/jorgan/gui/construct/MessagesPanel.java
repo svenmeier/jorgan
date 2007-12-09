@@ -161,8 +161,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		int index = table.getSelectedRow();
 		Message message = messages.get(index);
 
-		message.init("filter " + shortMessage.getStatus(), "filter "
-				+ shortMessage.getData1(), "filter " + shortMessage.getData2());
+		message.init("equal " + shortMessage.getStatus(), "equal "
+				+ shortMessage.getData1(), "equal " + shortMessage.getData2());
 
 		updateMessages();
 	}
@@ -372,7 +372,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		private void record(String deviceName) {
 			try {
-				MidiDevice device = DevicePool.getMidiDevice(deviceName, false);
+				MidiDevice device = DevicePool.getMidiDevice(deviceName, DevicePool.IN);
 
 				device.open();
 

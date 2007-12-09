@@ -72,8 +72,11 @@ public class ConsolePlayer extends Player<Console> {
 		String input = console.getInput();
 		if (input != null) {
 			try {
-				in = DevicePool.getMidiDevice(input, false);
-				in.open();
+				// Important: assure successfull opening of MIDI device
+				// before storing reference in instance variable
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(input, DevicePool.IN);
+				toBeOpened.open();
+				this.in = toBeOpened;
 
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
@@ -85,8 +88,11 @@ public class ConsolePlayer extends Player<Console> {
 		String output = console.getOutput();
 		if (output != null) {
 			try {
-				out = DevicePool.getMidiDevice(output, true);
-				out.open();
+				// Important: assure successfull opening of MIDI device
+				// before storing reference in instance variable
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(output, DevicePool.OUT);
+				toBeOpened.open();
+				this.out = toBeOpened;
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
