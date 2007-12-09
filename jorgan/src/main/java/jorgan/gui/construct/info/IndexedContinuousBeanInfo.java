@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.IntegerEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.IndexedContinuous}.
  */
-public class IndexedContinuousBeanInfo extends ElementBeanInfo {
+public class IndexedContinuousBeanInfo extends ContinuousBeanInfo {
 
 	@Override
 	protected void registerProperties() {
