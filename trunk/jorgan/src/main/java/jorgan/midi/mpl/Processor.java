@@ -57,6 +57,8 @@ public class Processor {
 		term = term.substring(space + 1).trim();
 		if ("equal".equals(type)) {
 			return new Equal(term);
+		} else if ("notEqual".equals(type)) {
+			return new NotEqual(term);
 		} else if ("greaterEqual".equals(type)) {
 			return new GreaterEqual(term);
 		} else if ("greater".equals(type)) {
@@ -264,6 +266,18 @@ public class Processor {
 		@Override
 		protected boolean isTrue(float condition, float value) {
 			return value > condition;
+		}
+	}
+
+	private class NotEqual extends Condition {
+
+		public NotEqual(String term) throws Exception {
+			super(term);
+		}
+
+		@Override
+		protected boolean isTrue(float condition, float value) {
+			return value != condition;
 		}
 	}
 
