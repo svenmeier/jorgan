@@ -103,7 +103,10 @@ public class DescriptionPanel extends DockedPanel implements OrganAware {
 
 	private void write() {
 		if (element != null) {
-			element.setDescription(textArea.getText());
+			String description = textArea.getText();
+			if (!element.getDescription().equals(description)) {
+				element.setDescription(description);
+			}
 		}
 	}
 
