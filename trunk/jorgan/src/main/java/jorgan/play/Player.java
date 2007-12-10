@@ -27,8 +27,8 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Message.InputMessage;
-import jorgan.disposition.Message.OutputMessage;
+import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;

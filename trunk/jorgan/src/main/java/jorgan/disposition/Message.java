@@ -88,10 +88,4 @@ public abstract class Message implements Comparable<Message> {
 	}
 
 	protected abstract int getOrder();
-
-	public static abstract class InputMessage extends Message {
-	}
-
-	public static abstract class OutputMessage extends Message {
-	}
 }

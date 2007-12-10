@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 
 public interface Filter {
 

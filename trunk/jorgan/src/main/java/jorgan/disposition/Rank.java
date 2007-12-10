@@ -20,12 +20,10 @@ package jorgan.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Message.OutputMessage;
-
 /**
  * A rank.
  */
-public class Rank extends Element implements Engageable, Displayable {
+public class Rank extends Element implements Engageable, Displayable, Output {
 
 	private String output;
 

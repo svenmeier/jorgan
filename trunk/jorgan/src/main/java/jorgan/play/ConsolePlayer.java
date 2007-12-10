@@ -26,7 +26,7 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Reference;
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Processor.Context;

@@ -25,8 +25,8 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.ContinuousFilter.Engaging;
-import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.Filter.Intercept;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.mpl.ProcessingException;

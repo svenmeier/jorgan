@@ -20,8 +20,8 @@ package jorgan.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Message.InputMessage;
-import jorgan.disposition.Message.OutputMessage;
+import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Output.OutputMessage;
 
 /**
  * Abstract base class for an activateable elements.

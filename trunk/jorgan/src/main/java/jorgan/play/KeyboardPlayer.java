@@ -25,9 +25,9 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
-import jorgan.disposition.Message.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.ProcessingException;
@@ -123,10 +123,21 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	protected void input(InputMessage message, Context context)
 			throws ProcessingException {
 		if (message instanceof PressKey) {
-			press(Math.round(context.get(PressKey.PITCH)), Math.round(context
-					.get(PressKey.VELOCITY)));
+			int pitch = Math.round(context.get(PressKey.PITCH));
+			if (pitch < 0 || pitch > 127) {
+				throw new ProcessingException("" + pitch);
+			}
+			int velocity = Math.round(context.get(PressKey.VELOCITY));
+			if (velocity < 0 || velocity > 127) {
+				throw new ProcessingException("" + velocity);
+			}
+			press(pitch, velocity);
 		} else if (message instanceof ReleaseKey) {
-			release(Math.round(context.get(ReleaseKey.PITCH)));
+			int pitch = Math.round(context.get(ReleaseKey.PITCH));
+			if (pitch < 0 || pitch > 127) {
+				throw new ProcessingException("" + pitch);
+			}
+			release(pitch);
 		} else {
 			super.input(message, context);
 		}

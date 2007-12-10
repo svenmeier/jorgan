@@ -141,7 +141,7 @@ public class Processor {
 		protected ValueNode(String term) throws Exception {
 			int space = term.indexOf(' ');
 			if (space == -1) {
-				if (Character.isDigit(term.charAt(0))) {
+				if (Character.isDigit(term.charAt(0)) || '-' == term.charAt(0)) {
 					value = Float.parseFloat(term);
 				} else {
 					name = term;
