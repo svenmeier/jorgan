@@ -20,7 +20,7 @@ package jorgan.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Message.OutputMessage;
+import jorgan.disposition.Output.OutputMessage;
 
 /**
  * An activateable filter.

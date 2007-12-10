@@ -27,7 +27,7 @@ import jorgan.disposition.ActivateableFilter;
 import jorgan.disposition.ActivateableFilter.Disengaged;
 import jorgan.disposition.ActivateableFilter.Engaged;
 import jorgan.disposition.Filter.Intercept;
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.mpl.ProcessingException;

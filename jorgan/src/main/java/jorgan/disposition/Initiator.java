@@ -20,7 +20,7 @@ package jorgan.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 
 public abstract class Initiator extends Momentary {
 

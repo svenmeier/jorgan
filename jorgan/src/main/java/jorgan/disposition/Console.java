@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A console.
  */
-public class Console extends Input {
+public class Console extends Input implements Output {
 
 	/**
 	 * The output device.
@@ -164,5 +164,5 @@ public class Console extends Input {
 		references.add(0, reference);
 
 		fireElementChanged(true);
-	}
+	}	
 }

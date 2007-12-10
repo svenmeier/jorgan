@@ -24,7 +24,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
@@ -47,6 +47,9 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 		if (message instanceof Change) {
 			float value = context.get(Change.VALUE);
+			if (value < 0.0f || value > 1.0f) {
+				throw new ProcessingException("" + value);
+			}
 
 			if (Math.abs(continuous.getValue() - value) > continuous
 					.getThreshold()) {

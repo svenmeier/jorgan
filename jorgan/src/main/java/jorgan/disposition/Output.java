@@ -19,22 +19,14 @@
 package jorgan.disposition;
 
 /**
- * An input.
+ * An output.
  */
-public abstract class Input extends Element {
+public interface Output {
 
-	private String input;
-
-	public String getInput() {
-		return input;
-	}
+	public String getOutput();
 	
-	public void setInput(String input) {
-		this.input = input;
-
-		fireElementChanged(true);
-	}
-	
-	public static abstract class InputMessage extends Message {
+	public void setOutput(String output);
+		
+	public static abstract class OutputMessage extends Message {
 	}
 }

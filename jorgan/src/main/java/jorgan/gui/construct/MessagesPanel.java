@@ -45,7 +45,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
 import jorgan.disposition.Message;
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganAware;

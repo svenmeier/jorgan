@@ -20,7 +20,7 @@ package jorgan.play;
 
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Initiator.Initiate;
-import jorgan.disposition.Message.InputMessage;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 

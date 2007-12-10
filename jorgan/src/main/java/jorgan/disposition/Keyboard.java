@@ -20,8 +20,6 @@ package jorgan.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Message.InputMessage;
-
 /**
  * A keyboard.
  */
