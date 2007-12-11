@@ -30,7 +30,6 @@ import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -76,7 +75,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(input, DevicePool.IN);
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(input,
+						DevicePool.IN);
 				toBeOpened.open();
 				this.in = toBeOpened;
 
@@ -120,22 +120,24 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
+	protected void input(InputMessage message, Context context) {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				throw new ProcessingException("" + pitch);
+				addProblem(new Error("message.pitch", pitch));
+				return;
 			}
 			int velocity = Math.round(context.get(PressKey.VELOCITY));
 			if (velocity < 0 || velocity > 127) {
-				throw new ProcessingException("" + velocity);
+				addProblem(new Error("message.velocity", pitch));
+				return;
 			}
 			press(pitch, velocity);
 		} else if (message instanceof ReleaseKey) {
 			int pitch = Math.round(context.get(ReleaseKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				throw new ProcessingException("" + pitch);
+				addProblem(new Error("message.pitch", pitch));
+				return;
 			}
 			release(pitch);
 		} else {
@@ -182,6 +184,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	public void received(ShortMessage message) {
-		input(message, InputMessage.class, context);
+		input(message, context);
 	}
 }

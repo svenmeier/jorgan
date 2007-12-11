@@ -18,82 +18,15 @@
  */
 package jorgan.swing.table;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.swing.Icon;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
- * A renderer for icons in a {@link javax.swing.JTable}. <br>
- * This renderer can be customized to render cells of a table according to a
- * defined mapping from values to icons, see {@link #IconTableCellRenderer(Map)}.
- * <br>
- * For example the attribute of an object could be representated by a graphical
- * representation, here the importance of a message:
- * 
- * <pre>
- *         0  -&gt;  exclamationmark.gif
- *         1  -&gt;  null
- *         2  -&gt;  downarrow.gif
- * </pre>
- * 
- * Another usage could be to map the classes of objects in the rows of the table
- * to small representativ icons:
- * 
- * <pre>
- *         Mail.class        -&gt; mail.gif
- *         Appointment.class -&gt; appointment.gif
- *         News.class        -&gt; news.gif
- * </pre>
- * 
- * (For this to work the TableModel must return the objects classes in the
- * corresponding column.)
+ * A renderer for icons in a {@link javax.swing.JTable}.
  */
-public class IconTableCellRenderer extends DefaultTableCellRenderer {
-
-	private Icon defaultIcon;
-
-	private Map icons;
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param defaultIcon
-	 *            icon to use for all values
-	 */
-	public IconTableCellRenderer(Icon defaultIcon) {
-
-		this(defaultIcon, new HashMap<Object, Icon>());
-	}
-
-	/**
-	 * Constructor. <br>
-	 * The first icon in the map is used for all unknown values.
-	 * 
-	 * @param icons
-	 *            a map defining the mapping from values to icons
-	 */
-	public IconTableCellRenderer(Map<?, Icon> icons) {
-
-		this(icons.values().iterator().next(), icons);
-	}
-
-	/**
-	 * Constructor.
-	 * 
-	 * @param defaultIcon
-	 *            icon to use for all unknown values
-	 * @param icons
-	 *            a map defining the mapping from values to icons
-	 */
-	public IconTableCellRenderer(Icon defaultIcon, Map<?, Icon> icons) {
-
-		this.defaultIcon = defaultIcon;
-		this.icons = icons;
-	}
+public abstract class IconTableCellRenderer extends DefaultTableCellRenderer {
 
 	/**
 	 * Overriden for icon specific behaviour.
@@ -101,15 +34,17 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	@Override
 	protected void setValue(Object value) {
 
-		Icon icon = defaultIcon;
-		if (value != null) {
-			icon = (Icon) icons.get(value);
-			if (icon == null) {
-				icon = defaultIcon;
-			}
-		}
-		setIcon(icon);
+		setIcon(getIcon(value));
 	}
+
+	/**
+	 * Get the icon for the given value.
+	 * 
+	 * @param value
+	 *            value to get icon for
+	 * @return icon
+	 */
+	protected abstract Icon getIcon(Object value);
 
 	/**
 	 * Convinience method for configuration of a JTable. </br> The renderer is
@@ -123,7 +58,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 */
 	public void configureTableColumn(JTable table, int columnIndex) {
 
-		getTableCellRendererComponent(table, defaultIcon, false, false, 0, 0);
+		getTableCellRendererComponent(table, getIcon(null), false, false, 0, 0);
 
 		columnIndex = table.convertColumnIndexToView(columnIndex);
 

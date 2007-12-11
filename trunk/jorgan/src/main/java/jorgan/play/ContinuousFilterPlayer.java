@@ -26,10 +26,8 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -45,12 +43,11 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	public Channel filter(Channel channel) {
-		channel = new ChannelFilter(channel);
+		ChannelFilter channelFilter = new ChannelFilter(channel);
 
-		// TODO would be sufficient to handle changing on new channel only
-		engaging();
+		channelFilter.engaging();
 
-		return channel;
+		return channelFilter;
 	}
 
 	@Override
@@ -63,34 +60,19 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			engaging();
-		}
-	}
-
-	private void engaging() {
-		ContinuousFilter filter = getElement();
-
-		for (Engaging engaging : getElement().getMessages(Engaging.class)) {
 			for (ChannelFilter channel : channels) {
-				channel.set(Engaging.VALUE, filter.getValue());
-				output(engaging, channel);
+				channel.engaging();
 			}
 		}
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
-		if (message instanceof Intercept) {
-			engaging();
+	public void output(ShortMessage message, Context context) {
+		if (context instanceof ChannelFilter) {
+			((ChannelFilter) context).sendFilteredMessage(message);
 		} else {
-			super.input(message, context);
+			super.output(message, context);
 		}
-	}
-
-	@Override
-	protected void output(ShortMessage message, Context context) {
-		((ChannelFilter) context).sendFilteredMessage(message);
 	}
 
 	private class ChannelFilter extends PlayerContext implements Channel {
@@ -103,12 +85,32 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			channels.add(this);
 		}
 
-		public void sendMessage(ShortMessage message) {
-			if (!input(message, Intercept.class, this)) {
-				channel.sendMessage(message);
+		public void sendMessage(ShortMessage shortMessage) {
+			ContinuousFilter element = getElement();
+
+			boolean filtered = false;
+
+			for (Intercept message : element.getMessages(Intercept.class)) {
+				if (process(shortMessage, message, this)) {
+					engaging();
+					filtered = true;
+				}
+			}
+
+			if (!filtered) {
+				channel.sendMessage(shortMessage);
 			}
 		}
 
+		private void engaging() {
+			ContinuousFilter filter = getElement();
+
+			for (Engaging engaging : getElement().getMessages(Engaging.class)) {
+				set(Engaging.VALUE, filter.getValue());
+				output(engaging, this);
+			}
+		}
+		
 		public void sendFilteredMessage(ShortMessage message) {
 			channel.sendMessage(message);
 		}

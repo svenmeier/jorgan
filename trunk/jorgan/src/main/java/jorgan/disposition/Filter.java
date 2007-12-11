@@ -18,11 +18,9 @@
  */
 package jorgan.disposition;
 
-import jorgan.disposition.Input.InputMessage;
-
 public interface Filter {
 
-	public static class Intercept extends InputMessage {
+	public static class Intercept extends Message {
 		@Override
 		protected int getOrder() {
 			return 5;

@@ -21,9 +21,7 @@ package jorgan.gui.construct;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
@@ -46,6 +44,7 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganAware;
@@ -74,9 +73,9 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
 			.getResource("img/input.gif"));
 
-	/**
-	 * Icon used for indication of an error.
-	 */
+	private static final Icon interceptIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/intercept.gif"));
+
 	private static final Icon outputIcon = new ImageIcon(OrganPanel.class
 			.getResource("img/output.gif"));
 
@@ -119,11 +118,18 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		table.setModel(tableModel);
 		table.getSelectionModel().addListSelectionListener(removeAction);
 		table.getSelectionModel().addListSelectionListener(recordAction);
-		Map<Boolean, Icon> iconMap = new HashMap<Boolean, Icon>();
-		iconMap.put(true, inputIcon);
-		iconMap.put(false, outputIcon);
-		new IconTableCellRenderer(inputIcon, iconMap).configureTableColumn(
-				table, 0);
+		new IconTableCellRenderer() {
+			@Override
+			protected Icon getIcon(Object value) {
+				if (value instanceof InputMessage) {
+					return inputIcon;
+				} else if (value instanceof OutputMessage) {
+					return outputIcon;
+				} else {
+					return interceptIcon;
+				}
+			}
+		}.configureTableColumn(table, 0);
 		table.getColumnModel().getColumn(2).setCellEditor(
 				new StringCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(
@@ -246,7 +252,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 			switch (columnIndex) {
 			case 0:
-				return InputMessage.class.isAssignableFrom(message.getClass());
+				return message;
 			case 1:
 				return Elements.getDisplayName(message.getClass());
 			case 2:
@@ -372,7 +378,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		private void record(String deviceName) {
 			try {
-				MidiDevice device = DevicePool.getMidiDevice(deviceName, DevicePool.IN);
+				MidiDevice device = DevicePool.getMidiDevice(deviceName,
+						DevicePool.IN);
 
 				device.open();
 

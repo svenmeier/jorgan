@@ -18,17 +18,13 @@
  */
 package jorgan.play;
 
-import java.util.Set;
-
 import jorgan.disposition.Activateable;
-import jorgan.disposition.Console;
 import jorgan.disposition.Activateable.Activate;
 import jorgan.disposition.Activateable.Activated;
 import jorgan.disposition.Activateable.Deactivate;
 import jorgan.disposition.Activateable.Deactivated;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -43,8 +39,7 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
+	protected void input(InputMessage message, Context context) {
 		Activateable activateable = getElement();
 
 		if (message instanceof Activate) {
@@ -76,28 +71,14 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 	}
 
 	private void activated() {
-		Activateable activateable = getElement();
-
-		Set<Console> consoles = activateable.getReferrer(Console.class);
-
 		for (Activated message : getElement().getMessages(Activated.class)) {
-			for (Console console : consoles) {
-				Player player = getOrganPlay().getPlayer(console);
-				player.output(message, context);
-			}
+			output(message, context);
 		}
 	}
 
 	private void deactivated() {
-		Activateable activateable = getElement();
-
-		Set<Console> consoles = activateable.getReferrer(Console.class);
-
 		for (Deactivated message : getElement().getMessages(Deactivated.class)) {
-			for (Console console : consoles) {
-				Player player = getOrganPlay().getPlayer(console);
-				player.output(message, context);
-			}
+			output(message, context);
 		}
 	}
 }

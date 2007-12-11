@@ -20,9 +20,7 @@ package jorgan.gui.play;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -89,10 +87,16 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
 		TableUtils.pleasantLookAndFeel(table);
-		Map<Class, Icon> iconMap = new HashMap<Class, Icon>();
-		iconMap.put(Warning.class, warningIcon);
-		iconMap.put(jorgan.play.Error.class, errorIcon);
-		new IconTableCellRenderer(iconMap).configureTableColumn(table, 0);
+		new IconTableCellRenderer() {
+			@Override
+			protected Icon getIcon(Object value) {
+				if (value instanceof Warning) {
+					return warningIcon;
+				} else {
+					return errorIcon;
+				}
+			}
+		}.configureTableColumn(table, 0);
 		setScrollableBody(table, true, false);
 
 		popup.add(gotoAction);
@@ -176,7 +180,7 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 
 			switch (columnIndex) {
 			case 0:
-				return row.getProblem().getClass();
+				return row.getProblem();
 			case 1:
 				return row.getMessage();
 			case 2:
