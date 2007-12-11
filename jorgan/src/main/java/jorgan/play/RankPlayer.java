@@ -134,7 +134,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void output(ShortMessage message, Context context) {
+	public void output(ShortMessage message, Context context) {
 		channel.sendMessage(message);
 	}
 

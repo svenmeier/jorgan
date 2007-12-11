@@ -26,7 +26,6 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Reference;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Processor.Context;
@@ -74,7 +73,8 @@ public class ConsolePlayer extends Player<Console> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(input, DevicePool.IN);
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(input,
+						DevicePool.IN);
 				toBeOpened.open();
 				this.in = toBeOpened;
 
@@ -90,7 +90,8 @@ public class ConsolePlayer extends Player<Console> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(output, DevicePool.OUT);
+				MidiDevice toBeOpened = DevicePool.getMidiDevice(output,
+						DevicePool.OUT);
 				toBeOpened.open();
 				this.out = toBeOpened;
 
@@ -150,13 +151,13 @@ public class ConsolePlayer extends Player<Console> {
 
 			Player<?> player = getOrganPlay().getPlayer(reference.getElement());
 			if (player != null) {
-				player.input(message, InputMessage.class, context);
+				player.input(message, context);
 			}
 		}
 	}
 
 	@Override
-	protected void output(ShortMessage message, Context context) {
+	public void output(ShortMessage message, Context context) {
 		if (receiver != null) {
 			receiver.send(message, -1);
 		}

@@ -21,7 +21,6 @@ package jorgan.play;
 import jorgan.disposition.Initiator;
 import jorgan.disposition.Initiator.Initiate;
 import jorgan.disposition.Input.InputMessage;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -34,8 +33,7 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
+	protected void input(InputMessage message, Context context) {
 		Initiator initiator = getElement();
 
 		if (message instanceof Initiate) {

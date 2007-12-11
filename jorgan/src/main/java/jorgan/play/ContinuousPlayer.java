@@ -18,15 +18,11 @@
  */
 package jorgan.play;
 
-import java.util.Set;
-
-import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -41,14 +37,14 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
+	protected void input(InputMessage message, Context context) {
 		Continuous continuous = getElement();
 
 		if (message instanceof Change) {
 			float value = context.get(Change.VALUE);
 			if (value < 0.0f || value > 1.0f) {
-				throw new ProcessingException("" + value);
+				addProblem(new Error("message.value", value));
+				return;
 			}
 
 			if (Math.abs(continuous.getValue() - value) > continuous
@@ -73,13 +69,8 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		Continuous continuous = getElement();
 		context.set(Changed.VALUE, continuous.getValue());
 
-		Set<Console> consoles = continuous.getReferrer(Console.class);
-
-		for (Changed changed : getElement().getMessages(Changed.class)) {
-			for (Console console : consoles) {
-				Player player = getOrganPlay().getPlayer(console);
-				player.output(changed, context);
-			}
+		for (Changed message : getElement().getMessages(Changed.class)) {
+			output(message, context);
 		}
 	}
 }

@@ -82,7 +82,7 @@ public abstract class Continuous extends Element implements Displayable {
 	public static class Change extends InputMessage {
 
 		public static final String VALUE = "value";
-		
+
 		@Override
 		protected int getOrder() {
 			return 0;
@@ -92,7 +92,7 @@ public abstract class Continuous extends Element implements Displayable {
 	public static class Changed extends OutputMessage {
 
 		public static final String VALUE = "value";
-		
+
 		@Override
 		protected int getOrder() {
 			return 10;

@@ -27,7 +27,7 @@ public class Console extends Input implements Output {
 	 * The output device.
 	 */
 	private String output;
-	
+
 	/**
 	 * The skin.
 	 */
@@ -164,5 +164,5 @@ public class Console extends Input implements Output {
 		references.add(0, reference);
 
 		fireElementChanged(true);
-	}	
+	}
 }

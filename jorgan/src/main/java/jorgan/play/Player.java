@@ -22,11 +22,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
@@ -102,8 +105,8 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
-		removeProblem(new Error("messages"));
-		
+		removeProblem(new Error("message"));
+
 		openImpl();
 	}
 
@@ -192,46 +195,25 @@ public abstract class Player<E extends Element> {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		removeProblem(new Error("messages"));
+		removeProblem(new Error("message"));
 
 		if (!element.hasMessages() && warnMessages) {
-			addProblem(new Warning("messages"));
+			addProblem(new Warning("message"));
 		} else {
-			removeProblem(new Warning("messages"));
+			removeProblem(new Warning("message"));
 		}
 	}
 
-	public final boolean input(ShortMessage shortMessage,
-			Class<? extends InputMessage> messageClazz, Context context) {
-		boolean accepted = false;
-
+	public final void input(ShortMessage shortMessage, Context context) {
 		Element element = getElement();
 
-		try {
-			for (InputMessage message : element.getMessages(messageClazz)) {
-				if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
-						context))) {
-					continue;
-				}
-				if (Float.isNaN(message.processData1(shortMessage.getData1(),
-						context))) {
-					continue;
-				}
-				if (Float.isNaN(message.processData2(shortMessage.getData2(),
-						context))) {
-					continue;
-				}
-
+		for (InputMessage message : element.getMessages(InputMessage.class)) {
+			if (process(shortMessage, message, context)) {
 				input(message, context);
 
 				organPlay.fireInputAccepted();
-				accepted = true;
 			}
-		} catch (ProcessingException ex) {
-			addProblem(new Error("messages", ex.getPattern()));
 		}
-
-		return accepted;
 	}
 
 	/**
@@ -240,8 +222,7 @@ public abstract class Player<E extends Element> {
 	 * @param message
 	 *            message
 	 */
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
+	protected void input(InputMessage message, Context context) {
 
 	}
 
@@ -258,7 +239,7 @@ public abstract class Player<E extends Element> {
 
 				output(shortMessage, context);
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error("messages", status + "," + data1 + ","
+				addProblem(new Error("message.midi", status + "," + data1 + ","
 						+ data2));
 			}
 
@@ -266,14 +247,22 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addProblem(new Error("messages", ex.getPattern()));
+			addProblem(new Error("message", ex.getPattern()));
 		}
 	}
 
 	/**
-	 * Write output - default implementation does nothing.
+	 * Output a message - default implementation forwards message to referring
+	 * {@link Console}s.
 	 */
-	protected void output(ShortMessage message, Context context) {
+	public void output(ShortMessage message, Context context) {
+		Element element = getElement();
+
+		Set<Console> consoles = element.getReferrer(Console.class);
+		for (Console console : consoles) {
+			Player player = getOrganPlay().getPlayer(console);
+			player.output(message, context);
+		}
 	}
 
 	public E getElement() {
@@ -320,4 +309,25 @@ public abstract class Player<E extends Element> {
 			map.clear();
 		}
 	};
+	
+	public boolean process(ShortMessage shortMessage, Message message, Context context) {
+		try {
+			if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
+					context))) {
+				return false;
+			}
+			if (Float.isNaN(message.processData1(shortMessage.getData1(),
+					context))) {
+				return false;
+			}
+			if (Float.isNaN(message.processData2(shortMessage.getData2(),
+					context))) {
+				return false;
+			}
+		} catch (ProcessingException ex) {
+			addProblem(new Error("message", ex.getPattern()));
+			return false;
+		}
+		return true;
+	}
 }

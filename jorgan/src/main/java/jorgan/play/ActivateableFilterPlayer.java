@@ -27,10 +27,8 @@ import jorgan.disposition.ActivateableFilter;
 import jorgan.disposition.ActivateableFilter.Disengaged;
 import jorgan.disposition.ActivateableFilter.Engaged;
 import jorgan.disposition.Filter.Intercept;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor.Context;
 
 /**
@@ -46,18 +44,16 @@ public class ActivateableFilterPlayer extends
 	}
 
 	public Channel filter(Channel channel) {
-		channel = new ChannelFilter(channel);
+		ChannelFilter channelFilter = new ChannelFilter(channel);
 
-		// TODO would be sufficient to handle engaged/disengaged on new channel
-		// only
 		ActivateableFilter filter = getElement();
 		if (filter.isEngaged()) {
-			engaged();
+			channelFilter.engaged();
 		} else {
-			disengaged();
+			channelFilter.disengaged();
 		}
 
-		return channel;
+		return channelFilter;
 	}
 
 	@Override
@@ -66,48 +62,24 @@ public class ActivateableFilterPlayer extends
 
 		if (isOpen()) {
 			ActivateableFilter filter = getElement();
-			if (filter.isEngaged()) {
-				engaged();
-			} else {
-				disengaged();
-			}
-		}
-	}
 
-	private void engaged() {
-		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 			for (ChannelFilter channel : channels) {
-				output(engaged, channel);
-			}
-		}
-	}
-
-	private void disengaged() {
-		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			for (ChannelFilter channel : channels) {
-				output(disengaged, channel);
+				if (filter.isEngaged()) {
+					channel.engaged();
+				} else {
+					channel.disengaged();
+				}
 			}
 		}
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context)
-			throws ProcessingException {
-		if (message instanceof Intercept) {
-			ActivateableFilter filter = getElement();
-			if (filter.isEngaged()) {
-				engaged();
-			} else {
-				disengaged();
-			}
+	public void output(ShortMessage message, Context context) {
+		if (context instanceof ChannelFilter) {
+			((ChannelFilter) context).sendFilteredMessage(message);
 		} else {
-			super.input(message, context);
+			super.output(message, context);
 		}
-	}
-
-	@Override
-	protected void output(ShortMessage message, Context context) {
-		((ChannelFilter) context).sendFilteredMessage(message);
 	}
 
 	@Override
@@ -127,9 +99,37 @@ public class ActivateableFilterPlayer extends
 			channels.add(this);
 		}
 
-		public void sendMessage(ShortMessage message) {
-			if (!input(message, Intercept.class, this)) {
-				channel.sendMessage(message);
+		public void sendMessage(ShortMessage shortMessage) {
+			ActivateableFilter element = getElement();
+
+			boolean filtered = false;
+
+			for (Intercept message : element.getMessages(Intercept.class)) {
+				if (process(shortMessage, message, this)) {
+					if (element.isEngaged()) {
+						engaged();
+					} else {
+						disengaged();
+					}
+					filtered = true;
+				}
+			}
+
+			if (!filtered) {
+				channel.sendMessage(shortMessage);
+			}
+		}
+
+		private void engaged() {
+			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
+				output(engaged, this);
+			}
+		}
+
+		private void disengaged() {
+			for (Disengaged disengaged : getElement().getMessages(
+					Disengaged.class)) {
+				output(disengaged, this);
 			}
 		}
 
