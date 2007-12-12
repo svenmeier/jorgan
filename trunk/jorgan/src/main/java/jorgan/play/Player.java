@@ -228,20 +228,34 @@ public abstract class Player<E extends Element> {
 
 	protected final void output(OutputMessage message, Context context) {
 		try {
-			int status = Math.round(message.processStatus(0.0f, context));
-			int data1 = Math.round(message.processData1(0.0f, context));
-			int data2 = Math.round(message.processData2(0.0f, context));
+			float status = message.processStatus(0.0f, context);
+			if (Float.isNaN(status)) {
+				// TODO should we report an error?
+				return;
+			}
+			float data1 = message.processData1(0.0f, context);
+			if (Float.isNaN(status)) {
+				// TODO should we report an error?
+				return;
+			}
+			float data2 = message.processData2(0.0f, context);
+			if (Float.isNaN(status)) {
+				// TODO should we report an error?
+				return;
+			}
 
 			ShortMessage shortMessage;
 			try {
 				shortMessage = new ShortMessage();
-				shortMessage.setMessage(status, data1, data2);
-
-				output(shortMessage, context);
+				shortMessage.setMessage(Math.round(status), Math.round(data1),
+						Math.round(data2));
 			} catch (InvalidMidiDataException ex) {
 				addProblem(new Error("message.midi", status + "," + data1 + ","
 						+ data2));
+				return;
 			}
+
+			output(shortMessage, context);
 
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
@@ -309,8 +323,9 @@ public abstract class Player<E extends Element> {
 			map.clear();
 		}
 	};
-	
-	public boolean process(ShortMessage shortMessage, Message message, Context context) {
+
+	public boolean process(ShortMessage shortMessage, Message message,
+			Context context) {
 		try {
 			if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
 					context))) {
