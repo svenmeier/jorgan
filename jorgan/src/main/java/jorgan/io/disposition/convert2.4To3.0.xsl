@@ -3,7 +3,7 @@
 
   	<xsl:template match="console">
 	    <console>
-			<xsl:apply-templates select="@id|name|style|zoom"/>
+			<xsl:apply-templates select="@id|name|style|zoom|skin"/>
 	      <references>
 	      	<xsl:for-each select="references/consoleReference">
 				<xsl:variable name="id" select="@id"/>
@@ -205,7 +205,7 @@
     
   	<xsl:template match="swell">
 	    <continuousFilter>
-			<xsl:apply-templates select="@id|locking|name"/>
+			<xsl:apply-templates select="@id|locking|name|style"/>
 	      <description><xsl:value-of select="description"/></description>
 	      <threshold><xsl:value-of select="number(threshold) div 127"/></threshold>
 	      <value><xsl:value-of select="number(value) div 127"/></value>
@@ -233,7 +233,7 @@
     
   	<xsl:template match="variation">
 	    <activateableFilter>
-			<xsl:apply-templates select="@id|active|locking|name"/>
+			<xsl:apply-templates select="@id|active|locking|name|style"/>
 	      <description><xsl:value-of select="description"/></description>
 	      <references/>
    	      <messages>
@@ -269,7 +269,7 @@
 
   	<xsl:template match="tremulant">
 	    <activateableFilter>
-			<xsl:apply-templates select="@id|active|locking|name"/>
+			<xsl:apply-templates select="@id|active|locking|name|style"/>
 	      <description><xsl:value-of select="description"/></description>
 	      <references/>
    	      <messages>
@@ -293,6 +293,7 @@
 		<xsl:variable name="bank" select="bank"/>
 		<xsl:variable name="bankMSB" select="bankMSB"/>
 		<xsl:variable name="bankLSB" select="bankLSB"/>
+		<xsl:variable name="device" select="device"/>
       	<xsl:for-each select="//stop[references/reference/@id = $id]">
 			<xsl:variable name="program" select="program"/>
 			<xsl:variable name="remainder" select="following::stop[program=$program and references/reference/@id = $id]"/>
@@ -301,6 +302,9 @@
 			    	<xsl:attribute name="id">
 			    		<xsl:value-of select="$id"/>-<xsl:value-of select="$program"/>
 			    	</xsl:attribute>
+					<xsl:if test="$device">
+						<output><xsl:value-of select="$device"/></output>
+					</xsl:if>
 			      <channels></channels>
 			      <delay>0</delay>
 			      <name><xsl:value-of select="name"/></name>
