@@ -216,6 +216,16 @@
 	      			<xsl:call-template name="message"/>
 	      		</continuous-change>
 	      	</xsl:for-each>
+	      	<filter-intercept>
+	      		<status>equal 176</status>
+	      		<data1>equal 7</data1>
+	      		<data2>get volume</data2>
+	      	</filter-intercept>
+	      	<continuousFilter-engaging>
+	      		<status>set 176</status>
+	      		<data1>set 7</data1>
+	      		<data2>set value | div 2 | add 0.5 | mult volume 127</data2>
+	      	</continuousFilter-engaging>
 	      </messages>
 	      <zoom>1.0</zoom>
 	    </continuousFilter>
@@ -237,6 +247,21 @@
 	      			<xsl:call-template name="message"/>
 	      		</activateable-deactivate>
 	      	</xsl:for-each>
+	      	<filter-intercept>
+          		<status>equal 192</status>
+         		<data1>get program</data1>
+          		<data2></data2>
+	      	</filter-intercept>
+	        <activateableFilter-engaged>
+	          <status>set 192</status>
+	          <data1>set program 0 | add 20</data1>
+	          <data2></data2>
+	        </activateableFilter-engaged>
+	        <activateableFilter-disengaged>
+	          <status>set 192</status>
+	          <data1>set program 0</data1>
+	          <data2></data2>
+	        </activateableFilter-disengaged>
 	      </messages>
 	      <zoom>1.0</zoom>
 	    </activateableFilter>
