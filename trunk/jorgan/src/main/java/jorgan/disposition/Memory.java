@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 public class Memory extends IndexedContinuous {
 
-	private String[] titles = new String[100];
+	private String[] titles = new String[10];
 
 	public Memory() {
 		Arrays.fill(titles, "");
