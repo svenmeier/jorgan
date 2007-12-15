@@ -3,9 +3,9 @@
  */
 package jorgan.disposition;
 
+import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
-import jorgan.midi.mpl.Processor.Context;
 
 public abstract class Message implements Comparable<Message> {
 

@@ -32,9 +32,9 @@ import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
 import jorgan.midi.channel.ChannelPool;
 import jorgan.midi.channel.DelayedChannel;
+import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
-import jorgan.midi.mpl.Processor.Context;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.

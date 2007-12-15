@@ -28,7 +28,7 @@ import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.mpl.Processor.Context;
+import jorgan.midi.mpl.Context;
 
 /**
  * A player for a swell.

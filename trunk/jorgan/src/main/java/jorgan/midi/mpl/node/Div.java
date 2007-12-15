@@ -16,30 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.midi.mpl.node;
 
-import jorgan.disposition.Initiator;
-import jorgan.disposition.Initiator.Initiate;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.midi.mpl.Context;
 
-/**
- * A player for an {@link jorgan.disposition.Initiator}.
- */
-public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 
-	public InitiatorPlayer(E e) {
-		super(e);
+public class Div extends ValueNode {
+
+	public Div(String term) throws Exception {
+		super(term);
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context) {
-		Initiator initiator = getElement();
-
-		if (message instanceof Initiate) {
-			initiator.initiate();
-		} else {
-			super.input(message, context);
-		}
+	public float processImpl(float value, Context context) {
+		return value / getValue(context);
 	}
 }

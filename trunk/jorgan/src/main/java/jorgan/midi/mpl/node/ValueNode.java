@@ -16,30 +16,39 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.midi.mpl.node;
 
-import jorgan.disposition.Initiator;
-import jorgan.disposition.Initiator.Initiate;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.Processor.Node;
 
-/**
- * A player for an {@link jorgan.disposition.Initiator}.
- */
-public class InitiatorPlayer<E extends Initiator> extends Player<E> {
+public abstract class ValueNode extends Node {
 
-	public InitiatorPlayer(E e) {
-		super(e);
+	private String name;
+
+	private float value = Float.NaN;
+
+	protected ValueNode(String term) throws Exception {
+		int space = term.indexOf(' ');
+		if (space == -1) {
+			if (Character.isDigit(term.charAt(0)) || '-' == term.charAt(0)) {
+				value = Float.parseFloat(term);
+			} else {
+				name = term;
+			}
+		} else {
+			name = term.substring(0, space);
+			value = Float.parseFloat(term.substring(space + 1));
+		}
 	}
 
-	@Override
-	protected void input(InputMessage message, Context context) {
-		Initiator initiator = getElement();
-
-		if (message instanceof Initiate) {
-			initiator.initiate();
-		} else {
-			super.input(message, context);
+	protected float getValue(Context context) {
+		float value = Float.NaN;
+		if (name != null) {
+			value = context.get(name);
 		}
+		if (Float.isNaN(value)) {
+			value = this.value;
+		}
+		return value;
 	}
 }

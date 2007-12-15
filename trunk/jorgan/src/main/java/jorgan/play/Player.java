@@ -33,8 +33,8 @@ import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
-import jorgan.midi.mpl.Processor.Context;
 import bias.Configuration;
 
 /**

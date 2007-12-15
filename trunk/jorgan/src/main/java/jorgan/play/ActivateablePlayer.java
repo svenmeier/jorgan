@@ -25,7 +25,7 @@ import jorgan.disposition.Activateable.Deactivate;
 import jorgan.disposition.Activateable.Deactivated;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.mpl.Processor.Context;
+import jorgan.midi.mpl.Context;
 
 /**
  * An abstract base class for players that control activateable elements.
