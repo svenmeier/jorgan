@@ -54,7 +54,7 @@ public class Processor {
 
 		int space = term.indexOf(' ');
 		String type = Character.toUpperCase(term.charAt(0)) + term.substring(1, space).trim();
-		term = term.substring(space + 1);
+		term = term.substring(space + 1).trim();
 		
 		Class clazz = Class.forName(getClass().getPackage().getName() + ".node." + type);
 
