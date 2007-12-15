@@ -3,7 +3,6 @@ package jorgan.midi.mpl;
 import java.util.HashMap;
 
 import jorgan.midi.mpl.Processor;
-import jorgan.midi.mpl.Processor.Context;
 import junit.framework.TestCase;
 
 /**

@@ -30,7 +30,7 @@ import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
-import jorgan.midi.mpl.Processor.Context;
+import jorgan.midi.mpl.Context;
 
 /**
  * A player of an keyboard.
