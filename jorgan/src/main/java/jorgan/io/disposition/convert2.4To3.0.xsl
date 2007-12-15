@@ -4,6 +4,9 @@
   	<xsl:template match="console">
 	    <console>
 			<xsl:apply-templates select="@id|name|style|zoom|skin"/>
+			<xsl:if test="device">
+				<input><xsl:value-of select="device"/></input>
+			</xsl:if>
 	      <references>
 	      	<xsl:for-each select="references/consoleReference">
 				<xsl:variable name="id" select="@id"/>
