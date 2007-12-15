@@ -294,6 +294,13 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		public void elementChanged(final OrganEvent event) {
 			if (event.getElement() == element) {
 				updateReferences();
+			} else {
+				for (Row row : rows) {
+					if (event.getElement() == row.element) {
+						updateReferences();
+						return;
+					}
+				}
 			}
 		}
 	}
