@@ -21,5 +21,5 @@ package jorgan.disposition;
 /**
  * A label.
  */
-public class Label extends Element implements Displayable {
+public class Label extends Element {
 }

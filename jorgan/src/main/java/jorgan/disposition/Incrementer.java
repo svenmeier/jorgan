@@ -26,8 +26,8 @@ public class Incrementer extends Initiator {
 	private int delta = 1;
 
 	@Override
-	protected Class<?> references() {
-		return IndexedContinuous.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return IndexedContinuous.class.isAssignableFrom(clazz);
 	}
 
 	@Override

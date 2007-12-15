@@ -30,9 +30,8 @@ public class Keyboard extends Input {
 		addMessage(new ReleaseKey());
 	}
 
-	@Override
-	protected Class<?> references() {
-		return Keyable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Keyable.class.isAssignableFrom(clazz);
 	}
 
 	public List<Class<? extends Message>> getMessageClasses() {

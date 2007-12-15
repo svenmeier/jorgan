@@ -35,9 +35,8 @@ public class Console extends Input implements Output {
 
 	private String screen;
 
-	@Override
-	protected Class<?> references() {
-		return Displayable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return !Input.class.isAssignableFrom(clazz);
 	}
 
 	@Override

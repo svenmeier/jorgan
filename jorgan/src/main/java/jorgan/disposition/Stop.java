@@ -24,8 +24,8 @@ package jorgan.disposition;
 public class Stop extends Keyable {
 
 	@Override
-	protected Class<?> references() {
-		return Rank.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Rank.class.isAssignableFrom(clazz);
 	}
 
 	/**

@@ -29,8 +29,8 @@ public class Memory extends IndexedContinuous {
 	}
 
 	@Override
-	protected Class<?> references() {
-		return Combination.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Combination.class.isAssignableFrom(clazz);
 	}
 
 	public String getTitle() {

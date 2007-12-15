@@ -28,9 +28,9 @@ public class Keyer extends Activateable {
     private int velocity = 100;
 
     @Override
-	protected Class<?> references() {
-        return Keyable.class;
-    }
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Keyable.class.isAssignableFrom(clazz);
+	}
 
     public void setPitch(int pitch) {
         this.pitch = pitch;
