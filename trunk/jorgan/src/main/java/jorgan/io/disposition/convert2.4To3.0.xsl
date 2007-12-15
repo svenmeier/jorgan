@@ -170,7 +170,7 @@
 	      <references>
 	      	<xsl:for-each select="references/combinationReference">
 	      		<combination-reference>
-					<xsl:apply-templates select="@id"/>
+					<xsl:apply-templates select="@id|activated"/>
 	      		</combination-reference>
 	      	</xsl:for-each>
 	      </references>
