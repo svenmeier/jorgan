@@ -30,14 +30,13 @@ import bias.Configuration;
  */
 public abstract class ViewLayout {
 
-	private static Configuration config = Configuration.getRoot().get(
-			ViewLayout.class);
-	
 	private String name;
 
 	private Icon icon;
 
 	protected ViewLayout() {
+		Configuration config = Configuration.getRoot().get(getClass());
+		
 		config.read(this);
 	}
 
