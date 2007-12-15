@@ -87,16 +87,11 @@ public abstract class Element implements Cloneable {
 			return false;
 		}
 
-		Class<?> type = references();
-		if (type == null) {
-			return false;
-		}
-
-		return type.isAssignableFrom(element.getClass());
+		return canReference(element.getClass());
 	}
 
-	protected Class<?> references() {
-		return null;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return false;
 	}
 
 	protected boolean canReferenceDuplicates() {
@@ -307,6 +302,8 @@ public abstract class Element implements Cloneable {
 	}
 
 	/**
+	 * TODO move into {@link Console.Reference}
+	 * 
 	 * @param string
 	 */
 	public void setStyle(String string) {

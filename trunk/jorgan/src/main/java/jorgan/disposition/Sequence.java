@@ -24,8 +24,8 @@ package jorgan.disposition;
 public class Sequence extends IndexedContinuous implements Combination.Observer {
 
 	@Override
-	protected Class<?> references() {
-		return Combination.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Combination.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 
 	public void increment(int delta) {
 		super.increment(delta);
-		
+
 		getCombination().recall();
 	}
 

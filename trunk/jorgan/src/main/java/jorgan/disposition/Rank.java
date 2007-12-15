@@ -23,7 +23,7 @@ import java.util.List;
 /**
  * A rank.
  */
-public class Rank extends Element implements Engageable, Displayable, Output {
+public class Rank extends Element implements Engageable, Output {
 
 	private String output;
 
@@ -100,8 +100,8 @@ public class Rank extends Element implements Engageable, Displayable, Output {
 	}
 
 	@Override
-	protected Class<?> references() {
-		return Filter.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Filter.class.isAssignableFrom(clazz);
 	}
 
 	public String getOutput() {

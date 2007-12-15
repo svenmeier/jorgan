@@ -24,8 +24,8 @@ package jorgan.disposition;
 public class Regulator extends Continuous implements Activating {
 
 	@Override
-	protected Class<?> references() {
-		return Activateable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Activateable.class.isAssignableFrom(clazz);
 	}
 
 	@Override

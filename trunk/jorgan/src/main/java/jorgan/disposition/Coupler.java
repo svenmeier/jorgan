@@ -23,8 +23,7 @@ package jorgan.disposition;
  */
 public class Coupler extends Keyable {
 
-	@Override
-	protected Class<?> references() {
-		return Keyable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Keyable.class.isAssignableFrom(clazz);
 	}
 }

@@ -23,8 +23,8 @@ import java.util.Arrays;
 public class Combination extends Initiator {
 
 	@Override
-	protected Class<?> references() {
-		return Activateable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Activateable.class.isAssignableFrom(clazz);
 	}
 
 	@Override

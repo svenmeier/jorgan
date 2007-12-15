@@ -24,8 +24,8 @@ package jorgan.disposition;
 public class Activator extends Activateable implements Activating {
 
 	@Override
-	protected Class<?> references() {
-		return Activateable.class;
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Activateable.class.isAssignableFrom(clazz);
 	}
 	
 	public boolean activates(Element activateable) {
