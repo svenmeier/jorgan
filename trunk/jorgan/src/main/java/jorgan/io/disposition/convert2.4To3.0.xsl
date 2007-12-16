@@ -133,9 +133,7 @@
 	      <messages>
 	        <keyboard-pressKey>
 	          <status>equal <xsl:value-of select="command + channel"/></status>
-	          <data1>
-	          	<xsl:if test="threshold != 0">greater <xsl:value-of select="threshold"/> | </xsl:if>get pitch
-	          </data1>
+	          <data1><xsl:if test="threshold != 0">greater <xsl:value-of select="threshold"/> | </xsl:if>get pitch</data1>
 	          <data2>get velocity</data2>
 	        </keyboard-pressKey>
 	        <keyboard-releaseKey>
