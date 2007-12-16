@@ -27,7 +27,7 @@ public class Processor {
 
 	public Processor(String term) throws ProcessingException {
 		try {
-			root = createNodes(term);
+			root = createNodes(term.trim());
 		} catch (Exception ex) {
 			throw new ProcessingException(term, ex);
 		}
