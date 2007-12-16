@@ -115,6 +115,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			removeProblem(new Error("input"));
 			addProblem(new Warning("input"));
 		} else {
+			removeProblem(new Error("input"));
 			removeProblem(new Warning("input"));
 		}
 	}
