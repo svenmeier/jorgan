@@ -19,9 +19,9 @@
 package jorgan.disposition;
 
 /**
- * A keyer initiates a key press on activation.
+ * A keyer initiates a key press when {@link Activateable#isEngaged()}.
  */
-public class Keyer extends Activateable {
+public class Keyer extends Activator { 
 
     private int pitch = 64;
 
