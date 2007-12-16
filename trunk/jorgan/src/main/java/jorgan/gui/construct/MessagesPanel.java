@@ -39,6 +39,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
@@ -364,7 +365,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			if (element instanceof Input) {
 				input = (Input) element;
 			} else {
-				for (Element element : MessagesPanel.this.element.getReferrer()) {
+				for (Element element : MessagesPanel.this.element.getReferrer(Console.class)) {
 					if (element instanceof Input) {
 						input = (Input) element;
 					}
