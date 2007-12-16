@@ -90,6 +90,8 @@ public class KeyboardPane extends JComponent {
 
 	private JMenuItem channelPressureMenuItem;
 
+	private JMenuItem useNoteOffMenuItem;
+	
 	private int channel = 0;
 
 	private boolean sendVelocity = true;
@@ -98,6 +100,8 @@ public class KeyboardPane extends JComponent {
 
 	private boolean sendChannelPressure = false;
 
+	private boolean useNoteOff = true;
+	
 	private List<Key> keys = new ArrayList<Key>();
 
 	private Receiver receiver;
@@ -382,6 +386,7 @@ public class KeyboardPane extends JComponent {
 		channelMenuItems[channel].setSelected(true);
 		velocityMenuItem.setSelected(sendVelocity);
 		polyPressureMenuItem.setSelected(sendPolyPressure);
+		useNoteOffMenuItem.setSelected(useNoteOff);
 
 		popupMenu.show(this, x, y);
 	}
@@ -431,6 +436,15 @@ public class KeyboardPane extends JComponent {
 			}
 		});
 		popupMenu.add(channelPressureMenuItem);
+		
+		useNoteOffMenuItem = new JCheckBoxMenuItem();
+		config.get("useNoteOff").read(useNoteOffMenuItem);
+		useNoteOffMenuItem.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				useNoteOff = useNoteOffMenuItem.isSelected();
+			}
+		});
+		popupMenu.add(useNoteOffMenuItem);
 
 		return popupMenu;
 	}
@@ -506,8 +520,11 @@ public class KeyboardPane extends JComponent {
 		 */
 		public void release() {
 			if (pressed) {
-				send(ShortMessage.NOTE_OFF, pitch, 0);
-				// send(ShortMessage.NOTE_ON, pitch, 0);
+				if (useNoteOff) {
+					send(ShortMessage.NOTE_OFF, pitch, 0);
+				} else {
+					send(ShortMessage.NOTE_ON, pitch, 0);
+				}
 				pressed = false;
 				repaint();
 			}
