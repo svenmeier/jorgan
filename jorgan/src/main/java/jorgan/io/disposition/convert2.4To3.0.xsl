@@ -446,14 +446,9 @@
 
 	<xsl:template name="data">
 		<xsl:choose>
-			<xsl:when test="node() = -1">
-			</xsl:when>
-			<xsl:when test="node() = -2">
-				greater 0
-			</xsl:when>
-			<xsl:otherwise>
-				equal <xsl:value-of select="node()"/>
-			</xsl:otherwise>
+			<xsl:when test="node() = -1"></xsl:when>
+			<xsl:when test="node() = -2">greater 0</xsl:when>
+			<xsl:otherwise>equal <xsl:value-of select="node()"/></xsl:otherwise>
 		</xsl:choose>		
 	</xsl:template>
 </xsl:stylesheet>
