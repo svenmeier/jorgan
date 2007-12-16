@@ -100,6 +100,7 @@ public class RankPlayer extends Player<Rank> {
 					.getChannels()));
 		} catch (ProcessingException ex) {
 			addProblem(new Error("channels", rank.getChannels()));
+			return;
 		}
 
 		if (channel == null) {
