@@ -34,8 +34,6 @@ import jorgan.skin.TextLayer;
  */
 public class InitiatorView extends MomentaryView<Initiator> {
 
-	public static final String BINDING_INITIATE = "initiate";
-
 	private boolean pressed;
 
 	/**
@@ -52,7 +50,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 	protected void initBindings() {
 		super.initBindings();
 		
-		setBinding(BINDING_INITIATE, new ButtonLayer.Binding() {
+		setBinding(BINDING_PRESSED, new ButtonLayer.Binding() {
 			public boolean isPressable() {
 				return true;
 			}
@@ -103,7 +101,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 	private Layer createButtonLayer() {
 
 		ButtonLayer layer = new ButtonLayer();
-		layer.setBinding(BINDING_INITIATE);
+		layer.setBinding(BINDING_PRESSED);
 		layer.setFill(ButtonLayer.BOTH);
 
 		layer.addChild(createBorderLayer(false));

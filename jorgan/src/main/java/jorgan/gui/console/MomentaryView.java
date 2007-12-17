@@ -29,6 +29,8 @@ import jorgan.disposition.Shortcut;
  */
 public abstract class MomentaryView<E extends Momentary> extends View<E> {
 
+	public static final String BINDING_PRESSED = "pressed";
+	
 	/**
 	 * Constructor.
 	 * 
