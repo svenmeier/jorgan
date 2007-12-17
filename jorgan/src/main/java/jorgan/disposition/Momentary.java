@@ -29,6 +29,6 @@ public abstract class Momentary extends Element  {
     public void setShortcut(Shortcut shortcut) {
         this.shortcut = shortcut;
 
-        fireElementChanged(true);
+        fireChanged(true);
     }
 }

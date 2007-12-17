@@ -62,13 +62,13 @@ public abstract class Keyable extends Activateable {
 		}
 		this.action = action;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public void setTranspose(int transpose) {
 		this.transpose = transpose;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public int getVelocity() {
@@ -81,6 +81,6 @@ public abstract class Keyable extends Activateable {
 		}
 		this.velocity = velocity;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 }

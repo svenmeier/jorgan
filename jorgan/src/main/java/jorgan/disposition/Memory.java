@@ -48,7 +48,7 @@ public class Memory extends IndexedContinuous {
 					titles.length));
 			titles = strings;
 
-			fireElementChanged(true);
+			fireChanged(true);
 		}
 	}
 
@@ -74,7 +74,7 @@ public class Memory extends IndexedContinuous {
 		}
 		titles[index] = title;
 
-		fireElementChanged(false);
+		fireChanged(false);
 	}
 
 	public void clear(int index) {
@@ -96,7 +96,7 @@ public class Memory extends IndexedContinuous {
 			((Combination) reference.getElement()).swap(index1, index2);
 		}
 
-		fireElementChanged(false);
+		fireChanged(false);
 	}
 
 	public void copy(int index1, int index2) {

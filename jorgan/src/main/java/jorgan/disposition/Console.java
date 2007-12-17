@@ -59,19 +59,19 @@ public class Console extends Input implements Output {
 	public void setOutput(String output) {
 		this.output = output;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public void setSkin(String skin) {
 		this.skin = skin;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public void setScreen(String screen) {
 		this.screen = screen;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public void setLocation(Element element, int x, int y) {
@@ -144,7 +144,7 @@ public class Console extends Input implements Output {
 		references.remove(reference);
 		references.add(reference);
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
@@ -162,6 +162,6 @@ public class Console extends Input implements Output {
 		references.remove(reference);
 		references.add(0, reference);
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 }
