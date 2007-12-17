@@ -131,16 +131,64 @@
 				</input>
 			</xsl:if>
 	      <messages>
-	        <keyboard-pressKey>
-	          <status>equal <xsl:value-of select="command + channel"/></status>
-	          <data1><xsl:if test="threshold != 0">greater <xsl:value-of select="threshold"/> | </xsl:if>get pitch</data1>
-	          <data2>get velocity</data2>
-	        </keyboard-pressKey>
-	        <keyboard-releaseKey>
-	          <status>equal <xsl:value-of select="command + channel"/></status>
-	          <data1>get pitch</data1>
-	          <data2>equal 0</data2>
-	        </keyboard-releaseKey>
+        	<xsl:choose>
+        		<xsl:when test="command = 144">
+    		    	<xsl:choose>
+		        		<xsl:when test="threshold = 0">
+					        <keyboard-pressKey>
+					          <status>equal <xsl:value-of select="144 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2>get velocity</data2>
+					        </keyboard-pressKey>
+					        <keyboard-releaseKey>
+					          <status>equal <xsl:value-of select="128 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2></data2>
+					        </keyboard-releaseKey>
+		        		</xsl:when>
+		        		<xsl:otherwise>
+					        <keyboard-pressKey>
+					          <status>equal <xsl:value-of select="144 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2>greater <xsl:value-of select="threshold"/> | get velocity</data2>
+					        </keyboard-pressKey>
+					        <keyboard-releaseKey>
+					          <status>equal <xsl:value-of select="128 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2></data2>
+					        </keyboard-releaseKey>
+		        		</xsl:otherwise>
+		        	</xsl:choose>
+        		</xsl:when>
+        		<xsl:otherwise>
+    		    	<xsl:choose>
+		        		<xsl:when test="threshold = 0">
+					        <keyboard-pressKey>
+					          <status>equal <xsl:value-of select="160 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2>get velocity</data2>
+					        </keyboard-pressKey>
+					        <keyboard-releaseKey>
+					          <status>equal <xsl:value-of select="128 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2></data2>
+					        </keyboard-releaseKey>
+		        		</xsl:when>
+		        		<xsl:otherwise>
+					        <keyboard-pressKey>
+					          <status>equal <xsl:value-of select="160 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2>greater <xsl:value-of select="threshold"/> | get velocity</data2>
+					        </keyboard-pressKey>
+					        <keyboard-releaseKey>
+					          <status>equal <xsl:value-of select="160 + channel"/></status>
+					          <data1>get pitch</data1>
+					          <data2>lower <xsl:value-of select="threshold"/></data2>
+					        </keyboard-releaseKey>
+		        		</xsl:otherwise>
+		        	</xsl:choose>
+        		</xsl:otherwise>
+        	</xsl:choose>
 	      </messages>
 	    </keyboard>
   	</xsl:template>  	
