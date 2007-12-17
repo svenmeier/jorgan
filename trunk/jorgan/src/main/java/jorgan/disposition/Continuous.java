@@ -41,7 +41,7 @@ public abstract class Continuous extends Element {
 	public void setLocking(boolean locking) {
 		this.locking = locking;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public void setValue(float value) {
@@ -52,7 +52,7 @@ public abstract class Continuous extends Element {
 		if (this.value != value) {
 			this.value = value;
 
-			fireElementChanged(false);
+			fireChanged(false);
 		}
 	}
 
@@ -67,7 +67,7 @@ public abstract class Continuous extends Element {
 	public void setThreshold(float threshold) {
 		this.threshold = threshold;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public List<Class<? extends Message>> getMessageClasses() {

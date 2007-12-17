@@ -32,7 +32,7 @@ public abstract class Input extends Element {
 	public void setInput(String input) {
 		this.input = input;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 	
 	public static abstract class InputMessage extends Message {

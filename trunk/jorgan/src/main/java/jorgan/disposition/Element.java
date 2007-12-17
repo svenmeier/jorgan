@@ -233,7 +233,7 @@ public abstract class Element implements Cloneable {
 		}
 		this.name = name.trim();
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
@@ -257,21 +257,15 @@ public abstract class Element implements Cloneable {
 		}
 		this.description = description.trim();
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
 	 * Convenience method to fire an event in response to a change of this
 	 * element.
 	 */
-	protected void fireElementChanged(boolean dispositionChange) {
-		if (organ != null) {
-			organ.fireElementChanged(this, null, null, dispositionChange);
-		}
-
-		for (Reference reference : getReferences()) {
-			reference.getElement().referrerChanged(this);
-		}
+	protected void fireChanged(boolean dispositionChange) {
+		fireChanged(null, null, dispositionChange);
 	}
 
 	/**
@@ -280,13 +274,14 @@ public abstract class Element implements Cloneable {
 	 */
 	protected void fireChanged(String name, Object value,
 			boolean dispositionChange) {
+
 		if (organ != null) {
 			organ.fireElementChanged(this, name, value, dispositionChange);
 		}
-
+		
 		for (Reference reference : getReferences()) {
 			reference.getElement().referrerChanged(this);
-		}
+		}		
 	}
 
 	@Override
@@ -309,7 +304,7 @@ public abstract class Element implements Cloneable {
 	public void setStyle(String string) {
 		style = string;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
@@ -364,7 +359,7 @@ public abstract class Element implements Cloneable {
 
 		this.zoom = zoom;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**

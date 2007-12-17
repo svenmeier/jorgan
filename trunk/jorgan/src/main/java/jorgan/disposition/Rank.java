@@ -111,7 +111,7 @@ public class Rank extends Element implements Engageable, Output {
 	public void setOutput(String output) {
 		this.output = output;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public int getDelay() {
@@ -124,7 +124,7 @@ public class Rank extends Element implements Engageable, Output {
 		}
 		this.delay = delay;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	public String getChannels() {
@@ -138,7 +138,7 @@ public class Rank extends Element implements Engageable, Output {
 
 		this.channels = channels;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class Rank extends Element implements Engageable, Output {
 	@Override
 	public void referrerChanged(Element element) {
 		if (element instanceof Stop) {
-			fireElementChanged(false);
+			fireChanged(false);
 		}
 	}
 

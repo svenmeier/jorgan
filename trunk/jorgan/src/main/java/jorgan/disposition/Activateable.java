@@ -36,7 +36,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 		if (this.active != active) {
 			this.active = active;
 
-			fireElementChanged(false);
+			fireChanged(false);
 		}
 	}
 
@@ -51,7 +51,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 	public void setLocking(boolean locking) {
 		this.locking = locking;
 
-		fireElementChanged(true);
+		fireChanged(true);
 	}
 
 	/**
@@ -85,7 +85,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 	@Override
 	public void referrerChanged(Element element) {
 		if (element instanceof Activating) {
-			fireElementChanged(false);
+			fireChanged(false);
 		}
 	}
 
