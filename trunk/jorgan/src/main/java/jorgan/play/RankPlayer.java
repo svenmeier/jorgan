@@ -99,6 +99,8 @@ public class RankPlayer extends Player<Rank> {
 			channel = channelPool.createChannel(new RankChannelFilter(rank
 					.getChannels()));
 		} catch (ProcessingException ex) {
+			channel = new DeadChannel();
+
 			addProblem(new Error("channels", rank.getChannels()));
 			return;
 		}
@@ -107,17 +109,18 @@ public class RankPlayer extends Player<Rank> {
 			channel = new DeadChannel();
 
 			addProblem(new Warning("channels", rank.getChannels()));
-		} else {
-			for (Reference reference : rank.getReferences()) {
-				FilterPlayer filterPlayer = (FilterPlayer) getOrganPlay()
-						.getPlayer(reference.getElement());
+			return;
+		}
 
-				channel = filterPlayer.filter(channel);
-			}
+		for (Reference reference : rank.getReferences()) {
+			FilterPlayer filterPlayer = (FilterPlayer) getOrganPlay()
+					.getPlayer(reference.getElement());
 
-			if (rank.getDelay() > 0) {
-				channel = new DelayedChannel(channel, rank.getDelay());
-			}
+			channel = filterPlayer.filter(channel);
+		}
+
+		if (rank.getDelay() > 0) {
+			channel = new DelayedChannel(channel, rank.getDelay());
 		}
 
 		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
@@ -161,16 +164,18 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void play(int pitch, int velocity) {
-		if (channel == null) {
-			engaged();
-		}
+		if (channelPool != null) {
+			if (channel == null) {
+				engaged();
+			}
 
-		if (played[pitch] == 0) {
-			played(pitch, velocity);
-		}
-		played[pitch]++;
+			if (played[pitch] == 0) {
+				played(pitch, velocity);
+			}
+			played[pitch]++;
 
-		totalNotes++;
+			totalNotes++;
+		}
 	}
 
 	private void played(int pitch, int velocity) {
@@ -182,11 +187,13 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void mute(int pitch) {
-		totalNotes--;
-
-		played[pitch]--;
-		if (played[pitch] == 0) {
-			muted(pitch);
+		if (channelPool != null) {
+			totalNotes--;
+	
+			played[pitch]--;
+			if (played[pitch] == 0) {
+				muted(pitch);
+			}
 		}
 	}
 
