@@ -32,25 +32,18 @@ public class Rank extends Element implements Engageable, Output {
 	private int delay = 0;
 
 	public Rank() {
-		addMessage(new Engaged().init("set 176", "set 0", "set 0")); // control
-																		// change,
-																		// bank
-																		// select,
-																		// 0
-		addMessage(new Engaged().init("set 192", "set 0", "")); // program
-																// change, 0, -
-		addMessage(new Disengaged().init("set 176", "set 121", "")); // control
-																		// change,
-																		// reset,
-																		// -
-		addMessage(new Disengaged().init("set 176", "set 123", "")); // control
-																		// change,
-																		// all
-																		// notes
-																		// off,
-																		// -
-		addMessage(new NotePlayed());
-		addMessage(new NoteMuted());
+		// control change, bank select, 0
+		addMessage(new Engaged().init("set 176", "set 0", "set 0"));
+		// program change, 0, -
+		addMessage(new Engaged().init("set 192", "set 0", "")); 
+		// control change, reset, -
+		addMessage(new Disengaged().init("set 176", "set 121", "")); 
+		// control change, all notes off, -
+		addMessage(new Disengaged().init("set 176", "set 123", ""));
+		// note on, pitch, velocity
+		addMessage(new NotePlayed().init("set 144", "set pitch", "set velocity"));
+		// note off, pitch, -
+		addMessage(new NoteMuted().init("set 128", "set pitch", ""));
 	}
 
 	/**
@@ -65,7 +58,8 @@ public class Rank extends Element implements Engageable, Output {
 			engaged = new Engaged();
 			addMessage(engaged);
 		}
-		engaged.init("set 192", "set " + program, ""); // program change, 0, -
+		// program change, 0, -
+		engaged.init("set 192", "set " + program, "");
 	}
 
 	/**
@@ -194,10 +188,6 @@ public class Rank extends Element implements Engageable, Output {
 
 		public static final String PITCH = "pitch";
 
-		{
-			init("set 144", "set pitch", "set velocity");
-		}
-
 		@Override
 		protected int getOrder() {
 			return 11;
@@ -208,16 +198,12 @@ public class Rank extends Element implements Engageable, Output {
 
 		public static final String PITCH = "pitch";
 
-		{
-			init("set 128", "set pitch", "");
-		}
-		
 		@Override
 		protected int getOrder() {
 			return 12;
 		}
 	}
-	
+
 	public static class Disengaged extends OutputMessage {
 		@Override
 		protected int getOrder() {

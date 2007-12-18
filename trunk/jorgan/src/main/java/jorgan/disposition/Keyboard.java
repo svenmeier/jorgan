@@ -26,8 +26,12 @@ import java.util.List;
 public class Keyboard extends Input {
 
 	public Keyboard() {
-		addMessage(new PressKey());
-		addMessage(new ReleaseKey());
+		// note on, pitch, velocity
+		addMessage(new PressKey().init("equal 144", "get pitch", "greater 0 | get velocity"));	
+		// note on, pitch, -
+		addMessage(new ReleaseKey().init("equal 144", "get pitch", "equal 0"));
+		// note off, pitch, -
+		addMessage(new ReleaseKey().init("equal 128", "get pitch", ""));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -49,10 +53,6 @@ public class Keyboard extends Input {
 
 		public static final String VELOCITY = "velocity";
 
-		{
-			init("equal 144", "get pitch", "get velocity");
-		}
-		
 		@Override
 		protected int getOrder() {
 			return 0;
@@ -63,10 +63,6 @@ public class Keyboard extends Input {
 
 		public static final String PITCH = "pitch";
 
-		{
-			init("equal 128", "get pitch", "");
-		}
-		
 		@Override
 		protected int getOrder() {
 			return 1;
