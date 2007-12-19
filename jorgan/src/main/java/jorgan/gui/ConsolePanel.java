@@ -1047,7 +1047,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 			String tooltip = null;
 			if (view != null) {
 				tooltip = getTooltip(view.getElement());
-				
+
 				int x = screenToView(e.getX());
 				int y = screenToView(e.getY());
 
@@ -1093,11 +1093,14 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
-			if (MacAdapter.isMac()) {
+			if (MacAdapter.isMac()
+					|| !System.getProperty("java.version").startsWith("1.5")) {
 				dtde.acceptDrag(DnDConstants.ACTION_LINK);
 			} else {
-				// On Windows LINK is not accepted by default but user
-				// has to press CTRL by himself - so just accept MOVE.
+				// BUG 4869264:
+				// On non-Mac systems with Java 5 the LINK action is not
+				// accepted by default but user has to press CTRL by himself,
+				// so just accept MOVE.
 				dtde.acceptDrag(DnDConstants.ACTION_MOVE);
 			}
 		}
@@ -1280,7 +1283,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	}
 
 	private String getTooltip(Element element) {
-		
+
 		String description = element.getDescription();
 		if ("".equals(description)) {
 			return null;
@@ -1291,7 +1294,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		}
 		return description;
 	}
-	
+
 	private class ConsoleView extends View<Console> {
 		private ConsoleView(Console console) {
 			super(console);

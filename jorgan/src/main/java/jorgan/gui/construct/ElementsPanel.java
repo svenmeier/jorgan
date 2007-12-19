@@ -19,6 +19,7 @@
 package jorgan.gui.construct;
 
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -26,9 +27,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.AbstractListModel;
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -44,9 +49,8 @@ import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.BaseAction;
 import jorgan.util.Generics;
+import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
-import swingx.list.AbstractDnDListModel;
-import swingx.list.DnDList;
 import bias.Configuration;
 
 /**
@@ -71,7 +75,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 	private RemoveAction removeAction = new RemoveAction();
 
-	private DnDList list = new DnDList();
+	private JList list = new JList();
 
 	private JToggleButton sortByNameButton = new JToggleButton();
 
@@ -121,6 +125,23 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		});
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.addListSelectionListener(selectionHandler);
+		list.setDragEnabled(true);
+		list.setTransferHandler(new TransferHandler() {
+			@Override
+			public int getSourceActions(JComponent c) {
+				return DnDConstants.ACTION_LINK | DnDConstants.ACTION_COPY | DnDConstants.ACTION_MOVE;
+			}
+			
+			@Override
+			protected Transferable createTransferable(JComponent c) {
+				return new ObjectTransferable(list.getSelectedValues());
+			}
+
+			@Override
+			public boolean importData(JComponent comp, Transferable t) {
+				return false;
+			}
+		});
 
 		setScrollableBody(list, true, false);
 	}
@@ -234,7 +255,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class ElementsModel extends AbstractDnDListModel implements
+	private class ElementsModel extends AbstractListModel implements
 			PlayListener, OrganListener {
 
 		private int size = -1;
@@ -254,28 +275,10 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			return elements.get(index);
 		}
 
-		@Override
-		public int indexOf(Object element) {
-			return elements.indexOf(element);
-		}
-
 		public int getSize() {
 			size = elements.size();
 
 			return size;
-		}
-
-		@Override
-		public int getDropActions(Transferable transferable, int index) {
-			return 0;
-		}
-
-		@Override
-		protected void insertElementAt(Object element, int index) {
-		}
-
-		@Override
-		protected void removeElement(Object element) {
 		}
 
 		public void outputProduced() {
