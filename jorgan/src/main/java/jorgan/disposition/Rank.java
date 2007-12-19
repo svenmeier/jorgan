@@ -36,7 +36,7 @@ public class Rank extends Element implements Engageable, Output {
 		addMessage(new Engaged().init("set 176", "set 0", "set 0"));
 		// program change, 0, -
 		addMessage(new Engaged().init("set 192", "set 0", "")); 
-		// control change, reset, -
+		// control change, reset all, -
 		addMessage(new Disengaged().init("set 176", "set 121", "")); 
 		// control change, all notes off, -
 		addMessage(new Disengaged().init("set 176", "set 123", ""));
