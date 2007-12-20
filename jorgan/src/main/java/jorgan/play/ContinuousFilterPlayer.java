@@ -91,13 +91,17 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			boolean filtered = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				if (process(shortMessage, message, this)) {
-					engaging();
+				// Note: we ignore the channel, thus taking command instead of
+				// status
+				if (process(shortMessage.getCommand(), shortMessage.getData1(),
+						shortMessage.getData2(), message, this)) {
 					filtered = true;
 				}
 			}
 
-			if (!filtered) {
+			if (filtered) {
+				engaging();
+			} else {
 				channel.sendMessage(shortMessage);
 			}
 		}
@@ -110,7 +114,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 				output(engaging, this);
 			}
 		}
-		
+
 		public void sendFilteredMessage(ShortMessage message) {
 			channel.sendMessage(message);
 		}

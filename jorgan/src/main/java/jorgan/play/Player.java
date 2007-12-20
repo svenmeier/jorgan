@@ -208,7 +208,8 @@ public abstract class Player<E extends Element> {
 		Element element = getElement();
 
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
-			if (process(shortMessage, message, context)) {
+			if (process(shortMessage.getStatus(), shortMessage.getData1(),
+					shortMessage.getData2(), message, context)) {
 				input(message, context);
 
 				organPlay.fireInputAccepted();
@@ -324,19 +325,16 @@ public abstract class Player<E extends Element> {
 		}
 	};
 
-	public boolean process(ShortMessage shortMessage, Message message,
+	protected boolean process(int status, int data1, int data2, Message message,
 			Context context) {
 		try {
-			if (Float.isNaN(message.processStatus(shortMessage.getStatus(),
-					context))) {
+			if (Float.isNaN(message.processStatus(status, context))) {
 				return false;
 			}
-			if (Float.isNaN(message.processData1(shortMessage.getData1(),
-					context))) {
+			if (Float.isNaN(message.processData1(data1, context))) {
 				return false;
 			}
-			if (Float.isNaN(message.processData2(shortMessage.getData2(),
-					context))) {
+			if (Float.isNaN(message.processData2(data2, context))) {
 				return false;
 			}
 		} catch (ProcessingException ex) {

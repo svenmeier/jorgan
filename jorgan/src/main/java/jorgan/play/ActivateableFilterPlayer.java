@@ -105,17 +105,21 @@ public class ActivateableFilterPlayer extends
 			boolean filtered = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				if (process(shortMessage, message, this)) {
-					if (element.isEngaged()) {
-						engaged();
-					} else {
-						disengaged();
-					}
+				// Note: we ignore the channel, thus taking command instead of
+				// status
+				if (process(shortMessage.getCommand(), shortMessage.getData1(),
+						shortMessage.getData2(), message, this)) {
 					filtered = true;
 				}
 			}
 
-			if (!filtered) {
+			if (filtered) {
+				if (element.isEngaged()) {
+					engaged();
+				} else {
+					disengaged();
+				}
+			} else {
 				channel.sendMessage(shortMessage);
 			}
 		}
