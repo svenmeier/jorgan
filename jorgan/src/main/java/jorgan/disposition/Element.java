@@ -24,6 +24,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jorgan.disposition.event.OrganEvent;
+
 /**
  * Abstract base class of all elements of an organ.
  */
@@ -130,7 +132,7 @@ public abstract class Element implements Cloneable {
 		}
 		references.add(reference);
 
-		fireChanged("reference", reference, true);
+		fireAdded(new OrganEvent(getOrgan(), this, reference, true));
 	}
 
 	protected Reference createReference(Element element) {
@@ -201,7 +203,7 @@ public abstract class Element implements Cloneable {
 
 		references.remove(reference);
 
-		fireChanged("reference", reference, true);
+		fireRemoved(new OrganEvent(getOrgan(), this, reference, true));
 	}
 
 	public Reference getReference(int index) {
@@ -260,30 +262,38 @@ public abstract class Element implements Cloneable {
 		fireChanged(true);
 	}
 
-	/**
-	 * Convenience method to fire an event in response to a change of this
-	 * element.
-	 */
 	protected void fireChanged(boolean dispositionChange) {
-		fireChanged(null, null, dispositionChange);
-	}
-
-	/**
-	 * Convenience method to fire an event in response to a change of this
-	 * element.
-	 */
-	protected void fireChanged(String name, Object value,
-			boolean dispositionChange) {
-
 		if (organ != null) {
-			organ.fireElementChanged(this, name, value, dispositionChange);
+			fireChanged(new OrganEvent(getOrgan(), this, dispositionChange));
+			
+			for (Reference reference : getReferences()) {
+				reference.getElement().referrerChanged(this);
+			}
 		}
-		
-		for (Reference reference : getReferences()) {
-			reference.getElement().referrerChanged(this);
-		}		
 	}
 
+	protected void fireChanged(Reference reference, boolean dispositionChange) {
+		fireChanged(new OrganEvent(getOrgan(), this, reference, dispositionChange));
+	}
+	
+	protected void fireAdded(OrganEvent event) {
+		if (organ != null) {
+			organ.fireAdded(event);
+		}
+	}
+
+	protected void fireRemoved(OrganEvent event) {
+		if (organ != null) {
+			organ.fireRemoved(event);
+		}
+	}
+	
+	protected void fireChanged(OrganEvent event) {
+		if (organ != null) {
+			organ.fireChanged(event);
+		}
+	}
+	
 	@Override
 	public String toString() {
 		return getName();
@@ -384,13 +394,13 @@ public abstract class Element implements Cloneable {
 	public void addMessage(Message message) {
 		this.messages.add(message);
 
-		fireChanged("message", message, true);
+		fireAdded(new OrganEvent(getOrgan(), this, message, true));
 	}
 
 	public void removeMessage(Message message) {
 		this.messages.remove(message);
 
-		fireChanged("message", message, true);
+		fireRemoved(new OrganEvent(getOrgan(), this, message, true));
 	}
 
 	@SuppressWarnings("unchecked")

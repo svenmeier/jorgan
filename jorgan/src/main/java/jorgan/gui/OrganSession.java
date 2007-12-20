@@ -19,7 +19,6 @@
 package jorgan.gui;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
@@ -58,19 +57,17 @@ public class OrganSession {
         this.organ.addOrganListener((OrganListener) Spin
                 .over(new OrganAdapter() {
                     @Override
-					public void elementAdded(OrganEvent event) {
-
-                        Element element = event.getElement();
-
-                        selectionModel.setSelectedElement(element);
+					public void added(OrganEvent event) {
+                    	if (event.self()) {
+                            selectionModel.setSelectedElement(event.getElement());
+                    	}
                     }
 
                     @Override
-					public void elementRemoved(OrganEvent event) {
-
-                        Element element = event.getElement();
-
-                        selectionModel.clear(element);
+					public void removed(OrganEvent event) {
+                    	if (event.self()) {
+                    		selectionModel.clear(event.getElement());
+                    	}
                     }
                 }));
     }

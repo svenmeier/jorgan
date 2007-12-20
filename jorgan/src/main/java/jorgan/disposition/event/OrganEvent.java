@@ -21,7 +21,9 @@ package jorgan.disposition.event;
 import java.util.EventObject;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Message;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Reference;
 
 /**
  * Event describing the change of an organ.
@@ -33,71 +35,54 @@ public class OrganEvent extends EventObject {
 	 */
 	private boolean dispositionChange;
 
-	/**
-	 * The the element that was changed, added or removed.
-	 */
 	private Element element;
 
-	/**
-	 * Name of change.
-	 */
-	private String name;
+	private Reference reference;
 
-	/**
-	 * Value of change.
-	 */
-	private Object value;
+	private Message message;
 
-	/**
-	 * Create a new event in case of a change of a reference.
-	 * 
-	 * @param organ
-	 *            the organ that is the source of this event
-	 * @param element
-	 *            the owning element of the reference
-	 * @param name
-	 *            name of change
-	 * @param value
-	 *            value of change
-	 */
-	public OrganEvent(Organ organ, Element element, String name, Object value,
+	public OrganEvent(Organ organ, Element element,
+			boolean dispositionChange) {
+		this(organ, element, null, null, dispositionChange);
+	}
+
+	public OrganEvent(Organ organ, Element element, Reference reference, 
+			boolean dispositionChange) {
+		this(organ, element, reference, null, dispositionChange);
+	}
+
+	public OrganEvent(Organ organ, Element element, Message message,
+			boolean dispositionChange) {
+		this(organ, element, null, message, dispositionChange);
+	}
+
+	private OrganEvent(Organ organ, Element element, Reference reference, Message message,
 			boolean dispositionChange) {
 		super(organ);
 
 		this.element = element;
-		this.name = name;
-		this.value = value;
+		this.reference = reference;
+		this.message = message;
 		this.dispositionChange = dispositionChange;
 	}
+	
+	public boolean isDispositionChange() {
+		return dispositionChange;
+	}
 
-	/**
-	 * Get the element.
-	 * 
-	 * @return the element
-	 */
 	public Element getElement() {
 		return element;
 	}
 
-	/**
-	 * Get the name
-	 * 
-	 * @return the name
-	 */
-	public String getName() {
-		return name;
+	public Reference getReference() {
+		return reference;
 	}
 
-	/**
-	 * Get the value
-	 * 
-	 * @return the value
-	 */
-	public Object getValue() {
-		return value;
-	}
-
-	public boolean isDispositionChange() {
-		return dispositionChange;
+	public Message getMessage() {
+		return message;
+	}	
+	
+	public boolean self() {
+		return reference == null && message == null;
 	}
 }

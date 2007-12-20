@@ -315,32 +315,38 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			fireContentsChanged(this, index, index);
 		}
 
-		public void elementChanged(final OrganEvent event) {
-			Element element = event.getElement();
-			int index = elements.indexOf(element);
-
-			fireContentsChanged(this, index, index);
+		public void changed(final OrganEvent event) {
+			if (event.self()) {
+				Element element = event.getElement();
+				int index = elements.indexOf(element);
+	
+				fireContentsChanged(this, index, index);
+			}
 		}
 
-		public void elementAdded(OrganEvent event) {
-			elements.add(event.getElement());
+		public void added(OrganEvent event) {
+			if (event.self()) {
+				elements.add(event.getElement());
 
-			int index = elements.size() - 1;
-			fireIntervalAdded(this, index, index);
+				int index = elements.size() - 1;
+				fireIntervalAdded(this, index, index);
 
-			Collections.sort(elements, new ElementComparator(sortByNameButton
-					.isSelected()));
-			fireContentsChanged(this, 0, index);
+				Collections.sort(elements, new ElementComparator(sortByNameButton
+						.isSelected()));
+				fireContentsChanged(this, 0, index);
 
-			selectionHandler.selectionChanged(null);
+				selectionHandler.selectionChanged(null);
+			}
 		}
 
-		public void elementRemoved(OrganEvent event) {
-			int index = elements.indexOf(event.getElement());
-
-			elements.remove(event.getElement());
-
-			fireIntervalRemoved(this, index, index);
+		public void removed(OrganEvent event) {
+			if (event.self()) {
+				int index = elements.indexOf(event.getElement());
+	
+				elements.remove(event.getElement());
+	
+				fireIntervalRemoved(this, index, index);
+			}
 		}
 	}
 

@@ -284,14 +284,23 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			}
 		}
 
-		public void elementAdded(OrganEvent event) {
+		public void added(OrganEvent event) {
+			if (event.getMessage() != null && event.getElement() == element) {
+				updateMessages();
+				
+				int index = messages.indexOf(event.getMessage());
+				table.getSelectionModel().setSelectionInterval(index, index);
+			}
 		}
 
-		public void elementRemoved(OrganEvent event) {
+		public void removed(OrganEvent event) {
+			if (event.getMessage() != null && event.getElement() == element) {
+				updateMessages();
+			}
 		}
 
-		public void elementChanged(final OrganEvent event) {
-			if (event.getElement() == element) {
+		public void changed(final OrganEvent event) {
+			if (event.getMessage() != null && event.getElement() == element) {
 				updateMessages();
 			}
 		}

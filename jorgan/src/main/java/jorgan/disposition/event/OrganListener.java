@@ -24,23 +24,23 @@ package jorgan.disposition.event;
 public interface OrganListener {
 
   /**
-   * An element was changed.
+   * The organ was changed.
    *
    * @param event   event describing the change
    */
-  public void elementChanged(OrganEvent event);
+  public void changed(OrganEvent event);
 
   /**
-   * An element was added to the organ.
+   * Something was added to the organ.
    *
    * @param event   event describing the change
    */
-  public void elementAdded(OrganEvent event);
+  public void added(OrganEvent event);
 
   /**
-   * An element was removed from the organ.
+   * Something was removed from the organ.
    *
    * @param event   event describing the change
    */
-  public void elementRemoved(OrganEvent event);
+  public void removed(OrganEvent event);
 }

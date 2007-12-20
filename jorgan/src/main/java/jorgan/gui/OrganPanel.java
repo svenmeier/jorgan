@@ -439,29 +439,30 @@ public class OrganPanel extends JPanel {
 	 */
 	private class InternalOrganListener implements OrganListener {
 
-		public void elementChanged(OrganEvent event) {
-			jorgan.disposition.Element element = event.getElement();
-
-			if (element instanceof Console) {
-				updateConsoleDockable((Console) element);
+		public void changed(OrganEvent event) {
+			if (event.self()) {
+				Element element = event.getElement();
+				if (element instanceof Console) {
+					updateConsoleDockable((Console) element);
+				}
 			}
 		}
 
-		public void elementAdded(OrganEvent event) {
-
-			jorgan.disposition.Element element = event.getElement();
-
-			if (element instanceof Console) {
-				addConsoleDockable((Console) element);
+		public void added(OrganEvent event) {
+			if (event.self()) {
+				Element element = event.getElement();
+				if (element instanceof Console) {
+					addConsoleDockable((Console) element);
+				}
 			}
 		}
 
-		public void elementRemoved(OrganEvent event) {
-
-			jorgan.disposition.Element element = event.getElement();
-
-			if (element instanceof Console) {
-				removeConsoleDockable((Console) element);
+		public void removed(OrganEvent event) {
+			if (event.self()) {
+				Element element = event.getElement();
+				if (element instanceof Console) {
+					removeConsoleDockable((Console) element);
+				}
 			}
 		}
 	}

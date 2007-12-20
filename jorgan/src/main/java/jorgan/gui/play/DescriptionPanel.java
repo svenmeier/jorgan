@@ -125,7 +125,7 @@ public class DescriptionPanel extends DockedPanel implements OrganAware {
 		}
 
 		@Override
-		public void elementChanged(OrganEvent event) {
+		public void changed(OrganEvent event) {
 			read();
 		}
 	}
