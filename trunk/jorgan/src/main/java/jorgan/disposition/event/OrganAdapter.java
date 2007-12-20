@@ -23,11 +23,11 @@ package jorgan.disposition.event;
  */
 public class OrganAdapter implements OrganListener {
 
-  public void elementChanged(OrganEvent event) { }
+  public void changed(OrganEvent event) { }
 
-  public void elementAdded(OrganEvent event) { }
+  public void added(OrganEvent event) { }
 
-  public void elementRemoved(OrganEvent event) { }
+  public void removed(OrganEvent event) { }
 
   public final void referenceChanged(OrganEvent event) { }
 

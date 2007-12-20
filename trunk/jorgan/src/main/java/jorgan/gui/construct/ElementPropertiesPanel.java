@@ -106,9 +106,11 @@ public class ElementPropertiesPanel extends DockedPanel implements
 		}
 
 		@Override
-		public void elementChanged(OrganEvent event) {
-			if (propertiesPanel.getBeans().contains(event.getElement())) {
-				updateProperties();
+		public void changed(OrganEvent event) {
+			if (event.self()) {
+				if (propertiesPanel.getBeans().contains(event.getElement())) {
+					updateProperties();
+				}
 			}
 		}
 

@@ -621,15 +621,15 @@ public class OrganFrame extends JFrame {
 			setEnabled(file == null);
 		}
 
-		public void elementChanged(OrganEvent event) {
+		public void changed(OrganEvent event) {
 			analyseEvent(event);
 		}
 
-		public void elementAdded(OrganEvent event) {
+		public void added(OrganEvent event) {
 			analyseEvent(event);
 		}
 
-		public void elementRemoved(OrganEvent event) {
+		public void removed(OrganEvent event) {
 			analyseEvent(event);
 		}
 

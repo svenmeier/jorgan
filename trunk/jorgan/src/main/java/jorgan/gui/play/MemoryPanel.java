@@ -27,6 +27,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
@@ -177,20 +178,22 @@ public class MemoryPanel extends DockedPanel implements OrganAware {
 			memory.setTitle(rowIndex, (String) aValue);
 		}
 
-		public void elementAdded(OrganEvent event) {
-			if (event.getElement() instanceof Memory) {
-				setMemory((Memory) event.getElement());
+		public void added(OrganEvent event) {
+			Element element = event.getElement();
+			if (element instanceof Memory) {
+				setMemory((Memory)element);
 			}
 		}
 
-		public void elementChanged(OrganEvent event) {
-			if (event.getElement() == memory) {
-				setMemory(memory);
+		public void changed(OrganEvent event) {
+			Element element = event.getElement();
+			if (element instanceof Memory) {
+				setMemory((Memory)element);
 			}
 		}
 
-		public void elementRemoved(OrganEvent event) {
-			if (event.getElement() instanceof Memory) {
+		public void removed(OrganEvent event) {
+			if (event.self() && event.getElement() == memory) {
 				findMemory();
 			}
 		}

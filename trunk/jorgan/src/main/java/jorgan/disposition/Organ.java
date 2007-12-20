@@ -118,7 +118,7 @@ public class Organ {
 		elements.add(element);
 		element.setOrgan(this);
 
-		fireElementAdded(element);
+		fireAdded(new OrganEvent(this, element, true));
 	}
 
 	public void removeElement(Element element) {
@@ -134,35 +134,31 @@ public class Organ {
 		elements.remove(element);
 		element.setOrgan(null);
 
-		fireElementRemoved(element);
+		fireRemoved(new OrganEvent(this, element, true));
 	}
 
-	protected void fireElementChanged(Element element, String name, Object value, boolean dispositionChange) {
+	protected void fireChanged(OrganEvent event) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, name, value,dispositionChange);
 			for (OrganListener listener : listeners) {
-
-				listener.elementChanged(event);
+				listener.changed(event);
 			}
 		}
 	}
 
-	protected void fireElementAdded(Element element) {
+	protected void fireAdded(OrganEvent event) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, null, null, true);
+			// listener might add itself when notified so work on copy 
 			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
-
-				listener.elementAdded(event);
+				listener.added(event);
 			}
 		}
 	}
 
-	protected void fireElementRemoved(Element element) {
+	protected void fireRemoved(OrganEvent event) {
 		if (listeners != null) {
-			OrganEvent event = new OrganEvent(this, element, null, null, true);
-			for (OrganListener listener : listeners) {
-
-				listener.elementRemoved(event);
+			// listener might remove itself when notified so work on copy 
+			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
+				listener.removed(event);
 			}
 		}
 	}

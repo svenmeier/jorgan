@@ -80,7 +80,7 @@ public class Console extends Input implements Output {
 		reference.setX(x);
 		reference.setY(y);
 
-		fireChanged("reference", reference, true);
+		fireChanged(reference, true);
 	}
 
 	public int getX(Element element) {

@@ -20,6 +20,8 @@ package jorgan.disposition;
 
 import java.util.Arrays;
 
+import jorgan.disposition.event.OrganEvent;
+
 public class Combination extends Initiator {
 
 	@Override
@@ -87,7 +89,7 @@ public class Combination extends Initiator {
 
 			reference.setActive(level, registratable.isActive());
 
-			fireChanged("reference", reference, false);
+			fireChanged(new OrganEvent(getOrgan(), this, reference, false));
 		}
 
 		notifyObservers();
@@ -99,7 +101,7 @@ public class Combination extends Initiator {
 
 			reference.setActive(level, false);
 
-			fireChanged("reference", reference, false);
+			fireChanged(reference, false);
 		}
 	}
 
@@ -113,7 +115,7 @@ public class Combination extends Initiator {
 			reference.setActive(level1, value2);
 			reference.setActive(level2, value1);
 
-			fireChanged("reference", reference, false);
+			fireChanged(reference, false);
 		}
 	}
 
@@ -125,7 +127,7 @@ public class Combination extends Initiator {
 
 			reference.setActive(level2, value);
 
-			fireChanged("reference", reference, false);
+			fireChanged(reference, false);
 		}
 	}
 

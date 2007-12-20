@@ -24,7 +24,6 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -64,7 +63,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private Element element;
 
-	private List<Row> rows = new ArrayList<Row>();
+	private List<Element> elements = new ArrayList<Element>();
 
 	/**
 	 * The listener to selection changes.
@@ -85,7 +84,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
 
-	private ReferencesModel referencesModel = new ReferencesModel();
+	private ReferencesModel elementsModel = new ReferencesModel();
 
 	/**
 	 * Create a tree panel.
@@ -138,35 +137,19 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		addTool(referencedByButton);
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		list.setModel(referencesModel);
+		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
 				return session;
 			}
-
-			@Override
-			protected Element getElement(Object object) {
-				Row row = (Row) object;
-
-				if (getShowReferencesTo()) {
-					return row.reference.getElement();
-				} else {
-					return row.element;
-				}
-			}
 		});
 		list.addListSelectionListener(removeAction);
 		ListUtils.addActionListener(list, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Row row = rows.get(list.getSelectedIndex());
+				Element element = elements.get(list.getSelectedIndex());
 
-				if (getShowReferencesTo()) {
-					session.getSelectionModel().setSelectedElement(
-							row.reference.getElement());
-				} else {
-					session.getSelectionModel().setSelectedElement(row.element);
-				}
+				session.getSelectionModel().setSelectedElement(element);
 			}
 		});
 
@@ -181,14 +164,14 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 */
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(referencesModel);
+			this.session.removeOrganListener(elementsModel);
 			this.session.removeSelectionListener(selectionHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(referencesModel);
+			this.session.addOrganListener(elementsModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
 
@@ -197,8 +180,8 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private void updateReferences() {
 		element = null;
-		rows.clear();
-		referencesModel.update();
+		elements.clear();
+		elementsModel.update();
 		list.setVisible(false);
 
 		if (session != null
@@ -208,24 +191,20 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 			if (getShowReferencesTo()) {
 				for (Reference reference : element.getReferences()) {
-					rows.add(new Row(element, reference));
+					elements.add(reference.getElement());
 				}
 			} else {
 				for (Element referrer : element.getReferrer()) {
-					for (Reference reference : referrer.getReferences(element)) {
-						rows.add(new Row(referrer, reference));
-					}
+					elements.add(referrer);
 				}
 			}
 
 			if (sortByNameButton.isSelected()) {
-				Collections.sort(rows, new RowComparator(new ElementComparator(
-						true)));
+				Collections.sort(elements, new ElementComparator(true));
 			} else if (sortByTypeButton.isSelected()) {
-				Collections.sort(rows, new RowComparator(new ElementComparator(
-						false)));
+				Collections.sort(elements, new ElementComparator(false));
 			}
-			referencesModel.update();
+			elementsModel.update();
 			list.setVisible(true);
 		}
 
@@ -267,39 +246,62 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		private int size = 0;
 
 		private void update() {
-			if (rows.size() > size) {
-				fireIntervalAdded(this, size, rows.size() - 1);
-			} else if (rows.size() < size) {
-				fireIntervalRemoved(this, rows.size(), size - 1);
+			if (elements.size() > size) {
+				fireIntervalAdded(this, size, elements.size() - 1);
+			} else if (elements.size() < size) {
+				fireIntervalRemoved(this, elements.size(), size - 1);
 			} else {
-				fireContentsChanged(this, 0, rows.size());
+				fireContentsChanged(this, 0, elements.size());
 			}
-			size = rows.size();
+			size = elements.size();
 		}
 
 		public int getSize() {
-			return rows.size();
+			return elements.size();
 		}
 
 		public Object getElementAt(int index) {
-			return rows.get(index);
+			return elements.get(index);
 		}
 
-		public void elementAdded(OrganEvent event) {
-		}
-
-		public void elementRemoved(OrganEvent event) {
-		}
-
-		public void elementChanged(final OrganEvent event) {
-			if (event.getElement() == element) {
-				updateReferences();
+		public void added(OrganEvent event) {
+			if (getShowReferencesTo()) {
+				if (event.getReference() != null
+						&& event.getElement() == element) {
+					updateReferences();
+				}
 			} else {
-				for (Row row : rows) {
-					if (event.getElement() == row.element) {
-						updateReferences();
-						return;
-					}
+				if (event.getReference() != null
+						&& event.getReference().getElement() == element) {
+					updateReferences();
+				}
+			}
+		}
+
+		public void removed(OrganEvent event) {
+			if (getShowReferencesTo()) {
+				if (event.getReference() != null
+						&& event.getElement() == element) {
+					updateReferences();
+				}
+			} else {
+				if (event.getReference() != null
+						&& event.getReference().getElement() == element) {
+					updateReferences();
+				}
+			}
+		}
+
+		public void changed(final OrganEvent event) {
+			if (getShowReferencesTo()) {
+				if (event.getReference() != null
+						&& event.getElement() == element) {
+					updateReferences();
+				}
+			} else {
+				if (event.getReference() != null
+						&& event.getReference().getElement() == element) {
+					updateReferences();
 				}
 			}
 		}
@@ -336,12 +338,12 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 			int[] indices = list.getSelectedIndices();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
-					Row row = rows.get(indices[i]);
+					Element element = elements.get(indices[i]);
 
 					if (getShowReferencesTo()) {
-						row.element.removeReference(row.reference);
+						ReferencesPanel.this.element.unreference(element);
 					} else {
-						row.element.removeReference(row.reference);
+						element.unreference(ReferencesPanel.this.element);
 					}
 				}
 			}
@@ -349,35 +351,6 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(list.getSelectedIndex() != -1);
-		}
-	}
-
-	private class Row {
-		private Row(Element element, Reference reference) {
-			this.element = element;
-			this.reference = reference;
-		}
-
-		private Element element;
-
-		private Reference reference;
-	}
-
-	private class RowComparator implements Comparator<Row> {
-		private ElementComparator comparator;
-
-		private RowComparator(ElementComparator comparator) {
-			this.comparator = comparator;
-		}
-
-		public int compare(Row row1, Row row2) {
-
-			if (getShowReferencesTo()) {
-				return comparator.compare(row1.reference.getElement(),
-						row2.reference.getElement());
-			} else {
-				return comparator.compare(row1.element, row2.element);
-			}
 		}
 	}
 }

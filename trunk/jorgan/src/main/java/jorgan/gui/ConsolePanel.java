@@ -697,23 +697,10 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	private class InternalOrganListener extends OrganAdapter {
 
 		@Override
-		public void elementChanged(final OrganEvent event) {
+		public void changed(final OrganEvent event) {
 			Element element = event.getElement();
-
-			if (element == console) {
-				if ("reference".equals(event.getName())) {
-					Reference reference = (Reference) event.getValue();
-
-					if (console.references(reference.getElement())
-							&& getView(reference.getElement()) == null) {
-						createView(reference.getElement());
-					} else if (!console.references(reference.getElement())
-							&& getView(reference.getElement()) != null) {
-						dropView(reference.getElement());
-					} else {
-						getView(reference.getElement()).changeUpdate(event);
-					}
-				} else {
+			if (event.self()) {
+				if (element == console) {
 					initSkin();
 
 					consoleView.changeUpdate(event);
@@ -724,32 +711,42 @@ public class ConsolePanel extends JComponent implements Scrollable {
 
 					repaint();
 					revalidate();
+				} else {
+					View view = getView(element);
+					if (view != null) {
+						view.changeUpdate(event);
+					}
 				}
 			} else {
-				View view = getView(element);
-				if (view != null) {
-					view.changeUpdate(event);
+				if (element == console) {
+					Reference reference = event.getReference();
+					if (reference != null) {
+						View view = getView(reference.getElement());
+						if (view != null) {
+							view.changeUpdate(event);
+						}
+					}
 				}
 			}
 		}
 
 		@Override
-		public void elementAdded(OrganEvent event) {
-
-			Element element = event.getElement();
-
-			if (console.references(element)) {
-				createView(element);
+		public void added(OrganEvent event) {
+			if (!event.self() && event.getElement() == console) {
+				Reference reference = event.getReference();
+				if (reference != null) {
+					createView(reference.getElement());
+				}
 			}
 		}
 
 		@Override
-		public void elementRemoved(OrganEvent event) {
-
-			Element element = event.getElement();
-
-			if (getView(element) != null) {
-				dropView(element);
+		public void removed(OrganEvent event) {
+			if (!event.self() && event.getElement() == console) {
+				Reference reference = event.getReference();
+				if (reference != null) {
+					dropView(reference.getElement());
+				}
 			}
 		}
 	}

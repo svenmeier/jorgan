@@ -28,9 +28,11 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.ActivateableFilter;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Console;
+import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
@@ -38,12 +40,10 @@ import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
-import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
-import jorgan.disposition.ContinuousFilter;
-import jorgan.disposition.ActivateableFilter;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
@@ -233,7 +233,8 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values().iterator();
+			Iterator<Player<? extends Element>> iterator = players.values()
+					.iterator();
 			while (iterator.hasNext()) {
 				Player player = iterator.next();
 				player.open();
@@ -267,7 +268,8 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values().iterator();
+			Iterator<Player<? extends Element>> iterator = players.values()
+					.iterator();
 			while (iterator.hasNext()) {
 				Player<? extends Element> player = iterator.next();
 				player.close();
@@ -360,26 +362,32 @@ public class OrganPlay {
 	private class EventHandler extends OrganAdapter {
 
 		@Override
-		public void elementChanged(OrganEvent event) {
+		public void changed(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
-				Player player = getPlayer(event.getElement());
-				if (player != null) {
-					player.elementChanged(event);
+				if (event.self()) {
+					Player player = getPlayer(event.getElement());
+					if (player != null) {
+						player.elementChanged(event);
+					}
 				}
 			}
 		}
 
 		@Override
-		public void elementAdded(OrganEvent event) {
+		public void added(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
-				createPlayer(event.getElement());
+				if (event.self()) {
+					createPlayer(event.getElement());
+				}
 			}
 		}
 
 		@Override
-		public void elementRemoved(OrganEvent event) {
+		public void removed(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
-				dropPlayer(event.getElement());
+				if (event.self()) {
+					dropPlayer(event.getElement());
+				}
 			}
 		}
 	}
