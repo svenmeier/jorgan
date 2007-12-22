@@ -73,6 +73,8 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 	private AddAction addAction = new AddAction();
 
+	private DuplicateAction duplicateAction = new DuplicateAction();
+
 	private RemoveAction removeAction = new RemoveAction();
 
 	private JList list = new JList();
@@ -91,7 +93,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	public ElementsPanel() {
 
 		addTool(addAction);
-
+		addTool(duplicateAction);
 		addTool(removeAction);
 
 		addToolSeparator();
@@ -129,9 +131,10 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		list.setTransferHandler(new TransferHandler() {
 			@Override
 			public int getSourceActions(JComponent c) {
-				return DnDConstants.ACTION_LINK | DnDConstants.ACTION_COPY | DnDConstants.ACTION_MOVE;
+				return DnDConstants.ACTION_LINK | DnDConstants.ACTION_COPY
+						| DnDConstants.ACTION_MOVE;
 			}
-			
+
 			@Override
 			protected Transferable createTransferable(JComponent c) {
 				return new ObjectTransferable(list.getSelectedValues());
@@ -142,6 +145,8 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				return false;
 			}
 		});
+		list.addListSelectionListener(duplicateAction);
+		list.addListSelectionListener(removeAction);
 
 		setScrollableBody(list, true, false);
 	}
@@ -189,8 +194,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			}
 			elementsModel.update();
 		}
-
-		removeAction.update();
 	}
 
 	/**
@@ -225,8 +228,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 				updatingSelection = false;
 			}
-
-			removeAction.update();
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -245,8 +246,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 				updatingSelection = false;
 			}
-
-			removeAction.update();
 		}
 	}
 
@@ -319,7 +318,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			if (event.self()) {
 				Element element = event.getElement();
 				int index = elements.indexOf(element);
-	
+
 				fireContentsChanged(this, index, index);
 			}
 		}
@@ -331,8 +330,8 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				int index = elements.size() - 1;
 				fireIntervalAdded(this, index, index);
 
-				Collections.sort(elements, new ElementComparator(sortByNameButton
-						.isSelected()));
+				Collections.sort(elements, new ElementComparator(
+						sortByNameButton.isSelected()));
 				fireContentsChanged(this, 0, index);
 
 				selectionHandler.selectionChanged(null);
@@ -342,9 +341,9 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		public void removed(OrganEvent event) {
 			if (event.self()) {
 				int index = elements.indexOf(event.getElement());
-	
+
 				elements.remove(event.getElement());
-	
+
 				fireIntervalRemoved(this, index, index);
 			}
 		}
@@ -358,18 +357,34 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				Element prototype = null;
-				if (session.getSelectionModel().getSelectionCount() == 1) {
-					prototype = session.getSelectionModel()
-							.getSelectedElement();
-				}
 				CreateElementWizard.showInDialog(ElementsPanel.this, session
-						.getOrgan(), prototype);
+						.getOrgan());
 			}
 		}
 	}
 
-	private class RemoveAction extends BaseAction {
+	private class DuplicateAction extends BaseAction implements
+			ListSelectionListener {
+
+		private DuplicateAction() {
+			config.get("duplicate").read(this);
+
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			Element element = elements.get(list.getSelectedIndex());
+
+			session.getOrgan().addElement(element.clone());
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(list.getSelectedIndices().length == 1);
+		}
+	}
+
+	private class RemoveAction extends BaseAction implements
+			ListSelectionListener {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
@@ -385,12 +400,8 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			}
 		}
 
-		/**
-		 * Update the enabled state.
-		 */
-		public void update() {
-			setEnabled(session != null
-					&& session.getSelectionModel().isElementSelected());
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(list.getSelectedIndex() != -1);
 		}
 	}
 }

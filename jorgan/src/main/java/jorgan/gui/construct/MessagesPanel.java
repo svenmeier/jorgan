@@ -96,6 +96,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private AddAction addAction = new AddAction();
 
+	private DuplicateAction duplicateAction = new DuplicateAction();
+	
 	private RemoveAction removeAction = new RemoveAction();
 
 	private RecordAction recordAction = new RecordAction();
@@ -110,6 +112,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	public MessagesPanel() {
 
 		addTool(addAction);
+		addTool(duplicateAction);
 		addTool(removeAction);
 		addToolSeparator();
 		addTool(recordAction);
@@ -117,6 +120,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
+		table.getSelectionModel().addListSelectionListener(duplicateAction);
 		table.getSelectionModel().addListSelectionListener(removeAction);
 		table.getSelectionModel().addListSelectionListener(recordAction);
 		new IconTableCellRenderer() {
@@ -287,7 +291,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		public void added(OrganEvent event) {
 			if (event.getMessage() != null && event.getElement() == element) {
 				updateMessages();
-				
+
 				int index = messages.indexOf(event.getMessage());
 				table.getSelectionModel().setSelectionInterval(index, index);
 			}
@@ -321,6 +325,26 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		public void update() {
 			setEnabled(element != null);
+		}
+	}
+
+	private class DuplicateAction extends BaseAction implements
+			ListSelectionListener {
+
+		private DuplicateAction() {
+			config.get("duplicate").read(this);
+
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			Message message = messages.get(table.getSelectedRow());
+			
+			element.addMessage(message.clone());
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(table.getSelectedRowCount() == 1);
 		}
 	}
 
@@ -374,7 +398,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			if (element instanceof Input) {
 				input = (Input) element;
 			} else {
-				for (Console console : MessagesPanel.this.element.getReferrer(Console.class)) {
+				for (Console console : MessagesPanel.this.element
+						.getReferrer(Console.class)) {
 					input = console;
 					break;
 				}

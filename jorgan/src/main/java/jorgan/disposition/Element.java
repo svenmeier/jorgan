@@ -105,11 +105,6 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected void setOrgan(Organ organ) {
-		if (this.organ != organ) {
-			for (Reference reference : new ArrayList<Reference>(references)) {
-				removeReference(reference);
-			}
-		}
 		this.organ = organ;
 	}
 
@@ -203,7 +198,9 @@ public abstract class Element implements Cloneable {
 
 		references.remove(reference);
 
-		fireRemoved(new OrganEvent(getOrgan(), this, reference, true));
+		if (organ != null) {
+			fireRemoved(new OrganEvent(getOrgan(), this, reference, true));
+		}
 	}
 
 	public Reference getReference(int index) {
@@ -318,14 +315,21 @@ public abstract class Element implements Cloneable {
 	}
 
 	/**
-	 * All elements are cloneable for prototyping support.
+	 * All elements are cloneable.
 	 */
 	@Override
-	public Object clone() {
+	public Element clone() {
 		try {
 			Element clone = (Element) super.clone();
 
 			clone.references = new ArrayList<Reference>();
+			for (Reference reference : references) {
+				clone.references.add(reference.clone());
+			}
+			clone.messages = new ArrayList<Message>();
+			for (Message message : messages) {
+				clone.messages.add(message.clone());
+			}
 			clone.organ = null;
 
 			return clone;

@@ -122,7 +122,7 @@ public class ElementCreationPanel extends JPanel {
 	 * 
 	 * @return the element class
 	 */
-	public Class getElementClass() {
+	public Class<? extends Element> getElementClass() {
 		int index = typeList.getSelectedIndex();
 
 		if (index == -1) {
