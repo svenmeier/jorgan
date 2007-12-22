@@ -22,6 +22,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 
 /**
@@ -57,7 +58,7 @@ public class ElementComparator implements Comparator<Element> {
 
 	public int compareAlphabetical(Element e1, Element e2) {
 
-		return e1.getName().compareTo(e2.getName());
+		return Elements.getDisplayName(e1).compareTo(Elements.getDisplayName(e2));
 	}
 
 	public int compareType(Element e1, Element e2) {
