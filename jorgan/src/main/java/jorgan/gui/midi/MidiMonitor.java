@@ -188,7 +188,7 @@ public class MidiMonitor extends DockedPanel {
 
 		if (!selectionDialog.wasCancelled()) {
 			setDevice(selectionPanel.getDeviceName(), selectionPanel
-					.getDirection());
+					.getDeviceDirection());
 		}
 	}
 
