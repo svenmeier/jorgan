@@ -50,19 +50,19 @@ public class Organ {
 			classes.add(Console.class);
 			classes.add(Label.class);
 			classes.add(Keyboard.class);
-			classes.add(Rank.class);
-			classes.add(Stop.class);
 			classes.add(Coupler.class);
-			classes.add(Combination.class);
-			classes.add(Captor.class);
-			classes.add(ContinuousFilter.class);
+			classes.add(Stop.class);
+			classes.add(Rank.class);
 			classes.add(ActivateableFilter.class);
-			classes.add(Sequence.class);
+			classes.add(ContinuousFilter.class);
+			classes.add(Keyer.class);
 			classes.add(Activator.class);
 			classes.add(Regulator.class);
-			classes.add(Keyer.class);
-			classes.add(Memory.class);
+			classes.add(Combination.class);
+			classes.add(Captor.class);
+			classes.add(Sequence.class);
 			classes.add(Incrementer.class);
+			classes.add(Memory.class);
 
 			elementClasses = classes;
 		}
