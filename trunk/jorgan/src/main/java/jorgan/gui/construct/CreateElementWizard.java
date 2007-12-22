@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Reference;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -42,8 +41,6 @@ public class CreateElementWizard extends BasicWizard {
 
 	private Organ organ;
 
-	private Element prototype;
-
 	private Element element;
 
 	private List<Element> referencesTo = new ArrayList<Element>();
@@ -55,12 +52,9 @@ public class CreateElementWizard extends BasicWizard {
 	 * 
 	 * @param organ
 	 *            the organ to creat element for
-	 * @param prototype
-	 *            an optional prototype for the new element
 	 */
-	public CreateElementWizard(Organ organ, Element prototype) {
+	public CreateElementWizard(Organ organ) {
 		this.organ = organ;
-		this.prototype = prototype;
 
 		addPage(new ElementPage());
 		addPage(new ReferencesToPage());
@@ -114,9 +108,6 @@ public class CreateElementWizard extends BasicWizard {
 			config.get("element").read(this);
 
 			elementPanel.setElementClasses(Organ.getElementClasses());
-			if (prototype != null) {
-				elementPanel.setElementClass(prototype.getClass());
-			}
 		}
 
 		@Override
@@ -131,18 +122,13 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		protected void changing() {
-			Class elementClass = elementPanel.getElementClass();
+			Class<? extends Element> elementClass = elementPanel
+					.getElementClass();
 			String elementName = elementPanel.getElementName();
 
 			if (elementClass != null && elementName != null) {
 				try {
-					if (prototype != null
-							&& prototype.getClass() == elementClass) {
-						element = (Element) prototype.clone();
-					} else {
-						element = (Element) elementClass.newInstance();
-					}
-
+					element = elementClass.newInstance();
 					element.setName(elementName);
 				} catch (Exception ex) {
 					throw new Error(ex);
@@ -175,15 +161,6 @@ public class CreateElementWizard extends BasicWizard {
 					.getReferenceToCandidates(element));
 
 			referencesTo = new ArrayList<Element>();
-			if (prototype != null) {
-				if (prototype.getClass() == element.getClass()) {
-					for (int r = 0; r < prototype.getReferenceCount(); r++) {
-						Reference reference = prototype.getReference(r);
-						referencesTo.add(reference.getElement());
-					}
-					elementsSelectionPanel.setSelectedElements(referencesTo);
-				}
-			}
 		}
 
 		@Override
@@ -216,12 +193,6 @@ public class CreateElementWizard extends BasicWizard {
 					.getReferencedFromCandidates(element));
 
 			referencedFrom = new ArrayList<Element>();
-			if (prototype != null) {
-				if (prototype.getClass() == element.getClass()) {
-					referencedFrom.addAll(prototype.getReferrer());
-					elementsSelectionPanel.setSelectedElements(referencedFrom);
-				}
-			}
 		}
 
 		@Override
@@ -239,16 +210,12 @@ public class CreateElementWizard extends BasicWizard {
 	 *            owner of dialog
 	 * @param organ
 	 *            organ to add created element into
-	 * @param prototype
-	 *            element to use as prototype
 	 */
-	public static void showInDialog(Component owner, Organ organ,
-			Element prototype) {
+	public static void showInDialog(Component owner, Organ organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 
-
-		dialog.setWizard(new CreateElementWizard(organ, prototype));
+		dialog.setWizard(new CreateElementWizard(organ));
 
 		config.get("dialog").read(dialog);
 		dialog.setVisible(true);

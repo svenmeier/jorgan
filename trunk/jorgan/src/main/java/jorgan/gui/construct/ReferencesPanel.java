@@ -89,7 +89,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		addTool(addAction);
 		addTool(removeAction);
-
+		
 		addToolSeparator();
 
 		config.get("sortByName").read(sortByNameButton);
@@ -227,7 +227,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		public void added(OrganEvent event) {
 			if (event.getReference() != null && event.getElement() == element) {
 				updateReferences();
-				
+
 				list.setSelectedIndex(references.indexOf(event.getReference()));
 			}
 		}

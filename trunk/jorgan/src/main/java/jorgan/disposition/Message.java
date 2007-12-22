@@ -7,7 +7,7 @@ import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
 
-public abstract class Message implements Comparable<Message> {
+public abstract class Message implements Comparable<Message>, Cloneable {
 
 	private String status = "";
 
@@ -88,4 +88,16 @@ public abstract class Message implements Comparable<Message> {
 	}
 
 	protected abstract int getOrder();
+	
+	/**
+	 * All messages are cloneable.
+	 */
+	@Override
+	public Message clone() {
+		try {
+			return (Message) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new Error(ex);
+		}
+	}
 }

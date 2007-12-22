@@ -18,24 +18,37 @@
  */
 package jorgan.disposition;
 
+
 /**
  * A reference to another element.
  */
-public class Reference {
+public class Reference implements Cloneable {
 
-    /**
-     * The referenced element.
-     */
-    private Element element;
+	/**
+	 * The referenced element.
+	 */
+	private Element element;
 
-    public Reference(Element element) {
-    	if (element == null) {
-    		throw new IllegalArgumentException("element must not be null");
-    	}
-        this.element = element;
-    }
+	public Reference(Element element) {
+		if (element == null) {
+			throw new IllegalArgumentException("element must not be null");
+		}
+		this.element = element;
+	}
 
-    public Element getElement() {
-        return element;
-    }
+	public Element getElement() {
+		return element;
+	}
+
+	/**
+	 * All references are cloneable.
+	 */
+	@Override
+	public Reference clone() {
+		try {
+			return (Reference) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new Error(ex);
+		}
+	}
 }
