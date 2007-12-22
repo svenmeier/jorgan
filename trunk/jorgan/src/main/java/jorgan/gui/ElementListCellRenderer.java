@@ -20,7 +20,7 @@ import jorgan.gui.construct.ElementsPanel;
 import jorgan.swing.list.CommentedCellRenderer;
 
 /**
- * A cell renderer for elements.
+ * A cell renderer for {@link Element}s.
  */
 public class ElementListCellRenderer extends CommentedCellRenderer {
 
@@ -71,7 +71,7 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 		return null;
 	}
 
-	private Icon getIcon(Element element) {
+	protected Icon getIcon(Element element) {
 		OrganSession session = getOrgan();
 
 		if (session != null) {
