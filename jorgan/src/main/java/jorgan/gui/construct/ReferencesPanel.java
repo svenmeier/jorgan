@@ -38,9 +38,9 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.OrganAware;
 import jorgan.gui.OrganSession;
+import jorgan.gui.ReferenceListCellRenderer;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
@@ -89,7 +89,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		addTool(addAction);
 		addTool(removeAction);
-		
+
 		addToolSeparator();
 
 		config.get("sortByName").read(sortByNameButton);
@@ -117,7 +117,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setModel(referencesModel);
-		list.setCellRenderer(new ElementListCellRenderer() {
+		list.setCellRenderer(new ReferenceListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
 				return session;
