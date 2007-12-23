@@ -127,10 +127,6 @@ public class Organ {
 			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
 		}
 		
-		for (Element referrer : element.getReferrer()) {
-			referrer.unreference(element);
-		}
-
 		elements.remove(element);
 		element.setOrgan(null);
 

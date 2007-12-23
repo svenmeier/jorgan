@@ -105,6 +105,14 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected void setOrgan(Organ organ) {
+		if (this.organ != null) {
+			for (Element referrer : getReferrer()) {
+				referrer.unreference(this);
+			}
+			
+			references.clear();
+		}
+		
 		this.organ = organ;
 	}
 
@@ -148,25 +156,6 @@ public abstract class Element implements Cloneable {
 			}
 		}
 		return null;
-	}
-
-	/**
-	 * Get all references to the given element.
-	 * 
-	 * @param element
-	 *            element to get references for
-	 * @return references
-	 */
-	public List<Reference> getReferences(Element element) {
-		List<Reference> filtered = new ArrayList<Reference>();
-
-		for (Reference reference : references) {
-			if (reference.getElement() == element) {
-				filtered.add(reference);
-			}
-		}
-
-		return filtered;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -271,6 +260,10 @@ public abstract class Element implements Cloneable {
 
 	protected void fireChanged(Reference reference, boolean dispositionChange) {
 		fireChanged(new OrganEvent(getOrgan(), this, reference, dispositionChange));
+	}
+	
+	protected void fireChanged(Message message, boolean dispositionChange) {
+		fireChanged(new OrganEvent(getOrgan(), this, message, dispositionChange));
 	}
 	
 	protected void fireAdded(OrganEvent event) {
@@ -417,5 +410,14 @@ public abstract class Element implements Cloneable {
 			}
 		}
 		return messages;
+	}
+
+	public void changeMessage(Message message, String status, String data1, String data2) {
+		if (!this.messages.contains(message)) {
+			throw new IllegalArgumentException("unkown message");
+		}
+		message.change(status, data1, data2);
+		
+		fireChanged(message, true);
 	}
 }

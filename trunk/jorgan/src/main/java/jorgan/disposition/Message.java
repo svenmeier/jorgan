@@ -21,11 +21,15 @@ public abstract class Message implements Comparable<Message>, Cloneable {
 
 	private transient Processor data2Processor;
 
-	public Message init(String status, String data1, String data2) {
-		setStatus(status);
-		setData1(data1);
-		setData2(data2);
+	protected Message change(String status, String data1, String data2) {
+		this.status = status;
+		this.data1 = data1;
+		this.data2 = data2;
 
+		statusProcessor = null;
+		data1Processor = null;
+		data2Processor = null;
+		
 		return this;
 	}
 
@@ -33,30 +37,12 @@ public abstract class Message implements Comparable<Message>, Cloneable {
 		return data1;
 	}
 
-	public void setData1(String data1) {
-		this.data1 = data1;
-
-		data1Processor = null;
-	}
-
 	public String getData2() {
 		return data2;
 	}
 
-	public void setData2(String data2) {
-		this.data2 = data2;
-
-		data2Processor = null;
-	}
-
 	public String getStatus() {
 		return status;
-	}
-
-	public void setStatus(String status) {
-		this.status = status;
-
-		statusProcessor = null;
 	}
 
 	public float processStatus(float status, Context context)
