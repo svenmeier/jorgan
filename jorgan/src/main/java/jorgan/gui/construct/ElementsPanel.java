@@ -73,8 +73,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 	private AddAction addAction = new AddAction();
 
-	private DuplicateAction duplicateAction = new DuplicateAction();
-
 	private RemoveAction removeAction = new RemoveAction();
 
 	private JList list = new JList();
@@ -93,7 +91,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	public ElementsPanel() {
 
 		addTool(addAction);
-		addTool(duplicateAction);
 		addTool(removeAction);
 
 		addToolSeparator();
@@ -145,7 +142,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				return false;
 			}
 		});
-		list.addListSelectionListener(duplicateAction);
 		list.addListSelectionListener(removeAction);
 
 		setScrollableBody(list, true, false);
@@ -360,26 +356,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				CreateElementWizard.showInDialog(ElementsPanel.this, session
 						.getOrgan());
 			}
-		}
-	}
-
-	private class DuplicateAction extends BaseAction implements
-			ListSelectionListener {
-
-		private DuplicateAction() {
-			config.get("duplicate").read(this);
-
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			Element element = elements.get(list.getSelectedIndex());
-
-			session.getOrgan().addElement(element.clone());
-		}
-
-		public void valueChanged(ListSelectionEvent e) {
-			setEnabled(list.getSelectedIndices().length == 1);
 		}
 	}
 

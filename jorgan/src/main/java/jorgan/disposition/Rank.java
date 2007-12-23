@@ -33,17 +33,17 @@ public class Rank extends Element implements Engageable, Output {
 
 	public Rank() {
 		// control change, bank select, 0
-		addMessage(new Engaged().init("set 176", "set 0", "set 0"));
+		addMessage(new Engaged().change("set 176", "set 0", "set 0"));
 		// program change, 0, -
-		addMessage(new Engaged().init("set 192", "set 0", "")); 
+		addMessage(new Engaged().change("set 192", "set 0", "")); 
 		// control change, reset all, -
-		addMessage(new Disengaged().init("set 176", "set 121", "")); 
+		addMessage(new Disengaged().change("set 176", "set 121", "")); 
 		// control change, all notes off, -
-		addMessage(new Disengaged().init("set 176", "set 123", ""));
+		addMessage(new Disengaged().change("set 176", "set 123", ""));
 		// note on, pitch, velocity
-		addMessage(new NotePlayed().init("set 144", "set pitch", "set velocity"));
+		addMessage(new NotePlayed().change("set 144", "set pitch", "set velocity"));
 		// note off, pitch, -
-		addMessage(new NoteMuted().init("set 128", "set pitch", ""));
+		addMessage(new NoteMuted().change("set 128", "set pitch", ""));
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class Rank extends Element implements Engageable, Output {
 			addMessage(engaged);
 		}
 		// program change, 0, -
-		engaged.init("set 192", "set " + program, "");
+		engaged.change("set 192", "set " + program, "");
 	}
 
 	/**

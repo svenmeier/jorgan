@@ -27,11 +27,11 @@ public class Keyboard extends Input {
 
 	public Keyboard() {
 		// note on, pitch, velocity
-		addMessage(new PressKey().init("equal 144", "get pitch", "greater 0 | get velocity"));	
+		addMessage(new PressKey().change("equal 144", "get pitch", "greater 0 | get velocity"));	
 		// note on, pitch, -
-		addMessage(new ReleaseKey().init("equal 144", "get pitch", "equal 0"));
+		addMessage(new ReleaseKey().change("equal 144", "get pitch", "equal 0"));
 		// note off, pitch, -
-		addMessage(new ReleaseKey().init("equal 128", "get pitch", ""));
+		addMessage(new ReleaseKey().change("equal 128", "get pitch", ""));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {

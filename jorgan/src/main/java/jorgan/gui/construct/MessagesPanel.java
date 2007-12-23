@@ -18,6 +18,9 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -32,9 +35,11 @@ import javax.sound.midi.Transmitter;
 import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
@@ -59,6 +64,7 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
+import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -96,8 +102,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private AddAction addAction = new AddAction();
 
-	private DuplicateAction duplicateAction = new DuplicateAction();
-	
 	private RemoveAction removeAction = new RemoveAction();
 
 	private RecordAction recordAction = new RecordAction();
@@ -112,7 +116,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	public MessagesPanel() {
 
 		addTool(addAction);
-		addTool(duplicateAction);
 		addTool(removeAction);
 		addToolSeparator();
 		addTool(recordAction);
@@ -120,7 +123,44 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
-		table.getSelectionModel().addListSelectionListener(duplicateAction);
+		table.setTransferHandler(new TransferHandler() {
+			@Override
+			public void exportToClipboard(JComponent comp, Clipboard clip,
+					int action) throws IllegalStateException {
+				int[] rows = table.getSelectedRows();
+				if (rows.length > 0) {
+					Message[] subMessages = new Message[rows.length];
+					for (int m = 0; m < subMessages.length; m++) {
+						subMessages[m] = messages.get(rows[m]);
+					}
+
+					for (int m = 0; m < subMessages.length; m++) {
+						if (action == DnDConstants.ACTION_COPY) {
+							subMessages[m] = subMessages[m].clone();
+						} else {
+							element.removeMessage(subMessages[m]);
+						}
+					}
+
+					clip.setContents(new ObjectTransferable(subMessages), null);
+				}
+			}
+
+			@Override
+			public boolean importData(JComponent comp, Transferable t) {
+				try {
+					Message[] subMessages = (Message[]) ObjectTransferable
+							.getObject(t);
+					for (int m = 0; m < subMessages.length; m++) {
+						element.addMessage(subMessages[m]);
+					}
+
+					return true;
+				} catch (Exception noImport) {
+					return false;
+				}
+			}
+		});
 		table.getSelectionModel().addListSelectionListener(removeAction);
 		table.getSelectionModel().addListSelectionListener(recordAction);
 		new IconTableCellRenderer() {
@@ -164,16 +204,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			this.session.addOrganListener(tableModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
-
-		updateMessages();
-	}
-
-	private void updateCurrentMessage(ShortMessage shortMessage) {
-		int index = table.getSelectedRow();
-		Message message = messages.get(index);
-
-		message.init("equal " + shortMessage.getStatus(), "equal "
-				+ shortMessage.getData1(), "equal " + shortMessage.getData2());
 
 		updateMessages();
 	}
@@ -275,17 +305,22 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			Message message = messages.get(rowIndex);
 
+			String status = message.getStatus();
+			String data1 = message.getData1();
+			String data2 = message.getData2();
 			switch (columnIndex) {
 			case 2:
-				message.setStatus((String) aValue);
+				status = (String) aValue;
 				break;
 			case 3:
-				message.setData1((String) aValue);
+				data1 = (String) aValue;
 				break;
 			case 4:
-				message.setData2((String) aValue);
+				data2 = (String) aValue;
 				break;
 			}
+
+			element.changeMessage(message, status, data1, data2);
 		}
 
 		public void added(OrganEvent event) {
@@ -306,6 +341,9 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		public void changed(final OrganEvent event) {
 			if (event.getMessage() != null && event.getElement() == element) {
 				updateMessages();
+
+				int index = messages.indexOf(event.getMessage());
+				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 	}
@@ -325,26 +363,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		public void update() {
 			setEnabled(element != null);
-		}
-	}
-
-	private class DuplicateAction extends BaseAction implements
-			ListSelectionListener {
-
-		private DuplicateAction() {
-			config.get("duplicate").read(this);
-
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			Message message = messages.get(table.getSelectedRow());
-			
-			element.addMessage(message.clone());
-		}
-
-		public void valueChanged(ListSelectionEvent e) {
-			setEnabled(table.getSelectedRowCount() == 1);
 		}
 	}
 
@@ -421,13 +439,11 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 				transmitter.setReceiver(new Receiver() {
 					public void send(final MidiMessage message, long when) {
 						if (MessageUtils.isShortMessage(message)) {
+							recorded((ShortMessage) message);
+
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									if (isRecording()) {
-										updateCurrentMessage((ShortMessage) message);
-
-										dialog.hide();
-									}
+									dialog.hide();
 								}
 							});
 						}
@@ -445,8 +461,16 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			}
 		}
 
-		private boolean isRecording() {
-			return table.getSelectedRow() != -1;
+		private void recorded(ShortMessage shortMessage) {
+			int index = table.getSelectedRow();
+			if (index != -1) {
+				Message message = messages.get(index);
+
+				element.changeMessage(message, "equal "
+						+ shortMessage.getStatus(), "equal "
+						+ shortMessage.getData1(), "equal "
+						+ shortMessage.getData2());
+			}
 		}
 	}
 }
