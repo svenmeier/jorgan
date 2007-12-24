@@ -18,6 +18,7 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
@@ -138,8 +139,40 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 			}
 
 			@Override
+			public void exportToClipboard(JComponent comp, Clipboard clip,
+					int action) throws IllegalStateException {
+				int[] indices = list.getSelectedIndices();
+				if (indices.length > 0) {
+					Element[] subElements = new Element[indices.length];
+					for (int e = 0; e < subElements.length; e++) {
+						subElements[e] = elements.get(indices[e]);
+					}
+
+					for (int m = 0; m < subElements.length; m++) {
+						if (action == DnDConstants.ACTION_COPY) {
+							subElements[m] = subElements[m].clone();
+						} else {
+							session.getOrgan().removeElement(subElements[m]);
+						}
+					}
+
+					clip.setContents(new ObjectTransferable(subElements), null);
+				}
+			}
+
+			@Override
 			public boolean importData(JComponent comp, Transferable t) {
-				return false;
+				try {
+					Element[] subElements = (Element[]) ObjectTransferable
+							.getObject(t);
+					for (int e = 0; e < subElements.length; e++) {
+						session.getOrgan().addElement(subElements[e]);
+					}
+
+					return true;
+				} catch (Exception noImport) {
+					return false;
+				}
 			}
 		});
 		list.addListSelectionListener(removeAction);

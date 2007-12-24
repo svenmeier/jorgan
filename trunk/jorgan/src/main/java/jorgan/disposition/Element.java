@@ -109,11 +109,18 @@ public abstract class Element implements Cloneable {
 			for (Element referrer : getReferrer()) {
 				referrer.unreference(this);
 			}
-			
-			references.clear();
 		}
 		
 		this.organ = organ;
+		
+		if (this.organ != null) {
+			// work on copy of references to avoid concurrent modification
+			for (Reference reference : new ArrayList<Reference>(references)) {
+				if (reference.getElement().getOrgan() != organ) {
+					references.remove(reference);
+				}
+			}
+		}
 	}
 
 	public List<Reference> getReferences() {
