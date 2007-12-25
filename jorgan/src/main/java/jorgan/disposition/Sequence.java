@@ -41,7 +41,7 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 		if (getCombination() != combination) {
 			int index = references.indexOf(getReference(combination));
 
-			setValue(((float) (index)) / (getSize() - 1));
+			setIndex(index);
 		}
 	}
 
