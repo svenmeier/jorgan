@@ -82,15 +82,9 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
         }
     }
 
-    protected void activated() {
-    }
-
     protected abstract void activateKey(int pitch, int velocity);
 
     protected abstract void deactivateKey(int pitch);
-
-    protected void deactivated() {
-    }
 
     public void keyDown(int pitch, int velocity) {
 
@@ -160,8 +154,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
         }
 
         public void activated() {
-            KeyablePlayer.this.activated();
-
             for (int p = 0; p < pressedKeys.length; p++) {
                 if (pressedKeys[p] > 0) {
                     KeyablePlayer.this.activateKey(p, ACTIVATE_VELOCITY);
@@ -175,8 +167,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
                     KeyablePlayer.this.deactivateKey(p);
                 }
             }
-
-            KeyablePlayer.this.deactivated();
         }
     }
 
@@ -217,8 +207,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
 
         @Override
 		public void activated() {
-            KeyablePlayer.this.activated();
-
             int highest = getHighestPitch();
             if (highest != -1) {
                 KeyablePlayer.this.activateKey(highest, ACTIVATE_VELOCITY);
@@ -231,8 +219,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
             if (highest != -1) {
                 KeyablePlayer.this.deactivateKey(highest);
             }
-
-            KeyablePlayer.this.deactivated();
         }
 
         private int getHighestPitch() {
@@ -275,8 +261,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
 
         @Override
 		public void activated() {
-            KeyablePlayer.this.activated();
-
             int lowest = getLowestPitch();
             if (lowest != -1) {
                 KeyablePlayer.this.activateKey(lowest, ACTIVATE_VELOCITY);
@@ -289,8 +273,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
             if (lowest != -1) {
                 KeyablePlayer.this.deactivateKey(lowest);
             }
-
-            KeyablePlayer.this.deactivated();
         }
 
         private int getLowestPitch() {
@@ -330,8 +312,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
 
         @Override
 		public void activated() {
-            KeyablePlayer.this.activated();
-
             if (hasPitch()) {
                 Keyable keyable = getElement();
                 KeyablePlayer.this.activateKey(60 + keyable.getTranspose(),
@@ -345,8 +325,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlaye
                 Keyable keyable = getElement();
                 KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
             }
-
-            KeyablePlayer.this.deactivated();
         }
 
         private boolean hasPitch() {
