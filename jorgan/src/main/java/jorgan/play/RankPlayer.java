@@ -49,8 +49,6 @@ public class RankPlayer extends Player<Rank> {
 
 	private int[] played = new int[128];
 
-	private int totalNotes;
-
 	public RankPlayer(Rank soundSource) {
 		super(soundSource);
 	}
@@ -81,11 +79,6 @@ public class RankPlayer extends Player<Rank> {
 			disengaged();
 		}
 
-		for (int n = 0; n < played.length; n++) {
-			played[n] = 0;
-		}
-		totalNotes = 0;
-
 		if (channelPool != null) {
 			channelPool.close();
 			channelPool = null;
@@ -95,6 +88,10 @@ public class RankPlayer extends Player<Rank> {
 	private void engaged() {
 		Rank rank = getElement();
 
+		for (int n = 0; n < played.length; n++) {
+			played[n] = 0;
+		}
+		
 		try {
 			channel = channelPool.createChannel(new RankChannelFilter(rank
 					.getChannels()));
@@ -173,8 +170,6 @@ public class RankPlayer extends Player<Rank> {
 				played(pitch, velocity);
 			}
 			played[pitch]++;
-
-			totalNotes++;
 		}
 	}
 
@@ -188,8 +183,10 @@ public class RankPlayer extends Player<Rank> {
 
 	public void mute(int pitch) {
 		if (channelPool != null) {
-			totalNotes--;
-	
+			if (channel == null) {
+				return;
+			}
+			
 			played[pitch]--;
 			if (played[pitch] == 0) {
 				muted(pitch);
