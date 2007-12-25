@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * An regulator of {@link jorgan.disposition.Activateable}s.
  */
-public class Regulator extends Continuous implements Activating {
+public class Regulator extends IndexedContinuous implements Activating {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -31,10 +31,6 @@ public class Regulator extends Continuous implements Activating {
 	@Override
 	protected boolean canReferenceDuplicates() {
 		return true;
-	}
-
-	public int getIndex() {
-		return Math.round((getSize() - 1) * getValue());
 	}
 
 	public int getSize() {
