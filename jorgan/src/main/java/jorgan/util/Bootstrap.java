@@ -74,7 +74,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 					new Class[] { String[].class });
 			method.invoke(null, new Object[] { args });
 		} catch (Throwable t) {
-			logger.log(Level.WARNING, "bootstrapping failed", t);
+			logger.log(Level.SEVERE, "bootstrapping failed", t);
 		}
 	}
 
