@@ -35,9 +35,5 @@ public abstract class Initiator extends Momentary {
 	}
 
 	public static class Initiate extends InputMessage {
-		@Override
-		protected int getOrder() {
-			return 0;
-		}
 	}
 }

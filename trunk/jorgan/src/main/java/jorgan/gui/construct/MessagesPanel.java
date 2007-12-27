@@ -22,8 +22,11 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.sound.midi.MidiDevice;
@@ -37,6 +40,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JTable;
+import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
@@ -108,6 +112,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 	private JTable table = new JTable();
 
+	private JToggleButton sortByTypeButton = new JToggleButton();
+	
 	private MessagesModel tableModel = new MessagesModel();
 
 	/**
@@ -117,9 +123,19 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		addTool(addAction);
 		addTool(removeAction);
+
+		addToolSeparator();
+		config.get("sortByType").read(sortByTypeButton);
+		sortByTypeButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				updateMessages();
+			}
+		});
+		addTool(sortByTypeButton);
+
 		addToolSeparator();
 		addTool(recordAction);
-
+		
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
@@ -227,7 +243,10 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			for (Message message : element.getMessages()) {
 				messages.add(message);
 			}
-			Collections.sort(messages);
+			
+			if (sortByTypeButton.isSelected()) {
+				Collections.sort(messages, new MessageComparator());
+			}
 
 			tableModel.update();
 			table.setVisible(true);
@@ -471,6 +490,28 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 						+ shortMessage.getData1(), "equal "
 						+ shortMessage.getData2());
 			}
+		}
+	}
+	
+	private class MessageComparator implements Comparator<Message> {
+		public int compare(Message m1, Message m2) {
+			int order = m1.getClass().getName().compareTo(m2.getClass().getName());
+
+			if (m1 instanceof InputMessage) {
+				order -= 100;
+			}
+			if (m2 instanceof InputMessage) {
+				order += 100;
+			}
+			
+			if (m1 instanceof OutputMessage) {
+				order += 100;
+			}
+			if (m2 instanceof OutputMessage) {
+				order -= 100;
+			}
+			
+			return order;
 		}
 	}
 }

@@ -101,30 +101,14 @@ public abstract class Activateable extends Momentary implements Engageable {
 	}
 
 	public static class Activate extends InputMessage {
-		@Override
-		protected int getOrder() {
-			return 0;
-		}
 	}
 
 	public static class Deactivate extends InputMessage {
-		@Override
-		protected int getOrder() {
-			return 1;
-		}
 	}
 	
 	public static class Activated extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 10;
-		}
 	}
 
 	public static class Deactivated extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 11;
-		}
 	}
 }

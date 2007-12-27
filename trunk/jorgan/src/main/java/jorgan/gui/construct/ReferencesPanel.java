@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
+import javax.swing.ButtonGroup;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
@@ -92,24 +93,20 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		addToolSeparator();
 
+		ButtonGroup sortGroup = new ButtonGroup();
 		config.get("sortByName").read(sortByNameButton);
-		sortByNameButton.setSelected(true);
+		sortByNameButton.getModel().setGroup(sortGroup);
 		sortByNameButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (sortByNameButton.isSelected()) {
-					sortByTypeButton.setSelected(false);
-				}
 				updateReferences();
 			}
 		});
 		addTool(sortByNameButton);
 
 		config.get("sortByType").read(sortByTypeButton);
+		sortByTypeButton.getModel().setGroup(sortGroup);
 		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (sortByTypeButton.isSelected()) {
-					sortByNameButton.setSelected(false);
-				}
 				updateReferences();
 			}
 		});

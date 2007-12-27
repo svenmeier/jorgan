@@ -37,11 +37,7 @@ public class ContinuousFilter extends Continuous implements Filter {
 	}
 
 	public static class Engaging extends OutputMessage {
+
 		public static final String VALUE = "value";
-		
-		@Override
-		protected int getOrder() {
-			return 11;
-		}
 	}
 }

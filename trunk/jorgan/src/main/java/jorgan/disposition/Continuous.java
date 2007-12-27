@@ -82,20 +82,10 @@ public abstract class Continuous extends Element {
 	public static class Change extends InputMessage {
 
 		public static final String VALUE = "value";
-
-		@Override
-		protected int getOrder() {
-			return 0;
-		}
 	}
 
 	public static class Changed extends OutputMessage {
 
 		public static final String VALUE = "value";
-
-		@Override
-		protected int getOrder() {
-			return 10;
-		}
 	}
 }
