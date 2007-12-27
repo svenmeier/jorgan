@@ -38,16 +38,8 @@ public class ActivateableFilter extends Activateable implements Filter {
 	}
 
 	public static class Engaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 12;
-		}
 	}
 
 	public static class Disengaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 13;
-		}
 	}
 }

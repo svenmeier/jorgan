@@ -176,10 +176,6 @@ public class Rank extends Element implements Engageable, Output {
 	}
 
 	public static class Engaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 10;
-		}
 	}
 
 	public static class NotePlayed extends OutputMessage {
@@ -187,27 +183,13 @@ public class Rank extends Element implements Engageable, Output {
 		public static final String VELOCITY = "velocity";
 
 		public static final String PITCH = "pitch";
-
-		@Override
-		protected int getOrder() {
-			return 11;
-		}
 	}
 
 	public static class NoteMuted extends OutputMessage {
 
 		public static final String PITCH = "pitch";
-
-		@Override
-		protected int getOrder() {
-			return 12;
-		}
 	}
 
 	public static class Disengaged extends OutputMessage {
-		@Override
-		protected int getOrder() {
-			return 13;
-		}
 	}
 }

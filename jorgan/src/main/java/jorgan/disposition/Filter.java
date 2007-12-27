@@ -21,9 +21,5 @@ package jorgan.disposition;
 public interface Filter {
 
 	public static class Intercept extends Message {
-		@Override
-		protected int getOrder() {
-			return 5;
-		}
 	}
 }

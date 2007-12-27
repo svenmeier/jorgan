@@ -52,20 +52,10 @@ public class Keyboard extends Input {
 		public static final String PITCH = "pitch";
 
 		public static final String VELOCITY = "velocity";
-
-		@Override
-		protected int getOrder() {
-			return 0;
-		}
 	}
 
 	public static class ReleaseKey extends InputMessage {
 
 		public static final String PITCH = "pitch";
-
-		@Override
-		protected int getOrder() {
-			return 1;
-		}
 	}
 }
