@@ -43,13 +43,9 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 		Activateable activateable = getElement();
 
 		if (message instanceof Activate) {
-			if (!activateable.isActive()) {
-				activateable.setActive(true);
-			}
+			activateable.setActive(true);
 		} else if (message instanceof Deactivate) {
-			if (activateable.isActive()) {
-				activateable.setActive(false);
-			}
+			activateable.setActive(false);
 		} else {
 			super.input(message, context);
 		}
