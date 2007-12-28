@@ -128,6 +128,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		config.get("sortByType").read(sortByTypeButton);
 		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
+				commitEdit();
 				updateMessages();
 			}
 		});
@@ -202,6 +203,13 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		setScrollableBody(table, true, false);
 	}
 
+	private void commitEdit() {
+		CellEditor editor = table.getCellEditor();
+		if (editor != null) {
+			editor.stopCellEditing();
+		}
+	}
+
 	/**
 	 * Set the organ to be edited.
 	 * 
@@ -225,11 +233,6 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	}
 
 	private void updateMessages() {
-		CellEditor editor = table.getCellEditor();
-		if (editor != null) {
-			editor.stopCellEditing();
-		}
-
 		element = null;
 		messages.clear();
 		tableModel.update();
