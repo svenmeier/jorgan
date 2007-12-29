@@ -37,28 +37,28 @@ public class Elements {
 	}
 
 	/**
-	 * Get the display name of the given element class.
+	 * Get the display name of the given class.
 	 * 
-	 * @param elementClass
-	 *            class of elements to get display name for
+	 * @param clazz
+	 *            class to get display name for
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<?> elementClass) {
-		return getMessage(classWithoutPackage(elementClass));
+	public static String getDisplayName(Class<?> clazz) {
+		return getMessage(classWithoutPackage(clazz));
 	}
 
 	/**
-	 * Get the display name of the given property of element class.
+	 * Get the display name of the given property of a class.
 	 * 
-	 * @param elementClass
-	 *            class of elements to get display name for
+	 * @param clazz
+	 *            class to get display name for
 	 * @param property
-	 *            properyt
+	 *            property
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<?> elementClass,
+	public static String getDisplayName(Class<?> clazz,
 			String property) {
-		return getMessage(classWithoutPackage(elementClass) + "." + property);
+		return getMessage(classWithoutPackage(clazz) + "." + property);
 	}
 
 	private static String getMessage(String key) {
