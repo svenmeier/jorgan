@@ -121,8 +121,8 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 			this.session.addPlayerListener(tableModel);
 
 			Organ organ = this.session.getOrgan();
-			for (int e = 0; e < organ.getElementCount(); e++) {
-				addProblems(organ.getElement(e));
+			for (Element element : organ.getElements()) {
+				addProblems(element);
 			}
 		}
 

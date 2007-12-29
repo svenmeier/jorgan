@@ -153,8 +153,8 @@ public class OrganShell implements UI {
 			organPlay = new OrganPlay(organ);
 			organPlay.addPlayerListener(playerListener);
 
-			for (int e = 0; e < organ.getElementCount(); e++) {
-				showElementStatus(organ.getElement(e));
+			for (Element element : organ.getElements()) {
+				showElementStatus(element);
 			}
 
 			organPlay.open();

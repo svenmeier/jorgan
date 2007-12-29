@@ -20,7 +20,9 @@ package jorgan.disposition;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
@@ -35,7 +37,7 @@ public class Organ {
 	 */
 	private transient List<OrganListener> listeners;
 
-	private List<Element> elements = new ArrayList<Element>();
+	private Set<Element> elements = new HashSet<Element>();
 
 	private static List<Class<? extends Element>> elementClasses;
 
@@ -97,21 +99,8 @@ public class Organ {
 		listeners.remove(listener);
 	}
 
-	/**
-	 * Get count of elements.
-	 * 
-	 * @return element count
-	 */
-	public int getElementCount() {
-		return elements.size();
-	}
-
-	public Element getElement(int index) {
-		return elements.get(index);
-	}
-
-	public List<Element> getElements() {
-		return Collections.unmodifiableList(elements);
+	public Set<Element> getElements() {
+		return Collections.unmodifiableSet(elements);
 	}
 
 	public void addElement(Element element) {
@@ -207,15 +196,15 @@ public class Organ {
 	 * @return elements
 	 */
 	@SuppressWarnings("unchecked")
-	public <E> List<E> getElements(Class<E> clazz) {
-		List<E> list = new ArrayList<E>();
+	public <E> Set<E> getElements(Class<E> clazz) {
+		Set<E> set = new HashSet<E>();
 
 		for (Element element : this.elements) {
 			if (clazz.isInstance(element)) {
-				list.add((E) element);
+				set.add((E) element);
 			}
 		}
 
-		return list;
+		return set;
 	}
 }

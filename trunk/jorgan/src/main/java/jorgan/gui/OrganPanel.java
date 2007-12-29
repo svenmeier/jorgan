@@ -206,8 +206,7 @@ public class OrganPanel extends JPanel {
 				}
 			}
 
-			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
-				Element element = this.session.getOrgan().getElement(e);
+			for (Element element : this.session.getOrgan().getElements()) {
 				if (element instanceof Console) {
 					removeConsoleDockable((Console) element);
 				}
@@ -230,8 +229,7 @@ public class OrganPanel extends JPanel {
 				}
 			}
 
-			for (int e = 0; e < this.session.getOrgan().getElementCount(); e++) {
-				Element element = this.session.getOrgan().getElement(e);
+			for (Element element : this.session.getOrgan().getElements()) {
 				if (element instanceof Console) {
 					addConsoleDockable((Console) element);
 				}

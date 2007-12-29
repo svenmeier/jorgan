@@ -19,7 +19,7 @@
 package jorgan.gui.play;
 
 import java.awt.event.ActionEvent;
-import java.util.List;
+import java.util.Set;
 
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
@@ -102,11 +102,12 @@ public class MemoryPanel extends DockedPanel implements OrganAware {
 	}
 
 	private void findMemory() {
-		List memories = this.session.getOrgan().getElements(Memory.class);
+		Set<Memory> memories = this.session.getOrgan()
+				.getElements(Memory.class);
 		if (memories.isEmpty()) {
 			setMemory(null);
 		} else {
-			setMemory((Memory) memories.get(0));
+			setMemory(memories.iterator().next());
 		}
 	}
 
@@ -181,14 +182,14 @@ public class MemoryPanel extends DockedPanel implements OrganAware {
 		public void added(OrganEvent event) {
 			Element element = event.getElement();
 			if (element instanceof Memory) {
-				setMemory((Memory)element);
+				setMemory((Memory) element);
 			}
 		}
 
 		public void changed(OrganEvent event) {
 			Element element = event.getElement();
 			if (element instanceof Memory) {
-				setMemory((Memory)element);
+				setMemory((Memory) element);
 			}
 		}
 
