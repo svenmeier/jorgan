@@ -116,10 +116,9 @@ public class DispositionImportProvider implements ImportProvider {
 
 		Organ organ = new DispositionStream().read(new FileInputStream(file));
 
-		List<Rank> ranks = organ.getElements(Rank.class);
-
-		for (int s = 0; s < ranks.size(); s++) {
-			organ.removeElement(ranks.get(s));
+		List<Rank> ranks = new ArrayList<Rank>(organ.getElements(Rank.class));
+		for (Rank rank : ranks) {
+			organ.removeElement(rank);
 		}
 
 		return ranks;

@@ -89,8 +89,8 @@ public class OrganPlay {
 
 		organ.addOrganListener(eventHandler);
 
-		for (int e = 0; e < organ.getElementCount(); e++) {
-			createPlayer(organ.getElement(e));
+		for (Element element : organ.getElements()) {
+			createPlayer(element);
 		}
 	}
 

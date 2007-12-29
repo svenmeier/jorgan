@@ -738,9 +738,7 @@ public class OrganFrame extends JFrame {
 		}
 
 		private void goFullScreen() {
-			List consoles = session.getOrgan().getElements(Console.class);
-			for (int c = 0; c < consoles.size(); c++) {
-				Console console = (Console) consoles.get(c);
+			for (Console console : session.getOrgan().getElements(Console.class)) {
 				String screen = console.getScreen();
 				if (screen == null) {
 					continue;
