@@ -110,9 +110,9 @@ public abstract class Element implements Cloneable {
 				referrer.unreference(this);
 			}
 		}
-		
+
 		this.organ = organ;
-		
+
 		if (this.organ != null) {
 			// work on copy of references to avoid concurrent modification
 			for (Reference reference : new ArrayList<Reference>(references)) {
@@ -142,7 +142,9 @@ public abstract class Element implements Cloneable {
 		}
 		references.add(reference);
 
-		fireAdded(new OrganEvent(getOrgan(), this, reference, true));
+		if (organ != null) {
+			organ.fireAdded(new OrganEvent(organ, this, reference, true));
+		}
 	}
 
 	protected Reference createReference(Element element) {
@@ -195,7 +197,7 @@ public abstract class Element implements Cloneable {
 		references.remove(reference);
 
 		if (organ != null) {
-			fireRemoved(new OrganEvent(getOrgan(), this, reference, true));
+			organ.fireRemoved(new OrganEvent(organ, this, reference, true));
 		}
 	}
 
@@ -257,8 +259,8 @@ public abstract class Element implements Cloneable {
 
 	protected void fireChanged(boolean dispositionChange) {
 		if (organ != null) {
-			fireChanged(new OrganEvent(getOrgan(), this, dispositionChange));
-			
+			organ.fireChanged(new OrganEvent(organ, this, dispositionChange));
+
 			for (Reference reference : getReferences()) {
 				reference.getElement().referrerChanged(this);
 			}
@@ -266,31 +268,19 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected void fireChanged(Reference reference, boolean dispositionChange) {
-		fireChanged(new OrganEvent(getOrgan(), this, reference, dispositionChange));
-	}
-	
-	protected void fireChanged(Message message, boolean dispositionChange) {
-		fireChanged(new OrganEvent(getOrgan(), this, message, dispositionChange));
-	}
-	
-	protected void fireAdded(OrganEvent event) {
 		if (organ != null) {
-			organ.fireAdded(event);
+			organ.fireChanged(new OrganEvent(organ, this, reference,
+					dispositionChange));
 		}
 	}
 
-	protected void fireRemoved(OrganEvent event) {
+	protected void fireChanged(Message message, boolean dispositionChange) {
 		if (organ != null) {
-			organ.fireRemoved(event);
+			organ.fireChanged(new OrganEvent(organ, this, message,
+					dispositionChange));
 		}
 	}
-	
-	protected void fireChanged(OrganEvent event) {
-		if (organ != null) {
-			organ.fireChanged(event);
-		}
-	}
-	
+
 	@Override
 	public String toString() {
 		return getName();
@@ -304,7 +294,7 @@ public abstract class Element implements Cloneable {
 	}
 
 	/**
-	 * TODO move into {@link Console.Reference}
+	 * TODO move into {@link Console.Reference} ?
 	 * 
 	 * @param string
 	 */
@@ -398,13 +388,17 @@ public abstract class Element implements Cloneable {
 	public void addMessage(Message message) {
 		this.messages.add(message);
 
-		fireAdded(new OrganEvent(getOrgan(), this, message, true));
+		if (organ != null) {
+			organ.fireAdded(new OrganEvent(organ, this, message, true));
+		}
 	}
 
 	public void removeMessage(Message message) {
 		this.messages.remove(message);
 
-		fireRemoved(new OrganEvent(getOrgan(), this, message, true));
+		if (organ != null) {
+			organ.fireRemoved(new OrganEvent(organ, this, message, true));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -419,12 +413,13 @@ public abstract class Element implements Cloneable {
 		return messages;
 	}
 
-	public void changeMessage(Message message, String status, String data1, String data2) {
+	public void changeMessage(Message message, String status, String data1,
+			String data2) {
 		if (!this.messages.contains(message)) {
 			throw new IllegalArgumentException("unkown message");
 		}
 		message.change(status, data1, data2);
-		
+
 		fireChanged(message, true);
 	}
 }

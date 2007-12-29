@@ -20,8 +20,6 @@ package jorgan.disposition;
 
 import java.util.Arrays;
 
-import jorgan.disposition.event.OrganEvent;
-
 public class Combination extends Initiator {
 
 	@Override
@@ -89,7 +87,7 @@ public class Combination extends Initiator {
 
 			reference.setActive(level, registratable.isActive());
 
-			fireChanged(new OrganEvent(getOrgan(), this, reference, false));
+			fireChanged(reference, false);
 		}
 
 		notifyObservers();
@@ -161,11 +159,12 @@ public class Combination extends Initiator {
 		public Activateable getRegistratable() {
 			return (Activateable) getElement();
 		}
-		
+
 		public void setSize(int size) {
 			if (activated.length != size) {
 				boolean[] booleans = new boolean[size];
-				System.arraycopy(activated, 0, booleans, 0, Math.min(activated.length, booleans.length));
+				System.arraycopy(activated, 0, booleans, 0, Math.min(
+						activated.length, booleans.length));
 				activated = booleans;
 			}
 		}
@@ -180,14 +179,14 @@ public class Combination extends Initiator {
 	public static interface Observer {
 		public void initiated(Combination combination);
 	}
-	
+
 	@Override
 	public void referrerChanged(Element element) {
 		if (element instanceof Memory) {
-			int size = ((Memory)element).getSize();
-			
+			int size = ((Memory) element).getSize();
+
 			for (jorgan.disposition.Reference reference : references) {
-				((Reference)reference).setSize(size);
+				((Reference) reference).setSize(size);
 			}
 		}
 	}
