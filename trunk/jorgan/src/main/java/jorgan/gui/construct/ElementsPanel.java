@@ -149,10 +149,9 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 					}
 
 					for (int m = 0; m < subElements.length; m++) {
-						if (action != DnDConstants.ACTION_COPY) {
+						if (action == DnDConstants.ACTION_MOVE) {
 							session.getOrgan().removeElement(subElements[m]);
 						}
-						subElements[m] = subElements[m].clone();
 					}
 
 					clip.setContents(new ObjectTransferable(subElements), null);
@@ -165,7 +164,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 					Element[] subElements = (Element[]) ObjectTransferable
 							.getObject(t);
 					for (int e = 0; e < subElements.length; e++) {
-						session.getOrgan().addElement(subElements[e]);
+						session.getOrgan().addElement(subElements[e].clone());
 					}
 
 					return true;
