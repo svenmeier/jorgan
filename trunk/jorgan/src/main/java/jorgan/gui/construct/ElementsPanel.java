@@ -53,6 +53,7 @@ import jorgan.util.Generics;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * Panel shows all elements.
@@ -398,6 +399,12 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			if (config.get("remove/confirm").read(
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
+					ElementsPanel.this) != MessageBox.OPTION_OK) {
+				return;
+			}
+
 			List selectedElements = session.getSelectionModel()
 					.getSelectedElements();
 
