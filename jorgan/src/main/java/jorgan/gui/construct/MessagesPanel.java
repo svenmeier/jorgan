@@ -113,7 +113,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	private JTable table = new JTable();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
-	
+
 	private MessagesModel tableModel = new MessagesModel();
 
 	/**
@@ -136,7 +136,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 
 		addToolSeparator();
 		addTool(recordAction);
-		
+
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
@@ -244,7 +244,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			for (Message message : element.getMessages()) {
 				messages.add(message);
 			}
-			
+
 			if (sortByTypeButton.isSelected()) {
 				Collections.sort(messages, new MessageComparator());
 			}
@@ -396,6 +396,12 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			if (config.get("remove/confirm").read(
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
+					MessagesPanel.this) != MessageBox.OPTION_OK) {
+				return;
+			}
+
 			int[] indices = table.getSelectedRows();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
@@ -493,10 +499,11 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			}
 		}
 	}
-	
+
 	private class MessageComparator implements Comparator<Message> {
 		public int compare(Message m1, Message m2) {
-			int order = m1.getClass().getName().compareTo(m2.getClass().getName());
+			int order = m1.getClass().getName().compareTo(
+					m2.getClass().getName());
 
 			if (m1 instanceof InputMessage) {
 				order -= 100;
@@ -504,14 +511,14 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			if (m2 instanceof InputMessage) {
 				order += 100;
 			}
-			
+
 			if (m1 instanceof OutputMessage) {
 				order += 100;
 			}
 			if (m2 instanceof OutputMessage) {
 				order -= 100;
 			}
-			
+
 			return order;
 		}
 	}

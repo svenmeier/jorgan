@@ -48,6 +48,7 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.list.ListUtils;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * Panel shows the references of elements.
@@ -270,6 +271,12 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			if (config.get("remove/confirm").read(
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
+					ReferencesPanel.this) != MessageBox.OPTION_OK) {
+				return;
+			}
+			
 			int[] indices = list.getSelectedIndices();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
