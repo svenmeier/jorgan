@@ -105,12 +105,6 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected void setOrgan(Organ organ) {
-		if (this.organ != null) {
-			for (Element referrer : getReferrer()) {
-				referrer.unreference(this);
-			}
-		}
-
 		this.organ = organ;
 
 		if (this.organ != null) {
@@ -330,23 +324,6 @@ public abstract class Element implements Cloneable {
 
 	public boolean references(Element element) {
 		return getReference(element) != null;
-	}
-
-	@SuppressWarnings("unchecked")
-	public <E> Set<E> getReferrer(Class<E> clazz) {
-		Set<E> set = new HashSet<E>();
-
-		for (Element candidate : organ.getElements()) {
-			if (clazz.isAssignableFrom(candidate.getClass())
-					&& candidate.references(this)) {
-				set.add((E) candidate);
-			}
-		}
-		return set;
-	}
-
-	public Set<Element> getReferrer() {
-		return getReferrer(Element.class);
 	}
 
 	public float getZoom() {

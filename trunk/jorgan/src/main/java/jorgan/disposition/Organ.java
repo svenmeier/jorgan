@@ -115,6 +115,10 @@ public class Organ {
 		if (element.getOrgan() != this) {
 			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
 		}
+
+		for (Element referrer : getReferrer(element)) {
+			referrer.unreference(element);
+		}
 		
 		elements.remove(element);
 		element.setOrgan(null);
@@ -148,6 +152,23 @@ public class Organ {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public <E> Set<E> getReferrer(Element element, Class<E> clazz) {
+		Set<E> set = new HashSet<E>();
+
+		for (Element candidate : elements) {
+			if (clazz.isAssignableFrom(candidate.getClass())
+					&& candidate.references(element)) {
+				set.add((E) candidate);
+			}
+		}
+		return set;
+	}
+
+	public Set<Element> getReferrer(Element element) {
+		return getReferrer(element, Element.class);
+	}
+	
 	/**
 	 * Get candidates to reference from the given element.
 	 * 

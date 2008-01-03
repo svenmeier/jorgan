@@ -442,8 +442,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 			if (element instanceof Input) {
 				input = (Input) element;
 			} else {
-				for (Console console : MessagesPanel.this.element
-						.getReferrer(Console.class)) {
+				for (Console console : MessagesPanel.this.session.getOrgan()
+						.getReferrer(element, Console.class)) {
 					input = console;
 					break;
 				}

@@ -68,9 +68,11 @@ public abstract class Activateable extends Momentary implements Engageable {
 			return true;
 		}
 
-		for (Activating activating : getReferrer(Activating.class)) {
-			if (activating.activates(this)) {
-				return true;
+		if (getOrgan() != null) {
+			for (Activating activating : getOrgan().getReferrer(this, Activating.class)) {
+				if (activating.activates(this)) {
+					return true;
+				}
 			}
 		}
 

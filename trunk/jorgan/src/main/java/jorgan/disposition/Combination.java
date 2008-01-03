@@ -34,13 +34,15 @@ public class Combination extends Initiator {
 
 	@Override
 	public void initiate() {
-		for (Captor captor : getReferrer(Captor.class)) {
-			if (captor.isEngaged()) {
-				capture();
-				return;
-			}
+		if (getOrgan() != null) {
+			for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+				if (captor.isEngaged()) {
+					capture();
+					return;
+				}
+			}			
 		}
-
+		
 		recall();
 	}
 
@@ -70,8 +72,10 @@ public class Combination extends Initiator {
 	}
 
 	private int getLevel() {
-		for (Memory memory : getReferrer(Memory.class)) {
-			return memory.getIndex();
+		if (getOrgan() != null) {
+			for (Memory memory : getOrgan().getReferrer(this, Memory.class)) {
+				return memory.getIndex();
+			}
 		}
 		return 0;
 	}
@@ -180,8 +184,10 @@ public class Combination extends Initiator {
 	}
 
 	protected void notifyObservers() {
-		for (Observer observer : getReferrer(Observer.class)) {
-			observer.initiated(this);
+		if (getOrgan() != null) {
+			for (Observer observer : getOrgan().getReferrer(this, Observer.class)) {
+				observer.initiated(this);
+			}
 		}
 	}
 
