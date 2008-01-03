@@ -22,6 +22,7 @@ import java.beans.PropertyEditorSupport;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.skin.SkinManager;
 
 /**
@@ -38,8 +39,12 @@ public class StyleEditor extends PropertyEditorSupport implements
 		if (element instanceof Console) {
 			console = (Console) element;
 		} else {
-			for (Console console : element.getReferrer(Console.class)) {
-				this.console = console;
+			Organ organ = element.getOrgan();
+			if (organ != null) {
+				for (Console console : organ
+						.getReferrer(element, Console.class)) {
+					this.console = console;
+				}
 			}
 		}
 	}

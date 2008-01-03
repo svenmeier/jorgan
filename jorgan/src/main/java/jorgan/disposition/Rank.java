@@ -144,9 +144,11 @@ public class Rank extends Element implements Engageable, Output {
 	 * @see Stop#plays(Rank)
 	 */
 	public boolean isEngaged() {
-		for (Stop stop : getReferrer(Stop.class)) {
-			if (stop.plays(this)) {
-				return true;
+		if (getOrgan() != null) {
+			for (Stop stop : getOrgan().getReferrer(this, Stop.class)) {
+				if (stop.plays(this)) {
+					return true;
+				}
 			}
 		}
 
