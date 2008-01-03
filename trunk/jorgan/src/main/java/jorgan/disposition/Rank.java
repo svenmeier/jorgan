@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A rank.
@@ -35,13 +35,14 @@ public class Rank extends Element implements Engageable, Output {
 		// control change, bank select, 0
 		addMessage(new Engaged().change("set 176", "set 0", "set 0"));
 		// program change, 0, -
-		addMessage(new Engaged().change("set 192", "set 0", "")); 
+		addMessage(new Engaged().change("set 192", "set 0", ""));
 		// control change, reset all, -
-		addMessage(new Disengaged().change("set 176", "set 121", "")); 
+		addMessage(new Disengaged().change("set 176", "set 121", ""));
 		// control change, all notes off, -
 		addMessage(new Disengaged().change("set 176", "set 123", ""));
 		// note on, pitch, velocity
-		addMessage(new NotePlayed().change("set 144", "set pitch", "set velocity"));
+		addMessage(new NotePlayed().change("set 144", "set pitch",
+				"set velocity"));
 		// note off, pitch, -
 		addMessage(new NoteMuted().change("set 128", "set pitch", ""));
 	}
@@ -164,8 +165,8 @@ public class Rank extends Element implements Engageable, Output {
 		}
 	}
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Engaged.class);
 		names.add(Disengaged.class);

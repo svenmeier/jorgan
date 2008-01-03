@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
+import java.util.Set;
 
 import jorgan.disposition.Output.OutputMessage;
 
@@ -27,8 +27,9 @@ import jorgan.disposition.Output.OutputMessage;
  */
 public class ContinuousFilter extends Continuous implements Filter {
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> messages = super.getMessageClasses();
+	@Override
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> messages = super.getMessageClasses();
 
 		messages.add(Intercept.class);
 		messages.add(Engaging.class);

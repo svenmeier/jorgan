@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
+import java.util.Set;
 
 /**
  * A keyboard.
@@ -27,7 +27,8 @@ public class Keyboard extends Input {
 
 	public Keyboard() {
 		// note on, pitch, velocity
-		addMessage(new PressKey().change("equal 144", "get pitch", "greater 0 | get velocity"));	
+		addMessage(new PressKey().change("equal 144", "get pitch",
+				"greater 0 | get velocity"));
 		// note on, pitch, -
 		addMessage(new ReleaseKey().change("equal 144", "get pitch", "equal 0"));
 		// note off, pitch, -
@@ -38,8 +39,9 @@ public class Keyboard extends Input {
 		return Keyable.class.isAssignableFrom(clazz);
 	}
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+	@Override
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(PressKey.class);
 		names.add(ReleaseKey.class);
