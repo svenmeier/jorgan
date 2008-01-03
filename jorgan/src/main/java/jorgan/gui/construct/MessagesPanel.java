@@ -151,9 +151,9 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 						subMessages[m] = messages.get(rows[m]);
 					}
 
-					for (int m = 0; m < subMessages.length; m++) {
+					for (Message message : subMessages) {
 						if (action == DnDConstants.ACTION_MOVE) {
-							element.removeMessage(subMessages[m]);
+							element.removeMessage(message);
 						}
 					}
 
@@ -166,8 +166,8 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 				try {
 					Message[] subMessages = (Message[]) ObjectTransferable
 							.getObject(t);
-					for (int m = 0; m < subMessages.length; m++) {
-						element.addMessage(subMessages[m].clone());
+					for (Message message : subMessages) {
+						element.addMessage(message.clone());
 					}
 
 					return true;

@@ -19,6 +19,7 @@
 package jorgan.gui.construct;
 
 import java.awt.Component;
+import java.util.ArrayList;
 
 import javax.swing.JComponent;
 
@@ -87,7 +88,9 @@ public class CreateMessageWizard extends BasicWizard {
 		private MessagePage() {
 			config.get("message").read(this);
 
-			messagePanel.setMessageClasses(element.getMessageClasses());
+			messagePanel
+					.setMessageClasses(new ArrayList<Class<? extends Message>>(
+							element.getMessageClasses()));
 		}
 
 		@Override

@@ -18,6 +18,9 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -29,9 +32,11 @@ import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.ButtonGroup;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
+import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -46,6 +51,7 @@ import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.list.ListUtils;
+import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -128,6 +134,45 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 						.getElement();
 
 				session.getSelectionModel().setSelectedElement(element);
+			}
+		});
+		list.setTransferHandler(new TransferHandler() {
+			@Override
+			public void exportToClipboard(JComponent comp, Clipboard clip,
+					int action) throws IllegalStateException {
+				int[] indices = list.getSelectedIndices();
+				if (indices.length > 0) {
+					Reference[] subReferences = new Reference[indices.length];
+					for (int r = 0; r < subReferences.length; r++) {
+						subReferences[r] = references.get(indices[r]);
+					}
+
+					for (Reference reference : subReferences) {
+						if (action == DnDConstants.ACTION_MOVE) {
+							element.removeReference(reference);
+						}
+					}
+
+					clip.setContents(new ObjectTransferable(subReferences),
+							null);
+				}
+			}
+
+			@Override
+			public boolean importData(JComponent comp, Transferable t) {
+				try {
+					Reference[] subReferences = (Reference[]) ObjectTransferable
+							.getObject(t);
+					for (Reference reference : subReferences) {
+						if (element.canReference(reference.getElement())) {
+							element.addReference(reference.clone());
+						}
+					}
+
+					return true;
+				} catch (Exception noImport) {
+					return false;
+				}
 			}
 		});
 
@@ -276,7 +321,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 					ReferencesPanel.this) != MessageBox.OPTION_OK) {
 				return;
 			}
-			
+
 			int[] indices = list.getSelectedIndices();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {

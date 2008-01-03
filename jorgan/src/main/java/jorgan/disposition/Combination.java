@@ -168,6 +168,15 @@ public class Combination extends Initiator {
 				activated = booleans;
 			}
 		}
+		
+		@Override
+		public Reference clone() {
+			Reference clone = (Reference)super.clone();
+
+			clone.activated = this.activated.clone();
+				
+			return clone;
+		}
 	}
 
 	protected void notifyObservers() {

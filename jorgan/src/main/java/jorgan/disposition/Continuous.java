@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
+import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
@@ -70,8 +70,9 @@ public abstract class Continuous extends Element {
 		fireChanged(true);
 	}
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+	@Override
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Change.class);
 		names.add(Changed.class);

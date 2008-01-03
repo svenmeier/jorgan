@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
+import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 
@@ -26,8 +26,9 @@ public abstract class Initiator extends Momentary {
 
 	public abstract void initiate();
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> names = super.getMessageClasses();
+	@Override
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> names = super.getMessageClasses();
 
 		names.add(Initiate.class);
 

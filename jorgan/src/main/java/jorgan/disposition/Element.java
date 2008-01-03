@@ -373,8 +373,8 @@ public abstract class Element implements Cloneable {
 	public void referrerChanged(Element element) {
 	}
 
-	public List<Class<? extends Message>> getMessageClasses() {
-		return new ArrayList<Class<? extends Message>>();
+	public Set<Class<? extends Message>> getMessageClasses() {
+		return new HashSet<Class<? extends Message>>();
 	}
 
 	public List<Message> getMessages() {
@@ -386,6 +386,11 @@ public abstract class Element implements Cloneable {
 	}
 
 	public void addMessage(Message message) {
+		Set<Class<? extends Message>> messageClasses = getMessageClasses();
+		if (!messageClasses.contains(message.getClass())) {
+			throw new IllegalArgumentException("illegal message '" + message
+					+ "'");
+		}
 		this.messages.add(message);
 
 		if (organ != null) {
