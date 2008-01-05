@@ -49,9 +49,19 @@ public class Memory extends IndexedContinuous {
 			titles = strings;
 
 			fireChanged(true);
+			sizeChanged();
 		}
 	}
 
+	/**
+	 * Notify referenced {@link Combination}s of change. 
+	 */
+	protected void sizeChanged() {
+		for (Combination combination : getReferenced(Combination.class)) {
+			combination.referrerChanged(this);
+		}
+	}
+	
 	public int getSize() {
 		return titles.length;
 	}
@@ -80,8 +90,8 @@ public class Memory extends IndexedContinuous {
 	public void clear(int index) {
 		setTitle(index, "");
 
-		for (Reference reference : references) {
-			((Combination) reference.getElement()).clear(index);
+		for (Combination combination : getReferenced(Combination.class)) {
+			combination.clear(index);
 		}
 	}
 
@@ -92,8 +102,8 @@ public class Memory extends IndexedContinuous {
 		setTitle(index1, title2);
 		setTitle(index2, title1);
 
-		for (Reference reference : references) {
-			((Combination) reference.getElement()).swap(index1, index2);
+		for (Combination combination : getReferenced(Combination.class)) {
+			combination.swap(index1, index2);
 		}
 
 		fireChanged(false);
@@ -104,8 +114,10 @@ public class Memory extends IndexedContinuous {
 
 		setTitle(index2, title);
 
-		for (Reference reference : references) {
-			((Combination) reference.getElement()).copy(index1, index2);
+		for (Combination combination : getReferenced(Combination.class)) {
+			combination.copy(index1, index2);
 		}
+		
+		fireChanged(false);
 	}
 }

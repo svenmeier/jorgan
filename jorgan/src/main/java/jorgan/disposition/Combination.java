@@ -40,9 +40,9 @@ public class Combination extends Initiator {
 					capture();
 					return;
 				}
-			}			
+			}
 		}
-		
+
 		recall();
 	}
 
@@ -58,9 +58,7 @@ public class Combination extends Initiator {
 			}
 		}
 
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			Activateable registratable = reference.getRegistratable();
 
 			if (reference.isActive(level)) {
@@ -84,9 +82,7 @@ public class Combination extends Initiator {
 
 		int level = getLevel();
 
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			Activateable registratable = (Activateable) reference.getElement();
 
 			reference.setActive(level, registratable.isActive());
@@ -98,9 +94,7 @@ public class Combination extends Initiator {
 	}
 
 	public void clear(int level) {
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			reference.setActive(level, false);
 
 			fireChanged(reference, false);
@@ -108,9 +102,7 @@ public class Combination extends Initiator {
 	}
 
 	public void swap(int level1, int level2) {
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			boolean value1 = reference.isActive(level1);
 			boolean value2 = reference.isActive(level2);
 
@@ -122,9 +114,7 @@ public class Combination extends Initiator {
 	}
 
 	public void copy(int level1, int level2) {
-		for (int e = 0; e < getReferenceCount(); e++) {
-			Reference reference = (Reference) getReference(e);
-
+		for (Reference reference : getReferences(Reference.class)) {
 			boolean value = reference.isActive(level1);
 
 			reference.setActive(level2, value);
@@ -172,20 +162,21 @@ public class Combination extends Initiator {
 				activated = booleans;
 			}
 		}
-		
+
 		@Override
 		public Reference clone() {
-			Reference clone = (Reference)super.clone();
+			Reference clone = (Reference) super.clone();
 
 			clone.activated = this.activated.clone();
-				
+
 			return clone;
 		}
 	}
 
 	protected void notifyObservers() {
 		if (getOrgan() != null) {
-			for (Observer observer : getOrgan().getReferrer(this, Observer.class)) {
+			for (Observer observer : getOrgan().getReferrer(this,
+					Observer.class)) {
 				observer.initiated(this);
 			}
 		}
@@ -195,13 +186,18 @@ public class Combination extends Initiator {
 		public void initiated(Combination combination);
 	}
 
+	/**
+	 * If a referring {@link Memory} changes, the size might change too.
+	 * 
+	 * @see Reference#setSize()
+	 */
 	@Override
 	public void referrerChanged(Element element) {
 		if (element instanceof Memory) {
 			int size = ((Memory) element).getSize();
 
-			for (jorgan.disposition.Reference reference : references) {
-				((Reference) reference).setSize(size);
+			for (Reference reference : getReferences(Reference.class)) {
+				reference.setSize(size);
 			}
 		}
 	}

@@ -45,4 +45,13 @@ public class Regulator extends IndexedContinuous implements Activating {
 
 		return getReference(getIndex()).getElement() == activateable;
 	}
+	
+	/**
+	 * Notify referenced {@link Activateable}s of change. 
+	 */
+	@Override
+	protected void indexChanged(int oldIndex, int newIndex) {
+		getReference(oldIndex).getElement().referrerChanged(this);
+		getReference(newIndex).getElement().referrerChanged(this);
+	}
 }

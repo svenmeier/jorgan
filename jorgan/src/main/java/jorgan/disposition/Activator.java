@@ -28,6 +28,16 @@ public class Activator extends Activateable implements Activating {
 		return Activateable.class.isAssignableFrom(clazz);
 	}
 	
+	/**
+	 * Notify referenced {@link Activateable}s of change.
+	 */
+	@Override
+	protected void engagedChanged() {
+		for (Activateable activateable : getReferenced(Activateable.class)) {
+			activateable.referrerChanged(this);
+		}
+	}
+	
 	public boolean activates(Element activateable) {
 		if (!references(activateable)) {
 			throw new IllegalArgumentException("does not reference '" + activateable
@@ -35,5 +45,5 @@ public class Activator extends Activateable implements Activating {
 		}
 		
 		return isEngaged();
-	}	
+	}
 }

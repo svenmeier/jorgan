@@ -39,7 +39,7 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 
 	public void initiated(Combination combination) {
 		if (getCombination() != combination) {
-			int index = references.indexOf(getReference(combination));
+			int index = getReferencedIndex(combination);
 
 			setIndex(index);
 		}
@@ -52,11 +52,11 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 	}
 
 	private Combination getCombination() {
-		int index = getIndex();
-
 		if (getReferenceCount() == 0) {
 			return null;
 		} else {
+			int index = getIndex();
+
 			Reference reference = getReference(index);
 			return ((Combination) reference.getElement());
 		}

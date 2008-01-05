@@ -30,6 +30,22 @@ public abstract class IndexedContinuous extends Continuous {
 	
 	public abstract int getSize();
 
+	@Override
+	public void setValue(float value) {
+		int oldIndex = getIndex();
+		
+		super.setValue(value);
+		
+		int newIndex = getIndex();
+		
+		if (oldIndex != newIndex) {
+			indexChanged(oldIndex, newIndex);
+		}
+	}
+	
+	protected void indexChanged(int oldIndex, int newIndex) {
+	}
+	
 	public void increment(int delta) {
 		int index = getIndex() + delta;
 		if (index < 0) {
