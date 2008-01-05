@@ -37,6 +37,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 			this.active = active;
 
 			fireChanged(false);
+			engagedChanged();
 		}
 	}
 
@@ -64,23 +65,34 @@ public abstract class Activateable extends Momentary implements Engageable {
 	 * @see Activating#activates(Activateable)
 	 */
 	public boolean isEngaged() {
-		if (active) {
-			return true;
-		}
+		boolean engaged = false;
 
-		if (getOrgan() != null) {
-			for (Activating activating : getOrgan().getReferrer(this, Activating.class)) {
-				if (activating.activates(this)) {
-					return true;
+		if (active) {
+			engaged = true;
+		} else {
+			if (getOrgan() != null) {
+				for (Activating activating : getOrgan().getReferrer(this,
+						Activating.class)) {
+					if (activating.activates(this)) {
+						engaged = true;
+						break;
+					}
 				}
 			}
 		}
 
-		return false;
+		return engaged;
 	}
 
 	/**
-	 * If a referring {@link Activating} changes, this element changes too.
+	 * Hook method on change of {@link #isEngaged()}.
+	 */
+	protected void engagedChanged() {
+	}
+	
+	/**
+	 * If a referring {@link Activating} changes, {@link #isEngaged()} might
+	 * change too.
 	 * 
 	 * @see #isEngaged()
 	 */
@@ -88,6 +100,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 	public void referrerChanged(Element element) {
 		if (element instanceof Activating) {
 			fireChanged(false);
+			engagedChanged();
 		}
 	}
 

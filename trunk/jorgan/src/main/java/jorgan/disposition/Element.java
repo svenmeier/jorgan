@@ -60,6 +60,9 @@ public abstract class Element implements Cloneable {
 
 	/**
 	 * The references to other elements.
+	 * 
+	 * TODO protected for {@link Console#toFront(Element)} and
+	 * {@link Console#toBack(Element)} only
 	 */
 	protected List<Reference> references = new ArrayList<Reference>();
 
@@ -162,11 +165,34 @@ public abstract class Element implements Cloneable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R> List<R> getReferences(Class<R> clazz) {
+	public <E extends Element> List<E> getReferenced(Class<E> clazz) {
+		List<E> filter = new ArrayList<E>();
+
+		for (Reference reference : this.references) {
+			if (clazz.isInstance(reference.getElement())) {
+				filter.add((E) reference.getElement());
+			}
+		}
+		return filter;
+	}
+
+	public int getReferencedIndex(Element element) {
+		for (int r = 0; r < references.size(); r++) {
+			Reference reference = references.get(r);
+
+			if (reference.getElement() == element) {
+				return r;
+			}
+		}
+		throw new IllegalArgumentException("element not referenced");
+	}
+
+	@SuppressWarnings("unchecked")
+	public <R extends Reference> List<R> getReferences(Class<R> clazz) {
 		List<R> filter = new ArrayList<R>();
 
 		for (Reference reference : this.references) {
-			if (reference.getClass() == clazz) {
+			if (clazz.isInstance(reference)) {
 				filter.add((R) reference);
 			}
 		}
@@ -254,10 +280,6 @@ public abstract class Element implements Cloneable {
 	protected void fireChanged(boolean dispositionChange) {
 		if (organ != null) {
 			organ.fireChanged(new OrganEvent(organ, this, dispositionChange));
-
-			for (Reference reference : getReferences()) {
-				reference.getElement().referrerChanged(this);
-			}
 		}
 	}
 

@@ -32,10 +32,7 @@ public class Incrementer extends Initiator {
 
 	@Override
 	public void initiate() {
-		for (Reference reference : references) {
-			IndexedContinuous continuous = (IndexedContinuous) reference
-					.getElement();
-
+		for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
 			continuous.increment(delta);
 		}
 	}

@@ -156,7 +156,8 @@ public class Rank extends Element implements Engageable, Output {
 	}
 
 	/**
-	 * If a referring {@link Stop} changes, this element changes too.
+	 * If a referring {@link Stop} changes, {@link #isEngaged()} might change
+	 * too.
 	 * 
 	 * @see #isEngaged()
 	 */
