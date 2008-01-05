@@ -20,11 +20,12 @@
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.KeyStroke;
 
 public abstract class BaseAction extends AbstractAction {
 
 	public void setName(String name) {
-		putValue(Action.NAME, name);
+		putValue(NAME, name);
 	}
 
 	public String getName() {
@@ -32,7 +33,7 @@ public abstract class BaseAction extends AbstractAction {
 	}
 
 	public void setShortDescription(String description) {
-		putValue(Action.SHORT_DESCRIPTION, description);
+		putValue(SHORT_DESCRIPTION, description);
 	}
 
 	public String getShortDescription() {
@@ -40,10 +41,18 @@ public abstract class BaseAction extends AbstractAction {
 	}
 
 	public void setSmallIcon(Icon icon) {
-		putValue(Action.SMALL_ICON, icon);
+		putValue(SMALL_ICON, icon);
 	}
 
 	public Icon getSmallIcon() {
 		return (Icon) getValue(Action.SMALL_ICON);
+	}
+	
+	public void setAccelerator(KeyStroke keyStroke) {
+		putValue(ACCELERATOR_KEY, keyStroke);
+	}
+	
+	public KeyStroke getAccelerator() {
+		return (KeyStroke)getValue(ACCELERATOR_KEY);
 	}
 }

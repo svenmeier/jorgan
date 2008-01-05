@@ -178,12 +178,17 @@ public class OrganPanel extends JPanel {
 	 * 
 	 * @return widgets
 	 */
-	public List getMenuWidgets() {
+	public List<Object> getMenuWidgets() {
 		List<Object> actions = new ArrayList<Object>();
 
 		for (String key : views.keySet()) {
 			actions.add(views.get(key));
 		}
+
+		actions.add(null);
+
+		actions.add(forwardAction);
+		actions.add(backAction);
 
 		return actions;
 	}

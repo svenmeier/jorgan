@@ -187,9 +187,8 @@ public class OrganFrame extends JFrame {
 		toolBar.setFloatable(false);
 		getContentPane().add(toolBar, BorderLayout.NORTH);
 
-		List statusBarWidgets = organPanel.getStatusBarWidgets();
-		for (int w = 0; w < statusBarWidgets.size(); w++) {
-			statusBar.addStatus((JComponent) statusBarWidgets.get(w));
+		for (Object widget : organPanel.getStatusBarWidgets()) {
+			statusBar.addStatus((JComponent) widget);
 		}
 		getContentPane().add(statusBar, BorderLayout.SOUTH);
 
@@ -231,9 +230,12 @@ public class OrganFrame extends JFrame {
 		viewMenu.addSeparator();
 		viewMenu.add(debugAction);
 		viewMenu.addSeparator();
-		List actions = organPanel.getMenuWidgets();
-		for (int a = 0; a < actions.size(); a++) {
-			viewMenu.add((Action) actions.get(a));
+		for (Object widget : organPanel.getMenuWidgets()) {
+			if (widget == null) {
+				viewMenu.addSeparator();
+			} else {
+				viewMenu.add((Action)widget);
+			}
 		}
 		if (tweakMac.isInstalled()) {
 			tweakMac.setPreferencesListener(configurationAction);
