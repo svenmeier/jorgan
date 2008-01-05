@@ -56,9 +56,9 @@ public class Processor {
 		String type = Character.toUpperCase(term.charAt(0)) + term.substring(1, space).trim();
 		term = term.substring(space + 1).trim();
 		
-		Class clazz = Class.forName(getClass().getPackage().getName() + ".node." + type);
+		Class<?> clazz = Class.forName(getClass().getPackage().getName() + ".node." + type);
 
-		return (Node)clazz.getConstructor(new Class[]{String.class}).newInstance(term);
+		return (Node)clazz.getConstructor(new Class<?>[]{String.class}).newInstance(term);
 	}
 
 	public float process(float value, Context context) {
