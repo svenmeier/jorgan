@@ -251,8 +251,8 @@ public abstract class Player<E extends Element> {
 				shortMessage.setMessage(Math.round(status), Math.round(data1),
 						Math.round(data2));
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error("message.midi", status + "," + data1 + ","
-						+ data2));
+				addProblem(new Error("message.midi", Math.round(status) + ","
+						+ Math.round(data1) + "," + Math.round(data2)));
 				return;
 			}
 
@@ -273,7 +273,8 @@ public abstract class Player<E extends Element> {
 	public void output(ShortMessage message, Context context) {
 		Element element = getElement();
 
-		Set<Console> consoles = organPlay.getOrgan().getReferrer(element, Console.class);
+		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
+				Console.class);
 		for (Console console : consoles) {
 			Player player = getOrganPlay().getPlayer(console);
 			player.output(message, context);
@@ -325,8 +326,8 @@ public abstract class Player<E extends Element> {
 		}
 	};
 
-	protected boolean process(int status, int data1, int data2, Message message,
-			Context context) {
+	protected boolean process(int status, int data1, int data2,
+			Message message, Context context) {
 		try {
 			if (Float.isNaN(message.processStatus(status, context))) {
 				return false;
