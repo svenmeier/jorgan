@@ -114,7 +114,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		if (keyboard.getInput() == null && getWarnDevice()) {
 			removeProblem(new Error("input"));
 			addProblem(new Warning("input"));
-		} else {
+		} else if (!isOpen()) {
 			removeProblem(new Error("input"));
 			removeProblem(new Warning("input"));
 		}
