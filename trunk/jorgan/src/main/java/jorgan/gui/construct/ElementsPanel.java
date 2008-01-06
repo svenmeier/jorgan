@@ -73,10 +73,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	 */
 	private SelectionHandler selectionHandler = new SelectionHandler();
 
-	private AddAction addAction = new AddAction();
-
-	private RemoveAction removeAction = new RemoveAction();
-
 	private JList list = new JList();
 
 	private JToggleButton sortByNameButton = new JToggleButton();
@@ -91,31 +87,6 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	 * Create a tree panel.
 	 */
 	public ElementsPanel() {
-
-		addTool(addAction);
-		addTool(removeAction);
-
-		addToolSeparator();
-
-		ButtonGroup sortGroup = new ButtonGroup();
-		config.get("sortByName").read(sortByNameButton);
-		sortByNameButton.getModel().setGroup(sortGroup);
-		sortByNameButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				setOrgan(session);
-			}
-		});
-		addTool(sortByNameButton);
-
-		config.get("sortByType").read(sortByTypeButton);
-		sortByTypeButton.getModel().setGroup(sortGroup);
-		sortByTypeButton.setSelected(true);
-		sortByTypeButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				setOrgan(session);
-			}
-		});
-		addTool(sortByTypeButton);
 
 		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
@@ -174,9 +145,34 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				}
 			}
 		});
-		list.addListSelectionListener(removeAction);
-
 		setScrollableBody(list, true, false);
+
+		addTool(new AddAction());
+		addTool(new RemoveAction());
+
+		addToolSeparator();
+
+		ButtonGroup sortGroup = new ButtonGroup();
+		config.get("sortByName").read(sortByNameButton);
+		sortByNameButton.getModel().setGroup(sortGroup);
+		sortByNameButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				setOrgan(session);
+			}
+		});
+		addTool(sortByNameButton);
+
+		config.get("sortByType").read(sortByTypeButton);
+		sortByTypeButton.getModel().setGroup(sortGroup);
+		sortByTypeButton.setSelected(true);
+		sortByTypeButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				setOrgan(session);
+			}
+		});
+		addTool(sortByTypeButton);
+
+		new DuplicateAction();
 	}
 
 	/**
@@ -391,11 +387,38 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		}
 	}
 
+	private class DuplicateAction extends BaseAction implements
+			ListSelectionListener {
+
+		private DuplicateAction() {
+			config.get("duplicate").read(this);
+
+			list.addListSelectionListener(this);
+
+			register(list);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			if (session != null) {
+				for (Element element : new ArrayList<Element>(session
+						.getSelectionModel().getSelectedElements())) {
+					session.getOrgan().duplicate(element);
+				}
+			}
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			setEnabled(list.getSelectedIndex() != -1);
+		}
+	}
+
 	private class RemoveAction extends BaseAction implements
 			ListSelectionListener {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
+
+			list.addListSelectionListener(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -405,12 +428,9 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 				return;
 			}
 
-			List selectedElements = session.getSelectionModel()
-					.getSelectedElements();
-
-			for (int e = selectedElements.size() - 1; e >= 0; e--) {
-				session.getOrgan().removeElement(
-						(Element) selectedElements.get(e));
+			for (Element element : new ArrayList<Element>(session
+					.getSelectionModel().getSelectedElements())) {
+				session.getOrgan().removeElement(element);
 			}
 		}
 
