@@ -55,4 +55,12 @@ public abstract class BaseAction extends AbstractAction {
 	public KeyStroke getAccelerator() {
 		return (KeyStroke)getValue(ACCELERATOR_KEY);
 	}
+	
+	public void setMnemonic(Integer key) {
+		putValue(MNEMONIC_KEY, key);
+	}
+	
+	public Integer getMnemonic() {
+		return (Integer)getValue(MNEMONIC_KEY);
+	}
 }
