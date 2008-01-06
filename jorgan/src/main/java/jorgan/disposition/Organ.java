@@ -228,4 +228,17 @@ public class Organ {
 
 		return set;
 	}
+
+	public void duplicate(Element element) {
+		Element clone = element.clone();
+		
+		addElement(clone);
+		
+		for (Element referrer : getReferrer(element)) {
+			Reference reference = referrer.getReference(element);
+			if (referrer.canReference(clone)) {
+				referrer.addReference(reference.clone(clone));
+			}
+		}
+	}
 }

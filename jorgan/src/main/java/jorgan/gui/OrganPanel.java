@@ -185,11 +185,6 @@ public class OrganPanel extends JPanel {
 			actions.add(views.get(key));
 		}
 
-		actions.add(null);
-
-		actions.add(forwardAction);
-		actions.add(backAction);
-
 		return actions;
 	}
 

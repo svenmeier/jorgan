@@ -127,6 +127,16 @@ public class Console extends Input implements Output {
 		public void setY(int i) {
 			y = i;
 		}
+		
+		@Override
+		public Reference clone(Element element) {
+			Reference clone = (Reference)super.clone(element);
+
+			clone.x += 32;
+			clone.y += 32;
+			
+			return clone;
+		}
 	}
 
 	/**

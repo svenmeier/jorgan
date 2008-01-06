@@ -20,6 +20,7 @@
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.KeyStroke;
 
 public abstract class BaseAction extends AbstractAction {
@@ -62,5 +63,10 @@ public abstract class BaseAction extends AbstractAction {
 	
 	public Integer getMnemonic() {
 		return (Integer)getValue(MNEMONIC_KEY);
+	}
+
+	protected void register(JComponent component) {
+		component.getInputMap().put(getAccelerator(), this);
+		component.getActionMap().put(this, this);
 	}
 }

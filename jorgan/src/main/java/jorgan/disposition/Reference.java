@@ -51,4 +51,12 @@ public class Reference implements Cloneable {
 			throw new Error(ex);
 		}
 	}
+	
+	public Reference clone(Element element) {
+		Reference clone = clone();
+		
+		clone.element = element;
+		
+		return clone;
+	}
 }
