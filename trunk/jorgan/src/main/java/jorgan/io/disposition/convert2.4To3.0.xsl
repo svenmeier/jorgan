@@ -307,7 +307,7 @@
 	      		</activateable-deactivate>
 	      	</xsl:for-each>
 	      	<xsl:choose>
-	      		<xsl:when test="program != 0">
+	      		<xsl:when test="program != 0">	      			
 			      	<filter-intercept>
 		          		<status>equal 192</status>
 		         		<data1>get program</data1>
@@ -315,16 +315,24 @@
 			      	</filter-intercept>
 			        <activateableFilter-engaged>
 			          <status>set 192</status>
-			          <data1>set program 0 | add <xsl:value-of select="program"/></data1>
+			          <data1>set program <xsl:choose><xsl:when test="program &lt; 0"><xsl:value-of select="program * -1"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose> | add <xsl:value-of select="program"/></data1>
 			          <data2></data2>
 			        </activateableFilter-engaged>
 			        <activateableFilter-disengaged>
 			          <status>set 192</status>
-			          <data1>set program 0</data1>
+			          <data1>set program <xsl:choose><xsl:when test="program &lt; 0"><xsl:value-of select="program * -1"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose></data1>
 			          <data2></data2>
 			        </activateableFilter-disengaged>
 	      		</xsl:when>
 	      		<xsl:when test="bank != 0">
+	      			<xsl:choose>
+	      				<xsl:when test="bank &lt; 0">
+							<xsl:variable name="default" select="0"/>
+	      				</xsl:when>
+	      				<xsl:otherwise>
+							<xsl:variable name="default" select="bank"/>
+	      				</xsl:otherwise>
+	      			</xsl:choose>
 			      	<filter-intercept>
 		          		<status>equal 176</status>
 		         		<data1>equal 0</data1>
@@ -333,12 +341,12 @@
 			        <activateableFilter-engaged>
 			          <status>set 176</status>
 			          <data1>set 0</data1>
-			          <data2>set bank 0 | add <xsl:value-of select="bank"/></data2>
+			          <data2>set bank <xsl:choose><xsl:when test="bank &lt; 0"><xsl:value-of select="bank * -1"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose> | add <xsl:value-of select="bank"/></data2>
 			        </activateableFilter-engaged>
 			        <activateableFilter-disengaged>
 			          <status>set 176</status>
 			          <data1>0</data1>
-			          <data2>set bank 0</data2>
+			          <data2>set bank <xsl:choose><xsl:when test="bank &lt; 0"><xsl:value-of select="bank * -1"/></xsl:when><xsl:otherwise>0</xsl:otherwise></xsl:choose></data2>
 			        </activateableFilter-disengaged>
 	      		</xsl:when>
 	      	</xsl:choose>
