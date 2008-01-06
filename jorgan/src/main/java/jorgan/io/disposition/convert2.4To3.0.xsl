@@ -476,6 +476,15 @@
 	  	</incrementer>
   	</xsl:template>  	
 
+  	<xsl:template match="style">
+		<style>
+			<xsl:choose>
+				<xsl:when test=". = 'swellWarning'">swell</xsl:when>
+				<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+			</xsl:choose>
+		</style>
+	</xsl:template>	
+
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
