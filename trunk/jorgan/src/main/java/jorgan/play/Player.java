@@ -231,17 +231,17 @@ public abstract class Player<E extends Element> {
 		try {
 			float status = message.processStatus(0.0f, context);
 			if (Float.isNaN(status)) {
-				// TODO should we report an error?
+				// abort processing
 				return;
 			}
 			float data1 = message.processData1(0.0f, context);
 			if (Float.isNaN(status)) {
-				// TODO should we report an error?
+				// abort processing
 				return;
 			}
 			float data2 = message.processData2(0.0f, context);
 			if (Float.isNaN(status)) {
-				// TODO should we report an error?
+				// abort processing
 				return;
 			}
 
