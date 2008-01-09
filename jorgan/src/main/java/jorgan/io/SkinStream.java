@@ -60,12 +60,19 @@ public class SkinStream {
 		xstream.registerConverter(new FontConverter());
 	}
 
-	public Skin read(InputStream in) throws IOException {
-		Skin skin = (Skin) xstream.fromXML(in);
-		
-		in.close();
-		
-		return skin;
+	/**
+	 * @param file	the file to read from
+	 * @return	the read skin
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public Skin read(InputStream in) throws IOException, Exception {
+		try {
+			Skin skin = (Skin) xstream.fromXML(in);
+			return skin;
+		} finally {
+			in.close();			
+		}
 	}
 
 	public void write(Skin skin, OutputStream out) throws IOException {

@@ -76,8 +76,8 @@ public class SkinManager implements ISkinManager {
 						skin.setSource(source);
 						skins.add(skin);
 					}
-				} catch (IOException ex) {
-					logger.log(Level.INFO, "ignoring skin '" + entry + "'");
+				} catch (Exception ex) {
+					logger.log(Level.INFO, "ignoring skin '" + entry + "'", ex);
 				}
 			}
 		}
