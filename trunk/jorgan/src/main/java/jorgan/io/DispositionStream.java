@@ -82,7 +82,14 @@ public class DispositionStream {
 		config.read(this);
 	}
 
-	public Organ read(File file) throws IOException {
+	/**
+	 * 
+	 * @param file	the file to read from
+	 * @return	the read organ
+	 * @throws IOException
+	 * @throws Exception
+	 */
+	public Organ read(File file) throws IOException, Exception {
 		Organ organ = read(new FileInputStream(file));
 
 		addRecentFile(file);
