@@ -20,10 +20,11 @@ package jorgan.disposition;
 
 /**
  * A keyable.
+ * 
+ * TODO convert actions, transpose and velocity into elements ?
  */
 public abstract class Keyable extends Activateable {
 
-	// TODO make action subclasses with real behavior
 	public static final int ACTION_STRAIGHT = 0;
 
 	public static final int ACTION_PITCH_CONSTANT = 1;
