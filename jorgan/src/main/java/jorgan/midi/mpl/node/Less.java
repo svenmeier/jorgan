@@ -19,14 +19,14 @@
 package jorgan.midi.mpl.node;
 
 
-public class LowerEqual extends Condition {
+public class Less extends Condition {
 
-	public LowerEqual(String term) throws Exception {
+	public Less(String term) throws Exception {
 		super(term);
 	}
 
 	@Override
 	protected boolean isTrue(float condition, float value) {
-		return value <= condition;
+		return value < condition;
 	}
 }
