@@ -144,8 +144,8 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	protected Reference createReference(Element element) {
-		return new Reference(element);
+	protected Reference<? extends Element> createReference(Element element) {
+		return new Reference<Element>(element);
 	}
 
 	/**
@@ -155,8 +155,8 @@ public abstract class Element implements Cloneable {
 	 *            element to get reference for
 	 * @return reference or <code>null</code> if element is not referenced
 	 */
-	public Reference getReference(Element element) {
-		for (Reference reference : references) {
+	public Reference<? extends Element> getReference(Element element) {
+		for (Reference<? extends Element> reference : references) {
 			if (reference.getElement() == element) {
 				return reference;
 			}

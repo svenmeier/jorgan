@@ -29,7 +29,10 @@ public class Combination extends Initiator {
 
 	@Override
 	protected Reference createReference(Element element) {
-		return new Reference(element);
+		if (!(element instanceof Switch)) {
+			throw new IllegalArgumentException("can only reference Switch");
+		}
+		return new Reference((Switch) element);
 	}
 
 	@Override
@@ -51,7 +54,7 @@ public class Combination extends Initiator {
 		int level = getLevel();
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Switch registratable = reference.getSwitch();
+			Switch registratable = reference.getElement();
 
 			if (!reference.isActive(level)) {
 				registratable.setActive(false);
@@ -59,7 +62,7 @@ public class Combination extends Initiator {
 		}
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Switch registratable = reference.getSwitch();
+			Switch registratable = reference.getElement();
 
 			if (reference.isActive(level)) {
 				registratable.setActive(true);
@@ -83,9 +86,7 @@ public class Combination extends Initiator {
 		int level = getLevel();
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Switch registratable = (Switch) reference.getElement();
-
-			reference.setActive(level, registratable.isActive());
+			reference.setActive(level, reference.getElement().isActive());
 
 			fireChanged(reference, false);
 		}
@@ -126,11 +127,11 @@ public class Combination extends Initiator {
 	/**
 	 * A reference of a combination to another element.
 	 */
-	public static class Reference extends jorgan.disposition.Reference {
+	public static class Reference extends jorgan.disposition.Reference<Switch> {
 
 		private boolean[] activated = new boolean[100];
 
-		public Reference(Element element) {
+		public Reference(Switch element) {
 			super(element);
 
 			Arrays.fill(activated, true);
@@ -148,10 +149,6 @@ public class Combination extends Initiator {
 				throw new IllegalArgumentException("index");
 			}
 			return activated[index];
-		}
-
-		public Switch getSwitch() {
-			return (Switch) getElement();
 		}
 
 		public void setSize(int size) {

@@ -22,21 +22,21 @@ package jorgan.disposition;
 /**
  * A reference to another element.
  */
-public class Reference implements Cloneable {
+public class Reference<E extends Element> implements Cloneable {
 
 	/**
 	 * The referenced element.
 	 */
-	private Element element;
+	private E element;
 
-	public Reference(Element element) {
+	public Reference(E element) {
 		if (element == null) {
 			throw new IllegalArgumentException("element must not be null");
 		}
 		this.element = element;
 	}
 
-	public Element getElement() {
+	public E getElement() {
 		return element;
 	}
 
@@ -52,10 +52,11 @@ public class Reference implements Cloneable {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Reference clone(Element element) {
-		Reference clone = clone();
+		Reference<E> clone = clone();
 		
-		clone.element = element;
+		clone.element = (E)element;
 		
 		return clone;
 	}
