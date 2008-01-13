@@ -21,15 +21,13 @@ package jorgan.gui.midi;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.swing.ButtonGroup;
+import javax.swing.AbstractButton;
 import javax.swing.JLabel;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
@@ -44,6 +42,7 @@ import jorgan.midi.MessageUtils;
 import jorgan.midi.MidiLogger;
 import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
+import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import swingx.docking.DockedPanel;
@@ -107,8 +106,6 @@ public class MidiMonitor extends DockedPanel {
 
 	private JTable table = new JTable();
 
-	private ButtonGroup baseGroup = new ButtonGroup();
-
 	private JToggleButton hexButton = new JToggleButton();
 
 	private JToggleButton decButton = new JToggleButton();
@@ -127,22 +124,19 @@ public class MidiMonitor extends DockedPanel {
 
 		addToolSeparator();
 
-		config.get("hex").read(hexButton);
-		hexButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		ButtonGroup baseGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
 				tableModel.fireTableDataChanged();
 			}
-		});
+		};
+
+		config.get("hex").read(hexButton);
 		hexButton.setSelected(true);
 		baseGroup.add(hexButton);
 		addTool(hexButton);
 
 		config.get("decimal").read(decButton);
-		decButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				tableModel.fireTableDataChanged();
-			}
-		});
 		baseGroup.add(decButton);
 		addTool(decButton);
 
