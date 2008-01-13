@@ -21,27 +21,27 @@ package jorgan.gui.console;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 
-import jorgan.disposition.Activateable;
+import jorgan.disposition.Switch;
 import jorgan.skin.ButtonLayer;
 import jorgan.skin.Layer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
 /**
- * A view for an activateable.
+ * A view for a {@link Switch}.
  */
-public class ActivateableView extends MomentaryView<Activateable> {
+public class SwitchView extends MomentaryView<Switch> {
 
 	public static final String BINDING_ENGAGED = "engaged";
 
 	/**
 	 * Constructor.
 	 * 
-	 * @param activateable
-	 *            the activateable to view
+	 * @param element
+	 *            the element to view
 	 */
-	public ActivateableView(Activateable activateable) {
-		super(activateable);
+	public SwitchView(Switch element) {
+		super(element);
 	}
 
 	@Override
@@ -87,25 +87,25 @@ public class ActivateableView extends MomentaryView<Activateable> {
 
 	@Override
 	protected void shortcutPressed() {
-		Activateable activateable = getElement();
+		Switch element = getElement();
 
-		if (activateable.isLocking()) {
+		if (element.isLocking()) {
 			// do nothing - activate/deactivate on release instead)
 		} else {
 			// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys cannot
-			// be used for non-locking activateables :(
-			activateable.setActive(true);
+			// be used for non-locking elements :(
+			element.setActive(true);
 		}
 	}
 
 	@Override
 	protected void shortcutReleased() {
-		Activateable activateable = getElement();
+		Switch element = getElement();
 
-		if (activateable.isLocking()) {
-			activateable.setActive(!activateable.isActive());
+		if (element.isLocking()) {
+			element.setActive(!element.isActive());
 		} else {
-			activateable.setActive(false);
+			element.setActive(false);
 		}
 	}
 

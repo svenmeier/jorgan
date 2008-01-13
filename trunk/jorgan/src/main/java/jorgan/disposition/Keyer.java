@@ -19,7 +19,7 @@
 package jorgan.disposition;
 
 /**
- * A keyer initiates a key press when {@link Activateable#isEngaged()}.
+ * A keyer initiates a key press when {@link Switch#isEngaged()}.
  */
 public class Keyer extends Activator { 
 

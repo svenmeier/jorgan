@@ -160,7 +160,7 @@
 					        <keyboard-releaseKey>
 					          <status>equal <xsl:value-of select="144 + channel"/></status>
 					          <data1>get pitch</data1>
-					          <data2>less <xsl:value-of select="threshold"/></data2>
+					          <data2>lower <xsl:value-of select="threshold"/></data2>
 					        </keyboard-releaseKey>
 					        <keyboard-releaseKey>
 					          <status>equal <xsl:value-of select="128 + channel"/></status>
@@ -193,7 +193,7 @@
 					        <keyboard-releaseKey>
 					          <status>equal <xsl:value-of select="160 + channel"/></status>
 					          <data1>get pitch</data1>
-					          <data2>less <xsl:value-of select="threshold"/></data2>
+					          <data2>lower <xsl:value-of select="threshold"/></data2>
 					        </keyboard-releaseKey>
 		        		</xsl:otherwise>
 		        	</xsl:choose>

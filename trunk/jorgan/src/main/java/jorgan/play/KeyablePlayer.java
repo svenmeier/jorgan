@@ -24,7 +24,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player for a keyable.
  */
-public abstract class KeyablePlayer<E extends Keyable> extends ActivateablePlayer<E> {
+public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
     private static final int ACTIVATE_VELOCITY = 0;
 

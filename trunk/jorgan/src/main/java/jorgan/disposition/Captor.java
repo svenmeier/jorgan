@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public class Captor extends Activateable implements Combination.Observer {
+public class Captor extends Switch implements Combination.Observer {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {

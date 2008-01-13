@@ -18,19 +18,13 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Activateable;
-import jorgan.gui.construct.editor.BooleanEditor;
-
 /**
- * BeanInfo for {@link jorgan.disposition.Activateable}.
+ * BeanInfo for {@link jorgan.disposition.SwitchFilter}.
  */
-public class ActivateableBeanInfo extends MomentaryBeanInfo {
+public class SwitchFilterBeanInfo extends SwitchBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
-
-		add("active", Activateable.class, BooleanEditor.class);
-		add("locking", Activateable.class, BooleanEditor.class);
 	}
 }

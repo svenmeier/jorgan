@@ -23,7 +23,7 @@ package jorgan.disposition;
  * 
  * TODO convert actions, transpose and velocity into elements ?
  */
-public abstract class Keyable extends Activateable {
+public abstract class Keyable extends Switch {
 
 	public static final int ACTION_STRAIGHT = 0;
 

@@ -23,30 +23,30 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.ActivateableFilter;
-import jorgan.disposition.ActivateableFilter.Disengaged;
-import jorgan.disposition.ActivateableFilter.Engaged;
+import jorgan.disposition.SwitchFilter;
+import jorgan.disposition.SwitchFilter.Disengaged;
+import jorgan.disposition.SwitchFilter.Engaged;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.mpl.Context;
 
 /**
- * A player for an {@link ActivateableFilter}.
+ * A player for an {@link SwitchFilter}.
  */
-public class ActivateableFilterPlayer extends
-		ActivateablePlayer<ActivateableFilter> implements FilterPlayer {
+public class SwitchFilterPlayer extends
+		SwitchPlayer<SwitchFilter> implements FilterPlayer {
 
 	private List<ChannelFilter> channels = new ArrayList<ChannelFilter>();
 
-	public ActivateableFilterPlayer(ActivateableFilter variation) {
+	public SwitchFilterPlayer(SwitchFilter variation) {
 		super(variation);
 	}
 
 	public Channel filter(Channel channel) {
 		ChannelFilter channelFilter = new ChannelFilter(channel);
 
-		ActivateableFilter filter = getElement();
+		SwitchFilter filter = getElement();
 		if (filter.isEngaged()) {
 			channelFilter.engaged();
 		} else {
@@ -61,7 +61,7 @@ public class ActivateableFilterPlayer extends
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			ActivateableFilter filter = getElement();
+			SwitchFilter filter = getElement();
 
 			for (ChannelFilter channel : channels) {
 				if (filter.isEngaged()) {
@@ -100,7 +100,7 @@ public class ActivateableFilterPlayer extends
 		}
 
 		public void sendMessage(ShortMessage shortMessage) {
-			ActivateableFilter element = getElement();
+			SwitchFilter element = getElement();
 
 			boolean filtered = false;
 

@@ -21,26 +21,26 @@ package jorgan.disposition;
 /**
  * An activator.
  */
-public class Activator extends Activateable implements Activating {
+public class Activator extends Switch implements Activating {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Activateable.class.isAssignableFrom(clazz);
+		return Switch.class.isAssignableFrom(clazz);
 	}
 	
 	/**
-	 * Notify referenced {@link Activateable}s of change.
+	 * Notify referenced {@link Switch}s of change.
 	 */
 	@Override
 	protected void engagedChanged() {
-		for (Activateable activateable : getReferenced(Activateable.class)) {
-			activateable.referrerChanged(this);
+		for (Switch element : getReferenced(Switch.class)) {
+			element.referrerChanged(this);
 		}
 	}
 	
-	public boolean activates(Element activateable) {
-		if (!references(activateable)) {
-			throw new IllegalArgumentException("does not reference '" + activateable
+	public boolean activates(Element element) {
+		if (!references(element)) {
+			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
 		

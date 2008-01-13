@@ -19,13 +19,13 @@
 package jorgan.disposition;
 
 /**
- * An regulator of {@link jorgan.disposition.Activateable}s.
+ * An regulator of {@link jorgan.disposition.Switch}s.
  */
 public class Regulator extends IndexedContinuous implements Activating {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Activateable.class.isAssignableFrom(clazz);
+		return Switch.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -37,17 +37,17 @@ public class Regulator extends IndexedContinuous implements Activating {
 		return getReferenceCount();
 	}    
 	
-	public boolean activates(Element activateable) {
-		if (!references(activateable)) {
-			throw new IllegalArgumentException("does not reference '" + activateable
+	public boolean activates(Element element) {
+		if (!references(element)) {
+			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
 
-		return getReference(getIndex()).getElement() == activateable;
+		return getReference(getIndex()).getElement() == element;
 	}
 	
 	/**
-	 * Notify referenced {@link Activateable}s of change. 
+	 * Notify referenced {@link Switch}s of change. 
 	 */
 	@Override
 	protected void indexChanged(int oldIndex, int newIndex) {
