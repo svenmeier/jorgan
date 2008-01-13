@@ -18,37 +18,37 @@
  */
 package jorgan.play;
 
-import jorgan.disposition.Activateable;
-import jorgan.disposition.Activateable.Activate;
-import jorgan.disposition.Activateable.Activated;
-import jorgan.disposition.Activateable.Deactivate;
-import jorgan.disposition.Activateable.Deactivated;
-import jorgan.disposition.Activateable.Toggle;
+import jorgan.disposition.Switch;
+import jorgan.disposition.Switch.Activate;
+import jorgan.disposition.Switch.Activated;
+import jorgan.disposition.Switch.Deactivate;
+import jorgan.disposition.Switch.Deactivated;
+import jorgan.disposition.Switch.Toggle;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 
 /**
- * An abstract base class for players that control activateable elements.
+ * An abstract base for players that control {@link Switch}es.
  */
-public class ActivateablePlayer<E extends Activateable> extends Player<E> {
+public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private PlayerContext context = new PlayerContext();
 
-	public ActivateablePlayer(E activateable) {
-		super(activateable);
+	public SwitchPlayer(E element) {
+		super(element);
 	}
 
 	@Override
 	protected void input(InputMessage message, Context context) {
-		Activateable activateable = getElement();
+		Switch element = getElement();
 
 		if (message instanceof Activate) {
-			activateable.setActive(true);
+			element.setActive(true);
 		} else if (message instanceof Deactivate) {
-			activateable.setActive(false);
+			element.setActive(false);
 		} else if (message instanceof Toggle) {
-			activateable.setActive(!activateable.isActive());
+			element.setActive(!element.isActive());
 		} else {
 			super.input(message, context);
 		}
@@ -59,9 +59,9 @@ public class ActivateablePlayer<E extends Activateable> extends Player<E> {
 		super.elementChanged(event);
 
 		if (isOpen()) {
-			Activateable activateable = getElement();
+			Switch element = getElement();
 
-			if (activateable.isActive()) {
+			if (element.isActive()) {
 				activated();
 			} else {
 				deactivated();

@@ -26,7 +26,7 @@ import jorgan.gui.construct.editor.TransposeEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.
  */
-public class KeyableBeanInfo extends ActivateableBeanInfo {
+public class KeyableBeanInfo extends SwitchBeanInfo {
 
 	@Override
 	protected void registerProperties() {

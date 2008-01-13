@@ -25,7 +25,7 @@ import jorgan.disposition.event.OrganEvent;
 /**
  * A player of a keyer.
  */
-public class KeyerPlayer extends ActivateablePlayer<Keyer> {
+public class KeyerPlayer extends SwitchPlayer<Keyer> {
 
     private boolean keying = false;
 

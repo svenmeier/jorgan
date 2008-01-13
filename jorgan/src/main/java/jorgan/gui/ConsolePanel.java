@@ -55,7 +55,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 
-import jorgan.disposition.Activateable;
+import jorgan.disposition.Switch;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
@@ -67,7 +67,7 @@ import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.console.ActivateableView;
+import jorgan.gui.console.SwitchView;
 import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
@@ -494,8 +494,8 @@ public class ConsolePanel extends JComponent implements Scrollable {
 	private void createView(Element element) {
 		View view = null;
 
-		if (element instanceof Activateable) {
-			view = new ActivateableView((Activateable) element);
+		if (element instanceof Switch) {
+			view = new SwitchView((Switch) element);
 		} else if (element instanceof Initiator) {
 			view = new InitiatorView((Initiator) element);
 		} else if (element instanceof Memory) {

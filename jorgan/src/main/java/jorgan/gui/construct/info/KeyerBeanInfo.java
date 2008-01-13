@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.DataEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Keyer}.
  */
-public class KeyerBeanInfo extends ActivateableBeanInfo {
+public class KeyerBeanInfo extends SwitchBeanInfo {
 
     @Override
 	protected void registerProperties() {

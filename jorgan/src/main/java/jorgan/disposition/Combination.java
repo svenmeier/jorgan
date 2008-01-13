@@ -24,7 +24,7 @@ public class Combination extends Initiator {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Activateable.class.isAssignableFrom(clazz);
+		return Switch.class.isAssignableFrom(clazz);
 	}
 
 	@Override
@@ -51,7 +51,7 @@ public class Combination extends Initiator {
 		int level = getLevel();
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Activateable registratable = reference.getRegistratable();
+			Switch registratable = reference.getSwitch();
 
 			if (!reference.isActive(level)) {
 				registratable.setActive(false);
@@ -59,7 +59,7 @@ public class Combination extends Initiator {
 		}
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Activateable registratable = reference.getRegistratable();
+			Switch registratable = reference.getSwitch();
 
 			if (reference.isActive(level)) {
 				registratable.setActive(true);
@@ -83,7 +83,7 @@ public class Combination extends Initiator {
 		int level = getLevel();
 
 		for (Reference reference : getReferences(Reference.class)) {
-			Activateable registratable = (Activateable) reference.getElement();
+			Switch registratable = (Switch) reference.getElement();
 
 			reference.setActive(level, registratable.isActive());
 
@@ -130,8 +130,8 @@ public class Combination extends Initiator {
 
 		private boolean[] activated = new boolean[100];
 
-		public Reference(Element activateable) {
-			super(activateable);
+		public Reference(Element element) {
+			super(element);
 
 			Arrays.fill(activated, true);
 		}
@@ -150,8 +150,8 @@ public class Combination extends Initiator {
 			return activated[index];
 		}
 
-		public Activateable getRegistratable() {
-			return (Activateable) getElement();
+		public Switch getSwitch() {
+			return (Switch) getElement();
 		}
 
 		public void setSize(int size) {

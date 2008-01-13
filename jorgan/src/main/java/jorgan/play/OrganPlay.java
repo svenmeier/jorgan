@@ -28,7 +28,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.ActivateableFilter;
+import jorgan.disposition.SwitchFilter;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Console;
@@ -296,16 +296,16 @@ public class OrganPlay {
 			player = new RankPlayer((Rank) element);
 		} else if (element instanceof ContinuousFilter) {
 			player = new ContinuousFilterPlayer((ContinuousFilter) element);
-		} else if (element instanceof ActivateableFilter) {
-			player = new ActivateableFilterPlayer((ActivateableFilter) element);
+		} else if (element instanceof SwitchFilter) {
+			player = new SwitchFilterPlayer((SwitchFilter) element);
 		} else if (element instanceof Activator) {
-			player = new ActivateablePlayer<Activator>((Activator) element);
+			player = new SwitchPlayer<Activator>((Activator) element);
 		} else if (element instanceof Regulator) {
 			player = new ContinuousPlayer<Regulator>((Regulator) element);
 		} else if (element instanceof Initiator) {
 			player = new InitiatorPlayer<Initiator>((Initiator) element);
 		} else if (element instanceof Captor) {
-			player = new ActivateablePlayer<Captor>((Captor) element);
+			player = new SwitchPlayer<Captor>((Captor) element);
 		} else if (element instanceof Memory) {
 			player = new ContinuousPlayer<Memory>((Memory) element);
 		} else if (element instanceof Sequence) {

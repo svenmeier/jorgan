@@ -24,9 +24,12 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 
 /**
- * Abstract base class for an activateable elements.
+ * Abstract base class for an switchable elements.
+ * 
+ * @see #setActive(boolean)
+ * @see #isActive()
  */
-public abstract class Activateable extends Momentary implements Engageable {
+public abstract class Switch extends Momentary implements Engageable {
 
 	private boolean active = false;
 
@@ -62,7 +65,7 @@ public abstract class Activateable extends Momentary implements Engageable {
 	 * @return <code>true</code> if engaged
 	 * 
 	 * @see #setActive(boolean)
-	 * @see Activating#activates(Activateable)
+	 * @see Activating#activates(Element)
 	 */
 	public boolean isEngaged() {
 		boolean engaged = false;

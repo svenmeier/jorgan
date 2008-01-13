@@ -16,15 +16,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.disposition;
+
+import java.util.Set;
+
+import jorgan.disposition.Output.OutputMessage;
 
 /**
- * BeanInfo for {@link jorgan.disposition.ActivateableFilter}.
+ * An switchable filter.
  */
-public class ActivateableFilterBeanInfo extends ActivateableBeanInfo {
+public class SwitchFilter extends Switch implements Filter {
 
 	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	public Set<Class<? extends Message>> getMessageClasses() {
+		Set<Class<? extends Message>> messages = super.getMessageClasses();
+
+		messages.add(Intercept.class);
+		messages.add(Engaged.class);
+		messages.add(Disengaged.class);
+
+		return messages;
+	}
+
+	public static class Engaged extends OutputMessage {
+	}
+
+	public static class Disengaged extends OutputMessage {
 	}
 }

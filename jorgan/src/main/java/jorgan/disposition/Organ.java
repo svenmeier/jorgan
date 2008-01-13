@@ -55,7 +55,7 @@ public class Organ {
 			classes.add(Coupler.class);
 			classes.add(Stop.class);
 			classes.add(Rank.class);
-			classes.add(ActivateableFilter.class);
+			classes.add(SwitchFilter.class);
 			classes.add(ContinuousFilter.class);
 			classes.add(Keyer.class);
 			classes.add(Activator.class);

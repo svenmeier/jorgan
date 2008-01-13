@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Captor}.
  */
-public class CaptorBeanInfo extends ActivateableBeanInfo {
+public class CaptorBeanInfo extends SwitchBeanInfo {
 
     @Override
 	protected void registerProperties() {
