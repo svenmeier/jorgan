@@ -156,14 +156,32 @@ public abstract class Element implements Cloneable {
 	 * @return reference or <code>null</code> if element is not referenced
 	 */
 	public Reference<? extends Element> getReference(Element element) {
+		Reference<? extends Element> filter = null;
+		
 		for (Reference<? extends Element> reference : references) {
 			if (reference.getElement() == element) {
-				return reference;
+				if (filter == null) {
+					filter = reference;
+				} else {
+					throw new IllegalStateException("element is referenced more than once");
+				}
 			}
 		}
-		return null;
+		
+		return filter;
 	}
 
+	public List<Reference<? extends Element>> getReferences(Element element) {
+		List<Reference<? extends Element>> filter = new ArrayList<Reference<? extends Element>>();
+		
+		for (Reference<? extends Element> reference : this.references) {
+			if (reference.getElement() == element) {
+				filter.add(reference);
+			}
+		}
+		return filter;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public <E extends Element> List<E> getReferenced(Class<E> clazz) {
 		List<E> filter = new ArrayList<E>();
@@ -345,7 +363,12 @@ public abstract class Element implements Cloneable {
 	}
 
 	public boolean references(Element element) {
-		return getReference(element) != null;
+		for (Reference<? extends Element> reference : references) {
+			if (reference.getElement() == element) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public float getZoom() {
@@ -425,5 +448,9 @@ public abstract class Element implements Cloneable {
 		message.change(status, data1, data2);
 
 		fireChanged(message, true);
+	}
+
+	public boolean hasReference(Reference reference) {
+		return references.contains(reference);
 	}
 }

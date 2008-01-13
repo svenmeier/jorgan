@@ -20,18 +20,16 @@ package jorgan.gui.construct;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
-import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractListModel;
-import javax.swing.ButtonGroup;
+import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
@@ -50,6 +48,7 @@ import jorgan.gui.ReferenceListCellRenderer;
 import jorgan.gui.event.ElementSelectionEvent;
 import jorgan.gui.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
+import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
@@ -57,7 +56,7 @@ import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
- * Panel shows the references of elements.
+ * Panel shows the {@link Reference}s of {@link Element}s.
  */
 public class ReferencesPanel extends DockedPanel implements OrganAware {
 
@@ -71,8 +70,6 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private Element element;
 
-	private List<Reference> references = new ArrayList<Reference>();
-
 	/**
 	 * The listener to selection changes.
 	 */
@@ -84,11 +81,19 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private JList list = new JList();
 
+	private JToggleButton referencesToButton = new JToggleButton();
+
+	private JToggleButton referencedFromButton = new JToggleButton();
+
 	private JToggleButton sortByNameButton = new JToggleButton();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
 
-	private ReferencesModel referencesModel = new ReferencesModel();
+	private OrganListener organListener = new OrganObserver();
+
+	private ReferencesToModel referencesToModel = new ReferencesToModel();
+
+	private ReferencedFromModel referencedFromModel = new ReferencedFromModel();
 
 	/**
 	 * Create a tree panel.
@@ -100,27 +105,40 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 		addToolSeparator();
 
-		ButtonGroup sortGroup = new ButtonGroup();
-		config.get("sortByName").read(sortByNameButton);
-		sortByNameButton.getModel().setGroup(sortGroup);
-		sortByNameButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		ButtonGroup toFromGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
 				updateReferences();
 			}
-		});
+		};
+
+		config.get("referencesTo").read(referencesToButton);
+		toFromGroup.add(referencesToButton);
+		addTool(referencesToButton);
+
+		config.get("referencedFrom").read(referencedFromButton);
+		toFromGroup.add(referencedFromButton);
+		addTool(referencedFromButton);
+
+		addToolSeparator();
+
+		ButtonGroup sortGroup = new ButtonGroup(true) {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				updateReferences();
+			}
+		};
+
+		config.get("sortByName").read(sortByNameButton);
+		sortGroup.add(sortByNameButton);
 		addTool(sortByNameButton);
 
 		config.get("sortByType").read(sortByTypeButton);
-		sortByTypeButton.getModel().setGroup(sortGroup);
-		sortByTypeButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				updateReferences();
-			}
-		});
+		sortGroup.add(sortByTypeButton);
 		addTool(sortByTypeButton);
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		list.setModel(referencesModel);
+		list.setModel(referencesToModel);
 		list.setCellRenderer(new ReferenceListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
@@ -130,8 +148,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		list.addListSelectionListener(removeAction);
 		ListUtils.addActionListener(list, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				Element element = references.get(list.getSelectedIndex())
-						.getElement();
+				Element element = (Element) list.getSelectedValue();
 
 				session.getSelectionModel().setSelectedElement(element);
 			}
@@ -142,32 +159,15 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 					int action) throws IllegalStateException {
 				int[] indices = list.getSelectedIndices();
 				if (indices.length > 0) {
-					Reference[] subReferences = new Reference[indices.length];
-					for (int r = 0; r < subReferences.length; r++) {
-						subReferences[r] = references.get(indices[r]);
-					}
-
-					for (Reference reference : subReferences) {
-						if (action == DnDConstants.ACTION_MOVE) {
-							element.removeReference(reference);
-						}
-					}
-
-					clip.setContents(new ObjectTransferable(subReferences),
-							null);
+					clip.setContents(new ObjectTransferable(getModel().get(
+							indices, true)), null);
 				}
 			}
 
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
 				try {
-					Reference[] subReferences = (Reference[]) ObjectTransferable
-							.getObject(t);
-					for (Reference reference : subReferences) {
-						if (element.canReference(reference.getElement())) {
-							element.addReference(reference.clone());
-						}
-					}
+					getModel().add(ObjectTransferable.getObject(t));
 
 					return true;
 				} catch (Exception noImport) {
@@ -177,6 +177,8 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		});
 
 		setScrollableBody(list, true, false);
+
+		updateReferences();
 	}
 
 	/**
@@ -187,14 +189,14 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 */
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(referencesModel);
+			this.session.removeOrganListener(organListener);
 			this.session.removeSelectionListener(selectionHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(referencesModel);
+			this.session.addOrganListener(organListener);
 			this.session.addSelectionListener(selectionHandler);
 		}
 
@@ -203,8 +205,8 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private void updateReferences() {
 		element = null;
-		references.clear();
-		referencesModel.update();
+
+		list.setModel(new DefaultListModel());
 		list.setVisible(false);
 
 		if (session != null
@@ -212,20 +214,21 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 			element = session.getSelectionModel().getSelectedElement();
 
-			for (Reference reference : element.getReferences()) {
-				references.add(reference);
+			if (referencesToButton.isSelected()) {
+				referencesToModel.update();
+				list.setModel(referencesToModel);
+			} else {
+				referencedFromModel.update();
+				list.setModel(referencedFromModel);
 			}
-
-			if (sortByNameButton.isSelected()) {
-				Collections.sort(references, new ReferenceComparator(true));
-			} else if (sortByTypeButton.isSelected()) {
-				Collections.sort(references, new ReferenceComparator(false));
-			}
-			referencesModel.update();
 			list.setVisible(true);
 		}
 
 		addAction.update();
+	}
+
+	private ReferencesModel getModel() {
+		return (ReferencesModel) list.getModel();
 	}
 
 	/**
@@ -243,21 +246,31 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class ReferencesModel extends AbstractListModel implements
-			OrganListener {
-
-		private int size = 0;
-
-		private void update() {
-			if (references.size() > size) {
-				fireIntervalAdded(this, size, references.size() - 1);
-			} else if (references.size() < size) {
-				fireIntervalRemoved(this, references.size(), size - 1);
-			} else {
-				fireContentsChanged(this, 0, references.size());
-			}
-			size = references.size();
+	private class OrganObserver implements OrganListener {
+		public void added(OrganEvent event) {
+			getModel().onChange(event);
 		}
+
+		public void removed(OrganEvent event) {
+			getModel().onChange(event);
+		}
+
+		public void changed(final OrganEvent event) {
+			getModel().onChange(event);
+		}
+	}
+
+	private abstract class ReferencesModel extends AbstractListModel {
+		public abstract void add(Object object);
+
+		public abstract void onChange(OrganEvent event);
+
+		public abstract Object get(int[] indices, boolean cut);
+	}
+
+	private class ReferencesToModel extends ReferencesModel {
+
+		private List<Reference> references = new ArrayList<Reference>();
 
 		public int getSize() {
 			return references.size();
@@ -267,23 +280,130 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 			return references.get(index).getElement();
 		}
 
-		public void added(OrganEvent event) {
-			if (event.getReference() != null && event.getElement() == element) {
-				updateReferences();
+		@Override
+		public Object get(int[] indices, boolean cut) {
+			Reference[] subReferences = new Reference[indices.length];
+			for (int r = 0; r < subReferences.length; r++) {
+				subReferences[r] = references.get(indices[r]);
+			}
 
-				list.setSelectedIndex(references.indexOf(event.getReference()));
+			if (cut) {
+				for (Reference reference : subReferences) {
+					element.removeReference(reference);
+				}
+			}
+
+			return subReferences;
+		}
+
+		@Override
+		public void add(Object object) {
+			Reference[] subReferences = (Reference[]) object;
+			for (Reference reference : subReferences) {
+				if (element.canReference(reference.getElement())) {
+					element.addReference(reference.clone());
+				}
 			}
 		}
 
-		public void removed(OrganEvent event) {
-			if (event.getReference() != null && event.getElement() == element) {
+		@Override
+		public void onChange(OrganEvent event) {
+			if (event.getElement() == element && event.getReference() != null) {
 				updateReferences();
 			}
 		}
 
-		public void changed(final OrganEvent event) {
-			if (event.getReference() != null && event.getElement() == element) {
-				updateReferences();
+		public void update() {
+			references.clear();
+
+			for (Reference reference : element.getReferences()) {
+				references.add(reference);
+			}
+
+			if (sortByNameButton.isSelected()) {
+				Collections.sort(references, new ReferenceComparator(true));
+			} else if (sortByTypeButton.isSelected()) {
+				Collections.sort(references, new ReferenceComparator(false));
+			}
+		}
+	}
+
+	/**
+	 * TODO would be nice to use a tree for this.
+	 */
+	private class ReferencedFromModel extends ReferencesModel {
+
+		private List<BackReference> backReferences = new ArrayList<BackReference>();
+
+		public int getSize() {
+			return backReferences.size();
+		}
+
+		public Object getElementAt(int index) {
+			return backReferences.get(index).element;
+		}
+
+		@Override
+		public Object get(int[] indices, boolean cut) {
+			BackReference[] subBackReferences = new BackReference[indices.length];
+			for (int r = 0; r < subBackReferences.length; r++) {
+				subBackReferences[r] = backReferences.get(indices[r]);
+			}
+
+			if (cut) {
+				for (BackReference backReference : subBackReferences) {
+					backReference.getElement().removeReference(
+							backReference.getReference());
+				}
+			}
+
+			return subBackReferences;
+		}
+
+		@Override
+		public void add(Object object) {
+			BackReference[] subBackReferences = (BackReference[]) object;
+			for (BackReference subBackReference : subBackReferences) {
+				if (subBackReference.getElement().canReference(element)) {
+					subBackReference.getElement().addReference(
+							subBackReference.getReference().clone(element));
+				}
+			}
+		}
+
+		@Override
+		public void onChange(OrganEvent event) {
+			if (event.getReference() != null) {
+				if (event.getElement().references(element)) {
+					updateReferences();
+					return;
+				}
+				
+				for (BackReference backReference : backReferences) {
+					if (backReference.getElement() == event.getElement()) {
+						updateReferences();
+						return;
+					}
+				}
+			}
+		}
+
+		public void update() {
+			backReferences.clear();
+
+			for (Element aReferrer : element.getOrgan().getReferrer(element)) {
+				for (Reference<? extends Element> reference : aReferrer
+						.getReferences(element)) {
+					backReferences.add(new BackReference(aReferrer, reference));
+				}
+			}
+
+			if (sortByNameButton.isSelected()) {
+				Collections.sort(backReferences, new BackReferenceComparator(
+						true));
+			} else if (sortByTypeButton.isSelected()) {
+				Collections.sort(backReferences, new BackReferenceComparator(
+						false));
 			}
 		}
 	}
@@ -322,14 +442,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 				return;
 			}
 
-			int[] indices = list.getSelectedIndices();
-			if (indices != null) {
-				for (int i = indices.length - 1; i >= 0; i--) {
-					Reference reference = references.get(indices[i]);
-
-					ReferencesPanel.this.element.removeReference(reference);
-				}
-			}
+			getModel().get(list.getSelectedIndices(), true);
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -348,6 +461,40 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 			return comparator.compare(reference1.getElement(), reference2
 					.getElement());
+		}
+	}
+
+	private class BackReferenceComparator implements Comparator<BackReference> {
+		private ElementComparator comparator;
+
+		public BackReferenceComparator(boolean sort) {
+			this.comparator = new ElementComparator(sort);
+		}
+
+		public int compare(BackReference reference1, BackReference reference2) {
+
+			return comparator.compare(reference1.getElement(), reference2
+					.getElement());
+		}
+	}
+
+	public static class BackReference {
+
+		private Element element;
+
+		private Reference reference;
+
+		public BackReference(Element element, Reference reference) {
+			this.element = element;
+			this.reference = reference;
+		}
+
+		public Element getElement() {
+			return element;
+		}
+
+		public Reference getReference() {
+			return reference;
 		}
 	}
 }
