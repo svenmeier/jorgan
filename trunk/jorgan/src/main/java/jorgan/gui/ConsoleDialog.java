@@ -24,12 +24,10 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
-import javax.swing.ButtonGroup;
+import javax.swing.AbstractButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -44,6 +42,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
+import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
 
 /**
@@ -51,7 +50,8 @@ import bias.Configuration;
  */
 public class ConsoleDialog extends JDialog {
 
-	private static Configuration config = Configuration.getRoot().get(ConsoleDialog.class);
+	private static Configuration config = Configuration.getRoot().get(
+			ConsoleDialog.class);
 
 	/**
 	 * The handler of mouse events.
@@ -66,7 +66,11 @@ public class ConsoleDialog extends JDialog {
 
 	private JPopupMenu popup = new JPopupMenu();
 
-	private ButtonGroup group = new ButtonGroup();
+	private ButtonGroup group = new ButtonGroup() {
+		protected void onSelected(AbstractButton button) {
+			cardPanel.selectCard(button.getClientProperty(this));
+		}
+	};
 
 	private OrganSession session;
 
@@ -122,17 +126,10 @@ public class ConsoleDialog extends JDialog {
 
 		cardPanel.addCard(consolePanel, console);
 
-		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
+		JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
 				.getDisplayName(console));
-		check.getModel().setGroup(group);
-		check.setSelected(true);
-		check.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (check.isSelected()) {
-					cardPanel.selectCard(console);
-				}
-			}
-		});
+		check.putClientProperty(group, console);
+		group.add(check);
 		popup.add(check, 0);
 	}
 

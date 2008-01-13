@@ -31,12 +31,14 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
-import javax.swing.ButtonGroup;
+import javax.swing.AbstractButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
+
+import jorgan.swing.button.ButtonGroup;
 
 import bias.Configuration;
 
@@ -91,7 +93,7 @@ public class KeyboardPane extends JComponent {
 	private JMenuItem channelPressureMenuItem;
 
 	private JMenuItem useNoteOffMenuItem;
-	
+
 	private int channel = 0;
 
 	private boolean sendVelocity = true;
@@ -101,7 +103,7 @@ public class KeyboardPane extends JComponent {
 	private boolean sendChannelPressure = false;
 
 	private boolean useNoteOff = true;
-	
+
 	private List<Key> keys = new ArrayList<Key>();
 
 	private Receiver receiver;
@@ -394,17 +396,19 @@ public class KeyboardPane extends JComponent {
 	protected JPopupMenu createPopup() {
 		JPopupMenu popupMenu = new JPopupMenu();
 
-		ButtonGroup channelGroup = new ButtonGroup();
-		ChannelHandler channelHandler = new ChannelHandler();
+		ButtonGroup channelGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				setChannel((Integer)button.getClientProperty(this));
+			}
+		};
 		for (int c = 0; c < 16; c++) {
 			channelMenuItems[c] = new JCheckBoxMenuItem();
 			config.get("channel").read(channelMenuItems[c]);
 			channelMenuItems[c].setText(channelMenuItems[c].getText() + " "
 					+ (c + 1));
-			channelMenuItems[c].getModel().setGroup(channelGroup);
-			channelMenuItems[c].putClientProperty(channelHandler,
-					new Integer(c));
-			channelMenuItems[c].addItemListener(channelHandler);
+			channelMenuItems[c].putClientProperty(channelGroup, c);
+			channelGroup.add(channelMenuItems[c]);
 			popupMenu.add(channelMenuItems[c]);
 		}
 
@@ -436,7 +440,7 @@ public class KeyboardPane extends JComponent {
 			}
 		});
 		popupMenu.add(channelPressureMenuItem);
-		
+
 		useNoteOffMenuItem = new JCheckBoxMenuItem();
 		config.get("useNoteOff").read(useNoteOffMenuItem);
 		useNoteOffMenuItem.addItemListener(new ItemListener() {
@@ -621,15 +625,6 @@ public class KeyboardPane extends JComponent {
 				g.setColor(Color.BLACK);
 				g.fillOval(x + whiteWidth / 2 - 2, whiteHeight - 8, 4, 4);
 			}
-		}
-	}
-
-	private class ChannelHandler implements ItemListener {
-		public void itemStateChanged(ItemEvent e) {
-			JCheckBoxMenuItem menuItem = (JCheckBoxMenuItem) e.getSource();
-
-			Integer channel = (Integer) menuItem.getClientProperty(this);
-			setChannel(channel.intValue());
 		}
 	}
 

@@ -22,14 +22,12 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractListModel;
-import javax.swing.ButtonGroup;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JToggleButton;
@@ -49,6 +47,7 @@ import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.swing.BaseAction;
+import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.DockedPanel;
@@ -152,25 +151,19 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 
 		addToolSeparator();
 
-		ButtonGroup sortGroup = new ButtonGroup();
-		config.get("sortByName").read(sortByNameButton);
-		sortByNameButton.getModel().setGroup(sortGroup);
-		sortByNameButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
+		ButtonGroup sortGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
 				setOrgan(session);
 			}
-		});
-		addTool(sortByNameButton);
-
+		};
 		config.get("sortByType").read(sortByTypeButton);
-		sortByTypeButton.getModel().setGroup(sortGroup);
-		sortByTypeButton.setSelected(true);
-		sortByTypeButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				setOrgan(session);
-			}
-		});
+		sortGroup.add(sortByTypeButton);
 		addTool(sortByTypeButton);
+
+		config.get("sortByName").read(sortByNameButton);
+		sortGroup.add(sortByNameButton);
+		addTool(sortByNameButton);
 
 		new DuplicateAction();
 	}

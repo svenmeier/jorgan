@@ -21,7 +21,6 @@ package jorgan.gui.preferences.category;
 import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
-import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -34,6 +33,7 @@ import javax.swing.border.TitledBorder;
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -62,8 +62,6 @@ public class GuiCategory extends JOrganCategory {
 			OrganFrame.class, "handleRegistrationChanges"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
-
-	private ButtonGroup changesGroup = new ButtonGroup();
 
 	private JRadioButton confirmChangesRadioButton = new JRadioButton();
 
@@ -123,20 +121,22 @@ public class GuiCategory extends JOrganCategory {
 
 		builder.nextRow();
 
+		ButtonGroup changesGroup = new ButtonGroup();
+
 		config.get("confirmChanges").read(confirmChangesRadioButton);
-		confirmChangesRadioButton.getModel().setGroup(changesGroup);
+		changesGroup.add(confirmChangesRadioButton);
 		panel.add(confirmChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
 		config.get("saveChanges").read(saveChangesRadioButton);
-		saveChangesRadioButton.getModel().setGroup(changesGroup);
+		changesGroup.add(saveChangesRadioButton);
 		panel.add(saveChangesRadioButton, builder.nextColumn());
 
 		builder.nextRow();
 
 		config.get("ignoreChanges").read(ignoreChangesRadioButton);
-		ignoreChangesRadioButton.getModel().setGroup(changesGroup);
+		changesGroup.add(ignoreChangesRadioButton);
 		panel.add(ignoreChangesRadioButton, builder.nextColumn());
 
 		return panel;
