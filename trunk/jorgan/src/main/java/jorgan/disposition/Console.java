@@ -102,7 +102,7 @@ public class Console extends Input implements Output {
 	/**
 	 * A reference of a console to another element.
 	 */
-	public static class Reference extends jorgan.disposition.Reference {
+	public static class Reference extends jorgan.disposition.Reference<Element> {
 
 		private int x;
 

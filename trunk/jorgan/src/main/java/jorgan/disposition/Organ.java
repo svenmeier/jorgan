@@ -235,7 +235,7 @@ public class Organ {
 		addElement(clone);
 		
 		for (Element referrer : getReferrer(element)) {
-			Reference reference = referrer.getReference(element);
+			Reference<? extends Element> reference = referrer.getReference(element);
 			if (referrer.canReference(clone)) {
 				referrer.addReference(reference.clone(clone));
 			}
