@@ -103,6 +103,10 @@ public abstract class Element implements Cloneable {
 		return false;
 	}
 
+	protected boolean validReference(Reference reference) {
+		return true;
+	}
+	
 	public Organ getOrgan() {
 		return organ;
 	}
@@ -132,10 +136,17 @@ public abstract class Element implements Cloneable {
 	}
 
 	public void addReference(Reference reference) {
-		Element element = reference.getElement();
-		if (!canReference(element)) {
-			throw new IllegalArgumentException("cannot reference '" + element
-					+ "'");
+		if (references.contains(reference)) {
+			throw new IllegalArgumentException("duplicate reference '"
+					+ reference + "'");
+		}
+		if (!canReference(reference.getElement())) {
+			throw new IllegalArgumentException("cannot reference '"
+					+ reference.getElement() + "'");
+		}
+		if (!validReference(reference)) {
+			throw new IllegalArgumentException("invalid reference '"
+					+ reference + "'");
 		}
 		references.add(reference);
 
@@ -157,23 +168,24 @@ public abstract class Element implements Cloneable {
 	 */
 	public Reference<? extends Element> getReference(Element element) {
 		Reference<? extends Element> filter = null;
-		
+
 		for (Reference<? extends Element> reference : references) {
 			if (reference.getElement() == element) {
 				if (filter == null) {
 					filter = reference;
 				} else {
-					throw new IllegalStateException("element is referenced more than once");
+					throw new IllegalStateException(
+							"element is referenced more than once");
 				}
 			}
 		}
-		
+
 		return filter;
 	}
 
 	public List<Reference<? extends Element>> getReferences(Element element) {
 		List<Reference<? extends Element>> filter = new ArrayList<Reference<? extends Element>>();
-		
+
 		for (Reference<? extends Element> reference : this.references) {
 			if (reference.getElement() == element) {
 				filter.add(reference);
@@ -181,7 +193,7 @@ public abstract class Element implements Cloneable {
 		}
 		return filter;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public <E extends Element> List<E> getReferenced(Class<E> clazz) {
 		List<E> filter = new ArrayList<E>();

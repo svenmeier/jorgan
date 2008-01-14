@@ -42,26 +42,26 @@ public class ElementComparator implements Comparator<Element> {
 	public int compare(Element e1, Element e2) {
 
 		if (alphabet) {
-			int result = compareAlphabetical(e1, e2);
+			int result = compareByName(e1, e2);
 			if (result == 0) {
-				result = compareType(e1, e2);
+				result = compareByType(e1, e2);
 			}
 			return result;
 		} else {
-			int result = compareType(e1, e2);
+			int result = compareByType(e1, e2);
 			if (result == 0) {
-				result = compareAlphabetical(e1, e2);
+				result = compareByName(e1, e2);
 			}
 			return result;
 		}
 	}
 
-	public int compareAlphabetical(Element e1, Element e2) {
+	public static int compareByName(Element e1, Element e2) {
 
 		return Elements.getDisplayName(e1).compareTo(Elements.getDisplayName(e2));
 	}
 
-	public int compareType(Element e1, Element e2) {
+	public static int compareByType(Element e1, Element e2) {
 
 		int index1 = types.indexOf(e1.getClass());
 		int index2 = types.indexOf(e2.getClass());

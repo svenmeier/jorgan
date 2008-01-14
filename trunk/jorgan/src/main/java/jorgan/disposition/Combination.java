@@ -28,6 +28,11 @@ public class Combination extends Initiator {
 	}
 
 	@Override
+	protected boolean validReference(jorgan.disposition.Reference reference) {
+		return reference instanceof Reference;
+	}	
+	
+	@Override
 	protected Reference createReference(Element element) {
 		if (!(element instanceof Switch)) {
 			throw new IllegalArgumentException("can only reference Switch");
