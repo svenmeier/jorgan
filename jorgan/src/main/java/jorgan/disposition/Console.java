@@ -40,6 +40,11 @@ public class Console extends Input implements Output {
 	}
 
 	@Override
+	protected boolean validReference(jorgan.disposition.Reference reference) {
+		return reference instanceof Reference;
+	}
+	
+	@Override
 	protected Reference createReference(Element element) {
 		return new Reference(element);
 	}

@@ -20,6 +20,7 @@ package jorgan.gui.construct;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
+import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -69,6 +70,8 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	private OrganSession session;
 
 	private Element element;
+
+	private List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
 	/**
 	 * The listener to selection changes.
@@ -159,18 +162,35 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 					int action) throws IllegalStateException {
 				int[] indices = list.getSelectedIndices();
 				if (indices.length > 0) {
-					clip.setContents(new ObjectTransferable(getModel().get(
-							indices, true)), null);
+					ReferrerReference[] subReferences = new ReferrerReference[indices.length];
+					for (int r = 0; r < subReferences.length; r++) {
+						subReferences[r] = references.get(indices[r]);
+					}
+
+					if (action == DnDConstants.ACTION_MOVE) {
+						for (ReferrerReference reference : subReferences) {
+							reference.getReferrer().removeReference(
+									reference.getReference());
+						}
+					}
+
+					clip.setContents(new ObjectTransferable(subReferences),
+							null);
 				}
 			}
 
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
 				try {
-					getModel().add(ObjectTransferable.getObject(t));
-
+					for (ReferrerReference reference : (ReferrerReference[]) ObjectTransferable
+							.getObject(t)) {
+						try {
+							getModel().add(reference);
+						} catch (Exception invalidReference) {
+						}
+					}
 					return true;
-				} catch (Exception noImport) {
+				} catch (Exception noReferrerReferences) {
 					return false;
 				}
 			}
@@ -205,6 +225,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private void updateReferences() {
 		element = null;
+		references.clear();
 
 		list.setModel(new DefaultListModel());
 		list.setVisible(false);
@@ -248,163 +269,136 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 */
 	private class OrganObserver implements OrganListener {
 		public void added(OrganEvent event) {
-			getModel().onChange(event);
+			if (event.getReference() != null
+					&& getModel().onReferenceChange(event)) {
+				updateReferences();
+				
+				for (int r = 0; r < references.size(); r++) {
+					ReferrerReference reference = references.get(r);
+					if (reference.getReference() == event.getReference()) {
+						list.setSelectedIndex(r);
+					}
+				}
+			}
 		}
 
 		public void removed(OrganEvent event) {
-			getModel().onChange(event);
+			if (event.getReference() != null
+					&& getModel().onReferenceChange(event)) {
+				updateReferences();
+			}
 		}
 
-		public void changed(final OrganEvent event) {
-			getModel().onChange(event);
+		public void changed(OrganEvent event) {
+			if (event.getReference() != null
+					&& getModel().onReferenceChange(event)) {
+				updateReferences();
+			}
 		}
 	}
 
-	private abstract class ReferencesModel extends AbstractListModel {
-		public abstract void add(Object object);
-
-		public abstract void onChange(OrganEvent event);
-
-		public abstract Object get(int[] indices, boolean cut);
-	}
-
-	private class ReferencesToModel extends ReferencesModel {
-
-		private List<Reference> references = new ArrayList<Reference>();
+	private abstract class ReferencesModel extends AbstractListModel implements
+			Comparator<ReferrerReference> {
 
 		public int getSize() {
 			return references.size();
 		}
 
 		public Object getElementAt(int index) {
-			return references.get(index).getElement();
+			return getElement(references.get(index));
 		}
 
-		@Override
-		public Object get(int[] indices, boolean cut) {
-			Reference[] subReferences = new Reference[indices.length];
-			for (int r = 0; r < subReferences.length; r++) {
-				subReferences[r] = references.get(indices[r]);
-			}
+		public abstract void add(ReferrerReference references);
 
-			if (cut) {
-				for (Reference reference : subReferences) {
-					element.removeReference(reference);
-				}
-			}
-
-			return subReferences;
-		}
-
-		@Override
-		public void add(Object object) {
-			Reference[] subReferences = (Reference[]) object;
-			for (Reference reference : subReferences) {
-				if (element.canReference(reference.getElement())) {
-					element.addReference(reference.clone());
-				}
-			}
-		}
-
-		@Override
-		public void onChange(OrganEvent event) {
-			if (event.getElement() == element && event.getReference() != null) {
-				updateReferences();
-			}
-		}
+		public abstract boolean onReferenceChange(OrganEvent event);
 
 		public void update() {
 			references.clear();
 
-			for (Reference reference : element.getReferences()) {
-				references.add(reference);
-			}
+			references = getReferences();
+
+			Collections.sort(references, this);
+		}
+
+		public int compare(ReferrerReference reference1,
+				ReferrerReference reference2) {
+			Element element1 = getElement(reference1);
+			Element element2 = getElement(reference2);
 
 			if (sortByNameButton.isSelected()) {
-				Collections.sort(references, new ReferenceComparator(true));
+				return ElementComparator
+						.compareByName(element1, element2);
 			} else if (sortByTypeButton.isSelected()) {
-				Collections.sort(references, new ReferenceComparator(false));
+				return ElementComparator.compareByType(element1, element2);
+			} else {
+				return 0;
 			}
+		}
+
+		protected abstract List<ReferrerReference> getReferences();
+
+		protected abstract Element getElement(ReferrerReference reference);
+	}
+
+	private class ReferencesToModel extends ReferencesModel {
+
+		@Override
+		public void add(ReferrerReference reference) {
+			element.addReference(reference.getReference().clone());
+		}
+
+		@Override
+		public boolean onReferenceChange(OrganEvent event) {
+			return event.getElement() == element;
+		}
+
+		@Override
+		protected List<ReferrerReference> getReferences() {
+			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
+
+			for (Reference reference : element.getReferences()) {
+				references.add(new ReferrerReference(element, reference));
+			}
+
+			return references;
+		}
+
+		@Override
+		protected Element getElement(ReferrerReference reference) {
+			return reference.getReference().getElement();
 		}
 	}
 
-	/**
-	 * TODO would be nice to use a tree for this.
-	 */
 	private class ReferencedFromModel extends ReferencesModel {
 
-		private List<BackReference> backReferences = new ArrayList<BackReference>();
-
-		public int getSize() {
-			return backReferences.size();
-		}
-
-		public Object getElementAt(int index) {
-			return backReferences.get(index).element;
+		@Override
+		public void add(ReferrerReference reference) {
+			reference.getReferrer().addReference(
+					reference.getReference().clone(element));
 		}
 
 		@Override
-		public Object get(int[] indices, boolean cut) {
-			BackReference[] subBackReferences = new BackReference[indices.length];
-			for (int r = 0; r < subBackReferences.length; r++) {
-				subBackReferences[r] = backReferences.get(indices[r]);
-			}
-
-			if (cut) {
-				for (BackReference backReference : subBackReferences) {
-					backReference.getElement().removeReference(
-							backReference.getReference());
-				}
-			}
-
-			return subBackReferences;
+		public boolean onReferenceChange(OrganEvent event) {
+			return event.getReference().getElement() == element;
 		}
 
 		@Override
-		public void add(Object object) {
-			BackReference[] subBackReferences = (BackReference[]) object;
-			for (BackReference subBackReference : subBackReferences) {
-				if (subBackReference.getElement().canReference(element)) {
-					subBackReference.getElement().addReference(
-							subBackReference.getReference().clone(element));
-				}
-			}
-		}
-
-		@Override
-		public void onChange(OrganEvent event) {
-			if (event.getReference() != null) {
-				if (event.getElement().references(element)) {
-					updateReferences();
-					return;
-				}
-				
-				for (BackReference backReference : backReferences) {
-					if (backReference.getElement() == event.getElement()) {
-						updateReferences();
-						return;
-					}
-				}
-			}
-		}
-
-		public void update() {
-			backReferences.clear();
+		protected List<ReferrerReference> getReferences() {
+			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
 			for (Element aReferrer : element.getOrgan().getReferrer(element)) {
 				for (Reference<? extends Element> reference : aReferrer
 						.getReferences(element)) {
-					backReferences.add(new BackReference(aReferrer, reference));
+					references.add(new ReferrerReference(aReferrer, reference));
 				}
 			}
 
-			if (sortByNameButton.isSelected()) {
-				Collections.sort(backReferences, new BackReferenceComparator(
-						true));
-			} else if (sortByTypeButton.isSelected()) {
-				Collections.sort(backReferences, new BackReferenceComparator(
-						false));
-			}
+			return references;
+		}
+
+		@Override
+		protected Element getElement(ReferrerReference reference) {
+			return reference.getReferrer();
 		}
 	}
 
@@ -442,7 +436,16 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 				return;
 			}
 
-			getModel().get(list.getSelectedIndices(), true);
+			int[] indices = list.getSelectedIndices();
+			ReferrerReference[] subReferences = new ReferrerReference[indices.length];
+			for (int r = 0; r < subReferences.length; r++) {
+				subReferences[r] = references.get(indices[r]);
+			}
+
+			for (ReferrerReference reference : subReferences) {
+				reference.getReferrer().removeReference(
+						reference.getReference());
+			}
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -450,47 +453,19 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		}
 	}
 
-	private class ReferenceComparator implements Comparator<Reference> {
-		private ElementComparator comparator;
+	public static class ReferrerReference {
 
-		public ReferenceComparator(boolean sort) {
-			this.comparator = new ElementComparator(sort);
-		}
-
-		public int compare(Reference reference1, Reference reference2) {
-
-			return comparator.compare(reference1.getElement(), reference2
-					.getElement());
-		}
-	}
-
-	private class BackReferenceComparator implements Comparator<BackReference> {
-		private ElementComparator comparator;
-
-		public BackReferenceComparator(boolean sort) {
-			this.comparator = new ElementComparator(sort);
-		}
-
-		public int compare(BackReference reference1, BackReference reference2) {
-
-			return comparator.compare(reference1.getElement(), reference2
-					.getElement());
-		}
-	}
-
-	public static class BackReference {
-
-		private Element element;
+		private Element referrer;
 
 		private Reference reference;
 
-		public BackReference(Element element, Reference reference) {
-			this.element = element;
+		public ReferrerReference(Element referrer, Reference reference) {
+			this.referrer = referrer;
 			this.reference = reference;
 		}
 
-		public Element getElement() {
-			return element;
+		public Element getReferrer() {
+			return referrer;
 		}
 
 		public Reference getReference() {
