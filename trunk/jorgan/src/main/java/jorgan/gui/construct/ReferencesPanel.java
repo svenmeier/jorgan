@@ -176,18 +176,20 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
-				try {
-					for (ReferrerReference reference : (ReferrerReference[]) ObjectTransferable
-							.getObject(t)) {
-						try {
-							getModel().add(reference);
-						} catch (Exception invalidReference) {
+				if (element != null) {
+					try {
+						for (ReferrerReference reference : (ReferrerReference[]) ObjectTransferable
+								.getObject(t)) {
+							try {
+								getReferencesModel().add(reference);
+							} catch (Exception invalidReference) {
+							}
 						}
+						return true;
+					} catch (Exception noReferrerReferences) {
 					}
-					return true;
-				} catch (Exception noReferrerReferences) {
-					return false;
 				}
+				return false;
 			}
 		});
 
@@ -243,7 +245,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		addAction.update();
 	}
 
-	private ReferencesModel getModel() {
+	private ReferencesModel getReferencesModel() {
 		return (ReferencesModel) list.getModel();
 	}
 
@@ -252,17 +254,18 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class EventHandler implements ElementSelectionListener, OrganListener {
+	private class EventHandler implements ElementSelectionListener,
+			OrganListener {
 
 		public void selectionChanged(ElementSelectionEvent ev) {
 			updateReferences();
 		}
 
 		public void added(OrganEvent event) {
-			if (event.getReference() != null
-					&& getModel().onReferenceChange(event)) {
+			if (element != null && event.getReference() != null
+					&& getReferencesModel().onReferenceChange(event)) {
 				updateReferences();
-				
+
 				for (int r = 0; r < references.size(); r++) {
 					ReferrerReference reference = references.get(r);
 					if (reference.getReference() == event.getReference()) {
@@ -273,15 +276,15 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		}
 
 		public void removed(OrganEvent event) {
-			if (event.getReference() != null
-					&& getModel().onReferenceChange(event)) {
+			if (element != null && event.getReference() != null
+					&& getReferencesModel().onReferenceChange(event)) {
 				updateReferences();
 			}
 		}
 
 		public void changed(OrganEvent event) {
-			if (event.getReference() != null
-					&& getModel().onReferenceChange(event)) {
+			if (element != null && event.getReference() != null
+					&& getReferencesModel().onReferenceChange(event)) {
 				updateReferences();
 			}
 		}
@@ -303,8 +306,6 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 		public abstract boolean onReferenceChange(OrganEvent event);
 
 		public void update() {
-			references.clear();
-
 			references = getReferences();
 
 			Collections.sort(references, this);
@@ -316,8 +317,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 			Element element2 = getElement(reference2);
 
 			if (sortByNameButton.isSelected()) {
-				return ElementComparator
-						.compareByName(element1, element2);
+				return ElementComparator.compareByName(element1, element2);
 			} else if (sortByTypeButton.isSelected()) {
 				return ElementComparator.compareByType(element1, element2);
 			} else {
