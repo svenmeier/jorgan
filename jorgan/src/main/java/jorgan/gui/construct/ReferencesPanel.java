@@ -73,10 +73,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 
 	private List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
-	/**
-	 * The listener to selection changes.
-	 */
-	private SelectionHandler selectionHandler = new SelectionHandler();
+	private EventHandler eventHandler = new EventHandler();
 
 	private AddAction addAction = new AddAction();
 
@@ -91,8 +88,6 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	private JToggleButton sortByNameButton = new JToggleButton();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
-
-	private OrganListener organListener = new OrganObserver();
 
 	private ReferencesToModel referencesToModel = new ReferencesToModel();
 
@@ -209,15 +204,15 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 */
 	public void setOrgan(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(organListener);
-			this.session.removeSelectionListener(selectionHandler);
+			this.session.removeOrganListener(eventHandler);
+			this.session.removeSelectionListener(eventHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(organListener);
-			this.session.addSelectionListener(selectionHandler);
+			this.session.addOrganListener(eventHandler);
+			this.session.addSelectionListener(eventHandler);
 		}
 
 		updateReferences();
@@ -253,21 +248,16 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	}
 
 	/**
-	 * The handler of selections.
-	 */
-	private class SelectionHandler implements ElementSelectionListener {
-
-		public void selectionChanged(ElementSelectionEvent ev) {
-			updateReferences();
-		}
-	}
-
-	/**
 	 * Note that <em>Spin</em> ensures that the methods of this listeners are
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class OrganObserver implements OrganListener {
+	private class EventHandler implements ElementSelectionListener, OrganListener {
+
+		public void selectionChanged(ElementSelectionEvent ev) {
+			updateReferences();
+		}
+
 		public void added(OrganEvent event) {
 			if (event.getReference() != null
 					&& getModel().onReferenceChange(event)) {
