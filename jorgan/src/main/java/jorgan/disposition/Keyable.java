@@ -37,17 +37,11 @@ public abstract class Keyable extends Switch {
 
 	public static final int ACTION_SOSTENUTO = 5;
 
-	public static final int ACTION_INVERSE = 6;
-
-	public static final int DEFAULT_TRANSPOSE = 0;
-
-	public static final int DEFAULT_VELOCITY = 100;
-
-	private int velocity = DEFAULT_VELOCITY;
+	private int velocity = 100;
 
 	private int action = ACTION_STRAIGHT;
 
-	private int transpose = DEFAULT_TRANSPOSE;
+	private int transpose = 0;
 
 	public int getTranspose() {
 		return transpose;
@@ -58,7 +52,7 @@ public abstract class Keyable extends Switch {
 	}
 
 	public void setAction(int action) {
-		if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
+		if (action < ACTION_STRAIGHT || action > ACTION_SOSTENUTO) {
 			throw new IllegalArgumentException("pitch '" + action + "'");
 		}
 		this.action = action;

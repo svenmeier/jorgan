@@ -59,6 +59,28 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="coupler">
+		<coupler>
+			<xsl:apply-templates select="@id|action|active|locking|name|shortcut|transpose|velocity|zoom|references|description|messages"/>
+			<style>
+				<xsl:choose>
+					<xsl:when test="style = 'coupler' and action = '6'">couplerInverse</xsl:when>
+					<xsl:when test="style = 'black' and action = '6'">blackInverse</xsl:when>
+					<xsl:otherwise><xsl:value-of select="style"/></xsl:otherwise>
+				</xsl:choose>
+			</style>
+		</coupler>
+	</xsl:template>
+
+	<xsl:template match="action">
+		<action>
+			<xsl:choose>
+				<xsl:when test=". = '6'">0</xsl:when>
+				<xsl:otherwise><xsl:value-of select="."/></xsl:otherwise>
+			</xsl:choose>
+		</action>
+	</xsl:template>
+	
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>

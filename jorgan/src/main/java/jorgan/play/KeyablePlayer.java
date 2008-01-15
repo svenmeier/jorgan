@@ -47,9 +47,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
         case Keyable.ACTION_STRAIGHT:
             action = new Action();
             break;
-        case Keyable.ACTION_INVERSE:
-            action = new InverseAction();
-            break;
         case Keyable.ACTION_PITCH_CONSTANT:
             action = new ConstantPitchAction();
             break;
@@ -124,7 +121,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
         protected boolean activated = false;
 
         public void changed() {
-            if (shouldActivate()) {
+            if (getElement().isEngaged()) {
                 if (!activated) {
                     activated = true;
                     activated();
@@ -135,10 +132,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
                     activated = false;
                 }
             }
-        }
-
-        protected boolean shouldActivate() {
-            return getElement().isEngaged();
         }
 
         public void keyDown(int pitch, int velocity) {
@@ -167,13 +160,6 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
                     KeyablePlayer.this.deactivateKey(p);
                 }
             }
-        }
-    }
-
-    private class InverseAction extends Action {
-        @Override
-		protected boolean shouldActivate() {
-            return !getElement().isEngaged();
         }
     }
 
