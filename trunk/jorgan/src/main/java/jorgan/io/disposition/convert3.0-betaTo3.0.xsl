@@ -59,6 +59,26 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="combination-reference">
+		<combination-reference>
+			<xsl:attribute name="id">
+				<xsl:value-of select="@id"/>
+			</xsl:attribute>
+
+			<activated>
+				<xsl:variable name="id" select="@id"/>
+				<xsl:choose>
+					<xsl:when test="//coupler[@id = $id and action = '6']">
+						<xsl:value-of select="translate(activated, '01', '10')"/>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="activated"/>
+					</xsl:otherwise>
+				</xsl:choose>
+			</activated>
+		</combination-reference>
+	</xsl:template>
+
 	<xsl:template match="coupler">
 		<coupler>
 			<xsl:apply-templates select="@id|action|active|locking|name|shortcut|transpose|velocity|zoom|references|description|messages"/>
@@ -94,18 +114,16 @@
 	
 	    <xsl:choose>
 	      <xsl:when test="contains($text, $from)">
+			<xsl:variable name="before" select="substring-before($text, $from)"/>
+			<xsl:variable name="after" select="substring-after($text, $from)"/>
 	
-		<xsl:variable name="before" select="substring-before($text, $from)"/>
-		<xsl:variable name="after" select="substring-after($text, $from)"/>
-		<xsl:variable name="prefix" select="concat($before, $to)"/>
-	
-		<xsl:value-of select="$before"/>
-		<xsl:value-of select="$to"/>
+			<xsl:value-of select="$before"/>
+			<xsl:value-of select="$to"/>
 	        <xsl:call-template name="replace-string">
-		  <xsl:with-param name="text" select="$after"/>
-		  <xsl:with-param name="from" select="$from"/>
-		  <xsl:with-param name="to" select="$to"/>
-		</xsl:call-template>
+				<xsl:with-param name="text" select="$after"/>
+				<xsl:with-param name="from" select="$from"/>
+		  		<xsl:with-param name="to" select="$to"/>
+			</xsl:call-template>
 	      </xsl:when> 
 	      <xsl:otherwise>
 	        <xsl:value-of select="$text"/>  
