@@ -21,6 +21,7 @@ package jorgan.io.disposition;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -93,14 +94,19 @@ public class Conversion {
 		transform.transform(new StreamSource(in),
 				new StreamResult(byteArrayOut));
 
+		byte[] bytes = byteArrayOut.toByteArray();
 		if (DEBUG) {
-			System.out.println(new String(byteArrayOut.toByteArray()));
-			System.out.flush();
+			try {
+				FileOutputStream debug = new FileOutputStream(xsl + ".xml");
+				debug.write(bytes);
+				debug.flush();
+				debug.close();
+			} catch (Exception ex) {
+				throw new Error();
+			}
 		}
 
-		in = new ByteArrayInputStream(byteArrayOut.toByteArray());
-
-		return in;
+		return new ByteArrayInputStream(bytes);
 	}
 
 	public static InputStream convertAll(InputStream in)

@@ -54,7 +54,7 @@ public class ElementConverter implements Converter {
 
 	/**
 	 * @see #marshallId(Element, HierarchicalStreamWriter, MarshallingContext)
-	 */ 
+	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 		Element element = (Element) value;
@@ -80,8 +80,9 @@ public class ElementConverter implements Converter {
 	}
 
 	/**
-	 * @see #unmarshallId(Element, HierarchicalStreamReader, UnmarshallingContext)
-	 */ 
+	 * @see #unmarshallId(Element, HierarchicalStreamReader,
+	 *      UnmarshallingContext)
+	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
@@ -92,11 +93,10 @@ public class ElementConverter implements Converter {
 		return element;
 	}
 
-	protected void unmarshallId(Element element, HierarchicalStreamReader reader,
-			UnmarshallingContext context) {
+	protected void unmarshallId(Element element,
+			HierarchicalStreamReader reader, UnmarshallingContext context) {
 
-		Unmarshal.get(context).putElement(reader.getAttribute("id"),
-				element);
+		Unmarshal.get(context).putElement(reader.getAttribute("id"), element);
 	}
 
 	public static class Marshal {
@@ -106,8 +106,7 @@ public class ElementConverter implements Converter {
 		private SequenceGenerator sequenceGenerator = new SequenceGenerator(1);
 
 		public static Marshal get(MarshallingContext context) {
-			Marshal state = (Marshal) context
-					.get(Marshal.class);
+			Marshal state = (Marshal) context.get(Marshal.class);
 			if (state == null) {
 				state = new Marshal();
 				context.put(Marshal.class, state);
@@ -131,8 +130,7 @@ public class ElementConverter implements Converter {
 		private Map<String, Element> map = new HashMap<String, Element>();
 
 		public static Unmarshal get(UnmarshallingContext context) {
-			Unmarshal state = (Unmarshal) context
-					.get(Unmarshal.class);
+			Unmarshal state = (Unmarshal) context.get(Unmarshal.class);
 			if (state == null) {
 				state = new Unmarshal();
 				context.put(Unmarshal.class, state);
@@ -141,6 +139,11 @@ public class ElementConverter implements Converter {
 		}
 
 		public void putElement(String id, Element element) {
+			if (id == null) {
+				// id is optional, but the element can not be referenced
+				return;
+			}
+			
 			Element previous = map.put(id, element);
 			if (previous != null) {
 				throw new ConversionException("duplicate id '" + id + "'");
@@ -148,7 +151,7 @@ public class ElementConverter implements Converter {
 		}
 
 		public Element getElement(String id) {
-			
+
 			Element element = map.get(id);
 			if (element == null) {
 				throw new ConversionException("unkown element id '" + id + "'");
