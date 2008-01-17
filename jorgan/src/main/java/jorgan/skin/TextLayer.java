@@ -34,7 +34,7 @@ import jorgan.gui.console.View;
  */
 public class TextLayer extends Layer {
 
-	private int alignment = CENTER;
+	private Alignment alignment = Alignment.CENTER;
 
 	private Font font = new Font("Arial", Font.PLAIN, 12);
 
@@ -98,11 +98,11 @@ public class TextLayer extends Layer {
 		antialiased = b;
 	}
 
-	public int getAlignment() {
+	public Alignment getAlignment() {
 		return alignment;
 	}
 
-	public void setAlignment(int alignment) {
+	public void setAlignment(Alignment alignment) {
 		this.alignment = alignment;
 	}
 
@@ -206,10 +206,10 @@ public class TextLayer extends Layer {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 
-		if (alignment == CENTER || alignment == RIGHT || alignment == LEFT) {
+		if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT || alignment == Alignment.LEFT) {
 			y += height / 2 - linesHeight / 2;
-		} else if (alignment == BOTTOM || alignment == BOTTOM_RIGHT
-				|| alignment == BOTTOM_LEFT) {
+		} else if (alignment == Alignment.BOTTOM || alignment == Alignment.BOTTOM_RIGHT
+				|| alignment == Alignment.BOTTOM_LEFT) {
 			y += height - linesHeight;
 		}
 
@@ -221,10 +221,10 @@ public class TextLayer extends Layer {
 			}
 
 			int alignedX = x;
-			if (alignment == TOP || alignment == CENTER || alignment == BOTTOM) {
+			if (alignment == Alignment.TOP || alignment == Alignment.CENTER || alignment == Alignment.BOTTOM) {
 				alignedX = x + width / 2 - line.width / 2;
-			} else if (alignment == RIGHT || alignment == TOP_RIGHT
-					|| alignment == BOTTOM_RIGHT) {
+			} else if (alignment == Alignment.RIGHT || alignment == Alignment.TOP_RIGHT
+					|| alignment == Alignment.BOTTOM_RIGHT) {
 				alignedX = x + width - line.width;
 			}
 

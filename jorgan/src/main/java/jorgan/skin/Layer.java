@@ -32,35 +32,9 @@ import jorgan.gui.console.View;
  */
 public abstract class Layer implements Cloneable {
 
-	public static final int CENTER = 0;
+	private Anchor anchor = Anchor.CENTER;
 
-	public static final int TOP = 1;
-
-	public static final int TOP_RIGHT = 2;
-
-	public static final int RIGHT = 3;
-
-	public static final int BOTTOM_RIGHT = 4;
-
-	public static final int BOTTOM = 5;
-
-	public static final int BOTTOM_LEFT = 6;
-
-	public static final int LEFT = 7;
-
-	public static final int TOP_LEFT = 8;
-
-	public static final int NONE = 0;
-
-	public static final int HORIZONAL = 1;
-
-	public static final int VERTICAL = 2;
-
-	public static final int BOTH = 3;
-
-	private int anchor = CENTER;
-
-	private int fill = NONE;
+	private Fill fill = Fill.NONE;
 
 	private int width;
 
@@ -101,17 +75,17 @@ public abstract class Layer implements Cloneable {
 		Rectangle rectangle = new Rectangle(0, 0, getUnpaddedWidth(),
 				getUnpadddedHeight());
 
-		if (fill == BOTH || fill == HORIZONAL) {
+		if (fill == Fill.BOTH || fill == Fill.HORIZONTAL) {
 			rectangle.width = size.width - padding.left - padding.right;
 		}
-		if (fill == BOTH || fill == VERTICAL) {
+		if (fill == Fill.BOTH || fill == Fill.VERTICAL) {
 			rectangle.height = size.height - padding.top - padding.bottom;
 		}
 
-		if (anchor == TOP_LEFT || anchor == LEFT || anchor == BOTTOM_LEFT) {
+		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.LEFT || anchor == Anchor.BOTTOM_LEFT) {
 			rectangle.x = padding.left;
-		} else if (anchor == TOP_RIGHT || anchor == RIGHT
-				|| anchor == BOTTOM_RIGHT) {
+		} else if (anchor == Anchor.TOP_RIGHT || anchor == Anchor.RIGHT
+				|| anchor == Anchor.BOTTOM_RIGHT) {
 			rectangle.x = size.width - padding.right - rectangle.width;
 		} else {
 			rectangle.x = padding.left
@@ -119,10 +93,10 @@ public abstract class Layer implements Cloneable {
 					- rectangle.width / 2;
 		}
 
-		if (anchor == TOP_LEFT || anchor == TOP || anchor == TOP_RIGHT) {
+		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.TOP || anchor == Anchor.TOP_RIGHT) {
 			rectangle.y = padding.top;
-		} else if (anchor == BOTTOM_LEFT || anchor == BOTTOM
-				|| anchor == BOTTOM_RIGHT) {
+		} else if (anchor == Anchor.BOTTOM_LEFT || anchor == Anchor.BOTTOM
+				|| anchor == Anchor.BOTTOM_RIGHT) {
 			rectangle.y = size.height - padding.bottom - rectangle.height;
 		} else {
 			rectangle.y = padding.top
@@ -150,11 +124,11 @@ public abstract class Layer implements Cloneable {
 		}
 	}
 
-	public void setFill(int fill) {
+	public void setFill(Fill fill) {
 		this.fill = fill;
 	}
 
-	public int getFill() {
+	public Fill getFill() {
 		return fill;
 
 	}
@@ -167,11 +141,11 @@ public abstract class Layer implements Cloneable {
 		return padding;
 	}
 
-	public void setAnchor(int anchor) {
+	public void setAnchor(Anchor anchor) {
 		this.anchor = anchor;
 	}
 
-	public int getAnchor() {
+	public Anchor getAnchor() {
 		return anchor;
 	}
 
