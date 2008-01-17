@@ -23,6 +23,7 @@ import java.awt.Insets;
 
 import jorgan.disposition.Initiator;
 import jorgan.skin.ButtonLayer;
+import jorgan.skin.Fill;
 import jorgan.skin.Layer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -102,7 +103,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 
 		ButtonLayer layer = new ButtonLayer();
 		layer.setBinding(BINDING_PRESSED);
-		layer.setFill(ButtonLayer.BOTH);
+		layer.setFill(Fill.BOTH);
 
 		layer.addChild(createBorderLayer(false));
 
@@ -126,7 +127,7 @@ public class InitiatorView extends MomentaryView<Initiator> {
 				}
 			}
 		};
-		layer.setFill(Layer.BOTH);
+		layer.setFill(Fill.BOTH);
 
 		return layer;
 	}

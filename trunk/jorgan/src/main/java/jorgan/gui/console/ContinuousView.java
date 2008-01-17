@@ -23,7 +23,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import jorgan.disposition.Continuous;
-import jorgan.skin.Layer;
+import jorgan.skin.Fill;
 import jorgan.skin.SliderLayer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -88,7 +88,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 	protected SliderLayer createSliderLayer() {
 		SliderLayer layer = new SliderLayer();
 		layer.setBinding(BINDING_VALUE);
-		layer.setFill(Layer.BOTH);
+		layer.setFill(Fill.BOTH);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 
 		return layer;

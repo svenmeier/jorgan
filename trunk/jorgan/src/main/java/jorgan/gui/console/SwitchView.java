@@ -22,7 +22,9 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 
 import jorgan.disposition.Switch;
+import jorgan.skin.Anchor;
 import jorgan.skin.ButtonLayer;
+import jorgan.skin.Fill;
 import jorgan.skin.Layer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -124,7 +126,7 @@ public class SwitchView extends MomentaryView<Switch> {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(CONTROL_NAME);
 		layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
-		layer.setAnchor(TextLayer.LEFT);
+		layer.setAnchor(Anchor.LEFT);
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
 
@@ -134,7 +136,7 @@ public class SwitchView extends MomentaryView<Switch> {
 	private Layer createButtonLayer() {
 		ButtonLayer layer = new ButtonLayer();
 		layer.setBinding(BINDING_PRESSED);
-		layer.setFill(ButtonLayer.BOTH);
+		layer.setFill(Fill.BOTH);
 
 		layer.addChild(createCheckLayer(false));
 
@@ -166,7 +168,7 @@ public class SwitchView extends MomentaryView<Switch> {
 		layer.setWidth(13);
 		layer.setHeight(13);
 		layer.setPadding(new Insets(4, 4, 4, 4));
-		layer.setAnchor(Layer.LEFT);
+		layer.setAnchor(Anchor.LEFT);
 
 		return layer;
 	}
