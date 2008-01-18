@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/java"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-core"/>
+	<classpathentry kind="lib" path="/jOrgan-core/lib/bias-0.5.jar"/>
+	<classpathentry kind="output" path="build/java"/>
+</classpath>
