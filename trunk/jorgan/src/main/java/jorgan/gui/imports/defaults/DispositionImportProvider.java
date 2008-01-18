@@ -35,7 +35,6 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.Rank;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionStream;
-import jorgan.io.riff.RiffFormatException;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
@@ -111,8 +110,7 @@ public class DispositionImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws XMLFormatException
 	 */
-	private List<Rank> readRanks(File file) throws IOException,
-			RiffFormatException {
+	private List<Rank> readRanks(File file) throws IOException {
 
 		Organ organ = new DispositionStream().read(new FileInputStream(file));
 
