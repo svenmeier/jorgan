@@ -68,7 +68,7 @@
       <fileset dir="./build/java" />
   	</jar>
 
-	<zip destfile="./dist/sound-creative-${creative.version}-win32.zip">
+	<zip destfile="./dist/jOrgan-creative-${creative.version}-win32.zip">
       <fileset dir="./dist/marshal" />
 	</zip>  	
   	<delete dir="./dist/marshal" />
