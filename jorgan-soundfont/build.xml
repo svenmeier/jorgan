@@ -1,4 +1,4 @@
-<project name="jOrgan-sounds-creative" default="dist" basedir=".">
+<project name="jOrgan-soundfont" default="dist" basedir=".">
 
   <property file="./build.properties" />
 
@@ -7,10 +7,10 @@
     <delete dir="./dist"/>
   </target>
 
-  <target name="compile.java">
+  <target name="compile">
     <mkdir dir="./build/java" />
 
-  	<javac srcdir="./src/java" destdir="./build/java">
+  	<javac srcdir="./src" destdir="./build">
     	<classpath path="${jorgan.core.path}/build" />
     	<classpath>
             <fileset dir="${jorgan.core.path}/lib">
@@ -19,67 +19,25 @@
    		</classpath>
   	</javac>
   	
-    <copy todir="./build/java">
-        <fileset dir="./src/java">
+    <copy todir="./build">
+        <fileset dir="./src">
             <include name="META-INF/**/*" />
         </fileset>
     </copy>
   	
-	<native2ascii encoding="UTF8" src="src/java" dest="build/java" includes="**/i18n*.properties" />
+	<native2ascii encoding="UTF8" src="src" dest="build" includes="**/i18n*.properties" />
   </target>
-
-  <target name="compile.native" depends="compile.java">
-    <mkdir dir="./build/native" />
-
-    <!-- generate ./build/native/SoundFontManager.h first -->
-    <javah verbose="true" class="jorgan.creative.SoundFontManager" outputfile="./build/native/SoundFontManager.h">
-      <classpath path="./build/java" />
-    </javah>
-
-    <mkdir dir="./build/native/win32" />
-
-    <!-- then compile ./src/native/SoundFontManager.c into ./build/native/SoundFontManager.o -->
-    <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jni}\include" />
-      <arg value="-I${jni}\include\win32" />
-      <arg value="-I.\lib" />
-      <arg value="-I.\build\native" />
-      <arg value="-o" />
-      <arg value=".\build\native\win32\SoundFontManager.o" />
-      <arg value=".\src\native\SoundFontManager.c" />
-    </exec>
-
-    <!-- lastly link ./build/native/SoundFontManager.o into ./build/native/creative.dll -->
-    <exec failonerror="true" executable="${ld}">
-      <arg value="-dll" />
-      <arg value="-o" />
-      <arg value=".\build\native\win32\creative.dll" />
-      <arg value=".\build\native\win32\SoundFontManager.o" />
-    </exec>
-  </target>
-
-  <target name="compile" depends="compile.java, compile.native"/>
 
   <target name="dist" depends="clean, compile">
   	<mkdir dir="./dist/marshal/lib" />
 
-  	<copy file="./build/native/win32/creative.dll" todir="./dist/marshal/lib" />
-  	<jar file="./dist/marshal/lib/creative.jar">
-      <fileset dir="./build/java" />
+  	<jar file="./dist/marshal/lib/soundfont.jar">
+      <fileset dir="./build" />
   	</jar>
 
-	<zip destfile="./dist/sound-creative-${creative.version}-win32.zip">
+	<zip destfile="./dist/jOrgan-soundfont-${soundfont.version}.zip">
       <fileset dir="./dist/marshal" />
 	</zip>  	
   	<delete dir="./dist/marshal" />
   </target>
-
-  <target name="run" depends="clean, compile">
-    <java fork="true" classname="jorgan.creative.SoundFontManagerTest">
-      <classpath path="./build/java"/>
-      <sysproperty key="java.library.path" value="./lib/sfman32.dll"/>
-      <sysproperty key="jorgan.creative.library.path" value="./build/native/win32"/>
-    </java>
-  </target>
-
 </project>
