@@ -36,6 +36,7 @@ import jorgan.midi.mpl.ProcessingException;
 import jorgan.session.event.Error;
 import jorgan.session.event.Warning;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Abstract base class for all players.
@@ -96,7 +97,7 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
-		removeProblem(new Error(element, "message"));
+		removeError("message");
 
 		openImpl();
 	}
@@ -129,25 +130,34 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	protected void addProblem(Problem problem) {
-		if (problem == null) {
-			throw new IllegalArgumentException("problem must not be null");
-		}
-		getOrganPlay().getProblems().addProblem(problem);
+	protected void addWarning(String property, Object value) {
+		
+		String message = config.get("Warning." + property).read(new MessageBuilder()).build(value);
+		getOrganPlay().getProblems().addProblem(
+				new Warning(element, property, message));
 	}
 
-	protected void removeProblem(Problem problem) {
-		if (problem == null) {
-			throw new IllegalArgumentException("problem must not be null");
-		}
-		getOrganPlay().getProblems().removeProblem(problem);
+	protected void removeWarning(String property) {
+		getOrganPlay().getProblems().removeProblem(
+				new Warning(element, property, null));
+	}
+
+	protected void addError(String property, Object value) {
+		String message = config.get("Error." + property).read(new MessageBuilder()).build(value);
+		getOrganPlay().getProblems().addProblem(
+				new Error(element, property, message));
+	}
+
+	protected void removeError(String property) {
+		getOrganPlay().getProblems()
+				.removeProblem(new Error(element, property, null));
 	}
 
 	public void elementChanged(OrganEvent event) {
 		if (!element.hasMessages() && warnMessages) {
-			addProblem(new Warning(element, "message"));
+			addWarning("message", null);
 		} else {
-			removeProblem(new Warning(element, "message"));
+			removeWarning("message");
 		}
 	}
 
@@ -198,9 +208,8 @@ public abstract class Player<E extends Element> {
 				shortMessage.setMessage(Math.round(status), Math.round(data1),
 						Math.round(data2));
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error(element, "message.midi", Math
-						.round(status)
-						+ "," + Math.round(data1) + "," + Math.round(data2)));
+				addError("message.midi", Math.round(status) + ","
+						+ Math.round(data1) + "," + Math.round(data2));
 				return;
 			}
 
@@ -210,7 +219,7 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addProblem(new Error(element, "message", ex.getPattern()));
+			addError("message", ex.getPattern());
 		}
 	}
 
@@ -239,12 +248,12 @@ public abstract class Player<E extends Element> {
 		this.warnDevice = warnDevice;
 	}
 
-	public boolean getWarnRules() {
+	public boolean getWarnMessages() {
 		return warnMessages;
 	}
 
-	public void setWarnRules(boolean warnRules) {
-		this.warnMessages = warnRules;
+	public void setWarnMessages(boolean warnMessages) {
+		this.warnMessages = warnMessages;
 	}
 
 	public void received(ShortMessage message) {
@@ -285,7 +294,7 @@ public abstract class Player<E extends Element> {
 				return false;
 			}
 		} catch (ProcessingException ex) {
-			addProblem(new Error(element, "message", ex.getPattern()));
+			addError("message", ex.getPattern());
 			return false;
 		}
 		return true;

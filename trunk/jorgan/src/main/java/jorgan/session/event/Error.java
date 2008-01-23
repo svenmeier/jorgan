@@ -26,11 +26,7 @@ import jorgan.play.Problem;
  */
 public class Error extends Problem {
 
-	public Error(Element element, String property) {
-		super(element, property, null);
-	}
-
-	public Error(Element element, String property, Object value) {
-		super(element, property, value);
+	public Error(Element element, String property, String message) {
+		super(element, property, message);
 	}
 }

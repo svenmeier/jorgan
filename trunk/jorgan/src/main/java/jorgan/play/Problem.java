@@ -29,20 +29,20 @@ public abstract class Problem {
 
 	private String property;
 
-	private Object value;
+	private String message;
 
-	protected Problem(Element element, String property, Object value) {
+	protected Problem(Element element, String property, String message) {
 		this.element = element;
 		this.property = property;
-		this.value = value;
+		this.message = message;
 	}
 
 	public String getProperty() {
 		return property;
 	}
 
-	public Object getValue() {
-		return value;
+	public String getMessage() {
+		return message;
 	}
 
 	@Override
@@ -67,12 +67,6 @@ public abstract class Problem {
 	@Override
 	public int hashCode() {
 		return element.hashCode();
-	}
-
-	@Override
-	public String toString() {
-		String name = getClass().getName();
-		return name.substring(name.lastIndexOf('.') + 1) + "." + property;
 	}
 
 	public Element getElement() {

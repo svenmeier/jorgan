@@ -28,7 +28,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
 import jorgan.play.Problem;
@@ -41,7 +40,6 @@ import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import swingx.docking.DockedPanel;
 import bias.Configuration;
-import bias.util.MessageBuilder;
 
 /**
  * Panel shows the problems.
@@ -69,7 +67,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 
 	private ProblemsModel tableModel = new ProblemsModel();
 
-	private List<Row> rows = new ArrayList<Row>();
+	private List<Problem> problems = new ArrayList<Problem>();
 
 	private JPopupMenu popup = new JPopupMenu();
 
@@ -110,7 +108,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		if (this.session != null) {
 			this.session.removeProblemListener(tableModel);
 
-			rows.clear();
+			problems.clear();
 		}
 
 		this.session = session;
@@ -118,9 +116,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		if (this.session != null) {
 			this.session.addProblemListener(tableModel);
 
-			for (Problem problem : session.getProblems().getProblems()) {
-				rows.add(new Row(problem));
-			}
+			this.problems.addAll(session.getProblems().getProblems());
 		}
 
 		tableModel.fireTableDataChanged();
@@ -149,76 +145,34 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		}
 
 		public int getRowCount() {
-			return rows.size();
+			return problems.size();
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Row row = rows.get(rowIndex);
+			Problem problem = problems.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
-				return row.getProblem();
+				return problem;
 			case 1:
-				return row.getMessage();
+				return problem.getMessage();
 			case 2:
-				return Elements.getDisplayName(row.getElement());
+				return Elements.getDisplayName(problem.getElement());
 			}
 
 			return null;
 		}
 
 		public void problemAdded(Problem problem) {
-			rows.add(new Row(problem));
+			problems.add(problem);
 
 			fireTableDataChanged();
 		}
 
 		public void problemRemoved(Problem problem) {
-			rows.remove(new Row(problem));
+			problems.remove(problem);
 
 			fireTableDataChanged();
-		}
-	}
-
-	private class Row {
-
-		private Problem problem;
-
-		private String message;
-
-		private Row(Problem problem) {
-			this.problem = problem;
-
-			message = config.get(problem.toString()).read(new MessageBuilder())
-					.build(problem.getValue());
-		}
-
-		private Element getElement() {
-			return problem.getElement();
-		}
-
-		private Problem getProblem() {
-			return problem;
-		}
-
-		private String getMessage() {
-			return message;
-		}
-
-		@Override
-		public int hashCode() {
-			return problem.hashCode();
-		}
-
-		@Override
-		public boolean equals(Object object) {
-			if (!(object instanceof Row)) {
-				return false;
-			}
-
-			Row row = (Row) object;
-
-			return row.problem.equals(this.problem);
 		}
 	}
 
@@ -231,10 +185,10 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		public void actionPerformed(ActionEvent ev) {
 			int index = table.getSelectedRow();
 
-			Row row = rows.get(index);
+			Problem problem = problems.get(index);
 
-			session.getSelectionModel().setSelectedElement(row.getElement(),
-					row.getProblem().getProperty());
+			session.getSelectionModel().setSelectedElement(
+					problem.getElement(), problem.getProperty());
 		}
 	}
 }

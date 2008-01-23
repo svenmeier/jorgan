@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import jorgan.Info;
 import jorgan.UI;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionFileFilter;
 import jorgan.io.DispositionStream;
@@ -460,8 +461,15 @@ public class OrganShell implements UI {
 	private class InternalProblemListener implements ProblemListener {
 
 		public void problemAdded(Problem problem) {
-			writeMessage(problem.toString(), problem.getElement().getName(),
-					problem.getValue());
+
+			String key;
+			if (problem instanceof jorgan.session.event.Error) {
+				key = "error";
+			} else {
+				key = "warning";
+			}
+			writeMessage(key, Elements.getDisplayName(problem.getElement()), problem
+					.getMessage());
 		}
 
 		public void problemRemoved(Problem problem) {

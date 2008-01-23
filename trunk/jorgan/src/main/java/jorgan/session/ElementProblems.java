@@ -19,6 +19,7 @@
 package jorgan.session;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
@@ -135,7 +136,7 @@ public class ElementProblems {
 	}
 
 	public List<Problem> getProblems() {
-		return new ArrayList<Problem>(problems);
+		return Collections.unmodifiableList(problems);
 	}
 	
 	public void addProblemListener(ProblemListener listener) {
