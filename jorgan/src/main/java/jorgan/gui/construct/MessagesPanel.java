@@ -57,13 +57,13 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.OrganAware;
 import jorgan.gui.OrganPanel;
-import jorgan.gui.OrganSession;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
 import jorgan.midi.DevicePool;
 import jorgan.midi.MessageUtils;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
@@ -76,7 +76,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows the messages of elements.
  */
-public class MessagesPanel extends DockedPanel implements OrganAware {
+public class MessagesPanel extends DockedPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MessagesPanel.class);
@@ -214,7 +214,7 @@ public class MessagesPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            session to be edited
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(tableModel);
 			this.session.removeSelectionListener(selectionHandler);

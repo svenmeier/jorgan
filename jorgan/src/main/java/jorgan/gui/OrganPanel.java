@@ -47,8 +47,6 @@ import jorgan.gui.construct.ElementPropertiesPanel;
 import jorgan.gui.construct.ElementsPanel;
 import jorgan.gui.construct.MessagesPanel;
 import jorgan.gui.construct.ReferencesPanel;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
 import jorgan.gui.midi.MidiMonitor;
 import jorgan.gui.play.DescriptionPanel;
 import jorgan.gui.play.MemoryPanel;
@@ -57,6 +55,10 @@ import jorgan.gui.play.ProblemsPanel;
 import jorgan.gui.play.VirtualKeyboard;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
@@ -201,8 +203,8 @@ public class OrganPanel extends JPanel {
 			this.session.removeSelectionListener(selectionListener);
 
 			for (View dockable : views.values()) {
-				if (dockable.getComponent() instanceof OrganAware) {
-					((OrganAware) dockable.getComponent()).setOrgan(null);
+				if (dockable.getComponent() instanceof SessionAware) {
+					((SessionAware) dockable.getComponent()).setSession(null);
 				}
 			}
 
@@ -223,9 +225,9 @@ public class OrganPanel extends JPanel {
 			this.session.addSelectionListener(selectionListener);
 
 			for (View dockable : views.values()) {
-				if (dockable.getComponent() instanceof OrganAware) {
-					((OrganAware) dockable.getComponent())
-							.setOrgan(this.session);
+				if (dockable.getComponent() instanceof SessionAware) {
+					((SessionAware) dockable.getComponent())
+							.setSession(this.session);
 				}
 			}
 
@@ -414,7 +416,7 @@ public class OrganPanel extends JPanel {
 		}
 
 		public void problemAdded(PlayEvent ev) {
-			if (ev.getProblem() instanceof jorgan.play.Error) {
+			if (ev.getProblem() instanceof jorgan.session.event.Error) {
 				View dockable = views.get("problems");
 				viewDocking.putDockable(dockable.getKey(), dockable);
 			}

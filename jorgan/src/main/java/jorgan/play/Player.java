@@ -18,9 +18,7 @@
  */
 package jorgan.play;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,6 +33,8 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.session.event.Error;
+import jorgan.session.event.Warning;
 import bias.Configuration;
 
 /**
@@ -50,7 +50,7 @@ public abstract class Player<E extends Element> {
 	/**
 	 * The element played by this player.
 	 */
-	private E element;
+	private final E element;
 
 	/**
 	 * Is this player open.
@@ -62,18 +62,9 @@ public abstract class Player<E extends Element> {
 	private boolean warnMessages;
 
 	/**
-	 * The problems.
-	 */
-	private List<Problem> problems = new ArrayList<Problem>();
-
-	private int errorCount = 0;
-
-	private int warningCount = 0;
-
-	/**
 	 * Create a player for the given element.
 	 */
-	public Player(E element) {
+	protected Player(E element) {
 		config.read(this);
 
 		this.element = element;
@@ -105,7 +96,7 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
-		removeProblem(new Error("message"));
+		removeProblem(new Error(element, "message"));
 
 		openImpl();
 	}
@@ -142,71 +133,25 @@ public abstract class Player<E extends Element> {
 		if (problem == null) {
 			throw new IllegalArgumentException("problem must not be null");
 		}
-		if (!problems.contains(problem)) {
-			problems.add(problem);
-			if (problem instanceof Warning) {
-				warningCount++;
-			}
-			if (problem instanceof Error) {
-				errorCount++;
-			}
-			fireProblemAdded(problem);
-		}
+		getOrganPlay().getProblems().addProblem(problem);
 	}
 
 	protected void removeProblem(Problem problem) {
 		if (problem == null) {
 			throw new IllegalArgumentException("problem must not be null");
 		}
-		if (problems.contains(problem)) {
-			problems.remove(problem);
-			if (problem instanceof Warning) {
-				warningCount--;
-			}
-			if (problem instanceof Error) {
-				errorCount--;
-			}
-			fireProblemsRemoved(problem);
-		}
-	}
-
-	private void fireProblemAdded(Problem problem) {
-		if (organPlay != null) {
-			organPlay.fireProblemAdded(this, problem);
-		}
-	}
-
-	private void fireProblemsRemoved(Problem problem) {
-		if (organPlay != null) {
-			organPlay.fireProblemRemoved(this, problem);
-		}
-	}
-
-	public boolean hasWarnings() {
-		return warningCount > 0;
-	}
-
-	public boolean hasErrors() {
-		return errorCount > 0;
-	}
-
-	public List<Problem> getProblems() {
-		return new ArrayList<Problem>(problems);
+		getOrganPlay().getProblems().removeProblem(problem);
 	}
 
 	public void elementChanged(OrganEvent event) {
-		removeProblem(new Error("message"));
-
 		if (!element.hasMessages() && warnMessages) {
-			addProblem(new Warning("message"));
+			addProblem(new Warning(element, "message"));
 		} else {
-			removeProblem(new Warning("message"));
+			removeProblem(new Warning(element, "message"));
 		}
 	}
 
 	public final void input(ShortMessage shortMessage, Context context) {
-		Element element = getElement();
-
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
 			if (process(shortMessage.getStatus(), shortMessage.getData1(),
 					shortMessage.getData2(), message, context)) {
@@ -222,6 +167,8 @@ public abstract class Player<E extends Element> {
 	 * 
 	 * @param message
 	 *            message
+	 * @param context
+	 *            the message context
 	 */
 	protected void input(InputMessage message, Context context) {
 
@@ -251,8 +198,9 @@ public abstract class Player<E extends Element> {
 				shortMessage.setMessage(Math.round(status), Math.round(data1),
 						Math.round(data2));
 			} catch (InvalidMidiDataException ex) {
-				addProblem(new Error("message.midi", Math.round(status) + ","
-						+ Math.round(data1) + "," + Math.round(data2)));
+				addProblem(new Error(element, "message.midi", Math
+						.round(status)
+						+ "," + Math.round(data1) + "," + Math.round(data2)));
 				return;
 			}
 
@@ -262,7 +210,7 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addProblem(new Error("message", ex.getPattern()));
+			addProblem(new Error(element, "message", ex.getPattern()));
 		}
 	}
 
@@ -271,8 +219,6 @@ public abstract class Player<E extends Element> {
 	 * {@link Console}s.
 	 */
 	public void output(ShortMessage message, Context context) {
-		Element element = getElement();
-
 		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
 				Console.class);
 		for (Console console : consoles) {
@@ -339,7 +285,7 @@ public abstract class Player<E extends Element> {
 				return false;
 			}
 		} catch (ProcessingException ex) {
-			addProblem(new Error("message", ex.getPattern()));
+			addProblem(new Error(element, "message", ex.getPattern()));
 			return false;
 		}
 		return true;

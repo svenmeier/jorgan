@@ -16,16 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui;
+package jorgan.session;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
+import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.event.ProblemListener;
 import spin.Spin;
 
 /**
@@ -33,6 +34,8 @@ import spin.Spin;
  * Note that <em>Spin</em> ensures that listener methods are called on the
  * EDT, although a change in disposition or players might be triggered by a
  * change on a MIDI thread.
+ * 
+ * TODO remove spin dependencies - non-GUI clients dont' need spin
  */
 public class OrganSession {
 
@@ -40,7 +43,9 @@ public class OrganSession {
 
     private OrganPlay play;
 
-    private ElementSelectionModel selectionModel;
+    private ElementSelection selectionModel;
+    
+    private ElementProblems problems;
 
     public OrganSession() {
         this(createDefaultOrgan());
@@ -52,8 +57,11 @@ public class OrganSession {
         }
         this.organ = organ;
 
-        this.play = new OrganPlay(organ);
-        this.selectionModel = new ElementSelectionModel();
+        this.selectionModel = new ElementSelection();
+        this.problems = new ElementProblems();
+
+        this.play = new OrganPlay(organ, problems);
+        
         this.organ.addOrganListener((OrganListener) Spin
                 .over(new OrganAdapter() {
                     @Override
@@ -80,7 +88,7 @@ public class OrganSession {
         return play;
     }
 
-    public ElementSelectionModel getSelectionModel() {
+    public ElementSelection getSelectionModel() {
         return selectionModel;
     }
 
@@ -108,6 +116,18 @@ public class OrganSession {
         play.removePlayerListener((PlayListener) Spin.over(listener));
     }
 
+    public void addProblemListener(ProblemListener listener) {
+    	problems.addProblemListener((ProblemListener) Spin.over(listener));
+    }
+
+    public void removeProblemListener(ProblemListener listener) {
+    	problems.removeProblemListener((ProblemListener) Spin.over(listener));
+    }
+    
+    public ElementProblems getProblems() {
+    	return problems;
+    }
+    
     private static Organ createDefaultOrgan() {
         Organ organ = new Organ();
 

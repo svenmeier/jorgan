@@ -16,11 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.event;
+package jorgan.session.event;
 
-import java.util.EventListener;
+import jorgan.disposition.Element;
+import jorgan.play.Problem;
 
-public interface ElementSelectionListener extends EventListener {
-  
-  public void selectionChanged(ElementSelectionEvent ev);
+/**
+ * A warning.
+ */
+public class Warning extends Problem {
+
+	public Warning(Element element, String property) {
+		super(element, property, null);
+	}
+
+	public Warning(Element element, String property, Object value) {
+		super(element, property, value);
+	}
 }

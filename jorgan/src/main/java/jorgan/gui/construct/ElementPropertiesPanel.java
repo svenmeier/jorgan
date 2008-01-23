@@ -30,11 +30,11 @@ import javax.swing.event.ChangeListener;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.gui.OrganAware;
-import jorgan.gui.OrganSession;
 import jorgan.gui.construct.editor.ElementAwareEditor;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
 import swingx.docking.DockedPanel;
@@ -43,7 +43,7 @@ import swingx.docking.DockedPanel;
  * Panel shows the properties of elements.
  */
 public class ElementPropertiesPanel extends DockedPanel implements
-		OrganAware {
+		SessionAware {
 
 	private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
 
@@ -64,7 +64,7 @@ public class ElementPropertiesPanel extends DockedPanel implements
 		setScrollableBody(propertiesPanel, true, false);
 	}
 
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeSelectionListener(selectionHandler);
 			this.session.removeOrganListener(selectionHandler);

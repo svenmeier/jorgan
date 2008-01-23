@@ -18,22 +18,21 @@
  */
 package jorgan.play;
 
+import jorgan.disposition.Element;
+
 /**
  * Problem of a player.
  */
 public abstract class Problem {
 
+	private Element element;
+
 	private String property;
 
 	private Object value;
 
-	protected Problem(String property) {
-
-		this.property = property;
-	}
-
-	protected Problem(String property, Object value) {
-
+	protected Problem(Element element, String property, Object value) {
+		this.element = element;
 		this.property = property;
 		this.value = value;
 	}
@@ -54,6 +53,10 @@ public abstract class Problem {
 
 		Problem problem = (Problem) object;
 
+		if (!(this.element == problem.element)) {
+			return false;
+		}
+		
 		if (!this.property.equals(problem.property)) {
 			return false;
 		}
@@ -63,12 +66,16 @@ public abstract class Problem {
 
 	@Override
 	public int hashCode() {
-		return toString().hashCode();
+		return element.hashCode();
 	}
 
 	@Override
 	public String toString() {
 		String name = getClass().getName();
 		return name.substring(name.lastIndexOf('.') + 1) + "." + property;
+	}
+
+	public Element getElement() {
+		return element;
 	}
 }

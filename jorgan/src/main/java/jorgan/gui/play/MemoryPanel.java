@@ -31,8 +31,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.OrganAware;
-import jorgan.gui.OrganSession;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
@@ -44,7 +44,7 @@ import bias.util.MessageBuilder;
 /**
  * Panel for editing of a {@link jorgan.disposition.Memory}.
  */
-public class MemoryPanel extends DockedPanel implements OrganAware {
+public class MemoryPanel extends DockedPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MemoryPanel.class);
@@ -85,7 +85,7 @@ public class MemoryPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            session
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(model);
 

@@ -30,14 +30,12 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Organ;
-import jorgan.gui.OrganAware;
 import jorgan.gui.OrganPanel;
-import jorgan.gui.OrganSession;
 import jorgan.play.Problem;
-import jorgan.play.Warning;
-import jorgan.play.event.PlayEvent;
-import jorgan.play.event.PlayListener;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ProblemListener;
+import jorgan.session.event.Warning;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
@@ -48,7 +46,7 @@ import bias.util.MessageBuilder;
 /**
  * Panel shows the problems.
  */
-public class ProblemsPanel extends DockedPanel implements OrganAware {
+public class ProblemsPanel extends DockedPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ProblemsPanel.class);
@@ -108,9 +106,9 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            the organ
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removePlayerListener(tableModel);
+			this.session.removeProblemListener(tableModel);
 
 			rows.clear();
 		}
@@ -118,39 +116,18 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addPlayerListener(tableModel);
+			this.session.addProblemListener(tableModel);
 
-			Organ organ = this.session.getOrgan();
-			for (Element element : organ.getElements()) {
-				addProblems(element);
+			for (Problem problem : session.getProblems().getProblems()) {
+				rows.add(new Row(problem));
 			}
 		}
 
 		tableModel.fireTableDataChanged();
 	}
 
-	private void addProblems(Element element) {
-
-		List problems = session.getPlay().getProblems(element);
-		if (problems != null) {
-			for (int p = 0; p < problems.size(); p++) {
-				rows.add(new Row(element, (Problem) problems.get(p)));
-			}
-		}
-	}
-
-	private void removeProblems(Element element) {
-
-		for (int r = rows.size() - 1; r >= 0; r--) {
-			Row row = rows.get(r);
-			if (row.getElement() == element) {
-				rows.remove(row);
-			}
-		}
-	}
-
 	public class ProblemsModel extends AbstractTableModel implements
-			PlayListener {
+			ProblemListener {
 
 		private String[] columnNames = new String[getColumnCount()];
 
@@ -190,56 +167,26 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 			return null;
 		}
 
-		public void inputAccepted() {
-		}
-
-		public void outputProduced() {
-		}
-
-		public void playerAdded(PlayEvent ev) {
-
-			addProblems(ev.getElement());
-
-			tableModel.fireTableDataChanged();
-		}
-
-		public void playerRemoved(PlayEvent ev) {
-			removeProblems(ev.getElement());
-
-			tableModel.fireTableDataChanged();
-		}
-
-		public void problemAdded(PlayEvent ev) {
-
-			rows.add(new Row(ev.getElement(), ev.getProblem()));
+		public void problemAdded(Problem problem) {
+			rows.add(new Row(problem));
 
 			fireTableDataChanged();
 		}
 
-		public void problemRemoved(PlayEvent ev) {
-
-			rows.remove(new Row(ev.getElement(), ev.getProblem()));
+		public void problemRemoved(Problem problem) {
+			rows.remove(new Row(problem));
 
 			fireTableDataChanged();
-		}
-
-		public void opened() {
-		}
-
-		public void closed() {
 		}
 	}
 
 	private class Row {
 
-		private Element element;
-
 		private Problem problem;
 
 		private String message;
 
-		private Row(Element element, Problem problem) {
-			this.element = element;
+		private Row(Problem problem) {
 			this.problem = problem;
 
 			message = config.get(problem.toString()).read(new MessageBuilder())
@@ -247,7 +194,7 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 		}
 
 		private Element getElement() {
-			return element;
+			return problem.getElement();
 		}
 
 		private Problem getProblem() {
@@ -260,7 +207,7 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 
 		@Override
 		public int hashCode() {
-			return element.hashCode() + problem.hashCode();
+			return problem.hashCode();
 		}
 
 		@Override
@@ -271,8 +218,7 @@ public class ProblemsPanel extends DockedPanel implements OrganAware {
 
 			Row row = (Row) object;
 
-			return row.element.equals(this.element)
-					&& row.problem.equals(this.problem);
+			return row.problem.equals(this.problem);
 		}
 	}
 
