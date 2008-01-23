@@ -35,8 +35,6 @@ import jorgan.midi.channel.DelayedChannel;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
-import jorgan.session.event.Error;
-import jorgan.session.event.Warning;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -59,10 +57,10 @@ public class RankPlayer extends Player<Rank> {
 	protected void openImpl() {
 		Rank rank = getElement();
 
-		removeProblem(new Warning(getElement(), "channels"));
-		removeProblem(new Error(getElement(), "channels"));
-		removeProblem(new Error(getElement(), "output"));
-		
+		removeWarning("channels");
+		removeError("channels");
+		removeError("output");
+
 		if (rank.getOutput() != null) {
 			try {
 				// Important: assure successfull opening of MIDI device
@@ -71,7 +69,7 @@ public class RankPlayer extends Player<Rank> {
 				toBeOpened.open();
 				channelPool = toBeOpened;
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error(getElement(), "output", rank.getOutput()));
+				addError("output", rank.getOutput());
 			}
 		}
 	}
@@ -94,21 +92,21 @@ public class RankPlayer extends Player<Rank> {
 		for (int n = 0; n < played.length; n++) {
 			played[n] = 0;
 		}
-		
+
 		try {
 			channel = channelPool.createChannel(new RankChannelFilter(rank
 					.getChannels()));
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addProblem(new Error(getElement(), "channels", rank.getChannels()));
+			addError("channels", rank.getChannels());
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(new Warning(getElement(), "channels", rank.getChannels()));
+			addWarning("channels", rank.getChannels());
 			return;
 		}
 
@@ -149,10 +147,10 @@ public class RankPlayer extends Player<Rank> {
 		Rank rank = getElement();
 
 		if (rank.getOutput() == null && getWarnDevice()) {
-			removeProblem(new Error(getElement(), "output"));
-			addProblem(new Warning(getElement(), "output"));
+			removeError("output");
+			addWarning("output", null);
 		} else {
-			removeProblem(new Warning(getElement(), "output"));
+			removeWarning("output");
 		}
 
 		if (channelPool != null) {
@@ -190,7 +188,7 @@ public class RankPlayer extends Player<Rank> {
 			if (channel == null) {
 				return;
 			}
-			
+
 			played[pitch]--;
 			if (played[pitch] == 0) {
 				muted(pitch);

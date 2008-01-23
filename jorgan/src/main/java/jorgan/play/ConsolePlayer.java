@@ -29,8 +29,6 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Context;
-import jorgan.session.event.Error;
-import jorgan.session.event.Warning;
 
 /**
  * A player of an console.
@@ -67,8 +65,8 @@ public class ConsolePlayer extends Player<Console> {
 	protected void openImpl() {
 		Console console = getElement();
 
-		removeProblem(new Error(getElement(), "input"));
-		removeProblem(new Error(getElement(), "output"));
+		removeError("input");
+		removeError("output");
 
 		String input = console.getInput();
 		if (input != null) {
@@ -83,7 +81,7 @@ public class ConsolePlayer extends Player<Console> {
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error(getElement(), "input", input));
+				addError("input", input);
 			}
 		}
 
@@ -99,7 +97,7 @@ public class ConsolePlayer extends Player<Console> {
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error(getElement(), "output", input));
+				addError("output", input);
 			}
 		}
 	}
@@ -130,17 +128,17 @@ public class ConsolePlayer extends Player<Console> {
 		Console console = getElement();
 
 		if (console.getInput() == null && getWarnDevice()) {
-			removeProblem(new Error(getElement(), "input"));
-			addProblem(new Warning(getElement(), "input"));
+			removeError("input");
+			addWarning("input", null);
 		} else {
-			removeProblem(new Warning(getElement(), "input"));
+			removeWarning("input");
 		}
 
 		if (console.getOutput() == null && getWarnDevice()) {
-			removeProblem(new Error(getElement(), "output"));
-			addProblem(new Warning(getElement(), "output"));
+			removeError("output");
+			addWarning("output", null);
 		} else {
-			removeProblem(new Warning(getElement(), "output"));
+			removeWarning("output");
 		}
 	}
 
