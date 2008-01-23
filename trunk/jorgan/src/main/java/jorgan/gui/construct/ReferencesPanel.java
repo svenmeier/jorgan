@@ -43,11 +43,11 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.OrganAware;
-import jorgan.gui.OrganSession;
 import jorgan.gui.ReferenceListCellRenderer;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
@@ -59,7 +59,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows the {@link Reference}s of {@link Element}s.
  */
-public class ReferencesPanel extends DockedPanel implements OrganAware {
+public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ReferencesPanel.class);
@@ -204,7 +204,7 @@ public class ReferencesPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            session to be edited
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(eventHandler);
 			this.session.removeSelectionListener(eventHandler);

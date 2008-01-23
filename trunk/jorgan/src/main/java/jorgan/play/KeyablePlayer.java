@@ -26,16 +26,18 @@ import jorgan.disposition.event.OrganEvent;
  */
 public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
+	private static final int KEY_MAX = 127;
+	
     private static final int ACTIVATE_VELOCITY = 0;
 
     /**
      * The currently pressed keys.
      */
-    private int[] pressedKeys = new int[128];
+    private int[] pressedKeys = new int[KEY_MAX + 1];
 
     private Action action;
 
-    public KeyablePlayer(E keyable) {
+    protected KeyablePlayer(E keyable) {
         super(keyable);
     }
 

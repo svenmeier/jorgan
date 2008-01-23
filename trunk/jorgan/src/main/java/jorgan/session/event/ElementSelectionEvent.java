@@ -16,18 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.event;
+package jorgan.session.event;
 
-/**
- * A listener to events of a player.
- */
-public interface PlayListener {
+import java.util.EventObject;
 
-    public void opened();
+public class ElementSelectionEvent extends EventObject {
 
-    public void closed();
-
-    public void inputAccepted();
-
-    public void outputProduced();
+  public ElementSelectionEvent(Object source) {
+    super(source);  
+  }
 }

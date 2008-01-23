@@ -40,6 +40,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
+import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
 import jorgan.swing.button.ButtonGroup;

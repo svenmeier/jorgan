@@ -54,6 +54,7 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
+import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.Desktop;
 import jorgan.swing.DebugPanel;
@@ -309,7 +310,6 @@ public class OrganFrame extends JFrame {
 			if (session.getPlay().isOpen()) {
 				session.getPlay().close();
 			}
-			session.getPlay().dispose();
 
 			organPanel.closing();
 			
@@ -332,7 +332,6 @@ public class OrganFrame extends JFrame {
 			if (this.session.getPlay().isOpen()) {
 				this.session.getPlay().close();
 			}
-			this.session.getPlay().dispose();
 
 			this.session.removeOrganListener(saveAction);
 		}

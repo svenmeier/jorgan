@@ -26,17 +26,17 @@ import javax.swing.border.EmptyBorder;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.gui.OrganAware;
-import jorgan.gui.OrganSession;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayAdapter;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import swingx.docking.DockedPanel;
 
 /**
  * Panel that displays the description of an element.
  */
-public class DescriptionPanel extends DockedPanel implements OrganAware {
+public class DescriptionPanel extends DockedPanel implements SessionAware {
 
 	private JTextArea textArea;
 
@@ -69,7 +69,7 @@ public class DescriptionPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            session
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(elementHandler);
 			this.session.removeSelectionListener(elementHandler);

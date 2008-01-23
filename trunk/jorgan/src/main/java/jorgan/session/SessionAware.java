@@ -16,18 +16,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.session;
 
-/**
- * A warning.
- */
-public class Warning extends Problem {
 
-    public Warning(String property) {
-		super(property);
-	}
+public interface SessionAware {
 
-	public Warning(String property, Object value) {
-		super(property, value);
-	}
+	public void setSession(OrganSession session);
 }

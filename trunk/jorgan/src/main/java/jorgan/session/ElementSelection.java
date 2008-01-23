@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui;
+package jorgan.session;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 
-public class ElementSelectionModel {
+public class ElementSelection {
 
 	private List<ElementSelectionListener> listeners = new ArrayList<ElementSelectionListener>();
 
@@ -41,7 +41,7 @@ public class ElementSelectionModel {
 
 	private String property;
 
-	public ElementSelectionModel() {
+	public ElementSelection() {
 		clear();
 	}
 

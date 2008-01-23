@@ -28,7 +28,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.SwitchFilter;
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Console;
@@ -44,11 +43,12 @@ import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
+import jorgan.disposition.SwitchFilter;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
-import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.session.ElementProblems;
 
 /**
  * A play of an organ.
@@ -76,6 +76,8 @@ public class OrganPlay {
 	 */
 	private List<PlayListener> listeners = new ArrayList<PlayListener>();
 
+	private ElementProblems problems = new ElementProblems();
+
 	private Organ organ;
 
 	/**
@@ -84,8 +86,9 @@ public class OrganPlay {
 	 * @param organ
 	 *            the organ to play
 	 */
-	public OrganPlay(Organ organ) {
+	public OrganPlay(Organ organ, ElementProblems problems) {
 		this.organ = organ;
+		this.problems = problems;
 
 		organ.addOrganListener(eventHandler);
 
@@ -106,14 +109,6 @@ public class OrganPlay {
 		listeners.remove(listener);
 	}
 
-	public void dispose() {
-
-		organ.removeOrganListener(eventHandler);
-		organ = null;
-
-		listeners.clear();
-	}
-
 	protected void fireClosed() {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
@@ -128,46 +123,6 @@ public class OrganPlay {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
 				listener.opened();
-			}
-		}
-	}
-
-	protected void firePlayerAdded(Player player) {
-		if (listeners != null) {
-			PlayEvent event = new PlayEvent(this, player.getElement());
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.playerAdded(event);
-			}
-		}
-	}
-
-	protected void firePlayerRemoved(Player player) {
-		if (listeners != null) {
-			PlayEvent event = new PlayEvent(this, player.getElement());
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.playerRemoved(event);
-			}
-		}
-	}
-
-	protected void fireProblemAdded(Player player, Problem problem) {
-		if (listeners != null) {
-			PlayEvent event = new PlayEvent(this, player.getElement(), problem);
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.problemAdded(event);
-			}
-		}
-	}
-
-	protected void fireProblemRemoved(Player player, Problem problem) {
-		if (listeners != null) {
-			PlayEvent event = new PlayEvent(this, player.getElement(), problem);
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.problemRemoved(event);
 			}
 		}
 	}
@@ -198,33 +153,6 @@ public class OrganPlay {
 
 	protected Player<? extends Element> getPlayer(Element element) {
 		return players.get(element);
-	}
-
-	public boolean hasErrors(Element element) {
-		Player player = getPlayer(element);
-		if (player == null) {
-			return false;
-		}
-
-		return player.hasErrors();
-	}
-
-	public boolean hasWarnings(Element element) {
-		Player player = getPlayer(element);
-		if (player == null) {
-			return false;
-		}
-
-		return player.hasWarnings();
-	}
-
-	public List getProblems(Element element) {
-		Player player = getPlayer(element);
-		if (player == null) {
-			return null;
-		}
-
-		return player.getProblems();
 	}
 
 	public void open() {
@@ -316,8 +244,6 @@ public class OrganPlay {
 			player.setOrganPlay(this);
 			players.put(element, player);
 
-			firePlayerAdded(player);
-
 			player.elementChanged(null);
 		}
 	}
@@ -326,8 +252,6 @@ public class OrganPlay {
 		Player player = players.get(element);
 		if (player != null) {
 			players.remove(element);
-
-			firePlayerRemoved(player);
 		}
 	}
 
@@ -390,5 +314,9 @@ public class OrganPlay {
 				}
 			}
 		}
+	}
+
+	protected ElementProblems getProblems() {
+		return problems;
 	}
 }

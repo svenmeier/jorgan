@@ -16,9 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui;
+package jorgan.session.event;
 
-public interface OrganAware {
+import jorgan.disposition.Element;
+import jorgan.play.Problem;
 
-	public void setOrgan(OrganSession session);
+/**
+ * Problem of a player.
+ */
+public class Error extends Problem {
+
+	public Error(Element element, String property) {
+		super(element, property, null);
+	}
+
+	public Error(Element element, String property, Object value) {
+		super(element, property, value);
+	}
 }

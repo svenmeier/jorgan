@@ -16,18 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.session.event;
 
-/**
- * Problem of a player.
- */
-public class Error extends Problem {
+import java.util.EventListener;
 
-    public Error(String property) {
-		super(property);
-	}
 
-	public Error(String property, Object value) {
-		super(property, value);
-	}
+public interface ElementSelectionListener extends EventListener {
+  
+  public void selectionChanged(ElementSelectionEvent ev);
 }

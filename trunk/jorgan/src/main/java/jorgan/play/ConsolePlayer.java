@@ -29,6 +29,8 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Context;
+import jorgan.session.event.Error;
+import jorgan.session.event.Warning;
 
 /**
  * A player of an console.
@@ -65,8 +67,8 @@ public class ConsolePlayer extends Player<Console> {
 	protected void openImpl() {
 		Console console = getElement();
 
-		removeProblem(new Error("input"));
-		removeProblem(new Error("output"));
+		removeProblem(new Error(getElement(), "input"));
+		removeProblem(new Error(getElement(), "output"));
 
 		String input = console.getInput();
 		if (input != null) {
@@ -81,7 +83,7 @@ public class ConsolePlayer extends Player<Console> {
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("input", input));
+				addProblem(new Error(getElement(), "input", input));
 			}
 		}
 
@@ -97,7 +99,7 @@ public class ConsolePlayer extends Player<Console> {
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addProblem(new Error("output", input));
+				addProblem(new Error(getElement(), "output", input));
 			}
 		}
 	}
@@ -128,17 +130,17 @@ public class ConsolePlayer extends Player<Console> {
 		Console console = getElement();
 
 		if (console.getInput() == null && getWarnDevice()) {
-			removeProblem(new Error("input"));
-			addProblem(new Warning("input"));
+			removeProblem(new Error(getElement(), "input"));
+			addProblem(new Warning(getElement(), "input"));
 		} else {
-			removeProblem(new Warning("input"));
+			removeProblem(new Warning(getElement(), "input"));
 		}
 
 		if (console.getOutput() == null && getWarnDevice()) {
-			removeProblem(new Error("output"));
-			addProblem(new Warning("output"));
+			removeProblem(new Error(getElement(), "output"));
+			addProblem(new Warning(getElement(), "output"));
 		} else {
-			removeProblem(new Warning("output"));
+			removeProblem(new Warning(getElement(), "output"));
 		}
 	}
 

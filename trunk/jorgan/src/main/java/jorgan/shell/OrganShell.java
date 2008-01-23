@@ -28,14 +28,12 @@ import java.util.logging.Logger;
 
 import jorgan.Info;
 import jorgan.UI;
-import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionFileFilter;
 import jorgan.io.DispositionStream;
-import jorgan.play.OrganPlay;
 import jorgan.play.Problem;
-import jorgan.play.event.PlayEvent;
-import jorgan.play.event.PlayListener;
+import jorgan.session.OrganSession;
+import jorgan.session.event.ProblemListener;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -54,11 +52,11 @@ public class OrganShell implements UI {
 
 	private Organ organ;
 
-	private OrganPlay organPlay;
+	private OrganSession session;
 
 	private Interpreter interpreter;
 
-	private InternalPlayerListener playerListener = new InternalPlayerListener();
+	private InternalProblemListener problemListener = new InternalProblemListener();
 
 	private boolean useDefaultEncoding;
 
@@ -121,7 +119,7 @@ public class OrganShell implements UI {
 
 			this.file = file;
 
-			setOrgan(organ);
+			setOrgan(new OrganSession(organ));
 
 			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));
@@ -140,24 +138,25 @@ public class OrganShell implements UI {
 	 * @param organ
 	 *            the organ
 	 */
-	public void setOrgan(Organ organ) {
-		if (organPlay != null) {
-			organPlay.close();
-			organPlay.dispose();
-			organPlay = null;
+	public void setOrgan(OrganSession session) {
+		if (this.session != null) {
+			if (this.session.getPlay().isOpen()) {
+				this.session.getPlay().close();
+			}
+			this.session = null;
 		}
 
-		this.organ = organ;
+		this.session = session;
 
-		if (organ != null) {
-			organPlay = new OrganPlay(organ);
-			organPlay.addPlayerListener(playerListener);
+		if (session != null) {
+			this.session = session;
+			session.addProblemListener(problemListener);
 
-			for (Element element : organ.getElements()) {
-				showElementStatus(element);
+			for (Problem problem : session.getProblems().getProblems()) {
+				problemListener.problemAdded(problem);
 			}
 
-			organPlay.open();
+			session.getPlay().open();
 		}
 	}
 
@@ -171,18 +170,6 @@ public class OrganShell implements UI {
 			writeMessage("saveConfirm");
 		} catch (Exception ex) {
 			writeMessage("saveException", file.getName());
-		}
-	}
-
-	protected void showElementStatus(Element element) {
-
-		List problems = organPlay.getProblems(element);
-		if (problems != null) {
-			for (int p = 0; p < problems.size(); p++) {
-				Problem problem = (Problem) problems.get(p);
-
-				writeMessage(problem.toString(), element.getName(), problem.getValue());
-			}
 		}
 	}
 
@@ -298,8 +285,7 @@ public class OrganShell implements UI {
 				for (int c = 0; c < interpreter.getCommandCount(); c++) {
 					Command command = interpreter.getCommand(c);
 					String name = pad(command.getName(), length);
-					writeMessage("helpElement", name, command
-							.getDescription());
+					writeMessage("helpElement", name, command.getDescription());
 				}
 				writeMessage("helpFooter");
 			}
@@ -364,16 +350,17 @@ public class OrganShell implements UI {
 							new Integer(r + 1), recent });
 				}
 			} else {
+				File file;
 				try {
 					int index = Integer.parseInt(param) - 1;
-
-					openOrgan((File) recents.get(index));
-				} catch (Exception ex) {
+					file = (File) recents.get(index);
+				} catch (RuntimeException ex) {
 					Integer from = new Integer(1);
 					Integer to = new Integer(recents.size());
-					writeMessage("recentParameter", new Object[] { from,
-							to });
+					writeMessage("recentParameter", new Object[] { from, to });
+					return;
 				}
+				openOrgan(file);
 			}
 		}
 	}
@@ -393,10 +380,9 @@ public class OrganShell implements UI {
 				return;
 			}
 
-			if (organPlay != null) {
-				organPlay.close();
-				organPlay.dispose();
-				organPlay = null;
+			if (session != null) {
+				session.getPlay().close();
+				session = null;
 			}
 
 			writeMessage("exitConfirm");
@@ -469,34 +455,16 @@ public class OrganShell implements UI {
 	}
 
 	/**
-	 * The monitor of player events.
+	 * The monitor of problems.
 	 */
-	private class InternalPlayerListener implements PlayListener {
+	private class InternalProblemListener implements ProblemListener {
 
-		public void inputAccepted() {
+		public void problemAdded(Problem problem) {
+			writeMessage(problem.toString(), problem.getElement().getName(),
+					problem.getValue());
 		}
 
-		public void outputProduced() {
-		}
-
-		public void playerAdded(PlayEvent ev) {
-		}
-
-		public void playerRemoved(PlayEvent ev) {
-		}
-
-		public void problemAdded(PlayEvent ev) {
-			showElementStatus(ev.getElement());
-		}
-
-		public void problemRemoved(PlayEvent ev) {
-			showElementStatus(ev.getElement());
-		}
-
-		public void opened() {
-		}
-
-		public void closed() {
+		public void problemRemoved(Problem problem) {
 		}
 	}
 

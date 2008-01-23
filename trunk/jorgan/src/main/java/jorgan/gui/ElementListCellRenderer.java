@@ -17,6 +17,7 @@ import javax.swing.JList;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.construct.ElementsPanel;
+import jorgan.session.OrganSession;
 import jorgan.swing.list.CommentedCellRenderer;
 
 /**
@@ -75,9 +76,9 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 		OrganSession session = getOrgan();
 
 		if (session != null) {
-			if (session.getPlay().hasErrors(element)) {
+			if (session.getProblems().hasErrors(element)) {
 				return errorIcon;
-			} else if (session.getPlay().hasWarnings(element)) {
+			} else if (session.getProblems().hasWarnings(element)) {
 				return warningIcon;
 			}
 		}

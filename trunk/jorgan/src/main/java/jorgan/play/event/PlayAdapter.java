@@ -28,22 +28,6 @@ public class PlayAdapter implements PlayListener {
 
 	}
 
-	public void playerAdded(PlayEvent ev) {
-
-	}
-
-	public void playerRemoved(PlayEvent ev) {
-
-	}
-
-	public void problemAdded(PlayEvent ev) {
-
-	}
-
-	public void problemRemoved(PlayEvent ev) {
-
-	}
-
 	public void inputAccepted() {
 
 	}

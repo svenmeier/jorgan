@@ -16,13 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.event;
+package jorgan.session.event;
 
-import java.util.EventObject;
+import jorgan.play.Problem;
 
-public class ElementSelectionEvent extends EventObject {
+/**
+ * A listener to problems.
+ */
+public interface ProblemListener {
 
-  public ElementSelectionEvent(Object source) {
-    super(source);  
-  }
+    public void problemAdded(Problem problem);
+
+    public void problemRemoved(Problem problem);
 }

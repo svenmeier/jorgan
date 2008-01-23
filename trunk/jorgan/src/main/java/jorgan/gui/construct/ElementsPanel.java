@@ -40,12 +40,12 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
-import jorgan.gui.OrganAware;
-import jorgan.gui.OrganSession;
-import jorgan.gui.event.ElementSelectionEvent;
-import jorgan.gui.event.ElementSelectionListener;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import jorgan.session.event.ElementSelectionEvent;
+import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
@@ -57,7 +57,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows all elements.
  */
-public class ElementsPanel extends DockedPanel implements OrganAware {
+public class ElementsPanel extends DockedPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ElementsPanel.class);
@@ -154,7 +154,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				setOrgan(session);
+				setSession(session);
 			}
 		};
 		config.get("sortByType").read(sortByTypeButton);
@@ -183,7 +183,7 @@ public class ElementsPanel extends DockedPanel implements OrganAware {
 	 * @param session
 	 *            organ to be edited
 	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 
 		if (this.session != null) {
 			this.session.removeOrganListener(elementsModel);
