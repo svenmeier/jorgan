@@ -148,7 +148,7 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 
-				session.getSelectionModel().setSelectedElement(element);
+				session.getElementSelection().setSelectedElement(element);
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
@@ -228,9 +228,9 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 		list.setVisible(false);
 
 		if (session != null
-				&& session.getSelectionModel().getSelectionCount() == 1) {
+				&& session.getElementSelection().getSelectionCount() == 1) {
 
-			element = session.getSelectionModel().getSelectedElement();
+			element = session.getElementSelection().getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
 				referencesToModel.update();

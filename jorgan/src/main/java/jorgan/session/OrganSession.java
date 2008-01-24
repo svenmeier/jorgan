@@ -35,7 +35,7 @@ import spin.Spin;
  * EDT, although a change in disposition or players might be triggered by a
  * change on a MIDI thread.
  * 
- * TODO remove spin dependencies - non-GUI clients dont' need spin
+ * TODO remove spin dependencies - non-GUI clients dont' need Spin
  */
 public class OrganSession {
 
@@ -43,7 +43,7 @@ public class OrganSession {
 
     private OrganPlay play;
 
-    private ElementSelection selectionModel;
+    private ElementSelection selection;
     
     private ElementProblems problems;
 
@@ -57,7 +57,7 @@ public class OrganSession {
         }
         this.organ = organ;
 
-        this.selectionModel = new ElementSelection();
+        this.selection = new ElementSelection();
         this.problems = new ElementProblems();
 
         this.play = new OrganPlay(organ, problems);
@@ -67,14 +67,16 @@ public class OrganSession {
                     @Override
 					public void added(OrganEvent event) {
                     	if (event.self()) {
-                            selectionModel.setSelectedElement(event.getElement());
+                            selection.setSelectedElement(event.getElement());
                     	}
                     }
 
                     @Override
 					public void removed(OrganEvent event) {
                     	if (event.self()) {
-                    		selectionModel.clear(event.getElement());
+                    		selection.clear(event.getElement());
+                            
+                            problems.removeProblems(event.getElement());
                     	}
                     }
                 }));
@@ -88,16 +90,16 @@ public class OrganSession {
         return play;
     }
 
-    public ElementSelection getSelectionModel() {
-        return selectionModel;
+    public ElementSelection getElementSelection() {
+        return selection;
     }
 
     public void addSelectionListener(ElementSelectionListener listener) {
-        selectionModel.addSelectionListener(listener);
+        selection.addSelectionListener(listener);
     }
 
     public void removeSelectionListener(ElementSelectionListener listener) {
-        selectionModel.removeSelectionListener(listener);
+        selection.removeSelectionListener(listener);
     }
 
     public void addOrganListener(OrganListener listener) {

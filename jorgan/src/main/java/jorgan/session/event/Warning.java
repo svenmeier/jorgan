@@ -19,7 +19,6 @@
 package jorgan.session.event;
 
 import jorgan.disposition.Element;
-import jorgan.play.Problem;
 
 /**
  * A warning.

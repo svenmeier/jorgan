@@ -30,9 +30,9 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
-import jorgan.play.Problem;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
+import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.Warning;
 import jorgan.swing.BaseAction;
@@ -187,7 +187,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 
 			Problem problem = problems.get(index);
 
-			session.getSelectionModel().setSelectedElement(
+			session.getElementSelection().setSelectedElement(
 					problem.getElement(), problem.getProperty());
 		}
 	}

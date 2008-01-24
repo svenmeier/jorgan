@@ -237,9 +237,9 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		table.setVisible(false);
 
 		if (session != null
-				&& session.getSelectionModel().getSelectionCount() == 1) {
+				&& session.getElementSelection().getSelectionCount() == 1) {
 
-			element = session.getSelectionModel().getSelectedElement();
+			element = session.getElementSelection().getSelectedElement();
 
 			for (Message message : element.getMessages()) {
 				messages.add(message);

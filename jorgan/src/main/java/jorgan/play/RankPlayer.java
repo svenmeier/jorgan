@@ -69,7 +69,7 @@ public class RankPlayer extends Player<Rank> {
 				toBeOpened.open();
 				channelPool = toBeOpened;
 			} catch (MidiUnavailableException ex) {
-				addError("output", rank.getOutput());
+				addError("output", rank.getOutput(), "outputUnavailable");
 			}
 		}
 	}
@@ -99,14 +99,14 @@ public class RankPlayer extends Player<Rank> {
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addError("channels", rank.getChannels());
+			addError("channels", rank.getChannels(), "channelsIllegal");
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addWarning("channels", rank.getChannels());
+			addWarning("channels", rank.getChannels(), "channelsUnvailable");
 			return;
 		}
 
@@ -148,7 +148,7 @@ public class RankPlayer extends Player<Rank> {
 
 		if (rank.getOutput() == null && getWarnDevice()) {
 			removeError("output");
-			addWarning("output", null);
+			addWarning("output", null, "outputMissing");
 		} else {
 			removeWarning("output");
 		}

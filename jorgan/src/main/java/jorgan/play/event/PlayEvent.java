@@ -22,7 +22,7 @@ import java.util.EventObject;
 
 import jorgan.disposition.Element;
 import jorgan.play.OrganPlay;
-import jorgan.play.Problem;
+import jorgan.session.event.Problem;
 
 /**
  * Event of a player.

@@ -130,9 +130,9 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	protected void addWarning(String property, Object value) {
+	protected void addWarning(String property, Object value, String key) {
 
-		String message = config.get("Warning." + property).read(
+		String message = config.get("Warning." + key).read(
 				new MessageBuilder()).build(value);
 		getOrganPlay().getProblems().addProblem(
 				new Warning(element, property, message));
@@ -143,8 +143,8 @@ public abstract class Player<E extends Element> {
 				new Warning(element, property, null));
 	}
 
-	protected void addError(String property, Object value) {
-		String message = config.get("Error." + property).read(
+	protected void addError(String property, Object value, String key) {
+		String message = config.get("Error." + key).read(
 				new MessageBuilder()).build(value);
 		getOrganPlay().getProblems().addProblem(
 				new Error(element, property, message));
@@ -157,9 +157,9 @@ public abstract class Player<E extends Element> {
 
 	public void elementChanged(OrganEvent event) {
 		if (!element.hasMessages() && warnMessages) {
-			addWarning("message", null);
+			addWarning("messages", null, "messagesMissing");
 		} else {
-			removeWarning("message");
+			removeWarning("messages");
 		}
 	}
 
@@ -208,8 +208,8 @@ public abstract class Player<E extends Element> {
 			try {
 				shortMessage = createShortMessage(status, data1, data2);
 			} catch (InvalidMidiDataException ex) {
-				addError("message.midi", Math.round(status) + ","
-						+ Math.round(data1) + "," + Math.round(data2));
+				addError("messages", Math.round(status) + ","
+						+ Math.round(data1) + "," + Math.round(data2), "messageInvalid");
 				return;
 			}
 
@@ -219,7 +219,7 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addError("message", ex.getPattern());
+			addError("messages", ex.getPattern(), "illegalMessage");
 		}
 	}
 
@@ -312,7 +312,7 @@ public abstract class Player<E extends Element> {
 				return false;
 			}
 		} catch (ProcessingException ex) {
-			addError("message", ex.getPattern());
+			addError("messages", ex.getPattern(), "messageIllegal");
 			return false;
 		}
 		return true;

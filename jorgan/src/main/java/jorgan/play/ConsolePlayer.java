@@ -81,7 +81,7 @@ public class ConsolePlayer extends Player<Console> {
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addError("input", input);
+				addError("input", input, "inputUnavailable");
 			}
 		}
 
@@ -97,7 +97,7 @@ public class ConsolePlayer extends Player<Console> {
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addError("output", input);
+				addError("output", input, "unavailable");
 			}
 		}
 	}
@@ -129,14 +129,14 @@ public class ConsolePlayer extends Player<Console> {
 
 		if (console.getInput() == null && getWarnDevice()) {
 			removeError("input");
-			addWarning("input", null);
+			addWarning("input", null, "inputMissing");
 		} else {
 			removeWarning("input");
 		}
 
 		if (console.getOutput() == null && getWarnDevice()) {
 			removeError("output");
-			addWarning("output", null);
+			addWarning("output", null, "outputMissing");
 		} else {
 			removeWarning("output");
 		}

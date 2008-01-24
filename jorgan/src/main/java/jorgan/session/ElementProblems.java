@@ -23,8 +23,8 @@ import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.play.Problem;
 import jorgan.session.event.Error;
+import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.Warning;
 
@@ -145,5 +145,13 @@ public class ElementProblems {
 	
 	public void removeProblemListener(ProblemListener listener) {
 		listeners.remove(listener);
+	}
+
+	public void removeProblems(Element element) {
+		for (Problem problem : new ArrayList<Problem>(problems)) {
+			if (problem.getElement() == element) {
+				removeProblem(problem);
+			}
+		}
 	}
 }
