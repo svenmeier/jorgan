@@ -97,7 +97,7 @@ public class ConsolePlayer extends Player<Console> {
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addError("output", input, "unavailable");
+				addError("output", output, "outputUnavailable");
 			}
 		}
 	}
