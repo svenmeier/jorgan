@@ -199,7 +199,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 		if (this.session != null) {
 			this.session.addOrganListener(elementsModel);
 			this.session.addPlayerListener(elementsModel);
-			this.session.getSelectionModel().addSelectionListener(
+			this.session.getElementSelection().addSelectionListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
@@ -227,7 +227,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 
 				list.clearSelection();
 
-				java.util.List selectedElements = session.getSelectionModel()
+				java.util.List selectedElements = session.getElementSelection()
 						.getSelectedElements();
 				for (int e = 0; e < selectedElements.size(); e++) {
 					Element element = (Element) selectedElements.get(e);
@@ -254,10 +254,10 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 				Object[] values = list.getSelectedValues();
 
 				if (values.length == 1) {
-					session.getSelectionModel().setSelectedElement(
+					session.getElementSelection().setSelectedElement(
 							(Element) values[0]);
 				} else {
-					session.getSelectionModel().setSelectedElements(
+					session.getElementSelection().setSelectedElements(
 							Generics.asList(values, Element.class));
 				}
 
@@ -394,7 +394,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
 				for (Element element : new ArrayList<Element>(session
-						.getSelectionModel().getSelectedElements())) {
+						.getElementSelection().getSelectedElements())) {
 					session.getOrgan().duplicate(element);
 				}
 			}
@@ -422,7 +422,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 			}
 
 			for (Element element : new ArrayList<Element>(session
-					.getSelectionModel().getSelectedElements())) {
+					.getElementSelection().getSelectedElements())) {
 				session.getOrgan().removeElement(element);
 			}
 		}

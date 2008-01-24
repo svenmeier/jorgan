@@ -99,7 +99,7 @@ public class ElementPropertiesPanel extends DockedPanel implements
 				changing = true;
 
 				String property = propertiesPanel.getProperty();
-				session.getSelectionModel().setSelectedProperty(property);
+				session.getElementSelection().setSelectedProperty(property);
 
 				changing = false;
 			}
@@ -118,9 +118,9 @@ public class ElementPropertiesPanel extends DockedPanel implements
 			if (!changing) {
 				changing = true;
 
-				propertiesPanel.setBeans(session.getSelectionModel()
+				propertiesPanel.setBeans(session.getElementSelection()
 						.getSelectedElements());
-				propertiesPanel.setProperty(session.getSelectionModel()
+				propertiesPanel.setProperty(session.getElementSelection()
 						.getSelectedProperty());
 
 				changing = false;

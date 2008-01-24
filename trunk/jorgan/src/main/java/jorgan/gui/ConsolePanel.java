@@ -808,15 +808,15 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 
 			if (isMultiSelect(e)) {
 				if (pressedElement != null) {
-					session.getSelectionModel().addSelectedElement(
+					session.getElementSelection().addSelectedElement(
 							pressedElement);
 				}
 			} else {
 				if (pressedElement == null) {
-					session.getSelectionModel().setSelectedElement(null);
+					session.getElementSelection().setSelectedElement(null);
 				} else {
 					if (!selectedElements.contains(pressedElement)) {
-						session.getSelectionModel().setSelectedElement(
+						session.getElementSelection().setSelectedElement(
 								pressedElement);
 					}
 				}
@@ -868,7 +868,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 						elements.add(element);
 					}
 				}
-				session.getSelectionModel().setSelectedElements(elements);
+				session.getElementSelection().setSelectedElements(elements);
 			} else {
 				View view = getView(pressedElement);
 
@@ -924,7 +924,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		public void mouseClicked(MouseEvent e) {
 			if (pressedElement != null) {
 				if (isMultiSelect(e) && wasSelected) {
-					session.getSelectionModel().removeSelectedElement(
+					session.getElementSelection().removeSelectedElement(
 							pressedElement);
 				}
 			}
@@ -1143,7 +1143,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 			ElementSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
 
-			List<Element> newElements = session.getSelectionModel()
+			List<Element> newElements = session.getElementSelection()
 					.getSelectedElements();
 
 			for (Element element : newElements) {

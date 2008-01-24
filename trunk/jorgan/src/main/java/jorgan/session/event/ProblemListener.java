@@ -18,7 +18,6 @@
  */
 package jorgan.session.event;
 
-import jorgan.play.Problem;
 
 /**
  * A listener to problems.

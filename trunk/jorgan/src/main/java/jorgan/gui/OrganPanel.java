@@ -240,8 +240,8 @@ public class OrganPanel extends JPanel implements SessionAware {
 			backAction.setEnabled(false);
 			forwardAction.setEnabled(false);
 		} else {
-			backAction.setEnabled(session.getSelectionModel().canBack());
-			forwardAction.setEnabled(session.getSelectionModel().canForward());
+			backAction.setEnabled(session.getElementSelection().canBack());
+			forwardAction.setEnabled(session.getElementSelection().canForward());
 		}
 	}
 
@@ -466,8 +466,8 @@ public class OrganPanel extends JPanel implements SessionAware {
 	 */
 	private class InternalSelectionListener implements ElementSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
-			if (session.getSelectionModel().getSelectionCount() == 1) {
-				Element element = session.getSelectionModel()
+			if (session.getElementSelection().getSelectionCount() == 1) {
+				Element element = session.getElementSelection()
 						.getSelectedElement();
 				if (element instanceof Console) {
 					Console console = (Console) element;
@@ -543,7 +543,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.getSelectionModel().back();
+			session.getElementSelection().back();
 		}
 	}
 
@@ -558,7 +558,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.getSelectionModel().forward();
+			session.getElementSelection().forward();
 		}
 	}
 

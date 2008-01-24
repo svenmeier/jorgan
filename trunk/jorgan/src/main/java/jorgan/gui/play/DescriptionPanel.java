@@ -119,7 +119,7 @@ public class DescriptionPanel extends DockedPanel implements SessionAware {
 		public void selectionChanged(ElementSelectionEvent ev) {
 			write();
 
-			element = session.getSelectionModel().getSelectedElement();
+			element = session.getElementSelection().getSelectedElement();
 
 			read();
 		}
