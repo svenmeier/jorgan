@@ -34,6 +34,7 @@ import jorgan.io.DispositionFileFilter;
 import jorgan.io.DispositionStream;
 import jorgan.play.Problem;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
 import jorgan.session.event.ProblemListener;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -41,7 +42,7 @@ import bias.util.MessageBuilder;
 /**
  * Shell for playing of an organ.
  */
-public class OrganShell implements UI {
+public class OrganShell implements UI, SessionAware {
 
 	private static final Logger logger = Logger.getLogger(OrganShell.class
 			.getName());
@@ -120,7 +121,7 @@ public class OrganShell implements UI {
 
 			this.file = file;
 
-			setOrgan(new OrganSession(organ));
+			setSession(new OrganSession(organ));
 
 			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));
@@ -133,13 +134,7 @@ public class OrganShell implements UI {
 		}
 	}
 
-	/**
-	 * Set the organ.
-	 * 
-	 * @param organ
-	 *            the organ
-	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			if (this.session.getPlay().isOpen()) {
 				this.session.getPlay().close();
@@ -235,7 +230,7 @@ public class OrganShell implements UI {
 				return;
 			}
 			file = null;
-			setOrgan(null);
+			setSession(null);
 
 			writeMessage("closeConfirm");
 		}
@@ -468,8 +463,8 @@ public class OrganShell implements UI {
 			} else {
 				key = "warning";
 			}
-			writeMessage(key, Elements.getDisplayName(problem.getElement()), problem
-					.getMessage());
+			writeMessage(key, Elements.getDisplayName(problem.getElement()),
+					problem.getMessage());
 		}
 
 		public void problemRemoved(Problem problem) {

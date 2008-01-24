@@ -131,8 +131,9 @@ public abstract class Player<E extends Element> {
 	}
 
 	protected void addWarning(String property, Object value) {
-		
-		String message = config.get("Warning." + property).read(new MessageBuilder()).build(value);
+
+		String message = config.get("Warning." + property).read(
+				new MessageBuilder()).build(value);
 		getOrganPlay().getProblems().addProblem(
 				new Warning(element, property, message));
 	}
@@ -143,14 +144,15 @@ public abstract class Player<E extends Element> {
 	}
 
 	protected void addError(String property, Object value) {
-		String message = config.get("Error." + property).read(new MessageBuilder()).build(value);
+		String message = config.get("Error." + property).read(
+				new MessageBuilder()).build(value);
 		getOrganPlay().getProblems().addProblem(
 				new Error(element, property, message));
 	}
 
 	protected void removeError(String property) {
-		getOrganPlay().getProblems()
-				.removeProblem(new Error(element, property, null));
+		getOrganPlay().getProblems().removeProblem(
+				new Error(element, property, null));
 	}
 
 	public void elementChanged(OrganEvent event) {
@@ -204,9 +206,7 @@ public abstract class Player<E extends Element> {
 
 			ShortMessage shortMessage;
 			try {
-				shortMessage = new ShortMessage();
-				shortMessage.setMessage(Math.round(status), Math.round(data1),
-						Math.round(data2));
+				shortMessage = createShortMessage(status, data1, data2);
 			} catch (InvalidMidiDataException ex) {
 				addError("message.midi", Math.round(status) + ","
 						+ Math.round(data1) + "," + Math.round(data2));
@@ -221,6 +221,24 @@ public abstract class Player<E extends Element> {
 		} catch (ProcessingException ex) {
 			addError("message", ex.getPattern());
 		}
+	}
+
+	private ShortMessage createShortMessage(float status, float data1,
+			float data2) throws InvalidMidiDataException {
+
+		ShortMessage shortMessage = new ShortMessage();
+		
+		// status isn't checked in ShortMessage#setMessage(int, int, int)
+		int iStatus = Math.round(status);
+		if (iStatus < 0 || iStatus > 255) {
+			throw new InvalidMidiDataException("status out of range: " + iStatus);
+		}
+		int iData1 = Math.round(data1);
+		int iData2 = Math.round(data2);
+
+		shortMessage.setMessage(iStatus, iData1, iData2);
+		
+		return shortMessage;
 	}
 
 	/**

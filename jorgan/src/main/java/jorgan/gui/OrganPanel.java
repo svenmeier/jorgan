@@ -71,7 +71,7 @@ import bias.Configuration;
 /**
  * Panel for display and editing of an organ.
  */
-public class OrganPanel extends JPanel {
+public class OrganPanel extends JPanel implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			OrganPanel.class);
@@ -190,13 +190,7 @@ public class OrganPanel extends JPanel {
 		return actions;
 	}
 
-	/**
-	 * Set the organ to be displayed.
-	 * 
-	 * @param session
-	 *            the organ to be displayed
-	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(organListener);
 			this.session.removePlayerListener(playListener);
@@ -254,7 +248,7 @@ public class OrganPanel extends JPanel {
 	protected void addConsoleDockable(Console console) {
 
 		ConsolePanel consolePanel = new ConsolePanel();
-		consolePanel.setOrgan(session);
+		consolePanel.setSession(session);
 		consolePanel.setConsole(console);
 
 		JScrollPane scrollPane = new JScrollPane(consolePanel);
@@ -283,7 +277,7 @@ public class OrganPanel extends JPanel {
 		ConsolePanel consolePanel = (ConsolePanel) scrollPane.getViewport()
 				.getView();
 		consolePanel.setConsole(null);
-		consolePanel.setOrgan(null);
+		consolePanel.setSession(null);
 
 		consoleDocking.removeDockable(console);
 	}
