@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.play;
+package jorgan.gui.midi;
 
 import java.awt.BorderLayout;
 
@@ -26,7 +26,6 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.swing.JPanel;
 
-import jorgan.gui.midi.KeyboardPane;
 import jorgan.midi.DeviceInfo;
 import jorgan.midi.Loopback;
 
