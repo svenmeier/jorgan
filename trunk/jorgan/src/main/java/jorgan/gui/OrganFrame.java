@@ -55,6 +55,7 @@ import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.Desktop;
 import jorgan.swing.DebugPanel;
@@ -67,7 +68,7 @@ import bias.util.MessageBuilder;
 /**
  * The jOrgan frame.
  */
-public class OrganFrame extends JFrame {
+public class OrganFrame extends JFrame implements SessionAware {
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
@@ -319,13 +320,7 @@ public class OrganFrame extends JFrame {
 		}
 	}
 
-	/**
-	 * Set the organ edited by this frame.
-	 * 
-	 * @param session
-	 *            organ to be edited
-	 */
-	private void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		statusBar.setStatus(null);
 
 		if (this.session != null) {
@@ -348,7 +343,7 @@ public class OrganFrame extends JFrame {
 
 		saveAction.clearChanges();
 
-		organPanel.setOrgan(session);
+		organPanel.setSession(session);
 	}
 
 	/**
@@ -359,7 +354,7 @@ public class OrganFrame extends JFrame {
 		if (canCloseOrgan()) {
 			setFile(null);
 
-			setOrgan(new OrganSession());
+			setSession(new OrganSession());
 		}
 	}
 
@@ -389,7 +384,7 @@ public class OrganFrame extends JFrame {
 
 			setFile(file);
 
-			setOrgan(new OrganSession(organ));
+			setSession(new OrganSession(organ));
 
 			buildRecentsMenu();
 			
@@ -748,7 +743,7 @@ public class OrganFrame extends JFrame {
 				ConsoleDialog dialog = dialogs.get(screen);
 				if (dialog == null) {
 					dialog = ConsoleDialog.create(OrganFrame.this, screen);
-					dialog.setOrgan(session);
+					dialog.setSession(session);
 					dialogs.put(screen, dialog);
 				}
 				dialog.addConsole(console);
@@ -763,7 +758,7 @@ public class OrganFrame extends JFrame {
 				ConsoleDialog dialog = iterator.next();
 				dialog.setVisible(false);
 				dialog.dispose();
-				dialog.setOrgan(null);
+				dialog.setSession(null);
 			}
 			dialogs.clear();
 		}

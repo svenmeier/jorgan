@@ -86,6 +86,7 @@ import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.skin.Skin;
@@ -99,7 +100,7 @@ import bias.Configuration;
 /**
  * Panel that manages views to display a console of an organ.
  */
-public class ConsolePanel extends JComponent implements Scrollable {
+public class ConsolePanel extends JComponent implements Scrollable, SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
@@ -353,13 +354,7 @@ public class ConsolePanel extends JComponent implements Scrollable {
 		return Math.max(1, viewToScreen(viewIncrement, false));
 	}
 
-	/**
-	 * Set the organ session.
-	 * 
-	 * @param session
-	 *            organ session
-	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(organListener);
 			this.session.removeSelectionListener(selectionListener);

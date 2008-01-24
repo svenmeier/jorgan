@@ -41,6 +41,7 @@ import javax.swing.event.MouseInputAdapter;
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
 import jorgan.swing.button.ButtonGroup;
@@ -49,7 +50,7 @@ import bias.Configuration;
 /**
  * JDialog subclass to show a console <em>full screen</em>.
  */
-public class ConsoleDialog extends JDialog {
+public class ConsoleDialog extends JDialog implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsoleDialog.class);
@@ -100,13 +101,7 @@ public class ConsoleDialog extends JDialog {
 		popup.add(new CloseAction());
 	}
 
-	/**
-	 * Set the organ session.
-	 * 
-	 * @param session
-	 *            organ session
-	 */
-	public void setOrgan(OrganSession session) {
+	public void setSession(OrganSession session) {
 		this.session = session;
 	}
 
@@ -119,7 +114,7 @@ public class ConsoleDialog extends JDialog {
 	public void addConsole(final Console console) {
 
 		ConsolePanel consolePanel = new ConsolePanel();
-		consolePanel.setOrgan(session);
+		consolePanel.setSession(session);
 		consolePanel.setConsole(console);
 
 		consolePanel.addMouseListener(mouseHandler);
