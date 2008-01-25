@@ -40,8 +40,8 @@
 
     <!-- then compile ./src/native/SoundFontManager.c into ./build/native/SoundFontManager.o -->
     <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jni}\include" />
-      <arg value="-I${jni}\include\win32" />
+      <arg value="-I${jdk.include}" />
+      <arg value="-I${jdk.include}\win32" />
       <arg value="-I.\lib" />
       <arg value="-I.\build\native" />
       <arg value="-o" />
