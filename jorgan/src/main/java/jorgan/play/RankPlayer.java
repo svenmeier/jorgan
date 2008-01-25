@@ -30,8 +30,9 @@ import jorgan.disposition.Rank.NotePlayed;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
 import jorgan.midi.channel.ChannelFilter;
-import jorgan.midi.channel.ChannelPool;
+import jorgan.midi.channel.ChannelFactory;
 import jorgan.midi.channel.DelayedChannel;
+import jorgan.midi.channel.ChannelFactoryPool;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
@@ -43,7 +44,7 @@ public class RankPlayer extends Player<Rank> {
 
 	private PlayerContext context = new PlayerContext();
 
-	private ChannelPool channelPool;
+	private ChannelFactory channelFactory;
 
 	private Channel channel;
 
@@ -65,9 +66,9 @@ public class RankPlayer extends Player<Rank> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				ChannelPool toBeOpened = ChannelPool.instance(rank.getOutput());
+				ChannelFactory toBeOpened = ChannelFactoryPool.getPool(rank.getOutput());
 				toBeOpened.open();
-				channelPool = toBeOpened;
+				channelFactory = toBeOpened;
 			} catch (MidiUnavailableException ex) {
 				addError("output", rank.getOutput(), "outputUnavailable");
 			}
@@ -80,9 +81,9 @@ public class RankPlayer extends Player<Rank> {
 			disengaged();
 		}
 
-		if (channelPool != null) {
-			channelPool.close();
-			channelPool = null;
+		if (channelFactory != null) {
+			channelFactory.close();
+			channelFactory = null;
 		}
 	}
 
@@ -94,7 +95,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		try {
-			channel = channelPool.createChannel(new RankChannelFilter(rank
+			channel = channelFactory.createChannel(new RankChannelFilter(rank
 					.getChannels()));
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
@@ -153,7 +154,7 @@ public class RankPlayer extends Player<Rank> {
 			removeWarning("output");
 		}
 
-		if (channelPool != null) {
+		if (channelFactory != null) {
 			if (channel == null && rank.isEngaged()) {
 				engaged();
 			} else if (channel != null && !rank.isEngaged()) {
@@ -163,7 +164,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void play(int pitch, int velocity) {
-		if (channelPool != null) {
+		if (channelFactory != null) {
 			if (channel == null) {
 				engaged();
 			}
@@ -184,7 +185,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void mute(int pitch) {
-		if (channelPool != null) {
+		if (channelFactory != null) {
 			if (channel == null) {
 				return;
 			}

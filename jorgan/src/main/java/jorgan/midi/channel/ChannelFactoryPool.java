@@ -30,34 +30,11 @@ import javax.sound.midi.ShortMessage;
 import jorgan.midi.DevicePool;
 
 /**
- * A pool of channels.
+ * A pool of {@link ChannelFactory}s.
  */
-public abstract class ChannelPool {
+public abstract class ChannelFactoryPool {
 
-	private static Map<String, SharedChannelPool> sharedPools = new HashMap<String, SharedChannelPool>();
-
-	public abstract String getDeviceName();
-
-	/**
-	 * Open this pool of channels. <br>
-	 * Opens the MIDI device on first call.
-	 * 
-	 * @throws MidiUnavailableException
-	 *             if device is not available
-	 */
-	public abstract void open() throws MidiUnavailableException;
-
-	/**
-	 * Create a channel.
-	 * 
-	 * @return filter filter of channels
-	 */
-	public abstract Channel createChannel(ChannelFilter filter);
-
-	/**
-	 * Close this pool of channels.
-	 */
-	public abstract void close();
+	private static Map<String, PooledChannelFactory> factories = new HashMap<String, PooledChannelFactory>();
 
 	/**
 	 * Get the instance for a MIDI device.
@@ -68,19 +45,19 @@ public abstract class ChannelPool {
 	 * @throws MidiUnavailableException
 	 *             if device is not available
 	 */
-	public static ChannelPool instance(String deviceName)
+	public static ChannelFactory getPool(String deviceName)
 			throws MidiUnavailableException {
-		SharedChannelPool pool = sharedPools.get(deviceName);
-		if (pool == null) {
-			pool = new SharedChannelPool(deviceName);
+		PooledChannelFactory factory = factories.get(deviceName);
+		if (factory == null) {
+			factory = new PooledChannelFactory(deviceName);
 
-			sharedPools.put(deviceName, pool);
+			factories.put(deviceName, factory);
 		}
 
-		return new ProxyChannelPool(pool);
+		return new ProxyChannelFactory(factory);
 	}
 
-	private static class SharedChannelPool extends ChannelPool {
+	private static class PooledChannelFactory implements ChannelFactory {
 
 		private String deviceName;
 
@@ -107,7 +84,7 @@ public abstract class ChannelPool {
 		/**
 		 * Use {@link #instance(String)}.
 		 */
-		protected SharedChannelPool(String deviceName)
+		protected PooledChannelFactory(String deviceName)
 				throws MidiUnavailableException {
 
 			this.deviceName = deviceName;
@@ -115,7 +92,6 @@ public abstract class ChannelPool {
 			this.device = DevicePool.getMidiDevice(deviceName, DevicePool.OUT);
 		}
 
-		@Override
 		public String getDeviceName() {
 			return deviceName;
 		}
@@ -127,7 +103,6 @@ public abstract class ChannelPool {
 		 * @throws MidiUnavailableException
 		 *             if device is not available
 		 */
-		@Override
 		public void open() throws MidiUnavailableException {
 			if (opened == 0) {
 				device.open();
@@ -143,7 +118,6 @@ public abstract class ChannelPool {
 		 * @return created channel or <code>null</code> if no channel is
 		 *         available
 		 */
-		@Override
 		public Channel createChannel(ChannelFilter filter) {
 
 			if (opened == 0) {
@@ -162,7 +136,6 @@ public abstract class ChannelPool {
 		/**
 		 * Close this pool of channels.
 		 */
-		@Override
 		public void close() {
 			opened--;
 
@@ -231,26 +204,25 @@ public abstract class ChannelPool {
 		}
 	}
 
-	private static class ProxyChannelPool extends ChannelPool {
+	private static class ProxyChannelFactory implements ChannelFactory {
+		
 		private boolean open = false;
 
-		private SharedChannelPool pool;
+		private ChannelFactory factory;
 
-		protected ProxyChannelPool(SharedChannelPool pool) {
+		protected ProxyChannelFactory(ChannelFactory pool) {
 
-			this.pool = pool;
+			this.factory = pool;
 		}
 
-		@Override
 		public String getDeviceName() {
-			return pool.getDeviceName();
+			return factory.getDeviceName();
 		}
 
-		@Override
 		public void open() throws MidiUnavailableException {
 			assertClosed();
 
-			pool.open();
+			factory.open();
 
 			open = true;
 		}
@@ -261,21 +233,19 @@ public abstract class ChannelPool {
 		 * @return created channel or <code>null</code> if no channel is
 		 *         available
 		 */
-		@Override
 		public Channel createChannel(ChannelFilter filter) {
 			assertOpen();
 
-			return pool.createChannel(filter);
+			return factory.createChannel(filter);
 		}
 
 		/**
 		 * Close this pool of channels.
 		 */
-		@Override
 		public void close() {
 			assertOpen();
 
-			pool.close();
+			factory.close();
 
 			open = false;
 		}
