@@ -36,6 +36,7 @@ import jorgan.midi.channel.ChannelFactoryPool;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
+import jorgan.session.event.Severity;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -58,9 +59,9 @@ public class RankPlayer extends Player<Rank> {
 	protected void openImpl() {
 		Rank rank = getElement();
 
-		removeWarning("channels");
-		removeError("channels");
-		removeError("output");
+		removeProblem(Severity.WARNING, "channels");
+		removeProblem(Severity.ERROR, "channels");
+		removeProblem(Severity.ERROR, "output");
 
 		if (rank.getOutput() != null) {
 			try {
@@ -70,7 +71,7 @@ public class RankPlayer extends Player<Rank> {
 				toBeOpened.open();
 				channelFactory = toBeOpened;
 			} catch (MidiUnavailableException ex) {
-				addError("output", rank.getOutput(), "outputUnavailable");
+				addProblem(Severity.ERROR, "output", rank.getOutput(), "outputUnavailable");
 			}
 		}
 	}
@@ -100,14 +101,14 @@ public class RankPlayer extends Player<Rank> {
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addError("channels", rank.getChannels(), "channelsIllegal");
+			addProblem(Severity.ERROR, "channels", rank.getChannels(), "channelsIllegal");
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addWarning("channels", rank.getChannels(), "channelsUnvailable");
+			addProblem(Severity.WARNING, "channels", rank.getChannels(), "channelsUnvailable");
 			return;
 		}
 
@@ -148,10 +149,10 @@ public class RankPlayer extends Player<Rank> {
 		Rank rank = getElement();
 
 		if (rank.getOutput() == null && getWarnDevice()) {
-			removeError("output");
-			addWarning("output", null, "outputMissing");
+			removeProblem(Severity.ERROR, "output");
+			addProblem(Severity.WARNING, "output", null, "outputMissing");
 		} else {
-			removeWarning("output");
+			removeProblem(Severity.WARNING, "output");
 		}
 
 		if (channelFactory != null) {

@@ -23,20 +23,27 @@ import jorgan.disposition.Element;
 /**
  * Problem of a player.
  */
-public abstract class Problem {
+public class Problem {
 
+	private Severity severity;
+	
 	private Element element;
 
 	private String property;
 
 	private String message;
 
-	protected Problem(Element element, String property, String message) {
+	public Problem(Severity severity, Element element, String property, String message) {
+		this.severity = severity;
 		this.element = element;
 		this.property = property;
 		this.message = message;
 	}
 
+	public Severity getSeverity() {
+		return severity;
+	}
+	
 	public String getProperty() {
 		return property;
 	}

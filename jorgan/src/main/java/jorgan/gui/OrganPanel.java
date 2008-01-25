@@ -53,12 +53,14 @@ import jorgan.gui.play.DescriptionPanel;
 import jorgan.gui.play.MemoryPanel;
 import jorgan.gui.play.MessagesMonitor;
 import jorgan.gui.play.ProblemsPanel;
-import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.event.Problem;
+import jorgan.session.event.ProblemListener;
+import jorgan.session.event.Severity;
 import jorgan.swing.BaseAction;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Dock;
@@ -86,19 +88,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 	private OrganSession session;
 
 	/**
-	 * The listener to organ changes.
+	 * The listener to events.
 	 */
-	private OrganListener organListener = new InternalOrganListener();
-
-	/**
-	 * The listener to selection changes.
-	 */
-	private ElementSelectionListener selectionListener = new InternalSelectionListener();
-
-	/**
-	 * The listener to events sent by the player.
-	 */
-	private PlayListener playListener = new InternalPlayListener();
+	private EventsListener eventsListener = new EventsListener();
 
 	/*
 	 * The outer dockingPane that holds all views.
@@ -192,9 +184,10 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(organListener);
-			this.session.removePlayerListener(playListener);
-			this.session.removeSelectionListener(selectionListener);
+			this.session.removeOrganListener(eventsListener);
+			this.session.removePlayerListener(eventsListener);
+			this.session.removeProblemListener(eventsListener);
+			this.session.removeSelectionListener(eventsListener);
 
 			for (View dockable : views.values()) {
 				if (dockable.getComponent() instanceof SessionAware) {
@@ -214,9 +207,10 @@ public class OrganPanel extends JPanel implements SessionAware {
 		if (this.session != null) {
 			setConstructing(!this.session.getPlay().isOpen());
 
-			this.session.addOrganListener(organListener);
-			this.session.addPlayerListener(playListener);
-			this.session.addSelectionListener(selectionListener);
+			this.session.addSelectionListener(eventsListener);
+			this.session.addProblemListener(eventsListener);
+			this.session.addPlayerListener(eventsListener);
+			this.session.addOrganListener(eventsListener);
 
 			for (View dockable : views.values()) {
 				if (dockable.getComponent() instanceof SessionAware) {
@@ -241,7 +235,8 @@ public class OrganPanel extends JPanel implements SessionAware {
 			forwardAction.setEnabled(false);
 		} else {
 			backAction.setEnabled(session.getElementSelection().canBack());
-			forwardAction.setEnabled(session.getElementSelection().canForward());
+			forwardAction
+					.setEnabled(session.getElementSelection().canForward());
 		}
 	}
 
@@ -391,9 +386,10 @@ public class OrganPanel extends JPanel implements SessionAware {
 	}
 
 	/**
-	 * The listener to events of the player.
+	 * The listener to events.
 	 */
-	private class InternalPlayListener implements PlayListener {
+	private class EventsListener implements PlayListener, ProblemListener,
+			OrganListener, ElementSelectionListener {
 
 		public void inputAccepted() {
 			playMonitor.input();
@@ -403,20 +399,14 @@ public class OrganPanel extends JPanel implements SessionAware {
 			playMonitor.output();
 		}
 
-		public void playerAdded(PlayEvent ev) {
-		}
-
-		public void playerRemoved(PlayEvent ev) {
-		}
-
-		public void problemAdded(PlayEvent ev) {
-			if (ev.getProblem() instanceof jorgan.session.event.Error) {
+		public void problemAdded(Problem problem) {
+			if (problem.getSeverity() == Severity.ERROR) {
 				View dockable = views.get("problems");
 				viewDocking.putDockable(dockable.getKey(), dockable);
 			}
 		}
 
-		public void problemRemoved(PlayEvent ev) {
+		public void problemRemoved(Problem ev) {
 		}
 
 		public void opened() {
@@ -426,12 +416,6 @@ public class OrganPanel extends JPanel implements SessionAware {
 		public void closed() {
 			setConstructing(true);
 		}
-	}
-
-	/**
-	 * The listener to organ events.
-	 */
-	private class InternalOrganListener implements OrganListener {
 
 		public void changed(OrganEvent event) {
 			if (event.self()) {
@@ -459,12 +443,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 				}
 			}
 		}
-	}
 
-	/**
-	 * The listener to selection events.
-	 */
-	private class InternalSelectionListener implements ElementSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
 			if (session.getElementSelection().getSelectionCount() == 1) {
 				Element element = session.getElementSelection()

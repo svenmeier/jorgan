@@ -33,8 +33,8 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
-import jorgan.session.event.Error;
-import jorgan.session.event.Warning;
+import jorgan.session.event.Problem;
+import jorgan.session.event.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -97,7 +97,7 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
-		removeError("message");
+		removeProblem(Severity.ERROR, "message");
 
 		openImpl();
 	}
@@ -130,36 +130,26 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	protected void addWarning(String property, Object value, String key) {
+	protected void addProblem(Severity severity, String property, Object value,
+			String key) {
 
-		String message = config.get("Warning." + key).read(
+		String message = config.get(severity.toString() + "." + key).read(
 				new MessageBuilder()).build(value);
+
 		getOrganPlay().getProblems().addProblem(
-				new Warning(element, property, message));
+				new Problem(severity, element, property, message));
 	}
 
-	protected void removeWarning(String property) {
+	protected void removeProblem(Severity severity, String property) {
 		getOrganPlay().getProblems().removeProblem(
-				new Warning(element, property, null));
-	}
-
-	protected void addError(String property, Object value, String key) {
-		String message = config.get("Error." + key).read(
-				new MessageBuilder()).build(value);
-		getOrganPlay().getProblems().addProblem(
-				new Error(element, property, message));
-	}
-
-	protected void removeError(String property) {
-		getOrganPlay().getProblems().removeProblem(
-				new Error(element, property, null));
+				new Problem(severity, element, property, null));
 	}
 
 	public void elementChanged(OrganEvent event) {
 		if (!element.hasMessages() && warnMessages) {
-			addWarning("messages", null, "messagesMissing");
+			addProblem(Severity.WARNING, "messages", null, "messagesMissing");
 		} else {
-			removeWarning("messages");
+			removeProblem(Severity.WARNING, "messages");
 		}
 	}
 
@@ -208,8 +198,9 @@ public abstract class Player<E extends Element> {
 			try {
 				shortMessage = createShortMessage(status, data1, data2);
 			} catch (InvalidMidiDataException ex) {
-				addError("messages", Math.round(status) + ","
-						+ Math.round(data1) + "," + Math.round(data2), "messageInvalid");
+				addProblem(Severity.ERROR, "messages", Math.round(status) + ","
+						+ Math.round(data1) + "," + Math.round(data2),
+						"messageInvalid");
 				return;
 			}
 
@@ -219,7 +210,8 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addError("messages", ex.getPattern(), "illegalMessage");
+			addProblem(Severity.ERROR, "messages", ex.getPattern(),
+					"illegalMessage");
 		}
 	}
 
@@ -227,17 +219,18 @@ public abstract class Player<E extends Element> {
 			float data2) throws InvalidMidiDataException {
 
 		ShortMessage shortMessage = new ShortMessage();
-		
+
 		// status isn't checked in ShortMessage#setMessage(int, int, int)
 		int iStatus = Math.round(status);
 		if (iStatus < 0 || iStatus > 255) {
-			throw new InvalidMidiDataException("status out of range: " + iStatus);
+			throw new InvalidMidiDataException("status out of range: "
+					+ iStatus);
 		}
 		int iData1 = Math.round(data1);
 		int iData2 = Math.round(data2);
 
 		shortMessage.setMessage(iStatus, iData1, iData2);
-		
+
 		return shortMessage;
 	}
 
@@ -312,7 +305,8 @@ public abstract class Player<E extends Element> {
 				return false;
 			}
 		} catch (ProcessingException ex) {
-			addError("messages", ex.getPattern(), "messageIllegal");
+			addProblem(Severity.ERROR, "messages", ex.getPattern(),
+					"messageIllegal");
 			return false;
 		}
 		return true;

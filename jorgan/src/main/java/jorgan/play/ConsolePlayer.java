@@ -29,6 +29,7 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Context;
+import jorgan.session.event.Severity;
 
 /**
  * A player of an console.
@@ -65,8 +66,8 @@ public class ConsolePlayer extends Player<Console> {
 	protected void openImpl() {
 		Console console = getElement();
 
-		removeError("input");
-		removeError("output");
+		removeProblem(Severity.ERROR, "input");
+		removeProblem(Severity.ERROR, "output");
 
 		String input = console.getInput();
 		if (input != null) {
@@ -81,7 +82,7 @@ public class ConsolePlayer extends Player<Console> {
 				transmitter = in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addError("input", input, "inputUnavailable");
+				addProblem(Severity.ERROR, "input", input, "inputUnavailable");
 			}
 		}
 
@@ -97,7 +98,7 @@ public class ConsolePlayer extends Player<Console> {
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addError("output", output, "outputUnavailable");
+				addProblem(Severity.ERROR, "output", output, "outputUnavailable");
 			}
 		}
 	}
@@ -128,17 +129,17 @@ public class ConsolePlayer extends Player<Console> {
 		Console console = getElement();
 
 		if (console.getInput() == null && getWarnDevice()) {
-			removeError("input");
-			addWarning("input", null, "inputMissing");
+			removeProblem(Severity.ERROR, "input");
+			addProblem(Severity.WARNING, "input", null, "inputMissing");
 		} else {
-			removeWarning("input");
+			removeProblem(Severity.WARNING, "input");
 		}
 
 		if (console.getOutput() == null && getWarnDevice()) {
-			removeError("output");
-			addWarning("output", null, "outputMissing");
+			removeProblem(Severity.ERROR, "output");
+			addProblem(Severity.WARNING, "output", null, "outputMissing");
 		} else {
-			removeWarning("output");
+			removeProblem(Severity.WARNING, "output");
 		}
 	}
 

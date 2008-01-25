@@ -34,7 +34,7 @@ import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
-import jorgan.session.event.Warning;
+import jorgan.session.event.Severity;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
@@ -42,7 +42,7 @@ import swingx.docking.DockedPanel;
 import bias.Configuration;
 
 /**
- * Panel shows the problems.
+ * Panel shows the {@link Problem}s.
  */
 public class ProblemsPanel extends DockedPanel implements SessionAware {
 
@@ -86,7 +86,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		new IconTableCellRenderer() {
 			@Override
 			protected Icon getIcon(Object value) {
-				if (value instanceof Warning) {
+				if (value == Severity.WARNING) {
 					return warningIcon;
 				} else {
 					return errorIcon;
@@ -153,7 +153,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 
 			switch (columnIndex) {
 			case 0:
-				return problem;
+				return problem.getSeverity();
 			case 1:
 				return problem.getMessage();
 			case 2:

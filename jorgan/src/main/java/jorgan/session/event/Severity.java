@@ -18,14 +18,9 @@
  */
 package jorgan.session.event;
 
-import jorgan.disposition.Element;
-
 /**
- * Problem of a player.
+ * The severity of a {@link Problem}.
  */
-public class Error extends Problem {
-
-	public Error(Element element, String property, String message) {
-		super(element, property, message);
-	}
+public enum Severity {
+	WARNING, ERROR
 }

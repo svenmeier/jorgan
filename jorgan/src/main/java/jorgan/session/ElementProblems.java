@@ -23,10 +23,9 @@ import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.session.event.Error;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
-import jorgan.session.event.Warning;
+import jorgan.session.event.Severity;
 
 /**
  * The problems.
@@ -53,10 +52,10 @@ public class ElementProblems {
 		}
 		if (!problems.contains(problem)) {
 			problems.add(problem);
-			if (problem instanceof Warning) {
+			if (problem.getSeverity() == Severity.WARNING) {
 				warningCount++;
 			}
-			if (problem instanceof Error) {
+			if (problem.getSeverity() == Severity.ERROR) {
 				errorCount++;
 			}
 			fireProblemAdded(problem);
@@ -69,10 +68,10 @@ public class ElementProblems {
 		}
 		if (problems.contains(problem)) {
 			problems.remove(problem);
-			if (problem instanceof Warning) {
+			if (problem.getSeverity() == Severity.WARNING) {
 				warningCount--;
 			}
-			if (problem instanceof Error) {
+			if (problem.getSeverity() == Severity.ERROR) {
 				errorCount--;
 			}
 			fireProblemRemoved(problem);
@@ -107,7 +106,8 @@ public class ElementProblems {
 
 	public boolean hasErrors(Element element) {
 		for (Problem problem : problems) {
-			if (problem instanceof Error && problem.getElement() == element) {
+			if (problem.getSeverity() == Severity.ERROR
+					&& problem.getElement() == element) {
 				return true;
 			}
 		}
@@ -116,7 +116,8 @@ public class ElementProblems {
 
 	public boolean hasWarnings(Element element) {
 		for (Problem problem : problems) {
-			if (problem instanceof Warning && problem.getElement() == element) {
+			if (problem.getSeverity() == Severity.WARNING
+					&& problem.getElement() == element) {
 				return true;
 			}
 		}
@@ -138,11 +139,11 @@ public class ElementProblems {
 	public List<Problem> getProblems() {
 		return Collections.unmodifiableList(problems);
 	}
-	
+
 	public void addProblemListener(ProblemListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void removeProblemListener(ProblemListener listener) {
 		listeners.remove(listener);
 	}
