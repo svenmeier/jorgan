@@ -31,6 +31,7 @@ import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.mpl.Context;
+import jorgan.session.event.Severity;
 
 /**
  * A player of an keyboard.
@@ -68,7 +69,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
 
-		removeWarning("input");
+		removeProblem(Severity.WARNING, "input");
 
 		String input = keyboard.getInput();
 		if (input != null) {
@@ -83,7 +84,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 				transmitter = this.in.getTransmitter();
 				transmitter.setReceiver(getOrganPlay().createReceiver(this));
 			} catch (MidiUnavailableException ex) {
-				addError("input", input, "inputUnavailable");
+				addProblem(Severity.ERROR, "input", input, "inputUnavailable");
 			}
 		}
 	}
@@ -112,11 +113,11 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		Keyboard keyboard = getElement();
 
 		if (keyboard.getInput() == null && getWarnDevice()) {
-			removeError("input");
-			addWarning("input", null, "inputMissing");
+			removeProblem(Severity.ERROR, "input");
+			addProblem(Severity.WARNING, "input", null, "inputMissing");
 		} else if (!isOpen()) {
-			removeError("input");
-			removeWarning("input");
+			removeProblem(Severity.ERROR, "input");
+			removeProblem(Severity.WARNING, "input");
 		}
 	}
 
@@ -125,19 +126,19 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				addError("messages", pitch, "pitchInvalid");
+				addProblem(Severity.ERROR, "messages", pitch, "pitchInvalid");
 				return;
 			}
 			int velocity = Math.round(context.get(PressKey.VELOCITY));
 			if (velocity < 0 || velocity > 127) {
-				addError("messages", pitch, "velocityInvalid");
+				addProblem(Severity.ERROR, "messages", pitch, "velocityInvalid");
 				return;
 			}
 			press(pitch, velocity);
 		} else if (message instanceof ReleaseKey) {
 			int pitch = Math.round(context.get(ReleaseKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				addError("messages", pitch, "pitchInvalid");
+				addProblem(Severity.ERROR, "messages", pitch, "pitchInvalid");
 				return;
 			}
 			release(pitch);

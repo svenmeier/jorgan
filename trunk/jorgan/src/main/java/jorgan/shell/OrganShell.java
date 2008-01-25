@@ -36,6 +36,7 @@ import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
+import jorgan.session.event.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -458,7 +459,7 @@ public class OrganShell implements UI, SessionAware {
 		public void problemAdded(Problem problem) {
 
 			String key;
-			if (problem instanceof jorgan.session.event.Error) {
+			if (problem.getSeverity() == Severity.ERROR) {
 				key = "error";
 			} else {
 				key = "warning";

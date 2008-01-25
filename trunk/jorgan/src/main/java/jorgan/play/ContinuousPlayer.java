@@ -24,6 +24,7 @@ import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
+import jorgan.session.event.Severity;
 
 /**
  * A player for a swell.
@@ -43,7 +44,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		if (message instanceof Change) {
 			float value = context.get(Change.VALUE);
 			if (value < 0.0f || value > 1.0f) {
-				addError("messages", value, "valueInvalid");
+				addProblem(Severity.ERROR, "messages", value, "valueInvalid");
 				return;
 			}
 
