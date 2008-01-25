@@ -28,13 +28,19 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 
 /**
  * A pool of {@link ChannelFactory}s.
  */
-public abstract class ChannelFactoryPool {
+public class ChannelFactoryPool {
 
-	private static Map<String, PooledChannelFactory> factories = new HashMap<String, PooledChannelFactory>();
+	private static final ChannelFactoryPool instance = new ChannelFactoryPool();
+
+	private Map<String, PooledChannelFactory> factories = new HashMap<String, PooledChannelFactory>();
+
+	private ChannelFactoryPool() {
+	}
 
 	/**
 	 * Get the instance for a MIDI device.
@@ -45,7 +51,7 @@ public abstract class ChannelFactoryPool {
 	 * @throws MidiUnavailableException
 	 *             if device is not available
 	 */
-	public static ChannelFactory getPool(String deviceName)
+	public ChannelFactory getPool(String deviceName)
 			throws MidiUnavailableException {
 		PooledChannelFactory factory = factories.get(deviceName);
 		if (factory == null) {
@@ -89,7 +95,8 @@ public abstract class ChannelFactoryPool {
 
 			this.deviceName = deviceName;
 
-			this.device = DevicePool.getMidiDevice(deviceName, DevicePool.OUT);
+			this.device = DevicePool.instance().getMidiDevice(deviceName,
+					Direction.OUT);
 		}
 
 		public String getDeviceName() {
@@ -205,7 +212,7 @@ public abstract class ChannelFactoryPool {
 	}
 
 	private static class ProxyChannelFactory implements ChannelFactory {
-		
+
 		private boolean open = false;
 
 		private ChannelFactory factory;
@@ -261,5 +268,9 @@ public abstract class ChannelFactoryPool {
 				throw new IllegalStateException("open");
 			}
 		}
+	}
+
+	public static ChannelFactoryPool instance() {
+		return instance;
 	}
 }

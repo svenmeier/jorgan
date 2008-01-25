@@ -16,42 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.editor;
+package jorgan.midi;
 
-import java.beans.PropertyEditorSupport;
+public enum Direction {
 
-import jorgan.midi.DevicePool;
-import jorgan.midi.Direction;
-
-/**
- * Property editor for an output device property.
- */
-public class OutDeviceEditor extends PropertyEditorSupport {
-
-	private String[] tags;
-
-	@Override
-	public String[] getTags() {
-		if (tags == null) {
-			String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
-					Direction.OUT);
-
-			tags = new String[1 + deviceNames.length];
-
-			System.arraycopy(deviceNames, 0, tags, 1, deviceNames.length);
-		}
-		return tags;
-	}
-
-	@Override
-	public String getAsText() {
-
-		return (String) getValue();
-	}
-
-	@Override
-	public void setAsText(String string) {
-
-		setValue(string);
-	}
+	OUT, IN
 }

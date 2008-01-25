@@ -21,6 +21,7 @@ package jorgan.gui.construct.editor;
 import java.beans.PropertyEditorSupport;
 
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 
 /**
  * Property editor for a input device property.
@@ -30,7 +31,8 @@ public class InDeviceEditor extends PropertyEditorSupport {
 	private String[] tags;
 
 	public InDeviceEditor() {
-		String[] deviceNames = DevicePool.getMidiDeviceNames(DevicePool.IN);
+		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
 
 		tags = new String[1 + deviceNames.length];
 

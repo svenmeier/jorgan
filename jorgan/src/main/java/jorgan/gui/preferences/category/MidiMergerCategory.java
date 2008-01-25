@@ -30,6 +30,7 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.merge.MergeInput;
 import jorgan.midi.merge.MidiMerger;
 import jorgan.midi.merge.MidiMergerProvider;
@@ -207,7 +208,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		// create inputs for all devices (excluding MidiMerger)
 		allInputs = new ArrayList<MergeInput>();
 
-		String[] devices = DevicePool.getMidiDeviceNames(DevicePool.IN);
+		String[] devices = DevicePool.instance().getMidiDeviceNames(Direction.IN);
 		for (String device : devices) {
 			if (!MidiMergerProvider.INFO.getName().equals(device)) {
 				allInputs.add(new MergeInput(device, -1));

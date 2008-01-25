@@ -37,6 +37,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.KeyFormat;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.MidiLogger;
@@ -96,7 +97,7 @@ public class MidiMonitor extends DockedPanel {
 
 	private String deviceName;
 
-	private int direction;
+	private Direction direction;
 
 	private boolean open;
 
@@ -161,7 +162,7 @@ public class MidiMonitor extends DockedPanel {
 		prepareColumn(4, 10, SwingConstants.RIGHT);
 		prepareColumn(5, 100, SwingConstants.LEFT);
 
-		setDevice(null, DevicePool.IN);
+		setDevice(null, Direction.IN);
 	}
 
 	private DeviceSelectionPanel selectionPanel;
@@ -194,14 +195,15 @@ public class MidiMonitor extends DockedPanel {
 	 * @param direction
 	 *            should <code>out</code> or <code>in</code> be logged
 	 */
-	public void setDevice(String name, int direction) {
+	public void setDevice(String name, Direction direction) {
 		if (this.deviceName == null && name != null || this.deviceName != null
 				&& !this.deviceName.equals(name) || this.direction != direction) {
 
 			if (this.deviceName != null) {
 				try {
-					DevicePool.removeLogger((MidiLogger) Spin.over(logger),
-							this.deviceName, this.direction);
+					DevicePool.instance().removeLogger(
+							(MidiLogger) Spin.over(logger), this.deviceName,
+							this.direction);
 				} catch (MidiUnavailableException ex) {
 					throw new Error();
 				}
@@ -212,8 +214,8 @@ public class MidiMonitor extends DockedPanel {
 
 			if (this.deviceName != null) {
 				try {
-					open = DevicePool.addLogger((MidiLogger) Spin.over(logger),
-							name, direction);
+					open = DevicePool.instance().addLogger(
+							(MidiLogger) Spin.over(logger), name, direction);
 				} catch (MidiUnavailableException ex) {
 					this.deviceName = null;
 				}
@@ -230,7 +232,7 @@ public class MidiMonitor extends DockedPanel {
 			message = config.get("noStatus").read(new MessageBuilder()).build();
 		} else {
 			message = config.get("status").read(new MessageBuilder()).build(
-					deviceName, direction,
+					deviceName, direction.name(),
 					open ? new Integer(1) : new Integer(0));
 		}
 		setMessage(message);

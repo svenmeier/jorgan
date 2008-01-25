@@ -59,6 +59,7 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
@@ -456,8 +457,8 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 
 		private void record(String deviceName) {
 			try {
-				MidiDevice device = DevicePool.getMidiDevice(deviceName,
-						DevicePool.IN);
+				MidiDevice device = DevicePool.instance().getMidiDevice(
+						deviceName, Direction.IN);
 
 				device.open();
 
