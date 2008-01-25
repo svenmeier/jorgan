@@ -19,7 +19,9 @@
 package jorgan.midi;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
@@ -33,13 +35,13 @@ import javax.sound.midi.Transmitter;
  */
 public class DevicePool {
 
-	private static List<PooledDevice> devices = new ArrayList<PooledDevice>();
+	private static final DevicePool instance = new DevicePool();
 
-	public static final int IN = 0;
-
-	public static final int OUT = 1;
+	private Map<Direction, List<PooledDevice>> devices = new HashMap<Direction, List<PooledDevice>>();
 
 	private DevicePool() {
+		devices.put(Direction.IN, new ArrayList<PooledDevice>());
+		devices.put(Direction.OUT, new ArrayList<PooledDevice>());
 	}
 
 	/**
@@ -53,55 +55,68 @@ public class DevicePool {
 	 * @return the named device
 	 * @throws MidiUnavailableException
 	 */
-	public static MidiDevice getMidiDevice(String name, int direction)
+	public MidiDevice getMidiDevice(String name, Direction direction)
 			throws MidiUnavailableException {
 
-		PooledDevice pooledDevice = getPooledDevice(name, direction);
-		if (pooledDevice == null) {
-			initDevicePool(direction);
+		refreshDevices(direction);
 
-			pooledDevice = getPooledDevice(name, direction);
-			if (pooledDevice == null) {
-				throw new MidiUnavailableException(name);
-			}
+		PooledDevice pooledDevice = getDevice(devices.get(direction), name);
+		if (pooledDevice == null) {
+			throw new MidiUnavailableException(name);
 		}
 
 		return new ProxyDevice(pooledDevice);
 	}
 
-	private static PooledDevice getPooledDevice(String name, int out) {
+	private PooledDevice getPooledDevice(Direction direction, String name) {
+		for (PooledDevice device : devices.get(direction)) {
+			if (device.name().equals(name)) {
+				return device;
+			}
+		}
+		return null;
+	}
 
+	private PooledDevice getDevice(List<PooledDevice> devices, String name) {
 		for (PooledDevice device : devices) {
 			if (device.name().equals(name)) {
-				if (device.supports(out)) {
-					return device;
-				}
+				return device;
 			}
 		}
 		return null;
 	}
 
 	/**
-	 * Initialize the pool of devices for the given direction.
+	 * Refresh the pool of devices for the given direction.
 	 * 
 	 * @param direction
 	 *            {@link IN} or {@link OUT}
 	 */
-	private static void initDevicePool(int direction) {
+	private synchronized void refreshDevices(Direction direction) {
+
+		List<PooledDevice> oldDevices = devices.get(direction);
+		List<PooledDevice> newDevices = new ArrayList<PooledDevice>();
+
 		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
-			PooledDevice device = getPooledDevice(info.getName(), direction);
+			PooledDevice device = getDevice(newDevices, info.getName());
 			if (device == null) {
-				try {
-					device = new PooledDevice(info.getName(), MidiSystem
-							.getMidiDevice(info));
-				} catch (MidiUnavailableException skipDevice) {
-					continue;
+				device = getDevice(oldDevices, info.getName());
+				if (device == null) {
+					try {
+						device = new PooledDevice(info.getName(), MidiSystem
+								.getMidiDevice(info));
+					} catch (MidiUnavailableException skipDevice) {
+						continue;
+					}
+					if (!device.supports(direction)) {
+						continue;
+					}
 				}
-				if (device.supports(direction)) {
-					devices.add(device);
-				}
+				newDevices.add(device);
 			}
 		}
+
+		devices.put(direction, newDevices);
 	}
 
 	/**
@@ -111,31 +126,29 @@ public class DevicePool {
 	 *            direction of midi, {@link IN} or {@link OUT}
 	 * @return list of device names
 	 */
-	public static String[] getMidiDeviceNames(int direction) {
-		initDevicePool(direction);
+	public String[] getMidiDeviceNames(Direction direction) {
+		refreshDevices(direction);
 
 		List<String> names = new ArrayList<String>();
-		for (PooledDevice device : devices) {
-			if (device.supports(direction)) {
-				names.add(device.name);
-			}
+		for (PooledDevice device : devices.get(direction)) {
+			names.add(device.name);
 		}
 
 		return names.toArray(new String[names.size()]);
 	}
 
-	public static boolean addLogger(MidiLogger logger, String name,
-			int direction) throws MidiUnavailableException {
-		PooledDevice device = getPooledDevice(name, direction);
+	public boolean addLogger(MidiLogger logger, String name, Direction direction)
+			throws MidiUnavailableException {
+		PooledDevice device = getPooledDevice(direction, name);
 
 		device.addLogger(logger, direction);
 
 		return device.isOpen();
 	}
 
-	public static void removeLogger(MidiLogger logger, String name,
-			int direction) throws MidiUnavailableException {
-		PooledDevice device = getPooledDevice(name, direction);
+	public void removeLogger(MidiLogger logger, String name, Direction direction)
+			throws MidiUnavailableException {
+		PooledDevice device = getPooledDevice(direction, name);
 
 		device.removeLogger(logger, direction);
 	}
@@ -200,9 +213,7 @@ public class DevicePool {
 	 */
 	private static class PooledDevice extends DeviceWrapper {
 
-		private List<MidiLogger> inLoggers = new ArrayList<MidiLogger>();
-
-		private List<MidiLogger> outLoggers = new ArrayList<MidiLogger>();
+		private Map<Direction, List<MidiLogger>> loggers = new HashMap<Direction, List<MidiLogger>>();
 
 		private int openCount;
 
@@ -219,34 +230,26 @@ public class DevicePool {
 
 			this.out = device.getMaxReceivers() != 0;
 			this.in = device.getMaxTransmitters() != 0;
+			
+			loggers.put(Direction.IN, new ArrayList<MidiLogger>());
+			loggers.put(Direction.OUT, new ArrayList<MidiLogger>());
 		}
 
 		public String name() {
 			return name;
 		}
 
-		public boolean supports(int direction) {
-			return this.out && direction == OUT || this.in && direction == IN;
+		public boolean supports(Direction direction) {
+			return this.out && direction == Direction.OUT || this.in
+					&& direction == Direction.IN;
 		}
 
-		public void addLogger(MidiLogger logger, int direction) {
-			if (direction == IN) {
-				inLoggers.add(logger);
-			} else if (direction == OUT) {
-				outLoggers.add(logger);
-			} else {
-				throw new IllegalArgumentException("direction " + direction);
-			}
+		public void addLogger(MidiLogger logger, Direction direction) {
+			loggers.get(direction).add(logger);
 		}
 
-		public void removeLogger(MidiLogger logger, int direction) {
-			if (direction == IN) {
-				inLoggers.remove(logger);
-			} else if (direction == OUT) {
-				outLoggers.remove(logger);
-			} else {
-				throw new IllegalArgumentException("direction " + direction);
-			}
+		public void removeLogger(MidiLogger logger, Direction direction) {
+			loggers.get(direction).remove(logger);
 		}
 
 		@Override
@@ -254,11 +257,11 @@ public class DevicePool {
 			if (openCount == 0) {
 				super.open();
 
-				for (MidiLogger inLogger : inLoggers) {
-					inLogger.opened();
+				for (MidiLogger logger : loggers.get(Direction.IN)) {
+					logger.opened();
 				}
-				for (MidiLogger outLogger : outLoggers) {
-					outLogger.opened();
+				for (MidiLogger logger : loggers.get(Direction.OUT)) {
+					logger.opened();
 				}
 			}
 			openCount++;
@@ -271,8 +274,8 @@ public class DevicePool {
 				public void send(MidiMessage message, long timeStamp) {
 					super.send(message, timeStamp);
 
-					for (MidiLogger outLogger : outLoggers) {
-						outLogger.log(message);
+					for (MidiLogger logger : loggers.get(Direction.OUT)) {
+						logger.log(message);
 					}
 				}
 			};
@@ -288,8 +291,8 @@ public class DevicePool {
 
 					// TODO if multiple transmitters are get, we will log
 					// multiple times :(
-					for (MidiLogger inLogger : inLoggers) {
-						inLogger.log(message);
+					for (MidiLogger logger : loggers.get(Direction.IN)) {
+						logger.log(message);
 					}
 				}
 			};
@@ -302,13 +305,17 @@ public class DevicePool {
 			if (openCount == 0) {
 				super.close();
 
-				for (MidiLogger inLogger : inLoggers) {
-					inLogger.closed();
+				for (MidiLogger logger : loggers.get(Direction.IN)) {
+					logger.closed();
 				}
-				for (MidiLogger outLogger : outLoggers) {
-					outLogger.closed();
+				for (MidiLogger logger : loggers.get(Direction.OUT)) {
+					logger.closed();
 				}
 			}
 		}
+	}
+
+	public static DevicePool instance() {
+		return instance;
 	}
 }

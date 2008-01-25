@@ -28,6 +28,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
 
@@ -74,8 +75,8 @@ public class ConsolePlayer extends Player<Console> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(input,
-						DevicePool.IN);
+				MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(
+						input, Direction.IN);
 				toBeOpened.open();
 				this.in = toBeOpened;
 
@@ -91,14 +92,15 @@ public class ConsolePlayer extends Player<Console> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.getMidiDevice(output,
-						DevicePool.OUT);
+				MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(
+						output, Direction.OUT);
 				toBeOpened.open();
 				this.out = toBeOpened;
 
 				receiver = out.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "output", output, "outputUnavailable");
+				addProblem(Severity.ERROR, "output", output,
+						"outputUnavailable");
 			}
 		}
 	}

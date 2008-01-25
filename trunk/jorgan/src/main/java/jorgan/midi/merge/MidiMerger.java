@@ -29,6 +29,7 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.Loopback;
 import bias.Configuration;
 
@@ -111,7 +112,7 @@ public class MidiMerger extends Loopback {
 
 			// Important: assure successfull opening of MIDI device
 			// before storing reference in instance variable
-			MidiDevice toBeOpened = DevicePool.getMidiDevice(device, DevicePool.IN);
+			MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(device, Direction.IN);
 			toBeOpened.open();
 			this.device = toBeOpened;
 

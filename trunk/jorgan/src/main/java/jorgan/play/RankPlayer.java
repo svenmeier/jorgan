@@ -29,10 +29,10 @@ import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.channel.Channel;
-import jorgan.midi.channel.ChannelFilter;
 import jorgan.midi.channel.ChannelFactory;
-import jorgan.midi.channel.DelayedChannel;
 import jorgan.midi.channel.ChannelFactoryPool;
+import jorgan.midi.channel.ChannelFilter;
+import jorgan.midi.channel.DelayedChannel;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
@@ -67,11 +67,13 @@ public class RankPlayer extends Player<Rank> {
 			try {
 				// Important: assure successfull opening of MIDI device
 				// before storing reference in instance variable
-				ChannelFactory toBeOpened = ChannelFactoryPool.getPool(rank.getOutput());
+				ChannelFactory toBeOpened = ChannelFactoryPool.instance()
+						.getPool(rank.getOutput());
 				toBeOpened.open();
 				channelFactory = toBeOpened;
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "output", rank.getOutput(), "outputUnavailable");
+				addProblem(Severity.ERROR, "output", rank.getOutput(),
+						"outputUnavailable");
 			}
 		}
 	}
@@ -101,14 +103,16 @@ public class RankPlayer extends Player<Rank> {
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.ERROR, "channels", rank.getChannels(), "channelsIllegal");
+			addProblem(Severity.ERROR, "channels", rank.getChannels(),
+					"channelsIllegal");
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.WARNING, "channels", rank.getChannels(), "channelsUnvailable");
+			addProblem(Severity.WARNING, "channels", rank.getChannels(),
+					"channelsUnvailable");
 			return;
 		}
 
