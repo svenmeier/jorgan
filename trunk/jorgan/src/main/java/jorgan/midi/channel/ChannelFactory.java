@@ -18,24 +18,33 @@
  */
 package jorgan.midi.channel;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.MidiUnavailableException;
 
 /**
- * A wrapper of a channel.
+ * A pool of channels.
  */
-public abstract class ChannelWrapper implements Channel {
+public interface ChannelFactory {
 
-	private Channel channel;
+	public String getDeviceName();
 
-	protected ChannelWrapper(Channel channel) {
-		this.channel = channel;
-	}
+	/**
+	 * Open this pool of channels. <br>
+	 * Opens the MIDI device on first call.
+	 * 
+	 * @throws MidiUnavailableException
+	 *             if device is not available
+	 */
+	public void open() throws MidiUnavailableException;
 
-	public void sendMessage(ShortMessage message) {
-		channel.sendMessage(message);
-	}
+	/**
+	 * Create a channel.
+	 * 
+	 * @return filter filter of channels
+	 */
+	public Channel createChannel(ChannelFilter filter);
 
-	public void release() {
-		channel.release();
-	}
+	/**
+	 * Close this pool of channels.
+	 */
+	public void close();
 }

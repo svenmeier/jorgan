@@ -56,17 +56,17 @@ public class DevicePool {
 	public static MidiDevice getMidiDevice(String name, int direction)
 			throws MidiUnavailableException {
 
-		PooledDevice sharedDevice = getPooledDevice(name, direction);
-		if (sharedDevice == null) {
+		PooledDevice pooledDevice = getPooledDevice(name, direction);
+		if (pooledDevice == null) {
 			initDevicePool(direction);
 
-			sharedDevice = getPooledDevice(name, direction);
-			if (sharedDevice == null) {
+			pooledDevice = getPooledDevice(name, direction);
+			if (pooledDevice == null) {
 				throw new MidiUnavailableException(name);
 			}
 		}
 
-		return new ProxyDevice(sharedDevice);
+		return new ProxyDevice(pooledDevice);
 	}
 
 	private static PooledDevice getPooledDevice(String name, int out) {
@@ -143,7 +143,7 @@ public class DevicePool {
 	private static class ProxyDevice extends DeviceWrapper {
 		private boolean open = false;
 
-		private ProxyDevice(PooledDevice device) {
+		private ProxyDevice(MidiDevice device) {
 			super(device);
 		}
 
