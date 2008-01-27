@@ -3,13 +3,6 @@
 #include "fluidsynthJNI.h"
 #include "fluidsynth.h"
 
-#define IOEX "java/io/IOException"
-
-fluid_settings_t* settings;
-fluid_synth_t* synth;
-fluid_audio_driver_t* adriver;
-int sfont_id;
-
 /**
  * Helper for throwing an Exception
  * @return FALSE
@@ -28,53 +21,130 @@ void throwException(JNIEnv* env, char* exception, char* pattern, ...) {
   (*env)->ThrowNew(env, ioex, msg);
 }
 
+struct Context {
+  jobject object;
+  fluid_settings_t* settings;
+  fluid_synth_t* synth;
+  fluid_audio_driver_t* adriver;
+};
+
+struct Context contexts[128];
+
+struct Context *createContext(JNIEnv *env) {
+  int index;
+  for (index = 0; index < 128; index++) {
+    if (contexts[index].object == NULL) {
+      return &contexts[index];
+    }
+  }
+  throwException(env, "java/lang/Error", "Contexts exceeded");
+}
+
+struct Context *getContext(JNIEnv *env, jobject object) {
+  int index;
+  for (index = 0; index < 128; index++) {
+    if ((*env)->IsSameObject(env, object, contexts[index].object)) {
+      return &contexts[index];
+    }
+  }
+  throwException(env, "java/lang/Error", "No Context found");
+  return NULL;
+}
+
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object) {
-  settings = new_fluid_settings();
+  struct Context *context = createContext(env);
 
-  synth = new_fluid_synth(settings);
+  (*context).object = (*env)->NewGlobalRef(env, object);
 
-  adriver = new_fluid_audio_driver(settings, synth);
+  (*context).settings = new_fluid_settings();
+  (*context).synth = new_fluid_synth((*context).settings);
+  (*context).adriver = new_fluid_audio_driver((*context).settings, (*context).synth);
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_destroy(JNIEnv *env, jobject object) {
-  delete_fluid_audio_driver(adriver);
-  delete_fluid_synth(synth);
-  delete_fluid_settings(settings);
+  struct Context *context = getContext(env, object);
+  if (context != NULL) {
+    delete_fluid_audio_driver((*context).adriver);
+    delete_fluid_synth((*context).synth);
+    delete_fluid_settings((*context).settings);
+
+    (*env)->DeleteGlobalRef(env, (*context).object);
+    (*context).object = NULL;
+  }
+}
+
+fluid_synth_t *getSynth(JNIEnv *env, jobject object) {
+  struct Context *context = getContext(env, object);
+  if (context == NULL) {
+    return NULL;
+  }
+
+  return (*context).synth;
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv *env, jobject object, jstring filename) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   char* cfilename = (*env)->GetStringUTFChars(env, filename, 0);		
-  int soundfont = fluid_synth_sfload(synth, cfilename, 0);
+  int soundfont = fluid_synth_sfload(synth , cfilename, 0);
   if (soundfont == -1) {
-    throwException(env, IOEX, "Couldn't load file %s, error %d", cfilename, soundfont);
+    throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", cfilename, soundfont);
   }
   (*env)->ReleaseStringUTFChars(env, filename, cfilename);
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_noteOn(JNIEnv *env, jobject object, jint channel, jint pitch, jint velocity) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   fluid_synth_noteon(synth, channel, pitch, velocity);
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_noteOff(JNIEnv *env, jobject object, jint channel, jint pitch) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   fluid_synth_noteoff(synth, channel, pitch);
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_controlChange(JNIEnv *env, jobject object, jint channel, jint controller, jint value) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   fluid_synth_cc(synth, channel, controller, value);
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_pitchBend(JNIEnv *env, jobject object, jint channel, jint value) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   fluid_synth_pitch_bend(synth, channel, value); 
 }
 
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_programChange(JNIEnv *env, jobject object, jint channel, jint program) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
   fluid_synth_program_change(synth, channel, program); 
 }

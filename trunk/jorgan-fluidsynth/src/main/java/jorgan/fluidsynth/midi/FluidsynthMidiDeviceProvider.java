@@ -37,8 +37,11 @@ public class FluidsynthMidiDeviceProvider extends MidiDeviceProvider {
 	static {
 		// TODO remove test
 		try {
-			Fluidsynth synth = addDevice();
-			synth.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
+			Fluidsynth synth1 = addDevice();
+			synth1.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
+			
+			Fluidsynth synth2 = addDevice();
+			synth2.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
