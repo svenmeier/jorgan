@@ -104,12 +104,14 @@ public class DeviceSelectionPanel extends JPanel {
 	 *            <code>in</code>
 	 */
 	public void setDevice(String name, Direction direction) {
-		TreeNode[] path = getPath(name, direction);
-		if (path == null) {
-			tree.clearSelection();
-		} else {
-			tree.setSelectionPath(new TreePath(path));
+		if (name != null && direction != null) {
+			TreeNode[] path = getPath(name, direction);
+			if (path != null) {
+				tree.setSelectionPath(new TreePath(path));
+				return;
+			}
 		}
+		tree.clearSelection();
 	}
 
 	protected TreeNode[] getPath(String name, Direction direction) {
@@ -130,7 +132,7 @@ public class DeviceSelectionPanel extends JPanel {
 	 */
 	public Direction getDeviceDirection() {
 		TreePath[] paths = tree.getSelectionPaths();
-		if (paths.length == 1) {
+		if (paths != null && paths.length == 1) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0]
 					.getLastPathComponent();
 			if (node.getParent() == roots.get(Direction.IN)) {
@@ -150,7 +152,7 @@ public class DeviceSelectionPanel extends JPanel {
 	 */
 	public String getDeviceName() {
 		TreePath[] paths = tree.getSelectionPaths();
-		if (paths.length == 1) {
+		if (paths != null && paths.length == 1) {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode) paths[0]
 					.getLastPathComponent();
 			if (!roots.containsValue(node)) {

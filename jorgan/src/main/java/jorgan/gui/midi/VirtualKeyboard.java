@@ -21,12 +21,12 @@ package jorgan.gui.midi;
 import java.awt.BorderLayout;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.spi.MidiDeviceProvider;
 import javax.swing.JPanel;
 
-import jorgan.midi.DeviceInfo;
 import jorgan.midi.Loopback;
 
 /**
@@ -63,8 +63,9 @@ public class VirtualKeyboard extends JPanel {
 		/**
 		 * The device info for this providers device.
 		 */
-		public static final DeviceInfo INFO = new DeviceInfo("jOrgan Keyboard",
-				"jOrgan", "Keyboard of jOrgan", "1.0");
+		public static final Info INFO = new Info("jOrgan Keyboard", "jOrgan",
+				"Keyboard of jOrgan", "1.0") {
+		};
 
 		/**
 		 * The device.

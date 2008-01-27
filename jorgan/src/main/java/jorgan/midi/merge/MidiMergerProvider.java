@@ -19,9 +19,9 @@
 package jorgan.midi.merge;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.midi.DeviceInfo;
 import jorgan.midi.merge.MidiMerger;
 
 /**
@@ -34,8 +34,8 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 	/**
 	 * The device info for this providers device.
 	 */
-	public static final DeviceInfo INFO = new DeviceInfo("jOrgan Midi Merger",
-			"jOrgan", "Midi-Merger of jOrgan", "1.0");
+	public static final Info INFO = new Info("jOrgan Midi Merger",
+			"jOrgan", "Midi-Merger of jOrgan", "1.0") {};
 
 	/**
 	 * The device.
