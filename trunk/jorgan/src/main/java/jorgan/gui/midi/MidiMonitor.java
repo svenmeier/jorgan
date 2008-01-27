@@ -162,7 +162,7 @@ public class MidiMonitor extends DockedPanel {
 		prepareColumn(4, 10, SwingConstants.RIGHT);
 		prepareColumn(5, 100, SwingConstants.LEFT);
 
-		setDevice(null, Direction.IN);
+		updateMessagesLabel();
 	}
 
 	private DeviceSelectionPanel selectionPanel;
