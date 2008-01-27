@@ -1,0 +1,70 @@
+<project name="jOrgan-fluidsynth" default="dist" basedir=".">
+
+  <property file="./build.properties" />
+
+  <target name="clean">
+    <delete dir="./target"/>
+  </target>
+
+  <target name="compile.java">
+    <mkdir dir="./target/classes" />
+
+  	<javac srcdir="./src/main/java" destdir="./target/classes">
+    	<classpath path="${jorgan.core.path}/build" />
+    	<classpath>
+            <fileset dir="${jorgan.core.path}/lib">
+	            <include name="*" />
+            </fileset>
+   		</classpath>
+  	</javac>
+  	
+    <copy todir="./target/classes">
+        <fileset dir="./src/main/java">
+            <include name="META-INF/**/*" />
+        </fileset>
+    </copy>
+  	
+	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
+  </target>
+
+  <target name="compile.native" depends="compile.java">
+    <mkdir dir="./target/native" />
+
+    <javah verbose="true" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/fluidsynthJNI.h">
+      <classpath path="./target/classes" />
+    </javah>
+
+    <exec failonerror="true" executable="${cc}">
+      <arg value="-I${jdk.include}" />
+      <arg value="-I${jdk.include}/linux" />
+      <arg value="-I./lib/native" />
+      <arg value="-I./target/native" />
+      <arg value="-fPIC" />
+      <arg line="-c ./src/main/native/fluidsynthJNI.c" />
+      <arg line="-o ./target/native/fluidsynthJNI.o" />
+    </exec>
+
+    <exec failonerror="true" executable="${ld}">
+      <arg value="-shared" />
+      <arg value="-lfluidsynth" />
+<!--      <arg line="-f /usr/lib/libfluidsynth.so"/> -->
+      <arg line="-o ./target/native/libfluidsynthJNI.so" />
+      <arg line="./target/native/fluidsynthJNI.o" />
+    </exec>
+  </target>
+
+  <target name="compile" depends="compile.java, compile.native"/>
+
+  <target name="dist" depends="clean, compile">
+  	<mkdir dir="./target/marshal/lib" />
+
+  	<copy file="./target/native/libfluidsynthJNI.so" todir="./target/marshal/lib" />
+  	<jar file="./target/marshal/lib/fluidsynth.jar">
+      <fileset dir="./target/classes" />
+  	</jar>
+
+	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-amd64.zip">
+      <fileset dir="./target/marshal" />
+	</zip>  	
+  </target>
+</project>
