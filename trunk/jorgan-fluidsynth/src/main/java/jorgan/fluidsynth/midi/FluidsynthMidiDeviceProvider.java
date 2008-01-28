@@ -35,28 +35,34 @@ public class FluidsynthMidiDeviceProvider extends MidiDeviceProvider {
 	private static Map<Info, FluidsynthMidiDevice> devices = new HashMap<Info, FluidsynthMidiDevice>();
 
 	static {
+		FluidsynthMidiDeviceProvider provider = new FluidsynthMidiDeviceProvider();
+		
 		// TODO remove test
 		try {
-			Fluidsynth synth1 = addDevice();
+			Fluidsynth synth1 = provider.addDevice("Fluidsynth 1").getSynth();
 			synth1.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
-			
-			Fluidsynth synth2 = addDevice();
+
+			Fluidsynth synth2 = provider.addDevice("Fluidsynth 2").getSynth();
 			synth2.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
 		} catch (Throwable e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static Fluidsynth addDevice() {
-		Info info = new Info("Fluidsynth " + devices.size(),
-				"jOrgan", "Fluidsynth of jOrgan", "1.0") {
+	public FluidsynthMidiDevice addDevice(String name) {
+		Info info = new Info(name, "Fluidsynth", "Fluidsynth", "1.0") {
 		};
 
 		Fluidsynth synth = new Fluidsynth();
-		
-		devices.put(info, new FluidsynthMidiDevice(info, synth));
-		
-		return synth;
+		FluidsynthMidiDevice device = new FluidsynthMidiDevice(info, synth); 
+		devices.put(info, device);
+
+		return device;
+	}
+
+	public void removeDevice(FluidsynthMidiDevice device) {
+		devices.remove(device.getDeviceInfo());
+		device.getSynth().close();
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class FluidsynthMidiDevice implements MidiDevice {
 
 	private Fluidsynth synth;
 
-	public FluidsynthMidiDevice(Info info, Fluidsynth synth) {
+	FluidsynthMidiDevice(Info info, Fluidsynth synth) {
 		this.info = info;
 		this.synth = synth;
 	}
@@ -52,7 +52,11 @@ public class FluidsynthMidiDevice implements MidiDevice {
 	public Info getDeviceInfo() {
 		return info;
 	}
-
+	
+	public Fluidsynth getSynth() {
+		return synth;
+	}
+	
 	public void close() {
 		open = false;
 
