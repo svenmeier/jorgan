@@ -47,7 +47,6 @@
     <exec failonerror="true" executable="${ld}">
       <arg value="-shared" />
       <arg value="-lfluidsynth" />
-<!--      <arg line="-f /usr/lib/libfluidsynth.so"/> -->
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
       <arg line="./target/native/fluidsynthJNI.o" />
     </exec>
