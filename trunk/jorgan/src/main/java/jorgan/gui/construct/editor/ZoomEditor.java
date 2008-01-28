@@ -57,7 +57,9 @@ public class ZoomEditor extends CustomEditor {
 	@Override
 	public Component getCustomEditor(Object value) {
 
-		spinner.setValue(Math.round(100 * ((Number)value).floatValue()));
+		if (value != null) {
+			spinner.setValue(Math.round(100 * ((Number)value).floatValue()));
+		}
 
 		return spinner;
 	}

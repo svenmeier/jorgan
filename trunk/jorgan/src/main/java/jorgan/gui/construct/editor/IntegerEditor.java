@@ -56,7 +56,9 @@ public class IntegerEditor extends CustomEditor {
 	@Override
 	public Component getCustomEditor(Object value) {
 
-		spinner.setValue(value);
+		if (value != null) {
+			spinner.setValue(value);
+		}
 
 		return spinner;
 	}
