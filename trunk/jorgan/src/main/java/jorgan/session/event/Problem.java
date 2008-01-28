@@ -60,6 +60,10 @@ public class Problem {
 
 		Problem problem = (Problem) object;
 
+		if (!(this.severity == problem.severity)) {
+			return false;
+		}
+
 		if (!(this.element == problem.element)) {
 			return false;
 		}
