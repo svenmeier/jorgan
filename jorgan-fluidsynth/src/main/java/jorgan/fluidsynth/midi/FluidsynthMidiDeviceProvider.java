@@ -62,7 +62,7 @@ public class FluidsynthMidiDeviceProvider extends MidiDeviceProvider {
 
 	public void removeDevice(FluidsynthMidiDevice device) {
 		devices.remove(device.getDeviceInfo());
-		device.getSynth().close();
+		device.getSynth().dispose();
 	}
 
 	@Override

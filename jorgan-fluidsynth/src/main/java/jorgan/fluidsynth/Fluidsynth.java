@@ -21,7 +21,7 @@ package jorgan.fluidsynth;
 import java.io.File;
 import java.io.IOException;
 
-import jorgan.util.Bootstrap;
+import jorgan.util.ClassUtils;
 
 /**
  * Java Wrapper for a Fluidsynth.
@@ -36,7 +36,7 @@ public class Fluidsynth {
 		create();
 	}
 
-	public void close() {
+	public void dispose() {
 		destroy();
 	}
 	
@@ -61,20 +61,20 @@ public class Fluidsynth {
 	public native void programChange(int channel, int program);
 	
 	/**
-	 * Load the native library "fluidsynth" from the path specified via the
-	 * system property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the
-	 * installation directory of this class. Fall back to standard VM library
-	 * loading which tries to resolve to a dll/lib on the classpath or a system
-	 * directory.
+	 * Load the native library "fluidsynth" from the path specified via the system
+	 * property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the directory this
+	 * class was loaded from. Fall back to standard VM library loading which
+	 * tries to resolve to a .dll/.so on <code>java.library.path</code> or a
+	 * system directory.
 	 * 
-	 * @see jorgan.util.Bootstrap
+	 * @see jorgan.util.ClassUtils
 	 */
 	static {
 		try {
 			File file;
 			String path = System.getProperty(JORGAN_FLUIDSYNTH_LIBRARY_PATH);
 			if (path == null) {
-				file = Bootstrap.getDirectory(Fluidsynth.class);
+				file = ClassUtils.getDirectory(Fluidsynth.class);
 			} else {
 				file = new File(path);
 			}
