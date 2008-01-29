@@ -1,7 +1,9 @@
 #include <jni.h>
 #include <stdio.h>
-#include "fluidsynthJNI.h"
 #include "fluidsynth.h"
+#include "fluidsynthJNI.h"
+
+#define MAX_CONTEXTS 16
 
 /**
  * Helper for throwing an Exception
@@ -28,11 +30,11 @@ struct Context {
   fluid_audio_driver_t* adriver;
 };
 
-struct Context contexts[128];
+struct Context contexts[MAX_CONTEXTS];
 
 struct Context *createContext(JNIEnv *env) {
   int index;
-  for (index = 0; index < 128; index++) {
+  for (index = 0; index < MAX_CONTEXTS; index++) {
     if (contexts[index].object == NULL) {
       return &contexts[index];
     }
@@ -42,7 +44,7 @@ struct Context *createContext(JNIEnv *env) {
 
 struct Context *getContext(JNIEnv *env, jobject object) {
   int index;
-  for (index = 0; index < 128; index++) {
+  for (index = 0; index < MAX_CONTEXTS; index++) {
     if ((*env)->IsSameObject(env, object, contexts[index].object)) {
       return &contexts[index];
     }
