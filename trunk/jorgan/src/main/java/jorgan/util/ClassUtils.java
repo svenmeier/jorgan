@@ -32,6 +32,16 @@ public class ClassUtils {
 
 	private static final String FILE_PROTOCOL = "file:";
 
+	/**
+	 * Analyse where the given class was loaded from, i.e.
+	 * <ul>
+	 * <li>the directory of the jar-file, the class is contained in, or</li>
+	 * <lI>the base directory of the class-file hierarchy</li>
+	 * </ul>
+	 * 
+	 * @param clazz
+	 * @return
+	 */
 	public static File getDirectory(Class clazz) {
 		try {
 			URL url = getClassURL(clazz);
