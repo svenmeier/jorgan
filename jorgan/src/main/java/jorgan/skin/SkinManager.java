@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 
 import jorgan.io.SkinStream;
 import jorgan.util.Bootstrap;
+import jorgan.util.ClassUtils;
 
 /**
  * Manager of skins.
@@ -56,7 +57,7 @@ public class SkinManager implements ISkinManager {
 
 	private void initialize() {
 		File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY,
-				Bootstrap.getDirectory() + "/skins"));
+				ClassUtils.getDirectory(Bootstrap.class) + "/skins"));
 		if (skinsDir.exists()) {
 			String[] entries = skinsDir.list();
 			for (int e = 0; e < entries.length; e++) {
@@ -175,7 +176,7 @@ public class SkinManager implements ISkinManager {
 
 	/**
 	 * Get the singleton instance.
-	 *
+	 * 
 	 * @return manager of {@Skin}s.
 	 */
 	public static SkinManager instance() {

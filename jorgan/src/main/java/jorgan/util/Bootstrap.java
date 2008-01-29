@@ -22,11 +22,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.net.JarURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.List;
@@ -89,75 +87,10 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 	}
 
 	/**
-	 * Get the directory where the current running program is bootstrapped from.
-	 * <br>
-	 * If it is not bootstrapped (see {@link #isBootstrapped()}) the
-	 * <em>current
-	 * user working directory</em> (as denoted by the system
-	 * property <code>user.dir<code>) is returned instead.
-	 * 
-	 * @return        the bootstrap directory
-	 * @see #isBootstrapped()
-	 */
-	public static File getDirectory() {
-		return getDirectory(Bootstrap.class);
-	}
-
-	/**
-	 * Get the directory where given clazz in the current running program is
-	 * bootstrapped from. <br>
-	 * If it is not bootstrapped (see {@link #isBootstrapped()}) the
-	 * <em>current
-	 * user working directory</em> (as denoted by the system
-	 * property <code>user.dir<code>) is returned instead.
-	 * 
-	 * @param  clazz  class to get bootstrap directory for
-	 * @return        the bootstrap directory
-	 * @see #isBootstrapped()
-	 */
-	public static File getDirectory(Class clazz) {
-		if (isBootstrapped()) {
-			try {
-				// jar:file:/C:/Program
-				// Files/FooMatic/./lib/foo.jar!/foo/Bar.class
-				JarURLConnection jarCon = (JarURLConnection) getClassURL(clazz)
-						.openConnection();
-
-				// file:/C:/Program Files/FooMatic/./lib/foo.jar
-				URL jarUrl = jarCon.getJarFileURL();
-
-				// /C:/Program Files/FooMatic/./lib/foo.jar
-				File jarFile = new File(URLDecoder.decode(jarUrl.getPath(),
-						"UTF-8"));
-
-				// /C:/Program Files/FooMatic/./lib
-				return jarFile.getParentFile();
-			} catch (Exception ex) {
-				logger.log(Level.WARNING, "detecting bootstrap directory failed",
-						ex);
-			}
-		}
-
-		return new File(System.getProperty("user.dir"));
-	}
-
-	/**
-	 * Get URL of the given class.
-	 * 
-	 * @param clazz
-	 *            class to get URL for
-	 * @return the URL this class was loaded from
-	 */
-	private static URL getClassURL(Class clazz) {
-		String resourceName = "/" + clazz.getName().replace('.', '/')
-				+ ".class";
-		return clazz.getResource(resourceName);
-	}
-
-	/**
 	 * Bootstrap with dynamically constructed classpath.
 	 * 
-	 * @param args	arguments
+	 * @param args
+	 *            arguments
 	 */
 	public static void main(final String[] args) {
 
@@ -182,8 +115,7 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 	/**
 	 * Assemble classpath from manifest file information (optional).
 	 */
-	private static URL[] getClasspath(Manifest manifest)
-			throws MalformedURLException {
+	private URL[] getClasspath(Manifest manifest) throws MalformedURLException {
 
 		String classpath = manifest.getMainAttributes().getValue(
 				BOOTSTRAP_CLASSPATH);
@@ -193,8 +125,9 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 
 		StringTokenizer tokens = new StringTokenizer(classpath, ",", false);
 		List<URL> urls = new ArrayList<URL>();
+		File directory = ClassUtils.getDirectory(getClass());
 		while (tokens.hasMoreTokens()) {
-			File file = new File(getDirectory(), tokens.nextToken());
+			File file = new File(directory, tokens.nextToken());
 			if (file.exists()) {
 				if (file.isDirectory()) {
 					File[] files = file.listFiles();
@@ -221,8 +154,8 @@ public class Bootstrap extends ThreadGroup implements Runnable {
 
 		// find all manifest files
 		Stack<URL> manifests = new Stack<URL>();
-		for (Enumeration<URL> e = Bootstrap.class.getClassLoader().getResources(
-				MANIFEST); e.hasMoreElements();) {
+		for (Enumeration<URL> e = Bootstrap.class.getClassLoader()
+				.getResources(MANIFEST); e.hasMoreElements();) {
 			manifests.add(e.nextElement());
 		}
 
