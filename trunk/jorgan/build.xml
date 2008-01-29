@@ -57,6 +57,7 @@
        	<jar destfile="./dist/marshal/jorgan.jar">
             <fileset dir="./build">
                 <include name="jorgan/util/Bootstrap.class"/>
+                <include name="jorgan/util/ClassUtils.class"/>
             </fileset>
             <manifest>
                 <attribute name="Main-class" value="jorgan.util.Bootstrap" />
