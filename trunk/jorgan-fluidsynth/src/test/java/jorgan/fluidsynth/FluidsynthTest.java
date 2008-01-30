@@ -19,10 +19,14 @@ public class FluidsynthTest extends TestCase {
 		synth.noteOn(0, 64, 100);
 		
 		synchronized (this) {
-			wait(5000);
+			wait(1000);
 		}
 		
 		synth.noteOff(0, 64);
+
+		synchronized (this) {
+			wait(1000);
+		}
 		
 		synth.dispose();
 	}
