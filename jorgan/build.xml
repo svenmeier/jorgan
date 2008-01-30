@@ -4,15 +4,14 @@
 
     <property file="./build.properties"/>
 
-    <target name="clean" description="Cleanup directories">
-        <delete dir="./build"/>
-        <delete dir="./dist"/>
+    <target name="clean" description="Cleanup target directory">
+        <delete dir="./target"/>
     </target>
 
     <target name="build" description="Build the source" >
-        <mkdir dir="./build"/>
+        <mkdir dir="./target/classes"/>
 
-    	<javac debug="true" source="1.5" target="1.5" destdir="./build" srcdir="./src">
+    	<javac debug="true" source="1.5" target="1.5" destdir="./target/classes" srcdir="./src">
         	<compilerarg value="-Xlint:all,-serial"/>
         	<classpath>
 	            <fileset dir="./lib">
@@ -21,7 +20,7 @@
         	</classpath>
         </javac>
 
-    	<copy todir="./build">
+    	<copy todir="./target/classes">
             <fileset dir="./src">
                 <include name="META-INF/**/*" />
                 <include name="**/*.gif" />
@@ -30,10 +29,10 @@
             </fileset>
         </copy>
 
-    	<native2ascii encoding="UTF8" src="src" dest="build" includes="**/i18n*.properties" />
+    	<native2ascii encoding="UTF8" src="src" dest="./target/classes" includes="**/i18n*.properties" />
     		
     	<filter token="jorgan.version" value="${jorgan.version}"/>
-    	<copy todir="./build" filtering="true">
+    	<copy todir="./target/classes" filtering="true">
             <fileset dir="./src" >
                 <include name="**/*.properties" />
             </fileset>
@@ -41,9 +40,11 @@
     </target>
 
 	<target name="newLanguage" depends="clean">
+        <mkdir dir="./target/classes"/>
+
 		<input message="Enter language code (e.g. 'de' without quotes)" addproperty="language"/>
 
-		<copy todir="./build" filtering="true">
+		<copy todir="./target/classes" filtering="true">
             <fileset dir="./src" >
                 <include name="**/i18n.properties" />
             </fileset>
@@ -52,10 +53,10 @@
 	</target>
 	
     <target name="dist" description="Set up the distribution" depends="clean, build" >
-        <mkdir dir="./dist/marshal" />
+        <mkdir dir="./target/marshal" />
 
-       	<jar destfile="./dist/marshal/jorgan.jar">
-            <fileset dir="./build">
+       	<jar destfile="./target/marshal/jorgan.jar">
+            <fileset dir="./target/classes">
                 <include name="jorgan/util/Bootstrap.class"/>
                 <include name="jorgan/util/ClassUtils.class"/>
             </fileset>
@@ -66,38 +67,38 @@
             </manifest>
         </jar>
 
-        <mkdir dir="./dist/marshal/lib" />
-    	<jar destfile="./dist/marshal/lib/core.jar">
-            <fileset dir="./build">
+        <mkdir dir="./target/marshal/lib" />
+    	<jar destfile="./target/marshal/lib/core.jar">
+            <fileset dir="./target/classes">
                 <include name="**/*"/>
             </fileset>
         </jar>
-        <copy todir="./dist/marshal/lib">
+        <copy todir="./target/marshal/lib">
         	<fileset dir="./lib">
         		<include name="*.jar"/>
 	            <exclude name="AppleJavaExtensions.jar" />
         	</fileset>
         </copy>
 
-        <mkdir dir="./dist/marshal/docs" />
-        <copy todir="./dist/marshal/docs">
+        <mkdir dir="./target/marshal/docs" />
+        <copy todir="./target/marshal/docs">
             <fileset dir="./docs">
                 <include name="*"/>
             </fileset>
 		</copy>
 
-        <mkdir dir="./dist/marshal/dispositions" />
-        <copy todir="./dist/marshal/dispositions">
+        <mkdir dir="./target/marshal/dispositions" />
+        <copy todir="./target/marshal/dispositions">
             <fileset dir="./dispositions" />
 		</copy>
 
-        <zip basedir="./dist/marshal" destfile="./dist/jOrgan-${jorgan.version}.zip" />
-        <delete dir="./dist/marshal" />
+        <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
+        <delete dir="./target/marshal" />
     </target>
 
 	<target name="deploy" description="deploy the application on SourceForge" depends="dist">
 		<ftp server="upload.sourceforge.net" userid="anonymous" password="" remotedir="/incoming">
-			<fileset file="./dist/jOrgan-${jorgan.version}.zip" />
+			<fileset file="./target/jOrgan-${jorgan.version}.zip" />
 		</ftp>
 	</target>	
 </project>
