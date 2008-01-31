@@ -19,7 +19,7 @@
 package jorgan.disposition;
 
 /**
- * An regulator of {@link jorgan.disposition.Switch}s.
+ * An regulator of {@link jorgan.disposition.Switch}es.
  */
 public class Regulator extends IndexedContinuous implements Activating {
 
