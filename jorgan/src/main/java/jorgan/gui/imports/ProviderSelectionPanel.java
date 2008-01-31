@@ -21,10 +21,8 @@ package jorgan.gui.imports;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-import javax.imageio.spi.ServiceRegistry;
 import javax.swing.AbstractListModel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -34,6 +32,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.gui.imports.spi.ProviderRegistry;
 
 /**
  * A selection of an import method.
@@ -64,7 +63,7 @@ public class ProviderSelectionPanel extends JPanel {
 				});
 		scrollPane.setViewportView(list);
 
-		setImportProviders(lookupImportProviders());
+		setImportProviders(ProviderRegistry.lookup());
 	}
 
 	/**
@@ -91,24 +90,6 @@ public class ProviderSelectionPanel extends JPanel {
 		} else {
 			return providers.get(index);
 		}
-	}
-
-	/**
-	 * Utility method to get all importProviders that are registered as a
-	 * service.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<ImportProvider> lookupImportProviders() {
-		ArrayList<ImportProvider> providers = new ArrayList<ImportProvider>();
-
-		Iterator iterator = ServiceRegistry.lookupProviders(ImportProvider.class);
-
-		while (iterator.hasNext()) {
-			providers.add((ImportProvider)iterator.next());
-		}
-
-		return providers;
 	}
 
 	private class ProvidersModel extends AbstractListModel {
