@@ -18,15 +18,12 @@
  */
 package jorgan.disposition;
 
+import jorgan.util.Null;
+
 /**
  * A console.
  */
-public class Console extends Input implements Output {
-
-	/**
-	 * The output device.
-	 */
-	private String output;
+public class Console extends Element implements Input.Referenceable {
 
 	/**
 	 * The skin.
@@ -36,21 +33,17 @@ public class Console extends Input implements Output {
 	private String screen;
 
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return !Input.class.isAssignableFrom(clazz);
+		return !Input.Referenceable.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	protected boolean validReference(jorgan.disposition.Reference reference) {
 		return reference instanceof Reference;
 	}
-	
+
 	@Override
 	protected Reference createReference(Element element) {
 		return new Reference(element);
-	}
-
-	public String getOutput() {
-		return output;
 	}
 
 	public String getSkin() {
@@ -61,22 +54,20 @@ public class Console extends Input implements Output {
 		return screen;
 	}
 
-	public void setOutput(String output) {
-		this.output = output;
-
-		fireChanged(true);
-	}
-
 	public void setSkin(String skin) {
-		this.skin = skin;
-
-		fireChanged(true);
+		if (!Null.safeEquals(this.skin, skin)) {
+			this.skin = skin;
+	
+			fireChanged(true);
+		}
 	}
 
 	public void setScreen(String screen) {
-		this.screen = screen;
-
-		fireChanged(true);
+		if (!Null.safeEquals(this.screen, screen)) {
+			this.screen = screen;
+	
+			fireChanged(true);
+		}
 	}
 
 	public void setLocation(Element element, int x, int y) {
@@ -132,14 +123,14 @@ public class Console extends Input implements Output {
 		public void setY(int i) {
 			y = i;
 		}
-		
+
 		@Override
 		public Reference clone(Element element) {
-			Reference clone = (Reference)super.clone(element);
+			Reference clone = (Reference) super.clone(element);
 
 			clone.x += 32;
 			clone.y += 32;
-			
+
 			return clone;
 		}
 	}
@@ -178,5 +169,8 @@ public class Console extends Input implements Output {
 		references.add(0, reference);
 
 		fireChanged(true);
+	}
+
+	public static interface Referenceable {
 	}
 }

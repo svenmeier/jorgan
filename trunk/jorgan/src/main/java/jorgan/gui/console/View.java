@@ -206,6 +206,7 @@ public class View<E extends Element> {
 			public boolean isPressable() {
 				return false;
 			}
+
 			public String getText() {
 				return Elements.getDisplayName(getElement());
 			}
@@ -215,6 +216,7 @@ public class View<E extends Element> {
 			public boolean isPressable() {
 				return false;
 			}
+
 			public String getText() {
 				return getElement().getDescription();
 			}

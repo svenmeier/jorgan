@@ -35,7 +35,7 @@ import spin.Spin;
  * EDT, although a change in disposition or players might be triggered by a
  * change on a MIDI thread.
  * 
- * TODO remove spin dependencies - non-GUI clients dont' need Spin
+ * TODO remove spin dependencies - non-GUI clients don't need Spin
  */
 public class OrganSession {
 

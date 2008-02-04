@@ -18,23 +18,36 @@
  */
 package jorgan.disposition;
 
+import jorgan.util.Null;
+
 /**
  * An input.
  */
-public abstract class Input extends Element {
+public class Input extends Element {
 
-	private String input;
+	private String device;
 
-	public String getInput() {
-		return input;
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Referenceable.class.isAssignableFrom(clazz);
 	}
 	
-	public void setInput(String input) {
-		this.input = input;
-
-		fireChanged(true);
+	
+	public String getDevice() {
+		return device;
+	}
+	
+	public void setDevice(String device) {
+		if (!Null.safeEquals(this.device, device)) {
+			this.device = device;
+	
+			fireChanged(true);
+		}
 	}
 	
 	public static abstract class InputMessage extends Message {
+	}
+	
+	public static interface Referenceable {
 	}
 }

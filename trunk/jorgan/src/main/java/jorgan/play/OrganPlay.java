@@ -26,28 +26,14 @@ import java.util.Map;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.Activator;
-import jorgan.disposition.Captor;
-import jorgan.disposition.Console;
-import jorgan.disposition.ContinuousFilter;
-import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
-import jorgan.disposition.Initiator;
-import jorgan.disposition.Keyboard;
-import jorgan.disposition.Keyer;
-import jorgan.disposition.Memory;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Rank;
-import jorgan.disposition.Regulator;
-import jorgan.disposition.Sequence;
-import jorgan.disposition.Stop;
-import jorgan.disposition.SwitchFilter;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.MessageUtils;
+import jorgan.midi.ReceiverWrapper;
 import jorgan.play.event.PlayListener;
+import jorgan.play.spi.ProviderRegistry;
 import jorgan.session.ElementProblems;
 
 /**
@@ -94,6 +80,16 @@ public class OrganPlay {
 
 		for (Element element : organ.getElements()) {
 			createPlayer(element);
+		}
+	}
+
+	public void destroy() {
+		if (isOpen()) {
+			close();
+		}
+
+		for (Player player : players.values()) {
+			player.setOrganPlay(null);
 		}
 	}
 
@@ -208,37 +204,8 @@ public class OrganPlay {
 	}
 
 	protected void createPlayer(Element element) {
-		Player<? extends Element> player = null;
-
-		if (element instanceof Console) {
-			player = new ConsolePlayer((Console) element);
-		} else if (element instanceof Keyboard) {
-			player = new KeyboardPlayer((Keyboard) element);
-		} else if (element instanceof Keyer) {
-			player = new KeyerPlayer((Keyer) element);
-		} else if (element instanceof Stop) {
-			player = new StopPlayer((Stop) element);
-		} else if (element instanceof Coupler) {
-			player = new CouplerPlayer((Coupler) element);
-		} else if (element instanceof Rank) {
-			player = new RankPlayer((Rank) element);
-		} else if (element instanceof ContinuousFilter) {
-			player = new ContinuousFilterPlayer((ContinuousFilter) element);
-		} else if (element instanceof SwitchFilter) {
-			player = new SwitchFilterPlayer((SwitchFilter) element);
-		} else if (element instanceof Activator) {
-			player = new SwitchPlayer<Activator>((Activator) element);
-		} else if (element instanceof Regulator) {
-			player = new ContinuousPlayer<Regulator>((Regulator) element);
-		} else if (element instanceof Initiator) {
-			player = new InitiatorPlayer<Initiator>((Initiator) element);
-		} else if (element instanceof Captor) {
-			player = new SwitchPlayer<Captor>((Captor) element);
-		} else if (element instanceof Memory) {
-			player = new ContinuousPlayer<Memory>((Memory) element);
-		} else if (element instanceof Sequence) {
-			player = new ContinuousPlayer<Sequence>((Sequence) element);
-		}
+		Player<? extends Element> player = ProviderRegistry
+				.createPlayer(element);
 
 		if (player != null) {
 			player.setOrganPlay(this);
@@ -252,35 +219,9 @@ public class OrganPlay {
 		Player player = players.get(element);
 		if (player != null) {
 			players.remove(element);
+			
+			player.setOrganPlay(null);
 		}
-	}
-
-	/**
-	 * Create a receiver that forwards all received messages to the given
-	 * player.<br>
-	 * All forwarding is synchronized on this organPlay to avoid race
-	 * conditions.
-	 * 
-	 * @param player
-	 *            player to forward messages to
-	 * @return receiver
-	 * @see jorgan.play.Player#received(javax.sound.midi.ShortMessage)
-	 */
-	protected Receiver createReceiver(final Player player) {
-		return new Receiver() {
-			public void close() {
-			}
-
-			public void send(MidiMessage message, long timestamp) {
-				synchronized (RECEIVER_LOCK) {
-					if (open && MessageUtils.isShortMessage(message)) {
-						synchronized (CHANGE_LOCK) {
-							player.received((ShortMessage) message);
-						}
-					}
-				}
-			}
-		};
 	}
 
 	private class EventHandler extends OrganAdapter {
@@ -318,5 +259,28 @@ public class OrganPlay {
 
 	protected ElementProblems getProblems() {
 		return problems;
+	}
+
+	/**
+	 * A synchronized receiver, to avoid race conditions.
+	 * 
+	 * @param receiver
+	 *            the receicer to synchronize
+	 */
+	public class SynchronizedReceiver extends ReceiverWrapper {
+
+		public SynchronizedReceiver(Receiver receiver) {
+			super(receiver);
+		}
+
+		public void send(MidiMessage message, long timestamp) {
+			synchronized (RECEIVER_LOCK) {
+				if (open) {
+					synchronized (CHANGE_LOCK) {
+						super.send(message, timestamp);
+					}
+				}
+			}
+		}
 	}
 }

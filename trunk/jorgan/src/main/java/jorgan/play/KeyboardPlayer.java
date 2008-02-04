@@ -18,19 +18,13 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
-import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.DevicePool;
-import jorgan.midi.Direction;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
 
@@ -47,16 +41,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	private boolean[] pressed = new boolean[128];
 
 	/**
-	 * The midiDevice to receive input from.
-	 */
-	private MidiDevice in;
-
-	/**
-	 * The transmitter of the opened midiDevice.
-	 */
-	private Transmitter transmitter;
-
-	/**
 	 * Create player for the given keyboard.
 	 * 
 	 * @param keyboard
@@ -67,63 +51,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void openImpl() {
-		Keyboard keyboard = getElement();
-
-		removeProblem(Severity.WARNING, "input");
-
-		String input = keyboard.getInput();
-		if (input != null) {
-			try {
-				// Important: assure successfull opening of MIDI device
-				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(
-						input, Direction.IN);
-				toBeOpened.open();
-				this.in = toBeOpened;
-
-				transmitter = this.in.getTransmitter();
-				transmitter.setReceiver(getOrganPlay().createReceiver(this));
-			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "input", input, "inputUnavailable");
-			}
-		}
-	}
-
-	@Override
 	protected void closeImpl() {
-		if (in != null) {
-			if (transmitter != null) {
-				transmitter.close();
-				transmitter = null;
-			}
-
-			in.close();
-			in = null;
-		}
-
 		for (int p = 0; p < pressed.length; p++) {
 			pressed[p] = false;
 		}
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
-
-		Keyboard keyboard = getElement();
-
-		if (keyboard.getInput() == null && getWarnDevice()) {
-			removeProblem(Severity.ERROR, "input");
-			addProblem(Severity.WARNING, "input", null, "inputMissing");
-		} else if (!isOpen()) {
-			removeProblem(Severity.ERROR, "input");
-			removeProblem(Severity.WARNING, "input");
-		}
-	}
-
-	@Override
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
@@ -144,7 +79,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			}
 			release(pitch);
 		} else {
-			super.input(message, context);
+			super.onInput(message, context);
 		}
 	}
 
@@ -187,6 +122,6 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	@Override
 	public void received(ShortMessage message) {
-		input(message, context);
+		onInput(message, context);
 	}
 }

@@ -18,24 +18,23 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.Element;
+import jorgan.disposition.Filter;
 import jorgan.disposition.Rank;
-import jorgan.disposition.Reference;
+import jorgan.disposition.Output;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.channel.Channel;
-import jorgan.midi.channel.ChannelFactory;
-import jorgan.midi.channel.ChannelFactoryPool;
-import jorgan.midi.channel.ChannelFilter;
-import jorgan.midi.channel.DelayedChannel;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
+import jorgan.play.output.Channel;
+import jorgan.play.output.ChannelFilter;
+import jorgan.play.output.DelayedChannel;
 import jorgan.session.event.Severity;
 
 /**
@@ -44,8 +43,6 @@ import jorgan.session.event.Severity;
 public class RankPlayer extends Player<Rank> {
 
 	private PlayerContext context = new PlayerContext();
-
-	private ChannelFactory channelFactory;
 
 	private Channel channel;
 
@@ -57,36 +54,14 @@ public class RankPlayer extends Player<Rank> {
 
 	@Override
 	protected void openImpl() {
-		Rank rank = getElement();
-
 		removeProblem(Severity.WARNING, "channels");
 		removeProblem(Severity.ERROR, "channels");
-		removeProblem(Severity.ERROR, "output");
-
-		if (rank.getOutput() != null) {
-			try {
-				// Important: assure successfull opening of MIDI device
-				// before storing reference in instance variable
-				ChannelFactory toBeOpened = ChannelFactoryPool.instance()
-						.getPool(rank.getOutput());
-				toBeOpened.open();
-				channelFactory = toBeOpened;
-			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "output", rank.getOutput(),
-						"outputUnavailable");
-			}
-		}
 	}
 
 	@Override
 	protected void closeImpl() {
 		if (channel != null) {
 			disengaged();
-		}
-
-		if (channelFactory != null) {
-			channelFactory.close();
-			channelFactory = null;
 		}
 	}
 
@@ -98,8 +73,14 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		try {
-			channel = channelFactory.createChannel(new RankChannelFilter(rank
-					.getChannels()));
+			for (Output sound : rank.getReferenced(Output.class)) {
+				OutputPlayer<?> player = (OutputPlayer<?>) getOrganPlay().getPlayer(
+						sound);
+
+				channel = player.createChannel(new RankChannelFilter(rank
+						.getChannels()));
+				break;
+			}
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
@@ -116,11 +97,13 @@ public class RankPlayer extends Player<Rank> {
 			return;
 		}
 
-		for (Reference reference : rank.getReferences()) {
-			FilterPlayer filterPlayer = (FilterPlayer) getOrganPlay()
-					.getPlayer(reference.getElement());
+		for (Element element : rank.getReferenced(Element.class)) {
+			if (element instanceof Filter) {
+				FilterPlayer player = (FilterPlayer) getOrganPlay().getPlayer(
+						element);
 
-			channel = filterPlayer.filter(channel);
+				channel = player.filter(channel);
+			}
 		}
 
 		if (rank.getDelay() > 0) {
@@ -142,7 +125,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	public void output(ShortMessage message, Context context) {
+	public void onOutput(ShortMessage message, Context context) {
 		channel.sendMessage(message);
 	}
 
@@ -152,14 +135,7 @@ public class RankPlayer extends Player<Rank> {
 
 		Rank rank = getElement();
 
-		if (rank.getOutput() == null && getWarnDevice()) {
-			removeProblem(Severity.ERROR, "output");
-			addProblem(Severity.WARNING, "output", null, "outputMissing");
-		} else {
-			removeProblem(Severity.WARNING, "output");
-		}
-
-		if (channelFactory != null) {
+		if (isOpen()) {
 			if (channel == null && rank.isEngaged()) {
 				engaged();
 			} else if (channel != null && !rank.isEngaged()) {
@@ -169,7 +145,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void play(int pitch, int velocity) {
-		if (channelFactory != null) {
+		if (isOpen()) {
 			if (channel == null) {
 				engaged();
 			}
@@ -190,7 +166,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	public void mute(int pitch) {
-		if (channelFactory != null) {
+		if (isOpen()) {
 			if (channel == null) {
 				return;
 			}

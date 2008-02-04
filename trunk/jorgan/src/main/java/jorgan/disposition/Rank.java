@@ -20,12 +20,12 @@ package jorgan.disposition;
 
 import java.util.Set;
 
+import jorgan.disposition.Output.OutputMessage;
+
 /**
  * A rank.
  */
-public class Rank extends Element implements Engageable, Output {
-
-	private String output;
+public class Rank extends Element implements Engageable {
 
 	private String channels = "";
 
@@ -96,17 +96,8 @@ public class Rank extends Element implements Engageable, Output {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Filter.class.isAssignableFrom(clazz);
-	}
-
-	public String getOutput() {
-		return output;
-	}
-
-	public void setOutput(String output) {
-		this.output = output;
-
-		fireChanged(true);
+		return Filter.class.isAssignableFrom(clazz)
+				|| Output.class.isAssignableFrom(clazz);
 	}
 
 	public int getDelay() {

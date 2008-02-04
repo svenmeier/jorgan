@@ -11,13 +11,9 @@ import bias.util.MessageBuilder;
  */
 public class Elements {
 
-	private static Configuration config = Configuration.getRoot().get(
-			Elements.class);
+	private static Configuration config = Configuration.getRoot();
 
 	private static Map<String, String> messages = new HashMap<String, String>();
-
-	private Elements() {
-	}
 
 	/**
 	 * Get the display name of the given element.
@@ -44,7 +40,7 @@ public class Elements {
 	 * @return the display name
 	 */
 	public static String getDisplayName(Class<?> clazz) {
-		return getMessage(classWithoutPackage(clazz));
+		return getMessage(clazz, "this");
 	}
 
 	/**
@@ -56,28 +52,18 @@ public class Elements {
 	 *            property
 	 * @return the display name
 	 */
-	public static String getDisplayName(Class<?> clazz,
-			String property) {
-		return getMessage(classWithoutPackage(clazz) + "." + property);
+	public static String getDisplayName(Class<?> clazz, String property) {
+		return getMessage(clazz, property);
 	}
 
-	private static String getMessage(String key) {
-		String message = messages.get(key);
+	private static String getMessage(Class<?> clazz, String key) {
+		String completeKey = clazz.getName() + "#" + key;
+		String message = messages.get(completeKey);
 		if (message == null) {
-			message = config.get(key).read(new MessageBuilder()).build();
-			messages.put(key, message);
+			message = config.get(clazz).get(key).read(new MessageBuilder())
+					.build();
+			messages.put(completeKey, message);
 		}
 		return message;
-	}
-
-	private static String classWithoutPackage(Class clazz) {
-		String name = clazz.getName();
-
-		int index = name.lastIndexOf('.');
-		if (index != -1) {
-			name = name.substring(index + 1);
-		}
-
-		return name;
 	}
 }

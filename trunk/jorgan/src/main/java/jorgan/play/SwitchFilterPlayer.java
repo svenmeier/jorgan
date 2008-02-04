@@ -28,8 +28,8 @@ import jorgan.disposition.SwitchFilter.Disengaged;
 import jorgan.disposition.SwitchFilter.Engaged;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.channel.Channel;
 import jorgan.midi.mpl.Context;
+import jorgan.play.output.Channel;
 
 /**
  * A player for an {@link SwitchFilter}.
@@ -74,11 +74,11 @@ public class SwitchFilterPlayer extends
 	}
 
 	@Override
-	public void output(ShortMessage message, Context context) {
+	public void onOutput(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
 			((ChannelFilter) context).sendFilteredMessage(message);
 		} else {
-			super.output(message, context);
+			super.onOutput(message, context);
 		}
 	}
 

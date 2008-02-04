@@ -324,10 +324,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		statusBar.setStatus(null);
 
 		if (this.session != null) {
-			if (this.session.getPlay().isOpen()) {
-				this.session.getPlay().close();
-			}
-
+			this.session.getPlay().destroy();
+			
 			this.session.removeOrganListener(saveAction);
 		}
 

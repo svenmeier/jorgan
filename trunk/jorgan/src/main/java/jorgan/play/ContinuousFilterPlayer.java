@@ -27,8 +27,8 @@ import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.channel.Channel;
 import jorgan.midi.mpl.Context;
+import jorgan.play.output.Channel;
 
 /**
  * A player for a swell.
@@ -67,11 +67,11 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	@Override
-	public void output(ShortMessage message, Context context) {
+	public void onOutput(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
 			((ChannelFilter) context).sendFilteredMessage(message);
 		} else {
-			super.output(message, context);
+			super.onOutput(message, context);
 		}
 	}
 

@@ -73,8 +73,15 @@ public abstract class Player<E extends Element> {
 
 	public void setOrganPlay(OrganPlay organPlay) {
 		this.organPlay = organPlay;
+		if (organPlay == null) {
+			destroy();
+		}
 	}
 
+	protected void destroy() {
+		
+	}
+	
 	public OrganPlay getOrganPlay() {
 		return organPlay;
 	}
@@ -153,11 +160,11 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	public final void input(ShortMessage shortMessage, Context context) {
+	public final void onInput(ShortMessage shortMessage, Context context) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
 			if (process(shortMessage.getStatus(), shortMessage.getData1(),
 					shortMessage.getData2(), message, context)) {
-				input(message, context);
+				onInput(message, context);
 
 				organPlay.fireInputAccepted();
 			}
@@ -172,7 +179,7 @@ public abstract class Player<E extends Element> {
 	 * @param context
 	 *            the message context
 	 */
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 
 	}
 
@@ -204,7 +211,7 @@ public abstract class Player<E extends Element> {
 				return;
 			}
 
-			output(shortMessage, context);
+			onOutput(shortMessage, context);
 
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
@@ -238,12 +245,12 @@ public abstract class Player<E extends Element> {
 	 * Output a message - default implementation forwards message to referring
 	 * {@link Console}s.
 	 */
-	public void output(ShortMessage message, Context context) {
+	public void onOutput(ShortMessage message, Context context) {
 		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
 				Console.class);
 		for (Console console : consoles) {
 			Player player = getOrganPlay().getPlayer(console);
-			player.output(message, context);
+			player.onOutput(message, context);
 		}
 	}
 
@@ -267,6 +274,11 @@ public abstract class Player<E extends Element> {
 		this.warnMessages = warnMessages;
 	}
 
+	/**
+	 * Notification from an {@link InputPlayer} that a message was received.
+	 * 
+	 * @param message
+	 */
 	public void received(ShortMessage message) {
 	}
 

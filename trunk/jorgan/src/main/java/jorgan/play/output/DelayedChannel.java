@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.channel;
+package jorgan.play.output;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -24,6 +24,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
+
 
 /**
  * A delayed channel.

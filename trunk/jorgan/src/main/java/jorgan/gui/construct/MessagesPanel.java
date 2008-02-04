@@ -48,7 +48,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
-import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
@@ -440,18 +439,27 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		public void actionPerformed(ActionEvent ev) {
 			Input input = null;
 
-			if (element instanceof Input) {
-				input = (Input) element;
+			Element referencable = null;
+			if (element instanceof Input.Referenceable) {
+				referencable = (Element) element;
 			} else {
-				for (Console console : MessagesPanel.this.session.getOrgan()
-						.getReferrer(element, Console.class)) {
-					input = console;
+				for (Input.Referenceable referrer : session.getOrgan()
+						.getReferrer(element, Input.Referenceable.class)) {
+					referencable = (Element) referrer;
+					break;
+				}
+			}
+
+			if (referencable != null) {
+				for (Input referrer : session.getOrgan().getReferrer(
+						referencable, Input.class)) {
+					input = referrer;
 					break;
 				}
 			}
 
 			if (input != null) {
-				record(input.getInput());
+				record(input.getDevice());
 			}
 		}
 

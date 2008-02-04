@@ -22,7 +22,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Keyboard}.
  */
-public class KeyboardBeanInfo extends InputBeanInfo {
+public class KeyboardBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {

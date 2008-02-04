@@ -30,6 +30,6 @@ public class InputBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("input", Input.class, InDeviceEditor.class);
+		add("device", Input.class, InDeviceEditor.class);
 	}
 }

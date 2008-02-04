@@ -16,12 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.channel;
+package jorgan.gui.construct.info.spi;
+
+import java.beans.BeanInfo;
 
 /**
- * A filter of channels.
+ * A provider of {@link BeanInfo}s.
  */
-public interface ChannelFilter {
+public interface BeanInfoProvider {
 
-	public boolean accept(int channel);
+	public String getBeanInfoSearchPath();
 }

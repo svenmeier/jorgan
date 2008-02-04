@@ -31,6 +31,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.construct.editor.ElementAwareEditor;
+import jorgan.gui.construct.info.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
@@ -42,10 +43,7 @@ import swingx.docking.DockedPanel;
 /**
  * Panel shows the properties of elements.
  */
-public class ElementPropertiesPanel extends DockedPanel implements
-		SessionAware {
-
-	private static final String[] BEAN_INFO_SEARCH_PATH = new String[] { "jorgan.gui.construct.info" };
+public class ElementPropertiesPanel extends DockedPanel implements SessionAware {
 
 	/**
 	 * The handler of selection changes.
@@ -143,7 +141,8 @@ public class ElementPropertiesPanel extends DockedPanel implements
 		@Override
 		public BeanInfo getBeanInfo(Class beanClass)
 				throws IntrospectionException {
-			Introspector.setBeanInfoSearchPath(BEAN_INFO_SEARCH_PATH);
+			Introspector.setBeanInfoSearchPath(ProviderRegistry
+					.getBeanInfoSearchPath());
 
 			return super.getBeanInfo(beanClass);
 		}
