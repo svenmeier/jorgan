@@ -20,10 +20,13 @@ package jorgan.disposition;
 
 import jorgan.util.Null;
 
-public class BasicOutput extends Output {
+/**
+ * An input.
+ */
+public class MidiInput extends Input {
 
 	private String device;
-	
+
 	public String getDevice() {
 		return device;
 	}
@@ -31,7 +34,7 @@ public class BasicOutput extends Output {
 	public void setDevice(String device) {
 		if (!Null.safeEquals(this.device, device)) {
 			this.device = device;
-			
+
 			fireChanged(true);
 		}
 	}

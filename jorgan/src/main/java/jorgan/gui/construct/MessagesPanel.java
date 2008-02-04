@@ -52,6 +52,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
 import jorgan.disposition.Message;
+import jorgan.disposition.MidiInput;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
@@ -437,7 +438,7 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			Input input = null;
+			MidiInput input = null;
 
 			Element referencable = null;
 			if (element instanceof Input.Referenceable) {
@@ -451,8 +452,8 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 			}
 
 			if (referencable != null) {
-				for (Input referrer : session.getOrgan().getReferrer(
-						referencable, Input.class)) {
+				for (MidiInput referrer : session.getOrgan().getReferrer(
+						referencable, MidiInput.class)) {
 					input = referrer;
 					break;
 				}

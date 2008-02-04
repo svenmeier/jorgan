@@ -23,27 +23,27 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.BasicOutput;
+import jorgan.disposition.MidiOutput;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.session.event.Severity;
 
 /**
- * A player of a {@link jorgan.disposition.BasicOutput}.
+ * A player of a {@link jorgan.disposition.MidiOutput}.
  */
-public class BasicOutputPlayer<O extends BasicOutput> extends OutputPlayer<O> {
+public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 
 	private MidiDevice device;
 
 	private Receiver receiver;
 
-	public BasicOutputPlayer(O output) {
+	public MidiOutputPlayer(O output) {
 		super(output);
 	}
 
 	@Override
 	protected void openImpl() {
-		BasicOutput output = getElement();
+		MidiOutput output = getElement();
 
 		if (output.getDevice() != null) {
 			try {
