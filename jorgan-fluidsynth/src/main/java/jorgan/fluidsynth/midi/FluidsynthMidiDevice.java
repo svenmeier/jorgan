@@ -44,7 +44,7 @@ public class FluidsynthMidiDevice implements MidiDevice {
 
 	private Fluidsynth synth;
 
-	FluidsynthMidiDevice(Info info, Fluidsynth synth) {
+	public FluidsynthMidiDevice(Info info, Fluidsynth synth) {
 		this.info = info;
 		this.synth = synth;
 	}
@@ -126,27 +126,7 @@ public class FluidsynthMidiDevice implements MidiDevice {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				int channel = shortMessage.getChannel();
-
-				switch (shortMessage.getCommand()) {
-				case ShortMessage.NOTE_ON:
-					synth.noteOn(channel, shortMessage.getData1(), shortMessage
-							.getData2());
-					break;
-				case ShortMessage.NOTE_OFF:
-					synth.noteOff(channel, shortMessage.getData1());
-					break;
-				case ShortMessage.PROGRAM_CHANGE:
-					synth.programChange(channel, shortMessage.getData1());
-					break;
-				case ShortMessage.CONTROL_CHANGE:
-					synth.controlChange(channel, shortMessage.getData1(),
-							shortMessage.getData2());
-					break;
-				case ShortMessage.PITCH_BEND:
-					synth.pitchBend(channel, shortMessage.getData1());
-					break;
-				}
+				synth.send(shortMessage);
 			}
 		}
 	}

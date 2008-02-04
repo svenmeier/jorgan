@@ -1,1 +1,1 @@
-jorgan.fluidsynth.midi.FluidsynthMidiDeviceProvider
+jorgan.fluidsynth.midi.spi.FluidsynthMidiDeviceProvider

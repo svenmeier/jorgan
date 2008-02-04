@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.midi;
+package jorgan.fluidsynth.midi.spi;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +26,7 @@ import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
 import jorgan.fluidsynth.Fluidsynth;
+import jorgan.fluidsynth.midi.FluidsynthMidiDevice;
 
 /**
  * Java Wrapper for a Fluidsynth.
@@ -33,21 +34,6 @@ import jorgan.fluidsynth.Fluidsynth;
 public class FluidsynthMidiDeviceProvider extends MidiDeviceProvider {
 
 	private static Map<Info, FluidsynthMidiDevice> devices = new HashMap<Info, FluidsynthMidiDevice>();
-
-	static {
-		FluidsynthMidiDeviceProvider provider = new FluidsynthMidiDeviceProvider();
-		
-		// TODO remove test
-		try {
-			Fluidsynth synth1 = provider.addDevice("Fluidsynth 1").getSynth();
-			synth1.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
-
-			Fluidsynth synth2 = provider.addDevice("Fluidsynth 2").getSynth();
-			synth2.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
-		} catch (Throwable e) {
-			e.printStackTrace();
-		}
-	}
 
 	public FluidsynthMidiDevice addDevice(String name) {
 		Info info = new Info(name, "Fluidsynth", "Fluidsynth", "1.0") {
