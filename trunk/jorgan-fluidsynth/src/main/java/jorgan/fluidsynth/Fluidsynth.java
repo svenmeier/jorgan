@@ -21,6 +21,8 @@ package jorgan.fluidsynth;
 import java.io.File;
 import java.io.IOException;
 
+import javax.sound.midi.ShortMessage;
+
 import jorgan.util.ClassUtils;
 
 /**
@@ -84,6 +86,30 @@ public class Fluidsynth {
 			System.load(library);
 		} catch (Throwable t) {
 			System.loadLibrary(LIBRARY);
+		}
+	}
+
+	public void send(ShortMessage shortMessage) {
+		int channel = shortMessage.getChannel();
+
+		switch (shortMessage.getCommand()) {
+		case ShortMessage.NOTE_ON:
+			noteOn(channel, shortMessage.getData1(), shortMessage
+					.getData2());
+			break;
+		case ShortMessage.NOTE_OFF:
+			noteOff(channel, shortMessage.getData1());
+			break;
+		case ShortMessage.PROGRAM_CHANGE:
+			programChange(channel, shortMessage.getData1());
+			break;
+		case ShortMessage.CONTROL_CHANGE:
+			controlChange(channel, shortMessage.getData1(),
+					shortMessage.getData2());
+			break;
+		case ShortMessage.PITCH_BEND:
+			pitchBend(channel, shortMessage.getData1());
+			break;
 		}
 	}
 }
