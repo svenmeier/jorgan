@@ -16,22 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
 
+import jorgan.disposition.MidiOutput;
+import jorgan.gui.construct.editor.OutDeviceEditor;
 
 /**
- * An input.
+ * BeanInfo for {@link jorgan.disposition.MidiOutput}.
  */
-public abstract class Input extends Element {
+public class MidiOutputBeanInfo extends ElementBeanInfo {
 
 	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Referenceable.class.isAssignableFrom(clazz);
-	}
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public static abstract class InputMessage extends Message {
-	}
-
-	public static interface Referenceable {
+		add("device", MidiOutput.class, OutDeviceEditor.class);
 	}
 }

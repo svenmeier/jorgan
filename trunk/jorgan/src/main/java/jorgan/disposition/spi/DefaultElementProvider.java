@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Activator;
-import jorgan.disposition.BasicOutput;
+import jorgan.disposition.MidiOutput;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
@@ -67,7 +67,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Sequence.class);
 		classes.add(Incrementer.class);
 		classes.add(Memory.class);
-		classes.add(BasicOutput.class);
+		classes.add(MidiOutput.class);
 
 		elementClasses = classes;
 	}

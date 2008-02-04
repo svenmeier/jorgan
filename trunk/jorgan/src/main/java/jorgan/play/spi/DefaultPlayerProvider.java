@@ -1,23 +1,22 @@
 package jorgan.play.spi;
 
 import jorgan.disposition.Activator;
-import jorgan.disposition.BasicOutput;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Console;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
 import jorgan.disposition.Initiator;
-import jorgan.disposition.Input;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
+import jorgan.disposition.MidiInput;
+import jorgan.disposition.MidiOutput;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
 import jorgan.disposition.SwitchFilter;
-import jorgan.play.BasicOutputPlayer;
 import jorgan.play.ConsolePlayer;
 import jorgan.play.ContinuousFilterPlayer;
 import jorgan.play.ContinuousPlayer;
@@ -26,6 +25,7 @@ import jorgan.play.InitiatorPlayer;
 import jorgan.play.InputPlayer;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.KeyerPlayer;
+import jorgan.play.MidiOutputPlayer;
 import jorgan.play.Player;
 import jorgan.play.RankPlayer;
 import jorgan.play.StopPlayer;
@@ -37,8 +37,8 @@ public class DefaultPlayerProvider implements PlayerProvider {
 	public Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
 
-		if (element instanceof Input) {
-			player = new InputPlayer((Input) element);
+		if (element instanceof MidiInput) {
+			player = new InputPlayer((MidiInput) element);
 		} else if (element instanceof Console) {
 			player = new ConsolePlayer((Console) element);
 		} else if (element instanceof Keyboard) {
@@ -67,8 +67,8 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new ContinuousPlayer<Memory>((Memory) element);
 		} else if (element instanceof Sequence) {
 			player = new ContinuousPlayer<Sequence>((Sequence) element);
-		} else if (element instanceof BasicOutput) {
-			player = new BasicOutputPlayer<BasicOutput>((BasicOutput) element);
+		} else if (element instanceof MidiOutput) {
+			player = new MidiOutputPlayer<MidiOutput>((MidiOutput) element);
 		}
 
 		return player;

@@ -16,20 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.disposition;
 
-import jorgan.disposition.BasicOutput;
-import jorgan.gui.construct.editor.OutDeviceEditor;
+import jorgan.util.Null;
 
-/**
- * BeanInfo for {@link jorgan.disposition.BasicOutput}.
- */
-public class BasicOutputBeanInfo extends ElementBeanInfo {
+public class MidiOutput extends Output {
 
-	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	private String device;
+	
+	public String getDevice() {
+		return device;
+	}
 
-		add("device", BasicOutput.class, OutDeviceEditor.class);
+	public void setDevice(String device) {
+		if (!Null.safeEquals(this.device, device)) {
+			this.device = device;
+			
+			fireChanged(true);
+		}
 	}
 }

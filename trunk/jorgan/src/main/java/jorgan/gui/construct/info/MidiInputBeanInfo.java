@@ -18,18 +18,18 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Input;
+import jorgan.disposition.MidiInput;
 import jorgan.gui.construct.editor.InDeviceEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Input}.
+ * BeanInfo for {@link jorgan.disposition.MidiInput}.
  */
-public class InputBeanInfo extends ElementBeanInfo {
+public class MidiInputBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("device", Input.class, InDeviceEditor.class);
+		add("device", MidiInput.class, InDeviceEditor.class);
 	}
 }
