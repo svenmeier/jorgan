@@ -39,7 +39,10 @@ public class ProviderRegistry {
 		Iterator<ImportProvider> iterator = ServiceRegistry.lookupProviders(ImportProvider.class);
 
 		while (iterator.hasNext()) {
-			providers.add(iterator.next());
+			try {
+				providers.add(iterator.next());
+			} catch (Throwable providerFailed) {
+			}			
 		}
 
 		return providers;

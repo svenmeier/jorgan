@@ -18,7 +18,7 @@
  */
 package jorgan.play;
 
-import jorgan.midi.channel.Channel;
+import jorgan.play.output.Channel;
 
 /**
  * A player that filters messages on a channel.

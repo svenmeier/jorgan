@@ -38,7 +38,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 		Continuous continuous = getElement();
 
 		if (message instanceof Change) {
@@ -53,7 +53,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 				continuous.setValue(value);
 			}
 		} else {
-			super.input(message, context);
+			super.onInput(message, context);
 		}
 	}
 

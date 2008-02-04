@@ -35,17 +35,18 @@ import javax.xml.transform.TransformerException;
 
 import jorgan.disposition.Organ;
 import jorgan.io.disposition.BooleanArrayConverter;
+import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.ElementConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
-import jorgan.io.disposition.PackageStrippingMapper;
 import jorgan.io.disposition.ReferenceConverter;
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
@@ -53,13 +54,15 @@ import com.thoughtworks.xstream.mapper.MapperWrapper;
  */
 public class DispositionStream {
 
+	private static final String ENCODING = "UTF-8";
+
 	private static Configuration config = Configuration.getRoot().get(
 			DispositionStream.class);
 
-	private XStream xstream = new XStream(new DomDriver()) {
+	private XStream xstream = new XStream(createDriver()) {
 		@Override
 		protected MapperWrapper wrapMapper(MapperWrapper next) {
-			return new PackageStrippingMapper(next);
+			return new ClassMapper(next);
 		}
 	};
 
@@ -84,8 +87,9 @@ public class DispositionStream {
 
 	/**
 	 * 
-	 * @param file	the file to read from
-	 * @return	the read organ
+	 * @param file
+	 *            the file to read from
+	 * @return the read organ
 	 * @throws IOException
 	 * @throws Exception
 	 */
@@ -103,7 +107,7 @@ public class DispositionStream {
 		try {
 			InputStream converted = Conversion.convertAll(in);
 
-			Reader reader = new InputStreamReader(converted, "UTF-8");
+			Reader reader = new InputStreamReader(converted, ENCODING);
 
 			organ = (Organ) xstream.fromXML(reader);
 		} catch (TransformerException ex) {
@@ -134,7 +138,7 @@ public class DispositionStream {
 	public void write(Organ organ, OutputStream out) throws IOException {
 
 		try {
-			Writer writer = new OutputStreamWriter(out, "UTF-8");
+			Writer writer = new OutputStreamWriter(out, ENCODING);
 			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
 			xstream.toXML(organ, writer);
 		} finally {
@@ -202,5 +206,14 @@ public class DispositionStream {
 
 	public void setHistorySize(int historySize) {
 		this.historySize = historySize;
+	}
+
+	private DomDriver createDriver() {
+		return new DomDriver(ENCODING, createReplacer());
+	}
+
+	private XmlFriendlyReplacer createReplacer() {
+		// replaced "$" and "_"
+		return new XmlFriendlyReplacer("-", "_");
 	}
 }

@@ -20,10 +20,12 @@ package jorgan.disposition;
 
 import java.util.Set;
 
+import jorgan.disposition.Input.InputMessage;
+
 /**
  * A keyboard.
  */
-public class Keyboard extends Input {
+public class Keyboard extends Element implements Input.Referenceable {
 
 	public Keyboard() {
 		// note on, pitch, velocity

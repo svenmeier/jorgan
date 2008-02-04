@@ -39,39 +39,6 @@ public class Organ {
 
 	private Set<Element> elements = new HashSet<Element>();
 
-	private static List<Class<? extends Element>> elementClasses;
-
-	/**
-	 * Get all known element classes.
-	 * 
-	 * @return element classes
-	 */
-	public static List<Class<? extends Element>> getElementClasses() {
-		if (elementClasses == null) {
-			List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
-			classes.add(Console.class);
-			classes.add(Label.class);
-			classes.add(Keyboard.class);
-			classes.add(Coupler.class);
-			classes.add(Stop.class);
-			classes.add(Rank.class);
-			classes.add(SwitchFilter.class);
-			classes.add(ContinuousFilter.class);
-			classes.add(Keyer.class);
-			classes.add(Activator.class);
-			classes.add(Regulator.class);
-			classes.add(Combination.class);
-			classes.add(Captor.class);
-			classes.add(Sequence.class);
-			classes.add(Incrementer.class);
-			classes.add(Memory.class);
-
-			elementClasses = classes;
-		}
-
-		return new ArrayList<Class<? extends Element>>(elementClasses);
-	}
-
 	/**
 	 * Add a listener to this organ.
 	 * 

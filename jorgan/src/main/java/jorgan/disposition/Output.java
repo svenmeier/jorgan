@@ -18,15 +18,8 @@
  */
 package jorgan.disposition;
 
-/**
- * An output.
- */
-public interface Output {
+public abstract class Output extends Element {
 
-	public String getOutput();
-	
-	public void setOutput(String output);
-		
 	public static abstract class OutputMessage extends Message {
 	}
 }

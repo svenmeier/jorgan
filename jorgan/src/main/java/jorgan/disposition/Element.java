@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 
 import jorgan.disposition.event.OrganEvent;
+import jorgan.util.Null;
 
 /**
  * Abstract base class of all elements of an organ.
@@ -275,12 +276,14 @@ public abstract class Element implements Cloneable {
 	 *            name to set
 	 */
 	public void setName(String name) {
-		if (name == null) {
-			name = "";
-		}
-		this.name = name.trim();
+		if (!Null.safeEquals(this.name, name)) {
+			if (name == null) {
+				name = "";
+			}
+			this.name = name.trim();
 
-		fireChanged(true);
+			fireChanged(true);
+		}
 	}
 
 	/**

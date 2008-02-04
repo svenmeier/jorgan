@@ -16,35 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.channel;
-
-import javax.sound.midi.MidiUnavailableException;
+package jorgan.play.output;
 
 /**
- * A pool of channels.
+ * A filter of channels.
  */
-public interface ChannelFactory {
+public interface ChannelFilter {
 
-	public String getDeviceName();
-
-	/**
-	 * Open this pool of channels. <br>
-	 * Opens the MIDI device on first call.
-	 * 
-	 * @throws MidiUnavailableException
-	 *             if device is not available
-	 */
-	public void open() throws MidiUnavailableException;
-
-	/**
-	 * Create a channel.
-	 * 
-	 * @return filter filter of channels
-	 */
-	public Channel createChannel(ChannelFilter filter);
-
-	/**
-	 * Close this pool of channels.
-	 */
-	public void close();
+	public boolean accept(int channel);
 }

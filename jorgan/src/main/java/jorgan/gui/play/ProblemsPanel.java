@@ -128,7 +128,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 		private String[] columnNames = new String[getColumnCount()];
 
 		public int getColumnCount() {
-			return 3;
+			return 4;
 		}
 
 		public void setColumnNames(String[] columnNames) {
@@ -158,6 +158,9 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 				return problem.getMessage();
 			case 2:
 				return Elements.getDisplayName(problem.getElement());
+			case 3:
+				return Elements.getDisplayName(problem.getElement()
+						.getClass(), problem.getProperty());
 			}
 
 			return null;

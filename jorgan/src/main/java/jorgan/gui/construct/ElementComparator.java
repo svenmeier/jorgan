@@ -19,19 +19,14 @@
 package jorgan.gui.construct;
 
 import java.util.Comparator;
-import java.util.List;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Organ;
 
 /**
  * Comparator of elements.
  */
 public class ElementComparator implements Comparator<Element> {
-
-	private static List<Class<? extends Element>> types = Organ
-			.getElementClasses();
 
 	private boolean alphabet;
 
@@ -58,14 +53,13 @@ public class ElementComparator implements Comparator<Element> {
 
 	public static int compareByName(Element e1, Element e2) {
 
-		return Elements.getDisplayName(e1).compareTo(Elements.getDisplayName(e2));
+		return Elements.getDisplayName(e1).compareTo(
+				Elements.getDisplayName(e2));
 	}
 
 	public static int compareByType(Element e1, Element e2) {
 
-		int index1 = types.indexOf(e1.getClass());
-		int index2 = types.indexOf(e2.getClass());
-
-		return index1 - index2;
+		return Elements.getDisplayName(e1.getClass()).compareTo(
+				Elements.getDisplayName(e2.getClass()));
 	}
 }

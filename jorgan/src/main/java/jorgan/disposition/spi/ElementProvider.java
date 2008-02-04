@@ -16,22 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.channel;
+package jorgan.disposition.spi;
 
-import javax.sound.midi.ShortMessage;
+import java.util.List;
+
+import jorgan.disposition.Element;
 
 /**
- * A channel.
+ * A provider of {@link Element}s.
  */
-public interface Channel {
+public interface ElementProvider {
 
-	/**
-	 * Send a message.
-	 * 
-	 * @param message
-	 *            message
-	 */
-	public void sendMessage(ShortMessage message);
-
-	public void release();
+	public List<Class<? extends Element>> getElementClasses();
 }
