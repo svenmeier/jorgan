@@ -3,15 +3,14 @@
   <property file="./build.properties" />
 
   <target name="clean">
-    <delete dir="./build"/>
-    <delete dir="./dist"/>
+    <delete dir="./target"/>
   </target>
 
   <target name="compile">
-    <mkdir dir="./build/java" />
+    <mkdir dir="./target/classes" />
 
-  	<javac srcdir="./src" destdir="./build">
-    	<classpath path="${jorgan.core.path}/build" />
+  	<javac srcdir="./src/main/java" destdir="./target/classes">
+    	<classpath path="${jorgan.core.path}/target/classes" />
     	<classpath>
             <fileset dir="${jorgan.core.path}/lib">
 	            <include name="*" />
@@ -19,25 +18,25 @@
    		</classpath>
   	</javac>
   	
-    <copy todir="./build">
-        <fileset dir="./src">
+    <copy todir="./target/classes">
+        <fileset dir="./src/main/java">
             <include name="META-INF/**/*" />
         </fileset>
     </copy>
   	
-	<native2ascii encoding="UTF8" src="src" dest="build" includes="**/i18n*.properties" />
+	<native2ascii encoding="UTF8" src="./src/main/java" dest="./target/classes" includes="**/i18n*.properties" />
   </target>
 
   <target name="dist" depends="clean, compile">
-  	<mkdir dir="./dist/marshal/lib" />
+  	<mkdir dir="./target/marshal/lib" />
 
-  	<jar file="./dist/marshal/lib/soundfont.jar">
-      <fileset dir="./build" />
+  	<jar file="./target/marshal/lib/soundfont.jar">
+      <fileset dir="./target/classes" />
   	</jar>
 
-	<zip destfile="./dist/jOrgan-soundfont-${soundfont.version}.zip">
-      <fileset dir="./dist/marshal" />
+	<zip destfile="./target/jOrgan-soundfont-${soundfont.version}.zip">
+      <fileset dir="./target/marshal" />
 	</zip>  	
-  	<delete dir="./dist/marshal" />
+  	<delete dir="./target/marshal" />
   </target>
 </project>
