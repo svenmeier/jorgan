@@ -56,7 +56,7 @@ public class FluidsynthOutputPlayer extends
 	}
 
 	@Override
-	public void output(ShortMessage message) {
+	public void send(ShortMessage message) {
 		if (synth != null) {
 			synth.send(message);
 		}

@@ -34,7 +34,7 @@ import jorgan.play.output.ChannelFilter;
 public abstract class OutputPlayer<E extends Output> extends Player<E> {
 
 	private static final int MAX_CHANNELS = 16;
-	
+
 	/**
 	 * Created channels.
 	 */
@@ -48,7 +48,13 @@ public abstract class OutputPlayer<E extends Output> extends Player<E> {
 		}
 	}
 
-	public abstract void output(ShortMessage message);
+	/**
+	 * Send a message to this output.
+	 * 
+	 * @param message
+	 *            message sent
+	 */
+	public abstract void send(ShortMessage message);
 
 	/**
 	 * Create a channel.
@@ -112,7 +118,7 @@ public abstract class OutputPlayer<E extends Output> extends Player<E> {
 				throw new Error(ex);
 			}
 
-			output(message);
+			send(message);
 		}
 	}
 }

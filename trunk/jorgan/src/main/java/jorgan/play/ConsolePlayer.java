@@ -67,7 +67,7 @@ public class ConsolePlayer extends Player<Console> {
 				OutputPlayer<?> player = (OutputPlayer<?>)getOrganPlay().getPlayer(
 						reference.getElement());
 				if (player != null) {
-					player.output(message);
+					player.send(message);
 				}
 			}
 		}
