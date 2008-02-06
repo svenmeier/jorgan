@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Activator;
-import jorgan.disposition.MidiOutput;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
@@ -30,11 +29,12 @@ import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
 import jorgan.disposition.Incrementer;
-import jorgan.disposition.Input;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Label;
 import jorgan.disposition.Memory;
+import jorgan.disposition.MidiInput;
+import jorgan.disposition.MidiOutput;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
@@ -50,7 +50,7 @@ public class DefaultElementProvider implements ElementProvider {
 
 	static {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
-		classes.add(Input.class);
+		classes.add(MidiInput.class);
 		classes.add(Console.class);
 		classes.add(Label.class);
 		classes.add(Keyboard.class);
