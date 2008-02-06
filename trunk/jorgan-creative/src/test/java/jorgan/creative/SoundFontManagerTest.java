@@ -1,7 +1,5 @@
 package jorgan.creative;
 
-import java.io.IOException;
-
 import junit.framework.TestCase;
 
 /**
