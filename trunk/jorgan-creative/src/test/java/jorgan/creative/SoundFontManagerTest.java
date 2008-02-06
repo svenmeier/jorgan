@@ -47,12 +47,8 @@ public class SoundFontManagerTest extends TestCase {
 
 		// loop through its programs
 		for (int p = 0; p < 128; p++) {
-			try {
-				System.out.println("Program #" + p + ": "
-						+ mgr.getPresetDescriptor(dev, bank, p));
-			} catch (IOException ex) {
-				// program not used
-			}
+			System.out.println("Program #" + p + ": "
+					+ mgr.getPresetDescriptor(dev, bank, p));
 		}
 
 		// Clear bank

@@ -73,6 +73,7 @@ public class CreativeImportProvider implements ImportProvider {
 				}
 			}
 		} catch (Throwable t) {
+			t.printStackTrace();
 			logger.log(Level.FINE, "unable to locate devices", t);
 		}
 	}

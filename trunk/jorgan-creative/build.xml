@@ -6,7 +6,7 @@
     <delete dir="./target"/>
   </target>
 
-  <target name="compile.java">
+  <target name="compile">
     <mkdir dir="./target/classes" />
 
   	<javac srcdir="./src/main/java" destdir="./target/classes">
@@ -27,37 +27,31 @@
 	<native2ascii encoding="UTF8" src="./src/main/java" dest="./target/classes" includes="**/i18n*.properties" />
   </target>
 
-  <target name="compile.native" depends="compile.java">
+  <target name="native" depends="compile">
     <mkdir dir="./target/native" />
 
-    <javah verbose="true" class="jorgan.creative.SoundFontManager" outputfile="./target/native/SoundFontManager.h">
+    <javah verbose="true" class="jorgan.creative.SoundFontManager" outputfile="./target/native/jorgan.creative.SoundFontManager.h">
       <classpath path="./target/classes" />
     </javah>
 
     <exec failonerror="true" executable="${cc}">
       <arg value="-I${jdk.include}" />
-      <arg value="-I${jdk.include}\win32" />
-      <arg value="-I.\lib" />
-      <arg value="-I.\target\native" />
-      <arg value="-o" />
-      <arg value=".\target\native\SoundFontManager.o" />
-      <arg value=".\src\main\native\SoundFontManager.c" />
-    </exec>
-
-    <exec failonerror="true" executable="${ld}">
-      <arg value="-dll" />
-      <arg value="-o" />
-      <arg value=".\target\native\creative.dll" />
-      <arg value=".\target\native\SoundFontManager.o" />
+      <arg value="-I${jdk.include}/win32" />
+      <arg value="-I./lib/native" />
+      <arg value="-I./target/native" />
+      <arg value="-Wall" />
+      <arg value="-D_JNI_IMPLEMENTATION" />
+      <arg value="-Wl,--kill-at" />
+      <arg value="-shared" />
+      <arg value="./src/main/native/creativeJNI.c" />
+      <arg line="-o ./target/native/creativeJNI.dll" />
     </exec>
   </target>
 
-  <target name="compile" depends="compile.java, compile.native"/>
-
-  <target name="dist" depends="clean, compile">
+  <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
 
-  	<copy file="./target/native/creative.dll" todir="./target/marshal/lib" />
+  	<copy file="./target/native/creativeJNI.dll" todir="./target/marshal/lib" />
   	<jar file="./target/marshal/lib/creative.jar">
       <fileset dir="./target/classes" />
   	</jar>
@@ -65,6 +59,5 @@
 	<zip destfile="./target/jOrgan-creative-${creative.version}-win32.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
-  	<delete dir="./target/marshal" />
   </target>
 </project>

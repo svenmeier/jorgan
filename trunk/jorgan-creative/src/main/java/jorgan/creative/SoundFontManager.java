@@ -30,7 +30,7 @@ public class SoundFontManager {
 
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
 
-	private static final String LIBRARY = "creative";
+	private static final String LIBRARY = "creativeJNI";
 
 	/**
 	 * Load the native library "creative" from the path specified via the system
@@ -55,6 +55,7 @@ public class SoundFontManager {
 					.getCanonicalPath();
 			System.load(library);
 		} catch (Throwable t) {
+			t.printStackTrace();
 			System.loadLibrary(LIBRARY);
 		}
 	}
@@ -66,7 +67,7 @@ public class SoundFontManager {
 	 * 
 	 * @return number of devices
 	 */
-	public native int getNumDevices() throws IOException;
+	public native int getNumDevices();
 
 	/**
 	 * Get the name of a device.
@@ -75,7 +76,7 @@ public class SoundFontManager {
 	 *            the device to query
 	 * @return name of device
 	 */
-	public native String getDeviceName(int device) throws IOException;
+	public native String getDeviceName(int device);
 
 	/**
 	 * Open a device. An application calls this function when it wishes to
@@ -104,7 +105,7 @@ public class SoundFontManager {
 	 *            bank to test
 	 * @return <code>true</code> if bank is used
 	 */
-	public native boolean isBankUsed(int device, int bank) throws IOException;
+	public native boolean isBankUsed(int device, int bank);
 
 	/**
 	 * Get the description of a bank.
@@ -115,8 +116,7 @@ public class SoundFontManager {
 	 *            bank to get description for
 	 * @return description of bank
 	 */
-	public native String getBankDescriptor(int device, int bank)
-			throws IOException;
+	public native String getBankDescriptor(int device, int bank);
 
 	/**
 	 * Get the fileName of a SoundFont loaded into the given bank.
@@ -127,8 +127,7 @@ public class SoundFontManager {
 	 *            bank to get fileName for
 	 * @return pathName of SoundFont
 	 */
-	public native String getBankFileName(int device, int bank)
-			throws IOException;
+	public native String getBankFileName(int device, int bank);
 
 	/**
 	 * Load a SoundFont into the given bank.
@@ -151,7 +150,7 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to clear
 	 */
-	public native void clearBank(int device, int bank) throws IOException;
+	public native void clearBank(int device, int bank);
 
 	/**
 	 * Get the description of a preset in given program and bank.
@@ -164,6 +163,5 @@ public class SoundFontManager {
 	 *            program of preset
 	 * @return description of preset in the given bank and program
 	 */
-	public native String getPresetDescriptor(int device, int bank, int program)
-			throws IOException;
+	public native String getPresetDescriptor(int device, int bank, int program);
 }
