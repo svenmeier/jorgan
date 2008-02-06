@@ -308,9 +308,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private void close() {
 		if (canCloseOrgan()) {
-			if (session.getPlay().isOpen()) {
-				session.getPlay().close();
-			}
+			session.getPlay().destroy();
 
 			organPanel.closing();
 			
