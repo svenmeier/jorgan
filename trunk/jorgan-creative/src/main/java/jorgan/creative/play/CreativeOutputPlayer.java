@@ -32,7 +32,7 @@ import jorgan.session.event.Severity;
  */
 public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 
-	private boolean loaded;
+	private CreativeOutput clone;
 
 	public CreativeOutputPlayer(CreativeOutput output) {
 		super(output);
@@ -52,30 +52,22 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 	private void load() {
 		CreativeOutput output = getElement();
 
-		loaded = false;
+		clone = null;
 		removeProblem(Severity.ERROR, "soundfont");
 		removeProblem(Severity.ERROR, "device");
 
 		if (output.getSoundfont() != null && output.getDevice() != null) {
-			SoundFontManager manager = new SoundFontManager();
-
-			int index = -1;
-			for (int d = manager.getNumDevices() - 1; d >= 0; d--) {
-				if (manager.getDeviceName(d).equals(output.getDevice())) {
-					index = d;
-					break;
-				}
-			}
+			int index = getDeviceIndex(output.getDevice());
 
 			if (index == -1) {
 				addProblem(Severity.ERROR, "device", output.getDevice(),
 						"noCreativeDevice");
 			} else {
 				try {
-					manager.loadBank(index, output.getBank(), output
-							.getSoundfont());
+					new SoundFontManager().loadBank(index, output.getBank(),
+							output.getSoundfont());
 
-					loaded = true;
+					clone = (CreativeOutput) output.clone();
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", output
 							.getSoundfont(), "soundFontLoad");
@@ -84,11 +76,27 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		}
 	}
 
-	private void unload() {
-		CreativeOutput output = getElement();
+	private int getDeviceIndex(String device) {
+		SoundFontManager manager = new SoundFontManager();
 
-		if (loaded) {
-			new SoundFontManager().clearBank(0, output.getBank());
+		for (int d = manager.getNumDevices() - 1; d >= 0; d--) {
+			if (manager.getDeviceName(d).equals(device)) {
+				return d;
+			}
+		}
+
+		return -1;
+	}
+
+	private void unload() {
+		if (clone != null) {
+			try {
+				int index = getDeviceIndex(clone.getDevice());
+				new SoundFontManager().clearBank(index, clone.getBank());
+			} catch (IllegalArgumentException invalidDeviceOrBank) {
+			}
+
+			clone = null;
 		}
 	}
 }
