@@ -2,11 +2,12 @@ package jorgan.play.spi;
 
 import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
+import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
-import jorgan.disposition.Initiator;
+import jorgan.disposition.Incrementer;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
@@ -37,37 +38,41 @@ public class DefaultPlayerProvider implements PlayerProvider {
 	public Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
 
-		if (element instanceof MidiInput) {
+		Class clazz = element.getClass();
+
+		if (clazz == MidiInput.class) {
 			player = new InputPlayer((MidiInput) element);
-		} else if (element instanceof Console) {
+		} else if (clazz == Console.class) {
 			player = new ConsolePlayer((Console) element);
-		} else if (element instanceof Keyboard) {
+		} else if (clazz == Keyboard.class) {
 			player = new KeyboardPlayer((Keyboard) element);
-		} else if (element instanceof Keyer) {
+		} else if (clazz == Keyer.class) {
 			player = new KeyerPlayer((Keyer) element);
-		} else if (element instanceof Stop) {
+		} else if (clazz == Stop.class) {
 			player = new StopPlayer((Stop) element);
-		} else if (element instanceof Coupler) {
+		} else if (clazz == Coupler.class) {
 			player = new CouplerPlayer((Coupler) element);
-		} else if (element instanceof Rank) {
+		} else if (clazz == Rank.class) {
 			player = new RankPlayer((Rank) element);
-		} else if (element instanceof ContinuousFilter) {
+		} else if (clazz == ContinuousFilter.class) {
 			player = new ContinuousFilterPlayer((ContinuousFilter) element);
-		} else if (element instanceof SwitchFilter) {
+		} else if (clazz == SwitchFilter.class) {
 			player = new SwitchFilterPlayer((SwitchFilter) element);
-		} else if (element instanceof Activator) {
+		} else if (clazz == Activator.class) {
 			player = new SwitchPlayer<Activator>((Activator) element);
-		} else if (element instanceof Regulator) {
+		} else if (clazz == Regulator.class) {
 			player = new ContinuousPlayer<Regulator>((Regulator) element);
-		} else if (element instanceof Initiator) {
-			player = new InitiatorPlayer<Initiator>((Initiator) element);
-		} else if (element instanceof Captor) {
+		} else if (clazz == Combination.class) {
+			player = new InitiatorPlayer<Combination>((Combination) element);
+		} else if (clazz == Incrementer.class) {
+			player = new InitiatorPlayer<Incrementer>((Incrementer) element);
+		} else if (clazz == Captor.class) {
 			player = new SwitchPlayer<Captor>((Captor) element);
-		} else if (element instanceof Memory) {
+		} else if (clazz == Memory.class) {
 			player = new ContinuousPlayer<Memory>((Memory) element);
-		} else if (element instanceof Sequence) {
+		} else if (clazz == Sequence.class) {
 			player = new ContinuousPlayer<Sequence>((Sequence) element);
-		} else if (element instanceof MidiOutput) {
+		} else if (clazz == MidiOutput.class) {
 			player = new MidiOutputPlayer<MidiOutput>((MidiOutput) element);
 		}
 
