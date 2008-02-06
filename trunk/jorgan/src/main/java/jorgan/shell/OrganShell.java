@@ -137,9 +137,7 @@ public class OrganShell implements UI, SessionAware {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			if (this.session.getPlay().isOpen()) {
-				this.session.getPlay().close();
-			}
+			this.session.getPlay().destroy();
 			this.session = null;
 		}
 
@@ -378,7 +376,7 @@ public class OrganShell implements UI, SessionAware {
 			}
 
 			if (session != null) {
-				session.getPlay().close();
+				session.getPlay().destroy();
 				session = null;
 			}
 
