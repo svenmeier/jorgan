@@ -73,7 +73,7 @@ public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 	}
 
 	@Override
-	public void output(ShortMessage message) {
+	public void send(ShortMessage message) {
 		if (receiver != null) {
 			receiver.send(message, -1);
 		}
