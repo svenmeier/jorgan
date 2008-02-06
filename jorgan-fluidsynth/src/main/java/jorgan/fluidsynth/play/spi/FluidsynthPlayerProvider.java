@@ -9,7 +9,7 @@ import jorgan.play.spi.PlayerProvider;
 public class FluidsynthPlayerProvider implements PlayerProvider {
 
 	public Player<FluidsynthOutput> createPlayer(Element element) {
-		if (element instanceof FluidsynthOutput) {
+		if (element.getClass() == FluidsynthOutput.class) {
 			return new FluidsynthOutputPlayer((FluidsynthOutput) element);
 		}
 		return null;

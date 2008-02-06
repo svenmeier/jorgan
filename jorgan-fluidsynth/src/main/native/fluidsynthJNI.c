@@ -1,7 +1,7 @@
 #include <jni.h>
 #include <stdio.h>
 #include "fluidsynth.h"
-#include "fluidsynthJNI.h"
+#include "jorgan.fluidsynth.Fluidsynth.h"
 
 #define MAX_CONTEXTS 16
 
