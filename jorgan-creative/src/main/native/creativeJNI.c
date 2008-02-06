@@ -47,8 +47,9 @@
       return throwException(env, "java/lang/Error", "Couldn't access Sound Font Manager Function Table in library %s", SF_MASTER_MANAGER_FILENAME);
 	 
     LRESULT rc = pSFManager->SF_QueryInterface(ID_SFMANL101API, &pSFManager101API );
-    if (rc!=SFERR_NOERR) 
-      return throwException(env, "java/lang/Error", "Couldn't access Sound Font Manager Interface Version %#x, error %d", ID_SFMANL101API, rc);
+    if (rc != SFERR_NOERR) {
+      return throwException(env, "java/lang/Error", "rc %d", rc);
+    }
       
     // we're good
     return TRUE;
@@ -67,7 +68,10 @@
 
     // ask for it
     WORD num = 0;
-    pSFManager101API->SF_GetNumDevs(&num);
+    LRESULT rc = pSFManager101API->SF_GetNumDevs(&num);
+    if (rc != SFERR_NOERR) {
+      return throwException(env, "java/lang/Error", "rc %d", rc);
+    }
     
     // done
     return num;
@@ -90,7 +94,12 @@
     caps.m_SizeOf = sizeof(caps);
 
     // ask for the data
-    pSFManager101API->SF_GetDevCaps(device, &caps);
+    LRESULT rc = pSFManager101API->SF_GetDevCaps(device, &caps);
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
 
     // make sure the device name has a trailing 0 and convert into jstring
     caps.m_DevName[39] = 0;
@@ -114,9 +123,10 @@
     
     // open the device
     LRESULT rc = pSFManager101API->SF_Open(device);
-    if (rc!=SFERR_NOERR) {
-      throwException(env, "java/io/IOException", "Couldn't open device %d, error %d", device, rc);
-      return;
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 	  
     // done
@@ -135,9 +145,10 @@
     
     // close it
     LRESULT rc = pSFManager101API->SF_Close(device);
-    if (rc!=SFERR_NOERR) {
-      throwException(env, "java/io/IOException", "Couldn't close device %d, error %d", device, rc);
-      return;
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 	  
     // done	  
@@ -162,7 +173,14 @@
 
     WORD bank2result = bank;
 
-    pSFManager101API->SF_IsMIDIBankUsed(device, &bank2result);
+    LRESULT rc = pSFManager101API->SF_IsMIDIBankUsed(device, &bank2result);
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
 
     return bank2result==65535 ? JNI_FALSE : JNI_TRUE; 
   }
@@ -192,9 +210,12 @@
 
     // do the call
     LRESULT rc = pSFManager101API->SF_GetLoadedBankDescriptor(device, &midiLocation, &buffer);
-    if (rc!=SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "Couldn't get bank descriptor for bank %d, error %d", bank, rc);
-      return NULL;
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // grab the text from the buffer
@@ -230,9 +251,13 @@
 
     // do the call  
     LRESULT rc = pSFManager101API->SF_GetLoadedBankPathname(device, &midiLocation, &buffer);
-    if (rc!=SFERR_NOERR) 
-      throwException(env, "java/lang/Error", "Couldn't get filename of bank %d, error %d", bank, rc);
-
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
     // since we're polite we're converting backward slashes into forward slashes
     int j=strlen(file);
     int i;
@@ -285,8 +310,21 @@
     LRESULT rc = pSFManager101API->SF_LoadBank(device, &midiLocation, &buffer);
 
     // check result
-    if (rc!=SFERR_NOERR) 
-      throwException(env, "java/io/IOException", "Couldn't load file %s int bank %d, error %d", file, bank, rc);
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc == SFERR_DEVICE_BUSY) {
+      throwException(env, "java/lang/IllegalStateException", "device is busy");
+    } else if (rc == SFERR_PATHNAME_INVALID) {
+      throwException(env, "java/io/FileNotFoundException", "%s", file);
+    } else if (rec == SFERR_FORMAT_INVALID) {
+      throwException(env, "java/io/IOException", "invalid format");
+    } else if (rec == SFERR_SYSMEM_INSUFFICIENT || rec == SFERR_SOUNDMEM_INSUFFICIENT) {
+      throwException(env, "java/io/IOException", "insufficient memory");
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
 
     // release string
     (*env)->ReleaseStringUTFChars(env, jfile, file);    
@@ -314,8 +352,15 @@
     LRESULT rc = pSFManager101API->SF_ClearLoadedBank(device, &midiLocation);
 
     // check result
-    if (rc!=SFERR_NOERR) 
-      throwException(env, "java/lang/Error", "Couldn't clear bank %d, error %d", bank, rc);
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc == SFERR_DEVICE_BUSY) {
+      throwException(env, "java/lang/IllegalStateException", "device busy");
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
 
     // done
   }
@@ -346,8 +391,14 @@
 
     // do the call  
     LRESULT rc = pSFManager101API->SF_GetLoadedPresetDescriptor(device, &midiLocation, &buffer);
-    if (rc!=SFERR_NOERR) 
-      throwException(env, "java/lang/Error", "Couldn't get descriptor of bank %d program %d, error %d", bank, program, rc);
+
+    if (rc == SFERR_DEVICE_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
+    } else if (rc == SFERR_BANK_INDEX_INVALID) {
+      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
+    } else if (rc != SFERR_NOERR) {
+      throwException(env, "java/lang/Error", "rc %d", rc);
+    }
 
     // grab the text from the buffer
     jstring result = (*env)->NewStringUTF(env, desc);
