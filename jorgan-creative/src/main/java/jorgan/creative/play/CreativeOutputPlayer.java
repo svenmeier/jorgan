@@ -1,3 +1,21 @@
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package jorgan.creative.play;
 
 import java.io.IOException;
@@ -35,25 +53,33 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		CreativeOutput output = getElement();
 
 		loaded = false;
-		removeProblem(Severity.ERROR, "name");
+		removeProblem(Severity.ERROR, "soundfont");
+		removeProblem(Severity.ERROR, "device");
 
 		if (output.getSoundfont() != null && output.getDevice() != null) {
-			try {
-				SoundFontManager manager = new SoundFontManager();
-				
-				int max = manager.getNumDevices();
-				for (int d = 0; d < max; d++) {
-					if (manager.getDeviceName(d).equals(output.getDevice())) {
-						new SoundFontManager().loadBank(d, output.getBank(), output
-								.getSoundfont());
-						break;
-					}
-				}
+			SoundFontManager manager = new SoundFontManager();
 
-				loaded = true;
-			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "soundfont", output.getSoundfont(),
-						"soundFontLoad");
+			int index = -1;
+			for (int d = manager.getNumDevices() - 1; d >= 0; d--) {
+				if (manager.getDeviceName(d).equals(output.getDevice())) {
+					index = d;
+					break;
+				}
+			}
+
+			if (index == -1) {
+				addProblem(Severity.ERROR, "device", output.getDevice(),
+						"noCreativeDevice");
+			} else {
+				try {
+					manager.loadBank(index, output.getBank(), output
+							.getSoundfont());
+
+					loaded = true;
+				} catch (IOException ex) {
+					addProblem(Severity.ERROR, "soundfont", output
+							.getSoundfont(), "soundFontLoad");
+				}
 			}
 		}
 	}
@@ -62,10 +88,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		CreativeOutput output = getElement();
 
 		if (loaded) {
-			try {
-				new SoundFontManager().clearBank(0, output.getBank());
-			} catch (IOException ex) {
-			}
+			new SoundFontManager().clearBank(0, output.getBank());
 		}
 	}
 }

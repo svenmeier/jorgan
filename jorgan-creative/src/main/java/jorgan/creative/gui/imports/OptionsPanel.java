@@ -119,6 +119,11 @@ public class OptionsPanel extends JPanel {
 			return null;
 		}
 
-		return device.banks.get(table.getSelectedRow());
+		int index = table.getSelectedRow();
+		if (index == -1) {
+			return null;
+		}
+
+		return device.banks.get(index);
 	}
 }
