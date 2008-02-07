@@ -53,8 +53,9 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		CreativeOutput output = getElement();
 
 		clone = null;
-		removeProblem(Severity.ERROR, "soundfont");
 		removeProblem(Severity.ERROR, "device");
+		removeProblem(Severity.ERROR, "bank");
+		removeProblem(Severity.ERROR, "soundfont");
 
 		if (output.getSoundfont() != null && output.getDevice() != null) {
 			int index = getDeviceIndex(output.getDevice());
@@ -63,6 +64,11 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 				addProblem(Severity.ERROR, "device", output.getDevice(),
 						"noCreativeDevice");
 			} else {
+				try {
+					new SoundFontManager().clearBank(index, output.getBank());
+				} catch (Exception exception) {
+				}
+				
 				try {
 					new SoundFontManager().loadBank(index, output.getBank(),
 							output.getSoundfont());
@@ -96,7 +102,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 			try {
 				int index = getDeviceIndex(clone.getDevice());
 				new SoundFontManager().clearBank(index, clone.getBank());
-			} catch (IllegalArgumentException invalidDeviceOrBank) {
+			} catch (Exception ex) {
 			}
 
 			clone = null;

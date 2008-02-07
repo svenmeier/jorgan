@@ -150,7 +150,7 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to clear
 	 */
-	public native void clearBank(int device, int bank);
+	public native void clearBank(int device, int bank) throws IOException ;
 
 	/**
 	 * Get the description of a preset in given program and bank.
