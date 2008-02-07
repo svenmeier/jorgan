@@ -315,12 +315,10 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc == SFERR_DEVICE_BUSY) {
-      throwException(env, "java/lang/IllegalStateException", "device is busy");
-    } else if (rc == SFERR_PATHNAME_INVALID) {
+      throwException(env, "java/io/IOException", "device busy");
+    } else if (rc == SFERR_PATHNAME_INVALID || rc == SFERR_FORMAT_INVALID) {
       throwException(env, "java/io/FileNotFoundException", "%s", file);
-    } else if (rec == SFERR_FORMAT_INVALID) {
-      throwException(env, "java/io/IOException", "invalid format");
-    } else if (rec == SFERR_SYSMEM_INSUFFICIENT || rec == SFERR_SOUNDMEM_INSUFFICIENT) {
+    } else if (rc == SFERR_SYSMEM_INSUFFICIENT || rc == SFERR_SOUNDMEM_INSUFFICIENT) {
       throwException(env, "java/io/IOException", "insufficient memory");
     } else if (rc != SFERR_NOERR) {
       throwException(env, "java/lang/Error", "rc %d", rc);
@@ -357,7 +355,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc == SFERR_DEVICE_BUSY) {
-      throwException(env, "java/lang/IllegalStateException", "device busy");
+      throwException(env, "java/io/IOException", "device busy");
     } else if (rc != SFERR_NOERR) {
       throwException(env, "java/lang/Error", "rc %d", rc);
     }
