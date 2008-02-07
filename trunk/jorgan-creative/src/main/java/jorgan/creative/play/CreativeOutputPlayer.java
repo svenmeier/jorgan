@@ -66,10 +66,10 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 					clone = (CreativeOutput) output.clone();
 				} catch (IllegalArgumentException ex) {
 					addProblem(Severity.ERROR, "bank", output
-							.getSoundfont(), ex.getMessage());
+							.getSoundfont(), "invalidBank");
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", output
-							.getSoundfont(), ex.getMessage());
+							.getSoundfont(), "soundfontLoad");
 				}
 			}
 		}

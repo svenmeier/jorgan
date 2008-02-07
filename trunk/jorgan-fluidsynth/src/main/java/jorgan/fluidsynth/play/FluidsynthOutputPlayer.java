@@ -27,13 +27,16 @@ public class FluidsynthOutputPlayer extends
 	protected void setUp() {
 		FluidsynthOutput output = getElement();
 
-		if (output.getSoundfont() != null) {
+		if (output.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
+			"noSoundfont");
+		} else {
 			try {
 				synth = new Fluidsynth();
 				synth.soundFontLoad(output.getSoundfont());
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "name", output.getName(),
-						"soundfontUnkown");
+				addProblem(Severity.ERROR, "soundfont", output.getSoundfont(),
+						"soundfontLoad");
 			}
 		}
 	}
@@ -44,6 +47,9 @@ public class FluidsynthOutputPlayer extends
 			synth.dispose();
 			synth = null;
 		}
+		
+		removeProblem(Severity.ERROR, "soundfont");
+		removeProblem(Severity.WARNING, "soundfont");
 	}
 	
 	@Override
