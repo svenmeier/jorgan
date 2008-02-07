@@ -138,6 +138,9 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
+	/**
+	 * TODO build messages according to reporting subclass 
+	 */
 	protected void addProblem(Severity severity, String property, Object value,
 			String key) {
 
