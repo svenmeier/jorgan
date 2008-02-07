@@ -9,7 +9,6 @@ import jorgan.gui.preferences.category.DispositionStreamCategory;
 import jorgan.gui.preferences.category.GuiCategory;
 import jorgan.gui.preferences.category.MidiMergerCategory;
 import jorgan.gui.preferences.category.ShellCategory;
-import jorgan.gui.preferences.category.PlayerCategory;
 import jorgan.gui.preferences.category.ConsoleCategory;
 import bias.swing.Category;
 
@@ -26,7 +25,6 @@ public class CoreCategoryProvider {
 		categories.add(new ConsoleCategory());
 		categories.add(new DispositionStreamCategory());
 		categories.add(new ShellCategory());
-		categories.add(new PlayerCategory());
 		categories.add(new MidiCategory());
 		categories.add(new MidiMergerCategory());
 
