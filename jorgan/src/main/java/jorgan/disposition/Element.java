@@ -345,12 +345,14 @@ public abstract class Element implements Cloneable {
 	/**
 	 * TODO move into {@link Console.Reference} ?
 	 * 
-	 * @param string
+	 * @param style
 	 */
-	public void setStyle(String string) {
-		style = string;
+	public void setStyle(String style) {
+		if (!Null.safeEquals(this.style, style)) {
+			this.style = style;
 
-		fireChanged(true);
+			fireChanged(true);
+		}
 	}
 
 	/**
