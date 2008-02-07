@@ -24,6 +24,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.MidiOutput;
+import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.session.event.Severity;
@@ -42,9 +43,23 @@ public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 	}
 
 	@Override
+	public void elementChanged(OrganEvent event) {
+		MidiOutput output = getElement();
+
+		if (output.getDevice() == null) {
+			addProblem(Severity.WARNING, "device", output.getDevice(),
+					"noDevice");
+		} else {
+			removeProblem(Severity.WARNING, "device");
+		}
+	}
+
+	@Override
 	protected void openImpl() {
 		MidiOutput output = getElement();
 
+		removeProblem(Severity.ERROR, "device");
+		
 		if (output.getDevice() != null) {
 			try {
 				// Important: assure successfull opening of MIDI device

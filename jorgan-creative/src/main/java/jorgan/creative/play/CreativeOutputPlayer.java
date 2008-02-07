@@ -43,11 +43,11 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		CreativeOutput output = getElement();
 
 		clone = null;
+			
 		removeProblem(Severity.ERROR, "device");
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
-
-		if (output.getSoundfont() != null && output.getDevice() != null) {
+		if (output.getDevice() != null && output.getSoundfont() != null) {
 			int index = getDeviceIndex(output.getDevice());
 
 			if (index == -1) {
@@ -58,15 +58,15 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 					new SoundFontManager().clearBank(index, output.getBank());
 				} catch (Exception exception) {
 				}
-				
+
 				try {
 					new SoundFontManager().loadBank(index, output.getBank(),
 							output.getSoundfont());
 
 					clone = (CreativeOutput) output.clone();
 				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "bank", output
-							.getSoundfont(), "invalidBank");
+					addProblem(Severity.ERROR, "bank", output.getSoundfont(),
+							"invalidBank");
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", output
 							.getSoundfont(), "soundfontLoad");
@@ -94,6 +94,21 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		if (event != null) {
 			tearDown();
 			setUp();
+		}
+
+		CreativeOutput output = getElement();	
+		if (output.getDevice() == null) {
+			addProblem(Severity.WARNING, "device", output.getDevice(),
+					"noDevice");
+		} else {
+			removeProblem(Severity.WARNING, "device");
+		}
+		
+		if (output.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
+					"noSoundfont");
+		} else {
+			removeProblem(Severity.WARNING, "soundfont");
 		}
 	}
 

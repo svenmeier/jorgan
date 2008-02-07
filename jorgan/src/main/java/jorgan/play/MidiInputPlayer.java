@@ -28,6 +28,7 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Input;
 import jorgan.disposition.MidiInput;
 import jorgan.disposition.Reference;
+import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
@@ -36,7 +37,7 @@ import jorgan.session.event.Severity;
 /**
  * A player of an {@link MidiInput}.
  */
-public class InputPlayer extends Player<MidiInput> {
+public class MidiInputPlayer extends Player<MidiInput> {
 
 	/**
 	 * The midiDevice to receive input from.
@@ -48,8 +49,20 @@ public class InputPlayer extends Player<MidiInput> {
 	 */
 	private Transmitter transmitter;
 
-	public InputPlayer(MidiInput input) {
+	public MidiInputPlayer(MidiInput input) {
 		super(input);
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		MidiInput input = getElement();
+
+		if (input.getDevice() == null) {
+			addProblem(Severity.WARNING, "device", input.getDevice(),
+					"noDevice");
+		} else {
+			removeProblem(Severity.WARNING, "device");
+		}
 	}
 
 	@Override
