@@ -74,11 +74,17 @@ public abstract class Player<E extends Element> {
 	public void setOrganPlay(OrganPlay organPlay) {
 		this.organPlay = organPlay;
 		if (organPlay == null) {
-			destroy();
+			tearDown();
+		} else {
+			setUp();
 		}
 	}
 
-	protected void destroy() {
+	protected void setUp() {
+		
+	}
+
+	protected void tearDown() {
 		
 	}
 	

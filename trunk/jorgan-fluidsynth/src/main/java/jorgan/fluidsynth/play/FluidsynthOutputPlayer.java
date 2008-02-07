@@ -24,17 +24,7 @@ public class FluidsynthOutputPlayer extends
 	}
 
 	@Override
-	protected void destroy() {
-		unload();
-	}
-
-	@Override
-	public void elementChanged(OrganEvent event) {
-		unload();
-		load();
-	}
-
-	private void load() {
+	protected void setUp() {
 		FluidsynthOutput output = getElement();
 
 		if (output.getSoundfont() != null) {
@@ -48,10 +38,20 @@ public class FluidsynthOutputPlayer extends
 		}
 	}
 
-	private void unload() {
+	@Override
+	protected void tearDown() {
 		if (synth != null) {
 			synth.dispose();
 			synth = null;
+		}
+	}
+	
+	@Override
+	public void elementChanged(OrganEvent event) {
+		// only 'real' changes (identifiable by non-null event)
+		if (event != null) {
+			tearDown();
+			setUp();
 		}
 	}
 
