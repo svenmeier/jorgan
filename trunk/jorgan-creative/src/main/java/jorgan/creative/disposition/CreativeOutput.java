@@ -26,8 +26,10 @@ public class CreativeOutput extends MidiOutput {
 	}
 
 	public void setBank(int bank) {
-		this.bank = bank;
+		if (bank != this.bank) {
+			this.bank = bank;
 
-		fireChanged(true);
+			fireChanged(true);
+		}
 	}
 }
