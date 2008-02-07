@@ -58,36 +58,31 @@ public abstract class Player<E extends Element> {
 	 */
 	private boolean open;
 
-	private boolean warnDevice;
-
-	private boolean warnMessages;
-
 	/**
 	 * Create a player for the given element.
 	 */
 	protected Player(E element) {
-		config.read(this);
-
 		this.element = element;
 	}
 
 	public void setOrganPlay(OrganPlay organPlay) {
-		this.organPlay = organPlay;
 		if (organPlay == null) {
 			tearDown();
+			this.organPlay = organPlay;
 		} else {
+			this.organPlay = organPlay;
 			setUp();
 		}
 	}
 
 	protected void setUp() {
-		
+
 	}
 
 	protected void tearDown() {
-		
+
 	}
-	
+
 	public OrganPlay getOrganPlay() {
 		return organPlay;
 	}
@@ -159,11 +154,6 @@ public abstract class Player<E extends Element> {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		if (!element.hasMessages() && warnMessages) {
-			addProblem(Severity.WARNING, "messages", null, "messagesMissing");
-		} else {
-			removeProblem(Severity.WARNING, "messages");
-		}
 	}
 
 	public final void onInput(ShortMessage shortMessage, Context context) {
@@ -264,24 +254,8 @@ public abstract class Player<E extends Element> {
 		return element;
 	}
 
-	public boolean getWarnDevice() {
-		return warnDevice;
-	}
-
-	public void setWarnDevice(boolean warnDevice) {
-		this.warnDevice = warnDevice;
-	}
-
-	public boolean getWarnMessages() {
-		return warnMessages;
-	}
-
-	public void setWarnMessages(boolean warnMessages) {
-		this.warnMessages = warnMessages;
-	}
-
 	/**
-	 * Notification from an {@link InputPlayer} that a message was received.
+	 * Notification from an {@link MidiInputPlayer} that a message was received.
 	 * 
 	 * @param message
 	 */

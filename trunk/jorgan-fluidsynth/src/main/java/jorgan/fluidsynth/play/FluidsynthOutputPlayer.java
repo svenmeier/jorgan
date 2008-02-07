@@ -14,8 +14,7 @@ import jorgan.session.event.Severity;
 /**
  * A player for a {@link Output} element with a {@link FluidsynthOutput}.
  */
-public class FluidsynthOutputPlayer extends
-		OutputPlayer<FluidsynthOutput> {
+public class FluidsynthOutputPlayer extends OutputPlayer<FluidsynthOutput> {
 
 	private Fluidsynth synth;
 
@@ -27,10 +26,8 @@ public class FluidsynthOutputPlayer extends
 	protected void setUp() {
 		FluidsynthOutput output = getElement();
 
-		if (output.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
-			"noSoundfont");
-		} else {
+		removeProblem(Severity.ERROR, "soundfont");
+		if (output.getSoundfont() != null) {
 			try {
 				synth = new Fluidsynth();
 				synth.soundFontLoad(output.getSoundfont());
@@ -47,17 +44,22 @@ public class FluidsynthOutputPlayer extends
 			synth.dispose();
 			synth = null;
 		}
-		
-		removeProblem(Severity.ERROR, "soundfont");
-		removeProblem(Severity.WARNING, "soundfont");
 	}
-	
+
 	@Override
 	public void elementChanged(OrganEvent event) {
 		// only 'real' changes (identifiable by non-null event)
 		if (event != null) {
 			tearDown();
 			setUp();
+		}
+
+		FluidsynthOutput output = getElement();
+		if (output.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
+					"noSoundfont");
+		} else {
+			removeProblem(Severity.WARNING, "soundfont");
 		}
 	}
 

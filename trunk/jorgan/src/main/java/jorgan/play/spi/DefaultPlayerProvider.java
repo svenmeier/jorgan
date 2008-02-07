@@ -23,7 +23,7 @@ import jorgan.play.ContinuousFilterPlayer;
 import jorgan.play.ContinuousPlayer;
 import jorgan.play.CouplerPlayer;
 import jorgan.play.InitiatorPlayer;
-import jorgan.play.InputPlayer;
+import jorgan.play.MidiInputPlayer;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.KeyerPlayer;
 import jorgan.play.MidiOutputPlayer;
@@ -41,7 +41,7 @@ public class DefaultPlayerProvider implements PlayerProvider {
 		Class clazz = element.getClass();
 
 		if (clazz == MidiInput.class) {
-			player = new InputPlayer((MidiInput) element);
+			player = new MidiInputPlayer((MidiInput) element);
 		} else if (clazz == Console.class) {
 			player = new ConsolePlayer((Console) element);
 		} else if (clazz == Keyboard.class) {
