@@ -39,17 +39,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 	}
 
 	@Override
-	protected void destroy() {
-		unload();
-	}
-
-	@Override
-	public void elementChanged(OrganEvent event) {
-		unload();
-		load();
-	}
-
-	private void load() {
+	protected void setUp() {
 		CreativeOutput output = getElement();
 
 		clone = null;
@@ -85,6 +75,28 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		}
 	}
 
+	@Override
+	protected void tearDown() {
+		if (clone != null) {
+			try {
+				int index = getDeviceIndex(clone.getDevice());
+				new SoundFontManager().clearBank(index, clone.getBank());
+			} catch (Exception ex) {
+			}
+
+			clone = null;
+		}
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		// only 'real' changes (identifiable by non-null event)
+		if (event != null) {
+			tearDown();
+			setUp();
+		}
+	}
+
 	private int getDeviceIndex(String device) {
 		SoundFontManager manager = new SoundFontManager();
 
@@ -95,17 +107,5 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		}
 
 		return -1;
-	}
-
-	private void unload() {
-		if (clone != null) {
-			try {
-				int index = getDeviceIndex(clone.getDevice());
-				new SoundFontManager().clearBank(index, clone.getBank());
-			} catch (Exception ex) {
-			}
-
-			clone = null;
-		}
 	}
 }
