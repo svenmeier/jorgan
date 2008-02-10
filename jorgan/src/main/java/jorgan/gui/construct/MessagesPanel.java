@@ -129,7 +129,6 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		config.get("sortByType").read(sortByTypeButton);
 		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				commitEdit();
 				updateMessages();
 			}
 		});
@@ -231,30 +230,43 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		updateMessages();
 	}
 
+	private boolean updating = false;
+	
 	private void updateMessages() {
-		element = null;
-		messages.clear();
-		tableModel.update();
-		table.setVisible(false);
+	    if (updating) {
+	      return;
+	    }
+	    
+	    try {
+	        updating = true;
+	        commitEdit();
 
-		if (session != null
-				&& session.getElementSelection().getSelectionCount() == 1) {
+	        element = null;
+	        messages.clear();
+	        tableModel.update();
+	        table.setVisible(false);
 
-			element = session.getElementSelection().getSelectedElement();
+	        if (session != null
+	                && session.getElementSelection().getSelectionCount() == 1) {
 
-			for (Message message : element.getMessages()) {
-				messages.add(message);
-			}
+	            element = session.getElementSelection().getSelectedElement();
 
-			if (sortByTypeButton.isSelected()) {
-				Collections.sort(messages, new MessageComparator());
-			}
+	            for (Message message : element.getMessages()) {
+	                messages.add(message);
+	            }
 
-			tableModel.update();
-			table.setVisible(true);
-		}
+	            if (sortByTypeButton.isSelected()) {
+	                Collections.sort(messages, new MessageComparator());
+	            }
 
-		addAction.update();
+	            tableModel.update();
+	            table.setVisible(true);
+	        }
+
+	        addAction.update();
+	    }finally {
+	      updating = false;
+	    }
 	}
 
 	/**
