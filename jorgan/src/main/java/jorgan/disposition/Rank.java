@@ -27,7 +27,7 @@ import jorgan.disposition.Output.OutputMessage;
  */
 public class Rank extends Element implements Engageable {
 
-	private String channels = "";
+	private String channel = "";
 
 	private int delay = 0;
 
@@ -113,16 +113,16 @@ public class Rank extends Element implements Engageable {
 		fireChanged(true);
 	}
 
-	public String getChannels() {
-		return channels;
+	public String getChannel() {
+		return channel;
 	}
 
-	public void setChannels(String channels) {
-		if (channels == null) {
-			throw new IllegalArgumentException("channels must not be null");
+	public void setChannel(String channel) {
+		if (channel == null) {
+			throw new IllegalArgumentException("channel must not be null");
 		}
 
-		this.channels = channels;
+		this.channel = channel;
 
 		fireChanged(true);
 	}

@@ -31,7 +31,7 @@ public class RankBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("channels", Rank.class, StringEditor.class);
+		add("channel", Rank.class, StringEditor.class);
 		add("delay", Rank.class, DelayEditor.class);
 	}
 }

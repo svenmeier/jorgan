@@ -54,8 +54,8 @@ public class RankPlayer extends Player<Rank> {
 
 	@Override
 	protected void openImpl() {
-		removeProblem(Severity.WARNING, "channels");
-		removeProblem(Severity.ERROR, "channels");
+		removeProblem(Severity.WARNING, "channel");
+		removeProblem(Severity.ERROR, "channel");
 	}
 
 	@Override
@@ -78,22 +78,22 @@ public class RankPlayer extends Player<Rank> {
 						sound);
 
 				channel = player.createChannel(new RankChannelFilter(rank
-						.getChannels()));
+						.getChannel()));
 				break;
 			}
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.ERROR, "channels", rank.getChannels(),
-					"channelsIllegal");
+			addProblem(Severity.ERROR, "channel", rank.getChannel(),
+					"channelIllegal");
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.WARNING, "channels", rank.getChannels(),
-					"channelsUnvailable");
+			addProblem(Severity.WARNING, "channel", rank.getChannel(),
+					"channelUnvailable");
 			return;
 		}
 
