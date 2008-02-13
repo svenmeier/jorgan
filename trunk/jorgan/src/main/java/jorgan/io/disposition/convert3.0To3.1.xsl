@@ -28,7 +28,8 @@
 
 	<xsl:template match="rank">
 		<rank>
-			<xsl:apply-templates select="@*|channels|delay|description|messages|name|style|zoom"/>
+			<xsl:apply-templates select="@*|delay|description|messages|name|style|zoom"/>
+			<channel><xsl:value-of select="channels"/></channel>
 			<references>
 				<xsl:apply-templates select="references/*"/>
 				<xsl:if test="output">
