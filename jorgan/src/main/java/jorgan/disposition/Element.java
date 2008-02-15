@@ -65,7 +65,7 @@ public abstract class Element implements Cloneable {
 	 * TODO protected for {@link Console#toFront(Element)} and
 	 * {@link Console#toBack(Element)} only
 	 */
-	protected List<Reference> references = new ArrayList<Reference>();
+	protected List<Reference<? extends Element>> references = new ArrayList<Reference<? extends Element>>();
 
 	private List<Message> messages = new ArrayList<Message>();
 
@@ -104,10 +104,10 @@ public abstract class Element implements Cloneable {
 		return false;
 	}
 
-	protected boolean validReference(Reference reference) {
+	protected boolean validReference(Reference<? extends Element> reference) {
 		return true;
 	}
-	
+
 	public Organ getOrgan() {
 		return organ;
 	}
@@ -117,7 +117,8 @@ public abstract class Element implements Cloneable {
 
 		if (this.organ != null) {
 			// work on copy of references to avoid concurrent modification
-			for (Reference reference : new ArrayList<Reference>(references)) {
+			for (Reference<? extends Element> reference : new ArrayList<Reference<? extends Element>>(
+					references)) {
 				if (reference.getElement().getOrgan() != organ) {
 					references.remove(reference);
 				}
@@ -125,7 +126,7 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	public List<Reference> getReferences() {
+	public List<Reference<? extends Element>> getReferences() {
 		return Collections.unmodifiableList(references);
 	}
 
@@ -136,7 +137,7 @@ public abstract class Element implements Cloneable {
 		addReference(createReference(element));
 	}
 
-	public void addReference(Reference reference) {
+	public void addReference(Reference<? extends Element> reference) {
 		if (references.contains(reference)) {
 			throw new IllegalArgumentException("duplicate reference '"
 					+ reference + "'");
@@ -209,7 +210,7 @@ public abstract class Element implements Cloneable {
 
 	public int getReferencedIndex(Element element) {
 		for (int r = 0; r < references.size(); r++) {
-			Reference reference = references.get(r);
+			Reference<? extends Element> reference = references.get(r);
 
 			if (reference.getElement() == element) {
 				return r;
@@ -233,14 +234,15 @@ public abstract class Element implements Cloneable {
 	public final void unreference(Element element) {
 
 		// work on copy of references to avoid concurrent modification
-		for (Reference reference : new ArrayList<Reference>(references)) {
+		for (Reference<? extends Element> reference : new ArrayList<Reference<? extends Element>>(
+				references)) {
 			if (reference.getElement() == element) {
 				removeReference(reference);
 			}
 		}
 	}
 
-	public void removeReference(Reference reference) {
+	public void removeReference(Reference<? extends Element> reference) {
 		if (!references.contains(reference)) {
 			throw new IllegalArgumentException("element not referenced");
 		}
@@ -252,7 +254,7 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	public Reference getReference(int index) {
+	public Reference<? extends Element> getReference(int index) {
 		return references.get(index);
 	}
 
@@ -316,7 +318,8 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	protected void fireChanged(Reference reference, boolean dispositionChange) {
+	protected void fireChanged(Reference<? extends Element> reference,
+			boolean dispositionChange) {
 		if (organ != null) {
 			organ.fireChanged(new OrganEvent(organ, this, reference,
 					dispositionChange));
@@ -363,8 +366,8 @@ public abstract class Element implements Cloneable {
 		try {
 			Element clone = (Element) super.clone();
 
-			clone.references = new ArrayList<Reference>();
-			for (Reference reference : references) {
+			clone.references = new ArrayList<Reference<? extends Element>>();
+			for (Reference<? extends Element> reference : references) {
 				clone.references.add(reference.clone());
 			}
 			clone.messages = new ArrayList<Message>();
@@ -467,7 +470,7 @@ public abstract class Element implements Cloneable {
 		fireChanged(message, true);
 	}
 
-	public boolean hasReference(Reference reference) {
+	public boolean hasReference(Reference<? extends Element> reference) {
 		return references.contains(reference);
 	}
 }

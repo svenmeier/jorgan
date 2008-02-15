@@ -42,7 +42,7 @@ public class ClassUtils {
 	 * @param clazz
 	 * @return
 	 */
-	public static File getDirectory(Class clazz) {
+	public static File getDirectory(Class<?> clazz) {
 		try {
 			URL url = getClassURL(clazz);
 
@@ -80,11 +80,11 @@ public class ClassUtils {
 	 *            class to get URL for
 	 * @return the URL this class was loaded from
 	 */
-	private static URL getClassURL(Class clazz) {
+	private static URL getClassURL(Class<?> clazz) {
 		return clazz.getResource(getClassResourceName(clazz));
 	}
 
-	private static String getClassResourceName(Class clazz) {
+	private static String getClassResourceName(Class<?> clazz) {
 		return ("/" + clazz.getName().replace('.', '/') + ".class");
 	}
 }

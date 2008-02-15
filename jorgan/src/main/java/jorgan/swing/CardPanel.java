@@ -28,6 +28,7 @@ import java.awt.Rectangle;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JPanel;
 
@@ -176,9 +177,9 @@ public class CardPanel extends JPanel {
 		 * @see LayoutManager
 		 */
 		public void removeLayoutComponent(Component comp) {
-			Iterator entries = cards.entrySet().iterator();
+			Iterator<Entry<Object, Component>> entries = cards.entrySet().iterator();
 			while (entries.hasNext()) {
-				Map.Entry entry = (Map.Entry) entries.next();
+				Entry<Object, Component> entry = entries.next();
 				if (entry.getValue() == comp) {
 					cards.remove(entry.getKey());
 					break;

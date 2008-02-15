@@ -227,10 +227,10 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 
 				list.clearSelection();
 
-				java.util.List selectedElements = session.getElementSelection()
+				List<Element> selectedElements = session.getElementSelection()
 						.getSelectedElements();
 				for (int e = 0; e < selectedElements.size(); e++) {
-					Element element = (Element) selectedElements.get(e);
+					Element element = selectedElements.get(e);
 
 					int index = elements.indexOf(element);
 					if (index != -1) {

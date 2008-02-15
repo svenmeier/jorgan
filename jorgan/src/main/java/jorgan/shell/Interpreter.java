@@ -52,7 +52,7 @@ public class Interpreter {
 	/**
 	 * The commands to interpret.
 	 */
-	private List commands;
+	private List<Command> commands;
 
 	/**
 	 * The unknown command.
@@ -87,7 +87,7 @@ public class Interpreter {
 	 * @param unknown
 	 *            the command to use in case of an unknown command
 	 */
-	public Interpreter(List commands, Command unknown) {
+	public Interpreter(List<Command> commands, Command unknown) {
 
 		this.commands = commands;
 		this.unknown = unknown;
@@ -222,8 +222,7 @@ public class Interpreter {
 	 * @return the command
 	 */
 	public Command getCommand(String name) {
-		for (int c = 0; c < commands.size(); c++) {
-			Command command = (Command) commands.get(c);
+		for (Command command : commands) {
 			if (name.equals(command.getName())) {
 				return command;
 			}
@@ -248,6 +247,6 @@ public class Interpreter {
 	 * @return the command
 	 */
 	public Command getCommand(int index) {
-		return (Command) commands.get(index);
+		return commands.get(index);
 	}
 }

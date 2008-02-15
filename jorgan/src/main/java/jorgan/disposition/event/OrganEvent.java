@@ -37,7 +37,7 @@ public class OrganEvent extends EventObject {
 
 	private Element element;
 
-	private Reference reference;
+	private Reference<? extends Element> reference;
 
 	private Message message;
 
@@ -46,7 +46,7 @@ public class OrganEvent extends EventObject {
 		this(organ, element, null, null, dispositionChange);
 	}
 
-	public OrganEvent(Organ organ, Element element, Reference reference, 
+	public OrganEvent(Organ organ, Element element, Reference<? extends Element> reference, 
 			boolean dispositionChange) {
 		this(organ, element, reference, null, dispositionChange);
 	}
@@ -56,7 +56,7 @@ public class OrganEvent extends EventObject {
 		this(organ, element, null, message, dispositionChange);
 	}
 
-	private OrganEvent(Organ organ, Element element, Reference reference, Message message,
+	private OrganEvent(Organ organ, Element element, Reference<? extends Element> reference, Message message,
 			boolean dispositionChange) {
 		super(organ);
 
@@ -74,7 +74,7 @@ public class OrganEvent extends EventObject {
 		return element;
 	}
 
-	public Reference getReference() {
+	public Reference<? extends Element> getReference() {
 		return reference;
 	}
 

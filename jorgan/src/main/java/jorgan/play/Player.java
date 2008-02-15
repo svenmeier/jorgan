@@ -248,7 +248,7 @@ public abstract class Player<E extends Element> {
 		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
 				Console.class);
 		for (Console console : consoles) {
-			Player player = getOrganPlay().getPlayer(console);
+			Player<? extends Element> player = getOrganPlay().getPlayer(console);
 			player.onOutput(message, context);
 		}
 	}

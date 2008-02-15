@@ -70,7 +70,7 @@ public class DelayedChannel implements Channel {
 		channel = null;
 	}
 
-	private abstract class DelayedInvocation implements Comparable {
+	private abstract class DelayedInvocation implements Comparable<DelayedInvocation> {
 
 		private long when;
 
@@ -80,8 +80,7 @@ public class DelayedChannel implements Channel {
 			invoker.delay(this);
 		}
 
-		public int compareTo(Object object) {
-			DelayedInvocation invocation = (DelayedInvocation) object;
+		public int compareTo(DelayedInvocation invocation) {
 
 			if (this.when < invocation.when) {
 				return -1;

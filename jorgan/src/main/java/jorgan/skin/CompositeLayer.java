@@ -34,7 +34,7 @@ public class CompositeLayer extends Layer {
 
     private List<Layer> layers = new ArrayList<Layer>();
 
-    public List getLayers() {
+    public List<Layer> getLayers() {
         return layers;
     }
 

@@ -43,17 +43,18 @@ public class Reference<E extends Element> implements Cloneable {
 	/**
 	 * All references are cloneable.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
-	public Reference clone() {
+	public Reference<E> clone() {
 		try {
-			return (Reference) super.clone();
+			return (Reference<E>) super.clone();
 		} catch (CloneNotSupportedException ex) {
 			throw new Error(ex);
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Reference clone(Element element) {
+	public Reference<E> clone(Element element) {
 		Reference<E> clone = clone();
 		
 		clone.element = (E)element;

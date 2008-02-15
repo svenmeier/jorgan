@@ -128,7 +128,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	/**
 	 * The element to view mapping.
 	 */
-	private Map<Element, View> viewsByElement = new HashMap<Element, View>();
+	private Map<Element, View<? extends Element>> viewsByElement = new HashMap<Element, View<? extends Element>>();
 
 	/**
 	 * Currently constructing.
@@ -380,7 +380,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	 */
 	public void scrollElementToVisible(Element element) {
 		if (element != null) {
-			View view = getView(element);
+			View<? extends Element> view = getView(element);
 			if (view != null) {
 				int x1 = viewToScreen(view.getX(), false);
 				int y1 = viewToScreen(view.getY(), false);
@@ -453,7 +453,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 			consoleView.setConsolePanel(null);
 			consoleView = null;
 
-			for (View view : viewsByElement.values()) {
+			for (View<? extends Element> view : viewsByElement.values()) {
 				view.setConsolePanel(null);
 			}
 			viewsByElement.clear();
@@ -469,7 +469,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 			consoleView = new ConsoleView(console);
 			consoleView.setConsolePanel(this);
 
-			for (Reference reference : console.getReferences()) {
+			for (Reference<? extends Element> reference : console.getReferences()) {
 				createView(reference.getElement());
 			}
 		}
@@ -483,12 +483,12 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		}
 	}
 
-	protected View getView(Element element) {
+	protected View<? extends Element> getView(Element element) {
 		return viewsByElement.get(element);
 	}
 
 	private void createView(Element element) {
-		View view = null;
+		View<? extends Element> view = null;
 
 		if (element instanceof Switch) {
 			view = new SwitchView((Switch) element);
@@ -512,7 +512,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	}
 
 	protected void dropView(Element element) {
-		View view = getView(element);
+		View<? extends Element> view = getView(element);
 
 		viewsByElement.remove(element);
 		view.setConsolePanel(null);
@@ -553,7 +553,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	 */
 	protected Element getElement(int x, int y) {
 		for (Element element : selectedElements) {
-			View view = getView(element);
+			View<? extends Element> view = getView(element);
 			if (view != null && view.contains(x, y)) {
 				return element;
 			}
@@ -562,7 +562,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		// iterate over elements from front to back
 		for (int r = console.getReferenceCount() - 1; r >= 0; r--) {
 			Element element = console.getReference(r).getElement();
-			View view = getView(element);
+			View<? extends Element> view = getView(element);
 			if (view.contains(x, y)) {
 				return element;
 			}
@@ -579,7 +579,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	 *            y position
 	 * @return view
 	 */
-	protected View getView(int x, int y) {
+	protected View<? extends Element> getView(int x, int y) {
 		Element element = getElement(x, y);
 		if (element == null) {
 			return null;
@@ -600,8 +600,8 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		int x = 0;
 		int y = 0;
 
-		for (Reference reference : console.getReferences()) {
-			View view = getView(reference.getElement());
+		for (Reference<? extends Element> reference : console.getReferences()) {
+			View<? extends Element> view = getView(reference.getElement());
 
 			x = Math.max(x, view.getX() + view.getWidth());
 			y = Math.max(y, view.getY() + view.getHeight());
@@ -616,7 +616,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	 * @param view
 	 *            view to repaint
 	 */
-	public void repaintView(View view) {
+	public void repaintView(View<? extends Element> view) {
 		int x1 = viewToScreen(view.getX(), false);
 		int y1 = viewToScreen(view.getY(), false);
 		int x2 = viewToScreen(view.getX() + view.getWidth(), true);
@@ -668,8 +668,8 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 
 		consoleView.paint(g);
 
-		for (Reference reference : console.getReferences()) {
-			View view = getView(reference.getElement());
+		for (Reference<? extends Element> reference : console.getReferences()) {
+			View<? extends Element> view = getView(reference.getElement());
 
 			int x = view.getX();
 			int y = view.getY();
@@ -700,24 +700,24 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 					initSkin();
 
 					consoleView.changeUpdate(event);
-					for (Reference reference : console.getReferences()) {
-						View view = getView(reference.getElement());
+					for (Reference<? extends Element> reference : console.getReferences()) {
+						View<? extends Element> view = getView(reference.getElement());
 						view.changeUpdate(event);
 					}
 
 					repaint();
 					revalidate();
 				} else {
-					View view = getView(element);
+					View<? extends Element> view = getView(element);
 					if (view != null) {
 						view.changeUpdate(event);
 					}
 				}
 			} else {
 				if (element == console) {
-					Reference reference = event.getReference();
+					Reference<? extends Element> reference = event.getReference();
 					if (reference != null) {
-						View view = getView(reference.getElement());
+						View<? extends Element> view = getView(reference.getElement());
 						if (view != null) {
 							view.changeUpdate(event);
 						}
@@ -729,7 +729,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		@Override
 		public void added(OrganEvent event) {
 			if (!event.self() && event.getElement() == console) {
-				Reference reference = event.getReference();
+				Reference<? extends Element> reference = event.getReference();
 				if (reference != null) {
 					createView(reference.getElement());
 				}
@@ -739,7 +739,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		@Override
 		public void removed(OrganEvent event) {
 			if (!event.self() && event.getElement() == console) {
-				Reference reference = event.getReference();
+				Reference<? extends Element> reference = event.getReference();
 				if (reference != null) {
 					dropView(reference.getElement());
 				}
@@ -857,9 +857,9 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 				int y2 = screenToView(Math.max(mouseFrom.y, mouseTo.y));
 
 				List<Element> elements = new ArrayList<Element>();
-				for (Reference reference : console.getReferences()) {
+				for (Reference<? extends Element> reference : console.getReferences()) {
 					Element element = reference.getElement();
-					View view = getView(element);
+					View<? extends Element> view = getView(element);
 
 					if (view.getX() > x1
 							&& (view.getX() + view.getWidth()) < x2
@@ -870,7 +870,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 				}
 				session.getElementSelection().setSelectedElements(elements);
 			} else {
-				View view = getView(pressedElement);
+				View<? extends Element> view = getView(pressedElement);
 
 				int deltaX = 0;
 				int deltaY = 0;
@@ -980,7 +980,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 
 			for (Element selectedElement : selectedElements) {
 
-				View view = getView(selectedElement);
+				View<? extends Element> view = getView(selectedElement);
 				if (view != null) {
 					int x1 = viewToScreen(view.getX(), false);
 					int y1 = viewToScreen(view.getY(), false);
@@ -1015,14 +1015,14 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 	 */
 	private class PlayMouseInputListener extends MouseInputAdapter {
 
-		View view;
+		View<? extends Element> view;
 
 		@Override
 		public void mousePressed(MouseEvent e) {
 			int x = screenToView(e.getX());
 			int y = screenToView(e.getY());
 
-			View view = getView(x, y);
+			View<? extends Element> view = getView(x, y);
 			if (view != null && view.isPressable(x, y)) {
 				this.view = view;
 				this.view.mousePressed(x, y);
@@ -1034,7 +1034,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			View view = getView(screenToView(e.getX()), screenToView(e.getY()));
+			View<? extends Element> view = getView(screenToView(e.getX()), screenToView(e.getY()));
 
 			Cursor cursor = Cursor.getDefaultCursor();
 			String tooltip = null;
@@ -1105,7 +1105,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 				Object[] elements = (Object[]) ObjectTransferable
 						.getObject(dtde.getTransferable());
 
-				ArrayList<View> views = new ArrayList<View>();
+				ArrayList<View<? extends Element>> views = new ArrayList<View<? extends Element>>();
 				for (int e = 0; e < elements.length; e++) {
 					Element element = (Element) elements[e];
 
@@ -1113,7 +1113,7 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 						console.reference(element);
 					}
 
-					View view = getView(element);
+					View<? extends Element> view = getView(element);
 					if (view != null) {
 						views.add(view);
 					}
@@ -1185,8 +1185,8 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 					.getWindowAncestor(ConsolePanel.this)) {
 
 				boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
-				for (Reference reference : console.getReferences()) {
-					View view = getView(reference.getElement());
+				for (Reference<? extends Element> reference : console.getReferences()) {
+					View<? extends Element> view = getView(reference.getElement());
 
 					if (pressed) {
 						view.keyPressed(e);
@@ -1251,15 +1251,15 @@ public class ConsolePanel extends JComponent implements Scrollable, SessionAware
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			ArrayList<View> views = new ArrayList<View>();
+			ArrayList<View<? extends Element>> views = new ArrayList<View<? extends Element>>();
 			for (int s = 0; s < selectedElements.size(); s++) {
-				View view = getView(selectedElements.get(s));
+				View<? extends Element> view = getView(selectedElements.get(s));
 				if (view != null) {
 					views.add(view);
 				}
 			}
 
-			View pressed = getView(pressedElement);
+			View<? extends Element> pressed = getView(pressedElement);
 			layout.layout(pressed, views);
 		}
 	}

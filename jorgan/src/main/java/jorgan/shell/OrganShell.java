@@ -330,7 +330,7 @@ public class OrganShell implements UI, SessionAware {
 		}
 
 		public void execute(String param) {
-			List recents = new DispositionStream().getRecentFiles();
+			List<File> recents = new DispositionStream().getRecentFiles();
 			if (recents.size() == 0) {
 				writeMessage("recentNone");
 				return;
@@ -340,7 +340,7 @@ public class OrganShell implements UI, SessionAware {
 				writeMessage("recentHeader");
 
 				for (int r = 0; r < recents.size(); r++) {
-					File recent = (File) recents.get(r);
+					File recent = recents.get(r);
 					writeMessage("recentElement", new Object[] {
 							new Integer(r + 1), recent });
 				}
@@ -348,7 +348,7 @@ public class OrganShell implements UI, SessionAware {
 				File file;
 				try {
 					int index = Integer.parseInt(param) - 1;
-					file = (File) recents.get(index);
+					file = recents.get(index);
 				} catch (RuntimeException ex) {
 					Integer from = new Integer(1);
 					Integer to = new Integer(recents.size());

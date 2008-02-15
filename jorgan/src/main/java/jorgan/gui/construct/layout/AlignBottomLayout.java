@@ -20,6 +20,7 @@ package jorgan.gui.construct.layout;
 
 import java.util.List;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 public class AlignBottomLayout extends ViewLayout {
@@ -27,12 +28,12 @@ public class AlignBottomLayout extends ViewLayout {
     private int y;
 
     @Override
-	protected void init(View pressed, List<View> views) {
+	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
         y = pressed.getY() + pressed.getHeight();
     }
 
     @Override
-	protected void visit(View view, int index) {
+	protected void visit(View<? extends Element> view, int index) {
         changePosition(view, view.getX(), y - view.getHeight());
     }
 }

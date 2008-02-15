@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.swing.Icon;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 import bias.Configuration;
 
@@ -74,23 +75,23 @@ public abstract class ViewLayout {
 	 * @param views
 	 *            the selected views to layout
 	 */
-	public void layout(View pressed, List<View> views) {
+	public void layout(View<? extends Element> pressed, List<View<? extends Element>> views) {
 		init(pressed, views);
 
 		for (int s = 0; s < views.size(); s++) {
-			View view = views.get(s);
+			View<? extends Element> view = views.get(s);
 			visit(view, s);
 		}
 	}
 
-	protected void changePosition(View view, int x, int y) {
+	protected void changePosition(View<? extends Element> view, int x, int y) {
 		view.getConsolePanel().getConsole()
 				.setLocation(view.getElement(), x, y);
 	}
 
-	protected void init(View pressed, List<View> views) {
+	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
 	}
 
-	protected void visit(View view, int index) {
+	protected void visit(View<? extends Element> view, int index) {
 	}
 }

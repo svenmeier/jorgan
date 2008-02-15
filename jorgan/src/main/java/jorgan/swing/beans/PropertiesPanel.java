@@ -75,7 +75,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private String property;
 
-	private Class beanClass;
+	private Class<?> beanClass;
 
 	private BeanInfo beanInfo;
 
@@ -163,7 +163,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 * 
 	 * @return the beans
 	 */
-	public List getBeans() {
+	public List<?> getBeans() {
 		return Collections.unmodifiableList(beans);
 	}
 
@@ -211,7 +211,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 * 
 	 * @return the bean class
 	 */
-	public Class getBeanClass() {
+	public Class<?> getBeanClass() {
 		return beanClass;
 	}
 
@@ -255,7 +255,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 *            list of beans to get common superclass for
 	 * @return common superclass
 	 */
-	public static Class getCommonClass(List<Object> beans) {
+	public static Class<?> getCommonClass(List<Object> beans) {
 		Class<?> commonClass = null;
 		for (int b = 0; b < beans.size(); b++) {
 			Object bean = beans.get(b);

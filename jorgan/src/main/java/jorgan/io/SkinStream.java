@@ -83,6 +83,7 @@ public class SkinStream {
 
 	private class FontConverter implements Converter {
 
+		@SuppressWarnings("unchecked")
 		public boolean canConvert(Class clazz) {
 			return clazz.equals(Font.class);
 		}
@@ -125,6 +126,7 @@ public class SkinStream {
 
 	private class ColorConverter implements Converter {
 
+		@SuppressWarnings("unchecked")
 		public boolean canConvert(Class clazz) {
 			return clazz.equals(Color.class);
 		}

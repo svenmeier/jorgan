@@ -454,7 +454,7 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 
 			Element referencable = null;
 			if (element instanceof Input.Referenceable) {
-				referencable = (Element) element;
+				referencable = element;
 			} else {
 				for (Input.Referenceable referrer : session.getOrgan()
 						.getReferrer(element, Input.Referenceable.class)) {

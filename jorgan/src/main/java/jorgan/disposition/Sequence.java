@@ -57,7 +57,7 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 		} else {
 			int index = getIndex();
 
-			Reference reference = getReference(index);
+			Reference<? extends Element> reference = getReference(index);
 			return ((Combination) reference.getElement());
 		}
 	}

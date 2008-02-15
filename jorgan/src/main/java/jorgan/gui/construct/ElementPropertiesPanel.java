@@ -139,7 +139,7 @@ public class ElementPropertiesPanel extends DockedPanel implements SessionAware 
 	private class ElementCustomizer extends DefaultBeanCustomizer {
 
 		@Override
-		public BeanInfo getBeanInfo(Class beanClass)
+		public BeanInfo getBeanInfo(Class<?> beanClass)
 				throws IntrospectionException {
 			Introspector.setBeanInfoSearchPath(ProviderRegistry
 					.getBeanInfoSearchPath());

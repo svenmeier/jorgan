@@ -107,10 +107,8 @@ public class ElementsSelectionPanel extends JPanel {
 	 * @param elements
 	 *            elements to be selected
 	 */
-	public void setSelectedElements(List elements) {
-		for (int e = 0; e < elements.size(); e++) {
-			Element element = (Element) elements.get(e);
-
+	public void setSelectedElements(List<Element> elements) {
+		for (Element element : elements) {
 			int index = elements.indexOf(element);
 			if (index != -1) {
 				elementsList.addSelectionInterval(index, index);

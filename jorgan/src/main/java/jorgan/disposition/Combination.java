@@ -28,7 +28,7 @@ public class Combination extends Initiator {
 	}
 
 	@Override
-	protected boolean validReference(jorgan.disposition.Reference reference) {
+	protected boolean validReference(jorgan.disposition.Reference<? extends Element> reference) {
 		return reference instanceof Reference;
 	}	
 	

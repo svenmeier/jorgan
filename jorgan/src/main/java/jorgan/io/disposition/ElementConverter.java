@@ -48,6 +48,7 @@ public class ElementConverter implements Converter {
 				Object.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
 		return Element.class.isAssignableFrom(clazz);
 	}

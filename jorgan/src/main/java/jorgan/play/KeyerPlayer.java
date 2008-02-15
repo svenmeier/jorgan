@@ -52,9 +52,9 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
                     for (int e = 0; e < keyer.getReferenceCount(); e++) {
                         Element element = keyer.getReference(e).getElement();
 
-                        Player player = getOrganPlay().getPlayer(element);
+                        Player<? extends Element> player = getOrganPlay().getPlayer(element);
                         if (player != null) {
-                            ((KeyablePlayer) player).keyDown(keyer.getPitch(),
+                            ((KeyablePlayer<?>) player).keyDown(keyer.getPitch(),
                                     keyer.getVelocity());
                         }
                     }
@@ -65,9 +65,9 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
                     for (int e = 0; e < keyer.getReferenceCount(); e++) {
                         Element element = keyer.getReference(e).getElement();
 
-                        Player player = getOrganPlay().getPlayer(element);
+                        Player<? extends Element> player = getOrganPlay().getPlayer(element);
                         if (player != null) {
-                            ((KeyablePlayer) player).keyUp(keyer.getPitch());
+                            ((KeyablePlayer<?>) player).keyUp(keyer.getPitch());
                         }
                     }
                     keying = false;

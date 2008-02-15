@@ -54,6 +54,7 @@ public class OrganConverter implements Converter {
 				Object.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
 		return Organ.class.isAssignableFrom(clazz);
 	}
