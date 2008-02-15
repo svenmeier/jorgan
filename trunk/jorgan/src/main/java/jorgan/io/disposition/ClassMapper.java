@@ -33,6 +33,7 @@ public class ClassMapper extends MapperWrapper {
 		super(wrapped);
 	}
 
+	@SuppressWarnings("unchecked")
 	public String serializedClass(Class type) {
 		String name = type.getName();
 
@@ -66,6 +67,7 @@ public class ClassMapper extends MapperWrapper {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Class realClass(String name) {
 		try {
 			StringBuffer buffer = new StringBuffer("jorgan.");

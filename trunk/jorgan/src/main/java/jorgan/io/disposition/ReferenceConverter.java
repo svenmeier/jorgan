@@ -53,6 +53,7 @@ public class ReferenceConverter implements Converter {
 				Object.class);
 	}
 
+	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
 		return Reference.class.isAssignableFrom(clazz);
 	}
@@ -62,7 +63,7 @@ public class ReferenceConverter implements Converter {
 	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-		Reference reference = (Reference) value;
+		Reference<? extends Element> reference = (Reference<? extends Element>) value;
 
 		marshalElement(reference, writer, context);
 
@@ -79,7 +80,7 @@ public class ReferenceConverter implements Converter {
 	 * @param context
 	 *            the context
 	 */
-	protected void marshalElement(Reference reference,
+	protected void marshalElement(Reference<? extends Element> reference,
 			HierarchicalStreamWriter writer, MarshallingContext context) {
 		writer.addAttribute("id", ElementConverter.Marshal
 				.get(context).getId(reference.getElement()));
@@ -91,7 +92,7 @@ public class ReferenceConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		Reference reference = (Reference) nested.unmarshal(reader, context);
+		Reference<? extends Element> reference = (Reference<? extends Element>) nested.unmarshal(reader, context);
 
 		context.addCompletionCallback(new UnmarshalElement(reference, reader
 				.getAttribute("id"), context), 0);
@@ -104,13 +105,13 @@ public class ReferenceConverter implements Converter {
 	 */
 	protected static class UnmarshalElement implements Runnable {
 
-		private Reference reference;
+		private Reference<? extends Element> reference;
 
 		private String id;
 
 		private UnmarshallingContext context;
 
-		private UnmarshalElement(Reference reference, String id,
+		private UnmarshalElement(Reference<? extends Element> reference, String id,
 				UnmarshallingContext context) {
 			this.reference = reference;
 			this.id = id;

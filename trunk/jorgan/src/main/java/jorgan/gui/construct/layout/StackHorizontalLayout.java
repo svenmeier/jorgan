@@ -20,6 +20,7 @@ package jorgan.gui.construct.layout;
 
 import java.util.List;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 public class StackHorizontalLayout extends ViewLayout {
@@ -35,14 +36,14 @@ public class StackHorizontalLayout extends ViewLayout {
 	}
 
 	@Override
-	protected void init(View pressed, List<View> views) {
+	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
 
 		x = pressed.getX() - (x % grid);
 		y = pressed.getY() - (y % grid);
 	}
 
 	@Override
-	protected void visit(View view, int index) {
+	protected void visit(View<? extends Element> view, int index) {
 		changePosition(view, x, y);
 
 		int width = view.getWidth();

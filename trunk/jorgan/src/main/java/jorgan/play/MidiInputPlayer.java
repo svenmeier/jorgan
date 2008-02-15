@@ -25,6 +25,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Input;
 import jorgan.disposition.MidiInput;
 import jorgan.disposition.Reference;
@@ -111,7 +112,7 @@ public class MidiInputPlayer extends Player<MidiInput> {
 				Input input = getElement();
 
 				for (int r = 0; r < input.getReferenceCount(); r++) {
-					Reference reference = input.getReference(r);
+					Reference<? extends Element> reference = input.getReference(r);
 
 					Player<?> player = getOrganPlay().getPlayer(
 							reference.getElement());

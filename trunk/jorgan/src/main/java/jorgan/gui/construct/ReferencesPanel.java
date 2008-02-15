@@ -346,7 +346,7 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 		protected List<ReferrerReference> getReferences() {
 			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
-			for (Reference reference : element.getReferences()) {
+			for (Reference<? extends Element> reference : element.getReferences()) {
 				references.add(new ReferrerReference(element, reference));
 			}
 
@@ -447,9 +447,9 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 		private Element referrer;
 
-		private Reference reference;
+		private Reference<? extends Element> reference;
 
-		public ReferrerReference(Element referrer, Reference reference) {
+		public ReferrerReference(Element referrer, Reference<? extends Element> reference) {
 			this.referrer = referrer;
 			this.reference = reference;
 		}
@@ -458,7 +458,7 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 			return referrer;
 		}
 
-		public Reference getReference() {
+		public Reference<? extends Element> getReference() {
 			return reference;
 		}
 	}

@@ -28,6 +28,7 @@ public class BooleanArrayConverter implements Converter {
 
 	private boolean[] tmp = new boolean[0];
 
+	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
 		return tmp.getClass() == clazz;
 	}

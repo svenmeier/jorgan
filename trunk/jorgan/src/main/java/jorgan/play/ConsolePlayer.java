@@ -42,7 +42,7 @@ public class ConsolePlayer extends Player<Console> {
 		Console console = getElement();
 
 		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Reference reference = console.getReference(r);
+			Reference<? extends Element> reference = console.getReference(r);
 			Element element = reference.getElement();
 
 			if (!(element instanceof Output)) {
@@ -60,7 +60,7 @@ public class ConsolePlayer extends Player<Console> {
 		Console console = getElement();
 
 		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Reference reference = console.getReference(r);
+			Reference<? extends Element> reference = console.getReference(r);
 			Element element = reference.getElement();
 
 			if (element instanceof Output) {

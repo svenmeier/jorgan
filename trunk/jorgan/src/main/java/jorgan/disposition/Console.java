@@ -37,7 +37,7 @@ public class Console extends Element implements Input.Referenceable {
 	}
 
 	@Override
-	protected boolean validReference(jorgan.disposition.Reference reference) {
+	protected boolean validReference(jorgan.disposition.Reference<? extends Element> reference) {
 		return reference instanceof Reference;
 	}
 
@@ -142,7 +142,7 @@ public class Console extends Element implements Input.Referenceable {
 	 *            element to move to front
 	 */
 	public void toFront(Element element) {
-		jorgan.disposition.Reference reference = getReference(element);
+		Reference reference = (Reference)getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
@@ -160,7 +160,7 @@ public class Console extends Element implements Input.Referenceable {
 	 *            element to move to back
 	 */
 	public void toBack(Element element) {
-		jorgan.disposition.Reference reference = getReference(element);
+		Reference reference = (Reference)getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}

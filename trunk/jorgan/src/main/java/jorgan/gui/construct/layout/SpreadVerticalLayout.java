@@ -22,6 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 public class SpreadVerticalLayout extends ViewLayout {
@@ -33,25 +34,25 @@ public class SpreadVerticalLayout extends ViewLayout {
     private int count;
 
     @Override
-	protected void init(View pressed, List<View> views) {
+	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
 
-        Collections.sort(views, new Comparator<View>() {
-            public int compare(View view1, View view2) {
+        Collections.sort(views, new Comparator<View<? extends Element>>() {
+            public int compare(View<? extends Element> view1, View<? extends Element> view2) {
                 
                 return view1.getY() - view2.getY();
             }
         });
         count = views.size();
 
-        View top = views.get(0);
-        View bottom = views.get(views.size() - 1);
+        View<? extends Element> top = views.get(0);
+        View<? extends Element> bottom = views.get(views.size() - 1);
 
         y = top.getY() + top.getHeight() / 2;
         height = bottom.getY() + bottom.getHeight() / 2 - y;
     }
 
     @Override
-	protected void visit(View view, int index) {
+	protected void visit(View<? extends Element> view, int index) {
         changePosition(view, view.getX(), y + (height * index / (count - 1))
                 - view.getHeight() / 2);
     }

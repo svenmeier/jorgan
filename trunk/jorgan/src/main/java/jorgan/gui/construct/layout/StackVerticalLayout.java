@@ -18,6 +18,7 @@
  */
 package jorgan.gui.construct.layout;
 
+import jorgan.disposition.Element;
 import jorgan.gui.console.View;
 
 public class StackVerticalLayout extends ViewLayout {
@@ -36,7 +37,7 @@ public class StackVerticalLayout extends ViewLayout {
 	}
 
 	@Override
-	protected void visit(View view, int index) {
+	protected void visit(View<? extends Element> view, int index) {
 		changePosition(view, x, y);
 
 		int height = view.getHeight();

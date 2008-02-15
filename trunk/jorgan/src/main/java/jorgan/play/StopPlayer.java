@@ -18,6 +18,7 @@
  */
 package jorgan.play;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Stop;
 
@@ -39,7 +40,7 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 			velocity = stop.getVelocity();
 		}
 
-		for (Reference reference : stop.getReferences()) {
+		for (Reference<? extends Element> reference : stop.getReferences()) {
 			RankPlayer rankPlayer = (RankPlayer) getOrganPlay().getPlayer(
 					reference.getElement());
 
@@ -51,7 +52,7 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 	protected void deactivateKey(int pitch) {
 		Stop stop = getElement();
 
-		for (Reference reference : stop.getReferences()) {
+		for (Reference<? extends Element> reference : stop.getReferences()) {
 			RankPlayer rankPlayer = (RankPlayer) getOrganPlay().getPlayer(
 					reference.getElement());
 

@@ -38,7 +38,7 @@ public class DefaultPlayerProvider implements PlayerProvider {
 	public Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
 
-		Class clazz = element.getClass();
+		Class<? extends Element> clazz = element.getClass();
 
 		if (clazz == MidiInput.class) {
 			player = new MidiInputPlayer((MidiInput) element);

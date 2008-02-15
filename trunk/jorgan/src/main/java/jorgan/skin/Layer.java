@@ -60,7 +60,7 @@ public abstract class Layer implements Cloneable {
 		this.view = view;
 	}
 
-	public View getView() {
+	public View<? extends Element> getView() {
 		return view;
 	}
 

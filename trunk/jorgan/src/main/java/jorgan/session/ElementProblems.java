@@ -124,7 +124,7 @@ public class ElementProblems {
 		return false;
 	}
 
-	public List getProblems(Element element) {
+	public List<Problem> getProblems(Element element) {
 		List<Problem> filter = new ArrayList<Problem>();
 
 		for (Problem problem : problems) {

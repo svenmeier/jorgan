@@ -38,7 +38,7 @@ public interface BeanCustomizer {
 	 * @return the bean info for the given class
 	 * @throws IntrospectionException
 	 */
-	public BeanInfo getBeanInfo(Class beanClass) throws IntrospectionException;
+	public BeanInfo getBeanInfo(Class<?> beanClass) throws IntrospectionException;
 
 	/**
 	 * Get an editor for a property.

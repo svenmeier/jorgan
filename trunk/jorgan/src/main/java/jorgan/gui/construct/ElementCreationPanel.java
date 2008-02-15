@@ -107,7 +107,7 @@ public class ElementCreationPanel extends JPanel {
 	 * @param elementClass
 	 *            the class for the element to create
 	 */
-	public void setElementClass(Class elementClass) {
+	public void setElementClass(Class<?> elementClass) {
 		for (int c = 0; c < elementClasses.size(); c++) {
 			if (elementClasses.get(c) == elementClass) {
 				typeList.setSelectedIndex(c);

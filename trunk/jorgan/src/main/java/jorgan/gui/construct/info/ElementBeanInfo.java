@@ -59,7 +59,7 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		add("zoom", Element.class, ZoomEditor.class);
 	}
 
-	protected void add(String name, Class<? extends Element> clazz, Class editor) {
+	protected void add(String name, Class<? extends Element> clazz, Class<?> editor) {
 		try {
 			PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 

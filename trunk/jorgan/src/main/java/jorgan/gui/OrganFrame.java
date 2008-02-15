@@ -177,7 +177,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		toolBar.addSeparator();
 
-		List toolBarWidgets = organPanel.getToolBarWidgets();
+		List<?> toolBarWidgets = organPanel.getToolBarWidgets();
 		for (int w = 0; w < toolBarWidgets.size(); w++) {
 			if (toolBarWidgets.get(w) instanceof Action) {
 				toolBar.add((Action) toolBarWidgets.get(w));

@@ -88,7 +88,7 @@ public class OrganPlay {
 			close();
 		}
 
-		for (Player player : players.values()) {
+		for (Player<? extends Element> player : players.values()) {
 			player.setOrganPlay(null);
 		}
 	}
@@ -160,7 +160,7 @@ public class OrganPlay {
 			Iterator<Player<? extends Element>> iterator = players.values()
 					.iterator();
 			while (iterator.hasNext()) {
-				Player player = iterator.next();
+				Player<? extends Element> player = iterator.next();
 				player.open();
 			}
 
@@ -216,7 +216,7 @@ public class OrganPlay {
 	}
 
 	protected void dropPlayer(Element element) {
-		Player player = players.get(element);
+		Player<? extends Element> player = players.get(element);
 		if (player != null) {
 			players.remove(element);
 			
@@ -230,7 +230,7 @@ public class OrganPlay {
 		public void changed(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
 				if (event.self()) {
-					Player player = getPlayer(event.getElement());
+					Player<? extends Element> player = getPlayer(event.getElement());
 					if (player != null) {
 						player.elementChanged(event);
 					}
