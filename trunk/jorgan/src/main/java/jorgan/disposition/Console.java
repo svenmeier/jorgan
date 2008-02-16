@@ -33,17 +33,23 @@ public class Console extends Element implements Input.Referenceable {
 	private String screen;
 
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return !Input.Referenceable.class.isAssignableFrom(clazz);
+		return Referenceable.class.isAssignableFrom(clazz)
+				|| Output.class.isAssignableFrom(clazz);
 	}
 
 	@Override
-	protected boolean validReference(jorgan.disposition.Reference<? extends Element> reference) {
-		return reference instanceof Reference;
+	protected boolean validReference(
+			jorgan.disposition.Reference<? extends Element> reference) {
+		return true;
 	}
 
 	@Override
-	protected Reference createReference(Element element) {
-		return new Reference(element);
+	protected jorgan.disposition.Reference<? extends Element> createReference(Element element) {
+		if (element instanceof Referenceable) {
+			return new Reference(element);
+		} else {
+			return super.createReference(element);
+		}
 	}
 
 	public String getSkin() {
@@ -57,7 +63,7 @@ public class Console extends Element implements Input.Referenceable {
 	public void setSkin(String skin) {
 		if (!Null.safeEquals(this.skin, skin)) {
 			this.skin = skin;
-	
+
 			fireChanged(true);
 		}
 	}
@@ -65,7 +71,7 @@ public class Console extends Element implements Input.Referenceable {
 	public void setScreen(String screen) {
 		if (!Null.safeEquals(this.screen, screen)) {
 			this.screen = screen;
-	
+
 			fireChanged(true);
 		}
 	}
@@ -142,7 +148,7 @@ public class Console extends Element implements Input.Referenceable {
 	 *            element to move to front
 	 */
 	public void toFront(Element element) {
-		Reference reference = (Reference)getReference(element);
+		Reference reference = (Reference) getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
@@ -160,7 +166,7 @@ public class Console extends Element implements Input.Referenceable {
 	 *            element to move to back
 	 */
 	public void toBack(Element element) {
-		Reference reference = (Reference)getReference(element);
+		Reference reference = (Reference) getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}

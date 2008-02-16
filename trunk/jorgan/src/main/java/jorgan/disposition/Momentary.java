@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public abstract class Momentary extends Element  {
+public abstract class Momentary extends Element implements Console.Referenceable {
 
     private Shortcut shortcut;
 

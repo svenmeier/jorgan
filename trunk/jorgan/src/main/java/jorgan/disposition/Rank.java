@@ -25,7 +25,7 @@ import jorgan.disposition.Output.OutputMessage;
 /**
  * A rank.
  */
-public class Rank extends Element implements Engageable {
+public class Rank extends Element implements Engageable, Console.Referenceable {
 
 	private String channel = "";
 
