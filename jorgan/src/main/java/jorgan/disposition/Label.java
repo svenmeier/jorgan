@@ -21,5 +21,5 @@ package jorgan.disposition;
 /**
  * A label.
  */
-public class Label extends Element {
+public class Label extends Element implements Console.Referenceable {
 }
