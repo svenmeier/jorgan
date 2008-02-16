@@ -78,12 +78,17 @@ public class Combination extends Initiator {
 	}
 
 	private int getLevel() {
+		int size = 1;
+		int level = 0;
 		if (getOrgan() != null) {
 			for (Memory memory : getOrgan().getReferrer(this, Memory.class)) {
-				return memory.getIndex();
+				size = memory.getSize();
+				level = memory.getIndex();
+				break;
 			}
 		}
-		return 0;
+		ensureSize(size);
+		return level;
 	}
 
 	public void capture() {
@@ -134,7 +139,7 @@ public class Combination extends Initiator {
 	 */
 	public static class Reference extends jorgan.disposition.Reference<Switch> {
 
-		private boolean[] activated = new boolean[100];
+		private boolean[] activated = new boolean[1];
 
 		public Reference(Switch element) {
 			super(element);
@@ -196,11 +201,13 @@ public class Combination extends Initiator {
 	@Override
 	public void referrerChanged(Element element) {
 		if (element instanceof Memory) {
-			int size = ((Memory) element).getSize();
-
-			for (Reference reference : getReferences(Reference.class)) {
-				reference.setSize(size);
-			}
+			ensureSize(((Memory) element).getSize());
+		}
+	}
+	
+	private void ensureSize(int size) {
+		for (Reference reference : getReferences(Reference.class)) {
+			reference.setSize(size);
 		}
 	}
 }
