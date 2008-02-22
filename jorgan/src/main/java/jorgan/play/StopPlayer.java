@@ -36,10 +36,6 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 	protected void activateKey(int pitch, int velocity) {
 		Stop stop = getElement();
 
-		if (stop.getVelocity() != 0) {
-			velocity = stop.getVelocity();
-		}
-
 		for (Reference<? extends Element> reference : stop.getReferences()) {
 			RankPlayer rankPlayer = (RankPlayer) getOrganPlay().getPlayer(
 					reference.getElement());

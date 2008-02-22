@@ -74,8 +74,8 @@ public class RankPlayer extends Player<Rank> {
 
 		try {
 			for (Output sound : rank.getReferenced(Output.class)) {
-				OutputPlayer<?> player = (OutputPlayer<?>) getOrganPlay().getPlayer(
-						sound);
+				OutputPlayer<?> player = (OutputPlayer<?>) getOrganPlay()
+						.getPlayer(sound);
 
 				channel = player.createChannel(new RankChannelFilter(rank
 						.getChannel()));
@@ -84,16 +84,16 @@ public class RankPlayer extends Player<Rank> {
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.ERROR, "channel", rank.getChannel(),
-					"channelIllegal");
+			addProblem(Severity.ERROR, "channel", "channelIllegal", rank
+					.getChannel());
 			return;
 		}
 
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.WARNING, "channel", rank.getChannel(),
-					"channelUnvailable");
+			addProblem(Severity.WARNING, "channel", "channelUnvailable", rank
+					.getChannel());
 			return;
 		}
 

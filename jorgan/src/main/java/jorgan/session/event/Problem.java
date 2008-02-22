@@ -29,14 +29,14 @@ public class Problem {
 	
 	private Element element;
 
-	private String property;
+	private Object location;
 
 	private String message;
 
-	public Problem(Severity severity, Element element, String property, String message) {
+	public Problem(Severity severity, Element element, Object location, String message) {
 		this.severity = severity;
 		this.element = element;
-		this.property = property;
+		this.location = location;
 		this.message = message;
 	}
 
@@ -44,8 +44,8 @@ public class Problem {
 		return severity;
 	}
 	
-	public String getProperty() {
-		return property;
+	public Object getLocation() {
+		return location;
 	}
 
 	public String getMessage() {
@@ -68,7 +68,7 @@ public class Problem {
 			return false;
 		}
 		
-		if (!this.property.equals(problem.property)) {
+		if (!this.location.equals(problem.location)) {
 			return false;
 		}
 

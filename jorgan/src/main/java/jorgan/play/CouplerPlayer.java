@@ -33,10 +33,6 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
 	protected void activateKey(int pitch, int velocity) {
 		Coupler coupler = getElement();
 
-		if (coupler.getVelocity() != 0) {
-			velocity = coupler.getVelocity();
-		}
-
 		for (Reference reference : coupler.getReferences()) {
 			KeyablePlayer<? extends Keyable> keyablePlayer = (KeyablePlayer<? extends Keyable>) getOrganPlay()
 					.getPlayer(reference.getElement());

@@ -97,7 +97,7 @@ public class ElementPropertiesPanel extends DockedPanel implements SessionAware 
 				changing = true;
 
 				String property = propertiesPanel.getProperty();
-				session.getElementSelection().setSelectedProperty(property);
+				session.getElementSelection().setLocation(property);
 
 				changing = false;
 			}
@@ -118,8 +118,13 @@ public class ElementPropertiesPanel extends DockedPanel implements SessionAware 
 
 				propertiesPanel.setBeans(session.getElementSelection()
 						.getSelectedElements());
-				propertiesPanel.setProperty(session.getElementSelection()
-						.getSelectedProperty());
+
+				Object location = session.getElementSelection().getLocation();
+				if (location instanceof String) {
+					propertiesPanel.setProperty((String)location);
+				} else {
+					propertiesPanel.setProperty(null);
+				}
 
 				changing = false;
 			}

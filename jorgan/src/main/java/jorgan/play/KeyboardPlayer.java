@@ -62,19 +62,19 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				addProblem(Severity.ERROR, "messages", pitch, "pitchInvalid");
+				addProblem(Severity.ERROR, message, "pitchInvalid", pitch);
 				return;
 			}
 			int velocity = Math.round(context.get(PressKey.VELOCITY));
 			if (velocity < 0 || velocity > 127) {
-				addProblem(Severity.ERROR, "messages", pitch, "velocityInvalid");
+				addProblem(Severity.ERROR, message, "velocityInvalid", pitch);
 				return;
 			}
 			press(pitch, velocity);
 		} else if (message instanceof ReleaseKey) {
 			int pitch = Math.round(context.get(ReleaseKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
-				addProblem(Severity.ERROR, "messages", pitch, "pitchInvalid");
+				addProblem(Severity.ERROR, message, "pitchInvalid", pitch);
 				return;
 			}
 			release(pitch);

@@ -105,7 +105,7 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected boolean validReference(Reference<? extends Element> reference) {
-		return true;
+		return reference.getClass() == Reference.class;
 	}
 
 	public Organ getOrgan() {
