@@ -41,6 +41,7 @@ import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.PlayListener;
 import jorgan.play.spi.ProviderRegistry;
 import jorgan.session.ElementProblems;
+import jorgan.session.event.Problem;
 
 /**
  * A play of an organ.
@@ -236,6 +237,14 @@ public class OrganPlay {
 		}
 	}
 
+	protected void addProblem(Problem problem) {
+		problems.addProblem(problem);
+	}
+
+	protected void removeProblem(Problem problem) {
+		problems.removeProblem(problem);
+	}
+
 	private class EventHandler extends OrganAdapter {
 
 		@Override
@@ -270,12 +279,8 @@ public class OrganPlay {
 		}
 	}
 
-	protected ElementProblems getProblems() {
-		return problems;
-	}
-
 	/**
-	 * Create a transmitter for the device with the given. The returned
+	 * Create a transmitter for the device with the given name. The returned
 	 * transmitter will automatically close the device when
 	 * {@link Transmitter#close()} is called on it.<br>
 	 * Note: The receiver set on the created transmitter ({@link Transmitter#setReceiver(Receiver)})

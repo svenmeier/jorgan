@@ -105,6 +105,10 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
+		for (Message message : getElement().getMessages()) {
+			removeProblem(Severity.ERROR, message);
+		}
+
 		openImpl();
 	}
 
@@ -136,23 +140,23 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	/**
-	 * TODO build messages according to reporting subclass
-	 */
 	protected void addProblem(Severity severity, Object location, String key,
 			Object... args) {
 
-		String message = createMessage(severity.toString() + "." + key, args);
+		String message = createMessage(key, args);
 
-		getOrganPlay().getProblems().addProblem(
+		getOrganPlay().addProblem(
 				new Problem(severity, element, location, message));
 	}
 
 	protected void removeProblem(Severity severity, Object location) {
-		getOrganPlay().getProblems().removeProblem(
+		getOrganPlay().removeProblem(
 				new Problem(severity, element, location, null));
 	}
 
+	/**
+	 * TODO how to create messages for extensions??
+	 */
 	protected String createMessage(String key, Object[] args) {
 		return config.get(key).read(new MessageBuilder()).build(args);
 	}
