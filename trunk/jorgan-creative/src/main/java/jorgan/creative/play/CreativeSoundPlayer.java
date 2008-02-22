@@ -21,38 +21,37 @@ package jorgan.creative.play;
 import java.io.IOException;
 
 import jorgan.creative.SoundFontManager;
-import jorgan.creative.disposition.CreativeOutput;
-import jorgan.disposition.Output;
+import jorgan.creative.disposition.CreativeSound;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.play.MidiOutputPlayer;
+import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
 
 /**
- * A player for a {@link Output} element with a {@link CreativeOutput}.
+ * A player for a {@link CreativeSound}.
  */
-public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
+public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
-	private CreativeOutput clone;
+	private CreativeSound clone;
 
-	public CreativeOutputPlayer(CreativeOutput output) {
+	public CreativeSoundPlayer(CreativeSound output) {
 		super(output);
 	}
 
 	@Override
 	protected void setUp() {
-		CreativeOutput output = getElement();
+		CreativeSound output = getElement();
 
 		clone = null;
 
 		removeProblem(Severity.ERROR, "device");
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
-		if (output.getDevice() != null && output.getSoundfont() != null) {
-			int index = getDeviceIndex(output.getDevice());
+		if (output.getOutput() != null && output.getSoundfont() != null) {
+			int index = getDeviceIndex(output.getOutput());
 
 			if (index == -1) {
 				addProblem(Severity.ERROR, "device", "noCreativeDevice", output
-						.getDevice());
+						.getOutput());
 			} else {
 				try {
 					new SoundFontManager().clearBank(index, output.getBank());
@@ -63,7 +62,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 					new SoundFontManager().loadBank(index, output.getBank(),
 							output.getSoundfont());
 
-					clone = (CreativeOutput) output.clone();
+					clone = (CreativeSound) output.clone();
 				} catch (IllegalArgumentException ex) {
 					addProblem(Severity.ERROR, "bank", "invalidBank", output
 							.getSoundfont());
@@ -79,7 +78,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 	protected void tearDown() {
 		if (clone != null) {
 			try {
-				int index = getDeviceIndex(clone.getDevice());
+				int index = getDeviceIndex(clone.getOutput());
 				new SoundFontManager().clearBank(index, clone.getBank());
 			} catch (Exception ex) {
 			}
@@ -90,22 +89,11 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 
 	@Override
 	public void elementChanged(OrganEvent event) {
-		// only 'real' changes (identifiable by non-null event)
-		if (event != null) {
-			tearDown();
-			setUp();
-		}
-
-		CreativeOutput output = getElement();
-		if (output.getDevice() == null) {
-			addProblem(Severity.WARNING, "device", "noDevice", output
-					.getDevice());
-		} else {
-			removeProblem(Severity.WARNING, "device");
-		}
-
-		if (output.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", "noSoundfont", output
+		super.elementChanged(event);
+		
+		CreativeSound sound = getElement();
+		if (sound.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
 					.getSoundfont());
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");

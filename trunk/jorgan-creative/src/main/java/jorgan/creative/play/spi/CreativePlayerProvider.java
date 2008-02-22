@@ -18,8 +18,8 @@
  */
 package jorgan.creative.play.spi;
 
-import jorgan.creative.disposition.CreativeOutput;
-import jorgan.creative.play.CreativeOutputPlayer;
+import jorgan.creative.disposition.CreativeSound;
+import jorgan.creative.play.CreativeSoundPlayer;
 import jorgan.disposition.Element;
 import jorgan.play.Player;
 import jorgan.play.spi.PlayerProvider;
@@ -29,9 +29,9 @@ import jorgan.play.spi.PlayerProvider;
  */
 public class CreativePlayerProvider implements PlayerProvider {
 
-	public Player<CreativeOutput> createPlayer(Element element) {
-		if (element.getClass() == CreativeOutput.class) {
-			return new CreativeOutputPlayer((CreativeOutput) element);
+	public Player<CreativeSound> createPlayer(Element element) {
+		if (element.getClass() == CreativeSound.class) {
+			return new CreativeSoundPlayer((CreativeSound) element);
 		}
 		return null;
 	}

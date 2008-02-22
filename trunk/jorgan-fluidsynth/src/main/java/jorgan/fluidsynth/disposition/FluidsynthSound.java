@@ -1,9 +1,9 @@
 package jorgan.fluidsynth.disposition;
 
-import jorgan.disposition.Output;
+import jorgan.disposition.Sound;
 import jorgan.util.Null;
 
-public class FluidsynthOutput extends Output {
+public class FluidsynthSound extends Sound {
 
 	private String soundfont;
 
@@ -14,8 +14,8 @@ public class FluidsynthOutput extends Output {
 	public void setSoundfont(String soundfont) {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			this.soundfont = soundfont;
-			
+
 			fireChanged(true);
-		}		
+		}
 	}
 }

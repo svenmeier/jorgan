@@ -1,9 +1,9 @@
 package jorgan.creative.disposition;
 
-import jorgan.disposition.MidiOutput;
+import jorgan.disposition.GenericSound;
 import jorgan.util.Null;
 
-public class CreativeOutput extends MidiOutput {
+public class CreativeSound extends GenericSound {
 
 	private String soundfont;
 
