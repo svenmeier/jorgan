@@ -16,21 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.gui.construct;
+package jorgan.creative.gui.construct;
 
-import jorgan.fluidsynth.disposition.FluidsynthOutput;
+import jorgan.creative.disposition.CreativeSound;
 import jorgan.gui.construct.editor.FileEditor;
-import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.info.GenericSoundBeanInfo;
 
 /**
- * BeanInfo for {@link jorgan.fluidsynth.disposition.FluidsynthOutput}.
+ * BeanInfo for {@link jorgan.creative.disposition.CreativeSound}.
  */
-public class FluidsynthOutputBeanInfo extends ElementBeanInfo {
+public class CreativeSoundBeanInfo extends GenericSoundBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("soundfont", FluidsynthOutput.class, FileEditor.class);
+		add("soundfont", CreativeSound.class, FileEditor.class);
+		add("bank", CreativeSound.class, IntegerEditor.class);
 	}
 }

@@ -20,7 +20,7 @@ package jorgan.fluidsynth.gui.construct.spi;
 
 import java.beans.BeanInfo;
 
-import jorgan.fluidsynth.gui.construct.FluidsynthOutputBeanInfo;
+import jorgan.fluidsynth.gui.construct.FluidsynthSoundBeanInfo;
 import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
 /**
@@ -28,7 +28,7 @@ import jorgan.gui.construct.info.spi.BeanInfoProvider;
  */
 public class FluidsynthBeanInfoProvider implements BeanInfoProvider {
 
-	private static final String BEAN_INFO_SEARCH_PATH = FluidsynthOutputBeanInfo.class
+	private static final String BEAN_INFO_SEARCH_PATH = FluidsynthSoundBeanInfo.class
 			.getPackage().getName();
 
 	public String getBeanInfoSearchPath() {

@@ -20,7 +20,7 @@ package jorgan.creative.gui.construct.spi;
 
 import java.beans.BeanInfo;
 
-import jorgan.creative.gui.construct.CreativeOutputBeanInfo;
+import jorgan.creative.gui.construct.CreativeSoundBeanInfo;
 import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
 /**
@@ -28,7 +28,7 @@ import jorgan.gui.construct.info.spi.BeanInfoProvider;
  */
 public class CreativeBeanInfoProvider implements BeanInfoProvider {
 
-	private static final String BEAN_INFO_SEARCH_PATH = CreativeOutputBeanInfo.class
+	private static final String BEAN_INFO_SEARCH_PATH = CreativeSoundBeanInfo.class
 			.getPackage().getName();
 
 	public String getBeanInfoSearchPath() {
