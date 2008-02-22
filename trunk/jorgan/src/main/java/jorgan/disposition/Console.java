@@ -23,28 +23,48 @@ import jorgan.util.Null;
 /**
  * A console.
  */
-public class Console extends Element implements Input.Referenceable {
+public class Console extends Element implements Input, Output {
 
-	/**
-	 * The skin.
-	 */
 	private String skin;
 
 	private String screen;
+	
+	private String input;
 
+	private String output;
+
+	public void setInput(String input) {
+		if (!Null.safeEquals(this.input, input)) {
+			this.input = input;
+			
+			fireChanged(true);
+		}
+	}
+	
+	public String getInput() {
+		return input;
+	}
+	
+	public void setOutput(String output) {
+		if (!Null.safeEquals(this.output, output)) {
+			this.output = output;
+			
+			fireChanged(true);
+		}
+	}
+	
+	public String getOutput() {
+		return output;
+	}
+		
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Referenceable.class.isAssignableFrom(clazz)
-				|| Output.class.isAssignableFrom(clazz);
+		return Referenceable.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	protected boolean validReference(
 			jorgan.disposition.Reference<? extends Element> reference) {
-		if (reference.getClass() == Reference.class) {
-			return true;
-		} else {
-			return super.validReference(reference);
-		}
+		return reference.getClass() == Reference.class;
 	}
 
 	@Override

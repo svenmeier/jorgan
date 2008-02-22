@@ -33,12 +33,12 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private PlayerContext context = new PlayerContext();
 
-	public ContinuousPlayer(E slider) {
-		super(slider);
+	public ContinuousPlayer(E continuous) {
+		super(continuous);
 	}
 
 	@Override
-	protected void onInput(InputMessage message, Context context) {
+	protected void input(InputMessage message, Context context) {
 		Continuous continuous = getElement();
 
 		if (message instanceof Change) {
@@ -53,7 +53,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 				continuous.setValue(value);
 			}
 		} else {
-			super.onInput(message, context);
+			super.input(message, context);
 		}
 	}
 

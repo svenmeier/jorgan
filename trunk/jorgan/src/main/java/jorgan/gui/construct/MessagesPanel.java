@@ -48,11 +48,10 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Input;
 import jorgan.disposition.Message;
-import jorgan.disposition.MidiInput;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
@@ -231,42 +230,42 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 	}
 
 	private boolean updating = false;
-	
+
 	private void updateMessages() {
-	    if (updating) {
-	      return;
-	    }
-	    
-	    try {
-	        updating = true;
-	        commitEdit();
+		if (updating) {
+			return;
+		}
 
-	        element = null;
-	        messages.clear();
-	        tableModel.update();
-	        table.setVisible(false);
+		try {
+			updating = true;
+			commitEdit();
 
-	        if (session != null
-	                && session.getElementSelection().getSelectionCount() == 1) {
+			element = null;
+			messages.clear();
+			tableModel.update();
+			table.setVisible(false);
 
-	            element = session.getElementSelection().getSelectedElement();
+			if (session != null
+					&& session.getElementSelection().getSelectionCount() == 1) {
 
-	            for (Message message : element.getMessages()) {
-	                messages.add(message);
-	            }
+				element = session.getElementSelection().getSelectedElement();
 
-	            if (sortByTypeButton.isSelected()) {
-	                Collections.sort(messages, new MessageComparator());
-	            }
+				for (Message message : element.getMessages()) {
+					messages.add(message);
+				}
 
-	            tableModel.update();
-	            table.setVisible(true);
-	        }
+				if (sortByTypeButton.isSelected()) {
+					Collections.sort(messages, new MessageComparator());
+				}
 
-	        addAction.update();
-	    }finally {
-	      updating = false;
-	    }
+				tableModel.update();
+				table.setVisible(true);
+			}
+
+			addAction.update();
+		} finally {
+			updating = false;
+		}
 	}
 
 	/**
@@ -450,29 +449,18 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			MidiInput input = null;
+			Console console = null;
 
-			Element referencable = null;
-			if (element instanceof Input.Referenceable) {
-				referencable = element;
-			} else {
-				for (Input.Referenceable referrer : session.getOrgan()
-						.getReferrer(element, Input.Referenceable.class)) {
-					referencable = (Element) referrer;
+			if (element instanceof Console.Referenceable) {
+				for (Console referrer : session.getOrgan().getReferrer(element,
+						Console.class)) {
+					console = referrer;
 					break;
 				}
 			}
 
-			if (referencable != null) {
-				for (MidiInput referrer : session.getOrgan().getReferrer(
-						referencable, MidiInput.class)) {
-					input = referrer;
-					break;
-				}
-			}
-
-			if (input != null) {
-				record(input.getDevice());
+			if (console != null) {
+				record(console.getInput());
 			}
 		}
 

@@ -16,20 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.disposition;
 
-import jorgan.disposition.MidiInput;
-import jorgan.gui.construct.editor.InDeviceEditor;
 
-/**
- * BeanInfo for {@link jorgan.disposition.MidiInput}.
- */
-public class MidiInputBeanInfo extends ElementBeanInfo {
+public abstract class Sound extends Element implements Output {
 
-	@Override
-	protected void registerProperties() {
-		super.registerProperties();
-
-		add("device", MidiInput.class, InDeviceEditor.class);
-	}
 }

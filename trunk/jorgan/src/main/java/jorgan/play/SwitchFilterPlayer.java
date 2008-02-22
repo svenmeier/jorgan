@@ -74,11 +74,11 @@ public class SwitchFilterPlayer extends
 	}
 
 	@Override
-	public void onOutput(ShortMessage message, Context context) {
+	public void send(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
 			((ChannelFilter) context).sendFilteredMessage(message);
 		} else {
-			super.onOutput(message, context);
+			super.send(message, context);
 		}
 	}
 

@@ -16,26 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
 
-import jorgan.util.Null;
+import jorgan.disposition.GenericSound;
+import jorgan.gui.construct.editor.OutDeviceEditor;
 
 /**
- * An input.
+ * BeanInfo for {@link jorgan.disposition.GenericSound}.
  */
-public class MidiInput extends Input {
+public class GenericSoundBeanInfo extends ElementBeanInfo {
 
-	private String device;
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public String getDevice() {
-		return device;
-	}
-
-	public void setDevice(String device) {
-		if (!Null.safeEquals(this.device, device)) {
-			this.device = device;
-
-			fireChanged(true);
-		}
+		add("output", GenericSound.class, OutDeviceEditor.class);
 	}
 }

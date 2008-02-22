@@ -7,12 +7,11 @@ import jorgan.disposition.Console;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
+import jorgan.disposition.GenericSound;
 import jorgan.disposition.Incrementer;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
-import jorgan.disposition.MidiInput;
-import jorgan.disposition.MidiOutput;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
@@ -22,11 +21,10 @@ import jorgan.play.ConsolePlayer;
 import jorgan.play.ContinuousFilterPlayer;
 import jorgan.play.ContinuousPlayer;
 import jorgan.play.CouplerPlayer;
+import jorgan.play.GenericSoundPlayer;
 import jorgan.play.InitiatorPlayer;
-import jorgan.play.MidiInputPlayer;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.KeyerPlayer;
-import jorgan.play.MidiOutputPlayer;
 import jorgan.play.Player;
 import jorgan.play.RankPlayer;
 import jorgan.play.StopPlayer;
@@ -40,9 +38,7 @@ public class DefaultPlayerProvider implements PlayerProvider {
 
 		Class<? extends Element> clazz = element.getClass();
 
-		if (clazz == MidiInput.class) {
-			player = new MidiInputPlayer((MidiInput) element);
-		} else if (clazz == Console.class) {
+		if (clazz == Console.class) {
 			player = new ConsolePlayer((Console) element);
 		} else if (clazz == Keyboard.class) {
 			player = new KeyboardPlayer((Keyboard) element);
@@ -72,8 +68,9 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new ContinuousPlayer<Memory>((Memory) element);
 		} else if (clazz == Sequence.class) {
 			player = new ContinuousPlayer<Sequence>((Sequence) element);
-		} else if (clazz == MidiOutput.class) {
-			player = new MidiOutputPlayer<MidiOutput>((MidiOutput) element);
+		} else if (clazz == GenericSound.class) {
+			player = new GenericSoundPlayer<GenericSound>(
+					(GenericSound) element);
 		}
 
 		return player;

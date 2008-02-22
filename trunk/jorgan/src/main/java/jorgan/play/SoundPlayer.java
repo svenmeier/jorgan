@@ -24,14 +24,15 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.Output;
+import jorgan.disposition.Sound;
+import jorgan.midi.mpl.Context;
 import jorgan.play.output.Channel;
 import jorgan.play.output.ChannelFilter;
 
 /**
- * A player of {@link jorgan.disposition.Output} subclasses.
+ * A player of {@link jorgan.disposition.Sound} subclasses.
  */
-public abstract class OutputPlayer<E extends Output> extends Player<E> {
+public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 
 	private static final int MAX_CHANNELS = 16;
 
@@ -40,21 +41,13 @@ public abstract class OutputPlayer<E extends Output> extends Player<E> {
 	 */
 	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
-	public OutputPlayer(E output) {
-		super(output);
+	public SoundPlayer(E sound) {
+		super(sound);
 
 		for (int c = 0; c < MAX_CHANNELS; c++) {
 			channels.add(null);
 		}
 	}
-
-	/**
-	 * Send a message to this output.
-	 * 
-	 * @param message
-	 *            message sent
-	 */
-	public abstract void send(ShortMessage message);
 
 	/**
 	 * Create a channel.
@@ -71,6 +64,9 @@ public abstract class OutputPlayer<E extends Output> extends Player<E> {
 		return null;
 	}
 
+	@Override
+	public abstract void send(ShortMessage message, Context context);
+	
 	/**
 	 * A channel implementation.
 	 */
@@ -118,7 +114,7 @@ public abstract class OutputPlayer<E extends Output> extends Player<E> {
 				throw new Error(ex);
 			}
 
-			send(message);
+			send(message, null);
 		}
 	}
 }

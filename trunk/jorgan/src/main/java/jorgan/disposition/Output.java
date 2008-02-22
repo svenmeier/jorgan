@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public abstract class Output extends Element {
+public interface Output {
 
 	public static abstract class OutputMessage extends Message {
 	}

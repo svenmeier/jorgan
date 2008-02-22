@@ -22,16 +22,8 @@ package jorgan.disposition;
 /**
  * An input.
  */
-public abstract class Input extends Element {
-
-	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Referenceable.class.isAssignableFrom(clazz);
-	}
+public interface Input {
 
 	public static abstract class InputMessage extends Message {
-	}
-
-	public static interface Referenceable {
 	}
 }

@@ -18,56 +18,117 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.disposition.Output;
-import jorgan.disposition.Reference;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
+import jorgan.session.event.Severity;
 
 /**
  * A player of an console.
  */
 public class ConsolePlayer extends Player<Console> {
 
-	private PlayerContext context = new PlayerContext();
+	private Transmitter transmitter;
+
+	private Receiver receiver;
 
 	public ConsolePlayer(Console console) {
 		super(console);
 	}
 
 	@Override
-	public void received(ShortMessage message) {
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+		
 		Console console = getElement();
 
-		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Reference<? extends Element> reference = console.getReference(r);
-			Element element = reference.getElement();
+		if (console.getOutput() == null) {
+			addProblem(Severity.WARNING, "output", "noDevice", console
+					.getOutput());
+		} else {
+			removeProblem(Severity.WARNING, "output");
+		}
 
-			if (!(element instanceof Output)) {
-				Player<?> player = getOrganPlay().getPlayer(
-						reference.getElement());
-				if (player != null) {
-					player.onInput(message, context);
-				}
+		if (console.getInput() == null) {
+			addProblem(Severity.WARNING, "input", "noDevice", console
+					.getInput());
+		} else {
+			removeProblem(Severity.WARNING, "input");
+		}
+	}
+
+	@Override
+	protected void openImpl() {
+		Console console = getElement();
+
+		removeProblem(Severity.ERROR, "input");
+		if (console.getInput() != null) {
+			try {
+				transmitter = getOrganPlay().createTransmitter(
+						console.getInput());
+				transmitter.setReceiver(new ReceiverImpl());
+			} catch (MidiUnavailableException ex) {
+				addProblem(Severity.ERROR, "input", "deviceUnavailable",
+						console.getInput());
+			}
+		}
+
+		removeProblem(Severity.ERROR, "output");
+		if (console.getOutput() != null) {
+			try {
+				receiver = getOrganPlay().createReceiver(console.getOutput());
+			} catch (MidiUnavailableException ex) {
+				addProblem(Severity.ERROR, "output", "deviceUnavailable",
+						console.getOutput());
 			}
 		}
 	}
 
 	@Override
-	public void onOutput(ShortMessage message, Context context) {
-		Console console = getElement();
+	protected void closeImpl() {
+		if (transmitter != null) {
+			transmitter.close();
+			transmitter = null;
+		}
 
-		for (int r = 0; r < console.getReferenceCount(); r++) {
-			Reference<? extends Element> reference = console.getReference(r);
-			Element element = reference.getElement();
+		if (receiver != null) {
+			receiver.close();
+			receiver = null;
+		}
+	}
 
-			if (element instanceof Output) {
-				OutputPlayer<?> player = (OutputPlayer<?>)getOrganPlay().getPlayer(
-						reference.getElement());
-				if (player != null) {
-					player.send(message);
+	@Override
+	protected void send(ShortMessage message, Context context) {
+
+		if (receiver != null) {
+			receiver.send(message, -1);
+		}
+	}
+
+	/**
+	 * The receiver of messages - notifies referenced elements of a received message.
+	 */
+	private class ReceiverImpl extends PlayerContext implements Receiver {
+		public void close() {
+		}
+
+		public void send(MidiMessage message, long timeStamp) {
+			if (MessageUtils.isShortMessage(message)) {
+				for (Element element : getElement()
+						.getReferenced(Element.class)) {
+					Player<? extends Element> player = getOrganPlay()
+							.getPlayer(element);
+					if (player != null) {
+						player.received((ShortMessage) message, this);
+					}
 				}
 			}
 		}

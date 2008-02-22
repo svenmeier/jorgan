@@ -28,7 +28,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 	private static final int KEY_MAX = 127;
 	
-    private static final int ACTIVATE_VELOCITY = 0;
+    private static final int ACTIVATE_VELOCITY = 100;
 
     /**
      * The currently pressed keys.

@@ -18,6 +18,9 @@
  */
 package jorgan.gui.construct.info;
 
+import jorgan.disposition.Console;
+import jorgan.gui.construct.editor.InDeviceEditor;
+
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyboard}.
@@ -27,5 +30,7 @@ public class KeyboardBeanInfo extends ElementBeanInfo {
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
+		
+		add("input", Console.class, InDeviceEditor.class);
 	}
 }

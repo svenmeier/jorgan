@@ -18,6 +18,7 @@
  */
 package jorgan.midi;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
@@ -45,5 +46,19 @@ public class MessageUtils {
 		}
 
 		return false;
+	}
+
+	public static ShortMessage createShortMessage(int status, int data1,
+			int data2) throws InvalidMidiDataException {
+
+		ShortMessage shortMessage = new ShortMessage();
+
+		// status isn't checked in ShortMessage#setMessage(int, int, int)
+		if (status < 0 || status > 255) {
+			throw new InvalidMidiDataException("status out of range: " + status);
+		}
+		shortMessage.setMessage(status, data1, data2);
+
+		return shortMessage;
 	}
 }
