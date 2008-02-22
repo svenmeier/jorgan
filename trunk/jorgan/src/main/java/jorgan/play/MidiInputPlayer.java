@@ -59,8 +59,8 @@ public class MidiInputPlayer extends Player<MidiInput> {
 		MidiInput input = getElement();
 
 		if (input.getDevice() == null) {
-			addProblem(Severity.WARNING, "device", input.getDevice(),
-					"noDevice");
+			addProblem(Severity.WARNING, "device", "noDevice", input
+					.getDevice());
 		} else {
 			removeProblem(Severity.WARNING, "device");
 		}
@@ -86,8 +86,8 @@ public class MidiInputPlayer extends Player<MidiInput> {
 						.setReceiver(getOrganPlay().new SynchronizedReceiver(
 								new ReceiverImpl()));
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "device", input.getDevice(),
-						"deviceUnavailable");
+				addProblem(Severity.ERROR, "device", "deviceUnavailable", input
+						.getDevice());
 			}
 		}
 	}
@@ -112,7 +112,8 @@ public class MidiInputPlayer extends Player<MidiInput> {
 				Input input = getElement();
 
 				for (int r = 0; r < input.getReferenceCount(); r++) {
-					Reference<? extends Element> reference = input.getReference(r);
+					Reference<? extends Element> reference = input
+							.getReference(r);
 
 					Player<?> player = getOrganPlay().getPlayer(
 							reference.getElement());

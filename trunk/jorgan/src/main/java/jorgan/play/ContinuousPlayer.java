@@ -44,7 +44,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		if (message instanceof Change) {
 			float value = context.get(Change.VALUE);
 			if (value < 0.0f || value > 1.0f) {
-				addProblem(Severity.ERROR, "messages", value, "valueInvalid");
+				addProblem(Severity.ERROR, message, "valueInvalid", value);
 				return;
 			}
 

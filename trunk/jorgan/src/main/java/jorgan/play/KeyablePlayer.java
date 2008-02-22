@@ -88,6 +88,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
     public void keyDown(int pitch, int velocity) {
 
         Keyable keyable = getElement();
+
         pitch += keyable.getTranspose();
 
         if (pitch >= 0 && pitch <= 127) {

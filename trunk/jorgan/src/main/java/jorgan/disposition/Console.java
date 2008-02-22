@@ -40,7 +40,11 @@ public class Console extends Element implements Input.Referenceable {
 	@Override
 	protected boolean validReference(
 			jorgan.disposition.Reference<? extends Element> reference) {
-		return true;
+		if (reference.getClass() == Reference.class) {
+			return true;
+		} else {
+			return super.validReference(reference);
+		}
 	}
 
 	@Override

@@ -43,7 +43,7 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 		CreativeOutput output = getElement();
 
 		clone = null;
-			
+
 		removeProblem(Severity.ERROR, "device");
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
@@ -51,8 +51,8 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 			int index = getDeviceIndex(output.getDevice());
 
 			if (index == -1) {
-				addProblem(Severity.ERROR, "device", output.getDevice(),
-						"noCreativeDevice");
+				addProblem(Severity.ERROR, "device", "noCreativeDevice", output
+						.getDevice());
 			} else {
 				try {
 					new SoundFontManager().clearBank(index, output.getBank());
@@ -65,11 +65,11 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 
 					clone = (CreativeOutput) output.clone();
 				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "bank", output.getSoundfont(),
-							"invalidBank");
+					addProblem(Severity.ERROR, "bank", "invalidBank", output
+							.getSoundfont());
 				} catch (IOException ex) {
-					addProblem(Severity.ERROR, "soundfont", output
-							.getSoundfont(), "soundfontLoad");
+					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
+							output.getSoundfont());
 				}
 			}
 		}
@@ -96,17 +96,17 @@ public class CreativeOutputPlayer extends MidiOutputPlayer<CreativeOutput> {
 			setUp();
 		}
 
-		CreativeOutput output = getElement();	
+		CreativeOutput output = getElement();
 		if (output.getDevice() == null) {
-			addProblem(Severity.WARNING, "device", output.getDevice(),
-					"noDevice");
+			addProblem(Severity.WARNING, "device", "noDevice", output
+					.getDevice());
 		} else {
 			removeProblem(Severity.WARNING, "device");
 		}
-		
+
 		if (output.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
-					"noSoundfont");
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont", output
+					.getSoundfont());
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}

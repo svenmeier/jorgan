@@ -39,7 +39,7 @@ public class ElementSelection {
 	 */
 	private List<Element> selectedElements = new ArrayList<Element>();
 
-	private String property;
+	private Object location;
 
 	public ElementSelection() {
 		clear();
@@ -68,15 +68,15 @@ public class ElementSelection {
 		fireStateChanged();
 	}
 
-	public String getSelectedProperty() {
-		return property;
+	public Object getLocation() {
+		return location;
 	}
 
-	public void setSelectedProperty(String property) {
-		if (this.property == null && property != null || this.property != null
-				&& !this.property.equals(property)) {
+	public void setLocation(Object location) {
+		if (this.location == null && location != null || this.location != null
+				&& !this.location.equals(location)) {
 
-			this.property = property;
+			this.location = location;
 
 			fireStateChanged();
 		}
@@ -138,12 +138,12 @@ public class ElementSelection {
 	 * 
 	 * @param element
 	 *            element to select
-	 * @param property
+	 * @param location
 	 *            property to select
 	 */
-	public void setSelectedElement(Element element, String property) {
+	public void setSelectedElement(Element element, Object location) {
 
-		this.property = property;
+		this.location = location;
 
 		updateHistory(element);
 
@@ -188,7 +188,7 @@ public class ElementSelection {
 		if (historyIndex > 0) {
 			historyIndex--;
 
-			property = null;
+			location = null;
 
 			Element element = history.get(historyIndex);
 			selectedElements.clear();
@@ -206,7 +206,7 @@ public class ElementSelection {
 		if (historyIndex < history.size() - 1) {
 			historyIndex++;
 
-			property = null;
+			location = null;
 
 			Element element = history.get(historyIndex);
 			selectedElements.clear();
@@ -223,7 +223,7 @@ public class ElementSelection {
 	 *            elements to select
 	 */
 	public void setSelectedElements(List<Element> elements) {
-		property = null;
+		location = null;
 
 		selectedElements.clear();
 		selectedElements.addAll(elements);
@@ -240,7 +240,7 @@ public class ElementSelection {
 	public void removeSelectedElement(Element element) {
 
 		if (selectedElements.contains(element)) {
-			property = null;
+			location = null;
 
 			selectedElements.remove(element);
 
@@ -264,7 +264,7 @@ public class ElementSelection {
 					"cannot add null element to selected elements");
 		}
 
-		property = null;
+		location = null;
 
 		updateHistory(element);
 

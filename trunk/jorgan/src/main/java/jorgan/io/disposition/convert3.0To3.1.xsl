@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 
+	<xsl:template match="coupler">
+		<coupler>
+			<xsl:apply-templates select="@*|action|active|description|locking|messages|name|references|shortcut|style|transpose|zoom"/>
+		</coupler>
+	</xsl:template>
+
+	<xsl:template match="stop">
+		<stop>
+			<xsl:apply-templates select="@*|action|active|description|locking|messages|name|references|shortcut|style|transpose|zoom"/>
+		</stop>
+	</xsl:template>
+
 	<xsl:template match="keyboard">
 		<keyboard>
 			<xsl:apply-templates select="@*|description|messages|name|references|style|zoom"/>

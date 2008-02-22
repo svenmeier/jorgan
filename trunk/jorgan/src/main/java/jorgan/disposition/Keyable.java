@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A keyable.
  * 
- * TODO convert actions, transpose and velocity into elements ?
+ * TODO convert actions into elements ?
  */
 public abstract class Keyable extends Switch {
 
@@ -36,8 +36,6 @@ public abstract class Keyable extends Switch {
 	public static final int ACTION_SUSTAIN = 4;
 
 	public static final int ACTION_SOSTENUTO = 5;
-
-	private int velocity = 100;
 
 	private int action = ACTION_STRAIGHT;
 
@@ -62,19 +60,6 @@ public abstract class Keyable extends Switch {
 
 	public void setTranspose(int transpose) {
 		this.transpose = transpose;
-
-		fireChanged(true);
-	}
-
-	public int getVelocity() {
-		return velocity;
-	}
-
-	public void setVelocity(int velocity) {
-		if (velocity < 0 || velocity > 127) {
-			throw new IllegalArgumentException("velocity '" + velocity + "'");
-		}
-		this.velocity = velocity;
 
 		fireChanged(true);
 	}

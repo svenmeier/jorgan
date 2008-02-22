@@ -47,8 +47,8 @@ public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 		MidiOutput output = getElement();
 
 		if (output.getDevice() == null) {
-			addProblem(Severity.WARNING, "device", output.getDevice(),
-					"noDevice");
+			addProblem(Severity.WARNING, "device", "noDevice", output
+					.getDevice());
 		} else {
 			removeProblem(Severity.WARNING, "device");
 		}
@@ -59,7 +59,7 @@ public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 		MidiOutput output = getElement();
 
 		removeProblem(Severity.ERROR, "device");
-		
+
 		if (output.getDevice() != null) {
 			try {
 				// Important: assure successfull opening of MIDI device
@@ -70,8 +70,8 @@ public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
 				device = toBeOpened;
 				receiver = device.getReceiver();
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "device", output.getDevice(),
-						"deviceUnavailable");
+				addProblem(Severity.ERROR, "device", "deviceUnavailable",
+						output.getDevice());
 			}
 		}
 	}

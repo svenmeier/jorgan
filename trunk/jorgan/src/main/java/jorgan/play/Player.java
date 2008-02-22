@@ -105,8 +105,6 @@ public abstract class Player<E extends Element> {
 		}
 		open = true;
 
-		removeProblem(Severity.ERROR, "message");
-
 		openImpl();
 	}
 
@@ -139,23 +137,27 @@ public abstract class Player<E extends Element> {
 	}
 
 	/**
-	 * TODO build messages according to reporting subclass 
+	 * TODO build messages according to reporting subclass
 	 */
-	protected void addProblem(Severity severity, String property, Object value,
-			String key) {
+	protected void addProblem(Severity severity, Object location, String key,
+			Object... args) {
 
-		String message = config.get(severity.toString() + "." + key).read(
-				new MessageBuilder()).build(value);
+		String message = createMessage(severity.toString() + "." + key, args);
 
 		getOrganPlay().getProblems().addProblem(
-				new Problem(severity, element, property, message));
+				new Problem(severity, element, location, message));
 	}
 
-	protected void removeProblem(Severity severity, String property) {
+	protected void removeProblem(Severity severity, Object location) {
 		getOrganPlay().getProblems().removeProblem(
-				new Problem(severity, element, property, null));
+				new Problem(severity, element, location, null));
 	}
 
+	protected String createMessage(String key, Object[] args) {
+		return config.get(key).read(
+				new MessageBuilder()).build(args);
+	}
+	
 	public void elementChanged(OrganEvent event) {
 	}
 
@@ -204,9 +206,9 @@ public abstract class Player<E extends Element> {
 			try {
 				shortMessage = createShortMessage(status, data1, data2);
 			} catch (InvalidMidiDataException ex) {
-				addProblem(Severity.ERROR, "messages", Math.round(status) + ","
-						+ Math.round(data1) + "," + Math.round(data2),
-						"messageInvalid");
+				addProblem(Severity.ERROR, message, "messageInvalid", Math
+						.round(status)
+						+ "," + Math.round(data1) + "," + Math.round(data2));
 				return;
 			}
 
@@ -216,8 +218,8 @@ public abstract class Player<E extends Element> {
 				organPlay.fireOutputProduced();
 			}
 		} catch (ProcessingException ex) {
-			addProblem(Severity.ERROR, "messages", ex.getPattern(),
-					"illegalMessage");
+			addProblem(Severity.ERROR, message, "messageIllegal", ex
+					.getPattern());
 		}
 	}
 
@@ -248,7 +250,8 @@ public abstract class Player<E extends Element> {
 		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
 				Console.class);
 		for (Console console : consoles) {
-			Player<? extends Element> player = getOrganPlay().getPlayer(console);
+			Player<? extends Element> player = getOrganPlay()
+					.getPlayer(console);
 			player.onOutput(message, context);
 		}
 	}
@@ -300,8 +303,8 @@ public abstract class Player<E extends Element> {
 				return false;
 			}
 		} catch (ProcessingException ex) {
-			addProblem(Severity.ERROR, "messages", ex.getPattern(),
-					"messageIllegal");
+			addProblem(Severity.ERROR, message, "messageIllegal", ex
+					.getPattern());
 			return false;
 		}
 		return true;

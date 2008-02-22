@@ -32,8 +32,8 @@ public class FluidsynthOutputPlayer extends OutputPlayer<FluidsynthOutput> {
 				synth = new Fluidsynth();
 				synth.soundFontLoad(output.getSoundfont());
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "soundfont", output.getSoundfont(),
-						"soundfontLoad");
+				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", output
+						.getSoundfont());
 			}
 		}
 	}
@@ -56,8 +56,8 @@ public class FluidsynthOutputPlayer extends OutputPlayer<FluidsynthOutput> {
 
 		FluidsynthOutput output = getElement();
 		if (output.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", output.getSoundfont(),
-					"noSoundfont");
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont", output
+					.getSoundfont());
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
