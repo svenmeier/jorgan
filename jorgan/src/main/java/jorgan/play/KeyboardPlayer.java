@@ -18,13 +18,19 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
+import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
 
@@ -33,12 +39,12 @@ import jorgan.session.event.Severity;
  */
 public class KeyboardPlayer extends Player<Keyboard> {
 
-	private PlayerContext context = new PlayerContext();
-
 	/**
 	 * The currently pressed keys.
 	 */
 	private boolean[] pressed = new boolean[128];
+
+	private Transmitter transmitter;
 
 	/**
 	 * Create player for the given keyboard.
@@ -51,14 +57,50 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void closeImpl() {
-		for (int p = 0; p < pressed.length; p++) {
-			pressed[p] = false;
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+		
+		Keyboard keyboard = getElement();
+
+		if (keyboard.getInput() == null) {
+			addProblem(Severity.WARNING, "input", "noDevice", keyboard
+					.getInput());
+		} else {
+			removeProblem(Severity.WARNING, "input");
 		}
 	}
 
 	@Override
-	protected void onInput(InputMessage message, Context context) {
+	protected void openImpl() {
+		Keyboard keyboard = getElement();
+
+		removeProblem(Severity.ERROR, "input");
+		if (keyboard.getInput() != null) {
+			try {
+				transmitter = getOrganPlay().createTransmitter(
+						keyboard.getInput());
+				transmitter.setReceiver(new ReceiverImpl());
+			} catch (MidiUnavailableException ex) {
+				addProblem(Severity.ERROR, "input", "deviceUnavailable",
+						keyboard.getInput());
+			}
+		}
+	}
+
+	@Override
+	protected void closeImpl() {
+		for (int p = 0; p < pressed.length; p++) {
+			pressed[p] = false;
+		}
+
+		if (transmitter != null) {
+			transmitter.close();
+			transmitter = null;
+		}
+	}
+
+	@Override
+	protected void input(InputMessage message, Context context) {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
@@ -79,7 +121,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			}
 			release(pitch);
 		} else {
-			super.onInput(message, context);
+			super.input(message, context);
 		}
 	}
 
@@ -120,8 +162,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	@Override
-	public void received(ShortMessage message) {
-		onInput(message, context);
+	private class ReceiverImpl extends PlayerContext implements Receiver {
+		public void close() {
+		}
+
+		public void send(MidiMessage message, long timeStamp) {
+			if (MessageUtils.isShortMessage(message)) {
+				received((ShortMessage) message, this);
+			}
+		}
 	}
 }

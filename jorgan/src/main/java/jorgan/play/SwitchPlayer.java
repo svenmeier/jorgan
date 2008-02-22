@@ -40,7 +40,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 	}
 
 	@Override
-	protected void onInput(InputMessage message, Context context) {
+	protected void input(InputMessage message, Context context) {
 		Switch element = getElement();
 
 		if (message instanceof Activate) {
@@ -50,7 +50,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		} else if (message instanceof Toggle) {
 			element.setActive(!element.isActive());
 		} else {
-			super.onInput(message, context);
+			super.input(message, context);
 		}
 	}
 

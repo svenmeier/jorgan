@@ -20,12 +20,14 @@ package jorgan.disposition;
 
 import java.util.Set;
 
-import jorgan.disposition.Input.InputMessage;
+import jorgan.util.Null;
 
 /**
  * A keyboard.
  */
-public class Keyboard extends Element implements Input.Referenceable {
+public class Keyboard extends Element implements Input {
+
+	private String input;
 
 	public Keyboard() {
 		// note on, pitch, velocity
@@ -41,6 +43,18 @@ public class Keyboard extends Element implements Input.Referenceable {
 		return Keyable.class.isAssignableFrom(clazz);
 	}
 
+	public void setInput(String input) {
+		if (!Null.safeEquals(this.input, input)) {
+			this.input = input;
+			
+			fireChanged(true);
+		}
+	}
+	
+	public String getInput() {
+		return input;
+	}
+	
 	@Override
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();

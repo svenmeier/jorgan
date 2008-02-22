@@ -23,7 +23,7 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Element;
 import jorgan.disposition.Filter;
 import jorgan.disposition.Rank;
-import jorgan.disposition.Output;
+import jorgan.disposition.Sound;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
@@ -42,9 +42,7 @@ import jorgan.session.event.Severity;
  */
 public class RankPlayer extends Player<Rank> {
 
-	private PlayerContext context = new PlayerContext();
-
-	private Channel channel;
+	private ChannelImpl channel;
 
 	private int[] played = new int[128];
 
@@ -72,9 +70,10 @@ public class RankPlayer extends Player<Rank> {
 			played[n] = 0;
 		}
 
+		Channel channel = null;
 		try {
-			for (Output sound : rank.getReferenced(Output.class)) {
-				OutputPlayer<?> player = (OutputPlayer<?>) getOrganPlay()
+			for (Sound sound : rank.getReferenced(Sound.class)) {
+				SoundPlayer<?> player = (SoundPlayer<?>) getOrganPlay()
 						.getPlayer(sound);
 
 				channel = player.createChannel(new RankChannelFilter(rank
@@ -110,22 +109,18 @@ public class RankPlayer extends Player<Rank> {
 			channel = new DelayedChannel(channel, rank.getDelay());
 		}
 
-		for (Engaged engaged : getElement().getMessages(Engaged.class)) {
-			output(engaged, context);
-		}
+		this.channel = new ChannelImpl(channel);
+		this.channel.engaged();
 	}
 
 	private void disengaged() {
-		for (Disengaged disengaged : getElement().getMessages(Disengaged.class)) {
-			output(disengaged, context);
-		}
-
-		channel.release();
-		channel = null;
+		this.channel.disengaged();
+		this.channel.release();
+		this.channel = null;
 	}
 
 	@Override
-	public void onOutput(ShortMessage message, Context context) {
+	protected void send(ShortMessage message, Context context) {
 		channel.sendMessage(message);
 	}
 
@@ -151,17 +146,9 @@ public class RankPlayer extends Player<Rank> {
 			}
 
 			if (played[pitch] == 0) {
-				played(pitch, velocity);
+				channel.played(pitch, velocity);
 			}
 			played[pitch]++;
-		}
-	}
-
-	private void played(int pitch, int velocity) {
-		context.set(NotePlayed.PITCH, pitch);
-		context.set(NotePlayed.VELOCITY, velocity);
-		for (NotePlayed notePlayed : getElement().getMessages(NotePlayed.class)) {
-			output(notePlayed, context);
 		}
 	}
 
@@ -173,15 +160,54 @@ public class RankPlayer extends Player<Rank> {
 
 			played[pitch]--;
 			if (played[pitch] == 0) {
-				muted(pitch);
+				channel.muted(pitch);
 			}
 		}
 	}
 
-	private void muted(int pitch) {
-		context.set(NoteMuted.PITCH, pitch);
-		for (NoteMuted noteMuted : getElement().getMessages(NoteMuted.class)) {
-			output(noteMuted, context);
+	private class ChannelImpl extends PlayerContext implements Channel {
+		private Channel channel;
+
+		public ChannelImpl(Channel channel) {
+			this.channel = channel;
+		}
+
+		public void engaged() {
+			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
+				output(engaged, this);
+			}
+		}
+
+		public void disengaged() {
+			for (Disengaged disengaged : getElement().getMessages(
+					Disengaged.class)) {
+				output(disengaged, this);
+			}
+		}
+
+		public void sendMessage(ShortMessage message) {
+			channel.sendMessage(message);
+		}
+
+		public void release() {
+			channel.release();
+		}
+
+		private void played(int pitch, int velocity) {
+			set(NotePlayed.PITCH, pitch);
+			set(NotePlayed.VELOCITY, velocity);
+			for (NotePlayed notePlayed : getElement().getMessages(
+					NotePlayed.class)) {
+				output(notePlayed, this);
+			}
+		}
+
+		private void muted(int pitch) {
+			set(NoteMuted.PITCH, pitch);
+			for (NoteMuted noteMuted : getElement()
+					.getMessages(NoteMuted.class)) {
+				output(noteMuted, this);
+			}
 		}
 	}
 

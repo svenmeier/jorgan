@@ -18,77 +18,65 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.disposition.MidiOutput;
+import jorgan.disposition.GenericSound;
 import jorgan.disposition.event.OrganEvent;
-import jorgan.midi.DevicePool;
-import jorgan.midi.Direction;
+import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
 
 /**
- * A player of a {@link jorgan.disposition.MidiOutput}.
+ * A player of a {@link jorgan.disposition.GenericSound}.
  */
-public class MidiOutputPlayer<O extends MidiOutput> extends OutputPlayer<O> {
-
-	private MidiDevice device;
+public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 
 	private Receiver receiver;
 
-	public MidiOutputPlayer(O output) {
-		super(output);
+	public GenericSoundPlayer(S sound) {
+		super(sound);
 	}
 
 	@Override
 	public void elementChanged(OrganEvent event) {
-		MidiOutput output = getElement();
+		super.elementChanged(event);
+		
+		GenericSound sound = getElement();
 
-		if (output.getDevice() == null) {
-			addProblem(Severity.WARNING, "device", "noDevice", output
-					.getDevice());
+		if (sound.getOutput() == null) {
+			addProblem(Severity.WARNING, "output", "noDevice", sound
+					.getOutput());
 		} else {
-			removeProblem(Severity.WARNING, "device");
+			removeProblem(Severity.WARNING, "output");
 		}
 	}
 
 	@Override
 	protected void openImpl() {
-		MidiOutput output = getElement();
+		GenericSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "device");
-
-		if (output.getDevice() != null) {
+		if (sound.getOutput() != null) {
 			try {
-				// Important: assure successfull opening of MIDI device
-				// before storing reference in instance variable
-				MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(
-						output.getDevice(), Direction.OUT);
-				toBeOpened.open();
-				device = toBeOpened;
-				receiver = device.getReceiver();
+				receiver = getOrganPlay().createReceiver(sound.getOutput());
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "device", "deviceUnavailable",
-						output.getDevice());
+				addProblem(Severity.ERROR, "output", "deviceUnavailable", sound
+						.getOutput());
 			}
 		}
 	}
 
 	@Override
 	protected void closeImpl() {
-		if (device != null) {
+		if (receiver != null) {
 			receiver.close();
 			receiver = null;
-
-			device.close();
-			device = null;
 		}
 	}
 
 	@Override
-	public void send(ShortMessage message) {
+	public void send(ShortMessage message, Context context) {
 		if (receiver != null) {
 			receiver.send(message, -1);
 		}

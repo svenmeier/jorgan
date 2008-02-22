@@ -97,7 +97,7 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Filter.class.isAssignableFrom(clazz)
-				|| Output.class.isAssignableFrom(clazz);
+				|| Sound.class.isAssignableFrom(clazz);
 	}
 
 	public int getDelay() {

@@ -33,13 +33,13 @@ public class InitiatorPlayer<E extends Initiator> extends Player<E> {
 	}
 
 	@Override
-	protected void onInput(InputMessage message, Context context) {
+	protected void input(InputMessage message, Context context) {
 		Initiator initiator = getElement();
 
 		if (message instanceof Initiate) {
 			initiator.initiate();
 		} else {
-			super.onInput(message, context);
+			super.input(message, context);
 		}
 	}
 }

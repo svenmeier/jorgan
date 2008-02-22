@@ -24,14 +24,20 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.ReceiverWrapper;
+import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.PlayListener;
 import jorgan.play.spi.ProviderRegistry;
 import jorgan.session.ElementProblems;
@@ -41,8 +47,14 @@ import jorgan.session.ElementProblems;
  */
 public class OrganPlay {
 
+	/**
+	 * Only one thread is allowed to change players at a time.
+	 */
 	private final Object CHANGE_LOCK = new Object();
 
+	/**
+	 * Only one receiver is allowed to send a message into players at a time.
+	 */
 	private final Object RECEIVER_LOCK = new Object();
 
 	private boolean open;
@@ -219,7 +231,7 @@ public class OrganPlay {
 		Player<? extends Element> player = players.get(element);
 		if (player != null) {
 			players.remove(element);
-			
+
 			player.setOrganPlay(null);
 		}
 	}
@@ -230,7 +242,8 @@ public class OrganPlay {
 		public void changed(OrganEvent event) {
 			synchronized (CHANGE_LOCK) {
 				if (event.self()) {
-					Player<? extends Element> player = getPlayer(event.getElement());
+					Player<? extends Element> player = getPlayer(event
+							.getElement());
 					if (player != null) {
 						player.elementChanged(event);
 					}
@@ -262,25 +275,71 @@ public class OrganPlay {
 	}
 
 	/**
-	 * A synchronized receiver, to avoid race conditions.
+	 * Create a transmitter for the device with the given. The returned
+	 * transmitter will automatically close the device when
+	 * {@link Transmitter#close()} is called on it.<br>
+	 * Note: The receiver set on the created transmitter ({@link Transmitter#setReceiver(Receiver)})
+	 * will be synchronized, see {@link #RECEIVER_LOCK} and {@link #CHANGE_LOCK}.
 	 * 
-	 * @param receiver
-	 *            the receicer to synchronize
+	 * @param deviceName
+	 *            the name of the device
+	 * @return transmitter
+	 * @throws MidiUnavailableException
 	 */
-	public class SynchronizedReceiver extends ReceiverWrapper {
+	public Transmitter createTransmitter(String deviceName)
+			throws MidiUnavailableException {
+		final MidiDevice device = DevicePool.instance().getMidiDevice(
+				deviceName, Direction.IN);
+		device.open();
 
-		public SynchronizedReceiver(Receiver receiver) {
-			super(receiver);
-		}
+		final Transmitter transmitter = device.getTransmitter();
 
-		public void send(MidiMessage message, long timestamp) {
-			synchronized (RECEIVER_LOCK) {
-				if (open) {
-					synchronized (CHANGE_LOCK) {
-						super.send(message, timestamp);
-					}
-				}
+		return new TransmitterWrapper(transmitter) {
+			public void close() {
+				super.close();
+
+				device.close();
 			}
-		}
+
+			public void setReceiver(final Receiver receiver) {
+				super.setReceiver(new ReceiverWrapper(receiver) {
+					public void send(MidiMessage message, long timestamp) {
+						synchronized (RECEIVER_LOCK) {
+							if (open) {
+								synchronized (CHANGE_LOCK) {
+									super.send(message, timestamp);
+								}
+							}
+						}
+					}
+				});
+			}
+		};
+	}
+
+	/**
+	 * Create a receiver for the device with the given name. The returned
+	 * receiver will automatically close the device when
+	 * {@link Receiver#close()} is called on it.
+	 * 
+	 * @param deviceName
+	 *            the name of the device
+	 * @return transmitter
+	 * @throws MidiUnavailableException
+	 */
+	public Receiver createReceiver(String deviceName)
+			throws MidiUnavailableException {
+		final MidiDevice device = DevicePool.instance().getMidiDevice(
+				deviceName, Direction.OUT);
+		device.open();
+
+		return new ReceiverWrapper(device.getReceiver()) {
+			@Override
+			public void close() {
+				super.close();
+
+				device.close();
+			}
+		};
 	}
 }

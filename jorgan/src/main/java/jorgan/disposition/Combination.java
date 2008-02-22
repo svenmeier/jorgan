@@ -29,7 +29,7 @@ public class Combination extends Initiator {
 
 	@Override
 	protected boolean validReference(jorgan.disposition.Reference<? extends Element> reference) {
-		return reference instanceof Reference;
+		return reference.getClass() == Reference.class;
 	}	
 	
 	@Override

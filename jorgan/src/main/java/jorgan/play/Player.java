@@ -20,7 +20,6 @@ package jorgan.play;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.ShortMessage;
@@ -31,6 +30,7 @@ import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.session.event.Problem;
@@ -154,18 +154,23 @@ public abstract class Player<E extends Element> {
 	}
 
 	protected String createMessage(String key, Object[] args) {
-		return config.get(key).read(
-				new MessageBuilder()).build(args);
-	}
-	
-	public void elementChanged(OrganEvent event) {
+		return config.get(key).read(new MessageBuilder()).build(args);
 	}
 
-	public final void onInput(ShortMessage shortMessage, Context context) {
+	public void elementChanged(OrganEvent event) {
+		// only 'real' changes (identifiable by non-null event) trigger {@link
+		// #tearDown()} and {@link #setUp()}.
+		if (event != null) {
+			tearDown();
+			setUp();
+		}
+	}
+
+	protected final void received(ShortMessage shortMessage, Context context) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
 			if (process(shortMessage.getStatus(), shortMessage.getData1(),
 					shortMessage.getData2(), message, context)) {
-				onInput(message, context);
+				input(message, context);
 
 				organPlay.fireInputAccepted();
 			}
@@ -180,7 +185,7 @@ public abstract class Player<E extends Element> {
 	 * @param context
 	 *            the message context
 	 */
-	protected void onInput(InputMessage message, Context context) {
+	protected void input(InputMessage message, Context context) {
 
 	}
 
@@ -191,28 +196,33 @@ public abstract class Player<E extends Element> {
 				// abort processing
 				return;
 			}
+			int iStatus = Math.round(status);
+
 			float data1 = message.processData1(0.0f, context);
 			if (Float.isNaN(status)) {
 				// abort processing
 				return;
 			}
+			int iData1 = Math.round(data1);
+
 			float data2 = message.processData2(0.0f, context);
 			if (Float.isNaN(status)) {
 				// abort processing
 				return;
 			}
+			int iData2 = Math.round(data2);
 
 			ShortMessage shortMessage;
 			try {
-				shortMessage = createShortMessage(status, data1, data2);
+				shortMessage = MessageUtils.createShortMessage(iStatus, iData1,
+						iData2);
 			} catch (InvalidMidiDataException ex) {
-				addProblem(Severity.ERROR, message, "messageInvalid", Math
-						.round(status)
-						+ "," + Math.round(data1) + "," + Math.round(data2));
+				addProblem(Severity.ERROR, message, "messageInvalid", iStatus,
+						iData1, iData2);
 				return;
 			}
 
-			onOutput(shortMessage, context);
+			send(shortMessage, context);
 
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
@@ -223,49 +233,23 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	private ShortMessage createShortMessage(float status, float data1,
-			float data2) throws InvalidMidiDataException {
-
-		ShortMessage shortMessage = new ShortMessage();
-
-		// status isn't checked in ShortMessage#setMessage(int, int, int)
-		int iStatus = Math.round(status);
-		if (iStatus < 0 || iStatus > 255) {
-			throw new InvalidMidiDataException("status out of range: "
-					+ iStatus);
-		}
-		int iData1 = Math.round(data1);
-		int iData2 = Math.round(data2);
-
-		shortMessage.setMessage(iStatus, iData1, iData2);
-
-		return shortMessage;
-	}
-
 	/**
-	 * Output a message - default implementation forwards message to referring
+	 * Send a message - default implementation forwards messages to referring
 	 * {@link Console}s.
 	 */
-	public void onOutput(ShortMessage message, Context context) {
-		Set<Console> consoles = organPlay.getOrgan().getReferrer(element,
-				Console.class);
-		for (Console console : consoles) {
+	protected void send(ShortMessage message, Context context) {
+		for (Console console : organPlay.getOrgan().getReferrer(element,
+				Console.class)) {
 			Player<? extends Element> player = getOrganPlay()
 					.getPlayer(console);
-			player.onOutput(message, context);
+			if (player != null) {
+				player.send(message, context);
+			}
 		}
 	}
 
 	public E getElement() {
 		return element;
-	}
-
-	/**
-	 * Notification from an {@link MidiInputPlayer} that a message was received.
-	 * 
-	 * @param message
-	 */
-	public void received(ShortMessage message) {
 	}
 
 	protected class PlayerContext implements Context {

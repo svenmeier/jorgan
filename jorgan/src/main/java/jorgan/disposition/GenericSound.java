@@ -20,18 +20,18 @@ package jorgan.disposition;
 
 import jorgan.util.Null;
 
-public class MidiOutput extends Output {
+public class GenericSound extends Sound implements Output {
 
-	private String device;
-	
-	public String getDevice() {
-		return device;
+	private String output;
+
+	public String getOutput() {
+		return output;
 	}
 
-	public void setDevice(String device) {
-		if (!Null.safeEquals(this.device, device)) {
-			this.device = device;
-			
+	public void setOutput(String output) {
+		if (!Null.safeEquals(this.output, output)) {
+			this.output = output;
+
 			fireChanged(true);
 		}
 	}
