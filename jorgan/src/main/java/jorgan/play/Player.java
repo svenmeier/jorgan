@@ -43,8 +43,7 @@ import bias.util.MessageBuilder;
  */
 public abstract class Player<E extends Element> {
 
-	private static Configuration config = Configuration.getRoot().get(
-			Player.class);
+	private static Configuration config = Configuration.getRoot();
 
 	private OrganPlay organPlay;
 
@@ -154,11 +153,23 @@ public abstract class Player<E extends Element> {
 				new Problem(severity, element, location, null));
 	}
 
-	/**
-	 * TODO how to create messages for extensions??
-	 */
 	protected String createMessage(String key, Object[] args) {
-		return config.get(key).read(new MessageBuilder()).build(args);
+		MessageBuilder builder = new MessageBuilder();
+
+		Class<?> clazz = getClass();
+		while (true) {
+			config.get(clazz).get(key).read(builder);
+			if (builder.hasPattern()) {
+				break;
+			}
+			if (clazz == Player.class) {
+				break;
+			} else {
+				clazz = clazz.getSuperclass();
+			}
+		}
+
+		return builder.build(args);
 	}
 
 	public void elementChanged(OrganEvent event) {
