@@ -63,7 +63,7 @@ public class ReferenceConverter implements Converter {
 	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-		Reference<? extends Element> reference = (Reference<? extends Element>) value;
+		Reference<?> reference = (Reference<?>) value;
 
 		marshalElement(reference, writer, context);
 
@@ -92,7 +92,7 @@ public class ReferenceConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		Reference<? extends Element> reference = (Reference<? extends Element>) nested.unmarshal(reader, context);
+		Reference<?> reference = (Reference<?>) nested.unmarshal(reader, context);
 
 		context.addCompletionCallback(new UnmarshalElement(reference, reader
 				.getAttribute("id"), context), 0);
