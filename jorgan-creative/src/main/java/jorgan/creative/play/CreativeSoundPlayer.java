@@ -18,6 +18,7 @@
  */
 package jorgan.creative.play;
 
+import java.io.File;
 import java.io.IOException;
 
 import jorgan.creative.SoundFontManager;
@@ -60,7 +61,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 				try {
 					new SoundFontManager().loadBank(index, output.getBank(),
-							output.getSoundfont());
+							new File(output.getSoundfont()).getCanonicalPath());
 
 					clone = (CreativeSound) output.clone();
 				} catch (IllegalArgumentException ex) {
