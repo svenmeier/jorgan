@@ -3,7 +3,38 @@
 #include "SFMAN.H"
 
   /** One global reference to the Sound Font Manager API */
-  PSFMANL101API pSFManager101API = 0;
+  PSFMANL101API pSFManager101API = NULL;
+  
+  JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+  
+    JNIEnv *env;
+    
+    if ((*vm)->GetEnv(vm, (void **)&env, JNI_VERSION_1_2)) {
+      return JNI_ERR;
+    }
+
+    // Load Sound Font Manager DLL
+    HANDLE handleSFMAN32 = LoadLibrary(SF_MASTER_MANAGER_FILENAME) ;
+    if (handleSFMAN32 == NULL) { 
+      return JNI_ERR;
+    }
+ 
+    // Lookup function table
+    PSFMANAGER pSFManager = (PSFMANAGER)GetProcAddress(handleSFMAN32, SF_FUNCTION_TABLE_NAME);
+    if (pSFManager == NULL) { 
+      return JNI_ERR;
+    }
+	 
+    LRESULT rc = pSFManager->SF_QueryInterface(ID_SFMANL101API, &pSFManager101API );
+    if (rc != SFERR_NOERR) {
+      return JNI_ERR;
+    }    
+    
+    return JNI_VERSION_1_2;
+  }
+
+  JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void *reserved) {
+  }
   
   /**
    * Helper for throwing an Exception
@@ -27,45 +58,12 @@
   }
 
   /**
-   * Lazy init
-   * @return TRUE if initialized, FALSE otherwise
-   */
-  int lazyInit(JNIEnv* env) {
-
-    // pointer to API already known?
-    if (pSFManager101API!=NULL)
-      return TRUE; 
-
-    // Load Sound Font Manager DLL
-    HANDLE handleSFMAN32 = LoadLibrary(SF_MASTER_MANAGER_FILENAME) ;
-    if (handleSFMAN32==NULL) 
-      return throwException(env, "java/lang/Error", "Couldn't load dynamic library %s", SF_MASTER_MANAGER_FILENAME);
- 
-    // Lookup function table
-    PSFMANAGER pSFManager = (PSFMANAGER)GetProcAddress(handleSFMAN32, SF_FUNCTION_TABLE_NAME);
-    if (pSFManager==NULL ) 
-      return throwException(env, "java/lang/Error", "Couldn't access Sound Font Manager Function Table in library %s", SF_MASTER_MANAGER_FILENAME);
-	 
-    LRESULT rc = pSFManager->SF_QueryInterface(ID_SFMANL101API, &pSFManager101API );
-    if (rc != SFERR_NOERR) {
-      return throwException(env, "java/lang/Error", "rc %d", rc);
-    }
-      
-    // we're good
-    return TRUE;
-  }
-	
-  /**
    * Class:     jorgan_creative_SoundFontManager
    * Method:    getNumDevices
    * Signature: ()I
    */
   JNIEXPORT jint JNICALL Java_jorgan_creative_SoundFontManager_getNumDevices (JNIEnv *env, jobject obj) {
 	
-    // do the lazy init
-    if (!lazyInit(env))
-      return 0;
-
     // ask for it
     WORD num = 0;
     LRESULT rc = pSFManager101API->SF_GetNumDevs(&num);
@@ -83,10 +81,6 @@
    * Signature: (I)Ljava/lang/String;
    */
   JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getDeviceName(JNIEnv *env, jobject obj, jint device) {
-
-    // do the lazy init
-    if (!lazyInit(env))
-      return NULL;
 
     // prepare result data structure	    
     CSFCapsObject caps;
@@ -117,10 +111,6 @@
    */
   JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_open(JNIEnv *env, jobject obj, jint device) {
 
-    // do the lazy init
-    if (!lazyInit(env))
-      return;
-    
     // open the device
     LRESULT rc = pSFManager101API->SF_Open(device);
     if (rc == SFERR_DEVICE_INVALID) {
@@ -139,10 +129,6 @@
    */
   JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_close(JNIEnv *env, jobject obj, jint device) {
 
-    // do the lazy init
-    if (!lazyInit(env))
-      return;
-    
     // close it
     LRESULT rc = pSFManager101API->SF_Close(device);
     if (rc == SFERR_DEVICE_INVALID) {
@@ -161,10 +147,6 @@
    */
   JNIEXPORT jboolean JNICALL Java_jorgan_creative_SoundFontManager_isBankUsed(JNIEnv *env, jobject obj, jint device, jint bank) {
 
-    // do the lazy init
-    if (!lazyInit(env))
-      return JNI_FALSE;
-    
     // ask manager - after the call:
     // if bank2result ... then bank contains ...
     //   =bank | loaded presets or waveforms
@@ -192,10 +174,6 @@
    */
   JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getBankDescriptor(JNIEnv *env, jobject obj, jint device, jint bank) {
 	
-    // do the lazy init
-    if (!lazyInit(env))
-      return NULL;
-    
     // prepare midi descriptor
     CSFMIDILocation midiLocation;
     midiLocation.m_BankIndex = bank;
@@ -232,10 +210,6 @@
    */
   JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getBankFileName(JNIEnv *env, jobject obj, jint device, jint bank) {
 	
-    // do the lazy init
-    if (!lazyInit(env))
-      return NULL;
-    
     // prepare midi descriptor
     CSFMIDILocation midiLocation;
     midiLocation.m_BankIndex = bank;
@@ -279,10 +253,6 @@
    */
   JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_loadBank(JNIEnv *env, jobject obj, jint device, jint bank, jstring jfile) {
 
-    // do the lazy init
-    if (!lazyInit(env))
-      return;
-    
     // convert java file into string
     char* file = (*env)->GetStringUTFChars(env, jfile, NULL);
 
@@ -337,10 +307,6 @@
    */
   JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_clearBank(JNIEnv *env, jobject obj, jint device, jint bank) {
 	
-    // do the lazy init
-    if (!lazyInit(env))
-      return;
-    
     // prepare midi descriptor 
     CSFMIDILocation midiLocation;
     midiLocation.m_BankIndex = bank;
@@ -369,10 +335,6 @@
    * Signature: (III)Ljava/lang/String;
    */
   JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescriptor(JNIEnv *env, jobject obj, jint device, jint bank, jint program) {
-
-    // do the lazy init
-    if (!lazyInit(env))
-      return NULL;
 
     // prepare midi descriptor
     CSFMIDILocation midiLocation;
