@@ -93,7 +93,6 @@
 		</copy>
 
         <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
-        <delete dir="./target/marshal" />
     </target>
 
 	<target name="deploy" description="deploy the application on SourceForge" depends="dist">
