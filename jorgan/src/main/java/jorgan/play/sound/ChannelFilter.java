@@ -16,22 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.output;
-
-import javax.sound.midi.ShortMessage;
+package jorgan.play.sound;
 
 /**
- * A channel.
+ * A filter of channels.
  */
-public interface Channel {
+public interface ChannelFilter {
 
-	/**
-	 * Send a message.
-	 * 
-	 * @param message
-	 *            message
-	 */
-	public void sendMessage(ShortMessage message);
-
-	public void release();
+	public boolean accept(int channel);
 }

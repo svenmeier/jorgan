@@ -28,7 +28,7 @@ import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
-import jorgan.play.output.Channel;
+import jorgan.play.sound.Channel;
 
 /**
  * A player for a swell.
@@ -69,7 +69,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	@Override
 	public void send(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
-			((ChannelFilter) context).sendFilteredMessage(message);
+			((ChannelFilter) context).sendFilteredMessage(message.getCommand(),
+					message.getData1(), message.getData2());
 		} else {
 			super.send(message, context);
 		}
@@ -85,16 +86,13 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			channels.add(this);
 		}
 
-		public void sendMessage(ShortMessage shortMessage) {
+		public void sendMessage(int command, int data1, int data2) {
 			ContinuousFilter element = getElement();
 
 			boolean filtered = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				// Note: we ignore the channel, thus taking command instead of
-				// status
-				if (process(shortMessage.getCommand(), shortMessage.getData1(),
-						shortMessage.getData2(), message, this)) {
+				if (process(command, data1, data2, message, this)) {
 					filtered = true;
 				}
 			}
@@ -102,7 +100,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			if (filtered) {
 				engaging();
 			} else {
-				channel.sendMessage(shortMessage);
+				channel.sendMessage(command, data1, data2);
 			}
 		}
 
@@ -115,8 +113,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			}
 		}
 
-		public void sendFilteredMessage(ShortMessage message) {
-			channel.sendMessage(message);
+		public void sendFilteredMessage(int command, int data1, int data2) {
+			channel.sendMessage(command, data1, data2);
 		}
 
 		public void release() {

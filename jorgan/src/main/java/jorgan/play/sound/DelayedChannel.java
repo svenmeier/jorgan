@@ -16,15 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.output;
+package jorgan.play.sound;
 
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javax.sound.midi.ShortMessage;
-
 
 /**
  * A delayed channel.
@@ -54,12 +51,12 @@ public class DelayedChannel implements Channel {
 		this.delay = delay;
 	}
 
-	public void sendMessage(final ShortMessage message) {
+	public void sendMessage(final int command, final int data1, final int data2) {
 		new DelayedInvocation() {
 			@Override
 			public void now() {
 				if (channel != null) {
-					channel.sendMessage(message);
+					channel.sendMessage(command, data1, data2);
 				}
 			}
 		};
@@ -70,7 +67,8 @@ public class DelayedChannel implements Channel {
 		channel = null;
 	}
 
-	private abstract class DelayedInvocation implements Comparable<DelayedInvocation> {
+	private abstract class DelayedInvocation implements
+			Comparable<DelayedInvocation> {
 
 		private long when;
 

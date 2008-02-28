@@ -32,9 +32,9 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
-import jorgan.play.output.Channel;
-import jorgan.play.output.ChannelFilter;
-import jorgan.play.output.DelayedChannel;
+import jorgan.play.sound.Channel;
+import jorgan.play.sound.ChannelFilter;
+import jorgan.play.sound.DelayedChannel;
 import jorgan.session.event.Severity;
 
 /**
@@ -91,9 +91,8 @@ public class RankPlayer extends Player<Rank> {
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.WARNING, "channel", "channelUnvailable", rank
+			addProblem(Severity.WARNING, "channel", "channelUnavailable", rank
 					.getChannel());
-			return;
 		}
 
 		for (Element element : rank.getReferenced(Element.class)) {
@@ -117,11 +116,13 @@ public class RankPlayer extends Player<Rank> {
 		this.channel.disengaged();
 		this.channel.release();
 		this.channel = null;
+		
+		removeProblem(Severity.WARNING, "channel");
 	}
 
 	@Override
 	protected void send(ShortMessage message, Context context) {
-		channel.sendMessage(message);
+		channel.sendMessage(message.getCommand(), message.getData1(), message.getData2());
 	}
 
 	@Override
@@ -185,8 +186,8 @@ public class RankPlayer extends Player<Rank> {
 			}
 		}
 
-		public void sendMessage(ShortMessage message) {
-			channel.sendMessage(message);
+		public void sendMessage(int command, int data1, int data2) {
+			channel.sendMessage(command, data1, data2);
 		}
 
 		public void release() {
@@ -212,7 +213,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private class DeadChannel implements Channel {
-		public void sendMessage(ShortMessage message) {
+		public void sendMessage(int command, int data1, int data2) {
 		}
 
 		public void release() {

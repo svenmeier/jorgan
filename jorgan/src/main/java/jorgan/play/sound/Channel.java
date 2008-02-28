@@ -16,12 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.output;
+package jorgan.play.sound;
 
 /**
- * A filter of channels.
+ * A channel.
  */
-public interface ChannelFilter {
+public interface Channel {
 
-	public boolean accept(int channel);
+	/**
+	 * Send a message.
+	 * 
+	 * @param message
+	 *            message
+	 */
+	public void sendMessage(int command, int data1, int data2);
+
+	public void release();
 }
