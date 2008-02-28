@@ -52,11 +52,11 @@ public class FluidsynthMidiDevice implements MidiDevice {
 	public Info getDeviceInfo() {
 		return info;
 	}
-	
+
 	public Fluidsynth getSynth() {
 		return synth;
 	}
-	
+
 	public void close() {
 		open = false;
 
@@ -126,7 +126,9 @@ public class FluidsynthMidiDevice implements MidiDevice {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				synth.send(shortMessage);
+				synth.send(shortMessage.getChannel(),
+						shortMessage.getCommand(), shortMessage.getData1(),
+						shortMessage.getData2());
 			}
 		}
 	}
