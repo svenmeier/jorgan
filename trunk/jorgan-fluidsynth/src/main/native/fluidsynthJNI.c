@@ -54,13 +54,16 @@ struct Context *getContext(JNIEnv *env, jobject object) {
 }
 
 JNIEXPORT
-void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object) {
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jint channels) {
   struct Context *context = createContext(env);
 
   (*context).object = (*env)->NewGlobalRef(env, object);
 
   (*context).settings = new_fluid_settings();
+  fluid_settings_setint((*context).settings, "synth.midi-channels", channels);
+
   (*context).synth = new_fluid_synth((*context).settings);
+
   (*context).adriver = new_fluid_audio_driver((*context).settings, (*context).synth);
 }
 

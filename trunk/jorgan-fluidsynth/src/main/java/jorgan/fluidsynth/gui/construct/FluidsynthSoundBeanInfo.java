@@ -20,6 +20,7 @@ package jorgan.fluidsynth.gui.construct;
 
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.gui.construct.editor.FileEditor;
+import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
 
 /**
@@ -31,6 +32,7 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
+		add("channels", FluidsynthSound.class, IntegerEditor.class);
 		add("soundfont", FluidsynthSound.class, FileEditor.class);
 	}
 }

@@ -35,14 +35,18 @@ public class Fluidsynth {
 	private static final String LIBRARY = "fluidsynthJNI";
 
 	public Fluidsynth() {
-		create();
+		this(16);
+	}
+	
+	public Fluidsynth(int channels) {
+		create(channels);
 	}
 
 	public void dispose() {
 		destroy();
 	}
-	
-	private native void create();
+
+	private native void create(int channels);
 
 	private native void destroy();
 
@@ -61,13 +65,13 @@ public class Fluidsynth {
 	public native void pitchBend(int channel, int bend);
 
 	public native void programChange(int channel, int program);
-	
+
 	/**
-	 * Load the native library "fluidsynth" from the path specified via the system
-	 * property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the directory this
-	 * class was loaded from. Fall back to standard VM library loading which
-	 * tries to resolve to a .dll/.so on <code>java.library.path</code> or a
-	 * system directory.
+	 * Load the native library "fluidsynth" from the path specified via the
+	 * system property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the directory
+	 * this class was loaded from. Fall back to standard VM library loading
+	 * which tries to resolve to a .dll/.so on <code>java.library.path</code>
+	 * or a system directory.
 	 * 
 	 * @see jorgan.util.ClassUtils
 	 */
@@ -89,26 +93,22 @@ public class Fluidsynth {
 		}
 	}
 
-	public void send(ShortMessage shortMessage) {
-		int channel = shortMessage.getChannel();
-
-		switch (shortMessage.getCommand()) {
+	public void send(int channel, int command, int data1, int data2) {
+		switch (command) {
 		case ShortMessage.NOTE_ON:
-			noteOn(channel, shortMessage.getData1(), shortMessage
-					.getData2());
+			noteOn(channel, data1, data2);
 			break;
 		case ShortMessage.NOTE_OFF:
-			noteOff(channel, shortMessage.getData1());
+			noteOff(channel, data1);
 			break;
 		case ShortMessage.PROGRAM_CHANGE:
-			programChange(channel, shortMessage.getData1());
+			programChange(channel, data1);
 			break;
 		case ShortMessage.CONTROL_CHANGE:
-			controlChange(channel, shortMessage.getData1(),
-					shortMessage.getData2());
+			controlChange(channel, data1, data2);
 			break;
 		case ShortMessage.PITCH_BEND:
-			pitchBend(channel, shortMessage.getData1());
+			pitchBend(channel, data1);
 			break;
 		}
 	}

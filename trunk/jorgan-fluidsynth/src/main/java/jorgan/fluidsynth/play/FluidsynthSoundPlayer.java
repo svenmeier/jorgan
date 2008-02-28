@@ -2,12 +2,9 @@ package jorgan.fluidsynth.play;
 
 import java.io.IOException;
 
-import javax.sound.midi.ShortMessage;
-
 import jorgan.disposition.event.OrganEvent;
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
-import jorgan.midi.mpl.Context;
 import jorgan.play.SoundPlayer;
 import jorgan.session.event.Severity;
 
@@ -23,13 +20,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
+	protected int getChannelCount() {
+		FluidsynthSound sound = getElement();
+
+		return sound.getChannels();
+	}
+	
+	@Override
 	protected void setUp() {
 		FluidsynthSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
 			try {
-				synth = new Fluidsynth();
+				synth = new Fluidsynth(sound.getChannels());
 				synth.soundFontLoad(sound.getSoundfont());
 			} catch (IOException ex) {
 				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
@@ -60,9 +64,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
-	public void send(ShortMessage message, Context context) {
+	protected void send(int channel, int command, int data1, int data2) {
 		if (synth != null) {
-			synth.send(message);
+			synth.send(channel, command, data1, data2);
 		}
 	}
 }
