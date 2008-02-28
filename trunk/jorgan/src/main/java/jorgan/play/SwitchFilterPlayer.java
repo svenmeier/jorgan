@@ -29,13 +29,13 @@ import jorgan.disposition.SwitchFilter.Engaged;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
-import jorgan.play.output.Channel;
+import jorgan.play.sound.Channel;
 
 /**
  * A player for an {@link SwitchFilter}.
  */
-public class SwitchFilterPlayer extends
-		SwitchPlayer<SwitchFilter> implements FilterPlayer {
+public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
+		FilterPlayer {
 
 	private List<ChannelFilter> channels = new ArrayList<ChannelFilter>();
 
@@ -76,7 +76,8 @@ public class SwitchFilterPlayer extends
 	@Override
 	public void send(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
-			((ChannelFilter) context).sendFilteredMessage(message);
+			((ChannelFilter) context).sendFilteredMessage(message.getCommand(),
+					message.getData1(), message.getData2());
 		} else {
 			super.send(message, context);
 		}
@@ -99,7 +100,7 @@ public class SwitchFilterPlayer extends
 			channels.add(this);
 		}
 
-		public void sendMessage(ShortMessage shortMessage) {
+		public void sendMessage(int command, int data1, int data2) {
 			SwitchFilter element = getElement();
 
 			boolean filtered = false;
@@ -107,8 +108,7 @@ public class SwitchFilterPlayer extends
 			for (Intercept message : element.getMessages(Intercept.class)) {
 				// Note: we ignore the channel, thus taking command instead of
 				// status
-				if (process(shortMessage.getCommand(), shortMessage.getData1(),
-						shortMessage.getData2(), message, this)) {
+				if (process(command, data1, data2, message, this)) {
 					filtered = true;
 				}
 			}
@@ -120,7 +120,7 @@ public class SwitchFilterPlayer extends
 					disengaged();
 				}
 			} else {
-				channel.sendMessage(shortMessage);
+				channel.sendMessage(command, data1, data2);
 			}
 		}
 
@@ -137,8 +137,8 @@ public class SwitchFilterPlayer extends
 			}
 		}
 
-		public void sendFilteredMessage(ShortMessage message) {
-			channel.sendMessage(message);
+		public void sendFilteredMessage(int command, int data1, int data2) {
+			channel.sendMessage(command, data1, data2);
 		}
 
 		public void release() {

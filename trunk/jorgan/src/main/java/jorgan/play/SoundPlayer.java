@@ -19,34 +19,27 @@
 package jorgan.play;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Sound;
-import jorgan.midi.mpl.Context;
-import jorgan.play.output.Channel;
-import jorgan.play.output.ChannelFilter;
+import jorgan.play.sound.Channel;
+import jorgan.play.sound.ChannelFilter;
 
 /**
  * A player of {@link jorgan.disposition.Sound} subclasses.
  */
 public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 
-	private static final int MAX_CHANNELS = 16;
-
 	/**
 	 * Created channels.
 	 */
-	private List<ChannelImpl> channels = new ArrayList<ChannelImpl>();
+	private ArrayList<ChannelImpl> channels = new ArrayList<ChannelImpl>();
 
-	public SoundPlayer(E sound) {
+	protected SoundPlayer(E sound) {
 		super(sound);
+	}
 
-		for (int c = 0; c < MAX_CHANNELS; c++) {
-			channels.add(null);
-		}
+	protected int getChannelCount() {
+		return 16;
 	}
 
 	/**
@@ -55,18 +48,23 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 	 * @return created channel or <code>null</code> if no channel is available
 	 */
 	public Channel createChannel(ChannelFilter filter) {
-		for (int c = 0; c < channels.size(); c++) {
-			if (channels.get(c) == null && filter.accept(c)) {
-				return new ChannelImpl(c);
+		for (int c = 0; c < getChannelCount(); c++) {
+			if (filter.accept(c)) {
+				while (channels.size() <= c) {
+					channels.add(null);
+				}
+
+				if (channels.get(c) == null) {
+					return new ChannelImpl(c);
+				}
 			}
 		}
 
 		return null;
 	}
 
-	@Override
-	public abstract void send(ShortMessage message, Context context);
-	
+	protected abstract void send(int channel, int command, int data1, int data2);
+
 	/**
 	 * A channel implementation.
 	 */
@@ -89,10 +87,6 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 			channels.set(channel, this);
 		}
 
-		public int getNumber() {
-			return channel + 1;
-		}
-
 		/**
 		 * Release.
 		 */
@@ -106,15 +100,8 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		 * @param message
 		 *            message
 		 */
-		public void sendMessage(ShortMessage message) {
-			try {
-				message.setMessage(message.getCommand(), channel, message
-						.getData1(), message.getData2());
-			} catch (InvalidMidiDataException ex) {
-				throw new Error(ex);
-			}
-
-			send(message, null);
+		public void sendMessage(int command, int data1, int data2) {
+			send(channel, command, data1, data2);
 		}
 	}
 }
