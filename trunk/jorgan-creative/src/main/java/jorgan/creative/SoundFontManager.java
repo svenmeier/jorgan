@@ -20,6 +20,8 @@ package jorgan.creative;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.util.ClassUtils;
 
@@ -27,6 +29,9 @@ import jorgan.util.ClassUtils;
  * Java Wrapper for a Creative SoundBlaster SoundFont Manager.
  */
 public class SoundFontManager {
+
+	private static final Logger logger = Logger
+			.getLogger(SoundFontManager.class.getName());
 
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
 
@@ -55,7 +60,8 @@ public class SoundFontManager {
 					.getCanonicalPath();
 			System.load(library);
 		} catch (Throwable t) {
-			t.printStackTrace();
+			logger.log(Level.WARNING, "falling back to System.loadLibary()", t);
+			
 			System.loadLibrary(LIBRARY);
 		}
 	}
@@ -150,7 +156,7 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to clear
 	 */
-	public native void clearBank(int device, int bank) throws IOException ;
+	public native void clearBank(int device, int bank) throws IOException;
 
 	/**
 	 * Get the description of a preset in given program and bank.

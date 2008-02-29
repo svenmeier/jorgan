@@ -20,6 +20,8 @@ package jorgan.fluidsynth;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
 
@@ -30,6 +32,9 @@ import jorgan.util.ClassUtils;
  */
 public class Fluidsynth {
 
+	private static final Logger logger = Logger.getLogger(Fluidsynth.class
+			.getName());
+	
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	private static final String LIBRARY = "fluidsynthJNI";
@@ -89,6 +94,8 @@ public class Fluidsynth {
 					.getCanonicalPath();
 			System.load(library);
 		} catch (Throwable t) {
+			logger.log(Level.WARNING, "falling back to System.loadLibary()", t);
+			
 			System.loadLibrary(LIBRARY);
 		}
 	}
