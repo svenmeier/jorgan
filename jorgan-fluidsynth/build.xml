@@ -35,20 +35,15 @@
     </javah>
 
     <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jdk.include}" />
-      <arg value="-I${jdk.include}/linux" />
-      <arg value="-I./lib/native" />
+      <arg value="-I${jdk}/include" />
+      <arg value="-I${jdk}/include/linux" />
       <arg value="-I./target/native" />
+      <arg value="-Wall" />
       <arg value="-fPIC" />
-      <arg line="-c ./src/main/native/fluidsynthJNI.c" />
-      <arg line="-o ./target/native/fluidsynthJNI.o" />
-    </exec>
-
-    <exec failonerror="true" executable="${ld}">
       <arg value="-shared" />
-      <arg value="-lfluidsynth" />
+      <arg value="-Wl,-lfluidsynth" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
-      <arg line="./target/native/fluidsynthJNI.o" />
     </exec>
   </target>
 
