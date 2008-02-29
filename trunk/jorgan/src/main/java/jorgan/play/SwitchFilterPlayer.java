@@ -24,9 +24,9 @@ import java.util.List;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.SwitchFilter;
+import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.SwitchFilter.Disengaged;
 import jorgan.disposition.SwitchFilter.Engaged;
-import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
@@ -106,9 +106,7 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			boolean filtered = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				// Note: we ignore the channel, thus taking command instead of
-				// status
-				if (process(command, data1, data2, message, this)) {
+				if (process(message, command, data1, data2)) {
 					filtered = true;
 				}
 			}

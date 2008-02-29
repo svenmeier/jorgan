@@ -33,7 +33,7 @@ import jorgan.midi.mpl.Context;
  */
 public class SwitchPlayer<E extends Switch> extends Player<E> {
 
-	private PlayerContext context = new PlayerContext();
+	private PlayerContext activeContext = new PlayerContext();
 
 	public SwitchPlayer(E element) {
 		super(element);
@@ -71,13 +71,13 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private void activated() {
 		for (Activated message : getElement().getMessages(Activated.class)) {
-			output(message, context);
+			output(message, activeContext);
 		}
 	}
 
 	private void deactivated() {
 		for (Deactivated message : getElement().getMessages(Deactivated.class)) {
-			output(message, context);
+			output(message, activeContext);
 		}
 	}
 }

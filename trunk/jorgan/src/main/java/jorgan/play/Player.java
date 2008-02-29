@@ -47,6 +47,8 @@ public abstract class Player<E extends Element> {
 
 	private OrganPlay organPlay;
 
+	private PlayerContext receivedContext = new PlayerContext();
+
 	/**
 	 * The element played by this player.
 	 */
@@ -181,11 +183,11 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	protected final void received(ShortMessage shortMessage, Context context) {
+	protected final void received(ShortMessage shortMessage) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
-			if (process(shortMessage.getStatus(), shortMessage.getData1(),
-					shortMessage.getData2(), message, context)) {
-				input(message, context);
+			if (receivedContext.process(message, shortMessage.getStatus(), shortMessage
+					.getData1(), shortMessage.getData2())) {
+				input(message, receivedContext);
 
 				organPlay.fireInputAccepted();
 			}
@@ -204,36 +206,15 @@ public abstract class Player<E extends Element> {
 
 	}
 
-	protected final void output(OutputMessage message, Context context) {
-		try {
-			float status = message.processStatus(0.0f, context);
-			if (Float.isNaN(status)) {
-				// abort processing
-				return;
-			}
-			int iStatus = Math.round(status);
-
-			float data1 = message.processData1(0.0f, context);
-			if (Float.isNaN(status)) {
-				// abort processing
-				return;
-			}
-			int iData1 = Math.round(data1);
-
-			float data2 = message.processData2(0.0f, context);
-			if (Float.isNaN(status)) {
-				// abort processing
-				return;
-			}
-			int iData2 = Math.round(data2);
-
+	protected final void output(OutputMessage message, PlayerContext context) {
+		if (context.process(message, 0, 0, 0)) {
 			ShortMessage shortMessage;
 			try {
-				shortMessage = MessageUtils.createShortMessage(iStatus, iData1,
-						iData2);
+				shortMessage = MessageUtils.createShortMessage(context
+						.getStatus(), context.getData1(), context.getData2());
 			} catch (InvalidMidiDataException ex) {
-				addProblem(Severity.ERROR, message, "messageInvalid", iStatus,
-						iData1, iData2);
+				addProblem(Severity.ERROR, message, "messageInvalid", context
+						.getStatus(), context.getData1(), context.getData2());
 				return;
 			}
 
@@ -242,9 +223,6 @@ public abstract class Player<E extends Element> {
 			if (organPlay != null) {
 				organPlay.fireOutputProduced();
 			}
-		} catch (ProcessingException ex) {
-			addProblem(Severity.ERROR, message, "messageIllegal", ex
-					.getPattern());
 		}
 	}
 
@@ -271,6 +249,10 @@ public abstract class Player<E extends Element> {
 
 		private Map<String, Float> map = new HashMap<String, Float>();
 
+		private int status;
+		private int data1;
+		private int data2;
+
 		public float get(String name) {
 			Float temp = map.get(name);
 			if (temp == null) {
@@ -287,25 +269,42 @@ public abstract class Player<E extends Element> {
 		public void clear() {
 			map.clear();
 		}
-	};
 
-	protected boolean process(int status, int data1, int data2,
-			Message message, Context context) {
-		try {
-			if (Float.isNaN(message.processStatus(status, context))) {
-				return false;
-			}
-			if (Float.isNaN(message.processData1(data1, context))) {
-				return false;
-			}
-			if (Float.isNaN(message.processData2(data2, context))) {
-				return false;
-			}
-		} catch (ProcessingException ex) {
-			addProblem(Severity.ERROR, message, "messageIllegal", ex
-					.getPattern());
-			return false;
+		public int getStatus() {
+			return status;
 		}
-		return true;
-	}
+
+		public int getData1() {
+			return data1;
+		}
+
+		public int getData2() {
+			return data2;
+		}
+
+		public boolean process(Message message, int status, int data1, int data2) {
+			try {
+				float fStatus = message.processStatus(status, this);
+				if (Float.isNaN(fStatus)) {
+					return false;
+				}
+				float fData1 = message.processData1(data1, this);
+				if (Float.isNaN(fData1)) {
+					return false;
+				}
+				float fData2 = message.processData2(data2, this);
+				if (Float.isNaN(fData2)) {
+					return false;
+				}
+				this.status = Math.round(fStatus);
+				this.data1 = Math.round(fData1);
+				this.data2 = Math.round(fData2);
+			} catch (ProcessingException ex) {
+				addProblem(Severity.ERROR, message, "messageIllegal", ex
+						.getPattern());
+				return false;
+			}
+			return true;
+		}
+	};
 }

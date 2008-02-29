@@ -92,7 +92,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			boolean filtered = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				if (process(command, data1, data2, message, this)) {
+				if (process(message, command, data1, data2)) {
 					filtered = true;
 				}
 			}
