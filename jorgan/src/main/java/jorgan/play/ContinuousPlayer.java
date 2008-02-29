@@ -31,7 +31,7 @@ import jorgan.session.event.Severity;
  */
 public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
-	private PlayerContext context = new PlayerContext();
+	private PlayerContext valueContext = new PlayerContext();
 
 	public ContinuousPlayer(E continuous) {
 		super(continuous);
@@ -68,10 +68,10 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private void changed() {
 		Continuous continuous = getElement();
-		context.set(Changed.VALUE, continuous.getValue());
+		valueContext.set(Changed.VALUE, continuous.getValue());
 
 		for (Changed message : getElement().getMessages(Changed.class)) {
-			output(message, context);
+			output(message, valueContext);
 		}
 	}
 }

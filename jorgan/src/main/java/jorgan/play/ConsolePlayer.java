@@ -116,7 +116,7 @@ public class ConsolePlayer extends Player<Console> {
 	/**
 	 * The receiver of messages - notifies referenced elements of a received message.
 	 */
-	private class ReceiverImpl extends PlayerContext implements Receiver {
+	private class ReceiverImpl implements Receiver {
 		public void close() {
 		}
 
@@ -127,7 +127,7 @@ public class ConsolePlayer extends Player<Console> {
 					Player<? extends Element> player = getOrganPlay()
 							.getPlayer(element);
 					if (player != null) {
-						player.received((ShortMessage) message, this);
+						player.received((ShortMessage) message);
 					}
 				}
 			}

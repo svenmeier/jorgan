@@ -162,13 +162,13 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	private class ReceiverImpl extends PlayerContext implements Receiver {
+	private class ReceiverImpl implements Receiver {
 		public void close() {
 		}
 
 		public void send(MidiMessage message, long timeStamp) {
 			if (MessageUtils.isShortMessage(message)) {
-				received((ShortMessage) message, this);
+				received((ShortMessage) message);
 			}
 		}
 	}
