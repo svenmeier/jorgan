@@ -35,12 +35,11 @@
     </javah>
 
     <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jdk.include}" />
-      <arg value="-I${jdk.include}/win32" />
-      <arg value="-I./lib/native" />
+      <arg value="-I${jdk}/include" />
+      <arg value="-I${jdk}/include/win32" />
+      <arg value="-I./lib/win32/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
-      <arg value="-D_JNI_IMPLEMENTATION" />
       <arg value="-Wl,--kill-at" />
       <arg value="-shared" />
       <arg value="./src/main/native/creativeJNI.c" />
