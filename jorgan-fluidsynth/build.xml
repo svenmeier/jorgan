@@ -27,12 +27,44 @@
 	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
   </target>
 
-  <target name="native" depends="compile">
+  <target name="native" depends="native-amd64, native-win32">
+  </target>
+
+  <target name="native-common" depends="compile">
     <mkdir dir="./target/native" />
 
-    <javah verbose="true" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
+  	<javah verbose="true" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
       <classpath path="./target/classes" />
     </javah>
+  	
+  	<condition property="amd64">
+      <equals arg1="${architecture}" arg2="amd64"/>
+  	</condition>
+   	<condition property="win32">
+      <equals arg1="${architecture}" arg2="win32"/>
+  	</condition>
+  </target>
+	
+  <target name="native-win32" depends="native-common" if="win32">
+    <mkdir dir="./target/native" />
+
+    <exec failonerror="true" executable="${cc}">
+      <arg value="-I${jdk}/include" />
+      <arg value="-I${jdk}/include/win32" />
+      <arg value="-I./lib/win32/include" />
+      <arg value="-I./target/native" />
+      <arg value="-Wall" />
+      <arg value="-Wl,--kill-at" />
+      <arg value="-Wl,-L./lib/win32" />
+      <arg value="-Wl,-lfluidsynth" />
+      <arg value="-shared" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg line="-o ./target/native/fluidsynthJNI.dll" />
+    </exec>
+  </target>
+	
+  <target name="native-amd64" depends="native-common" if="amd64">
+    <mkdir dir="./target/native" />
 
     <exec failonerror="true" executable="${cc}">
       <arg value="-I${jdk}/include" />
@@ -50,12 +82,18 @@
   <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
 
-  	<copy file="./target/native/libfluidsynthJNI.so" todir="./target/marshal/lib" />
+  	<copy todir="./target/marshal/lib">
+      <fileset dir="./target/native">
+  		<include name="*.dll"/>
+        <include name="*.so"/>
+      </fileset>
+    </copy>
+  		
   	<jar file="./target/marshal/lib/fluidsynth.jar">
       <fileset dir="./target/classes" />
   	</jar>
 
-	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-amd64.zip">
+	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${architecture}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
   </target>
