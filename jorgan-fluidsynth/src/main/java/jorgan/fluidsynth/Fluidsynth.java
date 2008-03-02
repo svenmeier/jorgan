@@ -81,11 +81,11 @@ public class Fluidsynth {
 		}
 
 		try {
-			ClassUtils.loadLibrary(file, "fluidsynth");
+			System.load(ClassUtils.getLibraryName(file, "fluidsynth"));
 		} catch (UnsatisfiedLinkError error) {
 			// might be on system library path
 		}
-		ClassUtils.loadLibrary(file, "fluidsynthJNI");
+		System.load(ClassUtils.getLibraryName(file, "fluidsynthJNI"));
 	}
 
 	public void send(int channel, int command, int data1, int data2) {
