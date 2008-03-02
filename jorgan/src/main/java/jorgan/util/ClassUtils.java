@@ -19,6 +19,7 @@
 package jorgan.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -86,5 +87,22 @@ public class ClassUtils {
 
 	private static String getClassResourceName(Class<?> clazz) {
 		return ("/" + clazz.getName().replace('.', '/') + ".class");
+	}
+
+	/**
+	 * Load a library with given name from the given path.
+	 * 
+	 * @param path
+	 * @param name
+	 */
+	public static void loadLibrary(File path, String name) {
+		String library;
+		try {
+			library = new File(path, System.mapLibraryName(name))
+					.getCanonicalPath();
+		} catch (IOException e) {
+			throw new UnsatisfiedLinkError(e.getMessage());
+		}
+		System.load(library);
 	}
 }

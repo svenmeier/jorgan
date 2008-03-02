@@ -20,8 +20,6 @@ package jorgan.creative;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jorgan.util.ClassUtils;
 
@@ -30,40 +28,25 @@ import jorgan.util.ClassUtils;
  */
 public class SoundFontManager {
 
-	private static final Logger logger = Logger
-			.getLogger(SoundFontManager.class.getName());
-
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
-
-	private static final String LIBRARY = "creativeJNI";
 
 	/**
 	 * Load the native library "creative" from the path specified via the system
 	 * property {@link #JORGAN_CREATIVE_LIBRARY_PATH} or the directory this
-	 * class was loaded from. Fall back to standard VM library loading which
-	 * tries to resolve to a .dll/.so on <code>java.library.path</code> or a
-	 * system directory.
+	 * class was loaded from.
 	 * 
 	 * @see jorgan.util.ClassUtils
 	 */
 	static {
-		try {
-			File file;
-			String path = System.getProperty(JORGAN_CREATIVE_LIBRARY_PATH);
-			if (path == null) {
-				file = ClassUtils.getDirectory(SoundFontManager.class);
-			} else {
-				file = new File(path);
-			}
-
-			String library = new File(file, System.mapLibraryName(LIBRARY))
-					.getCanonicalPath();
-			System.load(library);
-		} catch (Throwable t) {
-			logger.log(Level.WARNING, "falling back to System.loadLibary()", t);
-			
-			System.loadLibrary(LIBRARY);
+		File file;
+		String path = System.getProperty(JORGAN_CREATIVE_LIBRARY_PATH);
+		if (path == null) {
+			file = ClassUtils.getDirectory(SoundFontManager.class);
+		} else {
+			file = new File(path);
 		}
+
+		ClassUtils.loadLibrary(file, "creativeJNI");
 	}
 
 	/**
