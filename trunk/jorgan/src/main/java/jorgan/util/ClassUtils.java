@@ -90,12 +90,17 @@ public class ClassUtils {
 	}
 
 	/**
-	 * Load a library with given name from the given path.
+	 * Get the name of a library.<br>
+	 * Note: Loading of a JNI library has to be done in the corresponding Java
+	 * class or otherwise native methods will result in
+	 * {@link UnsatisfiedLinkError}s.
 	 * 
 	 * @param path
+	 *            path of library
 	 * @param name
+	 *            name of library
 	 */
-	public static void loadLibrary(File path, String name) {
+	public static String getLibraryName(File path, String name) {
 		String library;
 		try {
 			library = new File(path, System.mapLibraryName(name))
@@ -103,6 +108,6 @@ public class ClassUtils {
 		} catch (IOException e) {
 			throw new Error(e.getMessage());
 		}
-		System.load(library);
+		return library;
 	}
 }

@@ -46,9 +46,9 @@ public class SoundFontManager {
 			file = new File(path);
 		}
 
-		ClassUtils.loadLibrary(file, "creativeJNI");
+		System.load(ClassUtils.getLibraryName(file, "creativeJNI"));
 	}
-
+	
 	/**
 	 * Get the total number of available devices. The standard Soundblaster Live
 	 * drivers are available as two devices, e.g. 'SB Live! Synth A [D800]' and
