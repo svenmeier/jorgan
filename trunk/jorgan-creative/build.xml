@@ -27,16 +27,30 @@
 	<native2ascii encoding="UTF8" src="./src/main/java" dest="./target/classes" includes="**/i18n*.properties" />
   </target>
 
-  <target name="native" depends="compile">
+  <target name="native" depends="native-windows">
+  </target>
+
+  <target name="native-common" depends="compile">
     <mkdir dir="./target/native" />
 
     <javah verbose="true" class="jorgan.creative.SoundFontManager" outputfile="./target/native/jorgan.creative.SoundFontManager.h">
       <classpath path="./target/classes" />
     </javah>
+    
+   	<condition property="isWindows">
+      <os family="windows"/>
+  	</condition>
+  	<condition property="isUnix">
+      <os family="unix"/>
+  	</condition>
+  </target>
 
-    <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jdk}/include" />
-      <arg value="-I${jdk}/include/win32" />
+  <target name="native-windows" depends="native-common" if="isWindows">
+    <mkdir dir="./target/native" />
+
+    <exec failonerror="true" executable="${win.cc}">
+      <arg value="-I${win.jdk}/include" />
+      <arg value="-I${win.jdk}/include/win32" />
       <arg value="-I./lib/win32/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
@@ -45,17 +59,26 @@
       <arg value="./src/main/native/creativeJNI.c" />
       <arg line="-o ./target/native/creativeJNI.dll" />
     </exec>
+    
+  	<property name="package" value="win-${os.arch}"/>
   </target>
 
   <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
 
-  	<copy file="./target/native/creativeJNI.dll" todir="./target/marshal/lib" />
+  	<copy todir="./target/marshal/lib">
+      <fileset dir="./target/native">
+  		<include name="*.dll"/>
+        <include name="*.so"/>
+      </fileset>
+    </copy>
+
   	<jar file="./target/marshal/lib/creative.jar">
       <fileset dir="./target/classes" />
   	</jar>
 
-	<zip destfile="./target/jOrgan-creative-${creative.version}-win32.zip">
+    <fail unless="package"/>
+	<zip destfile="./target/jOrgan-creative-${creative.version}-${package}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
   </target>

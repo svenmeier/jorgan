@@ -99,6 +99,7 @@
       <fileset dir="./target/classes" />
   	</jar>
 
+    <fail unless="package"/>
 	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${package}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
