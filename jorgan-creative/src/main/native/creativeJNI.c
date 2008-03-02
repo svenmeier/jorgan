@@ -256,14 +256,6 @@
     // convert java file into string
     char* file = (*env)->GetStringUTFChars(env, jfile, NULL);
 
-    // since we're paranoid we're converting forward slashes into backward slashes
-    // we SHOULD really check isCopy to make sure we're not breaking an invariant ;)
-    int j=(*env)->GetStringLength(env, jfile);
-    int i;
-    for (i=0; i<j; i++) {
-      if (file[i]=='/') file[i]='\\';
-    } 
-	  
     // prepare midi descriptor 
     CSFMIDILocation midiLocation;
     midiLocation.m_BankIndex = bank;
