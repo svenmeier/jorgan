@@ -20,8 +20,6 @@ package jorgan.fluidsynth;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
 
@@ -32,17 +30,12 @@ import jorgan.util.ClassUtils;
  */
 public class Fluidsynth {
 
-	private static final Logger logger = Logger.getLogger(Fluidsynth.class
-			.getName());
-	
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
-
-	private static final String LIBRARY = "fluidsynthJNI";
 
 	public Fluidsynth() {
 		this(16);
 	}
-	
+
 	public Fluidsynth(int channels) {
 		create(channels);
 	}
@@ -74,30 +67,25 @@ public class Fluidsynth {
 	/**
 	 * Load the native library "fluidsynth" from the path specified via the
 	 * system property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the directory
-	 * this class was loaded from. Fall back to standard VM library loading
-	 * which tries to resolve to a .dll/.so on <code>java.library.path</code>
-	 * or a system directory.
+	 * this class was loaded from.
 	 * 
 	 * @see jorgan.util.ClassUtils
 	 */
 	static {
-		try {
-			File file;
-			String path = System.getProperty(JORGAN_FLUIDSYNTH_LIBRARY_PATH);
-			if (path == null) {
-				file = ClassUtils.getDirectory(Fluidsynth.class);
-			} else {
-				file = new File(path);
-			}
-
-			String library = new File(file, System.mapLibraryName(LIBRARY))
-					.getCanonicalPath();
-			System.load(library);
-		} catch (Throwable t) {
-			logger.log(Level.WARNING, "falling back to System.loadLibary()", t);
-			
-			System.loadLibrary(LIBRARY);
+		File file;
+		String path = System.getProperty(JORGAN_FLUIDSYNTH_LIBRARY_PATH);
+		if (path == null) {
+			file = ClassUtils.getDirectory(Fluidsynth.class);
+		} else {
+			file = new File(path);
 		}
+
+		try {
+			ClassUtils.loadLibrary(file, "fluidsynth");
+		} catch (UnsatisfiedLinkError error) {
+			// might be on system library path
+		}
+		ClassUtils.loadLibrary(file, "fluidsynthJNI");
 	}
 
 	public void send(int channel, int command, int data1, int data2) {
