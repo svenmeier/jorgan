@@ -27,30 +27,30 @@
 	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
   </target>
 
-  <target name="native" depends="native-amd64, native-win32">
+  <target name="native" depends="native-linux, native-windows">
   </target>
 
   <target name="native-common" depends="compile">
     <mkdir dir="./target/native" />
 
-  	<javah verbose="true" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
+  	<javah verbose="false" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
       <classpath path="./target/classes" />
     </javah>
   	
-  	<condition property="amd64">
-      <equals arg1="${architecture}" arg2="amd64"/>
+  	<condition property="isLinux">
+      <equals arg1="${os.arch}" arg2="amd64"/>
   	</condition>
-   	<condition property="win32">
-      <equals arg1="${architecture}" arg2="win32"/>
+   	<condition property="isWindows">
+      <equals arg1="${os.arch}" arg2="win32"/>
   	</condition>
   </target>
 	
-  <target name="native-win32" depends="native-common" if="win32">
+  <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
-    <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jdk}/include" />
-      <arg value="-I${jdk}/include/win32" />
+    <exec failonerror="true" executable="${windows.cc}">
+      <arg value="-I${windows.jdk}/include" />
+      <arg value="-I${windows.jdk}/include/win32" />
       <arg value="-I./lib/win32/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
@@ -65,12 +65,12 @@
   	<copy file="./lib/win32/fluidsynth.dll" todir="./target/native" />
   </target>
 	
-  <target name="native-amd64" depends="native-common" if="amd64">
+  <target name="native-linux" depends="native-common" if="isLinux">
     <mkdir dir="./target/native" />
 
-    <exec failonerror="true" executable="${cc}">
-      <arg value="-I${jdk}/include" />
-      <arg value="-I${jdk}/include/linux" />
+    <exec failonerror="true" executable="${linux.cc}">
+      <arg value="-I${linux.jdk}/include" />
+      <arg value="-I${linux.jdk}/include/linux" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
@@ -95,7 +95,7 @@
       <fileset dir="./target/classes" />
   	</jar>
 
-	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${architecture}.zip">
+	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${os.arch}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
   </target>
