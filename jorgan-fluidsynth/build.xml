@@ -27,7 +27,7 @@
 	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
   </target>
 
-  <target name="native" depends="native-linux, native-windows">
+  <target name="native" depends="native-unix, native-windows">
   </target>
 
   <target name="native-common" depends="compile">
@@ -37,20 +37,20 @@
       <classpath path="./target/classes" />
     </javah>
   	
-  	<condition property="isLinux">
-      <equals arg1="${os.arch}" arg2="amd64"/>
-  	</condition>
    	<condition property="isWindows">
-      <equals arg1="${os.arch}" arg2="win32"/>
+      <os family="windows"/>
+  	</condition>
+  	<condition property="isUnix">
+      <os family="unix"/>
   	</condition>
   </target>
 	
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
-    <exec failonerror="true" executable="${windows.cc}">
-      <arg value="-I${windows.jdk}/include" />
-      <arg value="-I${windows.jdk}/include/win32" />
+    <exec failonerror="true" executable="${win.cc}">
+      <arg value="-I${win.jdk}/include" />
+      <arg value="-I${win.jdk}/include/win32" />
       <arg value="-I./lib/win32/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
@@ -63,14 +63,16 @@
     </exec>
   	
   	<copy file="./lib/win32/fluidsynth.dll" todir="./target/native" />
+  	
+  	<property name="package" value="win-${os.arch}"/>
   </target>
 	
-  <target name="native-linux" depends="native-common" if="isLinux">
+  <target name="native-unix" depends="native-common" if="isUnix">
     <mkdir dir="./target/native" />
 
-    <exec failonerror="true" executable="${linux.cc}">
-      <arg value="-I${linux.jdk}/include" />
-      <arg value="-I${linux.jdk}/include/linux" />
+    <exec failonerror="true" executable="${unix.cc}">
+      <arg value="-I${unix.jdk}/include" />
+      <arg value="-I${unix.jdk}/include/linux" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
@@ -79,6 +81,8 @@
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
     </exec>
+  	
+  	<property name="package" value="unix-${os.arch}"/>
   </target>
 
   <target name="dist" depends="clean, compile, native">
@@ -95,7 +99,7 @@
       <fileset dir="./target/classes" />
   	</jar>
 
-	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${os.arch}.zip">
+	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${package}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
   </target>
