@@ -254,7 +254,7 @@
   JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_loadBank(JNIEnv *env, jobject obj, jint device, jint bank, jstring jfile) {
 
     // convert java file into string
-    char* file = (*env)->GetStringUTFChars(env, jfile, NULL);
+    const char* file = (*env)->GetStringUTFChars(env, jfile, NULL);
 
     // prepare midi descriptor 
     CSFMIDILocation midiLocation;
