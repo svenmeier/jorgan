@@ -40,6 +40,7 @@ struct Context *createContext(JNIEnv *env) {
     }
   }
   throwException(env, "java/lang/Error", "Contexts exceeded");
+  return NULL;
 }
 
 struct Context *getContext(JNIEnv *env, jobject object) {
@@ -56,6 +57,9 @@ struct Context *getContext(JNIEnv *env, jobject object) {
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jint channels) {
   struct Context *context = createContext(env);
+  if (context == NULL) {
+    return;
+  }
 
   (*context).object = (*env)->NewGlobalRef(env, object);
 
@@ -70,14 +74,16 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
 JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_destroy(JNIEnv *env, jobject object) {
   struct Context *context = getContext(env, object);
-  if (context != NULL) {
-    delete_fluid_audio_driver((*context).adriver);
-    delete_fluid_synth((*context).synth);
-    delete_fluid_settings((*context).settings);
-
-    (*env)->DeleteGlobalRef(env, (*context).object);
-    (*context).object = NULL;
+  if (context == NULL) {
+    return;
   }
+
+  delete_fluid_audio_driver((*context).adriver);
+  delete_fluid_synth((*context).synth);
+  delete_fluid_settings((*context).settings);
+
+  (*env)->DeleteGlobalRef(env, (*context).object);
+  (*context).object = NULL;
 }
 
 fluid_synth_t *getSynth(JNIEnv *env, jobject object) {
@@ -96,7 +102,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv *env, jobjec
     return;
   }
 
-  char* cfilename = (*env)->GetStringUTFChars(env, filename, 0);		
+  const char* cfilename = (*env)->GetStringUTFChars(env, filename, NULL);
   int soundfont = fluid_synth_sfload(synth , cfilename, 0);
   if (soundfont == -1) {
     throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", cfilename, soundfont);
