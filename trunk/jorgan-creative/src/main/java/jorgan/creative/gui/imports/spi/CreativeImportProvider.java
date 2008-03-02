@@ -66,15 +66,18 @@ public class CreativeImportProvider implements ImportProvider {
 				devices[d] = new Device(manager.getDeviceName(d));
 
 				for (int b = 0; b < 127; b++) {
-					if (manager.isBankUsed(d, b)) {
-						devices[d].banks.add(new Bank(b, manager
-								.getBankDescriptor(d, b)));
+					try {
+						if (manager.isBankUsed(d, b)) {
+							devices[d].banks.add(new Bank(b, manager
+									.getBankDescriptor(d, b)));
+						}
+					} catch (IllegalArgumentException ex) {
+						// bank is illegal??
 					}
 				}
 			}
 		} catch (Throwable t) {
-			t.printStackTrace();
-			logger.log(Level.FINE, "unable to locate devices", t);
+			logger.log(Level.WARNING, "unable to locate devices", t);
 		}
 	}
 

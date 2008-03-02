@@ -101,7 +101,7 @@ public class ClassUtils {
 			library = new File(path, System.mapLibraryName(name))
 					.getCanonicalPath();
 		} catch (IOException e) {
-			throw new UnsatisfiedLinkError(e.getMessage());
+			throw new Error(e.getMessage());
 		}
 		System.load(library);
 	}
