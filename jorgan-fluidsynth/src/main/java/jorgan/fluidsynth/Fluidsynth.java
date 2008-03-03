@@ -24,6 +24,7 @@ import java.io.IOException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.util.ClassUtils;
+import jorgan.util.NativeUtils;
 
 /**
  * Java Wrapper for a Fluidsynth.
@@ -81,11 +82,11 @@ public class Fluidsynth {
 		}
 
 		try {
-			System.load(ClassUtils.getLibraryName(file, "fluidsynth"));
+			System.load(NativeUtils.getLibraryName(file, "fluidsynth"));
 		} catch (UnsatisfiedLinkError error) {
 			// might be on system library path
 		}
-		System.load(ClassUtils.getLibraryName(file, "fluidsynthJNI"));
+		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
 	}
 
 	public void send(int channel, int command, int data1, int data2) {

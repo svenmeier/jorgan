@@ -20,6 +20,8 @@ package jorgan.creative.play;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
@@ -32,6 +34,8 @@ import jorgan.session.event.Severity;
  */
 public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
+	private Logger logger = Logger.getLogger(CreativeSoundPlayer.class.getName());
+	
 	private CreativeSound clone;
 
 	public CreativeSoundPlayer(CreativeSound output) {
@@ -70,6 +74,9 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
 							output.getSoundfont());
+				} catch (Error err) {
+					logger.log(Level.WARNING, "unable to use SoundFontManager", err);
+					addProblem(Severity.ERROR, null, "native");
 				}
 			}
 		}
