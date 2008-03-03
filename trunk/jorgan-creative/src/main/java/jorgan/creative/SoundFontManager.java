@@ -22,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 
 import jorgan.util.ClassUtils;
+import jorgan.util.NativeUtils;
 
 /**
  * Java Wrapper for a Creative SoundBlaster SoundFont Manager.
@@ -46,9 +47,9 @@ public class SoundFontManager {
 			file = new File(path);
 		}
 
-		System.load(ClassUtils.getLibraryName(file, "creativeJNI"));
+		System.load(NativeUtils.getLibraryName(file, "creativeJNI"));
 	}
-	
+
 	/**
 	 * Get the total number of available devices. The standard Soundblaster Live
 	 * drivers are available as two devices, e.g. 'SB Live! Synth A [D800]' and

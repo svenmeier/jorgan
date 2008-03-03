@@ -76,8 +76,8 @@ public class CreativeImportProvider implements ImportProvider {
 					}
 				}
 			}
-		} catch (Throwable t) {
-			logger.log(Level.WARNING, "unable to locate devices", t);
+		} catch (Error err) {
+			logger.log(Level.WARNING, "unable to use SoundFontManager", err);
 		}
 	}
 
@@ -111,24 +111,28 @@ public class CreativeImportProvider implements ImportProvider {
 	public List<Rank> getRanks() {
 		List<Rank> ranks = new ArrayList<Rank>();
 
-		Bank bank = panel.getSelectedBank();
-		if (bank != null) {
-			SoundFontManager manager = new SoundFontManager();
+		try {
+			Bank bank = panel.getSelectedBank();
+			if (bank != null) {
+				SoundFontManager manager = new SoundFontManager();
 
-			for (int p = 0; p < 127; p++) {
-				try {
-					String preset = manager.getPresetDescriptor(0, bank.number,
-							p);
-					if (preset != null && !"".equals(preset)) {
-						Rank rank = new Rank();
-						rank.setName(preset);
-						rank.setProgram(p);
-						ranks.add(rank);
+				for (int p = 0; p < 127; p++) {
+					try {
+						String preset = manager.getPresetDescriptor(0,
+								bank.number, p);
+						if (preset != null && !"".equals(preset)) {
+							Rank rank = new Rank();
+							rank.setName(preset);
+							rank.setProgram(p);
+							ranks.add(rank);
+						}
+					} catch (IllegalArgumentException ex) {
+						// bank is illegal??
 					}
-				} catch (Throwable t) {
-					logger.log(Level.FINEST, "unable to locate preset", t);
 				}
 			}
+		} catch (Error err) {
+			logger.log(Level.WARNING, "unable to use SoundFontManager", err);
 		}
 
 		return ranks;

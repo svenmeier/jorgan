@@ -19,7 +19,6 @@
 package jorgan.util;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -87,27 +86,5 @@ public class ClassUtils {
 
 	private static String getClassResourceName(Class<?> clazz) {
 		return ("/" + clazz.getName().replace('.', '/') + ".class");
-	}
-
-	/**
-	 * Get the name of a library.<br>
-	 * Note: Loading of a JNI library has to be done in the corresponding Java
-	 * class or otherwise native methods will result in
-	 * {@link UnsatisfiedLinkError}s.
-	 * 
-	 * @param path
-	 *            path of library
-	 * @param name
-	 *            name of library
-	 */
-	public static String getLibraryName(File path, String name) {
-		String library;
-		try {
-			library = new File(path, System.mapLibraryName(name))
-					.getCanonicalPath();
-		} catch (IOException e) {
-			throw new Error(e.getMessage());
-		}
-		return library;
 	}
 }

@@ -19,6 +19,7 @@
 package jorgan.session.event;
 
 import jorgan.disposition.Element;
+import jorgan.util.Null;
 
 /**
  * Problem of a player.
@@ -68,7 +69,7 @@ public class Problem {
 			return false;
 		}
 		
-		if (!this.location.equals(problem.location)) {
+		if (!Null.safeEquals(this.location, problem.location)) {
 			return false;
 		}
 

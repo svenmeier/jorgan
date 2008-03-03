@@ -1,6 +1,8 @@
 package jorgan.fluidsynth.play;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.disposition.event.OrganEvent;
 import jorgan.fluidsynth.Fluidsynth;
@@ -12,6 +14,9 @@ import jorgan.session.event.Severity;
  * A player for a {@link FluidsynthSound}.
  */
 public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
+
+	private Logger logger = Logger.getLogger(FluidsynthSoundPlayer.class
+			.getName());
 
 	private Fluidsynth synth;
 
@@ -25,7 +30,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		return sound.getChannels();
 	}
-	
+
 	@Override
 	protected void setUp() {
 		FluidsynthSound sound = getElement();
@@ -38,6 +43,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			} catch (IOException ex) {
 				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
 						.getSoundfont());
+			} catch (Error err) {
+				logger.log(Level.WARNING, "unable to use Fluidsynth", err);
+				addProblem(Severity.ERROR, null, "native");
 			}
 		}
 	}
