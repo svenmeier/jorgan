@@ -21,10 +21,15 @@ package jorgan.gui.construct.info.spi;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.imageio.spi.ServiceRegistry;
 
 public class ProviderRegistry {
+
+	private static final Logger logger = Logger
+			.getLogger(ProviderRegistry.class.getName());
 
 	/**
 	 * Utility method to get all registered providers.
@@ -41,6 +46,7 @@ public class ProviderRegistry {
 			try {
 				providers.add(iterator.next());
 			} catch (Throwable providerFailed) {
+				logger.log(Level.WARNING, "provider failed", providerFailed);
 			}
 		}
 
@@ -52,7 +58,11 @@ public class ProviderRegistry {
 
 		List<BeanInfoProvider> providers = lookup();
 		for (BeanInfoProvider provider : providers) {
-			paths.add(provider.getBeanInfoSearchPath());
+			try {
+				paths.add(provider.getBeanInfoSearchPath());
+			} catch (Throwable providerFailed) {
+				logger.log(Level.WARNING, "provider failed", providerFailed);
+			}
 		}
 
 		return paths.toArray(new String[paths.size()]);
