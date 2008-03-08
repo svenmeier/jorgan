@@ -668,19 +668,23 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		consoleView.paint(g);
 
-		for (View<? extends Element> view : viewsByElement.values()) {
-			int x = view.getX();
-			int y = view.getY();
-			int width = view.getWidth();
-			int height = view.getHeight();
+		// iterate elements in order defined by console 
+		for (Element element : console.getReferenced(Element.class)) {
+			View<?> view = getView(element);
+			if (view != null) {
+				int x = view.getX();
+				int y = view.getY();
+				int width = view.getWidth();
+				int height = view.getHeight();
 
-			if ((clip.x + clip.width > x && clip.x < x + width)
-					&& (clip.y + clip.height > y && clip.y < y + height)) {
+				if ((clip.x + clip.width > x && clip.x < x + width)
+						&& (clip.y + clip.height > y && clip.y < y + height)) {
 
-				// clipping a scaled graphics corrupts the clip so don't do it
-				// g.clipRect(x, y, width, height);
-				view.paint(g);
-				// g.setClip(clip);
+					// clipping a scaled graphics corrupts the clip so don't do it
+					// g.clipRect(x, y, width, height);
+					view.paint(g);
+					// g.setClip(clip);
+				}
 			}
 		}
 	}
