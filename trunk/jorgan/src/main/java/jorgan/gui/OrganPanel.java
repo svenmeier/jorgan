@@ -26,10 +26,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,6 +40,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.spi.ProviderRegistry;
 import jorgan.gui.play.MessagesMonitor;
@@ -54,10 +53,9 @@ import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.swing.BaseAction;
 import swingx.docking.DefaultDockable;
-import swingx.docking.Dock;
 import swingx.docking.Dockable;
+import swingx.docking.Docked;
 import swingx.docking.DockingPane;
-import swingx.docking.border.Eclipse3Border;
 import swingx.docking.persistence.XMLPersister;
 import bias.Configuration;
 
@@ -95,13 +93,11 @@ public class OrganPanel extends JPanel implements SessionAware {
 	 */
 	private DockingPane consoleDocking = new BordererDockingPane();
 
-	private Map<Console, ConsoleDockable> consolesMap = new HashMap<Console, ConsoleDockable>();
-
 	private BackAction backAction = new BackAction();
 
 	private ForwardAction forwardAction = new ForwardAction();
 
-	private MessagesMonitor playMonitor = new MessagesMonitor();
+	private MessagesMonitor messagesMonitor = new MessagesMonitor();
 
 	private String playDocking;
 
@@ -145,7 +141,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 	public List<Object> getStatusBarWidgets() {
 		List<Object> widgets = new ArrayList<Object>();
 
-		widgets.add(playMonitor);
+		widgets.add(messagesMonitor);
 
 		return widgets;
 	}
@@ -224,25 +220,41 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 	protected void addConsoleDockable(Console console) {
 
-		ConsoleDockable dockable = new ConsoleDockable(console);
-		dockable.setSession(session);
-		consolesMap.put(console, dockable);
+		ConsoleDockable dockable = new ConsoleDockable(console) {
+			@Override
+			public void docked(Docked docked) {
+				super.docked(docked);
+				
+				setSession(session);
+			}
+			
+			@Override
+			public void undocked() {
+				setSession(null);
+
+				super.undocked();				
+			}
+		};
 
 		consoleDocking.putDockable(console, dockable);
 	}
 
 	protected void updateConsoleDockable(Console console) {
-		ConsoleDockable dockable = consolesMap.get(console);
-
-		consoleDocking.putDockable(console, dockable);
+		ConsoleDockable dockable = (ConsoleDockable) consoleDocking
+				.getDockable(console);
+		if (dockable == null) {
+			addConsoleDockable(console);
+		} else {
+			consoleDocking.putDockable(console, dockable);
+		}
 	}
 
 	protected void removeConsoleDockable(Console console) {
-		ConsoleDockable dockable = consolesMap.remove(console);
-
-		dockable.setSession(null);
-
-		consoleDocking.removeDockable(console);
+		ConsoleDockable dockable = (ConsoleDockable) consoleDocking
+				.getDockable(console);
+		if (dockable != null) {
+			consoleDocking.removeDockable(console);
+		}
 	}
 
 	/**
@@ -340,15 +352,6 @@ public class OrganPanel extends JPanel implements SessionAware {
 		config.write(this);
 	}
 
-	private class BordererDockingPane extends DockingPane {
-		@Override
-		protected Dock createDockImpl() {
-			Dock dock = super.createDockImpl();
-			dock.setBorder(new Eclipse3Border());
-			return dock;
-		}
-	}
-
 	/**
 	 * The listener to events.
 	 */
@@ -356,11 +359,11 @@ public class OrganPanel extends JPanel implements SessionAware {
 			OrganListener, ElementSelectionListener {
 
 		public void inputAccepted() {
-			playMonitor.input();
+			messagesMonitor.input();
 		}
 
 		public void outputProduced() {
-			playMonitor.output();
+			messagesMonitor.output();
 		}
 
 		public void problemAdded(Problem problem) {
