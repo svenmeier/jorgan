@@ -77,16 +77,20 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	}
 
 	@Override
-	protected void send(int channel, int command, int data1, int data2) {
-		if (receiver != null) {
-			ShortMessage message;
-			try {
-				message = MessageUtils.createShortMessage(command | channel,
-						data1, data2);
-			} catch (InvalidMidiDataException e) {
-				throw new Error(e);
-			}
-			receiver.send(message, -1);
+	protected boolean send(int channel, int command, int data1, int data2) {
+		if (receiver == null) {
+			return false;
 		}
+
+		ShortMessage message;
+		try {
+			message = MessageUtils.createShortMessage(command | channel,
+					data1, data2);
+		} catch (InvalidMidiDataException e) {
+			throw new Error(e);
+		}
+		receiver.send(message, -1);
+
+		return true;
 	}
 }

@@ -72,9 +72,13 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
-	protected void send(int channel, int command, int data1, int data2) {
-		if (synth != null) {
-			synth.send(channel, command, data1, data2);
+	protected boolean send(int channel, int command, int data1, int data2) {
+		if (synth == null) {
+			return false;
 		}
+		
+		synth.send(channel, command, data1, data2);
+		
+		return true;
 	}
 }
