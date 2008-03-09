@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct;
+package jorgan.gui.dock;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -57,6 +57,7 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
+import jorgan.gui.construct.CreateMessageWizard;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
@@ -69,17 +70,18 @@ import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
  * Panel shows the messages of elements.
  */
-public class MessagesPanel extends DockedPanel implements SessionAware {
+public class MessagesDockable extends DefaultDockable implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
-			MessagesPanel.class);
+			MessagesDockable.class);
 
 	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
 			.getResource("img/input.gif"));
@@ -119,22 +121,15 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 	/**
 	 * Create a tree panel.
 	 */
-	public MessagesPanel() {
+	public MessagesDockable() {
+		config.read(this);
 
-		addTool(addAction);
-		addTool(removeAction);
-
-		addToolSeparator();
 		config.get("sortByType").read(sortByTypeButton);
 		sortByTypeButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				updateMessages();
 			}
 		});
-		addTool(sortByTypeButton);
-
-		addToolSeparator();
-		addTool(recordAction);
 
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -197,7 +192,19 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 				new StringCellEditor());
 		TableUtils.pleasantLookAndFeel(table);
 
-		setScrollableBody(table, true, false);
+		setContent(table);
+	}
+
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(addAction);
+		docked.addTool(removeAction);
+		docked.addToolSeparator();
+		docked.addTool(sortByTypeButton);
+		docked.addToolSeparator();
+		docked.addTool(recordAction);
 	}
 
 	private void commitEdit() {
@@ -389,8 +396,8 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateMessageWizard.showInDialog(MessagesPanel.this, session
-					.getOrgan(), element);
+			CreateMessageWizard
+					.showInDialog(table, session.getOrgan(), element);
 		}
 
 		public void update() {
@@ -409,8 +416,7 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
-					MessagesPanel.this) != MessageBox.OPTION_OK) {
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(table) != MessageBox.OPTION_OK) {
 				return;
 			}
 
@@ -489,7 +495,7 @@ public class MessagesPanel extends DockedPanel implements SessionAware {
 					}
 				});
 
-				dialog.show(MessagesPanel.this);
+				dialog.show(table);
 
 				transmitter.close();
 				device.close();

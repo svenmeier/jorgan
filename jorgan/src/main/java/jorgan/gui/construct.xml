@@ -3,23 +3,23 @@
     <docking x="0" y="0" width="200" height="200">
       <slice orientation="3" weight="0.0">
         <dock>
-          <dockable key="keyboard" null="true"/>
+          <dockable key="Keyboard" null="true"/>
         </dock>
         <slice orientation="2" weight="0.25">
           <slice orientation="1" weight="0.5">
             <dock>
-              <dockable key="elements"/>
+              <dockable key="Elements"/>
             </dock>
             <dock>
-              <dockable key="references"/>
-              <dockable key="properties" selected="true"/>
+              <dockable key="References"/>
+              <dockable key="Properties" selected="true"/>
             </dock>
           </slice>
           <slice orientation="3" weight="0.25">
             <dock>
-              <dockable key="messages" null="true"/>
-              <dockable key="midiMonitor" null="true"/>
-              <dockable key="problems" selected="true"/>
+              <dockable key="Messages" null="true"/>
+              <dockable key="Monitor" null="true"/>
+              <dockable key="Problems" selected="true"/>
             </dock>
             <bridge key="consoles"/>
           </slice>

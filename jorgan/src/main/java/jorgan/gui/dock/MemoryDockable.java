@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.play;
+package jorgan.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.util.Set;
@@ -36,18 +36,19 @@ import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
 import bias.util.MessageBuilder;
 
 /**
- * Panel for editing of a {@link jorgan.disposition.Memory}.
+ * Dockable for editing of a {@link jorgan.disposition.Memory}.
  */
-public class MemoryPanel extends DockedPanel implements SessionAware {
+public class MemoryDockable extends DefaultDockable implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
-			MemoryPanel.class);
+			MemoryDockable.class);
 
 	private JTable table = new JTable();
 
@@ -60,7 +61,8 @@ public class MemoryPanel extends DockedPanel implements SessionAware {
 	/**
 	 * Constructor.
 	 */
-	public MemoryPanel() {
+	public MemoryDockable() {
+		config.read(this);
 
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -69,12 +71,7 @@ public class MemoryPanel extends DockedPanel implements SessionAware {
 		TableUtils.hideHeader(table);
 		TableUtils.fixColumnWidth(table, 0, "888");
 		TableUtils.pleasantLookAndFeel(table);
-		setScrollableBody(table, true, false);
-
-		addTool(new PreviousAction());
-		addTool(new NextAction());
-		addTool(new SwapAction());
-		addTool(new ClearAction());
+		setContent(table);
 
 		setMemory(null);
 	}
@@ -101,6 +98,19 @@ public class MemoryPanel extends DockedPanel implements SessionAware {
 		}
 	}
 
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(new PreviousAction());
+		docked.addTool(new NextAction());
+		docked.addTool(new SwapAction());
+		docked.addTool(new ClearAction());
+		
+		updateSelection();
+		updateMessage();
+	}
+
 	private void findMemory() {
 		Set<Memory> memories = this.session.getOrgan()
 				.getElements(Memory.class);
@@ -118,17 +128,28 @@ public class MemoryPanel extends DockedPanel implements SessionAware {
 
 		table.setVisible(memory != null);
 
-		if (memory == null) {
-			setMessage(config.get("noMemory").read(new MessageBuilder())
-					.build());
-		} else {
-			setMessage(null);
-
-			updateSelection();
-		}
+		updateSelection();
+		updateMessage();
 	}
 
+	private void updateMessage() {
+		String message;
+		if (memory == null) {
+			message = config.get("noMemory").read(new MessageBuilder()).build();
+		} else {
+			message = null;
+		}
+
+		if (isDocked()) {
+			getDocked().setMessage(message);
+		}
+	}
+	
 	private void updateSelection() {
+		if (memory == null) {
+			return;
+		}
+		
 		// remove listener to avoid infinite loop
 		table.getSelectionModel().removeListSelectionListener(model);
 
@@ -290,7 +311,7 @@ public class MemoryPanel extends DockedPanel implements SessionAware {
 
 			MessageBox box = config.get("clearConfirm").read(
 					new MessageBox(MessageBox.OPTIONS_YES_NO));
-			return box.show(MemoryPanel.this) == MessageBox.OPTION_YES;
+			return box.show(table) == MessageBox.OPTION_YES;
 		}
 
 		public void valueChanged(ListSelectionEvent e) {

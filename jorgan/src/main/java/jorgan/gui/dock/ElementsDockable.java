@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct;
+package jorgan.gui.dock;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -40,6 +40,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
+import jorgan.gui.construct.CreateElementWizard;
+import jorgan.gui.construct.ElementComparator;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
@@ -50,17 +52,18 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
  * Panel shows all elements.
  */
-public class ElementsPanel extends DockedPanel implements SessionAware {
+public class ElementsDockable extends DefaultDockable implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ElementsPanel.class);
+			ElementsDockable.class);
 
 	/**
 	 * The edited organ.
@@ -85,7 +88,9 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 	/**
 	 * Create a tree panel.
 	 */
-	public ElementsPanel() {
+	public ElementsDockable() {
+		
+		config.read(this);
 
 		list.setModel(elementsModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
@@ -144,12 +149,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 				}
 			}
 		});
-		setScrollableBody(list, true, false);
-
-		addTool(new AddAction());
-		addTool(new RemoveAction());
-
-		addToolSeparator();
+		setContent(list);
 
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
@@ -159,13 +159,24 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 		};
 		config.get("sortByType").read(sortByTypeButton);
 		sortGroup.add(sortByTypeButton);
-		addTool(sortByTypeButton);
 
 		config.get("sortByName").read(sortByNameButton);
 		sortGroup.add(sortByNameButton);
-		addTool(sortByNameButton);
 
 		new DuplicateAction();
+	}
+
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(new AddAction());
+		docked.addTool(new RemoveAction());
+
+		docked.addToolSeparator();
+
+		docked.addTool(sortByTypeButton);
+		docked.addTool(sortByNameButton);
 	}
 
 	/**
@@ -374,8 +385,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				CreateElementWizard.showInDialog(ElementsPanel.this, session
-						.getOrgan());
+				CreateElementWizard.showInDialog(list, session.getOrgan());
 			}
 		}
 	}
@@ -416,8 +426,7 @@ public class ElementsPanel extends DockedPanel implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
-					ElementsPanel.this) != MessageBox.OPTION_OK) {
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(list) != MessageBox.OPTION_OK) {
 				return;
 			}
 

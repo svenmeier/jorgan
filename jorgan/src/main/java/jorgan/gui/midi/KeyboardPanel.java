@@ -45,10 +45,10 @@ import bias.Configuration;
 /**
  * A keyboard.
  */
-public class KeyboardPane extends JComponent {
+public class KeyboardPanel extends JComponent {
 
 	private static Configuration config = Configuration.getRoot().get(
-			KeyboardPane.class);
+			KeyboardPanel.class);
 
 	private static final int C = 0;
 
@@ -111,7 +111,7 @@ public class KeyboardPane extends JComponent {
 	/**
 	 * Constructor.
 	 */
-	public KeyboardPane() {
+	public KeyboardPanel() {
 		MouseHandler handler = new MouseHandler();
 		addMouseListener(handler);
 		addMouseMotionListener(handler);
@@ -332,7 +332,7 @@ public class KeyboardPane extends JComponent {
 
 		private void showPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				KeyboardPane.this.showPopup(e.getX(), e.getY());
+				KeyboardPanel.this.showPopup(e.getX(), e.getY());
 			}
 		}
 

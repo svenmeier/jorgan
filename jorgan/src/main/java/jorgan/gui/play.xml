@@ -3,12 +3,12 @@
     <docking x="0" y="0" width="200" height="200">
       <slice orientation="3" weight="0.0">
         <dock>
-          <dockable key="keyboard"/>
+          <dockable key="Keyboard"/>
         </dock>
         <slice orientation="3" weight="0.25">
           <dock>
-            <dockable key="midiMonitor" null="true"/>
-            <dockable key="problems" null="true"/>
+            <dockable key="Monitor" null="true"/>
+            <dockable key="Problems" null="true"/>
           </dock>
           <bridge key="consoles"/>
         </slice>

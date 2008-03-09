@@ -16,35 +16,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.midi;
-
-import java.awt.BorderLayout;
+package jorgan.gui.dock;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
-import javax.swing.JPanel;
 
+import jorgan.gui.midi.KeyboardPanel;
 import jorgan.midi.Loopback;
+import swingx.docking.DefaultDockable;
+import bias.Configuration;
 
 /**
  * A virtual keyboard.
  */
-public class VirtualKeyboard extends JPanel {
+public class KeyboardDockable extends DefaultDockable {
 
-	private KeyboardPane pane = new KeyboardPane();
+	private static final Configuration config = Configuration.getRoot().get(
+			KeyboardDockable.class);
+
+	private KeyboardPanel keyboard = new KeyboardPanel();
 
 	/**
 	 * Constructor.
 	 */
-	public VirtualKeyboard() {
-		super(new BorderLayout());
+	public KeyboardDockable() {
+		config.read(this);
 
-		add(pane, BorderLayout.CENTER);
-
-		pane.setReceiver(new Receiver() {
+		keyboard.setReceiver(new Receiver() {
 			public void send(MidiMessage message, long timeStamp) {
 				Provider.getKeyboard().loopbackMessage(message, timeStamp);
 			}
@@ -53,8 +54,10 @@ public class VirtualKeyboard extends JPanel {
 				// ignore
 			}
 		});
+		setScrollable(false);
+		setContent(keyboard);
 	}
-
+	
 	/**
 	 * The provider for the virtual keyboard.
 	 */

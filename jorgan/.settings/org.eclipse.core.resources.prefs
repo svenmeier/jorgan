@@ -1,4 +1,4 @@
-#Sat Feb 02 16:50:46 CET 2008
+#Sun Mar 09 19:41:35 CET 2008
 eclipse.preferences.version=1
 encoding//docs/authors.txt=ISO-8859-1
 encoding//src/jorgan/disposition/i18n.properties=UTF-8
@@ -25,6 +25,12 @@ encoding//src/jorgan/gui/construct/layout/i18n_de.properties=UTF-8
 encoding//src/jorgan/gui/construct/layout/i18n_it.properties=UTF-8
 encoding//src/jorgan/gui/construct/layout/i18n_no.properties=UTF-8
 encoding//src/jorgan/gui/construct/layout/i18n_ru.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n_cs.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n_de.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n_it.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n_no.properties=UTF-8
+encoding//src/jorgan/gui/dock/i18n_ru.properties=UTF-8
 encoding//src/jorgan/gui/i18n.properties=UTF-8
 encoding//src/jorgan/gui/i18n_cs.properties=UTF-8
 encoding//src/jorgan/gui/i18n_de.properties=UTF-8

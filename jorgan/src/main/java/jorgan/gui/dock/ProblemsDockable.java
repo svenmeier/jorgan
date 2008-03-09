@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.play;
+package jorgan.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
@@ -38,16 +38,16 @@ import jorgan.session.event.Severity;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
 import bias.Configuration;
 
 /**
  * Panel shows the {@link Problem}s.
  */
-public class ProblemsPanel extends DockedPanel implements SessionAware {
+public class ProblemsDockable extends DefaultDockable implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ProblemsPanel.class);
+			ProblemsDockable.class);
 
 	/**
 	 * Icon used for indication of a warning.
@@ -76,7 +76,8 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 	/**
 	 * Create a tree panel.
 	 */
-	public ProblemsPanel() {
+	public ProblemsDockable() {
+		config.read(this);
 
 		config.get("table").read(tableModel);
 		table.setModel(tableModel);
@@ -93,7 +94,7 @@ public class ProblemsPanel extends DockedPanel implements SessionAware {
 				}
 			}
 		}.configureTableColumn(table, 0);
-		setScrollableBody(table, true, false);
+		setContent(table);
 
 		popup.add(gotoAction);
 	}

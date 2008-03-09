@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct;
+package jorgan.gui.dock;
 
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.Transferable;
@@ -44,6 +44,8 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ReferenceListCellRenderer;
+import jorgan.gui.construct.CreateReferencesWizard;
+import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
@@ -52,17 +54,18 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
  * Panel shows the {@link Reference}s of {@link Element}s.
  */
-public class ReferencesPanel extends DockedPanel implements SessionAware {
+public class ReferencesDockable extends DefaultDockable implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ReferencesPanel.class);
+			ReferencesDockable.class);
 
 	/**
 	 * The edited organ.
@@ -96,12 +99,8 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 	/**
 	 * Create a tree panel.
 	 */
-	public ReferencesPanel() {
-
-		addTool(addAction);
-		addTool(removeAction);
-
-		addToolSeparator();
+	public ReferencesDockable() {
+		config.read(this);
 
 		ButtonGroup toFromGroup = new ButtonGroup() {
 			@Override
@@ -112,13 +111,9 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 		config.get("referencesTo").read(referencesToButton);
 		toFromGroup.add(referencesToButton);
-		addTool(referencesToButton);
 
 		config.get("referencedFrom").read(referencedFromButton);
 		toFromGroup.add(referencedFromButton);
-		addTool(referencedFromButton);
-
-		addToolSeparator();
 
 		ButtonGroup sortGroup = new ButtonGroup(true) {
 			@Override
@@ -129,11 +124,9 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 		config.get("sortByName").read(sortByNameButton);
 		sortGroup.add(sortByNameButton);
-		addTool(sortByNameButton);
 
 		config.get("sortByType").read(sortByTypeButton);
 		sortGroup.add(sortByTypeButton);
-		addTool(sortByTypeButton);
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setModel(referencesToModel);
@@ -193,9 +186,23 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 			}
 		});
 
-		setScrollableBody(list, true, false);
+		setContent(list);
 
 		updateReferences();
+	}
+
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(addAction);
+		docked.addTool(removeAction);
+		docked.addToolSeparator();
+		docked.addTool(referencesToButton);
+		docked.addTool(referencedFromButton);
+		docked.addToolSeparator();
+		docked.addTool(sortByNameButton);
+		docked.addTool(sortByTypeButton);
 	}
 
 	/**
@@ -346,7 +353,8 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 		protected List<ReferrerReference> getReferences() {
 			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
-			for (Reference<? extends Element> reference : element.getReferences()) {
+			for (Reference<? extends Element> reference : element
+					.getReferences()) {
 				references.add(new ReferrerReference(element, reference));
 			}
 
@@ -401,8 +409,8 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateReferencesWizard.showInDialog(ReferencesPanel.this, session
-					.getOrgan(), element);
+			CreateReferencesWizard.showInDialog(list, session.getOrgan(),
+					element);
 		}
 
 		public void update() {
@@ -421,8 +429,7 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(
-					ReferencesPanel.this) != MessageBox.OPTION_OK) {
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(list) != MessageBox.OPTION_OK) {
 				return;
 			}
 
@@ -449,7 +456,8 @@ public class ReferencesPanel extends DockedPanel implements SessionAware {
 
 		private Reference<? extends Element> reference;
 
-		public ReferrerReference(Element referrer, Reference<? extends Element> reference) {
+		public ReferrerReference(Element referrer,
+				Reference<? extends Element> reference) {
 			this.referrer = referrer;
 			this.reference = reference;
 		}

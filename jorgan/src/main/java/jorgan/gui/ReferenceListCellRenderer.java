@@ -11,7 +11,6 @@ import javax.swing.ImageIcon;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
-import jorgan.gui.construct.ElementsPanel;
 
 /**
  * A cell renderer for {@link Reference}s.
@@ -21,8 +20,9 @@ public class ReferenceListCellRenderer extends ElementListCellRenderer {
 	/**
 	 * Icon used for indication an reference.
 	 */
-	private static final Icon referenceIcon = new ImageIcon(ElementsPanel.class
-			.getResource("/jorgan/gui/img/reference.gif"));
+	private static final Icon referenceIcon = new ImageIcon(
+			ReferenceListCellRenderer.class
+					.getResource("/jorgan/gui/img/reference.gif"));
 
 	protected Icon getIcon(Element element) {
 		return referenceIcon;
