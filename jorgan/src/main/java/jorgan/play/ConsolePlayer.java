@@ -110,6 +110,10 @@ public class ConsolePlayer extends Player<Console> {
 
 		if (receiver != null) {
 			receiver.send(message, -1);
+		
+			if (getOrganPlay() != null) {
+				getOrganPlay().fireOutputProduced();
+			}
 		}
 	}
 

@@ -219,10 +219,6 @@ public abstract class Player<E extends Element> {
 			}
 
 			send(shortMessage, context);
-
-			if (organPlay != null) {
-				organPlay.fireOutputProduced();
-			}
 		}
 	}
 
