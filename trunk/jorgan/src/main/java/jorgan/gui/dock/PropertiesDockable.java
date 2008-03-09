@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct;
+package jorgan.gui.dock;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -38,12 +38,16 @@ import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import bias.Configuration;
 
 /**
- * Panel shows the properties of elements.
+ * Dockable shows the properties of elements.
  */
-public class ElementPropertiesPanel extends DockedPanel implements SessionAware {
+public class PropertiesDockable extends DefaultDockable implements SessionAware {
+
+	private static Configuration config = Configuration.getRoot().get(
+			PropertiesDockable.class);
 
 	/**
 	 * The handler of selection changes.
@@ -54,12 +58,14 @@ public class ElementPropertiesPanel extends DockedPanel implements SessionAware 
 
 	private PropertiesPanel propertiesPanel = new PropertiesPanel();
 
-	public ElementPropertiesPanel() {
+	public PropertiesDockable() {
+		config.read(this);
+
+		setContent(propertiesPanel);
 
 		ElementCustomizer customizer = new ElementCustomizer();
 		propertiesPanel.setBeanCustomizer(customizer);
 		propertiesPanel.addChangeListener(selectionHandler);
-		setScrollableBody(propertiesPanel, true, false);
 	}
 
 	public void setSession(OrganSession session) {
@@ -121,7 +127,7 @@ public class ElementPropertiesPanel extends DockedPanel implements SessionAware 
 
 				Object location = session.getElementSelection().getLocation();
 				if (location instanceof String) {
-					propertiesPanel.setProperty((String)location);
+					propertiesPanel.setProperty((String) location);
 				} else {
 					propertiesPanel.setProperty(null);
 				}

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.midi;
+package jorgan.gui.dock;
 
 import java.awt.Color;
 import java.awt.Component;
@@ -36,6 +36,7 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
+import jorgan.gui.midi.DeviceSelectionPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.KeyFormat;
@@ -46,17 +47,18 @@ import jorgan.swing.StandardDialog;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
-import swingx.docking.DockedPanel;
+import swingx.docking.DefaultDockable;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
 /**
  * A monitor of MIDI messages.
  */
-public class MidiMonitor extends DockedPanel {
+public class MonitorDockable extends DefaultDockable {
 
 	private static final Configuration config = Configuration.getRoot().get(
-			MidiMonitor.class);
+			MonitorDockable.class);
 
 	private static final KeyFormat keyFormat = new KeyFormat();
 
@@ -118,12 +120,8 @@ public class MidiMonitor extends DockedPanel {
 	/**
 	 * Constructor.
 	 */
-	public MidiMonitor() {
+	public MonitorDockable() {
 		config.read(this);
-
-		addTool(new DeviceAction());
-
-		addToolSeparator();
 
 		ButtonGroup baseGroup = new ButtonGroup() {
 			@Override
@@ -135,25 +133,16 @@ public class MidiMonitor extends DockedPanel {
 		config.get("hex").read(hexButton);
 		hexButton.setSelected(true);
 		baseGroup.add(hexButton);
-		addTool(hexButton);
 
 		config.get("decimal").read(decButton);
 		baseGroup.add(decButton);
-		addTool(decButton);
-
-		addToolSeparator();
 
 		config.get("scrollLock").read(scrollLockButton);
-		addTool(scrollLockButton);
-
-		addToolSeparator();
-
-		addTool(new ClearAction());
 
 		config.get("table").read(tableModel);
 		table.setModel(tableModel);
 		TableUtils.pleasantLookAndFeel(table);
-		setScrollableBody(table, true, false);
+		setContent(table);
 
 		prepareColumn(0, 10, SwingConstants.RIGHT);
 		prepareColumn(1, 10, SwingConstants.RIGHT);
@@ -165,6 +154,22 @@ public class MidiMonitor extends DockedPanel {
 		updateMessagesLabel();
 	}
 
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(new DeviceAction());
+		docked.addToolSeparator();
+		docked.addTool(hexButton);
+		docked.addTool(decButton);
+		docked.addToolSeparator();
+		docked.addTool(scrollLockButton);
+		docked.addToolSeparator();
+		docked.addTool(new ClearAction());
+		
+		updateMessagesLabel();
+	}
+
 	private DeviceSelectionPanel selectionPanel;
 
 	protected void selectDevice() {
@@ -173,7 +178,7 @@ public class MidiMonitor extends DockedPanel {
 		}
 		selectionPanel.setDevice(deviceName, direction);
 
-		StandardDialog selectionDialog = StandardDialog.create(this);
+		StandardDialog selectionDialog = StandardDialog.create(table);
 		selectionDialog.addCancelAction();
 		selectionDialog.addOKAction();
 		selectionDialog.setBody(selectionPanel);
@@ -235,7 +240,10 @@ public class MidiMonitor extends DockedPanel {
 					deviceName, direction.name(),
 					open ? new Integer(1) : new Integer(0));
 		}
-		setMessage(message);
+
+		if (isDocked()) {
+			getDocked().setMessage(message);
+		}
 	}
 
 	private void prepareColumn(int index, int width, int align) {

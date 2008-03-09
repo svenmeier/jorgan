@@ -28,7 +28,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.TitledBorder;
 
-import jorgan.gui.midi.MidiMonitor;
+import jorgan.gui.dock.MonitorDockable;
 import jorgan.swing.GridBuilder;
 import bias.Configuration;
 import bias.swing.Category;
@@ -42,7 +42,7 @@ public class MidiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiCategory.class);
 
-	private Model monitorMax = getModel(new Property(MidiMonitor.class, "max"));
+	private Model monitorMax = getModel(new Property(MonitorDockable.class, "max"));
 
 	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
 			1, Integer.MAX_VALUE, 50));

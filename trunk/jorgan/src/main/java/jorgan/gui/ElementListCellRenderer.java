@@ -16,7 +16,7 @@ import javax.swing.JList;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.gui.construct.ElementsPanel;
+import jorgan.gui.dock.ElementsDockable;
 import jorgan.session.OrganSession;
 import jorgan.swing.list.CommentedCellRenderer;
 
@@ -30,19 +30,19 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	/**
 	 * Icon used for indication an element.
 	 */
-	private static final Icon elementIcon = new ImageIcon(ElementsPanel.class
+	private static final Icon elementIcon = new ImageIcon(ElementsDockable.class
 			.getResource("/jorgan/gui/img/element.gif"));
 
 	/**
 	 * Icon used for indication of a warning.
 	 */
-	private static final Icon warningIcon = new ImageIcon(ElementsPanel.class
+	private static final Icon warningIcon = new ImageIcon(ElementsDockable.class
 			.getResource("/jorgan/gui/img/elementWarning.gif"));
 
 	/**
 	 * Icon used for indication of an error.
 	 */
-	private static final Icon errorIcon = new ImageIcon(ElementsPanel.class
+	private static final Icon errorIcon = new ImageIcon(ElementsDockable.class
 			.getResource("/jorgan/gui/img/elementError.gif"));
 
 	/**

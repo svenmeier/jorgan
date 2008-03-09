@@ -231,7 +231,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * Create a view panel.
 	 */
-	public ConsolePanel() {
+	public ConsolePanel(Console console) {
+		if (console == null) {
+			throw new IllegalArgumentException("console must not be null");
+		}
 		config.read(this);
 
 		// must report to be opaque so containing scrollPane can use blitting
@@ -266,6 +269,18 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		arrangeMenu.add(arrangeToBackAction);
 		arrangeMenu.add(arrangeHideAction);
 
+		this.console = console;
+
+		initSkin();
+
+		consoleView = new ConsoleView(console);
+		consoleView.setConsolePanel(this);
+
+		for (Reference<? extends Element> reference : console
+				.getReferences(Console.Reference.class)) {
+			createView(reference.getElement());
+		}
+		
 		setConstructing(true);
 	}
 
@@ -441,40 +456,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 */
 	public Console getConsole() {
 		return console;
-	}
-
-	/**
-	 * Set the console to be edited.
-	 * 
-	 * @param console
-	 *            console to be edited
-	 */
-	public void setConsole(Console console) {
-		if (this.console != null) {
-			consoleView.setConsolePanel(null);
-			consoleView = null;
-
-			for (View<? extends Element> view : viewsByElement.values()) {
-				view.setConsolePanel(null);
-			}
-			viewsByElement.clear();
-
-			skin = null;
-		}
-
-		this.console = console;
-
-		if (console != null) {
-			initSkin();
-
-			consoleView = new ConsoleView(console);
-			consoleView.setConsolePanel(this);
-
-			for (Reference<? extends Element> reference : console
-					.getReferences(Console.Reference.class)) {
-				createView(reference.getElement());
-			}
-		}
 	}
 
 	private void initSkin() {
