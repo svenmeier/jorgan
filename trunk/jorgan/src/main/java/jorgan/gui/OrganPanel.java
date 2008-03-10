@@ -42,6 +42,7 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
+import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.spi.ProviderRegistry;
 import jorgan.gui.play.MessagesMonitor;
 import jorgan.play.event.PlayListener;
@@ -52,7 +53,6 @@ import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.swing.BaseAction;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Dockable;
 import swingx.docking.Docked;
 import swingx.docking.DockingPane;
@@ -82,11 +82,11 @@ public class OrganPanel extends JPanel implements SessionAware {
 	private EventsListener eventsListener = new EventsListener();
 
 	/*
-	 * The outer dockingPane that holds all views.
+	 * The outer dockingPane.
 	 */
-	private DockingPane viewDocking = new BordererDockingPane();
+	private DockingPane docking = new BordererDockingPane();
 
-	private Set<Dockable> dockables = new HashSet<Dockable>();
+	private Set<DockableAction> dockableActions = new HashSet<DockableAction>();
 
 	/*
 	 * The inner dockingPane that holds all consoles.
@@ -111,10 +111,12 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 		setLayout(new BorderLayout());
 
-		viewDocking.setBorder(new EmptyBorder(2, 2, 2, 2));
-		add(viewDocking, BorderLayout.CENTER);
+		docking.setBorder(new EmptyBorder(2, 2, 2, 2));
+		add(docking, BorderLayout.CENTER);
 
-		dockables.addAll(ProviderRegistry.getDockables());
+		for (OrganDockable dockable : ProviderRegistry.getDockables()) {
+			dockableActions.add(new DockableAction(dockable));
+		}
 
 		loadDocking();
 	}
@@ -152,13 +154,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 	 * @return widgets
 	 */
 	public List<Object> getMenuWidgets() {
-		List<Object> actions = new ArrayList<Object>();
-
-		for (Dockable dockable : dockables) {
-			actions.add(new DockableAction(dockable));
-		}
-
-		return actions;
+		return new ArrayList<Object>(dockableActions);
 	}
 
 	public void setSession(OrganSession session) {
@@ -168,10 +164,8 @@ public class OrganPanel extends JPanel implements SessionAware {
 			this.session.removeProblemListener(eventsListener);
 			this.session.removeSelectionListener(eventsListener);
 
-			for (Dockable dockable : dockables) {
-				if (dockable instanceof SessionAware) {
-					((SessionAware) dockable).setSession(null);
-				}
+			for (DockableAction action : dockableActions) {
+				action.getDockable().setSession(null);
 			}
 
 			for (Element element : this.session.getOrgan().getElements()) {
@@ -191,10 +185,8 @@ public class OrganPanel extends JPanel implements SessionAware {
 			this.session.addPlayerListener(eventsListener);
 			this.session.addOrganListener(eventsListener);
 
-			for (Dockable dockable : dockables) {
-				if (dockable instanceof SessionAware) {
-					((SessionAware) dockable).setSession(this.session);
-				}
+			for (DockableAction action : dockableActions) {
+				action.getDockable().setSession(this.session);
 			}
 
 			for (Element element : this.session.getOrgan().getElements()) {
@@ -218,35 +210,31 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 	}
 
+	protected void updateActions() {
+		for (DockableAction action : dockableActions) {
+			action.update();
+		}
+	}
+	
 	protected void addConsoleDockable(Console console) {
 
 		ConsoleDockable dockable = new ConsoleDockable(console) {
 			@Override
 			public void docked(Docked docked) {
 				super.docked(docked);
-				
+
 				setSession(session);
 			}
-			
+
 			@Override
 			public void undocked() {
 				setSession(null);
 
-				super.undocked();				
+				super.undocked();
 			}
 		};
 
 		consoleDocking.putDockable(console, dockable);
-	}
-
-	protected void updateConsoleDockable(Console console) {
-		ConsoleDockable dockable = (ConsoleDockable) consoleDocking
-				.getDockable(console);
-		if (dockable == null) {
-			addConsoleDockable(console);
-		} else {
-			consoleDocking.putDockable(console, dockable);
-		}
 	}
 
 	protected void removeConsoleDockable(Console console) {
@@ -275,10 +263,12 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 			loadDocking();
 
-			updateHistory();
-
 			config.write(this);
 		}
+		
+		updateHistory();
+		
+		updateActions();
 	}
 
 	protected void loadDocking() {
@@ -381,12 +371,6 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void changed(OrganEvent event) {
-			if (event.self()) {
-				Element element = event.getElement();
-				if (element instanceof Console) {
-					updateConsoleDockable((Console) element);
-				}
-			}
 		}
 
 		public void added(OrganEvent event) {
@@ -414,7 +398,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 				if (element instanceof Console) {
 					Console console = (Console) element;
 
-					updateConsoleDockable(console);
+					if (consoleDocking.getDockable(console) == null) {
+						addConsoleDockable(console);
+					}
 				}
 			}
 
@@ -424,17 +410,29 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 	private class DockableAction extends BaseAction {
 
-		private Dockable dockable;
+		private OrganDockable dockable;
 
-		public DockableAction(Dockable dockable) {
+		public DockableAction(OrganDockable dockable) {
 			this.dockable = dockable;
 
 			setName(dockable.getTitle());
 			setSmallIcon(dockable.getIcon());
 		}
 
+		public OrganDockable getDockable() {
+			return dockable;
+		}
+
+		public void update() {
+			if (constructing) {
+				setEnabled(dockable.forConstruct());
+			} else {
+				setEnabled(dockable.forPlay());
+			}
+		}
+
 		public void actionPerformed(ActionEvent ev) {
-			viewDocking.putDockable(DefaultDockable.getKey(dockable), dockable);
+			docking.putDockable(dockable.getKey(), dockable);
 		}
 	}
 
@@ -470,11 +468,11 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 	private class OrganPanelPersister extends XMLPersister {
 		private OrganPanelPersister(Reader reader) {
-			super(viewDocking, reader);
+			super(docking, reader);
 		}
 
 		private OrganPanelPersister(Writer writer) {
-			super(viewDocking, writer);
+			super(docking, writer);
 		}
 
 		@Override
@@ -488,9 +486,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 		@Override
 		protected Dockable resolveDockable(Object key) {
-			for (Dockable dockable : dockables) {
-				if (DefaultDockable.getKey(dockable).equals(key)) {
-					return dockable;
+			for (DockableAction action : dockableActions) {
+				if (action.getDockable().getKey().equals(key)) {
+					return action.getDockable();
 				}
 			}
 			return null;

@@ -26,8 +26,7 @@ import java.util.logging.Logger;
 
 import javax.imageio.spi.ServiceRegistry;
 
-
-import swingx.docking.Dockable;
+import jorgan.gui.dock.OrganDockable;
 
 public class ProviderRegistry {
 
@@ -56,16 +55,16 @@ public class ProviderRegistry {
 		return providers;
 	}
 
-	public static List<Dockable> getDockables() {
-		List<Dockable> views = new ArrayList<Dockable>();
+	public static List<OrganDockable> getDockables() {
+		List<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
 		for (DockableProvider provider : lookup()) {
 			try {
-				views.addAll(provider.getDockables());
+				dockables.addAll(provider.getDockables());
 			} catch (Throwable providerFailed) {
 				logger.log(Level.WARNING, "provider failed", providerFailed);
 			}
 		}
-		return views;
+		return dockables;
 	}
 }

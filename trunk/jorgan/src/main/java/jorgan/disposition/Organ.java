@@ -95,7 +95,8 @@ public class Organ {
 
 	protected void fireChanged(OrganEvent event) {
 		if (listeners != null) {
-			for (OrganListener listener : listeners) {
+			// listener might remove itself when notified so work on copy 
+			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
 				listener.changed(event);
 			}
 		}

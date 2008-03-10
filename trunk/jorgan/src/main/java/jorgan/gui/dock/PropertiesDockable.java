@@ -33,18 +33,16 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.info.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
-import swingx.docking.DefaultDockable;
 import bias.Configuration;
 
 /**
  * Dockable shows the properties of elements.
  */
-public class PropertiesDockable extends DefaultDockable implements SessionAware {
+public class PropertiesDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			PropertiesDockable.class);
@@ -68,6 +66,11 @@ public class PropertiesDockable extends DefaultDockable implements SessionAware 
 		propertiesPanel.addChangeListener(selectionHandler);
 	}
 
+	@Override
+	public boolean forPlay() {
+		return false;
+	}
+	
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeSelectionListener(selectionHandler);

@@ -30,6 +30,8 @@ import swingx.docking.Docked;
 
 /**
  * Panel that manages views to display a console of an organ.
+ * 
+ * TODO observe console for changes of title, i.e. name
  */
 public class ConsoleDockable extends AbstractDockable implements SessionAware {
 

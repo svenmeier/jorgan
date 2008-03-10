@@ -23,27 +23,23 @@ import java.awt.Color;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
-import bias.Configuration;
-
-import swingx.docking.DefaultDockable;
-
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.play.event.PlayAdapter;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import bias.Configuration;
 
 /**
  * Panel that displays the description of an element.
  */
-public class DescriptionDockable extends DefaultDockable implements SessionAware {
+public class DescriptionDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			DescriptionDockable.class);
-	
+
 	private JTextArea textArea;
 
 	private OrganSession session;
@@ -59,7 +55,7 @@ public class DescriptionDockable extends DefaultDockable implements SessionAware
 	 */
 	public DescriptionDockable() {
 		config.read(this);
-		
+
 		textArea = new JTextArea();
 		textArea.setEnabled(false);
 		textArea.setBackground(new Color(255, 255, 225));
@@ -68,10 +64,15 @@ public class DescriptionDockable extends DefaultDockable implements SessionAware
 		textArea.setDisabledTextColor(Color.BLACK);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
-		
+
 		setContent(textArea);
 	}
 
+	@Override
+	public boolean forPlay() {
+		return false;
+	}
+	
 	/**
 	 * Set the organ.
 	 * 
