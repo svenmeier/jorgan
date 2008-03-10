@@ -32,11 +32,9 @@ import jorgan.disposition.Memory;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -45,7 +43,7 @@ import bias.util.MessageBuilder;
 /**
  * Dockable for editing of a {@link jorgan.disposition.Memory}.
  */
-public class MemoryDockable extends DefaultDockable implements SessionAware {
+public class MemoryDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MemoryDockable.class);
@@ -106,7 +104,7 @@ public class MemoryDockable extends DefaultDockable implements SessionAware {
 		docked.addTool(new NextAction());
 		docked.addTool(new SwapAction());
 		docked.addTool(new ClearAction());
-		
+
 		updateSelection();
 		updateMessage();
 	}
@@ -144,12 +142,12 @@ public class MemoryDockable extends DefaultDockable implements SessionAware {
 			getDocked().setMessage(message);
 		}
 	}
-	
+
 	private void updateSelection() {
 		if (memory == null) {
 			return;
 		}
-		
+
 		// remove listener to avoid infinite loop
 		table.getSelectionModel().removeListSelectionListener(model);
 

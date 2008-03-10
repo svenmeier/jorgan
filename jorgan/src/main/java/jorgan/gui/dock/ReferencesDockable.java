@@ -47,14 +47,12 @@ import jorgan.gui.ReferenceListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
 import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -62,7 +60,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows the {@link Reference}s of {@link Element}s.
  */
-public class ReferencesDockable extends DefaultDockable implements SessionAware {
+public class ReferencesDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ReferencesDockable.class);
@@ -191,6 +189,11 @@ public class ReferencesDockable extends DefaultDockable implements SessionAware 
 		updateReferences();
 	}
 
+	@Override
+	public boolean forPlay() {
+		return false;
+	}
+	
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);

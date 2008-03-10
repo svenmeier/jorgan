@@ -27,24 +27,26 @@ import jorgan.gui.dock.KeyboardDockable;
 import jorgan.gui.dock.MemoryDockable;
 import jorgan.gui.dock.MessagesDockable;
 import jorgan.gui.dock.MonitorDockable;
+import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.ProblemsDockable;
 import jorgan.gui.dock.PropertiesDockable;
 import jorgan.gui.dock.ReferencesDockable;
-import swingx.docking.Dockable;
 
 public class DefaultDockableProvider implements DockableProvider {
 
-	public List<? extends Dockable> getDockables() {
-		List<Dockable> dockables = new ArrayList<Dockable>();
+	public List<OrganDockable> getDockables() {
+		List<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
+		// construct only
 		dockables.add(new ElementsDockable());
 		dockables.add(new PropertiesDockable());
+		dockables.add(new ReferencesDockable());
 		dockables.add(new DescriptionDockable());
+		dockables.add(new MessagesDockable());
+
 		dockables.add(new MonitorDockable());
 		dockables.add(new MemoryDockable());
 		dockables.add(new ProblemsDockable());
-		dockables.add(new ReferencesDockable());
-		dockables.add(new MessagesDockable());
 		dockables.add(new KeyboardDockable());
 
 		return dockables;

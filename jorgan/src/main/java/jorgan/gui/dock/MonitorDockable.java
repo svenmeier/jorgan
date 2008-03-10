@@ -47,7 +47,6 @@ import jorgan.swing.StandardDialog;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -55,7 +54,7 @@ import bias.util.MessageBuilder;
 /**
  * A monitor of MIDI messages.
  */
-public class MonitorDockable extends DefaultDockable {
+public class MonitorDockable extends OrganDockable {
 
 	private static final Configuration config = Configuration.getRoot().get(
 			MonitorDockable.class);
@@ -166,7 +165,7 @@ public class MonitorDockable extends DefaultDockable {
 		docked.addTool(scrollLockButton);
 		docked.addToolSeparator();
 		docked.addTool(new ClearAction());
-		
+
 		updateMessagesLabel();
 	}
 

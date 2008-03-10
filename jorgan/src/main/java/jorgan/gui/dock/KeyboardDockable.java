@@ -26,13 +26,12 @@ import javax.sound.midi.spi.MidiDeviceProvider;
 
 import jorgan.gui.midi.KeyboardPanel;
 import jorgan.midi.Loopback;
-import swingx.docking.DefaultDockable;
 import bias.Configuration;
 
 /**
  * A virtual keyboard.
  */
-public class KeyboardDockable extends DefaultDockable {
+public class KeyboardDockable extends OrganDockable {
 
 	private static final Configuration config = Configuration.getRoot().get(
 			KeyboardDockable.class);
@@ -57,7 +56,7 @@ public class KeyboardDockable extends DefaultDockable {
 		setScrollable(false);
 		setContent(keyboard);
 	}
-	
+
 	/**
 	 * The provider for the virtual keyboard.
 	 */

@@ -16,13 +16,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.dock.spi;
+package jorgan.gui.dock;
 
-import java.util.List;
+import jorgan.session.OrganSession;
+import jorgan.session.SessionAware;
+import swingx.docking.DefaultDockable;
 
-import jorgan.gui.dock.OrganDockable;
+public abstract class OrganDockable extends DefaultDockable implements
+		SessionAware {
 
-public interface DockableProvider {
+	public boolean forConstruct() {
+		return true;
+	}
 
-	public List<OrganDockable> getDockables();
+	public boolean forPlay() {
+		return true;
+	}
+
+	public void setSession(OrganSession session) {
+	}
+
+	public String getKey() {
+		String name = getClass().getSimpleName();
+		if (name.endsWith("Dockable")) {
+			name = name.substring(0, name.length() - "Dockable".length());
+		}
+		return name;
+	}
 }

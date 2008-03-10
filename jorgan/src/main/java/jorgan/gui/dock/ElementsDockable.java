@@ -45,14 +45,12 @@ import jorgan.gui.construct.ElementComparator;
 import jorgan.play.event.PlayEvent;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -60,7 +58,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows all elements.
  */
-public class ElementsDockable extends DefaultDockable implements SessionAware {
+public class ElementsDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ElementsDockable.class);
@@ -89,7 +87,7 @@ public class ElementsDockable extends DefaultDockable implements SessionAware {
 	 * Create a tree panel.
 	 */
 	public ElementsDockable() {
-		
+
 		config.read(this);
 
 		list.setModel(elementsModel);
@@ -166,6 +164,11 @@ public class ElementsDockable extends DefaultDockable implements SessionAware {
 		new DuplicateAction();
 	}
 
+	@Override
+	public boolean forPlay() {
+		return false;
+	}
+	
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);

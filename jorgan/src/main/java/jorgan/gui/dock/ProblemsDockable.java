@@ -31,20 +31,18 @@ import javax.swing.table.AbstractTableModel;
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.Severity;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
-import swingx.docking.DefaultDockable;
 import bias.Configuration;
 
 /**
  * Panel shows the {@link Problem}s.
  */
-public class ProblemsDockable extends DefaultDockable implements SessionAware {
+public class ProblemsDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ProblemsDockable.class);

@@ -62,7 +62,6 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
@@ -70,7 +69,6 @@ import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import swingx.dnd.ObjectTransferable;
-import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -78,7 +76,7 @@ import bias.swing.MessageBox;
 /**
  * Panel shows the messages of elements.
  */
-public class MessagesDockable extends DefaultDockable implements SessionAware {
+public class MessagesDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MessagesDockable.class);
@@ -193,6 +191,11 @@ public class MessagesDockable extends DefaultDockable implements SessionAware {
 		TableUtils.pleasantLookAndFeel(table);
 
 		setContent(table);
+	}
+	
+	@Override
+	public boolean forPlay() {
+		return false;
 	}
 
 	@Override
