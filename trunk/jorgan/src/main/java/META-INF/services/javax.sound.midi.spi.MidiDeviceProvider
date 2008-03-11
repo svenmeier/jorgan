@@ -1,2 +1,2 @@
-jorgan.gui.midi.VirtualKeyboard$Provider
+jorgan.gui.dock.KeyboardDockable$Provider
 jorgan.midi.merge.MidiMergerProvider
