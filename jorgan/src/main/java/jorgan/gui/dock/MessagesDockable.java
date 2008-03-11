@@ -39,6 +39,7 @@ import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
@@ -190,7 +191,7 @@ public class MessagesDockable extends OrganDockable {
 				new StringCellEditor());
 		TableUtils.pleasantLookAndFeel(table);
 
-		setContent(table);
+		setContent(new JScrollPane(table));
 	}
 	
 	@Override

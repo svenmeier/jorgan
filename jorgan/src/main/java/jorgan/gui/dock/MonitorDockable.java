@@ -29,6 +29,7 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.AbstractButton;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
@@ -141,7 +142,7 @@ public class MonitorDockable extends OrganDockable {
 		config.get("table").read(tableModel);
 		table.setModel(tableModel);
 		TableUtils.pleasantLookAndFeel(table);
-		setContent(table);
+		setContent(new JScrollPane(table));
 
 		prepareColumn(0, 10, SwingConstants.RIGHT);
 		prepareColumn(1, 10, SwingConstants.RIGHT);
@@ -165,8 +166,6 @@ public class MonitorDockable extends OrganDockable {
 		docked.addTool(scrollLockButton);
 		docked.addToolSeparator();
 		docked.addTool(new ClearAction());
-
-		updateMessagesLabel();
 	}
 
 	private DeviceSelectionPanel selectionPanel;
@@ -240,9 +239,7 @@ public class MonitorDockable extends OrganDockable {
 					open ? new Integer(1) : new Integer(0));
 		}
 
-		if (isDocked()) {
-			getDocked().setMessage(message);
-		}
+		setMessage(message);
 	}
 
 	private void prepareColumn(int index, int width, int align) {

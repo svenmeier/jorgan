@@ -33,6 +33,7 @@ import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
 import javax.swing.JComponent;
 import javax.swing.JList;
+import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
@@ -184,7 +185,7 @@ public class ReferencesDockable extends OrganDockable {
 			}
 		});
 
-		setContent(list);
+		setContent(new JScrollPane(list));
 
 		updateReferences();
 	}

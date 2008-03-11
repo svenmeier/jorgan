@@ -53,7 +53,6 @@ public class KeyboardDockable extends OrganDockable {
 				// ignore
 			}
 		});
-		setScrollable(false);
 		setContent(keyboard);
 	}
 
