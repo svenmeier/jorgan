@@ -20,6 +20,7 @@ package jorgan.gui.dock;
 
 import java.awt.Color;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.EmptyBorder;
 
@@ -65,7 +66,7 @@ public class DescriptionDockable extends OrganDockable {
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
 
-		setContent(textArea);
+		setContent(new JScrollPane(textArea));
 	}
 
 	@Override

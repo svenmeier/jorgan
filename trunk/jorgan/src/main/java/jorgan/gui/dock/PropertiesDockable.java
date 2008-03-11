@@ -24,6 +24,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 
+import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -54,16 +55,16 @@ public class PropertiesDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private PropertiesPanel propertiesPanel = new PropertiesPanel();
+	private PropertiesPanel panel = new PropertiesPanel();
 
 	public PropertiesDockable() {
 		config.read(this);
 
-		setContent(propertiesPanel);
-
 		ElementCustomizer customizer = new ElementCustomizer();
-		propertiesPanel.setBeanCustomizer(customizer);
-		propertiesPanel.addChangeListener(selectionHandler);
+		panel.setBeanCustomizer(customizer);
+		panel.addChangeListener(selectionHandler);
+		
+		setContent(new JScrollPane(panel));
 	}
 
 	@Override
@@ -105,7 +106,7 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				String property = propertiesPanel.getProperty();
+				String property = panel.getProperty();
 				session.getElementSelection().setLocation(property);
 
 				changing = false;
@@ -115,7 +116,7 @@ public class PropertiesDockable extends OrganDockable {
 		@Override
 		public void changed(OrganEvent event) {
 			if (event.self()) {
-				if (propertiesPanel.getBeans().contains(event.getElement())) {
+				if (panel.getBeans().contains(event.getElement())) {
 					updateProperties();
 				}
 			}
@@ -125,14 +126,14 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				propertiesPanel.setBeans(session.getElementSelection()
+				panel.setBeans(session.getElementSelection()
 						.getSelectedElements());
 
 				Object location = session.getElementSelection().getLocation();
 				if (location instanceof String) {
-					propertiesPanel.setProperty((String) location);
+					panel.setProperty((String) location);
 				} else {
-					propertiesPanel.setProperty(null);
+					panel.setProperty(null);
 				}
 
 				changing = false;
@@ -143,7 +144,7 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				propertiesPanel.setBean(null);
+				panel.setBean(null);
 
 				changing = false;
 			}
@@ -168,7 +169,7 @@ public class PropertiesDockable extends OrganDockable {
 
 			if (editor != null && editor instanceof ElementAwareEditor) {
 				((ElementAwareEditor) editor)
-						.setElement((Element) propertiesPanel.getBeans().get(0));
+						.setElement((Element) panel.getBeans().get(0));
 			}
 
 			return editor;

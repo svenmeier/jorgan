@@ -25,6 +25,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
@@ -92,7 +93,7 @@ public class ProblemsDockable extends OrganDockable {
 				}
 			}
 		}.configureTableColumn(table, 0);
-		setContent(table);
+		setContent(new JScrollPane(table));
 
 		popup.add(gotoAction);
 	}

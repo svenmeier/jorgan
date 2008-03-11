@@ -21,6 +21,7 @@ package jorgan.gui.dock;
 import java.awt.event.ActionEvent;
 import java.util.Set;
 
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
@@ -69,7 +70,7 @@ public class MemoryDockable extends OrganDockable {
 		TableUtils.hideHeader(table);
 		TableUtils.fixColumnWidth(table, 0, "888");
 		TableUtils.pleasantLookAndFeel(table);
-		setContent(table);
+		setContent(new JScrollPane(table));
 
 		setMemory(null);
 	}
@@ -104,9 +105,6 @@ public class MemoryDockable extends OrganDockable {
 		docked.addTool(new NextAction());
 		docked.addTool(new SwapAction());
 		docked.addTool(new ClearAction());
-
-		updateSelection();
-		updateMessage();
 	}
 
 	private void findMemory() {
@@ -138,9 +136,7 @@ public class MemoryDockable extends OrganDockable {
 			message = null;
 		}
 
-		if (isDocked()) {
-			getDocked().setMessage(message);
-		}
+		setMessage(message);
 	}
 
 	private void updateSelection() {

@@ -18,45 +18,40 @@
  */
 package jorgan.gui.dock;
 
-import javax.swing.Icon;
+import javax.swing.JScrollPane;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
-import swingx.docking.AbstractDockable;
+import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 
 /**
  * Panel that manages views to display a console of an organ.
  * 
- * TODO observe console for changes of title, i.e. name
+ * TODO observe console for name changes to set correct title
  */
-public class ConsoleDockable extends AbstractDockable implements SessionAware {
+public class ConsoleDockable extends DefaultDockable implements SessionAware {
 
 	private ConsolePanel panel;
 
 	public ConsoleDockable(Console console) {
 		panel = new ConsolePanel(console);
+
+		setTitle(Elements.getDisplayName(panel.getConsole()));
+		
+		setContent(new JScrollPane(panel));
 	}
 
 	public void setSession(OrganSession session) {
 		panel.setSession(session);
 	}
 
-	public String getTitle() {
-		return Elements.getDisplayName(panel.getConsole());
-	}
-
-	public Icon getIcon() {
-		return null;
-	}
-
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.setContent(panel, true);
 	}
 }
