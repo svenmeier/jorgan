@@ -64,6 +64,8 @@ import bias.Configuration;
  */
 public class OrganPanel extends JPanel implements SessionAware {
 
+	private static final String DOCKING_VERSION = "1";
+
 	private static Configuration config = Configuration.getRoot().get(
 			OrganPanel.class);
 
@@ -467,12 +469,13 @@ public class OrganPanel extends JPanel implements SessionAware {
 	}
 
 	private class OrganPanelPersister extends XMLPersister {
+
 		private OrganPanelPersister(Reader reader) {
-			super(docking, reader);
+			super(docking, reader, DOCKING_VERSION);
 		}
 
 		private OrganPanelPersister(Writer writer) {
-			super(docking, writer);
+			super(docking, writer, DOCKING_VERSION);
 		}
 
 		@Override
