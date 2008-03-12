@@ -52,6 +52,7 @@ import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
+import jorgan.session.event.Severity;
 import jorgan.swing.BaseAction;
 import swingx.docking.Dockable;
 import swingx.docking.Docked;
@@ -359,6 +360,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void problemAdded(Problem problem) {
+			if (problem.getSeverity() == Severity.ERROR) {
+				// TODO open problems dock
+			}
 		}
 
 		public void problemRemoved(Problem ev) {
