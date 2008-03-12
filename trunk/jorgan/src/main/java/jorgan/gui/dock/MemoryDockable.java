@@ -125,18 +125,18 @@ public class MemoryDockable extends OrganDockable {
 		table.setVisible(memory != null);
 
 		updateSelection();
-		updateMessage();
+		updateStatus();
 	}
 
-	private void updateMessage() {
-		String message;
+	private void updateStatus() {
+		String status;
 		if (memory == null) {
-			message = config.get("noMemory").read(new MessageBuilder()).build();
+			status = config.get("noMemory").read(new MessageBuilder()).build();
 		} else {
-			message = null;
+			status = null;
 		}
 
-		setMessage(message);
+		setStatus(status);
 	}
 
 	private void updateSelection() {

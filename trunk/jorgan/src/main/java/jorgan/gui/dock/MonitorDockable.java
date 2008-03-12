@@ -151,7 +151,7 @@ public class MonitorDockable extends OrganDockable {
 		prepareColumn(4, 10, SwingConstants.RIGHT);
 		prepareColumn(5, 100, SwingConstants.LEFT);
 
-		updateMessagesLabel();
+		updateStatus();
 	}
 
 	@Override
@@ -226,20 +226,20 @@ public class MonitorDockable extends OrganDockable {
 
 			clear();
 		}
-		updateMessagesLabel();
+		updateStatus();
 	}
 
-	protected void updateMessagesLabel() {
-		String message;
+	protected void updateStatus() {
+		String status;
 		if (deviceName == null) {
-			message = config.get("noStatus").read(new MessageBuilder()).build();
+			status = config.get("noStatus").read(new MessageBuilder()).build();
 		} else {
-			message = config.get("status").read(new MessageBuilder()).build(
+			status = config.get("status").read(new MessageBuilder()).build(
 					deviceName, direction.name(),
 					open ? new Integer(1) : new Integer(0));
 		}
 
-		setMessage(message);
+		setStatus(status);
 	}
 
 	private void prepareColumn(int index, int width, int align) {
@@ -263,13 +263,13 @@ public class MonitorDockable extends OrganDockable {
 		public void opened() {
 			open = true;
 
-			updateMessagesLabel();
+			updateStatus();
 		}
 
 		public void closed() {
 			open = false;
 
-			updateMessagesLabel();
+			updateStatus();
 		}
 
 		public void log(MidiMessage message) {
