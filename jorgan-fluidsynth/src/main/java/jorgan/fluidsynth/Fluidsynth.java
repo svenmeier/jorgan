@@ -104,7 +104,7 @@ public class Fluidsynth {
 			controlChange(channel, data1, data2);
 			break;
 		case ShortMessage.PITCH_BEND:
-			pitchBend(channel, data1);
+			pitchBend(channel, (data2 * 128) + data1);
 			break;
 		}
 	}
