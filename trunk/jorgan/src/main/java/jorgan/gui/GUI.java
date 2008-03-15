@@ -24,7 +24,7 @@ public class GUI implements UI {
 	public static enum LAF {
 		DEFAULT, SYSTEM, CROSS_PLATFORM
 	}
-	
+
 	private static Logger log = Logger.getLogger(GUI.class.getName());
 
 	private static Configuration config = Configuration.getRoot()
@@ -53,7 +53,7 @@ public class GUI implements UI {
 	public void setLookAndFeel(LAF lookAndFeel) {
 		this.lookAndFeel = lookAndFeel;
 	}
-	
+
 	/**
 	 * Start the user interaction.
 	 * 
@@ -63,67 +63,35 @@ public class GUI implements UI {
 	public void display(final File file) {
 
 		MacAdapter.getInstance().install("jOrgan");
-		
-		if (showAboutOnStartup) {
-			AboutPanel.showSplash();
+
+		invokeOnSwing(new Environment());
+
+		AboutPanel.showSplash();
+
+		FrameWrapper wrapper = new FrameWrapper();
+		invokeOnSwing(wrapper);
+
+		if (file != null) {
+			invokeOnSwing(new Opener(wrapper.getFrame(), file));
 		}
 
-		Swing swing = new Swing().start(file);
-		
 		AboutPanel.hideSplash();
-		
-		swing.waitForEnd();
+
+		wrapper.waitForEnd();
 	}
 
-	private class Swing extends ComponentAdapter implements Runnable {
-		
-		private OrganFrame frame;
-		
-		private File file;
-		
-		public Swing start(File file) {
-			try {
-				SwingUtilities.invokeAndWait(this);
-			} catch (InterruptedException e) {
-				throw new Error(e);
-			} catch (InvocationTargetException e) {
-				throw new Error(e);
-			}
-			return this;
+	private void invokeOnSwing(Runnable runnable) {
+		try {
+			SwingUtilities.invokeAndWait(runnable);
+		} catch (InterruptedException e) {
+			throw new Error(e);
+		} catch (InvocationTargetException e) {
+			throw new Error(e);
 		}
+	}
 
-		public void run() {			
-			initSwing();
-			
-			frame = new OrganFrame();
-			frame.addComponentListener(this);
-
-			if (file != null) {
-				frame.openOrgan(file);
-			}
-
-			frame.setVisible(true);
-		}
-		
-		@Override
-		public synchronized void componentHidden(ComponentEvent e) {
-			frame.dispose();
-			frame = null;
-
-			notify();
-		}
-
-		public synchronized void waitForEnd() {
-			while (frame != null) {
-				try {
-					wait();
-				} catch (InterruptedException ex) {
-					throw new Error(ex);
-				}
-			}
-		}
-		
-		private void initSwing() {
+	private class Environment implements Runnable {
+		public void run() {
 			String plaf = null;
 			try {
 				switch (lookAndFeel) {
@@ -152,6 +120,55 @@ public class GUI implements UI {
 			// Never wait for the result of a spin-over or we'll
 			// run into deadlocks!! (player lock <-> Swing EDT)
 			SpinOverEvaluator.setDefaultWait(false);
-		}		
+		}
+	}
+
+	private class FrameWrapper extends ComponentAdapter implements Runnable {
+
+		private OrganFrame frame;
+
+		public void run() {
+			frame = new OrganFrame();
+			frame.addComponentListener(this);
+			frame.setVisible(true);
+		}
+
+		public OrganFrame getFrame() {
+			return frame;
+		}
+
+		@Override
+		public synchronized void componentHidden(ComponentEvent e) {
+			frame.dispose();
+			frame = null;
+
+			notify();
+		}
+
+		public synchronized void waitForEnd() {
+			while (frame != null) {
+				try {
+					wait();
+				} catch (InterruptedException ex) {
+					throw new Error(ex);
+				}
+			}
+		}
+	}
+
+	private class Opener implements Runnable {
+
+		private OrganFrame frame;
+
+		private File file;
+
+		public Opener(OrganFrame frame, File file) {
+			this.frame = frame;
+			this.file = file;
+		}
+
+		public void run() {
+			frame.openOrgan(file);
+		}
 	}
 }
