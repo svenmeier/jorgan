@@ -20,7 +20,7 @@ package jorgan.disposition;
 
 import jorgan.util.Null;
 
-public class GenericSound extends Sound implements Output {
+public class GenericSound extends Sound {
 
 	private String output;
 
