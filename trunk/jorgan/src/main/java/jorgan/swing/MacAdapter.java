@@ -185,7 +185,7 @@ public abstract class MacAdapter {
 	}
 
 	private static void unexpected(Throwable throwable) {
-		logger.log(Level.WARNING, "unexpected failure on adapting", throwable);
+		logger.log(Level.WARNING, "unexpected failure", throwable);
 	}
 
 	/**
