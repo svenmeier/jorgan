@@ -65,6 +65,36 @@ public class Fluidsynth {
 
 	public native void programChange(int channel, int program);
 
+	public native void setReverbOn(boolean b);
+
+	public native void setReverb(double roomsize, double damping, double width,
+			double level);
+
+	public native void setChorusOn(boolean b);
+
+	public native void setChorus(int nr, double level, double speed,
+			double depth_ms, int type);
+
+	public void send(int channel, int command, int data1, int data2) {
+		switch (command) {
+		case ShortMessage.NOTE_ON:
+			noteOn(channel, data1, data2);
+			break;
+		case ShortMessage.NOTE_OFF:
+			noteOff(channel, data1);
+			break;
+		case ShortMessage.PROGRAM_CHANGE:
+			programChange(channel, data1);
+			break;
+		case ShortMessage.CONTROL_CHANGE:
+			controlChange(channel, data1, data2);
+			break;
+		case ShortMessage.PITCH_BEND:
+			pitchBend(channel, (data2 * 128) + data1);
+			break;
+		}
+	}
+
 	/**
 	 * Load the native library "fluidsynth" from the path specified via the
 	 * system property {@link #JORGAN_FLUIDSYNTH_LIBRARY_PATH} or the directory
@@ -87,25 +117,5 @@ public class Fluidsynth {
 			// might be on system library path
 		}
 		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
-	}
-
-	public void send(int channel, int command, int data1, int data2) {
-		switch (command) {
-		case ShortMessage.NOTE_ON:
-			noteOn(channel, data1, data2);
-			break;
-		case ShortMessage.NOTE_OFF:
-			noteOff(channel, data1);
-			break;
-		case ShortMessage.PROGRAM_CHANGE:
-			programChange(channel, data1);
-			break;
-		case ShortMessage.CONTROL_CHANGE:
-			controlChange(channel, data1, data2);
-			break;
-		case ShortMessage.PITCH_BEND:
-			pitchBend(channel, (data2 * 128) + data1);
-			break;
-		}
 	}
 }
