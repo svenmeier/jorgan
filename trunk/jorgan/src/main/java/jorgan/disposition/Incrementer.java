@@ -19,7 +19,7 @@
 package jorgan.disposition;
 
 /**
- * An incrementer of continuous elements.
+ * An incrementer of {@link IndexedContinuous}.
  */
 public class Incrementer extends Initiator {
 
