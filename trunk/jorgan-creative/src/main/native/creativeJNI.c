@@ -68,7 +68,7 @@
     WORD num = 0;
     LRESULT rc = pSFManager101API->SF_GetNumDevs(&num);
     if (rc != SFERR_NOERR) {
-      return throwException(env, "java/lang/Error", "rc %d", rc);
+      return throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
     
     // done
@@ -92,7 +92,7 @@
     if (rc == SFERR_DEVICE_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     // make sure the device name has a trailing 0 and convert into jstring
@@ -102,42 +102,6 @@
 
     // done
     return result;
-  }
-	
-  /**
-   * Class:     jorgan_creative_SoundFontManager
-   * Method:    open
-   * Signature: (I)V
-   */
-  JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_open(JNIEnv *env, jobject obj, jint device) {
-
-    // open the device
-    LRESULT rc = pSFManager101API->SF_Open(device);
-    if (rc == SFERR_DEVICE_INVALID) {
-      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
-    } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
-    }
-	  
-    // done
-  }
-
-  /**
-   * Class:     jorgan_creative_SoundFontManager
-   * Method:    close
-   * Signature: (I)V
-   */
-  JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_close(JNIEnv *env, jobject obj, jint device) {
-
-    // close it
-    LRESULT rc = pSFManager101API->SF_Close(device);
-    if (rc == SFERR_DEVICE_INVALID) {
-      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
-    } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
-    }
-	  
-    // done	  
   }
 	
   /**
@@ -161,7 +125,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     return bank2result==65535 ? JNI_FALSE : JNI_TRUE; 
@@ -193,7 +157,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     // grab the text from the buffer
@@ -230,14 +194,8 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
-    // since we're polite we're converting backward slashes into forward slashes
-    int j=strlen(file);
-    int i;
-    for (i=0; i<j; i++) {
-      if (file[i]=='\\') file[i]='/';
-    } 
 
     // grab the text from the buffer
     jstring result = (*env)->NewStringUTF(env, file);
@@ -283,7 +241,7 @@
     } else if (rc == SFERR_SYSMEM_INSUFFICIENT || rc == SFERR_SOUNDMEM_INSUFFICIENT) {
       throwException(env, "java/io/IOException", "insufficient memory");
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     // release string
@@ -315,7 +273,7 @@
     } else if (rc == SFERR_DEVICE_BUSY) {
       throwException(env, "java/io/IOException", "device busy");
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     // done
@@ -349,7 +307,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "java/lang/Error", "rc %d", rc);
+      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
     }
 
     // grab the text from the buffer

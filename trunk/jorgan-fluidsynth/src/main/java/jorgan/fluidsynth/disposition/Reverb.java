@@ -18,6 +18,36 @@
  */
 package jorgan.fluidsynth.disposition;
 
-
 public class Reverb {
+	
+	private double roomsize;
+	
+	private double damping;
+	
+	private double width;
+	
+	private double level;
+
+	public Reverb(double roomsize, double damping, double width, double level) {
+		this.roomsize = roomsize;
+		this.damping = damping;
+		this.width = width;
+		this.level = level;
+	}
+
+	public double getDamping() {
+		return damping;
+	}
+
+	public double getLevel() {
+		return level;
+	}
+
+	public double getRoomsize() {
+		return roomsize;
+	}
+
+	public double getWidth() {
+		return width;
+	}
 }

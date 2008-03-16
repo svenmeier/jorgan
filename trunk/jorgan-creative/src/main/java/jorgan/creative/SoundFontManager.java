@@ -51,13 +51,34 @@ public class SoundFontManager {
 	}
 
 	/**
+	 * Get the index of a device.
+	 * 
+	 * @param device
+	 *            the device to query
+	 * @return index of device
+	 * @throws IllegalArgumentException
+	 *             if device is not known
+	 */
+	public int getDeviceIndex(String device) throws IllegalArgumentException {
+		for (int d = getNumDevices() - 1; d >= 0; d--) {
+			if (getDeviceName(d).equals(device)) {
+				return d;
+			}
+		}
+
+		throw new IllegalArgumentException("unkown device " + device);
+	}
+
+	/**
 	 * Get the total number of available devices. The standard Soundblaster Live
 	 * drivers are available as two devices, e.g. 'SB Live! Synth A [D800]' and
 	 * 'SB Live! Synth B [D800]'.
 	 * 
 	 * @return number of devices
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native int getNumDevices();
+	public native int getNumDevices() throws UnknownException;
 
 	/**
 	 * Get the name of a device.
@@ -65,26 +86,13 @@ public class SoundFontManager {
 	 * @param device
 	 *            the device to query
 	 * @return name of device
+	 * @throws IllegalArgumentException
+	 *             if device is not known
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native String getDeviceName(int device);
-
-	/**
-	 * Open a device. An application calls this function when it wishes to
-	 * acquire a specific SoundFont device.
-	 * 
-	 * @param device
-	 *            number of device to open
-	 */
-	public native void open(int device) throws IOException;
-
-	/**
-	 * Close a device. An application calls this function when it wishes to
-	 * release control of an acquired SoundFont device.
-	 * 
-	 * @param device
-	 *            the device to close
-	 */
-	public native void close(int device) throws IOException;
+	public native String getDeviceName(int device)
+			throws IllegalArgumentException, UnknownException;
 
 	/**
 	 * Test if a bank is used, i.e. if a SoundFont is loaded.
@@ -94,8 +102,13 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to test
 	 * @return <code>true</code> if bank is used
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native boolean isBankUsed(int device, int bank);
+	public native boolean isBankUsed(int device, int bank)
+			throws IllegalArgumentException, UnknownException;
 
 	/**
 	 * Get the description of a bank.
@@ -105,8 +118,13 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to get description for
 	 * @return description of bank
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native String getBankDescriptor(int device, int bank);
+	public native String getBankDescriptor(int device, int bank)
+			throws UnknownException;
 
 	/**
 	 * Get the fileName of a SoundFont loaded into the given bank.
@@ -116,8 +134,13 @@ public class SoundFontManager {
 	 * @param bank
 	 *            bank to get fileName for
 	 * @return pathName of SoundFont
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native String getBankFileName(int device, int bank);
+	public native String getBankFileName(int device, int bank)
+			throws UnknownException;
 
 	/**
 	 * Load a SoundFont into the given bank.
@@ -128,9 +151,15 @@ public class SoundFontManager {
 	 *            bank to load SoundFont into (forward/backward slashes ok)
 	 * @param fileName
 	 *            fileName of SoundFont to load
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws IOException
+	 *             if file was not loaded
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
 	public native void loadBank(int device, int bank, String fileName)
-			throws IOException;
+			throws IllegalArgumentException, IOException, UnknownException;
 
 	/**
 	 * Clear a bank.
@@ -139,8 +168,15 @@ public class SoundFontManager {
 	 *            device to clear bank in
 	 * @param bank
 	 *            bank to clear
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws IOException
+	 *             if device is busy
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native void clearBank(int device, int bank) throws IOException;
+	public native void clearBank(int device, int bank)
+			throws IllegalArgumentException, IOException, UnknownException;
 
 	/**
 	 * Get the description of a preset in given program and bank.
@@ -152,6 +188,11 @@ public class SoundFontManager {
 	 * @param program
 	 *            program of preset
 	 * @return description of preset in the given bank and program
+	 * @throws IllegalArgumentException
+	 *             if device is unknown or bank invalid
+	 * @throws UnknownException
+	 *             in case of a unkown failure
 	 */
-	public native String getPresetDescriptor(int device, int bank, int program);
+	public native String getPresetDescriptor(int device, int bank, int program)
+			throws UnknownException;
 }

@@ -19,12 +19,12 @@
 package jorgan.fluidsynth.play;
 
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jorgan.disposition.event.OrganEvent;
 import jorgan.fluidsynth.Fluidsynth;
+import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
+import jorgan.fluidsynth.disposition.Reverb;
 import jorgan.play.SoundPlayer;
 import jorgan.session.event.Severity;
 
@@ -32,9 +32,6 @@ import jorgan.session.event.Severity;
  * A player for a {@link FluidsynthSound}.
  */
 public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
-
-	private Logger logger = Logger.getLogger(FluidsynthSoundPlayer.class
-			.getName());
 
 	private Fluidsynth synth;
 
@@ -55,13 +52,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
-			try {
-				synth = new Fluidsynth(sound.getChannels());
-			} catch (Error err) {
-				logger.log(Level.WARNING, "unable to use Fluidsynth", err);
-				addProblem(Severity.ERROR, null, "native");
-				return;
-			}
+			synth = new Fluidsynth(sound.getChannels());
 
 			try {
 				synth.soundFontLoad(sound.getSoundfont());
@@ -69,9 +60,24 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
 						.getSoundfont());
 			}
-			
-			synth.setReverbOn(sound.getReverb() != null);
-			synth.setChorusOn(sound.getChorus() != null);
+
+			Reverb reverb = sound.getReverb();
+			if (reverb == null) {
+				synth.setReverbOn(false);
+			} else {
+				synth.setReverbOn(true);
+				synth.setReverb(reverb.getRoomsize(), reverb.getDamping(),
+						reverb.getWidth(), reverb.getLevel());
+			}
+
+			Chorus chorus = sound.getChorus();
+			if (chorus == null) {
+				synth.setChorusOn(false);
+			} else {
+				synth.setChorusOn(true);
+				synth.setChorus(chorus.getNr(), chorus.getLevel(), chorus
+						.getSpeed(), chorus.getDepthMs(), chorus.getType());
+			}
 		}
 	}
 
@@ -101,7 +107,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		if (synth == null) {
 			return false;
 		}
-		
+
 		synth.send(channel, command, data1, data2);
 		
 		return true;
