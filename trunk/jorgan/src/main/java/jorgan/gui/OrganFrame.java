@@ -375,24 +375,27 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 *            file to open organ from
 	 */
 	public void openOrgan(File file) {
+		Organ organ;
 		try {
-			Organ organ = new DispositionStream().read(file);
-
-			setFile(file);
-
-			setSession(new OrganSession(organ));
-
-			buildRecentsMenu();
-			
-			if (fullScreenOnLoad) {
-				fullScreenAction.goFullScreen();
-			}
+			organ = new DispositionStream().read(file);
 		} catch (IOException ex) {
 			showBoxMessage("openOrganException", file.getName());
+			return;
 		} catch (Exception ex) {
 			logger.log(Level.INFO, "opening organ failed", ex);
 
 			showBoxMessage("openOrganInvalid", file.getName());
+			return;
+		}		
+
+		setFile(file);
+		
+		setSession(new OrganSession(organ));
+
+		buildRecentsMenu();
+		
+		if (fullScreenOnLoad) {
+			fullScreenAction.goFullScreen();
 		}
 	}
 
@@ -420,11 +423,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 		try {
 			new DispositionStream().write(session.getOrgan(), file);
 
-			setFile(file);
-
-			saveAction.clearChanges();
-
-			buildRecentsMenu();
 			showStatusMessage("organSaved", new Object[0]);
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
@@ -439,6 +437,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			return false;
 		}
+		
+		setFile(file);
+
+		saveAction.clearChanges();
+
+		buildRecentsMenu();
+		
 		return true;
 	}
 
