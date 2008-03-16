@@ -26,6 +26,7 @@ import java.util.logging.Logger;
 import javax.swing.JPanel;
 
 import jorgan.creative.SoundFontManager;
+import jorgan.creative.GenericException;
 import jorgan.creative.gui.imports.Bank;
 import jorgan.creative.gui.imports.Device;
 import jorgan.creative.gui.imports.OptionsPanel;
@@ -58,9 +59,9 @@ public class CreativeImportProvider implements ImportProvider {
 	public CreativeImportProvider() {
 		config.read(this);
 
-		try {
-			SoundFontManager manager = new SoundFontManager();
+		SoundFontManager manager = new SoundFontManager();
 
+		try {
 			devices = new Device[manager.getNumDevices()];
 			for (int d = 0; d < devices.length; d++) {
 				devices[d] = new Device(manager.getDeviceName(d));
@@ -76,8 +77,8 @@ public class CreativeImportProvider implements ImportProvider {
 					}
 				}
 			}
-		} catch (Error err) {
-			logger.log(Level.WARNING, "unable to use SoundFontManager", err);
+		} catch (GenericException ex) {
+			logger.log(Level.WARNING, ex.getMessage(), ex);
 		}
 	}
 
@@ -111,15 +112,15 @@ public class CreativeImportProvider implements ImportProvider {
 	public List<Rank> getRanks() {
 		List<Rank> ranks = new ArrayList<Rank>();
 
-		try {
-			Bank bank = panel.getSelectedBank();
-			if (bank != null) {
+		Bank bank = panel.getSelectedBank();
+		if (bank != null) {
+			try {
 				SoundFontManager manager = new SoundFontManager();
 
 				for (int p = 0; p < 127; p++) {
 					try {
-						String preset = manager.getPresetDescriptor(0,
-								bank.number, p);
+						String preset = manager.getPresetDescriptor(0, bank.number,
+								p);
 						if (preset != null && !"".equals(preset)) {
 							Rank rank = new Rank();
 							rank.setName(preset);
@@ -130,9 +131,9 @@ public class CreativeImportProvider implements ImportProvider {
 						// bank is illegal??
 					}
 				}
+			} catch (GenericException ex) {
+				logger.log(Level.WARNING, ex.getMessage(), ex);
 			}
-		} catch (Error err) {
-			logger.log(Level.WARNING, "unable to use SoundFontManager", err);
 		}
 
 		return ranks;
