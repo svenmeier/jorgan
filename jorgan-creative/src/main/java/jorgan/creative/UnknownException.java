@@ -16,45 +16,8 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.disposition;
+package jorgan.creative;
 
-public class Chorus {
-	private int nr;
+public class UnknownException extends RuntimeException {
 
-	private double level;
-
-	private double speed;
-
-	private double depthMs;
-
-	private int type;
-
-	public Chorus(int nr, double level, double speed, double depthMs, int type) {
-		super();
-		this.nr = nr;
-		this.level = level;
-		this.speed = speed;
-		this.depthMs = depthMs;
-		this.type = type;
-	}
-
-	public double getDepthMs() {
-		return depthMs;
-	}
-
-	public double getLevel() {
-		return level;
-	}
-
-	public int getNr() {
-		return nr;
-	}
-
-	public double getSpeed() {
-		return speed;
-	}
-
-	public int getType() {
-		return type;
-	}
 }

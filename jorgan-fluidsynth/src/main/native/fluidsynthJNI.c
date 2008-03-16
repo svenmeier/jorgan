@@ -159,3 +159,44 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_programChange(JNIEnv *env, jobjec
 
   fluid_synth_program_change(synth, channel, program); 
 }
+
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setReverbOn(JNIEnv *env, jobject object, jboolean on) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
+  fluid_synth_set_reverb_on(synth, on);
+}
+
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setReverb(JNIEnv *env, jobject object, jdouble roomsize, jdouble damping, jdouble width, jdouble level) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
+  fluid_synth_set_reverb(synth, roomsize, damping, width, level);
+}
+
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setChorusOn(JNIEnv *env, jobject object, jboolean on) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
+  fluid_synth_set_chorus_on(synth, on);
+}
+
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setChorus(JNIEnv *env, jobject object, jint nr, jdouble level, jdouble speed, jdouble depth_ms, jint type) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
+  fluid_synth_set_chorus(synth, nr, level, speed, depth_ms, type);
+}
+
