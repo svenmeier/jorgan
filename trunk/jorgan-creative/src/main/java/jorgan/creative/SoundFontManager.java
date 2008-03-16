@@ -75,10 +75,10 @@ public class SoundFontManager {
 	 * 'SB Live! Synth B [D800]'.
 	 * 
 	 * @return number of devices
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
-	public native int getNumDevices() throws UnknownException;
+	public native int getNumDevices() throws GenericException;
 
 	/**
 	 * Get the name of a device.
@@ -88,11 +88,11 @@ public class SoundFontManager {
 	 * @return name of device
 	 * @throws IllegalArgumentException
 	 *             if device is not known
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native String getDeviceName(int device)
-			throws IllegalArgumentException, UnknownException;
+			throws IllegalArgumentException, GenericException;
 
 	/**
 	 * Test if a bank is used, i.e. if a SoundFont is loaded.
@@ -104,11 +104,11 @@ public class SoundFontManager {
 	 * @return <code>true</code> if bank is used
 	 * @throws IllegalArgumentException
 	 *             if device is unknown or bank invalid
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native boolean isBankUsed(int device, int bank)
-			throws IllegalArgumentException, UnknownException;
+			throws IllegalArgumentException, GenericException;
 
 	/**
 	 * Get the description of a bank.
@@ -120,11 +120,11 @@ public class SoundFontManager {
 	 * @return description of bank
 	 * @throws IllegalArgumentException
 	 *             if device is unknown or bank invalid
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native String getBankDescriptor(int device, int bank)
-			throws UnknownException;
+			throws GenericException;
 
 	/**
 	 * Get the fileName of a SoundFont loaded into the given bank.
@@ -136,11 +136,11 @@ public class SoundFontManager {
 	 * @return pathName of SoundFont
 	 * @throws IllegalArgumentException
 	 *             if device is unknown or bank invalid
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native String getBankFileName(int device, int bank)
-			throws UnknownException;
+			throws GenericException;
 
 	/**
 	 * Load a SoundFont into the given bank.
@@ -155,11 +155,11 @@ public class SoundFontManager {
 	 *             if device is unknown or bank invalid
 	 * @throws IOException
 	 *             if file was not loaded
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native void loadBank(int device, int bank, String fileName)
-			throws IllegalArgumentException, IOException, UnknownException;
+			throws IllegalArgumentException, IOException, GenericException;
 
 	/**
 	 * Clear a bank.
@@ -172,11 +172,11 @@ public class SoundFontManager {
 	 *             if device is unknown or bank invalid
 	 * @throws IOException
 	 *             if device is busy
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native void clearBank(int device, int bank)
-			throws IllegalArgumentException, IOException, UnknownException;
+			throws IllegalArgumentException, IOException, GenericException;
 
 	/**
 	 * Get the description of a preset in given program and bank.
@@ -190,9 +190,9 @@ public class SoundFontManager {
 	 * @return description of preset in the given bank and program
 	 * @throws IllegalArgumentException
 	 *             if device is unknown or bank invalid
-	 * @throws UnknownException
+	 * @throws GenericException
 	 *             in case of a unkown failure
 	 */
 	public native String getPresetDescriptor(int device, int bank, int program)
-			throws UnknownException;
+			throws GenericException;
 }

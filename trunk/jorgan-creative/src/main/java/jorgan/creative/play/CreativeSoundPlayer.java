@@ -21,6 +21,7 @@ package jorgan.creative.play;
 import java.io.File;
 import java.io.IOException;
 
+import jorgan.creative.GenericException;
 import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
 import jorgan.disposition.event.OrganEvent;
@@ -79,8 +80,9 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 							output.getSoundfont());
 					return;
 				}
-			} catch (Exception ex) {
-				addProblem(Severity.ERROR, null, "unknownFailure");
+			} catch (GenericException ex) {
+				addProblem(Severity.ERROR, null, "genericFailure", ex
+						.getMessage());
 			}
 		}
 	}

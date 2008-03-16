@@ -18,6 +18,13 @@
  */
 package jorgan.creative;
 
-public class UnknownException extends RuntimeException {
+/**
+ * The {@link SoundFontManager} native API sporadically returns generic error
+ * codes. These are translated to this exception by the JNI integration layer.
+ */
+public class GenericException extends RuntimeException {
 
+	public GenericException(String message) {
+		super(message);
+	}
 }
