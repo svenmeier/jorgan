@@ -4,6 +4,7 @@ import java.awt.Toolkit;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.io.File;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -15,6 +16,7 @@ import jorgan.UI;
 import jorgan.swing.MacAdapter;
 import spin.over.SpinOverEvaluator;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * Graphical UI implementation.
@@ -30,6 +32,8 @@ public class GUI implements UI {
 	private static Configuration config = Configuration.getRoot()
 			.get(GUI.class);
 
+	private static OrganFrame frame;
+
 	private boolean showAboutOnStartup = true;
 
 	private LAF lookAndFeel = LAF.DEFAULT;
@@ -38,7 +42,7 @@ public class GUI implements UI {
 		config.read(this);
 	}
 
-	public boolean getShowAboutOnStartup() {
+	public boolean getShowAboutOnStart() {
 		return showAboutOnStartup;
 	}
 
@@ -64,20 +68,22 @@ public class GUI implements UI {
 
 		MacAdapter.getInstance().install("jOrgan");
 
-		invokeOnSwing(new Environment());
+		invokeOnSwing(new ExceptionContext());
+
+		invokeOnSwing(new SwingContext());
 
 		AboutPanel.showSplash();
 
-		FrameWrapper wrapper = new FrameWrapper();
-		invokeOnSwing(wrapper);
+		FrameContext frameContext = new FrameContext();
+		invokeOnSwing(frameContext);
 
 		if (file != null) {
-			invokeOnSwing(new Opener(wrapper.getFrame(), file));
+			invokeOnSwing(new FileContext(frame, file));
 		}
 
 		AboutPanel.hideSplash();
 
-		wrapper.waitForEnd();
+		frameContext.waitAndDispose();
 	}
 
 	private void invokeOnSwing(Runnable runnable) {
@@ -90,7 +96,7 @@ public class GUI implements UI {
 		}
 	}
 
-	private class Environment implements Runnable {
+	private class SwingContext implements Runnable {
 		public void run() {
 			String plaf = null;
 			try {
@@ -123,18 +129,39 @@ public class GUI implements UI {
 		}
 	}
 
-	private class FrameWrapper extends ComponentAdapter implements Runnable {
+	public static class ExceptionContext implements Runnable,
+			UncaughtExceptionHandler {
 
-		private OrganFrame frame;
+		public void run() {
+			Thread.currentThread().setUncaughtExceptionHandler(this);
+
+			System.setProperty("sun.awt.exception.handler", getClass()
+					.getName());
+		}
+
+		/**
+		 * http://bugs.sun.com/view_bug.do?bug_id=4499199
+		 */
+		public void handle(Throwable throwable) {
+			log.log(Level.SEVERE, throwable.getMessage(), throwable);
+
+			config.get("exception").read(new MessageBox(MessageBox.OPTIONS_OK))
+					.show(frame);
+		}
+
+		public void uncaughtException(final Thread thread,
+				final Throwable throwable) {
+			handle(throwable);
+		}
+	}
+
+	private static class FrameContext extends ComponentAdapter implements
+			Runnable {
 
 		public void run() {
 			frame = new OrganFrame();
 			frame.addComponentListener(this);
 			frame.setVisible(true);
-		}
-
-		public OrganFrame getFrame() {
-			return frame;
 		}
 
 		@Override
@@ -145,7 +172,7 @@ public class GUI implements UI {
 			notify();
 		}
 
-		public synchronized void waitForEnd() {
+		public synchronized void waitAndDispose() {
 			while (frame != null) {
 				try {
 					wait();
@@ -156,13 +183,13 @@ public class GUI implements UI {
 		}
 	}
 
-	private class Opener implements Runnable {
+	private static class FileContext implements Runnable {
 
 		private OrganFrame frame;
 
 		private File file;
 
-		public Opener(OrganFrame frame, File file) {
+		public FileContext(OrganFrame frame, File file) {
 			this.frame = frame;
 			this.file = file;
 		}
