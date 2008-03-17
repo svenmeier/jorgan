@@ -32,6 +32,7 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.DevicePool;
@@ -139,11 +140,12 @@ public class OrganPlay {
 	/**
 	 * Fire input.
 	 */
-	protected void fireInputAccepted() {
+	protected void fireInputAccepted(Element element, InputMessage message,
+			int channel, int command, int data1, int data2) {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
-				listener.inputAccepted();
+				listener.inputAccepted(channel, command, data1, data2);
 			}
 		}
 	}
@@ -151,11 +153,12 @@ public class OrganPlay {
 	/**
 	 * Fire output.
 	 */
-	protected void fireOutputProduced() {
+	protected void fireOutputProduced(int channel, int command, int data1,
+			int data2) {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
-				listener.outputProduced();
+				listener.outputProduced(channel, command, data1, data2);
 			}
 		}
 	}

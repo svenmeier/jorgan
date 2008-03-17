@@ -63,7 +63,8 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		return null;
 	}
 
-	protected abstract boolean send(int channel, int command, int data1, int data2);
+	protected abstract boolean send(int channel, int command, int data1,
+			int data2);
 
 	/**
 	 * A channel implementation.
@@ -101,9 +102,10 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		 *            message
 		 */
 		public void sendMessage(int command, int data1, int data2) {
-			if (send(channel, command, data1, data2)) {				
+			if (send(channel, command, data1, data2)) {
 				if (getOrganPlay() != null) {
-					getOrganPlay().fireOutputProduced();
+					getOrganPlay().fireOutputProduced(channel, command, data1,
+							data2);
 				}
 			}
 		}

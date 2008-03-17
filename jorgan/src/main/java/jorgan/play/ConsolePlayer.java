@@ -47,7 +47,7 @@ public class ConsolePlayer extends Player<Console> {
 	@Override
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
-		
+
 		Console console = getElement();
 
 		if (console.getOutput() == null) {
@@ -110,15 +110,18 @@ public class ConsolePlayer extends Player<Console> {
 
 		if (receiver != null) {
 			receiver.send(message, -1);
-		
+
 			if (getOrganPlay() != null) {
-				getOrganPlay().fireOutputProduced();
+				getOrganPlay().fireOutputProduced(message.getChannel(),
+						message.getCommand(), message.getData1(),
+						message.getData2());
 			}
 		}
 	}
 
 	/**
-	 * The receiver of messages - notifies referenced elements of a received message.
+	 * The receiver of messages - notifies referenced elements of a received
+	 * message.
 	 */
 	private class ReceiverImpl implements Receiver {
 		public void close() {

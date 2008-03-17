@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -66,15 +65,6 @@ public class DevicePool {
 		}
 
 		return new ProxyDevice(pooledDevice);
-	}
-
-	private PooledDevice getPooledDevice(Direction direction, String name) {
-		for (PooledDevice device : devices.get(direction)) {
-			if (device.name().equals(name)) {
-				return device;
-			}
-		}
-		return null;
 	}
 
 	private PooledDevice getDevice(List<PooledDevice> devices, String name) {
@@ -137,22 +127,6 @@ public class DevicePool {
 		return names.toArray(new String[names.size()]);
 	}
 
-	public boolean addLogger(MidiLogger logger, String name, Direction direction)
-			throws MidiUnavailableException {
-		PooledDevice device = getPooledDevice(direction, name);
-
-		device.addLogger(logger, direction);
-
-		return device.isOpen();
-	}
-
-	public void removeLogger(MidiLogger logger, String name, Direction direction)
-			throws MidiUnavailableException {
-		PooledDevice device = getPooledDevice(direction, name);
-
-		device.removeLogger(logger, direction);
-	}
-
 	private static class ProxyDevice extends DeviceWrapper {
 		private boolean open = false;
 
@@ -213,8 +187,6 @@ public class DevicePool {
 	 */
 	private static class PooledDevice extends DeviceWrapper {
 
-		private Map<Direction, List<MidiLogger>> loggers = new HashMap<Direction, List<MidiLogger>>();
-
 		private int openCount;
 
 		private boolean out;
@@ -230,9 +202,6 @@ public class DevicePool {
 
 			this.out = device.getMaxReceivers() != 0;
 			this.in = device.getMaxTransmitters() != 0;
-			
-			loggers.put(Direction.IN, new ArrayList<MidiLogger>());
-			loggers.put(Direction.OUT, new ArrayList<MidiLogger>());
 		}
 
 		public String name() {
@@ -244,58 +213,12 @@ public class DevicePool {
 					&& direction == Direction.IN;
 		}
 
-		public void addLogger(MidiLogger logger, Direction direction) {
-			loggers.get(direction).add(logger);
-		}
-
-		public void removeLogger(MidiLogger logger, Direction direction) {
-			loggers.get(direction).remove(logger);
-		}
-
 		@Override
 		public void open() throws MidiUnavailableException {
 			if (openCount == 0) {
 				super.open();
-
-				for (MidiLogger logger : loggers.get(Direction.IN)) {
-					logger.opened();
-				}
-				for (MidiLogger logger : loggers.get(Direction.OUT)) {
-					logger.opened();
-				}
 			}
 			openCount++;
-		}
-
-		@Override
-		public Receiver getReceiver() throws MidiUnavailableException {
-			return new ReceiverWrapper(super.getReceiver()) {
-				@Override
-				public void send(MidiMessage message, long timeStamp) {
-					super.send(message, timeStamp);
-
-					for (MidiLogger logger : loggers.get(Direction.OUT)) {
-						logger.log(message);
-					}
-				}
-			};
-		}
-
-		@Override
-		public Transmitter getTransmitter() throws MidiUnavailableException {
-			return new TransmitterWrapper(super.getTransmitter()) {
-
-				@Override
-				protected void send(MidiMessage message, long timeStamp) {
-					super.send(message, timeStamp);
-
-					// TODO if multiple transmitters are get, we will log
-					// multiple times :(
-					for (MidiLogger logger : loggers.get(Direction.IN)) {
-						logger.log(message);
-					}
-				}
-			};
 		}
 
 		@Override
@@ -304,13 +227,6 @@ public class DevicePool {
 
 			if (openCount == 0) {
 				super.close();
-
-				for (MidiLogger logger : loggers.get(Direction.IN)) {
-					logger.closed();
-				}
-				for (MidiLogger logger : loggers.get(Direction.OUT)) {
-					logger.closed();
-				}
 			}
 		}
 	}
