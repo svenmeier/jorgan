@@ -43,11 +43,11 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
 import jorgan.gui.construct.ElementComparator;
-import jorgan.play.event.PlayEvent;
-import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.event.Problem;
+import jorgan.session.event.ProblemListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
@@ -169,7 +169,7 @@ public class ElementsDockable extends OrganDockable {
 	public boolean forPlay() {
 		return false;
 	}
-	
+
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);
@@ -202,7 +202,7 @@ public class ElementsDockable extends OrganDockable {
 
 		if (this.session != null) {
 			this.session.removeOrganListener(elementsModel);
-			this.session.removePlayerListener(elementsModel);
+			this.session.removeProblemListener(elementsModel);
 			this.session.removeSelectionListener(selectionHandler);
 
 			elements = new ArrayList<Element>();
@@ -213,7 +213,7 @@ public class ElementsDockable extends OrganDockable {
 
 		if (this.session != null) {
 			this.session.addOrganListener(elementsModel);
-			this.session.addPlayerListener(elementsModel);
+			this.session.addProblemListener(elementsModel);
 			this.session.getElementSelection().addSelectionListener(
 					selectionHandler);
 
@@ -287,7 +287,7 @@ public class ElementsDockable extends OrganDockable {
 	 * change on a MIDI thread.
 	 */
 	private class ElementsModel extends AbstractListModel implements
-			PlayListener, OrganListener {
+			ProblemListener, OrganListener {
 
 		private int size = -1;
 
@@ -312,35 +312,17 @@ public class ElementsDockable extends OrganDockable {
 			return size;
 		}
 
-		public void outputProduced() {
+		public void problemAdded(Problem problem) {
+			updateProblem(problem);
 		}
 
-		public void inputAccepted() {
+		public void problemRemoved(Problem problem) {
+			updateProblem(problem);
 		}
 
-		public void playerAdded(PlayEvent ev) {
-		}
+		private void updateProblem(Problem problem) {
 
-		public void playerRemoved(PlayEvent ev) {
-		}
-
-		public void problemAdded(PlayEvent ev) {
-			updateProblem(ev);
-		}
-
-		public void problemRemoved(PlayEvent ev) {
-			updateProblem(ev);
-		}
-
-		public void opened() {
-		}
-
-		public void closed() {
-		}
-
-		private void updateProblem(PlayEvent ev) {
-
-			Element element = ev.getElement();
+			Element element = problem.getElement();
 			int index = elements.indexOf(element);
 
 			fireContentsChanged(this, index, index);

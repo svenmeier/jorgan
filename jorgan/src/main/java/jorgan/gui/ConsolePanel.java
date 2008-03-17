@@ -55,7 +55,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 
-import jorgan.disposition.Switch;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
@@ -64,14 +63,15 @@ import jorgan.disposition.Memory;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
+import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.console.SwitchView;
 import jorgan.gui.console.ContinuousView;
 import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
 import jorgan.gui.console.RankView;
+import jorgan.gui.console.SwitchView;
 import jorgan.gui.console.View;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
@@ -83,7 +83,7 @@ import jorgan.gui.construct.layout.SpreadHorizontalLayout;
 import jorgan.gui.construct.layout.SpreadVerticalLayout;
 import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
-import jorgan.play.event.PlayEvent;
+import jorgan.play.event.PlayAdapter;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
@@ -280,7 +280,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				.getReferences(Console.Reference.class)) {
 			createView(reference.getElement());
 		}
-		
+
 		setConstructing(true);
 	}
 
@@ -649,7 +649,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		consoleView.paint(g);
 
-		// iterate elements in order defined by console 
+		// iterate elements in order defined by console
 		for (Element element : console.getReferenced(Element.class)) {
 			View<?> view = getView(element);
 			if (view != null) {
@@ -661,7 +661,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if ((clip.x + clip.width > x && clip.x < x + width)
 						&& (clip.y + clip.height > y && clip.y < y + height)) {
 
-					// clipping a scaled graphics corrupts the clip so don't do it
+					// clipping a scaled graphics corrupts the clip so don't do
+					// it
 					// g.clipRect(x, y, width, height);
 					view.paint(g);
 					// g.setClip(clip);
@@ -731,7 +732,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 	}
 
-	private class InternalPlayListener implements PlayListener {
+	private class InternalPlayListener extends PlayAdapter {
 
 		public void opened() {
 			setConstructing(false);
@@ -739,24 +740,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void closed() {
 			setConstructing(true);
-		}
-
-		public void inputAccepted() {
-		}
-
-		public void outputProduced() {
-		}
-
-		public void playerAdded(PlayEvent ev) {
-		}
-
-		public void playerRemoved(PlayEvent ev) {
-		}
-
-		public void problemAdded(PlayEvent ev) {
-		}
-
-		public void problemRemoved(PlayEvent ev) {
 		}
 	}
 
