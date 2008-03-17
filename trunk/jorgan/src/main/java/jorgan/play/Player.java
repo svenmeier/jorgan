@@ -185,11 +185,14 @@ public abstract class Player<E extends Element> {
 
 	protected final void received(ShortMessage shortMessage) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
-			if (receivedContext.process(message, shortMessage.getStatus(), shortMessage
-					.getData1(), shortMessage.getData2())) {
-				input(message, receivedContext);
+			if (receivedContext.process(message, shortMessage.getStatus(),
+					shortMessage.getData1(), shortMessage.getData2())) {
 
-				organPlay.fireInputAccepted();
+				getOrganPlay().fireInputAccepted(getElement(), null,
+						shortMessage.getChannel(), shortMessage.getCommand(),
+						shortMessage.getData1(), shortMessage.getData2());
+				
+				input(message, receivedContext);
 			}
 		}
 	}
@@ -246,7 +249,9 @@ public abstract class Player<E extends Element> {
 		private Map<String, Float> map = new HashMap<String, Float>();
 
 		private int status;
+
 		private int data1;
+
 		private int data2;
 
 		public float get(String name) {

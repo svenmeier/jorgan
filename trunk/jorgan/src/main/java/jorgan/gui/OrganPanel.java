@@ -45,7 +45,7 @@ import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.spi.ProviderRegistry;
 import jorgan.gui.play.MessagesMonitor;
-import jorgan.play.event.PlayListener;
+import jorgan.play.event.PlayAdapter;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
@@ -218,7 +218,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 			action.update();
 		}
 	}
-	
+
 	protected void addConsoleDockable(Console console) {
 
 		ConsoleDockable dockable = new ConsoleDockable(console) {
@@ -268,9 +268,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 			config.write(this);
 		}
-		
+
 		updateHistory();
-		
+
 		updateActions();
 	}
 
@@ -348,14 +348,17 @@ public class OrganPanel extends JPanel implements SessionAware {
 	/**
 	 * The listener to events.
 	 */
-	private class EventsListener implements PlayListener, ProblemListener,
-			OrganListener, ElementSelectionListener {
+	private class EventsListener extends PlayAdapter implements
+			ProblemListener, OrganListener, ElementSelectionListener {
 
-		public void inputAccepted() {
+		@Override
+		public void inputAccepted(int channel, int command, int data1, int data2) {
 			messagesMonitor.input();
 		}
 
-		public void outputProduced() {
+		@Override
+		public void outputProduced(int channel, int command, int data1,
+				int data2) {
 			messagesMonitor.output();
 		}
 
