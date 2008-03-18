@@ -140,12 +140,12 @@ public class OrganPlay {
 	/**
 	 * Fire input.
 	 */
-	protected void fireInputAccepted(Element element, InputMessage message,
+	protected void fireReceived(Element element, InputMessage message,
 			int channel, int command, int data1, int data2) {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
-				listener.inputAccepted(channel, command, data1, data2);
+				listener.received(channel, command, data1, data2);
 			}
 		}
 	}
@@ -153,12 +153,12 @@ public class OrganPlay {
 	/**
 	 * Fire output.
 	 */
-	protected void fireOutputProduced(int channel, int command, int data1,
+	protected void fireSent(int channel, int command, int data1,
 			int data2) {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
-				listener.outputProduced(channel, command, data1, data2);
+				listener.sent(channel, command, data1, data2);
 			}
 		}
 	}

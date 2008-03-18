@@ -104,7 +104,7 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		public void sendMessage(int command, int data1, int data2) {
 			if (send(channel, command, data1, data2)) {
 				if (getOrganPlay() != null) {
-					getOrganPlay().fireOutputProduced(channel, command, data1,
+					getOrganPlay().fireSent(channel, command, data1,
 							data2);
 				}
 			}

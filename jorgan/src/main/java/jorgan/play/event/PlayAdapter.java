@@ -29,11 +29,11 @@ public class PlayAdapter implements PlayListener {
 
 	}
 
-	public void inputAccepted(int channel, int command, int data1, int data2) {
+	public void received(int channel, int command, int data1, int data2) {
 
 	}
 
-	public void outputProduced(int channel, int command, int data1, int data2) {
+	public void sent(int channel, int command, int data1, int data2) {
 
 	}
 }
