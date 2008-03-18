@@ -30,6 +30,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
+import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
@@ -55,12 +56,16 @@ public class MonitorDockable extends OrganDockable {
 	private static final KeyFormat keyFormat = new KeyFormat();
 
 	private static final Color[] colors = new Color[] {
-			new Color(255, 240, 240), new Color(240, 255, 240),
-			new Color(240, 255, 255), new Color(240, 240, 255),
-			new Color(255, 240, 255), new Color(255, 255, 240),
-			new Color(240, 240, 240) };
+			new Color(255, 240, 240), // 0x80
+			new Color(240, 255, 240), // 0x90
+			new Color(240, 255, 255), // 0xa0
+			new Color(240, 240, 255), // 0xb0
+			new Color(255, 240, 255), // 0xc0
+			new Color(255, 255, 240), // 0xd0
+			new Color(240, 240, 240) // 0x80
+	};
 
-	private static final String[] events = new String[] { "NOTE_OFF", // 0x80
+	private static final String[] tooltips = new String[] { "Note off", // 0x80
 			"Note on", // 0x90
 			"Poly pressure", // 0xa0
 			"Control Change", // 0xb0
@@ -101,9 +106,12 @@ public class MonitorDockable extends OrganDockable {
 		config.get("scrollLock").read(scrollLockButton);
 
 		config.get("table").read(tableModel);
+		ToolTipManager.sharedInstance().registerComponent(table);
 		table.setModel(tableModel);
 		TableUtils.pleasantLookAndFeel(table);
-		setContent(new JScrollPane(table));
+		setContent(new JScrollPane(table,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
 		IconTableCellRenderer iconRenderer = new IconTableCellRenderer() {
 			@Override
@@ -123,8 +131,8 @@ public class MonitorDockable extends OrganDockable {
 						.getTableCellRendererComponent(table, value,
 								isSelected, hasFocus, row, column);
 
-				if (!isSelected && row < messages.size()) {
-					component.setBackground(messages.get(row).getColor());
+				if (!isSelected) {
+					configureCell(row, component);
 				}
 
 				return component;
@@ -132,12 +140,11 @@ public class MonitorDockable extends OrganDockable {
 		};
 		iconRenderer.configureTableColumn(table, 0);
 
-		prepareColumn(1, 10, SwingConstants.RIGHT);
-		prepareColumn(2, 10, SwingConstants.RIGHT);
-		prepareColumn(3, 10, SwingConstants.RIGHT);
-		prepareColumn(4, 10, SwingConstants.RIGHT);
-		prepareColumn(5, 10, SwingConstants.RIGHT);
-		prepareColumn(6, 100, SwingConstants.LEFT);
+		for (int c = 1; c < table.getColumnCount(); c++) {
+			TableColumn column = table.getColumnModel().getColumn(c);
+
+			column.setCellRenderer(new MessageCellRenderer());
+		}
 	}
 
 	@Override
@@ -165,13 +172,6 @@ public class MonitorDockable extends OrganDockable {
 		docked.addTool(new ClearAction());
 	}
 
-	private void prepareColumn(int index, int width, int align) {
-		TableColumn column = table.getColumnModel().getColumn(index);
-
-		column.setCellRenderer(new MessageCellRenderer(align));
-		column.setPreferredWidth(width);
-	}
-
 	/**
 	 * Clear this log.
 	 */
@@ -192,7 +192,7 @@ public class MonitorDockable extends OrganDockable {
 	private class InternalListener extends PlayAdapter {
 
 		@Override
-		public void inputAccepted(int channel, int command, int data1, int data2) {
+		public void received(int channel, int command, int data1, int data2) {
 
 			if (inputButton.isSelected()) {
 				add(new Message(true, channel, command, data1, data2));
@@ -200,8 +200,7 @@ public class MonitorDockable extends OrganDockable {
 		}
 
 		@Override
-		public void outputProduced(int channel, int command, int data1,
-				int data2) {
+		public void sent(int channel, int command, int data1, int data2) {
 
 			if (outputButton.isSelected()) {
 				add(new Message(false, channel, command, data1, data2));
@@ -234,7 +233,7 @@ public class MonitorDockable extends OrganDockable {
 		private String[] columnNames = new String[getColumnCount()];
 
 		public int getColumnCount() {
-			return 7;
+			return 5;
 		}
 
 		public void setColumnNames(String[] columnNames) {
@@ -269,10 +268,6 @@ public class MonitorDockable extends OrganDockable {
 				return message.getData1();
 			case 4:
 				return message.getData2();
-			case 5:
-				return message.getNote();
-			case 6:
-				return message.getEvent();
 			}
 			return null;
 		}
@@ -290,9 +285,7 @@ public class MonitorDockable extends OrganDockable {
 
 		private String data2;
 
-		private String note;
-
-		private String event;
+		private String tooltip;
 
 		private Color color;
 
@@ -305,16 +298,14 @@ public class MonitorDockable extends OrganDockable {
 			this.data1 = format(data1);
 			this.data2 = format(data2);
 
-			if (command == 144 || command == 128) {
-				this.note = keyFormat.format(new Integer(data1 & 0xff));
-			} else {
-				this.note = "-";
-			}
-
 			if (command >= 0x80 && command < 0xf0) {
-				this.event = events[(command - 0x80) >> 4];
+				this.tooltip = tooltips[(command - 0x80) >> 4];
+
+				if (command == 144 || command == 128) {
+					this.tooltip = tooltip + " " + keyFormat.format(new Integer(data1 & 0xff));
+				}
 			} else {
-				this.event = "?";
+				this.tooltip = "?";
 			}
 
 			if (command >= 0x80 && command < 0xf0) {
@@ -345,21 +336,12 @@ public class MonitorDockable extends OrganDockable {
 		}
 
 		/**
-		 * Get the note (if applicable).
-		 * 
-		 * @return note
-		 */
-		public String getNote() {
-			return note;
-		}
-
-		/**
 		 * Get the event (if applicable).
 		 * 
 		 * @return event
 		 */
-		public String getEvent() {
-			return event;
+		public String getTooltip() {
+			return tooltip;
 		}
 
 		/**
@@ -382,14 +364,8 @@ public class MonitorDockable extends OrganDockable {
 
 	private class MessageCellRenderer extends DefaultTableCellRenderer {
 
-		/**
-		 * Create a renderer with the given alingment.
-		 * 
-		 * @param alignment
-		 *            alignment
-		 */
-		public MessageCellRenderer(int alignment) {
-			setHorizontalAlignment(alignment);
+		public MessageCellRenderer() {
+			setHorizontalAlignment(SwingConstants.RIGHT);
 		}
 
 		@Override
@@ -401,11 +377,19 @@ public class MonitorDockable extends OrganDockable {
 					.getTableCellRendererComponent(table, value, isSelected,
 							hasFocus, row, column);
 
-			if (!isSelected && row < messages.size()) {
-				component.setBackground(messages.get(row).getColor());
+			if (!isSelected) {
+				configureCell(row, component);
 			}
-
 			return component;
+		}
+	}
+
+	private void configureCell(int row, JComponent component) {
+		if (row < messages.size()) {
+			Message message = messages.get(row);
+
+			component.setBackground(message.getColor());
+			component.setToolTipText(message.getTooltip());
 		}
 	}
 

@@ -112,7 +112,7 @@ public class ConsolePlayer extends Player<Console> {
 			receiver.send(message, -1);
 
 			if (getOrganPlay() != null) {
-				getOrganPlay().fireOutputProduced(message.getChannel(),
+				getOrganPlay().fireSent(message.getChannel(),
 						message.getCommand(), message.getData1(),
 						message.getData2());
 			}
@@ -129,12 +129,18 @@ public class ConsolePlayer extends Player<Console> {
 
 		public void send(MidiMessage message, long timeStamp) {
 			if (MessageUtils.isShortMessage(message)) {
+				ShortMessage shortMessage = (ShortMessage)message;
+				
+				getOrganPlay().fireReceived(getElement(), null,
+						shortMessage.getChannel(), shortMessage.getCommand(),
+						shortMessage.getData1(), shortMessage.getData2());		
+				
 				for (Element element : getElement()
 						.getReferenced(Element.class)) {
 					Player<? extends Element> player = getOrganPlay()
 							.getPlayer(element);
 					if (player != null) {
-						player.received((ShortMessage) message);
+						player.received(shortMessage);
 					}
 				}
 			}

@@ -188,10 +188,6 @@ public abstract class Player<E extends Element> {
 			if (receivedContext.process(message, shortMessage.getStatus(),
 					shortMessage.getData1(), shortMessage.getData2())) {
 
-				getOrganPlay().fireInputAccepted(getElement(), null,
-						shortMessage.getChannel(), shortMessage.getCommand(),
-						shortMessage.getData1(), shortMessage.getData2());
-				
 				input(message, receivedContext);
 			}
 		}
