@@ -28,19 +28,18 @@ import javax.sound.midi.ShortMessage;
 public class MessageUtils {
 
 	/**
-	 * Test if the given message is a {@link ShortMessage}.
+	 * Test if the given message is a channel message.
 	 * 
 	 * @param message
 	 *            message to test
-	 * @return <code>true</cde> if short message
+	 * @return <code>true</cde> if channel message
 	 */
-	public static boolean isShortMessage(MidiMessage message) {
+	public static boolean isChannelMessage(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
 			int status = shortMessage.getStatus();
-			if (status != ShortMessage.ACTIVE_SENSING
-					&& status != ShortMessage.TIMING_CLOCK) {
+			if (status >= 0x80 && status < 0xF0) {
 				return true;
 			}
 		}
@@ -48,14 +47,19 @@ public class MessageUtils {
 		return false;
 	}
 
-	public static ShortMessage createShortMessage(int status, int data1,
+	public static ShortMessage createChannelMessage(int channel, int command,
+			int data1, int data2) throws InvalidMidiDataException {
+
+		return createChannelMessage(channel | command, data1, data2);
+	}
+
+	public static ShortMessage createChannelMessage(int status, int data1,
 			int data2) throws InvalidMidiDataException {
 
 		ShortMessage shortMessage = new ShortMessage();
 
-		// status isn't checked in ShortMessage#setMessage(int, int, int)
-		if (status < 0 || status > 255) {
-			throw new InvalidMidiDataException("status out of range: " + status);
+		if (status < 0x00 || status >= 0xF0) {
+			throw new InvalidMidiDataException("no channel status: " + status);
 		}
 		shortMessage.setMessage(status, data1, data2);
 

@@ -128,7 +128,7 @@ public class ConsolePlayer extends Player<Console> {
 		}
 
 		public void send(MidiMessage message, long timeStamp) {
-			if (MessageUtils.isShortMessage(message)) {
+			if (MessageUtils.isChannelMessage(message)) {
 				ShortMessage shortMessage = (ShortMessage)message;
 				
 				getOrganPlay().fireReceived(getElement(), null,

@@ -484,7 +484,7 @@ public class MessagesDockable extends OrganDockable {
 				Transmitter transmitter = device.getTransmitter();
 				transmitter.setReceiver(new Receiver() {
 					public void send(final MidiMessage message, long when) {
-						if (MessageUtils.isShortMessage(message)) {
+						if (MessageUtils.isChannelMessage(message)) {
 							recorded((ShortMessage) message);
 
 							SwingUtilities.invokeLater(new Runnable() {

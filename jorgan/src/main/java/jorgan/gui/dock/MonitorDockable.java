@@ -19,23 +19,19 @@
 package jorgan.gui.dock;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Icon;
-import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
-import jorgan.midi.KeyFormat;
 import jorgan.play.event.PlayAdapter;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
@@ -44,6 +40,7 @@ import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import swingx.docking.Docked;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * A monitor of MIDI messages.
@@ -53,8 +50,6 @@ public class MonitorDockable extends OrganDockable {
 	private static final Configuration config = Configuration.getRoot().get(
 			MonitorDockable.class);
 
-	private static final KeyFormat keyFormat = new KeyFormat();
-
 	private static final Color[] colors = new Color[] {
 			new Color(255, 240, 240), // 0x80
 			new Color(240, 255, 240), // 0x90
@@ -62,17 +57,7 @@ public class MonitorDockable extends OrganDockable {
 			new Color(240, 240, 255), // 0xb0
 			new Color(255, 240, 255), // 0xc0
 			new Color(255, 255, 240), // 0xd0
-			new Color(240, 240, 240) // 0x80
-	};
-
-	private static final String[] tooltips = new String[] { "Note off", // 0x80
-			"Note on", // 0x90
-			"Poly pressure", // 0xa0
-			"Control Change", // 0xb0
-			"Program change", // 0xc0
-			"Channel pressure", // 0xd0
-			"Pitch bend", // 0xe0
-			"System" // 0xf0
+			new Color(240, 240, 240) // 0xe0
 	};
 
 	private PlayListener listener = new InternalListener();
@@ -113,37 +98,11 @@ public class MonitorDockable extends OrganDockable {
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
-		IconTableCellRenderer iconRenderer = new IconTableCellRenderer() {
-			@Override
-			protected Icon getIcon(Object in) {
-				if (Boolean.TRUE.equals(in)) {
-					return inputButton.getIcon();
-				} else {
-					return outputButton.getIcon();
-				}
-			}
-
-			@Override
-			public Component getTableCellRendererComponent(JTable table,
-					Object value, boolean isSelected, boolean hasFocus,
-					int row, int column) {
-				JComponent component = (JComponent) super
-						.getTableCellRendererComponent(table, value,
-								isSelected, hasFocus, row, column);
-
-				if (!isSelected) {
-					configureCell(row, component);
-				}
-
-				return component;
-			}
-		};
-		iconRenderer.configureTableColumn(table, 0);
-
+		new MessageCellRenderer(true).configureTableColumn(table, 0);
 		for (int c = 1; c < table.getColumnCount(); c++) {
 			TableColumn column = table.getColumnModel().getColumn(c);
 
-			column.setCellRenderer(new MessageCellRenderer());
+			column.setCellRenderer(new MessageCellRenderer(false));
 		}
 	}
 
@@ -277,119 +236,121 @@ public class MonitorDockable extends OrganDockable {
 
 		private boolean input;
 
-		private String channel;
+		private int channel;
 
-		private String command;
+		private int command;
 
-		private String data1;
+		private int data1;
 
-		private String data2;
-
-		private String tooltip;
-
-		private Color color;
+		private int data2;
 
 		public Message(boolean input, int channel, int command, int data1,
 				int data2) {
 			this.input = input;
 
-			this.channel = format(channel);
-			this.command = format(command);
-			this.data1 = format(data1);
-			this.data2 = format(data2);
-
-			if (command >= 0x80 && command < 0xf0) {
-				this.tooltip = tooltips[(command - 0x80) >> 4];
-
-				if (command == 144 || command == 128) {
-					this.tooltip = tooltip + " " + keyFormat.format(new Integer(data1 & 0xff));
-				}
-			} else {
-				this.tooltip = "?";
-			}
-
-			if (command >= 0x80 && command < 0xf0) {
-				this.color = colors[(command - 0x80) >> 4];
-			} else {
-				this.color = Color.white;
-			}
+			this.channel = channel;
+			this.command = command;
+			this.data1 = data1;
+			this.data2 = data2;
 		}
 
 		public boolean isInput() {
 			return input;
 		}
 
-		public String getChannel() {
+		public int getChannel() {
 			return channel;
 		}
 
-		public String getCommand() {
+		public int getCommand() {
 			return command;
 		}
 
-		public String getData1() {
+		public int getData1() {
 			return data1;
 		}
 
-		public String getData2() {
+		public int getData2() {
 			return data2;
 		}
 
-		/**
-		 * Get the event (if applicable).
-		 * 
-		 * @return event
-		 */
-		public String getTooltip() {
-			return tooltip;
+		public String getDescription() {
+			MessageBuilder builder = new MessageBuilder();
+
+			config.get(command + ">" + data1 + ">" + data2).read(builder);
+			if (!builder.hasPattern()) {
+				config.get(command + ">" + data1).read(builder);
+				if (!builder.hasPattern()) {
+					config.get("" + command).read(builder);
+				}
+			}
+			return builder.build(command, data1, data2);
 		}
 
-		/**
-		 * Get the color.
-		 * 
-		 * @return color
-		 */
 		public Color getColor() {
-			return color;
-		}
-
-		private String format(int value) {
-			if (value == -1) {
-				return "-";
+			if (command >= 0x80 && command < 0xf0) {
+				return colors[(command - 0x80) >> 4];
 			} else {
-				return Integer.toString(value);
+				return Color.white;
 			}
 		}
 	}
 
-	private class MessageCellRenderer extends DefaultTableCellRenderer {
+	private class MessageCellRenderer extends IconTableCellRenderer {
 
-		public MessageCellRenderer() {
+		private boolean showIcon;
+		private transient Message message;
+
+		public MessageCellRenderer(boolean showIcon) {
 			setHorizontalAlignment(SwingConstants.RIGHT);
+
+			this.showIcon = showIcon;
 		}
 
 		@Override
-		public Component getTableCellRendererComponent(JTable table,
+		public MessageCellRenderer getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
 
-			JComponent component = (JComponent) super
-					.getTableCellRendererComponent(table, value, isSelected,
-							hasFocus, row, column);
+			super.getTableCellRendererComponent(table, value, isSelected,
+					hasFocus, row, column);
 
-			if (!isSelected) {
-				configureCell(row, component);
+			if (row < messages.size()) {
+				message = messages.get(row);
+
+				if (!isSelected) {
+					setBackground(message.getColor());
+				}
+			} else {
+				message = null;
 			}
-			return component;
+
+			return this;
 		}
-	}
 
-	private void configureCell(int row, JComponent component) {
-		if (row < messages.size()) {
-			Message message = messages.get(row);
+		@Override
+		protected Icon getIcon(Object input) {
+			if (Boolean.TRUE.equals(input)) {
+				return inputButton.getIcon();
+			} else {
+				return outputButton.getIcon();
+			}
+		}
 
-			component.setBackground(message.getColor());
-			component.setToolTipText(message.getTooltip());
+		protected void setValue(Object value) {
+			if (showIcon) {
+				super.setValue(value);
+			} else {
+				setText((value == null) ? "" : value.toString());
+			}
+		}
+
+		@Override
+		public String getToolTipText() {
+			if (message != null) {
+				return message.getDescription();
+			}
+			return null;
 		}
 	}
 
