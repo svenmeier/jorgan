@@ -84,7 +84,7 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 
 		ShortMessage message;
 		try {
-			message = MessageUtils.createShortMessage(command | channel,
+			message = MessageUtils.createChannelMessage(channel, command,
 					data1, data2);
 		} catch (InvalidMidiDataException e) {
 			throw new Error(e);

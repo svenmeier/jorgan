@@ -37,6 +37,14 @@ public abstract class IconTableCellRenderer extends DefaultTableCellRenderer {
 		setIcon(getIcon(value));
 	}
 
+	@Override
+	public IconTableCellRenderer getTableCellRendererComponent(JTable table,
+			Object value, boolean isSelected, boolean hasFocus, int row,
+			int column) {
+		return (IconTableCellRenderer) super.getTableCellRendererComponent(
+				table, value, isSelected, hasFocus, row, column);
+	}
+
 	/**
 	 * Get the icon for the given value.
 	 * 
