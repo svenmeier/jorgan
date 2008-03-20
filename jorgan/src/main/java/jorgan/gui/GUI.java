@@ -72,7 +72,9 @@ public class GUI implements UI {
 
 		invokeOnSwing(new SwingContext());
 
-		AboutPanel.showSplash();
+		if (showAboutOnStartup) {
+			AboutPanel.showSplash();
+		}
 
 		FrameContext frameContext = new FrameContext();
 		invokeOnSwing(frameContext);
