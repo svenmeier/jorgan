@@ -64,20 +64,19 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 	}
 
 	/**
-	 * Convenience method to get the midi program.
+	 * Convenience method to set the midi bank.
 	 * 
-	 * @return the program
+	 * @param bank
+	 *            bank to set
 	 */
-	public int getProgram() {
-		Engaged engaged = getProgramChange();
-		if (engaged != null) {
-			try {
-				return Integer.parseInt(engaged.getData1().substring(
-						"set ".length()));
-			} catch (Exception ignore) {
-			}
+	public void setBank(int bank) {
+		Engaged engaged = getBankSelect();
+		if (engaged == null) {
+			engaged = new Engaged();
+			addMessage(engaged);
 		}
-		return 0;
+		// control change, bank select, bank
+		engaged.change("set 176", "set 0", "set " + bank);
 	}
 
 	/**
@@ -88,6 +87,21 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
 			if ("set 192".equals(engaged.getStatus())) {
+				return engaged;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the {@link Engaged} message sending a midi bank sekect.
+	 * 
+	 * @return bank select message
+	 */
+	private Engaged getBankSelect() {
+		for (Engaged engaged : getMessages(Engaged.class)) {
+			if ("set 176".equals(engaged.getStatus())
+					&& "set 0".equals(engaged.getData1())) {
 				return engaged;
 			}
 		}

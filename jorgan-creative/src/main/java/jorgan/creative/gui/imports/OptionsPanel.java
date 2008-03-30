@@ -25,6 +25,7 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -49,6 +50,8 @@ public class OptionsPanel extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 
 	private JTable table = new JTable();
+	
+	private JCheckBox stopsCheckBox = new JCheckBox();
 
 	public OptionsPanel(Device[] devices) {
 		setLayout(new BorderLayout(2, 2));
@@ -76,6 +79,8 @@ public class OptionsPanel extends JPanel {
 					}
 				});
 		scrollPane.setViewportView(table);
+		
+		add(config.get("stops").read(stopsCheckBox), BorderLayout.SOUTH);
 	}
 
 	public class BanksModel extends AbstractTableModel {
@@ -143,5 +148,9 @@ public class OptionsPanel extends JPanel {
 		}
 
 		return device.banks.get(index);
+	}
+	
+	public boolean getCreateStops() {
+		return stopsCheckBox.isSelected();
 	}
 }

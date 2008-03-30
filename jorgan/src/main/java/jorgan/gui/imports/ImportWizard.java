@@ -19,12 +19,14 @@
 package jorgan.gui.imports;
 
 import java.awt.Component;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Rank;
+import jorgan.gui.construct.ElementsSelectionPanel;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
@@ -32,7 +34,7 @@ import jorgan.swing.wizard.WizardDialog;
 import bias.Configuration;
 
 /**
- * A wizard for importing of sounds.
+ * A wizard for importing of elements.
  */
 public class ImportWizard extends BasicWizard {
 
@@ -43,9 +45,9 @@ public class ImportWizard extends BasicWizard {
 
 	private ImportProvider provider;
 
-	private List<Rank> ranks;
+	private List<Element> elements;
 
-	private List<Rank> selectedRanks;
+	private List<Element> selectedElements;
 
 	/**
 	 * Create a new wizard.
@@ -58,7 +60,7 @@ public class ImportWizard extends BasicWizard {
 
 		addPage(new ProviderSelectionPage());
 		addPage(new ImportOptionsPage());
-		addPage(new RankSelectionPage());
+		addPage(new ElementSelectionPage());
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class ImportWizard extends BasicWizard {
 	 */
 	@Override
 	public boolean allowsFinish() {
-		return selectedRanks != null && selectedRanks.size() > 0;
+		return selectedElements != null && selectedElements.size() > 0;
 	}
 
 	/**
@@ -77,8 +79,8 @@ public class ImportWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		for (int s = 0; s < selectedRanks.size(); s++) {
-			organ.addElement(selectedRanks.get(s));
+		for (int s = 0; s < selectedElements.size(); s++) {
+			organ.addElement(selectedElements.get(s));
 		}
 
 		return true;
@@ -130,48 +132,48 @@ public class ImportWizard extends BasicWizard {
 
 		@Override
 		public boolean allowsNext() {
-			return provider.hasRanks();
+			return provider.hasElements();
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			ranks = provider.getRanks();
+			elements = provider.getElements();
 
-			return ranks.size() > 0;
+			return elements.size() > 0;
 		}
 	}
 
 	/**
-	 * Page for selecting of ranks to import.
+	 * Page for selecting of elements to import.
 	 */
-	private class RankSelectionPage extends AbstractPage {
+	private class ElementSelectionPage extends AbstractPage {
 
-		private RankSelectionPanel rankSelectionPanel = new RankSelectionPanel();
+		private ElementsSelectionPanel selectionPanel = new ElementsSelectionPanel();
 
-		public RankSelectionPage() {
-			config.get("rankSelection").read(this);
+		public ElementSelectionPage() {
+			config.get("elementSelection").read(this);
 		}
 
 		@Override
 		public void enteringFromPrevious() {
-			rankSelectionPanel.setRanks(ranks);
+			selectionPanel.setElements(new ArrayList<Element>(elements));
 		}
 
 		@Override
 		protected JComponent getComponentImpl() {
-			return rankSelectionPanel;
+			return selectionPanel;
 		}
 
 		@Override
 		public boolean leavingToPrevious() {
-			selectedRanks = null;
+			selectedElements = null;
 
 			return true;
 		}
 
 		@Override
 		protected void changing() {
-			selectedRanks = rankSelectionPanel.getSelectedRanks();
+			selectedElements = selectionPanel.getSelectedElements();
 
 			super.changing();
 		}

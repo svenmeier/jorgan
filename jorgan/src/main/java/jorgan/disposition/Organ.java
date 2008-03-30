@@ -198,6 +198,10 @@ public class Organ {
 	}
 
 	public void duplicate(Element element) {
+		if (element.getOrgan() != this) {
+			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
+		}
+		
 		Element clone = element.clone();
 		
 		addElement(clone);

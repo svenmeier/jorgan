@@ -23,7 +23,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import jorgan.disposition.Rank;
+import jorgan.disposition.Element;
 import jorgan.gui.imports.spi.ImportProvider;
 import bias.Configuration;
 
@@ -37,7 +37,7 @@ public class PatchListImportProvider implements ImportProvider {
 
 	private PatchListPanel panel = new PatchListPanel();
 
-	private List<Rank> ranks = new ArrayList<Rank>();
+	private List<Element> elements = new ArrayList<Element>();
 
 	private String name;
 
@@ -67,12 +67,12 @@ public class PatchListImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasRanks() {
+	public boolean hasElements() {
 		return false;
 	}
 
-	public List<Rank> getRanks() {
-		return ranks;
+	public List<Element> getElements() {
+		return elements;
 	}
 
 	/**
