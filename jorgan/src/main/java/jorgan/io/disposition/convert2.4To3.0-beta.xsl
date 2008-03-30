@@ -43,16 +43,7 @@
 			<xsl:apply-templates select="@id|active|locking|name|shortcut|style|zoom|references"/>
 	      <description><xsl:value-of select="description"/></description>
 	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	    </captor>
   	</xsl:template>  	
@@ -107,16 +98,7 @@
 	      	</xsl:for-each>
 	      </references>
      	  <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	    </stop>
   	</xsl:template>  	
@@ -208,16 +190,7 @@
 			<xsl:apply-templates select="@id|action|active|locking|name|shortcut|style|transpose|velocity|zoom|references"/>
 	      <description><xsl:value-of select="description"/></description>
    	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	    </coupler>
   	</xsl:template>  	
@@ -248,16 +221,7 @@
 			<xsl:apply-templates select="@id|active|locking|name|shortcut|style|zoom|references"/>
 	      <description><xsl:value-of select="description"/></description>
    	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	    </activator>
   	</xsl:template>  	
@@ -296,16 +260,7 @@
 	      <description><xsl:value-of select="description"/></description>
 	      <references/>
    	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      	<xsl:choose>
 	      		<xsl:when test="program != 0">	      			
 			      	<filter-intercept>
@@ -361,16 +316,7 @@
 	      <description><xsl:value-of select="description"/></description>
 	      <references/>
    	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	      <zoom>1.0</zoom>
 	    </activateableFilter>
@@ -468,16 +414,7 @@
 			<xsl:apply-templates select="@id|active|locking|name|pitch|shortcut|style|velocity|zoom|references"/>
 	      <description><xsl:value-of select="description"/></description>
    	      <messages>
-	      	<xsl:for-each select="activateMessage">
-	      		<activateable-activate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-activate>
-	      	</xsl:for-each>
-	      	<xsl:for-each select="deactivateMessage">
-	      		<activateable-deactivate>
-	      			<xsl:call-template name="message"/>
-	      		</activateable-deactivate>
-	      	</xsl:for-each>
+	      	<xsl:call-template name="activateDeactivateToggle"/>
 	      </messages>
 	  	</keyer>
   	</xsl:template>  	
@@ -543,6 +480,30 @@
 			<xsl:when test="node() = -1"></xsl:when>
 			<xsl:when test="node() = -2">greater 0</xsl:when>
 			<xsl:otherwise>equal <xsl:value-of select="node()"/></xsl:otherwise>
+		</xsl:choose>		
+	</xsl:template>
+	
+	<xsl:template name="activateDeactivateToggle">
+		<xsl:choose>
+			<xsl:when test="activateMessage = deactivateMessage">
+	      		<activateable-toggle>
+			      	<xsl:for-each select="activateMessage">
+	      				<xsl:call-template name="message"/>
+			      	</xsl:for-each>
+	      		</activateable-toggle>
+			</xsl:when>
+			<xsl:otherwise>
+		      	<xsl:for-each select="activateMessage">
+		      		<activateable-activate>
+		      			<xsl:call-template name="message"/>
+		      		</activateable-activate>
+		      	</xsl:for-each>
+		      	<xsl:for-each select="deactivateMessage">
+		      		<activateable-deactivate>
+		      			<xsl:call-template name="message"/>
+		      		</activateable-deactivate>
+		      	</xsl:for-each>
+			</xsl:otherwise>
 		</xsl:choose>		
 	</xsl:template>
 </xsl:stylesheet>
