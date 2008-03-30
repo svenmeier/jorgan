@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.swing.JPanel;
 
-import jorgan.disposition.Rank;
+import jorgan.disposition.Element;
 
 /**
  * A provider of an import.
@@ -35,7 +35,7 @@ public interface ImportProvider {
 
 	public String getDescription();
 
-	public abstract boolean hasRanks();
+	public abstract boolean hasElements();
 
-	public abstract List<Rank> getRanks();
+	public abstract List<Element> getElements();
 }

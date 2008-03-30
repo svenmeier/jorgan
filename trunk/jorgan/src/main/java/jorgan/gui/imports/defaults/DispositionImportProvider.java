@@ -25,14 +25,15 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Rank;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
@@ -78,19 +79,19 @@ public class DispositionImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasRanks() {
+	public boolean hasElements() {
 		File file = panel.fileSelector.getSelectedFile();
 
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List<Rank> getRanks() {
-		List<Rank> ranks = new ArrayList<Rank>();
+	public List<Element> getElements() {
+		List<Element> elements = new ArrayList<Element>();
 
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
 			try {
-				ranks = readRanks(file);
+				elements.addAll(readElements(file));
 			} catch (IOException ex) {
 				panel.showMessage("exception/general", file.getPath());
 			} catch (Exception ex) {
@@ -98,7 +99,7 @@ public class DispositionImportProvider implements ImportProvider {
 			}
 		}
 
-		return ranks;
+		return elements;
 	}
 
 	/**
@@ -110,16 +111,11 @@ public class DispositionImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws XMLFormatException
 	 */
-	private List<Rank> readRanks(File file) throws IOException {
+	private Set<Element> readElements(File file) throws IOException {
 
 		Organ organ = new DispositionStream().read(new FileInputStream(file));
 
-		List<Rank> ranks = new ArrayList<Rank>(organ.getElements(Rank.class));
-		for (Rank rank : ranks) {
-			organ.removeElement(rank);
-		}
-
-		return ranks;
+		return organ.getElements();
 	}
 
 	/**

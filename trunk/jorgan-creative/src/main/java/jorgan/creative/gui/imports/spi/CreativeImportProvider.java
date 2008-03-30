@@ -19,7 +19,9 @@
 package jorgan.creative.gui.imports.spi;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,7 +32,9 @@ import jorgan.creative.GenericException;
 import jorgan.creative.gui.imports.Bank;
 import jorgan.creative.gui.imports.Device;
 import jorgan.creative.gui.imports.OptionsPanel;
+import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
+import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
 import bias.Configuration;
 
@@ -105,30 +109,25 @@ public class CreativeImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasRanks() {
+	public boolean hasElements() {
 		return panel.getSelectedBank() != null;
 	}
 
-	public List<Rank> getRanks() {
-		List<Rank> ranks = new ArrayList<Rank>();
+	public List<Element> getElements() {
+		List<Element> elements = new ArrayList<Element>();
 
 		Bank bank = panel.getSelectedBank();
 		if (bank != null) {
 			try {
-				SoundFontManager manager = new SoundFontManager();
-
-				for (int p = 0; p < 127; p++) {
-					try {
-						String preset = manager.getPresetDescriptor(0, bank.number,
-								p);
-						if (preset != null && !"".equals(preset)) {
-							Rank rank = new Rank();
-							rank.setName(preset);
-							rank.setProgram(p);
-							ranks.add(rank);
-						}
-					} catch (IllegalArgumentException ex) {
-						// bank is illegal??
+				Set<Rank> ranks = readRanks(bank);
+				elements.addAll(ranks);
+				
+				if (panel.getCreateStops()) {
+					for (Rank rank : ranks) {
+						Stop stop = new Stop();
+						stop.setName(rank.getName());
+						stop.reference(rank);
+						elements.add(stop);
 					}
 				}
 			} catch (GenericException ex) {
@@ -136,6 +135,30 @@ public class CreativeImportProvider implements ImportProvider {
 			}
 		}
 
+		return elements;
+	}
+	
+	private Set<Rank> readRanks(Bank bank) {
+		Set<Rank> ranks = new HashSet<Rank>();
+		
+		SoundFontManager manager = new SoundFontManager();
+
+		for (int p = 0; p < 127; p++) {
+			try {
+				String preset = manager.getPresetDescriptor(0, bank.number,
+						p);
+				if (preset != null && !"".equals(preset)) {
+					Rank rank = new Rank();
+					rank.setName(preset);
+					rank.setProgram(p);
+					rank.setBank(bank.number);
+					ranks.add(rank);
+				}
+			} catch (IllegalArgumentException ex) {
+				// bank is illegal??
+			}
+		}
+		
 		return ranks;
 	}
 }

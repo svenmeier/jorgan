@@ -24,11 +24,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.JPanel;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
+import jorgan.disposition.Stop;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.riff.RiffChunk;
 import jorgan.riff.RiffFormatException;
@@ -76,19 +80,31 @@ public class SoundFontImportProvider implements ImportProvider {
 		this.name = name;
 	}
 
-	public boolean hasRanks() {
+	public boolean hasElements() {
 		File file = panel.getSelectedFile();
 
 		return file != null && file.exists() && file.isFile();
 	}
 
-	public List<Rank> getRanks() {
-		List<Rank> ranks = new ArrayList<Rank>();
+	public List<Element> getElements() {
+		List<Element> elements = new ArrayList<Element>();
 
 		File file = panel.getSelectedFile();
+		int bank = panel.getBank();
 		if (file != null) {
 			try {
-				ranks = readRanks(file);
+				Set<Rank> ranks = readRanks(file, bank);
+
+				elements.addAll(ranks);
+
+				if (panel.getCreateStops()) {
+					for (Rank rank : ranks) {
+						Stop stop = new Stop();
+						stop.setName(rank.getName());
+						stop.reference(rank);
+						elements.add(stop);
+					}
+				}
 			} catch (RiffFormatException ex) {
 				showMessage("exception/invalid", file.getPath());
 			} catch (IOException ex) {
@@ -96,7 +112,7 @@ public class SoundFontImportProvider implements ImportProvider {
 			}
 		}
 
-		return ranks;
+		return elements;
 	}
 
 	private void showMessage(String key, Object... args) {
@@ -114,10 +130,10 @@ public class SoundFontImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws RiffFormatException
 	 */
-	private List<Rank> readRanks(File file) throws IOException,
+	private Set<Rank> readRanks(File file, int bank) throws IOException,
 			RiffFormatException {
 
-		ArrayList<Rank> ranks = new ArrayList<Rank>();
+		Set<Rank> ranks = new HashSet<Rank>();
 
 		InputStream input = null;
 		try {
@@ -133,6 +149,7 @@ public class SoundFontImportProvider implements ImportProvider {
 				Rank rank = new Rank();
 				rank.setName(preset.getName());
 				rank.setProgram(preset.getProgram());
+				rank.setBank(bank);
 				ranks.add(rank);
 			}
 		} finally {
