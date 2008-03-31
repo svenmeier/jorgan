@@ -79,9 +79,7 @@ public class ImportWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		for (int s = 0; s < selectedElements.size(); s++) {
-			organ.addElement(selectedElements.get(s));
-		}
+		organ.addElements(selectedElements);
 
 		return true;
 	}
