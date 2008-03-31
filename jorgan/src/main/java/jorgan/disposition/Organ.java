@@ -19,6 +19,7 @@
 package jorgan.disposition;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -70,6 +71,18 @@ public class Organ {
 		return Collections.unmodifiableSet(elements);
 	}
 
+	public boolean containsElement(Element element) {
+		return elements.contains(element);
+	}
+	
+	public void addElements(Collection<Element> elements) {
+		this.elements.addAll(elements);
+		
+		for (Element element : elements) {
+			addElement(element);
+		}
+	}
+	
 	public void addElement(Element element) {
 		elements.add(element);
 		element.setOrgan(this);

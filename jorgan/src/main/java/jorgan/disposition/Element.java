@@ -115,11 +115,14 @@ public abstract class Element implements Cloneable {
 	protected void setOrgan(Organ organ) {
 		this.organ = organ;
 
-		if (this.organ != null) {
+		if (organ == null) {
+			// we keep references to other elements so this element can be
+			// re-added (eventually cloned) to the previous organ
+		} else {
 			// work on copy of references to avoid concurrent modification
 			for (Reference<? extends Element> reference : new ArrayList<Reference<? extends Element>>(
 					references)) {
-				if (reference.getElement().getOrgan() != organ) {
+				if (!organ.containsElement(reference.getElement())) {
 					references.remove(reference);
 				}
 			}
