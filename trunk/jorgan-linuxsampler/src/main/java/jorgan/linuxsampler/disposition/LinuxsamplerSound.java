@@ -28,6 +28,8 @@ public class LinuxsamplerSound extends GenericSound {
 	private int port = 8888;
 
 	private String lscp;
+	
+	private boolean reset;
 
 	public String getHost() {
 		return host;
@@ -63,5 +65,13 @@ public class LinuxsamplerSound extends GenericSound {
 
 			fireChanged(true);
 		}
+	}
+
+	public boolean getReset() {
+		return reset;
+	}
+
+	public void setReset(boolean reset) {
+		this.reset = reset;
 	}
 }

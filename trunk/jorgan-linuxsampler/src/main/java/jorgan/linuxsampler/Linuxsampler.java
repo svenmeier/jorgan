@@ -18,13 +18,15 @@ import java.net.UnknownHostException;
 
 public class Linuxsampler {
 	
+	private static final String RESET = "RESET";
+
 	private static final String COMMENT_PREFIX = "#";
 
 	private Socket socket;
 
 	private Writer writer;
 
-	private Reader reader;
+	private BufferedReader reader;
 
 	public Linuxsampler(String host, int port)
 			throws UnknownHostException, SocketTimeoutException,
@@ -32,8 +34,9 @@ public class Linuxsampler {
 
 		SocketAddress address = new InetSocketAddress(host, port);
 
-		Socket socket = new Socket();
+		socket = new Socket();
 		socket.connect(address, 1000);
+		socket.setSoTimeout(10 * 1000);
 
 		try {
 			writer = new OutputStreamWriter(socket.getOutputStream());
@@ -44,7 +47,7 @@ public class Linuxsampler {
 		}
 
 		try {
-			reader = new InputStreamReader(socket.getInputStream());
+			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 		} catch (IOException e) {
 			socket.close();
 
@@ -61,6 +64,10 @@ public class Linuxsampler {
 		reader.close();
 	}
 
+	public void sendReset() throws IOException {
+		sendImpl(RESET);
+	}
+	
 	public void send(Reader reader) throws IOException {
 		BufferedReader bufferedReader = new BufferedReader(reader);
 		while (true) {
@@ -70,34 +77,41 @@ public class Linuxsampler {
 				return;
 			}
 
-			write(line);
+			sendImpl(line);
 		}
 	}
 
-	private void write(String line)  throws IOException {
-		line = line.trim();
+	private void sendImpl(String line) throws IOException {
+		String request = line.trim();
 		
-		if (line.length() == 0) {
+		if (request.length() == 0) {
 			return;
 		}
 
-		if (line.startsWith(COMMENT_PREFIX)) {
+		if (request.startsWith(COMMENT_PREFIX)) {
 			return;
 		}
 
-		writer.write(line);
-		writer.write("\r\n");
-		writer.flush();
-		
+		String response = initiate(request);
 		// TODO analyse response
 	}
 	
-	public void close() {
-		try {
-			writer.close();
-			reader.close();
-			socket.close();
-		} catch (IOException ignore) {
-		}
+	private String initiate(String request) throws IOException {
+
+		writer.write(request);
+		writer.write("\r\n");
+		writer.flush();
+
+		return reader.readLine();
+	}
+	
+	public void close() throws IOException {
+		Socket tempSocket = socket;
+		
+		writer = null;
+		reader = null;
+		socket = null;
+		
+		tempSocket.close();
 	}
 }

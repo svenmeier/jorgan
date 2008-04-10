@@ -37,7 +37,7 @@ import jorgan.session.event.Severity;
 public class LinuxsamplerSoundPlayer extends
 		GenericSoundPlayer<LinuxsamplerSound> {
 
-	private Linuxsampler communication;
+	private Linuxsampler linuxsampler;
 
 	public LinuxsamplerSoundPlayer(LinuxsamplerSound sound) {
 		super(sound);
@@ -52,7 +52,7 @@ public class LinuxsamplerSoundPlayer extends
 
 		if (sound.getHost() != null) {
 			try {
-				communication = new Linuxsampler(sound.getHost(), sound
+				linuxsampler = new Linuxsampler(sound.getHost(), sound
 						.getPort());
 			} catch (UnknownHostException e) {
 				addProblem(Severity.ERROR, "host", "unkownHost", sound
@@ -78,7 +78,7 @@ public class LinuxsamplerSoundPlayer extends
 				}
 
 				try {
-					communication.send(reader);
+					linuxsampler.send(reader);
 				} catch (IOException e) {
 					addProblem(Severity.ERROR, "host", "hostUnavailable");
 					return;
@@ -89,10 +89,16 @@ public class LinuxsamplerSoundPlayer extends
 
 	@Override
 	protected void tearDown() {
-		if (communication != null) {
-			communication.close();
+		if (linuxsampler != null) {
+			try {
+				if (getElement().getReset()) {
+					linuxsampler.sendReset();
+				}
+				linuxsampler.close();
+			} catch (IOException ignore) {
+			}
 
-			communication = null;
+			linuxsampler = null;
 		}
 	}
 
