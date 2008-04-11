@@ -1,5 +1,20 @@
-/**
- * 
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 package jorgan.linuxsampler;
 
@@ -17,10 +32,6 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 public class Linuxsampler {
-	
-	private static final String RESET = "RESET";
-
-	private static final String COMMENT_PREFIX = "#";
 
 	private Socket socket;
 
@@ -28,9 +39,8 @@ public class Linuxsampler {
 
 	private BufferedReader reader;
 
-	public Linuxsampler(String host, int port)
-			throws UnknownHostException, SocketTimeoutException,
-			IOException {
+	public Linuxsampler(String host, int port) throws UnknownHostException,
+			SocketTimeoutException, IOException {
 
 		SocketAddress address = new InetSocketAddress(host, port);
 
@@ -47,7 +57,8 @@ public class Linuxsampler {
 		}
 
 		try {
-			reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+			reader = new BufferedReader(new InputStreamReader(socket
+					.getInputStream()));
 		} catch (IOException e) {
 			socket.close();
 
@@ -55,63 +66,102 @@ public class Linuxsampler {
 		}
 	}
 
-	public void send(String lscp) throws IOException {
+	public Conversation conversation() {
+		ensureOpen();
 
-		BufferedReader reader = new BufferedReader(new StringReader(lscp));
-
-		send(reader);
-		
-		reader.close();
+		return new Conversation();
 	}
 
-	public void sendReset() throws IOException {
-		sendImpl(RESET);
-	}
-	
-	public void send(Reader reader) throws IOException {
-		BufferedReader bufferedReader = new BufferedReader(reader);
-		while (true) {
-			String line = bufferedReader.readLine();
-
-			if (line == null) {
-				return;
-			}
-
-			sendImpl(line);
-		}
-	}
-
-	private void sendImpl(String line) throws IOException {
-		String request = line.trim();
-		
-		if (request.length() == 0) {
-			return;
-		}
-
-		if (request.startsWith(COMMENT_PREFIX)) {
-			return;
-		}
-
-		String response = initiate(request);
-		// TODO analyse response
-	}
-	
-	private String initiate(String request) throws IOException {
-
-		writer.write(request);
-		writer.write("\r\n");
-		writer.flush();
-
-		return reader.readLine();
-	}
-	
 	public void close() throws IOException {
+		ensureOpen();
+
 		Socket tempSocket = socket;
-		
+
 		writer = null;
 		reader = null;
 		socket = null;
-		
+
 		tempSocket.close();
+	}
+
+	private void ensureOpen() {
+		if (socket == null) {
+			throw new IllegalStateException("already closed");
+		}
+	}
+
+	public class Conversation {
+		private int warnings;
+
+		private Conversation() {
+		}
+
+		public void send(String lscp) throws IOException, ConversationException {
+
+			BufferedReader reader = new BufferedReader(new StringReader(lscp));
+
+			send(reader);
+
+			reader.close();
+		}
+
+		public void send(Reader reader) throws IOException,
+				ConversationException {
+			BufferedReader bufferedReader = new BufferedReader(reader);
+			while (true) {
+				String command = bufferedReader.readLine();
+
+				if (command == null) {
+					return;
+				}
+
+				sendImpl(command);
+			}
+		}
+
+		private void sendImpl(String command) throws IOException,
+				ConversationException {
+			ensureOpen();
+
+			command = command.trim();
+
+			// query commands have a undefined result length so replace with
+			// an empty command
+			if (command.startsWith("GET") || command.startsWith("LIST")) {
+				command = "";
+			}
+
+			// echoing our commands will interfere with our result reading
+			if (command.startsWith("SET ECHO 1")) {
+				command = "";
+			}
+
+			writer.write(command);
+			writer.write("\r\n");
+			writer.flush();
+
+			// empty commands and comments don't have a result
+			if (command.length() == 0 || command.startsWith("#")) {
+				return;
+			}
+
+			String result = reader.readLine();
+
+			if (result.startsWith("ERR")) {
+				throw new ConversationException(result);
+			}
+
+			if (result.startsWith("WRN")) {
+				warnings++;
+			}
+		}
+
+		public int getWarnings() {
+			return warnings;
+		}
+
+		public boolean hasWarnings() {
+			return warnings > 0;
+		}
 	}
 }

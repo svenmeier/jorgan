@@ -18,7 +18,6 @@
  */
 package jorgan.linuxsampler.gui.construct;
 
-import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.StringEditor;
@@ -37,6 +36,5 @@ public class LinuxsamplerSoundBeanInfo extends ElementBeanInfo {
 		add("host", LinuxsamplerSound.class, StringEditor.class);
 		add("port", LinuxsamplerSound.class, IntegerEditor.class);
 		add("lscp", LinuxsamplerSound.class, FileEditor.class);
-		add("reset", LinuxsamplerSound.class, BooleanEditor.class);
 	}
 }
