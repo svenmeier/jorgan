@@ -86,9 +86,16 @@ public class LinuxsamplerSoundPlayer extends
 					addProblem(Severity.ERROR, "host", "hostUnavailable");
 					return;
 				} catch (ConversationException e) {
-					addProblem(Severity.ERROR, "lscp", "lscpError");
+					addProblem(Severity.ERROR, "lscp", "lscpError", e
+							.getMessage());
 					return;
+				} finally {
+					try {
+						reader.close();
+					} catch (IOException ignore) {
+					}
 				}
+
 				if (conversation.hasWarnings()) {
 					addProblem(Severity.WARNING, "lscp", "lscpWarnings",
 							conversation.getWarnings());
