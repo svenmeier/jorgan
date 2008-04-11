@@ -26,7 +26,9 @@ import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
 import jorgan.disposition.event.OrganEvent;
+import jorgan.linuxsampler.ConversationException;
 import jorgan.linuxsampler.Linuxsampler;
+import jorgan.linuxsampler.Linuxsampler.Conversation;
 import jorgan.linuxsampler.disposition.LinuxsamplerSound;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
@@ -77,11 +79,19 @@ public class LinuxsamplerSoundPlayer extends
 					return;
 				}
 
+				Conversation conversation = linuxsampler.conversation();
 				try {
-					linuxsampler.send(reader);
+					conversation.send(reader);
 				} catch (IOException e) {
 					addProblem(Severity.ERROR, "host", "hostUnavailable");
 					return;
+				} catch (ConversationException e) {
+					addProblem(Severity.ERROR, "lscp", "lscpError");
+					return;
+				}
+				if (conversation.hasWarnings()) {
+					addProblem(Severity.WARNING, "lscp", "lscpWarnings",
+							conversation.getWarnings());
 				}
 			}
 		}
@@ -91,9 +101,6 @@ public class LinuxsamplerSoundPlayer extends
 	protected void tearDown() {
 		if (linuxsampler != null) {
 			try {
-				if (getElement().getReset()) {
-					linuxsampler.sendReset();
-				}
 				linuxsampler.close();
 			} catch (IOException ignore) {
 			}
