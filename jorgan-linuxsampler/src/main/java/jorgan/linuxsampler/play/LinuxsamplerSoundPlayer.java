@@ -18,6 +18,7 @@
  */
 package jorgan.linuxsampler.play;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -30,6 +31,7 @@ import jorgan.linuxsampler.ConversationException;
 import jorgan.linuxsampler.Linuxsampler;
 import jorgan.linuxsampler.Linuxsampler.Conversation;
 import jorgan.linuxsampler.disposition.LinuxsamplerSound;
+import jorgan.linuxsampler.io.FileWatcher;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
 
@@ -40,18 +42,18 @@ public class LinuxsamplerSoundPlayer extends
 		GenericSoundPlayer<LinuxsamplerSound> {
 
 	private Linuxsampler linuxsampler;
-
+	
+	private FileWatcher watcher;
+	
 	public LinuxsamplerSoundPlayer(LinuxsamplerSound sound) {
 		super(sound);
 	}
 
 	@Override
-	protected void setUp() {
+	protected synchronized void setUp() {
 		LinuxsamplerSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "host");
-		removeProblem(Severity.ERROR, "lscp");
-
 		if (sound.getHost() != null) {
 			try {
 				linuxsampler = new Linuxsampler(sound.getHost(), sound
@@ -67,52 +69,78 @@ public class LinuxsamplerSoundPlayer extends
 				addProblem(Severity.ERROR, "host", "hostUnavailable");
 				return;
 			}
+		}
 
-			if (sound.getLscp() != null) {
-				Reader reader;
+		loadLscp();
+	}
 
-				try {
-					reader = new FileReader(sound.getLscp());
-				} catch (FileNotFoundException e1) {
-					addProblem(Severity.ERROR, "lscp", "lscpNotFound", sound
-							.getLscp());
-					return;
+	private synchronized void loadLscp() {
+		removeProblem(Severity.WARNING, "lscp");
+		removeProblem(Severity.ERROR, "lscp");
+
+		if (linuxsampler == null) {
+			return;
+		}
+		
+		LinuxsamplerSound sound = getElement();
+		if (sound.getLscp() != null) {
+			File file = new File(sound.getLscp());
+
+			Reader reader;
+			try {
+				reader = new FileReader(file);				
+			} catch (FileNotFoundException e1) {
+				addProblem(Severity.ERROR, "lscp", "lscpNotFound", sound
+						.getLscp());
+				return;
+			}
+
+			watcher = new FileWatcher(file) {
+				@Override
+				protected void onChange(File file) {
+					watcher.cancel();
+					loadLscp();
 				}
-
+			};
+			
+			try {
 				Conversation conversation = linuxsampler.conversation();
-				try {
-					conversation.send(reader);
-				} catch (IOException e) {
-					addProblem(Severity.ERROR, "host", "hostUnavailable");
-					return;
-				} catch (ConversationException e) {
-					addProblem(Severity.ERROR, "lscp", "lscpError", e
-							.getMessage());
-					return;
-				} finally {
-					try {
-						reader.close();
-					} catch (IOException ignore) {
-					}
-				}
 
+				conversation.send(reader);
+				
 				if (conversation.hasWarnings()) {
 					addProblem(Severity.WARNING, "lscp", "lscpWarnings",
 							conversation.getWarnings());
+				}
+			} catch (IOException e) {
+				addProblem(Severity.ERROR, "host", "hostUnavailable");
+				return;
+			} catch (ConversationException e) {
+				addProblem(Severity.ERROR, "lscp", "lscpError", e
+						.getMessage());
+				return;
+			} finally {
+				try {
+					reader.close();
+				} catch (IOException ignore) {
 				}
 			}
 		}
 	}
 
 	@Override
-	protected void tearDown() {
+	protected synchronized void tearDown() {
 		if (linuxsampler != null) {
 			try {
 				linuxsampler.close();
 			} catch (IOException ignore) {
 			}
-
 			linuxsampler = null;
+		}
+		
+		if (watcher != null) {
+			watcher.cancel();
+			watcher = null;
 		}
 	}
 
