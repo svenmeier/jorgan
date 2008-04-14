@@ -29,8 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.border.TitledBorder;
 
-import jorgan.shell.Interpreter;
-import jorgan.shell.OrganShell;
+import jorgan.cli.Interpreter;
+import jorgan.cli.CLI;
 import jorgan.swing.GridBuilder;
 import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
@@ -39,16 +39,16 @@ import bias.util.MessageBuilder;
 import bias.util.Property;
 
 /**
- * {@link OrganShell} category.
+ * {@link CLI} category.
  */
-public class ShellCategory extends JOrganCategory {
+public class CLICategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ShellCategory.class);
+			CLICategory.class);
 
-	private Model encoding = getModel(new Property(OrganShell.class, "encoding"));
+	private Model encoding = getModel(new Property(CLI.class, "encoding"));
 
-	private Model useDefaultEncoding = getModel(new Property(OrganShell.class,
+	private Model useDefaultEncoding = getModel(new Property(CLI.class,
 			"useDefaultEncoding"));
 
 	private JRadioButton encodingDefaultRadioButton = new JRadioButton();
@@ -57,7 +57,7 @@ public class ShellCategory extends JOrganCategory {
 
 	private JComboBox encodingComboBox = new JComboBox();
 
-	public ShellCategory() {
+	public CLICategory() {
 		config.read(this);
 	}
 

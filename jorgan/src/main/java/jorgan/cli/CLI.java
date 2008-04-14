@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.shell;
+package jorgan.cli;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,15 +41,15 @@ import bias.Configuration;
 import bias.util.MessageBuilder;
 
 /**
- * Shell for playing of an organ.
+ * Command line interface implementation.
  */
-public class OrganShell implements UI, SessionAware {
+public class CLI implements UI, SessionAware {
 
-	private static final Logger logger = Logger.getLogger(OrganShell.class
+	private static final Logger logger = Logger.getLogger(CLI.class
 			.getName());
 
 	private static Configuration config = Configuration.getRoot().get(
-			OrganShell.class);
+			CLI.class);
 
 	private File file;
 
@@ -68,7 +68,7 @@ public class OrganShell implements UI, SessionAware {
 	/**
 	 * Create a new organShell.
 	 */
-	public OrganShell() {
+	public CLI() {
 		config.read(this);
 
 		List<Command> commands = new ArrayList<Command>();

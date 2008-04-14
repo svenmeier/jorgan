@@ -21,9 +21,9 @@ package jorgan;
 import java.io.File;
 import java.util.Collection;
 
+import jorgan.cli.CLI;
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
-import jorgan.shell.OrganShell;
 import bias.Configuration;
 import bias.store.CLIStore;
 import bias.store.DefaultingStore;
@@ -61,7 +61,7 @@ public class App {
 
 		UI ui;
 		if (headless) {
-			ui = new OrganShell();
+			ui = new CLI();
 		} else {
 			ui = new GUI();
 		}

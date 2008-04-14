@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.shell;
+package jorgan.cli;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,9 +31,9 @@ import java.util.Set;
 import java.util.StringTokenizer;
 
 /**
- * An interpreter of commands.
+ * An command line interpreter.
  * 
- * @see jorgan.shell.Command
+ * @see jorgan.cli.Command
  */
 public class Interpreter {
 
