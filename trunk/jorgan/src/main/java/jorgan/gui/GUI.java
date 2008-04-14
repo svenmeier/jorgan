@@ -19,7 +19,7 @@ import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
- * Graphical UI implementation.
+ * Graphical user interface implementation.
  */
 public class GUI implements UI {
 
