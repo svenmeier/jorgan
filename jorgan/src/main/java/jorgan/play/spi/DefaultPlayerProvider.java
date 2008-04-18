@@ -16,6 +16,7 @@ import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
+import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
 import jorgan.play.ConsolePlayer;
 import jorgan.play.ContinuousFilterPlayer;
@@ -52,6 +53,8 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new RankPlayer((Rank) element);
 		} else if (clazz == ContinuousFilter.class) {
 			player = new ContinuousFilterPlayer((ContinuousFilter) element);
+		} else if (clazz == Switch.class) {
+			player = new SwitchPlayer<Switch>((Switch) element);
 		} else if (clazz == SwitchFilter.class) {
 			player = new SwitchFilterPlayer((SwitchFilter) element);
 		} else if (clazz == Activator.class) {

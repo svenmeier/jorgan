@@ -24,12 +24,12 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 
 /**
- * Abstract base class for an switchable elements.
+ * Base class for an switchable elements.
  * 
  * @see #setActive(boolean)
  * @see #isActive()
  */
-public abstract class Switch extends Momentary implements Engageable {
+public class Switch extends Momentary implements Engageable {
 
 	private boolean active = false;
 

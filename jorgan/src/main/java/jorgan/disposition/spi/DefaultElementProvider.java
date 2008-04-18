@@ -38,6 +38,7 @@ import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
 import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
+import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
 
 /**
@@ -55,6 +56,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Coupler.class);
 		classes.add(Stop.class);
 		classes.add(Rank.class);
+		classes.add(Switch.class);
 		classes.add(SwitchFilter.class);
 		classes.add(ContinuousFilter.class);
 		classes.add(Keyer.class);
