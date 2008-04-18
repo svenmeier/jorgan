@@ -29,7 +29,7 @@ import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 
 /**
- * An abstract base for players that control {@link Switch}es.
+ * An base for players that control {@link Switch}es.
  */
 public class SwitchPlayer<E extends Switch> extends Player<E> {
 
