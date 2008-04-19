@@ -26,6 +26,9 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,6 +39,7 @@ import jorgan.gui.ConsolePanel;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
+import jorgan.skin.Layer.ViewBinding;
 import bias.Configuration;
 
 /**
@@ -49,13 +53,7 @@ public class View<E extends Element> {
 	/**
 	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
 	 */
-	public static final String CONTROL_NAME = "name";
-
-	/**
-	 * The key of the {@link Element#getDescription()} text for
-	 * {@link TextLayer}s.
-	 */
-	public static final String CONTROL_DESCRIPTION = "description";
+	public static final String BINDING_NAME = "name";
 
 	protected Dimension size = new Dimension();
 
@@ -103,7 +101,7 @@ public class View<E extends Element> {
 		config.read(this);
 	}
 
-	protected void setBinding(String name, Object binding) {
+	protected void setBinding(String name, ViewBinding binding) {
 		bindings.put(name, binding);
 	}
 
@@ -202,7 +200,9 @@ public class View<E extends Element> {
 	}
 
 	protected void initBindings() {
-		setBinding(CONTROL_NAME, new TextLayer.Binding() {
+		bindings.clear();
+
+		setBinding(BINDING_NAME, new TextLayer.Binding() {
 			public boolean isPressable() {
 				return false;
 			}
@@ -212,15 +212,35 @@ public class View<E extends Element> {
 			}
 		});
 
-		setBinding(CONTROL_DESCRIPTION, new TextLayer.Binding() {
-			public boolean isPressable() {
-				return false;
-			}
+		String description = getElement().getDescription();
+		BufferedReader reader = new BufferedReader(
+				new StringReader(description));
+		while (true) {
+			try {
+				String line = reader.readLine();
+				if (line == null) {
+					return;
+				}
 
-			public String getText() {
-				return getElement().getDescription();
+				int equalSign = line.indexOf("=");
+				if (equalSign != -1) {
+					final String name = line.substring(0, equalSign).trim();
+					final String text = line.substring(equalSign + 1).trim();
+
+					setBinding(name, new TextLayer.Binding() {
+						public boolean isPressable() {
+							return false;
+						}
+
+						public String getText() {
+							return text;
+						}
+					});
+				}
+			} catch (IOException unexpected) {
+				throw new Error(unexpected);
 			}
-		});
+		}
 	}
 
 	protected void initStyle() {
@@ -347,7 +367,7 @@ public class View<E extends Element> {
 		Style style = new Style();
 
 		TextLayer layer = new TextLayer();
-		layer.setBinding(CONTROL_NAME);
+		layer.setBinding(BINDING_NAME);
 		layer.setPadding(new Insets(4, 4, 4, 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());

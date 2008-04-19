@@ -124,7 +124,7 @@ public class SwitchView extends MomentaryView<Switch> {
 
 	private Layer createTextLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setBinding(CONTROL_NAME);
+		layer.setBinding(BINDING_NAME);
 		layer.setPadding(new Insets(4, 4 + 13 + 4, 4, 4));
 		layer.setAnchor(Anchor.LEFT);
 		layer.setFont(getDefaultFont());
