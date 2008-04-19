@@ -21,13 +21,13 @@ package jorgan.linuxsampler.gui.construct;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.StringEditor;
-import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.gui.construct.info.GenericSoundBeanInfo;
 import jorgan.linuxsampler.disposition.LinuxsamplerSound;
 
 /**
  * BeanInfo for {@link LinuxsamplerSound}.
  */
-public class LinuxsamplerSoundBeanInfo extends ElementBeanInfo {
+public class LinuxsamplerSoundBeanInfo extends GenericSoundBeanInfo {
 
 	@Override
 	protected void registerProperties() {
