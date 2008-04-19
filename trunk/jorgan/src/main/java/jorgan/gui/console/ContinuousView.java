@@ -67,7 +67,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 	protected TextLayer createTextNameLayer() {
 		TextLayer layer = new TextLayer();
-		layer.setBinding(CONTROL_NAME);
+		layer.setBinding(BINDING_NAME);
 		layer.setPadding(new Insets(4, 4, 4 + getDefaultFont().getSize(), 4));
 		layer.setFont(getDefaultFont());
 		layer.setColor(getDefaultColor());
