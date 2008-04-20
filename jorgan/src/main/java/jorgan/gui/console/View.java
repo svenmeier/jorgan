@@ -227,15 +227,17 @@ public class View<E extends Element> {
 					final String name = line.substring(0, equalSign).trim();
 					final String text = line.substring(equalSign + 1).trim();
 
-					setBinding(name, new TextLayer.Binding() {
-						public boolean isPressable() {
-							return false;
-						}
+					if (name.length() > 0) {
+						setBinding(name, new TextLayer.Binding() {
+							public boolean isPressable() {
+								return false;
+							}
 
-						public String getText() {
-							return text;
-						}
-					});
+							public String getText() {
+								return text;
+							}
+						});
+					}
 				}
 			} catch (IOException unexpected) {
 				throw new Error(unexpected);
