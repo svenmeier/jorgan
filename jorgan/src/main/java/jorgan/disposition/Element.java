@@ -310,7 +310,7 @@ public abstract class Element implements Cloneable {
 		if (description == null) {
 			description = "";
 		}
-		this.description = description.trim();
+		this.description = description;
 
 		fireChanged(true);
 	}
