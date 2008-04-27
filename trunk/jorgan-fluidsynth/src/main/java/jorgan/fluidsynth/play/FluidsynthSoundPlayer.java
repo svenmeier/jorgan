@@ -40,6 +40,32 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
+	protected void setUp() {
+		createSynth();
+	}
+
+	public void elementChanged(OrganEvent event) {
+		if (event != null) {
+			// TODO when necessary only 
+			destroySynth();
+			createSynth();
+		}
+
+		FluidsynthSound sound = getElement();
+		if (sound.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
+					.getSoundfont());
+		} else {
+			removeProblem(Severity.WARNING, "soundfont");
+		}
+	}
+
+	@Override
+	protected void tearDown() {
+		destroySynth();
+	}
+
+	@Override
 	protected int getChannelCount() {
 		FluidsynthSound sound = getElement();
 
@@ -47,7 +73,17 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
-	protected void setUp() {
+	protected boolean send(int channel, int command, int data1, int data2) {
+		if (synth == null) {
+			return false;
+		}
+
+		synth.send(channel, command, data1, data2);
+		
+		return true;
+	}
+
+	private void createSynth() {
 		FluidsynthSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "soundfont");
@@ -80,36 +116,11 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			}
 		}
 	}
-
-	@Override
-	protected void tearDown() {
+	
+	private void destroySynth() {
 		if (synth != null) {
 			synth.dispose();
 			synth = null;
 		}
-	}
-
-	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
-
-		FluidsynthSound sound = getElement();
-		if (sound.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
-					.getSoundfont());
-		} else {
-			removeProblem(Severity.WARNING, "soundfont");
-		}
-	}
-
-	@Override
-	protected boolean send(int channel, int command, int data1, int data2) {
-		if (synth == null) {
-			return false;
-		}
-
-		synth.send(channel, command, data1, data2);
-		
-		return true;
-	}
+	}	
 }

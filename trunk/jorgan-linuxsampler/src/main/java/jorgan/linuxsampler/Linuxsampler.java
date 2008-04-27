@@ -31,6 +31,8 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
+import jorgan.util.IOUtils;
+
 public class Linuxsampler {
 
 	private Socket socket;
@@ -100,9 +102,11 @@ public class Linuxsampler {
 
 			BufferedReader reader = new BufferedReader(new StringReader(lscp));
 
-			send(reader);
-
-			reader.close();
+			try {
+				send(reader);
+			} finally {
+				IOUtils.closeQuietly(reader);
+			}
 		}
 
 		public void send(Reader reader) throws IOException,
