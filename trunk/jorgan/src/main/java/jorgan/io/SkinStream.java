@@ -20,6 +20,7 @@ package jorgan.io;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -66,13 +67,9 @@ public class SkinStream {
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public Skin read(InputStream in) throws IOException, Exception {
-		try {
-			Skin skin = (Skin) xstream.fromXML(in);
-			return skin;
-		} finally {
-			in.close();			
-		}
+	public Skin read(InputStream in) throws IOException {
+		Skin skin = (Skin) xstream.fromXML(new BufferedInputStream(in));
+		return skin;
 	}
 
 	public void write(Skin skin, OutputStream out) throws IOException {

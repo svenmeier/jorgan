@@ -20,6 +20,7 @@ package jorgan.skin;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,6 +31,7 @@ import java.util.logging.Logger;
 import jorgan.io.SkinStream;
 import jorgan.util.Bootstrap;
 import jorgan.util.ClassUtils;
+import jorgan.util.IOUtils;
 
 /**
  * Manager of skins.
@@ -55,31 +57,35 @@ public class SkinManager implements ISkinManager {
 
 	private List<Skin> skins = new ArrayList<Skin>();
 
-	private void initialize() {
-		File skinsDir = new File(System.getProperty(SKINS_PATH_PROPERTY,
-				ClassUtils.getDirectory(Bootstrap.class) + "/skins"));
-		if (skinsDir.exists()) {
-			String[] entries = skinsDir.list();
-			for (int e = 0; e < entries.length; e++) {
-				String entry = entries[e];
-
-				File skinFile = new File(skinsDir, entry);
-
+	private void initSkins() {
+		File dir = new File(System.getProperty(SKINS_PATH_PROPERTY, ClassUtils
+				.getDirectory(Bootstrap.class)
+				+ "/skins"));
+		if (dir.exists()) {
+			for (String entry : dir.list()) {
 				try {
-					SkinSource source = createSkinDirectory(skinFile);
-					if (source == null) {
-						source = createSkinZip(skinFile);
-					}
-
-					if (source != null) {
-						Skin skin = new SkinStream().read(source.getURL(
-								SKIN_FILE).openStream());
-						skin.setSource(source);
-						skins.add(skin);
-					}
+					initSkin(new File(dir, entry));
 				} catch (Exception ex) {
 					logger.log(Level.INFO, "ignoring skin '" + entry + "'", ex);
 				}
+			}
+		}
+	}
+
+	private void initSkin(File file) throws IOException {
+		SkinSource source = createSkinDirectory(file);
+		if (source == null) {
+			source = createSkinZip(file);
+		}
+
+		if (source != null) {
+			InputStream input = source.getURL(SKIN_FILE).openStream();
+			try {
+				Skin skin = new SkinStream().read(input);
+				skin.setSource(source);
+				skins.add(skin);
+			} finally {
+				IOUtils.closeQuietly(input);
 			}
 		}
 	}
@@ -183,7 +189,7 @@ public class SkinManager implements ISkinManager {
 		if (instance == null) {
 			instance = new SkinManager();
 
-			instance.initialize();
+			instance.initSkins();
 		}
 
 		return instance;
