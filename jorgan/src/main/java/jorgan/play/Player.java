@@ -175,12 +175,6 @@ public abstract class Player<E extends Element> {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		// only 'real' changes (identifiable by non-null event) trigger {@link
-		// #tearDown()} and {@link #setUp()}.
-		if (event != null) {
-			tearDown();
-			setUp();
-		}
 	}
 
 	protected final void received(ShortMessage shortMessage) {

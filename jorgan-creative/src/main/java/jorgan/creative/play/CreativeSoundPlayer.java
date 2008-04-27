@@ -41,6 +41,33 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 	@Override
 	protected void setUp() {
+		createManager();
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+
+		if (event != null) {
+			// TODO when necessary only 
+			destroyManager();
+			createManager();
+		}
+		
+		CreativeSound sound = getElement();
+		if (sound.getSoundfont() == null) {
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont");
+		} else {
+			removeProblem(Severity.WARNING, "soundfont");
+		}
+	}
+
+	@Override
+	protected void tearDown() {
+		destroyManager();
+	}
+
+	private void createManager() {
 		CreativeSound output = getElement();
 
 		clone = null;
@@ -87,8 +114,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		}
 	}
 
-	@Override
-	protected void tearDown() {
+	private void destroyManager() {
 		if (clone != null) {
 			try {
 				int index = new SoundFontManager().getDeviceIndex(clone
@@ -99,18 +125,6 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 			}
 
 			clone = null;
-		}
-	}
-
-	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
-
-		CreativeSound sound = getElement();
-		if (sound.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", "noSoundfont");
-		} else {
-			removeProblem(Severity.WARNING, "soundfont");
 		}
 	}
 }

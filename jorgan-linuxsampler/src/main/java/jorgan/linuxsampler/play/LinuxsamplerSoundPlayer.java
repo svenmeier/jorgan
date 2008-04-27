@@ -34,6 +34,7 @@ import jorgan.linuxsampler.disposition.LinuxsamplerSound;
 import jorgan.linuxsampler.io.FileWatcher;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
+import jorgan.util.IOUtils;
 
 /**
  * A player for a {@link FluidsynthSound}.
@@ -51,6 +52,33 @@ public class LinuxsamplerSoundPlayer extends
 
 	@Override
 	protected synchronized void setUp() {
+		createLinuxsampler();
+	}
+
+	@Override
+	protected synchronized void tearDown() {
+		destroyLinuxsampler();
+	}
+
+	@Override
+	public void elementChanged(OrganEvent event) {
+		super.elementChanged(event);
+
+		if (event != null) {
+			// TODO when necessary only 
+			destroyLinuxsampler();
+			createLinuxsampler();
+		}
+		
+		LinuxsamplerSound sound = getElement();
+		if (sound.getHost() == null) {
+			addProblem(Severity.WARNING, "host", "noHost", sound.getHost());
+		} else {
+			removeProblem(Severity.WARNING, "host");
+		}
+	}
+	
+	private void createLinuxsampler() {
 		LinuxsamplerSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "host");
@@ -69,19 +97,15 @@ public class LinuxsamplerSoundPlayer extends
 				addProblem(Severity.ERROR, "host", "hostUnavailable");
 				return;
 			}
-		}
 
-		loadLscp();
+			loadLscp();
+		}
 	}
 
 	private synchronized void loadLscp() {
 		removeProblem(Severity.WARNING, "lscp");
 		removeProblem(Severity.ERROR, "lscp");
 
-		if (linuxsampler == null) {
-			return;
-		}
-		
 		LinuxsamplerSound sound = getElement();
 		if (sound.getLscp() != null) {
 			File file = new File(sound.getLscp());
@@ -120,39 +144,23 @@ public class LinuxsamplerSoundPlayer extends
 						.getMessage());
 				return;
 			} finally {
-				try {
-					reader.close();
-				} catch (IOException ignore) {
-				}
+				IOUtils.closeQuietly(reader);
 			}
 		}
 	}
-
-	@Override
-	protected synchronized void tearDown() {
+	
+	private void destroyLinuxsampler() {
 		if (linuxsampler != null) {
 			try {
 				linuxsampler.close();
 			} catch (IOException ignore) {
 			}
 			linuxsampler = null;
-		}
-		
-		if (watcher != null) {
-			watcher.cancel();
-			watcher = null;
-		}
-	}
 
-	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
-
-		LinuxsamplerSound sound = getElement();
-		if (sound.getHost() == null) {
-			addProblem(Severity.WARNING, "host", "noHost", sound.getHost());
-		} else {
-			removeProblem(Severity.WARNING, "host");
+			if (watcher != null) {
+				watcher.cancel();
+				watcher = null;
+			}
 		}
 	}
 }
