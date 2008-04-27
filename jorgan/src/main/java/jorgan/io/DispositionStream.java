@@ -41,6 +41,7 @@ import jorgan.io.disposition.ElementConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
+import jorgan.util.IOUtils;
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
@@ -94,11 +95,15 @@ public class DispositionStream {
 	 * @throws Exception
 	 */
 	public Organ read(File file) throws IOException, Exception {
-		Organ organ = read(new FileInputStream(file));
+		FileInputStream input = new FileInputStream(file);
 
-		addRecentFile(file);
-
-		return organ;
+		try {
+			Organ organ = read(input);
+			addRecentFile(file);
+			return organ;
+		} finally {
+			IOUtils.closeQuietly(input);
+		}
 	}
 
 	public Organ read(InputStream in) throws IOException {
@@ -112,11 +117,6 @@ public class DispositionStream {
 			organ = (Organ) xstream.fromXML(reader);
 		} catch (TransformerException ex) {
 			throw new ConversionException(ex);
-		} finally {
-			try {
-				in.close();
-			} catch (IOException ignore) {
-			}
 		}
 
 		return organ;
@@ -126,7 +126,13 @@ public class DispositionStream {
 
 		File temp = new File(file.getAbsoluteFile().getParentFile(), "."
 				+ file.getName());
-		write(organ, new FileOutputStream(temp));
+
+		FileOutputStream output = new FileOutputStream(temp);
+		try {
+			write(organ, output);
+		} finally {
+			IOUtils.closeQuietly(output);
+		}
 
 		new History(file).move(historySize);
 
@@ -137,16 +143,9 @@ public class DispositionStream {
 
 	public void write(Organ organ, OutputStream out) throws IOException {
 
-		try {
-			Writer writer = new OutputStreamWriter(out, ENCODING);
-			writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
-			xstream.toXML(organ, writer);
-		} finally {
-			try {
-				out.close();
-			} catch (IOException ignored) {
-			}
-		}
+		Writer writer = new OutputStreamWriter(out, ENCODING);
+		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+		xstream.toXML(organ, writer);
 	}
 
 	public File getRecentDirectory() {
