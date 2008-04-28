@@ -24,6 +24,7 @@ import java.util.Collection;
 import jorgan.cli.CLI;
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
+import jorgan.spi.ProviderRegistry;
 import bias.Configuration;
 import bias.store.CLIStore;
 import bias.store.DefaultingStore;
@@ -82,13 +83,10 @@ public class App {
 				new PropertiesStore(App.class, "preferences.properties")));
 		configuration.addStore(new ResourceBundlesStore("i18n"));
 
-		CLIStore cliStore = new CLIStore();
-		Option headless = cliStore.addSwitch("jorgan/App/headless", 'l');
-		headless.setLongName("headless");
-		headless.setDescription("start without a graphical UI");
-		configuration.addStore(cliStore);
+		CLIStore options = ProviderRegistry.getOptions();
+		configuration.addStore(options);
 
-		return cliStore.getOptions();
+		return options.getOptions();
 	}
 
 	/**
