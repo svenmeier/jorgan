@@ -30,6 +30,7 @@ import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -333,7 +334,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 					return value;
 				} catch (Exception ex) {
-					logger.log(Level.WARNING, "unable to get property value", ex);
+					logger.log(Level.WARNING, "unable to get property value",
+							ex);
 				}
 				return null;
 			}
@@ -355,8 +357,18 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 				try {
 					Object bean = beans.get(b);
 					method.invoke(bean, new Object[] { aValue });
+				} catch (InvocationTargetException ex) {
+					Throwable cause = ex.getCause();
+					if (cause instanceof Exception) {
+						logger.log(Level.WARNING,
+								"unable to set property value", ex);
+					} else {
+						// let anything more severe bubble up
+						throw new Error(cause);
+					}
 				} catch (Exception ex) {
-					logger.log(Level.WARNING, "unable to set property value", ex);
+					logger.log(Level.WARNING, "unable to set property value",
+							ex);
 				}
 			}
 		}
