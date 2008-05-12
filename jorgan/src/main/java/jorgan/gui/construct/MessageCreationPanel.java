@@ -18,7 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.GridBagLayout;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -53,16 +52,10 @@ public class MessageCreationPanel extends JPanel {
 	 * Constructor.
 	 */
 	public MessageCreationPanel() {
-		super(new GridBagLayout());
+		GridBuilder builder = new GridBuilder(this);
+		builder.column().grow().fill();
 
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d, 1.0d, 1.0d });
-
-		builder.nextRow();
-
-		add(config.get("type").read(new JLabel()), builder.nextColumn()
-				.alignNorthWest().gridWidthRemainder());
-
-		builder.nextRow(1.0d);
+		builder.row().cell(config.get("type").read(new JLabel()));
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
@@ -70,8 +63,7 @@ public class MessageCreationPanel extends JPanel {
 				firePropertyChange("message", null, null);
 			}
 		});
-		add(new JScrollPane(typeList), builder.nextColumn()
-				.gridWidthRemainder().fillBoth());
+		builder.row().grow().fill().cell(new JScrollPane(typeList));
 	}
 
 	/**

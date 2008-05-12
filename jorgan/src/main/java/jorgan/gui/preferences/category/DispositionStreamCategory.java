@@ -28,6 +28,7 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.io.DispositionStream;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -60,19 +61,19 @@ public class DispositionStreamCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new GridBagLayout());
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column();
+		builder.column().grow();
 
-		builder.nextRow();
+		Row row = builder.row();
 
-		panel.add(config.get("recentsSize").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(recentMaxSpinner, builder.nextColumn());
+		row.cell(config.get("recentsSize").read(new JLabel()));
+		row.cell(recentMaxSpinner);
 
-		builder.nextRow();
+		row = builder.row();
 
-		panel.add(config.get("historySize").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(historySizeSpinner, builder.nextColumn());
+		row.cell(config.get("historySize").read(new JLabel()));
+		row.cell(historySizeSpinner);
 
 		return panel;
 	}

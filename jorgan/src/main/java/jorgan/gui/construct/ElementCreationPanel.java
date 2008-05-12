@@ -18,7 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.GridBagLayout;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +35,7 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.text.DocumentNotifier;
 import bias.Configuration;
 
@@ -57,35 +57,31 @@ public class ElementCreationPanel extends JPanel {
 	 * Constructor.
 	 */
 	public ElementCreationPanel() {
-		super(new GridBagLayout());
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		GridBuilder builder = new GridBuilder(this);
+		builder.column();
+		builder.column().grow().fill();
 
-		builder.nextRow();
+		Row row = builder.row();
 
-		add(config.get("name").read(new JLabel()), builder.nextColumn());
-
+		row.cell(config.get("name").read(new JLabel()));
 		nameTextField.getDocument().addDocumentListener(new DocumentNotifier() {
 			public void changed() {
 				firePropertyChange("elementName", null, null);
 			}
 		});
-		add(nameTextField, builder.nextColumn().gridWidthRemainder()
-				.fillHorizontal());
+		row.cell(nameTextField);
 
-		builder.nextRow(1.0d);
+		row = builder.row().grow().fill();
 
-		add(config.get("type").read(new JLabel()), builder.nextColumn()
-				.alignNorthWest());
-
+		row.cell(config.get("type").read(new JLabel()));
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				firePropertyChange("elementClass", null, null);
 			}
 		});
-		add(new JScrollPane(typeList), builder.nextColumn()
-				.gridWidthRemainder().gridHeight(2).fillBoth());
+		row.cell(new JScrollPane(typeList));
 	}
 
 	/**

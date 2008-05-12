@@ -1,302 +1,223 @@
 package jorgan.swing;
 
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
+import javax.swing.JPanel;
 
 /**
  * A builder of a grid in a {@link java.awt.GridBagLayout}.
  */
 public class GridBuilder {
 
-	private GridBagConstraints defaults = new GridBagConstraints();
-
-	private Constraints constraints = new Constraints();
-
-	private double[] weightxs;
-
-	private double weighty;
+	private List<Column> columns = new ArrayList<Column>();
 
 	private int row = -1;
 
-	private int column = -1;
+	private JPanel panel;
 
-	/**
-	 * Create a builder.
-	 */
-	public GridBuilder() {
-		this(new double[0]);
+	public GridBuilder(JPanel panel) {
+		this.panel = panel;
+		panel.setLayout(new GridBagLayout());
 	}
 
-	/**
-	 * Create a builder.
-	 * 
-	 * @param weightxs
-	 *            the weights of the columns
-	 */
-	public GridBuilder(double[] weightxs) {
-		this.weightxs = weightxs;
-
-		defaults.gridwidth = 1;
-		defaults.gridheight = 1;
-		defaults.insets = new Insets(2, 2, 2, 2);
-		defaults.fill = GridBagConstraints.NONE;
-		defaults.anchor = GridBagConstraints.WEST;
-		defaults.weighty = 0.0d;
-		defaults.weightx = 0.0d;
+	public Column column() {
+		Column column = new Column(columns.size());
+		columns.add(column);
+		return column;
 	}
 
-	/**
-	 * Get the default constraints.
-	 * 
-	 * @return the default constraints
-	 */
-	public GridBagConstraints getDefaults() {
-		return defaults;
+	public Row row() {
+		row++;
+
+		return new Row(row);
 	}
 
-	/**
-	 * Set the default constraints.
-	 * 
-	 * @param defaults
-	 *            default constraints
-	 */
-	public void setDefaults(GridBagConstraints defaults) {
-		this.defaults = defaults;
+	public void row(JComponent component) {
+		Row row = row();
+
+		row.cell().span().fillHorizontal().set(component);
 	}
 
-	/**
-	 * Begin the next row.
-	 */
-	public void nextRow() {
-		nextRow(defaults.weighty);
-	}
+	public class Column {
+		private double weight = 0.0d;
 
-	/**
-	 * Begin the next row.
-	 * 
-	 * @param weighty
-	 *            the weight of the row, i.e. how much additional vertical space
-	 *            this row should occupcy
-	 */
-	public void nextRow(double weighty) {
-		column = -1;
-		if (row == -1) {
-			row = 0;
-		} else {
-			row += constraints.gridheight;
+		private boolean fillx = false;
+
+		private int gapx;
+
+		private int anchorx = GridBagConstraints.WEST;
+
+		private Column(int column) {
+			if (column > 0) {
+				gapx = 8;
+			}
 		}
 
-		this.weighty = weighty;
-	}
+		public Column grow() {
+			weight = 1.0d;
 
-	/**
-	 * Proceed to the next column.
-	 * 
-	 * @return the constraints for the next column
-	 */
-	public Constraints nextColumn() {
-		if (column == -1) {
-			column = 0;
-		} else {
-			column += constraints.gridwidth;
+			return this;
 		}
 
-		constraints.gridx = column;
-		constraints.gridy = row;
-		constraints.weightx = getWeightx(constraints.gridx);
-		constraints.weighty = weighty;
+		public Column fill() {
+			fillx = true;
 
-		constraints.gridwidth = defaults.gridheight;
-		constraints.gridheight = defaults.gridwidth;
-		constraints.anchor = defaults.anchor;
-		constraints.fill = defaults.fill;
-		constraints.insets = defaults.insets;
-		constraints.ipadx = defaults.ipadx;
-		constraints.ipady = defaults.ipady;
+			return this;
+		}
 
-		return constraints;
-	}
+		public Column left() {
+			anchorx = GridBagConstraints.WEST;
 
-	private double getWeightx(int column) {
-		if (column < weightxs.length) {
-			return weightxs[column];
-		} else {
-			return defaults.weightx;
+			return this;
+		}
+
+		public Column right() {
+			anchorx = GridBagConstraints.EAST;
+
+			return this;
 		}
 	}
 
-	/**
-	 * Convenience constraints subclass.
-	 */
-	public class Constraints extends GridBagConstraints {
+	public class Row {
+		private int row;
 
-		/**
-		 * Set the width of the current cell.
-		 * 
-		 * @param gridwidth
-		 *            the new gridwidth
-		 * @return itself
-		 */
-		public Constraints gridWidth(int gridwidth) {
-			constraints.gridwidth = gridwidth;
+		private int column = -1;
+
+		private double weighty = 0.0d;
+
+		private boolean filly;
+
+		private int gapy;
+
+		private int anchory;
+
+		private Row(int row) {
+			this.row = row;
+
+			if (row > 0) {
+				gapy = 4;
+			}
+		}
+
+		public Row grow() {
+			this.weighty = 1.0d;
+
 			return this;
 		}
 
-		/**
-		 * Set the width of the current cell to all remaining columns.
-		 * 
-		 * @return itself
-		 */
-		public Constraints gridWidthRemainder() {
-			constraints.gridwidth = GridBagConstraints.REMAINDER;
+		public Row fill() {
+			filly = true;
+
 			return this;
 		}
 
-		/**
-		 * Set the height of the current cell.
-		 * 
-		 * @param gridheight
-		 *            the new gridheight
-		 * @return itself
-		 */
-		public Constraints gridHeight(int gridheight) {
-			this.gridheight = gridheight;
+		public Row top() {
+			anchory = GridBagConstraints.NORTH;
+
 			return this;
 		}
 
-		/**
-		 * Fill horizontal.
-		 * 
-		 * @return itself
-		 */
-		public Constraints fillHorizontal() {
-			this.fill = GridBagConstraints.HORIZONTAL;
+		public Row bottom() {
+			anchory = GridBagConstraints.SOUTH;
+
 			return this;
 		}
 
-		/**
-		 * Fill vertical.
-		 * 
-		 * @return itself
-		 */
-		public Constraints fillVertical() {
-			this.fill = GridBagConstraints.VERTICAL;
+		public Row skip() {
+			cell().set(new JComponent() {
+				@Override
+				public void paint(Graphics g) {
+				}
+			});
 			return this;
 		}
 
-		/**
-		 * Fill both, i.e. horizontal and vertical.
-		 * 
-		 * @return itself
-		 */
-		public Constraints fillBoth() {
-			this.fill = GridBagConstraints.BOTH;
+		public Row cell(JComponent component) {
+			cell().set(component);
 			return this;
 		}
 
-		/**
-		 * Align west.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignWest() {
-			this.anchor = GridBagConstraints.WEST;
-			return this;
+		public Cell cell() {
+			column++;
+			return new Cell(column);
 		}
 
-		/**
-		 * Align north west.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignNorthWest() {
-			this.anchor = GridBagConstraints.NORTHWEST;
-			return this;
-		}
+		public class Cell {
+			private int column;
 
-		/**
-		 * Align north.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignNorth() {
-			this.anchor = GridBagConstraints.NORTH;
-			return this;
-		}
+			private int span;
 
-		/**
-		 * Align north east.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignNorthEast() {
-			this.anchor = GridBagConstraints.NORTHEAST;
-			return this;
-		}
+			private int fill;
 
-		/**
-		 * Align east.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignEast() {
+			private double weightx;
 
-			this.anchor = GridBagConstraints.EAST;
-			return this;
-		}
+			private int gapx;
 
-		/**
-		 * Align south east.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignSouthEast() {
-			this.anchor = GridBagConstraints.SOUTHEAST;
-			return this;
-		}
+			private int anchor;
 
-		/**
-		 * Align south.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignSouth() {
-			this.anchor = GridBagConstraints.SOUTH;
-			return this;
-		}
+			public Cell(int column) {
+				this.column = column;
+				this.span = 1;
 
-		/**
-		 * Align south west.
-		 * 
-		 * @return itself
-		 */
-		public Constraints alignSouthWest() {
-			this.anchor = GridBagConstraints.SOUTHWEST;
-			return this;
-		}
+				Column c = columns.get(column);
+				if (c.fillx && filly) {
+					fill = GridBagConstraints.BOTH;
+				} else if (c.fillx) {
+					fill = GridBagConstraints.HORIZONTAL;
+				} else if (filly) {
+					fill = GridBagConstraints.VERTICAL;
+				} else {
+					fill = GridBagConstraints.NONE;
+				}
+				weightx = c.weight;
+				gapx = c.gapx;
+				// TODO take row#anchory into account
+				anchor = c.anchorx;
+			}
 
-		/**
-		 * Pad the current cell.
-		 * 
-		 * @param ipadx
-		 *            the internal x padding
-		 * @return itself
-		 */
-		public Constraints padX(int ipadx) {
-			this.ipadx = ipadx;
-			return this;
-		}
+			public void set(JComponent component) {
 
-		/**
-		 * Pad the current cell.
-		 * 
-		 * @param ipady
-		 *            the internal y padding
-		 * @return itself
-		 */
-		public Constraints padY(int ipady) {
-			this.ipady = ipady;
-			return this;
+				GridBagConstraints constraints = new GridBagConstraints();
+				constraints.gridx = column;
+				constraints.gridy = row;
+				constraints.gridwidth = span;
+				constraints.weightx = weightx;
+				constraints.weighty = weighty;
+				constraints.fill = fill;
+				constraints.insets = new Insets(gapy, gapx, 0, 0);
+				constraints.anchor = anchor;
+				panel.add(component, constraints);
+			}
+
+			public Cell fillHorizontal() {
+				fill = GridBagConstraints.HORIZONTAL;
+
+				return this;
+			}
+
+			public Cell fillVertical() {
+				fill = GridBagConstraints.VERTICAL;
+
+				return this;
+			}
+
+			public Cell fillBoth() {
+				fill = GridBagConstraints.BOTH;
+
+				return this;
+			}
+
+			public Cell span() {
+				this.span = GridBagConstraints.REMAINDER;
+
+				return this;
+			}
 		}
 	}
 }

@@ -34,30 +34,23 @@ public class RuleBorder implements Border {
 	/**
 	 * Paint rule to the top of the component.
 	 * 
-	 * @see #RuleBorder(int, boolean, boolean)
+	 * @see #RuleBorder(int)
 	 */
 	public static final int TOP = SwingConstants.TOP;
 
 	/**
+	 * Paint rule to the center of the component.
+	 * 
+	 * @see #RuleBorder(int)
+	 */
+	public static final int CENTER = SwingConstants.CENTER;
+
+	/**
 	 * Paint rule to the bottom of the component.
 	 * 
-	 * @see #RuleBorder(int, boolean, boolean)
+	 * @see #RuleBorder(int)
 	 */
 	public static final int BOTTOM = SwingConstants.BOTTOM;
-
-	/**
-	 * Paint rule to the left of the component.
-	 * 
-	 * @see #RuleBorder(int, boolean, boolean)
-	 */
-	public static final int LEFT = SwingConstants.LEFT;
-
-	/**
-	 * Paint rule to the right of the component.
-	 * 
-	 * @see #RuleBorder(int, boolean, boolean)
-	 */
-	public static final int RIGHT = SwingConstants.RIGHT;
 
 	private int location;
 
@@ -102,52 +95,44 @@ public class RuleBorder implements Border {
 
 		switch (location) {
 		case TOP:
-			g.setColor(getShadowColor(c));
-			g.drawLine(x, y, x + width - 1, y);
-
-			g.setColor(getHighlightColor(c));
-			g.drawLine(x, y + 1, x + width - 1, y + 1);
+			// keep y
 			break;
-		case LEFT:
-			g.setColor(getShadowColor(c));
-			g.drawLine(x, y, x, y + height - 1);
-
-			g.setColor(getHighlightColor(c));
-			g.drawLine(x + 1, y, x + 1, y + height - 1);
+		case CENTER:
+			y = y + height / 2;
 			break;
 		case BOTTOM:
-			g.setColor(getShadowColor(c));
-			g.drawLine(x, y + height - 2, x + width - 1, y + height - 2);
-
-			g.setColor(getHighlightColor(c));
-			g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
+			y = y + height - 2;
 			break;
-		case RIGHT:
-			g.setColor(getShadowColor(c));
-			g.drawLine(x + width - 2, y, x + width - 2, y + height - 1);
-
-			g.setColor(getHighlightColor(c));
-			g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
-			break;
+		default:
+			throw new IllegalStateException();
 		}
+
+		paintRule(c, g, y, x, width);
+	}
+
+	private void paintRule(Component c, Graphics g, int y, int x, int width) {
+		g.setColor(getShadowColor(c));
+		g.drawLine(x, y, x + width - 1, y);
+
+		g.setColor(getHighlightColor(c));
+		g.drawLine(x, y + 1, x + width - 1, y + 1);
 	}
 
 	public Insets getBorderInsets(Component c) {
 		switch (location) {
 		case TOP:
 			return new Insets(2, 0, 0, 0);
-		case LEFT:
+		case CENTER:
 			return new Insets(0, 2, 0, 0);
 		case BOTTOM:
 			return new Insets(0, 0, 2, 0);
-		case RIGHT:
-			return new Insets(0, 0, 0, 2);
+		default:
+			throw new IllegalStateException();
 		}
-		return new Insets(0, 0, 0, 0);
 	}
 
 	public boolean isBorderOpaque() {
-		return true;
+		return false;
 	}
 
 	/**

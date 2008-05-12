@@ -18,8 +18,6 @@
  */
 package jorgan.gui.construct;
 
-import java.awt.BorderLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -38,6 +36,8 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Element;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.swing.BaseAction;
+import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.util.Generics;
 import bias.Configuration;
 
@@ -61,7 +61,11 @@ public class ElementsSelectionPanel extends JPanel {
 	 * Constructor.
 	 */
 	public ElementsSelectionPanel() {
-		setLayout(new BorderLayout(10, 10));
+		GridBuilder builder = new GridBuilder(this);
+
+		builder.column().grow().fill();
+		builder.column();
+		builder.column();
 
 		elementsList
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -71,17 +75,10 @@ public class ElementsSelectionPanel extends JPanel {
 				firePropertyChange("selectedElements", null, null);
 			}
 		});
-		add(new JScrollPane(elementsList), BorderLayout.CENTER);
+		builder.row().grow().fill().cell().span().set(new JScrollPane(elementsList));
 
-		JPanel buttonPanel = new JPanel(new BorderLayout());
-		add(buttonPanel, BorderLayout.SOUTH);
-
-		JPanel gridPanel = new JPanel(new GridLayout(1, 0, 2, 2));
-		buttonPanel.add(gridPanel, BorderLayout.EAST);
-
-		gridPanel.add(new JButton(allAction));
-
-		gridPanel.add(new JButton(noneAction));
+		Row row = builder.row();
+		row.skip().cell(new JButton(allAction)).cell(new JButton(noneAction));
 	}
 
 	/**
