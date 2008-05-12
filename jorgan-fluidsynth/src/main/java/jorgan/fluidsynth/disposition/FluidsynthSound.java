@@ -69,7 +69,7 @@ public class FluidsynthSound extends Sound {
 	public void setChorus(Chorus chorus) {
 		this.chorus = chorus;
 		
-		fireChanged(true);
+		fireChanged(false);
 	}
 
 	public Reverb getReverb() {
@@ -79,6 +79,6 @@ public class FluidsynthSound extends Sound {
 	public void setReverb(Reverb reverb) {
 		this.reverb = reverb;
 		
-		fireChanged(true);
+		fireChanged(false);
 	}
 }
