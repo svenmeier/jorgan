@@ -1,6 +1,5 @@
 package jorgan.soundfont.imports;
 
-import java.awt.GridBagLayout;
 import java.io.File;
 
 import javax.swing.JCheckBox;
@@ -13,6 +12,7 @@ import javax.swing.event.ChangeListener;
 
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import bias.Configuration;
 
 /**
@@ -34,30 +34,31 @@ public class OptionsPanel extends JPanel {
 	 * Constructor.
 	 */
 	public OptionsPanel() {
-		super(new GridBagLayout());
+		GridBuilder builder = new GridBuilder(this);
+		builder.column();
+		builder.column().grow().fill();
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		Row row = builder.row();
 
-		builder.nextRow(0.0d);
-
-		add(config.get("file").read(new JLabel()), builder.nextColumn());
+		row.cell(config.get("file").read(new JLabel()));
 
 		fileSelector.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				firePropertyChange("elements", null, null);
 			}
 		});
-		add(fileSelector, builder.nextColumn().fillHorizontal());
+		row.cell(fileSelector);
 
-		builder.nextRow(0.0d);
+		row = builder.row();
 
-		add(config.get("bank").read(new JLabel()), builder.nextColumn());
+		row.cell(config.get("bank").read(new JLabel()));
 
-		add(bankSpinner, builder.nextColumn());
+		row.cell(bankSpinner);
 
-		builder.nextRow(1.0d);
+		row = builder.row();
 
-		add(config.get("stops").read(stopsCheckBox), builder.nextColumn().alignNorth());
+		row.skip();
+		row.cell(config.get("stops").read(stopsCheckBox));
 	}
 
 	public File getSelectedFile() {
