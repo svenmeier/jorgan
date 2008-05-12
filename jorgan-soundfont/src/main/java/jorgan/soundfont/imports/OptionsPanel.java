@@ -11,8 +11,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import jorgan.swing.FileSelector;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
 /**
@@ -34,31 +34,22 @@ public class OptionsPanel extends JPanel {
 	 * Constructor.
 	 */
 	public OptionsPanel() {
-		GridBuilder builder = new GridBuilder(this);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(this);
+		Column column = builder.column();
 
-		Row row = builder.row();
-
-		row.cell(config.get("file").read(new JLabel()));
+		column.term(config.get("file").read(new JLabel()));
 
 		fileSelector.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				firePropertyChange("elements", null, null);
 			}
 		});
-		row.cell(fileSelector);
+		column.definition(fileSelector);
 
-		row = builder.row();
+		column.term(config.get("bank").read(new JLabel()));
+		column.definition(bankSpinner);
 
-		row.cell(config.get("bank").read(new JLabel()));
-
-		row.cell(bankSpinner);
-
-		row = builder.row();
-
-		row.skip();
-		row.cell(config.get("stops").read(stopsCheckBox));
+		column.definition(config.get("stops").read(stopsCheckBox));
 	}
 
 	public File getSelectedFile() {

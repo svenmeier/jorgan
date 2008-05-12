@@ -33,7 +33,8 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
-import jorgan.swing.GridBuilder;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
 /**
@@ -52,10 +53,11 @@ public class MessageCreationPanel extends JPanel {
 	 * Constructor.
 	 */
 	public MessageCreationPanel() {
-		GridBuilder builder = new GridBuilder(this);
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(this);
 
-		builder.row().cell(config.get("type").read(new JLabel()));
+		Column column = builder.column();
+
+		column.term(config.get("type").read(new JLabel()));
 
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
@@ -63,7 +65,7 @@ public class MessageCreationPanel extends JPanel {
 				firePropertyChange("message", null, null);
 			}
 		});
-		builder.row().grow().fill().cell(new JScrollPane(typeList));
+		column.definition(new JScrollPane(typeList), true);
 	}
 
 	/**

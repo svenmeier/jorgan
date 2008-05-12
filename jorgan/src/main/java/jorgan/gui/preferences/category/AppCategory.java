@@ -23,8 +23,8 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import jorgan.App;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.util.Property;
 
@@ -49,12 +49,11 @@ public class AppCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column().grow();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
-		Row row = builder.row();
+		Column column = builder.column();
 
-		row.cell(config.get("openRecentOnStartup").read(
+		column.definition(config.get("openRecentOnStartup").read(
 				openRecentOnStartupCheckBox));
 
 		return panel;

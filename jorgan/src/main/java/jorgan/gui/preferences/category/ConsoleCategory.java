@@ -32,11 +32,11 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.ConsolePanel;
 import jorgan.gui.console.View;
-import jorgan.swing.GridBuilder;
 import jorgan.swing.Separator;
-import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -87,7 +87,7 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private FontSelector elementFontSelector = new FontSelector();
 
-	private JCheckBox showShortcutCheckBox = new JCheckBox();
+	private JCheckBox shortcutCheckBox = new JCheckBox();
 
 	private ColorSelector shortcutColorSelector = new ColorSelector();
 
@@ -101,62 +101,45 @@ public class ConsoleCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
-		Row row = builder.row();
+		Column column = builder.column();
 
-		row.cell(config.get("grid").read(new JLabel()));
-		row.cell(gridSpinner);
+		column.term(config.get("grid").read(new JLabel()));
+		column.definition(gridSpinner);
 
-		row = builder.row();
+		column.definition(config.get("interpolate").read(interpolateCheckBox));
 
-		config.get("interpolate").read(interpolateCheckBox);
-		row.skip().cell(interpolateCheckBox);
+		column.term(config.get("background").read(new JLabel()));
+		column.definition(backgroundSelector);
 
-		row = builder.row();
+		column.term(config.get("foreground").read(new JLabel()));
+		column.definition(foregroundSelector);
 
-		row.cell(config.get("background").read(new JLabel()));
-		row.cell(backgroundSelector);
+		column.header(config.get("element").read(new Separator.Label()));
 
-		row = builder.row();
+		column.term(config.get("elementColor").read(new JLabel()));
+		column.definition(elementColorSelector);
 
-		row.cell(config.get("foreground").read(new JLabel()));
-		row.cell(foregroundSelector);
+		column.term(config.get("elementFont").read(new JLabel()));
+		column.definition(elementFontSelector);
 
-		builder.row(config.get("element").read(new Separator.Label()));
-
-		row = builder.row();
-
-		row.cell(config.get("elementColor").read(new JLabel()));
-		row.cell(elementColorSelector);
-
-		row = builder.row();
-
-		row.cell(config.get("elementFont").read(new JLabel()));
-		row.cell(elementFontSelector);
-
-		showShortcutCheckBox.addItemListener(new ItemListener() {
+		shortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
-				shortcutColorSelector.setEnabled(showShortcutCheckBox
+				shortcutColorSelector.setEnabled(shortcutCheckBox
 						.isSelected());
-				shortcutFontSelector.setEnabled(showShortcutCheckBox
+				shortcutFontSelector.setEnabled(shortcutCheckBox
 						.isSelected());
 			}
 		});
-		builder.row(new Separator<JCheckBox>(config.get("shortcut").read(
-				showShortcutCheckBox)));
+		column.header(new Separator<JCheckBox>(config.get("shortcut").read(
+				shortcutCheckBox)));
 
-		row = builder.row();
+		column.term(config.get("shortcutColor").read(new JLabel()));
+		column.definition(shortcutColorSelector);
 
-		row.cell(config.get("shortcutColor").read(new JLabel()));
-		row.cell(shortcutColorSelector);
-
-		row = builder.row();
-
-		row.cell(config.get("shortcutFont").read(new JLabel()));
-		row.cell(shortcutFontSelector);
+		column.term(config.get("shortcutFont").read(new JLabel()));
+		column.definition(shortcutFontSelector);
 
 		return panel;
 	}
@@ -177,7 +160,7 @@ public class ConsoleCategory extends JOrganCategory {
 		elementColorSelector.setSelectedColor((Color) elementColor.getValue());
 		elementFontSelector.setSelectedFont((Font) elementFont.getValue());
 
-		showShortcutCheckBox.setSelected((Boolean) showShortcut.getValue());
+		shortcutCheckBox.setSelected((Boolean) showShortcut.getValue());
 		shortcutColorSelector
 				.setSelectedColor((Color) shortcutColor.getValue());
 		shortcutFontSelector.setSelectedFont((Font) shortcutFont.getValue());
@@ -194,7 +177,7 @@ public class ConsoleCategory extends JOrganCategory {
 		elementColor.setValue(elementColorSelector.getSelectedColor());
 		elementFont.setValue(elementFontSelector.getSelectedFont());
 
-		showShortcut.setValue(showShortcutCheckBox.isSelected());
+		showShortcut.setValue(shortcutCheckBox.isSelected());
 		shortcutColor.setValue(shortcutColorSelector.getSelectedColor());
 		shortcutFont.setValue(shortcutFontSelector.getSelectedFont());
 	}

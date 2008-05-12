@@ -8,7 +8,7 @@ import javax.swing.JPanel;
 import swingx.docking.layout.FloatingLayout;
 
 /**
- * A builder of a list utilizing a {@link java.awt.GridLayout}.
+ * A builder of flows.
  */
 public class FlowBuilder {
 

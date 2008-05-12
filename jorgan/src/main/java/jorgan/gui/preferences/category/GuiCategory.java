@@ -28,10 +28,10 @@ import javax.swing.JRadioButton;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
-import jorgan.swing.GridBuilder;
 import jorgan.swing.Separator;
-import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.button.ButtonGroup;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -75,47 +75,35 @@ public class GuiCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
-		Row row = builder.row();
+		Column column = builder.column();
 
-		row.cell(config.get("lookAndFeel").read(new JLabel()));
+		column.term(config.get("lookAndFeel").read(new JLabel()));
 		lookAndFeelComboBox
 				.setModel(new DefaultComboBoxModel(GUI.LAF.values()));
-		row.cell(lookAndFeelComboBox);
+		column.definition(lookAndFeelComboBox);
 
-		row = builder.row();
+		column.definition(config.get("showAboutOnStartup").read(
+				showAboutOnStartupCheckBox));
 
-		config.get("showAboutOnStartup").read(showAboutOnStartupCheckBox);
-		row.cell().span().set(showAboutOnStartupCheckBox);
-
-		row = builder.row();
-
-		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
-		row.cell(fullScreenOnLoadCheckBox);
+		column.definition(config.get("fullScreenOnLoad").read(
+				fullScreenOnLoadCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
-		builder.row(config.get("changes").read(new Separator.Label()));
-
-		row = builder.row();
+		column.term(config.get("changes").read(new Separator.Label()));
 
 		config.get("confirmChanges").read(confirmChangesRadioButton);
 		changesGroup.add(confirmChangesRadioButton);
-		row.cell(confirmChangesRadioButton);
-
-		row = builder.row();
+		column.definition(confirmChangesRadioButton);
 
 		config.get("saveChanges").read(saveChangesRadioButton);
 		changesGroup.add(saveChangesRadioButton);
-		row.cell(saveChangesRadioButton);
-
-		row = builder.row();
+		column.definition(saveChangesRadioButton);
 
 		config.get("ignoreChanges").read(ignoreChangesRadioButton);
 		changesGroup.add(ignoreChangesRadioButton);
-		row.cell(ignoreChangesRadioButton);
+		column.definition(ignoreChangesRadioButton);
 
 		return panel;
 	}

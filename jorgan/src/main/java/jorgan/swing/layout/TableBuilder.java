@@ -8,7 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 /**
- * A builder of a definition utilizing a {@link java.awt.GridBagLayout}.
+ * A builder of a table.
  */
 public class TableBuilder {
 

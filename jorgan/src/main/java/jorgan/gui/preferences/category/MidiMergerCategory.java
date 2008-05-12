@@ -18,6 +18,7 @@
  */
 package jorgan.gui.preferences.category;
 
+import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +34,6 @@ import jorgan.midi.Direction;
 import jorgan.midi.merge.MergeInput;
 import jorgan.midi.merge.MidiMerger;
 import jorgan.midi.merge.MidiMergerProvider;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
@@ -84,25 +83,18 @@ public class MidiMergerCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel();
+		JPanel panel = new JPanel(new BorderLayout());
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column().grow().fill();
-
-		Row row = builder.row();
-
-		row.cell(config.get("description").read(new MultiLineLabel()));
-
-		row = builder.row().grow().fill();
-
-		scrollPane.setPreferredSize(new Dimension(0, 0));
-		row.cell(scrollPane);
+		panel.add(config.get("description").read(new MultiLineLabel()),
+				BorderLayout.NORTH);
 
 		table.setModel(tableModel);
 		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
 		TableUtils.pleasantLookAndFeel(table);
 		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
 		scrollPane.setViewportView(table);
+		scrollPane.setPreferredSize(new Dimension(0, 0));
+		panel.add(scrollPane, BorderLayout.CENTER);
 
 		return panel;
 	}

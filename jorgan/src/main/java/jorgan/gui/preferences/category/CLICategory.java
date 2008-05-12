@@ -27,10 +27,10 @@ import javax.swing.JRadioButton;
 
 import jorgan.cli.CLI;
 import jorgan.cli.Interpreter;
-import jorgan.swing.GridBuilder;
 import jorgan.swing.Separator;
-import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.button.ButtonGroup;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.MessageBuilder;
@@ -63,9 +63,8 @@ public class CLICategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
+		Column column = builder.column();
 
 		ButtonGroup encodingGroup = new ButtonGroup() {
 			@Override
@@ -73,27 +72,23 @@ public class CLICategory extends JOrganCategory {
 				encodingComboBox.setEnabled(button == encodingOtherRadioButton);
 			}
 		};
-		builder.row(config.get("encoding").read(new Separator.Label()));
-
-		Row row = builder.row();
+		column.term(config.get("encoding").read(new Separator.Label()));
 
 		String message = config.get("encodingDefault").read(
 				new MessageBuilder())
 				.build(System.getProperty("file.encoding"));
 		encodingDefaultRadioButton.setText(message);
 		encodingGroup.add(encodingDefaultRadioButton);
-		row.cell().span().set(encodingDefaultRadioButton);
-
-		row = builder.row();
+		column.definition(encodingDefaultRadioButton);
 
 		config.get("encodingOther").read(encodingOtherRadioButton);
 		encodingGroup.add(encodingOtherRadioButton);
-		row.cell(encodingOtherRadioButton);
+		column.definition(encodingOtherRadioButton);
 
 		encodingComboBox.setEditable(true);
 		encodingComboBox.setModel(new DefaultComboBoxModel(Interpreter
 				.getEncodings()));
-		row.cell(encodingComboBox);
+		column.definition(encodingComboBox);
 
 		return panel;
 	}
