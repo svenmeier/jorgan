@@ -16,47 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.disposition;
+package jorgan.fluidsynth.gui.dock.spi;
 
-public class Reverb {
+import java.util.ArrayList;
+import java.util.List;
 
-	private double room;
+import jorgan.fluidsynth.gui.dock.FluidsynthDockable;
+import jorgan.gui.dock.OrganDockable;
+import jorgan.gui.dock.spi.DockableProvider;
 
-	private double damping;
+public class FluidsynthDockableProvider implements DockableProvider {
 
-	private double width;
+	public List<OrganDockable> getDockables() {
+		ArrayList<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
-	private double level;
+		dockables.add(new FluidsynthDockable());
 
-	public double getDamping() {
-		return damping;
+		return dockables;
 	}
 
-	public double getLevel() {
-		return level;
-	}
-
-	public double getRoom() {
-		return room;
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public void setDamping(double damping) {
-		this.damping = damping;
-	}
-
-	public void setLevel(double level) {
-		this.level = level;
-	}
-
-	public void setRoom(double room) {
-		this.room = room;
-	}
-
-	public void setWidth(double width) {
-		this.width = width;
-	}
 }

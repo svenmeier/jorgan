@@ -45,10 +45,11 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	public void elementChanged(OrganEvent event) {
-		if (event != null) {
-			// TODO when necessary only 
+		if (event != null && event.isDispositionChange()) {
 			destroySynth();
 			createSynth();
+		} else {
+			configureSynth();
 		}
 
 		FluidsynthSound sound = getElement();
@@ -96,13 +97,19 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
 						.getSoundfont());
 			}
+		}
+	}
+	
+	private void configureSynth() {
+		if (synth != null) {
+			FluidsynthSound sound = getElement();
 
 			Reverb reverb = sound.getReverb();
 			if (reverb == null) {
 				synth.setReverbOn(false);
 			} else {
 				synth.setReverbOn(true);
-				synth.setReverb(reverb.getRoomsize(), reverb.getDamping(),
+				synth.setReverb(reverb.getRoom(), reverb.getDamping(),
 						reverb.getWidth(), reverb.getLevel());
 			}
 
@@ -112,7 +119,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			} else {
 				synth.setChorusOn(true);
 				synth.setChorus(chorus.getNr(), chorus.getLevel(), chorus
-						.getSpeed(), chorus.getDepthMs(), chorus.getType());
+						.getSpeed(), chorus.getDepth(), chorus.getType());
 			}
 		}
 	}

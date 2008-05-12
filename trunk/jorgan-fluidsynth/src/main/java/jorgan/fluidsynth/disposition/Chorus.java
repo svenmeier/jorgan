@@ -19,27 +19,19 @@
 package jorgan.fluidsynth.disposition;
 
 public class Chorus {
+	
 	private int nr;
 
 	private double level;
 
 	private double speed;
 
-	private double depthMs;
+	private double depth;
 
 	private int type;
 
-	public Chorus(int nr, double level, double speed, double depthMs, int type) {
-		super();
-		this.nr = nr;
-		this.level = level;
-		this.speed = speed;
-		this.depthMs = depthMs;
-		this.type = type;
-	}
-
-	public double getDepthMs() {
-		return depthMs;
+	public double getDepth() {
+		return depth;
 	}
 
 	public double getLevel() {
@@ -56,5 +48,25 @@ public class Chorus {
 
 	public int getType() {
 		return type;
+	}
+
+	public void setDepth(double depth) {
+		this.depth = depth;
+	}
+
+	public void setLevel(double level) {
+		this.level = level;
+	}
+
+	public void setNr(int nr) {
+		this.nr = nr;
+	}
+
+	public void setSpeed(double speed) {
+		this.speed = speed;
+	}
+
+	public void setType(int type) {
+		this.type = type;
 	}
 }
