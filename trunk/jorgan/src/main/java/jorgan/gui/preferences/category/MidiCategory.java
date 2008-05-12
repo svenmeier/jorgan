@@ -25,9 +25,9 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.dock.MonitorDockable;
-import jorgan.swing.GridBuilder;
 import jorgan.swing.Separator;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -54,16 +54,13 @@ public class MidiCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
+		Column column = builder.column();
 
-		builder.row(config.get("monitor").read(new Separator.Label()));
+		column.header(config.get("monitor").read(new Separator.Label()));
 
-		Row row = builder.row();
-
-		row.cell(config.get("monitorMax").read(new JLabel()));
-		row.cell(monitorMaxSpinner);
+		column.term(config.get("monitorMax").read(new JLabel()));
+		column.definition(monitorMaxSpinner);
 
 		return panel;
 	}

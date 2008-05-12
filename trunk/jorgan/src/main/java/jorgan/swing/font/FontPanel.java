@@ -27,8 +27,8 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import jorgan.swing.EditableList;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.TableBuilder;
+import jorgan.swing.layout.TableBuilder.Row;
 import bias.Configuration;
 
 /**
@@ -66,28 +66,25 @@ public class FontPanel extends JPanel {
 	public FontPanel() {
 		config.read(this);
 
-		GridBuilder builder = new GridBuilder(this);
-		builder.column().grow().fill();
-		builder.column();
-		builder.column();
+		TableBuilder builder = new TableBuilder(this);
 
 		Row row = builder.row();
 
-		row.cell(config.get("family").read(familyLabel));
-		row.cell(config.get("size").read(sizeLabel));
-		row.cell(config.get("style").read(styleLabel));
+		row.data(config.get("family").read(familyLabel), true);
+		row.data(config.get("size").read(sizeLabel));
+		row.data(config.get("style").read(styleLabel));
 
-		row = builder.row().grow().fill();
+		row = builder.row(true);
 
 		familyList.setValuesAsArray(GraphicsEnvironment
 				.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-		row.cell(familyList);
+		row.data(familyList, true);
 
 		sizeList.setValuesAsArray(sizes);
-		row.cell(sizeList);
+		row.data(sizeList);
 
 		stylesList.setValuesAsArray(styles);
-		row.cell(stylesList);
+		row.data(stylesList);
 	}
 
 	public void setStyles(String[] styles) {

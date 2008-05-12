@@ -36,8 +36,8 @@ import jorgan.disposition.Organ;
 import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.util.IOUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -139,20 +139,18 @@ public class DispositionImportProvider implements ImportProvider {
 		 * Constructor.
 		 */
 		public OptionsPanel() {
-			GridBuilder builder = new GridBuilder(this);
-			builder.column();
-			builder.column().grow().fill();
+			DefinitionBuilder builder = new DefinitionBuilder(this);
 
-			Row row = builder.row();
+			Column column = builder.column();
 
-			row.cell(config.get("options/file").read(new JLabel()));
+			column.term(config.get("options/file").read(new JLabel()));
 
 			fileSelector.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					firePropertyChange("ranks", null, null);
 				}
 			});
-			row.cell(fileSelector);
+			column.definition(fileSelector);
 		}
 
 		public void showMessage(String key, Object... args) {

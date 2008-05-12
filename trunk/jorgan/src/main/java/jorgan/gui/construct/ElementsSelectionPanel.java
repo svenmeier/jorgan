@@ -18,6 +18,7 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,8 +37,8 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Element;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.swing.BaseAction;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.FlowBuilder;
+import jorgan.swing.layout.FlowBuilder.Flow;
 import jorgan.util.Generics;
 import bias.Configuration;
 
@@ -61,12 +62,7 @@ public class ElementsSelectionPanel extends JPanel {
 	 * Constructor.
 	 */
 	public ElementsSelectionPanel() {
-		GridBuilder builder = new GridBuilder(this);
-
-		builder.column().grow().fill();
-		builder.column();
-		builder.column();
-
+		super(new BorderLayout());
 		elementsList
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		elementsList.setCellRenderer(new ElementListCellRenderer());
@@ -75,10 +71,16 @@ public class ElementsSelectionPanel extends JPanel {
 				firePropertyChange("selectedElements", null, null);
 			}
 		});
-		builder.row().grow().fill().cell().span().set(new JScrollPane(elementsList));
+		add(new JScrollPane(elementsList), BorderLayout.CENTER);
 
-		Row row = builder.row();
-		row.skip().cell(new JButton(allAction)).cell(new JButton(noneAction));
+		JPanel panel = new JPanel();
+		add(panel, BorderLayout.SOUTH);
+
+		FlowBuilder builder = new FlowBuilder(panel);
+
+		Flow flow = builder.flow();
+		flow.add(new JButton(allAction));
+		flow.add(new JButton(noneAction));
 	}
 
 	/**

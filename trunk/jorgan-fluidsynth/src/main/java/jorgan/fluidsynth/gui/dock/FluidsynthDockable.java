@@ -23,11 +23,13 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
+import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.dock.OrganDockable;
-import jorgan.swing.GridBuilder;
+import jorgan.session.OrganSession;
 import jorgan.swing.Separator;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
 public class FluidsynthDockable extends OrganDockable {
@@ -37,64 +39,52 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private JPanel panel;
 
+	private OrganSession session;
+
 	public FluidsynthDockable() {
 		config.read(this);
 
 		panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(panel);
-		builder.column().right();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(panel);
+		Column column = builder.column();
 
-		builder.row(config.get("chorus").read(new Separator.CheckBox()));
+		column.header(config.get("chorus").read(new Separator.CheckBox()));
 
-		Row row = builder.row();
+		column.term(config.get("chorus/nr").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row.cell(config.get("chorus/nr").read(new JLabel()));
-		row.cell(new JSpinner());
+		column.term(config.get("chorus/level").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row = builder.row();
+		column.term(config.get("chorus/speed").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row.cell(config.get("chorus/level").read(new JLabel()));
-		row.cell(new JSpinner());
+		column.term(config.get("chorus/depth").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row = builder.row();
+		column.term(config.get("chorus/type").read(new JLabel()));
+		column.definition(new JComboBox(new Object[] { "SINE", "TRIANGLE" }));
 
-		row.cell(config.get("chorus/speed").read(new JLabel()));
-		row.cell(new JSpinner());
+		column.header(config.get("reverb").read(new Separator.CheckBox()));
 
-		row = builder.row();
-		
-		row.cell(config.get("chorus/depth").read(new JLabel()));
-		row.cell(new JSpinner());
+		column.term(config.get("reverb/room").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row = builder.row();
-		
-		row.cell(config.get("chorus/type").read(new JLabel()));
-		row.cell(new JComboBox());
+		column.term(config.get("reverb/damping").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		builder.row(config.get("reverb").read(new Separator.CheckBox()));
+		column.term(config.get("reverb/width").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		row = builder.row();
-
-		row.cell(config.get("reverb/room").read(new JLabel()));
-		row.cell(new JSpinner());
-
-		row = builder.row();
-
-		row.cell(config.get("reverb/damping").read(new JLabel()));
-		row.cell(new JSpinner());
-
-		row = builder.row();
-
-		row.cell(config.get("reverb/width").read(new JLabel()));
-		row.cell(new JSpinner());
-
-		row = builder.row();
-
-		row.cell(config.get("reverb/level").read(new JLabel()));
-		row.cell(new JSpinner());
+		column.term(config.get("reverb/level").read(new JLabel()));
+		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
 		setContent(new JScrollPane(panel));
+	}
+
+	@Override
+	public void setSession(OrganSession session) {
+		this.session = session;
 	}
 }
