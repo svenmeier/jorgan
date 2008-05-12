@@ -34,8 +34,8 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.swing.GridBuilder;
-import jorgan.swing.GridBuilder.Row;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.text.DocumentNotifier;
 import bias.Configuration;
 
@@ -58,30 +58,25 @@ public class ElementCreationPanel extends JPanel {
 	 */
 	public ElementCreationPanel() {
 
-		GridBuilder builder = new GridBuilder(this);
-		builder.column();
-		builder.column().grow().fill();
+		DefinitionBuilder builder = new DefinitionBuilder(this);
+		Column column = builder.column();
 
-		Row row = builder.row();
-
-		row.cell(config.get("name").read(new JLabel()));
+		column.term(config.get("name").read(new JLabel()));
 		nameTextField.getDocument().addDocumentListener(new DocumentNotifier() {
 			public void changed() {
 				firePropertyChange("elementName", null, null);
 			}
 		});
-		row.cell(nameTextField);
+		column.definition(nameTextField);
 
-		row = builder.row().grow().fill();
-
-		row.cell(config.get("type").read(new JLabel()));
+		column.term(config.get("type").read(new JLabel()));
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				firePropertyChange("elementClass", null, null);
 			}
 		});
-		row.cell(new JScrollPane(typeList));
+		column.definition(new JScrollPane(typeList), true);
 	}
 
 	/**
