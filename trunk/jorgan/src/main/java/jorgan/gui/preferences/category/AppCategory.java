@@ -18,14 +18,13 @@
  */
 package jorgan.gui.preferences.category;
 
-import java.awt.GridBagLayout;
-
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import jorgan.App;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import bias.Configuration;
 import bias.util.Property;
 
@@ -48,16 +47,15 @@ public class AppCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column().grow();
 
-		builder.nextRow();
+		Row row = builder.row();
 
-		config.get("openRecentOnStartup").read(
-				openRecentOnStartupCheckBox);
-		panel.add(openRecentOnStartupCheckBox, builder.nextColumn()
-				.gridWidthRemainder());
+		row.cell(config.get("openRecentOnStartup").read(
+				openRecentOnStartupCheckBox));
 
 		return panel;
 	}

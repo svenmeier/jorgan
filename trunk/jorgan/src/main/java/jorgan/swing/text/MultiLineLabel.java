@@ -18,7 +18,6 @@
  */
 package jorgan.swing.text;
 
-import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.JLabel;
@@ -58,9 +57,9 @@ public class MultiLineLabel extends JTextArea {
 		setFont(new JTextField().getFont());
 		setLineWrap(true);
 		setWrapStyleWord(true);
-		setEnabled(false);
-		setDisabledTextColor(Color.black);
+		setEditable(false);
 		setBackground(new JLabel().getBackground());
+		setMinimumSize(new Dimension(0, 0));
 	}
 
 	@Override

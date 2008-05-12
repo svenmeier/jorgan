@@ -20,7 +20,6 @@ package jorgan.swing.font;
 
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
-import java.awt.GridBagLayout;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +28,7 @@ import javax.swing.JPanel;
 
 import jorgan.swing.EditableList;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import bias.Configuration;
 
 /**
@@ -57,46 +57,43 @@ public class FontPanel extends JPanel {
 	private EditableList stylesList = new EditableList();
 
 	private Font font;
-	
+
 	private String[] styles = new String[4];
 
 	/**
 	 * Constructor.
 	 */
 	public FontPanel() {
-		super(new GridBagLayout());
-
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d, 0.0d, 0.0d });
-
-		builder.nextRow();
-
 		config.read(this);
 
-		config.get("family").read(familyLabel);
-		config.get("size").read(sizeLabel);
-		config.get("style").read(styleLabel);
+		GridBuilder builder = new GridBuilder(this);
+		builder.column().grow().fill();
+		builder.column();
+		builder.column();
 
-		add(familyLabel, builder.nextColumn());
-		add(sizeLabel, builder.nextColumn());
-		add(styleLabel, builder.nextColumn());
+		Row row = builder.row();
 
-		builder.nextRow(1.0d);
+		row.cell(config.get("family").read(familyLabel));
+		row.cell(config.get("size").read(sizeLabel));
+		row.cell(config.get("style").read(styleLabel));
+
+		row = builder.row().grow().fill();
 
 		familyList.setValuesAsArray(GraphicsEnvironment
 				.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-		add(familyList, builder.nextColumn().fillBoth());
+		row.cell(familyList);
 
 		sizeList.setValuesAsArray(sizes);
-		add(sizeList, builder.nextColumn().fillBoth());
+		row.cell(sizeList);
 
 		stylesList.setValuesAsArray(styles);
-		add(stylesList, builder.nextColumn().fillBoth());
+		row.cell(stylesList);
 	}
 
 	public void setStyles(String[] styles) {
 		this.styles = styles;
 	}
-	
+
 	/**
 	 * Set the selected font.
 	 * 

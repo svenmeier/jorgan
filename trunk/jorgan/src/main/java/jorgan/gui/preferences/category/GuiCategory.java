@@ -18,9 +18,6 @@
  */
 package jorgan.gui.preferences.category;
 
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
@@ -28,11 +25,12 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.border.TitledBorder;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.Separator;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
 import bias.swing.Category;
@@ -75,69 +73,49 @@ public class GuiCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column();
+		builder.column().grow().fill();
 
-		builder.nextRow();
+		Row row = builder.row();
 
-		panel.add(config.get("lookAndFeel").read(new JLabel()), builder
-				.nextColumn());
+		row.cell(config.get("lookAndFeel").read(new JLabel()));
 		lookAndFeelComboBox
 				.setModel(new DefaultComboBoxModel(GUI.LAF.values()));
-		panel.add(lookAndFeelComboBox, builder.nextColumn());
+		row.cell(lookAndFeelComboBox);
 
-		builder.nextRow();
+		row = builder.row();
 
 		config.get("showAboutOnStartup").read(showAboutOnStartupCheckBox);
-		panel.add(showAboutOnStartupCheckBox, builder.nextColumn()
-				.gridWidthRemainder());
+		row.cell().span().set(showAboutOnStartupCheckBox);
 
-		builder.nextRow();
+		row = builder.row();
 
 		config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox);
-		panel.add(fullScreenOnLoadCheckBox, builder.nextColumn()
-				.gridWidthRemainder());
-
-		builder.nextRow();
-
-		panel.add(createChangesPanel(), builder.nextColumn()
-				.gridWidthRemainder().fillHorizontal());
-
-		builder.nextRow();
-
-		builder.nextRow();
-
-		return panel;
-	}
-
-	private JPanel createChangesPanel() {
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("changes").read(
-				new TitledBorder(BorderFactory.createEtchedBorder())));
-
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
-
-		builder.nextRow();
+		row.cell(fullScreenOnLoadCheckBox);
 
 		ButtonGroup changesGroup = new ButtonGroup();
+		builder.row(config.get("changes").read(new Separator.Label()));
+
+		row = builder.row();
 
 		config.get("confirmChanges").read(confirmChangesRadioButton);
 		changesGroup.add(confirmChangesRadioButton);
-		panel.add(confirmChangesRadioButton, builder.nextColumn());
+		row.cell(confirmChangesRadioButton);
 
-		builder.nextRow();
+		row = builder.row();
 
 		config.get("saveChanges").read(saveChangesRadioButton);
 		changesGroup.add(saveChangesRadioButton);
-		panel.add(saveChangesRadioButton, builder.nextColumn());
+		row.cell(saveChangesRadioButton);
 
-		builder.nextRow();
+		row = builder.row();
 
 		config.get("ignoreChanges").read(ignoreChangesRadioButton);
 		changesGroup.add(ignoreChangesRadioButton);
-		panel.add(ignoreChangesRadioButton, builder.nextColumn());
+		row.cell(ignoreChangesRadioButton);
 
 		return panel;
 	}

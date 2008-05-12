@@ -18,38 +18,17 @@
  */
 package jorgan.gui.construct.info;
 
-import java.beans.PropertyDescriptor;
-import java.beans.SimpleBeanInfo;
-import java.util.ArrayList;
-import java.util.List;
-
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.editor.StyleEditor;
 import jorgan.gui.construct.editor.ZoomEditor;
+import jorgan.swing.beans.PropertiesBeanInfo;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Element}.
  */
-public class ElementBeanInfo extends SimpleBeanInfo {
-
-	private List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
-
-	@Override
-	public final PropertyDescriptor[] getPropertyDescriptors() {
-
-		descriptors.clear();
-
-		registerProperties();
-
-		return descriptors.toArray(new PropertyDescriptor[descriptors.size()]);
-	}
-
-	@Override
-	public int getDefaultPropertyIndex() {
-		return 0;
-	}
+public class ElementBeanInfo extends PropertiesBeanInfo {
 
 	protected void registerProperties() {
 		// add name first so it's positioned at the default index
@@ -59,20 +38,8 @@ public class ElementBeanInfo extends SimpleBeanInfo {
 		add("zoom", Element.class, ZoomEditor.class);
 	}
 
-	protected void add(String name, Class<? extends Element> clazz, Class<?> editor) {
-		try {
-			PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
-
-			descriptor.setDisplayName(Elements.getDisplayName(clazz,
-					name));
-
-			if (editor != null) {
-				descriptor.setPropertyEditorClass(editor);
-			}
-
-			descriptors.add(descriptor);
-		} catch (Exception ex) {
-			throw new Error(ex);
-		}
+	protected void add(String name, Class<? extends Element> clazz,
+			Class<?> editor) {
+		add(name, clazz, Elements.getDisplayName(clazz, name), editor);
 	}
 }

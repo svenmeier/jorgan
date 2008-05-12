@@ -18,7 +18,6 @@
  */
 package jorgan.gui.imports.defaults;
 
-import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.io.File;
 import java.io.FileInputStream;
@@ -38,6 +37,7 @@ import jorgan.gui.imports.spi.ImportProvider;
 import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.util.IOUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -139,21 +139,20 @@ public class DispositionImportProvider implements ImportProvider {
 		 * Constructor.
 		 */
 		public OptionsPanel() {
-			super(new GridBagLayout());
+			GridBuilder builder = new GridBuilder(this);
+			builder.column();
+			builder.column().grow().fill();
 
-			GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+			Row row = builder.row();
 
-			builder.nextRow(1.0d);
-
-			add(config.get("options/file").read(new JLabel()), builder
-					.nextColumn());
+			row.cell(config.get("options/file").read(new JLabel()));
 
 			fileSelector.addChangeListener(new ChangeListener() {
 				public void stateChanged(ChangeEvent e) {
 					firePropertyChange("ranks", null, null);
 				}
 			});
-			add(fileSelector, builder.nextColumn().fillHorizontal());
+			row.cell(fileSelector);
 		}
 
 		public void showMessage(String key, Object... args) {

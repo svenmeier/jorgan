@@ -18,7 +18,6 @@
  */
 package jorgan.gui.preferences.category;
 
-import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +33,8 @@ import jorgan.midi.Direction;
 import jorgan.midi.merge.MergeInput;
 import jorgan.midi.merge.MidiMerger;
 import jorgan.midi.merge.MidiMergerProvider;
+import jorgan.swing.GridBuilder;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
@@ -83,13 +84,19 @@ public class MidiMergerCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel(new BorderLayout(10, 10));
+		JPanel panel = new JPanel();
 
-		panel.add(config.get("description").read(new MultiLineLabel()),
-				BorderLayout.NORTH);
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column().grow().fill();
+
+		Row row = builder.row();
+
+		row.cell(config.get("description").read(new MultiLineLabel()));
+
+		row = builder.row().grow().fill();
 
 		scrollPane.setPreferredSize(new Dimension(0, 0));
-		panel.add(scrollPane, BorderLayout.CENTER);
+		row.cell(scrollPane);
 
 		table.setModel(tableModel);
 		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
@@ -208,7 +215,8 @@ public class MidiMergerCategory extends JOrganCategory {
 		// create inputs for all devices (excluding MidiMerger)
 		allInputs = new ArrayList<MergeInput>();
 
-		String[] devices = DevicePool.instance().getMidiDeviceNames(Direction.IN);
+		String[] devices = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
 		for (String device : devices) {
 			if (!MidiMergerProvider.INFO.getName().equals(device)) {
 				allInputs.add(new MergeInput(device, -1));

@@ -32,68 +32,70 @@ import javax.swing.JLabel;
  */
 public class Header extends JLabel {
 
-  /**
-   * The header color.
-   */
-  private Color headerColor;
-  
-  /**
-   * Constructor.
-   */
-  public Header() {
-    super(" ");
+	/**
+	 * The header color.
+	 */
+	private Color headerColor;
 
-    Font font = getFont();
+	/**
+	 * Constructor.
+	 */
+	public Header() {
+		super(" ");
 
-    float fontSize = font.getSize2D() * 1.3f;   
-    setFont(font.deriveFont(Font.BOLD, fontSize));
+		Font font = getFont();
 
-    int borderSize = (int)(font.getSize2D() * 0.3f);
-    setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize,
-                                              borderSize, borderSize));    
-  }
+		float fontSize = font.getSize2D() * 1.3f;
+		setFont(font.deriveFont(Font.BOLD, fontSize));
 
-  /**
-   * Set the color to be used for this header.
-   * 
-   * @param color   color to use
-   */  
-  public void setHeader(Color color) {
-    this.headerColor = color;
-  }
-  
-  /**
-   * Get the color used by this header.
-   * 
-   * @return    color
-   */
-  public Color getHeader() {
-    return headerColor;
-  }
-  
-  /**
-   * Overriden to replace empty or <code>null</code> text with a single
-   * whitespace. This prevents this header to shrink.
-   */
-  @Override
-public void setText(String text) {
-    if (text == null || "".equals(text)) {
-      text = " ";
-    }
-    super.setText(text);
-  }
-  
-  @Override
-public void paintComponent(Graphics g) {
-    Graphics2D graphics = (Graphics2D)g;
-    
-    int   width      = getWidth();
-    int   height     = getHeight();
-    Color background = getBackground();
+		int borderSize = (int) (font.getSize2D() * 0.3f);
+		setBorder(BorderFactory.createEmptyBorder(borderSize, borderSize,
+				borderSize, borderSize));
+	}
 
-    graphics.setPaint(new GradientPaint(0, 0, headerColor, width, 0, background));
-    graphics.fillRect(0, 0, width, height);
-    
-    super.paintComponent(g);    
-  }
+	/**
+	 * Set the color to be used for this header.
+	 * 
+	 * @param color
+	 *            color to use
+	 */
+	public void setHeader(Color color) {
+		this.headerColor = color;
+	}
+
+	/**
+	 * Get the color used by this header.
+	 * 
+	 * @return color
+	 */
+	public Color getHeader() {
+		return headerColor;
+	}
+
+	/**
+	 * Overriden to replace empty or <code>null</code> text with a single
+	 * whitespace. This prevents this header to shrink.
+	 */
+	@Override
+	public void setText(String text) {
+		if (text == null || "".equals(text)) {
+			text = " ";
+		}
+		super.setText(text);
+	}
+
+	@Override
+	public void paintComponent(Graphics g) {
+		Graphics2D graphics = (Graphics2D) g;
+
+		int width = getWidth();
+		int height = getHeight();
+		Color background = getBackground();
+
+		graphics.setPaint(new GradientPaint(0, 0, headerColor, width, 0,
+				background));
+		graphics.fillRect(0, 0, width, height);
+
+		super.paintComponent(g);
+	}
 }

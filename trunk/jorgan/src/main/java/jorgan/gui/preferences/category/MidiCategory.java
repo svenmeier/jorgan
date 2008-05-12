@@ -18,18 +18,16 @@
  */
 package jorgan.gui.preferences.category;
 
-import java.awt.GridBagLayout;
-
-import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.TitledBorder;
 
 import jorgan.gui.dock.MonitorDockable;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.Separator;
+import jorgan.swing.GridBuilder.Row;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -42,7 +40,8 @@ public class MidiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiCategory.class);
 
-	private Model monitorMax = getModel(new Property(MonitorDockable.class, "max"));
+	private Model monitorMax = getModel(new Property(MonitorDockable.class,
+			"max"));
 
 	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
 			1, Integer.MAX_VALUE, 50));
@@ -53,35 +52,18 @@ public class MidiCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel(new GridBagLayout());
-
-		GridBuilder builder = new GridBuilder(new double[] { 1.0d });
-
-		builder.nextRow();
-
-		panel.add(createMonitorPanel(), builder.nextColumn()
-				.gridWidthRemainder().fillHorizontal());
-
-		builder.nextRow();
-
-		return panel;
-	}
-
-	private JPanel createMonitorPanel() {
 		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("monitor").read(
-				new TitledBorder(BorderFactory.createEtchedBorder())));
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column();
+		builder.column().grow().fill();
 
-		builder.nextRow();
+		builder.row(config.get("monitor").read(new Separator.Label()));
 
-		panel.add(config.get("monitorMax").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(monitorMaxSpinner, builder.nextColumn());
+		Row row = builder.row();
 
-		builder.nextRow();
+		row.cell(config.get("monitorMax").read(new JLabel()));
+		row.cell(monitorMaxSpinner);
 
 		return panel;
 	}

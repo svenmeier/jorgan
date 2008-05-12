@@ -20,22 +20,21 @@ package jorgan.gui.preferences.category;
 
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.TitledBorder;
 
 import jorgan.gui.ConsolePanel;
 import jorgan.gui.console.View;
 import jorgan.swing.GridBuilder;
+import jorgan.swing.Separator;
+import jorgan.swing.GridBuilder.Row;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
 import bias.Configuration;
@@ -100,84 +99,44 @@ public class ConsoleCategory extends JOrganCategory {
 
 	@Override
 	protected JComponent createComponent() {
-		JPanel panel = new JPanel(new GridBagLayout());
+		JPanel panel = new JPanel();
 
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
+		GridBuilder builder = new GridBuilder(panel);
+		builder.column();
+		builder.column().grow().fill();
 
-		builder.nextRow();
+		Row row = builder.row();
 
-		builder.nextRow();
+		row.cell(config.get("grid").read(new JLabel()));
+		row.cell(gridSpinner);
 
-		panel.add(config.get("grid").read(new JLabel()), builder.nextColumn());
-		panel.add(gridSpinner, builder.nextColumn());
-
-		builder.nextRow();
+		row = builder.row();
 
 		config.get("interpolate").read(interpolateCheckBox);
-		panel.add(interpolateCheckBox, builder.nextColumn()
-				.gridWidthRemainder());
+		row.skip().cell(interpolateCheckBox);
 
-		builder.nextRow();
+		row = builder.row();
 
-		panel.add(config.get("background").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(backgroundSelector, builder.nextColumn());
+		row.cell(config.get("background").read(new JLabel()));
+		row.cell(backgroundSelector);
 
-		builder.nextRow();
+		row = builder.row();
 
-		panel.add(config.get("foreground").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(foregroundSelector, builder.nextColumn());
+		row.cell(config.get("foreground").read(new JLabel()));
+		row.cell(foregroundSelector);
 
-		builder.nextRow();
+		builder.row(config.get("element").read(new Separator.Label()));
 
-		panel.add(createElementsPanel(), builder.nextColumn()
-				.gridWidthRemainder().fillHorizontal());
+		row = builder.row();
 
-		builder.nextRow();
+		row.cell(config.get("elementColor").read(new JLabel()));
+		row.cell(elementColorSelector);
 
-		panel.add(createShortcutsPanel(), builder.nextColumn()
-				.gridWidthRemainder().fillHorizontal());
+		row = builder.row();
 
-		return panel;
-	}
+		row.cell(config.get("elementFont").read(new JLabel()));
+		row.cell(elementFontSelector);
 
-	private JPanel createElementsPanel() {
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("element").read(
-				new TitledBorder(BorderFactory.createEtchedBorder())));
-
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
-
-		builder.nextRow();
-
-		panel.add(config.get("elementColor").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(elementColorSelector, builder.nextColumn());
-
-		builder.nextRow();
-
-		panel.add(config.get("elementFont").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(elementFontSelector, builder.nextColumn().fillHorizontal());
-
-		return panel;
-	}
-
-	private JPanel createShortcutsPanel() {
-
-		JPanel panel = new JPanel();
-		panel.setLayout(new GridBagLayout());
-		panel.setBorder(config.get("shortcut").read(
-				new TitledBorder(BorderFactory.createEtchedBorder())));
-
-		GridBuilder builder = new GridBuilder(new double[] { 0.0d, 1.0d });
-
-		builder.nextRow();
-
-		config.get("showShortcut").read(showShortcutCheckBox);
 		showShortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
 				shortcutColorSelector.setEnabled(showShortcutCheckBox
@@ -186,20 +145,18 @@ public class ConsoleCategory extends JOrganCategory {
 						.isSelected());
 			}
 		});
-		panel.add(showShortcutCheckBox, builder.nextColumn()
-				.gridWidthRemainder());
+		builder.row(new Separator<JCheckBox>(config.get("shortcut").read(
+				showShortcutCheckBox)));
 
-		builder.nextRow();
+		row = builder.row();
 
-		panel.add(config.get("shortcutColor").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(shortcutColorSelector, builder.nextColumn());
+		row.cell(config.get("shortcutColor").read(new JLabel()));
+		row.cell(shortcutColorSelector);
 
-		builder.nextRow();
+		row = builder.row();
 
-		panel.add(config.get("shortcutFont").read(new JLabel()), builder
-				.nextColumn());
-		panel.add(shortcutFontSelector, builder.nextColumn().fillHorizontal());
+		row.cell(config.get("shortcutFont").read(new JLabel()));
+		row.cell(shortcutFontSelector);
 
 		return panel;
 	}

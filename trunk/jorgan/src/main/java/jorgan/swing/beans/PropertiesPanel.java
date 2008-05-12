@@ -122,6 +122,23 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	}
 
 	/**
+	 * Convenience method to set the customizer for beans that are all instances
+	 * of a single class.
+	 * 
+	 * @param info
+	 *            the info to use for customization of all beans
+	 */
+	public void setBeanCustomizer(final BeanInfo info) {
+		setBeanCustomizer(new DefaultBeanCustomizer() {
+			@Override
+			public BeanInfo getBeanInfo(Class<?> beanClass)
+					throws IntrospectionException {
+				return info;
+			}
+		});
+	}
+
+	/**
 	 * Add a listener to changes.
 	 * 
 	 * @param listener
@@ -156,7 +173,11 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 *            bean to set
 	 */
 	public void setBean(Object bean) {
-		setBeans(new ArrayList<Object>(beans));
+		if (bean == null) {
+			setBeans(Collections.emptyList());
+		} else {
+			setBeans(Collections.singletonList(bean));
+		}
 	}
 
 	/**
@@ -529,5 +550,4 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		return table.getScrollableUnitIncrement(visibleRect, orientation,
 				direction);
 	}
-
 }
