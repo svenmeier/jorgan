@@ -48,8 +48,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	public void elementChanged(OrganEvent event) {
 		super.elementChanged(event);
 
-		if (event != null) {
-			// TODO when necessary only 
+		if (event != null && event.isDispositionChange()) {
 			destroyManager();
 			createManager();
 		}
