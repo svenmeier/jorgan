@@ -18,6 +18,7 @@
  */
 package jorgan.fluidsynth.gui.dock;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,7 +28,6 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.session.OrganSession;
-import jorgan.swing.Separator;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -47,9 +47,10 @@ public class FluidsynthDockable extends OrganDockable {
 		panel = new JPanel();
 
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
+
 		Column column = builder.column();
 
-		column.header(config.get("chorus").read(new Separator.CheckBox()));
+		column.group(config.get("chorus").read(new JCheckBox()));
 
 		column.term(config.get("chorus/nr").read(new JLabel()));
 		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
@@ -66,7 +67,7 @@ public class FluidsynthDockable extends OrganDockable {
 		column.term(config.get("chorus/type").read(new JLabel()));
 		column.definition(new JComboBox(new Object[] { "SINE", "TRIANGLE" }));
 
-		column.header(config.get("reverb").read(new Separator.CheckBox()));
+		column.group(config.get("reverb").read(new JCheckBox()));
 
 		column.term(config.get("reverb/room").read(new JLabel()));
 		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
@@ -80,7 +81,9 @@ public class FluidsynthDockable extends OrganDockable {
 		column.term(config.get("reverb/level").read(new JLabel()));
 		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
 
-		setContent(new JScrollPane(panel));
+		setContent(new JScrollPane(panel,
+				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
 	}
 
 	@Override

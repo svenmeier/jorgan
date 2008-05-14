@@ -28,7 +28,6 @@ import javax.swing.JRadioButton;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
-import jorgan.swing.Separator;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -91,7 +90,7 @@ public class GuiCategory extends JOrganCategory {
 				fullScreenOnLoadCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
-		column.term(config.get("changes").read(new Separator.Label()));
+		column.term(config.get("changes").read(new JLabel()));
 
 		config.get("confirmChanges").read(confirmChangesRadioButton);
 		changesGroup.add(confirmChangesRadioButton);

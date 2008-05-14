@@ -65,7 +65,7 @@ public class MessageCreationPanel extends JPanel {
 				firePropertyChange("message", null, null);
 			}
 		});
-		column.definition(new JScrollPane(typeList), true);
+		column.definition(new JScrollPane(typeList)).growVertical();
 	}
 
 	/**

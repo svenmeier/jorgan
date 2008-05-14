@@ -32,7 +32,6 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.ConsolePanel;
 import jorgan.gui.console.View;
-import jorgan.swing.Separator;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -116,30 +115,27 @@ public class ConsoleCategory extends JOrganCategory {
 		column.term(config.get("foreground").read(new JLabel()));
 		column.definition(foregroundSelector);
 
-		column.header(config.get("element").read(new Separator.Label()));
+		column.group(config.get("element").read(new JLabel()));
 
 		column.term(config.get("elementColor").read(new JLabel()));
 		column.definition(elementColorSelector);
 
 		column.term(config.get("elementFont").read(new JLabel()));
-		column.definition(elementFontSelector);
+		column.definition(elementFontSelector).fillHorizontal();
 
 		shortcutCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent ev) {
-				shortcutColorSelector.setEnabled(shortcutCheckBox
-						.isSelected());
-				shortcutFontSelector.setEnabled(shortcutCheckBox
-						.isSelected());
+				shortcutColorSelector.setEnabled(shortcutCheckBox.isSelected());
+				shortcutFontSelector.setEnabled(shortcutCheckBox.isSelected());
 			}
 		});
-		column.header(new Separator<JCheckBox>(config.get("shortcut").read(
-				shortcutCheckBox)));
+		column.group(config.get("shortcut").read(shortcutCheckBox));
 
 		column.term(config.get("shortcutColor").read(new JLabel()));
 		column.definition(shortcutColorSelector);
 
 		column.term(config.get("shortcutFont").read(new JLabel()));
-		column.definition(shortcutFontSelector);
+		column.definition(shortcutFontSelector).fillHorizontal();
 
 		return panel;
 	}

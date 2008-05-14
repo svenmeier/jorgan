@@ -22,12 +22,12 @@ import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import jorgan.cli.CLI;
 import jorgan.cli.Interpreter;
-import jorgan.swing.Separator;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -72,7 +72,7 @@ public class CLICategory extends JOrganCategory {
 				encodingComboBox.setEnabled(button == encodingOtherRadioButton);
 			}
 		};
-		column.term(config.get("encoding").read(new Separator.Label()));
+		column.term(config.get("encoding").read(new JLabel()));
 
 		String message = config.get("encodingDefault").read(
 				new MessageBuilder())
