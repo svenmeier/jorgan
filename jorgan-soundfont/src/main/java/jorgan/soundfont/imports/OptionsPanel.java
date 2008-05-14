@@ -44,7 +44,7 @@ public class OptionsPanel extends JPanel {
 				firePropertyChange("elements", null, null);
 			}
 		});
-		column.definition(fileSelector);
+		column.definition(fileSelector).fillHorizontal();
 
 		column.term(config.get("bank").read(new JLabel()));
 		column.definition(bankSpinner);

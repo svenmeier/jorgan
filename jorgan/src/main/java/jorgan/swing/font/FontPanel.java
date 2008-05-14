@@ -70,15 +70,15 @@ public class FontPanel extends JPanel {
 
 		Row row = builder.row();
 
-		row.data(config.get("family").read(familyLabel), true);
+		row.data(config.get("family").read(familyLabel)).growHorizontal();
 		row.data(config.get("size").read(sizeLabel));
 		row.data(config.get("style").read(styleLabel));
 
-		row = builder.row(true);
+		row = builder.row().growVertical();
 
 		familyList.setValuesAsArray(GraphicsEnvironment
 				.getLocalGraphicsEnvironment().getAvailableFontFamilyNames());
-		row.data(familyList, true);
+		row.data(familyList).growHorizontal();
 
 		sizeList.setValuesAsArray(sizes);
 		row.data(sizeList);

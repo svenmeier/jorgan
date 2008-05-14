@@ -76,7 +76,7 @@ public class ElementCreationPanel extends JPanel {
 				firePropertyChange("elementClass", null, null);
 			}
 		});
-		column.definition(new JScrollPane(typeList), true);
+		column.definition(new JScrollPane(typeList)).growVertical();
 	}
 
 	/**

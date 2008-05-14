@@ -150,7 +150,7 @@ public class DispositionImportProvider implements ImportProvider {
 					firePropertyChange("ranks", null, null);
 				}
 			});
-			column.definition(fileSelector);
+			column.definition(fileSelector).fillHorizontal();
 		}
 
 		public void showMessage(String key, Object... args) {
