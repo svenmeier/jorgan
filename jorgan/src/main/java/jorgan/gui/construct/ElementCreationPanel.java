@@ -67,7 +67,7 @@ public class ElementCreationPanel extends JPanel {
 				firePropertyChange("elementName", null, null);
 			}
 		});
-		column.definition(nameTextField);
+		column.definition(nameTextField).fillHorizontal();
 
 		column.term(config.get("type").read(new JLabel()));
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -76,7 +76,7 @@ public class ElementCreationPanel extends JPanel {
 				firePropertyChange("elementClass", null, null);
 			}
 		});
-		column.definition(new JScrollPane(typeList)).growVertical();
+		column.definition(new JScrollPane(typeList)).growVertical().fillBoth();
 	}
 
 	/**
