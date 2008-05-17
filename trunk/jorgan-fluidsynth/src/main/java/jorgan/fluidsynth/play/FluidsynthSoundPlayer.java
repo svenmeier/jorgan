@@ -119,7 +119,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			} else {
 				synth.setChorusOn(true);
 				synth.setChorus(chorus.getNr(), chorus.getLevel(), chorus
-						.getSpeed(), chorus.getDepth(), chorus.getType());
+						.getSpeed(), chorus.getDepth(), chorus.getType().ordinal());
 			}
 		}
 	}

@@ -18,6 +18,8 @@
  */
 package jorgan.fluidsynth.gui.dock;
 
+import java.util.Set;
+
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,7 +27,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
+import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.OrganListener;
+import jorgan.fluidsynth.disposition.Chorus;
+import jorgan.fluidsynth.disposition.FluidsynthSound;
+import jorgan.fluidsynth.disposition.Reverb;
+import jorgan.fluidsynth.disposition.Chorus.Type;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.session.OrganSession;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -41,45 +51,109 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private OrganSession session;
 
+	private EventHandler eventHandler = new EventHandler();
+
+	private FluidsynthSound sound;
+
+	private JCheckBox chorusCheckBox;
+
+	private JSpinner chorusNrSpinner;
+
+	private JSpinner chorusLevelSpinner;
+
+	private JSpinner chorusSpeedSpinner;
+
+	private JSpinner chorusDepthSpinner;
+
+	private JComboBox chorusTypeComboBox;
+
+	private JCheckBox reverbCheckBox;
+
+	private JSpinner reverbRoomSpinner;
+
+	private JSpinner reverbDampingSpinner;
+
+	private JSpinner reverbWidthSpinner;
+
+	private JSpinner reverbLevelSpinner;
+
+	private boolean updating = false;
+
 	public FluidsynthDockable() {
 		config.read(this);
 
 		panel = new JPanel();
+		panel.setVisible(false);
 
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
 		Column column = builder.column();
 
-		column.group(config.get("chorus").read(new JCheckBox()));
+		chorusCheckBox = new JCheckBox();
+		chorusCheckBox.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (!updating) {
+					if (chorusCheckBox.isSelected()) {
+						sound.setChorus(new Chorus());
+					} else {
+						sound.setChorus(null);
+					}
+				}
+			}
+		});
+		column.group(config.get("chorus").read(chorusCheckBox));
 
 		column.term(config.get("chorus/nr").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		chorusNrSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(chorusNrSpinner);
 
 		column.term(config.get("chorus/level").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		chorusLevelSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(chorusLevelSpinner);
 
 		column.term(config.get("chorus/speed").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		chorusSpeedSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(chorusSpeedSpinner);
 
 		column.term(config.get("chorus/depth").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		chorusDepthSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(chorusDepthSpinner);
 
 		column.term(config.get("chorus/type").read(new JLabel()));
-		column.definition(new JComboBox(new Object[] { "SINE", "TRIANGLE" }));
+		chorusTypeComboBox = new JComboBox(new Object[] { Type.SINE,
+				Type.TRIANGLE });
+		column.definition(chorusTypeComboBox);
 
-		column.group(config.get("reverb").read(new JCheckBox()));
+		reverbCheckBox = new JCheckBox();
+		reverbCheckBox.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (!updating) {
+					if (reverbCheckBox.isSelected()) {
+						sound.setReverb(new Reverb());
+					} else {
+						sound.setReverb(null);
+					}
+				}
+			}
+		});
+		column.group(config.get("reverb").read(reverbCheckBox));
 
 		column.term(config.get("reverb/room").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		reverbRoomSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(reverbRoomSpinner);
 
 		column.term(config.get("reverb/damping").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		reverbDampingSpinner = new JSpinner(
+				new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(reverbDampingSpinner);
 
 		column.term(config.get("reverb/width").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		reverbWidthSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(reverbWidthSpinner);
 
 		column.term(config.get("reverb/level").read(new JLabel()));
-		column.definition(new JSpinner(new SpinnerNumberModel(1, 0, 100, 1)));
+		reverbLevelSpinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
+		column.definition(reverbLevelSpinner);
 
 		setContent(new JScrollPane(panel,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -88,6 +162,100 @@ public class FluidsynthDockable extends OrganDockable {
 
 	@Override
 	public void setSession(OrganSession session) {
+		if (this.session != null) {
+			this.session.removeOrganListener(eventHandler);
+
+			setSound(null);
+		}
+
 		this.session = session;
+
+		if (this.session != null) {
+			this.session.addOrganListener(eventHandler);
+
+			findSound();
+		}
+	}
+
+	private void findSound() {
+		Set<FluidsynthSound> sounds = this.session.getOrgan().getElements(
+				FluidsynthSound.class);
+		if (sounds.isEmpty()) {
+			setSound(null);
+		} else {
+			setSound(sounds.iterator().next());
+		}
+	}
+
+	private void setSound(FluidsynthSound sound) {
+		this.sound = sound;
+
+		if (sound == null) {
+			panel.setVisible(false);
+		} else {
+			panel.setVisible(true);
+
+			updating = true;
+			setChorus(sound.getChorus());
+			setReverb(sound.getReverb());
+			updating = false;
+		}
+	}
+
+	private void setReverb(Reverb reverb) {
+		reverbCheckBox.setSelected(reverb != null);
+		reverbRoomSpinner.setEnabled(reverb != null);
+		reverbDampingSpinner.setEnabled(reverb != null);
+		reverbWidthSpinner.setEnabled(reverb != null);
+		reverbLevelSpinner.setEnabled(reverb != null);
+
+		if (reverb != null) {
+			setPercentage(reverbRoomSpinner, reverb.getRoom());
+			setPercentage(reverbDampingSpinner, reverb.getDamping());
+			setPercentage(reverbWidthSpinner, reverb.getWidth());
+			setPercentage(reverbLevelSpinner, reverb.getLevel());
+		}
+	}
+
+	private void setChorus(Chorus chorus) {
+		chorusCheckBox.setSelected(chorus != null);
+		chorusNrSpinner.setEnabled(chorus != null);
+		chorusLevelSpinner.setEnabled(chorus != null);
+		chorusSpeedSpinner.setEnabled(chorus != null);
+		chorusDepthSpinner.setEnabled(chorus != null);
+		chorusTypeComboBox.setEnabled(chorus != null);
+
+		if (chorus != null) {
+			setPercentage(chorusNrSpinner, chorus.getNr());
+			setPercentage(chorusLevelSpinner, chorus.getLevel());
+			setPercentage(chorusSpeedSpinner, chorus.getSpeed());
+			setPercentage(chorusDepthSpinner, chorus.getDepth());
+			chorusTypeComboBox.setSelectedItem(chorus.getType());
+		}
+	}
+
+	private void setPercentage(JSpinner spinner, double value) {
+		spinner.setValue((int)(value * 100));
+	}
+	
+	private class EventHandler implements OrganListener {
+
+		public void added(OrganEvent event) {
+			if (event.getElement() instanceof FluidsynthSound) {
+				setSound((FluidsynthSound) event.getElement());
+			}
+		}
+
+		public void changed(OrganEvent event) {
+			if (event.getElement() == sound) {
+				setSound(sound);
+			}
+		}
+
+		public void removed(OrganEvent event) {
+			if (event.getElement() == sound) {
+				findSound();
+			}
+		}
 	}
 }

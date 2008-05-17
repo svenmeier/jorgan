@@ -28,7 +28,7 @@ public class Chorus {
 
 	private double depth;
 
-	private int type;
+	private Type type = Type.SINE;
 
 	public double getDepth() {
 		return depth;
@@ -46,7 +46,7 @@ public class Chorus {
 		return speed;
 	}
 
-	public int getType() {
+	public Type getType() {
 		return type;
 	}
 
@@ -66,7 +66,11 @@ public class Chorus {
 		this.speed = speed;
 	}
 
-	public void setType(int type) {
+	public void setType(Type type) {
 		this.type = type;
+	}
+	
+	public static enum Type {
+		SINE, TRIANGLE;
 	}
 }
