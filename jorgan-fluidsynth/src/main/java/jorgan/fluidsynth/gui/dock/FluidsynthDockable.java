@@ -91,7 +91,16 @@ public class FluidsynthDockable extends OrganDockable {
 
 		Column column = builder.column();
 
-		chorusCheckBox = createCheckBox();
+		chorusCheckBox = new JCheckBox();
+		chorusCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (chorusCheckBox.isSelected()) {
+					sound.setChorus(new Chorus());
+				} else {
+					sound.setChorus(null);
+				}
+			}
+		});
 		column.group(config.get("chorus").read(chorusCheckBox));
 
 		column.term(config.get("chorus/nr").read(new JLabel()));
@@ -120,7 +129,16 @@ public class FluidsynthDockable extends OrganDockable {
 		});
 		column.definition(chorusTypeComboBox);
 
-		reverbCheckBox = createCheckBox();
+		reverbCheckBox = new JCheckBox();
+		reverbCheckBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (reverbCheckBox.isSelected()) {
+					sound.setReverb(new Reverb());
+				} else {
+					sound.setReverb(null);
+				}
+			}
+		});
 		column.group(config.get("reverb").read(reverbCheckBox));
 
 		column.term(config.get("reverb/room").read(new JLabel()));
@@ -142,17 +160,6 @@ public class FluidsynthDockable extends OrganDockable {
 		setContent(new JScrollPane(panel,
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
-	}
-
-	private JCheckBox createCheckBox() {
-		JCheckBox checkBox = new JCheckBox();
-		checkBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				write();
-				read();
-			}
-		});
-		return checkBox;
 	}
 
 	private JSpinner createSpinner() {
@@ -249,7 +256,6 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private void write() {
 		if (!readWrite) {
-			System.out.println("writing");
 			readWrite = true;
 
 			writeReverb();
