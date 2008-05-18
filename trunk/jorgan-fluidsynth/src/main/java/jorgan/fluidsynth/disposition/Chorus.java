@@ -20,13 +20,13 @@ package jorgan.fluidsynth.disposition;
 
 public class Chorus {
 	
-	private int nr;
+	private int nr = 3;
 
-	private double level;
+	private double level = 0.2d;
 
-	private double speed;
+	private int speed = 3;
 
-	private double depth;
+	private double depth = 0.8d;
 
 	private Type type = Type.SINE;
 
@@ -42,7 +42,7 @@ public class Chorus {
 		return nr;
 	}
 
-	public double getSpeed() {
+	public int getSpeed() {
 		return speed;
 	}
 
@@ -62,7 +62,7 @@ public class Chorus {
 		this.nr = nr;
 	}
 
-	public void setSpeed(double speed) {
+	public void setSpeed(int speed) {
 		this.speed = speed;
 	}
 

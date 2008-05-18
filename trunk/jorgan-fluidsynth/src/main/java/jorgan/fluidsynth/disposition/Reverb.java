@@ -20,13 +20,13 @@ package jorgan.fluidsynth.disposition;
 
 public class Reverb {
 
-	private double room;
+	private double room = 0.2d;
 
-	private double damping;
+	private double damping = 0.0d;
 
-	private double width;
+	private double width = 0.5d;
 
-	private double level;
+	private double level = 1.0d;
 
 	public double getDamping() {
 		return damping;
