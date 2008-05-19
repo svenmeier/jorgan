@@ -26,11 +26,26 @@ public class FluidsynthSound extends Sound {
 	private String soundfont;
 
 	private int channels = 32;
+	
+	private String audioDriver;
 
 	private Reverb reverb;
 
 	private Chorus chorus;
 
+	public void setAudioDriver(String audioDevice) {
+		if ("".equals(audioDevice)) {
+			audioDevice = null;
+		}
+		this.audioDriver = audioDevice;
+		
+		fireChanged(true);
+	}
+	
+	public String getAudioDriver() {
+		return audioDriver;
+	}
+	
 	public String getSoundfont() {
 		return soundfont;
 	}
