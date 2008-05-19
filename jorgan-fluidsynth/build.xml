@@ -18,13 +18,14 @@
    		</classpath>
   	</javac>
   	
-    <copy todir="./target/classes">
-        <fileset dir="./src/main/java">
-            <include name="META-INF/**/*" />
+	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
+		
+	<copy todir="./target/classes">
+		<fileset dir="./src/main/java">
+			<exclude name="**/*.java" />
+	       	<exclude name="**/i18n*.properties" />
         </fileset>
     </copy>
-  	
-	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
   </target>
 
   <target name="native" depends="native-unix, native-windows">

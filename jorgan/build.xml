@@ -20,15 +20,6 @@
         	</classpath>
         </javac>
 
-    	<copy todir="./target/classes">
-            <fileset dir="./src">
-                <include name="META-INF/**/*" />
-                <include name="**/*.gif" />
-                <include name="**/*.xml" />
-                <include name="**/*.xsl" />
-            </fileset>
-        </copy>
-
     	<native2ascii encoding="UTF8" src="src" dest="./target/classes" includes="**/i18n*.properties" />
     		
     	<filter token="jorgan.version" value="${jorgan.version}"/>
@@ -37,6 +28,14 @@
                 <include name="**/*.properties" />
             </fileset>
         </copy>        	
+    	
+    	<copy todir="./target/classes">
+            <fileset dir="./src">
+                <exclude name="**/*.java" />
+            	<exclude name="**/i18n*.properties" />
+            	<exclude name="**/*.properties" />
+            </fileset>
+        </copy>
     </target>
 
 	<target name="newLanguage" depends="clean">
