@@ -34,18 +34,18 @@ public class Fluidsynth {
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	public Fluidsynth() {
-		this(16);
+		this(16, null);
 	}
 
-	public Fluidsynth(int channels) {
-		create(channels);
+	public Fluidsynth(int channels, String audioDevice) {
+		create(channels, audioDevice);
 	}
 
 	public void dispose() {
 		destroy();
 	}
 
-	private native void create(int channels);
+	private native void create(int channels, String audioDevice);
 
 	private native void destroy();
 

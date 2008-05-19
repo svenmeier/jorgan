@@ -55,7 +55,7 @@ struct Context *getContext(JNIEnv *env, jobject object) {
 }
 
 JNIEXPORT
-void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jint channels) {
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jint channels, jstring audioDevice) {
   struct Context *context = createContext(env);
   if (context == NULL) {
     return;
@@ -65,10 +65,26 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
 
   (*context).settings = new_fluid_settings();
   fluid_settings_setint((*context).settings, "synth.midi-channels", channels);
+  fluid_settings_setint((*context).settings, "audio.jack.autoconnect", 1);
+  if (audioDevice != NULL) {
+    const char* cAudioDevice = (*env)->GetStringUTFChars(env, audioDevice, NULL);
+    fluid_settings_setstr((*context).settings, "audio.driver", cAudioDevice);
+    (*env)->ReleaseStringUTFChars(env, audioDevice, cAudioDevice);
+  }
 
   (*context).synth = new_fluid_synth((*context).settings);
+  if ((*context).synth == NULL) {
+    throwException(env, "java/io/IOException", "Couldn't create synth");
+    Java_jorgan_fluidsynth_Fluidsynth_destroy(env, object);
+    return;
+  }
 
   (*context).adriver = new_fluid_audio_driver((*context).settings, (*context).synth);
+  if ((*context).adriver == NULL) {
+    throwException(env, "java/io/IOException", "Couldn't create audio driver");
+    Java_jorgan_fluidsynth_Fluidsynth_destroy(env, object);
+    return;
+  }
 }
 
 JNIEXPORT
@@ -78,9 +94,15 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_destroy(JNIEnv *env, jobject obje
     return;
   }
 
-  delete_fluid_audio_driver((*context).adriver);
-  delete_fluid_synth((*context).synth);
-  delete_fluid_settings((*context).settings);
+  if ((*context).adriver != NULL) {
+    delete_fluid_audio_driver((*context).adriver);
+  }
+  if ((*context).synth != NULL) {
+    delete_fluid_synth((*context).synth);
+  }
+  if ((*context).settings != NULL) {
+    delete_fluid_settings((*context).settings);
+  }
 
   (*env)->DeleteGlobalRef(env, (*context).object);
   (*context).object = NULL;

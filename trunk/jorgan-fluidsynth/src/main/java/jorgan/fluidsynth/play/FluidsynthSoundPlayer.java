@@ -89,7 +89,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
-			synth = new Fluidsynth(sound.getChannels());
+			synth = new Fluidsynth(sound.getChannels(), sound.getAudioDriver());
 
 			try {
 				synth.soundFontLoad(sound.getSoundfont());
