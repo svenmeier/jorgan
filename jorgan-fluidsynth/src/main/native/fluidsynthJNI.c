@@ -55,7 +55,7 @@ struct Context *getContext(JNIEnv *env, jobject object) {
 }
 
 JNIEXPORT
-void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jint channels, jstring audioDevice) {
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jstring name, jint channels, jstring audioDevice) {
   struct Context *context = createContext(env);
   if (context == NULL) {
     return;
@@ -65,7 +65,13 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
 
   (*context).settings = new_fluid_settings();
   fluid_settings_setint((*context).settings, "synth.midi-channels", channels);
+
+  // JACK specialities
   fluid_settings_setint((*context).settings, "audio.jack.autoconnect", 1);
+  const char* cName = (*env)->GetStringUTFChars(env, name, NULL);
+  fluid_settings_setstr((*context).settings, "audio.jack.id", cName);
+  (*env)->ReleaseStringUTFChars(env, name, cName);
+
   if (audioDevice != NULL) {
     const char* cAudioDevice = (*env)->GetStringUTFChars(env, audioDevice, NULL);
     fluid_settings_setstr((*context).settings, "audio.driver", cAudioDevice);
@@ -74,7 +80,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
 
   (*context).synth = new_fluid_synth((*context).settings);
   if ((*context).synth == NULL) {
-    throwException(env, "java/io/IOException", "Couldn't create synth");
+    throwException(env, "java/lang/IllegalStateException", "Couldn't create synth");
     Java_jorgan_fluidsynth_Fluidsynth_destroy(env, object);
     return;
   }
@@ -130,6 +136,16 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv *env, jobjec
     throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", cfilename, soundfont);
   }
   (*env)->ReleaseStringUTFChars(env, filename, cfilename);
+}
+
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setGain(JNIEnv *env, jobject object, jfloat gain) {
+  fluid_synth_t* synth = getSynth(env, object);
+  if (synth == NULL) {
+    return;
+  }
+
+  fluid_synth_set_gain(synth, gain);
 }
 
 JNIEXPORT

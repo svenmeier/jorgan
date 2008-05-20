@@ -80,7 +80,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		}
 
 		synth.send(channel, command, data1, data2);
-		
+
 		return true;
 	}
 
@@ -89,8 +89,14 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
-			synth = new Fluidsynth(sound.getChannels(), sound.getAudioDriver());
-
+			try {
+				synth = new Fluidsynth(sound.getName(), sound.getChannels(), sound
+						.getAudioDriver());
+			} catch (IllegalStateException e) {
+				addProblem(Severity.ERROR, null, "create");
+				return;
+			}
+			
 			try {
 				synth.soundFontLoad(sound.getSoundfont());
 			} catch (IOException ex) {
@@ -99,18 +105,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			}
 		}
 	}
-	
+
 	private void configureSynth() {
 		if (synth != null) {
 			FluidsynthSound sound = getElement();
+
+			synth.setGain(((float) sound.getGain() / 10));
 
 			Reverb reverb = sound.getReverb();
 			if (reverb == null) {
 				synth.setReverbOn(false);
 			} else {
 				synth.setReverbOn(true);
-				synth.setReverb(reverb.getRoom(), reverb.getDamping(),
-						reverb.getWidth(), reverb.getLevel());
+				synth.setReverb(reverb.getRoom(), reverb.getDamping(), reverb
+						.getWidth(), reverb.getLevel());
 			}
 
 			Chorus chorus = sound.getChorus();
@@ -118,16 +126,17 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 				synth.setChorusOn(false);
 			} else {
 				synth.setChorusOn(true);
-				synth.setChorus(chorus.getNr(), chorus.getLevel(), chorus
-						.getSpeed(), chorus.getDepth(), chorus.getType().ordinal());
+				synth.setChorus((int) (chorus.getNr() * 100),
+						chorus.getLevel() * 10, chorus.getSpeed() * 5, chorus
+								.getDepth() * 10, chorus.getType().ordinal());
 			}
 		}
 	}
-	
+
 	private void destroySynth() {
 		if (synth != null) {
 			synth.dispose();
 			synth = null;
 		}
-	}	
+	}
 }

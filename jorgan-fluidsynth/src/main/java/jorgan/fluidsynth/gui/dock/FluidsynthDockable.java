@@ -57,6 +57,8 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private FluidsynthSound sound;
 
+	private JSpinner gainSpinner;
+	
 	private JCheckBox chorusCheckBox;
 
 	private JSpinner chorusNrSpinner;
@@ -91,6 +93,10 @@ public class FluidsynthDockable extends OrganDockable {
 
 		Column column = builder.column();
 
+		column.term(config.get("gain").read(new JLabel()));
+		gainSpinner = createSpinner();
+		column.definition(gainSpinner);
+		
 		chorusCheckBox = new JCheckBox();
 		chorusCheckBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
@@ -214,6 +220,8 @@ public class FluidsynthDockable extends OrganDockable {
 	private void read() {
 		if (!readWrite) {
 			readWrite = true;
+			
+			setPercentage(gainSpinner, sound.getGain());
 
 			readChorus(sound.getChorus());
 			readReverb(sound.getReverb());
@@ -246,9 +254,9 @@ public class FluidsynthDockable extends OrganDockable {
 		chorusTypeComboBox.setEnabled(chorus != null);
 
 		if (chorus != null) {
-			chorusNrSpinner.setValue(chorus.getNr());
+			setPercentage(chorusNrSpinner, chorus.getNr());
 			setPercentage(chorusLevelSpinner, chorus.getLevel());
-			chorusSpeedSpinner.setValue(chorus.getSpeed());
+			setPercentage(chorusSpeedSpinner, chorus.getSpeed());
 			setPercentage(chorusDepthSpinner, chorus.getDepth());
 			chorusTypeComboBox.setSelectedItem(chorus.getType());
 		}
@@ -258,6 +266,8 @@ public class FluidsynthDockable extends OrganDockable {
 		if (!readWrite) {
 			readWrite = true;
 
+			sound.setGain(getPercentage(gainSpinner));
+			
 			writeReverb();
 			writeChorus();
 
@@ -284,9 +294,9 @@ public class FluidsynthDockable extends OrganDockable {
 		if (chorusCheckBox.isSelected()) {
 			Chorus chorus = new Chorus();
 
-			chorus.setNr((Integer) chorusNrSpinner.getValue());
+			chorus.setNr(getPercentage(chorusNrSpinner));
 			chorus.setLevel(getPercentage(chorusLevelSpinner));
-			chorus.setSpeed((Integer) chorusSpeedSpinner.getValue());
+			chorus.setSpeed(getPercentage(chorusSpeedSpinner));
 			chorus.setDepth(getPercentage(chorusDepthSpinner));
 			chorus.setType((Type) chorusTypeComboBox.getSelectedItem());
 
