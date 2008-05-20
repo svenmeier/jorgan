@@ -28,11 +28,23 @@ public class FluidsynthSound extends Sound {
 	private int channels = 32;
 	
 	private String audioDriver;
+	
+	private double gain = 1.0d;
 
 	private Reverb reverb;
 
 	private Chorus chorus;
 
+	public void setGain(double gain) {
+		this.gain = gain;
+
+		fireChanged(false);
+	}
+	
+	public double getGain() {
+		return gain;
+	}
+	
 	public void setAudioDriver(String audioDevice) {
 		if ("".equals(audioDevice)) {
 			audioDevice = null;

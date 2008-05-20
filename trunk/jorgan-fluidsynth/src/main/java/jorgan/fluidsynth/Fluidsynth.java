@@ -34,18 +34,31 @@ public class Fluidsynth {
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	public Fluidsynth() {
-		this(16, null);
+		this("", 16, null);
 	}
 
-	public Fluidsynth(int channels, String audioDevice) {
-		create(channels, audioDevice);
+	public Fluidsynth(String name, int channels, String audioDriver)
+			throws IllegalStateException {
+		create(name(name), channels, audioDriver);
 	}
 
 	public void dispose() {
 		destroy();
 	}
 
-	private native void create(int channels, String audioDevice);
+	private String name(String name) {
+		StringBuffer buffer = new StringBuffer("jOrgan");
+
+		name = name.trim();
+		if (name.length() > 0) {
+			buffer.append("-");
+			buffer.append(name);
+		}
+		return buffer.toString();
+	}
+
+	private native void create(String name, int channels, String audioDriver)
+			throws IllegalStateException;
 
 	private native void destroy();
 
@@ -54,6 +67,8 @@ public class Fluidsynth {
 	}
 
 	public native void soundFontLoad(String filename) throws IOException;
+
+	public native void setGain(float gain);
 
 	public native void noteOn(int channel, int key, int velocity);
 
