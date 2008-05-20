@@ -109,7 +109,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * The organ session.
 	 */
-	private OrganSession session = new OrganSession();
+	private OrganSession session;
 
 	/*
 	 * The actions.
@@ -236,7 +236,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			if (widget == null) {
 				viewMenu.addSeparator();
 			} else {
-				viewMenu.add((Action)widget);
+				viewMenu.add((Action) widget);
 			}
 		}
 		if (tweakMac.isInstalled()) {
@@ -311,7 +311,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			session.getPlay().destroy();
 
 			organPanel.closing();
-			
+
 			config.write(this);
 
 			setVisible(false);
@@ -323,7 +323,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		if (this.session != null) {
 			this.session.getPlay().destroy();
-			
+
 			this.session.removeOrganListener(saveAction);
 		}
 
@@ -375,6 +375,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 *            file to open organ from
 	 */
 	public void openOrgan(File file) {
+		// start with empty session in case the following opening fails *or*
+		// the new session interferes with the current session
+		setSession(new OrganSession());
+
 		Organ organ;
 		try {
 			organ = new DispositionStream().read(file);
@@ -386,14 +390,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			showBoxMessage("openOrganInvalid", file.getName());
 			return;
-		}		
+		}
 
 		setFile(file);
-		
+
 		setSession(new OrganSession(organ));
 
 		buildRecentsMenu();
-		
+
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
 		}
@@ -437,13 +441,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			return false;
 		}
-		
+
 		setFile(file);
 
 		saveAction.clearChanges();
 
 		buildRecentsMenu();
-		
+
 		return true;
 	}
 
@@ -501,7 +505,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	protected void showBoxMessage(String key, Object... args) {
 
-		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this, args);
+		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this,
+				args);
 	}
 
 	/**
@@ -735,7 +740,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		private void goFullScreen() {
-			for (Console console : session.getOrgan().getElements(Console.class)) {
+			for (Console console : session.getOrgan()
+					.getElements(Console.class)) {
 				String screen = console.getScreen();
 				if (screen == null) {
 					continue;
