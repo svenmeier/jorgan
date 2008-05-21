@@ -22,13 +22,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.swing.JPanel;
 
 import jorgan.creative.SoundFontManager;
-import jorgan.creative.GenericException;
 import jorgan.creative.gui.imports.Bank;
 import jorgan.creative.gui.imports.Device;
 import jorgan.creative.gui.imports.OptionsPanel;
@@ -46,9 +43,6 @@ import bias.Configuration;
  */
 public class CreativeImportProvider implements ImportProvider {
 
-	private static Logger logger = Logger
-			.getLogger(CreativeImportProvider.class.getName());
-
 	static Configuration config = Configuration.getRoot().get(
 			CreativeImportProvider.class);
 
@@ -65,24 +59,20 @@ public class CreativeImportProvider implements ImportProvider {
 
 		SoundFontManager manager = new SoundFontManager();
 
-		try {
-			devices = new Device[manager.getNumDevices()];
-			for (int d = 0; d < devices.length; d++) {
-				devices[d] = new Device(manager.getDeviceName(d));
+		devices = new Device[manager.getNumDevices()];
+		for (int d = 0; d < devices.length; d++) {
+			devices[d] = new Device(manager.getDeviceName(d));
 
-				for (int b = 0; b < 127; b++) {
-					try {
-						if (manager.isBankUsed(d, b)) {
-							devices[d].banks.add(new Bank(b, manager
-									.getBankDescriptor(d, b)));
-						}
-					} catch (IllegalArgumentException ex) {
-						// bank is illegal??
+			for (int b = 0; b < 127; b++) {
+				try {
+					if (manager.isBankUsed(d, b)) {
+						devices[d].banks.add(new Bank(b, manager
+								.getBankDescriptor(d, b)));
 					}
+				} catch (IllegalArgumentException ex) {
+					// bank is illegal??
 				}
 			}
-		} catch (GenericException ex) {
-			logger.log(Level.WARNING, ex.getMessage(), ex);
 		}
 	}
 
@@ -118,35 +108,30 @@ public class CreativeImportProvider implements ImportProvider {
 
 		Bank bank = panel.getSelectedBank();
 		if (bank != null) {
-			try {
-				Set<Rank> ranks = readRanks(bank);
-				elements.addAll(ranks);
-				
-				if (panel.getCreateStops()) {
-					for (Rank rank : ranks) {
-						Stop stop = new Stop();
-						stop.setName(rank.getName());
-						stop.reference(rank);
-						elements.add(stop);
-					}
+			Set<Rank> ranks = readRanks(bank);
+			elements.addAll(ranks);
+
+			if (panel.getCreateStops()) {
+				for (Rank rank : ranks) {
+					Stop stop = new Stop();
+					stop.setName(rank.getName());
+					stop.reference(rank);
+					elements.add(stop);
 				}
-			} catch (GenericException ex) {
-				logger.log(Level.WARNING, ex.getMessage(), ex);
 			}
 		}
 
 		return elements;
 	}
-	
+
 	private Set<Rank> readRanks(Bank bank) {
 		Set<Rank> ranks = new HashSet<Rank>();
-		
+
 		SoundFontManager manager = new SoundFontManager();
 
-		for (int p = 0; p < 127; p++) {
+		for (int p = 0; p < 128; p++) {
 			try {
-				String preset = manager.getPresetDescriptor(0, bank.number,
-						p);
+				String preset = manager.getPresetDescriptor(0, bank.number, p);
 				if (preset != null && !"".equals(preset)) {
 					Rank rank = new Rank();
 					rank.setName(preset);
@@ -154,11 +139,10 @@ public class CreativeImportProvider implements ImportProvider {
 					rank.setBank(bank.number);
 					ranks.add(rank);
 				}
-			} catch (IllegalArgumentException ex) {
-				// bank is illegal??
+			} catch (IllegalArgumentException invalidPreset) {
 			}
 		}
-		
+
 		return ranks;
 	}
 }

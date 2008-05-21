@@ -21,7 +21,6 @@ package jorgan.creative.play;
 import java.io.File;
 import java.io.IOException;
 
-import jorgan.creative.GenericException;
 import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
 import jorgan.disposition.event.OrganEvent;
@@ -75,40 +74,35 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
 		if (output.getOutput() != null && output.getSoundfont() != null) {
+			int index;
+
 			try {
-				int index;
+				index = new SoundFontManager().getDeviceIndex(output
+						.getOutput());
+			} catch (IllegalArgumentException ex) {
+				addProblem(Severity.ERROR, "device", "noCreativeDevice",
+						output.getOutput());
+				return;
+			}
 
-				try {
-					index = new SoundFontManager().getDeviceIndex(output
-							.getOutput());
-				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "device", "noCreativeDevice",
-							output.getOutput());
-					return;
-				}
+			try {
+				new SoundFontManager().clearBank(index, output.getBank());
+			} catch (Exception ignore) {
+			}
 
-				try {
-					new SoundFontManager().clearBank(index, output.getBank());
-				} catch (Exception ignore) {
-				}
+			try {
+				new SoundFontManager().loadBank(index, output.getBank(),
+						new File(output.getSoundfont()).getCanonicalPath());
 
-				try {
-					new SoundFontManager().loadBank(index, output.getBank(),
-							new File(output.getSoundfont()).getCanonicalPath());
-
-					clone = (CreativeSound) output.clone();
-				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "bank", "invalidBank", output
-							.getBank());
-					return;
-				} catch (IOException ex) {
-					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
-							output.getSoundfont());
-					return;
-				}
-			} catch (GenericException ex) {
-				addProblem(Severity.ERROR, null, "genericFailure", ex
-						.getMessage());
+				clone = (CreativeSound) output.clone();
+			} catch (IllegalArgumentException ex) {
+				addProblem(Severity.ERROR, "bank", "invalidBank", output
+						.getBank());
+				return;
+			} catch (IOException ex) {
+				addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
+						output.getSoundfont());
+				return;
 			}
 		}
 	}
