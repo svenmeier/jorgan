@@ -18,6 +18,7 @@
  */
 package jorgan.fluidsynth.midi.spi;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,12 +36,13 @@ public class FluidsynthMidiDeviceProvider extends MidiDeviceProvider {
 
 	private static Map<Info, FluidsynthMidiDevice> devices = new HashMap<Info, FluidsynthMidiDevice>();
 
-	public FluidsynthMidiDevice addDevice(String name) {
+	public FluidsynthMidiDevice addDevice(String name)
+			throws IllegalStateException, IOException {
 		Info info = new Info(name, "Fluidsynth", "Fluidsynth", "1.0") {
 		};
 
 		Fluidsynth synth = new Fluidsynth();
-		FluidsynthMidiDevice device = new FluidsynthMidiDevice(info, synth); 
+		FluidsynthMidiDevice device = new FluidsynthMidiDevice(info, synth);
 		devices.put(info, device);
 
 		return device;
