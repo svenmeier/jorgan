@@ -95,6 +95,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			} catch (IllegalStateException e) {
 				addProblem(Severity.ERROR, null, "create");
 				return;
+			} catch (IOException e) {
+				addProblem(Severity.ERROR, null, "create");
+				return;
 			}
 			
 			try {
