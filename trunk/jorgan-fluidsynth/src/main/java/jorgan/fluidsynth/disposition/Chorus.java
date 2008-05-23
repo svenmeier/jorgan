@@ -51,25 +51,25 @@ public class Chorus {
 	}
 
 	public void setDepth(double depth) {
-		this.depth = depth;
+		this.depth = FluidsynthSound.limit(depth);
 	}
 
 	public void setLevel(double level) {
-		this.level = level;
+		this.level = FluidsynthSound.limit(level);
 	}
 
 	public void setNr(double nr) {
-		this.nr = nr;
+		this.nr = FluidsynthSound.limit(nr);
 	}
 
 	public void setSpeed(double speed) {
-		this.speed = speed;
+		this.speed = FluidsynthSound.limit(speed);
 	}
 
 	public void setType(Type type) {
 		this.type = type;
 	}
-	
+
 	public static enum Type {
 		SINE, TRIANGLE;
 	}

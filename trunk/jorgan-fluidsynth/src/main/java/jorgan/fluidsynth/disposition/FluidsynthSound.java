@@ -29,14 +29,14 @@ public class FluidsynthSound extends Sound {
 	
 	private String audioDriver;
 	
-	private double gain = 1.0d;
+	private double gain = 0.5d;
 
 	private Reverb reverb;
 
 	private Chorus chorus;
 
 	public void setGain(double gain) {
-		this.gain = gain;
+		this.gain = FluidsynthSound.limit(gain);
 
 		fireChanged(false);
 	}
@@ -108,4 +108,15 @@ public class FluidsynthSound extends Sound {
 		
 		fireChanged(false);
 	}
+	
+	static double limit(double value) {
+		if (value > 1.0d) {
+			value = 1.0d;
+		}
+		if (value < 0.0d) {
+			value = 0.0d;
+		}
+		
+		return value;
+	}	
 }
