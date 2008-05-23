@@ -45,18 +45,18 @@ public class Reverb {
 	}
 
 	public void setDamping(double damping) {
-		this.damping = damping;
+		this.damping = FluidsynthSound.limit(damping);
 	}
 
 	public void setLevel(double level) {
-		this.level = level;
+		this.level = FluidsynthSound.limit(level);
 	}
 
 	public void setRoom(double room) {
-		this.room = room;
+		this.room = FluidsynthSound.limit(room);
 	}
 
 	public void setWidth(double width) {
-		this.width = width;
+		this.width = FluidsynthSound.limit(width);
 	}
 }
