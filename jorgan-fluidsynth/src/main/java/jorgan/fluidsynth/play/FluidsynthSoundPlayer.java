@@ -87,19 +87,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	private void createSynth() {
 		FluidsynthSound sound = getElement();
 
+		removeProblem(Severity.ERROR, "audioDriver");
+		try {
+			synth = new Fluidsynth(sound.getName(), sound.getChannels(), sound
+					.getAudioDriver());
+		} catch (IllegalStateException e) {
+			addProblem(Severity.ERROR, "audioDriver", "create");
+			return;
+		} catch (IOException e) {
+			addProblem(Severity.ERROR, "audioDriver", "create");
+			return;
+		}
+
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
-			try {
-				synth = new Fluidsynth(sound.getName(), sound.getChannels(), sound
-						.getAudioDriver());
-			} catch (IllegalStateException e) {
-				addProblem(Severity.ERROR, null, "create");
-				return;
-			} catch (IOException e) {
-				addProblem(Severity.ERROR, null, "create");
-				return;
-			}
-			
 			try {
 				synth.soundFontLoad(sound.getSoundfont());
 			} catch (IOException ex) {
