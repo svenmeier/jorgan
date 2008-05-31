@@ -55,10 +55,8 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private EventHandler eventHandler = new EventHandler();
 
-	private FluidsynthSound sound;
-
 	private JSpinner gainSpinner;
-	
+
 	private JCheckBox chorusCheckBox;
 
 	private JSpinner chorusNrSpinner;
@@ -96,17 +94,8 @@ public class FluidsynthDockable extends OrganDockable {
 		column.term(config.get("gain").read(new JLabel()));
 		gainSpinner = createSpinner();
 		column.definition(gainSpinner);
-		
-		chorusCheckBox = new JCheckBox();
-		chorusCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (chorusCheckBox.isSelected()) {
-					sound.setChorus(new Chorus());
-				} else {
-					sound.setChorus(null);
-				}
-			}
-		});
+
+		chorusCheckBox = createCheckBox();
 		column.group(config.get("chorus").read(chorusCheckBox));
 
 		column.term(config.get("chorus/nr").read(new JLabel()));
@@ -135,16 +124,7 @@ public class FluidsynthDockable extends OrganDockable {
 		});
 		column.definition(chorusTypeComboBox);
 
-		reverbCheckBox = new JCheckBox();
-		reverbCheckBox.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (reverbCheckBox.isSelected()) {
-					sound.setReverb(new Reverb());
-				} else {
-					sound.setReverb(null);
-				}
-			}
-		});
+		reverbCheckBox = createCheckBox();
 		column.group(config.get("reverb").read(reverbCheckBox));
 
 		column.term(config.get("reverb/room").read(new JLabel()));
@@ -168,6 +148,16 @@ public class FluidsynthDockable extends OrganDockable {
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER));
 	}
 
+	private JCheckBox createCheckBox() {
+		JCheckBox checkBox = new JCheckBox();
+		checkBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				write();
+			}
+		});
+		return checkBox;
+	}
+
 	private JSpinner createSpinner() {
 		JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 0, 100, 1));
 		spinner.addChangeListener(new ChangeListener() {
@@ -182,70 +172,69 @@ public class FluidsynthDockable extends OrganDockable {
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.removeOrganListener(eventHandler);
-
-			setSound(null);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
 			this.session.addOrganListener(eventHandler);
-
-			findSound();
 		}
+
+		read();
 	}
 
-	private void findSound() {
-		Set<FluidsynthSound> sounds = this.session.getOrgan().getElements(
-				FluidsynthSound.class);
-		if (sounds.isEmpty()) {
-			setSound(null);
-		} else {
-			setSound(sounds.iterator().next());
+	private FluidsynthSound findSound() {
+		if (session != null) {
+			Set<FluidsynthSound> sounds = this.session.getOrgan()
+					.getElements(FluidsynthSound.class);
+			if (!sounds.isEmpty()) {
+				return sounds.iterator().next();
+			}
 		}
-	}
-
-	private void setSound(FluidsynthSound sound) {
-		this.sound = sound;
-
-		if (sound == null) {
-			panel.setVisible(false);
-		} else {
-			panel.setVisible(true);
-			
-			read();
-		}
+		return null;
 	}
 	
 	private void read() {
 		if (!readWrite) {
 			readWrite = true;
-			
-			setPercentage(gainSpinner, sound.getGain());
 
-			readChorus(sound.getChorus());
-			readReverb(sound.getReverb());
-			
+			FluidsynthSound sound = findSound();
+			if (sound != null) {
+				read(sound);
+			}
+			panel.setVisible(sound != null);
 			readWrite = false;
 		}
 	}
 
-	private void readReverb(Reverb reverb) {
+	private void read(FluidsynthSound sound) {
+		setPercentage(gainSpinner, sound.getGain());
+
+		readChorus(sound);
+		readReverb(sound);
+	}
+
+	private void readReverb(FluidsynthSound sound) {
+		Reverb reverb = sound.getReverb();
+
 		reverbCheckBox.setSelected(reverb != null);
 		reverbRoomSpinner.setEnabled(reverb != null);
 		reverbDampingSpinner.setEnabled(reverb != null);
 		reverbWidthSpinner.setEnabled(reverb != null);
 		reverbLevelSpinner.setEnabled(reverb != null);
 
-		if (reverb != null) {
-			setPercentage(reverbRoomSpinner, reverb.getRoom());
-			setPercentage(reverbDampingSpinner, reverb.getDamping());
-			setPercentage(reverbWidthSpinner, reverb.getWidth());
-			setPercentage(reverbLevelSpinner, reverb.getLevel());
+		if (reverb == null) {
+			reverb = new Reverb();
 		}
+		setPercentage(reverbRoomSpinner, reverb.getRoom());
+		setPercentage(reverbDampingSpinner, reverb.getDamping());
+		setPercentage(reverbWidthSpinner, reverb.getWidth());
+		setPercentage(reverbLevelSpinner, reverb.getLevel());
 	}
 
-	private void readChorus(Chorus chorus) {
+	private void readChorus(FluidsynthSound sound) {
+		Chorus chorus = sound.getChorus();
+
 		chorusCheckBox.setSelected(chorus != null);
 		chorusNrSpinner.setEnabled(chorus != null);
 		chorusLevelSpinner.setEnabled(chorus != null);
@@ -253,29 +242,39 @@ public class FluidsynthDockable extends OrganDockable {
 		chorusDepthSpinner.setEnabled(chorus != null);
 		chorusTypeComboBox.setEnabled(chorus != null);
 
-		if (chorus != null) {
-			setPercentage(chorusNrSpinner, chorus.getNr());
-			setPercentage(chorusLevelSpinner, chorus.getLevel());
-			setPercentage(chorusSpeedSpinner, chorus.getSpeed());
-			setPercentage(chorusDepthSpinner, chorus.getDepth());
-			chorusTypeComboBox.setSelectedItem(chorus.getType());
+		if (chorus == null) {
+			chorus = new Chorus();
 		}
+		setPercentage(chorusNrSpinner, chorus.getNr());
+		setPercentage(chorusLevelSpinner, chorus.getLevel());
+		setPercentage(chorusSpeedSpinner, chorus.getSpeed());
+		setPercentage(chorusDepthSpinner, chorus.getDepth());
+		chorusTypeComboBox.setSelectedItem(chorus.getType());
 	}
 
 	private void write() {
 		if (!readWrite) {
 			readWrite = true;
 
-			sound.setGain(getPercentage(gainSpinner));
-			
-			writeReverb();
-			writeChorus();
+			Set<FluidsynthSound> sounds = this.session.getOrgan().getElements(
+					FluidsynthSound.class);
+			for (FluidsynthSound sound : sounds) {
+				write(sound);
+				read(sound);
+			}
 
 			readWrite = false;
 		}
 	}
 
-	private void writeReverb() {
+	private void write(FluidsynthSound sound) {
+		sound.setGain(getPercentage(gainSpinner));
+
+		writeReverb(sound);
+		writeChorus(sound);
+	}
+
+	private void writeReverb(FluidsynthSound sound) {
 		if (reverbCheckBox.isSelected()) {
 			Reverb reverb = new Reverb();
 
@@ -290,7 +289,7 @@ public class FluidsynthDockable extends OrganDockable {
 		}
 	}
 
-	private void writeChorus() {
+	private void writeChorus(FluidsynthSound sound) {
 		if (chorusCheckBox.isSelected()) {
 			Chorus chorus = new Chorus();
 
@@ -318,19 +317,19 @@ public class FluidsynthDockable extends OrganDockable {
 
 		public void added(OrganEvent event) {
 			if (event.getElement() instanceof FluidsynthSound) {
-				setSound((FluidsynthSound) event.getElement());
+				read();
 			}
 		}
 
 		public void changed(OrganEvent event) {
-			if (event.getElement() == sound) {
-				setSound(sound);
+			if (event.getElement() instanceof FluidsynthSound) {
+				read();
 			}
 		}
 
 		public void removed(OrganEvent event) {
-			if (event.getElement() == sound) {
-				findSound();
+			if (event.getElement() instanceof FluidsynthSound) {
+				read();
 			}
 		}
 	}
