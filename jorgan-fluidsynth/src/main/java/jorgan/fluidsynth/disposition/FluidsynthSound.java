@@ -45,13 +45,15 @@ public class FluidsynthSound extends Sound {
 		return gain;
 	}
 	
-	public void setAudioDriver(String audioDevice) {
-		if ("".equals(audioDevice)) {
-			audioDevice = null;
+	public void setAudioDriver(String audioDriver) {
+		if (!Null.safeEquals(this.audioDriver, audioDriver)) {
+			if ("".equals(audioDriver)) {
+				audioDriver = null;
+			}
+			this.audioDriver = audioDriver;
+			
+			fireChanged(true);
 		}
-		this.audioDriver = audioDevice;
-		
-		fireChanged(true);
 	}
 	
 	public String getAudioDriver() {
