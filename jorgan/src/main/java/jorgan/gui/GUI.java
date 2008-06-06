@@ -79,11 +79,11 @@ public class GUI implements UI {
 		FrameContext frameContext = new FrameContext();
 		invokeOnSwing(frameContext);
 
+		AboutPanel.hideSplash();
+
 		if (file != null) {
 			invokeOnSwing(new FileContext(frame, file));
 		}
-
-		AboutPanel.hideSplash();
 
 		frameContext.waitAndDispose();
 	}
