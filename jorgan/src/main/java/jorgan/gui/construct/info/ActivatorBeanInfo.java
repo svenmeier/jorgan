@@ -21,6 +21,10 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Activator}.
  */
-public class ActivatorBeanInfo extends MomentaryBeanInfo {
+public class ActivatorBeanInfo extends SwitchBeanInfo {
 
+    @Override
+	protected void registerProperties() {
+        super.registerProperties();
+    }
 }

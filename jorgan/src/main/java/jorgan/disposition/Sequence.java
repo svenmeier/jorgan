@@ -37,7 +37,10 @@ public class Sequence extends IndexedContinuous implements Combination.Observer 
 		return getReferenceCount();
 	}
 
-	public void initiated(Combination combination) {
+	public void captured(Combination combination) {
+	}
+	
+	public void recalled(Combination combination) {
 		if (getCombination() != combination) {
 			int index = getReferencedIndex(combination);
 

@@ -20,8 +20,12 @@ package jorgan.disposition;
 
 import java.util.Arrays;
 
-public class Combination extends Initiator {
+public class Combination extends Switch {
 
+	public Combination() {
+		setLocking(false);
+	}
+	
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Switch.class.isAssignableFrom(clazz);
@@ -41,17 +45,19 @@ public class Combination extends Initiator {
 	}
 
 	@Override
-	public void initiate() {
-		if (getOrgan() != null) {
-			for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
-				if (captor.isEngaged()) {
-					capture();
-					return;
+	protected void engagedChanged() {
+		if (isActive()) {
+			if (getOrgan() != null) {
+				for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+					if (captor.isEngaged()) {
+						capture();
+						return;
+					}
 				}
 			}
-		}
 
-		recall();
+			recall();
+		}
 	}
 
 	public void recall() {
@@ -74,7 +80,12 @@ public class Combination extends Initiator {
 			}
 		}
 
-		notifyObservers();
+		if (getOrgan() != null) {
+			for (Observer observer : getOrgan().getReferrer(this,
+					Observer.class)) {
+				observer.recalled(this);
+			}
+		}
 	}
 
 	private int getLevel() {
@@ -101,7 +112,12 @@ public class Combination extends Initiator {
 			fireChanged(reference, false);
 		}
 
-		notifyObservers();
+		if (getOrgan() != null) {
+			for (Observer observer : getOrgan().getReferrer(this,
+					Observer.class)) {
+				observer.captured(this);
+			}
+		}
 	}
 
 	public void clear(int level) {
@@ -180,17 +196,10 @@ public class Combination extends Initiator {
 		}
 	}
 
-	protected void notifyObservers() {
-		if (getOrgan() != null) {
-			for (Observer observer : getOrgan().getReferrer(this,
-					Observer.class)) {
-				observer.initiated(this);
-			}
-		}
-	}
-
 	public static interface Observer {
-		public void initiated(Combination combination);
+		public void recalled(Combination combination);
+
+		public void captured(Combination combination);
 	}
 
 	/**

@@ -21,7 +21,7 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Combination}.
  */
-public class CombinationBeanInfo extends InitiatorBeanInfo {
+public class CombinationBeanInfo extends SwitchBeanInfo {
 
     @Override
 	protected void registerProperties() {

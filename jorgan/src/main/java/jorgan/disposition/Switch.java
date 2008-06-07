@@ -29,12 +29,28 @@ import jorgan.disposition.Output.OutputMessage;
  * @see #setActive(boolean)
  * @see #isActive()
  */
-public class Switch extends Momentary implements Engageable {
+public class Switch extends Element implements Engageable {
 
 	private boolean active = false;
 
 	private boolean locking = true;
 
+    private Shortcut shortcut;
+
+    public Shortcut getShortcut() {
+        return shortcut;
+    }
+
+    public void setShortcut(Shortcut shortcut) {
+        this.shortcut = shortcut;
+
+        fireChanged(true);
+    }
+	
+    public void toggle() {
+    	setActive(!isActive());
+    }
+    
 	public void setActive(boolean active) {
 		if (this.active != active) {
 			this.active = active;
