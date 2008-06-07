@@ -20,7 +20,9 @@ package jorgan.gui.console;
 
 import java.awt.Graphics2D;
 import java.awt.Insets;
+import java.awt.event.KeyEvent;
 
+import jorgan.disposition.Shortcut;
 import jorgan.disposition.Switch;
 import jorgan.skin.Anchor;
 import jorgan.skin.ButtonLayer;
@@ -32,8 +34,10 @@ import jorgan.skin.TextLayer;
 /**
  * A view for a {@link Switch}.
  */
-public class SwitchView extends MomentaryView<Switch> {
+public class SwitchView extends View<Switch> {
 
+	public static final String BINDING_ACTIVE = "active";
+	
 	public static final String BINDING_ENGAGED = "engaged";
 
 	/**
@@ -50,7 +54,7 @@ public class SwitchView extends MomentaryView<Switch> {
 	protected void initBindings() {
 		super.initBindings();
 
-		setBinding(BINDING_PRESSED, new ButtonLayer.Binding() {
+		setBinding(BINDING_ACTIVE, new ButtonLayer.Binding() {
 			public boolean isPressable() {
 				return true;
 			}
@@ -88,29 +92,37 @@ public class SwitchView extends MomentaryView<Switch> {
 	}
 
 	@Override
-	protected void shortcutPressed() {
+	public void keyPressed(KeyEvent ev) {
+
 		Switch element = getElement();
 
-		if (element.isLocking()) {
-			// do nothing - activate/deactivate on release instead)
-		} else {
-			// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys cannot
-			// be used for non-locking elements :(
-			element.setActive(true);
+		Shortcut shortcut = element.getShortcut();
+		if (shortcut != null && shortcut.match(ev)) {
+			if (element.isLocking()) {
+				// do nothing - activate/deactivate on release instead)
+			} else {
+				// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys cannot
+				// be used for non-locking elements :(
+				element.setActive(true);
+			}
 		}
 	}
 
 	@Override
-	protected void shortcutReleased() {
+	public void keyReleased(KeyEvent ev) {
+
 		Switch element = getElement();
 
-		if (element.isLocking()) {
-			element.setActive(!element.isActive());
-		} else {
-			element.setActive(false);
+		Shortcut shortcut = element.getShortcut();
+		if (shortcut != null && shortcut.match(ev)) {
+			if (element.isLocking()) {
+				element.setActive(!element.isActive());
+			} else {
+				element.setActive(false);
+			}
 		}
 	}
-
+	
 	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
@@ -135,7 +147,7 @@ public class SwitchView extends MomentaryView<Switch> {
 
 	private Layer createButtonLayer() {
 		ButtonLayer layer = new ButtonLayer();
-		layer.setBinding(BINDING_PRESSED);
+		layer.setBinding(BINDING_ACTIVE);
 		layer.setFill(Fill.BOTH);
 
 		layer.addChild(createCheckLayer(false));
@@ -171,5 +183,24 @@ public class SwitchView extends MomentaryView<Switch> {
 		layer.setAnchor(Anchor.LEFT);
 
 		return layer;
+	}
+	
+	@Override
+	public void paint(Graphics2D g) {
+		super.paint(g);
+
+		paintShortcut(g);
+	}
+
+	protected void paintShortcut(Graphics2D g) {
+		if (isShowShortcut()) {
+			Shortcut shortcut = getElement().getShortcut();
+			if (shortcut != null) {
+				g.setFont(getShortcutFont());
+				g.setColor(getShortcutColor());
+
+				g.drawString(shortcut.toString(), getX(), getY() + getHeight());
+			}
+		}
 	}
 }

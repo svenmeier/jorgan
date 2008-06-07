@@ -24,7 +24,7 @@ import jorgan.gui.construct.editor.DeltaEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Incrementer}.
  */
-public class IncrementerBeanInfo extends InitiatorBeanInfo {
+public class IncrementerBeanInfo extends SwitchBeanInfo {
 
     @Override
 	protected void registerProperties() {

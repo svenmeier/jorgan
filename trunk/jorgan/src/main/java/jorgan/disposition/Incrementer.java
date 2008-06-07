@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * An incrementer of {@link IndexedContinuous}.
  */
-public class Incrementer extends Initiator {
+public class Incrementer extends Switch {
 
 	private int delta = 1;
 
@@ -31,9 +31,11 @@ public class Incrementer extends Initiator {
 	}
 
 	@Override
-	public void initiate() {
-		for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
-			continuous.increment(delta);
+	protected void engagedChanged() {
+		if (isActive()) {
+			for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
+				continuous.increment(delta);
+			}
 		}
 	}
 

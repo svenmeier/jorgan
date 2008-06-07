@@ -23,7 +23,6 @@ import jorgan.play.ContinuousFilterPlayer;
 import jorgan.play.ContinuousPlayer;
 import jorgan.play.CouplerPlayer;
 import jorgan.play.GenericSoundPlayer;
-import jorgan.play.InitiatorPlayer;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.KeyerPlayer;
 import jorgan.play.Player;
@@ -62,9 +61,9 @@ public class DefaultPlayerProvider implements PlayerProvider {
 		} else if (clazz == Regulator.class) {
 			player = new ContinuousPlayer<Regulator>((Regulator) element);
 		} else if (clazz == Combination.class) {
-			player = new InitiatorPlayer<Combination>((Combination) element);
+			player = new SwitchPlayer<Combination>((Combination) element);
 		} else if (clazz == Incrementer.class) {
-			player = new InitiatorPlayer<Incrementer>((Incrementer) element);
+			player = new SwitchPlayer<Incrementer>((Incrementer) element);
 		} else if (clazz == Captor.class) {
 			player = new SwitchPlayer<Captor>((Captor) element);
 		} else if (clazz == Memory.class) {

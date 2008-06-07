@@ -25,7 +25,11 @@ public class Captor extends Switch implements Combination.Observer {
 		return Combination.class.isAssignableFrom(clazz);
 	}
 
-	public void initiated(Combination initiator) {
+	public void captured(Combination combination) {
+		setActive(false);
+	}
+
+	public void recalled(Combination combination) {
 		setActive(false);
 	}
 }

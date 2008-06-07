@@ -58,7 +58,6 @@ import javax.swing.event.MouseInputAdapter;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
-import jorgan.disposition.Initiator;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
@@ -68,7 +67,6 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.ContinuousView;
-import jorgan.gui.console.InitiatorView;
 import jorgan.gui.console.MemoryView;
 import jorgan.gui.console.RankView;
 import jorgan.gui.console.SwitchView;
@@ -475,8 +473,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		if (element instanceof Switch) {
 			view = new SwitchView((Switch) element);
-		} else if (element instanceof Initiator) {
-			view = new InitiatorView((Initiator) element);
 		} else if (element instanceof Memory) {
 			view = new MemoryView((Memory) element);
 		} else if (element instanceof Continuous) {
