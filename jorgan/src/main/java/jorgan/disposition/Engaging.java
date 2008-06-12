@@ -19,11 +19,11 @@
 package jorgan.disposition;
 
 /**
- * An element that activates {@link Switch}es.
+ * An element that engages {@link Switch}es.
  * 
- * @see Switch#activatingChanged(Activating)
+ * @see Switch#engagingChanged(Engaging)
  */
-public interface Activating {
+public interface Engaging {
 
 	/**
 	 * Is the given switch currently engaged by this element.
