@@ -20,8 +20,12 @@ package jorgan.disposition;
 
 public abstract class IndexedContinuous extends Continuous {
 
+	protected int getIndex(float value) {
+		return Math.min(getSize() - 1, Math.round(-0.5f + getSize() * value));
+	}
+
 	public int getIndex() {
-		return Math.min(getSize() - 1, Math.round(-0.5f + getSize() * getValue()));
+		return getIndex(getValue());
 	}
 
 	public void setIndex(int index) {
@@ -30,22 +34,6 @@ public abstract class IndexedContinuous extends Continuous {
 	
 	public abstract int getSize();
 
-	@Override
-	public void setValue(float value) {
-		int oldIndex = getIndex();
-		
-		super.setValue(value);
-		
-		int newIndex = getIndex();
-		
-		if (oldIndex != newIndex) {
-			indexChanged(oldIndex, newIndex);
-		}
-	}
-	
-	protected void indexChanged(int oldIndex, int newIndex) {
-	}
-	
 	public void increment(int delta) {
 		int index = getIndex() + delta;
 		if (index < 0) {

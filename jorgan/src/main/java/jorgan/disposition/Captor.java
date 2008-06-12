@@ -18,18 +18,14 @@
  */
 package jorgan.disposition;
 
-public class Captor extends Switch implements Combination.Observer {
+public class Captor extends Switch {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Combination.class.isAssignableFrom(clazz);
 	}
 
-	public void captured(Combination combination) {
-		setActive(false);
-	}
-
-	public void recalled(Combination combination) {
+	public void combinationCaptured() {
 		setActive(false);
 	}
 }

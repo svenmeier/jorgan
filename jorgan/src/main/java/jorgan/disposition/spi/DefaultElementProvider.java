@@ -36,7 +36,6 @@ import jorgan.disposition.Label;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
-import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
@@ -64,7 +63,6 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Regulator.class);
 		classes.add(Combination.class);
 		classes.add(Captor.class);
-		classes.add(Sequence.class);
 		classes.add(Incrementer.class);
 		classes.add(Memory.class);
 		classes.add(GenericSound.class);

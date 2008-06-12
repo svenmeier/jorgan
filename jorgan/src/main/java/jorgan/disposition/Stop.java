@@ -42,9 +42,13 @@ public class Stop extends Keyable {
 	 * Notify referenced {@link Rank}s of change.
 	 */
 	@Override
-	protected void engagedChanged() {
+	protected void onEngaged(boolean engaged) {
 		for (Rank rank : getReferenced(Rank.class)) {
-			rank.referrerChanged(this);
+			rank.stopChanged(engaged);
 		}
+	}
+
+	public boolean engages(Rank rank) {
+		return isEngaged();
 	}
 }

@@ -148,7 +148,7 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 	 * 
 	 * @see Stop#plays(Rank)
 	 */
-	public boolean isEngaged() {
+	public final boolean isEngaged() {
 		if (getOrgan() != null) {
 			for (Stop stop : getOrgan().getReferrer(this, Stop.class)) {
 				if (stop.plays(this)) {
@@ -160,16 +160,34 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 		return false;
 	}
 
+	protected void engagedChanged() {
+		fireChanged(false);
+	}
+
 	/**
-	 * If a referring {@link Stop} changes, {@link #isEngaged()} might change
-	 * too.
+	 * Notification from a referencing {@link Stop} of a change in
+	 * {@link Stop#engages(Rank)}.
 	 * 
-	 * @see #isEngaged()
+	 * @param engaged
 	 */
-	@Override
-	public void referrerChanged(Element element) {
-		if (element instanceof Stop) {
-			fireChanged(false);
+	public final void stopChanged(boolean engaged) {
+		int engageCount = 0;
+		for (Stop stop : getOrgan().getReferrer(this, Stop.class)) {
+			if (stop.engages(this)) {
+				engageCount++;
+			}
+		}
+
+		if (engaged) {
+			if (engageCount == 1) {
+				// first engaged
+				engagedChanged();
+			}
+		} else {
+			if (engageCount == 0) {
+				// last disengaged
+				engagedChanged();
+			}
 		}
 	}
 

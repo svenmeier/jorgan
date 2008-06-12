@@ -411,13 +411,6 @@ public abstract class Element implements Cloneable {
 		fireChanged(true);
 	}
 
-	/**
-	 * Notification that a referrer has changed. <br>
-	 * This default implementation does nothing.
-	 */
-	public void referrerChanged(Element element) {
-	}
-
 	public Set<Class<? extends Message>> getMessageClasses() {
 		return new HashSet<Class<? extends Message>>();
 	}

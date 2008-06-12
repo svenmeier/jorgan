@@ -54,12 +54,9 @@ public class Memory extends IndexedContinuous {
 	}
 
 	/**
-	 * Notify referenced {@link Combination}s of change. 
+	 * TODO Notify referenced {@link Combination}s of change. 
 	 */
 	protected void sizeChanged() {
-		for (Combination combination : getReferenced(Combination.class)) {
-			combination.referrerChanged(this);
-		}
 	}
 	
 	public int getSize() {

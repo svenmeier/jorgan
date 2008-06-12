@@ -31,8 +31,8 @@ public class Incrementer extends Switch {
 	}
 
 	@Override
-	protected void engagedChanged() {
-		if (isActive()) {
+	protected void onEngaged(boolean engaged) {
+		if (engaged) {
 			for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
 				continuous.increment(delta);
 			}
