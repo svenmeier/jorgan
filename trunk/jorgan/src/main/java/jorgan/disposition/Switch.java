@@ -85,12 +85,12 @@ public class Switch extends Element implements Engageable {
 
 	/**
 	 * Is this element engaged, either explicitely through
-	 * {@link #setActive(boolean)} or from a referencing {@link Activating}.
+	 * {@link #setActive(boolean)} or from a referencing {@link Engaging}.
 	 * 
 	 * @return <code>true</code> if engaged
 	 * 
 	 * @see #setActive(boolean)
-	 * @see Activating#engages(Element)
+	 * @see Engaging#engages(Element)
 	 */
 	public final boolean isEngaged() {
 		return getEngagedCount() > 0;
@@ -103,12 +103,12 @@ public class Switch extends Element implements Engageable {
 	}
 	
 	/**
-	 * Notification from a referencing {@link Activating} of a change in
-	 * {@link Activating#engages(Switch)}.
+	 * Notification from a referencing {@link Engaging} of a change in
+	 * {@link Engaging#engages(Switch)}.
 	 * 
 	 * @param engaged
 	 */
-	public final void activatingChanged(boolean engaged) {
+	public final void engagingChanged(boolean engaged) {
 
 		if (updateEngaged(engaged)) {
 			fireChanged(false);
@@ -137,7 +137,7 @@ public class Switch extends Element implements Engageable {
 	
 	private int getEngagedCount() {
 		int count = 0;
-		for (Activating activating : getOrgan().getReferrer(this, Activating.class)) {
+		for (Engaging activating : getOrgan().getReferrer(this, Engaging.class)) {
 			if (activating.engages(this)) {
 				count++;
 			}

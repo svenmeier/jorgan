@@ -13,6 +13,12 @@
 		</switch-activated>
 	</xsl:template>
 
+	<xsl:template match="sequence">
+		<regulator>
+			<xsl:apply-templates select="@*|node()"/>
+		</regulator>
+	</xsl:template>
+
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>

@@ -14,7 +14,6 @@ import jorgan.disposition.Keyer;
 import jorgan.disposition.Memory;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Regulator;
-import jorgan.disposition.Sequence;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
@@ -68,8 +67,6 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new SwitchPlayer<Captor>((Captor) element);
 		} else if (clazz == Memory.class) {
 			player = new ContinuousPlayer<Memory>((Memory) element);
-		} else if (clazz == Sequence.class) {
-			player = new ContinuousPlayer<Sequence>((Sequence) element);
 		} else if (clazz == GenericSound.class) {
 			player = new GenericSoundPlayer<GenericSound>(
 					(GenericSound) element);

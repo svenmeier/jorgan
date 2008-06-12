@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * An regulator of {@link jorgan.disposition.Switch}es.
  */
-public class Regulator extends IndexedContinuous implements Activating {
+public class Regulator extends IndexedContinuous implements Engaging {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -55,8 +55,8 @@ public class Regulator extends IndexedContinuous implements Activating {
 		Switch newElement = ((Switch)getReference(getIndex(value)).getElement());
 		
 		if (oldElement != newElement) {
-			oldElement.activatingChanged(false);
-			newElement.activatingChanged(true);
+			oldElement.engagingChanged(false);
+			newElement.engagingChanged(true);
 		}
 	}	
 }

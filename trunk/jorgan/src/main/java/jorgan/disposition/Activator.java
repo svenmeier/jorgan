@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * An activator.
  */
-public class Activator extends Switch implements Activating {
+public class Activator extends Switch implements Engaging {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -34,7 +34,7 @@ public class Activator extends Switch implements Activating {
 	@Override
 	protected void onEngaged(boolean engaged) {
 		for (Switch element : getReferenced(Switch.class)) {
-			element.activatingChanged(engaged);
+			element.engagingChanged(engaged);
 		}
 	}
 	
