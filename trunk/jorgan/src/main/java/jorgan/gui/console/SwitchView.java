@@ -64,11 +64,17 @@ public class SwitchView extends View<Switch> {
 			}
 
 			public void pressed() {
-				getElement().setActive(!getElement().isActive());
+				if (getElement().isLocking()) {
+					getElement().toggle();
+				} else {
+					getElement().setActive(true);
+				}
 			}
 
 			public void released() {
-				if (!getElement().isLocking()) {
+				if (getElement().isLocking()) {
+					// lock active
+				} else {
 					getElement().setActive(false);
 				}
 			};

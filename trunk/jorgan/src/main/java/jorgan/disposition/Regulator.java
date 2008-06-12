@@ -37,7 +37,7 @@ public class Regulator extends IndexedContinuous implements Activating {
 		return getReferenceCount();
 	}    
 	
-	public boolean activates(Element element) {
+	public boolean engages(Switch element) {
 		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
@@ -46,12 +46,17 @@ public class Regulator extends IndexedContinuous implements Activating {
 		return getReference(getIndex()).getElement() == element;
 	}
 	
-	/**
-	 * Notify referenced {@link Switch}s of change. 
-	 */
 	@Override
-	protected void indexChanged(int oldIndex, int newIndex) {
-		getReference(oldIndex).getElement().referrerChanged(this);
-		getReference(newIndex).getElement().referrerChanged(this);
-	}
+	public void setValue(float value) {
+		Switch oldElement = ((Switch)getReference(getIndex()).getElement());
+		
+		super.setValue(value);
+
+		Switch newElement = ((Switch)getReference(getIndex(value)).getElement());
+		
+		if (oldElement != newElement) {
+			oldElement.activatingChanged(false);
+			newElement.activatingChanged(true);
+		}
+	}	
 }

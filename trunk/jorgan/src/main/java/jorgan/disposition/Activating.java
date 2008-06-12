@@ -20,14 +20,16 @@ package jorgan.disposition;
 
 /**
  * An element that activates {@link Switch}es.
+ * 
+ * @see Switch#activatingChanged(Activating)
  */
 public interface Activating {
 
 	/**
-	 * Is the given switch currently activated by this element.
+	 * Is the given switch currently engaged by this element.
 	 * 
 	 * @param element
 	 * @see Switch#isEngaged()
 	 */
-	public boolean activates(Element element);
+	public boolean engages(Switch element);
 }

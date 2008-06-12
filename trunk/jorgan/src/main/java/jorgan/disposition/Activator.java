@@ -32,13 +32,13 @@ public class Activator extends Switch implements Activating {
 	 * Notify referenced {@link Switch}s of change.
 	 */
 	@Override
-	protected void engagedChanged() {
+	protected void onEngaged(boolean engaged) {
 		for (Switch element : getReferenced(Switch.class)) {
-			element.referrerChanged(this);
+			element.activatingChanged(engaged);
 		}
 	}
 	
-	public boolean activates(Element element) {
+	public boolean engages(Switch element) {
 		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");

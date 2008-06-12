@@ -56,8 +56,17 @@ public class Switch extends Element implements Engageable {
 			this.active = active;
 
 			fireChanged(false);
-			engagedChanged();
+			
+			onActivated(active);
+
+			updateEngaged(active);
 		}
+	}
+
+	/**
+	 * Hook method on change of {@link #isActive()}.
+	 */
+	protected void onActivated(boolean active) {
 	}
 
 	public boolean isActive() {
@@ -81,48 +90,64 @@ public class Switch extends Element implements Engageable {
 	 * @return <code>true</code> if engaged
 	 * 
 	 * @see #setActive(boolean)
-	 * @see Activating#activates(Element)
+	 * @see Activating#engages(Element)
 	 */
-	public boolean isEngaged() {
-		boolean engaged = false;
-
-		if (active) {
-			engaged = true;
-		} else {
-			if (getOrgan() != null) {
-				for (Activating activating : getOrgan().getReferrer(this,
-						Activating.class)) {
-					if (activating.activates(this)) {
-						engaged = true;
-						break;
-					}
-				}
-			}
-		}
-
-		return engaged;
+	public final boolean isEngaged() {
+		return getEngagedCount() > 0;
 	}
 
 	/**
 	 * Hook method on change of {@link #isEngaged()}.
 	 */
-	protected void engagedChanged() {
+	protected void onEngaged(boolean engaged) {
 	}
 	
 	/**
-	 * If a referring {@link Activating} changes, {@link #isEngaged()} might
-	 * change too.
+	 * Notification from a referencing {@link Activating} of a change in
+	 * {@link Activating#engages(Switch)}.
 	 * 
-	 * @see #isEngaged()
+	 * @param engaged
 	 */
-	@Override
-	public void referrerChanged(Element element) {
-		if (element instanceof Activating) {
+	public final void activatingChanged(boolean engaged) {
+
+		if (updateEngaged(engaged)) {
 			fireChanged(false);
-			engagedChanged();
 		}
 	}
-
+	
+	private boolean updateEngaged(boolean engaged) {
+		int engagedCount = getEngagedCount();
+		
+		if (engaged) {
+			if (engagedCount == 1) {
+				// first engaged
+				onEngaged(true);
+				return true;
+			}
+		} else {
+			if (engagedCount == 0) {
+				// last disengaged
+				onEngaged(false);
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private int getEngagedCount() {
+		int count = 0;
+		for (Activating activating : getOrgan().getReferrer(this, Activating.class)) {
+			if (activating.engages(this)) {
+				count++;
+			}
+		}
+		if (isActive()) {
+			count++;
+		}
+		return count;
+	}
+	
 	@Override
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();

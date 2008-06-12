@@ -45,22 +45,32 @@ public class Combination extends Switch {
 	}
 
 	@Override
-	protected void engagedChanged() {
-		if (isActive()) {
-			if (getOrgan() != null) {
-				for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
-					if (captor.isEngaged()) {
-						capture();
-						return;
-					}
-				}
-			}
-
-			recall();
+	protected void onActivated(boolean active) {
+		if (active) {
+			captureOrRecall();		
+		}
+	}
+	
+	@Override
+	protected void onEngaged(boolean engaged) {
+		if (engaged) {
+			captureOrRecall();		
 		}
 	}
 
-	public void recall() {
+	private void captureOrRecall() {
+		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+			if (captor.isEngaged()) {
+				capture();
+				
+				return;
+			}
+		}
+		
+		recall();
+	}
+
+	private void recall() {
 
 		int level = getLevel();
 
@@ -79,12 +89,20 @@ public class Combination extends Switch {
 				registratable.setActive(true);
 			}
 		}
+	}
 
-		if (getOrgan() != null) {
-			for (Observer observer : getOrgan().getReferrer(this,
-					Observer.class)) {
-				observer.recalled(this);
-			}
+	private void capture() {
+
+		int level = getLevel();
+
+		for (Reference reference : getReferences(Reference.class)) {
+			reference.setActive(level, reference.getElement().isActive());
+
+			fireChanged(reference, false);
+		}
+		
+		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+			captor.combinationCaptured();
 		}
 	}
 
@@ -100,24 +118,6 @@ public class Combination extends Switch {
 		}
 		ensureSize(size);
 		return level;
-	}
-
-	public void capture() {
-
-		int level = getLevel();
-
-		for (Reference reference : getReferences(Reference.class)) {
-			reference.setActive(level, reference.getElement().isActive());
-
-			fireChanged(reference, false);
-		}
-
-		if (getOrgan() != null) {
-			for (Observer observer : getOrgan().getReferrer(this,
-					Observer.class)) {
-				observer.captured(this);
-			}
-		}
 	}
 
 	public void clear(int level) {
@@ -196,24 +196,7 @@ public class Combination extends Switch {
 		}
 	}
 
-	public static interface Observer {
-		public void recalled(Combination combination);
-
-		public void captured(Combination combination);
-	}
-
-	/**
-	 * If a referring {@link Memory} changes, the size might change too.
-	 * 
-	 * @see Reference#setSize()
-	 */
-	@Override
-	public void referrerChanged(Element element) {
-		if (element instanceof Memory) {
-			ensureSize(((Memory) element).getSize());
-		}
-	}
-	
+	// TODO call when memory changes
 	private void ensureSize(int size) {
 		for (Reference reference : getReferences(Reference.class)) {
 			reference.setSize(size);
