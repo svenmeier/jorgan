@@ -61,7 +61,7 @@ public class Combination extends Switch {
 	private void captureOrRecall() {
 		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
 			if (captor.isEngaged()) {
-				capture();
+				capture(captor);
 				
 				return;
 			}
@@ -74,6 +74,7 @@ public class Combination extends Switch {
 
 		int level = getLevel();
 
+		// deactivate first ..
 		for (Reference reference : getReferences(Reference.class)) {
 			Switch registratable = reference.getElement();
 
@@ -82,6 +83,7 @@ public class Combination extends Switch {
 			}
 		}
 
+		// .. then activate
 		for (Reference reference : getReferences(Reference.class)) {
 			Switch registratable = reference.getElement();
 
@@ -91,7 +93,7 @@ public class Combination extends Switch {
 		}
 	}
 
-	private void capture() {
+	private void capture(Captor captor) {
 
 		int level = getLevel();
 
@@ -101,9 +103,7 @@ public class Combination extends Switch {
 			fireChanged(reference, false);
 		}
 		
-		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
-			captor.combinationCaptured();
-		}
+		captor.combinationCaptured();
 	}
 
 	private int getLevel() {

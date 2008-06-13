@@ -32,6 +32,19 @@ public abstract class IndexedContinuous extends Continuous {
 		setValue((index + 0.5f) / getSize());
 	}
 	
+	@Override
+	protected void onValueChanged(float oldValue, float newValue) {
+		int oldIndex = getIndex(oldValue);
+		int newIndex = getIndex(newValue);
+		
+		if (oldIndex != newIndex) {
+			onIndexChanged(oldIndex, newIndex);
+		}
+	}
+	
+	protected void onIndexChanged(int oldIndex, int newIndex) {
+	}
+
 	public abstract int getSize();
 
 	public void increment(int delta) {
