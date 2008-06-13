@@ -45,18 +45,10 @@ public class Regulator extends IndexedContinuous implements Engaging {
 
 		return getReference(getIndex()).getElement() == element;
 	}
-	
-	@Override
-	public void setValue(float value) {
-		Switch oldElement = ((Switch)getReference(getIndex()).getElement());
-		
-		super.setValue(value);
 
-		Switch newElement = ((Switch)getReference(getIndex(value)).getElement());
-		
-		if (oldElement != newElement) {
-			oldElement.engagingChanged(false);
-			newElement.engagingChanged(true);
-		}
+	@Override
+	protected void onIndexChanged(int oldIndex, int newIndex) {
+		((Switch)getReference(oldIndex).getElement()).engagingChanged(false);
+		((Switch)getReference(newIndex).getElement()).engagingChanged(true);
 	}	
 }

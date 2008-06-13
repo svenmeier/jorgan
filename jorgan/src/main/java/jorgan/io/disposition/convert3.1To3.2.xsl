@@ -5,6 +5,9 @@
 		<switch-activate>
 			<xsl:apply-templates select="@*|node()"/>
 		</switch-activate>
+		<switch-deactivate>
+			<xsl:apply-templates select="@*|node()"/>
+		</switch-deactivate>
 	</xsl:template>
 
 	<xsl:template match="initiator-initiated">

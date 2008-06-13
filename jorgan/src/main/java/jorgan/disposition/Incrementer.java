@@ -24,6 +24,10 @@ package jorgan.disposition;
 public class Incrementer extends Switch {
 
 	private int delta = 1;
+	
+	private Incrementer() {
+		setLocking(false);
+	}
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {

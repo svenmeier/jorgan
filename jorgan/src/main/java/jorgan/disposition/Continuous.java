@@ -50,10 +50,17 @@ public abstract class Continuous extends Element implements Console.Referenceabl
 		}
 
 		if (this.value != value) {
+			float oldValue = this.value;
+			
 			this.value = value;
 
 			fireChanged(false);
+			
+			onValueChanged(oldValue, this.value);
 		}
+	}
+
+	protected void onValueChanged(float oldValue, float newValue) {
 	}
 
 	public float getValue() {
