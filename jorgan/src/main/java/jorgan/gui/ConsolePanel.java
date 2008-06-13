@@ -615,6 +615,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		Rectangle clip = graphics.getClipBounds();
 		graphics.setColor(getBackground());
+		//graphics.setColor(new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255)));
 		graphics.fillRect(clip.x, clip.y, clip.width, clip.height);
 
 		if (console != null) {
