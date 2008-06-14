@@ -21,7 +21,7 @@ package jorgan.disposition;
 /**
  * A stop.
  */
-public class Stop extends Keyable {
+public class Stop extends Keyable implements Engaging {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -29,26 +29,16 @@ public class Stop extends Keyable {
 	}
 
 	/**
-	 * Is the given rank currently engaged by this element.
-	 * 
-	 * @param element
-	 * @see Rank#isEngaged()
-	 */
-	public boolean plays(Rank rank) {
-		return isEngaged();
-	}
-	
-	/**
 	 * Notify referenced {@link Rank}s of change.
 	 */
 	@Override
 	protected void onEngaged(boolean engaged) {
 		for (Rank rank : getReferenced(Rank.class)) {
-			rank.stopChanged(engaged);
+			rank.engagingChanged(engaged);
 		}
 	}
 
-	public boolean engages(Rank rank) {
+	public boolean engages(Engageable element) {
 		return isEngaged();
 	}
 }

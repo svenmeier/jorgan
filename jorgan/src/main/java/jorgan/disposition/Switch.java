@@ -29,7 +29,7 @@ import jorgan.disposition.Output.OutputMessage;
  * @see #setActive(boolean)
  * @see #isActive()
  */
-public class Switch extends Element implements Engageable, Console.Referenceable {
+public class Switch extends Engageable implements Console.Referenceable {
 
 	private boolean active = false;
 
@@ -83,65 +83,8 @@ public class Switch extends Element implements Engageable, Console.Referenceable
 		fireChanged(true);
 	}
 
-	/**
-	 * Is this element engaged, either explicitely through
-	 * {@link #setActive(boolean)} or from a referencing {@link Engaging}.
-	 * 
-	 * @return <code>true</code> if engaged
-	 * 
-	 * @see #setActive(boolean)
-	 * @see Engaging#engages(Element)
-	 */
-	public final boolean isEngaged() {
-		return getEngagedCount() > 0;
-	}
-
-	/**
-	 * Hook method on change of {@link #isEngaged()}.
-	 */
-	protected void onEngaged(boolean engaged) {
-	}
-	
-	/**
-	 * Notification from a referencing {@link Engaging} of a change in
-	 * {@link Engaging#engages(Switch)}.
-	 * 
-	 * @param engaged
-	 */
-	public final void engagingChanged(boolean engaged) {
-
-		if (updateEngaged(engaged)) {
-			fireChanged(false);
-		}
-	}
-	
-	private boolean updateEngaged(boolean engaged) {
-		int engagedCount = getEngagedCount();
-		
-		if (engaged) {
-			if (engagedCount == 1) {
-				// first engaged
-				onEngaged(true);
-				return true;
-			}
-		} else {
-			if (engagedCount == 0) {
-				// last disengaged
-				onEngaged(false);
-				return true;
-			}
-		}
-		
-		return false;
-	}
-	
-	private int getEngagedCount() {
-		int count = 0;
-		for (Engaging activating : getOrgan().getReferrer(this, Engaging.class)) {
-			if (activating.engages(this)) {
-				count++;
-			}
-		}
+	protected int getEngagedCount() {
+		int count = super.getEngagedCount();
 		if (isActive()) {
 			count++;
 		}

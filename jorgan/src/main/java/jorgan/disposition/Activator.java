@@ -38,8 +38,8 @@ public class Activator extends Switch implements Engaging {
 		}
 	}
 	
-	public boolean engages(Switch element) {
-		if (!references(element)) {
+	public boolean engages(Engageable element) {
+		if (!references((Element)element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}

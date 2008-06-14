@@ -19,17 +19,17 @@
 package jorgan.disposition;
 
 /**
- * An element that engages {@link Switch}es.
+ * An element that engages {@link Engageable}s.
  * 
- * @see Switch#engagingChanged(Engaging)
+ * @see Engageable#engagingChanged(Engaging)
  */
 public interface Engaging {
 
 	/**
-	 * Is the given switch currently engaged by this element.
+	 * Is the given engageable currently engaged by this element.
 	 * 
 	 * @param element
-	 * @see Switch#isEngaged()
+	 * @see Engageable#isEngaged()
 	 */
-	public boolean engages(Switch element);
+	public boolean engages(Engageable element);
 }
