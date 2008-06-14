@@ -18,10 +18,69 @@
  */
 package jorgan.disposition;
 
+
 /**
  * Can this element be engaged.
  */
-public interface Engageable {
+public class Engageable extends Element {
 
-	public boolean isEngaged();
+	/**
+	 * Is this element engaged from referencing {@link Engaging}.
+	 * 
+	 * @return <code>true</code> if engaged
+	 * 
+	 * @see Engaging#engages(Element)
+	 */
+	public final boolean isEngaged() {
+		return getEngagedCount() > 0;
+	}
+
+	/**
+	 * Hook method on change of {@link #isEngaged()}.
+	 */
+	protected void onEngaged(boolean engaged) {
+	}
+
+	/**
+	 * Notification from a referencing {@link Engaging} of a change in
+	 * {@link Engaging#engages(Engageable))}.
+	 * 
+	 * @param engaged
+	 */
+	public final void engagingChanged(boolean engaged) {
+
+		if (updateEngaged(engaged)) {
+			fireChanged(false);
+		}
+	}
+
+	protected boolean updateEngaged(boolean engaged) {
+		int engagedCount = getEngagedCount();
+
+		if (engaged) {
+			if (engagedCount == 1) {
+				// first engaged
+				onEngaged(true);
+				return true;
+			}
+		} else {
+			if (engagedCount == 0) {
+				// last disengaged
+				onEngaged(false);
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	protected int getEngagedCount() {
+		int count = 0;
+		for (Engaging activating : getOrgan().getReferrer(this, Engaging.class)) {
+			if (activating.engages(this)) {
+				count++;
+			}
+		}
+		return count;
+	}
 }

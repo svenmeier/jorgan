@@ -25,7 +25,7 @@ import jorgan.disposition.Output.OutputMessage;
 /**
  * A rank.
  */
-public class Rank extends Element implements Engageable, Console.Referenceable {
+public class Rank extends Engageable implements Console.Referenceable {
 
 	private String channel = "";
 
@@ -141,54 +141,9 @@ public class Rank extends Element implements Engageable, Console.Referenceable {
 		fireChanged(true);
 	}
 
-	/**
-	 * Is this element angaged through a referencing {@link Stop}.
-	 * 
-	 * @return <code>true</code> if engaged
-	 * 
-	 * @see Stop#plays(Rank)
-	 */
-	public final boolean isEngaged() {
-		if (getOrgan() != null) {
-			for (Stop stop : getOrgan().getReferrer(this, Stop.class)) {
-				if (stop.plays(this)) {
-					return true;
-				}
-			}
-		}
-
-		return false;
-	}
-
-	protected void engagedChanged() {
+	@Override
+	protected void onEngaged(boolean engaged) {
 		fireChanged(false);
-	}
-
-	/**
-	 * Notification from a referencing {@link Stop} of a change in
-	 * {@link Stop#engages(Rank)}.
-	 * 
-	 * @param engaged
-	 */
-	public final void stopChanged(boolean engaged) {
-		int engageCount = 0;
-		for (Stop stop : getOrgan().getReferrer(this, Stop.class)) {
-			if (stop.engages(this)) {
-				engageCount++;
-			}
-		}
-
-		if (engaged) {
-			if (engageCount == 1) {
-				// first engaged
-				engagedChanged();
-			}
-		} else {
-			if (engageCount == 0) {
-				// last disengaged
-				engagedChanged();
-			}
-		}
 	}
 
 	public Set<Class<? extends Message>> getMessageClasses() {

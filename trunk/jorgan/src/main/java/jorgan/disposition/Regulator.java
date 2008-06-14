@@ -37,8 +37,8 @@ public class Regulator extends IndexedContinuous implements Engaging {
 		return getReferenceCount();
 	}    
 	
-	public boolean engages(Switch element) {
-		if (!references(element)) {
+	public boolean engages(Engageable element) {
+		if (!references((Element)element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
@@ -48,7 +48,9 @@ public class Regulator extends IndexedContinuous implements Engaging {
 
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
-		((Switch)getReference(oldIndex).getElement()).engagingChanged(false);
+		// first engage ..
 		((Switch)getReference(newIndex).getElement()).engagingChanged(true);
+		// .. then disengage
+		((Switch)getReference(oldIndex).getElement()).engagingChanged(false);
 	}	
 }
