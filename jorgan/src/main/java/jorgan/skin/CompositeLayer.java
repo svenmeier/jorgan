@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
 
 /**
@@ -32,129 +32,129 @@ import jorgan.gui.console.View;
  */
 public class CompositeLayer extends Layer {
 
-    private List<Layer> layers = new ArrayList<Layer>();
+	private List<Layer> layers = new ArrayList<Layer>();
 
-    public List<Layer> getLayers() {
-        return layers;
-    }
+	public List<Layer> getLayers() {
+		return layers;
+	}
 
-    public void addChild(Layer layer) {
-        layers.add(layer);
-    }
+	public void addChild(Layer layer) {
+		layers.add(layer);
+	}
 
-    public int getChildCount() {
-        return layers.size();
-    }
+	public int getChildCount() {
+		return layers.size();
+	}
 
-    public Layer getChild(int index) {
-        return layers.get(index);
-    }
+	public Layer getChild(int index) {
+		return layers.get(index);
+	}
 
-    public List<Layer> getChildren() {
-    	return Collections.unmodifiableList(layers);
-    }
-    
-    @Override
+	public List<Layer> getChildren() {
+		return Collections.unmodifiableList(layers);
+	}
+
+	@Override
 	public Dimension getSize() {
-        Dimension dimension = super.getSize();
+		Dimension dimension = super.getSize();
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            Dimension dim = layer.getSize();
-            dimension.width = Math.max(dimension.width, dim.width);
-            dimension.height = Math.max(dimension.height, dim.height);
-        }
+			Dimension dim = layer.getSize();
+			dimension.width = Math.max(dimension.width, dim.width);
+			dimension.height = Math.max(dimension.height, dim.height);
+		}
 
-        return dimension;
-    }
+		return dimension;
+	}
 
-    @Override
-	public void setView(View<? extends Element> view) {
-        super.setView(view);
+	@Override
+	public void setView(View<? extends Displayable> view) {
+		super.setView(view);
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            layer.setView(view);
-        }
-    }
+			layer.setView(view);
+		}
+	}
 
-    @Override
+	@Override
 	public boolean isPressable(int x, int y, Dimension dimension) {
-        if (super.isPressable(x, y, dimension)) {
-            return true;
-        }
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		if (super.isPressable(x, y, dimension)) {
+			return true;
+		}
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            if (layer.isPressable(x, y, dimension)) {
-                return true;
-            }
-        }
-        return false;
-    }
+			if (layer.isPressable(x, y, dimension)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
-    @Override
+	@Override
 	public void mousePressed(int x, int y, Dimension size) {
-        super.mousePressed(x, y, size);
+		super.mousePressed(x, y, size);
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            layer.mousePressed(x, y, size);
-        }
-    }
+			layer.mousePressed(x, y, size);
+		}
+	}
 
-    @Override
+	@Override
 	public void mouseDragged(int x, int y, Dimension size) {
-        super.mouseDragged(x, y, size);
+		super.mouseDragged(x, y, size);
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            layer.mouseDragged(x, y, size);
-        }
-    }
+			layer.mouseDragged(x, y, size);
+		}
+	}
 
-    @Override
+	@Override
 	public void mouseReleased(int x, int y, Dimension size) {
-        super.mouseReleased(x, y, size);
+		super.mouseReleased(x, y, size);
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            layer.mouseReleased(x, y, size);
-        }
-    }
+			layer.mouseReleased(x, y, size);
+		}
+	}
 
-    @Override
+	@Override
 	public void draw(Graphics2D g, Dimension dimension) {
-        super.draw(g, dimension);
+		super.draw(g, dimension);
 
-        drawChildren(g, dimension);
-    }
+		drawChildren(g, dimension);
+	}
 
-    protected void drawChildren(Graphics2D g, Dimension dimension) {
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = layers.get(l);
+	protected void drawChildren(Graphics2D g, Dimension dimension) {
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = layers.get(l);
 
-            layer.draw(g, dimension);
-        }
-    }
+			layer.draw(g, dimension);
+		}
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        CompositeLayer clone = (CompositeLayer) super.clone();
+		CompositeLayer clone = (CompositeLayer) super.clone();
 
-        clone.layers = new ArrayList<Layer>();
+		clone.layers = new ArrayList<Layer>();
 
-        for (int l = 0; l < layers.size(); l++) {
-            Layer layer = getChild(l);
+		for (int l = 0; l < layers.size(); l++) {
+			Layer layer = getChild(l);
 
-            clone.addChild((Layer) layer.clone());
-        }
+			clone.addChild((Layer) layer.clone());
+		}
 
-        return clone;
-    }
+		return clone;
+	}
 }

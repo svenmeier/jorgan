@@ -18,8 +18,59 @@
  */
 package jorgan.disposition;
 
-/**
- * A label.
- */
-public class Label extends Displayable {
+import jorgan.util.Null;
+
+public abstract class Displayable extends Element {
+
+	/**
+	 * The maximum supported zoom.
+	 */
+	public static final float MAX_ZOOM = 1.5f;
+
+	/**
+	 * The minimum supported zoom.
+	 */
+	public static final float MIN_ZOOM = 0.5f;
+
+	private String style;
+
+	/**
+	 * The zoom.
+	 */
+	private float zoom = 1.0f;
+
+	/**
+	 * @return the style
+	 */
+	public String getStyle() {
+		return style;
+	}
+
+	/**
+	 * @param style
+	 */
+	public void setStyle(String style) {
+		if (!Null.safeEquals(this.style, style)) {
+			this.style = style;
+
+			fireChanged(true);
+		}
+	}
+
+	public float getZoom() {
+		return zoom;
+	}
+
+	public void setZoom(float zoom) {
+		if (zoom < MIN_ZOOM) {
+			zoom = MIN_ZOOM;
+		}
+		if (zoom > MAX_ZOOM) {
+			zoom = MAX_ZOOM;
+		}
+
+		this.zoom = zoom;
+
+		fireChanged(true);
+	}
 }

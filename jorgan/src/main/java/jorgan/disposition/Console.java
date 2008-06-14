@@ -23,7 +23,7 @@ import jorgan.util.Null;
 /**
  * A console.
  */
-public class Console extends Element implements Input, Output {
+public class Console extends Displayable implements Input, Output {
 
 	private String skin;
 
@@ -58,7 +58,7 @@ public class Console extends Element implements Input, Output {
 	}
 		
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Referenceable.class.isAssignableFrom(clazz);
+		return Displayable.class.isAssignableFrom(clazz) && !(Console.class == clazz);
 	}
 
 	@Override
@@ -69,8 +69,8 @@ public class Console extends Element implements Input, Output {
 
 	@Override
 	protected jorgan.disposition.Reference<? extends Element> createReference(Element element) {
-		if (element instanceof Referenceable) {
-			return new Reference(element);
+		if (element instanceof Displayable) {
+			return new Reference((Displayable)element);
 		} else {
 			return super.createReference(element);
 		}
@@ -128,13 +128,13 @@ public class Console extends Element implements Input, Output {
 	/**
 	 * A reference of a console to another element.
 	 */
-	public static class Reference extends jorgan.disposition.Reference<Element> {
+	public static class Reference extends jorgan.disposition.Reference<Displayable> {
 
 		private int x;
 
 		private int y;
 
-		public Reference(Element element) {
+		public Reference(Displayable element) {
 			super(element);
 		}
 
@@ -199,8 +199,5 @@ public class Console extends Element implements Input, Output {
 		references.add(0, reference);
 
 		fireChanged(true);
-	}
-
-	public static interface Referenceable {
 	}
 }

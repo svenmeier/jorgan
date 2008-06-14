@@ -222,7 +222,7 @@ public class ElementSelection {
 	 * @param elements
 	 *            elements to select
 	 */
-	public void setSelectedElements(List<Element> elements) {
+	public void setSelectedElements(List<? extends Element> elements) {
 		location = null;
 
 		selectedElements.clear();

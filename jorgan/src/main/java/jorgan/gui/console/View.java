@@ -32,6 +32,7 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganEvent;
@@ -45,7 +46,7 @@ import bias.Configuration;
 /**
  * Base class of all views representing a view on one element of an organ.
  */
-public class View<E extends Element> {
+public class View<E extends Displayable> {
 
 	private static Configuration config = Configuration.getRoot().get(
 			View.class);

@@ -22,6 +22,12 @@
 		</regulator>
 	</xsl:template>
 
+	<xsl:template match="keyboard|genericSound|fluidsynth.fluidsynthSound|creative.creativeSound|linuxsampler.linuxsamplerSound">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()[not(name()='zoom' or name()='style')]"/>
+		</xsl:copy>
+	</xsl:template>
+
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>

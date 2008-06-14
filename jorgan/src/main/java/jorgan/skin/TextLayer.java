@@ -26,7 +26,7 @@ import java.awt.RenderingHints;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
 
 /**
@@ -107,7 +107,7 @@ public class TextLayer extends Layer {
 	}
 
 	@Override
-	public void setView(View<? extends Element> view) {
+	public void setView(View<? extends Displayable> view) {
 		super.setView(view);
 
 		String text = "";
@@ -206,9 +206,11 @@ public class TextLayer extends Layer {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 
-		if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT || alignment == Alignment.LEFT) {
+		if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT
+				|| alignment == Alignment.LEFT) {
 			y += height / 2 - linesHeight / 2;
-		} else if (alignment == Alignment.BOTTOM || alignment == Alignment.BOTTOM_RIGHT
+		} else if (alignment == Alignment.BOTTOM
+				|| alignment == Alignment.BOTTOM_RIGHT
 				|| alignment == Alignment.BOTTOM_LEFT) {
 			y += height - linesHeight;
 		}
@@ -221,9 +223,11 @@ public class TextLayer extends Layer {
 			}
 
 			int alignedX = x;
-			if (alignment == Alignment.TOP || alignment == Alignment.CENTER || alignment == Alignment.BOTTOM) {
+			if (alignment == Alignment.TOP || alignment == Alignment.CENTER
+					|| alignment == Alignment.BOTTOM) {
 				alignedX = x + width / 2 - line.width / 2;
-			} else if (alignment == Alignment.RIGHT || alignment == Alignment.TOP_RIGHT
+			} else if (alignment == Alignment.RIGHT
+					|| alignment == Alignment.TOP_RIGHT
 					|| alignment == Alignment.BOTTOM_RIGHT) {
 				alignedX = x + width - line.width;
 			}

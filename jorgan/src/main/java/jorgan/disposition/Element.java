@@ -33,16 +33,6 @@ import jorgan.util.Null;
 public abstract class Element implements Cloneable {
 
 	/**
-	 * The maximum supported zoom.
-	 */
-	public static final float MAX_ZOOM = 1.5f;
-
-	/**
-	 * The minimum supported zoom.
-	 */
-	public static final float MIN_ZOOM = 0.5f;
-
-	/**
 	 * The organ this element belongs to.
 	 */
 	private Organ organ;
@@ -57,8 +47,6 @@ public abstract class Element implements Cloneable {
 	 */
 	private String description = "";
 
-	private String style;
-
 	/**
 	 * The references to other elements.
 	 * 
@@ -68,11 +56,6 @@ public abstract class Element implements Cloneable {
 	protected List<Reference<? extends Element>> references = new ArrayList<Reference<? extends Element>>();
 
 	private List<Message> messages = new ArrayList<Message>();
-
-	/**
-	 * The zoom.
-	 */
-	private float zoom = 1.0f;
 
 	/**
 	 * Test if this element can reference the given element. <br>
@@ -342,26 +325,6 @@ public abstract class Element implements Cloneable {
 	}
 
 	/**
-	 * @return the style
-	 */
-	public String getStyle() {
-		return style;
-	}
-
-	/**
-	 * TODO move into {@link Console.Reference} ?
-	 * 
-	 * @param style
-	 */
-	public void setStyle(String style) {
-		if (!Null.safeEquals(this.style, style)) {
-			this.style = style;
-
-			fireChanged(true);
-		}
-	}
-
-	/**
 	 * All elements are cloneable.
 	 */
 	@Override
@@ -392,23 +355,6 @@ public abstract class Element implements Cloneable {
 			}
 		}
 		return false;
-	}
-
-	public float getZoom() {
-		return zoom;
-	}
-
-	public void setZoom(float zoom) {
-		if (zoom < MIN_ZOOM) {
-			zoom = MIN_ZOOM;
-		}
-		if (zoom > MAX_ZOOM) {
-			zoom = MAX_ZOOM;
-		}
-
-		this.zoom = zoom;
-
-		fireChanged(true);
 	}
 
 	public Set<Class<? extends Message>> getMessageClasses() {
