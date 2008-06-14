@@ -18,24 +18,19 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
-import jorgan.gui.construct.editor.StringEditor;
-import jorgan.swing.beans.PropertiesBeanInfo;
+import jorgan.disposition.Displayable;
+import jorgan.gui.construct.editor.StyleEditor;
+import jorgan.gui.construct.editor.ZoomEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Element}.
+ * BeanInfo for {@link jorgan.disposition.Displayable}.
  */
-public class ElementBeanInfo extends PropertiesBeanInfo {
+public class DisplayableBeanInfo extends ElementBeanInfo {
 
 	protected void registerProperties() {
-		// add name first so it's positioned at the default index
-		// @see #getDefaultPropertyIndex()
-		add("name", Element.class, StringEditor.class);
-	}
-
-	protected void add(String name, Class<? extends Element> clazz,
-			Class<?> editor) {
-		add(name, clazz, Elements.getDisplayName(clazz, name), editor);
+		super.registerProperties();
+		
+		add("style", Displayable.class, StyleEditor.class);
+		add("zoom", Displayable.class, ZoomEditor.class);
 	}
 }

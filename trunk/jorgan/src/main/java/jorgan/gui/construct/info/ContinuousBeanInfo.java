@@ -25,7 +25,7 @@ import jorgan.gui.construct.editor.ValueEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Continuous}.
  */
-public class ContinuousBeanInfo extends ElementBeanInfo {
+public class ContinuousBeanInfo extends DisplayableBeanInfo {
 
 	@Override
 	protected void registerProperties() {

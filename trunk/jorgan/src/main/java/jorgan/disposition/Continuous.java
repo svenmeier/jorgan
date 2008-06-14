@@ -26,7 +26,7 @@ import jorgan.disposition.Output.OutputMessage;
 /**
  * A continuous element.
  */
-public abstract class Continuous extends Element implements Console.Referenceable {
+public abstract class Continuous extends Displayable {
 
 	private boolean locking = true;
 

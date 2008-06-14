@@ -22,7 +22,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
 
 public class SpreadHorizontalLayout extends ViewLayout {
@@ -34,24 +34,26 @@ public class SpreadHorizontalLayout extends ViewLayout {
 	private int count;
 
 	@Override
-	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
+	protected void init(View<? extends Displayable> pressed,
+			List<View<? extends Displayable>> views) {
 
-		Collections.sort(views, new Comparator<View<? extends Element>>() {
-			public int compare(View<? extends Element> view1, View<? extends Element> view2) {
+		Collections.sort(views, new Comparator<View<? extends Displayable>>() {
+			public int compare(View<? extends Displayable> view1,
+					View<? extends Displayable> view2) {
 				return view1.getX() - view2.getX();
 			}
 		});
 		count = views.size();
 
-		View<? extends Element> left = views.get(0);
-		View<? extends Element> right = views.get(views.size() - 1);
+		View<? extends Displayable> left = views.get(0);
+		View<? extends Displayable> right = views.get(views.size() - 1);
 
 		x = left.getX() + left.getWidth() / 2;
 		width = right.getX() + right.getWidth() / 2 - x;
 	}
 
 	@Override
-	protected void visit(View<? extends Element> view, int index) {
+	protected void visit(View<? extends Displayable> view, int index) {
 		changePosition(view, x + (width * index / (count - 1))
 				- view.getWidth() / 2, view.getY());
 	}

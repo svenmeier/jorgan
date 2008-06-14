@@ -50,6 +50,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
@@ -461,7 +462,7 @@ public class MessagesDockable extends OrganDockable {
 		public void actionPerformed(ActionEvent ev) {
 			Console console = null;
 
-			if (element instanceof Console.Referenceable) {
+			if (element instanceof Displayable) {
 				for (Console referrer : session.getOrgan().getReferrer(element,
 						Console.class)) {
 					console = referrer;

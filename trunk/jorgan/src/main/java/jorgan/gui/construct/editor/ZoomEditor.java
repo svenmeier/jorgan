@@ -25,7 +25,7 @@ import java.text.ParseException;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 
 /**
  * PropertyEditor for a scale property.
@@ -37,7 +37,9 @@ public class ZoomEditor extends CustomEditor {
 	private NumberFormat format = NumberFormat.getPercentInstance();
 
 	public ZoomEditor() {
-		spinner = new JSpinner(new SpinnerNumberModel(100, Math.round(Element.MIN_ZOOM * 100), Math.round(Element.MAX_ZOOM * 100), 1));
+		spinner = new JSpinner(new SpinnerNumberModel(100, Math
+				.round(Displayable.MIN_ZOOM * 100), Math
+				.round(Displayable.MAX_ZOOM * 100), 1));
 		spinner.setBorder(null);
 
 		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
@@ -58,7 +60,7 @@ public class ZoomEditor extends CustomEditor {
 	public Component getCustomEditor(Object value) {
 
 		if (value != null) {
-			spinner.setValue(Math.round(100 * ((Number)value).floatValue()));
+			spinner.setValue(Math.round(100 * ((Number) value).floatValue()));
 		}
 
 		return spinner;
@@ -75,6 +77,6 @@ public class ZoomEditor extends CustomEditor {
 			// invalid value so keep previous value
 		}
 
-		return (((Number)spinner.getValue()).floatValue() / 100);
+		return (((Number) spinner.getValue()).floatValue() / 100);
 	}
 }

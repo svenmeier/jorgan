@@ -29,7 +29,7 @@ import jorgan.disposition.Output.OutputMessage;
  * @see #setActive(boolean)
  * @see #isActive()
  */
-public class Switch extends Engageable implements Console.Referenceable {
+public class Switch extends Engageable {
 
 	private boolean active = false;
 

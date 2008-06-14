@@ -24,7 +24,7 @@ import java.awt.Insets;
 import java.awt.Rectangle;
 import java.net.URL;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
 
 /**
@@ -46,7 +46,7 @@ public abstract class Layer implements Cloneable {
 
 	private transient Resolver resolver;
 
-	protected transient View<? extends Element> view;
+	protected transient View<? extends Displayable> view;
 
 	public void setResolver(Resolver resolver) {
 		this.resolver = resolver;
@@ -56,11 +56,11 @@ public abstract class Layer implements Cloneable {
 		return this.resolver.resolve(name);
 	}
 
-	public void setView(View<? extends Element> view) {
+	public void setView(View<? extends Displayable> view) {
 		this.view = view;
 	}
 
-	public View<? extends Element> getView() {
+	public View<? extends Displayable> getView() {
 		return view;
 	}
 

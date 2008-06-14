@@ -25,7 +25,7 @@ import jorgan.gui.construct.editor.ShortcutEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Switch}.
  */
-public class SwitchBeanInfo extends ElementBeanInfo {
+public class SwitchBeanInfo extends DisplayableBeanInfo {
 
 	@Override
 	protected void registerProperties() {

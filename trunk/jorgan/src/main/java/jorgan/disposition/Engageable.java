@@ -22,7 +22,7 @@ package jorgan.disposition;
 /**
  * Can this element be engaged.
  */
-public class Engageable extends Element {
+public class Engageable extends Displayable {
 
 	/**
 	 * Is this element engaged from referencing {@link Engaging}.

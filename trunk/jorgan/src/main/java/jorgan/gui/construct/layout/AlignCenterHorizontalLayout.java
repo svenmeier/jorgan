@@ -20,7 +20,7 @@ package jorgan.gui.construct.layout;
 
 import java.util.List;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
 
 public class AlignCenterHorizontalLayout extends ViewLayout {
@@ -28,12 +28,12 @@ public class AlignCenterHorizontalLayout extends ViewLayout {
     private int x;
 
     @Override
-	protected void init(View<? extends Element> pressed, List<View<? extends Element>> views) {
+	protected void init(View<? extends Displayable> pressed, List<View<? extends Displayable>> views) {
         x = pressed.getX() + pressed.getWidth() / 2;
     }
 
     @Override
-	protected void visit(View<? extends Element> view, int index) {
+	protected void visit(View<? extends Displayable> view, int index) {
         changePosition(view, x - view.getWidth() / 2, view.getY());
     }
 }
