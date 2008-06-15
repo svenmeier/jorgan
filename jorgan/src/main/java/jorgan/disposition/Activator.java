@@ -27,7 +27,7 @@ public class Activator extends Switch implements Engaging {
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Switch.class.isAssignableFrom(clazz);
 	}
-	
+
 	/**
 	 * Notify referenced {@link Switch}s of change.
 	 */
@@ -37,13 +37,22 @@ public class Activator extends Switch implements Engaging {
 			element.engagingChanged(engaged);
 		}
 	}
-	
+
+	/**
+	 * An activator engages referenced {@link Switch}es when engaged itself.
+	 */
 	public boolean engages(Engageable element) {
-		if (!references((Element)element)) {
+		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
-		
+
 		return isEngaged();
+	}
+
+	/**
+	 * Do nothing.
+	 */
+	public void engagedChanged(Engageable element, boolean engaged) {
 	}
 }

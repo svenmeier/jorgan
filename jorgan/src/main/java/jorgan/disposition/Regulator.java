@@ -35,10 +35,14 @@ public class Regulator extends IndexedContinuous implements Engaging {
 
 	public int getSize() {
 		return getReferenceCount();
-	}    
-	
+	}
+
+	/**
+	 * A regulator enages the referenced {@link Switch} corresponding to the
+	 * current {@link #getIndex()}.
+	 */
 	public boolean engages(Engageable element) {
-		if (!references((Element)element)) {
+		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
@@ -46,11 +50,28 @@ public class Regulator extends IndexedContinuous implements Engaging {
 		return getReference(getIndex()).getElement() == element;
 	}
 
+	/**
+	 * Adjust {@link #getIndex()} if corresponding referenced {@link Switch} is
+	 * engaged.
+	 */
+	public void engagedChanged(Engageable element, boolean engaged) {
+		if (!references((Element) element)) {
+			throw new IllegalArgumentException("does not reference '" + element
+					+ "'");
+		}
+
+		if (engaged) {
+			if (getReference(getIndex()).getElement() != element) {
+				setIndex(getReferencedIndex(element));
+			}
+		}
+	}
+
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
-		// first engage ..
-		((Switch)getReference(newIndex).getElement()).engagingChanged(true);
+		// to minimuze switching first engage ..
+		((Switch) getReference(newIndex).getElement()).engagingChanged(true);
 		// .. then disengage
-		((Switch)getReference(oldIndex).getElement()).engagingChanged(false);
-	}	
+		((Switch) getReference(oldIndex).getElement()).engagingChanged(false);
+	}
 }
