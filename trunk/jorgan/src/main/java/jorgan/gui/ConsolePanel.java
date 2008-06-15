@@ -56,22 +56,15 @@ import javax.swing.ToolTipManager;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.Continuous;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
-import jorgan.disposition.Memory;
-import jorgan.disposition.Rank;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
-import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.console.ContinuousView;
-import jorgan.gui.console.MemoryView;
-import jorgan.gui.console.RankView;
-import jorgan.gui.console.SwitchView;
 import jorgan.gui.console.View;
+import jorgan.gui.console.spi.ProviderRegistry;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
 import jorgan.gui.construct.layout.AlignCenterVerticalLayout;
@@ -470,19 +463,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void createView(Displayable element) {
-		View<? extends Displayable> view = null;
-
-		if (element instanceof Switch) {
-			view = new SwitchView((Switch) element);
-		} else if (element instanceof Memory) {
-			view = new MemoryView((Memory) element);
-		} else if (element instanceof Continuous) {
-			view = new ContinuousView<Continuous>((Continuous) element);
-		} else if (element instanceof Rank) {
-			view = new RankView((Rank) element);
-		} else {
-			view = new View<Displayable>(element);
-		}
+		View<? extends Displayable> view = ProviderRegistry.createView(element);
 
 		viewsByDisplayable.put(element, view);
 		view.setConsolePanel(this);
@@ -541,7 +522,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		// iterate over elements from front to back
 		for (int r = console.getReferenceCount() - 1; r >= 0; r--) {
-			Displayable element = (Displayable)console.getReference(r).getElement();
+			Displayable element = (Displayable) console.getReference(r)
+					.getElement();
 			View<? extends Displayable> view = getView(element);
 			if (view != null && view.contains(x, y)) {
 				return element;
@@ -616,7 +598,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		Rectangle clip = graphics.getClipBounds();
 		graphics.setColor(getBackground());
-		//graphics.setColor(new Color((int)(Math.random() * 255), (int)(Math.random() * 255), (int)(Math.random() * 255)));
+		// graphics.setColor(new Color((int)(Math.random() * 255),
+		// (int)(Math.random() * 255), (int)(Math.random() * 255)));
 		graphics.fillRect(clip.x, clip.y, clip.width, clip.height);
 
 		if (console != null) {
@@ -644,7 +627,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private void paintViews(Graphics2D g) {
 
 		consoleView.paint(g);
-		
+
 		// iterate elements in order defined by console
 		Rectangle clip = g.getClipBounds();
 		for (Displayable element : console.getReferenced(Displayable.class)) {
@@ -681,14 +664,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					initSkin();
 
 					consoleView.changeUpdate(event);
-					for (View<? extends Displayable> view : viewsByDisplayable.values()) {
+					for (View<? extends Displayable> view : viewsByDisplayable
+							.values()) {
 						view.changeUpdate(event);
 					}
 
 					repaint();
 					revalidate();
-				} else if (element instanceof Displayable){
-					View<? extends Displayable> view = getView((Displayable)element);
+				} else if (element instanceof Displayable) {
+					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
 						view.changeUpdate(event);
 					}
@@ -698,7 +682,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					Reference<? extends Element> reference = event
 							.getReference();
 					if (reference != null) {
-						View<? extends Displayable> view = getView((Displayable)reference
+						View<? extends Displayable> view = getView((Displayable) reference
 								.getElement());
 						if (view != null) {
 							view.changeUpdate(event);
@@ -712,8 +696,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void added(OrganEvent event) {
 			if (!event.self() && event.getElement() == console) {
 				Reference<? extends Element> reference = event.getReference();
-				if (reference != null && reference.getElement() instanceof Displayable) {
-					createView((Displayable)reference.getElement());
+				if (reference != null
+						&& reference.getElement() instanceof Displayable) {
+					createView((Displayable) reference.getElement());
 				}
 			}
 		}
@@ -722,8 +707,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void removed(OrganEvent event) {
 			if (!event.self() && event.getElement() == console) {
 				Reference<? extends Element> reference = event.getReference();
-				if (reference != null && reference.getElement() instanceof Displayable) {
-					dropView((Displayable)reference.getElement());
+				if (reference != null
+						&& reference.getElement() instanceof Displayable) {
+					dropView((Displayable) reference.getElement());
 				}
 			}
 		}
@@ -763,8 +749,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			mouseFrom = e.getPoint();
 
-			pressedDisplayable = getElement(screenToView(e.getX()), screenToView(e
-					.getY()));
+			pressedDisplayable = getElement(screenToView(e.getX()),
+					screenToView(e.getY()));
 
 			if (pressedDisplayable != null) {
 				wasSelected = selectedDisplayables.contains(pressedDisplayable);
@@ -791,8 +777,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			Displayable element = getElement(screenToView(e.getX()), screenToView(e
-					.getY()));
+			Displayable element = getElement(screenToView(e.getX()),
+					screenToView(e.getY()));
 			if (element == null) {
 				setCursor(Cursor.getDefaultCursor());
 			} else {
@@ -821,7 +807,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				int y2 = screenToView(Math.max(mouseFrom.y, mouseTo.y));
 
 				List<Displayable> elements = new ArrayList<Displayable>();
-				for (View<? extends Displayable> view : viewsByDisplayable.values()) {
+				for (View<? extends Displayable> view : viewsByDisplayable
+						.values()) {
 					if (view.getX() > x1
 							&& (view.getX() + view.getWidth()) < x2
 							&& view.getY() > y1
@@ -853,8 +840,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				for (Displayable selectedDisplayable : selectedDisplayables) {
 					view = getView(selectedDisplayable);
 
-					console.setLocation(selectedDisplayable, view.getX() + deltaX,
-							view.getY() + deltaY);
+					console.setLocation(selectedDisplayable, view.getX()
+							+ deltaX, view.getY() + deltaY);
 				}
 			}
 		}
@@ -959,7 +946,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			g.setColor(getForeground());
 			g.setXORMode(Color.white);
 
-			if (pressedDisplayable == null && mouseFrom != null && mouseTo != null) {
+			if (pressedDisplayable == null && mouseFrom != null
+					&& mouseTo != null) {
 				int x1 = Math.min(mouseFrom.x, mouseTo.x);
 				int y1 = Math.min(mouseFrom.y, mouseTo.y);
 				int x2 = Math.max(mouseFrom.x, mouseTo.x);
@@ -1102,7 +1090,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * The listener to element selections.
 	 */
 	private class InternalDisplayableSelectionListener implements
-	ElementSelectionListener {
+			ElementSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
 
 			List<Element> newDisplayables = session.getElementSelection()
@@ -1111,8 +1099,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			for (Element element : newDisplayables) {
 				if (selectedDisplayables.contains(element)) {
 					selectedDisplayables.remove(element);
-				} else if (element instanceof Displayable){
-					selectedDisplayables.add((Displayable)element);
+				} else if (element instanceof Displayable) {
+					selectedDisplayables.add((Displayable) element);
 				}
 			}
 
@@ -1123,8 +1111,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			selectedDisplayables.clear();
 			for (Element element : newDisplayables) {
-				if (element instanceof Displayable){
-					selectedDisplayables.add((Displayable)element);
+				if (element instanceof Displayable) {
+					selectedDisplayables.add((Displayable) element);
 				}
 			}
 
@@ -1150,7 +1138,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					.getWindowAncestor(ConsolePanel.this)) {
 
 				boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
-				for (View<? extends Displayable> view : viewsByDisplayable.values()) {
+				for (View<? extends Displayable> view : viewsByDisplayable
+						.values()) {
 					if (pressed) {
 						view.keyPressed(e);
 					} else {
@@ -1216,7 +1205,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void actionPerformed(ActionEvent ev) {
 			ArrayList<View<? extends Displayable>> views = new ArrayList<View<? extends Displayable>>();
 			for (int s = 0; s < selectedDisplayables.size(); s++) {
-				View<? extends Displayable> view = getView(selectedDisplayables.get(s));
+				View<? extends Displayable> view = getView(selectedDisplayables
+						.get(s));
 				if (view != null) {
 					views.add(view);
 				}
