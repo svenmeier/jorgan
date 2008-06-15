@@ -141,11 +141,6 @@ public class Rank extends Engageable {
 		fireChanged(true);
 	}
 
-	@Override
-	protected void onEngaged(boolean engaged) {
-		fireChanged(false);
-	}
-
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();
 

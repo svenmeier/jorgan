@@ -38,7 +38,16 @@ public class Stop extends Keyable implements Engaging {
 		}
 	}
 
+	/**
+	 * A stop engages referenced {@link Rank}s when engaged itself.
+	 */
 	public boolean engages(Engageable element) {
 		return isEngaged();
+	}
+
+	/**
+	 * Do nothing.
+	 */
+	public void engagedChanged(Engageable element, boolean engaged) {
 	}
 }
