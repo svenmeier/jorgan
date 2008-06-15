@@ -18,13 +18,13 @@
  */
 package jorgan.gui.console;
 
-import jorgan.disposition.Rank;
+import jorgan.disposition.Engageable;
 import jorgan.skin.ButtonLayer;
 
 /**
- * A view for a rank.
+ * A view for an {@link Engageable}.
  */
-public class RankView extends View<Rank> {
+public class EngageableView<E extends Engageable> extends View<E> {
 
 	public static final String BINDING_ENGAGED = "engaged";
 
@@ -34,8 +34,8 @@ public class RankView extends View<Rank> {
 	 * @param rank
 	 *            the rank to view
 	 */
-	public RankView(Rank rank) {
-		super(rank);
+	public EngageableView(E engageable) {
+		super(engageable);
 	}
 
 	@Override

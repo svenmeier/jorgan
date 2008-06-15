@@ -34,12 +34,10 @@ import jorgan.skin.TextLayer;
 /**
  * A view for a {@link Switch}.
  */
-public class SwitchView extends View<Switch> {
+public class SwitchView extends EngageableView<Switch> {
 
 	public static final String BINDING_ACTIVE = "active";
 	
-	public static final String BINDING_ENGAGED = "engaged";
-
 	/**
 	 * Constructor.
 	 * 
@@ -77,22 +75,6 @@ public class SwitchView extends View<Switch> {
 				} else {
 					getElement().setActive(false);
 				}
-			};
-		});
-
-		setBinding(BINDING_ENGAGED, new ButtonLayer.Binding() {
-			public boolean isPressable() {
-				return false;
-			}
-
-			public boolean isPressed() {
-				return getElement().isEngaged();
-			}
-
-			public void pressed() {
-			}
-
-			public void released() {
 			};
 		});
 	}
