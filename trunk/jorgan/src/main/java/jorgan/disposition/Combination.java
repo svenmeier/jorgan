@@ -53,7 +53,8 @@ public class Combination extends Switch {
 	
 	@Override
 	protected void onEngaged(boolean engaged) {
-		if (engaged) {
+		// no need to captureOrRecall if onActivated() already did it
+		if (engaged && !isActive()) {
 			captureOrRecall();		
 		}
 	}
