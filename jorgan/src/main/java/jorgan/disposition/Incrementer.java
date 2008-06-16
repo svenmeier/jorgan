@@ -35,11 +35,23 @@ public class Incrementer extends Switch {
 	}
 
 	@Override
+	protected void onActivated(boolean active) {
+		if (active) {
+			increment();		
+		}
+	}	
+	
+	@Override
 	protected void onEngaged(boolean engaged) {
-		if (engaged) {
-			for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
-				continuous.increment(delta);
-			}
+		// no need to increment if onActivated() already did it
+		if (engaged && !isActive()) {
+			increment();
+		}
+	}
+
+	private void increment() {
+		for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
+			continuous.increment(delta);
 		}
 	}
 
