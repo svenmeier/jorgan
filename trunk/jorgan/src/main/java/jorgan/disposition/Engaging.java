@@ -31,12 +31,5 @@ public interface Engaging {
 	 * @param element
 	 * @see Engageable#isEngaged()
 	 */
-	public boolean engages(Engageable element);
-	
-	/**
-	 * Notification about a change of {@link Engageable#isEngaged()}.
-	 * 
-	 * @param element
-	 */
-	public void engagedChanged(Engageable element, boolean engaged);
+	public boolean engages(Engageable element);	
 }

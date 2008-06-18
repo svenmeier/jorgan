@@ -49,10 +49,4 @@ public class Activator extends Switch implements Engaging {
 
 		return isEngaged();
 	}
-
-	/**
-	 * Do nothing.
-	 */
-	public void engagedChanged(Engageable element, boolean engaged) {
-	}
 }

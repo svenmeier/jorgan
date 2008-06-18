@@ -44,10 +44,4 @@ public class Stop extends Keyable implements Engaging {
 	public boolean engages(Engageable element) {
 		return isEngaged();
 	}
-
-	/**
-	 * Do nothing.
-	 */
-	public void engagedChanged(Engageable element, boolean engaged) {
-	}
 }

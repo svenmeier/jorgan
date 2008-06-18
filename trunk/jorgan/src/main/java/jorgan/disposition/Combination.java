@@ -25,17 +25,18 @@ public class Combination extends Switch {
 	public Combination() {
 		setLocking(false);
 	}
-	
+
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Switch.class.isAssignableFrom(clazz);
 	}
 
 	@Override
-	protected boolean validReference(jorgan.disposition.Reference<? extends Element> reference) {
+	protected boolean validReference(
+			jorgan.disposition.Reference<? extends Element> reference) {
 		return reference.getClass() == Reference.class;
-	}	
-	
+	}
+
 	@Override
 	protected Reference createReference(Element element) {
 		if (!(element instanceof Switch)) {
@@ -47,15 +48,15 @@ public class Combination extends Switch {
 	@Override
 	protected void onActivated(boolean active) {
 		if (active) {
-			captureOrRecall();		
+			captureOrRecall();
 		}
 	}
-	
+
 	@Override
 	protected void onEngaged(boolean engaged) {
 		// no need to captureOrRecall if onActivated() already did it
 		if (engaged && !isActive()) {
-			captureOrRecall();		
+			captureOrRecall();
 		}
 	}
 
@@ -63,11 +64,11 @@ public class Combination extends Switch {
 		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
 			if (captor.isEngaged()) {
 				capture(captor);
-				
+
 				return;
 			}
 		}
-		
+
 		recall();
 	}
 
@@ -103,7 +104,7 @@ public class Combination extends Switch {
 
 			fireChanged(reference, false);
 		}
-		
+
 		captor.combinationCaptured();
 	}
 
