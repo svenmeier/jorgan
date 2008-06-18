@@ -54,13 +54,13 @@ public class Regulator extends IndexedContinuous implements Engaging {
 	 * Adjust {@link #getIndex()} if corresponding referenced {@link Switch} is
 	 * engaged.
 	 */
-	public void engagedChanged(Engageable element, boolean engaged) {
+	public void activatedChanged(Switch element, boolean active) {
 		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
 
-		if (engaged) {
+		if (active) {
 			if (getReference(getIndex()).getElement() != element) {
 				setIndex(getReferencedIndex(element));
 			}

@@ -35,31 +35,36 @@ public class Switch extends Engageable {
 
 	private boolean locking = true;
 
-    private Shortcut shortcut;
+	private Shortcut shortcut;
 
-    public Shortcut getShortcut() {
-        return shortcut;
-    }
+	public Shortcut getShortcut() {
+		return shortcut;
+	}
 
-    public void setShortcut(Shortcut shortcut) {
-        this.shortcut = shortcut;
+	public void setShortcut(Shortcut shortcut) {
+		this.shortcut = shortcut;
 
-        fireChanged(true);
-    }
-	
-    public void toggle() {
-    	setActive(!isActive());
-    }
-    
+		fireChanged(true);
+	}
+
+	public void toggle() {
+		setActive(!isActive());
+	}
+
 	public void setActive(boolean active) {
 		if (this.active != active) {
 			this.active = active;
 
 			fireChanged(false);
-			
+
 			onActivated(active);
 
 			updateEngaged(active);
+
+			for (Regulator regulator : getOrgan().getReferrer(this,
+					Regulator.class)) {
+				regulator.activatedChanged(this, active);
+			}
 		}
 	}
 
@@ -90,7 +95,7 @@ public class Switch extends Engageable {
 		}
 		return count;
 	}
-	
+
 	@Override
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();

@@ -41,14 +41,6 @@ public class Engageable extends Displayable {
 	protected void onEngaged(boolean engaged) {
 	}
 
-	private void onEngagedInternal(boolean engaged) {
-		onEngaged(engaged);
-		
-		for (Engaging engaging : getOrgan().getReferrer(this, Engaging.class)) {
-			engaging.engagedChanged(this, engaged);
-		}
-	}
-	
 	/**
 	 * Notification from a referencing {@link Engaging} of a change in
 	 * {@link Engaging#engages(Engageable))}.
@@ -68,13 +60,13 @@ public class Engageable extends Displayable {
 		if (engaged) {
 			if (engagedCount == 1) {
 				// first engaged
-				onEngagedInternal(true);
+				onEngaged(true);
 				return true;
 			}
 		} else {
 			if (engagedCount == 0) {
 				// last disengaged
-				onEngagedInternal(false);
+				onEngaged(false);
 				return true;
 			}
 		}
