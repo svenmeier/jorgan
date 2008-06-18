@@ -18,18 +18,25 @@
  */
 package jorgan.gui.console;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
+import jorgan.disposition.IndexedContinuous;
 import jorgan.disposition.Memory;
 import jorgan.skin.TextLayer;
 
 /**
  * A view that shows a {@link Memory}.
  */
-public class MemoryView extends IndexedContinuousView<Memory> {
+public class IndexedContinuousView<E extends IndexedContinuous> extends
+		ContinuousView<E> {
 
 	/**
-	 * The key of the {@link Memory#getTitle()} text for {@link TextLayer}s.
+	 * The key of the {@link IndexedContinuous#getIndex()} text for {@link TextLayer}s.
 	 */
-	public static final String BINDING_TITLE = "title";
+	public static final String BINDING_INDEX = "index";
+
+	private NumberFormat indexFormat = new DecimalFormat("000");
 
 	/**
 	 * Constructor.
@@ -37,21 +44,21 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	 * @param memory
 	 *            memory to view
 	 */
-	public MemoryView(Memory memory) {
-		super(memory);
+	public IndexedContinuousView(E element) {
+		super(element);
 	}
 
 	@Override
 	protected void initBindings() {
 		super.initBindings();
 
-		setBinding(BINDING_TITLE, new TextLayer.Binding() {
+		setBinding(BINDING_INDEX, new TextLayer.Binding() {
 			public boolean isPressable() {
 				return false;
 			}
 
 			public String getText() {
-				return getElement().getTitle();
+				return indexFormat.format(getElement().getIndex() + 1);
 			}
 		});
 	}
