@@ -69,9 +69,10 @@ public class Regulator extends IndexedContinuous implements Engaging {
 
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
-		// to minimuze switching first engage ..
-		((Switch) getReference(newIndex).getElement()).engagingChanged(true);
-		// .. then disengage
+		// Disengage old switch first to save resources. Note that referenced
+		// switches (including further referenced switches in case of an
+		// Activator) will stay engaged if they are reference by the new switch.
 		((Switch) getReference(oldIndex).getElement()).engagingChanged(false);
+		((Switch) getReference(newIndex).getElement()).engagingChanged(true);
 	}
 }
