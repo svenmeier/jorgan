@@ -25,6 +25,7 @@ import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
@@ -57,6 +58,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Rank.class);
 		classes.add(Switch.class);
 		classes.add(SwitchFilter.class);
+		classes.add(Continuous.class);
 		classes.add(ContinuousFilter.class);
 		classes.add(Keyer.class);
 		classes.add(Activator.class);
