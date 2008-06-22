@@ -4,6 +4,7 @@ import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
@@ -11,9 +12,7 @@ import jorgan.disposition.GenericSound;
 import jorgan.disposition.Incrementer;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
-import jorgan.disposition.Memory;
 import jorgan.disposition.Rank;
-import jorgan.disposition.Regulator;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
@@ -57,16 +56,14 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new SwitchFilterPlayer((SwitchFilter) element);
 		} else if (clazz == Activator.class) {
 			player = new SwitchPlayer<Activator>((Activator) element);
-		} else if (clazz == Regulator.class) {
-			player = new ContinuousPlayer<Regulator>((Regulator) element);
 		} else if (clazz == Combination.class) {
 			player = new SwitchPlayer<Combination>((Combination) element);
 		} else if (clazz == Incrementer.class) {
 			player = new SwitchPlayer<Incrementer>((Incrementer) element);
 		} else if (clazz == Captor.class) {
 			player = new SwitchPlayer<Captor>((Captor) element);
-		} else if (clazz == Memory.class) {
-			player = new ContinuousPlayer<Memory>((Memory) element);
+		} else if (clazz == Continuous.class) {
+			player = new ContinuousPlayer<Continuous>((Continuous) element);
 		} else if (clazz == GenericSound.class) {
 			player = new GenericSoundPlayer<GenericSound>(
 					(GenericSound) element);
