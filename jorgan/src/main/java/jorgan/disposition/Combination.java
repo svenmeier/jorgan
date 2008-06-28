@@ -20,8 +20,10 @@ package jorgan.disposition;
 
 import java.util.Arrays;
 
-public class Combination extends Switch {
+public class Combination extends Switch implements Activating {
 
+	private boolean recalling;
+	
 	public Combination() {
 		setLocking(false);
 	}
@@ -74,24 +76,30 @@ public class Combination extends Switch {
 
 	private void recall() {
 
-		int level = getLevel();
+		try {
+			recalling = true;
 
-		// deactivate first ..
-		for (Reference reference : getReferences(Reference.class)) {
-			Switch registratable = reference.getElement();
+			int level = getLevel();
 
-			if (!reference.isActive(level)) {
-				registratable.setActive(false);
+			// deactivate first ..
+			for (Reference reference : getReferences(Reference.class)) {
+				Switch registratable = reference.getElement();
+
+				if (!reference.isActive(level)) {
+					registratable.setActive(false);
+				}
 			}
-		}
 
-		// .. then activate
-		for (Reference reference : getReferences(Reference.class)) {
-			Switch registratable = reference.getElement();
+			// .. then activate
+			for (Reference reference : getReferences(Reference.class)) {
+				Switch registratable = reference.getElement();
 
-			if (reference.isActive(level)) {
-				registratable.setActive(true);
+				if (reference.isActive(level)) {
+					registratable.setActive(true);
+				}
 			}
+		} finally {
+			recalling = false;
 		}
 	}
 
@@ -152,6 +160,28 @@ public class Combination extends Switch {
 		}
 	}
 
+	public void switchChanged(Switch element, boolean active) {
+		if (recalling) {
+			return;
+		}
+		
+		if (!references((Element) element)) {
+			throw new IllegalArgumentException("does not reference '" + element
+					+ "'");
+		}
+
+		if (isActive()) {
+			int level = getLevel();
+
+			for (Reference reference : getReferences(Reference.class)) {
+				if (reference.isActive(level) != active) {
+					setActive(false);
+					break;
+				}
+			}
+		}
+	}
+	
 	/**
 	 * A reference of a combination to another element.
 	 */
