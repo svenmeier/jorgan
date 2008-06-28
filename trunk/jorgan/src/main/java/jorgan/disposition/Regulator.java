@@ -21,7 +21,8 @@ package jorgan.disposition;
 /**
  * An regulator of {@link jorgan.disposition.Switch}es.
  */
-public class Regulator extends IndexedContinuous implements Engaging {
+public class Regulator extends IndexedContinuous implements Engaging,
+		Activating {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -54,7 +55,7 @@ public class Regulator extends IndexedContinuous implements Engaging {
 	 * Adjust {@link #getIndex()} if corresponding referenced {@link Switch} is
 	 * engaged.
 	 */
-	public void activatedChanged(Switch element, boolean active) {
+	public void switchChanged(Switch element, boolean active) {
 		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");

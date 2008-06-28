@@ -61,9 +61,9 @@ public class Switch extends Engageable {
 
 			updateEngaged(active);
 
-			for (Regulator regulator : getOrgan().getReferrer(this,
-					Regulator.class)) {
-				regulator.activatedChanged(this, active);
+			for (Activating activating : getOrgan().getReferrer(this,
+					Activating.class)) {
+				activating.switchChanged(this, active);
 			}
 		}
 	}
