@@ -25,7 +25,7 @@ public class Incrementer extends Switch {
 
 	private int delta = 1;
 	
-	private Incrementer() {
+	public Incrementer() {
 		setLocking(false);
 	}
 
