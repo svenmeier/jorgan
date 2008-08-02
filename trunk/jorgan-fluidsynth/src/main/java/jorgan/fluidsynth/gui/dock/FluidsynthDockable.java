@@ -306,7 +306,7 @@ public class FluidsynthDockable extends OrganDockable {
 	}
 
 	private void setPercentage(JSpinner spinner, double value) {
-		spinner.setValue((int) (value * 100));
+		spinner.setValue((int)Math.round(value * 100));
 	}
 
 	private double getPercentage(JSpinner spinner) {
