@@ -127,10 +127,13 @@ public class Fluidsynth {
 		}
 
 		try {
-			System.load(NativeUtils.getLibraryName(file, "fluidsynth"));
+			// for Windows we load fluidsynth explicitely from extension
+			System.load(NativeUtils.getLibraryName(file, "libfluidsynth-1"));
 		} catch (UnsatisfiedLinkError error) {
-			// might be on system library path
+			// should be on system library path, thus will be automagically
+			// loadad with following JNI wrapper
 		}
+
 		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
 	}
 }
