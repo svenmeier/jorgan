@@ -39,6 +39,8 @@ public class Memory extends IndexedContinuous {
 
 	public void setTitle(String index) {
 		titles[getIndex()] = index;
+		
+		fireChanged(false);
 	}
 
 	public void setSize(int size) {
