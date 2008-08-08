@@ -32,6 +32,10 @@ public abstract class IndexedContinuous extends Continuous {
 		setValue((index + 0.5f) / getSize());
 	}
 	
+	public abstract String getTitle();
+	
+	public abstract void setTitle(String title);
+	
 	@Override
 	protected void onValueChanged(float oldValue, float newValue) {
 		int oldIndex = getIndex(oldValue);

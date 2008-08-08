@@ -20,6 +20,7 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.IndexedContinuous;
 import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.editor.StringEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.IndexedContinuous}.
@@ -31,5 +32,6 @@ public class IndexedContinuousBeanInfo extends ContinuousBeanInfo {
 		super.registerProperties();
 
 		add("index", IndexedContinuous.class, IntegerEditor.class);
+		add("title", IndexedContinuous.class, StringEditor.class);
 	}
 }

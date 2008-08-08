@@ -38,6 +38,25 @@ public class Regulator extends IndexedContinuous implements Engaging,
 		return getReferenceCount();
 	}
 
+	@Override
+	public String getTitle() {
+		int index = getIndex();
+		
+		if (index < getSize()) {
+			return getReference(index).getElement().getName();
+		} else {
+			return "";
+		}
+	}
+
+	public void setTitle(String title) {
+		int index = getIndex();
+		
+		if (index < getSize()) {
+			getReference(index).getElement().setName(title);
+		}
+	}
+	
 	/**
 	 * A regulator enages the referenced {@link Switch} corresponding to the
 	 * current {@link #getIndex()}.

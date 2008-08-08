@@ -36,6 +36,11 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 	 */
 	public static final String BINDING_INDEX = "index";
 
+	/**
+	 * The key of the {@link IndexedContinuous#getTitle()} text for {@link TextLayer}s.
+	 */
+	public static final String BINDING_TITLE = "title";
+
 	private NumberFormat indexFormat = new DecimalFormat("000");
 
 	/**
@@ -59,6 +64,16 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 
 			public String getText() {
 				return indexFormat.format(getElement().getIndex() + 1);
+			}
+		});
+		
+		setBinding(BINDING_TITLE, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+
+			public String getText() {
+				return getElement().getTitle();
 			}
 		});
 	}
