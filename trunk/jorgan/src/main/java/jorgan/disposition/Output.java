@@ -20,6 +20,10 @@ package jorgan.disposition;
 
 public interface Output {
 
+	public String getOutput();
+
+	public void setOutput(String output);
+	
 	public static abstract class OutputMessage extends Message {
 	}
 }
