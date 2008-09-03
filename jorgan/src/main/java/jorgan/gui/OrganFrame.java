@@ -51,6 +51,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.convenience.DevicesWizard;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
@@ -125,6 +126,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private SaveAsAction saveAsAction = new SaveAsAction();
 
 	private ImportAction importAction = new ImportAction();
+
+	private DevicesAction inputOutputAction = new DevicesAction();
 
 	private ExitAction exitAction = new ExitAction();
 
@@ -218,6 +221,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		fileMenu.add(saveAsAction);
 		fileMenu.addSeparator();
 		fileMenu.add(importAction);
+		fileMenu.add(inputOutputAction);
 		if (tweakMac.isInstalled()) {
 			tweakMac.setQuitListener(exitAction);
 		} else {
@@ -697,6 +701,19 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			ImportWizard.showInDialog(OrganFrame.this, session.getOrgan());
+		}
+	}
+
+	/**
+	 * The action that starts the devices configuration wizard.
+	 */
+	private class DevicesAction extends BaseAction {
+		private DevicesAction() {
+			config.get("devices").read(this);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			DevicesWizard.showInDialog(OrganFrame.this, session.getOrgan());
 		}
 	}
 

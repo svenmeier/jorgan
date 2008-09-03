@@ -19,6 +19,6 @@
 package jorgan.disposition;
 
 
-public abstract class Sound extends Element implements Output {
+public abstract class Sound extends Element {
 
 }
