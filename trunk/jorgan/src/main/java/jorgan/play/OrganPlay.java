@@ -173,18 +173,7 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values()
-					.iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.open();
-			}
-
-			iterator = players.values().iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.elementChanged(null);
-			}
+			openImpl();
 		}
 
 		synchronized (RECEIVER_LOCK) {
@@ -192,6 +181,21 @@ public class OrganPlay {
 		}
 
 		fireOpened();
+	}
+
+	private void openImpl() {
+		Iterator<Player<? extends Element>> iterator = players.values()
+				.iterator();
+		while (iterator.hasNext()) {
+			Player<? extends Element> player = iterator.next();
+			player.open();
+		}
+
+		iterator = players.values().iterator();
+		while (iterator.hasNext()) {
+			Player<? extends Element> player = iterator.next();
+			player.elementChanged(null);
+		}
 	}
 
 	public boolean isOpen() {
@@ -208,15 +212,19 @@ public class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values()
-					.iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.close();
-			}
+			closeImpl();
 		}
 
 		fireClosed();
+	}
+
+	private void closeImpl() {
+		Iterator<Player<? extends Element>> iterator = players.values()
+				.iterator();
+		while (iterator.hasNext()) {
+			Player<? extends Element> player = iterator.next();
+			player.close();
+		}
 	}
 
 	protected void createPlayer(Element element) {
@@ -260,6 +268,8 @@ public class OrganPlay {
 						player.elementChanged(event);
 					}
 				}
+				
+				checkDispositionChange(event);
 			}
 		}
 
@@ -269,6 +279,8 @@ public class OrganPlay {
 				if (event.self()) {
 					createPlayer(event.getElement());
 				}
+				
+				checkDispositionChange(event);
 			}
 		}
 
@@ -277,6 +289,17 @@ public class OrganPlay {
 			synchronized (CHANGE_LOCK) {
 				if (event.self()) {
 					dropPlayer(event.getElement());
+				}
+
+				checkDispositionChange(event);
+			}
+		}
+
+		private void checkDispositionChange(OrganEvent event) {
+			if (event.isDispositionChange()) {
+				if (open) {
+					closeImpl();
+					openImpl();
 				}
 			}
 		}
