@@ -13,6 +13,7 @@ import jorgan.disposition.Incrementer;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
 import jorgan.disposition.Rank;
+import jorgan.disposition.Regulator;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Switch;
 import jorgan.disposition.SwitchFilter;
@@ -56,6 +57,8 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new SwitchFilterPlayer((SwitchFilter) element);
 		} else if (clazz == Activator.class) {
 			player = new SwitchPlayer<Activator>((Activator) element);
+		} else if (clazz == Regulator.class) {
+			player = new ContinuousPlayer<Regulator>((Regulator) element);
 		} else if (clazz == Combination.class) {
 			player = new SwitchPlayer<Combination>((Combination) element);
 		} else if (clazz == Incrementer.class) {
