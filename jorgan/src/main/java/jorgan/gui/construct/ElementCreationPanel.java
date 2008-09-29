@@ -18,11 +18,13 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.Component;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -34,6 +36,7 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
+import jorgan.gui.img.ElementIcons;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.text.DocumentNotifier;
@@ -70,6 +73,23 @@ public class ElementCreationPanel extends JPanel {
 		column.definition(nameTextField).fillHorizontal();
 
 		column.term(config.get("type").read(new JLabel()));
+		typeList.setCellRenderer(new DefaultListCellRenderer() {
+
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+
+				Class<?> clazz = (Class<?>) value;
+				
+				super.getListCellRendererComponent(list, Elements.getDisplayName(clazz), index,
+						isSelected, cellHasFocus);
+
+				setIcon(ElementIcons.getIcon(clazz));
+
+				return this;
+			}
+
+		});
 		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
@@ -113,14 +133,9 @@ public class ElementCreationPanel extends JPanel {
 	 * 
 	 * @return the element class
 	 */
+	@SuppressWarnings("unchecked")
 	public Class<? extends Element> getElementClass() {
-		int index = typeList.getSelectedIndex();
-
-		if (index == -1) {
-			return null;
-		} else {
-			return elementClasses.get(index);
-		}
+		return (Class<? extends Element>)typeList.getSelectedValue();
 	}
 
 	/**
@@ -139,7 +154,7 @@ public class ElementCreationPanel extends JPanel {
 		}
 
 		public Object getElementAt(int index) {
-			return Elements.getDisplayName(elementClasses.get(index));
+			return elementClasses.get(index);
 		}
 	}
 
