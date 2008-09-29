@@ -44,7 +44,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.ReferenceListCellRenderer;
+import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
 import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
@@ -129,7 +129,7 @@ public class ReferencesDockable extends OrganDockable {
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		list.setModel(referencesToModel);
-		list.setCellRenderer(new ReferenceListCellRenderer() {
+		list.setCellRenderer(new ElementListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
 				return session;
@@ -194,7 +194,7 @@ public class ReferencesDockable extends OrganDockable {
 	public boolean forPlay() {
 		return false;
 	}
-	
+
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);

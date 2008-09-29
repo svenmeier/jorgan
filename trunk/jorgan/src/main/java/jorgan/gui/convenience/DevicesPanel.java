@@ -24,12 +24,14 @@ import java.util.Map;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Input;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Output;
+import jorgan.gui.img.ElementIcons;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -70,7 +72,10 @@ public class DevicesPanel extends JPanel {
 		Column column = builder.column();
 		for (Element element : organ.getElements()) {
 			if (adapter.applies(element)) {
-				column.term(new JLabel(Elements.getDisplayName(element)));
+				JLabel label = new JLabel(Elements.getDisplayName(element));
+				label.setHorizontalTextPosition(SwingConstants.LEFT);
+				label.setIcon(ElementIcons.getIcon(element.getClass()));
+				column.term(label);
 
 				column.definition(createComboBox(element, tags)).fillHorizontal();
 			}

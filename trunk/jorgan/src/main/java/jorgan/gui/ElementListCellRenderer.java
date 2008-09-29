@@ -17,7 +17,9 @@ import javax.swing.JList;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.dock.ElementsDockable;
+import jorgan.gui.img.ElementIcons;
 import jorgan.session.OrganSession;
+import jorgan.swing.CompoundIcon;
 import jorgan.swing.list.CommentedCellRenderer;
 
 /**
@@ -26,12 +28,6 @@ import jorgan.swing.list.CommentedCellRenderer;
 public class ElementListCellRenderer extends CommentedCellRenderer {
 
 	private static Pattern repeatedWhitespace = Pattern.compile(" +");
-
-	/**
-	 * Icon used for indication an element.
-	 */
-	private static final Icon elementIcon = new ImageIcon(ElementsDockable.class
-			.getResource("/jorgan/gui/img/element.gif"));
 
 	/**
 	 * Icon used for indication of a warning.
@@ -75,14 +71,15 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	protected Icon getIcon(Element element) {
 		OrganSession session = getOrgan();
 
+		Icon icon = ElementIcons.getIcon(element.getClass());
 		if (session != null) {
 			if (session.getProblems().hasErrors(element)) {
-				return errorIcon;
+				return new CompoundIcon(icon, errorIcon);
 			} else if (session.getProblems().hasWarnings(element)) {
-				return warningIcon;
+				return new CompoundIcon(icon, warningIcon);
 			}
 		}
-		return elementIcon;
+		return icon;
 	}
 
 	private class WrappedRenderer extends DefaultListCellRenderer {
@@ -96,10 +93,6 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 
 			text.setLength(0);
 			text.append(noRepeatedWhitespace(Elements.getDisplayName(element)));
-			if (!"".equals(element.getName())) {
-				text.append(" : ");
-				text.append(Elements.getDisplayName(element.getClass()));
-			}
 
 			super.getListCellRendererComponent(list, text.toString(), index,
 					isSelected, cellHasFocus);
