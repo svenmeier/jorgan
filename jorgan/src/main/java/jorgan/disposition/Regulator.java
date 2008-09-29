@@ -42,10 +42,10 @@ public class Regulator extends IndexedContinuous implements Engaging,
 	public String getTitle() {
 		int index = getIndex();
 		
-		if (index < getSize()) {
-			return getReference(index).getElement().getName();
-		} else {
+		if (index == -1) {
 			return "";
+		} else {
+			return getReference(index).getElement().getName();
 		}
 	}
 
