@@ -99,6 +99,7 @@ public class WizardDialog extends StandardDialog {
 			this.wizard.removeWizardListener(listener);
 
 			setBody(null);
+			setDescription(null);
 		}
 
 		this.wizard = wizard;
