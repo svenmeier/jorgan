@@ -146,9 +146,7 @@ public class WizardDialog extends StandardDialog {
 					setBody(null);
 					setDescription(null);
 				} else {
-					if (!component.equals(getBody())) {
-						setBody(component);
-					}
+					setBody(component);
 					setDescription(current.getDescription());
 				}
 				previousAction.setEnabled(wizard.hasPrevious()

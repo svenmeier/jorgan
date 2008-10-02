@@ -157,6 +157,10 @@ public class StandardDialog extends JDialog {
 	 *            body to be displayed
 	 */
 	public void setBody(JComponent body) {
+		if (this.body == body) {
+			return;
+		}
+
 		if (this.body != null) {
 			bodyWrapper.remove(this.body);
 			bodyWrapper.revalidate();
@@ -169,9 +173,11 @@ public class StandardDialog extends JDialog {
 			bodyWrapper.add(body, BorderLayout.CENTER);
 			bodyWrapper.revalidate();
 			bodyWrapper.repaint();
-		}
 
-		guaranteePreferredSize();
+			if (isVisible()) {
+				guaranteeSize();
+			}
+		}
 	}
 
 	/**
@@ -181,6 +187,15 @@ public class StandardDialog extends JDialog {
 	 */
 	public JComponent getBody() {
 		return body;
+	}
+
+	@Override
+	public void setVisible(boolean visible) {
+		if (visible) {
+			guaranteeSize();
+		}
+		
+		super.setVisible(visible);
 	}
 
 	/**
@@ -193,6 +208,10 @@ public class StandardDialog extends JDialog {
 		descriptionLabel.setText(description);
 
 		descriptionLabel.setVisible(description != null);
+
+		if (isVisible()) {
+			guaranteeSize();
+		}
 	}
 
 	/**
@@ -305,16 +324,24 @@ public class StandardDialog extends JDialog {
 	}
 
 	/**
-	 * Guarantee that the size of this dialog is greater than the preferred
-	 * size.
+	 * Guarantee the size of this dialog to be greater than the preferred size.
 	 */
-	private void guaranteePreferredSize() {
-		Dimension preferredSize = getPreferredSize();
-		Dimension size = getSize();
+	private void guaranteeSize() {
 
-		setSize(Math.max(preferredSize.width, size.width), Math.max(
-				preferredSize.height, size.height));
-		validate();
+		Dimension current = getSize();
+
+		if (!isDisplayable()) {
+			// if not displayable yet, the preferred size of the dialog
+			// decorations are not correctly taken into account
+			pack();
+		}
+
+		Dimension preferred = getPreferredSize();
+		if (preferred.width > current.width || preferred.height > current.height) {
+			setSize(Math.max(preferred.width, current.width), Math.max(
+					preferred.height, current.height));
+			validate();
+		}
 	}
 
 	/**
