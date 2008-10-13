@@ -330,14 +330,16 @@ public class StandardDialog extends JDialog {
 
 		Dimension current = getSize();
 
+		boolean packed = false;
 		if (!isDisplayable()) {
 			// if not displayable yet, the preferred size of the dialog
 			// decorations are not correctly taken into account
 			pack();
+			packed = true;
 		}
 
 		Dimension preferred = getPreferredSize();
-		if (preferred.width > current.width || preferred.height > current.height) {
+		if (packed || preferred.width > current.width || preferred.height > current.height) {
 			setSize(Math.max(preferred.width, current.width), Math.max(
 					preferred.height, current.height));
 			validate();
