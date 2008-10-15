@@ -27,6 +27,7 @@ import javax.swing.JFrame;
 import jorgan.swing.StandardDialog;
 import bias.Configuration;
 import bias.swing.CategoriesPanel;
+import bias.swing.Category;
 
 /**
  * A dialog for editing of configurations.
@@ -36,7 +37,14 @@ public class PreferencesDialog extends StandardDialog {
 	private static Configuration config = Configuration.getRoot().get(
 			PreferencesDialog.class);
 
-	private CategoriesPanel categoriesPanel = new CategoriesPanel();
+	private CategoriesPanel categoriesPanel = new CategoriesPanel() {
+		@Override
+		protected void categorySelected(Category category) {
+			super.categorySelected(category);
+			
+			PreferencesDialog.this.guaranteeSize();
+		}
+	};
 
 	/**
 	 * Constructor.
