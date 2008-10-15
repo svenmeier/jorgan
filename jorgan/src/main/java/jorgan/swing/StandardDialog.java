@@ -192,9 +192,19 @@ public class StandardDialog extends JDialog {
 	@Override
 	public void setVisible(boolean visible) {
 		if (visible) {
+			if (!isDisplayable()) {
+				// if not displayable yet, the preferred size of the dialog
+				// decorations are not correctly taken into account so pack()
+				// first and then restore the current size
+
+				Dimension current = getSize();
+				pack();
+				setSize(current);
+			}
+
 			guaranteeSize();
 		}
-		
+
 		super.setVisible(visible);
 	}
 
@@ -326,20 +336,12 @@ public class StandardDialog extends JDialog {
 	/**
 	 * Guarantee the size of this dialog to be greater than the preferred size.
 	 */
-	private void guaranteeSize() {
+	protected void guaranteeSize() {
 
 		Dimension current = getSize();
-
-		boolean packed = false;
-		if (!isDisplayable()) {
-			// if not displayable yet, the preferred size of the dialog
-			// decorations are not correctly taken into account
-			pack();
-			packed = true;
-		}
-
 		Dimension preferred = getPreferredSize();
-		if (packed || preferred.width > current.width || preferred.height > current.height) {
+		if (preferred.width > current.width
+				|| preferred.height > current.height) {
 			setSize(Math.max(preferred.width, current.width), Math.max(
 					preferred.height, current.height));
 			validate();
