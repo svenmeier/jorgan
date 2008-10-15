@@ -193,9 +193,8 @@ public class StandardDialog extends JDialog {
 	public void setVisible(boolean visible) {
 		if (visible) {
 			if (!isDisplayable()) {
-				// if not displayable yet, the preferred size of the dialog
-				// decorations are not correctly taken into account so pack()
-				// first and then restore the current size
+				// pack and then immediately restore current size,
+				// see #guaranteeSize()
 
 				Dimension current = getSize();
 				pack();
@@ -335,6 +334,8 @@ public class StandardDialog extends JDialog {
 
 	/**
 	 * Guarantee the size of this dialog to be greater than the preferred size.
+	 * This dialog should at least be displayable so that the dialog decorations
+	 * are taken into account for preferred size.
 	 */
 	protected void guaranteeSize() {
 
