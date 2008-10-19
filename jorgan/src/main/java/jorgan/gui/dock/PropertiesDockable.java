@@ -29,6 +29,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.construct.editor.ElementAwareEditor;
@@ -99,6 +100,13 @@ public class PropertiesDockable extends OrganDockable {
 		private boolean changing = false;
 
 		public void selectionChanged(ElementSelectionEvent ev) {
+			Element element = session.getElementSelection().getSelectedElement();
+			if (element == null) {
+				setStatus(null);
+			} else {
+				setStatus(Elements.getDisplayName(element.getClass()));
+			}
+			
 			updateProperties();
 		}
 
