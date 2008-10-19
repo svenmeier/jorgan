@@ -21,7 +21,6 @@ package jorgan.swing.beans;
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -505,9 +504,6 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			if (column == 0) {
 				setText((String) value);
 				setToolTipText(null);
-				if (row == beanInfo.getDefaultPropertyIndex()) {
-					setFont(getFont().deriveFont(Font.BOLD));
-				}
 			} else {
 				if (editors[row] == null) {
 					if (value == null) {
