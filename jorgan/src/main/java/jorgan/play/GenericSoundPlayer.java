@@ -57,7 +57,7 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	protected void openImpl() {
 		GenericSound sound = getElement();
 
-		removeProblem(Severity.ERROR, "device");
+		removeProblem(Severity.ERROR, "output");
 		if (sound.getOutput() != null) {
 			try {
 				receiver = getOrganPlay().createReceiver(sound.getOutput());
