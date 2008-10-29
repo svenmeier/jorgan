@@ -74,10 +74,10 @@ public class AboutPanel extends JPanel {
 
 		String version = new Info().getVersion();
 
-		g.setFont(new Font("Sans Serif", Font.PLAIN, 14));
+		g.setFont(new Font("Sans Serif", Font.PLAIN, 16));
 		g.setColor(Color.black);
 
-		g.drawString(version, 182, 182);
+		g.drawString("Version " + version, 5, 150);
 	}
 
 	/**
