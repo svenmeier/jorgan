@@ -51,6 +51,13 @@ public class Switch extends Engageable {
 		setActive(!isActive());
 	}
 
+	public void initiate() {
+		if (!isActive()) {
+			setActive(true);
+			setActive(false);
+		}
+	}
+	
 	public void setActive(boolean active) {
 		if (this.active != active) {
 			this.active = active;
@@ -103,6 +110,7 @@ public class Switch extends Engageable {
 		names.add(Activate.class);
 		names.add(Deactivate.class);
 		names.add(Toggle.class);
+		names.add(Initiate.class);
 		names.add(Activated.class);
 		names.add(Deactivated.class);
 
@@ -118,6 +126,9 @@ public class Switch extends Engageable {
 	public static class Toggle extends InputMessage {
 	}
 
+	public static class Initiate extends InputMessage {
+	}
+	
 	public static class Activated extends OutputMessage {
 	}
 

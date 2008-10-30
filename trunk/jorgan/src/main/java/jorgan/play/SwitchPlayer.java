@@ -23,6 +23,7 @@ import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Activated;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.disposition.Switch.Deactivated;
+import jorgan.disposition.Switch.Initiate;
 import jorgan.disposition.Switch.Toggle;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.OrganEvent;
@@ -49,6 +50,8 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 			element.setActive(false);
 		} else if (message instanceof Toggle) {
 			element.toggle();
+		} else if (message instanceof Initiate) {
+			element.initiate();
 		} else {
 			super.input(message, context);
 		}
