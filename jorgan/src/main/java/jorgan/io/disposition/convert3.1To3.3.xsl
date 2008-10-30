@@ -2,12 +2,9 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 
 	<xsl:template match="initiator-initiate">
-		<switch-activate>
+		<switch-initiate>
 			<xsl:apply-templates select="@*|node()"/>
-		</switch-activate>
-		<switch-deactivate>
-			<xsl:apply-templates select="@*|node()"/>
-		</switch-deactivate>
+		</switch-initiate>
 	</xsl:template>
 
 	<xsl:template match="initiator-initiated">
