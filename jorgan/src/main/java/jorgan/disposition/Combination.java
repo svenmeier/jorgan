@@ -160,7 +160,7 @@ public class Combination extends Switch implements Activating {
 		}
 	}
 
-	public void switchChanged(Switch element, boolean active) {
+	public void activeChanged(Switch element, boolean active) {
 		if (recalling) {
 			return;
 		}
