@@ -49,31 +49,31 @@ public class Engageable extends Displayable {
 	 */
 	public final void engagingChanged(boolean engaged) {
 
-		if (updateEngaged(engaged)) {
+		if (isEngagedChange(engaged)) {
 			fireChanged(false);
+			
+			onEngaged(engaged);
 		}
 	}
 
-	protected boolean updateEngaged(boolean engaged) {
+	protected final boolean isEngagedChange(boolean engaged) {
 		int engagedCount = getEngagedCount();
 
 		if (engaged) {
 			if (engagedCount == 1) {
 				// first engaged
-				onEngaged(true);
 				return true;
 			}
 		} else {
 			if (engagedCount == 0) {
 				// last disengaged
-				onEngaged(false);
 				return true;
 			}
 		}
 
 		return false;
 	}
-
+	
 	protected int getEngagedCount() {
 		int count = 0;
 		for (Engaging engaging : getOrgan().getReferrer(this, Engaging.class)) {

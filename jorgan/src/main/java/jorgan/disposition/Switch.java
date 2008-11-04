@@ -66,7 +66,9 @@ public class Switch extends Engageable {
 
 			onActivated(active);
 
-			updateEngaged(active);
+			if (isEngagedChange(active)) {
+				onEngaged(active);
+			}
 
 			for (Activating activating : getOrgan().getReferrer(this,
 					Activating.class)) {
