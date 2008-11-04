@@ -57,22 +57,27 @@ public class Switch extends Engageable {
 			setActive(false);
 		}
 	}
-	
+
 	public void setActive(boolean active) {
 		if (this.active != active) {
 			this.active = active;
 
-			fireChanged(false);
+			// the following block should be in sync with
+			// Engageable#engagingChanged(boolean), first fire change, then
+			// check change of engaging
+			{
+				fireChanged(false);
+
+				if (isEngagedChange(active)) {
+					onEngaged(active);
+				}
+			}
 
 			onActivated(active);
 
-			if (isEngagedChange(active)) {
-				onEngaged(active);
-			}
-
 			for (Activating activating : getOrgan().getReferrer(this,
 					Activating.class)) {
-				activating.switchChanged(this, active);
+				activating.activeChanged(this, active);
 			}
 		}
 	}
@@ -130,7 +135,7 @@ public class Switch extends Engageable {
 
 	public static class Initiate extends InputMessage {
 	}
-	
+
 	public static class Activated extends OutputMessage {
 	}
 

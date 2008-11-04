@@ -25,5 +25,11 @@ package jorgan.disposition;
  */
 public interface Activating {
 
-	public void switchChanged(Switch element, boolean active);	
+	/**
+	 * Notification from a referenced {@link Switch} of a change in
+	 * {@link Switch#isActive())}.
+	 * 
+	 * @param engaged
+	 */
+	public void activeChanged(Switch element, boolean active);	
 }
