@@ -69,12 +69,12 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
   // JACK specialities
   fluid_settings_setint((*context).settings, "audio.jack.autoconnect", 1);
   const char* cName = (*env)->GetStringUTFChars(env, name, NULL);
-  fluid_settings_setstr((*context).settings, "audio.jack.id", cName);
+  fluid_settings_setstr((*context).settings, "audio.jack.id", (char*)cName);
   (*env)->ReleaseStringUTFChars(env, name, cName);
 
   if (audioDevice != NULL) {
     const char* cAudioDevice = (*env)->GetStringUTFChars(env, audioDevice, NULL);
-    fluid_settings_setstr((*context).settings, "audio.driver", cAudioDevice);
+    fluid_settings_setstr((*context).settings, "audio.driver", (char*)cAudioDevice);
     (*env)->ReleaseStringUTFChars(env, audioDevice, cAudioDevice);
   }
 
