@@ -5,6 +5,7 @@ The team behind jOrgan (sorted by last name) :
 
     Contributors :
       . Sörfõzõ Bence <sfbence@egon.gyaloglo.hu> (theatre skin)
+      . Bernd Casper <herz-casper@web.de> (element icons)
 
     Translators :
       . Crew Glazjev <thorgeir@tut.by> (Russian translation)
@@ -13,8 +14,11 @@ The team behind jOrgan (sorted by last name) :
       . Martin Slavik <martin.slavik@tul.cz> (Czech translation)
 
     User Feedback and Food for Thought :
+      . Graham Goode <ggoode.sa@gmail.com>
       . Graham Harrison <fg.harrison@virgin.net>
       . Michael Kainberger <exlibris@aon.at>
       . Don M. McDonald <don@fnords.org>
       . Bruce Miles <bruce@gbmuk.fsnet.co.uk>
+      . Roy Radford <roy.radford42@yahoo.co.uk>
+      . Paul Stratman <pcstratman@gmail.com>
       . and many others!!!
