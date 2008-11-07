@@ -18,93 +18,125 @@
  */
 package jorgan.skin;
 
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Locale;
 
 /**
  * Style.
  */
 public class Skin implements Resolver {
 
-    private String name = "";
+	private String name = "";
 
-    private ArrayList<Style> styles = new ArrayList<Style>();
+	private ArrayList<Style> styles = new ArrayList<Style>();
 
-    private transient SkinSource source;
+	private transient SkinSource source;
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        if (name == null) {
-            name = "";
-        }
-        this.name = name;
-    }
+	public void setName(String name) {
+		if (name == null) {
+			name = "";
+		}
+		this.name = name;
+	}
 
-    public int getStyleCount() {
-        return styles.size();
-    }
+	public int getStyleCount() {
+		return styles.size();
+	}
 
-    public String[] getStyleNames() {
-        String[] names = new String[1 + styles.size()];
+	public String[] getStyleNames() {
+		String[] names = new String[1 + styles.size()];
 
-        for (int s = 0; s < styles.size(); s++) {
-            names[s + 1] = getStyle(s).getName();
-        }
+		for (int s = 0; s < styles.size(); s++) {
+			names[s + 1] = getStyle(s).getName();
+		}
 
-        return names;
-    }
+		return names;
+	}
 
-    public Style getStyle(int index) {
-        return styles.get(index);
-    }
+	public Style getStyle(int index) {
+		return styles.get(index);
+	}
 
-    public void addStyle(Style style) {
-        styles.add(style);
-    }
+	public void addStyle(Style style) {
+		styles.add(style);
+	}
 
-    public void setSource(SkinSource source) {
-        this.source = source;
-    }
+	public void setSource(SkinSource source) {
+		this.source = source;
+	}
 
-    public SkinSource getSource() {
-        return source;
-    }
+	public SkinSource getSource() {
+		return source;
+	}
 
-    public Skin getSkin() {
-        return this;
-    }
+	public Skin getSkin() {
+		return this;
+	}
 
-    public Style createStyle(String styleName) {
+	public Style createStyle(String styleName) {
 
-        for (int s = 0; s < styles.size(); s++) {
-            Style style = styles.get(s);
-            if (style.getName().equals(styleName)) {
-            	Style clone = (Style)style.clone();
-            	
-            	initResolver(clone);
-            	
-                return clone;
-            }
-        }
-        return null;
-    }
-    
-    private void initResolver(Layer layer) {
-    	layer.setResolver(this);
-    	
-    	if (layer instanceof CompositeLayer) {
-    		CompositeLayer compositeLayer = (CompositeLayer)layer;
-    		
-    		for (Layer child : compositeLayer.getChildren()) {
-    			initResolver(child);
-    		}
-    	}
-    }
-    
-    public URL resolve(String name) {
-        return source.getURL(name);
-    }
+		for (int s = 0; s < styles.size(); s++) {
+			Style style = styles.get(s);
+			if (style.getName().equals(styleName)) {
+				Style clone = (Style) style.clone();
+
+				initResolver(clone);
+
+				return clone;
+			}
+		}
+		return null;
+	}
+
+	private void initResolver(Layer layer) {
+		layer.setResolver(this);
+
+		if (layer instanceof CompositeLayer) {
+			CompositeLayer compositeLayer = (CompositeLayer) layer;
+
+			for (Layer child : compositeLayer.getChildren()) {
+				initResolver(child);
+			}
+		}
+	}
+
+	public URL resolve(String name) {
+		String locale = Locale.getDefault().toString();
+
+		int suffix = name.lastIndexOf('.');
+		if (suffix == -1) {
+			suffix = name.length();
+		}
+
+		while (!locale.isEmpty()) {
+			String localized = name.substring(0, suffix) + "_" + locale
+			+ name.substring(suffix);
+			
+			URL url = source.getURL(localized);
+			if (probe(url)) {
+				return url;
+			}
+
+			locale = locale.substring(0, Math.max(0, locale.lastIndexOf('_')));
+		}
+		return source.getURL(name);
+	}
+
+	private boolean probe(URL url) {
+		URLConnection connection;
+		try {
+			connection = url.openConnection();
+
+			return connection.getContentLength() > 0;
+		} catch (IOException ex) {
+			return false;
+		}
+	}
 }
