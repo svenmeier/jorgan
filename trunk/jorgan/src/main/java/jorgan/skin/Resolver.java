@@ -25,5 +25,12 @@ import java.net.URL;
  */
 public interface Resolver {
 
-    public URL resolve(String name);
+	/**
+	 * Resolve the given name.
+	 * 
+	 * @return url or <code>null</code> if not resolvable
+	 * @param name
+	 * @return
+	 */
+	public URL resolve(String name);
 }

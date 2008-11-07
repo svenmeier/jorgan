@@ -52,16 +52,15 @@ public class ImageCache {
      * @return image
      */
     public static Image getImage(URL url, Component component) {
+		if (url == null) {
+			throw new IllegalArgumentException("url must not be null");
+		}
 
-        Image img = images.get(url);
+		Image img = images.get(url);
         if (img == null) {
             img = createImage(url, component);
 
-            if (!loadImage(img, component)) {
-                img = createImage(ImageCache.class
-                        .getResource("img/missing.gif"), component);
-                loadImage(img, component);
-            }
+            loadImage(img, component);
 
             images.put(url, img);
         }
@@ -129,9 +128,8 @@ public class ImageCache {
      * 
      * @param image
      *            the image
-     * @return <code>true</code> if the image was correctly loaded
      */
-    private static boolean loadImage(Image image, Component component) {
+    private static void loadImage(Image image, Component component) {
 
         MediaTracker tracker = new MediaTracker(component);
         tracker.addImage(image, -1);
@@ -140,9 +138,6 @@ public class ImageCache {
         } catch (InterruptedException e) {
             throw new Error("unexpected interruption");
         }
-        boolean error = tracker.isErrorAny();
         tracker.removeImage(image);
-
-        return !error;
     }
 }
