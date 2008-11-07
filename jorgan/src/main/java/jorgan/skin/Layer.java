@@ -44,7 +44,11 @@ public abstract class Layer implements Cloneable {
 
 	private String binding = null;
 
-	private transient Resolver resolver;
+	private transient Resolver resolver = new Resolver() {
+		public URL resolve(String name) {
+			return null;
+		}
+	};
 
 	protected transient View<? extends Displayable> view;
 

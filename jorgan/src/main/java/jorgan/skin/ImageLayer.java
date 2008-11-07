@@ -21,6 +21,9 @@ package jorgan.skin;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
+import java.net.URL;
+
+import javax.swing.ImageIcon;
 
 import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
@@ -81,8 +84,12 @@ public class ImageLayer extends Layer {
 	public void setView(View<? extends Displayable> view) {
 		super.setView(view);
 
-		if (image == null) {
-			image = ImageCache.getImage(resolve(file), view.getConsolePanel());
+		URL url = resolve(file);
+		if (url != null) {
+			image = ImageCache.getImage(url, view.getConsolePanel());
+		} else {
+			image = new ImageIcon(getClass().getResource("img/missing.gif"))
+					.getImage();
 		}
 	}
 

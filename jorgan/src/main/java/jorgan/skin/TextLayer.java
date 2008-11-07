@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -84,6 +85,7 @@ public class TextLayer extends Layer {
 		if (font == null) {
 			throw new IllegalArgumentException("font of label cannot be null");
 		}
+
 		this.font = font;
 	}
 
@@ -109,6 +111,12 @@ public class TextLayer extends Layer {
 	@Override
 	public void setView(View<? extends Displayable> view) {
 		super.setView(view);
+
+		URL url = resolve(font.getName());
+		if (url != null) {
+			font = FontCache.getFont(url, view.getConsolePanel()).deriveFont(
+					font.getStyle(), font.getSize());
+		}
 
 		String text = "";
 		Binding binding = getBinding(Binding.class);

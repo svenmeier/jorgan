@@ -108,15 +108,15 @@ public class Skin implements Resolver {
 	}
 
 	public URL resolve(String name) {
-		String locale = Locale.getDefault().toString();
+		String locale = "_" + Locale.getDefault().toString();
 
 		int suffix = name.lastIndexOf('.');
 		if (suffix == -1) {
 			suffix = name.length();
 		}
 
-		while (!locale.isEmpty()) {
-			String localized = name.substring(0, suffix) + "_" + locale
+		while (true) {
+			String localized = name.substring(0, suffix) + locale
 			+ name.substring(suffix);
 			
 			URL url = source.getURL(localized);
@@ -124,9 +124,12 @@ public class Skin implements Resolver {
 				return url;
 			}
 
-			locale = locale.substring(0, Math.max(0, locale.lastIndexOf('_')));
+			if (locale.isEmpty()) {
+				return null;
+			} else {
+				locale = locale.substring(0, locale.lastIndexOf('_'));
+			}
 		}
-		return source.getURL(name);
 	}
 
 	private boolean probe(URL url) {
