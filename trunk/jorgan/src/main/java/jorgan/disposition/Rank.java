@@ -124,7 +124,7 @@ public class Rank extends Engageable {
 		}
 		this.delay = delay;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	public String getChannel() {
@@ -138,7 +138,7 @@ public class Rank extends Engageable {
 
 		this.channel = channel;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	public Set<Class<? extends Message>> getMessageClasses() {

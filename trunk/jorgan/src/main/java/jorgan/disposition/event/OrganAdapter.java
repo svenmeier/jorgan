@@ -18,20 +18,40 @@
  */
 package jorgan.disposition.event;
 
+import jorgan.disposition.Element;
+import jorgan.disposition.Message;
+import jorgan.disposition.Reference;
+
 /**
  * A default implementation of a listener to organ changes.
  */
 public class OrganAdapter implements OrganListener {
 
-  public void changed(OrganEvent event) { }
+	public void elementAdded(Element element) {
+	}
 
-  public void added(OrganEvent event) { }
+	public void elementRemoved(Element element) {
+	}
 
-  public void removed(OrganEvent event) { }
+	public void messageAdded(Element element, Message reference) {
+	}
 
-  public final void referenceChanged(OrganEvent event) { }
+	public void messageChanged(Element element, Message reference) {
+	}
 
-  public final void referenceAdded(OrganEvent event) { }
+	public void messageRemoved(Element element, Message reference) {
+	}
 
-  public final void referenceRemoved(OrganEvent event) { }
+	public void propertyChanged(Element element, String name) {
+	}
+
+	public void referenceAdded(Element element, Reference<?> reference) {
+	}
+
+	public void referenceChanged(Element element, Reference<?> reference) {
+	}
+
+	public void referenceRemoved(Element element, Reference<?> reference) {
+	}
+
 }

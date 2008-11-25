@@ -19,7 +19,6 @@
 package jorgan.play;
 
 import jorgan.disposition.Keyable;
-import jorgan.disposition.event.OrganEvent;
 
 /**
  * A player for a keyable.
@@ -109,8 +108,8 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		if (isOpen()) {
 			action.changed();

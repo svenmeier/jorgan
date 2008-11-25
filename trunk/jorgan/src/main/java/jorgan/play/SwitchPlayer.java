@@ -26,7 +26,6 @@ import jorgan.disposition.Switch.Deactivated;
 import jorgan.disposition.Switch.Initiate;
 import jorgan.disposition.Switch.Toggle;
 import jorgan.disposition.Input.InputMessage;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 
 /**
@@ -58,8 +57,8 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		if (isOpen()) {
 			Switch element = getElement();

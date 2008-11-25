@@ -44,7 +44,7 @@ public class Switch extends Engageable {
 	public void setShortcut(Shortcut shortcut) {
 		this.shortcut = shortcut;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	public void toggle() {
@@ -66,7 +66,7 @@ public class Switch extends Engageable {
 			// Engageable#engagingChanged(boolean), first fire change, then
 			// check change of engaging
 			{
-				fireChanged(false);
+				fireChange(new SimplePropertyChange());
 
 				if (isEngagedChange(active)) {
 					onEngaged(active);
@@ -99,7 +99,7 @@ public class Switch extends Engageable {
 	public void setLocking(boolean locking) {
 		this.locking = locking;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	protected int getEngagedCount() {

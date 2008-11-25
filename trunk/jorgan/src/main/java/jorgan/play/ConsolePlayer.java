@@ -26,7 +26,6 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
@@ -45,8 +44,8 @@ public class ConsolePlayer extends Player<Console> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		Console console = getElement();
 

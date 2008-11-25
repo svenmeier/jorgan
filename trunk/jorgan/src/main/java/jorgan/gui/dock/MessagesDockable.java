@@ -54,9 +54,9 @@ import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
+import jorgan.disposition.Reference;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.CreateMessageWizard;
@@ -194,7 +194,7 @@ public class MessagesDockable extends OrganDockable {
 
 		setContent(new JScrollPane(table));
 	}
-	
+
 	@Override
 	public boolean forPlay() {
 		return false;
@@ -367,28 +367,46 @@ public class MessagesDockable extends OrganDockable {
 			element.changeMessage(message, status, data1, data2);
 		}
 
-		public void added(OrganEvent event) {
-			if (event.getMessage() != null && event.getElement() == element) {
+		public void messageAdded(Element element, Message message) {
+			if (element == MessagesDockable.this.element) {
 				updateMessages();
 
-				int index = messages.indexOf(event.getMessage());
+				int index = messages.indexOf(message);
 				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 
-		public void removed(OrganEvent event) {
-			if (event.getMessage() != null && event.getElement() == element) {
+		public void messageRemoved(Element element, Message message) {
+			if (element == MessagesDockable.this.element) {
 				updateMessages();
 			}
 		}
 
-		public void changed(final OrganEvent event) {
-			if (event.getMessage() != null && event.getElement() == element) {
+		public void messageChanged(Element element, Message message) {
+			if (element == MessagesDockable.this.element) {
 				updateMessages();
 
-				int index = messages.indexOf(event.getMessage());
+				int index = messages.indexOf(message);
 				table.getSelectionModel().setSelectionInterval(index, index);
 			}
+		}
+
+		public void elementAdded(Element element) {
+		}
+
+		public void elementRemoved(Element element) {
+		}
+
+		public void propertyChanged(Element element, String name) {
+		}
+
+		public void referenceAdded(Element element, Reference<?> reference) {
+		}
+
+		public void referenceChanged(Element element, Reference<?> reference) {
+		}
+
+		public void referenceRemoved(Element element, Reference<?> reference) {
 		}
 	}
 
@@ -420,10 +438,6 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(table) != MessageBox.OPTION_OK) {
-				return;
-			}
 
 			int[] indices = table.getSelectedRows();
 			if (indices != null) {

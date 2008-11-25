@@ -16,23 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.session.event;
 
-import jorgan.util.Null;
 
-public class GenericSound extends Sound implements Output {
+/**
+ * A listener to undos.
+ */
+public interface UndoListener {
 
-	private String output;
-
-	public String getOutput() {
-		return output;
-	}
-
-	public void setOutput(String output) {
-		if (!Null.safeEquals(this.output, output)) {
-			this.output = output;
-
-			fireChange(new PropertyChange());
-		}
-	}
+    public void changed();
 }

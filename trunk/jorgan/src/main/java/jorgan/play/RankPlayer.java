@@ -28,7 +28,6 @@ import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Processor;
@@ -126,8 +125,8 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		Rank rank = getElement();
 

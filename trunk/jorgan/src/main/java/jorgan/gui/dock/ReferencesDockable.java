@@ -42,7 +42,7 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
@@ -56,7 +56,6 @@ import jorgan.swing.list.ListUtils;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
 import bias.Configuration;
-import bias.swing.MessageBox;
 
 /**
  * Panel shows the {@link Reference}s of {@link Element}s.
@@ -265,37 +264,37 @@ public class ReferencesDockable extends OrganDockable {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	private class EventHandler implements ElementSelectionListener,
-			OrganListener {
+	private class EventHandler extends OrganAdapter implements
+			ElementSelectionListener, OrganListener {
 
 		public void selectionChanged(ElementSelectionEvent ev) {
 			updateReferences();
 		}
 
-		public void added(OrganEvent event) {
-			if (element != null && event.getReference() != null
-					&& getReferencesModel().onReferenceChange(event)) {
+		@Override
+		public void referenceAdded(Element element, Reference<?> reference) {
+			if (getReferencesModel().onReferenceChange(element, reference)) {
 				updateReferences();
 
 				for (int r = 0; r < references.size(); r++) {
-					ReferrerReference reference = references.get(r);
-					if (reference.getReference() == event.getReference()) {
+					ReferrerReference rr = references.get(r);
+					if (rr.getReference() == reference) {
 						list.setSelectedIndex(r);
 					}
 				}
 			}
 		}
 
-		public void removed(OrganEvent event) {
-			if (element != null && event.getReference() != null
-					&& getReferencesModel().onReferenceChange(event)) {
+		@Override
+		public void referenceRemoved(Element element, Reference<?> reference) {
+			if (getReferencesModel().onReferenceChange(element, reference)) {
 				updateReferences();
 			}
 		}
 
-		public void changed(OrganEvent event) {
-			if (element != null && event.getReference() != null
-					&& getReferencesModel().onReferenceChange(event)) {
+		@Override
+		public void referenceChanged(Element element, Reference<?> reference) {
+			if (getReferencesModel().onReferenceChange(element, reference)) {
 				updateReferences();
 			}
 		}
@@ -314,7 +313,8 @@ public class ReferencesDockable extends OrganDockable {
 
 		public abstract void add(ReferrerReference references);
 
-		public abstract boolean onReferenceChange(OrganEvent event);
+		public abstract boolean onReferenceChange(Element element,
+				Reference reference);
 
 		public void update() {
 			references = getReferences();
@@ -349,8 +349,8 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public boolean onReferenceChange(OrganEvent event) {
-			return event.getElement() == element;
+		public boolean onReferenceChange(Element element, Reference reference) {
+			return element == ReferencesDockable.this.element;
 		}
 
 		@Override
@@ -380,8 +380,8 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public boolean onReferenceChange(OrganEvent event) {
-			return event.getReference().getElement() == element;
+		public boolean onReferenceChange(Element element, Reference reference) {
+			return reference.getElement() == ReferencesDockable.this.element;
 		}
 
 		@Override
@@ -432,11 +432,6 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(list) != MessageBox.OPTION_OK) {
-				return;
-			}
-
 			int[] indices = list.getSelectedIndices();
 			ReferrerReference[] subReferences = new ReferrerReference[indices.length];
 			for (int r = 0; r < subReferences.length; r++) {

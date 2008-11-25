@@ -49,8 +49,9 @@ import javax.swing.UIManager;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
-import jorgan.disposition.event.OrganEvent;
-import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.event.Change;
+import jorgan.disposition.event.OrganObserver;
+import jorgan.disposition.event.UndoableChange;
 import jorgan.gui.convenience.DevicesWizard;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
@@ -58,10 +59,10 @@ import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
-import jorgan.swing.Desktop;
 import jorgan.swing.DebugPanel;
-import jorgan.swing.StatusBar;
+import jorgan.swing.Desktop;
 import jorgan.swing.MacAdapter;
+import jorgan.swing.StatusBar;
 import bias.Configuration;
 import bias.swing.MessageBox;
 import bias.util.MessageBuilder;
@@ -328,13 +329,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (this.session != null) {
 			this.session.getPlay().destroy();
 
-			this.session.removeOrganListener(saveAction);
+			this.session.removeOrganObserver(saveAction);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(saveAction);
+			this.session.addOrganObserver(saveAction);
 
 			if (!constructButton.isSelected()) {
 				session.getPlay().open();
@@ -483,8 +484,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * @return <code>true</code> if organ can be closed
 	 */
 	public boolean canCloseOrgan() {
-		if (saveAction.hasChanges()) {
-			if (saveAction.confirmChanges()) {
+		if (saveAction.mustSave()) {
+			if (saveAction.mustConfirm()) {
 				MessageBox box = new MessageBox(
 						MessageBox.OPTIONS_YES_NO_CANCEL);
 				config.get("closeOrganConfirmChanges").read(box);
@@ -583,67 +584,45 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * that the methods of this listeners are called on the EDT, although a
 	 * change in the organ might be triggered by a change on a MIDI thread.
 	 */
-	private class SaveAction extends BaseAction implements OrganListener {
+	private class SaveAction extends BaseAction implements OrganObserver {
 
-		private boolean dispositionChanges = false;
+		private boolean changes = false;
 
-		private boolean registrationChanges = false;
+		private boolean undoableChanges = false;
 
 		private SaveAction() {
 			config.get("save").read(this);
+
+			setEnabled(false);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
 			saveOrgan();
 		}
 
-		/**
-		 * Are changes known.
-		 * 
-		 * @return <code>true</code> if changes are known
-		 */
-		public boolean hasChanges() {
-			return dispositionChanges || registrationChanges
-					&& handleRegistrationChanges != REGISTRATION_CHANGES_IGNORE;
+		public boolean mustSave() {
+			return undoableChanges
+					|| (changes && (handleRegistrationChanges != REGISTRATION_CHANGES_IGNORE));
 		}
 
-		/**
-		 * Are changes to be confirmed.
-		 * 
-		 * @return <code>true</code> if changes are to be confirmed
-		 */
-		public boolean confirmChanges() {
-			return dispositionChanges
-					|| handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM;
+		public boolean mustConfirm() {
+			return handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM;
 		}
 
 		/**
 		 * Clear changes.
 		 */
 		public void clearChanges() {
-			dispositionChanges = false;
-			registrationChanges = false;
+			changes = false;
+			undoableChanges = false;
 
 			setEnabled(file == null);
 		}
 
-		public void changed(OrganEvent event) {
-			analyseEvent(event);
-		}
-
-		public void added(OrganEvent event) {
-			analyseEvent(event);
-		}
-
-		public void removed(OrganEvent event) {
-			analyseEvent(event);
-		}
-
-		private void analyseEvent(final OrganEvent event) {
-			if (event.isDispositionChange()) {
-				dispositionChanges = true;
-			} else {
-				registrationChanges = true;
+		public void onChange(Change change) {
+			changes = true;
+			if (change instanceof UndoableChange) {
+				undoableChanges = true;
 			}
 
 			setEnabled(true);

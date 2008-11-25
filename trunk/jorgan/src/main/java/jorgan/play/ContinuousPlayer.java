@@ -22,7 +22,6 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Input.InputMessage;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
 
@@ -58,8 +57,8 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		if (isOpen()) {
 			changed();

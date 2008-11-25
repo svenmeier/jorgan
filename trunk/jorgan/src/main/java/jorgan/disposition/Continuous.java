@@ -41,7 +41,7 @@ public class Continuous extends Displayable {
 	public void setLocking(boolean locking) {
 		this.locking = locking;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	public void setValue(float value) {
@@ -54,7 +54,7 @@ public class Continuous extends Displayable {
 			
 			this.value = value;
 
-			fireChanged(false);
+			fireChange(new SimplePropertyChange());
 			
 			onValueChanged(oldValue, this.value);
 		}
@@ -74,7 +74,7 @@ public class Continuous extends Displayable {
 	public void setThreshold(float threshold) {
 		this.threshold = threshold;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	@Override

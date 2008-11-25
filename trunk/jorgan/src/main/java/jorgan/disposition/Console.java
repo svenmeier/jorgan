@@ -18,6 +18,8 @@
  */
 package jorgan.disposition;
 
+import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.event.UndoableChange;
 import jorgan.util.Null;
 
 /**
@@ -28,7 +30,7 @@ public class Console extends Displayable implements Input, Output {
 	private String skin;
 
 	private String screen;
-	
+
 	private String input;
 
 	private String output;
@@ -36,29 +38,30 @@ public class Console extends Displayable implements Input, Output {
 	public void setInput(String input) {
 		if (!Null.safeEquals(this.input, input)) {
 			this.input = input;
-			
-			fireChanged(true);
+
+			fireChange(new PropertyChange());
 		}
 	}
-	
+
 	public String getInput() {
 		return input;
 	}
-	
+
 	public void setOutput(String output) {
 		if (!Null.safeEquals(this.output, output)) {
 			this.output = output;
-			
-			fireChanged(true);
+
+			fireChange(new PropertyChange());
 		}
 	}
-	
+
 	public String getOutput() {
 		return output;
 	}
-		
+
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Displayable.class.isAssignableFrom(clazz) && !(Console.class == clazz);
+		return Displayable.class.isAssignableFrom(clazz)
+				&& !(Console.class == clazz);
 	}
 
 	@Override
@@ -68,9 +71,10 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	@Override
-	protected jorgan.disposition.Reference<? extends Element> createReference(Element element) {
+	protected jorgan.disposition.Reference<? extends Element> createReference(
+			Element element) {
 		if (element instanceof Displayable) {
-			return new Reference((Displayable)element);
+			return new Reference((Displayable) element);
 		} else {
 			return super.createReference(element);
 		}
@@ -88,7 +92,7 @@ public class Console extends Displayable implements Input, Output {
 		if (!Null.safeEquals(this.skin, skin)) {
 			this.skin = skin;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -96,17 +100,30 @@ public class Console extends Displayable implements Input, Output {
 		if (!Null.safeEquals(this.screen, screen)) {
 			this.screen = screen;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
-	public void setLocation(Element element, int x, int y) {
-		Reference reference = (Reference) getReference(element);
+	public void setLocation(final Element element, final int x, final int y) {
+		final Reference reference = (Reference) getReference(element);
 
+		final int oldX = reference.getX();
+		final int oldY = reference.getY();
+		
 		reference.setX(x);
 		reference.setY(y);
 
-		fireChanged(reference, true);
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.referenceChanged(Console.this, reference);
+			}
+			public void undo() {
+				setLocation(element, oldX, oldY);
+			}
+			public void redo() {
+				setLocation(element, x, y);
+			}
+		});
 	}
 
 	public int getX(Element element) {
@@ -128,7 +145,8 @@ public class Console extends Displayable implements Input, Output {
 	/**
 	 * A reference of a console to another element.
 	 */
-	public static class Reference extends jorgan.disposition.Reference<Displayable> {
+	public static class Reference extends
+			jorgan.disposition.Reference<Displayable> {
 
 		private int x;
 
@@ -171,16 +189,13 @@ public class Console extends Displayable implements Input, Output {
 	 * @param element
 	 *            element to move to front
 	 */
-	public void toFront(Element element) {
-		Reference reference = (Reference) getReference(element);
+	public void toFront(final Element element) {
+		final Reference reference = (Reference) getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
 
-		references.remove(reference);
-		references.add(reference);
-
-		fireChanged(true);
+		moveReference(reference, references.size() - 1);
 	}
 
 	/**
@@ -195,9 +210,6 @@ public class Console extends Displayable implements Input, Output {
 			throw new IllegalArgumentException("unkown element");
 		}
 
-		references.remove(reference);
-		references.add(0, reference);
-
-		fireChanged(true);
-	}
+		moveReference(reference, 0);
+	}	
 }

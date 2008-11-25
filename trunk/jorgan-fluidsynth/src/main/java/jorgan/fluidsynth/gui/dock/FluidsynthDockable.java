@@ -32,8 +32,8 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
-import jorgan.disposition.event.OrganEvent;
-import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.Element;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
@@ -185,15 +185,15 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private FluidsynthSound findSound() {
 		if (session != null) {
-			Set<FluidsynthSound> sounds = this.session.getOrgan()
-					.getElements(FluidsynthSound.class);
+			Set<FluidsynthSound> sounds = this.session.getOrgan().getElements(
+					FluidsynthSound.class);
 			if (!sounds.isEmpty()) {
 				return sounds.iterator().next();
 			}
 		}
 		return null;
 	}
-	
+
 	private void read() {
 		if (!readWrite) {
 			readWrite = true;
@@ -306,29 +306,32 @@ public class FluidsynthDockable extends OrganDockable {
 	}
 
 	private void setPercentage(JSpinner spinner, double value) {
-		spinner.setValue((int)Math.round(value * 100));
+		spinner.setValue((int) Math.round(value * 100));
 	}
 
 	private double getPercentage(JSpinner spinner) {
 		return ((Number) spinner.getValue()).doubleValue() / 100.0d;
 	}
 
-	private class EventHandler implements OrganListener {
+	private class EventHandler extends OrganAdapter {
 
-		public void added(OrganEvent event) {
-			if (event.getElement() instanceof FluidsynthSound) {
+		@Override
+		public void elementAdded(Element element) {
+			if (element instanceof FluidsynthSound) {
 				read();
 			}
 		}
 
-		public void changed(OrganEvent event) {
-			if (event.getElement() instanceof FluidsynthSound) {
+		@Override
+		public void propertyChanged(Element element, String name) {
+			if (element instanceof FluidsynthSound) {
 				read();
 			}
 		}
 
-		public void removed(OrganEvent event) {
-			if (event.getElement() instanceof FluidsynthSound) {
+		@Override
+		public void elementRemoved(Element element) {
+			if (element instanceof FluidsynthSound) {
 				read();
 			}
 		}

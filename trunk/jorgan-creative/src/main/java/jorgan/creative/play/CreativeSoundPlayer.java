@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
 
@@ -44,13 +43,14 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
-		if (event != null && event.isDispositionChange()) {
-			destroyManager();
-			createManager();
-		}
+		// TODO when to destroy and create??
+//		if () {
+//			destroyManager();
+//			createManager();
+//		}
 		
 		CreativeSound sound = getElement();
 		if (sound.getSoundfont() == null) {

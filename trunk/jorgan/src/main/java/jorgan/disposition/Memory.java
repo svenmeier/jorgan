@@ -39,8 +39,8 @@ public class Memory extends IndexedContinuous {
 
 	public void setTitle(String index) {
 		titles[getIndex()] = index;
-		
-		fireChanged(false);
+
+		fireChange(new SimplePropertyChange());
 	}
 
 	public void setSize(int size) {
@@ -51,7 +51,7 @@ public class Memory extends IndexedContinuous {
 					titles.length));
 			titles = strings;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -77,7 +77,7 @@ public class Memory extends IndexedContinuous {
 		}
 		titles[index] = title;
 
-		fireChanged(false);
+		fireChange(new SimplePropertyChange());
 	}
 
 	public void clear(int index) {
@@ -98,8 +98,6 @@ public class Memory extends IndexedContinuous {
 		for (Combination combination : getReferenced(Combination.class)) {
 			combination.swap(index1, index2);
 		}
-
-		fireChanged(false);
 	}
 
 	public void copy(int index1, int index2) {
@@ -110,7 +108,5 @@ public class Memory extends IndexedContinuous {
 		for (Combination combination : getReferenced(Combination.class)) {
 			combination.copy(index1, index2);
 		}
-		
-		fireChanged(false);
 	}
 }

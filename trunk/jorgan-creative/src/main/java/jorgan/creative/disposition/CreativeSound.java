@@ -35,7 +35,7 @@ public class CreativeSound extends GenericSound {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			this.soundfont = soundfont;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -47,7 +47,7 @@ public class CreativeSound extends GenericSound {
 		if (bank != this.bank) {
 			this.bank = bank;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 }

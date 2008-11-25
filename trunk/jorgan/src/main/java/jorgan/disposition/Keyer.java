@@ -18,35 +18,36 @@
  */
 package jorgan.disposition;
 
+
 /**
  * A keyer initiates a key press when {@link Switch#isEngaged()}.
  */
-public class Keyer extends Activator { 
+public class Keyer extends Activator {
 
-    private int pitch = 64;
+	private int pitch = 64;
 
-    private int velocity = 100;
+	private int velocity = 100;
 
-    @Override
+	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Keyable.class.isAssignableFrom(clazz);
 	}
 
-    public void setPitch(int pitch) {
-        this.pitch = pitch;
+	public void setPitch(int pitch) {
+		this.pitch = pitch;
 
-        fireChanged(true);
-    }
+		fireChange(new PropertyChange());
+	}
 
-    public int getPitch() {
-        return pitch;
-    }
+	public int getPitch() {
+		return pitch;
+	}
 
-    public void setVelocity(int velocity) {
-        this.velocity = velocity;
-    }
+	public void setVelocity(int velocity) {
+		this.velocity = velocity;
+	}
 
-    public int getVelocity() {
-        return velocity;
-    }
+	public int getVelocity() {
+		return velocity;
+	}
 }

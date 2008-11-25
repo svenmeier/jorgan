@@ -29,7 +29,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
@@ -174,7 +173,7 @@ public abstract class Player<E extends Element> {
 		return builder.build(args);
 	}
 
-	public void elementChanged(OrganEvent event) {
+	public void update() {
 	}
 
 	protected final void received(ShortMessage shortMessage) {
@@ -220,7 +219,7 @@ public abstract class Player<E extends Element> {
 	 * {@link Console}s.
 	 */
 	protected void send(ShortMessage message, Context context) {
-		for (Console console : organPlay.getOrgan().getReferrer(element,
+		for (Element console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
 			Player<? extends Element> player = getOrganPlay()
 					.getPlayer(console);

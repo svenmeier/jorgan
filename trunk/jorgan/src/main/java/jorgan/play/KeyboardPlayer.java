@@ -29,7 +29,6 @@ import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.session.event.Severity;
@@ -57,8 +56,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 		
 		Keyboard keyboard = getElement();
 

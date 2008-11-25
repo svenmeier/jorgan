@@ -53,7 +53,7 @@ public abstract class Displayable extends Element {
 		if (!Null.safeEquals(this.style, style)) {
 			this.style = style;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -71,6 +71,6 @@ public abstract class Displayable extends Element {
 
 		this.zoom = zoom;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 }

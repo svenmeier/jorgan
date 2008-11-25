@@ -24,7 +24,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.Change;
+import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.event.UndoableChange;
 import jorgan.util.Null;
 
 /**
@@ -96,12 +98,14 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected void setOrgan(Organ organ) {
-		this.organ = organ;
-
 		if (organ == null) {
 			// we keep references to other elements so this element can be
 			// re-added (eventually cloned) to the previous organ
 		} else {
+			if (this.organ != null) {
+				throw new IllegalStateException("already added");
+			}
+			
 			// work on copy of references to avoid concurrent modification
 			for (Reference<? extends Element> reference : new ArrayList<Reference<? extends Element>>(
 					references)) {
@@ -110,6 +114,8 @@ public abstract class Element implements Cloneable {
 				}
 			}
 		}
+		
+		this.organ = organ;
 	}
 
 	public List<Reference<? extends Element>> getReferences() {
@@ -123,7 +129,11 @@ public abstract class Element implements Cloneable {
 		addReference(createReference(element));
 	}
 
-	public void addReference(Reference<? extends Element> reference) {
+	public void addReference(final Reference<? extends Element> reference) {
+		addReference(reference, this.references.size());
+	}
+
+	public void addReference(final Reference<? extends Element> reference, final int index) {
 		if (references.contains(reference)) {
 			throw new IllegalArgumentException("duplicate reference '"
 					+ reference + "'");
@@ -136,11 +146,24 @@ public abstract class Element implements Cloneable {
 			throw new IllegalArgumentException("invalid reference '"
 					+ reference + "'");
 		}
-		references.add(reference);
-
-		if (organ != null) {
-			organ.fireAdded(new OrganEvent(organ, this, reference, true));
+		if (this.references.size() < index) {
+			throw new IllegalArgumentException("index '" + index
+					+ "'");
 		}
+
+		references.add(index, reference);
+
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.referenceAdded(Element.this, reference);
+			}
+			public void undo() {
+				removeReference(reference);
+			}
+			public void redo() {
+				addReference(reference, index);
+			}
+		});
 	}
 
 	protected Reference<? extends Element> createReference(Element element) {
@@ -228,16 +251,26 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	public void removeReference(Reference<? extends Element> reference) {
+	public void removeReference(final Reference<? extends Element> reference) {
 		if (!references.contains(reference)) {
 			throw new IllegalArgumentException("element not referenced");
 		}
 
+		final int index = references.indexOf(reference);
+		
 		references.remove(reference);
 
-		if (organ != null) {
-			organ.fireRemoved(new OrganEvent(organ, this, reference, true));
-		}
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.referenceRemoved(Element.this, reference);
+			}
+			public void undo() {
+				addReference(reference, index);
+			}
+			public void redo() {
+				removeReference(reference);
+			}
+		});
 	}
 
 	public Reference<? extends Element> getReference(int index) {
@@ -270,7 +303,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.name = name.trim();
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -295,27 +328,12 @@ public abstract class Element implements Cloneable {
 		}
 		this.description = description;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
-	protected void fireChanged(boolean dispositionChange) {
+	protected void fireChange(Change change) {
 		if (organ != null) {
-			organ.fireChanged(new OrganEvent(organ, this, dispositionChange));
-		}
-	}
-
-	protected void fireChanged(Reference<? extends Element> reference,
-			boolean dispositionChange) {
-		if (organ != null) {
-			organ.fireChanged(new OrganEvent(organ, this, reference,
-					dispositionChange));
-		}
-	}
-
-	protected void fireChanged(Message message, boolean dispositionChange) {
-		if (organ != null) {
-			organ.fireChanged(new OrganEvent(organ, this, message,
-					dispositionChange));
+			organ.fireChange(change);
 		}
 	}
 
@@ -369,25 +387,56 @@ public abstract class Element implements Cloneable {
 		return !messages.isEmpty();
 	}
 
-	public void addMessage(Message message) {
+	public void addMessage(final Message message) {
+		addMessage(message, this.messages.size());
+	}
+
+	public void addMessage(final Message message, final int index) {
 		Set<Class<? extends Message>> messageClasses = getMessageClasses();
 		if (!messageClasses.contains(message.getClass())) {
 			throw new IllegalArgumentException("illegal message '" + message
 					+ "'");
 		}
-		this.messages.add(message);
-
-		if (organ != null) {
-			organ.fireAdded(new OrganEvent(organ, this, message, true));
+		if (this.messages.size() < index) {
+			throw new IllegalArgumentException("index '" + index
+					+ "'");
 		}
-	}
+		
+		this.messages.add(index, message);
 
-	public void removeMessage(Message message) {
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.messageAdded(Element.this, message);
+			}
+			public void undo() {
+				removeMessage(message);
+			}
+			public void redo() {
+				addMessage(message, index);
+			}
+		});
+	}
+	
+	public void removeMessage(final Message message) {
+		if (!this.messages.contains(message)) {
+			throw new IllegalArgumentException("unkown message");
+		}
+		
+		final int index = messages.indexOf(message);
+		
 		this.messages.remove(message);
 
-		if (organ != null) {
-			organ.fireRemoved(new OrganEvent(organ, this, message, true));
-		}
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.messageRemoved(Element.this, message);
+			}
+			public void undo() {
+				addMessage(message, index);				
+			}
+			public void redo() {
+				removeMessage(message);
+			}
+		});
 	}
 
 	@SuppressWarnings("unchecked")
@@ -402,17 +451,85 @@ public abstract class Element implements Cloneable {
 		return messages;
 	}
 
-	public void changeMessage(Message message, String status, String data1,
-			String data2) {
+	public void changeMessage(final Message message, final String status,
+			final String data1, final String data2) {
 		if (!this.messages.contains(message)) {
 			throw new IllegalArgumentException("unkown message");
 		}
+		
+		final String oldStatus = message.getStatus();
+		final String oldData1 = message.getData1();
+		final String oldData2 = message.getData2();
+		
 		message.change(status, data1, data2);
 
-		fireChanged(message, true);
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.messageChanged(Element.this, message);
+			}
+			public void undo() {
+				changeMessage(message, oldStatus, oldData1, oldData2);
+			}
+			public void redo() {
+				changeMessage(message, status, data1, data2);
+			}
+		});
 	}
 
 	public boolean hasReference(Reference<? extends Element> reference) {
 		return references.contains(reference);
+	}
+
+	protected void moveReference(final Reference<? extends Element> reference, final int index) {
+		final int oldIndex = references.indexOf(reference);
+		references.remove(reference);
+		
+		references.add(oldIndex < index ? index - 1 : index, reference);
+	
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.referenceChanged(Element.this, reference);
+			}
+			
+			public void undo() {
+				moveReference(reference, oldIndex);
+			}
+			
+			public void redo() {
+				moveReference(reference, index);
+			}
+		});
+	}
+
+	public class PropertyChange implements UndoableChange {
+		public void notify(OrganListener listener) {
+			// TODO get property name
+			listener.propertyChanged(Element.this, null);
+		}
+		public void undo() {
+			// TODO Auto-generated method stub
+		}
+		public void redo() {
+			// TODO Auto-generated method stub
+		}		
+	}
+
+	public class SimplePropertyChange implements Change {
+		public void notify(OrganListener listener) {
+			// TODO get property name
+			listener.propertyChanged(Element.this, null);
+		}
+	}
+
+	public class SimpleReferenceChange implements Change {
+		private Reference reference;
+
+		public SimpleReferenceChange(Reference reference) {
+			this.reference = reference;
+		}
+		
+		public void notify(OrganListener listener) {
+			listener.referenceChanged(Element.this, reference);
+		}
 	}
 }

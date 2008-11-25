@@ -24,7 +24,6 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.GenericSound;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.MessageUtils;
 import jorgan.session.event.Severity;
 
@@ -40,8 +39,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		GenericSound sound = getElement();
 
