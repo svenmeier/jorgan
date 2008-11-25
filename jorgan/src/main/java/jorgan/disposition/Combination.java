@@ -110,7 +110,7 @@ public class Combination extends Switch implements Activating {
 		for (Reference reference : getReferences(Reference.class)) {
 			reference.setActive(level, reference.getElement().isActive());
 
-			fireChanged(reference, false);
+			fireChange(new SimpleReferenceChange(reference));
 		}
 
 		captor.combinationCaptured();
@@ -134,7 +134,7 @@ public class Combination extends Switch implements Activating {
 		for (Reference reference : getReferences(Reference.class)) {
 			reference.setActive(level, false);
 
-			fireChanged(reference, false);
+			fireChange(new SimpleReferenceChange(reference));
 		}
 	}
 
@@ -146,7 +146,7 @@ public class Combination extends Switch implements Activating {
 			reference.setActive(level1, value2);
 			reference.setActive(level2, value1);
 
-			fireChanged(reference, false);
+			fireChange(new SimpleReferenceChange(reference));
 		}
 	}
 
@@ -156,7 +156,7 @@ public class Combination extends Switch implements Activating {
 
 			reference.setActive(level2, value);
 
-			fireChanged(reference, false);
+			fireChange(new SimpleReferenceChange(reference));
 		}
 	}
 

@@ -38,7 +38,8 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Message;
+import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
@@ -53,6 +54,7 @@ import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.Problem;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.Severity;
+import jorgan.session.event.UndoListener;
 import jorgan.swing.BaseAction;
 import swingx.docking.Dockable;
 import swingx.docking.Docked;
@@ -100,6 +102,10 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 	private ForwardAction forwardAction = new ForwardAction();
 
+	private UndoAction undoAction = new UndoAction();
+
+	private RedoAction redoAction = new RedoAction();
+
 	private MessagesMonitor messagesMonitor = new MessagesMonitor();
 
 	private String playDocking;
@@ -132,9 +138,12 @@ public class OrganPanel extends JPanel implements SessionAware {
 	public List<Object> getToolBarWidgets() {
 		List<Object> widgets = new ArrayList<Object>();
 
+		widgets.add(undoAction);
+		widgets.add(redoAction);
+
 		widgets.add(backAction);
 		widgets.add(forwardAction);
-
+		
 		return widgets;
 	}
 
@@ -166,6 +175,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 			this.session.removePlayerListener(eventsListener);
 			this.session.removeProblemListener(eventsListener);
 			this.session.removeSelectionListener(eventsListener);
+			this.session.removeUndoListener(eventsListener);
 
 			for (DockableAction action : dockableActions) {
 				action.getDockable().setSession(null);
@@ -183,6 +193,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		if (this.session != null) {
 			setConstructing(!this.session.getPlay().isOpen());
 
+			this.session.addUndoListener(eventsListener);
 			this.session.addSelectionListener(eventsListener);
 			this.session.addProblemListener(eventsListener);
 			this.session.addPlayerListener(eventsListener);
@@ -198,6 +209,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 				}
 			}
 		}
+
+		undoAction.setEnabled(false);
+		redoAction.setEnabled(false);
 
 		updateHistory();
 	}
@@ -349,7 +363,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 	 * The listener to events.
 	 */
 	private class EventsListener extends PlayAdapter implements
-			ProblemListener, OrganListener, ElementSelectionListener {
+			ProblemListener, OrganListener, ElementSelectionListener, UndoListener {
 
 		@Override
 		public void received(int channel, int command, int data1, int data2) {
@@ -379,27 +393,6 @@ public class OrganPanel extends JPanel implements SessionAware {
 			setConstructing(true);
 		}
 
-		public void changed(OrganEvent event) {
-		}
-
-		public void added(OrganEvent event) {
-			if (event.self()) {
-				Element element = event.getElement();
-				if (element instanceof Console) {
-					addConsoleDockable((Console) element);
-				}
-			}
-		}
-
-		public void removed(OrganEvent event) {
-			if (event.self()) {
-				Element element = event.getElement();
-				if (element instanceof Console) {
-					removeConsoleDockable((Console) element);
-				}
-			}
-		}
-
 		public void selectionChanged(ElementSelectionEvent ev) {
 			if (session.getElementSelection().getSelectionCount() == 1) {
 				Element element = session.getElementSelection()
@@ -415,6 +408,44 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 			updateHistory();
 		}
+		
+		public void changed() {
+			undoAction.setEnabled(session.getUndoManager().canUndo());
+			redoAction.setEnabled(session.getUndoManager().canRedo());
+		}
+		
+		public void elementAdded(Element element) {
+			if (element instanceof Console) {
+				addConsoleDockable((Console) element);
+			}
+		}
+
+		public void elementRemoved(Element element) {
+			if (element instanceof Console) {
+				removeConsoleDockable((Console) element);
+			}
+		}
+
+		public void messageAdded(Element element, Message message) {
+		}
+
+		public void messageChanged(Element element, Message message) {
+		}
+
+		public void messageRemoved(Element element, Message message) {
+		}
+
+		public void propertyChanged(Element element, String name) {
+		}
+
+		public void referenceAdded(Element element, Reference<?> reference) {
+		}
+
+		public void referenceChanged(Element element, Reference<?> reference) {
+		}
+
+		public void referenceRemoved(Element element, Reference<?> reference) {
+		}		
 	}
 
 	private class DockableAction extends BaseAction {
@@ -472,6 +503,28 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			session.getElementSelection().forward();
+		}
+	}
+
+	private class UndoAction extends BaseAction {
+		private UndoAction() {
+			config.get("undo").read(this);
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			session.getUndoManager().undo();
+		}
+	}
+
+	private class RedoAction extends BaseAction {
+		private RedoAction() {
+			config.get("redo").read(this);
+			setEnabled(false);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			session.getUndoManager().redo();
 		}
 	}
 

@@ -61,7 +61,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.View;
 import jorgan.gui.console.spi.ProviderRegistry;
@@ -657,58 +656,50 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private class InternalOrganListener extends OrganAdapter {
 
 		@Override
-		public void changed(final OrganEvent event) {
-			Element element = event.getElement();
-			if (event.self()) {
-				if (element == console) {
-					initSkin();
+		public void propertyChanged(Element element, String name) {
+			if (element == console) {
+				initSkin();
 
-					consoleView.changeUpdate(event);
-					for (View<? extends Displayable> view : viewsByDisplayable
-							.values()) {
-						view.changeUpdate(event);
-					}
-
-					repaint();
-					revalidate();
-				} else if (element instanceof Displayable) {
-					View<? extends Displayable> view = getView((Displayable) element);
-					if (view != null) {
-						view.changeUpdate(event);
-					}
+				consoleView.changeUpdate();
+				for (View<? extends Displayable> view : viewsByDisplayable
+						.values()) {
+					view.changeUpdate();
 				}
-			} else {
-				if (element == console) {
-					Reference<? extends Element> reference = event
-							.getReference();
-					if (reference != null) {
-						View<? extends Displayable> view = getView((Displayable) reference
-								.getElement());
-						if (view != null) {
-							view.changeUpdate(event);
-						}
-					}
+
+				repaint();
+				revalidate();
+			} else if (element instanceof Displayable) {
+				View<? extends Displayable> view = getView((Displayable) element);
+				if (view != null) {
+					view.changeUpdate();
 				}
 			}
 		}
 
 		@Override
-		public void added(OrganEvent event) {
-			if (!event.self() && event.getElement() == console) {
-				Reference<? extends Element> reference = event.getReference();
-				if (reference != null
-						&& reference.getElement() instanceof Displayable) {
+		public void referenceChanged(Element element, Reference<?> reference) {
+			if (element == console) {
+				View<? extends Displayable> view = getView((Displayable) reference
+						.getElement());
+				if (view != null) {
+					view.changeUpdate();
+				}
+			}
+		}
+
+		@Override
+		public void referenceAdded(Element element, Reference<?> reference) {
+			if (element == console) {
+				if (reference.getElement() instanceof Displayable) {
 					createView((Displayable) reference.getElement());
 				}
 			}
 		}
 
 		@Override
-		public void removed(OrganEvent event) {
-			if (!event.self() && event.getElement() == console) {
-				Reference<? extends Element> reference = event.getReference();
-				if (reference != null
-						&& reference.getElement() instanceof Displayable) {
+		public void referenceRemoved(Element element, Reference<?> reference) {
+			if (element == console) {
+				if (reference.getElement() instanceof Displayable) {
 					dropView((Displayable) reference.getElement());
 				}
 			}
@@ -1057,13 +1048,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 				ArrayList<View<? extends Displayable>> views = new ArrayList<View<? extends Displayable>>();
 				for (int e = 0; e < elements.length; e++) {
-					Displayable element = (Displayable) elements[e];
+					Element element = (Element) elements[e];
 
 					if (console.canReference(element)) {
 						console.reference(element);
 					}
 
-					View<? extends Displayable> view = getView(element);
+					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
 						views.add(view);
 					}

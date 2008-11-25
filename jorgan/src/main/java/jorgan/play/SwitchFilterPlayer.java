@@ -27,7 +27,6 @@ import jorgan.disposition.SwitchFilter;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.SwitchFilter.Disengaged;
 import jorgan.disposition.SwitchFilter.Engaged;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
 
@@ -57,8 +56,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		if (isOpen()) {
 			SwitchFilter filter = getElement();

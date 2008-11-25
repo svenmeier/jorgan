@@ -18,6 +18,7 @@
  */
 package jorgan.disposition;
 
+
 /**
  * A keyable.
  * 
@@ -55,12 +56,12 @@ public abstract class Keyable extends Switch {
 		}
 		this.action = action;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 
 	public void setTranspose(int transpose) {
 		this.transpose = transpose;
 
-		fireChanged(true);
+		fireChange(new PropertyChange());
 	}
 }

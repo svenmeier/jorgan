@@ -25,8 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.event.OrganObserver;
+import jorgan.disposition.event.UndoableChange;
 
 /**
  * The container for all elements of an organ.
@@ -38,6 +40,11 @@ public class Organ {
 	 */
 	private transient List<OrganListener> listeners;
 
+	/**
+	 * Registered observers.
+	 */
+	private transient List<OrganObserver> observers;
+	
 	private Set<Element> elements = new HashSet<Element>();
 
 	/**
@@ -67,6 +74,33 @@ public class Organ {
 		listeners.remove(listener);
 	}
 
+	/**
+	 * Add a observer to this organ.
+	 * 
+	 * @param observer
+	 *            observer to add
+	 */
+	public void addOrganObserver(OrganObserver observer) {
+		if (observers == null) {
+			observers = new ArrayList<OrganObserver>();
+		}
+		observers.add(observer);
+	}
+
+	/**
+	 * Remove the given observer.
+	 * 
+	 * @param observer
+	 *            observer to remove
+	 * @see #addOrganObserver(OrganListener)
+	 */
+	public void removeOrganObserver(OrganObserver observer) {
+		if (observers == null) {
+			observers = new ArrayList<OrganObserver>();
+		}
+		observers.remove(observer);
+	}
+
 	public Set<Element> getElements() {
 		return Collections.unmodifiableSet(elements);
 	}
@@ -74,61 +108,75 @@ public class Organ {
 	public boolean containsElement(Element element) {
 		return elements.contains(element);
 	}
-	
+
 	public void addElements(Collection<Element> elements) {
 		this.elements.addAll(elements);
-		
+
 		for (Element element : elements) {
 			addElement(element);
 		}
 	}
-	
-	public void addElement(Element element) {
+
+	public void addElement(final Element element) {
 		elements.add(element);
 		element.setOrgan(this);
 
-		fireAdded(new OrganEvent(this, element, true));
+		// TODO handle index and references
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.elementAdded(element);
+			}
+			public void undo() {
+				removeElement(element);
+			}
+			public void redo() {
+				addElement(element);
+			}
+		});
 	}
 
-	public void removeElement(Element element) {
+	public void removeElement(final Element element) {
 
 		if (element.getOrgan() != this) {
-			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
+			throw new IllegalArgumentException("unkown element "
+					+ element.getName() + "'");
 		}
 
 		for (Element referrer : getReferrer(element)) {
 			referrer.unreference(element);
 		}
-		
+
 		elements.remove(element);
 		element.setOrgan(null);
 
-		fireRemoved(new OrganEvent(this, element, true));
+		// TODO handle index and references
+		fireChange(new UndoableChange() {
+			public void notify(OrganListener listener) {
+				listener.elementRemoved(element);
+			}
+			public void undo() {
+				addElement(element);
+			}
+			public void redo() {
+				removeElement(element);
+			}
+		});
 	}
 
-	protected void fireChanged(OrganEvent event) {
+	protected void fireChange(Change change) {
 		if (listeners != null) {
-			// listener might remove itself when notified so work on copy 
-			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
-				listener.changed(event);
+			// listener might remove itself when notified so work on copy
+			for (OrganListener listener : new ArrayList<OrganListener>(
+					listeners)) {
+				change.notify(listener);
 			}
 		}
-	}
-
-	protected void fireAdded(OrganEvent event) {
-		if (listeners != null) {
-			// listener might add itself when notified so work on copy 
-			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
-				listener.added(event);
-			}
-		}
-	}
-
-	protected void fireRemoved(OrganEvent event) {
-		if (listeners != null) {
-			// listener might remove itself when notified so work on copy 
-			for (OrganListener listener : new ArrayList<OrganListener>(listeners)) {
-				listener.removed(event);
+		
+		if (observers != null) {
+			// observer might remove itself when notified so work on copy
+			for (OrganObserver observer : new ArrayList<OrganObserver>(
+					observers)) {
+				observer.onChange(change);
 			}
 		}
 	}
@@ -149,7 +197,7 @@ public class Organ {
 	public Set<Element> getReferrer(Element element) {
 		return getReferrer(element, Element.class);
 	}
-	
+
 	/**
 	 * Get candidates to reference from the given element.
 	 * 
@@ -212,15 +260,17 @@ public class Organ {
 
 	public void duplicate(Element element) {
 		if (element.getOrgan() != this) {
-			throw new IllegalArgumentException("unkown element " + element.getName() + "'");
+			throw new IllegalArgumentException("unkown element "
+					+ element.getName() + "'");
 		}
-		
+
 		Element clone = element.clone();
-		
+
 		addElement(clone);
-		
+
 		for (Element referrer : getReferrer(element)) {
-			for (Reference<? extends Element> reference : referrer.getReferences(element)) {
+			for (Reference<? extends Element> reference : referrer
+					.getReferences(element)) {
 				if (referrer.canReference(clone)) {
 					referrer.addReference(reference.clone(clone));
 				}

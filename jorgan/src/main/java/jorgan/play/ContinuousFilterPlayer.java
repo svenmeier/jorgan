@@ -26,7 +26,6 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
 
@@ -56,8 +55,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
 		if (isOpen()) {
 			for (ChannelFilter channel : channels) {

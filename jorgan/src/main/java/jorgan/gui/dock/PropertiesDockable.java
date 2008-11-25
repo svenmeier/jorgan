@@ -31,7 +31,6 @@ import javax.swing.event.ChangeListener;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.info.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
@@ -122,11 +121,9 @@ public class PropertiesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void changed(OrganEvent event) {
-			if (event.self()) {
-				if (panel.getBeans().contains(event.getElement())) {
-					updateProperties();
-				}
+		public void propertyChanged(Element element, String name) {
+			if (panel.getBeans().contains(element)) {
+				updateProperties();
 			}
 		}
 

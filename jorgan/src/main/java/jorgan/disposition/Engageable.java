@@ -50,8 +50,8 @@ public class Engageable extends Displayable {
 	public final void engagingChanged(boolean engaged) {
 
 		if (isEngagedChange(engaged)) {
-			fireChanged(false);
-			
+			fireChange(new SimplePropertyChange());
+
 			onEngaged(engaged);
 		}
 	}
@@ -73,7 +73,7 @@ public class Engageable extends Displayable {
 
 		return false;
 	}
-	
+
 	protected int getEngagedCount() {
 		int count = 0;
 		for (Engaging engaging : getOrgan().getReferrer(this, Engaging.class)) {

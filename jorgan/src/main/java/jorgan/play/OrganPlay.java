@@ -33,8 +33,10 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.event.OrganObserver;
+import jorgan.disposition.event.UndoableChange;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ReceiverWrapper;
@@ -91,6 +93,7 @@ public class OrganPlay {
 		this.problems = problems;
 
 		organ.addOrganListener(eventHandler);
+		organ.addOrganObserver(eventHandler);
 
 		for (Element element : organ.getElements()) {
 			createPlayer(element);
@@ -153,8 +156,7 @@ public class OrganPlay {
 	/**
 	 * Fire output.
 	 */
-	protected void fireSent(int channel, int command, int data1,
-			int data2) {
+	protected void fireSent(int channel, int command, int data1, int data2) {
 		if (listeners != null) {
 			for (int l = 0; l < listeners.size(); l++) {
 				PlayListener listener = listeners.get(l);
@@ -194,7 +196,7 @@ public class OrganPlay {
 		iterator = players.values().iterator();
 		while (iterator.hasNext()) {
 			Player<? extends Element> player = iterator.next();
-			player.elementChanged(null);
+			player.update();
 		}
 	}
 
@@ -235,7 +237,7 @@ public class OrganPlay {
 			player.setOrganPlay(this);
 			players.put(element, player);
 
-			player.elementChanged(null);
+			player.update();
 		}
 	}
 
@@ -256,51 +258,36 @@ public class OrganPlay {
 		problems.removeProblem(problem);
 	}
 
-	private class EventHandler extends OrganAdapter {
+	private class EventHandler extends OrganAdapter implements OrganObserver {
 
 		@Override
-		public void changed(OrganEvent event) {
+		public void propertyChanged(Element element, String name) {
 			synchronized (CHANGE_LOCK) {
-				if (event.self()) {
-					Player<? extends Element> player = getPlayer(event
-							.getElement());
-					if (player != null) {
-						player.elementChanged(event);
-					}
+				Player<? extends Element> player = getPlayer(element);
+				if (player != null) {
+					player.update();
 				}
-				
-				checkDispositionChange(event);
 			}
 		}
 
 		@Override
-		public void added(OrganEvent event) {
+		public void elementAdded(Element element) {
 			synchronized (CHANGE_LOCK) {
-				if (event.self()) {
-					createPlayer(event.getElement());
-				}
-				
-				checkDispositionChange(event);
+				createPlayer(element);
 			}
 		}
 
 		@Override
-		public void removed(OrganEvent event) {
+		public void elementRemoved(Element element) {
 			synchronized (CHANGE_LOCK) {
-				if (event.self()) {
-					dropPlayer(event.getElement());
-				}
-
-				checkDispositionChange(event);
+				dropPlayer(element);
 			}
 		}
 
-		private void checkDispositionChange(OrganEvent event) {
-			if (event.isDispositionChange()) {
-				if (open) {
-					closeImpl();
-					openImpl();
-				}
+		public void onChange(Change change) {
+			if (open && change instanceof UndoableChange) {
+				closeImpl();
+				openImpl();
 			}
 		}
 	}

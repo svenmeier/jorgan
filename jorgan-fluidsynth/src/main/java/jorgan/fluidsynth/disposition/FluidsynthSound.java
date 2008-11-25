@@ -38,7 +38,7 @@ public class FluidsynthSound extends Sound {
 	public void setGain(double gain) {
 		this.gain = FluidsynthSound.limit(gain);
 
-		fireChanged(false);
+		fireChange(new SimplePropertyChange());
 	}
 	
 	public double getGain() {
@@ -52,7 +52,7 @@ public class FluidsynthSound extends Sound {
 			}
 			this.audioDriver = audioDriver;
 			
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 	
@@ -68,7 +68,7 @@ public class FluidsynthSound extends Sound {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			this.soundfont = soundfont;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -87,7 +87,7 @@ public class FluidsynthSound extends Sound {
 		if (this.channels != channels) {
 			this.channels = channels;
 
-			fireChanged(true);
+			fireChange(new PropertyChange());
 		}
 	}
 
@@ -98,7 +98,7 @@ public class FluidsynthSound extends Sound {
 	public void setChorus(Chorus chorus) {
 		this.chorus = chorus;
 		
-		fireChanged(false);
+		fireChange(new SimplePropertyChange());
 	}
 
 	public Reverb getReverb() {
@@ -108,7 +108,7 @@ public class FluidsynthSound extends Sound {
 	public void setReverb(Reverb reverb) {
 		this.reverb = reverb;
 		
-		fireChanged(false);
+		fireChange(new SimplePropertyChange());
 	}
 	
 	static double limit(double value) {

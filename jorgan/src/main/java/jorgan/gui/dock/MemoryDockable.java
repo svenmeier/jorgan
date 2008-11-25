@@ -30,7 +30,8 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Memory;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Message;
+import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -194,26 +195,6 @@ public class MemoryDockable extends OrganDockable {
 			memory.setTitle(rowIndex, (String) aValue);
 		}
 
-		public void added(OrganEvent event) {
-			Element element = event.getElement();
-			if (element instanceof Memory) {
-				setMemory((Memory) element);
-			}
-		}
-
-		public void changed(OrganEvent event) {
-			Element element = event.getElement();
-			if (element instanceof Memory) {
-				setMemory((Memory) element);
-			}
-		}
-
-		public void removed(OrganEvent event) {
-			if (event.self() && event.getElement() == memory) {
-				findMemory();
-			}
-		}
-
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {
 				int row = table.getSelectedRow();
@@ -221,6 +202,42 @@ public class MemoryDockable extends OrganDockable {
 					memory.setIndex(row);
 				}
 			}
+		}
+		
+		public void elementAdded(Element element) {
+			if (element instanceof Memory) {
+				setMemory((Memory) element);
+			}
+		}
+
+		public void propertyChanged(Element element, String name) {
+			if (element instanceof Memory) {
+				setMemory((Memory) element);
+			}
+		}
+
+		public void elementRemoved(Element element) {
+			if (element == memory) {
+				findMemory();
+			}
+		}
+
+		public void messageAdded(Element element, Message reference) {
+		}
+		
+		public void messageChanged(Element element, Message reference) {
+		}
+		
+		public void messageRemoved(Element element, Message reference) {
+		}
+		
+		public void referenceAdded(Element element, Reference<?> reference) {
+		}
+		
+		public void referenceChanged(Element element, Reference<?> reference) {
+		}
+		
+		public void referenceRemoved(Element element, Reference<?> reference) {
 		}
 	}
 

@@ -46,15 +46,15 @@ public class Keyboard extends Element implements Input {
 	public void setInput(String input) {
 		if (!Null.safeEquals(this.input, input)) {
 			this.input = input;
-			
-			fireChanged(true);
+
+			fireChange(new PropertyChange());
 		}
 	}
-	
+
 	public String getInput() {
 		return input;
 	}
-	
+
 	@Override
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();

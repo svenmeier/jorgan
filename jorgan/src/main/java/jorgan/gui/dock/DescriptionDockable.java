@@ -26,7 +26,6 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.play.event.PlayAdapter;
 import jorgan.session.OrganSession;
 import jorgan.session.event.ElementSelectionEvent;
@@ -136,7 +135,7 @@ public class DescriptionDockable extends OrganDockable {
 		}
 
 		@Override
-		public void changed(OrganEvent event) {
+		public void propertyChanged(Element element, String name) {
 			read();
 		}
 	}

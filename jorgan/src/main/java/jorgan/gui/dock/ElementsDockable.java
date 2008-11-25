@@ -38,7 +38,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganEvent;
+import jorgan.disposition.Message;
+import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
@@ -54,7 +55,6 @@ import jorgan.util.Generics;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
 import bias.Configuration;
-import bias.swing.MessageBox;
 
 /**
  * Panel shows all elements.
@@ -328,38 +328,49 @@ public class ElementsDockable extends OrganDockable {
 			fireContentsChanged(this, index, index);
 		}
 
-		public void changed(final OrganEvent event) {
-			if (event.self()) {
-				Element element = event.getElement();
-				int index = elements.indexOf(element);
+		public void propertyChanged(Element element, String name) {
+			int index = elements.indexOf(element);
 
-				fireContentsChanged(this, index, index);
-			}
+			fireContentsChanged(this, index, index);
 		}
 
-		public void added(OrganEvent event) {
-			if (event.self()) {
-				elements.add(event.getElement());
+		public void elementAdded(Element element) {
+			elements.add(element);
 
-				int index = elements.size() - 1;
-				fireIntervalAdded(this, index, index);
+			int index = elements.size() - 1;
+			fireIntervalAdded(this, index, index);
 
-				Collections.sort(elements, new ElementComparator(
-						sortByNameButton.isSelected()));
-				fireContentsChanged(this, 0, index);
+			Collections.sort(elements, new ElementComparator(sortByNameButton
+					.isSelected()));
+			fireContentsChanged(this, 0, index);
 
-				selectionHandler.selectionChanged(null);
-			}
+			selectionHandler.selectionChanged(null);
 		}
 
-		public void removed(OrganEvent event) {
-			if (event.self()) {
-				int index = elements.indexOf(event.getElement());
+		public void elementRemoved(Element element) {
+			int index = elements.indexOf(element);
 
-				elements.remove(event.getElement());
+			elements.remove(element);
 
-				fireIntervalRemoved(this, index, index);
-			}
+			fireIntervalRemoved(this, index, index);
+		}
+
+		public void messageAdded(Element element, Message reference) {
+		}
+
+		public void messageChanged(Element element, Message reference) {
+		}
+
+		public void messageRemoved(Element element, Message reference) {
+		}
+
+		public void referenceAdded(Element element, Reference<?> reference) {
+		}
+
+		public void referenceChanged(Element element, Reference<?> reference) {
+		}
+
+		public void referenceRemoved(Element element, Reference<?> reference) {
 		}
 	}
 
@@ -412,10 +423,6 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (config.get("remove/confirm").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(list) != MessageBox.OPTION_OK) {
-				return;
-			}
 
 			for (Element element : new ArrayList<Element>(session
 					.getElementSelection().getSelectedElements())) {

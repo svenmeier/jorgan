@@ -20,7 +20,6 @@ package jorgan.fluidsynth.play;
 
 import java.io.IOException;
 
-import jorgan.disposition.event.OrganEvent;
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
@@ -44,13 +43,14 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		createSynth();
 	}
 
-	public void elementChanged(OrganEvent event) {
-		if (event != null && event.isDispositionChange()) {
-			destroySynth();
-			createSynth();
-		} else {
+	public void update() {
+		// TODO when to destroy and create??
+//		if () {
+//			destroySynth();
+//			createSynth();
+//		} else {
 			configureSynth();
-		}
+//		}
 
 		FluidsynthSound sound = getElement();
 		if (sound.getSoundfont() == null) {

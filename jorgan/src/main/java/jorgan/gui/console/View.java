@@ -35,7 +35,6 @@ import java.util.Map;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.event.OrganEvent;
 import jorgan.gui.ConsolePanel;
 import jorgan.skin.Skin;
 import jorgan.skin.Style;
@@ -134,7 +133,7 @@ public class View<E extends Displayable> {
 		this.consolePanel = consolePanel;
 
 		if (consolePanel != null) {
-			changeUpdate(null);
+			changeUpdate();
 		}
 	}
 
@@ -179,7 +178,7 @@ public class View<E extends Displayable> {
 	 * @param event
 	 *            event of disposition
 	 */
-	public void changeUpdate(OrganEvent event) {
+	public void changeUpdate() {
 
 		if (consolePanel != null) {
 			// issure repaint so old location gets cleared
@@ -386,7 +385,7 @@ public class View<E extends Displayable> {
 	public void setDefaultColor(Color color) {
 		this.defaultColor = color;
 
-		changeUpdate(null);
+		changeUpdate();
 	}
 
 	public Font getDefaultFont() {
@@ -396,7 +395,7 @@ public class View<E extends Displayable> {
 	public void setDefaultFont(Font font) {
 		this.defaultFont = font;
 
-		changeUpdate(null);
+		changeUpdate();
 	}
 
 	public Color getShortcutColor() {
@@ -406,7 +405,7 @@ public class View<E extends Displayable> {
 	public void setShortcutColor(Color shortcutColor) {
 		this.shortcutColor = shortcutColor;
 
-		changeUpdate(null);
+		changeUpdate();
 	}
 
 	public Font getShortcutFont() {
@@ -416,7 +415,7 @@ public class View<E extends Displayable> {
 	public void setShortcutFont(Font shortcutFont) {
 		this.shortcutFont = shortcutFont;
 
-		changeUpdate(null);
+		changeUpdate();
 	}
 
 	public boolean isShowShortcut() {
@@ -426,6 +425,6 @@ public class View<E extends Displayable> {
 	public void setShowShortcut(boolean showShortcut) {
 		this.showShortcut = showShortcut;
 
-		changeUpdate(null);
+		changeUpdate();
 	}
 }
