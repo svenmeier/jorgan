@@ -35,6 +35,9 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 
 		add("channels", FluidsynthSound.class, IntegerEditor.class);
 		add("audioDriver", FluidsynthSound.class, StringEditor.class);
+		add("audioDevice", FluidsynthSound.class, StringEditor.class);
+		add("audioBuffers", FluidsynthSound.class, IntegerEditor.class);
+		add("audioBufferSize", FluidsynthSound.class, IntegerEditor.class);
 		add("soundfont", FluidsynthSound.class, FileEditor.class);
 	}
 }

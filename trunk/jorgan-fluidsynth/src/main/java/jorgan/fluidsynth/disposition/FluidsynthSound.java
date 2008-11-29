@@ -27,7 +27,17 @@ public class FluidsynthSound extends Sound {
 
 	private int channels = 32;
 	
+	// audio.driver [alsa, oss, jack, dsound, sndman, coreaudio, portaudio]
 	private String audioDriver;
+
+	// audio.<driver>.device
+	private String audioDevice;
+	
+	// audio.periods [2-64]
+	private int audioBuffers = 16;
+
+	// audio.period-size [64-8192]
+	private int audioBufferSize = 64;
 	
 	private double gain = 0.5d;
 
@@ -120,5 +130,61 @@ public class FluidsynthSound extends Sound {
 		}
 		
 		return value;
+	}
+
+	public int getAudioBuffers() {
+		return audioBuffers;
+	}
+
+	public void setAudioBuffers(int audioBuffers) {
+		if (audioBuffers < 2) {
+			throw new IllegalArgumentException(
+					"audioBuffers must be greater or equal 2");
+		}
+		if (audioBuffers > 16) {
+			throw new IllegalArgumentException("audioBuffers must be less than 16");
+		}
+
+		if (this.audioBuffers != audioBuffers) {
+			this.audioBuffers = audioBuffers;
+			
+			fireChange(new PropertyChange());
+		}
+	}
+
+	public int getAudioBufferSize() {
+		return audioBufferSize;
+	}
+
+	public void setAudioBufferSize(int audioBufferSize) {
+		if (audioBufferSize < 64) {
+			throw new IllegalArgumentException(
+					"audioBufferSize must be greater or equal 64");
+		}
+		if (audioBufferSize > 8192) {
+			throw new IllegalArgumentException("audioBufferSize must be less than 8192");
+		}
+
+		if (this.audioBufferSize != audioBufferSize) {
+			this.audioBufferSize = audioBufferSize;
+
+			fireChange(new PropertyChange());
+		}
+	}
+
+	public String getAudioDevice() {
+		return audioDevice;
+	}
+
+	public void setAudioDevice(String audioDevice) {
+		if (!Null.safeEquals(this.audioDevice, audioDevice)) {
+			if ("".equals(audioDevice)) {
+				audioDevice = null;
+			}
+			
+			this.audioDevice = audioDevice;
+			
+			fireChange(new PropertyChange());
+		}
 	}	
 }
