@@ -69,7 +69,9 @@ public class Conversion {
 			new Conversion("<organ *version=\"3\\.0\" *>",
 					"convert3.0To3.1.xsl"),
 			new Conversion("<organ *version=\"3\\.[1|2].*\" *>",
-					"convert3.1To3.3.xsl") };
+					"convert3.1To3.3.xsl"),
+			new Conversion("<organ *version=\"3\\.3.*\" *>",
+					"convert3.3To3.4.xsl") };
 
 	private String pattern;
 
@@ -123,13 +125,15 @@ public class Conversion {
 		int index = 0;
 		while (index < conversions.length) {
 			if (conversions[index].isApplicable(header)) {
+				logger.log(Level.INFO, "applicable '" + conversions[index].pattern
+						+ "'");
 				break;
 			}
 			index++;
 		}
 
 		while (index < conversions.length) {
-			logger.log(Level.INFO, "converting '" + conversions[index].pattern
+			logger.log(Level.INFO, "applying '" + conversions[index].xsl
 					+ "'");
 
 			in = conversions[index].convert(in);
