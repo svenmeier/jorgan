@@ -273,7 +273,9 @@ public class ReferencesDockable extends OrganDockable {
 
 		@Override
 		public void referenceAdded(Element element, Reference<?> reference) {
-			if (getReferencesModel().onReferenceChange(element, reference)) {
+			if (ReferencesDockable.this.element != null
+					&& getReferencesModel().onReferenceChange(element,
+							reference)) {
 				updateReferences();
 
 				for (int r = 0; r < references.size(); r++) {
@@ -287,14 +289,18 @@ public class ReferencesDockable extends OrganDockable {
 
 		@Override
 		public void referenceRemoved(Element element, Reference<?> reference) {
-			if (getReferencesModel().onReferenceChange(element, reference)) {
+			if (ReferencesDockable.this.element != null
+					&& getReferencesModel().onReferenceChange(element,
+							reference)) {
 				updateReferences();
 			}
 		}
 
 		@Override
 		public void referenceChanged(Element element, Reference<?> reference) {
-			if (getReferencesModel().onReferenceChange(element, reference)) {
+			if (ReferencesDockable.this.element != null
+					&& getReferencesModel().onReferenceChange(element,
+							reference)) {
 				updateReferences();
 			}
 		}
