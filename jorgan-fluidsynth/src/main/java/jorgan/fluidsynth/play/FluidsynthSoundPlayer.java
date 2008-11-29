@@ -45,12 +45,12 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 	public void update() {
 		// TODO when to destroy and create??
-//		if () {
-//			destroySynth();
-//			createSynth();
-//		} else {
-			configureSynth();
-//		}
+		// if () {
+		// destroySynth();
+		// createSynth();
+		// } else {
+		configureSynth();
+		// }
 
 		FluidsynthSound sound = getElement();
 		if (sound.getSoundfont() == null) {
@@ -90,7 +90,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		removeProblem(Severity.ERROR, "audioDriver");
 		try {
 			synth = new Fluidsynth(sound.getName(), sound.getChannels(), sound
-					.getAudioDriver());
+					.getAudioDriver(), sound.getAudioDevice(), sound
+					.getAudioBuffers(), sound.getAudioBufferSize());
 		} catch (IllegalStateException e) {
 			addProblem(Severity.ERROR, "audioDriver", "create");
 			return;
@@ -114,7 +115,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		if (synth != null) {
 			FluidsynthSound sound = getElement();
 
-			synth.setGain((float)(sound.getGain() * 2));
+			synth.setGain((float) (sound.getGain() * 2));
 
 			Reverb reverb = sound.getReverb();
 			if (reverb == null) {
