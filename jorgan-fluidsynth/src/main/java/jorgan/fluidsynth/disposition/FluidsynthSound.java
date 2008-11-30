@@ -57,12 +57,14 @@ public class FluidsynthSound extends Sound {
 	
 	public void setAudioDriver(String audioDriver) {
 		if (!Null.safeEquals(this.audioDriver, audioDriver)) {
+			String oldAudioDriver = this.audioDriver;
+			
 			if ("".equals(audioDriver)) {
 				audioDriver = null;
 			}
 			this.audioDriver = audioDriver;
 			
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldAudioDriver, this.audioDriver));
 		}
 	}
 	
@@ -76,9 +78,11 @@ public class FluidsynthSound extends Sound {
 
 	public void setSoundfont(String soundfont) {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
+			String oldSoundfont = this.soundfont;
+			
 			this.soundfont = soundfont;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldSoundfont, this.soundfont));
 		}
 	}
 
@@ -94,10 +98,13 @@ public class FluidsynthSound extends Sound {
 		if (channels > 256) {
 			throw new IllegalArgumentException("channels must be less than 256");
 		}
+		
 		if (this.channels != channels) {
+			int oldChannels = this.channels;
+			
 			this.channels = channels;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldChannels, this.channels));
 		}
 	}
 
@@ -146,9 +153,11 @@ public class FluidsynthSound extends Sound {
 		}
 
 		if (this.audioBuffers != audioBuffers) {
+			int oldAudioBuffers = this.audioBuffers;
+			
 			this.audioBuffers = audioBuffers;
 			
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldAudioBuffers, this.audioBuffers));
 		}
 	}
 
@@ -166,9 +175,11 @@ public class FluidsynthSound extends Sound {
 		}
 
 		if (this.audioBufferSize != audioBufferSize) {
+			int oldAudioBufferSize = this.audioBufferSize;
+			
 			this.audioBufferSize = audioBufferSize;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldAudioBufferSize, this.audioBufferSize));
 		}
 	}
 
@@ -178,13 +189,14 @@ public class FluidsynthSound extends Sound {
 
 	public void setAudioDevice(String audioDevice) {
 		if (!Null.safeEquals(this.audioDevice, audioDevice)) {
+			String oldAudioDevice = this.audioDevice;
+			
 			if ("".equals(audioDevice)) {
 				audioDevice = null;
 			}
-			
 			this.audioDevice = audioDevice;
 			
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldAudioDevice, this.audioDevice));
 		}
 	}	
 }

@@ -32,6 +32,15 @@ import jorgan.util.NativeUtils;
 public class Fluidsynth {
 
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
+	
+	private String name;
+	private int channels;
+	private String audioDriver;
+	private String audioDevice;
+	private int buffers;
+	private int bufferSize;
+
+	private File soundfont;
 
 	public Fluidsynth() throws IllegalStateException, IOException {
 		this("", 16, null, null, 16, 64);
@@ -40,23 +49,48 @@ public class Fluidsynth {
 	public Fluidsynth(String name, int channels, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException {
-		create(name(name), channels, audioDriver, audioDevice, buffers,
+		
+		this.name = name;
+		this.channels = channels;
+		this.audioDriver = audioDriver;
+		this.audioDevice = audioDevice;
+		this.buffers = buffers;
+		this.bufferSize = bufferSize;
+		
+		create(name, channels, audioDriver, audioDevice, buffers,
 				bufferSize);
 	}
 
-	public void dispose() {
-		destroy();
+	public String getAudioDevice() {
+		return audioDevice;
 	}
 
-	private String name(String name) {
-		StringBuffer buffer = new StringBuffer("jOrgan");
+	public String getAudioDriver() {
+		return audioDriver;
+	}
 
-		name = name.trim();
-		if (name.length() > 0) {
-			buffer.append("-");
-			buffer.append(name);
-		}
-		return buffer.toString();
+	public int getBuffers() {
+		return buffers;
+	}
+
+	public int getBufferSize() {
+		return bufferSize;
+	}
+
+	public int getChannels() {
+		return channels;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public File getSoundfont() {
+		return soundfont;
+	}
+	
+	public void dispose() {
+		destroy();
 	}
 
 	private native void create(String name, int channels, String audioDriver,
@@ -65,8 +99,10 @@ public class Fluidsynth {
 
 	private native void destroy();
 
-	public void soundFontLoad(File file) throws IOException {
-		soundFontLoad(file.getAbsolutePath());
+	public void soundFontLoad(File soundfont) throws IOException {
+		this.soundfont = soundfont;
+		
+		soundFontLoad(soundfont.getAbsolutePath());
 	}
 
 	public native void soundFontLoad(String filename) throws IOException;
