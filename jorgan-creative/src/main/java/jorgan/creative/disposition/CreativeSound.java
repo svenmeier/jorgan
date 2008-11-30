@@ -33,9 +33,11 @@ public class CreativeSound extends GenericSound {
 
 	public void setSoundfont(String soundfont) {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
+			String oldSoundfont = this.soundfont;
+			
 			this.soundfont = soundfont;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldSoundfont, soundfont));
 		}
 	}
 
@@ -45,9 +47,11 @@ public class CreativeSound extends GenericSound {
 
 	public void setBank(int bank) {
 		if (bank != this.bank) {
+			int oldBank = this.bank;
+			
 			this.bank = bank;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldBank, this.bank));
 		}
 	}
 }
