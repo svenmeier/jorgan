@@ -619,7 +619,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 			setEnabled(file == null);
 		}
 
-		public void onChange(Change change) {
+		public void beforeChange(Change change) {
+		}
+		
+		public void afterChange(Change change) {
 			changes = true;
 			if (change instanceof UndoableChange) {
 				undoableChanges = true;

@@ -284,9 +284,13 @@ public class OrganPlay {
 			}
 		}
 
-		public void onChange(Change change) {
+		public void beforeChange(Change change) {
 			if (open && change instanceof UndoableChange) {
 				closeImpl();
+			}
+		}
+		public void afterChange(Change change) {
+			if (open && change instanceof UndoableChange) {
 				openImpl();
 			}
 		}

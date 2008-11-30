@@ -163,6 +163,14 @@ public class Organ {
 	}
 
 	protected void fireChange(Change change) {
+		if (observers != null) {
+			// observer might remove itself when notified so work on copy
+			for (OrganObserver observer : new ArrayList<OrganObserver>(
+					observers)) {
+				observer.beforeChange(change);
+			}
+		}
+
 		if (listeners != null) {
 			// listener might remove itself when notified so work on copy
 			for (OrganListener listener : new ArrayList<OrganListener>(
@@ -175,7 +183,7 @@ public class Organ {
 			// observer might remove itself when notified so work on copy
 			for (OrganObserver observer : new ArrayList<OrganObserver>(
 					observers)) {
-				observer.onChange(change);
+				observer.afterChange(change);
 			}
 		}
 	}
