@@ -25,6 +25,7 @@ import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
+import jorgan.util.Null;
 
 /**
  * A player for a {@link CreativeSound}.
@@ -46,17 +47,21 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	public void update() {
 		super.update();
 
-		// TODO when to destroy and create??
-//		if () {
-//			destroyManager();
-//			createManager();
-//		}
-		
 		CreativeSound sound = getElement();
 		if (sound.getSoundfont() == null) {
 			addProblem(Severity.WARNING, "soundfont", "noSoundfont");
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
+		}
+
+		if (clone != null) {
+			if (!Null.safeEquals(clone.getOutput(), sound.getOutput())
+					|| !Null.safeEquals(clone.getBank(), sound.getBank())
+					|| !Null.safeEquals(clone.getSoundfont(), sound
+							.getSoundfont())) {
+				destroyManager();
+				createManager();
+			}
 		}
 	}
 
@@ -66,42 +71,42 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	}
 
 	private void createManager() {
-		CreativeSound output = getElement();
+		CreativeSound sound = getElement();
 
 		clone = null;
 
-		removeProblem(Severity.ERROR, "device");
+		removeProblem(Severity.ERROR, "output");
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
-		if (output.getOutput() != null && output.getSoundfont() != null) {
+		if (sound.getOutput() != null && sound.getSoundfont() != null) {
 			int index;
 
 			try {
-				index = new SoundFontManager().getDeviceIndex(output
-						.getOutput());
+				index = new SoundFontManager()
+						.getDeviceIndex(sound.getOutput());
 			} catch (IllegalArgumentException ex) {
-				addProblem(Severity.ERROR, "device", "noCreativeDevice",
-						output.getOutput());
+				addProblem(Severity.ERROR, "output", "noCreativeDevice", sound
+						.getOutput());
 				return;
 			}
 
 			try {
-				new SoundFontManager().clearBank(index, output.getBank());
+				new SoundFontManager().clearBank(index, sound.getBank());
 			} catch (Exception ignore) {
 			}
 
 			try {
-				new SoundFontManager().loadBank(index, output.getBank(),
-						new File(output.getSoundfont()).getCanonicalPath());
+				new SoundFontManager().loadBank(index, sound.getBank(),
+						new File(sound.getSoundfont()).getCanonicalPath());
 
-				clone = (CreativeSound) output.clone();
+				clone = (CreativeSound) sound.clone();
 			} catch (IllegalArgumentException ex) {
-				addProblem(Severity.ERROR, "bank", "invalidBank", output
+				addProblem(Severity.ERROR, "bank", "invalidBank", sound
 						.getBank());
 				return;
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
-						output.getSoundfont());
+				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
+						.getSoundfont());
 				return;
 			}
 		}
