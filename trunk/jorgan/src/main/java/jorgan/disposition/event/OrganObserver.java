@@ -24,5 +24,7 @@ package jorgan.disposition.event;
  */
 public interface OrganObserver {
 
-	public void onChange(Change change);
+	public void beforeChange(Change change);
+	
+	public void afterChange(Change change);
 }
