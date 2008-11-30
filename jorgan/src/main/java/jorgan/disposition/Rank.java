@@ -21,6 +21,7 @@ package jorgan.disposition;
 import java.util.Set;
 
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.util.Null;
 
 /**
  * A rank.
@@ -119,12 +120,16 @@ public class Rank extends Engageable {
 	}
 
 	public void setDelay(int delay) {
-		if (delay < 0) {
-			throw new IllegalArgumentException("delay '" + delay + "'");
-		}
-		this.delay = delay;
+		if (this.delay != delay) {
+			int oldDelay = this.delay;
+			
+			if (delay < 0) {
+				throw new IllegalArgumentException("delay '" + delay + "'");
+			}
+			this.delay = delay;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldDelay, this.delay));
+		}
 	}
 
 	public String getChannel() {
@@ -136,9 +141,13 @@ public class Rank extends Engageable {
 			throw new IllegalArgumentException("channel must not be null");
 		}
 
-		this.channel = channel;
+		if (!Null.safeEquals(this.channel, channel)) {
+			String oldChannel = this.channel;
 
-		fireChange(new PropertyChange());
+			this.channel = channel;
+
+			fireChange(new PropertyChange(oldChannel, this.channel));
+		}
 	}
 
 	public Set<Class<? extends Message>> getMessageClasses() {

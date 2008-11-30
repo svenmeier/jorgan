@@ -45,9 +45,11 @@ public class Keyboard extends Element implements Input {
 
 	public void setInput(String input) {
 		if (!Null.safeEquals(this.input, input)) {
+			String oldInput = this.input;
+			
 			this.input = input;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldInput, this.input));
 		}
 	}
 

@@ -51,17 +51,25 @@ public abstract class Keyable extends Switch {
 	}
 
 	public void setAction(int action) {
-		if (action < ACTION_STRAIGHT || action > ACTION_SOSTENUTO) {
-			throw new IllegalArgumentException("pitch '" + action + "'");
-		}
-		this.action = action;
+		if (this.action != action) {
+			int oldAction = this.action;
+			
+			if (action < ACTION_STRAIGHT || action > ACTION_SOSTENUTO) {
+				throw new IllegalArgumentException("pitch '" + action + "'");
+			}
+			this.action = action;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldAction, this.action));
+		}
 	}
 
 	public void setTranspose(int transpose) {
-		this.transpose = transpose;
+		if (this.transpose != transpose) {
+			int oldTranspose = this.transpose;
+			
+			this.transpose = transpose;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldTranspose, this.transpose));
+		}
 	}
 }

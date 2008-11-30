@@ -51,9 +51,11 @@ public abstract class Displayable extends Element {
 	 */
 	public void setStyle(String style) {
 		if (!Null.safeEquals(this.style, style)) {
+			String oldStyle = this.style;
+			
 			this.style = style;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldStyle, style));
 		}
 	}
 
@@ -62,15 +64,19 @@ public abstract class Displayable extends Element {
 	}
 
 	public void setZoom(float zoom) {
-		if (zoom < MIN_ZOOM) {
-			zoom = MIN_ZOOM;
-		}
-		if (zoom > MAX_ZOOM) {
-			zoom = MAX_ZOOM;
-		}
+		if (zoom != this.zoom) {
+			float oldZoom = this.zoom;
+			
+			if (zoom < MIN_ZOOM) {
+				zoom = MIN_ZOOM;
+			}
+			if (zoom > MAX_ZOOM) {
+				zoom = MAX_ZOOM;
+			}
 
-		this.zoom = zoom;
+			this.zoom = zoom;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldZoom, this.zoom));
+		}
 	}
 }

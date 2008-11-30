@@ -22,6 +22,7 @@ import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.util.Null;
 
 /**
  * Base class for an switchable elements.
@@ -42,9 +43,13 @@ public class Switch extends Engageable {
 	}
 
 	public void setShortcut(Shortcut shortcut) {
-		this.shortcut = shortcut;
+		if (!Null.safeEquals(this.shortcut, shortcut)) {
+			Shortcut oldShortcut = this.shortcut;
 
-		fireChange(new PropertyChange());
+			this.shortcut = shortcut;
+
+			fireChange(new PropertyChange(oldShortcut, this.shortcut));
+		}
 	}
 
 	public void toggle() {
@@ -97,9 +102,13 @@ public class Switch extends Engageable {
 	}
 
 	public void setLocking(boolean locking) {
-		this.locking = locking;
+		if (this.locking != locking) {
+			boolean oldLocking = this.locking;
 
-		fireChange(new PropertyChange());
+			this.locking = locking;
+
+			fireChange(new PropertyChange(oldLocking, this.locking));
+		}
 	}
 
 	protected int getEngagedCount() {

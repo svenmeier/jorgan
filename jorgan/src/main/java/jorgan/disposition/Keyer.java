@@ -34,9 +34,13 @@ public class Keyer extends Activator {
 	}
 
 	public void setPitch(int pitch) {
-		this.pitch = pitch;
+		if (this.pitch != pitch) {
+			int oldPitch = this.pitch;
+			
+			this.pitch = pitch;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldPitch, this.pitch));
+		}
 	}
 
 	public int getPitch() {

@@ -30,9 +30,11 @@ public class GenericSound extends Sound implements Output {
 
 	public void setOutput(String output) {
 		if (!Null.safeEquals(this.output, output)) {
+			String oldOutput = this.output;
+			
 			this.output = output;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldOutput, this.output));
 		}
 	}
 }
