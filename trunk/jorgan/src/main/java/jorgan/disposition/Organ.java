@@ -118,10 +118,10 @@ public class Organ {
 	}
 
 	public void addElement(final Element element) {
+		
 		elements.add(element);
 		element.setOrgan(this);
 
-		// TODO handle index and references
 		fireChange(new UndoableChange() {
 			public void notify(OrganListener listener) {
 				listener.elementAdded(element);
@@ -134,7 +134,7 @@ public class Organ {
 			}
 		});
 	}
-
+	
 	public void removeElement(final Element element) {
 
 		if (element.getOrgan() != this) {
@@ -149,7 +149,6 @@ public class Organ {
 		elements.remove(element);
 		element.setOrgan(null);
 
-		// TODO handle index and references
 		fireChange(new UndoableChange() {
 			public void notify(OrganListener listener) {
 				listener.elementRemoved(element);

@@ -45,13 +45,15 @@ public class Memory extends IndexedContinuous {
 
 	public void setSize(int size) {
 		if (size != titles.length) {
+			int oldSize = titles.length;
+			
 			String[] strings = new String[size];
 			Arrays.fill(strings, 0, strings.length, "");
 			System.arraycopy(titles, 0, strings, 0, Math.min(strings.length,
 					titles.length));
 			titles = strings;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldSize, titles.length));
 		}
 	}
 

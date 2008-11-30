@@ -23,6 +23,7 @@ import java.util.List;
 
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
+import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
 import jorgan.session.event.UndoListener;
@@ -37,6 +38,8 @@ public class UndoManager {
 	private List<UndoableChange> undos = new ArrayList<UndoableChange>();
 
 	private List<UndoableChange> redos = new ArrayList<UndoableChange>();
+	
+	private boolean compound = false;
 
 	private boolean inProgress;
 
@@ -60,7 +63,13 @@ public class UndoManager {
 
 	private void add(UndoableChange change) {
 		if (!inProgress) {
-			undos.add(change);
+			if (compound) {
+				undos.add(new CompoundChange(change, undos.remove(undos.size() - 1)));
+			} else {
+				undos.add(change);
+				compound = true;
+			}
+			
 			redos.clear();
 
 			fireChange();
@@ -73,6 +82,10 @@ public class UndoManager {
 		}
 	}
 
+	public void compound() {
+		compound = false;
+	}
+	
 	public boolean canUndo() {
 		return !undos.isEmpty();
 	}
@@ -82,6 +95,8 @@ public class UndoManager {
 	}
 
 	public void undo() {
+		compound = false;
+		
 		if (!undos.isEmpty()) {
 			try {
 				inProgress = true;
@@ -100,6 +115,8 @@ public class UndoManager {
 	}
 
 	public void redo() {
+		compound = false;
+
 		if (!redos.isEmpty()) {
 			try {
 				inProgress = true;
@@ -113,6 +130,30 @@ public class UndoManager {
 			} finally {
 				inProgress = false;
 			}
+		}
+	}
+	
+	private static class CompoundChange implements UndoableChange {
+		private UndoableChange change1;
+		
+		private UndoableChange change2;
+		
+		public CompoundChange(UndoableChange change1, UndoableChange change2) {
+			this.change1 = change1;
+			this.change2 = change2;
+		}
+		
+		public void notify(OrganListener listener) {
+		}
+		
+		public void undo() {
+			change1.undo();
+			change2.undo();
+		}
+		
+		public void redo() {
+			change2.redo();
+			change1.redo();
 		}
 	}
 }

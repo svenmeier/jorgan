@@ -26,6 +26,7 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
+import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.UndoListener;
@@ -61,12 +62,20 @@ public class OrganSession {
 		}
 		this.organ = organ;
 
-		this.selection = new ElementSelection();
-		this.problems = new ElementProblems();
+		problems = new ElementProblems();
 
-		this.play = new OrganPlay(organ, problems);
+		play = new OrganPlay(organ, problems);
 
-		this.organ.addOrganListener((OrganListener) Spin
+		undoManager = new UndoManager(organ);
+
+		selection = new ElementSelection();
+		selection.addSelectionListener(new ElementSelectionListener() {
+			public void selectionChanged(ElementSelectionEvent ev) {
+				undoManager.compound(); 
+			}
+		});
+		
+		organ.addOrganListener((OrganListener) Spin
 				.over(new OrganAdapter() {
 					@Override
 					public void elementAdded(Element element) {
@@ -81,7 +90,6 @@ public class OrganSession {
 					}
 				}));
 		
-		this.undoManager = new UndoManager(organ);
 	}
 
 	public Organ getOrgan() {

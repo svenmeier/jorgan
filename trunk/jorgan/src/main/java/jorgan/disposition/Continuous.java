@@ -39,9 +39,13 @@ public class Continuous extends Displayable {
 	}
 
 	public void setLocking(boolean locking) {
-		this.locking = locking;
+		if (this.locking != locking) {
+			boolean oldLocking = this.locking;
+			
+			this.locking = locking;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldLocking, this.locking));
+		}
 	}
 
 	public void setValue(float value) {
@@ -72,9 +76,13 @@ public class Continuous extends Displayable {
 	}
 
 	public void setThreshold(float threshold) {
-		this.threshold = threshold;
+		if (this.threshold != threshold) {
+			float oldThreshold = this.threshold;
+			
+			this.threshold = threshold;
 
-		fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldThreshold, threshold));
+		}
 	}
 
 	@Override

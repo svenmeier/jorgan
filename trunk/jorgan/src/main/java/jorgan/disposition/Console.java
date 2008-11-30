@@ -37,9 +37,11 @@ public class Console extends Displayable implements Input, Output {
 
 	public void setInput(String input) {
 		if (!Null.safeEquals(this.input, input)) {
+			String oldInput = this.input;
+
 			this.input = input;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldInput, this.input));
 		}
 	}
 
@@ -49,9 +51,11 @@ public class Console extends Displayable implements Input, Output {
 
 	public void setOutput(String output) {
 		if (!Null.safeEquals(this.output, output)) {
+			String oldOutput = this.output;
+
 			this.output = output;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldOutput, this.output));
 		}
 	}
 
@@ -90,17 +94,21 @@ public class Console extends Displayable implements Input, Output {
 
 	public void setSkin(String skin) {
 		if (!Null.safeEquals(this.skin, skin)) {
+			String oldSkin = this.skin;
+
 			this.skin = skin;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldSkin, this.skin));
 		}
 	}
 
 	public void setScreen(String screen) {
 		if (!Null.safeEquals(this.screen, screen)) {
+			String oldScreen = this.screen;
+
 			this.screen = screen;
 
-			fireChange(new PropertyChange());
+			fireChange(new PropertyChange(oldScreen, this.screen));
 		}
 	}
 
@@ -109,7 +117,7 @@ public class Console extends Displayable implements Input, Output {
 
 		final int oldX = reference.getX();
 		final int oldY = reference.getY();
-		
+
 		reference.setX(x);
 		reference.setY(y);
 
@@ -117,9 +125,11 @@ public class Console extends Displayable implements Input, Output {
 			public void notify(OrganListener listener) {
 				listener.referenceChanged(Console.this, reference);
 			}
+
 			public void undo() {
 				setLocation(element, oldX, oldY);
 			}
+
 			public void redo() {
 				setLocation(element, x, y);
 			}
@@ -211,5 +221,5 @@ public class Console extends Displayable implements Input, Output {
 		}
 
 		moveReference(reference, 0);
-	}	
+	}
 }
