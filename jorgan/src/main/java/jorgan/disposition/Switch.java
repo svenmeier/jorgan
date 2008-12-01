@@ -48,7 +48,7 @@ public class Switch extends Engageable {
 
 			this.shortcut = shortcut;
 
-			fireChange(new PropertyChange(oldShortcut, this.shortcut));
+			fireChange(new UndoablePropertyChange(oldShortcut, this.shortcut));
 		}
 	}
 
@@ -71,7 +71,7 @@ public class Switch extends Engageable {
 			// Engageable#engagingChanged(boolean), first fire change, then
 			// check change of engaging
 			{
-				fireChange(new SimplePropertyChange());
+				fireChange(new PropertyChange());
 
 				if (isEngagedChange(active)) {
 					onEngaged(active);
@@ -107,7 +107,7 @@ public class Switch extends Engageable {
 
 			this.locking = locking;
 
-			fireChange(new PropertyChange(oldLocking, this.locking));
+			fireChange(new UndoablePropertyChange(oldLocking, this.locking));
 		}
 	}
 

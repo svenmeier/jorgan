@@ -50,7 +50,7 @@ public class Engageable extends Displayable {
 	public final void engagingChanged(boolean engaged) {
 
 		if (isEngagedChange(engaged)) {
-			fireChange(new SimplePropertyChange());
+			fireChange(new PropertyChange());
 
 			onEngaged(engaged);
 		}

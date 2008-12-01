@@ -39,7 +39,7 @@ public class Keyer extends Activator {
 			
 			this.pitch = pitch;
 
-			fireChange(new PropertyChange(oldPitch, this.pitch));
+			fireChange(new UndoablePropertyChange(oldPitch, this.pitch));
 		}
 	}
 
