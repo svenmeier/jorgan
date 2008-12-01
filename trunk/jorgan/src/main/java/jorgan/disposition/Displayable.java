@@ -55,7 +55,7 @@ public abstract class Displayable extends Element {
 			
 			this.style = style;
 
-			fireChange(new PropertyChange(oldStyle, style));
+			fireChange(new UndoablePropertyChange(oldStyle, style));
 		}
 	}
 
@@ -76,7 +76,7 @@ public abstract class Displayable extends Element {
 
 			this.zoom = zoom;
 
-			fireChange(new PropertyChange(oldZoom, this.zoom));
+			fireChange(new UndoablePropertyChange(oldZoom, this.zoom));
 		}
 	}
 }

@@ -44,7 +44,7 @@ public class Continuous extends Displayable {
 			
 			this.locking = locking;
 
-			fireChange(new PropertyChange(oldLocking, this.locking));
+			fireChange(new UndoablePropertyChange(oldLocking, this.locking));
 		}
 	}
 
@@ -58,7 +58,7 @@ public class Continuous extends Displayable {
 			
 			this.value = value;
 
-			fireChange(new SimplePropertyChange());
+			fireChange(new PropertyChange());
 			
 			onValueChanged(oldValue, this.value);
 		}
@@ -81,7 +81,7 @@ public class Continuous extends Displayable {
 			
 			this.threshold = threshold;
 
-			fireChange(new PropertyChange(oldThreshold, threshold));
+			fireChange(new UndoablePropertyChange(oldThreshold, threshold));
 		}
 	}
 

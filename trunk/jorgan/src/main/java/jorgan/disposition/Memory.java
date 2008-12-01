@@ -40,7 +40,7 @@ public class Memory extends IndexedContinuous {
 	public void setTitle(String index) {
 		titles[getIndex()] = index;
 
-		fireChange(new SimplePropertyChange());
+		fireChange(new PropertyChange());
 	}
 
 	public void setSize(int size) {
@@ -53,7 +53,7 @@ public class Memory extends IndexedContinuous {
 					titles.length));
 			titles = strings;
 
-			fireChange(new PropertyChange(oldSize, titles.length));
+			fireChange(new UndoablePropertyChange(oldSize, titles.length));
 		}
 	}
 
@@ -79,7 +79,7 @@ public class Memory extends IndexedContinuous {
 		}
 		titles[index] = title;
 
-		fireChange(new SimplePropertyChange());
+		fireChange(new PropertyChange());
 	}
 
 	public void clear(int index) {

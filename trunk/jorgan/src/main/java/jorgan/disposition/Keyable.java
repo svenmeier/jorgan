@@ -59,7 +59,7 @@ public abstract class Keyable extends Switch {
 			}
 			this.action = action;
 
-			fireChange(new PropertyChange(oldAction, this.action));
+			fireChange(new UndoablePropertyChange(oldAction, this.action));
 		}
 	}
 
@@ -69,7 +69,7 @@ public abstract class Keyable extends Switch {
 			
 			this.transpose = transpose;
 
-			fireChange(new PropertyChange(oldTranspose, this.transpose));
+			fireChange(new UndoablePropertyChange(oldTranspose, this.transpose));
 		}
 	}
 }

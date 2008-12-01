@@ -310,7 +310,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.name = name.trim();
 
-			fireChange(new PropertyChange(oldName, this.name));
+			fireChange(new UndoablePropertyChange(oldName, this.name));
 		}
 	}
 
@@ -338,7 +338,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.description = description;
 
-			fireChange(new PropertyChange(oldDescription, this.description));
+			fireChange(new UndoablePropertyChange(oldDescription, this.description));
 		}
 	}
 
@@ -518,23 +518,42 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
-	public class PropertyChange implements UndoableChange {
+	public class PropertyChange implements Change {
 		private String methodName;
 
-		private Object oldValue;
-
-		private Object newValue;
-
-		public PropertyChange(Object oldValue, Object newValue) {
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-
+		public PropertyChange() {
 			StackTraceElement trace = Thread.currentThread().getStackTrace()[2];
 			this.methodName = trace.getMethodName();
 		}
 
 		public void notify(OrganListener listener) {
 			listener.propertyChanged(Element.this, getName());
+		}
+
+		protected String getName() {
+			return Character.toLowerCase(methodName.charAt("set".length()))
+					+ methodName.substring("set".length() + 1);
+		}
+		
+		protected Method getMethod() throws Exception {
+			for (Method method : Element.this.getClass().getMethods()) {
+				if (method.getName().equals(methodName)) {
+					return method;
+				}
+			}
+			throw new Error();
+		}
+	}
+
+	public class UndoablePropertyChange extends PropertyChange implements UndoableChange {
+
+		private Object oldValue;
+
+		private Object newValue;
+
+		public UndoablePropertyChange(Object oldValue, Object newValue) {
+			this.oldValue = oldValue;
+			this.newValue = newValue;
 		}
 
 		public void undo() {
@@ -552,44 +571,12 @@ public abstract class Element implements Cloneable {
 				throw new IllegalStateException(ex);
 			}
 		}
-		
-		private Method getMethod() throws Exception {
-			for (Method method : Element.this.getClass().getMethods()) {
-				if (method.getName().equals(methodName)) {
-					return method;
-				}
-			}
-			throw new Error();
-		}
-		
-		private String getName() {
-			return Character.toLowerCase(methodName.charAt("set".length()))
-					+ methodName.substring("set".length() + 1);
-		}
 	}
 
-	public class SimplePropertyChange implements Change {
-		private String methodName;
-
-		public SimplePropertyChange() {
-			StackTraceElement trace = Thread.currentThread().getStackTrace()[2];
-			this.methodName = trace.getMethodName();
-		}
-
-		public void notify(OrganListener listener) {
-			listener.propertyChanged(Element.this, getName());
-		}
-
-		private String getName() {
-			return Character.toLowerCase(methodName.charAt("set".length()))
-					+ methodName.substring("set".length() + 1);
-		}
-	}
-
-	public class SimpleReferenceChange implements Change {
+	public class ReferenceChange implements Change {
 		private Reference reference;
 
-		public SimpleReferenceChange(Reference reference) {
+		public ReferenceChange(Reference reference) {
 			this.reference = reference;
 		}
 
