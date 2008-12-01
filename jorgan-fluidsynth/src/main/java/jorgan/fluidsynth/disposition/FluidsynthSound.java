@@ -48,7 +48,7 @@ public class FluidsynthSound extends Sound {
 	public void setGain(double gain) {
 		this.gain = FluidsynthSound.limit(gain);
 
-		fireChange(new SimplePropertyChange());
+		fireChange(new PropertyChange());
 	}
 	
 	public double getGain() {
@@ -64,7 +64,7 @@ public class FluidsynthSound extends Sound {
 			}
 			this.audioDriver = audioDriver;
 			
-			fireChange(new PropertyChange(oldAudioDriver, this.audioDriver));
+			fireChange(new UndoablePropertyChange(oldAudioDriver, this.audioDriver));
 		}
 	}
 	
@@ -82,7 +82,7 @@ public class FluidsynthSound extends Sound {
 			
 			this.soundfont = soundfont;
 
-			fireChange(new PropertyChange(oldSoundfont, this.soundfont));
+			fireChange(new UndoablePropertyChange(oldSoundfont, this.soundfont));
 		}
 	}
 
@@ -104,7 +104,7 @@ public class FluidsynthSound extends Sound {
 			
 			this.channels = channels;
 
-			fireChange(new PropertyChange(oldChannels, this.channels));
+			fireChange(new UndoablePropertyChange(oldChannels, this.channels));
 		}
 	}
 
@@ -115,7 +115,7 @@ public class FluidsynthSound extends Sound {
 	public void setChorus(Chorus chorus) {
 		this.chorus = chorus;
 		
-		fireChange(new SimplePropertyChange());
+		fireChange(new PropertyChange());
 	}
 
 	public Reverb getReverb() {
@@ -125,7 +125,7 @@ public class FluidsynthSound extends Sound {
 	public void setReverb(Reverb reverb) {
 		this.reverb = reverb;
 		
-		fireChange(new SimplePropertyChange());
+		fireChange(new PropertyChange());
 	}
 	
 	static double limit(double value) {
@@ -157,7 +157,7 @@ public class FluidsynthSound extends Sound {
 			
 			this.audioBuffers = audioBuffers;
 			
-			fireChange(new PropertyChange(oldAudioBuffers, this.audioBuffers));
+			fireChange(new UndoablePropertyChange(oldAudioBuffers, this.audioBuffers));
 		}
 	}
 
@@ -179,7 +179,7 @@ public class FluidsynthSound extends Sound {
 			
 			this.audioBufferSize = audioBufferSize;
 
-			fireChange(new PropertyChange(oldAudioBufferSize, this.audioBufferSize));
+			fireChange(new UndoablePropertyChange(oldAudioBufferSize, this.audioBufferSize));
 		}
 	}
 
@@ -196,7 +196,7 @@ public class FluidsynthSound extends Sound {
 			}
 			this.audioDevice = audioDevice;
 			
-			fireChange(new PropertyChange(oldAudioDevice, this.audioDevice));
+			fireChange(new UndoablePropertyChange(oldAudioDevice, this.audioDevice));
 		}
 	}	
 }

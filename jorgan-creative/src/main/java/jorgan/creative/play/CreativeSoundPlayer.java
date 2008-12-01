@@ -73,8 +73,6 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	private void createManager() {
 		CreativeSound sound = getElement();
 
-		clone = null;
-
 		removeProblem(Severity.ERROR, "output");
 		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");

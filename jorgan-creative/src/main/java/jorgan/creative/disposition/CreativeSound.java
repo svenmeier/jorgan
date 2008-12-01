@@ -37,7 +37,7 @@ public class CreativeSound extends GenericSound {
 			
 			this.soundfont = soundfont;
 
-			fireChange(new PropertyChange(oldSoundfont, soundfont));
+			fireChange(new UndoablePropertyChange(oldSoundfont, soundfont));
 		}
 	}
 
@@ -51,7 +51,7 @@ public class CreativeSound extends GenericSound {
 			
 			this.bank = bank;
 
-			fireChange(new PropertyChange(oldBank, this.bank));
+			fireChange(new UndoablePropertyChange(oldBank, this.bank));
 		}
 	}
 }
