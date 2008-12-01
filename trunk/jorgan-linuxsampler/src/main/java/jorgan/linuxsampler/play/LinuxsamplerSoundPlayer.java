@@ -26,7 +26,6 @@ import java.io.Reader;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-import jorgan.disposition.event.OrganEvent;
 import jorgan.linuxsampler.ConversationException;
 import jorgan.linuxsampler.Linuxsampler;
 import jorgan.linuxsampler.Linuxsampler.Conversation;
@@ -35,6 +34,7 @@ import jorgan.linuxsampler.io.FileWatcher;
 import jorgan.play.GenericSoundPlayer;
 import jorgan.session.event.Severity;
 import jorgan.util.IOUtils;
+import jorgan.util.Null;
 
 /**
  * A player for a {@link FluidsynthSound}.
@@ -43,9 +43,11 @@ public class LinuxsamplerSoundPlayer extends
 		GenericSoundPlayer<LinuxsamplerSound> {
 
 	private Linuxsampler linuxsampler;
-	
+
+	private LinuxsamplerSound clone;
+
 	private FileWatcher watcher;
-	
+
 	public LinuxsamplerSoundPlayer(LinuxsamplerSound sound) {
 		super(sound);
 	}
@@ -61,22 +63,27 @@ public class LinuxsamplerSoundPlayer extends
 	}
 
 	@Override
-	public void elementChanged(OrganEvent event) {
-		super.elementChanged(event);
+	public void update() {
+		super.update();
 
-		if (event != null && event.isDispositionChange()) {
-			destroyLinuxsampler();
-			createLinuxsampler();
-		}
-		
 		LinuxsamplerSound sound = getElement();
+
+		if (linuxsampler != null) {
+			if (!Null.safeEquals(clone.getOutput(), sound.getOutput())
+					|| !Null.safeEquals(clone.getPort(), sound.getPort())
+					|| !Null.safeEquals(clone.getLscp(), sound.getLscp())) {
+				destroyLinuxsampler();
+				createLinuxsampler();
+			}
+		}
+
 		if (sound.getHost() == null) {
 			addProblem(Severity.WARNING, "host", "noHost", sound.getHost());
 		} else {
 			removeProblem(Severity.WARNING, "host");
 		}
 	}
-	
+
 	private void createLinuxsampler() {
 		LinuxsamplerSound sound = getElement();
 
@@ -85,6 +92,8 @@ public class LinuxsamplerSoundPlayer extends
 			try {
 				linuxsampler = new Linuxsampler(sound.getHost(), sound
 						.getPort());
+				
+				clone = (LinuxsamplerSound)sound.clone();
 			} catch (UnknownHostException e) {
 				addProblem(Severity.ERROR, "host", "unkownHost", sound
 						.getHost());
@@ -111,7 +120,7 @@ public class LinuxsamplerSoundPlayer extends
 
 			Reader reader;
 			try {
-				reader = new FileReader(file);				
+				reader = new FileReader(file);
 			} catch (FileNotFoundException e1) {
 				addProblem(Severity.ERROR, "lscp", "lscpNotFound", sound
 						.getLscp());
@@ -125,12 +134,12 @@ public class LinuxsamplerSoundPlayer extends
 					loadLscp();
 				}
 			};
-			
+
 			try {
 				Conversation conversation = linuxsampler.conversation();
 
 				conversation.send(reader);
-				
+
 				if (conversation.hasWarnings()) {
 					addProblem(Severity.WARNING, "lscp", "lscpWarnings",
 							conversation.getWarnings());
@@ -139,15 +148,14 @@ public class LinuxsamplerSoundPlayer extends
 				addProblem(Severity.ERROR, "host", "hostUnavailable");
 				return;
 			} catch (ConversationException e) {
-				addProblem(Severity.ERROR, "lscp", "lscpError", e
-						.getMessage());
+				addProblem(Severity.ERROR, "lscp", "lscpError", e.getMessage());
 				return;
 			} finally {
 				IOUtils.closeQuietly(reader);
 			}
 		}
 	}
-	
+
 	private void destroyLinuxsampler() {
 		if (linuxsampler != null) {
 			try {
@@ -156,10 +164,12 @@ public class LinuxsamplerSoundPlayer extends
 			}
 			linuxsampler = null;
 
+			clone = null;
+
 			if (watcher != null) {
 				watcher.cancel();
 				watcher = null;
-			}
+			}			
 		}
 	}
 }

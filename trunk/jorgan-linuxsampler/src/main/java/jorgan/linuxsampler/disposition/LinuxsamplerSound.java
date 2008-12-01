@@ -35,9 +35,11 @@ public class LinuxsamplerSound extends GenericSound {
 
 	public void setHost(String host) {
 		if (!Null.safeEquals(this.host, host)) {
+			String oldHost = this.host;
+			
 			this.host = host;
 
-			fireChanged(true);
+			fireChange(new UndoablePropertyChange(oldHost, this.host));
 		}
 	}
 
@@ -47,9 +49,11 @@ public class LinuxsamplerSound extends GenericSound {
 
 	public void setPort(int port) {
 		if (this.port != port) {
+			int oldPort = this.port;
+			
 			this.port = port;
 
-			fireChanged(true);
+			fireChange(new UndoablePropertyChange(oldPort, this.port));
 		}
 	}
 
@@ -59,9 +63,11 @@ public class LinuxsamplerSound extends GenericSound {
 
 	public void setLscp(String lscp) {
 		if (!Null.safeEquals(this.lscp, lscp)) {
+			String oldLscp = this.lscp;
+			
 			this.lscp = lscp;
 
-			fireChanged(true);
+			fireChange(new UndoablePropertyChange(oldLscp, this.lscp));
 		}
 	}
 }
