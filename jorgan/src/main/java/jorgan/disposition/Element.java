@@ -522,8 +522,14 @@ public abstract class Element implements Cloneable {
 		private String methodName;
 
 		public PropertyChange() {
-			StackTraceElement trace = Thread.currentThread().getStackTrace()[2];
-			this.methodName = trace.getMethodName();
+			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
+			for (StackTraceElement element : stack) {
+				if (element.getMethodName().startsWith("set")) {
+					this.methodName = element.getMethodName();
+					return;
+				}
+			}
+			throw new UnsupportedOperationException();
 		}
 
 		public void notify(OrganListener listener) {
@@ -541,7 +547,7 @@ public abstract class Element implements Cloneable {
 					return method;
 				}
 			}
-			throw new Error(methodName);
+			throw new UnsupportedOperationException(methodName);
 		}
 	}
 
@@ -574,9 +580,9 @@ public abstract class Element implements Cloneable {
 	}
 
 	public class ReferenceChange implements Change {
-		private Reference reference;
+		private Reference<?> reference;
 
-		public ReferenceChange(Reference reference) {
+		public ReferenceChange(Reference<?> reference) {
 			this.reference = reference;
 		}
 
