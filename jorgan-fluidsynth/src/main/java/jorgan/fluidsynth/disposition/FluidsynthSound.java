@@ -34,10 +34,10 @@ public class FluidsynthSound extends Sound {
 	private String audioDevice;
 	
 	// audio.periods [2-64]
-	private int audioBuffers = 16;
+	private int audioBuffers = 8;
 
 	// audio.period-size [64-8192]
-	private int audioBufferSize = 64;
+	private int audioBufferSize = 512;
 	
 	private double gain = 0.5d;
 
