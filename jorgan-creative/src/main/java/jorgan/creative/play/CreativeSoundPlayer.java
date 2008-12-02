@@ -38,7 +38,6 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		super(output);
 	}
 
-	@Override
 	protected void setUp() {
 		createManager();
 	}
@@ -54,7 +53,9 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
 
-		if (clone != null) {
+		if (clone == null) {
+			createManager();
+		} else {
 			if (!Null.safeEquals(clone.getOutput(), sound.getOutput())
 					|| !Null.safeEquals(clone.getBank(), sound.getBank())
 					|| !Null.safeEquals(clone.getSoundfont(), sound
