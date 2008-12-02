@@ -68,19 +68,21 @@ public class LinuxsamplerSoundPlayer extends
 
 		LinuxsamplerSound sound = getElement();
 
-		if (linuxsampler != null) {
+		if (sound.getHost() == null) {
+			addProblem(Severity.WARNING, "host", "noHost", sound.getHost());
+		} else {
+			removeProblem(Severity.WARNING, "host");
+		}
+
+		if (linuxsampler == null) {
+			createLinuxsampler();
+		} else {
 			if (!Null.safeEquals(clone.getOutput(), sound.getOutput())
 					|| !Null.safeEquals(clone.getPort(), sound.getPort())
 					|| !Null.safeEquals(clone.getLscp(), sound.getLscp())) {
 				destroyLinuxsampler();
 				createLinuxsampler();
 			}
-		}
-
-		if (sound.getHost() == null) {
-			addProblem(Severity.WARNING, "host", "noHost", sound.getHost());
-		} else {
-			removeProblem(Severity.WARNING, "host");
 		}
 	}
 
