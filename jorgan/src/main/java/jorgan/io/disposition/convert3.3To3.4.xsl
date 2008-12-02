@@ -4,8 +4,8 @@
 	<xsl:template match="fluidsynth.fluidsynthSound">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
-		    <audioBuffers>16</audioBuffers>
-		    <audioBufferSize>64</audioBufferSize>
+		    <audioBuffers>8</audioBuffers>
+		    <audioBufferSize>512</audioBufferSize>
 		</xsl:copy>
 	</xsl:template>
 
