@@ -38,10 +38,6 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		super(output);
 	}
 
-	protected void setUp() {
-		createManager();
-	}
-
 	@Override
 	public void update() {
 		super.update();
@@ -67,7 +63,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	}
 
 	@Override
-	protected void tearDown() {
+	protected void destroy() {
 		destroyManager();
 	}
 

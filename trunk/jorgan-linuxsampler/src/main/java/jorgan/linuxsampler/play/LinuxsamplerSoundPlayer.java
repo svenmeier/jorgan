@@ -53,12 +53,7 @@ public class LinuxsamplerSoundPlayer extends
 	}
 
 	@Override
-	protected synchronized void setUp() {
-		createLinuxsampler();
-	}
-
-	@Override
-	protected synchronized void tearDown() {
+	protected synchronized void destroy() {
 		destroyLinuxsampler();
 	}
 

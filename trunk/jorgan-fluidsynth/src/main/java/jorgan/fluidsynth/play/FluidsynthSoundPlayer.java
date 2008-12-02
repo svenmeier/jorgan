@@ -39,10 +39,6 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		super(sound);
 	}
 
-	protected void setUp() {
-		createSynth();
-	}
-
 	public void update() {
 		FluidsynthSound sound = getElement();
 
@@ -69,7 +65,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	}
 
 	@Override
-	protected void tearDown() {
+	protected void destroy() {
 		destroySynth();
 	}
 
