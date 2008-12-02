@@ -541,7 +541,7 @@ public abstract class Element implements Cloneable {
 					return method;
 				}
 			}
-			throw new Error();
+			throw new Error(methodName);
 		}
 	}
 
