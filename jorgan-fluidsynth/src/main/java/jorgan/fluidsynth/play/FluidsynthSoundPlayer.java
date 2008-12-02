@@ -39,25 +39,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		super(sound);
 	}
 
-	@Override
-	protected void setUp() {
-		createSynth();
-	}
-
 	public void update() {
 		FluidsynthSound sound = getElement();
-
-		if (synth != null) {
-			if (!Null
-					.safeEquals(synth.getAudioDriver(), sound.getAudioDriver())
-					|| Null.safeEquals(synth.getSoundfont(), sound
-							.getSoundfont())) {
-				destroySynth();
-				createSynth();
-			}
-
-			configureSynth();
-		}
 
 		if (sound.getSoundfont() == null) {
 			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
@@ -65,6 +48,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
+		
+		if (synth == null) {
+			createSynth();
+		} else {
+			if (!Null
+					.safeEquals(synth.getAudioDriver(), sound.getAudioDriver())
+					|| Null.safeEquals(synth.getSoundfont(), sound
+							.getSoundfont())) {
+				destroySynth();
+				createSynth();
+			}
+		}
+		
+		configureSynth();
 	}
 
 	@Override
