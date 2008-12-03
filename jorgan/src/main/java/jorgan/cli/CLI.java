@@ -51,8 +51,6 @@ public class CLI implements UI, SessionAware {
 	private static Configuration config = Configuration.getRoot().get(
 			CLI.class);
 
-	private File file;
-
 	private Organ organ;
 
 	private OrganSession session;
@@ -120,9 +118,7 @@ public class CLI implements UI, SessionAware {
 		try {
 			Organ organ = new DispositionStream().read(file);
 
-			this.file = file;
-
-			setSession(new OrganSession(organ));
+			setSession(new OrganSession(organ, file));
 
 			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));
@@ -160,11 +156,11 @@ public class CLI implements UI, SessionAware {
 	 */
 	protected void saveOrgan() {
 		try {
-			new DispositionStream().write(organ, file);
+			new DispositionStream().write(organ, session.getFile());
 
 			writeMessage("saveConfirm");
 		} catch (Exception ex) {
-			writeMessage("saveException", file.getName());
+			writeMessage("saveException", session.getFile().getName());
 		}
 	}
 
@@ -224,11 +220,10 @@ public class CLI implements UI, SessionAware {
 				writeMessage("closeParameter");
 				return;
 			}
-			if (file == null) {
+			if (session == null) {
 				writeMessage("closeNone");
 				return;
 			}
-			file = null;
 			setSession(null);
 
 			writeMessage("closeConfirm");
@@ -249,7 +244,7 @@ public class CLI implements UI, SessionAware {
 				writeMessage("saveParameter");
 				return;
 			}
-			if (file == null) {
+			if (session == null) {
 				writeMessage("saveNone");
 				return;
 			}

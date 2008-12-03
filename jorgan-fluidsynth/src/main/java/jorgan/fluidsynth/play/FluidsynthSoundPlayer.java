@@ -18,6 +18,7 @@
  */
 package jorgan.fluidsynth.play;
 
+import java.io.File;
 import java.io.IOException;
 
 import jorgan.fluidsynth.Fluidsynth;
@@ -54,8 +55,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		} else {
 			if (!Null
 					.safeEquals(synth.getAudioDriver(), sound.getAudioDriver())
-					|| Null.safeEquals(synth.getSoundfont(), sound
-							.getSoundfont())) {
+					|| !Null.safeEquals(synth.getSoundfont(), new File(sound
+							.getSoundfont()))) {
 				destroySynth();
 				createSynth();
 			}
@@ -106,7 +107,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
 			try {
-				synth.soundFontLoad(sound.getSoundfont());
+				synth.soundFontLoad(resolve(sound.getSoundfont()));
 			} catch (IOException ex) {
 				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
 						.getSoundfont());
