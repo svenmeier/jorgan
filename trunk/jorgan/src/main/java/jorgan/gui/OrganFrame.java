@@ -104,11 +104,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private StatusBar statusBar = new StatusBar();
 
 	/**
-	 * The file the current organ is associated with.
-	 */
-	private File file;
-
-	/**
 	 * The organ session.
 	 */
 	private OrganSession session;
@@ -299,7 +294,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private void setFile(File file) {
 
-		this.file = file;
+		session.setFile(file);
 		if (file == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
@@ -353,8 +348,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public void newOrgan() {
 
 		if (canCloseOrgan()) {
-			setFile(null);
-
 			setSession(new OrganSession());
 		}
 	}
@@ -397,9 +390,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			return;
 		}
 
-		setFile(file);
-
-		setSession(new OrganSession(organ));
+		setSession(new OrganSession(organ, file));
 
 		buildRecentsMenu();
 
@@ -414,10 +405,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * @return was the organ saved
 	 */
 	public boolean saveOrgan() {
-		if (file == null) {
+		if (session.getFile() == null) {
 			return saveOrganAs();
 		} else {
-			return saveOrgan(file);
+			return saveOrgan(session.getFile());
 		}
 	}
 
@@ -616,7 +607,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			changes = false;
 			undoableChanges = false;
 
-			setEnabled(file == null);
+			setEnabled(session.getFile() == null);
 		}
 
 		public void beforeChange(Change change) {

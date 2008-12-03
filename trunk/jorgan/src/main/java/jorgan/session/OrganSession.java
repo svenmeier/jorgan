@@ -18,6 +18,9 @@
  */
 package jorgan.session;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
@@ -25,6 +28,7 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.play.OrganPlay;
+import jorgan.play.Resolver;
 import jorgan.play.event.PlayListener;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
@@ -42,6 +46,11 @@ import spin.Spin;
  */
 public class OrganSession {
 
+	/**
+	 * The file the current organ is associated with.
+	 */
+	private File file;
+
 	private Organ organ;
 
 	private OrganPlay play;
@@ -57,14 +66,19 @@ public class OrganSession {
 	}
 
 	public OrganSession(Organ organ) {
+		this(organ, null);
+	}
+
+	public OrganSession(Organ organ, File file) {
 		if (organ == null) {
 			throw new IllegalArgumentException("organ must not be null");
 		}
 		this.organ = organ;
+		this.file = file;
 
 		problems = new ElementProblems();
 
-		play = new OrganPlay(organ, problems);
+		play = new OrganPlay(organ, problems, new PlayResolver());
 
 		undoManager = new UndoManager(organ);
 
@@ -92,6 +106,18 @@ public class OrganSession {
 		
 	}
 
+	public void setFile(File file) {
+		if (this.file != null && file == null) {
+			throw new IllegalArgumentException("file cannot be set to null");
+		}
+		
+		this.file = file;
+	}
+	
+	public File getFile() {
+		return file;
+	}
+	
 	public Organ getOrgan() {
 		return organ;
 	}
@@ -160,6 +186,21 @@ public class OrganSession {
 		return problems;
 	}
 
+	private class PlayResolver implements Resolver {
+		public File resolve(String name) throws FileNotFoundException {
+			File file = new File(name);
+			if (file.isAbsolute()) {
+				return file;
+			}
+			
+			if (getFile() != null) {
+				return new File(getFile().getParentFile(), name);
+			}
+			
+			throw new FileNotFoundException();
+		}
+	}
+	
 	private static Organ createDefaultOrgan() {
 		Organ organ = new Organ();
 

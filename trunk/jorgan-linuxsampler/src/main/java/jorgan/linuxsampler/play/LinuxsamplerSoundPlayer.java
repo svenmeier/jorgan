@@ -113,24 +113,24 @@ public class LinuxsamplerSoundPlayer extends
 
 		LinuxsamplerSound sound = getElement();
 		if (sound.getLscp() != null) {
-			File file = new File(sound.getLscp());
-
 			Reader reader;
 			try {
+				File file = resolve(sound.getLscp());
+
 				reader = new FileReader(file);
+				
+				watcher = new FileWatcher(file) {
+					@Override
+					protected void onChange(File file) {
+						watcher.cancel();
+						loadLscp();
+					}
+				};
 			} catch (FileNotFoundException e1) {
 				addProblem(Severity.ERROR, "lscp", "lscpNotFound", sound
 						.getLscp());
 				return;
 			}
-
-			watcher = new FileWatcher(file) {
-				@Override
-				protected void onChange(File file) {
-					watcher.cancel();
-					loadLscp();
-				}
-			};
 
 			try {
 				Conversation conversation = linuxsampler.conversation();

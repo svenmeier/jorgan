@@ -18,6 +18,8 @@
  */
 package jorgan.play;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -49,7 +51,7 @@ import jorgan.session.event.Problem;
 /**
  * A play of an organ.
  */
-public class OrganPlay {
+public class OrganPlay implements Resolver {
 
 	/**
 	 * Only one thread is allowed to change players at a time.
@@ -62,6 +64,8 @@ public class OrganPlay {
 	private final Object RECEIVER_LOCK = new Object();
 
 	private boolean open;
+	
+	private Resolver resolver;
 
 	/**
 	 * Element to player mapping.
@@ -88,9 +92,10 @@ public class OrganPlay {
 	 * @param organ
 	 *            the organ to play
 	 */
-	public OrganPlay(Organ organ, ElementProblems problems) {
+	public OrganPlay(Organ organ, ElementProblems problems, Resolver resolver) {
 		this.organ = organ;
 		this.problems = problems;
+		this.resolver = resolver;
 
 		organ.addOrganListener(eventHandler);
 		organ.addOrganObserver(eventHandler);
@@ -236,7 +241,7 @@ public class OrganPlay {
 		if (player != null) {
 			player.setOrganPlay(this);
 			players.put(element, player);
-
+			
 			player.update();
 		}
 	}
@@ -363,5 +368,9 @@ public class OrganPlay {
 				device.close();
 			}
 		};
+	}
+	
+	public File resolve(String name) throws FileNotFoundException {
+		return resolver.resolve(name);
 	}
 }
