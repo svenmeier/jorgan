@@ -92,11 +92,6 @@ public class OrganSession {
 		organ.addOrganListener((OrganListener) Spin
 				.over(new OrganAdapter() {
 					@Override
-					public void elementAdded(Element element) {
-						selection.setSelectedElement(element);
-					}
-
-					@Override
 					public void elementRemoved(Element element) {
 						selection.clear(element);
 

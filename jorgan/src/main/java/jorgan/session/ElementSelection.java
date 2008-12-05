@@ -55,8 +55,6 @@ public class ElementSelection {
 	}
 
 	public void clear(Element element) {
-		selectedElements.remove(element);
-
 		int index = history.indexOf(element);
 		if (index != -1) {
 			history.remove(element);
@@ -65,7 +63,9 @@ public class ElementSelection {
 			}
 		}
 
-		fireStateChanged();
+		if (selectedElements.remove(element)) {
+			fireStateChanged();
+		}
 	}
 
 	public Object getLocation() {

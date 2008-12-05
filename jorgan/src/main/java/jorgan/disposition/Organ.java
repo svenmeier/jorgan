@@ -265,7 +265,7 @@ public class Organ {
 		return set;
 	}
 
-	public void duplicate(Element element) {
+	public Element duplicate(Element element) {
 		if (element.getOrgan() != this) {
 			throw new IllegalArgumentException("unkown element "
 					+ element.getName() + "'");
@@ -283,5 +283,7 @@ public class Organ {
 				}
 			}
 		}
+		
+		return clone;
 	}
 }
