@@ -73,10 +73,16 @@
         <include name="*.so"/>
       </fileset>
     </copy>
-
   	<jar file="./target/marshal/lib/creative.jar">
       <fileset dir="./target/classes" />
   	</jar>
+  	
+  	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions">
+      <fileset dir="./src/main/dispositions">
+  		<include name="*"/>
+      </fileset>
+    </copy> 		
 
     <fail unless="package"/>
 	<zip destfile="./target/jOrgan-creative-${creative.version}-${package}.zip">

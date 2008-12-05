@@ -90,17 +90,22 @@
 
   <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
-
   	<copy todir="./target/marshal/lib">
       <fileset dir="./target/native">
   		<include name="*.dll"/>
         <include name="*.so"/>
       </fileset>
-    </copy>
-  		
+    </copy> 		
   	<jar file="./target/marshal/lib/fluidsynth.jar">
       <fileset dir="./target/classes" />
   	</jar>
+
+  	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions">
+      <fileset dir="./src/main/dispositions">
+  		<include name="*"/>
+      </fileset>
+    </copy> 		
 
     <fail unless="package"/>
 	<zip destfile="./target/jOrgan-fluidsynth-${fluidsynth.version}-${package}.zip">
