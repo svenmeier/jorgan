@@ -136,11 +136,21 @@ public class ElementsDockable extends OrganDockable {
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
 				try {
+					session.getUndoManager().compound();
+
+					List<Element> added = new ArrayList<Element>();
+					
 					Element[] subElements = (Element[]) ObjectTransferable
 							.getObject(t);
 					for (Element element : subElements) {
-						session.getOrgan().addElement(element.clone());
+						Element clone = element.clone();
+						
+						session.getOrgan().addElement(clone);
+						
+						added.add(clone);
 					}
+					
+					session.getElementSelection().setSelectedElements(added);
 
 					return true;
 				} catch (Exception noImport) {
@@ -400,10 +410,15 @@ public class ElementsDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
+				session.getUndoManager().compound();
+			
+				List<Element> duplicated = new ArrayList<Element>();
 				for (Element element : new ArrayList<Element>(session
 						.getElementSelection().getSelectedElements())) {
-					session.getOrgan().duplicate(element);
+					duplicated.add(session.getOrgan().duplicate(element));
 				}
+				
+				session.getElementSelection().setSelectedElements(duplicated);
 			}
 		}
 
