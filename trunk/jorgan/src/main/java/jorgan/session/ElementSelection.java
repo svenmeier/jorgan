@@ -299,7 +299,7 @@ public class ElementSelection {
 	 * Fire a change to all registered change listeners.
 	 */
 	protected void fireStateChanged() {
-		for (ElementSelectionListener listener : listeners) {
+		for (ElementSelectionListener listener : new ArrayList<ElementSelectionListener>(listeners)) {
 			listener.selectionChanged(new ElementSelectionEvent(this));
 		}
 	}
