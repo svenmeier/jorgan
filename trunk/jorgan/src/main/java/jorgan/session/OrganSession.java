@@ -58,7 +58,7 @@ public class OrganSession {
 	private ElementSelection selection;
 
 	private ElementProblems problems;
-	
+
 	private UndoManager undoManager;
 
 	public OrganSession() {
@@ -85,34 +85,42 @@ public class OrganSession {
 		selection = new ElementSelection();
 		selection.addSelectionListener(new ElementSelectionListener() {
 			public void selectionChanged(ElementSelectionEvent ev) {
-				undoManager.compound(); 
+				undoManager.compound();
 			}
 		});
-		
-		organ.addOrganListener((OrganListener) Spin
-				.over(new OrganAdapter() {
-					@Override
-					public void elementRemoved(Element element) {
-						selection.clear(element);
 
-						problems.removeProblems(element);
-					}
-				}));
-		
+		organ.addOrganListener((OrganListener) Spin.over(new OrganAdapter() {
+			@Override
+			public void elementRemoved(Element element) {
+				selection.clear(element);
+
+				problems.removeProblems(element);
+				
+				undoManager.compound();
+			}
+
+			@Override
+			public void elementAdded(Element element) {
+				selection.addSelectedElement(element);
+				
+				undoManager.compound();
+			}
+		}));
+
 	}
 
 	public void setFile(File file) {
 		if (this.file != null && file == null) {
 			throw new IllegalArgumentException("file cannot be set to null");
 		}
-		
+
 		this.file = file;
 	}
-	
+
 	public File getFile() {
 		return file;
 	}
-	
+
 	public Organ getOrgan() {
 		return organ;
 	}
@@ -124,7 +132,7 @@ public class OrganSession {
 	public UndoManager getUndoManager() {
 		return undoManager;
 	}
-	
+
 	public ElementSelection getElementSelection() {
 		return selection;
 	}
@@ -140,11 +148,11 @@ public class OrganSession {
 	public void addUndoListener(UndoListener listener) {
 		undoManager.addUndoListener((UndoListener) Spin.over(listener));
 	}
-	
+
 	public void removeUndoListener(UndoListener listener) {
 		undoManager.removeUndoListener((UndoListener) Spin.over(listener));
-	}	
-	
+	}
+
 	public void addOrganListener(OrganListener listener) {
 		organ.addOrganListener((OrganListener) Spin.over(listener));
 	}
@@ -187,15 +195,15 @@ public class OrganSession {
 			if (file.isAbsolute()) {
 				return file;
 			}
-			
+
 			if (getFile() != null) {
 				return new File(getFile().getParentFile(), name);
 			}
-			
+
 			throw new FileNotFoundException();
 		}
 	}
-	
+
 	private static Organ createDefaultOrgan() {
 		Organ organ = new Organ();
 

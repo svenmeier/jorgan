@@ -673,7 +673,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			ImportWizard.showInDialog(OrganFrame.this, session.getOrgan());
+			ImportWizard.showInDialog(OrganFrame.this, session);
 		}
 	}
 
@@ -686,7 +686,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			DevicesWizard.showInDialog(OrganFrame.this, session.getOrgan());
+			DevicesWizard.showInDialog(OrganFrame.this, session);
 		}
 	}
 

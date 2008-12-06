@@ -23,9 +23,10 @@ import java.awt.Component;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Input;
-import jorgan.disposition.Organ;
 import jorgan.disposition.Output;
 import jorgan.midi.Direction;
+import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -39,7 +40,7 @@ public class DevicesWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			DevicesWizard.class);
 
-	private Organ organ;
+	private OrganSession session;
 
 	private InputPage inputPage;
 
@@ -51,12 +52,12 @@ public class DevicesWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to import to
 	 */
-	public DevicesWizard(Organ organ) {
-		this.organ = organ;
+	public DevicesWizard(OrganSession organ) {
+		this.session = organ;
 
 		inputPage = new InputPage();
 		addPage(inputPage);
-		
+
 		outputPage = new OutputPage();
 		addPage(outputPage);
 	}
@@ -67,47 +68,51 @@ public class DevicesWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		inputPage.write();
-		outputPage.write();
-
+		session.getUndoManager().compound(new Compound() {
+			public void run() {
+				inputPage.write();
+				outputPage.write();
+			}
+		});
+		
 		return true;
 	}
 
 	private class InputPage extends AbstractPage {
-		
+
 		private DevicesPanel devicesPanel;
 
 		public InputPage() {
 			config.get("input").read(this);
-			
-			devicesPanel = new DevicesPanel(organ, Direction.IN);
+
+			devicesPanel = new DevicesPanel(session.getOrgan(), Direction.IN);
 		}
-		
+
 		@Override
 		protected JComponent getComponentImpl() {
 			return devicesPanel;
 		}
-		
+
 		public void write() {
 			devicesPanel.write();
 		}
 	}
 
 	private class OutputPage extends AbstractPage {
-		
+
 		private DevicesPanel devicesPanel;
 
 		public OutputPage() {
 			config.get("output").read(this);
-			
-			devicesPanel = new DevicesPanel(organ, Direction.OUT);
+
+			devicesPanel = new DevicesPanel(session.getOrgan(), Direction.OUT);
 		}
 
 		@Override
 		protected JComponent getComponentImpl() {
 			return devicesPanel;
 		}
-		
+
 		public void write() {
 			devicesPanel.write();
 		}
@@ -121,7 +126,7 @@ public class DevicesWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to configure
 	 */
-	public static void showInDialog(Component owner, Organ organ) {
+	public static void showInDialog(Component owner, OrganSession organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 		dialog.setWizard(new DevicesWizard(organ));

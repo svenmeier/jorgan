@@ -738,6 +738,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mousePressed(MouseEvent e) {
 
+			session.getUndoManager().compound();
+			
 			mouseFrom = e.getPoint();
 
 			pressedDisplayable = getElement(screenToView(e.getX()),
@@ -843,6 +845,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+
+			session.getUndoManager().compound();
+
 			if (pressedDisplayable == null) {
 				if (mouseTo != null) {
 					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

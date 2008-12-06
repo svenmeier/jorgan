@@ -64,6 +64,7 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
 import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.swing.BaseAction;
@@ -170,8 +171,7 @@ public class MessagesDockable extends OrganDockable {
 				}
 			}
 		});
-		table.getSelectionModel().addListSelectionListener(removeAction);
-		table.getSelectionModel().addListSelectionListener(recordAction);
+		table.getSelectionModel().addListSelectionListener(selectionHandler);
 		new IconTableCellRenderer() {
 			@Override
 			protected Icon getIcon(Object value) {
@@ -283,8 +283,16 @@ public class MessagesDockable extends OrganDockable {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler implements ElementSelectionListener {
+	private class SelectionHandler implements ElementSelectionListener, ListSelectionListener {
 
+		public void valueChanged(ListSelectionEvent e) {
+			// TODO should change ElementSelection 
+			session.getUndoManager().compound();
+			
+			removeAction.update();
+			recordAction.update();
+		}
+		
 		public void selectionChanged(ElementSelectionEvent ev) {
 			updateMessages();
 		}
@@ -428,8 +436,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 	}
 
-	private class RemoveAction extends BaseAction implements
-			ListSelectionListener {
+	private class RemoveAction extends BaseAction implements Compound {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
@@ -438,7 +445,14 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			session.getUndoManager().compound(this);
+		}
 
+		public void update() {
+			setEnabled(table.getSelectedRow() != -1);
+		}
+		
+		public void run() {
 			int[] indices = table.getSelectedRows();
 			if (indices != null) {
 				for (int i = indices.length - 1; i >= 0; i--) {
@@ -448,14 +462,9 @@ public class MessagesDockable extends OrganDockable {
 				}
 			}
 		}
-
-		public void valueChanged(ListSelectionEvent e) {
-			setEnabled(table.getSelectedRow() != -1);
-		}
 	}
 
-	private class RecordAction extends BaseAction implements
-			ListSelectionListener {
+	private class RecordAction extends BaseAction {
 
 		private MessageBox dialog = new MessageBox(MessageBox.OPTIONS_OK);
 
@@ -467,7 +476,7 @@ public class MessagesDockable extends OrganDockable {
 			setEnabled(false);
 		}
 
-		public void valueChanged(ListSelectionEvent e) {
+		public void update() {
 			int[] indices = table.getSelectedRows();
 			setEnabled(indices.length == 1
 					&& messages.get(indices[0]) instanceof InputMessage);
@@ -523,6 +532,8 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		private void recorded(ShortMessage shortMessage) {
+			session.getUndoManager().compound();
+
 			int index = table.getSelectedRow();
 			if (index != -1) {
 				Message message = messages.get(index);

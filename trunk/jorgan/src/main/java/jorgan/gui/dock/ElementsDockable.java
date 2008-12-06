@@ -45,6 +45,7 @@ import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
 import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.Problem;
@@ -136,21 +137,24 @@ public class ElementsDockable extends OrganDockable {
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
 				try {
-					session.getUndoManager().compound();
-
-					List<Element> added = new ArrayList<Element>();
-					
-					Element[] subElements = (Element[]) ObjectTransferable
+					final Element[] subElements = (Element[]) ObjectTransferable
 							.getObject(t);
-					for (Element element : subElements) {
-						Element clone = element.clone();
-						
-						session.getOrgan().addElement(clone);
-						
-						added.add(clone);
-					}
 					
-					session.getElementSelection().setSelectedElements(added);
+					session.getUndoManager().compound(new Compound() {
+						public void run() {
+							List<Element> added = new ArrayList<Element>();
+							
+							for (Element element : subElements) {
+								Element clone = element.clone();
+								
+								session.getOrgan().addElement(clone);
+								
+								added.add(clone);
+							}
+
+							session.getElementSelection().setSelectedElements(added);
+						}						
+					});					
 
 					return true;
 				} catch (Exception noImport) {
@@ -392,13 +396,13 @@ public class ElementsDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				CreateElementWizard.showInDialog(list, session.getOrgan());
+				CreateElementWizard.showInDialog(list, session);
 			}
 		}
 	}
 
 	private class DuplicateAction extends BaseAction implements
-			ListSelectionListener {
+			ListSelectionListener, Compound {
 
 		private DuplicateAction() {
 			config.get("duplicate").read(this);
@@ -410,25 +414,27 @@ public class ElementsDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				session.getUndoManager().compound();
-			
-				List<Element> duplicated = new ArrayList<Element>();
-				for (Element element : new ArrayList<Element>(session
-						.getElementSelection().getSelectedElements())) {
-					duplicated.add(session.getOrgan().duplicate(element));
-				}
-				
-				session.getElementSelection().setSelectedElements(duplicated);
+				session.getUndoManager().compound(this);
 			}
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(list.getSelectedIndex() != -1);
 		}
+		
+		public void run() {
+			List<Element> duplicated = new ArrayList<Element>();
+			for (Element element : new ArrayList<Element>(session
+					.getElementSelection().getSelectedElements())) {
+				duplicated.add(session.getOrgan().duplicate(element));
+			}
+			
+			session.getElementSelection().setSelectedElements(duplicated);
+		}
 	}
 
 	private class RemoveAction extends BaseAction implements
-			ListSelectionListener {
+			ListSelectionListener, Compound {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
@@ -438,15 +444,18 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-
-			for (Element element : new ArrayList<Element>(session
-					.getElementSelection().getSelectedElements())) {
-				session.getOrgan().removeElement(element);
-			}
+			session.getUndoManager().compound(this);
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(list.getSelectedIndex() != -1);
+		}
+		
+		public void run() {
+			for (Element element : new ArrayList<Element>(session
+					.getElementSelection().getSelectedElements())) {
+				session.getOrgan().removeElement(element);
+			}
 		}
 	}
 }

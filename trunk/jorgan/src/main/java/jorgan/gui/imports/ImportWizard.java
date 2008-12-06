@@ -25,9 +25,10 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
 import jorgan.gui.construct.ElementsSelectionPanel;
 import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -41,7 +42,9 @@ public class ImportWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			ImportWizard.class);
 
-	private Organ organ;
+	private OrganSession 
+
+		session;
 
 	private ImportProvider provider;
 
@@ -55,8 +58,10 @@ public class ImportWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to import to
 	 */
-	public ImportWizard(Organ organ) {
-		this.organ = organ;
+	public ImportWizard(OrganSession organ) {
+		this.
+
+		session = organ;
 
 		addPage(new ProviderSelectionPage());
 		addPage(new ImportOptionsPage());
@@ -79,7 +84,11 @@ public class ImportWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		organ.addElements(selectedElements);
+		session.getUndoManager().compound(new Compound() {
+			public void run() {
+				session.getOrgan().addElements(selectedElements);
+			}
+		});
 
 		return true;
 	}
@@ -185,7 +194,7 @@ public class ImportWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to import into
 	 */
-	public static void showInDialog(Component owner, Organ organ) {
+	public static void showInDialog(Component owner, OrganSession organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 		dialog.setWizard(new ImportWizard(organ));
