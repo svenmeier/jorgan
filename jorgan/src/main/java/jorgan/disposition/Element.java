@@ -330,7 +330,7 @@ public abstract class Element implements Cloneable {
 	 *            description to set
 	 */
 	public void setDescription(String description) {
-		if (!Null.safeEquals(this.name, name)) {
+		if (!Null.safeEquals(this.description, description)) {
 			String oldDescription = this.description;
 
 			if (description == null) {
