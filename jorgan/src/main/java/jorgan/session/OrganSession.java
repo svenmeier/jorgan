@@ -101,7 +101,7 @@ public class OrganSession {
 
 			@Override
 			public void elementAdded(Element element) {
-				selection.addSelectedElement(element);
+				selection.setSelectedElement(element);
 				
 				undoManager.compound();
 			}
