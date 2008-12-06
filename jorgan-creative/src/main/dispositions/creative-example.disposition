@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
+    <label id="0">
+      <zoom>1.0</zoom>
+      <name>Instructions</name>
+      <description>name=Use the Device Wizard to adjust the output of the CreativeSound element.  Then activate the stops to hear them sounding:</description>
+      <references/>
+      <messages/>
+    </label>
     <stop id="1">
       <action>0</action>
       <transpose>-12</transpose>
@@ -103,6 +110,10 @@
         <console-reference id="1">
           <x>200</x>
           <y>100</y>
+        </console-reference>
+        <console-reference id="0">
+          <x>120</x>
+          <y>40</y>
         </console-reference>
       </references>
       <messages/>
