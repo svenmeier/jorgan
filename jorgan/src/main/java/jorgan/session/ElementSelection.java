@@ -266,12 +266,13 @@ public class ElementSelection {
 
 		location = null;
 
-		updateHistory(element);
-
 		if (!selectedElements.contains(element)) {
+			updateHistory(element);
+
 			selectedElements.add(element);
+
+			fireStateChanged();
 		}
-		fireStateChanged();
 	}
 
 	/**

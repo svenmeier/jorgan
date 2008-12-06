@@ -26,6 +26,7 @@ import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
+import jorgan.session.event.Compound;
 import jorgan.session.event.UndoListener;
 
 /**
@@ -39,7 +40,9 @@ public class UndoManager {
 
 	private List<UndoableChange> redos = new ArrayList<UndoableChange>();
 	
-	private boolean compound = false;
+	private boolean allowCompound = false;
+
+	private Compound compound;
 
 	private boolean inProgress;
 
@@ -66,11 +69,11 @@ public class UndoManager {
 
 	private void add(UndoableChange change) {
 		if (!inProgress) {
-			if (compound) {
+			if (allowCompound) {
 				undos.add(new CompoundChange(change, undos.remove(undos.size() - 1)));
 			} else {
 				undos.add(change);
-				compound = true;
+				allowCompound = true;
 			}
 			
 			redos.clear();
@@ -86,7 +89,27 @@ public class UndoManager {
 	}
 
 	public void compound() {
-		compound = false;
+		if (compound == null) {
+			allowCompound = false;
+		}
+	}
+	
+	public void compound(Compound compound) {
+		if (this.compound != null) {
+			compound.run();
+			return;
+		}
+		
+		allowCompound = false;
+
+		this.compound = compound;
+		try {
+			compound.run();
+		} finally {
+			this.compound = null;
+		}
+		
+		allowCompound = false;		
 	}
 	
 	public boolean canUndo() {
@@ -98,7 +121,7 @@ public class UndoManager {
 	}
 
 	public void undo() {
-		compound = false;
+		allowCompound = false;
 		
 		if (!undos.isEmpty()) {
 			try {
@@ -118,7 +141,7 @@ public class UndoManager {
 	}
 
 	public void redo() {
-		compound = false;
+		allowCompound = false;
 
 		if (!redos.isEmpty()) {
 			try {

@@ -25,8 +25,9 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ProviderRegistry;
+import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -40,7 +41,7 @@ public class CreateElementWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			CreateElementWizard.class);
 
-	private Organ organ;
+	private OrganSession session;
 
 	private Element element;
 
@@ -54,8 +55,8 @@ public class CreateElementWizard extends BasicWizard {
 	 * @param organ
 	 *            the organ to creat element for
 	 */
-	public CreateElementWizard(Organ organ) {
-		this.organ = organ;
+	public CreateElementWizard(OrganSession organ) {
+		this.session = organ;
 
 		addPage(new ElementPage());
 		addPage(new ReferencesToPage());
@@ -78,20 +79,24 @@ public class CreateElementWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		organ.addElement(element);
+		session.getUndoManager().compound(new Compound() {
+			public void run() {
+				session.getOrgan().addElement(element);
 
-		if (!referencesTo.isEmpty()) {
-			for (int r = 0; r < referencesTo.size(); r++) {
-				element.reference(referencesTo.get(r));
+				if (!referencesTo.isEmpty()) {
+					for (int r = 0; r < referencesTo.size(); r++) {
+						element.reference(referencesTo.get(r));
+					}
+				}
+
+				if (!referencedFrom.isEmpty()) {
+					for (int r = 0; r < referencedFrom.size(); r++) {
+						referencedFrom.get(r).reference(element);
+					}
+				}
 			}
-		}
-
-		if (!referencedFrom.isEmpty()) {
-			for (int r = 0; r < referencedFrom.size(); r++) {
-				referencedFrom.get(r).reference(element);
-			}
-		}
-
+		});
+			
 		return true;
 	}
 
@@ -158,7 +163,7 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(organ
+			elementsSelectionPanel.setElements(session.getOrgan()
 					.getReferenceToCandidates(element));
 
 			referencesTo = new ArrayList<Element>();
@@ -190,7 +195,7 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(organ
+			elementsSelectionPanel.setElements(session.getOrgan()
 					.getReferencedFromCandidates(element));
 
 			referencedFrom = new ArrayList<Element>();
@@ -212,7 +217,7 @@ public class CreateElementWizard extends BasicWizard {
 	 * @param organ
 	 *            organ to add created element into
 	 */
-	public static void showInDialog(Component owner, Organ organ) {
+	public static void showInDialog(Component owner, OrganSession organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
 

@@ -25,7 +25,8 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
+import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -39,7 +40,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			CreateReferencesWizard.class);
 
-	private Organ organ;
+	private OrganSession session;
 
 	private Element element;
 
@@ -55,8 +56,8 @@ public class CreateReferencesWizard extends BasicWizard {
 	 * @param element
 	 *            the element to create references for
 	 */
-	public CreateReferencesWizard(Organ organ, Element element) {
-		this.organ = organ;
+	public CreateReferencesWizard(OrganSession organ, Element element) {
+		this.session = organ;
 		this.element = element;
 
 		addPage(new ReferencesToPage());
@@ -79,16 +80,20 @@ public class CreateReferencesWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		for (int t = 0; t < referencesTo.size(); t++) {
-			Element referenced = referencesTo.get(t);
-			element.reference(referenced);
-		}
+		session.getUndoManager().compound(new Compound() {
+			public void run() {
+				for (int t = 0; t < referencesTo.size(); t++) {
+					Element referenced = referencesTo.get(t);
+					element.reference(referenced);
+				}
 
-		for (int f = 0; f < referencedFrom.size(); f++) {
-			Element referrer = referencedFrom.get(f);
-			referrer.reference(element);
-		}
-
+				for (int f = 0; f < referencedFrom.size(); f++) {
+					Element referrer = referencedFrom.get(f);
+					referrer.reference(element);
+				}
+			}
+		});
+		
 		return true;
 	}
 
@@ -102,7 +107,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ReferencesToPage() {
 			config.get("referencesTo").read(this);
 
-			elementsSelectionPanel.setElements(organ
+			elementsSelectionPanel.setElements(session.getOrgan()
 					.getReferenceToCandidates(element));
 		}
 
@@ -129,7 +134,7 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ReferencedByPage() {
 			config.get("referencedBy").read(this);
 
-			elementsSelectionPanel.setElements(organ
+			elementsSelectionPanel.setElements(session.getOrgan()
 					.getReferencedFromCandidates(element));
 		}
 
@@ -156,7 +161,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	 * @param element
 	 *            element to add created references to
 	 */
-	public static void showInDialog(Component owner, Organ organ,
+	public static void showInDialog(Component owner, OrganSession organ,
 			Element element) {
 
 		WizardDialog dialog = WizardDialog.create(owner);

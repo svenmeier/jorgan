@@ -419,7 +419,7 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateReferencesWizard.showInDialog(list, session.getOrgan(),
+			CreateReferencesWizard.showInDialog(list, session,
 					element);
 		}
 

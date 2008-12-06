@@ -22,6 +22,8 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
+import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  * A customer of beans.
@@ -50,4 +52,8 @@ public interface BeanCustomizer {
 	 */
 	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
 			throws IntrospectionException;
+
+	public void beforeWrite(List<Object> beans, Method method);
+
+	public void afterWrite(List<Object> beans, Method method);
 }

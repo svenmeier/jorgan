@@ -23,6 +23,7 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
+import java.lang.reflect.Method;
 
 import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
@@ -34,9 +35,9 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.info.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
-import jorgan.swing.beans.DefaultBeanCustomizer;
 import jorgan.swing.beans.PropertiesPanel;
 import bias.Configuration;
 
@@ -55,13 +56,43 @@ public class PropertiesDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private PropertiesPanel panel = new PropertiesPanel();
+	private PropertiesPanel panel = new PropertiesPanel() {
+		@Override
+		public BeanInfo getBeanInfo(Class<?> beanClass)
+				throws IntrospectionException {
+			Introspector.setBeanInfoSearchPath(ProviderRegistry
+					.getBeanInfoSearchPath());
+
+			return super.getBeanInfo(beanClass);
+		}
+
+		@Override
+		public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+				throws IntrospectionException {
+			PropertyEditor editor = super.getPropertyEditor(descriptor);
+
+			if (editor != null && editor instanceof ElementAwareEditor) {
+				((ElementAwareEditor) editor)
+						.setElement((Element) panel.getBeans().get(0));
+			}
+
+			return editor;
+		}
+		
+		@Override
+		protected void onWriteProperty(final Method method, final Object value) {
+			
+			session.getUndoManager().compound(new Compound() {
+				public void run() {
+					writeProperty(method, value);
+				};
+			});
+		}
+	};
 
 	public PropertiesDockable() {
 		config.read(this);
 
-		ElementCustomizer customizer = new ElementCustomizer();
-		panel.setBeanCustomizer(customizer);
 		panel.addChangeListener(selectionHandler);
 		
 		setContent(new JScrollPane(panel));
@@ -99,6 +130,7 @@ public class PropertiesDockable extends OrganDockable {
 		private boolean changing = false;
 
 		public void selectionChanged(ElementSelectionEvent ev) {
+					
 			Element element = session.getElementSelection().getSelectedElement();
 			if (element == null) {
 				setStatus(null);
@@ -113,6 +145,8 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
+				session.getUndoManager().compound();
+				
 				String property = panel.getProperty();
 				session.getElementSelection().setLocation(property);
 
@@ -153,31 +187,6 @@ public class PropertiesDockable extends OrganDockable {
 
 				changing = false;
 			}
-		}
-	}
-
-	private class ElementCustomizer extends DefaultBeanCustomizer {
-
-		@Override
-		public BeanInfo getBeanInfo(Class<?> beanClass)
-				throws IntrospectionException {
-			Introspector.setBeanInfoSearchPath(ProviderRegistry
-					.getBeanInfoSearchPath());
-
-			return super.getBeanInfo(beanClass);
-		}
-
-		@Override
-		public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
-				throws IntrospectionException {
-			PropertyEditor editor = super.getPropertyEditor(descriptor);
-
-			if (editor != null && editor instanceof ElementAwareEditor) {
-				((ElementAwareEditor) editor)
-						.setElement((Element) panel.getBeans().get(0));
-			}
-
-			return editor;
 		}
 	}
 }

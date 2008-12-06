@@ -27,8 +27,10 @@ import java.awt.event.ActionListener;
 import java.beans.BeanInfo;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
+import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
+import java.beans.PropertyEditorManager;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -69,8 +71,6 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
-	private BeanCustomizer customizer = new DefaultBeanCustomizer();
-
 	private List<Object> beans = new ArrayList<Object>();
 
 	private String property;
@@ -108,33 +108,6 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		TableUtils.pleasantLookAndFeel(table);
 		TableUtils.hideHeader(table);
 		add(table, BorderLayout.CENTER);
-	}
-
-	/**
-	 * Set the customizer of beans.
-	 * 
-	 * @param customizer
-	 *            the customizer
-	 */
-	public void setBeanCustomizer(BeanCustomizer customizer) {
-		this.customizer = customizer;
-	}
-
-	/**
-	 * Convenience method to set the customizer for beans that are all instances
-	 * of a single class.
-	 * 
-	 * @param info
-	 *            the info to use for customization of all beans
-	 */
-	public void setBeanCustomizer(final BeanInfo info) {
-		setBeanCustomizer(new DefaultBeanCustomizer() {
-			@Override
-			public BeanInfo getBeanInfo(Class<?> beanClass)
-					throws IntrospectionException {
-				return info;
-			}
-		});
 	}
 
 	/**
@@ -211,7 +184,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			try {
 				beanClass = getCommonClass(this.beans);
 
-				beanInfo = customizer.getBeanInfo(beanClass);
+				beanInfo = getBeanInfo(beanClass);
 
 				descriptors = beanInfo.getPropertyDescriptors();
 
@@ -306,7 +279,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 				continue;
 			}
 
-			editors[d] = customizer.getPropertyEditor(descriptor);
+			editors[d] = getPropertyEditor(descriptor);
 		}
 
 		return editors;
@@ -314,6 +287,9 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private class ElementTableModel extends AbstractTableModel implements
 			ListSelectionListener {
+		
+		private boolean setting = false;
+
 		@Override
 		public String getColumnName(int column) {
 			return null;
@@ -373,22 +349,12 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			Method method = descriptors[rowIndex].getWriteMethod();
 
-			for (int b = 0; b < beans.size(); b++) {
+			if (!setting) {
 				try {
-					Object bean = beans.get(b);
-					method.invoke(bean, new Object[] { aValue });
-				} catch (InvocationTargetException ex) {
-					Throwable cause = ex.getCause();
-					if (cause instanceof Exception) {
-						logger.log(Level.WARNING,
-								"unable to set property value", ex);
-					} else {
-						// let anything more severe bubble up
-						throw new Error(cause);
-					}
-				} catch (Exception ex) {
-					logger.log(Level.WARNING, "unable to set property value",
-							ex);
+					setting = true;
+					onWriteProperty(method, aValue);
+				} finally {
+					setting = false;
 				}
 			}
 		}
@@ -412,6 +378,64 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 		}
 	}
 
+	protected void onWriteProperty(Method method, Object value) {
+		writeProperty(method, value);
+	}
+	
+	protected void writeProperty(Method method, Object value) { 
+		for (int b = 0; b < beans.size(); b++) {
+			try {
+				Object bean = beans.get(b);
+				method.invoke(bean, new Object[] { value });
+			} catch (InvocationTargetException ex) {
+				Throwable cause = ex.getCause();
+				if (cause instanceof Exception) {
+					logger.log(Level.WARNING,
+							"unable to set property value", ex);
+				} else {
+					// let anything more severe bubble up
+					throw new Error(cause);
+				}
+			} catch (Exception ex) {
+				logger.log(Level.WARNING, "unable to set property value",
+						ex);
+			}
+		}
+		
+	}
+
+	public BeanInfo getBeanInfo(Class<?> beanClass) throws IntrospectionException {
+		return new WriteableBeanInfo(new SortingBeanInfo(Introspector.getBeanInfo(beanClass)));
+	}
+
+	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
+			throws IntrospectionException {
+		if (descriptor.getPropertyEditorClass() == null) {
+			return findPropertyEditor(descriptor.getPropertyType());
+		} else {
+			try {
+				return (PropertyEditor) descriptor.getPropertyEditorClass()
+						.newInstance();
+			} catch (Exception ex) {
+				throw new IntrospectionException(ex.getMessage());
+			}
+		}
+	}
+
+	/**
+	 * Hook method for subclasses that want to implement a custom find of a
+	 * {@link PropertyEditor} if none is defined by a {@link PropertyDescriptor}.
+	 * 
+	 * @see java.beans.PropertyDescriptor#getPropertyEditorClass()
+	 * 
+	 * @param propertyType
+	 *            type of property to find editor for
+	 */
+	protected PropertyEditor findPropertyEditor(Class<?> propertyType)
+			throws IntrospectionException {
+		return PropertyEditorManager.findEditor(propertyType);
+	}	
+	
 	private class PropertyCellEditor extends AbstractCellEditor implements
 			TableCellEditor {
 
