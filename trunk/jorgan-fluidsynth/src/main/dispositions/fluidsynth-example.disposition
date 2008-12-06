@@ -1,66 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
-    <console id="1">
-      <screen>:0.0</screen>
+    <label id="1">
       <zoom>1.0</zoom>
-      <name></name>
-      <description></description>
-      <references>
-        <console-reference id="2">
-          <x>200</x>
-          <y>70</y>
-        </console-reference>
-        <console-reference id="3">
-          <x>200</x>
-          <y>100</y>
-        </console-reference>
-      </references>
+      <name>Instructions</name>
+      <description>name=Activate the stops to hear them sounding:</description>
+      <references/>
       <messages/>
-    </console>
-    <rank id="4">
-      <channel></channel>
-      <delay>0</delay>
-      <zoom>1.0</zoom>
-      <name>Rank 0</name>
-      <description></description>
-      <references>
-        <reference id="5"/>
-      </references>
-      <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 0</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 0</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
-      </messages>
-    </rank>
-    <fluidsynth.fluidsynthSound id="5">
+    </label>
+    <fluidsynth.fluidsynthSound id="2">
       <soundfont>fluidsynth-example.SF2</soundfont>
       <channels>32</channels>
       <audioDriver>alsa</audioDriver>
@@ -79,66 +27,14 @@
       <references/>
       <messages/>
     </fluidsynth.fluidsynthSound>
-    <keyboard id="6">
-      <input>jOrgan Keyboard</input>
-      <name></name>
-      <description></description>
-      <references>
-        <reference id="2"/>
-        <reference id="3"/>
-      </references>
-      <messages>
-        <keyboard-pressKey>
-          <status>equal 144</status>
-          <data1>get pitch</data1>
-          <data2>greater 0| get velocity</data2>
-        </keyboard-pressKey>
-        <keyboard-releaseKey>
-          <status>equal 128</status>
-          <data1>get pitch</data1>
-          <data2></data2>
-        </keyboard-releaseKey>
-        <keyboard-releaseKey>
-          <status>equal 144</status>
-          <data1>get pitch</data1>
-          <data2>equal 0 | get velocity</data2>
-        </keyboard-releaseKey>
-      </messages>
-    </keyboard>
-    <stop id="2">
-      <action>0</action>
-      <transpose>0</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 0</name>
-      <description></description>
-      <references>
-        <reference id="4"/>
-      </references>
-      <messages/>
-    </stop>
-    <stop id="3">
-      <action>0</action>
-      <transpose>-12</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 1</name>
-      <description></description>
-      <references>
-        <reference id="7"/>
-      </references>
-      <messages/>
-    </stop>
-    <rank id="7">
+    <rank id="3">
       <channel></channel>
       <delay>0</delay>
       <zoom>1.0</zoom>
       <name>Rank 1</name>
       <description></description>
       <references>
-        <reference id="5"/>
+        <reference id="2"/>
       </references>
       <messages>
         <rank-engaged>
@@ -173,5 +69,120 @@
         </rank-noteMuted>
       </messages>
     </rank>
+    <rank id="4">
+      <channel></channel>
+      <delay>0</delay>
+      <zoom>1.0</zoom>
+      <name>Rank 0</name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 0</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 0</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+    </rank>
+    <console id="5">
+      <screen>:0.0</screen>
+      <zoom>1.0</zoom>
+      <name></name>
+      <description></description>
+      <references>
+        <console-reference id="6">
+          <x>200</x>
+          <y>70</y>
+        </console-reference>
+        <console-reference id="7">
+          <x>200</x>
+          <y>100</y>
+        </console-reference>
+        <console-reference id="1">
+          <x>120</x>
+          <y>40</y>
+        </console-reference>
+      </references>
+      <messages/>
+    </console>
+    <stop id="7">
+      <action>0</action>
+      <transpose>-12</transpose>
+      <active>false</active>
+      <locking>true</locking>
+      <zoom>1.0</zoom>
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference id="3"/>
+      </references>
+      <messages/>
+    </stop>
+    <stop id="6">
+      <action>0</action>
+      <transpose>0</transpose>
+      <active>false</active>
+      <locking>true</locking>
+      <zoom>1.0</zoom>
+      <name>Stop 0</name>
+      <description></description>
+      <references>
+        <reference id="4"/>
+      </references>
+      <messages/>
+    </stop>
+    <keyboard id="8">
+      <input>jOrgan Keyboard</input>
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="6"/>
+        <reference id="7"/>
+      </references>
+      <messages>
+        <keyboard-pressKey>
+          <status>equal 144</status>
+          <data1>get pitch</data1>
+          <data2>greater 0| get velocity</data2>
+        </keyboard-pressKey>
+        <keyboard-releaseKey>
+          <status>equal 128</status>
+          <data1>get pitch</data1>
+          <data2></data2>
+        </keyboard-releaseKey>
+        <keyboard-releaseKey>
+          <status>equal 144</status>
+          <data1>get pitch</data1>
+          <data2>equal 0 | get velocity</data2>
+        </keyboard-releaseKey>
+      </messages>
+    </keyboard>
   </elements>
 </organ>
