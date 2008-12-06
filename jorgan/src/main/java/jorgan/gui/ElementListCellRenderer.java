@@ -61,6 +61,10 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 		if (newLine != -1) {
 			comment = comment.substring(0, newLine);
 		}
+		int equal = comment.indexOf('=');
+		if (equal != -1) {
+			comment = "";
+		}
 		return comment;
 	}
 
