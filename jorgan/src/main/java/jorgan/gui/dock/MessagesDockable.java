@@ -286,7 +286,7 @@ public class MessagesDockable extends OrganDockable {
 	private class SelectionHandler implements ElementSelectionListener, ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
-			// TODO should change ElementSelection 
+			// TODO should change ElementSelection ?
 			session.getUndoManager().compound();
 			
 			removeAction.update();
