@@ -121,19 +121,7 @@ public class Console extends Displayable implements Input, Output {
 		reference.setX(x);
 		reference.setY(y);
 
-		fireChange(new UndoableChange() {
-			public void notify(OrganListener listener) {
-				listener.referenceChanged(Console.this, reference);
-			}
-
-			public void undo() {
-				setLocation(element, oldX, oldY);
-			}
-
-			public void redo() {
-				setLocation(element, x, y);
-			}
-		});
+		fireChange(new LocationChange(reference, oldX, oldY, x, y));
 	}
 
 	public int getX(Element element) {
@@ -221,5 +209,55 @@ public class Console extends Displayable implements Input, Output {
 		}
 
 		moveReference(reference, 0);
+	}
+
+	private class LocationChange implements UndoableChange {
+
+		private Reference reference;
+
+		private int oldX;
+
+		private int oldY;
+
+		private int newX;
+
+		private int newY;
+
+		public LocationChange(Reference reference, int oldX, int oldY, int x,
+				int y) {
+			this.reference = reference;
+
+			this.oldX = oldX;
+			this.oldY = oldY;
+
+			this.newX = x;
+			this.newY = y;
+		}
+
+		public void notify(OrganListener listener) {
+			listener.referenceChanged(Console.this, reference);
+		}
+
+		public void undo() {
+			setLocation(reference.getElement(), oldX, oldY);
+		}
+
+		public void redo() {
+			setLocation(reference.getElement(), newX, newY);
+		}
+
+		public boolean replaces(UndoableChange change) {
+			if (change instanceof LocationChange) {
+				LocationChange other = (LocationChange) change;
+				if (this.reference == other.reference) {
+					this.newX = other.newX;
+					this.newY = other.newY;
+
+					return true;
+				}
+			}
+
+			return false;
+		}
 	}
 }

@@ -39,12 +39,12 @@ public class UndoManager {
 	private List<UndoableChange> undos = new ArrayList<UndoableChange>();
 
 	private List<UndoableChange> redos = new ArrayList<UndoableChange>();
-	
+
 	private boolean allowCompound = false;
 
 	private Compound compound;
 
-	private boolean inProgress;
+	private boolean undoing;
 
 	public UndoManager(Organ organ) {
 		organ.addOrganObserver(new OrganObserver() {
@@ -53,7 +53,7 @@ public class UndoManager {
 					add((UndoableChange) change);
 				}
 			}
-			
+
 			public void afterChange(Change change) {
 			}
 		});
@@ -68,14 +68,19 @@ public class UndoManager {
 	}
 
 	private void add(UndoableChange change) {
-		if (!inProgress) {
+		if (!undoing) {
 			if (allowCompound) {
-				undos.add(new CompoundChange(change, undos.remove(undos.size() - 1)));
+				UndoableChange previous = undos.remove(undos.size() - 1);
+				if (previous.replaces(change)) {
+					undos.add(previous);
+				} else {
+					undos.add(new CompoundChange(change, previous));
+				}
 			} else {
 				undos.add(change);
 				allowCompound = true;
 			}
-			
+
 			redos.clear();
 
 			fireChange();
@@ -93,13 +98,13 @@ public class UndoManager {
 			allowCompound = false;
 		}
 	}
-	
+
 	public void compound(Compound compound) {
 		if (this.compound != null) {
 			compound.run();
 			return;
 		}
-		
+
 		allowCompound = false;
 
 		this.compound = compound;
@@ -108,10 +113,10 @@ public class UndoManager {
 		} finally {
 			this.compound = null;
 		}
-		
-		allowCompound = false;		
+
+		allowCompound = false;
 	}
-	
+
 	public boolean canUndo() {
 		return !undos.isEmpty();
 	}
@@ -122,20 +127,20 @@ public class UndoManager {
 
 	public void undo() {
 		allowCompound = false;
-		
+
 		if (!undos.isEmpty()) {
 			try {
-				inProgress = true;
+				undoing = true;
 
 				UndoableChange change = undos.remove(undos.size() - 1);
 
 				redos.add(change);
 
 				change.undo();
-				
+
 				fireChange();
 			} finally {
-				inProgress = false;
+				undoing = false;
 			}
 		}
 	}
@@ -145,41 +150,49 @@ public class UndoManager {
 
 		if (!redos.isEmpty()) {
 			try {
-				inProgress = true;
+				undoing = true;
 				UndoableChange change = redos.remove(redos.size() - 1);
 
 				undos.add(change);
 
 				change.redo();
-				
+
 				fireChange();
 			} finally {
-				inProgress = false;
+				undoing = false;
 			}
 		}
 	}
-	
+
 	private static class CompoundChange implements UndoableChange {
 		private UndoableChange change1;
-		
+
 		private UndoableChange change2;
-		
+
 		public CompoundChange(UndoableChange change1, UndoableChange change2) {
 			this.change1 = change1;
 			this.change2 = change2;
 		}
-		
+
 		public void notify(OrganListener listener) {
 		}
-		
+
 		public void undo() {
 			change1.undo();
 			change2.undo();
 		}
-		
+
 		public void redo() {
 			change2.redo();
 			change1.redo();
+		}
+
+		public boolean replaces(UndoableChange change) {
+			if (change1.replaces(change)) {
+				return true;
+			}
+
+			return change2.replaces(change);
 		}
 	}
 }

@@ -21,7 +21,9 @@ package jorgan.gui.dock;
 import javax.swing.JScrollPane;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.ConsolePanel;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
@@ -30,22 +32,34 @@ import swingx.docking.Docked;
 
 /**
  * Panel that manages views to display a console of an organ.
- * 
- * TODO observe console for name changes to set correct title
  */
 public class ConsoleDockable extends DefaultDockable implements SessionAware {
 
+	private EventHandler eventHandler = new EventHandler();
+	
+	private OrganSession session;
+	
 	private ConsolePanel panel;
-
+	
 	public ConsoleDockable(Console console) {
 		panel = new ConsolePanel(console);
 
-		setTitle(Elements.getDisplayName(panel.getConsole()));
-		
 		setContent(new JScrollPane(panel));
+		
+		update();
 	}
 
 	public void setSession(OrganSession session) {
+		if (this.session != null) {
+			this.session.getOrgan().removeOrganListener(eventHandler);
+		}
+
+		this.session = session;
+		
+		if (this.session != null) {
+			this.session.getOrgan().addOrganListener(eventHandler);
+		}
+
 		panel.setSession(session);
 	}
 
@@ -53,5 +67,18 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
+	}
+	
+	private void update() {
+		setTitle(Elements.getDisplayName(panel.getConsole()));
+	}
+	
+	private class EventHandler extends OrganAdapter {
+		@Override
+		public void propertyChanged(Element element, String name) {
+			if (element == panel.getConsole()) {
+				update();
+			}
+		}
 	}
 }

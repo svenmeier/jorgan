@@ -25,10 +25,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import jorgan.disposition.event.AbstractUndoableChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
-import jorgan.disposition.event.UndoableChange;
 
 /**
  * The container for all elements of an organ.
@@ -44,7 +44,7 @@ public class Organ {
 	 * Registered observers.
 	 */
 	private transient List<OrganObserver> observers;
-	
+
 	private Set<Element> elements = new HashSet<Element>();
 
 	/**
@@ -118,23 +118,25 @@ public class Organ {
 	}
 
 	public void addElement(final Element element) {
-		
+
 		elements.add(element);
 		element.setOrgan(this);
 
-		fireChange(new UndoableChange() {
+		fireChange(new AbstractUndoableChange() {
 			public void notify(OrganListener listener) {
 				listener.elementAdded(element);
 			}
+
 			public void undo() {
 				removeElement(element);
 			}
+
 			public void redo() {
 				addElement(element);
 			}
 		});
 	}
-	
+
 	public void removeElement(final Element element) {
 
 		if (element.getOrgan() != this) {
@@ -149,13 +151,15 @@ public class Organ {
 		elements.remove(element);
 		element.setOrgan(null);
 
-		fireChange(new UndoableChange() {
+		fireChange(new AbstractUndoableChange() {
 			public void notify(OrganListener listener) {
 				listener.elementRemoved(element);
 			}
+
 			public void undo() {
 				addElement(element);
 			}
+
 			public void redo() {
 				removeElement(element);
 			}
@@ -178,7 +182,7 @@ public class Organ {
 				change.notify(listener);
 			}
 		}
-		
+
 		if (observers != null) {
 			// observer might remove itself when notified so work on copy
 			for (OrganObserver observer : new ArrayList<OrganObserver>(
@@ -283,7 +287,7 @@ public class Organ {
 				}
 			}
 		}
-		
+
 		return clone;
 	}
 }
