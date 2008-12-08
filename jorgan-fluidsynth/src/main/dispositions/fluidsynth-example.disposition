@@ -11,8 +11,6 @@
     <fluidsynth.fluidsynthSound id="2">
       <soundfont>fluidsynth-example.SF2</soundfont>
       <channels>32</channels>
-      <audioDriver>alsa</audioDriver>
-      <audioDevice>hw:0,0</audioDevice>
       <audioBuffers>16</audioBuffers>
       <audioBufferSize>64</audioBufferSize>
       <gain>0.2</gain>
