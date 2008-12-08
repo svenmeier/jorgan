@@ -96,7 +96,7 @@
       <bank>0</bank>
       <references/>
       <messages/>
-    </fluidsynth.fluidsynthSound>
+    </creative.creativeSound>
     <console id="7">
       <screen>:0.0</screen>
       <zoom>1.0</zoom>
