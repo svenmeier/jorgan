@@ -18,7 +18,6 @@
  */
 package jorgan.fluidsynth.play;
 
-import java.io.File;
 import java.io.IOException;
 
 import jorgan.fluidsynth.Fluidsynth;
@@ -33,6 +32,8 @@ import jorgan.util.Null;
  * A player for a {@link FluidsynthSound}.
  */
 public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
+
+	private FluidsynthSound clone;
 
 	private Fluidsynth synth;
 
@@ -49,19 +50,21 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
-		
+
 		if (synth == null) {
 			createSynth();
 		} else {
 			if (!Null
-					.safeEquals(synth.getAudioDriver(), sound.getAudioDriver())
-					|| !Null.safeEquals(synth.getSoundfont(), new File(sound
-							.getSoundfont()))) {
+					.safeEquals(clone.getAudioDriver(), sound.getAudioDriver())
+					|| !Null.safeEquals(clone.getAudioDevice(), sound
+							.getAudioDevice())
+					|| !Null.safeEquals(clone.getSoundfont(), sound
+							.getSoundfont())) {
 				destroySynth();
 				createSynth();
 			}
 		}
-		
+
 		configureSynth();
 	}
 
@@ -96,6 +99,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(),
 					sound.getAudioDriver(), sound.getAudioDevice(), sound
 							.getAudioBuffers(), sound.getAudioBufferSize());
+
+			clone = (FluidsynthSound) sound.clone();
 		} catch (IllegalStateException e) {
 			addProblem(Severity.ERROR, "audioDriver", "create");
 			return;
@@ -157,6 +162,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		if (synth != null) {
 			synth.dispose();
 			synth = null;
+
+			clone = null;
 		}
 	}
 }
