@@ -289,17 +289,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 		this.handleRegistrationChanges = handleRegistrationChanges;
 	}
 
-	/**
-	 * Set the file of the current organ.
-	 */
-	private void setFile(File file) {
+	private void updateTitle() {
 
-		session.setFile(file);
-		if (file == null) {
+		if (session.getFile() == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
-			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(file) + " - "
-					+ TITEL_SUFFIX);
+			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(session
+					.getFile())
+					+ " - " + TITEL_SUFFIX);
 		}
 	}
 
@@ -336,6 +333,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 				session.getPlay().open();
 			}
 		}
+		
+		updateTitle();
 
 		saveAction.clearChanges();
 
@@ -438,8 +437,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 			return false;
 		}
 
-		setFile(file);
+		session.setFile(file);
 
+		updateTitle();
+		
 		saveAction.clearChanges();
 
 		buildRecentsMenu();
@@ -612,7 +613,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void beforeChange(Change change) {
 		}
-		
+
 		public void afterChange(Change change) {
 			changes = true;
 			if (change instanceof UndoableChange) {
