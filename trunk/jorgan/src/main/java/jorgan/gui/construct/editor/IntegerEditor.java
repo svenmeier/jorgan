@@ -36,13 +36,22 @@ public class IntegerEditor extends CustomEditor {
 	private JSpinner spinner;
 
 	public IntegerEditor() {
-		spinner = new JSpinner(new SpinnerNumberModel(0, Integer.MIN_VALUE, Integer.MAX_VALUE, 1));
+		this(Integer.MIN_VALUE, 1, Integer.MAX_VALUE);
+	}
+
+	public IntegerEditor(int min, int delta, int max) {
+		this(min, min, delta, max);
+	}
+	
+	public IntegerEditor(int value, int min, int delta, int max) {
+		spinner = new JSpinner(new SpinnerNumberModel(value, min, max, delta));
 		spinner.setBorder(null);
 
 		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
 				.getEditor();
 		editor.getTextField().setBorder(null);
 	}
+
 
 	@Override
 	public String format(Object value) {

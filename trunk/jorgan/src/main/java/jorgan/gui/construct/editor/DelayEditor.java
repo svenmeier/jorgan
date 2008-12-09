@@ -18,60 +18,13 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.Component;
-import java.text.ParseException;
-
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
 /**
  * Property editor for delay.
  */
-public class DelayEditor extends CustomEditor {
-
-	private JSpinner spinner;
+public class DelayEditor extends IntegerEditor {
 
 	public DelayEditor() {
-
-		spinner = new JSpinner(new SpinnerNumberModel(0, 0, Integer.MAX_VALUE,
-				1));
-		spinner.setBorder(null);
-
-		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-				.getEditor();
-		editor.getTextField().setBorder(null);
-	}
-
-	@Override
-	public String format(Object value) {
-		if (value == null) {
-			return "";
-		} else {
-			return "" + value;
-		}
-	}
-
-	@Override
-	public Component getCustomEditor(Object value) {
-
-		if (value != null) {
-			spinner.setValue(value);
-		}
-
-		return spinner;
-	}
-
-	@Override
-	public Object getEditedValue() {
-
-		try {
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.commitEdit();
-		} catch (ParseException ex) {
-			// invalid value so keep previous value
-		}
-
-		return spinner.getValue();
+		super(0, 1, 60 * 1000);
 	}
 }
