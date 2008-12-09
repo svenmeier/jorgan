@@ -96,7 +96,10 @@ public class FluidsynthSound extends Sound {
 					"channels must be greater or equal 16");
 		}
 		if (channels > 256) {
-			throw new IllegalArgumentException("channels must be less than 256");
+			throw new IllegalArgumentException("channels must be less or equal 256");
+		}
+		if (channels % 16 != 0) {
+			throw new IllegalArgumentException("channels must be multiple of 16");
 		}
 		
 		if (this.channels != channels) {
