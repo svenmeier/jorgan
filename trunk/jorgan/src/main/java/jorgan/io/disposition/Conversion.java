@@ -70,8 +70,8 @@ public class Conversion {
 					"convert3.0To3.1.xsl"),
 			new Conversion("<organ *version=\"3\\.[1|2].*\" *>",
 					"convert3.1To3.3.xsl"),
-			new Conversion("<organ *version=\"3\\.3.*\" *>",
-					"convert3.3To3.4.xsl") };
+			new Conversion("<organ *version=\"3\\.[3|4].*\" *>",
+					"convert3.3To3.5.xsl") };
 
 	private String pattern;
 
