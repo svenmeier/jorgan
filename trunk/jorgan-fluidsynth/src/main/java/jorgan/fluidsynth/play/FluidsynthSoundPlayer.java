@@ -58,6 +58,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 					.safeEquals(clone.getAudioDriver(), sound.getAudioDriver())
 					|| !Null.safeEquals(clone.getAudioDevice(), sound
 							.getAudioDevice())
+					|| clone.getAudioBuffers() != sound.getAudioBuffers()
+					|| clone.getAudioBufferSize() != sound.getAudioBufferSize()
 					|| !Null.safeEquals(clone.getSoundfont(), sound
 							.getSoundfont())) {
 				destroySynth();
