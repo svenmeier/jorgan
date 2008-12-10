@@ -52,7 +52,7 @@
 	    <sequence>
 			<xsl:apply-templates select="@id|locking|name|style|zoom|references"/>
 	      <description><xsl:value-of select="description"/></description>
-	      <value><xsl:value-of select="number(threshold) div 127"/></value>
+	      <threshold><xsl:value-of select="number(threshold) div 127"/></threshold>
 	      <value><xsl:value-of select="number(value) div 127"/></value>
 	      <messages>
 	      	<xsl:for-each select="message">
