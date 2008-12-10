@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
@@ -90,10 +91,15 @@ public class Conversion {
 	}
 
 	public InputStream convert(InputStream in) throws TransformerException {
-		Transformer transform = TransformerFactory.newInstance()
+		TransformerFactory factory = TransformerFactory.newInstance();
+		factory.setAttribute("indent-number", new Integer(4));
+		
+		Transformer transform = factory
 				.newTransformer(
 						new StreamSource(Conversion.class
 								.getResourceAsStream(xsl)));
+
+		transform.setOutputProperty(OutputKeys.INDENT, "yes");
 
 		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
 
