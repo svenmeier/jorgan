@@ -60,6 +60,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 							.getAudioDevice())
 					|| clone.getAudioBuffers() != sound.getAudioBuffers()
 					|| clone.getAudioBufferSize() != sound.getAudioBufferSize()
+					|| clone.getChannels() != sound.getChannels()
 					|| !Null.safeEquals(clone.getSoundfont(), sound
 							.getSoundfont())) {
 				destroySynth();
