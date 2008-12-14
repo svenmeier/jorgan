@@ -1,5 +1,7 @@
 #include <jni.h>
+#include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include "fluidsynth.h"
 #include "jorgan.fluidsynth.Fluidsynth.h"
 
@@ -252,5 +254,72 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setChorus(JNIEnv *env, jobject ob
   }
 
   fluid_synth_set_chorus(synth, nr, level, speed, depth_ms, type);
+}
+
+struct forEachData {
+  JNIEnv *env;
+  jobject list;
+  jmethodID add;
+};
+
+void initData(JNIEnv *env, struct forEachData *data) {
+  data->env = env;
+
+  jclass class = (*env)->FindClass(env, "java/util/ArrayList");
+
+  jmethodID constructor = (*env)->GetMethodID(env, class, "<init>", "()V");
+  data->list = (*env)->NewObject(env, class, constructor);
+
+  data->add = (*env)->GetMethodID(env, class, "add", "(Ljava/lang/Object;)Z");
+}
+
+void onOption(void *vdata, char *name, char *value) {
+  struct forEachData *data = (struct forEachData *)vdata;
+
+  JNIEnv *env = data->env;
+
+  jstring string = (*env)->NewStringUTF(env, value);
+
+  (*env)->CallVoidMethod(env, data->list, data->add, string);
+}
+
+JNIEXPORT
+jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_getAudioDrivers(JNIEnv *env, jclass class) {
+
+  struct forEachData data;
+  initData(env, &data);
+
+  fluid_settings_t* settings = new_fluid_settings();
+  fluid_settings_foreach_option(settings, "audio.driver", &data, onOption);
+  delete_fluid_settings(settings);
+
+  return data.list;
+}
+
+JNIEXPORT
+jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_getAudioDevices(JNIEnv *env, jclass class, jstring audioDriver) {
+
+  struct forEachData data;
+  initData(env, &data);
+
+  const char* prefix = "audio.";
+  const char* cAudioDriver = (*env)->GetStringUTFChars(env, audioDriver, NULL);
+  const char* suffix = ".device";
+
+  char *key = (char *)calloc(strlen(prefix) + strlen(cAudioDriver) + strlen(suffix) + 1, 
+                        sizeof(char));
+  strcat(key, prefix);
+  strcat(key, cAudioDriver);
+  strcat(key, suffix);
+ 
+  fluid_settings_t* settings = new_fluid_settings();
+  fluid_settings_foreach_option(settings, key, &data, onOption);
+  delete_fluid_settings(settings);
+
+  free(key);
+
+  (*env)->ReleaseStringUTFChars(env, audioDriver, cAudioDriver);
+
+  return data.list;
 }
 
