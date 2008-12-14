@@ -20,6 +20,7 @@ package jorgan.fluidsynth;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
@@ -32,12 +33,17 @@ import jorgan.util.NativeUtils;
 public class Fluidsynth {
 
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
-	
+
 	private String name;
+
 	private int channels;
+
 	private String audioDriver;
+
 	private String audioDevice;
+
 	private int buffers;
+
 	private int bufferSize;
 
 	private File soundfont;
@@ -49,16 +55,15 @@ public class Fluidsynth {
 	public Fluidsynth(String name, int channels, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException {
-		
+
 		this.name = name;
 		this.channels = channels;
 		this.audioDriver = audioDriver;
 		this.audioDevice = audioDevice;
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
-		
-		create(name, channels, audioDriver, audioDevice, buffers,
-				bufferSize);
+
+		create(name, channels, audioDriver, audioDevice, buffers, bufferSize);
 	}
 
 	public String getAudioDevice() {
@@ -88,7 +93,7 @@ public class Fluidsynth {
 	public File getSoundfont() {
 		return soundfont;
 	}
-	
+
 	public void dispose() {
 		destroy();
 	}
@@ -101,7 +106,7 @@ public class Fluidsynth {
 
 	public void soundFontLoad(File soundfont) throws IOException {
 		this.soundfont = soundfont;
-		
+
 		soundFontLoad(soundfont.getAbsolutePath());
 	}
 
@@ -148,6 +153,22 @@ public class Fluidsynth {
 			break;
 		}
 	}
+
+	/**
+	 * Get the available {@link #getAudioDriver()}s.
+	 * 
+	 * @return possible options for audio drivers
+	 */
+	public native static List<String> getAudioDrivers();
+
+	/**
+	 * Get the available {@link #getAudioDevice()}s.
+	 * 
+	 * @param audioDriver
+	 *            the audio driver to get possible devices for
+	 * @return possible options for audio devices
+	 */
+	public native static List<String> getAudioDevices(String audioDriver);
 
 	/**
 	 * Load the native library "fluidsynth" from the path specified via the
