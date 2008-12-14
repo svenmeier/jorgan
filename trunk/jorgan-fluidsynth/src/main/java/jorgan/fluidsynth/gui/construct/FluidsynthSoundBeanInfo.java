@@ -19,11 +19,11 @@
 package jorgan.fluidsynth.gui.construct;
 
 import jorgan.fluidsynth.disposition.FluidsynthSound;
+import jorgan.fluidsynth.gui.construct.editor.AudioDeviceEditor;
+import jorgan.fluidsynth.gui.construct.editor.AudioDriverEditor;
 import jorgan.fluidsynth.gui.construct.editor.ChannelsEditor;
-import jorgan.fluidsynth.gui.construct.editor.DriverEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.IntegerEditor;
-import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
 
 /**
@@ -36,8 +36,8 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 		super.registerProperties();
 
 		add("channels", FluidsynthSound.class, ChannelsEditor.class);
-		add("audioDriver", FluidsynthSound.class, DriverEditor.class);
-		add("audioDevice", FluidsynthSound.class, StringEditor.class);
+		add("audioDriver", FluidsynthSound.class, AudioDriverEditor.class);
+		add("audioDevice", FluidsynthSound.class, AudioDeviceEditor.class);
 		add("audioBuffers", FluidsynthSound.class, IntegerEditor.class);
 		add("audioBufferSize", FluidsynthSound.class, IntegerEditor.class);
 		add("soundfont", FluidsynthSound.class, FileEditor.class);
