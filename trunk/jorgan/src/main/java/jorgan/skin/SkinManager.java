@@ -23,14 +23,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jorgan.io.SkinStream;
-import jorgan.util.Bootstrap;
-import jorgan.util.ClassUtils;
 import jorgan.util.IOUtils;
 
 /**
@@ -41,38 +39,39 @@ public class SkinManager implements ISkinManager {
 	private static final Logger logger = Logger.getLogger(SkinManager.class
 			.getName());
 
-	/**
-	 * The name of the system property to specify the path to load skins from.
-	 * <br>
-	 * If this system property is not set, skins will be loaded in a "skins"
-	 * folder relative to the installation directory.
-	 */
-	private static final String SKINS_PATH_PROPERTY = "jorgan.skins.path";
-
 	private static final String SKIN_FILE = "skin.xml";
 
 	private static final String ZIP_SUFFIX = ".zip";
 
 	private static SkinManager instance;
 
-	private List<Skin> skins = new ArrayList<Skin>();
+	private Map<File, Skin> skins = new HashMap<File, Skin>();
 
-	private void initSkins() {
-		File dir = new File(System.getProperty(SKINS_PATH_PROPERTY, ClassUtils
-				.getDirectory(Bootstrap.class)
-				+ "/skins"));
-		if (dir.exists()) {
-			for (String entry : dir.list()) {
-				try {
-					initSkin(new File(dir, entry));
-				} catch (Exception ex) {
-					logger.log(Level.INFO, "ignoring skin '" + entry + "'", ex);
-				}
+	public Skin getSkin(File file) throws IOException {
+		if (file == null) {
+			throw new IllegalArgumentException("file must not be null");
+		}
+		file = file.getAbsoluteFile();
+
+		Skin skin = skins.get(file);
+		if (skin == null) {
+			try {
+				skin = loadSkin(file);
+
+				skins.put(file, skin);
+			} catch (IOException ex) {
+				logger.log(Level.INFO, "opening skin failed", ex);
+				
+				throw ex;
 			}
 		}
+
+		return skin;
 	}
 
-	private void initSkin(File file) throws IOException {
+	private Skin loadSkin(File file) throws IOException {
+		Skin skin = null;
+
 		SkinSource source = createSkinDirectory(file);
 		if (source == null) {
 			source = createSkinZip(file);
@@ -81,16 +80,17 @@ public class SkinManager implements ISkinManager {
 		if (source != null) {
 			InputStream input = source.getURL(SKIN_FILE).openStream();
 			try {
-				Skin skin = new SkinStream().read(input);
+				skin = new SkinStream().read(input);
 				skin.setSource(source);
-				skins.add(skin);
 			} finally {
 				IOUtils.closeQuietly(input);
 			}
 		}
+
+		return skin;
 	}
 
-	private SkinSource createSkinDirectory(File file) throws IOException {
+	private SkinSource createSkinDirectory(File file) {
 
 		if (file.isDirectory()) {
 			return new SkinDirectory(file);
@@ -98,46 +98,12 @@ public class SkinManager implements ISkinManager {
 		return null;
 	}
 
-	private SkinSource createSkinZip(File file) throws IOException {
+	private SkinSource createSkinZip(File file) {
 
 		if (file.getName().endsWith(ZIP_SUFFIX)) {
 			return new SkinZip(file);
 		}
 		return null;
-	}
-
-	public String[] getSkinNames() {
-
-		String[] names = new String[1 + skins.size()];
-
-		for (int s = 0; s < skins.size(); s++) {
-			Skin skin = skins.get(s);
-			names[s + 1] = skin.getName();
-		}
-
-		return names;
-	}
-
-	public Skin getSkin(String skinName) {
-		for (int s = 0; s < skins.size(); s++) {
-			Skin skin = skins.get(s);
-
-			if (skin.getName().equals(skinName)) {
-				return skin;
-			}
-		}
-
-		return null;
-	}
-
-	public String[] getStyleNames(String skinName) {
-
-		Skin skin = getSkin(skinName);
-		if (skin == null) {
-			return new String[0];
-		} else {
-			return skin.getStyleNames();
-		}
 	}
 
 	/**
@@ -147,7 +113,7 @@ public class SkinManager implements ISkinManager {
 
 		private File directory;
 
-		private SkinDirectory(File directory) throws IOException {
+		private SkinDirectory(File directory) {
 			this.directory = directory;
 		}
 
@@ -167,7 +133,7 @@ public class SkinManager implements ISkinManager {
 
 		private File file;
 
-		private SkinZip(File file) throws IOException {
+		private SkinZip(File file) {
 			this.file = file;
 		}
 
@@ -188,8 +154,6 @@ public class SkinManager implements ISkinManager {
 	public static SkinManager instance() {
 		if (instance == null) {
 			instance = new SkinManager();
-
-			instance.initSkins();
 		}
 
 		return instance;

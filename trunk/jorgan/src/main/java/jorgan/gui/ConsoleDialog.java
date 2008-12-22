@@ -113,8 +113,7 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 	 */
 	public void addConsole(final Console console) {
 
-		ConsolePanel consolePanel = new ConsolePanel(console);
-		consolePanel.setSession(session);
+		ConsolePanel consolePanel = new ConsolePanel(session, console);
 
 		consolePanel.addMouseListener(mouseHandler);
 		consolePanel.addMouseMotionListener(mouseHandler);

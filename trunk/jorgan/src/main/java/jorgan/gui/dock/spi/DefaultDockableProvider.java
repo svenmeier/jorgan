@@ -31,6 +31,7 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.ProblemsDockable;
 import jorgan.gui.dock.PropertiesDockable;
 import jorgan.gui.dock.ReferencesDockable;
+import jorgan.gui.dock.SkinDockable;
 
 public class DefaultDockableProvider implements DockableProvider {
 
@@ -43,6 +44,7 @@ public class DefaultDockableProvider implements DockableProvider {
 		dockables.add(new ReferencesDockable());
 		dockables.add(new DescriptionDockable());
 		dockables.add(new MessagesDockable());
+		dockables.add(new SkinDockable());
 
 		dockables.add(new MonitorDockable());
 		dockables.add(new MemoryDockable());

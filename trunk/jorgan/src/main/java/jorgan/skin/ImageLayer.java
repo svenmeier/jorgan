@@ -86,7 +86,7 @@ public class ImageLayer extends Layer {
 
 		URL url = resolve(file);
 		if (url != null) {
-			image = ImageCache.getImage(url, view.getConsolePanel());
+			image = ImageCache.getImage(url);
 		} else {
 			image = new ImageIcon(getClass().getResource("img/missing.gif"))
 					.getImage();
