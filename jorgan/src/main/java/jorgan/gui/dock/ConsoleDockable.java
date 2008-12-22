@@ -39,28 +39,33 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 	
 	private OrganSession session;
 	
+	private Console console;
+	
 	private ConsolePanel panel;
 	
 	public ConsoleDockable(Console console) {
-		panel = new ConsolePanel(console);
-
-		setContent(new JScrollPane(panel));
-		
-		update();
+		this.console = console;
 	}
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(eventHandler);
+
+			setContent(null);
+			panel.dispose();
+			panel = null;
 		}
 
 		this.session = session;
 		
 		if (this.session != null) {
+			panel = new ConsolePanel(this.session, console);
+			setContent(new JScrollPane(panel));
+			
+			updateTitle();
+			
 			this.session.getOrgan().addOrganListener(eventHandler);
 		}
-
-		panel.setSession(session);
 	}
 
 	@Override
@@ -69,15 +74,15 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 
 	}
 	
-	private void update() {
+	private void updateTitle() {
 		setTitle(Elements.getDisplayName(panel.getConsole()));
 	}
 	
 	private class EventHandler extends OrganAdapter {
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == panel.getConsole()) {
-				update();
+			if (element == console) {
+				updateTitle();
 			}
 		}
 	}

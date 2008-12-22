@@ -114,7 +114,7 @@ public class TextLayer extends Layer {
 
 		URL url = resolve(font.getName());
 		if (url != null) {
-			font = FontCache.getFont(url, view.getConsolePanel()).deriveFont(
+			font = FontCache.getFont(url).deriveFont(
 					font.getStyle(), font.getSize());
 		}
 
@@ -124,7 +124,7 @@ public class TextLayer extends Layer {
 			text = binding.getText();
 		}
 
-		breakLines(text.toString().trim(), view.getConsolePanel()
+		breakLines(text.toString().trim(), view.getContainer().getHost()
 				.getFontMetrics(font));
 	}
 

@@ -34,6 +34,8 @@ import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.UndoListener;
+import jorgan.util.Bootstrap;
+import jorgan.util.ClassUtils;
 import spin.Spin;
 
 /**
@@ -45,6 +47,12 @@ import spin.Spin;
  * TODO remove spin dependencies - non-GUI clients don't need Spin
  */
 public class OrganSession {
+
+	private static final String LOCATION_HOME = "home:";
+
+	private static final String LOCATION_DISPOSITION = "disposition:";
+
+	private static final String LOCATION_JORGAN = "jorgan:";
 
 	/**
 	 * The file the current organ is associated with.
@@ -95,14 +103,14 @@ public class OrganSession {
 				selection.clear(element);
 
 				problems.removeProblems(element);
-				
+
 				undoManager.compound();
 			}
 
 			@Override
 			public void elementAdded(Element element) {
 				selection.setSelectedElement(element);
-				
+
 				undoManager.compound();
 			}
 		}));
@@ -191,17 +199,33 @@ public class OrganSession {
 
 	private class PlayResolver implements Resolver {
 		public File resolve(String name) throws FileNotFoundException {
-			File file = new File(name);
-			if (file.isAbsolute()) {
-				return file;
-			}
+			return OrganSession.this.resolve(name);
+		}
+	}
 
-			if (getFile() != null) {
-				return new File(getFile().getParentFile(), name);
-			}
+	public File resolve(String name) throws FileNotFoundException {
+		File file = new File(name);
 
+		if (name.startsWith(LOCATION_JORGAN)) {
+			file = new File(ClassUtils.getDirectory(Bootstrap.class), name
+					.substring(LOCATION_JORGAN.length()));
+		} else if (name.startsWith(LOCATION_DISPOSITION)) {
+			if (getFile() == null) {
+				file = null;
+			} else {
+				file = new File(getFile().getParentFile(), name
+						.substring(LOCATION_DISPOSITION.length()));
+			}
+		} else if (name.startsWith(LOCATION_HOME)) {
+			file = new File(System.getProperty("user.home"), name
+					.substring(LOCATION_HOME.length()));
+		}
+
+		if (file == null || !file.exists()) {
 			throw new FileNotFoundException();
 		}
+
+		return file;
 	}
 
 	private static Organ createDefaultOrgan() {

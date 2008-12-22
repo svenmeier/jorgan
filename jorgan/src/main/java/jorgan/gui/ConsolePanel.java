@@ -19,6 +19,7 @@
 package jorgan.gui;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -39,6 +40,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -63,6 +65,7 @@ import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.View;
+import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ProviderRegistry;
 import jorgan.gui.construct.layout.AlignBottomLayout;
 import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
@@ -77,9 +80,10 @@ import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.play.event.PlayAdapter;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.event.Problem;
+import jorgan.session.event.Severity;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
@@ -87,12 +91,13 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.MacAdapter;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Panel that manages views to display a console of an organ.
  */
 public class ConsolePanel extends JComponent implements Scrollable,
-		SessionAware {
+		ViewContainer {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
@@ -222,10 +227,20 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * Create a view panel.
 	 */
-	public ConsolePanel(Console console) {
+	public ConsolePanel(OrganSession session, Console console) {
+		if (session == null) {
+			throw new IllegalArgumentException("session must not be null");
+		}
 		if (console == null) {
 			throw new IllegalArgumentException("console must not be null");
 		}
+		this.session = session;
+		this.session.addOrganListener(organListener);
+		this.session.addSelectionListener(selectionListener);
+		this.session.addPlayerListener(playListener);
+
+		this.console = console;
+
 		config.read(this);
 
 		// must report to be opaque so containing scrollPane can use blitting
@@ -260,12 +275,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		arrangeMenu.add(arrangeToBackAction);
 		arrangeMenu.add(arrangeHideAction);
 
-		this.console = console;
-
+		setConstructing(!this.session.getPlay().isOpen());
 		initSkin();
 
 		consoleView = new ConsoleView(console);
-		consoleView.setConsolePanel(this);
+		consoleView.setContainer(this);
 
 		for (Reference<? extends Displayable> reference : console
 				.getReferences(Console.Reference.class)) {
@@ -273,6 +287,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		setConstructing(true);
+	}
+
+	public void dispose() {
+		this.session.removeOrganListener(organListener);
+		this.session.removeSelectionListener(selectionListener);
+		this.session.removePlayerListener(playListener);
+		this.session = null;
 	}
 
 	@Override
@@ -361,24 +382,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return Math.max(1, viewToScreen(viewIncrement, false));
 	}
 
-	public void setSession(OrganSession session) {
-		if (this.session != null) {
-			this.session.removeOrganListener(organListener);
-			this.session.removeSelectionListener(selectionListener);
-			this.session.removePlayerListener(playListener);
-		}
-
-		this.session = session;
-
-		if (this.session != null) {
-			this.session.addOrganListener(organListener);
-			this.session.addSelectionListener(selectionListener);
-			this.session.addPlayerListener(playListener);
-
-			setConstructing(!this.session.getPlay().isOpen());
-		}
-	}
-
 	/**
 	 * Scroll the given element to visible.
 	 * 
@@ -411,13 +414,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return (int) (screenPos / console.getZoom());
 	}
 
-	/**
-	 * Get the skin for the console.
-	 * 
-	 * @return the skin
-	 */
-	public Skin getSkin() {
-		return skin;
+	public Style getStyle(View<? extends Displayable> view) {
+		if (skin != null) {
+			String styleName = view.getElement().getStyle();
+			if (styleName != null) {
+				return skin.createStyle(styleName);
+			}
+		}
+		return null;
 	}
 
 	private void setConstructing(boolean constructing) {
@@ -450,11 +454,28 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void initSkin() {
-		if (console.getSkin() == null) {
-			skin = null;
+		session.getProblems().removeProblem(
+				new Problem(Severity.ERROR, console, "skin", null));
+
+		String skin = console.getSkin();
+		if (skin == null) {
+			this.skin = null;
 		} else {
-			skin = SkinManager.instance().getSkin(console.getSkin());
+			try {
+				this.skin = SkinManager.instance().getSkin(
+						session.resolve(skin));
+			} catch (IOException ex) {
+				session.getProblems().addProblem(
+						new Problem(Severity.ERROR, console, "skin",
+								createMessage("skinLoad", skin)));
+			}
 		}
+	}
+
+	protected String createMessage(String key, Object... args) {
+		MessageBuilder builder = new MessageBuilder();
+
+		return config.get(key).read(builder).build(args);
 	}
 
 	protected View<? extends Displayable> getView(Displayable element) {
@@ -465,7 +486,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		View<? extends Displayable> view = ProviderRegistry.createView(element);
 
 		viewsByDisplayable.put(element, view);
-		view.setConsolePanel(this);
+		view.setContainer(this);
 
 		repaint();
 		revalidate();
@@ -475,7 +496,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		View<? extends Displayable> view = getView(element);
 
 		viewsByDisplayable.remove(element);
-		view.setConsolePanel(null);
+		view.setContainer(null);
 
 		repaint();
 		revalidate();
@@ -569,12 +590,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return new Dimension(viewToScreen(x, true), viewToScreen(y, true));
 	}
 
-	/**
-	 * Request repainting of a view.
-	 * 
-	 * @param view
-	 *            view to repaint
-	 */
 	public void repaintView(View<? extends Displayable> view) {
 		int x1 = viewToScreen(view.getX(), false);
 		int y1 = viewToScreen(view.getY(), false);
@@ -582,6 +597,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		int y2 = viewToScreen(view.getY() + view.getHeight(), true);
 
 		repaint(x1, y1, x2 - x1, y2 - y1);
+	}
+
+	public Component getHost() {
+		return this;
 	}
 
 	/**
@@ -739,7 +758,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void mousePressed(MouseEvent e) {
 
 			session.getUndoManager().compound();
-			
+
 			mouseFrom = e.getPoint();
 
 			pressedDisplayable = getElement(screenToView(e.getX()),
@@ -1220,8 +1239,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 *            element to get location for
 	 * @return location
 	 */
-	public Point getLocation(Displayable element) {
-		return new Point(console.getX(element), console.getY(element));
+	public Point getLocation(View<? extends Displayable> view) {
+		return new Point(console.getX(view.getElement()), console.getY(view
+				.getElement()));
+	}
+
+	public void setLocation(View<? extends Displayable> view, Point location) {
+		console.setLocation(view.getElement(), location.x, location.y);
 	}
 
 	private String getTooltip(Displayable element) {

@@ -18,7 +18,6 @@
  */
 package jorgan.skin;
 
-import java.awt.Component;
 import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,11 +46,11 @@ public class FontCache {
 	 *            url to get image for
 	 * @return image
 	 */
-	public static Font getFont(URL url, Component component) {
+	public static Font getFont(URL url) {
 		if (url == null) {
 			throw new IllegalArgumentException("url must not be null");
 		}
-		
+
 		Font font = fonts.get(url);
 		if (font == null) {
 			try {

@@ -36,7 +36,6 @@ import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
-import jorgan.skin.Skin;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 import jorgan.skin.Layer.ViewBinding;
@@ -77,9 +76,9 @@ public class View<E extends Displayable> {
 	protected Style style;
 
 	/**
-	 * The containing viewPanel.
+	 * The container.
 	 */
-	private ConsolePanel consolePanel;
+	private ViewContainer container;
 
 	/**
 	 * The element represented by this view.
@@ -124,15 +123,15 @@ public class View<E extends Displayable> {
 	}
 
 	/**
-	 * Set the containing {@link ConsolePanel}.
+	 * Set the container.
 	 * 
 	 * @param consolePanel
 	 *            containing panel
 	 */
-	public void setConsolePanel(ConsolePanel consolePanel) {
-		this.consolePanel = consolePanel;
+	public void setContainer(ViewContainer container) {
+		this.container = container;
 
-		if (consolePanel != null) {
+		if (container != null) {
 			changeUpdate();
 		}
 	}
@@ -142,8 +141,8 @@ public class View<E extends Displayable> {
 	 * 
 	 * @return containing panel
 	 */
-	public ConsolePanel getConsolePanel() {
-		return consolePanel;
+	public ViewContainer getContainer() {
+		return container;
 	}
 
 	/**
@@ -180,7 +179,7 @@ public class View<E extends Displayable> {
 	 */
 	public void changeUpdate() {
 
-		if (consolePanel != null) {
+		if (container != null) {
 			// issure repaint so old location gets cleared
 			// in case of a changed bounds
 			repaint();
@@ -196,7 +195,7 @@ public class View<E extends Displayable> {
 	}
 
 	protected void initLocation() {
-		location = consolePanel.getLocation(element);
+		location = container.getLocation(this);
 	}
 
 	protected void initBindings() {
@@ -246,13 +245,7 @@ public class View<E extends Displayable> {
 	}
 
 	protected void initStyle() {
-		style = null;
-
-		Skin skin = consolePanel.getSkin();
-		if (skin != null) {
-			String styleName = element.getStyle();
-			style = skin.createStyle(styleName);
-		}
+		style = container.getStyle(this);
 		if (style == null) {
 			style = createDefaultStyle();
 		}
@@ -264,7 +257,7 @@ public class View<E extends Displayable> {
 	}
 
 	protected void repaint() {
-		consolePanel.repaintView(this);
+		container.repaintView(this);
 	}
 
 	/**
@@ -426,5 +419,9 @@ public class View<E extends Displayable> {
 		this.showShortcut = showShortcut;
 
 		changeUpdate();
+	}
+
+	public Style getStyle() {
+		return style;
 	}
 }

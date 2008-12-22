@@ -19,7 +19,6 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Displayable;
-import jorgan.gui.construct.editor.StyleEditor;
 import jorgan.gui.construct.editor.ZoomEditor;
 
 /**
@@ -29,8 +28,7 @@ public class DisplayableBeanInfo extends ElementBeanInfo {
 
 	protected void registerProperties() {
 		super.registerProperties();
-		
-		add("style", Displayable.class, StyleEditor.class);
+
 		add("zoom", Displayable.class, ZoomEditor.class);
 	}
 }

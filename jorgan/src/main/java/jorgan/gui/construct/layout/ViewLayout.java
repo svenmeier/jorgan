@@ -18,6 +18,7 @@
  */
 package jorgan.gui.construct.layout;
 
+import java.awt.Point;
 import java.util.List;
 
 import javax.swing.Icon;
@@ -86,8 +87,7 @@ public abstract class ViewLayout {
 	}
 
 	protected void changePosition(View<? extends Displayable> view, int x, int y) {
-		view.getConsolePanel().getConsole()
-				.setLocation(view.getElement(), x, y);
+		view.getContainer().setLocation(view, new Point(x, y));
 	}
 
 	protected void init(View<? extends Displayable> pressed,

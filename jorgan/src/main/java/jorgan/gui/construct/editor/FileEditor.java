@@ -35,68 +35,70 @@ import javax.swing.JTextField;
  */
 public class FileEditor extends CustomEditor implements ActionListener {
 
-  private JPanel     panel     = new JPanel();
-  private JTextField textField = new JTextField();
-  private JButton    button    = new JButton("...");
-  
-  private JFileChooser fileChooser;
+	private JPanel panel = new JPanel();
 
-  public FileEditor() {
-    panel.setLayout(new BorderLayout());
+	private JTextField textField = new JTextField();
 
-    button.setFocusable(false);
-    button.setMargin(new Insets(0, 0, 0, 0));
-    button.addActionListener(this);
-    panel.add(button, BorderLayout.EAST);
+	private JButton button = new JButton("...");
 
-    textField.setBorder(null);
-    panel.add(textField, BorderLayout.CENTER);
-  }
+	private JFileChooser fileChooser;
 
-  @Override
-public Component getCustomEditor(Object value) {
+	public FileEditor() {
+		panel.setLayout(new BorderLayout());
 
-    textField.setText(format(value));
+		button.setFocusable(false);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(this);
+		panel.add(button, BorderLayout.EAST);
 
-    return panel;
-  }
+		textField.setBorder(null);
+		panel.add(textField, BorderLayout.CENTER);
+	}
 
-  @Override
-protected Object getEditedValue() {
+	@Override
+	public Component getCustomEditor(Object value) {
 
-    String file = textField.getText();
-    if ("".equals(file)) {
-      return null;
-    } else {
-      return file;
-    }
-  }
+		textField.setText(format(value));
 
-  public void actionPerformed(ActionEvent ev) {
+		return panel;
+	}
 
-    if (fileChooser == null) {
-      fileChooser = new JFileChooser();
-      fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-      fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-      fileChooser.setMultiSelectionEnabled(false);
-    }
-    
-    if (!"".equals(textField.getText())) {
-      fileChooser.setSelectedFile(new File(textField.getText()));
-    }
-    
-    if (fileChooser.showOpenDialog(button) == JFileChooser.APPROVE_OPTION) {
-      textField.setText(fileChooser.getSelectedFile().getPath());
-    }
-  }
+	@Override
+	protected Object getEditedValue() {
 
-  @Override
-protected String format(Object value) {
-      
-    if (value == null) {
-      return "";
-    } else {
-      return value.toString();
-    }
-  }
+		String file = textField.getText();
+		if ("".equals(file)) {
+			return null;
+		} else {
+			return file;
+		}
+	}
+
+	public void actionPerformed(ActionEvent ev) {
+
+		if (fileChooser == null) {
+			fileChooser = new JFileChooser();
+			fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
+			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			fileChooser.setMultiSelectionEnabled(false);
+		}
+
+		if (!"".equals(textField.getText())) {
+			fileChooser.setSelectedFile(new File(textField.getText()));
+		}
+
+		if (fileChooser.showOpenDialog(button) == JFileChooser.APPROVE_OPTION) {
+			textField.setText(fileChooser.getSelectedFile().getPath());
+		}
+	}
+
+	@Override
+	protected String format(Object value) {
+
+		if (value == null) {
+			return "";
+		} else {
+			return value.toString();
+		}
+	}
 }

@@ -18,30 +18,20 @@
  */
 package jorgan.skin;
 
+import java.io.File;
+import java.io.IOException;
+
 /**
  * Manager of skins.
  */
 public interface ISkinManager {
 
-    /**
-     * Get the names of the available skins.
-     * 
-     * @return skins
-     */
-    public String[] getSkinNames();
-
-    /**
-     * Get the names of styles for the given skin.
-     * 
-     * @return styles
-     */
-    public String[] getStyleNames(String skin);
-    
-    /**
-     * Get a skin with the given name.
-     * 
-     * @param name  name of skin
-     * @return  skin
-     */
-    public Skin getSkin(String name);
+	/**
+	 * Get a skin with the given name.
+	 * 
+	 * @param name
+	 *            name of skin
+	 * @return skin
+	 */
+	public Skin getSkin(File file) throws IOException;
 }

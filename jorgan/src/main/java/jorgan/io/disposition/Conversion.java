@@ -72,7 +72,9 @@ public class Conversion {
 			new Conversion("<organ *version=\"3\\.[1|2].*\" *>",
 					"convert3.1To3.3.xsl"),
 			new Conversion("<organ *version=\"3\\.[3|4].*\" *>",
-					"convert3.3To3.5.xsl") };
+					"convert3.3To3.5-beta.xsl"),
+			new Conversion("<organ *version=\"3\\.5-beta.*\" *>",
+					"convert3.5-betaTo3.5.xsl") };
 
 	private String pattern;
 
@@ -93,11 +95,9 @@ public class Conversion {
 	public InputStream convert(InputStream in) throws TransformerException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setAttribute("indent-number", new Integer(4));
-		
-		Transformer transform = factory
-				.newTransformer(
-						new StreamSource(Conversion.class
-								.getResourceAsStream(xsl)));
+
+		Transformer transform = factory.newTransformer(new StreamSource(
+				Conversion.class.getResourceAsStream(xsl)));
 
 		transform.setOutputProperty(OutputKeys.INDENT, "yes");
 
@@ -131,16 +131,15 @@ public class Conversion {
 		int index = 0;
 		while (index < conversions.length) {
 			if (conversions[index].isApplicable(header)) {
-				logger.log(Level.INFO, "applicable '" + conversions[index].pattern
-						+ "'");
+				logger.log(Level.INFO, "applicable '"
+						+ conversions[index].pattern + "'");
 				break;
 			}
 			index++;
 		}
 
 		while (index < conversions.length) {
-			logger.log(Level.INFO, "applying '" + conversions[index].xsl
-					+ "'");
+			logger.log(Level.INFO, "applying '" + conversions[index].xsl + "'");
 
 			in = conversions[index].convert(in);
 			index++;

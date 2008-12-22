@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -46,26 +47,19 @@ public class Skin implements Resolver {
 		this.name = name;
 	}
 
-	public int getStyleCount() {
-		return styles.size();
-	}
-
-	public String[] getStyleNames() {
-		String[] names = new String[1 + styles.size()];
-
+	public List<Style> createStyles() {
+		List<Style> clones = new ArrayList<Style>();
+	
 		for (int s = 0; s < styles.size(); s++) {
-			names[s + 1] = getStyle(s).getName();
+			Style style = styles.get(s);
+
+			Style clone = (Style) style.clone();
+			initResolver(clone);
+
+			clones.add(clone);
 		}
-
-		return names;
-	}
-
-	public Style getStyle(int index) {
-		return styles.get(index);
-	}
-
-	public void addStyle(Style style) {
-		styles.add(style);
+		
+		return clones;
 	}
 
 	public void setSource(SkinSource source) {
@@ -117,8 +111,8 @@ public class Skin implements Resolver {
 
 		while (true) {
 			String localized = name.substring(0, suffix) + locale
-			+ name.substring(suffix);
-			
+					+ name.substring(suffix);
+
 			URL url = source.getURL(localized);
 			if (probe(url)) {
 				return url;

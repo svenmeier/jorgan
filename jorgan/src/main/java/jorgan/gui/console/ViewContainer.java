@@ -16,38 +16,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.editor;
+package jorgan.gui.console;
 
-import java.beans.PropertyEditorSupport;
+import java.awt.Component;
+import java.awt.Point;
 
-import jorgan.skin.SkinManager;
+import jorgan.disposition.Displayable;
+import jorgan.skin.Style;
 
 /**
- * Property editor for a skin property.
+ * Container of {@link View}s.
  */
-public class SkinEditor extends PropertyEditorSupport {
+public interface ViewContainer {
 
-    private String[] tags;
+	/**
+	 * Get the hosting {@link Component}.
+	 */
+	public Component getHost();
 
-    public SkinEditor() {
-        tags = SkinManager.instance().getSkinNames();
-    }
+	/**
+	 * Get the style for the given view.
+	 */
+	public Style getStyle(View<? extends Displayable> view);
+	
+	/**
+	 * Get the location for the given view.
+	 */
+	public Point getLocation(View<? extends Displayable> view);
 
-    @Override
-	public String[] getTags() {
+	/**
+	 * Set the location for the given view.
+	 */
+	public void setLocation(View<? extends Displayable> view, Point location);
 
-        return tags;
-    }
-
-    @Override
-	public String getAsText() {
-
-        return (String) getValue();
-    }
-
-    @Override
-	public void setAsText(String string) {
-
-        setValue(string);
-    }
+	/**
+	 * Request repainting of a view.
+	 * 
+	 * @param view
+	 *            view to repaint
+	 */
+	public void repaintView(View<? extends Displayable> view);
 }
