@@ -34,6 +34,8 @@ import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -50,6 +52,8 @@ import jorgan.session.event.ElementSelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
+import jorgan.swing.SpinnerSlider;
+import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -72,14 +76,27 @@ public class SkinDockable extends OrganDockable {
 
 	private Skin skin;
 
+	private SpinnerSlider slider;
+
 	private List<View<?>> styles = new ArrayList<View<?>>();
 
 	private EventHandler eventHandler = new EventHandler();
-	
+
 	private boolean updating = false;
 
 	public SkinDockable() {
 		config.read(this);
+
+		slider = new SpinnerSlider(Math.round(Displayable.MIN_ZOOM * 100), 100,
+				Math.round(Displayable.MAX_ZOOM * 100));
+		slider.setEnabled(false);
+		slider.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (!updating) {
+					element.setZoom(slider.getValue() / 100.0f);
+				}
+			}
+		});
 
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -117,9 +134,16 @@ public class SkinDockable extends OrganDockable {
 		update();
 	}
 
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		docked.addTool(slider);
+	}
+
 	private void update() {
 		updating = true;
-		
+
 		setStatus(null);
 
 		skin = null;
@@ -161,9 +185,11 @@ public class SkinDockable extends OrganDockable {
 
 		if (skin == null) {
 			setContent(null);
+			slider.setEnabled(false);
 		} else {
 			list.setModel(new StylesModel());
 			setContent(new JScrollPane(list));
+			slider.setEnabled(true);
 		}
 
 		if (element != null && element.getStyle() != null) {
@@ -174,7 +200,7 @@ public class SkinDockable extends OrganDockable {
 				}
 			}
 		}
-		
+
 		updating = false;
 	}
 
@@ -191,7 +217,7 @@ public class SkinDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == console) {
+			if (element == SkinDockable.this.element || element == console) {
 				update();
 			}
 		}

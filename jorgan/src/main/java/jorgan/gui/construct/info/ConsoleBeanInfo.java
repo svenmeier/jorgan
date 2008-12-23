@@ -27,7 +27,7 @@ import jorgan.gui.construct.editor.ScreenEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Organ}.
  */
-public class ConsoleBeanInfo extends DisplayableBeanInfo {
+public class ConsoleBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {

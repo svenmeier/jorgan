@@ -21,5 +21,5 @@ package jorgan.gui.construct.info;
 /**
  * BeanInfo for {@link jorgan.disposition.Label}.
  */
-public class LabelBeanInfo extends DisplayableBeanInfo {
+public class LabelBeanInfo extends ElementBeanInfo {
 }
