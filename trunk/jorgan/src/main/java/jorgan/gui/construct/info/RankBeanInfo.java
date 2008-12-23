@@ -25,7 +25,7 @@ import jorgan.gui.construct.editor.StringEditor;
 /**
  * BeanInfo for {@link jorgan.disposition.Rank}.
  */
-public class RankBeanInfo extends DisplayableBeanInfo {
+public class RankBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {
