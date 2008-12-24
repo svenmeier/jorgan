@@ -195,6 +195,10 @@ public abstract class Element implements Cloneable {
 			}
 		}
 
+		if (filter == null) {
+			throw new IllegalArgumentException("unkown element");
+		}
+		
 		return filter;
 	}
 

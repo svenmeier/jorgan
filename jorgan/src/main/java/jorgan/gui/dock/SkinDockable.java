@@ -182,25 +182,27 @@ public class SkinDockable extends OrganDockable {
 						}
 					}
 				}
+				
 			}
 		}
 
-		if (skin == null) {
-			setContent(null);
+		if (console == null) {
 			slider.setValue(1.0f);
 			slider.setEnabled(false);
+			setContent(null);
 		} else {
-			list.setModel(new StylesModel());
-			setContent(new JScrollPane(list));
 			slider.setValue(element.getZoom());
 			slider.setEnabled(true);
-		}
-
-		if (element != null && element.getStyle() != null) {
-			for (View<?> view : styles) {
-				if (view.getStyle().getName().equals(element.getStyle())) {
-					list.setSelectedValue(view, true);
-					break;
+			list.setModel(new StylesModel());
+			setContent(new JScrollPane(list));
+			
+			String style = element.getStyle();
+			if (style != null) {
+				for (View<?> view : styles) {
+					if (view.getStyle().getName().equals(style)) {
+						list.setSelectedValue(view, true);
+						break;
+					}
 				}
 			}
 		}
@@ -236,31 +238,33 @@ public class SkinDockable extends OrganDockable {
 		public StylesModel() {
 			styles.clear();
 
-			for (final Style style : skin.createStyles()) {
-				View<?> view = ProviderRegistry.createView(element);
-				view.setContainer(new ViewContainer() {
-					public Component getHost() {
-						return list;
-					}
+			if (skin != null) {
+				for (final Style style : skin.createStyles()) {
+					View<?> view = ProviderRegistry.createView(element);
+					view.setContainer(new ViewContainer() {
+						public Component getHost() {
+							return list;
+						}
 
-					public Point getLocation(View<? extends Displayable> view) {
-						return new Point(0, 0);
-					}
+						public Point getLocation(View<? extends Displayable> view) {
+							return new Point(0, 0);
+						}
 
-					public Style getStyle(View<? extends Displayable> view) {
-						return style;
-					}
+						public Style getStyle(View<? extends Displayable> view) {
+							return style;
+						}
 
-					public void repaintView(View<? extends Displayable> view) {
-						list.repaint();
-					}
+						public void repaintView(View<? extends Displayable> view) {
+							list.repaint();
+						}
 
-					public void setLocation(View<? extends Displayable> view,
-							Point location) {
-					}
-				});
+						public void setLocation(View<? extends Displayable> view,
+								Point location) {
+						}
+					});
 
-				styles.add(view);
+					styles.add(view);
+				}
 			}
 		}
 
