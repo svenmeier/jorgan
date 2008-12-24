@@ -93,7 +93,9 @@ public class SkinDockable extends OrganDockable {
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (!updating) {
-					element.setZoom((float) slider.getValue());
+					if (element != null) {
+						element.setZoom((float) slider.getValue());
+					}
 				}
 			}
 		});
@@ -185,10 +187,12 @@ public class SkinDockable extends OrganDockable {
 
 		if (skin == null) {
 			setContent(null);
+			slider.setValue(1.0f);
 			slider.setEnabled(false);
 		} else {
 			list.setModel(new StylesModel());
 			setContent(new JScrollPane(list));
+			slider.setValue(element.getZoom());
 			slider.setEnabled(true);
 		}
 
@@ -217,8 +221,12 @@ public class SkinDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == SkinDockable.this.element || element == console) {
+			if (element == console) {
 				update();
+			} else if (element == SkinDockable.this.element) {
+				for (View<?> style : styles) {
+					style.changeUpdate();
+				}
 			}
 		}
 	}
@@ -244,6 +252,7 @@ public class SkinDockable extends OrganDockable {
 					}
 
 					public void repaintView(View<? extends Displayable> view) {
+						list.repaint();
 					}
 
 					public void setLocation(View<? extends Displayable> view,
