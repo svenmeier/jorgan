@@ -286,7 +286,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			createView(reference.getElement());
 		}
 
-		setConstructing(true);
+		setConstructing(!this.session.getPlay().isOpen());
 	}
 
 	public void dispose() {
