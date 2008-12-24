@@ -60,6 +60,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 							.getAudioDevice())
 					|| clone.getAudioBuffers() != sound.getAudioBuffers()
 					|| clone.getAudioBufferSize() != sound.getAudioBufferSize()
+					|| clone.getSampleRate() != sound.getSampleRate()
 					|| clone.getChannels() != sound.getChannels()
 					|| !Null.safeEquals(clone.getSoundfont(), sound
 							.getSoundfont())) {
@@ -100,8 +101,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		removeProblem(Severity.ERROR, "audioDriver");
 		try {
 			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(),
-					sound.getAudioDriver(), sound.getAudioDevice(), sound
-							.getAudioBuffers(), sound.getAudioBufferSize());
+					sound.getSampleRate(), sound.getAudioDriver(), sound
+							.getAudioDevice(), sound.getAudioBuffers(), sound
+							.getAudioBufferSize());
 
 			clone = (FluidsynthSound) sound.clone();
 		} catch (IllegalStateException e) {

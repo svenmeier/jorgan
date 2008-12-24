@@ -49,10 +49,10 @@ public class Fluidsynth {
 	private File soundfont;
 
 	public Fluidsynth() throws IllegalStateException, IOException {
-		this("", 16, null, null, 16, 64);
+		this("", 16, 44100.0f, null, null, 16, 64);
 	}
 
-	public Fluidsynth(String name, int channels, String audioDriver,
+	public Fluidsynth(String name, int channels, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException {
 
@@ -63,7 +63,7 @@ public class Fluidsynth {
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		create(name, channels, audioDriver, audioDevice, buffers, bufferSize);
+		create(name, channels, sampleRate, audioDriver, audioDevice, buffers, bufferSize);
 	}
 
 	public String getAudioDevice() {
@@ -98,7 +98,7 @@ public class Fluidsynth {
 		destroy();
 	}
 
-	private native void create(String name, int channels, String audioDriver,
+	private native void create(String name, int channels, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException;
 
