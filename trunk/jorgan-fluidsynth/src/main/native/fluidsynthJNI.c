@@ -68,13 +68,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
   (*context).settings = new_fluid_settings();
 
   fluid_settings_setint((*context).settings, "synth.midi-channels", channels);
-  int check = 0;
-  check = fluid_settings_setnum((*context).settings, "synth.sample-rate", sampleRate);
-  if (check == 0) {
-    throwException(env, "java/lang/Error", "unable to set");
-    return;
-  };
-
+  fluid_settings_setnum((*context).settings, "synth.sample-rate", sampleRate);
 
   if (audioDriver != NULL) {
     const char* cAudioDriver = (*env)->GetStringUTFChars(env, audioDriver, NULL);
