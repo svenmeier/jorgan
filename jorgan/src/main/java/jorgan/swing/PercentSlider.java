@@ -1,6 +1,8 @@
 package jorgan.swing;
 
 import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
@@ -11,8 +13,6 @@ import javax.swing.JTextField;
 import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 
 public class PercentSlider extends JPanel {
 
@@ -33,25 +33,10 @@ public class PercentSlider extends JPanel {
 
 		textField = new JTextField();
 		textField.setColumns(format.format(max).length());
-		textField.getDocument().addDocumentListener(new DocumentListener() {
-			@Override
-			public void changedUpdate(DocumentEvent e) {
+		textField.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
 				if (!updating) {
-					toTextField();
-				}
-			}
-
-			@Override
-			public void insertUpdate(DocumentEvent e) {
-				if (!updating) {
-					toTextField();
-				}
-			}
-
-			@Override
-			public void removeUpdate(DocumentEvent e) {
-				if (!updating) {
-					toTextField();
+					toSlider();
 				}
 			}
 		});
@@ -59,8 +44,8 @@ public class PercentSlider extends JPanel {
 
 		// never paint values (as default in GTK)
 		UIManager.put("Slider.paintValue", Boolean.FALSE);
-		slider = new JSlider(new DefaultBoundedRangeModel(toInt(value),
-				0, toInt(min), toInt(max)));
+		slider = new JSlider(new DefaultBoundedRangeModel(toInt(value), 0,
+				toInt(min), toInt(max)));
 		slider.setOpaque(false);
 		slider.setPaintLabels(false);
 		slider.setPaintTicks(false);
@@ -90,6 +75,10 @@ public class PercentSlider extends JPanel {
 
 		textField.setEnabled(enabled);
 		slider.setEnabled(enabled);
+	}
+
+	public void setValue(double value) {
+		slider.setValue(toInt(value));
 	}
 
 	public double getValue() {
