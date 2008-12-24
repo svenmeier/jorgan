@@ -52,7 +52,7 @@ import jorgan.session.event.ElementSelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
-import jorgan.swing.SpinnerSlider;
+import jorgan.swing.PercentSlider;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -76,7 +76,7 @@ public class SkinDockable extends OrganDockable {
 
 	private Skin skin;
 
-	private SpinnerSlider slider;
+	private PercentSlider slider;
 
 	private List<View<?>> styles = new ArrayList<View<?>>();
 
@@ -87,13 +87,13 @@ public class SkinDockable extends OrganDockable {
 	public SkinDockable() {
 		config.read(this);
 
-		slider = new SpinnerSlider(Math.round(Displayable.MIN_ZOOM * 100), 100,
-				Math.round(Displayable.MAX_ZOOM * 100));
+		slider = new PercentSlider(Displayable.MIN_ZOOM, 1.0f,
+				Displayable.MAX_ZOOM);
 		slider.setEnabled(false);
 		slider.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (!updating) {
-					element.setZoom(slider.getValue() / 100.0f);
+					element.setZoom((float) slider.getValue());
 				}
 			}
 		});
