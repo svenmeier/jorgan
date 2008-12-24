@@ -27,6 +27,8 @@ public class FluidsynthSound extends Sound {
 
 	private int channels = 32;
 	
+	private int sampleRate = 44100;
+	
 	// audio.driver [alsa, oss, jack, dsound, sndman, coreaudio, portaudio]
 	private String audioDriver;
 
@@ -65,6 +67,20 @@ public class FluidsynthSound extends Sound {
 			this.audioDriver = audioDriver;
 			
 			fireChange(new UndoablePropertyChange(oldAudioDriver, this.audioDriver));
+		}
+	}
+	
+	public int getSampleRate() {
+		return sampleRate;
+	}
+	
+	public void setSampleRate(int sampleRate) {
+		if (this.sampleRate != sampleRate) {
+			int oldSampleRate = this.sampleRate;
+			
+			this.sampleRate = sampleRate;
+			
+			fireChange(new UndoablePropertyChange(oldSampleRate, this.sampleRate));
 		}
 	}
 	
