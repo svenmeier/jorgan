@@ -20,6 +20,7 @@ package jorgan.session;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
@@ -198,12 +199,12 @@ public class OrganSession {
 	}
 
 	private class PlayResolver implements Resolver {
-		public File resolve(String name) throws FileNotFoundException {
+		public File resolve(String name) throws IOException {
 			return OrganSession.this.resolve(name);
 		}
 	}
 
-	public File resolve(String name) throws FileNotFoundException {
+	public File resolve(String name) throws IOException {
 		File file = new File(name);
 
 		if (name.startsWith(LOCATION_JORGAN)) {
@@ -221,6 +222,10 @@ public class OrganSession {
 					.substring(LOCATION_HOME.length()));
 		}
 
+		if (file != null) {
+			file = file.getCanonicalFile();
+		}
+		
 		if (file == null || !file.exists()) {
 			throw new FileNotFoundException();
 		}

@@ -19,7 +19,6 @@
 package jorgan.linuxsampler.play;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -89,8 +88,8 @@ public class LinuxsamplerSoundPlayer extends
 			try {
 				linuxsampler = new Linuxsampler(sound.getHost(), sound
 						.getPort());
-				
-				clone = (LinuxsamplerSound)sound.clone();
+
+				clone = (LinuxsamplerSound) sound.clone();
 			} catch (UnknownHostException e) {
 				addProblem(Severity.ERROR, "host", "unkownHost", sound
 						.getHost());
@@ -118,7 +117,7 @@ public class LinuxsamplerSoundPlayer extends
 				File file = resolve(sound.getLscp());
 
 				reader = new FileReader(file);
-				
+
 				watcher = new FileWatcher(file) {
 					@Override
 					protected void onChange(File file) {
@@ -126,7 +125,7 @@ public class LinuxsamplerSoundPlayer extends
 						loadLscp();
 					}
 				};
-			} catch (FileNotFoundException e1) {
+			} catch (IOException e1) {
 				addProblem(Severity.ERROR, "lscp", "lscpNotFound", sound
 						.getLscp());
 				return;
@@ -166,7 +165,7 @@ public class LinuxsamplerSoundPlayer extends
 			if (watcher != null) {
 				watcher.cancel();
 				watcher = null;
-			}			
+			}
 		}
 	}
 }
