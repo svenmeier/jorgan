@@ -63,8 +63,7 @@ public class ClassUtils {
 			} else if (url.toString().startsWith(FILE_PROTOCOL)) {
 				String path = url.getPath();
 
-				return new File(path.substring(FILE_PROTOCOL.length(), path
-						.length()
+				return new File(path.substring(0, path.length()
 						- getClassResourceName(clazz).length()));
 			}
 		} catch (Exception fallBackToUserDir) {
