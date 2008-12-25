@@ -70,7 +70,7 @@ public class SkinDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private Displayable element;
+	private Displayable displayable;
 
 	private Console console;
 
@@ -90,33 +90,14 @@ public class SkinDockable extends OrganDockable {
 		slider = new PercentSlider(Displayable.MIN_ZOOM, 1.0f,
 				Displayable.MAX_ZOOM);
 		slider.setEnabled(false);
-		slider.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent e) {
-				if (!updating) {
-					if (element != null) {
-						element.setZoom((float) slider.getValue());
-					}
-				}
-			}
-		});
+		slider.addChangeListener(eventHandler);
 
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
 		list.setCellRenderer(new StyleRenderer());
-		list.addListSelectionListener(new ListSelectionListener() {
-			public void valueChanged(ListSelectionEvent e) {
-				if (!updating) {
-					View<?> style = (View<?>) list.getSelectedValue();
-					if (style == null) {
-						element.setStyle(null);
-					} else {
-						element.setStyle(style.getStyle().getName());
-					}
-				}
-			}
-		});
+		list.addListSelectionListener(eventHandler);
 	}
 
 	@Override
@@ -137,6 +118,11 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	@Override
+	public boolean forPlay() {
+		return false;
+	}
+
+	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);
 
@@ -146,43 +132,17 @@ public class SkinDockable extends OrganDockable {
 	private void update() {
 		updating = true;
 
-		setStatus(null);
-
 		skin = null;
-		element = null;
+		displayable = null;
 		console = null;
 
 		if (session != null) {
-			Element element = session.getElementSelection()
-					.getSelectedElement();
-			if (element != null && element instanceof Displayable) {
-				this.element = (Displayable) element;
-
-				if (element instanceof Console) {
-					this.console = (Console) element;
-				} else {
-					for (Console console : session.getOrgan().getReferrer(
-							element, Console.class)) {
-						this.console = console;
-						break;
-					}
+			displayable = getDisplayable();
+			if (displayable != null) {
+				console = getConsole(displayable);
+				if (console != null) {
+					skin = getSkin(console);
 				}
-
-				if (this.console != null) {
-					if (this.console.getSkin() == null) {
-						setStatus(config.get("noSkin").read(
-								new MessageBuilder()).build());
-					} else {
-						try {
-							File file = session.resolve(this.console.getSkin());
-							this.skin = SkinManager.instance().getSkin(file);
-						} catch (IOException ex) {
-							setStatus(config.get("skinFailed").read(
-									new MessageBuilder()).build());
-						}
-					}
-				}
-				
 			}
 		}
 
@@ -191,12 +151,12 @@ public class SkinDockable extends OrganDockable {
 			slider.setEnabled(false);
 			setContent(null);
 		} else {
-			slider.setValue(element.getZoom());
+			slider.setValue(displayable.getZoom());
 			slider.setEnabled(true);
 			list.setModel(new StylesModel());
 			setContent(new JScrollPane(list));
-			
-			String style = element.getStyle();
+
+			String style = displayable.getStyle();
 			if (style != null) {
 				for (View<?> view : styles) {
 					if (view.getStyle().getName().equals(style)) {
@@ -210,13 +170,49 @@ public class SkinDockable extends OrganDockable {
 		updating = false;
 	}
 
-	@Override
-	public boolean forPlay() {
-		return false;
+	private Displayable getDisplayable() {
+		Element element = session.getElementSelection().getSelectedElement();
+		if (element instanceof Displayable) {
+			return (Displayable) element;
+		}
+		
+		return null; 
+	}
+	
+	private Console getConsole(Element element) {
+		if (element instanceof Console) {
+			return (Console) element;
+		} else {
+			for (Console console : session.getOrgan().getReferrer(element,
+					Console.class)) {
+				return console;
+			}
+		}
+
+		return null;
+	}
+
+	private Skin getSkin(Console console) {
+		setStatus(null);
+
+		if (console.getSkin() == null) {
+			setStatus(config.get("noSkin").read(new MessageBuilder()).build());
+		} else {
+			try {
+				File file = session.resolve(console.getSkin());
+
+				return SkinManager.instance().getSkin(file);
+			} catch (IOException ex) {
+				setStatus(config.get("skinFailed").read(new MessageBuilder())
+						.build());
+			}
+		}
+
+		return null;
 	}
 
 	private class EventHandler extends OrganAdapter implements
-			ElementSelectionListener {
+			ElementSelectionListener, ChangeListener, ListSelectionListener {
 		public void selectionChanged(ElementSelectionEvent ev) {
 			update();
 		}
@@ -225,9 +221,28 @@ public class SkinDockable extends OrganDockable {
 		public void propertyChanged(Element element, String name) {
 			if (element == console) {
 				update();
-			} else if (element == SkinDockable.this.element) {
+			} else if (element == SkinDockable.this.displayable) {
 				for (View<?> style : styles) {
 					style.changeUpdate();
+				}
+			}
+		}
+
+		public void stateChanged(ChangeEvent e) {
+			if (!updating) {
+				if (displayable != null) {
+					displayable.setZoom((float) slider.getValue());
+				}
+			}
+		}
+
+		public void valueChanged(ListSelectionEvent e) {
+			if (!updating) {
+				View<?> style = (View<?>) list.getSelectedValue();
+				if (style == null) {
+					displayable.setStyle(null);
+				} else {
+					displayable.setStyle(style.getStyle().getName());
 				}
 			}
 		}
@@ -240,13 +255,14 @@ public class SkinDockable extends OrganDockable {
 
 			if (skin != null) {
 				for (final Style style : skin.createStyles()) {
-					View<?> view = ProviderRegistry.createView(element);
+					View<?> view = ProviderRegistry.createView(displayable);
 					view.setContainer(new ViewContainer() {
 						public Component getHost() {
 							return list;
 						}
 
-						public Point getLocation(View<? extends Displayable> view) {
+						public Point getLocation(
+								View<? extends Displayable> view) {
 							return new Point(0, 0);
 						}
 
@@ -258,8 +274,8 @@ public class SkinDockable extends OrganDockable {
 							list.repaint();
 						}
 
-						public void setLocation(View<? extends Displayable> view,
-								Point location) {
+						public void setLocation(
+								View<? extends Displayable> view, Point location) {
 						}
 					});
 
