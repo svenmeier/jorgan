@@ -19,12 +19,12 @@
 package jorgan.play;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * A player of an console.
  */
 public interface Resolver {
 
-	public File resolve(String name) throws FileNotFoundException;
+	public File resolve(String name) throws IOException;
 }

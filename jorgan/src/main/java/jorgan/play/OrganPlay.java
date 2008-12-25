@@ -19,7 +19,7 @@
 package jorgan.play;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -64,7 +64,7 @@ public class OrganPlay implements Resolver {
 	private final Object RECEIVER_LOCK = new Object();
 
 	private boolean open;
-	
+
 	private Resolver resolver;
 
 	/**
@@ -241,7 +241,7 @@ public class OrganPlay implements Resolver {
 		if (player != null) {
 			player.setOrganPlay(this);
 			players.put(element, player);
-			
+
 			player.update();
 		}
 	}
@@ -294,6 +294,7 @@ public class OrganPlay implements Resolver {
 				closeImpl();
 			}
 		}
+
 		public void afterChange(Change change) {
 			if (open && change instanceof UndoableChange) {
 				openImpl();
@@ -369,8 +370,8 @@ public class OrganPlay implements Resolver {
 			}
 		};
 	}
-	
-	public File resolve(String name) throws FileNotFoundException {
+
+	public File resolve(String name) throws IOException {
 		return resolver.resolve(name);
 	}
 }

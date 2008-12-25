@@ -19,7 +19,7 @@
 package jorgan.play;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +76,7 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	protected File resolve(String name) throws FileNotFoundException {
+	protected File resolve(String name) throws IOException {
 		return organPlay.resolve(name);
 	}
 
