@@ -35,8 +35,6 @@ import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
 import jorgan.session.event.ProblemListener;
 import jorgan.session.event.UndoListener;
-import jorgan.util.Bootstrap;
-import jorgan.util.ClassUtils;
 import spin.Spin;
 
 /**
@@ -48,12 +46,6 @@ import spin.Spin;
  * TODO remove spin dependencies - non-GUI clients don't need Spin
  */
 public class OrganSession {
-
-	private static final String LOCATION_HOME = "home:";
-
-	private static final String LOCATION_DISPOSITION = "disposition:";
-
-	private static final String LOCATION_JORGAN = "jorgan:";
 
 	/**
 	 * The file the current organ is associated with.
@@ -207,25 +199,18 @@ public class OrganSession {
 	public File resolve(String name) throws IOException {
 		File file = new File(name);
 
-		if (name.startsWith(LOCATION_JORGAN)) {
-			file = new File(ClassUtils.getDirectory(Bootstrap.class), name
-					.substring(LOCATION_JORGAN.length()));
-		} else if (name.startsWith(LOCATION_DISPOSITION)) {
+		if (!file.isAbsolute()) {
 			if (getFile() == null) {
 				file = null;
 			} else {
-				file = new File(getFile().getParentFile(), name
-						.substring(LOCATION_DISPOSITION.length()));
+				file = new File(getFile().getParentFile(), name);
 			}
-		} else if (name.startsWith(LOCATION_HOME)) {
-			file = new File(System.getProperty("user.home"), name
-					.substring(LOCATION_HOME.length()));
 		}
 
 		if (file != null) {
 			file = file.getCanonicalFile();
 		}
-		
+
 		if (file == null || !file.exists()) {
 			throw new FileNotFoundException();
 		}
