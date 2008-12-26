@@ -133,16 +133,12 @@ public class SkinDockable extends OrganDockable {
 		updating = true;
 
 		skin = null;
-		displayable = null;
 		console = null;
-
-		if (session != null) {
-			displayable = getDisplayable();
-			if (displayable != null) {
-				console = getConsole(displayable);
-				if (console != null) {
-					skin = getSkin(console);
-				}
+		displayable = getDisplayable();
+		if (displayable != null) {
+			console = getConsole(displayable);
+			if (console != null) {
+				skin = getSkin(console);
 			}
 		}
 
@@ -171,14 +167,17 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	private Displayable getDisplayable() {
-		Element element = session.getElementSelection().getSelectedElement();
-		if (element instanceof Displayable) {
-			return (Displayable) element;
+		if (session != null) {
+			Element element = session.getElementSelection()
+					.getSelectedElement();
+			if (element instanceof Displayable) {
+				return (Displayable) element;
+			}
 		}
-		
-		return null; 
+
+		return null;
 	}
-	
+
 	private Console getConsole(Element element) {
 		if (element instanceof Console) {
 			return (Console) element;
