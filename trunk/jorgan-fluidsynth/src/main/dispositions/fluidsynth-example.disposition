@@ -9,7 +9,7 @@
       <messages/>
     </label>
     <fluidsynth.fluidsynthSound id="2">
-      <soundfont>disposition:fluidsynth-example.SF2</soundfont>
+      <soundfont>fluidsynth-example.SF2</soundfont>
       <channels>32</channels>
       <sampleRate>44100</sampleRate>
       <audioBuffers>16</audioBuffers>
