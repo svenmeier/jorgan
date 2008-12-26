@@ -2,7 +2,7 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 
 	<xsl:template match="skin">
-		<skin>jorgan:skins/<xsl:value-of select="node()"/>.zip</skin>
+		<skin>../skins/<xsl:value-of select="node()"/>.zip</skin>
 	</xsl:template>
 
 	<xsl:template match="fluidsynth.fluidsynthSound">
