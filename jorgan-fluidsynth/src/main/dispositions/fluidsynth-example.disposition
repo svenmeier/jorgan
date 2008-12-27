@@ -13,7 +13,7 @@
       <channels>32</channels>
       <sampleRate>44100</sampleRate>
       <audioBuffers>16</audioBuffers>
-      <audioBufferSize>64</audioBufferSize>
+      <audioBufferSize>128</audioBufferSize>
       <gain>0.2</gain>
       <reverb>
         <room>0.2</room>
