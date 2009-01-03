@@ -18,6 +18,7 @@
  */
 package jorgan.midi;
 
+import java.util.Collections;
 import java.util.List;
 
 import javax.sound.midi.MidiDevice;
@@ -79,10 +80,10 @@ public class DeviceWrapper implements MidiDevice {
 	}
 
 	public List<Receiver> getReceivers() {
-		return device.getReceivers();
+		return Collections.emptyList();
 	}
 
 	public List<Transmitter> getTransmitters() {
-		return device.getTransmitters();
+		return Collections.emptyList();
 	}
 }

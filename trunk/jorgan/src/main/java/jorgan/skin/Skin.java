@@ -118,7 +118,7 @@ public class Skin implements Resolver {
 				return url;
 			}
 
-			if (locale.isEmpty()) {
+			if (locale.length() == 0) {
 				return null;
 			} else {
 				locale = locale.substring(0, locale.lastIndexOf('_'));
