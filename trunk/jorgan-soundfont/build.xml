@@ -38,6 +38,5 @@
 	<zip destfile="./target/jOrgan-soundfont-${soundfont.version}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
-  	<delete dir="./target/marshal" />
   </target>
 </project>
