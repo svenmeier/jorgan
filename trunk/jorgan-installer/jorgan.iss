@@ -37,6 +37,7 @@ Name: "core"; Description: "Program Files"; Types: full custom; Flags: fixed
 Name: "creative"; Description: "Creative Soundblaster"; Types: full
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: full
+Name: "skins"; Description: "Skins"; Types: full
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
@@ -44,6 +45,7 @@ Source: "..\core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: r
 Source: "..\creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
 Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
 Source: "..\linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
+Source: "..\skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan"; Filename: "{app}\jOrgan.exe"
