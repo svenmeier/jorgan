@@ -56,7 +56,6 @@ public class ProviderRegistry {
 		return providers;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
 		for (PlayerProvider provider : lookup()) {

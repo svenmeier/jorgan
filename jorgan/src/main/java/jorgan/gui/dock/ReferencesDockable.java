@@ -320,7 +320,7 @@ public class ReferencesDockable extends OrganDockable {
 		public abstract void add(ReferrerReference references);
 
 		public abstract boolean onReferenceChange(Element element,
-				Reference reference);
+				Reference<?> reference);
 
 		public void update() {
 			references = getReferences();
@@ -355,7 +355,7 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public boolean onReferenceChange(Element element, Reference reference) {
+		public boolean onReferenceChange(Element element, Reference<?> reference) {
 			return element == ReferencesDockable.this.element;
 		}
 
@@ -386,7 +386,7 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public boolean onReferenceChange(Element element, Reference reference) {
+		public boolean onReferenceChange(Element element, Reference<?> reference) {
 			return reference.getElement() == ReferencesDockable.this.element;
 		}
 
