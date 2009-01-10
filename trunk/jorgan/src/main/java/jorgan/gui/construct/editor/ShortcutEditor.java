@@ -85,11 +85,25 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		shortcutField.setShortcut(null);
 	}
 	
-	private class ShortcutField extends JTextField implements
-		KeyEventPostProcessor {
+	private class ShortcutField extends JTextField {
 
 		private Shortcut shortcut;
 
+		private KeyEventPostProcessor processor = new KeyEventPostProcessor() {
+			public boolean postProcessKeyEvent(KeyEvent e) {
+		        
+				if (e.getID() == KeyEvent.KEY_RELEASED) {
+					Shortcut shortcut = Shortcut.createShortCut(e);
+					if (shortcut != null) {
+						setShortcut(shortcut);
+						return true;
+					}			
+				}
+
+				return false;
+			}
+		};
+		
 		private ShortcutField() {
 			setBorder(null);
 			setEnabled(false);
@@ -100,13 +114,13 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 			super.addNotify();
 
 			KeyboardFocusManager.getCurrentKeyboardFocusManager()
-					.addKeyEventPostProcessor(this);
+					.addKeyEventPostProcessor(processor);
 		}
 
 		@Override
 		public void removeNotify() {
 			KeyboardFocusManager.getCurrentKeyboardFocusManager()
-					.removeKeyEventPostProcessor(this);
+					.removeKeyEventPostProcessor(processor);
 
 			super.removeNotify();
 		}
@@ -134,19 +148,6 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		 */
 		public Shortcut getShortcut() {
 			return shortcut;
-		}
-
-		public boolean postProcessKeyEvent(KeyEvent e) {
-	        
-			if (e.getID() == KeyEvent.KEY_RELEASED) {
-				Shortcut shortcut = Shortcut.createShortCut(e);
-				if (shortcut != null) {
-					setShortcut(shortcut);
-					return true;
-				}			
-			}
-
-			return false;
 		}
 	}
 }
