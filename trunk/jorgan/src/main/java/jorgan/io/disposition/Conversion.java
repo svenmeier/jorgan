@@ -74,7 +74,9 @@ public class Conversion {
 			new Conversion("<organ *version=\"3\\.[3|4].*\" *>",
 					"convert3.3To3.5-beta.xsl"),
 			new Conversion("<organ *version=\"3\\.5-beta.*\" *>",
-					"convert3.5-betaTo3.5.xsl") };
+					"convert3.5-betaTo3.5.xsl"),
+			new Conversion("<organ *version=\"3\\.5\" *>",
+					"convert3.5To3.5.1.xsl") };
 
 	private String pattern;
 

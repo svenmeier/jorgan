@@ -30,21 +30,24 @@ public class Combination extends Switch implements Activating {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Switch.class.isAssignableFrom(clazz);
+		return Switch.class.isAssignableFrom(clazz) || Continuous.class.isAssignableFrom(clazz);
 	}
 
 	@Override
 	protected boolean validReference(
-			jorgan.disposition.Reference<? extends Element> reference) {
-		return reference.getClass() == Reference.class;
+			Reference<? extends Element> reference) {
+		return AbstractReference.class.isAssignableFrom(reference.getClass());
 	}
 
 	@Override
-	protected Reference createReference(Element element) {
-		if (!(element instanceof Switch)) {
-			throw new IllegalArgumentException("can only reference Switch");
+	protected Reference<?> createReference(Element element) {
+		if (element instanceof Switch) {
+			return new SwitchReference((Switch) element);
+		} else if (element instanceof Continuous) {
+			return new ContinuousReference((Continuous) element);
+			
 		}
-		return new Reference((Switch) element);
+		throw new IllegalArgumentException("can only reference Switch or Continuous");
 	}
 
 	@Override
@@ -81,22 +84,8 @@ public class Combination extends Switch implements Activating {
 
 			int level = getLevel();
 
-			// deactivate first ..
-			for (Reference reference : getReferences(Reference.class)) {
-				Switch registratable = reference.getElement();
-
-				if (!reference.isActive(level)) {
-					registratable.setActive(false);
-				}
-			}
-
-			// .. then activate
-			for (Reference reference : getReferences(Reference.class)) {
-				Switch registratable = reference.getElement();
-
-				if (reference.isActive(level)) {
-					registratable.setActive(true);
-				}
+			for (AbstractReference reference : getReferences(AbstractReference.class)) {
+				reference.recall(level);
 			}
 		} finally {
 			recalling = false;
@@ -107,8 +96,8 @@ public class Combination extends Switch implements Activating {
 
 		int level = getLevel();
 
-		for (Reference reference : getReferences(Reference.class)) {
-			reference.setActive(level, reference.getElement().isActive());
+		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
+			reference.capture(level);
 
 			fireChange(new ReferenceChange(reference));
 		}
@@ -131,30 +120,24 @@ public class Combination extends Switch implements Activating {
 	}
 
 	public void clear(int level) {
-		for (Reference reference : getReferences(Reference.class)) {
-			reference.setActive(level, false);
+		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+			reference.clear(level);
 
 			fireChange(new ReferenceChange(reference));
 		}
 	}
 
 	public void swap(int level1, int level2) {
-		for (Reference reference : getReferences(Reference.class)) {
-			boolean value1 = reference.isActive(level1);
-			boolean value2 = reference.isActive(level2);
-
-			reference.setActive(level1, value2);
-			reference.setActive(level2, value1);
+		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+			reference.swap(level1, level2);
 
 			fireChange(new ReferenceChange(reference));
 		}
 	}
 
 	public void copy(int level1, int level2) {
-		for (Reference reference : getReferences(Reference.class)) {
-			boolean value = reference.isActive(level1);
-
-			reference.setActive(level2, value);
+		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+			reference.copy(level1, level2);
 
 			fireChange(new ReferenceChange(reference));
 		}
@@ -173,8 +156,8 @@ public class Combination extends Switch implements Activating {
 		if (isActive()) {
 			int level = getLevel();
 
-			for (Reference reference : getReferences(Reference.class)) {
-				if (reference.isActive(level) != active) {
+			for (SwitchReference reference : getReferences(SwitchReference.class)) {
+				if (!reference.matches(level)) {
 					setActive(false);
 					break;
 				}
@@ -182,55 +165,198 @@ public class Combination extends Switch implements Activating {
 		}
 	}
 	
+	private static abstract class AbstractReference<E extends Element> extends Reference<E> {
+		
+		public AbstractReference(E element) {
+			super(element);
+		}
+		
+		public abstract void copy(int index1, int index2);
+
+		public abstract void swap(int level1, int level2);
+		
+		public abstract void clear(int level);
+
+		public abstract void capture(int index);
+		
+		public abstract void recall(int index);
+	}
+	
 	/**
-	 * A reference of a combination to another element.
+	 * A reference of a combination to a {@link Switch}.
 	 */
-	public static class Reference extends jorgan.disposition.Reference<Switch> {
+	public static class SwitchReference extends AbstractReference<Switch> {
 
-		private boolean[] activated = new boolean[1];
+		private boolean[] actives = new boolean[1];
 
-		public Reference(Switch element) {
+		public SwitchReference(Switch element) {
 			super(element);
 
-			Arrays.fill(activated, true);
+			Arrays.fill(actives, true);
 		}
 
-		public void setActive(int index, boolean active) {
-			if (index < 0 || index > activated.length) {
+		public boolean matches(int index) {
+			if (index < 0 || index > actives.length) {
 				throw new IllegalArgumentException("index");
 			}
-			activated[index] = active;
+
+			return actives[index] == getElement().isActive();
 		}
 
-		public boolean isActive(int index) {
-			if (index < 0 || index > activated.length) {
+		@Override
+		public void copy(int index1, int index2) {
+			if (index1 < 0 || index1 > actives.length) {
+				throw new IllegalArgumentException("index1");
+			}
+			if (index2 < 0 || index2 > actives.length) {
+				throw new IllegalArgumentException("index2");
+			}
+			
+			actives[index2] = actives[index1];
+		}
+
+		@Override
+		public void swap(int index1, int index2) {
+			if (index1 < 0 || index1 > actives.length) {
+				throw new IllegalArgumentException("index1");
+			}
+			if (index2 < 0 || index2 > actives.length) {
+				throw new IllegalArgumentException("index2");
+			}
+			
+			boolean temp = actives[index1];
+			actives[index1] = actives[index2];
+			actives[index2] = temp;
+		}
+		
+		@Override
+		public void clear(int index) {
+			if (index < 0 || index > actives.length) {
 				throw new IllegalArgumentException("index");
 			}
-			return activated[index];
+			actives[index] = false;
 		}
 
+		@Override
+		public void capture(int index) {
+			if (index < 0 || index > actives.length) {
+				throw new IllegalArgumentException("index");
+			}
+			actives[index] = getElement().isActive();
+		}
+		
+		@Override
+		public void recall(int index) {
+			if (index < 0 || index > actives.length) {
+				throw new IllegalArgumentException("index");
+			}
+			getElement().setActive(actives[index]);
+		}
+		
 		public void setSize(int size) {
-			if (activated.length != size) {
-				boolean[] booleans = new boolean[size];
-				System.arraycopy(activated, 0, booleans, 0, Math.min(
-						activated.length, booleans.length));
-				activated = booleans;
+			if (actives.length != size) {
+				boolean[] activated = new boolean[size];
+				System.arraycopy(this.actives, 0, activated, 0, Math.min(
+						this.actives.length, activated.length));
+				this.actives = activated;
 			}
 		}
 
 		@Override
-		public Reference clone() {
-			Reference clone = (Reference) super.clone();
+		public SwitchReference clone() {
+			SwitchReference clone = (SwitchReference) super.clone();
 
-			clone.activated = this.activated.clone();
+			clone.actives = this.actives.clone();
 
 			return clone;
 		}
 	}
 
+	/**
+	 * A reference of a combination to a {@link Continuous}.
+	 */
+	public static class ContinuousReference extends AbstractReference<Continuous> {
+
+		private float[] values = new float[1];
+
+		public ContinuousReference(Continuous element) {
+			super(element);
+
+			Arrays.fill(values, 1.0f);
+		}
+
+		@Override
+		public void copy(int index1, int index2) {
+			if (index1 < 0 || index1 > values.length) {
+				throw new IllegalArgumentException("index1");
+			}
+			if (index2 < 0 || index2 > values.length) {
+				throw new IllegalArgumentException("index2");
+			}
+			
+			values[index2] = values[index1];
+		}
+
+		@Override
+		public void swap(int index1, int index2) {
+			if (index1 < 0 || index1 > values.length) {
+				throw new IllegalArgumentException("index1");
+			}
+			if (index2 < 0 || index2 > values.length) {
+				throw new IllegalArgumentException("index2");
+			}
+			
+			float temp = values[index1];
+			values[index1] = values[index2];
+			values[index2] = temp;
+		}
+
+		@Override
+		public void clear(int index) {
+			if (index < 0 || index > values.length) {
+				throw new IllegalArgumentException("index");
+			}
+			values[index] = 0.0f;
+		}
+		
+		@Override
+		public void capture(int index) {
+			if (index < 0 || index > values.length) {
+				throw new IllegalArgumentException("index");
+			}
+			values[index] = getElement().getValue();
+		}
+		
+		@Override
+		public void recall(int index) {
+			if (index < 0 || index > values.length) {
+				throw new IllegalArgumentException("index");
+			}
+			getElement().setValue(values[index]);
+		}
+		
+		public void setSize(int size) {
+			if (values.length != size) {
+				float[] values = new float[size];
+				System.arraycopy(this.values, 0, values, 0, Math.min(
+						this.values.length, values.length));
+				this.values = values;
+			}
+		}
+
+		@Override
+		public ContinuousReference clone() {
+			ContinuousReference clone = (ContinuousReference) super.clone();
+
+			clone.values = this.values.clone();
+
+			return clone;
+		}
+	}
+	
 	// TODO call when memory changes
 	private void ensureSize(int size) {
-		for (Reference reference : getReferences(Reference.class)) {
+		for (SwitchReference reference : getReferences(SwitchReference.class)) {
 			reference.setSize(size);
 		}
 	}

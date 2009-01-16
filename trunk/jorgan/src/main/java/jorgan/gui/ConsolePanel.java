@@ -281,7 +281,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		consoleView.setContainer(this);
 
 		for (Reference<? extends Displayable> reference : console
-				.getReferences(Console.Reference.class)) {
+				.getReferences(Console.LocationReference.class)) {
 			createView(reference.getElement());
 		}
 

@@ -70,15 +70,15 @@ public class Console extends Displayable implements Input, Output {
 
 	@Override
 	protected boolean validReference(
-			jorgan.disposition.Reference<? extends Element> reference) {
-		return reference.getClass() == Reference.class;
+			Reference<? extends Element> reference) {
+		return reference.getClass() == LocationReference.class;
 	}
 
 	@Override
-	protected jorgan.disposition.Reference<? extends Element> createReference(
+	protected Reference<? extends Element> createReference(
 			Element element) {
 		if (element instanceof Displayable) {
-			return new Reference((Displayable) element);
+			return new LocationReference((Displayable) element);
 		} else {
 			return super.createReference(element);
 		}
@@ -113,7 +113,7 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	public void setLocation(final Element element, final int x, final int y) {
-		final Reference reference = (Reference) getReference(element);
+		final LocationReference reference = (LocationReference) getReference(element);
 
 		final int oldX = reference.getX();
 		final int oldY = reference.getY();
@@ -125,7 +125,7 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	public int getX(Element element) {
-		Reference reference = (Reference) getReference(element);
+		LocationReference reference = (LocationReference) getReference(element);
 
 		return reference.getX();
 	}
@@ -134,7 +134,7 @@ public class Console extends Displayable implements Input, Output {
 		if (element == this) {
 			return 0;
 		} else {
-			Reference reference = (Reference) getReference(element);
+			LocationReference reference = (LocationReference) getReference(element);
 
 			return reference.getY();
 		}
@@ -143,14 +143,13 @@ public class Console extends Displayable implements Input, Output {
 	/**
 	 * A reference of a console to another element.
 	 */
-	public static class Reference extends
-			jorgan.disposition.Reference<Displayable> {
+	public static class LocationReference extends Reference<Displayable> {
 
 		private int x;
 
 		private int y;
 
-		public Reference(Displayable element) {
+		public LocationReference(Displayable element) {
 			super(element);
 		}
 
@@ -171,8 +170,8 @@ public class Console extends Displayable implements Input, Output {
 		}
 
 		@Override
-		public Reference clone(Element element) {
-			Reference clone = (Reference) super.clone(element);
+		public LocationReference clone(Element element) {
+			LocationReference clone = (LocationReference) super.clone(element);
 
 			clone.x += 32;
 			clone.y += 32;
@@ -188,7 +187,7 @@ public class Console extends Displayable implements Input, Output {
 	 *            element to move to front
 	 */
 	public void toFront(final Element element) {
-		final Reference reference = (Reference) getReference(element);
+		final LocationReference reference = (LocationReference) getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
@@ -203,7 +202,7 @@ public class Console extends Displayable implements Input, Output {
 	 *            element to move to back
 	 */
 	public void toBack(Element element) {
-		Reference reference = (Reference) getReference(element);
+		LocationReference reference = (LocationReference) getReference(element);
 		if (reference == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
@@ -213,7 +212,7 @@ public class Console extends Displayable implements Input, Output {
 
 	private class LocationChange implements UndoableChange {
 
-		private Reference reference;
+		private LocationReference reference;
 
 		private int oldX;
 
@@ -223,7 +222,7 @@ public class Console extends Displayable implements Input, Output {
 
 		private int newY;
 
-		public LocationChange(Reference reference, int oldX, int oldY, int x,
+		public LocationChange(LocationReference reference, int oldX, int oldY, int x,
 				int y) {
 			this.reference = reference;
 
