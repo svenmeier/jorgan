@@ -115,18 +115,18 @@
       <name></name>
       <description></description>
       <references>
-        <console-reference id="6">
+        <console-locationReference id="6">
           <x>200</x>
           <y>70</y>
-        </console-reference>
-        <console-reference id="7">
+        </console-locationReference>
+        <console-locationReference id="7">
           <x>200</x>
           <y>100</y>
-        </console-reference>
-        <console-reference id="1">
+        </console-locationReference>
+        <console-locationReference id="1">
           <x>120</x>
           <y>40</y>
-        </console-reference>
+        </console-locationReference>
       </references>
       <messages/>
     </console>
