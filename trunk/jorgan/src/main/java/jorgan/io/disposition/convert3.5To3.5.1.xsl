@@ -5,9 +5,19 @@
 		<combination-switchReference>
 			<xsl:apply-templates select="@*"/>
 			<actives>
-				<xsl:call-template name="split">
-					<xsl:with-param name="array" select="activated" />
-				</xsl:call-template>			
+				<xsl:variable name="id" select="@id"/>
+				<xsl:choose>
+					<xsl:when test="//coupler[@id = $id and substring(style, (string-length(style) - string-length('Inverse')) + 1) = 'Inverse']">
+						<xsl:call-template name="split">
+							<xsl:with-param name="array" select="translate(activated, '01', '10')" />
+						</xsl:call-template>			
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:call-template name="split">
+							<xsl:with-param name="array" select="activated" />
+						</xsl:call-template>			
+					</xsl:otherwise>
+				</xsl:choose>				
 			</actives>
 		</combination-switchReference>
 	</xsl:template>
@@ -16,6 +26,26 @@
 		<console-locationReference>
 			<xsl:apply-templates select="@*|node()"/>
 		</console-locationReference>
+	</xsl:template>
+
+	<xsl:template match="coupler">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()[not(name() = 'style' or name() = 'action')]"/>
+			<xsl:choose>
+				<xsl:when test="substring(style, (string-length(style) - string-length('Inverse')) + 1) = 'Inverse'">
+					<style>
+						<xsl:value-of select="substring(style, 1, string-length(style) - string-length('Inverse'))"/>
+					</style>
+					<action>6</action>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:if test="style">
+						<style><xsl:value-of select="style"/></style>
+					</xsl:if>
+					<action><xsl:value-of select="action"/></action>
+				</xsl:otherwise>
+			</xsl:choose>
+		</xsl:copy>
 	</xsl:template>
 
   	<xsl:template match="@*|node()">
