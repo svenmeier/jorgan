@@ -38,6 +38,8 @@ public abstract class Keyable extends Switch {
 
 	public static final int ACTION_SOSTENUTO = 5;
 
+	public static final int ACTION_INVERSE = 6;
+
 	private int action = ACTION_STRAIGHT;
 
 	private int transpose = 0;
@@ -54,7 +56,7 @@ public abstract class Keyable extends Switch {
 		if (this.action != action) {
 			int oldAction = this.action;
 			
-			if (action < ACTION_STRAIGHT || action > ACTION_SOSTENUTO) {
+			if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
 				throw new IllegalArgumentException("pitch '" + action + "'");
 			}
 			this.action = action;
