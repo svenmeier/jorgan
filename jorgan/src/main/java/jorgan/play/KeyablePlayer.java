@@ -31,6 +31,8 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 	private Action action;
 
+	protected boolean activated = false;
+
 	protected KeyablePlayer(E keyable) {
 		super(keyable);
 	}
@@ -57,6 +59,9 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 			break;
 		case Keyable.ACTION_SOSTENUTO:
 			action = new SostenutoAction();
+			break;
+		case Keyable.ACTION_INVERSE:
+			action = new InverseAction();
 			break;
 		default:
 			throw new IllegalStateException("unexpected keyable action '"
@@ -112,26 +117,21 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		super.update();
 
 		if (isOpen()) {
-			action.changed();
-		}
-	}
-
-	private class Action {
-		protected boolean activated = false;
-
-		public void changed() {
 			if (getElement().isEngaged()) {
 				if (!activated) {
 					activated = true;
-					activated();
+					action.activated();
 				}
 			} else {
 				if (activated) {
-					deactivated();
+					action.deactivated();
 					activated = false;
 				}
 			}
 		}
+	}
+
+	private class Action {
 
 		public void keyDown(int pitch, int velocity) {
 			if (activated) {
@@ -159,6 +159,28 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 					KeyablePlayer.this.deactivateKey(p);
 				}
 			}
+		}
+	}
+
+	private class InverseAction extends Action {
+		public void keyDown(int pitch, int velocity) {
+			if (!activated) {
+				KeyablePlayer.this.activateKey(pitch, velocity);
+			}
+		}
+
+		public void keyUp(int pitch) {
+			if (!activated) {
+				KeyablePlayer.this.deactivateKey(pitch);
+			}
+		}
+		
+		public void activated() {
+			super.deactivated();
+		}
+
+		public void deactivated() {
+			super.activated();
 		}
 	}
 
