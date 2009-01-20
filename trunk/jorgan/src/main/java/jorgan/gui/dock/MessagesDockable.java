@@ -100,6 +100,8 @@ public class MessagesDockable extends OrganDockable {
 
 	private Element element;
 
+	private ObjectTransferable transferable;
+
 	private List<Message> messages = new ArrayList<Message>();
 
 	/**
@@ -136,6 +138,7 @@ public class MessagesDockable extends OrganDockable {
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
 		table.setTransferHandler(new TransferHandler() {
+
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
 					int action) throws IllegalStateException {
@@ -152,7 +155,9 @@ public class MessagesDockable extends OrganDockable {
 						}
 					}
 
-					clip.setContents(new ObjectTransferable(subMessages), null);
+					transferable = new ObjectTransferable(subMessages);
+					
+					clip.setContents(transferable, null);
 				}
 			}
 
@@ -237,6 +242,11 @@ public class MessagesDockable extends OrganDockable {
 			this.session.addOrganListener(tableModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
+		
+		if (transferable != null) {
+			transferable.clear();
+			transferable = null;
+		}		
 
 		updateMessages();
 	}

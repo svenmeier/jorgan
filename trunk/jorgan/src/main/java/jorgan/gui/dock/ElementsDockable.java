@@ -70,6 +70,8 @@ public class ElementsDockable extends OrganDockable {
 	 */
 	private OrganSession session;
 
+	private ObjectTransferable transferable;
+	
 	/**
 	 * The handler of selection changes.
 	 */
@@ -103,6 +105,7 @@ public class ElementsDockable extends OrganDockable {
 		list.addListSelectionListener(selectionHandler);
 		list.setDragEnabled(true);
 		list.setTransferHandler(new TransferHandler() {
+
 			@Override
 			public int getSourceActions(JComponent c) {
 				return DnDConstants.ACTION_LINK | DnDConstants.ACTION_COPY
@@ -130,7 +133,8 @@ public class ElementsDockable extends OrganDockable {
 						}
 					}
 
-					clip.setContents(new ObjectTransferable(subElements), null);
+					transferable = new ObjectTransferable(subElements);
+					clip.setContents(transferable, null);
 				}
 			}
 
@@ -240,6 +244,11 @@ public class ElementsDockable extends OrganDockable {
 			}
 			elementsModel.update();
 		}
+		
+		if (transferable != null) {
+			transferable.clear();
+			transferable = null;
+		}		
 	}
 
 	/**
