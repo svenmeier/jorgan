@@ -71,6 +71,8 @@ public class ReferencesDockable extends OrganDockable {
 	private OrganSession session;
 
 	private Element element;
+	
+	private ObjectTransferable transferable;
 
 	private List<ReferrerReference> references = new ArrayList<ReferrerReference>();
 
@@ -143,6 +145,7 @@ public class ReferencesDockable extends OrganDockable {
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
+
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
 					int action) throws IllegalStateException {
@@ -160,7 +163,9 @@ public class ReferencesDockable extends OrganDockable {
 						}
 					}
 
-					clip.setContents(new ObjectTransferable(subReferences),
+					transferable = new ObjectTransferable(subReferences);
+					
+					clip.setContents(transferable,
 							null);
 				}
 			}
@@ -227,6 +232,11 @@ public class ReferencesDockable extends OrganDockable {
 			this.session.addSelectionListener(eventHandler);
 		}
 
+		if (transferable != null) {
+			transferable.clear();
+			transferable = null;
+		}
+		
 		updateReferences();
 	}
 
