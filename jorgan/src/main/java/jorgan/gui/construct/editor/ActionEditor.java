@@ -30,7 +30,7 @@ public class ActionEditor extends PropertyEditorSupport {
 	private static Configuration config = Configuration.getRoot().get(
 			ActionEditor.class);
 
-	private String[] tags = new String[6];
+	private String[] tags = new String[7];
 
 	/**
 	 * Constructor.
