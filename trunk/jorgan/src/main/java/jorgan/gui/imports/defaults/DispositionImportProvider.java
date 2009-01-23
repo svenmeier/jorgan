@@ -20,7 +20,6 @@ package jorgan.gui.imports.defaults;
 
 import java.awt.Insets;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,6 @@ import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
-import jorgan.util.IOUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
@@ -113,14 +111,8 @@ public class DispositionImportProvider implements ImportProvider {
 	 * @throws XMLFormatException
 	 */
 	private Set<Element> readElements(File file) throws IOException {
-		FileInputStream input = new FileInputStream(file);
-
-		try {
-			Organ organ = new DispositionStream().read(input);
-			return organ.getElements();
-		} finally {
-			IOUtils.closeQuietly(input);
-		}
+		Organ organ = new DispositionStream().read(file);
+		return organ.getElements();
 	}
 
 	/**
