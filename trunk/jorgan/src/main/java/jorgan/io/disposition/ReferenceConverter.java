@@ -32,9 +32,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Converter for {@link Reference}s that writes their element as an attribute
- * on marshalling and links the element on unmarshalling in a completion
- * callback.
+ * Converter for {@link Reference}s that writes their element as an attribute on
+ * marshalling and links the element on unmarshalling in a completion callback.
  * 
  * @see #marshalElement(Reference, HierarchicalStreamWriter, MarshallingContext)
  * @see UnmarshallingContext#addCompletionCallback(Runnable, int)
@@ -59,7 +58,8 @@ public class ReferenceConverter implements Converter {
 	}
 
 	/**
-	 * @see #marshalElement(Reference, HierarchicalStreamWriter, MarshallingContext)
+	 * @see #marshalElement(Reference, HierarchicalStreamWriter,
+	 *      MarshallingContext)
 	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
@@ -82,8 +82,8 @@ public class ReferenceConverter implements Converter {
 	 */
 	protected void marshalElement(Reference<? extends Element> reference,
 			HierarchicalStreamWriter writer, MarshallingContext context) {
-		writer.addAttribute("id", ElementConverter.Marshal
-				.get(context).getId(reference.getElement()));
+		writer.addAttribute("id", ElementConverter.Marshal.get(context).getId(
+				reference.getElement()));
 	}
 
 	/**
@@ -92,10 +92,13 @@ public class ReferenceConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		Reference<?> reference = (Reference<?>) nested.unmarshal(reader, context);
+		String id = reader.getAttribute("id");
 
-		context.addCompletionCallback(new UnmarshalElement(reference, reader
-				.getAttribute("id"), context), 0);
+		Reference<?> reference = (Reference<?>) nested.unmarshal(reader,
+				context);
+
+		context.addCompletionCallback(new UnmarshalElement(reference, id,
+				context), 0);
 
 		return reference;
 	}
@@ -111,8 +114,8 @@ public class ReferenceConverter implements Converter {
 
 		private UnmarshallingContext context;
 
-		private UnmarshalElement(Reference<? extends Element> reference, String id,
-				UnmarshallingContext context) {
+		private UnmarshalElement(Reference<? extends Element> reference,
+				String id, UnmarshallingContext context) {
 			this.reference = reference;
 			this.id = id;
 			this.context = context;

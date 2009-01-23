@@ -45,8 +45,9 @@ import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
@@ -142,7 +143,9 @@ public class DispositionStream {
 	public void write(Organ organ, OutputStream out) throws IOException {
 
 		Writer writer = new OutputStreamWriter(out, ENCODING);
-		writer.write("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
+		writer
+				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
+						+ "\" ?>\n");
 		xstream.toXML(organ, writer);
 	}
 
@@ -205,8 +208,8 @@ public class DispositionStream {
 		this.historySize = historySize;
 	}
 
-	private DomDriver createDriver() {
-		return new DomDriver(ENCODING, createReplacer());
+	private AbstractXmlDriver createDriver() {
+		return new XppDriver(createReplacer());
 	}
 
 	private XmlFriendlyReplacer createReplacer() {

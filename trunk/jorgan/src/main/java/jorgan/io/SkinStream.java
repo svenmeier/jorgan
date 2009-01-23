@@ -39,14 +39,14 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
  * A {@link jorgan.skin.Skin} streamer.
  */
 public class SkinStream {
 
-	private XStream xstream = new XStream(new DomDriver());
+	private XStream xstream = new XStream(new XppDriver());
 
 	public SkinStream() {
 		xstream.alias("skin", Skin.class);
@@ -62,8 +62,9 @@ public class SkinStream {
 	}
 
 	/**
-	 * @param file	the file to read from
-	 * @return	the read skin
+	 * @param file
+	 *            the file to read from
+	 * @return the read skin
 	 * @throws IOException
 	 * @throws Exception
 	 */

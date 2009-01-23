@@ -5,6 +5,7 @@
 	<classpathentry kind="lib" path="lib/spin-1.5.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/bias-0.5.jar"/>
 	<classpathentry kind="lib" path="lib/AppleJavaExtensions.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3_min-1.1.4c.jar"/>
 	<classpathentry kind="lib" path="lib/xstream-1.2.1.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry kind="lib" path="lib/swingx-0.7.jar"/>
