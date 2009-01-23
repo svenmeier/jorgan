@@ -19,9 +19,8 @@
 package jorgan.io.disposition;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.logging.Level;
@@ -40,8 +39,6 @@ public class Conversion {
 
 	private static final Logger logger = Logger.getLogger(Conversion.class
 			.getName());
-
-	private static final boolean DEBUG = false;
 
 	private static Conversion[] conversions = new Conversion[] {
 			new Conversion("<organ>", "convert1.0To2.0-beta.xsl"),
@@ -94,7 +91,8 @@ public class Conversion {
 		return matcher.find();
 	}
 
-	public InputStream convert(InputStream in) throws TransformerException {
+	public InputStream convert(InputStream in) throws TransformerException,
+			IOException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setAttribute("indent-number", new Integer(4));
 
@@ -103,24 +101,13 @@ public class Conversion {
 
 		transform.setOutputProperty(OutputKeys.INDENT, "yes");
 
-		ByteArrayOutputStream byteArrayOut = new ByteArrayOutputStream();
+		File temp = File.createTempFile(xsl + ".", ".xml");
 
-		transform.transform(new StreamSource(in),
-				new StreamResult(byteArrayOut));
+		transform.transform(new StreamSource(in), new StreamResult(temp));
 
-		byte[] bytes = byteArrayOut.toByteArray();
-		if (DEBUG) {
-			try {
-				FileOutputStream debug = new FileOutputStream(xsl + ".xml");
-				debug.write(bytes);
-				debug.flush();
-				debug.close();
-			} catch (Exception ex) {
-				throw new Error();
-			}
-		}
+		in.close();
 
-		return new ByteArrayInputStream(bytes);
+		return new FileInputStream(temp);
 	}
 
 	public static InputStream convertAll(InputStream in)
