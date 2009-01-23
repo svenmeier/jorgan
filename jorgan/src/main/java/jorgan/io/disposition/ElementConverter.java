@@ -87,17 +87,13 @@ public class ElementConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
+		String id = reader.getAttribute("id");
+		
 		Element element = (Element) nested.unmarshal(reader, context);
 
-		unmarshallId(element, reader, context);
+		Unmarshal.get(context).putElement(id, element);
 
 		return element;
-	}
-
-	protected void unmarshallId(Element element,
-			HierarchicalStreamReader reader, UnmarshallingContext context) {
-
-		Unmarshal.get(context).putElement(reader.getAttribute("id"), element);
 	}
 
 	public static class Marshal {
