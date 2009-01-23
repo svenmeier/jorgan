@@ -18,6 +18,7 @@
  */
 package jorgan.io;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -93,8 +94,8 @@ public class DispositionStream {
 	 * @throws IOException
 	 * @throws Exception
 	 */
-	public Organ read(File file) throws IOException, Exception {
-		FileInputStream input = new FileInputStream(file);
+	public Organ read(File file) throws IOException {
+		InputStream input = new BufferedInputStream(new FileInputStream(file));
 
 		try {
 			Organ organ = read(input);
