@@ -84,7 +84,7 @@ public class Combination extends Switch implements Activating {
 
 			int level = getLevel();
 
-			for (AbstractReference reference : getReferences(AbstractReference.class)) {
+			for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 				reference.recall(level);
 			}
 		} finally {
@@ -120,7 +120,7 @@ public class Combination extends Switch implements Activating {
 	}
 
 	public void clear(int level) {
-		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.clear(level);
 
 			fireChange(new ReferenceChange(reference));
@@ -128,7 +128,7 @@ public class Combination extends Switch implements Activating {
 	}
 
 	public void swap(int level1, int level2) {
-		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.swap(level1, level2);
 
 			fireChange(new ReferenceChange(reference));
@@ -136,7 +136,7 @@ public class Combination extends Switch implements Activating {
 	}
 
 	public void copy(int level1, int level2) {
-		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.copy(level1, level2);
 
 			fireChange(new ReferenceChange(reference));
