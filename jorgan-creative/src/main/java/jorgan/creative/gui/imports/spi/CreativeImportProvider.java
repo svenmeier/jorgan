@@ -58,21 +58,24 @@ public class CreativeImportProvider implements ImportProvider {
 		config.read(this);
 
 		SoundFontManager manager = new SoundFontManager();
+		if (manager.isSupported()) {
+			devices = new Device[manager.getNumDevices()];
+			for (int d = 0; d < devices.length; d++) {
+				devices[d] = new Device(manager.getDeviceName(d));
 
-		devices = new Device[manager.getNumDevices()];
-		for (int d = 0; d < devices.length; d++) {
-			devices[d] = new Device(manager.getDeviceName(d));
-
-			for (int b = 0; b < 127; b++) {
-				try {
-					if (manager.isBankUsed(d, b)) {
-						devices[d].banks.add(new Bank(b, manager
-								.getBankDescriptor(d, b)));
+				for (int b = 0; b < 127; b++) {
+					try {
+						if (manager.isBankUsed(d, b)) {
+							devices[d].banks.add(new Bank(b, manager
+									.getBankDescriptor(d, b)));
+						}
+					} catch (IllegalArgumentException ex) {
+						// bank is illegal??
 					}
-				} catch (IllegalArgumentException ex) {
-					// bank is illegal??
 				}
 			}
+		} else {
+			devices = new Device[0];
 		}
 	}
 
