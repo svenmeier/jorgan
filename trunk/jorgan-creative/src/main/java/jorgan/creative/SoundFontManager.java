@@ -30,9 +30,11 @@ import jorgan.util.NativeUtils;
 public class SoundFontManager {
 
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
+	
+	private static boolean supported;
 
 	/**
-	 * Load the native library "creative" from the path specified via the system
+	 * Load the native library "creativeJNI" from the path specified via the system
 	 * property {@link #JORGAN_CREATIVE_LIBRARY_PATH} or the directory this
 	 * class was loaded from.
 	 * 
@@ -47,9 +49,24 @@ public class SoundFontManager {
 			file = new File(path);
 		}
 
-		System.load(NativeUtils.getLibraryName(file, "creativeJNI"));
+		try {
+			System.load(NativeUtils.getLibraryName(file, "creativeJNI"));
+
+			supported = true;
+		} catch (UnsatisfiedLinkError e) {
+			if (e.getMessage().contains("unsupported JNI version 0xFFFFFFFF")) {
+				// JNI signales sfman32.dll unavailable
+				supported = false;
+			} else {
+				throw e;
+			}
+		}
 	}
 
+	public boolean isSupported() {
+		return supported;
+	}
+	
 	/**
 	 * Get the index of a device.
 	 * 
