@@ -34,6 +34,7 @@ import javax.swing.Icon;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
+import javax.swing.ToolTipManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
@@ -98,6 +99,7 @@ public class SkinDockable extends OrganDockable {
 		list.setVisibleRowCount(-1);
 		list.setCellRenderer(new StyleRenderer());
 		list.addListSelectionListener(eventHandler);
+		ToolTipManager.sharedInstance().registerComponent(list);
 	}
 
 	@Override
@@ -305,6 +307,8 @@ public class SkinDockable extends OrganDockable {
 				int index, boolean isSelected, boolean cellHasFocus) {
 			this.view = (View<Displayable>) value;
 
+			setToolTipText(view.getStyle().getName());
+			
 			return super.getListCellRendererComponent(list, this, index,
 					isSelected, cellHasFocus);
 		}
