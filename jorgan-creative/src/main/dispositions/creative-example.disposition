@@ -119,7 +119,7 @@
     <label id="7">
       <zoom>1.0</zoom>
       <name>Instructions</name>
-      <description>name=Use the Device Wizard to adjust the output of the CreativeSound element.  Then activate the stops to hear them sounding:</description>
+      <description>name=Use the Device Wizard to adjust the output of the CreativeSound element.  Then activate the stops to hear them sound:</description>
       <references/>
       <messages/>
     </label>

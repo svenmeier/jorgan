@@ -4,7 +4,7 @@
     <label id="1">
       <zoom>1.0</zoom>
       <name>Instructions</name>
-      <description>name=Activate the stops to hear them sounding:</description>
+      <description>name=Activate the stops to hear them sound:</description>
       <references/>
       <messages/>
     </label>
