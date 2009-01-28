@@ -171,6 +171,8 @@ public class Combination extends Switch implements Activating {
 			super(element);
 		}
 		
+		public abstract void setSize(int size);
+		
 		public abstract void copy(int index1, int index2);
 
 		public abstract void swap(int level1, int level2);
@@ -356,7 +358,7 @@ public class Combination extends Switch implements Activating {
 	
 	// TODO call when memory changes
 	private void ensureSize(int size) {
-		for (SwitchReference reference : getReferences(SwitchReference.class)) {
+		for (AbstractReference reference : getReferences(AbstractReference.class)) {
 			reference.setSize(size);
 		}
 	}
