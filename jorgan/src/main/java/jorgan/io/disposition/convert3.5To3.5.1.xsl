@@ -52,7 +52,7 @@
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
 		</xsl:copy>
-	</xsl:template>	
+	</xsl:template>		
 	
 	<xsl:template name="split">
 		<xsl:param name="array" select="." />
@@ -60,12 +60,7 @@
 		<xsl:choose>
 		    <xsl:when test="not($array)" />
 		    <xsl:otherwise>
-				<xsl:variable name="byte" select="substring($array, 1, 1)" />
-				
-				<boolean>
-					<xsl:if test="$byte = '0'">false</xsl:if>
-					<xsl:if test="$byte = '1'">true</xsl:if>
-				</boolean>
+				<xsl:value-of select="substring($array, 1, 1)" />,
 				
 				<xsl:call-template name="split">
 					<xsl:with-param name="array" select="substring($array, 2)" />
