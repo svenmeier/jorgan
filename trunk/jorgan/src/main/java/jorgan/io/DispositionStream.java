@@ -35,9 +35,11 @@ import java.util.List;
 import javax.xml.transform.TransformerException;
 
 import jorgan.disposition.Organ;
+import jorgan.io.disposition.BooleanArrayConverter;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.ElementConverter;
+import jorgan.io.disposition.FloatArrayConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
@@ -82,6 +84,8 @@ public class DispositionStream {
 		xstream.registerConverter(new OrganConverter(xstream));
 		xstream.registerConverter(new ElementConverter(xstream));
 		xstream.registerConverter(new ReferenceConverter(xstream));
+		xstream.registerConverter(new BooleanArrayConverter());
+		xstream.registerConverter(new FloatArrayConverter());
 
 		config.read(this);
 	}
