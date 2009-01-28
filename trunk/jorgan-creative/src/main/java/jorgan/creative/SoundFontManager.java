@@ -55,7 +55,7 @@ public class SoundFontManager {
 			supported = true;
 		} catch (UnsatisfiedLinkError e) {
 			if (e.getMessage().contains("unsupported JNI version 0xFFFFFFFF")) {
-				// JNI signales sfman32.dll unavailable
+				// JNI signals sfman32.dll unavailable
 				supported = false;
 			} else {
 				throw e;
