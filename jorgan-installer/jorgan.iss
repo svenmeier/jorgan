@@ -7,17 +7,17 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{68AF851E-E65E-4DCD-8428-37E2D93E3A56}
 AppName=jOrgan
-AppVerName=jOrgan 3.5
 AppPublisher=Sven Meier
 AppPublisherURL=http://jorgan.sourceforge.net
 AppSupportURL=http://jorgan.sourceforge.net
 AppUpdatesURL=http://jorgan.sourceforge.net
+AppVerName=jOrgan 3.5.1
+OutputBaseFilename=jOrgan-3.5.1-installer1
+OutputDir=.\target
 DefaultDirName={pf}\jOrgan
 DefaultGroupName=jOrgan
 DisableProgramGroupPage=yes
 LicenseFile=..\core\docs\gpl.txt
-OutputDir=.\target
-OutputBaseFilename=jOrgan-3.5-installer1
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
 SolidCompression=yes
