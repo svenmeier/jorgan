@@ -56,14 +56,16 @@ public abstract class Keyable extends Switch {
 		if (this.action != action) {
 			int oldAction = this.action;
 			
-			if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
-				throw new IllegalArgumentException("pitch '" + action + "'");
+			if (!isValidAction(action)) {
+				throw new IllegalArgumentException("action '" + action + "'");
 			}
 			this.action = action;
 
 			fireChange(new UndoablePropertyChange(oldAction, this.action));
 		}
 	}
+
+	protected abstract boolean isValidAction(int action);
 
 	public void setTranspose(int transpose) {
 		if (this.transpose != transpose) {

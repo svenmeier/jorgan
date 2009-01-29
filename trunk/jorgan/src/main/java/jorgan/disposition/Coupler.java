@@ -23,6 +23,11 @@ package jorgan.disposition;
  */
 public class Coupler extends Keyable {
 
+	@Override
+	protected boolean isValidAction(int action) {
+		return action >= ACTION_STRAIGHT && action <= ACTION_INVERSE;
+	}
+	
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Keyable.class.isAssignableFrom(clazz);
 	}
