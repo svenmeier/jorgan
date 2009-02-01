@@ -52,7 +52,7 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
-import jorgan.gui.convenience.DevicesWizard;
+import jorgan.gui.customize.CustomizeWizard;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
@@ -123,7 +123,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private ImportAction importAction = new ImportAction();
 
-	private DevicesAction inputOutputAction = new DevicesAction();
+	private CustomizeAction customizeAction = new CustomizeAction();
 
 	private ExitAction exitAction = new ExitAction();
 
@@ -217,7 +217,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		fileMenu.add(saveAsAction);
 		fileMenu.addSeparator();
 		fileMenu.add(importAction);
-		fileMenu.add(inputOutputAction);
+		fileMenu.add(customizeAction);
 		if (tweakMac.isInstalled()) {
 			tweakMac.setQuitListener(exitAction);
 		} else {
@@ -681,13 +681,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * The action that starts the devices configuration wizard.
 	 */
-	private class DevicesAction extends BaseAction {
-		private DevicesAction() {
-			config.get("devices").read(this);
+	private class CustomizeAction extends BaseAction {
+		private CustomizeAction() {
+			config.get("customize").read(this);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			DevicesWizard.showInDialog(OrganFrame.this, session);
+			CustomizeWizard.showInDialog(OrganFrame.this, session);
 		}
 	}
 
