@@ -16,50 +16,71 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.convenience;
+package jorgan.gui.customize;
 
 import java.awt.Component;
 
 import javax.swing.JComponent;
 
-import jorgan.disposition.Input;
-import jorgan.disposition.Output;
-import jorgan.midi.Direction;
+import jorgan.gui.customize.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
+import jorgan.swing.wizard.Page;
 import jorgan.swing.wizard.WizardDialog;
 import bias.Configuration;
 
 /**
- * A wizard for configuring of {@link Input}s and {@link Output}s.
+ * A wizard for customizing of a disposition.
  */
-public class DevicesWizard extends BasicWizard {
+public class CustomizeWizard extends BasicWizard {
 
 	private static Configuration config = Configuration.getRoot().get(
-			DevicesWizard.class);
+			CustomizeWizard.class);
 
 	private OrganSession session;
-
-	private InputPage inputPage;
-
-	private OutputPage outputPage;
 
 	/**
 	 * Create a new wizard.
 	 * 
-	 * @param organ
+	 * @param session
 	 *            organ to import to
 	 */
-	public DevicesWizard(OrganSession organ) {
-		this.session = organ;
+	public CustomizeWizard(OrganSession session) {
+		this.session = session;
 
-		inputPage = new InputPage();
-		addPage(inputPage);
+		for (Customizer customizer : ProviderRegistry
+				.lookupCustomizers(session)) {
+			addCustomizer(customizer);
+		}		
+	}
 
-		outputPage = new OutputPage();
-		addPage(outputPage);
+	private void addCustomizer(Customizer customizer) {
+		CustomizerPage page = new CustomizerPage(customizer);
+		addPage(page);
+		
+		if (getCurrentPage() == null) {
+			setCurrentPage(page);
+		}
+	}
+
+	private class CustomizerPage extends AbstractPage {
+
+		private Customizer customizer;
+
+		public CustomizerPage(Customizer customizer) {
+			this.customizer = customizer;
+		}
+
+		@Override
+		public String getDescription() {
+			return customizer.getDescription();
+		}
+		
+		@Override
+		protected JComponent getComponentImpl() {
+			return customizer.getComponent();
+		}
 	}
 
 	/**
@@ -68,54 +89,7 @@ public class DevicesWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.getUndoManager().compound(new Compound() {
-			public void run() {
-				inputPage.write();
-				outputPage.write();
-			}
-		});
-		
 		return true;
-	}
-
-	private class InputPage extends AbstractPage {
-
-		private DevicesPanel devicesPanel;
-
-		public InputPage() {
-			config.get("input").read(this);
-
-			devicesPanel = new DevicesPanel(session.getOrgan(), Direction.IN);
-		}
-
-		@Override
-		protected JComponent getComponentImpl() {
-			return devicesPanel;
-		}
-
-		public void write() {
-			devicesPanel.write();
-		}
-	}
-
-	private class OutputPage extends AbstractPage {
-
-		private DevicesPanel devicesPanel;
-
-		public OutputPage() {
-			config.get("output").read(this);
-
-			devicesPanel = new DevicesPanel(session.getOrgan(), Direction.OUT);
-		}
-
-		@Override
-		protected JComponent getComponentImpl() {
-			return devicesPanel;
-		}
-
-		public void write() {
-			devicesPanel.write();
-		}
 	}
 
 	/**
@@ -129,7 +103,7 @@ public class DevicesWizard extends BasicWizard {
 	public static void showInDialog(Component owner, OrganSession organ) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
-		dialog.setWizard(new DevicesWizard(organ));
+		dialog.setWizard(new CustomizeWizard(organ));
 
 		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
