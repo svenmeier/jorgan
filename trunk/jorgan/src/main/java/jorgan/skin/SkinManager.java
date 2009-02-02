@@ -25,8 +25,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jorgan.io.SkinStream;
 import jorgan.util.IOUtils;
@@ -35,9 +33,6 @@ import jorgan.util.IOUtils;
  * Manager of skins.
  */
 public class SkinManager implements ISkinManager {
-
-	private static final Logger logger = Logger.getLogger(SkinManager.class
-			.getName());
 
 	private static final String SKIN_FILE = "skin.xml";
 
@@ -55,15 +50,9 @@ public class SkinManager implements ISkinManager {
 
 		Skin skin = skins.get(file);
 		if (skin == null) {
-			try {
-				skin = loadSkin(file);
+			skin = loadSkin(file);
 
-				skins.put(file, skin);
-			} catch (IOException ex) {
-				logger.log(Level.INFO, "opening skin failed", ex);
-				
-				throw ex;
-			}
+			skins.put(file, skin);
 		}
 
 		return skin;
@@ -82,6 +71,10 @@ public class SkinManager implements ISkinManager {
 			try {
 				skin = new SkinStream().read(input);
 				skin.setSource(source);
+			} catch (Exception ex) {
+				IOException io = new IOException(ex.getMessage());
+				io.initCause(ex);
+				throw io;
 			} finally {
 				IOUtils.closeQuietly(input);
 			}
