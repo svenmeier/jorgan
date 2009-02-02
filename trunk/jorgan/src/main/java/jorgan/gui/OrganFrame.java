@@ -52,6 +52,7 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
+import jorgan.gui.customize.Customization;
 import jorgan.gui.customize.CustomizeWizard;
 import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
@@ -395,6 +396,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
+		} else {
+			Customization.offer(this, session);
 		}
 	}
 

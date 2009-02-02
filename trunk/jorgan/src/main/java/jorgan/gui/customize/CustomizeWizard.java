@@ -97,13 +97,13 @@ public class CustomizeWizard extends BasicWizard {
 	 * 
 	 * @param owner
 	 *            owner of dialog
-	 * @param organ
+	 * @param session
 	 *            organ to configure
 	 */
-	public static void showInDialog(Component owner, OrganSession organ) {
+	public static void showInDialog(Component owner, OrganSession session) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
-		dialog.setWizard(new CustomizeWizard(organ));
+		dialog.setWizard(new CustomizeWizard(session));
 
 		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
