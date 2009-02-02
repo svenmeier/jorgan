@@ -21,6 +21,7 @@ package jorgan.gui.customize.spi;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.disposition.GenericSound;
 import jorgan.disposition.Keyboard;
 import jorgan.gui.customize.Customizer;
 import jorgan.session.OrganSession;
@@ -37,6 +38,10 @@ public class DefaultCustomizerProvider implements CustomizerProvider {
 			customizers.add(new KeyboardsCustomizer(session));
 		}
 
+		if (!session.getOrgan().getElements(GenericSound.class).isEmpty()) {
+			customizers.add(new GenericSoundsCustomizer(session));
+		}
+		
 		return customizers;
 	}
 }
