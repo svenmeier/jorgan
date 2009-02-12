@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.customize.spi;
+package jorgan.gui.customize.keyboards;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -29,7 +29,6 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Keyboard;
 import jorgan.gui.customize.Customizer;
-import jorgan.gui.customize.keyboards.KeyboardPanel;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 
@@ -75,5 +74,11 @@ public class KeyboardsCustomizer implements Customizer {
 
 	public JComponent getComponent() {
 		return scrollPane;
+	}
+	
+	public void apply() {
+		for (KeyboardPanel panel : panels) {
+			panel.apply();
+		}
 	}
 }

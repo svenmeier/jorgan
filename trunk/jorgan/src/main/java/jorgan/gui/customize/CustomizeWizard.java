@@ -19,6 +19,8 @@
 package jorgan.gui.customize;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
@@ -26,7 +28,6 @@ import jorgan.gui.customize.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
-import jorgan.swing.wizard.Page;
 import jorgan.swing.wizard.WizardDialog;
 import bias.Configuration;
 
@@ -38,7 +39,7 @@ public class CustomizeWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			CustomizeWizard.class);
 
-	private OrganSession session;
+	private List<Customizer> customizers = new ArrayList<Customizer>();
 
 	/**
 	 * Create a new wizard.
@@ -47,18 +48,18 @@ public class CustomizeWizard extends BasicWizard {
 	 *            organ to import to
 	 */
 	public CustomizeWizard(OrganSession session) {
-		this.session = session;
-
 		for (Customizer customizer : ProviderRegistry
 				.lookupCustomizers(session)) {
 			addCustomizer(customizer);
-		}		
+		}
 	}
 
 	private void addCustomizer(Customizer customizer) {
+		customizers.add(customizer);
+
 		CustomizerPage page = new CustomizerPage(customizer);
 		addPage(page);
-		
+
 		if (getCurrentPage() == null) {
 			setCurrentPage(page);
 		}
@@ -76,7 +77,7 @@ public class CustomizeWizard extends BasicWizard {
 		public String getDescription() {
 			return customizer.getDescription();
 		}
-		
+
 		@Override
 		protected JComponent getComponentImpl() {
 			return customizer.getComponent();
@@ -88,6 +89,10 @@ public class CustomizeWizard extends BasicWizard {
 	 */
 	@Override
 	protected boolean finishImpl() {
+
+		for (Customizer customizer : customizers) {
+			customizer.apply();
+		}
 
 		return true;
 	}
