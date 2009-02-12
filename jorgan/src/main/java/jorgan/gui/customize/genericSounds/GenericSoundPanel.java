@@ -56,6 +56,11 @@ public class GenericSoundPanel extends JPanel {
 		deviceComboBox = new JComboBox(DevicePool.instance()
 				.getMidiDeviceNames(Direction.IN));
 		deviceComboBox.setEditable(false);
+		deviceComboBox.setSelectedItem(sound.getOutput());
 		column.definition(deviceComboBox).fillHorizontal();
+	}
+
+	public void apply() {
+		sound.setOutput((String) deviceComboBox.getSelectedItem());
 	}
 }

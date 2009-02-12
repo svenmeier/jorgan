@@ -28,4 +28,6 @@ public interface Customizer {
 	public String getDescription();
 
 	public JComponent getComponent();
+	
+	public void apply();
 }

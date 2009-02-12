@@ -21,9 +21,15 @@ package jorgan.gui.customize.spi;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.disposition.Continuous;
 import jorgan.disposition.GenericSound;
 import jorgan.disposition.Keyboard;
+import jorgan.disposition.Switch;
 import jorgan.gui.customize.Customizer;
+import jorgan.gui.customize.continuous.ContinuousCustomizer;
+import jorgan.gui.customize.genericSounds.GenericSoundsCustomizer;
+import jorgan.gui.customize.keyboards.KeyboardsCustomizer;
+import jorgan.gui.customize.switches.SwitchesCustomizer;
 import jorgan.session.OrganSession;
 
 /**
@@ -37,11 +43,16 @@ public class DefaultCustomizerProvider implements CustomizerProvider {
 		if (!session.getOrgan().getElements(Keyboard.class).isEmpty()) {
 			customizers.add(new KeyboardsCustomizer(session));
 		}
-
 		if (!session.getOrgan().getElements(GenericSound.class).isEmpty()) {
 			customizers.add(new GenericSoundsCustomizer(session));
 		}
-		
+		if (!session.getOrgan().getElements(Switch.class).isEmpty()) {
+			customizers.add(new SwitchesCustomizer(session));
+		}
+		if (!session.getOrgan().getElements(Continuous.class).isEmpty()) {
+			customizers.add(new ContinuousCustomizer(session));
+		}
+
 		return customizers;
 	}
 }

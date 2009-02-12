@@ -57,6 +57,34 @@ public class Keyboard extends Element implements Input {
 		return input;
 	}
 
+	public int getChannel() throws AmbiguousMessageException {
+		throw new AmbiguousMessageException();
+	}
+
+	public void setChannel(int channel) throws AmbiguousMessageException {
+	}
+
+	public int getFrom() throws AmbiguousMessageException {
+		throw new AmbiguousMessageException();
+	}
+
+	public void setFrom(int from) throws AmbiguousMessageException {
+	}
+
+	public int getTo() throws AmbiguousMessageException {
+		throw new AmbiguousMessageException();
+	}	
+	
+	public void setTo(int to) throws AmbiguousMessageException {
+	}
+
+	public int getTranspose() throws AmbiguousMessageException {
+		throw new AmbiguousMessageException();
+	}	
+	
+	public void setTranspose(int transpose) throws AmbiguousMessageException {
+	}
+
 	@Override
 	public Set<Class<? extends Message>> getMessageClasses() {
 		Set<Class<? extends Message>> names = super.getMessageClasses();
