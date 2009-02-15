@@ -74,6 +74,21 @@ public class DefinitionBuilder {
 			nextRow(1);
 		}
 
+		public void box(JComponent component) {
+			if (term) {
+				nextRow(1);
+			}
+
+			constraints.gridwidth = 2;
+			constraints.gridheight = 1;
+			constraints.weightx = 1.0d;
+			constraints.weighty = 1.0d;
+			constraints.fill = GridBagConstraints.BOTH;
+			panel.add(component, constraints);
+
+			nextRow(1);
+		}
+
 		public void term(JComponent component) {
 			if (term) {
 				nextRow(1);
