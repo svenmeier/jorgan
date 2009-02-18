@@ -16,17 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
+public class Less extends Condition {
 
-public class Greater extends Condition {
-
-	public Greater(String term) throws Exception {
-		super(term);
+	protected Less(String arguments) throws Exception {
+		super(arguments);
 	}
 
+	public Less(float value) {
+		super(value);
+	}
+	
 	@Override
 	protected boolean isTrue(float condition, float value) {
-		return value > condition;
+		return value < condition;
 	}
 }

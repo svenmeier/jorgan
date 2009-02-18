@@ -16,10 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
-
-import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.Processor.Node;
+package jorgan.midi.mpl;
 
 public abstract class ValueNode extends Node {
 
@@ -27,18 +24,24 @@ public abstract class ValueNode extends Node {
 
 	private float value = Float.NaN;
 
-	protected ValueNode(String term) throws Exception {
-		int space = term.indexOf(' ');
+	protected ValueNode(String arguments) throws Exception {
+		int space = arguments.indexOf(' ');
 		if (space == -1) {
-			if (Character.isDigit(term.charAt(0)) || '-' == term.charAt(0)) {
-				value = Float.parseFloat(term);
+			if (Character.isDigit(arguments.charAt(0))
+					|| '-' == arguments.charAt(0)) {
+				value = Float.parseFloat(arguments);
 			} else {
-				name = term;
+				name = arguments;
 			}
 		} else {
-			name = term.substring(0, space);
-			value = Float.parseFloat(term.substring(space + 1));
+			name = arguments.substring(0, space);
+			value = Float.parseFloat(arguments.substring(space + 1));
 		}
+	}
+
+	protected ValueNode(String name, float value) {
+		this.name = name;
+		this.value = value;
 	}
 
 	protected float getValue(Context context) {
@@ -50,5 +53,16 @@ public abstract class ValueNode extends Node {
 			value = this.value;
 		}
 		return value;
+	}
+
+	@Override
+	protected String getArguments() {
+		if (name == null) {
+			return "" + value;
+		} else if (Float.isNaN(value)) {
+			return name;
+		} else {
+			return name + " " + value;
+		}
 	}
 }

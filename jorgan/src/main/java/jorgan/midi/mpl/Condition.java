@@ -16,22 +16,34 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
-import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.Processor.Node;
+public abstract class Condition extends Node {
 
-public class Get extends Node {
+	private float value;
 
-	private String name;
+	protected Condition(String arguments) throws Exception {
 
-	public Get(String term) {
-		this.name = term;
+		this.value = Float.parseFloat(arguments);
+	}
+	
+	protected Condition(float value) {
+		this.value = value;
 	}
 
 	@Override
 	public float processImpl(float value, Context context) {
-		context.set(name, value);
-		return value;
+		if (isTrue(this.value, value)) {
+			return value;
+		} else {
+			return Float.NaN;
+		}
+	}
+
+	protected abstract boolean isTrue(float condition, float value);
+	
+	@Override
+	protected String getArguments() {
+		return "" + value;
 	}
 }

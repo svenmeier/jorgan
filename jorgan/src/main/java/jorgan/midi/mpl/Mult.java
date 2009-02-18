@@ -16,17 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
 
-public class Equal extends Condition {
 
-	public Equal(String term) throws Exception {
-		super(term);
+public class Mult extends ValueNode {
+
+	protected Mult(String arguments) throws Exception {
+		super(arguments);
+	}
+
+	public Mult(String name, float value) {
+		super(name, value);
 	}
 
 	@Override
-	protected boolean isTrue(float condition, float value) {
-		return value == condition;
+	public float processImpl(float value, Context context) {
+		return value * getValue(context);
 	}
 }

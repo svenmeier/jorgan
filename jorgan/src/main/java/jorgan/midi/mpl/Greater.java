@@ -16,18 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
-import jorgan.midi.mpl.Context;
+public class Greater extends Condition {
 
-public class Mod extends ValueNode {
-
-	public Mod(String term) throws Exception {
-		super(term);
+	protected Greater(String arguments) throws Exception {
+		super(arguments);
 	}
 
+	public Greater(float value) {
+		super(value);
+	}
+	
 	@Override
-	public float processImpl(float value, Context context) {
-		return value % getValue(context);
+	protected boolean isTrue(float condition, float value) {
+		return value > condition;
 	}
 }
