@@ -16,17 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
 
-public class Less extends Condition {
+public class Get extends Node {
 
-	public Less(String term) throws Exception {
-		super(term);
+	private String name;
+
+	public Get(String name) {
+		this.name = name;
 	}
 
 	@Override
-	protected boolean isTrue(float condition, float value) {
-		return value < condition;
+	public float processImpl(float value, Context context) {
+		context.set(name, value);
+		return value;
+	}
+
+	@Override
+	protected String getArguments() {
+		return name;
 	}
 }

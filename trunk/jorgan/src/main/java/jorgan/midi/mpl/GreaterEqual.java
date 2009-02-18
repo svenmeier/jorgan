@@ -16,28 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
-import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.Processor.Node;
+public class GreaterEqual extends Condition {
 
-public abstract class Condition extends Node {
-
-	private float value;
-
-	protected Condition(String term) throws Exception {
-
-		this.value = Float.parseFloat(term);
+	protected GreaterEqual(String arguments) throws Exception {
+		super(arguments);
 	}
 
+	public GreaterEqual(float value) {
+		super(value);
+	}
+	
 	@Override
-	public float processImpl(float value, Context context) {
-		if (isTrue(this.value, value)) {
-			return value;
-		} else {
-			return Float.NaN;
-		}
+	protected boolean isTrue(float condition, float value) {
+		return value >= condition;
 	}
-
-	protected abstract boolean isTrue(float condition, float value);
 }

@@ -16,19 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
-
-import jorgan.midi.mpl.Context;
+package jorgan.midi.mpl;
 
 
-public class Mult extends ValueNode {
 
-	public Mult(String term) throws Exception {
-		super(term);
+public class Sub extends ValueNode {
+
+	protected Sub(String arguments) throws Exception {
+		super(arguments);
+	}
+
+	public Sub(String name, float value) {
+		super(name, value);
 	}
 
 	@Override
 	public float processImpl(float value, Context context) {
-		return value * getValue(context);
+		return value - getValue(context);
 	}
 }

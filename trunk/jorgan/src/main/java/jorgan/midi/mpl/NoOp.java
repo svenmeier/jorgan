@@ -16,19 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl.node;
+package jorgan.midi.mpl;
 
-import jorgan.midi.mpl.Context;
+public class NoOp extends Node {
 
-
-public class Set extends ValueNode {
-
-	public Set(String term) throws Exception {
-		super(term);
+	protected NoOp() {
 	}
 
 	@Override
 	public float processImpl(float value, Context context) {
-		return getValue(context);
+		return value;
+	}
+
+	@Override
+	public String toString() {
+		return "";
+	}
+	
+	@Override
+	protected String getArguments() {
+		return "";
 	}
 }

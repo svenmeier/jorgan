@@ -18,11 +18,19 @@
  */
 package jorgan.midi.mpl;
 
-/**
- * A context for processing of a {@link Node}.
- */
-public interface Context {
-	public void set(String name, float value);
 
-	public float get(String name);
+public class Mod extends ValueNode {
+
+	protected Mod(String arguments) throws Exception {
+		super(arguments);
+	}
+
+	public Mod(String name, float value) {
+		super(name, value);
+	}
+	
+	@Override
+	public float processImpl(float value, Context context) {
+		return value % getValue(context);
+	}
 }

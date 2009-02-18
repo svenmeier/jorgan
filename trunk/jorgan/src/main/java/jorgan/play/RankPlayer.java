@@ -29,8 +29,8 @@ import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.Node;
 import jorgan.midi.mpl.ProcessingException;
-import jorgan.midi.mpl.Processor;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
 import jorgan.play.sound.DelayedChannel;
@@ -115,13 +115,14 @@ public class RankPlayer extends Player<Rank> {
 		this.channel.disengaged();
 		this.channel.release();
 		this.channel = null;
-		
+
 		removeProblem(Severity.WARNING, "channel");
 	}
 
 	@Override
 	protected void send(ShortMessage message, Context context) {
-		channel.sendMessage(message.getCommand(), message.getData1(), message.getData2());
+		channel.sendMessage(message.getCommand(), message.getData1(), message
+				.getData2());
 	}
 
 	@Override
@@ -221,14 +222,14 @@ public class RankPlayer extends Player<Rank> {
 
 	private class RankChannelFilter implements ChannelFilter, Context {
 
-		private Processor processor;
+		private Node node;
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
-			this.processor = new Processor(pattern);
+			this.node = Node.create(pattern);
 		}
 
 		public boolean accept(int channel) {
-			return !Float.isNaN(processor.process(channel, this));
+			return !Float.isNaN(node.process(channel, this));
 		}
 
 		public float get(String name) {
