@@ -198,7 +198,7 @@ public abstract class Element implements Cloneable {
 		if (filter == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
-		
+
 		return filter;
 	}
 
@@ -343,7 +343,8 @@ public abstract class Element implements Cloneable {
 			}
 			this.description = description;
 
-			fireChange(new UndoablePropertyChange(oldDescription, this.description));
+			fireChange(new UndoablePropertyChange(oldDescription,
+					this.description));
 		}
 	}
 
@@ -458,6 +459,15 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
+	public boolean hasMessages(Class<?> clazz) {
+		for (Message message : this.messages) {
+			if (clazz.isAssignableFrom(message.getClass())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@SuppressWarnings("unchecked")
 	public <M extends Message> List<M> getMessages(Class<M> clazz) {
 		List<M> messages = new ArrayList<M>();
@@ -545,7 +555,7 @@ public abstract class Element implements Cloneable {
 			return Character.toLowerCase(methodName.charAt("set".length()))
 					+ methodName.substring("set".length() + 1);
 		}
-		
+
 		protected Method getMethod() throws Exception {
 			for (Method method : Element.this.getClass().getMethods()) {
 				if (method.getName().equals(methodName)) {
@@ -556,7 +566,8 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	public class UndoablePropertyChange extends PropertyChange implements UndoableChange {
+	public class UndoablePropertyChange extends PropertyChange implements
+			UndoableChange {
 
 		private Object oldValue;
 
@@ -582,21 +593,22 @@ public abstract class Element implements Cloneable {
 				throw new IllegalStateException(ex);
 			}
 		}
-		
+
 		private Element getElement() {
 			return Element.this;
 		}
-		
+
 		public boolean replaces(UndoableChange change) {
 			if (change instanceof UndoablePropertyChange) {
-				UndoablePropertyChange other = (UndoablePropertyChange)change;
-				if (this.getElement() == other.getElement() && this.getName().equals(other.getName())) {
-						this.newValue = other.newValue;
-						
-						return true;
+				UndoablePropertyChange other = (UndoablePropertyChange) change;
+				if (this.getElement() == other.getElement()
+						&& this.getName().equals(other.getName())) {
+					this.newValue = other.newValue;
+
+					return true;
 				}
 			}
-			
+
 			return false;
 		}
 	}
@@ -611,7 +623,7 @@ public abstract class Element implements Cloneable {
 		public Reference<?> getReference() {
 			return reference;
 		}
-		
+
 		public void notify(OrganListener listener) {
 			listener.referenceChanged(Element.this, reference);
 		}
