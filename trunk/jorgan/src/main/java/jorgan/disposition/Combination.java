@@ -22,7 +22,7 @@ import java.util.Arrays;
 
 public class Combination extends Switch implements Activating {
 
-	private boolean recalling;
+	private transient boolean recalling;
 	
 	public Combination() {
 		setLocking(false);
