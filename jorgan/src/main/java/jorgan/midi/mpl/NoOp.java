@@ -18,10 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public class NoOp extends Node {
-
-	protected NoOp() {
-	}
+public class NoOp extends Command {
 
 	@Override
 	public float processImpl(float value, Context context) {

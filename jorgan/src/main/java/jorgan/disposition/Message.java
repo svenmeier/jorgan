@@ -4,7 +4,7 @@
 package jorgan.disposition;
 
 import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.Node;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.ProcessingException;
 
 public abstract class Message implements Cloneable {
@@ -15,20 +15,20 @@ public abstract class Message implements Cloneable {
 
 	private String data2 = "";
 
-	private transient Node statusNode;
+	private transient Command statusCommand;
 
-	private transient Node data1Node;
+	private transient Command data1Command;
 
-	private transient Node data2Node;
+	private transient Command data2Command;
 
 	protected Message change(String status, String data1, String data2) {
 		this.status = status;
 		this.data1 = data1;
 		this.data2 = data2;
 
-		statusNode = null;
-		data1Node = null;
-		data2Node = null;
+		statusCommand = null;
+		data1Command = null;
+		data2Command = null;
 
 		return this;
 	}
@@ -47,26 +47,26 @@ public abstract class Message implements Cloneable {
 
 	public float processStatus(float status, Context context)
 			throws ProcessingException {
-		if (statusNode == null) {
-			statusNode = Node.create(this.status);
+		if (statusCommand == null) {
+			statusCommand = Command.create(this.status);
 		}
-		return statusNode.process(status, context);
+		return statusCommand.process(status, context);
 	}
 
 	public float processData1(float data1, Context context)
 			throws ProcessingException {
-		if (data1Node == null) {
-			data1Node = Node.create(this.data1);
+		if (data1Command == null) {
+			data1Command = Command.create(this.data1);
 		}
-		return data1Node.process(data1, context);
+		return data1Command.process(data1, context);
 	}
 
 	public float processData2(float data2, Context context)
 			throws ProcessingException {
-		if (data2Node == null) {
-			data2Node = Node.create(this.data2);
+		if (data2Command == null) {
+			data2Command = Command.create(this.data2);
 		}
-		return data2Node.process(data2, context);
+		return data2Command.process(data2, context);
 	}
 
 	/**

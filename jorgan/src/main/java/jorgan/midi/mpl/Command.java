@@ -18,18 +18,14 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class Node {
+public abstract class Command {
 	
-	private Node next;
-
-	public void setNext(Node node) {
-		this.next = node;
-	}
+	private Command successor;
 
 	public final float process(float value, Context context) {
 		float f = processImpl(value, context);
-		if (!Float.isNaN(f) && next != null) {
-			f = next.process(f, context);
+		if (!Float.isNaN(f) && successor != null) {
+			f = successor.process(f, context);
 		}
 		return f;
 	}
@@ -47,48 +43,50 @@ public abstract class Node {
 		buffer.append(" ");
 		buffer.append(getArguments());
 
-		if (next != null) {
+		if (successor != null) {
 			buffer.append(" | ");
-			next.toString(buffer);
+			successor.toString(buffer);
 		}
 	}
 	
 	protected abstract String getArguments();	
 
-	public static Node create(String term) throws ProcessingException {
+	public static Command create(String terms) throws ProcessingException {
+		terms = terms.trim();
+		
 		try {
-			return createNodes(term.trim());
+			return createCommands(terms.trim());
 		} catch (Exception ex) {
-			throw new ProcessingException(term, ex);
+			throw new ProcessingException(terms, ex);
 		}
 	}
 
-	private static Node createNodes(String terms) throws Exception {
+	private static Command createCommands(String terms) throws Exception {
 
-		Node node;
-		
 		int pipe = terms.indexOf('|');
 		if (pipe == -1) {
-			node = createNode(terms.trim());
+			return createCommand(terms.trim());
 		} else {
-			node = createNode(terms.substring(0, pipe).trim());
+			Command successor = createCommands(terms.substring(pipe + 1).trim());
+			
+			Command command = createCommand(terms.substring(0, pipe).trim());
+			command.successor = successor;
 
-			node.setNext(createNodes(terms.substring(pipe + 1).trim()));
+			return command;
 		}
-		return node;
 	}
 
-	private static Node createNode(String term) throws Exception {
+	private static Command createCommand(String term) throws Exception {
 		if (term.length() == 0) {
 			return new NoOp();
 		}
-
+		
 		int space = term.indexOf(' ');
 
-		Class<?> type = Node.stringToType(term.substring(0, space).trim());
+		Class<?> type = Command.stringToType(term.substring(0, space).trim());
 		String arguments = term.substring(space + 1).trim();
 
-		return (Node)type.getDeclaredConstructor(new Class<?>[]{String.class}).newInstance(arguments);
+		return (Command)type.getDeclaredConstructor(new Class<?>[]{String.class}).newInstance(arguments);
 	}
 	
 	private static Class<?> stringToType(String string)
@@ -96,7 +94,7 @@ public abstract class Node {
 		String simpleName = Character.toUpperCase(string.charAt(0))
 				+ string.substring(1);
 
-		return Class.forName(Node.class.getPackage().getName() + "." + simpleName);
+		return Class.forName(Command.class.getPackage().getName() + "." + simpleName);
 	}
 
 	private static String typeToString(Class<?> type) {

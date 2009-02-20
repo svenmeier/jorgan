@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class Condition extends Node {
+public abstract class Condition extends Command {
 
 	private float value;
 

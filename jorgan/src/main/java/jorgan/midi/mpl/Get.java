@@ -19,7 +19,7 @@
 package jorgan.midi.mpl;
 
 
-public class Get extends Node {
+public class Get extends Command {
 
 	private String name;
 

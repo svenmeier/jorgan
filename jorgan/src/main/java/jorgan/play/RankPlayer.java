@@ -29,7 +29,7 @@ import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.Node;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
@@ -222,14 +222,14 @@ public class RankPlayer extends Player<Rank> {
 
 	private class RankChannelFilter implements ChannelFilter, Context {
 
-		private Node node;
+		private Command command;
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
-			this.node = Node.create(pattern);
+			this.command = Command.create(pattern);
 		}
 
 		public boolean accept(int channel) {
-			return !Float.isNaN(node.process(channel, this));
+			return !Float.isNaN(command.process(channel, this));
 		}
 
 		public float get(String name) {
