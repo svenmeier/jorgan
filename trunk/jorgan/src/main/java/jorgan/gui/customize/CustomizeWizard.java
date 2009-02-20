@@ -26,6 +26,7 @@ import javax.swing.JComponent;
 
 import jorgan.gui.customize.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
+import jorgan.session.event.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -41,6 +42,8 @@ public class CustomizeWizard extends BasicWizard {
 
 	private List<Customizer> customizers = new ArrayList<Customizer>();
 
+	private OrganSession session;
+
 	/**
 	 * Create a new wizard.
 	 * 
@@ -48,6 +51,8 @@ public class CustomizeWizard extends BasicWizard {
 	 *            organ to import to
 	 */
 	public CustomizeWizard(OrganSession session) {
+		this.session = session;
+
 		for (Customizer customizer : ProviderRegistry
 				.lookupCustomizers(session)) {
 			addCustomizer(customizer);
@@ -90,9 +95,13 @@ public class CustomizeWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		for (Customizer customizer : customizers) {
-			customizer.apply();
-		}
+		session.getUndoManager().compound(new Compound() {
+			public void run() {
+				for (Customizer customizer : customizers) {
+					customizer.apply();
+				}
+			}
+		});
 
 		return true;
 	}

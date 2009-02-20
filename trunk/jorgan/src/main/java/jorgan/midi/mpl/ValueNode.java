@@ -39,6 +39,18 @@ public abstract class ValueNode extends Command {
 		}
 	}
 
+	public String getName() {
+		return name;
+	}
+	
+	public float getValue() {
+		return value;
+	}
+	
+	public void setValue(float value) {
+		this.value = value;
+	}
+	
 	protected ValueNode(String name, float value) {
 		this.name = name;
 		this.value = value;

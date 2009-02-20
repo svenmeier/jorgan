@@ -20,6 +20,12 @@ package jorgan.disposition;
 
 import java.util.Set;
 
+import jorgan.midi.mpl.Add;
+import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.GreaterEqual;
+import jorgan.midi.mpl.LessEqual;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.util.Null;
 
 /**
@@ -46,7 +52,7 @@ public class Keyboard extends Element implements Input {
 	public void setInput(String input) {
 		if (!Null.safeEquals(this.input, input)) {
 			String oldInput = this.input;
-			
+
 			this.input = input;
 
 			fireChange(new UndoablePropertyChange(oldInput, this.input));
@@ -57,32 +63,134 @@ public class Keyboard extends Element implements Input {
 		return input;
 	}
 
-	public int getChannel() throws AmbiguousMessageException {
-		throw new AmbiguousMessageException();
+	public int getChannel() throws ProcessingException {
+		int channel = Integer.MAX_VALUE;
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Equal equal = Command.create(message.getStatus()).get(Equal.class);
+			if (equal != null) {
+				int status = ((int) equal.getValue());
+				channel = status & 0x0f;
+			}
+		}
+
+		if (channel == Integer.MAX_VALUE) {
+			throw new ProcessingException("TODO");
+		}
+		return channel;
 	}
 
-	public void setChannel(int channel) throws AmbiguousMessageException {
+	public void setChannel(int channel) throws ProcessingException {
+		getChannel();
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Command command = Command.create(message.getStatus());
+			Equal equal = command.get(Equal.class);
+			if (equal != null) {
+				equal.setValue((((int) equal.getValue()) & 0xfffffff0)
+						+ channel);
+
+				changeMessage(message, command.toString(), message.getData1(),
+						message.getData2());
+			}
+		}
 	}
 
-	public int getFrom() throws AmbiguousMessageException {
-		throw new AmbiguousMessageException();
+	public int getFrom() throws ProcessingException {
+		int pitch = Integer.MAX_VALUE;
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
+					GreaterEqual.class);
+			if (greaterEqual != null) {
+				pitch = ((int) greaterEqual.getValue());
+			}
+
+		}
+
+		if (pitch == Integer.MAX_VALUE) {
+			throw new ProcessingException("TODO");
+		}
+		return pitch;
 	}
 
-	public void setFrom(int from) throws AmbiguousMessageException {
+	public void setFrom(int from) throws ProcessingException {
+		getFrom();
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Command command = Command.create(message.getData1());
+			GreaterEqual greaterEqual = command.get(GreaterEqual.class);
+			if (greaterEqual != null) {
+				greaterEqual.setValue(from);
+
+				changeMessage(message, message.getStatus(), command.toString(),
+						message.getData2());
+			}
+		}
 	}
 
-	public int getTo() throws AmbiguousMessageException {
-		throw new AmbiguousMessageException();
-	}	
-	
-	public void setTo(int to) throws AmbiguousMessageException {
+	public int getTo() throws ProcessingException {
+		int pitch = Integer.MAX_VALUE;
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			LessEqual lessEqual = Command.create(message.getData1()).get(
+					LessEqual.class);
+			if (lessEqual != null) {
+				pitch = ((int) lessEqual.getValue());
+			}
+		}
+
+		if (pitch == Integer.MAX_VALUE) {
+			throw new ProcessingException("TODO");
+		}
+		return pitch;
 	}
 
-	public int getTranspose() throws AmbiguousMessageException {
-		throw new AmbiguousMessageException();
-	}	
-	
-	public void setTranspose(int transpose) throws AmbiguousMessageException {
+	public void setTo(int to) throws ProcessingException {
+		getTo();
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Command command = Command.create(message.getData1());
+			LessEqual lessEqual = command.get(LessEqual.class);
+			if (lessEqual != null) {
+				lessEqual.setValue(to);
+
+				changeMessage(message, message.getStatus(), command.toString(),
+						message.getData2());
+			}
+		}
+	}
+
+	public int getTranspose() throws ProcessingException {
+		int transpose = Integer.MAX_VALUE;
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Add add = Command.create(message.getData1()).get(
+					Add.class);
+			if (add != null && add.getName() == null) {
+				transpose = ((int) add.getValue());
+			}
+		}
+
+		if (transpose == Integer.MAX_VALUE) {
+			throw new ProcessingException("TODO");
+		}
+		return transpose;
+	}
+
+	public void setTranspose(int transpose) throws ProcessingException {
+		getTo();
+
+		for (HandleKey message : getMessages(HandleKey.class)) {
+			Command command = Command.create(message.getData1());
+			Add add = command.get(Add.class);
+			if (add != null) {
+				add.setValue(transpose);
+
+				changeMessage(message, message.getStatus(), command.toString(),
+						message.getData2());
+			}
+		}
 	}
 
 	@Override
@@ -95,14 +203,18 @@ public class Keyboard extends Element implements Input {
 		return names;
 	}
 
-	public static class PressKey extends InputMessage {
+	private static class HandleKey extends InputMessage {
+
+	}
+
+	public static class PressKey extends HandleKey {
 
 		public static final String PITCH = "pitch";
 
 		public static final String VELOCITY = "velocity";
 	}
 
-	public static class ReleaseKey extends InputMessage {
+	public static class ReleaseKey extends HandleKey {
 
 		public static final String PITCH = "pitch";
 	}

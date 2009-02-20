@@ -56,6 +56,6 @@ public class ConsoleCustomizer implements Customizer {
 	}
 
 	public void apply() {
-		// TODO
+		panel.apply();
 	}
 }

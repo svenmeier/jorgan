@@ -31,6 +31,14 @@ public abstract class Condition extends Command {
 		this.value = value;
 	}
 
+	public float getValue() {
+		return value;
+	}	
+	
+	public void  setValue(float value) {
+		this.value = value;
+	}
+	
 	@Override
 	public float processImpl(float value, Context context) {
 		if (isTrue(this.value, value)) {

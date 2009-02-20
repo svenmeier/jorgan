@@ -24,11 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import jorgan.disposition.AmbiguousMessageException;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -70,10 +70,10 @@ public class KeyboardPanel extends JPanel {
 		column.definition(deviceComboBox).fillHorizontal();
 
 		column.term(config.get("channel").read(new JLabel()));
-		channelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
+		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
 		try {
 			channelSpinner.setValue(keyboard.getChannel());
-		} catch (AmbiguousMessageException e) {
+		} catch (ProcessingException e) {
 			channelSpinner.setEnabled(false);
 		}
 		column.definition(channelSpinner);
@@ -82,7 +82,7 @@ public class KeyboardPanel extends JPanel {
 		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
 		try {
 			fromSpinner.setValue(keyboard.getFrom());
-		} catch (AmbiguousMessageException e) {
+		} catch (ProcessingException e) {
 			fromSpinner.setEnabled(false);
 		}
 		column.definition(fromSpinner);
@@ -91,7 +91,7 @@ public class KeyboardPanel extends JPanel {
 		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
 		try {
 			toSpinner.setValue(keyboard.getTo());
-		} catch (AmbiguousMessageException e) {
+		} catch (ProcessingException e) {
 			toSpinner.setEnabled(false);
 		}
 		column.definition(toSpinner);
@@ -100,7 +100,7 @@ public class KeyboardPanel extends JPanel {
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -64, 63, 1));
 		try {
 			transposeSpinner.setValue(keyboard.getTranspose());
-		} catch (AmbiguousMessageException e) {
+		} catch (ProcessingException e) {
 			transposeSpinner.setEnabled(false);
 		}
 		column.definition(transposeSpinner);
@@ -126,7 +126,7 @@ public class KeyboardPanel extends JPanel {
 			if (transposeSpinner.isEnabled()) {
 				keyboard.setTranspose((Integer) transposeSpinner.getValue());
 			}
-		} catch (AmbiguousMessageException ex) {
+		} catch (ProcessingException ex) {
 			throw new Error(ex);
 		}
 	}
