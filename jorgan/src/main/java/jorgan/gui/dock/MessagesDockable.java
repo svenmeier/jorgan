@@ -297,7 +297,9 @@ public class MessagesDockable extends OrganDockable {
 
 		public void valueChanged(ListSelectionEvent e) {
 			// TODO should change ElementSelection ?
-			session.getUndoManager().compound();
+			if (session != null) {
+				session.getUndoManager().compound();
+			}
 			
 			removeAction.update();
 			recordAction.update();

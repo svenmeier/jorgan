@@ -32,6 +32,19 @@ public abstract class Command {
 
 	public abstract float processImpl(float value, Context context);
 
+	@SuppressWarnings("unchecked")
+	public <T> T get(Class<T> clazz) {
+		if (clazz.isInstance(this)) {
+			return (T)this;
+		} else {
+			if (successor == null) {
+				return null;
+			} else {
+				return successor.get(clazz);
+			}
+		}
+	}
+	
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		toString(buffer);
