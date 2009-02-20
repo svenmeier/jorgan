@@ -22,6 +22,8 @@ import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -34,10 +36,15 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Switch;
+import jorgan.disposition.Continuous.Change;
+import jorgan.disposition.Switch.Activate;
+import jorgan.disposition.Switch.Deactivate;
+import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
 
@@ -48,6 +55,9 @@ public class ConsolePanel extends JPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
+
+	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
+			.getResource("/jorgan/gui/img/input.gif"));
 
 	private Console console;
 
@@ -97,6 +107,10 @@ public class ConsolePanel extends JPanel {
 		config.get("switchesTable").read(switchesModel);
 		table.setModel(switchesModel);
 		TableUtils.pleasantLookAndFeel(table);
+		table.getColumnModel().getColumn(1).setCellRenderer(
+				new IconTableCellRenderer());
+		table.getColumnModel().getColumn(2).setCellRenderer(
+				new IconTableCellRenderer());
 		scrollPane.setViewportView(table);
 	}
 
@@ -116,6 +130,8 @@ public class ConsolePanel extends JPanel {
 		JTable table = new JTable();
 		config.get("continuousTable").read(continuousModel);
 		table.setModel(continuousModel);
+		table.getColumnModel().getColumn(1).setCellRenderer(
+				new IconTableCellRenderer());
 		TableUtils.pleasantLookAndFeel(table);
 		scrollPane.setViewportView(table);
 	}
@@ -145,6 +161,20 @@ public class ConsolePanel extends JPanel {
 			return switches.size();
 		}
 
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			switch (columnIndex) {
+			case 0:
+				return String.class;
+			case 1:
+				return ImageIcon.class;
+			case 2:
+				return ImageIcon.class;
+			}
+
+			throw new Error();
+		}
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Switch aSwitch = switches.get(rowIndex);
 
@@ -152,9 +182,17 @@ public class ConsolePanel extends JPanel {
 			case 0:
 				return Elements.getDisplayName(aSwitch);
 			case 1:
-				return null;
+				if (aSwitch.hasMessages(Activate.class)) {
+					return inputIcon;
+				} else {
+					return null;
+				}
 			case 2:
-				return null;
+				if (aSwitch.hasMessages(Deactivate.class)) {
+					return inputIcon;
+				} else {
+					return null;
+				}
 			}
 
 			throw new Error();
@@ -182,6 +220,20 @@ public class ConsolePanel extends JPanel {
 			return continuous.size();
 		}
 
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			switch (columnIndex) {
+			case 0:
+				return String.class;
+			case 1:
+				return ImageIcon.class;
+			case 2:
+				return Float.class;
+			}
+
+			throw new Error();
+		}
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Continuous aContinuous = continuous.get(rowIndex);
 
@@ -189,7 +241,11 @@ public class ConsolePanel extends JPanel {
 			case 0:
 				return Elements.getDisplayName(aContinuous);
 			case 1:
-				return null;
+				if (aContinuous.hasMessages(Change.class)) {
+					return inputIcon;
+				} else {
+					return null;
+				}
 			case 2:
 				return aContinuous.getThreshold();
 			}

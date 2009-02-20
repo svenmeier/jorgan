@@ -26,14 +26,13 @@ import javax.swing.table.TableColumn;
 /**
  * A renderer for icons in a {@link javax.swing.JTable}.
  */
-public abstract class IconTableCellRenderer extends DefaultTableCellRenderer {
+public class IconTableCellRenderer extends DefaultTableCellRenderer {
 
 	/**
 	 * Overriden for icon specific behaviour.
 	 */
 	@Override
 	protected void setValue(Object value) {
-
 		setIcon(getIcon(value));
 	}
 
@@ -52,7 +51,9 @@ public abstract class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 *            value to get icon for
 	 * @return icon
 	 */
-	protected abstract Icon getIcon(Object value);
+	protected Icon getIcon(Object value) {
+		return (Icon)value;
+	}
 
 	/**
 	 * Convinience method for configuration of a JTable. </br> The renderer is
