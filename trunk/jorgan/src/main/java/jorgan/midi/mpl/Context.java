@@ -19,7 +19,7 @@
 package jorgan.midi.mpl;
 
 /**
- * A context for processing of a {@link Node}.
+ * A context for processing of a {@link Command}.
  */
 public interface Context {
 	public void set(String name, float value);

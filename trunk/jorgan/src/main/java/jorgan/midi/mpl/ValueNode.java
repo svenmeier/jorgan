@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class ValueNode extends Node {
+public abstract class ValueNode extends Command {
 
 	private String name;
 
