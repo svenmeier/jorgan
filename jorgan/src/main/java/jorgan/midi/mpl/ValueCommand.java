@@ -38,6 +38,19 @@ public abstract class ValueCommand extends Command {
 			value = Float.parseFloat(arguments.substring(space + 1));
 		}
 	}
+	
+	protected ValueCommand(String name, float value) {
+		this.name = name;
+		this.value = value;
+	}
+
+	protected ValueCommand(String name, float value, Command successor) {
+		super(successor);
+		
+		this.name = name;
+		this.value = value;
+	}
+
 
 	public String getName() {
 		return name;
@@ -47,15 +60,6 @@ public abstract class ValueCommand extends Command {
 		return value;
 	}
 	
-	public void setValue(float value) {
-		this.value = value;
-	}
-	
-	protected ValueCommand(String name, float value) {
-		this.name = name;
-		this.value = value;
-	}
-
 	protected float getValue(Context context) {
 		float value = Float.NaN;
 		if (name != null) {

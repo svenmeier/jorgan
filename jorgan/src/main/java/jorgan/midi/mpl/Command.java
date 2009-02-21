@@ -22,6 +22,15 @@ public abstract class Command {
 	
 	private Command successor;
 
+	protected Command() {
+	}
+	
+	protected Command(Command successor) {
+		if (successor != null && successor.getClass() != NoOp.class) {
+			this.successor = successor;
+		}
+	}
+
 	public final float process(float value, Context context) {
 		float f = processImpl(value, context);
 		if (!Float.isNaN(f) && successor != null) {

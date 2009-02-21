@@ -28,6 +28,10 @@ public class GreaterEqual extends Condition {
 		super(value);
 	}
 	
+	public GreaterEqual(float value, Command successor) {
+		super(value, successor);
+	}
+
 	@Override
 	protected boolean isTrue(float condition, float value) {
 		return value >= condition;

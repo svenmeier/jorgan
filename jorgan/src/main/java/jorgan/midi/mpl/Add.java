@@ -28,6 +28,10 @@ public class Add extends ValueCommand {
 		super(name, value);
 	}
 
+	public Add(String name, float value, Command successor) {
+		super(name, value, successor);
+	}
+
 	@Override
 	public float processImpl(float value, Context context) {
 		return value + getValue(context);

@@ -64,7 +64,7 @@ public class Keyboard extends Element implements Input {
 	}
 
 	public int getChannel() throws ProcessingException {
-		int channel = Integer.MAX_VALUE;
+		int channel = 0;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
 			Equal equal = Command.create(message.getStatus()).get(Equal.class);
@@ -74,20 +74,16 @@ public class Keyboard extends Element implements Input {
 			}
 		}
 
-		if (channel == Integer.MAX_VALUE) {
-			throw new ProcessingException("TODO");
-		}
 		return channel;
 	}
 
 	public void setChannel(int channel) throws ProcessingException {
-		getChannel();
-
 		for (HandleKey message : getMessages(HandleKey.class)) {
 			Command command = Command.create(message.getStatus());
+
 			Equal equal = command.get(Equal.class);
 			if (equal != null) {
-				equal.setValue((((int) equal.getValue()) & 0xfffffff0)
+				command = new Equal((((int) equal.getValue()) & 0xfffffff0)
 						+ channel);
 
 				changeMessage(message, command.toString(), message.getData1(),
@@ -97,7 +93,7 @@ public class Keyboard extends Element implements Input {
 	}
 
 	public int getFrom() throws ProcessingException {
-		int pitch = Integer.MAX_VALUE;
+		int pitch = 0;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
 			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
@@ -105,32 +101,13 @@ public class Keyboard extends Element implements Input {
 			if (greaterEqual != null) {
 				pitch = ((int) greaterEqual.getValue());
 			}
-
 		}
 
-		if (pitch == Integer.MAX_VALUE) {
-			throw new ProcessingException("TODO");
-		}
 		return pitch;
 	}
 
-	public void setFrom(int from) throws ProcessingException {
-		getFrom();
-
-		for (HandleKey message : getMessages(HandleKey.class)) {
-			Command command = Command.create(message.getData1());
-			GreaterEqual greaterEqual = command.get(GreaterEqual.class);
-			if (greaterEqual != null) {
-				greaterEqual.setValue(from);
-
-				changeMessage(message, message.getStatus(), command.toString(),
-						message.getData2());
-			}
-		}
-	}
-
 	public int getTo() throws ProcessingException {
-		int pitch = Integer.MAX_VALUE;
+		int pitch = 127;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
 			LessEqual lessEqual = Command.create(message.getData1()).get(
@@ -140,56 +117,29 @@ public class Keyboard extends Element implements Input {
 			}
 		}
 
-		if (pitch == Integer.MAX_VALUE) {
-			throw new ProcessingException("TODO");
-		}
 		return pitch;
 	}
 
-	public void setTo(int to) throws ProcessingException {
-		getTo();
-
-		for (HandleKey message : getMessages(HandleKey.class)) {
-			Command command = Command.create(message.getData1());
-			LessEqual lessEqual = command.get(LessEqual.class);
-			if (lessEqual != null) {
-				lessEqual.setValue(to);
-
-				changeMessage(message, message.getStatus(), command.toString(),
-						message.getData2());
-			}
-		}
-	}
-
 	public int getTranspose() throws ProcessingException {
-		int transpose = Integer.MAX_VALUE;
+		int transpose = 0;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
-			Add add = Command.create(message.getData1()).get(
-					Add.class);
-			if (add != null && add.getName() == null) {
+			Add add = Command.create(message.getData1()).get(Add.class);
+			if (add != null) {
 				transpose = ((int) add.getValue());
 			}
 		}
 
-		if (transpose == Integer.MAX_VALUE) {
-			throw new ProcessingException("TODO");
-		}
 		return transpose;
 	}
 
-	public void setTranspose(int transpose) throws ProcessingException {
-		getTo();
+	public void setData1(int from, int to, int transpose) throws ProcessingException {
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
-			Command command = Command.create(message.getData1());
-			Add add = command.get(Add.class);
-			if (add != null) {
-				add.setValue(transpose);
+			Command command = new GreaterEqual(from, new LessEqual(to, new Add(null, transpose)));
 
-				changeMessage(message, message.getStatus(), command.toString(),
-						message.getData2());
-			}
+			changeMessage(message, message.getStatus(), command.toString(),
+					message.getData2());
 		}
 	}
 

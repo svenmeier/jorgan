@@ -66,45 +66,45 @@ public class KeyboardPanel extends JPanel {
 		deviceComboBox = new JComboBox(DevicePool.instance()
 				.getMidiDeviceNames(Direction.IN));
 		deviceComboBox.setEditable(false);
-		deviceComboBox.setSelectedItem(keyboard.getInput());
 		column.definition(deviceComboBox).fillHorizontal();
 
 		column.term(config.get("channel").read(new JLabel()));
 		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
+		column.definition(channelSpinner);
+
+		column.term(config.get("from").read(new JLabel()));
+		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
+		column.definition(fromSpinner);
+
+		column.term(config.get("to").read(new JLabel()));
+		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
+		column.definition(toSpinner);
+
+		column.term(config.get("transpose").read(new JLabel()));
+		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -64, 63, 1));
+		column.definition(transposeSpinner);
+
+		read();
+	}
+
+	private void read() {
+		deviceComboBox.setSelectedItem(keyboard.getInput());
+		
 		try {
 			channelSpinner.setValue(keyboard.getChannel());
 		} catch (ProcessingException e) {
 			channelSpinner.setEnabled(false);
 		}
-		column.definition(channelSpinner);
 
-		column.term(config.get("from").read(new JLabel()));
-		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
 		try {
 			fromSpinner.setValue(keyboard.getFrom());
-		} catch (ProcessingException e) {
-			fromSpinner.setEnabled(false);
-		}
-		column.definition(fromSpinner);
-
-		column.term(config.get("to").read(new JLabel()));
-		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
-		try {
 			toSpinner.setValue(keyboard.getTo());
-		} catch (ProcessingException e) {
-			toSpinner.setEnabled(false);
-		}
-		column.definition(toSpinner);
-
-		column.term(config.get("transpose").read(new JLabel()));
-		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -64, 63, 1));
-		try {
 			transposeSpinner.setValue(keyboard.getTranspose());
 		} catch (ProcessingException e) {
+			fromSpinner.setEnabled(false);
+			toSpinner.setEnabled(false);
 			transposeSpinner.setEnabled(false);
 		}
-		column.definition(transposeSpinner);
-
 	}
 
 	public void apply() {
@@ -114,20 +114,16 @@ public class KeyboardPanel extends JPanel {
 			if (channelSpinner.isEnabled()) {
 				keyboard.setChannel((Integer) channelSpinner.getValue());
 			}
-
+		} catch (ProcessingException ignore) {
+		}
+		
+		try {
 			if (fromSpinner.isEnabled()) {
-				keyboard.setFrom((Integer) fromSpinner.getValue());
+				keyboard.setData1((Integer) fromSpinner.getValue(),
+						(Integer) toSpinner.getValue(),
+						(Integer) transposeSpinner.getValue());
 			}
-
-			if (toSpinner.isEnabled()) {
-				keyboard.setTo((Integer) toSpinner.getValue());
-			}
-
-			if (transposeSpinner.isEnabled()) {
-				keyboard.setTranspose((Integer) transposeSpinner.getValue());
-			}
-		} catch (ProcessingException ex) {
-			throw new Error(ex);
+		} catch (ProcessingException ignore) {
 		}
 	}
 }
