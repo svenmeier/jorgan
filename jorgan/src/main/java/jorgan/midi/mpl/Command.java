@@ -116,4 +116,14 @@ public abstract class Command {
 		return Character.toLowerCase(simpleName.charAt(0))
 				+ simpleName.substring(1);
 	}
+	
+	protected static String toString(float value) {
+		int integer = (int)value;
+		
+		if (integer == value) {
+			return Integer.toString(integer);
+		} else {
+			return Float.toString(value);
+		}
+	}
 }

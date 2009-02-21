@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 
 
-public class Set extends ValueNode {
+public class Set extends ValueCommand {
 
 	protected Set(String arguments) throws Exception {
 		super(arguments);

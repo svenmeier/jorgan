@@ -18,13 +18,13 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class ValueNode extends Command {
+public abstract class ValueCommand extends Command {
 
 	private String name;
 
 	private float value = Float.NaN;
 
-	protected ValueNode(String arguments) throws Exception {
+	protected ValueCommand(String arguments) throws Exception {
 		int space = arguments.indexOf(' ');
 		if (space == -1) {
 			if (Character.isDigit(arguments.charAt(0))
@@ -51,7 +51,7 @@ public abstract class ValueNode extends Command {
 		this.value = value;
 	}
 	
-	protected ValueNode(String name, float value) {
+	protected ValueCommand(String name, float value) {
 		this.name = name;
 		this.value = value;
 	}
@@ -70,11 +70,11 @@ public abstract class ValueNode extends Command {
 	@Override
 	protected String getArguments() {
 		if (name == null) {
-			return "" + value;
+			return toString(value);
 		} else if (Float.isNaN(value)) {
 			return name;
 		} else {
-			return name + " " + value;
+			return name + " " + toString(value);
 		}
 	}
 }

@@ -16,7 +16,7 @@ public class CommandTest extends TestCase {
 	public void testSet() throws Exception {
 		Command set8 = Command.create("set 8");
 		assertTrue(set8 instanceof Set);
-		assertEquals("set 8.0", set8.toString());
+		assertEquals("set 8", set8.toString());
 
 		Command setTest = Command.create("set test");
 		assertTrue(setTest instanceof Set);
@@ -24,13 +24,13 @@ public class CommandTest extends TestCase {
 
 		Command setTest8 = Command.create("set test 8");
 		assertTrue(setTest8 instanceof Set);
-		assertEquals("set test 8.0", setTest8.toString());
+		assertEquals("set test 8", setTest8.toString());
 	}
 
 	public void testAdd() throws Exception {
 		Command add5 = Command.create("add 5");
 		assertTrue(add5 instanceof Add);
-		assertEquals("add 5.0", add5.toString());
+		assertEquals("add 5", add5.toString());
 
 		Command addTest = Command.create("add test");
 		assertTrue(addTest instanceof Add);
@@ -40,7 +40,7 @@ public class CommandTest extends TestCase {
 	public void testSub() throws Exception {
 		Command sub5 = Command.create("sub 5");
 		assertTrue(sub5 instanceof Sub);
-		assertEquals("sub 5.0", sub5.toString());
+		assertEquals("sub 5", sub5.toString());
 
 		Command subTest = Command.create("sub test");
 		assertTrue(subTest instanceof Sub);
@@ -50,7 +50,7 @@ public class CommandTest extends TestCase {
 	public void testDivValue() throws Exception {
 		Command div5 = Command.create("div 5");
 		assertTrue(div5 instanceof Div);
-		assertEquals("div 5.0", div5.toString());
+		assertEquals("div 5", div5.toString());
 
 		Command divTest = Command.create("div test");
 		assertTrue(divTest instanceof Div);
@@ -60,7 +60,7 @@ public class CommandTest extends TestCase {
 	public void testMultValue() throws Exception {
 		Command mult5 = Command.create("mult 5");
 		assertTrue(mult5 instanceof Mult);
-		assertEquals("mult 5.0", mult5.toString());
+		assertEquals("mult 5", mult5.toString());
 
 		Command multTest = Command.create("mult test");
 		assertTrue(multTest instanceof Mult);
@@ -76,6 +76,6 @@ public class CommandTest extends TestCase {
 	public void testEqual() throws Exception {
 		Command equal10 = Command.create("equal 10");
 		assertTrue(equal10 instanceof Equal);
-		assertEquals("equal 10.0", equal10.toString());
+		assertEquals("equal 10", equal10.toString());
 	}
 }

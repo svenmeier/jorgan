@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 
 
-public class Mult extends ValueNode {
+public class Mult extends ValueCommand {
 
 	protected Mult(String arguments) throws Exception {
 		super(arguments);

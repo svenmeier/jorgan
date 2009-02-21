@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public class Div extends ValueNode {
+public class Div extends ValueCommand {
 
 	protected Div(String arguments) throws Exception {
 		super(arguments);
