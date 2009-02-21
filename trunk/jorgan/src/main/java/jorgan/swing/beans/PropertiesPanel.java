@@ -19,11 +19,8 @@
 package jorgan.swing.beans;
 
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.beans.BeanInfo;
 import java.beans.IndexedPropertyDescriptor;
 import java.beans.IntrospectionException;
@@ -39,14 +36,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.swing.AbstractCellEditor;
-import javax.swing.BorderFactory;
-import javax.swing.DefaultComboBoxModel;
-import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.Scrollable;
 import javax.swing.event.ChangeEvent;
@@ -55,7 +46,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellEditor;
-import javax.swing.table.TableCellRenderer;
 
 import jorgan.gui.OrganPanel;
 import jorgan.swing.table.TableUtils;
@@ -95,13 +85,25 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		PropertyCellRenderer nameRenderer = new PropertyCellRenderer();
-		PropertyCellRenderer valueRenderer = new PropertyCellRenderer();
-		table.getColumnModel().getColumn(0).setCellRenderer(nameRenderer);
+		PropertyCellRenderer valueRenderer = new PropertyCellRenderer() {
+			@Override
+			protected String getDescription(int row) {
+				return descriptors[row].getShortDescription();
+			}
+
+			@Override
+			protected PropertyEditor getEditor(int row) {
+				return editors[row];
+			}
+		};
 		table.getColumnModel().getColumn(1).setCellRenderer(valueRenderer);
 		table.getColumnModel().getColumn(1).setCellEditor(
-				new PropertyCellEditor());
-		table.setRowHeight(nameRenderer.getPreferredSize().height);
+				new PropertyCellEditor() {
+					@Override
+					protected PropertyEditor getEditor(int row) {
+						return editors[row];
+					}
+				});
 		table.getColumnModel().getSelectionModel().addListSelectionListener(
 				model);
 		table.getSelectionModel().addListSelectionListener(model);
@@ -287,7 +289,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	private class ElementTableModel extends AbstractTableModel implements
 			ListSelectionListener {
-		
+
 		private boolean setting = false;
 
 		@Override
@@ -381,8 +383,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	protected void onWriteProperty(Method method, Object value) {
 		writeProperty(method, value);
 	}
-	
-	protected void writeProperty(Method method, Object value) { 
+
+	protected void writeProperty(Method method, Object value) {
 		for (int b = 0; b < beans.size(); b++) {
 			try {
 				Object bean = beans.get(b);
@@ -390,22 +392,23 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			} catch (InvocationTargetException ex) {
 				Throwable cause = ex.getCause();
 				if (cause instanceof Exception) {
-					logger.log(Level.WARNING,
-							"unable to set property value", ex);
+					logger.log(Level.WARNING, "unable to set property value",
+							ex);
 				} else {
 					// let anything more severe bubble up
 					throw new Error(cause);
 				}
 			} catch (Exception ex) {
-				logger.log(Level.WARNING, "unable to set property value",
-						ex);
+				logger.log(Level.WARNING, "unable to set property value", ex);
 			}
 		}
-		
+
 	}
 
-	public BeanInfo getBeanInfo(Class<?> beanClass) throws IntrospectionException {
-		return new WriteableBeanInfo(new SortingBeanInfo(Introspector.getBeanInfo(beanClass)));
+	public BeanInfo getBeanInfo(Class<?> beanClass)
+			throws IntrospectionException {
+		return new WriteableBeanInfo(new SortingBeanInfo(Introspector
+				.getBeanInfo(beanClass)));
 	}
 
 	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)
@@ -434,117 +437,6 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	protected PropertyEditor findPropertyEditor(Class<?> propertyType)
 			throws IntrospectionException {
 		return PropertyEditorManager.findEditor(propertyType);
-	}	
-	
-	private class PropertyCellEditor extends AbstractCellEditor implements
-			TableCellEditor {
-
-		private PropertyEditor editor;
-
-		private JTextField textField = new JTextField();
-
-		private JComboBox comboBox = new JComboBox();
-
-		private PropertyCellEditor() {
-			textField.setOpaque(false);
-			textField.setBorder(null);
-			textField.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					stopCellEditing();
-				}
-			});
-
-			comboBox.setEditable(false);
-			comboBox.setBorder(null);
-			comboBox.addActionListener(new ActionListener() {
-				public void actionPerformed(ActionEvent ev) {
-					stopCellEditing();
-				}
-			});
-		}
-
-		public Component getTableCellEditorComponent(JTable table,
-				Object value, boolean isSelected, int row, int column) {
-
-			editor = editors[row];
-			editor.setValue(value);
-
-			Component component;
-			if (editor.supportsCustomEditor()) {
-				component = editor.getCustomEditor();
-			} else {
-				String[] tags = editor.getTags();
-				if (tags == null) {
-					textField.setText(editor.getAsText());
-					textField.selectAll();
-					component = textField;
-				} else {
-					comboBox.setModel(new DefaultComboBoxModel(tags));
-					comboBox.setSelectedItem(editor.getAsText());
-					component = comboBox;
-				}
-			}
-
-			return component;
-		}
-
-		public Object getCellEditorValue() {
-			if (!editor.supportsCustomEditor()) {
-				try {
-					if (editor.getTags() == null) {
-						editor.setAsText(textField.getText());
-					} else {
-						editor.setAsText((String) comboBox.getSelectedItem());
-					}
-				} catch (IllegalArgumentException ex) {
-					logger.log(Level.WARNING, "unable to get value", ex);
-				}
-			}
-			return editor.getValue();
-		}
-	}
-
-	private class PropertyCellRenderer extends JLabel implements
-			TableCellRenderer {
-
-		private PropertyCellRenderer() {
-			setOpaque(true);
-			setBorder(BorderFactory.createEmptyBorder(1, 0, 1, 0));
-			setText("Dummy");
-		}
-
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-			if (isSelected) {
-				setForeground(table.getSelectionForeground());
-				setBackground(table.getSelectionBackground());
-			} else {
-				setForeground(table.getForeground());
-				setBackground(table.getBackground());
-			}
-			setFont(table.getFont());
-
-			if (column == 0) {
-				setText((String) value);
-				setToolTipText(null);
-			} else {
-				if (editors[row] == null) {
-					if (value == null) {
-						setText("");
-					} else {
-						setText(value.toString());
-					}
-					setToolTipText(null);
-				} else {
-					editors[row].setValue(value);
-
-					setText(editors[row].getAsText());
-				}
-			}
-			setToolTipText(descriptors[row].getShortDescription());
-			return this;
-		}
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
