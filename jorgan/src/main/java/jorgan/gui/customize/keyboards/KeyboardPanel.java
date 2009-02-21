@@ -119,7 +119,7 @@ public class KeyboardPanel extends JPanel {
 		
 		try {
 			if (fromSpinner.isEnabled()) {
-				keyboard.setData1((Integer) fromSpinner.getValue(),
+				keyboard.setPitch((Integer) fromSpinner.getValue(),
 						(Integer) toSpinner.getValue(),
 						(Integer) transposeSpinner.getValue());
 			}

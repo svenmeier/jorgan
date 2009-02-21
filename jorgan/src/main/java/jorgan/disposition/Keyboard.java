@@ -23,9 +23,13 @@ import java.util.Set;
 import jorgan.midi.mpl.Add;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.Get;
+import jorgan.midi.mpl.Greater;
 import jorgan.midi.mpl.GreaterEqual;
+import jorgan.midi.mpl.Less;
 import jorgan.midi.mpl.LessEqual;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Sub;
 import jorgan.util.Null;
 
 /**
@@ -65,8 +69,11 @@ public class Keyboard extends Element implements Input {
 
 	public int getChannel() throws ProcessingException {
 		int channel = 0;
+		boolean found = false;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
+			found = true;
+			
 			Equal equal = Command.create(message.getStatus()).get(Equal.class);
 			if (equal != null) {
 				int status = ((int) equal.getValue());
@@ -74,6 +81,9 @@ public class Keyboard extends Element implements Input {
 			}
 		}
 
+		if (!found) {
+			throw new ProcessingException("");
+		}
 		return channel;
 	}
 
@@ -94,50 +104,94 @@ public class Keyboard extends Element implements Input {
 
 	public int getFrom() throws ProcessingException {
 		int pitch = 0;
+		boolean found = false;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
+			found = true;
+
 			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
 					GreaterEqual.class);
 			if (greaterEqual != null) {
 				pitch = ((int) greaterEqual.getValue());
 			}
+			
+			Greater greater = Command.create(message.getData1()).get(
+					Greater.class);
+			if (greater != null) {
+				pitch = ((int) greater.getValue()) + 1;
+			}
 		}
 
+		if (!found) {
+			throw new ProcessingException("");
+		}
 		return pitch;
 	}
 
 	public int getTo() throws ProcessingException {
 		int pitch = 127;
+		boolean found = false;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
+			found = true;
+
 			LessEqual lessEqual = Command.create(message.getData1()).get(
 					LessEqual.class);
 			if (lessEqual != null) {
 				pitch = ((int) lessEqual.getValue());
 			}
+			
+			Less less = Command.create(message.getData1()).get(
+					Less.class);
+			if (less != null) {
+				pitch = ((int) less.getValue()) - 1;
+			}
 		}
 
+		if (!found) {
+			throw new ProcessingException("");
+		}
 		return pitch;
 	}
 
 	public int getTranspose() throws ProcessingException {
 		int transpose = 0;
+		boolean found = false;
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
+			found = true;
+
 			Add add = Command.create(message.getData1()).get(Add.class);
 			if (add != null) {
 				transpose = ((int) add.getValue());
 			}
+			
+			Sub sub = Command.create(message.getData1()).get(Sub.class);
+			if (sub != null) {
+				transpose = ((int) sub.getValue()) * -1;
+			}
 		}
 
+		if (!found) {
+			throw new ProcessingException("");
+		}
 		return transpose;
 	}
 
-	public void setData1(int from, int to, int transpose) throws ProcessingException {
+	public void setPitch(int from, int to, int transpose) throws ProcessingException {
+
+		Command command = new Get(PressKey.PITCH);
+		if (transpose != 0) {
+			command = new Add(null, transpose, command);
+		}
+		if (to < 127) {
+			command = new LessEqual(to, command);
+		}
+		if (from > 0) {
+			command = new GreaterEqual(from, command);
+		}
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
-			Command command = new GreaterEqual(from, new LessEqual(to, new Add(null, transpose)));
-
 			changeMessage(message, message.getStatus(), command.toString(),
 					message.getData2());
 		}
