@@ -34,45 +34,54 @@ public class Customization {
 	private static Configuration config = Configuration.getRoot().get(
 			Customization.class);
 
-	private boolean prompt = false;
+	private Boolean customizeOnError = null;
 
-	private OrganSession session;
-
-	public Customization(OrganSession session) {
+	public Customization() {
 		config.read(this);
-
-		this.session = session;
 	}
 
-	public void setPrompt(boolean prompt) {
-		this.prompt = prompt;
+	public void setCustomizeOnError(Boolean customizeOnError) {
+		this.customizeOnError = customizeOnError;
 	}
 
-	public boolean getPrompt() {
-		return prompt;
-	}
-
-	public void offer(Component owner) {
-		if (prompt) {
-			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
-			config.get("confirm").read(box);
-
-			JCheckBox checkBox = new JCheckBox("", prompt);
-			config.get("confirm/alwaysPrompt").read(checkBox);
-			box.setComponents(checkBox);
-
-			if (box.show(owner) == MessageBox.OPTION_YES) {
-				CustomizeWizard.showInDialog(owner, session);
-			}
-
-			this.prompt = checkBox.isSelected();
-		}
-
-		config.write(this);
+	public Boolean getCustomizeOnError() {
+		return customizeOnError;
 	}
 
 	/**
-	 * Show customize in a dialog.
+	 * Offer customization.
+	 * 
+	 * @param owner
+	 *            the owning component
+	 * @return <code>true</code> if offer of customizazion is accepted
+	 */
+	public boolean offer(Component owner) {
+		if (customizeOnError == null) {
+			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
+			config.get("confirm").read(box);
+
+			JCheckBox rememberCheckBox = new JCheckBox("");
+			config.get("confirm/remember").read(rememberCheckBox);
+			box.setComponents(rememberCheckBox);
+
+			boolean customize = (box.show(owner) == MessageBox.OPTION_YES);
+
+			if (rememberCheckBox.isSelected()) {
+				customizeOnError = Boolean.valueOf(customize);
+			}
+
+			return customize;
+		}
+
+		if (customizeOnError.booleanValue()) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Offer customization.
 	 * 
 	 * @param owner
 	 *            owner of dialog
@@ -81,10 +90,14 @@ public class Customization {
 	 */
 	public static void offer(Component owner, OrganSession session) {
 
-		if (true) { // session.getProblems().hasErrors()
-			Customization customization = new Customization(session);
+		if (session.getProblems().hasErrors()) {
+			Customization customization = new Customization();
 
-			customization.offer(owner);
+			if (customization.offer(owner)) {
+				CustomizeWizard.showInDialog(owner, session);
+			}
+
+			config.write(customization);
 		}
 	}
 }
