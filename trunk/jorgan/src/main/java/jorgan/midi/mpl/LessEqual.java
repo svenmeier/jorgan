@@ -30,6 +30,10 @@ public class LessEqual extends Condition {
 		super(value);
 	}
 	
+	public LessEqual(float value, Command successor) {
+		super(value, successor);
+	}
+	
 	@Override
 	protected boolean isTrue(float condition, float value) {
 		return value <= condition;
