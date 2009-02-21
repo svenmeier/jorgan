@@ -19,12 +19,14 @@
 package jorgan.gui.customize.consoles;
 
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,16 +42,19 @@ import jorgan.disposition.Switch;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
-import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.midi.ShortMessageRecorder;
+import jorgan.swing.BaseAction;
 import jorgan.swing.beans.PropertyCellEditor;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.table.ActionCellEditor;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * A panel for a {@link console}.
@@ -58,9 +63,6 @@ public class ConsolePanel extends JPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
-
-	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
-			.getResource("/jorgan/gui/img/input.gif"));
 
 	private Console console;
 
@@ -73,6 +75,12 @@ public class ConsolePanel extends JPanel {
 	private ContinuousModel continuousModel = new ContinuousModel();
 
 	private List<Continuous> continuous;
+
+	private ActivateAction activateAction = new ActivateAction();
+
+	private DeactivateAction deactivateAction = new DeactivateAction();
+
+	private ChangeAction changeAction = new ChangeAction();
 
 	public ConsolePanel(Console console) {
 		this.console = console;
@@ -111,9 +119,31 @@ public class ConsolePanel extends JPanel {
 		table.setModel(switchesModel);
 		TableUtils.pleasantLookAndFeel(table);
 		table.getColumnModel().getColumn(1).setCellRenderer(
-				new IconTableCellRenderer());
+				new IconTableCellRenderer() {
+					@Override
+					protected Icon getIcon(Object value) {
+						if (((Switch) value).hasMessages(Activate.class)) {
+							return activateAction.getSmallIcon();
+						} else {
+							return null;
+						}
+					}
+				});
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new ActionCellEditor(activateAction));
 		table.getColumnModel().getColumn(2).setCellRenderer(
-				new IconTableCellRenderer());
+				new IconTableCellRenderer() {
+					@Override
+					protected Icon getIcon(Object value) {
+						if (((Switch) value).hasMessages(Deactivate.class)) {
+							return deactivateAction.getSmallIcon();
+						} else {
+							return null;
+						}
+					}
+				});
+		table.getColumnModel().getColumn(2).setCellEditor(
+				new ActionCellEditor(deactivateAction));
 		scrollPane.setViewportView(table);
 	}
 
@@ -134,20 +164,37 @@ public class ConsolePanel extends JPanel {
 		config.get("continuousTable").read(continuousModel);
 		table.setModel(continuousModel);
 		table.getColumnModel().getColumn(1).setCellRenderer(
-				new IconTableCellRenderer());
-		table.getColumnModel().getColumn(2).setCellEditor(new PropertyCellEditor() {
-			private ValueEditor editor = new ValueEditor();
-			@Override
-			protected PropertyEditor getEditor(int row) {
-				return editor;
-			}
-		});
+				new IconTableCellRenderer() {
+					@Override
+					protected Icon getIcon(Object value) {
+						if (((Continuous) value).hasMessages(Change.class)) {
+							return changeAction.getSmallIcon();
+						} else {
+							return null;
+						}
+					}
+				});
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new ActionCellEditor(changeAction));
+		table.getColumnModel().getColumn(2).setCellEditor(
+				new PropertyCellEditor() {
+					private ValueEditor editor = new ValueEditor();
+
+					@Override
+					protected PropertyEditor getEditor(int row) {
+						return editor;
+					}
+				});
 		TableUtils.pleasantLookAndFeel(table);
 		scrollPane.setViewportView(table);
 	}
 
 	public void apply() {
 		console.setOutput((String) deviceComboBox.getSelectedItem());
+	}
+
+	private String getDeviceName() {
+		return (String) deviceComboBox.getSelectedItem();
 	}
 
 	public class SwitchesModel extends AbstractTableModel {
@@ -173,13 +220,14 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1 || columnIndex == 2;
+			return getDeviceName() != null
+					&& (columnIndex == 1 || columnIndex == 2);
 		}
-		
+
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 		}
-		
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Switch aSwitch = switches.get(rowIndex);
 
@@ -187,17 +235,9 @@ public class ConsolePanel extends JPanel {
 			case 0:
 				return Elements.getDisplayName(aSwitch);
 			case 1:
-				if (aSwitch.hasMessages(Activate.class)) {
-					return inputIcon;
-				} else {
-					return null;
-				}
+				return aSwitch;
 			case 2:
-				if (aSwitch.hasMessages(Deactivate.class)) {
-					return inputIcon;
-				} else {
-					return null;
-				}
+				return aSwitch;
 			}
 
 			throw new Error();
@@ -226,33 +266,20 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		public Class<?> getColumnClass(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return String.class;
-			case 1:
-				return ImageIcon.class;
-			case 2:
-				return Float.class;
-			}
-
-			throw new Error();
-		}
-
-		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex == 1 || columnIndex == 2;
+			return getDeviceName() != null
+					&& (columnIndex == 1 || columnIndex == 2);
 		}
-		
+
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			Continuous aContinuous = continuous.get(rowIndex);
 
 			if (columnIndex == 2) {
-				aContinuous.setThreshold((Float)aValue);
+				aContinuous.setThreshold((Float) aValue);
 			}
 		}
-		
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Continuous aContinuous = continuous.get(rowIndex);
 
@@ -260,16 +287,96 @@ public class ConsolePanel extends JPanel {
 			case 0:
 				return Elements.getDisplayName(aContinuous);
 			case 1:
-				if (aContinuous.hasMessages(Change.class)) {
-					return inputIcon;
-				} else {
-					return null;
-				}
+				return aContinuous;
 			case 2:
 				return aContinuous.getThreshold();
 			}
 
 			throw new Error();
+		}
+	}
+
+	private class ActivateAction extends BaseAction {
+
+		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+
+		public ActivateAction() {
+			config.get("activate").read(this);
+
+			config.get("activate/message").read(messageBox);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						(String) deviceComboBox.getSelectedItem()) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						return false;
+					}
+				};
+
+				messageBox.show(ConsolePanel.this);
+				
+				recorder.close();
+			} catch (MidiUnavailableException cannotRecord) {
+			}
+		}
+	}
+
+	private class DeactivateAction extends BaseAction {
+
+		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+
+		public DeactivateAction() {
+			config.get("deactivate").read(this);
+
+			config.get("deactivate/message").read(messageBox);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						(String) deviceComboBox.getSelectedItem()) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						return false;
+					}
+				};
+
+				messageBox.show(ConsolePanel.this);
+				
+				recorder.close();
+			} catch (MidiUnavailableException cannotRecord) {
+			}
+		}
+	}
+
+	private class ChangeAction extends BaseAction {
+
+		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+
+		public ChangeAction() {
+			config.get("change").read(this);
+
+			config.get("change/message").read(messageBox);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						(String) deviceComboBox.getSelectedItem()) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						return false;
+					}
+				};
+
+				messageBox.show(ConsolePanel.this);
+				
+				recorder.close();
+			} catch (MidiUnavailableException cannotRecord) {
+			}
 		}
 	}
 }

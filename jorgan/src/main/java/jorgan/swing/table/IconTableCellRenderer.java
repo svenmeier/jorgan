@@ -34,6 +34,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	@Override
 	protected void setValue(Object value) {
 		setIcon(getIcon(value));
+		setHorizontalAlignment(CENTER);
 	}
 
 	@Override
@@ -52,7 +53,7 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 * @return icon
 	 */
 	protected Icon getIcon(Object value) {
-		return (Icon)value;
+		return (Icon) value;
 	}
 
 	/**

@@ -29,12 +29,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Transmitter;
 import javax.swing.CellEditor;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -60,9 +56,7 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.CreateMessageWizard;
-import jorgan.midi.DevicePool;
-import jorgan.midi.Direction;
-import jorgan.midi.MessageUtils;
+import jorgan.midi.ShortMessageRecorder;
 import jorgan.session.OrganSession;
 import jorgan.session.event.Compound;
 import jorgan.session.event.ElementSelectionEvent;
@@ -156,7 +150,7 @@ public class MessagesDockable extends OrganDockable {
 					}
 
 					transferable = new ObjectTransferable(subMessages);
-					
+
 					clip.setContents(transferable, null);
 				}
 			}
@@ -242,11 +236,11 @@ public class MessagesDockable extends OrganDockable {
 			this.session.addOrganListener(tableModel);
 			this.session.addSelectionListener(selectionHandler);
 		}
-		
+
 		if (transferable != null) {
 			transferable.clear();
 			transferable = null;
-		}		
+		}
 
 		updateMessages();
 	}
@@ -293,18 +287,19 @@ public class MessagesDockable extends OrganDockable {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler implements ElementSelectionListener, ListSelectionListener {
+	private class SelectionHandler implements ElementSelectionListener,
+			ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
 			// TODO should change ElementSelection ?
 			if (session != null) {
 				session.getUndoManager().compound();
 			}
-			
+
 			removeAction.update();
 			recordAction.update();
 		}
-		
+
 		public void selectionChanged(ElementSelectionEvent ev) {
 			updateMessages();
 		}
@@ -463,7 +458,7 @@ public class MessagesDockable extends OrganDockable {
 		public void update() {
 			setEnabled(table.getSelectedRow() != -1);
 		}
-		
+
 		public void run() {
 			int[] indices = table.getSelectedRows();
 			if (indices != null) {
@@ -478,12 +473,12 @@ public class MessagesDockable extends OrganDockable {
 
 	private class RecordAction extends BaseAction {
 
-		private MessageBox dialog = new MessageBox(MessageBox.OPTIONS_OK);
+		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
 
 		private RecordAction() {
 			config.get("record").read(this);
 
-			config.get("record/dialog").read(dialog);
+			config.get("record/message").read(messageBox);
 
 			setEnabled(false);
 		}
@@ -512,33 +507,24 @@ public class MessagesDockable extends OrganDockable {
 
 		private void record(String deviceName) {
 			try {
-				MidiDevice device = DevicePool.instance().getMidiDevice(
-						deviceName, Direction.IN);
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						deviceName) {
+					@Override
+					public boolean messageRecorded(final ShortMessage message) {
+						SwingUtilities.invokeLater(new Runnable() {
+							public void run() {
+								recorded((ShortMessage) message);
 
-				device.open();
-
-				Transmitter transmitter = device.getTransmitter();
-				transmitter.setReceiver(new Receiver() {
-					public void send(final MidiMessage message, long when) {
-						if (MessageUtils.isChannelMessage(message)) {
-							recorded((ShortMessage) message);
-
-							SwingUtilities.invokeLater(new Runnable() {
-								public void run() {
-									dialog.hide();
-								}
-							});
-						}
+								messageBox.hide();
+							}
+						});
+						return false;
 					}
+				};
 
-					public void close() {
-					}
-				});
+				messageBox.show(table);
 
-				dialog.show(table);
-
-				transmitter.close();
-				device.close();
+				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
 			}
 		}
