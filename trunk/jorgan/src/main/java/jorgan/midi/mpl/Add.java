@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public class Add extends ValueNode {
+public class Add extends ValueCommand {
 
 	protected Add(String arguments) throws Exception {
 		super(arguments);

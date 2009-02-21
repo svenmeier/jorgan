@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 
 
-public class Sub extends ValueNode {
+public class Sub extends ValueCommand {
 
 	protected Sub(String arguments) throws Exception {
 		super(arguments);
