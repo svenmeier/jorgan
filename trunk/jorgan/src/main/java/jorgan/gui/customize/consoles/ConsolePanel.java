@@ -32,6 +32,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 
@@ -82,6 +83,10 @@ public class ConsolePanel extends JPanel {
 
 	private ChangeAction changeAction = new ChangeAction();
 
+	private JTable switchesTable;
+
+	private JTable continuousTable;
+
 	public ConsolePanel(Console console) {
 		this.console = console;
 
@@ -114,11 +119,11 @@ public class ConsolePanel extends JPanel {
 		scrollPane.setPreferredSize(new Dimension(160, 160));
 		column.box(scrollPane);
 
-		JTable table = new JTable();
+		switchesTable = new JTable();
 		config.get("switchesTable").read(switchesModel);
-		table.setModel(switchesModel);
-		TableUtils.pleasantLookAndFeel(table);
-		table.getColumnModel().getColumn(1).setCellRenderer(
+		switchesTable.setModel(switchesModel);
+		TableUtils.pleasantLookAndFeel(switchesTable);
+		switchesTable.getColumnModel().getColumn(1).setCellRenderer(
 				new IconTableCellRenderer() {
 					@Override
 					protected Icon getIcon(Object value) {
@@ -129,9 +134,9 @@ public class ConsolePanel extends JPanel {
 						}
 					}
 				});
-		table.getColumnModel().getColumn(1).setCellEditor(
+		switchesTable.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(activateAction));
-		table.getColumnModel().getColumn(2).setCellRenderer(
+		switchesTable.getColumnModel().getColumn(2).setCellRenderer(
 				new IconTableCellRenderer() {
 					@Override
 					protected Icon getIcon(Object value) {
@@ -142,9 +147,9 @@ public class ConsolePanel extends JPanel {
 						}
 					}
 				});
-		table.getColumnModel().getColumn(2).setCellEditor(
+		switchesTable.getColumnModel().getColumn(2).setCellEditor(
 				new ActionCellEditor(deactivateAction));
-		scrollPane.setViewportView(table);
+		scrollPane.setViewportView(switchesTable);
 	}
 
 	private void initContinuous(Console console, Column column) {
@@ -160,10 +165,10 @@ public class ConsolePanel extends JPanel {
 		scrollPane.setPreferredSize(new Dimension(160, 160));
 		column.box(scrollPane);
 
-		JTable table = new JTable();
+		continuousTable = new JTable();
 		config.get("continuousTable").read(continuousModel);
-		table.setModel(continuousModel);
-		table.getColumnModel().getColumn(1).setCellRenderer(
+		continuousTable.setModel(continuousModel);
+		continuousTable.getColumnModel().getColumn(1).setCellRenderer(
 				new IconTableCellRenderer() {
 					@Override
 					protected Icon getIcon(Object value) {
@@ -174,9 +179,9 @@ public class ConsolePanel extends JPanel {
 						}
 					}
 				});
-		table.getColumnModel().getColumn(1).setCellEditor(
+		continuousTable.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(changeAction));
-		table.getColumnModel().getColumn(2).setCellEditor(
+		continuousTable.getColumnModel().getColumn(2).setCellEditor(
 				new PropertyCellEditor() {
 					private ValueEditor editor = new ValueEditor();
 
@@ -185,8 +190,8 @@ public class ConsolePanel extends JPanel {
 						return editor;
 					}
 				});
-		TableUtils.pleasantLookAndFeel(table);
-		scrollPane.setViewportView(table);
+		TableUtils.pleasantLookAndFeel(continuousTable);
+		scrollPane.setViewportView(continuousTable);
 	}
 
 	public void apply() {
@@ -296,87 +301,113 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private class ActivateAction extends BaseAction {
+	private abstract class RecordAction extends BaseAction {
 
 		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+
+		protected RecordAction(String name) {
+			config.get(name).read(this);
+
+			config.get(name + "/message").read(messageBox);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			try {
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						(String) deviceComboBox.getSelectedItem()) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						if (recorded(message)) {
+							return true;
+						} else {
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									messageBox.hide();
+								}
+							});
+							return false;
+						}
+					}
+				};
+
+				messageBox.show(ConsolePanel.this);
+
+				recorder.close();
+			} catch (MidiUnavailableException cannotRecord) {
+			}
+
+			closed();
+		}
+
+		protected abstract boolean recorded(ShortMessage message);
+
+		protected void closed() {
+		}
+	}
+
+	private class ActivateAction extends RecordAction {
 
 		public ActivateAction() {
-			config.get("activate").read(this);
-
-			config.get("activate/message").read(messageBox);
+			super("activate");
 		}
 
-		public void actionPerformed(ActionEvent e) {
-			try {
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
-						(String) deviceComboBox.getSelectedItem()) {
-					@Override
-					public boolean messageRecorded(ShortMessage message) {
-						return false;
-					}
-				};
+		@Override
+		protected boolean recorded(ShortMessage message) {
+			Switch aSwitch = switches.get(switchesTable.getSelectedRow());
 
-				messageBox.show(ConsolePanel.this);
-				
-				recorder.close();
-			} catch (MidiUnavailableException cannotRecord) {
-			}
+			aSwitch.setActivate(message.getStatus(), message.getData1(),
+					message.getData2());
+
+			return false;
 		}
 	}
 
-	private class DeactivateAction extends BaseAction {
-
-		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+	private class DeactivateAction extends RecordAction {
 
 		public DeactivateAction() {
-			config.get("deactivate").read(this);
-
-			config.get("deactivate/message").read(messageBox);
+			super("deactivate");
 		}
 
-		public void actionPerformed(ActionEvent e) {
-			try {
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
-						(String) deviceComboBox.getSelectedItem()) {
-					@Override
-					public boolean messageRecorded(ShortMessage message) {
-						return false;
-					}
-				};
+		@Override
+		protected boolean recorded(ShortMessage message) {
+			Switch aSwitch = switches.get(switchesTable.getSelectedRow());
 
-				messageBox.show(ConsolePanel.this);
-				
-				recorder.close();
-			} catch (MidiUnavailableException cannotRecord) {
-			}
+			aSwitch.setDeactivate(message.getStatus(), message.getData1(),
+					message.getData2());
+
+			return false;
 		}
 	}
 
-	private class ChangeAction extends BaseAction {
+	private class ChangeAction extends RecordAction {
 
-		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+		private int status = 0;
+
+		private int data1 = 0;
+
+		private int data2 = 0;
 
 		public ChangeAction() {
-			config.get("change").read(this);
-
-			config.get("change/message").read(messageBox);
+			super("change");
 		}
 
-		public void actionPerformed(ActionEvent e) {
-			try {
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
-						(String) deviceComboBox.getSelectedItem()) {
-					@Override
-					public boolean messageRecorded(ShortMessage message) {
-						return false;
-					}
-				};
+		@Override
+		protected boolean recorded(ShortMessage message) {
 
-				messageBox.show(ConsolePanel.this);
-				
-				recorder.close();
-			} catch (MidiUnavailableException cannotRecord) {
-			}
+			// TODO which one gets the 'value' variable
+			status = message.getStatus();
+			data1 = message.getData1();
+			data2 = message.getData2();
+
+			return true;
+		}
+
+		@Override
+		protected void closed() {
+			Continuous aContinuous = continuous.get(continuousTable
+					.getSelectedRow());
+
+			aContinuous.setChange(status, data1, data2);
 		}
 	}
 }

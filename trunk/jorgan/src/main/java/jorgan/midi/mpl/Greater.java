@@ -24,6 +24,10 @@ public class Greater extends Condition {
 		super(arguments);
 	}
 
+	public Greater(float value, Command successor) {
+		super(value, successor);
+	}
+	
 	public Greater(float value) {
 		super(value);
 	}

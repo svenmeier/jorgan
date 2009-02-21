@@ -22,6 +22,7 @@ import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.mpl.Equal;
 import jorgan.util.Null;
 
 /**
@@ -117,6 +118,20 @@ public class Switch extends Engageable {
 			count++;
 		}
 		return count;
+	}
+
+	public void setActivate(int status, int data1, int data2) {
+		removeMessages(Activate.class);
+
+		addMessage(new Activate().change(new Equal(status).toString(),
+				new Equal(data1).toString(), new Equal(data2).toString()));
+	}
+
+	public void setDeactivate(int status, int data1, int data2) {
+		removeMessages(Deactivate.class);
+
+		addMessage(new Deactivate().change(new Equal(status).toString(),
+				new Equal(data1).toString(), new Equal(data2).toString()));
 	}
 
 	@Override

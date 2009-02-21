@@ -28,6 +28,7 @@ import jorgan.midi.mpl.Greater;
 import jorgan.midi.mpl.GreaterEqual;
 import jorgan.midi.mpl.Less;
 import jorgan.midi.mpl.LessEqual;
+import jorgan.midi.mpl.NoOp;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Sub;
 import jorgan.util.Null;
@@ -41,12 +42,15 @@ public class Keyboard extends Element implements Input {
 
 	public Keyboard() {
 		// note on, pitch, velocity
-		addMessage(new PressKey().change("equal 144", "get pitch",
-				"greater 0 | get velocity"));
+		addMessage(new PressKey().change(new Equal(144).toString(), new Get(
+				"pitch").toString(), new Greater(0, new Get("velocity"))
+				.toString()));
 		// note on, pitch, -
-		addMessage(new ReleaseKey().change("equal 144", "get pitch", "equal 0"));
+		addMessage(new ReleaseKey().change(new Equal(144).toString(), new Get(
+				"pitch").toString(), new Equal(0).toString()));
 		// note off, pitch, -
-		addMessage(new ReleaseKey().change("equal 128", "get pitch", ""));
+		addMessage(new ReleaseKey().change(new Equal(128).toString(), new Get(
+				"pitch").toString(), new NoOp().toString()));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -73,7 +77,7 @@ public class Keyboard extends Element implements Input {
 
 		for (HandleKey message : getMessages(HandleKey.class)) {
 			found = true;
-			
+
 			Equal equal = Command.create(message.getStatus()).get(Equal.class);
 			if (equal != null) {
 				int status = ((int) equal.getValue());
@@ -112,13 +116,13 @@ public class Keyboard extends Element implements Input {
 			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
 					GreaterEqual.class);
 			if (greaterEqual != null) {
-				pitch = ((int) greaterEqual.getValue());
+				pitch = Math.max(pitch, ((int) greaterEqual.getValue()));
 			}
-			
+
 			Greater greater = Command.create(message.getData1()).get(
 					Greater.class);
 			if (greater != null) {
-				pitch = ((int) greater.getValue()) + 1;
+				pitch = Math.max(pitch, ((int) greater.getValue()) + 1);
 			}
 		}
 
@@ -138,13 +142,12 @@ public class Keyboard extends Element implements Input {
 			LessEqual lessEqual = Command.create(message.getData1()).get(
 					LessEqual.class);
 			if (lessEqual != null) {
-				pitch = ((int) lessEqual.getValue());
+				pitch = Math.min(pitch, ((int) lessEqual.getValue()));
 			}
-			
-			Less less = Command.create(message.getData1()).get(
-					Less.class);
+
+			Less less = Command.create(message.getData1()).get(Less.class);
 			if (less != null) {
-				pitch = ((int) less.getValue()) - 1;
+				pitch = Math.min(pitch, ((int) less.getValue()) - 1);
 			}
 		}
 
@@ -165,7 +168,7 @@ public class Keyboard extends Element implements Input {
 			if (add != null) {
 				transpose = ((int) add.getValue());
 			}
-			
+
 			Sub sub = Command.create(message.getData1()).get(Sub.class);
 			if (sub != null) {
 				transpose = ((int) sub.getValue()) * -1;
@@ -178,7 +181,8 @@ public class Keyboard extends Element implements Input {
 		return transpose;
 	}
 
-	public void setPitch(int from, int to, int transpose) throws ProcessingException {
+	public void setPitch(int from, int to, int transpose)
+			throws ProcessingException {
 
 		Command command = new Get(PressKey.PITCH);
 		if (transpose != 0) {
