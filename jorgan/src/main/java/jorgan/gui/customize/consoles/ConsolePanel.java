@@ -19,6 +19,7 @@
 package jorgan.gui.customize.consoles;
 
 import java.awt.Dimension;
+import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,8 +41,10 @@ import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.gui.OrganPanel;
+import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.swing.beans.PropertyCellEditor;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.IconTableCellRenderer;
@@ -132,6 +135,13 @@ public class ConsolePanel extends JPanel {
 		table.setModel(continuousModel);
 		table.getColumnModel().getColumn(1).setCellRenderer(
 				new IconTableCellRenderer());
+		table.getColumnModel().getColumn(2).setCellEditor(new PropertyCellEditor() {
+			private ValueEditor editor = new ValueEditor();
+			@Override
+			protected PropertyEditor getEditor(int row) {
+				return editor;
+			}
+		});
 		TableUtils.pleasantLookAndFeel(table);
 		scrollPane.setViewportView(table);
 	}
@@ -162,19 +172,14 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		public Class<?> getColumnClass(int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return String.class;
-			case 1:
-				return ImageIcon.class;
-			case 2:
-				return ImageIcon.class;
-			}
-
-			throw new Error();
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return columnIndex == 1 || columnIndex == 2;
 		}
-
+		
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+		}
+		
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Switch aSwitch = switches.get(rowIndex);
 
@@ -234,6 +239,20 @@ public class ConsolePanel extends JPanel {
 			throw new Error();
 		}
 
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return columnIndex == 1 || columnIndex == 2;
+		}
+		
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			Continuous aContinuous = continuous.get(rowIndex);
+
+			if (columnIndex == 2) {
+				aContinuous.setThreshold((Float)aValue);
+			}
+		}
+		
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Continuous aContinuous = continuous.get(rowIndex);
 
