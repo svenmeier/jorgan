@@ -22,6 +22,7 @@ import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.mpl.Equal;
 
 /**
  * A continuous element.
@@ -41,7 +42,7 @@ public class Continuous extends Displayable {
 	public void setLocking(boolean locking) {
 		if (this.locking != locking) {
 			boolean oldLocking = this.locking;
-			
+
 			this.locking = locking;
 
 			fireChange(new UndoablePropertyChange(oldLocking, this.locking));
@@ -55,11 +56,11 @@ public class Continuous extends Displayable {
 
 		if (this.value != value) {
 			float oldValue = this.value;
-			
+
 			this.value = value;
 
 			fireChange(new PropertyChange());
-			
+
 			onValueChanged(oldValue, this.value);
 		}
 	}
@@ -78,11 +79,18 @@ public class Continuous extends Displayable {
 	public void setThreshold(float threshold) {
 		if (this.threshold != threshold) {
 			float oldThreshold = this.threshold;
-			
+
 			this.threshold = threshold;
 
 			fireChange(new UndoablePropertyChange(oldThreshold, threshold));
 		}
+	}
+
+	public void setChange(int status, int data1, int data2) {
+		removeMessages(Change.class);
+
+		addMessage(new Change().change(new Equal(status).toString(), new Equal(
+				data1).toString(), new Equal(data2).toString()));
 	}
 
 	@Override

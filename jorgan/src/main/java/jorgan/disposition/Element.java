@@ -459,6 +459,14 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
+	public void removeMessages(Class<?> clazz) {
+		for (Message message : new ArrayList<Message>(this.messages)) {
+			if (clazz.isAssignableFrom(message.getClass())) {
+				removeMessage(message);
+			}
+		}
+	}
+
 	public boolean hasMessages(Class<?> clazz) {
 		for (Message message : this.messages) {
 			if (clazz.isAssignableFrom(message.getClass())) {
