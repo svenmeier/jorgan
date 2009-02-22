@@ -22,7 +22,7 @@ package jorgan.midi.mpl;
 
 public class Mult extends ValueCommand {
 
-	protected Mult(String arguments) throws Exception {
+	protected Mult(String arguments) {
 		super(arguments);
 	}
 

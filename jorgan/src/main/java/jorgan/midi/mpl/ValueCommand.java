@@ -24,7 +24,7 @@ public abstract class ValueCommand extends Command {
 
 	private float value = Float.NaN;
 
-	protected ValueCommand(String arguments) throws Exception {
+	protected ValueCommand(String arguments) {
 		int space = arguments.indexOf(' ');
 		if (space == -1) {
 			if (Character.isDigit(arguments.charAt(0))

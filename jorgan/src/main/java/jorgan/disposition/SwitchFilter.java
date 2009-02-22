@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.Set;
+import java.util.List;
 
 import jorgan.disposition.Output.OutputMessage;
 
@@ -28,14 +28,14 @@ import jorgan.disposition.Output.OutputMessage;
 public class SwitchFilter extends Switch implements Filter {
 
 	@Override
-	public Set<Class<? extends Message>> getMessageClasses() {
-		Set<Class<? extends Message>> messages = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		messages.add(Intercept.class);
-		messages.add(Engaged.class);
-		messages.add(Disengaged.class);
+		classes.add(Intercept.class);
+		classes.add(Engaged.class);
+		classes.add(Disengaged.class);
 
-		return messages;
+		return classes;
 	}
 
 	public static class Engaged extends OutputMessage {

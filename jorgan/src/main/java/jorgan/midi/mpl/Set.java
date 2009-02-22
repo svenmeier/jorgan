@@ -19,15 +19,18 @@
 package jorgan.midi.mpl;
 
 
-
 public class Set extends ValueCommand {
 
-	protected Set(String arguments) throws Exception {
+	public Set(String arguments) {
 		super(arguments);
 	}
 
 	public Set(String name, float value) {
 		super(name, value);
+	}
+
+	public Set(float value) {
+		super(null, value);
 	}
 
 	@Override

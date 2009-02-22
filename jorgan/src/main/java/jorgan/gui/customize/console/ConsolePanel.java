@@ -458,6 +458,10 @@ public class ConsolePanel extends JPanel {
 
 			@Override
 			protected void afterRecording() {
+				Continuous aContinuous = continuous.get(continuousTable
+						.getSelectedRow());
+
+				aContinuous.removeMessages(Change.class);
 			}
 		}
 

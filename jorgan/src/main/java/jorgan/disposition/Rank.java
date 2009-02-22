@@ -18,9 +18,11 @@
  */
 package jorgan.disposition;
 
-import java.util.Set;
+import java.util.List;
 
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.mpl.NoOp;
+import jorgan.midi.mpl.Set;
 import jorgan.util.Null;
 
 /**
@@ -34,18 +36,21 @@ public class Rank extends Engageable {
 
 	public Rank() {
 		// control change, bank select, 0
-		addMessage(new Engaged().change("set 176", "set 0", "set 0"));
+		addMessage(new Engaged().change(new Set(176), new Set(0), new Set(0)));
 		// program change, 0, -
-		addMessage(new Engaged().change("set 192", "set 0", ""));
+		addMessage(new Engaged().change(new Set(192), new Set(0), new NoOp()));
 		// control change, reset all, -
-		addMessage(new Disengaged().change("set 176", "set 121", ""));
+		addMessage(new Disengaged().change(new Set(176), new Set(121),
+				new NoOp()));
 		// control change, all notes off, -
-		addMessage(new Disengaged().change("set 176", "set 123", ""));
+		addMessage(new Disengaged().change(new Set(176), new Set(123),
+				new NoOp()));
 		// note on, pitch, velocity
-		addMessage(new NotePlayed().change("set 144", "set pitch",
-				"set velocity"));
+		addMessage(new NotePlayed().change(new Set(144), new Set("pitch"),
+				new Set("velocity")));
 		// note off, pitch, -
-		addMessage(new NoteMuted().change("set 128", "set pitch", ""));
+		addMessage(new NoteMuted().change(new Set(128), new Set("pitch"),
+				new NoOp()));
 	}
 
 	/**
@@ -122,7 +127,7 @@ public class Rank extends Engageable {
 	public void setDelay(int delay) {
 		if (this.delay != delay) {
 			int oldDelay = this.delay;
-			
+
 			if (delay < 0) {
 				throw new IllegalArgumentException("delay '" + delay + "'");
 			}
@@ -150,15 +155,15 @@ public class Rank extends Engageable {
 		}
 	}
 
-	public Set<Class<? extends Message>> getMessageClasses() {
-		Set<Class<? extends Message>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		names.add(Engaged.class);
-		names.add(Disengaged.class);
-		names.add(NotePlayed.class);
-		names.add(NoteMuted.class);
+		classes.add(Engaged.class);
+		classes.add(Disengaged.class);
+		classes.add(NotePlayed.class);
+		classes.add(NoteMuted.class);
 
-		return names;
+		return classes;
 	}
 
 	public static class Engaged extends OutputMessage {

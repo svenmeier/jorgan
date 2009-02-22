@@ -22,7 +22,7 @@ package jorgan.midi.mpl;
 
 public class Sub extends ValueCommand {
 
-	protected Sub(String arguments) throws Exception {
+	protected Sub(String arguments) {
 		super(arguments);
 	}
 
