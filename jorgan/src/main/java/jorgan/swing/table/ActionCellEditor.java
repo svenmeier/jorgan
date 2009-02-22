@@ -19,6 +19,7 @@
 package jorgan.swing.table;
 
 import java.awt.Component;
+import java.awt.event.ActionEvent;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.Action;
@@ -37,7 +38,14 @@ public class ActionCellEditor extends AbstractCellEditor implements
 	private Object value;
 
 	public ActionCellEditor(Action action) {
-		this.button = new JButton(action);
+		this.button = new JButton(action) {
+			@Override
+			protected void fireActionPerformed(ActionEvent event) {
+				super.fireActionPerformed(event);
+				
+				fireEditingStopped();
+			}
+		};
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value,

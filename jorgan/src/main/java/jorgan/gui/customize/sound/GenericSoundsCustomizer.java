@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.customize.keyboards;
+package jorgan.gui.customize.sound;
 
 import java.awt.GridLayout;
 import java.util.ArrayList;
@@ -27,26 +27,26 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import jorgan.disposition.Keyboard;
+import jorgan.disposition.GenericSound;
 import jorgan.gui.customize.Customizer;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 
 /**
- * customizer of {@link Keyboard}s.
+ * customizer of {@link GenericSound}s.
  */
-public class KeyboardsCustomizer implements Customizer {
+public class GenericSoundsCustomizer implements Customizer {
 
 	private static Configuration config = Configuration.getRoot().get(
-			KeyboardsCustomizer.class);
+			GenericSoundsCustomizer.class);
 
 	private String description;
 
 	private JScrollPane scrollPane;
 
-	private List<KeyboardPanel> panels = new ArrayList<KeyboardPanel>();
+	private List<GenericSoundPanel> panels = new ArrayList<GenericSoundPanel>();
 
-	public KeyboardsCustomizer(OrganSession session) {
+	public GenericSoundsCustomizer(OrganSession session) {
 		config.read(this);
 
 		scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -57,8 +57,9 @@ public class KeyboardsCustomizer implements Customizer {
 		JPanel grid = new JPanel(new GridLayout(0, 1));
 		scrollPane.setViewportView(grid);
 
-		for (Keyboard keyboard : session.getOrgan().getElements(Keyboard.class)) {
-			KeyboardPanel panel = new KeyboardPanel(keyboard);
+		for (GenericSound sound : session.getOrgan().getElements(
+				GenericSound.class)) {
+			GenericSoundPanel panel = new GenericSoundPanel(sound);
 			panels.add(panel);
 			grid.add(panel);
 		}
@@ -77,7 +78,7 @@ public class KeyboardsCustomizer implements Customizer {
 	}
 	
 	public void apply() {
-		for (KeyboardPanel panel : panels) {
+		for (GenericSoundPanel panel : panels) {
 			panel.apply();
 		}
 	}
