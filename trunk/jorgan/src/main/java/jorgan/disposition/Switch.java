@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.Set;
+import java.util.List;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
@@ -135,17 +135,17 @@ public class Switch extends Engageable {
 	}
 
 	@Override
-	public Set<Class<? extends Message>> getMessageClasses() {
-		Set<Class<? extends Message>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		names.add(Activate.class);
-		names.add(Deactivate.class);
-		names.add(Toggle.class);
-		names.add(Initiate.class);
-		names.add(Activated.class);
-		names.add(Deactivated.class);
+		classes.add(Activate.class);
+		classes.add(Deactivate.class);
+		classes.add(Toggle.class);
+		classes.add(Initiate.class);
+		classes.add(Activated.class);
+		classes.add(Deactivated.class);
 
-		return names;
+		return classes;
 	}
 
 	public static class Activate extends InputMessage {

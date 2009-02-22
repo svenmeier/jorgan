@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 public class Div extends ValueCommand {
 
-	protected Div(String arguments) throws Exception {
+	protected Div(String arguments) {
 		super(arguments);
 	}
 

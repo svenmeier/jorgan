@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 public class Add extends ValueCommand {
 
-	protected Add(String arguments) throws Exception {
+	protected Add(String arguments) {
 		super(arguments);
 	}
 	

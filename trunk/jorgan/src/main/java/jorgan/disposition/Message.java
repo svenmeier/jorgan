@@ -3,8 +3,8 @@
  */
 package jorgan.disposition;
 
-import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 
 public abstract class Message implements Cloneable {
@@ -29,6 +29,18 @@ public abstract class Message implements Cloneable {
 		statusCommand = null;
 		data1Command = null;
 		data2Command = null;
+
+		return this;
+	}
+
+	protected Message change(Command status, Command data1, Command data2) {
+		this.status = status.toString();
+		this.data1 = data1.toString();
+		this.data2 = data2.toString();
+
+		statusCommand = status;
+		data1Command = data1;
+		data2Command = data2;
 
 		return this;
 	}

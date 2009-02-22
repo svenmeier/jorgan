@@ -21,9 +21,7 @@ package jorgan.disposition;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import jorgan.disposition.event.AbstractUndoableChange;
 import jorgan.disposition.event.Change;
@@ -392,8 +390,8 @@ public abstract class Element implements Cloneable {
 		return false;
 	}
 
-	public Set<Class<? extends Message>> getMessageClasses() {
-		return new HashSet<Class<? extends Message>>();
+	public List<Class<? extends Message>> getMessageClasses() {
+		return new ArrayList<Class<? extends Message>>();
 	}
 
 	public List<Message> getMessages() {
@@ -409,7 +407,7 @@ public abstract class Element implements Cloneable {
 	}
 
 	public void addMessage(final Message message, final int index) {
-		Set<Class<? extends Message>> messageClasses = getMessageClasses();
+		List<Class<? extends Message>> messageClasses = getMessageClasses();
 		if (!messageClasses.contains(message.getClass())) {
 			throw new IllegalArgumentException("illegal message '" + message
 					+ "'");

@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.Set;
+import java.util.List;
 
 import jorgan.midi.mpl.Add;
 import jorgan.midi.mpl.Command;
@@ -43,14 +43,14 @@ public class Keyboard extends Element implements Input {
 	public Keyboard() {
 		// note on, pitch, velocity
 		addMessage(new PressKey().change(new Equal(144).toString(), new Get(
-				"pitch").toString(), new Greater(0, new Get("velocity"))
-				.toString()));
+				Key.PITCH).toString(), new Greater(0,
+				new Get(PressKey.VELOCITY)).toString()));
 		// note on, pitch, -
 		addMessage(new ReleaseKey().change(new Equal(144).toString(), new Get(
-				"pitch").toString(), new Equal(0).toString()));
+				Key.PITCH).toString(), new Equal(0).toString()));
 		// note off, pitch, -
 		addMessage(new ReleaseKey().change(new Equal(128).toString(), new Get(
-				"pitch").toString(), new NoOp().toString()));
+				Key.PITCH).toString(), new NoOp().toString()));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -75,7 +75,7 @@ public class Keyboard extends Element implements Input {
 		int channel = 0;
 		boolean found = false;
 
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			found = true;
 
 			Equal equal = Command.create(message.getStatus()).get(Equal.class);
@@ -92,7 +92,7 @@ public class Keyboard extends Element implements Input {
 	}
 
 	public void setChannel(int channel) throws ProcessingException {
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			Command command = Command.create(message.getStatus());
 
 			Equal equal = command.get(Equal.class);
@@ -110,7 +110,7 @@ public class Keyboard extends Element implements Input {
 		int pitch = 0;
 		boolean found = false;
 
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			found = true;
 
 			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
@@ -136,7 +136,7 @@ public class Keyboard extends Element implements Input {
 		int pitch = 127;
 		boolean found = false;
 
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			found = true;
 
 			LessEqual lessEqual = Command.create(message.getData1()).get(
@@ -161,7 +161,7 @@ public class Keyboard extends Element implements Input {
 		int transpose = 0;
 		boolean found = false;
 
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			found = true;
 
 			Add add = Command.create(message.getData1()).get(Add.class);
@@ -195,35 +195,32 @@ public class Keyboard extends Element implements Input {
 			command = new GreaterEqual(from, command);
 		}
 
-		for (HandleKey message : getMessages(HandleKey.class)) {
+		for (Key message : getMessages(Key.class)) {
 			changeMessage(message, message.getStatus(), command.toString(),
 					message.getData2());
 		}
 	}
 
 	@Override
-	public Set<Class<? extends Message>> getMessageClasses() {
-		Set<Class<? extends Message>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		names.add(PressKey.class);
-		names.add(ReleaseKey.class);
+		classes.add(PressKey.class);
+		classes.add(ReleaseKey.class);
 
-		return names;
+		return classes;
 	}
 
-	private static class HandleKey extends InputMessage {
-
-	}
-
-	public static class PressKey extends HandleKey {
+	private static class Key extends InputMessage {
 
 		public static final String PITCH = "pitch";
+	}
+
+	public static class PressKey extends Key {
 
 		public static final String VELOCITY = "velocity";
 	}
 
-	public static class ReleaseKey extends HandleKey {
-
-		public static final String PITCH = "pitch";
+	public static class ReleaseKey extends Key {
 	}
 }

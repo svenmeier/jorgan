@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-import java.util.Set;
+import java.util.List;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
@@ -121,13 +121,13 @@ public class Continuous extends Displayable {
 	}
 
 	@Override
-	public Set<Class<? extends Message>> getMessageClasses() {
-		Set<Class<? extends Message>> names = super.getMessageClasses();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		names.add(Change.class);
-		names.add(Changed.class);
+		classes.add(Change.class);
+		classes.add(Changed.class);
 
-		return names;
+		return classes;
 	}
 
 	public static class Change extends InputMessage {

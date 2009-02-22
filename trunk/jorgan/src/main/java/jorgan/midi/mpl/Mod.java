@@ -21,7 +21,7 @@ package jorgan.midi.mpl;
 
 public class Mod extends ValueCommand {
 
-	protected Mod(String arguments) throws Exception {
+	protected Mod(String arguments) {
 		super(arguments);
 	}
 
