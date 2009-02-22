@@ -22,7 +22,11 @@ import java.util.Set;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.Get;
+import jorgan.midi.mpl.GreaterEqual;
+import jorgan.midi.mpl.LessEqual;
 
 /**
  * A continuous element.
@@ -86,11 +90,34 @@ public class Continuous extends Displayable {
 		}
 	}
 
-	public void setChange(int status, int data1, int data2) {
+	public void setChangeWithStatus(int statusMin, int statusMax, int data1,
+			int data2) {
+		removeMessages(Change.class);
+
+		addMessage(new Change().change(newMinMaxGet(statusMin, statusMax)
+				.toString(), new Equal(data1).toString(), new Equal(data2)
+				.toString()));
+	}
+
+	public void setChangeWithData1(int status, int data1Min, int data1Max,
+			int data2) {
+		removeMessages(Change.class);
+
+		addMessage(new Change().change(new Equal(status).toString(),
+				newMinMaxGet(data1Min, data1Max).toString(), new Equal(data2)
+						.toString()));
+	}
+
+	public void setChangeWithData2(int status, int data1, int data2Min,
+			int data2Max) {
 		removeMessages(Change.class);
 
 		addMessage(new Change().change(new Equal(status).toString(), new Equal(
-				data1).toString(), new Equal(data2).toString()));
+				data1).toString(), newMinMaxGet(data2Min, data2Max).toString()));
+	}
+
+	private Command newMinMaxGet(int min, int max) {
+		return new GreaterEqual(min, new LessEqual(max, new Get(Change.VALUE)));
 	}
 
 	@Override

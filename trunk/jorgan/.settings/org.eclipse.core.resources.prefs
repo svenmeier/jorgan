@@ -1,4 +1,4 @@
-#Sun Feb 15 21:19:08 GMT+01:00 2009
+#Sun Feb 22 20:48:11 GMT+01:00 2009
 encoding//src/jorgan/cli/i18n_it.properties=UTF-8
 encoding//src/jorgan/play/i18n_no.properties=UTF-8
 encoding//src/jorgan/disposition/i18n_ru.properties=UTF-8
@@ -31,7 +31,6 @@ encoding//src/jorgan/gui/play/i18n_no.properties=UTF-8
 encoding//src/jorgan/gui/construct/editor/i18n_no.properties=UTF-8
 encoding//src/jorgan/play/i18n.properties=UTF-8
 encoding//src/jorgan/swing/color/i18n_no.properties=UTF-8
-encoding//src/jorgan/gui/customize/consoles/i18n.properties=UTF-8
 encoding//src/jorgan/cli/i18n.properties=UTF-8
 encoding//src/jorgan/swing/i18n_de.properties=UTF-8
 encoding//src/jorgan/gui/midi/i18n_it.properties=UTF-8
@@ -59,6 +58,7 @@ encoding//src/jorgan/swing/i18n_ru.properties=UTF-8
 encoding//src/jorgan/gui/dock/i18n.properties=UTF-8
 encoding//src/jorgan/disposition/i18n_de.properties=UTF-8
 encoding//src/jorgan/gui/preferences/category/i18n_it.properties=UTF-8
+encoding//src/jorgan/gui/customize/keyboard/i18n.properties=UTF-8
 encoding//src/jorgan/gui/preferences/i18n_no.properties=UTF-8
 encoding//src/jorgan/gui/dock/i18n_ru.properties=UTF-8
 eclipse.preferences.version=1
@@ -94,11 +94,11 @@ encoding//src/jorgan/cli/i18n_no.properties=UTF-8
 encoding//src/jorgan/gui/construct/layout/i18n_cs.properties=UTF-8
 encoding//src/jorgan/gui/i18n_it.properties=UTF-8
 encoding//src/jorgan/gui/preferences/category/i18n_de.properties=UTF-8
+encoding//src/jorgan/gui/customize/console/i18n.properties=UTF-8
 encoding//src/jorgan/swing/color/i18n_de.properties=UTF-8
 encoding//src/jorgan/swing/wizard/i18n_cs.properties=UTF-8
 encoding//src/jorgan/gui/construct/i18n_cs.properties=UTF-8
 encoding//src/jorgan/gui/i18n_ru.properties=UTF-8
-encoding//src/jorgan/gui/customize/keyboards/i18n.properties=UTF-8
 encoding//src/jorgan/cli/i18n_cs.properties=UTF-8
 encoding//src/jorgan/gui/imports/defaults/i18n_de.properties=UTF-8
 encoding//src/jorgan/gui/construct/editor/i18n_cs.properties=UTF-8

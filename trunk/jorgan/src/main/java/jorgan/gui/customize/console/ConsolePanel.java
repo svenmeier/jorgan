@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.customize.consoles;
+package jorgan.gui.customize.console;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
@@ -312,6 +312,8 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			beforeRecording();
+
 			try {
 				ShortMessageRecorder recorder = new ShortMessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
@@ -336,12 +338,15 @@ public class ConsolePanel extends JPanel {
 			} catch (MidiUnavailableException cannotRecord) {
 			}
 
-			closed();
+			afterRecording();
+		}
+
+		protected void beforeRecording() {
 		}
 
 		protected abstract boolean recorded(ShortMessage message);
 
-		protected void closed() {
+		protected void afterRecording() {
 		}
 	}
 
@@ -381,33 +386,136 @@ public class ConsolePanel extends JPanel {
 
 	private class ChangeAction extends RecordAction {
 
-		private int status = 0;
+		private State state;
 
-		private int data1 = 0;
+		private int status;
 
-		private int data2 = 0;
+		private int data1;
+
+		private int data2;
+
+		private int min;
+
+		private int max;
 
 		public ChangeAction() {
 			super("change");
 		}
 
 		@Override
+		protected void beforeRecording() {
+			state = new Undecided();
+			status = -1;
+			data1 = -1;
+			data2 = -1;
+			min = 127;
+			max = 0;
+		}
+
+		@Override
 		protected boolean recorded(ShortMessage message) {
 
-			// TODO which one gets the 'value' variable
-			status = message.getStatus();
-			data1 = message.getData1();
-			data2 = message.getData2();
+			state.recorded(message);
 
 			return true;
 		}
 
 		@Override
-		protected void closed() {
-			Continuous aContinuous = continuous.get(continuousTable
-					.getSelectedRow());
+		protected void afterRecording() {
+			state.afterRecording();
 
-			aContinuous.setChange(status, data1, data2);
+		}
+
+		private abstract class State {
+			protected abstract void recorded(ShortMessage message);
+
+			protected abstract void afterRecording();
+		}
+
+		private class Undecided extends State {
+
+			@Override
+			protected void recorded(ShortMessage message) {
+				if (message.getStatus() != status
+						&& message.getData1() == data1
+						&& message.getData2() == data2) {
+					state = new StatusMinMax();
+				}
+				if (message.getStatus() == status
+						&& message.getData1() != data1
+						&& message.getData2() == data2) {
+					state = new Data1MinMax();
+				}
+				if (message.getStatus() == status
+						&& message.getData1() == data1
+						&& message.getData2() != data2) {
+					state = new Data2MinMax();
+				}
+				status = message.getStatus();
+				data1 = message.getData1();
+				data2 = message.getData2();
+			}
+
+			@Override
+			protected void afterRecording() {
+			}
+		}
+
+		private abstract class Decided extends State {
+			@Override
+			protected void recorded(ShortMessage message) {
+				int value = getValue(message);
+
+				min = Math.min(min, value);
+				max = Math.max(max, value);
+			}
+
+			protected abstract int getValue(ShortMessage message);
+		}
+
+		private class StatusMinMax extends Decided {
+			@Override
+			protected int getValue(ShortMessage message) {
+				return message.getStatus();
+			}
+
+			@Override
+			protected void afterRecording() {
+				Continuous aContinuous = continuous.get(continuousTable
+						.getSelectedRow());
+
+				aContinuous.setChangeWithStatus(min, max, data1, data2);
+			}
+		}
+
+		private class Data1MinMax extends Decided {
+			@Override
+			protected int getValue(ShortMessage message) {
+				return message.getData1();
+			}
+
+			@Override
+			protected void afterRecording() {
+				Continuous aContinuous = continuous.get(continuousTable
+						.getSelectedRow());
+
+				aContinuous.setChangeWithData1(status, min, max, data2);
+			}
+		}
+
+		private class Data2MinMax extends Decided {
+			@Override
+			protected int getValue(ShortMessage message) {
+				return message.getData2();
+			}
+
+			@Override
+			protected void afterRecording() {
+				Continuous aContinuous = continuous.get(continuousTable
+						.getSelectedRow());
+
+				aContinuous.setChangeWithData2(status, data1, min, max);
+			}
 		}
 	}
 }

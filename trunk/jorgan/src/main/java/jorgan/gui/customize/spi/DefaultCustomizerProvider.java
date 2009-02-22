@@ -25,9 +25,9 @@ import jorgan.disposition.Console;
 import jorgan.disposition.GenericSound;
 import jorgan.disposition.Keyboard;
 import jorgan.gui.customize.Customizer;
-import jorgan.gui.customize.consoles.ConsoleCustomizer;
-import jorgan.gui.customize.genericSounds.GenericSoundsCustomizer;
-import jorgan.gui.customize.keyboards.KeyboardsCustomizer;
+import jorgan.gui.customize.console.ConsoleCustomizer;
+import jorgan.gui.customize.keyboard.KeyboardsCustomizer;
+import jorgan.gui.customize.sound.GenericSoundsCustomizer;
 import jorgan.session.OrganSession;
 
 /**
