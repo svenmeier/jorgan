@@ -23,10 +23,12 @@ import java.util.List;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Div;
 import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.Get;
 import jorgan.midi.mpl.GreaterEqual;
 import jorgan.midi.mpl.LessEqual;
+import jorgan.midi.mpl.Sub;
 
 /**
  * A continuous element.
@@ -117,7 +119,12 @@ public class Continuous extends Displayable {
 	}
 
 	private Command newMinMaxGet(int min, int max) {
-		return new GreaterEqual(min, new LessEqual(max, new Get(Change.VALUE)));
+		if (min > max) {
+			throw new IllegalArgumentException("min must be smaller than max");
+		}
+
+		return new GreaterEqual(min, new LessEqual(max, new Sub(min, new Div(
+				max - min, new Get(Change.VALUE)))));
 	}
 
 	@Override
