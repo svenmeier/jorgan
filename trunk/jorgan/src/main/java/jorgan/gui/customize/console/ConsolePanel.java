@@ -20,6 +20,8 @@ package jorgan.gui.customize.console;
 
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.List;
@@ -71,11 +73,11 @@ public class ConsolePanel extends JPanel {
 
 	private SwitchesModel switchesModel = new SwitchesModel();
 
-	private List<Switch> switches;
+	private List<Switch> switches = new ArrayList<Switch>();
 
 	private ContinuousModel continuousModel = new ContinuousModel();
 
-	private List<Continuous> continuous;
+	private List<Continuous> continuous = new ArrayList<Continuous>();
 
 	private ActivateAction activateAction = new ActivateAction();
 
@@ -86,6 +88,8 @@ public class ConsolePanel extends JPanel {
 	private JTable switchesTable;
 
 	private JTable continuousTable;
+	
+	private ShortMessageRecorder recorder;
 
 	public ConsolePanel(Console console) {
 		this.console = console;
@@ -98,18 +102,21 @@ public class ConsolePanel extends JPanel {
 		deviceComboBox = new JComboBox(DevicePool.instance()
 				.getMidiDeviceNames(Direction.IN));
 		deviceComboBox.setEditable(false);
-		deviceComboBox.setSelectedItem(console.getOutput());
+		deviceComboBox.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				record((String)deviceComboBox.getSelectedItem());
+			}
+		});
 		column.definition(deviceComboBox).fillHorizontal();
 
-		initSwitches(console, column);
+		initSwitches(column);
 
-		initContinuous(console, column);
+		initContinuous(column);
+		
+		read();
 	}
-
-	private void initSwitches(Console console, Column column) {
-		this.switches = new ArrayList<Switch>(console
-				.getReferenced(Switch.class));
-
+	
+	private void initSwitches(Column column) {
 		column.group(config.get("switches").read(new JLabel()));
 
 		JScrollPane scrollPane = new JScrollPane(
@@ -152,10 +159,7 @@ public class ConsolePanel extends JPanel {
 		scrollPane.setViewportView(switchesTable);
 	}
 
-	private void initContinuous(Console console, Column column) {
-		this.continuous = new ArrayList<Continuous>(console
-				.getReferenced(Continuous.class));
-
+	private void initContinuous(Column column) {
 		column.group(config.get("continuous").read(new JLabel()));
 
 		JScrollPane scrollPane = new JScrollPane(
@@ -194,8 +198,38 @@ public class ConsolePanel extends JPanel {
 		scrollPane.setViewportView(continuousTable);
 	}
 
+	private void read() {
+		deviceComboBox.setSelectedItem(console.getOutput());
+		
+		this.switches = new ArrayList<Switch>(console
+				.getReferenced(Switch.class));
+		
+		this.continuous = new ArrayList<Continuous>(console
+				.getReferenced(Continuous.class));
+	}
+
+
+	private void record(String device) {
+		if (recorder != null) {
+			recorder.close();
+			recorder = null;
+		}
+		
+		if (device != null) {
+			try {
+				recorder = new ShortMessageRecorder(device) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						return true;
+					}
+				};
+			} catch (MidiUnavailableException notAvailable) {
+			}
+		}
+	}
+		
 	public void apply() {
-		console.setOutput((String) deviceComboBox.getSelectedItem());
+		console.setInput((String) deviceComboBox.getSelectedItem());
 	}
 
 	private String getDeviceName() {
@@ -358,7 +392,7 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		protected boolean recorded(ShortMessage message) {
-			Switch aSwitch = switches.get(switchesTable.getSelectedRow());
+			Switch aSwitch = switches.get(switchesTable.getEditingRow());
 
 			aSwitch.setActivate(message.getStatus(), message.getData1(),
 					message.getData2());
@@ -375,7 +409,7 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		protected boolean recorded(ShortMessage message) {
-			Switch aSwitch = switches.get(switchesTable.getSelectedRow());
+			Switch aSwitch = switches.get(switchesTable.getEditingRow());
 
 			aSwitch.setDeactivate(message.getStatus(), message.getData1(),
 					message.getData2());
@@ -459,7 +493,7 @@ public class ConsolePanel extends JPanel {
 			@Override
 			protected void afterRecording() {
 				Continuous aContinuous = continuous.get(continuousTable
-						.getSelectedRow());
+						.getEditingRow());
 
 				aContinuous.removeMessages(Change.class);
 			}
@@ -486,7 +520,7 @@ public class ConsolePanel extends JPanel {
 			@Override
 			protected void afterRecording() {
 				Continuous aContinuous = continuous.get(continuousTable
-						.getSelectedRow());
+						.getEditingRow());
 
 				aContinuous.setChangeWithStatus(min, max, data1, data2);
 			}

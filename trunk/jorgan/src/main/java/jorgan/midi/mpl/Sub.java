@@ -30,6 +30,10 @@ public class Sub extends ValueCommand {
 		super(name, value);
 	}
 
+	public Sub(float value, Command successor) {
+		super(null, value, successor);
+	}
+
 	@Override
 	public float processImpl(float value, Context context) {
 		return value - getValue(context);
