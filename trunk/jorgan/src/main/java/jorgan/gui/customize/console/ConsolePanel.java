@@ -24,10 +24,13 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -41,6 +44,7 @@ import javax.swing.table.AbstractTableModel;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
+import jorgan.disposition.Message;
 import jorgan.disposition.Switch;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
@@ -49,6 +53,8 @@ import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.beans.PropertyCellEditor;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -88,8 +94,10 @@ public class ConsolePanel extends JPanel {
 	private JTable switchesTable;
 
 	private JTable continuousTable;
-	
+
 	private ShortMessageRecorder recorder;
+
+	private TestContext context = new TestContext();
 
 	public ConsolePanel(Console console) {
 		this.console = console;
@@ -99,12 +107,11 @@ public class ConsolePanel extends JPanel {
 		Column column = builder.column();
 
 		column.term(config.get("device").read(new JLabel()));
-		deviceComboBox = new JComboBox(DevicePool.instance()
-				.getMidiDeviceNames(Direction.IN));
+		deviceComboBox = new JComboBox();
 		deviceComboBox.setEditable(false);
 		deviceComboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				record((String)deviceComboBox.getSelectedItem());
+				record((String) deviceComboBox.getSelectedItem());
 			}
 		});
 		column.definition(deviceComboBox).fillHorizontal();
@@ -112,10 +119,10 @@ public class ConsolePanel extends JPanel {
 		initSwitches(column);
 
 		initContinuous(column);
-		
+
 		read();
 	}
-	
+
 	private void initSwitches(Column column) {
 		column.group(config.get("switches").read(new JLabel()));
 
@@ -128,6 +135,7 @@ public class ConsolePanel extends JPanel {
 
 		switchesTable = new JTable();
 		config.get("switchesTable").read(switchesModel);
+		switchesTable.setCellSelectionEnabled(true);
 		switchesTable.setModel(switchesModel);
 		TableUtils.pleasantLookAndFeel(switchesTable);
 		switchesTable.getColumnModel().getColumn(1).setCellRenderer(
@@ -171,6 +179,7 @@ public class ConsolePanel extends JPanel {
 
 		continuousTable = new JTable();
 		config.get("continuousTable").read(continuousModel);
+		continuousTable.setCellSelectionEnabled(true);
 		continuousTable.setModel(continuousModel);
 		continuousTable.getColumnModel().getColumn(1).setCellRenderer(
 				new IconTableCellRenderer() {
@@ -199,27 +208,35 @@ public class ConsolePanel extends JPanel {
 	}
 
 	private void read() {
-		deviceComboBox.setSelectedItem(console.getOutput());
-		
+		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
+		String[] items = new String[1 + deviceNames.length];
+		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
+		this.deviceComboBox.setModel(new DefaultComboBoxModel(items));
+		this.deviceComboBox.setSelectedItem(console.getOutput());
+
 		this.switches = new ArrayList<Switch>(console
 				.getReferenced(Switch.class));
-		
+
 		this.continuous = new ArrayList<Continuous>(console
 				.getReferenced(Continuous.class));
 	}
-
 
 	private void record(String device) {
 		if (recorder != null) {
 			recorder.close();
 			recorder = null;
 		}
-		
+
 		if (device != null) {
 			try {
 				recorder = new ShortMessageRecorder(device) {
 					@Override
 					public boolean messageRecorded(ShortMessage message) {
+						if (isShowing()) {
+							checkSwitches(message);
+							checkContinuous(message);
+						}
 						return true;
 					}
 				};
@@ -227,7 +244,50 @@ public class ConsolePanel extends JPanel {
 			}
 		}
 	}
-		
+
+	private void checkSwitches(ShortMessage message) {
+		switchesTable.clearSelection();
+
+		for (Switch aSwitch : switches) {
+			List<Activate> activates = aSwitch.getMessages(Activate.class);
+			for (Activate activate : activates) {
+				if (context.process(activate, message.getStatus(), message
+						.getData1(), message.getData2())) {
+					switchesTable.changeSelection(this.switches
+							.indexOf(aSwitch), 1, true, false);
+					break;
+				}
+			}
+
+			List<Deactivate> deactivates = aSwitch
+					.getMessages(Deactivate.class);
+			for (Deactivate activate : deactivates) {
+				if (context.process(activate, message.getStatus(), message
+						.getData1(), message.getData2())) {
+					switchesTable.changeSelection(this.switches
+							.indexOf(aSwitch), 2, true, false);
+					break;
+				}
+			}
+		}
+	}
+
+	private void checkContinuous(ShortMessage message) {
+		continuousTable.clearSelection();
+
+		for (Continuous continuous : this.continuous) {
+			List<Change> changes = continuous.getMessages(Change.class);
+			for (Change change : changes) {
+				if (context.process(change, message.getStatus(), message
+						.getData1(), message.getData2())) {
+					continuousTable.changeSelection(this.continuous
+							.indexOf(continuous), 1, true, false);
+					break;
+				}
+			}
+		}
+	}
+
 	public void apply() {
 		console.setInput((String) deviceComboBox.getSelectedItem());
 	}
@@ -535,7 +595,7 @@ public class ConsolePanel extends JPanel {
 			@Override
 			protected void afterRecording() {
 				Continuous aContinuous = continuous.get(continuousTable
-						.getSelectedRow());
+						.getEditingRow());
 
 				aContinuous.setChangeWithData1(status, min, max, data2);
 			}
@@ -550,10 +610,73 @@ public class ConsolePanel extends JPanel {
 			@Override
 			protected void afterRecording() {
 				Continuous aContinuous = continuous.get(continuousTable
-						.getSelectedRow());
+						.getEditingRow());
 
 				aContinuous.setChangeWithData2(status, data1, min, max);
 			}
+		}
+	}
+
+	private class TestContext implements Context {
+
+		private Map<String, Float> map = new HashMap<String, Float>();
+
+		private int status;
+
+		private int data1;
+
+		private int data2;
+
+		public float get(String name) {
+			Float temp = map.get(name);
+			if (temp == null) {
+				return Float.NaN;
+			} else {
+				return temp;
+			}
+		}
+
+		public void set(String name, float value) {
+			map.put(name, value);
+		}
+
+		public void clear() {
+			map.clear();
+		}
+
+		public int getStatus() {
+			return status;
+		}
+
+		public int getData1() {
+			return data1;
+		}
+
+		public int getData2() {
+			return data2;
+		}
+
+		public boolean process(Message message, int status, int data1, int data2) {
+			try {
+				float fStatus = message.processStatus(status, this);
+				if (Float.isNaN(fStatus)) {
+					return false;
+				}
+				float fData1 = message.processData1(data1, this);
+				if (Float.isNaN(fData1)) {
+					return false;
+				}
+				float fData2 = message.processData2(data2, this);
+				if (Float.isNaN(fData2)) {
+					return false;
+				}
+				this.status = Math.round(fStatus);
+				this.data1 = Math.round(fData1);
+				this.data2 = Math.round(fData2);
+			} catch (ProcessingException ex) {
+				return false;
+			}
+			return true;
 		}
 	}
 }
