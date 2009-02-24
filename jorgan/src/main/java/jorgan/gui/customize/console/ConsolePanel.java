@@ -19,6 +19,7 @@
 package jorgan.gui.customize.console;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -26,13 +27,16 @@ import java.awt.event.ItemListener;
 import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -41,6 +45,7 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -51,6 +56,7 @@ import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.disposition.Switch.Toggle;
+import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -62,7 +68,6 @@ import jorgan.swing.beans.PropertyCellEditor;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.ActionCellEditor;
-import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -74,6 +79,9 @@ public class ConsolePanel extends JPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
+
+	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
+			.getResource("img/input.gif"));
 
 	private Console console;
 
@@ -92,7 +100,7 @@ public class ConsolePanel extends JPanel {
 	private DeactivateAction deactivateAction = new DeactivateAction();
 
 	private ToggleAction toggleAction = new ToggleAction();
-	
+
 	private ChangeAction changeAction = new ChangeAction();
 
 	private JTable switchesTable;
@@ -103,7 +111,7 @@ public class ConsolePanel extends JPanel {
 
 	private TestContext context = new TestContext();
 
-	private List<Message> highlighted = new ArrayList<Message>();
+	private Set<Message> received = new HashSet<Message>();
 
 	public ConsolePanel(Console console) {
 		this.console = console;
@@ -141,7 +149,6 @@ public class ConsolePanel extends JPanel {
 
 		switchesTable = new JTable();
 		config.get("switchesTable").read(switchesModel);
-		switchesTable.setCellSelectionEnabled(true);
 		switchesTable.setModel(switchesModel);
 		TableUtils.pleasantLookAndFeel(switchesTable);
 		switchesTable.getColumnModel().getColumn(1).setCellRenderer(
@@ -222,7 +229,7 @@ public class ConsolePanel extends JPanel {
 						if (isShowing()) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
-									highlight(message);
+									received(message);
 								}
 							});
 						}
@@ -234,8 +241,8 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private void highlight(ShortMessage message) {
-		highlighted.clear();
+	private void received(ShortMessage message) {
+		received.clear();
 
 		for (SwitchRow switchRow : switchRows) {
 			switchRow.highlight(message);
@@ -287,8 +294,7 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return getDeviceName() != null
-					&& (columnIndex >= 1);
+			return getDeviceName() != null && (columnIndex >= 1);
 		}
 
 		@Override
@@ -716,13 +722,13 @@ public class ConsolePanel extends JPanel {
 			if (activate != null
 					&& context.process(activate, message.getStatus(), message
 							.getData1(), message.getData2())) {
-				highlighted.add(activate);
+				received.add(activate);
 			}
 
 			if (deactivate != null
 					&& context.process(deactivate, message.getStatus(), message
 							.getData1(), message.getData2())) {
-				highlighted.add(deactivate);
+				received.add(deactivate);
 			}
 		}
 
@@ -784,7 +790,7 @@ public class ConsolePanel extends JPanel {
 			if (change != null
 					&& context.process(change, message.getStatus(), message
 							.getData1(), message.getData2())) {
-				highlighted.add(change);
+				received.add(change);
 			}
 		}
 
@@ -798,21 +804,37 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private class HighlightCellRenderer extends IconTableCellRenderer {
+	private class HighlightCellRenderer extends DefaultTableCellRenderer {
+		
+		private Color defaultBackground;
+		
+		public HighlightCellRenderer() {
+			this.defaultBackground = getBackground();
+			setHorizontalAlignment(CENTER);
+		}
+		
 		@Override
-		protected Icon getIcon(Object value) {
-			setBackground(Color.yellow);
+		public Component getTableCellRendererComponent(JTable table,
+				Object value, boolean isSelected, boolean hasFocus, int row,
+				int column) {
 
-			setOpaque(false);
+			setBackground(defaultBackground);
 
-			if (value != null) {
-				if (highlighted.contains(value)) {
-					setOpaque(true);
-				}
+			super.getTableCellRendererComponent(table, null,
+								isSelected, hasFocus, row, column);
 
-				return activateAction.getSmallIcon();
+			if (received.contains(value)) {
+				setBackground(Color.yellow);
+			} else {
 			}
-			return null;
+			
+			if (value != null) {
+				setIcon(inputIcon);
+			} else {
+				setIcon(null);
+			}
+
+			return this;
 		}
 	}
 }
