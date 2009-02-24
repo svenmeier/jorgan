@@ -202,7 +202,7 @@ public class ConsolePanel extends JPanel {
 		String[] items = new String[1 + deviceNames.length];
 		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
 		this.deviceComboBox.setModel(new DefaultComboBoxModel(items));
-		this.deviceComboBox.setSelectedItem(console.getOutput());
+		this.deviceComboBox.setSelectedItem(console.getInput());
 
 		switchRows = new ArrayList<SwitchRow>();
 		for (Switch aSwitch : console.getReferenced(Switch.class)) {
@@ -245,18 +245,18 @@ public class ConsolePanel extends JPanel {
 		received.clear();
 
 		for (SwitchRow switchRow : switchRows) {
-			switchRow.highlight(message);
+			switchRow.received(message);
 		}
 		switchesTable.repaint();
 
 		for (ContinuousRow continuousRow : continuousRows) {
-			continuousRow.highlight(message);
+			continuousRow.received(message);
 		}
 		continuousTable.repaint();
 	}
 
 	public void apply() {
-		console.setInput((String) deviceComboBox.getSelectedItem());
+		console.setInput(getDeviceName());
 
 		for (SwitchRow switchRow : switchRows) {
 			switchRow.apply();
@@ -718,7 +718,7 @@ public class ConsolePanel extends JPanel {
 			toggle = aSwitch.createToggle(status, data1, data2);
 		}
 
-		public void highlight(ShortMessage message) {
+		public void received(ShortMessage message) {
 			if (activate != null
 					&& context.process(activate, message.getStatus(), message
 							.getData1(), message.getData2())) {
@@ -741,6 +741,11 @@ public class ConsolePanel extends JPanel {
 			aSwitch.removeMessages(Deactivate.class);
 			if (deactivate != null) {
 				aSwitch.addMessage(deactivate);
+			}
+			
+			aSwitch.removeMessages(Toggle.class);
+			if (toggle != null) {
+				aSwitch.addMessage(toggle);
 			}
 		}
 	}
@@ -786,7 +791,7 @@ public class ConsolePanel extends JPanel {
 			change = null;
 		}
 
-		public void highlight(ShortMessage message) {
+		public void received(ShortMessage message) {
 			if (change != null
 					&& context.process(change, message.getStatus(), message
 							.getData1(), message.getData2())) {
