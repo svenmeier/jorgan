@@ -120,18 +120,31 @@ public class Switch extends Engageable {
 		return count;
 	}
 
-	public void setActivate(int status, int data1, int data2) {
-		removeMessages(Activate.class);
+	public Activate createActivate(int status, int data1, int data2) {
+		Activate activate = new Activate();
 
-		addMessage(new Activate().change(new Equal(status).toString(),
-				new Equal(data1).toString(), new Equal(data2).toString()));
+		activate.change(new Equal(status).toString(), new Equal(data1)
+				.toString(), new Equal(data2).toString());
+
+		return activate;
 	}
 
-	public void setDeactivate(int status, int data1, int data2) {
-		removeMessages(Deactivate.class);
+	public Deactivate createDeactivate(int status, int data1, int data2) {
+		Deactivate deactivate = new Deactivate();
 
-		addMessage(new Deactivate().change(new Equal(status).toString(),
-				new Equal(data1).toString(), new Equal(data2).toString()));
+		deactivate.change(new Equal(status).toString(), new Equal(data1)
+				.toString(), new Equal(data2).toString());
+
+		return deactivate;
+	}
+
+	public Toggle createToggle(int status, int data1, int data2) {
+		Toggle toggle = new Toggle();
+
+		toggle.change(new Equal(status).toString(),
+				new Equal(data1).toString(), new Equal(data2).toString());
+
+		return toggle;
 	}
 
 	@Override
