@@ -18,6 +18,7 @@
  */
 package jorgan.gui.customize.console;
 
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -49,6 +50,7 @@ import jorgan.disposition.Switch;
 import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
+import jorgan.disposition.Switch.Toggle;
 import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -79,16 +81,18 @@ public class ConsolePanel extends JPanel {
 
 	private SwitchesModel switchesModel = new SwitchesModel();
 
-	private List<Switch> switches = new ArrayList<Switch>();
+	private List<SwitchRow> switchRows = new ArrayList<SwitchRow>();
 
 	private ContinuousModel continuousModel = new ContinuousModel();
 
-	private List<Continuous> continuous = new ArrayList<Continuous>();
+	private List<ContinuousRow> continuousRows = new ArrayList<ContinuousRow>();
 
 	private ActivateAction activateAction = new ActivateAction();
 
 	private DeactivateAction deactivateAction = new DeactivateAction();
 
+	private ToggleAction toggleAction = new ToggleAction();
+	
 	private ChangeAction changeAction = new ChangeAction();
 
 	private JTable switchesTable;
@@ -98,6 +102,8 @@ public class ConsolePanel extends JPanel {
 	private ShortMessageRecorder recorder;
 
 	private TestContext context = new TestContext();
+
+	private List<Message> highlighted = new ArrayList<Message>();
 
 	public ConsolePanel(Console console) {
 		this.console = console;
@@ -139,31 +145,17 @@ public class ConsolePanel extends JPanel {
 		switchesTable.setModel(switchesModel);
 		TableUtils.pleasantLookAndFeel(switchesTable);
 		switchesTable.getColumnModel().getColumn(1).setCellRenderer(
-				new IconTableCellRenderer() {
-					@Override
-					protected Icon getIcon(Object value) {
-						if (((Switch) value).hasMessages(Activate.class)) {
-							return activateAction.getSmallIcon();
-						} else {
-							return null;
-						}
-					}
-				});
+				new HighlightCellRenderer());
 		switchesTable.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(activateAction));
 		switchesTable.getColumnModel().getColumn(2).setCellRenderer(
-				new IconTableCellRenderer() {
-					@Override
-					protected Icon getIcon(Object value) {
-						if (((Switch) value).hasMessages(Deactivate.class)) {
-							return deactivateAction.getSmallIcon();
-						} else {
-							return null;
-						}
-					}
-				});
+				new HighlightCellRenderer());
 		switchesTable.getColumnModel().getColumn(2).setCellEditor(
 				new ActionCellEditor(deactivateAction));
+		switchesTable.getColumnModel().getColumn(3).setCellRenderer(
+				new HighlightCellRenderer());
+		switchesTable.getColumnModel().getColumn(3).setCellEditor(
+				new ActionCellEditor(toggleAction));
 		scrollPane.setViewportView(switchesTable);
 	}
 
@@ -179,19 +171,9 @@ public class ConsolePanel extends JPanel {
 
 		continuousTable = new JTable();
 		config.get("continuousTable").read(continuousModel);
-		continuousTable.setCellSelectionEnabled(true);
 		continuousTable.setModel(continuousModel);
 		continuousTable.getColumnModel().getColumn(1).setCellRenderer(
-				new IconTableCellRenderer() {
-					@Override
-					protected Icon getIcon(Object value) {
-						if (((Continuous) value).hasMessages(Change.class)) {
-							return changeAction.getSmallIcon();
-						} else {
-							return null;
-						}
-					}
-				});
+				new HighlightCellRenderer());
 		continuousTable.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(changeAction));
 		continuousTable.getColumnModel().getColumn(2).setCellEditor(
@@ -215,11 +197,15 @@ public class ConsolePanel extends JPanel {
 		this.deviceComboBox.setModel(new DefaultComboBoxModel(items));
 		this.deviceComboBox.setSelectedItem(console.getOutput());
 
-		this.switches = new ArrayList<Switch>(console
-				.getReferenced(Switch.class));
+		switchRows = new ArrayList<SwitchRow>();
+		for (Switch aSwitch : console.getReferenced(Switch.class)) {
+			switchRows.add(new SwitchRow(aSwitch));
+		}
 
-		this.continuous = new ArrayList<Continuous>(console
-				.getReferenced(Continuous.class));
+		continuousRows = new ArrayList<ContinuousRow>();
+		for (Continuous aContinuous : console.getReferenced(Continuous.class)) {
+			continuousRows.add(new ContinuousRow(aContinuous));
+		}
 	}
 
 	private void record(String device) {
@@ -232,10 +218,13 @@ public class ConsolePanel extends JPanel {
 			try {
 				recorder = new ShortMessageRecorder(device) {
 					@Override
-					public boolean messageRecorded(ShortMessage message) {
+					public boolean messageRecorded(final ShortMessage message) {
 						if (isShowing()) {
-							checkSwitches(message);
-							checkContinuous(message);
+							SwingUtilities.invokeLater(new Runnable() {
+								public void run() {
+									highlight(message);
+								}
+							});
 						}
 						return true;
 					}
@@ -245,51 +234,30 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private void checkSwitches(ShortMessage message) {
-		switchesTable.clearSelection();
+	private void highlight(ShortMessage message) {
+		highlighted.clear();
 
-		for (Switch aSwitch : switches) {
-			List<Activate> activates = aSwitch.getMessages(Activate.class);
-			for (Activate activate : activates) {
-				if (context.process(activate, message.getStatus(), message
-						.getData1(), message.getData2())) {
-					switchesTable.changeSelection(this.switches
-							.indexOf(aSwitch), 1, true, false);
-					break;
-				}
-			}
-
-			List<Deactivate> deactivates = aSwitch
-					.getMessages(Deactivate.class);
-			for (Deactivate activate : deactivates) {
-				if (context.process(activate, message.getStatus(), message
-						.getData1(), message.getData2())) {
-					switchesTable.changeSelection(this.switches
-							.indexOf(aSwitch), 2, true, false);
-					break;
-				}
-			}
+		for (SwitchRow switchRow : switchRows) {
+			switchRow.highlight(message);
 		}
-	}
+		switchesTable.repaint();
 
-	private void checkContinuous(ShortMessage message) {
-		continuousTable.clearSelection();
-
-		for (Continuous continuous : this.continuous) {
-			List<Change> changes = continuous.getMessages(Change.class);
-			for (Change change : changes) {
-				if (context.process(change, message.getStatus(), message
-						.getData1(), message.getData2())) {
-					continuousTable.changeSelection(this.continuous
-							.indexOf(continuous), 1, true, false);
-					break;
-				}
-			}
+		for (ContinuousRow continuousRow : continuousRows) {
+			continuousRow.highlight(message);
 		}
+		continuousTable.repaint();
 	}
 
 	public void apply() {
 		console.setInput((String) deviceComboBox.getSelectedItem());
+
+		for (SwitchRow switchRow : switchRows) {
+			switchRow.apply();
+		}
+
+		for (ContinuousRow continuousRow : continuousRows) {
+			continuousRow.apply();
+		}
 	}
 
 	private String getDeviceName() {
@@ -298,7 +266,7 @@ public class ConsolePanel extends JPanel {
 
 	public class SwitchesModel extends AbstractTableModel {
 
-		private String[] columnNames = new String[3];
+		private String[] columnNames = new String[4];
 
 		public void setColumnNames(String[] columnNames) {
 			this.columnNames = columnNames;
@@ -314,13 +282,13 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public int getRowCount() {
-			return switches.size();
+			return switchRows.size();
 		}
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
 			return getDeviceName() != null
-					&& (columnIndex == 1 || columnIndex == 2);
+					&& (columnIndex >= 1);
 		}
 
 		@Override
@@ -328,15 +296,17 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Switch aSwitch = switches.get(rowIndex);
+			SwitchRow switchRow = switchRows.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
-				return Elements.getDisplayName(aSwitch);
+				return switchRow.getDisplayName();
 			case 1:
-				return aSwitch;
+				return switchRow.activate;
 			case 2:
-				return aSwitch;
+				return switchRow.deactivate;
+			case 3:
+				return switchRow.toggle;
 			}
 
 			throw new Error();
@@ -361,7 +331,7 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public int getRowCount() {
-			return continuous.size();
+			return continuousRows.size();
 		}
 
 		@Override
@@ -372,23 +342,23 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			Continuous aContinuous = continuous.get(rowIndex);
+			ContinuousRow continuousRow = continuousRows.get(rowIndex);
 
 			if (columnIndex == 2) {
-				aContinuous.setThreshold((Float) aValue);
+				continuousRow.threshold = (Float) aValue;
 			}
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
-			Continuous aContinuous = continuous.get(rowIndex);
+			ContinuousRow continuousRow = continuousRows.get(rowIndex);
 
 			switch (columnIndex) {
 			case 0:
-				return Elements.getDisplayName(aContinuous);
+				return continuousRow.getDisplayName();
 			case 1:
-				return aContinuous;
+				return continuousRow.change;
 			case 2:
-				return aContinuous.getThreshold();
+				return continuousRow.threshold;
 			}
 
 			throw new Error();
@@ -452,9 +422,9 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		protected boolean recorded(ShortMessage message) {
-			Switch aSwitch = switches.get(switchesTable.getEditingRow());
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			aSwitch.setActivate(message.getStatus(), message.getData1(),
+			switchRow.newActivate(message.getStatus(), message.getData1(),
 					message.getData2());
 
 			return false;
@@ -469,9 +439,26 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		protected boolean recorded(ShortMessage message) {
-			Switch aSwitch = switches.get(switchesTable.getEditingRow());
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			aSwitch.setDeactivate(message.getStatus(), message.getData1(),
+			switchRow.newDeactivate(message.getStatus(), message.getData1(),
+					message.getData2());
+
+			return false;
+		}
+	}
+
+	private class ToggleAction extends RecordAction {
+
+		public ToggleAction() {
+			super("toggle");
+		}
+
+		@Override
+		protected boolean recorded(ShortMessage message) {
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
+
+			switchRow.newToggle(message.getStatus(), message.getData1(),
 					message.getData2());
 
 			return false;
@@ -552,10 +539,10 @@ public class ConsolePanel extends JPanel {
 
 			@Override
 			protected void afterRecording() {
-				Continuous aContinuous = continuous.get(continuousTable
-						.getEditingRow());
+				ContinuousRow continuousRow = continuousRows
+						.get(continuousTable.getEditingRow());
 
-				aContinuous.removeMessages(Change.class);
+				continuousRow.clearChange();
 			}
 		}
 
@@ -579,10 +566,10 @@ public class ConsolePanel extends JPanel {
 
 			@Override
 			protected void afterRecording() {
-				Continuous aContinuous = continuous.get(continuousTable
-						.getEditingRow());
+				ContinuousRow continuousRow = continuousRows
+						.get(continuousTable.getEditingRow());
 
-				aContinuous.setChangeWithStatus(min, max, data1, data2);
+				continuousRow.newChangeWithStatus(min, max, data1, data2);
 			}
 		}
 
@@ -594,10 +581,10 @@ public class ConsolePanel extends JPanel {
 
 			@Override
 			protected void afterRecording() {
-				Continuous aContinuous = continuous.get(continuousTable
-						.getEditingRow());
+				ContinuousRow continuousRow = continuousRows
+						.get(continuousTable.getEditingRow());
 
-				aContinuous.setChangeWithData1(status, min, max, data2);
+				continuousRow.newChangeWithData1(status, min, max, data2);
 			}
 		}
 
@@ -609,10 +596,10 @@ public class ConsolePanel extends JPanel {
 
 			@Override
 			protected void afterRecording() {
-				Continuous aContinuous = continuous.get(continuousTable
-						.getEditingRow());
+				ContinuousRow continuousRow = continuousRows
+						.get(continuousTable.getEditingRow());
 
-				aContinuous.setChangeWithData2(status, data1, min, max);
+				continuousRow.newChangeWithData2(status, data1, min, max);
 			}
 		}
 	}
@@ -677,6 +664,155 @@ public class ConsolePanel extends JPanel {
 				return false;
 			}
 			return true;
+		}
+	}
+
+	private class SwitchRow {
+		public Switch aSwitch;
+
+		public Activate activate;
+
+		public Deactivate deactivate;
+
+		public Toggle toggle;
+
+		public SwitchRow(Switch aSwitch) {
+			this.aSwitch = aSwitch;
+
+			List<Activate> activates = aSwitch.getMessages(Activate.class);
+			if (!activates.isEmpty()) {
+				activate = activates.get(0);
+			}
+
+			List<Deactivate> deactivates = aSwitch
+					.getMessages(Deactivate.class);
+			if (!deactivates.isEmpty()) {
+				deactivate = deactivates.get(0);
+			}
+
+			List<Toggle> toggles = aSwitch.getMessages(Toggle.class);
+			if (!toggles.isEmpty()) {
+				toggle = toggles.get(0);
+			}
+		}
+
+		public String getDisplayName() {
+			return Elements.getDisplayName(aSwitch);
+		}
+
+		public void newActivate(int status, int data1, int data2) {
+			activate = aSwitch.createActivate(status, data1, data2);
+		}
+
+		public void newDeactivate(int status, int data1, int data2) {
+			deactivate = aSwitch.createDeactivate(status, data1, data2);
+		}
+
+		public void newToggle(int status, int data1, int data2) {
+			toggle = aSwitch.createToggle(status, data1, data2);
+		}
+
+		public void highlight(ShortMessage message) {
+			if (activate != null
+					&& context.process(activate, message.getStatus(), message
+							.getData1(), message.getData2())) {
+				highlighted.add(activate);
+			}
+
+			if (deactivate != null
+					&& context.process(deactivate, message.getStatus(), message
+							.getData1(), message.getData2())) {
+				highlighted.add(deactivate);
+			}
+		}
+
+		public void apply() {
+			aSwitch.removeMessages(Activate.class);
+			if (activate != null) {
+				aSwitch.addMessage(activate);
+			}
+
+			aSwitch.removeMessages(Deactivate.class);
+			if (deactivate != null) {
+				aSwitch.addMessage(deactivate);
+			}
+		}
+	}
+
+	private class ContinuousRow {
+
+		public Continuous aContinuous;
+
+		public Change change;
+
+		public boolean changeHighlighted;
+
+		public float threshold;
+
+		public ContinuousRow(Continuous aContinuous) {
+			this.aContinuous = aContinuous;
+
+			List<Change> changes = aContinuous.getMessages(Change.class);
+			if (!changes.isEmpty()) {
+				change = changes.get(0);
+			}
+
+			threshold = aContinuous.getThreshold();
+		}
+
+		public String getDisplayName() {
+			return Elements.getDisplayName(aContinuous);
+		}
+
+		public void newChangeWithStatus(int min, int max, int data1, int data2) {
+			change = aContinuous.createChangeWithStatus(min, max, data1, data2);
+		}
+
+		public void newChangeWithData1(int status, int min, int max, int data2) {
+			change = aContinuous.createChangeWithData1(status, min, max, data2);
+		}
+
+		public void newChangeWithData2(int status, int data1, int min, int max) {
+			change = aContinuous.createChangeWithData2(status, data1, min, max);
+		}
+
+		public void clearChange() {
+			change = null;
+		}
+
+		public void highlight(ShortMessage message) {
+			if (change != null
+					&& context.process(change, message.getStatus(), message
+							.getData1(), message.getData2())) {
+				highlighted.add(change);
+			}
+		}
+
+		public void apply() {
+			aContinuous.removeMessages(Change.class);
+			if (change != null) {
+				aContinuous.addMessage(change);
+			}
+
+			aContinuous.setThreshold(threshold);
+		}
+	}
+
+	private class HighlightCellRenderer extends IconTableCellRenderer {
+		@Override
+		protected Icon getIcon(Object value) {
+			setBackground(Color.yellow);
+
+			setOpaque(false);
+
+			if (value != null) {
+				if (highlighted.contains(value)) {
+					setOpaque(true);
+				}
+
+				return activateAction.getSmallIcon();
+			}
+			return null;
 		}
 	}
 }

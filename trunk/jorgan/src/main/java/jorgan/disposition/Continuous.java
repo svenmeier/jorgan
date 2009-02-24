@@ -92,30 +92,35 @@ public class Continuous extends Displayable {
 		}
 	}
 
-	public void setChangeWithStatus(int statusMin, int statusMax, int data1,
-			int data2) {
-		removeMessages(Change.class);
+	public Change createChangeWithStatus(int statusMin, int statusMax,
+			int data1, int data2) {
+		Change change = new Change();
 
-		addMessage(new Change().change(newMinMaxGet(statusMin, statusMax)
-				.toString(), new Equal(data1).toString(), new Equal(data2)
-				.toString()));
+		change.change(newMinMaxGet(statusMin, statusMax).toString(), new Equal(
+				data1).toString(), new Equal(data2).toString());
+
+		return change;
 	}
 
-	public void setChangeWithData1(int status, int data1Min, int data1Max,
+	public Change createChangeWithData1(int status, int data1Min, int data1Max,
 			int data2) {
-		removeMessages(Change.class);
+		Change change = new Change();
 
-		addMessage(new Change().change(new Equal(status).toString(),
-				newMinMaxGet(data1Min, data1Max).toString(), new Equal(data2)
-						.toString()));
+		change.change(new Equal(status).toString(), newMinMaxGet(data1Min,
+				data1Max).toString(), new Equal(data2).toString());
+
+		return change;
 	}
 
-	public void setChangeWithData2(int status, int data1, int data2Min,
+	public Change createChangeWithData2(int status, int data1, int data2Min,
 			int data2Max) {
-		removeMessages(Change.class);
+		Change change = new Change();
 
-		addMessage(new Change().change(new Equal(status).toString(), new Equal(
-				data1).toString(), newMinMaxGet(data2Min, data2Max).toString()));
+		change.change(new Equal(status).toString(),
+				new Equal(data1).toString(), newMinMaxGet(data2Min, data2Max)
+						.toString());
+
+		return change;
 	}
 
 	private Command newMinMaxGet(int min, int max) {
