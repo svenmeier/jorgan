@@ -24,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.beans.PropertyEditor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -57,14 +56,12 @@ import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.disposition.Switch.Toggle;
 import jorgan.gui.OrganPanel;
-import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
-import jorgan.swing.beans.PropertyCellEditor;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.ActionCellEditor;
@@ -183,15 +180,6 @@ public class ConsolePanel extends JPanel {
 				new HighlightCellRenderer());
 		continuousTable.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(changeAction));
-		continuousTable.getColumnModel().getColumn(2).setCellEditor(
-				new PropertyCellEditor() {
-					private ValueEditor editor = new ValueEditor();
-
-					@Override
-					protected PropertyEditor getEditor(int row) {
-						return editor;
-					}
-				});
 		TableUtils.pleasantLookAndFeel(continuousTable);
 		scrollPane.setViewportView(continuousTable);
 	}
@@ -321,7 +309,7 @@ public class ConsolePanel extends JPanel {
 
 	public class ContinuousModel extends AbstractTableModel {
 
-		private String[] columnNames = new String[3];
+		private String[] columnNames = new String[2];
 
 		public void setColumnNames(String[] columnNames) {
 			this.columnNames = columnNames;
@@ -342,17 +330,7 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return getDeviceName() != null
-					&& (columnIndex == 1 || columnIndex == 2);
-		}
-
-		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			ContinuousRow continuousRow = continuousRows.get(rowIndex);
-
-			if (columnIndex == 2) {
-				continuousRow.threshold = (Float) aValue;
-			}
+			return getDeviceName() != null && (columnIndex >= 1);
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
@@ -363,8 +341,6 @@ public class ConsolePanel extends JPanel {
 				return continuousRow.getDisplayName();
 			case 1:
 				return continuousRow.change;
-			case 2:
-				return continuousRow.threshold;
 			}
 
 			throw new Error();
@@ -742,7 +718,7 @@ public class ConsolePanel extends JPanel {
 			if (deactivate != null) {
 				aSwitch.addMessage(deactivate);
 			}
-			
+
 			aSwitch.removeMessages(Toggle.class);
 			if (toggle != null) {
 				aSwitch.addMessage(toggle);
@@ -756,10 +732,6 @@ public class ConsolePanel extends JPanel {
 
 		public Change change;
 
-		public boolean changeHighlighted;
-
-		public float threshold;
-
 		public ContinuousRow(Continuous aContinuous) {
 			this.aContinuous = aContinuous;
 
@@ -767,8 +739,6 @@ public class ConsolePanel extends JPanel {
 			if (!changes.isEmpty()) {
 				change = changes.get(0);
 			}
-
-			threshold = aContinuous.getThreshold();
 		}
 
 		public String getDisplayName() {
@@ -804,20 +774,18 @@ public class ConsolePanel extends JPanel {
 			if (change != null) {
 				aContinuous.addMessage(change);
 			}
-
-			aContinuous.setThreshold(threshold);
 		}
 	}
 
 	private class HighlightCellRenderer extends DefaultTableCellRenderer {
-		
+
 		private Color defaultBackground;
-		
+
 		public HighlightCellRenderer() {
 			this.defaultBackground = getBackground();
 			setHorizontalAlignment(CENTER);
 		}
-		
+
 		@Override
 		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
@@ -825,14 +793,14 @@ public class ConsolePanel extends JPanel {
 
 			setBackground(defaultBackground);
 
-			super.getTableCellRendererComponent(table, null,
-								isSelected, hasFocus, row, column);
+			super.getTableCellRendererComponent(table, null, isSelected,
+					hasFocus, row, column);
 
 			if (received.contains(value)) {
 				setBackground(Color.yellow);
 			} else {
 			}
-			
+
 			if (value != null) {
 				setIcon(inputIcon);
 			} else {
