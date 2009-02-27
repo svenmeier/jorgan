@@ -42,7 +42,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
@@ -140,7 +139,6 @@ public class ConsolePanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		scrollPane.setPreferredSize(new Dimension(160, 160));
 		column.box(scrollPane);
 
@@ -169,7 +167,6 @@ public class ConsolePanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		scrollPane.setPreferredSize(new Dimension(160, 160));
 		column.box(scrollPane);
 
