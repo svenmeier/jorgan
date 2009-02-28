@@ -346,7 +346,8 @@ public class ConsolePanel extends JPanel {
 
 	private abstract class RecordAction extends BaseAction {
 
-		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+		private MessageBox messageBox = new MessageBox(
+				MessageBox.OPTIONS_OK_CANCEL);
 
 		protected RecordAction(String name) {
 			config.get(name).read(this);
@@ -355,9 +356,9 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			beforeRecording();
-
 			try {
+				beforeRecording();
+
 				ShortMessageRecorder recorder = new ShortMessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
@@ -375,13 +376,15 @@ public class ConsolePanel extends JPanel {
 					}
 				};
 
-				messageBox.show(ConsolePanel.this);
+				int result = messageBox.show(ConsolePanel.this);
 
 				recorder.close();
+
+				if (result == MessageBox.OPTION_OK) {
+					afterRecording();
+				}
 			} catch (MidiUnavailableException cannotRecord) {
 			}
-
-			afterRecording();
 		}
 
 		protected void beforeRecording() {
@@ -408,6 +411,13 @@ public class ConsolePanel extends JPanel {
 
 			return false;
 		}
+
+		@Override
+		protected void afterRecording() {
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
+
+			switchRow.clearActivate();
+		}
 	}
 
 	private class DeactivateAction extends RecordAction {
@@ -425,6 +435,13 @@ public class ConsolePanel extends JPanel {
 
 			return false;
 		}
+
+		@Override
+		protected void afterRecording() {
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
+
+			switchRow.clearDeactivate();
+		}
 	}
 
 	private class ToggleAction extends RecordAction {
@@ -441,6 +458,13 @@ public class ConsolePanel extends JPanel {
 					message.getData2());
 
 			return false;
+		}
+
+		@Override
+		protected void afterRecording() {
+			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
+
+			switchRow.clearToggle();
 		}
 	}
 
@@ -483,7 +507,6 @@ public class ConsolePanel extends JPanel {
 		@Override
 		protected void afterRecording() {
 			state.afterRecording();
-
 		}
 
 		private abstract class State {
@@ -689,6 +712,18 @@ public class ConsolePanel extends JPanel {
 
 		public void newToggle(int status, int data1, int data2) {
 			toggle = aSwitch.createToggle(status, data1, data2);
+		}
+
+		public void clearActivate() {
+			activate = null;
+		}
+
+		public void clearDeactivate() {
+			deactivate = null;
+		}
+
+		public void clearToggle() {
+			toggle = null;
 		}
 
 		public void received(ShortMessage message) {
