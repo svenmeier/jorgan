@@ -57,6 +57,8 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.CreateMessageWizard;
 import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.NoOp;
 import jorgan.session.OrganSession;
 import jorgan.session.event.Compound;
 import jorgan.session.event.ElementSelectionEvent;
@@ -473,7 +475,8 @@ public class MessagesDockable extends OrganDockable {
 
 	private class RecordAction extends BaseAction {
 
-		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
+		private MessageBox messageBox = new MessageBox(
+				MessageBox.OPTIONS_OK_CANCEL);
 
 		private RecordAction() {
 			config.get("record").read(this);
@@ -522,10 +525,21 @@ public class MessagesDockable extends OrganDockable {
 					}
 				};
 
-				messageBox.show(table);
+				if (messageBox.show(table) == MessageBox.OPTION_OK) {
+
+				}
 
 				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
+				session.getUndoManager().compound();
+
+				int index = table.getSelectedRow();
+				if (index != -1) {
+					Message message = messages.get(index);
+
+					element.changeMessage(message, new NoOp().toString(),
+							new NoOp().toString(), new NoOp().toString());
+				}
 			}
 		}
 
@@ -536,10 +550,10 @@ public class MessagesDockable extends OrganDockable {
 			if (index != -1) {
 				Message message = messages.get(index);
 
-				element.changeMessage(message, "equal "
-						+ shortMessage.getStatus(), "equal "
-						+ shortMessage.getData1(), "equal "
-						+ shortMessage.getData2());
+				element.changeMessage(message, new Equal(shortMessage
+						.getStatus()).toString(), new Equal(shortMessage
+						.getData1()).toString(), new Equal(shortMessage
+						.getData2()).toString());
 			}
 		}
 	}
