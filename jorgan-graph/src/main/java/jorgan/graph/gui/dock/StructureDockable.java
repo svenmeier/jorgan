@@ -31,6 +31,7 @@ import jorgan.disposition.Message;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
+import jorgan.play.event.PlayListener;
 import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
 import jorgan.session.event.ElementSelectionEvent;
@@ -105,7 +106,8 @@ public class StructureDockable extends OrganDockable {
 
     if (this.session!=null) {
       this.session.removeOrganListener(listener);
-      this.session.addSelectionListener(listener);
+      this.session.removeSelectionListener(listener);
+      this.session.removePlayerListener(listener);
     }
     
     this.session = session;
@@ -113,6 +115,7 @@ public class StructureDockable extends OrganDockable {
     if (this.session!=null) {
       this.session.addOrganListener(listener);
       this.session.addSelectionListener(listener);
+      this.session.addPlayerListener(listener);
     }
     
     rebuild();
@@ -162,8 +165,8 @@ public class StructureDockable extends OrganDockable {
   /**
    * our listener for organ events
    */
-  private class ListenerImpl implements MouseListener, OrganListener, ElementSelectionListener {
-
+  private class ListenerImpl implements MouseListener, OrganListener, ElementSelectionListener, PlayListener {
+    
     public void selectionChanged(ElementSelectionEvent ev) {
       ElementSelection es = session.getElementSelection();
       selection = es.getSelectedElement();
@@ -220,6 +223,24 @@ public class StructureDockable extends OrganDockable {
     }
 
     public void mouseReleased(MouseEvent e) {
+    }
+
+    @Override
+    public void closed() {
+    }
+
+    @Override
+    public void opened() {
+      selection = null;
+      graphWidget.repaint();
+    }
+
+    @Override
+    public void received(int channel, int command, int data1, int data2) {
+    }
+
+    @Override
+    public void sent(int channel, int command, int data1, int data2) {
     }
     
   } //OrganCallback
