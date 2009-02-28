@@ -15,6 +15,9 @@
             <fileset dir="${jorgan.core.path}/lib">
 	            <include name="*" />
             </fileset>
+            <fileset dir="./lib">
+	            <include name="*" />
+            </fileset>
    		</classpath>
   	</javac>
   	
@@ -34,6 +37,11 @@
   	<jar file="./target/marshal/lib/graph.jar">
       <fileset dir="./target/classes" />
   	</jar>
+    <copy todir="./target/marshal/lib">
+    	<fileset dir="./lib">
+    		<include name="*.jar"/>
+    	</fileset>
+    </copy>
 
 	<zip destfile="./target/jOrgan-graph-${graph.version}.zip">
       <fileset dir="./target/marshal" />
