@@ -18,6 +18,7 @@
  */
 package jorgan.gui.customize.sound;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -53,11 +54,20 @@ public class GenericSoundPanel extends JPanel {
 		column.group(new JLabel(Elements.getDisplayName(sound)));
 
 		column.term(config.get("device").read(new JLabel()));
-		deviceComboBox = new JComboBox(DevicePool.instance()
-				.getMidiDeviceNames(Direction.IN));
+		deviceComboBox = new JComboBox();
 		deviceComboBox.setEditable(false);
-		deviceComboBox.setSelectedItem(sound.getOutput());
 		column.definition(deviceComboBox).fillHorizontal();
+		
+		read();
+	}
+
+	private void read() {
+		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
+				Direction.OUT);
+		String[] items = new String[1 + deviceNames.length];
+		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
+		this.deviceComboBox.setModel(new DefaultComboBoxModel(items));
+		this.deviceComboBox.setSelectedItem(sound.getOutput());
 	}
 
 	public void apply() {
