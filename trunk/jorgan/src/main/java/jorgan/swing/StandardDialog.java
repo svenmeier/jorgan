@@ -24,6 +24,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
@@ -343,8 +344,14 @@ public class StandardDialog extends JDialog {
 		Dimension preferred = getPreferredSize();
 		if (preferred.width > current.width
 				|| preferred.height > current.height) {
-			setSize(Math.max(preferred.width, current.width), Math.max(
-					preferred.height, current.height));
+
+			// don't resize beyond screen size (minus a magic extra distance)
+			Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+			screenSize.height -= 80;
+
+			setSize(Math.min(screenSize.width, Math.max(preferred.width,
+					current.width)), Math.min(screenSize.height, Math.max(
+					preferred.height, current.height)));
 			validate();
 		}
 	}
