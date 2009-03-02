@@ -114,7 +114,6 @@ public class StructureDockable extends OrganDockable {
     filters.add(new ElementFilter(Keyboard.class, false));
     filterCombo = new JComboBox(filters);
     filterCombo.setRenderer(new ListCellRenderer() {
-      @Override
       public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         ElementFilter filter = (ElementFilter)value;
         JComponent result;
@@ -134,7 +133,6 @@ public class StructureDockable extends OrganDockable {
       }
     });
     filterCombo.addActionListener(new ActionListener() {
-      @Override
       public void actionPerformed(ActionEvent e) {
         ElementFilter filter = (ElementFilter)filterCombo.getSelectedItem();
         if (filter!=null) {
@@ -354,21 +352,17 @@ public class StructureDockable extends OrganDockable {
     public void mouseReleased(MouseEvent e) {
     }
 
-    @Override
     public void closed() {
     }
 
-    @Override
     public void opened() {
       selection = null;
       graphWidget.repaint();
     }
 
-    @Override
     public void received(int channel, int command, int data1, int data2) {
     }
 
-    @Override
     public void sent(int channel, int command, int data1, int data2) {
     }
     
