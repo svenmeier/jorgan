@@ -15,30 +15,24 @@ import gj.util.DefaultVertex;
 import gj.util.EmptyGraph;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Rectangle;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.Set;
 
+import javax.swing.AbstractButton;
 import javax.swing.Icon;
-import javax.swing.JCheckBox;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JLabel;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
-import javax.swing.ListCellRenderer;
+import javax.swing.JToggleButton;
 
-import jorgan.disposition.Console;
+import jorgan.disposition.Captor;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Message;
@@ -51,6 +45,7 @@ import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import jorgan.swing.button.ButtonGroup;
 import swingx.docking.Docked;
 import bias.Configuration;
 
@@ -64,8 +59,9 @@ public class StructureDockable extends OrganDockable {
   private ListenerImpl listener = new ListenerImpl(); 
   private OrganSession session = null;
   private List<Element> selection = new ArrayList<Element>();
-  private Vector<ElementFilter> filters;
-  private JComboBox filterCombo;
+  
+  private List<Class<? extends Element>> sources = new ArrayList<Class<? extends Element>>();
+  private List<JToggleButton> sourcesToggles = new ArrayList<JToggleButton>();
   
   /**
    * Constructor
@@ -107,43 +103,27 @@ public class StructureDockable extends OrganDockable {
     
     graphWidget.addMouseListener(listener);
     
-    // prepare filter
-    filters= new Vector<ElementFilter>(20);
-    filters.add(null);
-    filters.add(new ElementFilter(Console.class, false));
-    filters.add(new ElementFilter(Keyboard.class, false));
-    filterCombo = new JComboBox(filters);
-    filterCombo.setRenderer(new ListCellRenderer() {
-      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-        ElementFilter filter = (ElementFilter)value;
-        JComponent result;
-        if (filter==null)
-          result = new JLabel("Filter");
-        else 
-          result = new JCheckBox(filter.type.getSimpleName(), filter.isSelected);
-        result.setOpaque(true);
-        if (isSelected) {
-          result.setBackground(list.getSelectionBackground());
-          result.setForeground(list.getSelectionForeground());
-        } else {
-          result.setBackground(list.getBackground());
-          result.setForeground(list.getForeground());
-        }
-        return result;
+    // prepare source buttons
+    sources.add(Captor.class);
+    sources.add(Keyboard.class);
+
+    ButtonGroup sourceGroup = new ButtonGroup() {
+      @Override
+      protected void onSelected(AbstractButton button) {
+        rebuild();
       }
-    });
-    filterCombo.addActionListener(new ActionListener() {
-      public void actionPerformed(ActionEvent e) {
-        ElementFilter filter = (ElementFilter)filterCombo.getSelectedItem();
-        if (filter!=null) {
-          filter.isSelected = !filter.isSelected;
-          rebuild();
-        }
-        filterCombo.setSelectedIndex(0);
-      }
-    });
+    };
+
+    for (int i=0;i<sources.size();i++) {
+      JToggleButton toggle = new JToggleButton(sources.get(i).getSimpleName(), ElementIcons.getIcon(sources.get(i)));
+      sourcesToggles.add(toggle);
+      sourceGroup.add(toggle);
+    }
     
+    // prepare contents
     setContent(new JScrollPane(graphWidget));
+    
+    // done
   }
   
   /** callback - being docked */
@@ -151,7 +131,9 @@ public class StructureDockable extends OrganDockable {
   public void docked(Docked docked) {
     super.docked(docked);
 
-    docked.addTool(filterCombo);
+    for (JToggleButton button : sourcesToggles)
+      docked.addTool(button);
+    
   }
 
   /** calback - session opened */
@@ -177,24 +159,35 @@ public class StructureDockable extends OrganDockable {
   
 
   /**
-   * filter out elements?
-   */
-  private boolean filter(Element element) {
-    for (ElementFilter filter : filters) {
-      if (filter==null) continue;
-      if (!filter.isSelected && filter.type.isAssignableFrom(element.getClass()))
-        return true;
-    }
-    return false;
-  }
-  
-  /**
    * create a non-empty name representation
    */
   private String name(Element element) {
     return element.getName().length()>0 ? element.getName() : element.getClass().getSimpleName();
   }
                                         
+  
+  /**
+   * find all sources
+   */
+  private Set<Element> sources() {
+    
+    Class<? extends Element> sourcetype = null;
+    for (int i=0;i<sourcesToggles.size();i++) {
+      if (sourcesToggles.get(i).isSelected()) {
+        sourcetype = sources.get(i);
+        break;
+      }
+    }
+    if (sourcetype==null) throw new IllegalArgumentException("no source type selected");
+    
+    Set<Element> result = new HashSet<Element>();
+    for (Element element : session.getOrgan().getElements()) {
+      if (sourcetype.isAssignableFrom(element.getClass()))
+        result.add(element);
+    }
+    
+    return result;
+  }
   
   /**
    * rebuild structure
@@ -207,9 +200,9 @@ public class StructureDockable extends OrganDockable {
       return;
     }
     
-    // build an element graph
+    // build an element graph on all sources
     // TODO this is kinda bad to redo all over every time :)
-    ElementGraph graph = new ElementGraph(session.getOrgan().getElements());
+    ElementGraph graph = new ElementGraph(sources());
     if (graph.getVertices().isEmpty()) {
       graphWidget.setGraph(new EmptyGraph());
       return;
@@ -261,22 +254,34 @@ public class StructureDockable extends OrganDockable {
    */
   private class ElementGraph implements Graph {
     
-    private Map<Element, DefaultVertex<Element>> vertices;
+    private Map<Element, DefaultVertex<Element>> vertices = new HashMap<Element, DefaultVertex<Element>>();
     private List<DefaultEdge<Element>> edges = new ArrayList<DefaultEdge<Element>>();
     
-    private ElementGraph(Collection<Element> elements) {
-      vertices = new HashMap<Element, DefaultVertex<Element>>(elements.size());
-      for (Element element : elements) {
-        if (!filter(element))
-          vertices.put(element, new DefaultVertex<Element>(element));
+    private ElementGraph(Set<Element> sources) {
+      for (Element source : sources) { 
+        DefaultVertex<Element> vertex = new DefaultVertex<Element>(source); 
+        vertices.put(source, vertex);
+        source2sink(vertex);
       }
-      for (Element element : elements) {
-        if (!filter(element))
-          for (Reference<? extends Element> ref : element.getReferences()) {
-            if (!filter(ref.getElement()))
-              edges.add(new DefaultEdge<Element>(vertices.get(element), vertices.get(ref.getElement())));
-          }
+    }
+    
+    private void source2sink(DefaultVertex<Element> from) {
+
+      for (Reference<? extends Element> reference : from.getContent().getReferences()) {
+        DefaultVertex<Element> to = vertex(reference.getElement());
+        edges.add(new DefaultEdge<Element>(from, to));
+        source2sink(to);
       }
+      
+    }
+    
+    private DefaultVertex<Element> vertex(Element element) {
+      DefaultVertex<Element> result = vertices.get(element);
+      if (result==null) {
+        result = new DefaultVertex<Element>(element); 
+        vertices.put(element, result);  
+      }
+      return result;
     }
 
     public Collection<? extends Edge> getEdges() {
@@ -345,8 +350,18 @@ public class StructureDockable extends OrganDockable {
     @SuppressWarnings({ "unchecked" })
     public void mousePressed(MouseEvent e) {
       DefaultVertex<Element> vertex = (DefaultVertex<Element>)graphWidget.getVertexAt(e.getPoint());
-      if (vertex!=null)
-        session.getElementSelection().setSelectedElement(vertex.getContent());
+      if (vertex==null)
+        return;
+      Element element = vertex.getContent();
+      ElementSelection selection = session.getElementSelection();
+      if ((e.getModifiers()&MouseEvent.CTRL_MASK)!=0) {
+        if (selection.isSelected(element))
+          selection.removeSelectedElement(element);
+        else
+          selection.addSelectedElement(element);
+      } else {
+        selection.setSelectedElement(element);
+      }
     }
 
     public void mouseReleased(MouseEvent e) {
