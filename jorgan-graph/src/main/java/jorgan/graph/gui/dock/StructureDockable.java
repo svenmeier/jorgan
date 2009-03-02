@@ -14,7 +14,10 @@ import gj.util.DefaultVertex;
 import gj.util.EmptyGraph;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Rectangle;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.geom.Rectangle2D;
@@ -23,10 +26,19 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Vector;
 
+import javax.swing.JCheckBox;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JScrollPane;
+import javax.swing.ListCellRenderer;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
 import jorgan.disposition.Message;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
@@ -36,6 +48,7 @@ import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
 import jorgan.session.event.ElementSelectionEvent;
 import jorgan.session.event.ElementSelectionListener;
+import swingx.docking.Docked;
 import bias.Configuration;
 
 /**
@@ -47,7 +60,9 @@ public class StructureDockable extends OrganDockable {
   private GraphWidget graphWidget;
   private ListenerImpl listener = new ListenerImpl(); 
   private OrganSession session = null;
-  private Element selection;
+  private List<Element> selection = new ArrayList<Element>();
+  private Vector<ElementFilter> filters;
+  private JComboBox filterCombo;
   
   /**
    * Constructor
@@ -60,15 +75,84 @@ public class StructureDockable extends OrganDockable {
       @Override
       @SuppressWarnings({ "unchecked" })
       protected Color getColor(Vertex vertex) {
-        if (selection!=null && ((DefaultVertex<Element>)vertex).getContent().equals(selection))
+        if (selection.isEmpty()) 
+          return Color.BLACK;
+        if (selection.contains(((DefaultVertex<Element>)vertex).getContent()))
           return Color.BLUE;
-        return Color.BLACK;
+        return Color.LIGHT_GRAY;
+      }
+      @Override
+      @SuppressWarnings({ "unchecked" })
+      protected Color getColor(Edge edge) {
+        if (selection.isEmpty()) 
+          return Color.BLACK;
+        if ( selection.contains(((DefaultVertex<Element>)edge.getStart()).getContent()) || selection.contains(((DefaultVertex<Element>)edge.getEnd()).getContent()) )
+          return Color.BLUE;
+        return Color.LIGHT_GRAY;
       }
     });
     
     graphWidget.addMouseListener(listener);
     
+    // prepare filter
+    filters= new Vector<ElementFilter>(20);
+    filters.add(null);
+    filters.add(new ElementFilter(Console.class, false));
+    filters.add(new ElementFilter(Keyboard.class, false));
+    filterCombo = new JComboBox(filters);
+    filterCombo.setRenderer(new ListCellRenderer() {
+      @Override
+      public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        ElementFilter filter = (ElementFilter)value;
+        JComponent result;
+        if (filter==null)
+          result = new JLabel("Filter");
+        else 
+          result = new JCheckBox(filter.type.getSimpleName(), filter.isSelected);
+        result.setOpaque(true);
+        if (isSelected) {
+          result.setBackground(list.getSelectionBackground());
+          result.setForeground(list.getSelectionForeground());
+        } else {
+          result.setBackground(list.getBackground());
+          result.setForeground(list.getForeground());
+        }
+        return result;
+      }
+    });
+    filterCombo.addActionListener(new ActionListener() {
+      @Override
+      public void actionPerformed(ActionEvent e) {
+        ElementFilter filter = (ElementFilter)filterCombo.getSelectedItem();
+        if (filter!=null) {
+          filter.isSelected = !filter.isSelected;
+          rebuild();
+        }
+        filterCombo.setSelectedIndex(0);
+      }
+    });
+    
     setContent(new JScrollPane(graphWidget));
+  }
+  
+  /** callback - being docked */
+  @Override
+  public void docked(Docked docked) {
+    super.docked(docked);
+
+    docked.addTool(filterCombo);
+  }
+  
+  /**
+   * filter out elements?
+   */
+  private boolean filter(Element element) {
+    for (ElementFilter filter : filters) {
+      if (filter==null) continue;
+      if (!filter.isSelected && filter.type.isAssignableFrom(element.getClass()))
+        return true;
+    }
+    return false;
   }
   
   /**
@@ -82,9 +166,15 @@ public class StructureDockable extends OrganDockable {
       return;
     }
     
-    // collect all info
+    // build an element graph
     // TODO this is kinda bad to redo all over every time :)
     ElementGraph graph = new ElementGraph(session.getOrgan().getElements());
+    if (graph.getVertices().isEmpty()) {
+      graphWidget.setGraph(new EmptyGraph());
+      return;
+    }
+    
+    // collect all info
     Layout2D layout = new DefaultLayout(new Rectangle2D.Double(-20,-20,40,40));
     Rectangle bounds = new Rectangle();
     try {
@@ -121,6 +211,19 @@ public class StructureDockable extends OrganDockable {
     rebuild();
   }
   
+  /** 
+   * a filter action
+   */
+  private class ElementFilter {
+    boolean isSelected;
+    Class<? extends Element> type;
+    
+    ElementFilter(Class<? extends Element> type, boolean isSelected) {
+      this.type = type;
+      this.isSelected = isSelected;
+    }
+  } //ElementFilter
+  
   /**
    * a graph of elements
    */
@@ -132,23 +235,26 @@ public class StructureDockable extends OrganDockable {
     private ElementGraph(Collection<Element> elements) {
       vertices = new HashMap<Element, DefaultVertex<Element>>(elements.size());
       for (Element element : elements) {
-        vertices.put(element, new DefaultVertex<Element>(element) {
-          @Override
-          public String toString() {
-            Element e = getContent();
-            return e.getName().length()>0 ? getContent().getName() : e.getClass().getSimpleName();
-          }
-        });
-      }
-      for (Element element : elements) {
-        for (Reference<? extends Element> ref : element.getReferences()) {
-          edges.add(new DefaultEdge<Element>(vertices.get(element), vertices.get(ref.getElement())) {
+        if (!filter(element))
+          vertices.put(element, new DefaultVertex<Element>(element) {
             @Override
             public String toString() {
-              return getContent().getName();
+              Element e = getContent();
+              return e.getName().length()>0 ? getContent().getName() : e.getClass().getSimpleName();
             }
           });
-        }
+      }
+      for (Element element : elements) {
+        if (!filter(element))
+          for (Reference<? extends Element> ref : element.getReferences()) {
+            if (!filter(ref.getElement()))
+            edges.add(new DefaultEdge<Element>(vertices.get(element), vertices.get(ref.getElement())) {
+              @Override
+              public String toString() {
+                return getContent().getName();
+              }
+            });
+          }
       }
     }
 
@@ -169,7 +275,7 @@ public class StructureDockable extends OrganDockable {
     
     public void selectionChanged(ElementSelectionEvent ev) {
       ElementSelection es = session.getElementSelection();
-      selection = es.getSelectedElement();
+      selection = es.getSelectedElements();
       graphWidget.repaint();
     }
     
