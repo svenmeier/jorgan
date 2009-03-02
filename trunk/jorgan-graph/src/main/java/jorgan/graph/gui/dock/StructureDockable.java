@@ -4,6 +4,7 @@ import gj.layout.DefaultLayout;
 import gj.layout.Layout2D;
 import gj.layout.LayoutAlgorithmException;
 import gj.layout.hierarchical.HierarchicalLayoutAlgorithm;
+import gj.layout.hierarchical.VertexInLayerComparator;
 import gj.model.Edge;
 import gj.model.Graph;
 import gj.model.Vertex;
@@ -142,7 +143,29 @@ public class StructureDockable extends OrganDockable {
 
     docked.addTool(filterCombo);
   }
+
+  /** calback - session opened */
+  @Override
+  public void setSession(OrganSession session) {
+
+    if (this.session!=null) {
+      this.session.removeOrganListener(listener);
+      this.session.removeSelectionListener(listener);
+      this.session.removePlayerListener(listener);
+    }
+    
+    this.session = session;
+
+    if (this.session!=null) {
+      this.session.addOrganListener(listener);
+      this.session.addSelectionListener(listener);
+      this.session.addPlayerListener(listener);
+    }
+    
+    rebuild();
+  }
   
+
   /**
    * filter out elements?
    */
@@ -154,6 +177,14 @@ public class StructureDockable extends OrganDockable {
     }
     return false;
   }
+  
+  /**
+   * create a non-empty name representation
+   */
+  private String name(Element element) {
+    return element.getName().length()>0 ? element.getName() : element.getClass().getSimpleName();
+  }
+                                        
   
   /**
    * rebuild structure
@@ -181,7 +212,7 @@ public class StructureDockable extends OrganDockable {
       HierarchicalLayoutAlgorithm a = new HierarchicalLayoutAlgorithm();
       a.setDistanceBetweenLayers(30);
       a.setDistanceBetweenVertices(30);
-      bounds = a.apply(graph, layout, null, null).getBounds();
+      bounds = a.apply(graph, layout, null, null, new ElementComparator()).getBounds();
     } catch (LayoutAlgorithmException e) {
       // FIXME report something
       e.printStackTrace();
@@ -190,27 +221,18 @@ public class StructureDockable extends OrganDockable {
     graphWidget.setGraph(graph, bounds);
     
   }
-
-  @Override
-  public void setSession(OrganSession session) {
-
-    if (this.session!=null) {
-      this.session.removeOrganListener(listener);
-      this.session.removeSelectionListener(listener);
-      this.session.removePlayerListener(listener);
-    }
-    
-    this.session = session;
-
-    if (this.session!=null) {
-      this.session.addOrganListener(listener);
-      this.session.addSelectionListener(listener);
-      this.session.addPlayerListener(listener);
-    }
-    
-    rebuild();
-  }
   
+  /**
+   * our interpretation of sorted vertices in a layer
+   */
+  private class ElementComparator implements VertexInLayerComparator {
+    public int compare(Vertex v1, Vertex v2, int layer, Layout2D layout) {
+      Element e1 = ((DefaultVertex<Element>)v1).getContent();
+      Element e2 = ((DefaultVertex<Element>)v2).getContent();
+      return name(e1).compareTo(name(e2));
+    }
+  } //ElementComparator
+
   /** 
    * a filter action
    */
@@ -239,8 +261,7 @@ public class StructureDockable extends OrganDockable {
           vertices.put(element, new DefaultVertex<Element>(element) {
             @Override
             public String toString() {
-              Element e = getContent();
-              return e.getName().length()>0 ? getContent().getName() : e.getClass().getSimpleName();
+              return name(getContent());
             }
           });
       }
