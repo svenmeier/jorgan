@@ -21,7 +21,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 
+import javax.swing.Icon;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
@@ -44,6 +45,7 @@ import jorgan.disposition.Message;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
+import jorgan.gui.img.ElementIcons;
 import jorgan.play.event.PlayListener;
 import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
@@ -90,6 +92,16 @@ public class StructureDockable extends OrganDockable {
         if ( selection.contains(((DefaultVertex<Element>)edge.getStart()).getContent()) || selection.contains(((DefaultVertex<Element>)edge.getEnd()).getContent()) )
           return Color.BLUE;
         return Color.LIGHT_GRAY;
+      }
+      @Override
+      @SuppressWarnings({ "unchecked" })
+      protected Icon getIcon(Vertex vertex) {
+        return ElementIcons.getIcon( ((DefaultVertex<Element>)vertex).getContent().getClass() );
+      }
+      @Override
+      @SuppressWarnings({ "unchecked" })
+      protected String getText(Vertex vertex) {
+        return name(((DefaultVertex<Element>)vertex).getContent());
       }
     });
     
@@ -206,7 +218,7 @@ public class StructureDockable extends OrganDockable {
     }
     
     // collect all info
-    Layout2D layout = new DefaultLayout(new Rectangle2D.Double(-20,-20,40,40));
+    Layout2D layout = new DefaultLayout(new Ellipse2D.Double(-30,-20,60,40));
     Rectangle bounds = new Rectangle();
     try {
       HierarchicalLayoutAlgorithm a = new HierarchicalLayoutAlgorithm();
@@ -258,23 +270,13 @@ public class StructureDockable extends OrganDockable {
       vertices = new HashMap<Element, DefaultVertex<Element>>(elements.size());
       for (Element element : elements) {
         if (!filter(element))
-          vertices.put(element, new DefaultVertex<Element>(element) {
-            @Override
-            public String toString() {
-              return name(getContent());
-            }
-          });
+          vertices.put(element, new DefaultVertex<Element>(element));
       }
       for (Element element : elements) {
         if (!filter(element))
           for (Reference<? extends Element> ref : element.getReferences()) {
             if (!filter(ref.getElement()))
-            edges.add(new DefaultEdge<Element>(vertices.get(element), vertices.get(ref.getElement())) {
-              @Override
-              public String toString() {
-                return getContent().getName();
-              }
-            });
+              edges.add(new DefaultEdge<Element>(vertices.get(element), vertices.get(ref.getElement())));
           }
       }
     }
