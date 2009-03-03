@@ -126,6 +126,11 @@ public class StructureDockable extends OrganDockable {
     // done
   }
   
+  @Override
+  public boolean forPlay() {
+    return false;
+  }
+  
   /** callback - being docked */
   @Override
   public void docked(Docked docked) {
@@ -377,7 +382,6 @@ public class StructureDockable extends OrganDockable {
     }
 
     public void opened() {
-      selection = null;
       graphWidget.repaint();
     }
 
