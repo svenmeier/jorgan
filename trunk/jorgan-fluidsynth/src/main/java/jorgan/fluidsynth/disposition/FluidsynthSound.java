@@ -21,6 +21,9 @@ package jorgan.fluidsynth.disposition;
 import jorgan.disposition.Sound;
 import jorgan.util.Null;
 
+/**
+ * TODO add polyphony (http://personales.ya.com/berarma/fluidsynth/html/ar01s04.html)
+ */
 public class FluidsynthSound extends Sound {
 
 	private String soundfont;
