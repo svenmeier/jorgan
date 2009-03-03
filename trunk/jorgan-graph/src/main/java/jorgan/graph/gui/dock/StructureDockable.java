@@ -4,7 +4,6 @@ import gj.layout.DefaultLayout;
 import gj.layout.Layout2D;
 import gj.layout.LayoutAlgorithmException;
 import gj.layout.hierarchical.HierarchicalLayoutAlgorithm;
-import gj.layout.hierarchical.VertexInLayerComparator;
 import gj.model.Edge;
 import gj.model.Graph;
 import gj.model.Vertex;
@@ -21,6 +20,7 @@ import java.awt.event.MouseListener;
 import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -215,7 +215,8 @@ public class StructureDockable extends OrganDockable {
       HierarchicalLayoutAlgorithm a = new HierarchicalLayoutAlgorithm();
       a.setDistanceBetweenLayers(30);
       a.setDistanceBetweenVertices(30);
-      bounds = a.apply(graph, layout, null, null, new ElementComparator()).getBounds();
+      a.setOrderOfVerticesInLayer(new ElementComparator());
+      bounds = a.apply(graph, layout, null, null).getBounds();
     } catch (LayoutAlgorithmException e) {
       // FIXME report something
       e.printStackTrace();
@@ -228,8 +229,9 @@ public class StructureDockable extends OrganDockable {
   /**
    * our interpretation of sorted vertices in a layer
    */
-  private class ElementComparator implements VertexInLayerComparator {
-    public int compare(Vertex v1, Vertex v2, int layer, Layout2D layout) {
+  private class ElementComparator implements Comparator<Vertex> {
+    @SuppressWarnings({ "unchecked" })
+    public int compare(Vertex v1, Vertex v2) {
       Element e1 = ((DefaultVertex<Element>)v1).getContent();
       Element e2 = ((DefaultVertex<Element>)v2).getContent();
       return name(e1).compareTo(name(e2));
@@ -323,7 +325,11 @@ public class StructureDockable extends OrganDockable {
     }
 
     public void propertyChanged(Element element, String name) {
-      graphWidget.repaint();
+      // rebuild graph if name has changed (a change in order of vertices)
+      if ("name".equals(name))
+        rebuild();
+      else
+        graphWidget.repaint();
     }
 
     public void referenceAdded(Element element, Reference<?> reference) {
