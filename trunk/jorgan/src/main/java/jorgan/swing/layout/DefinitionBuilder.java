@@ -1,15 +1,12 @@
 package jorgan.swing.layout;
 
-import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.JComponent;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 
-import jorgan.swing.border.RuleBorder;
 
 /**
  * A builder of a definition list.
@@ -20,13 +17,23 @@ public class DefinitionBuilder {
 
 	private JPanel panel;
 
-	private int spacing = 2;
+	private final int rowSpacing = 2;
 
+	private final int columnSpacing = 20;
+	
+	private int gridY;
+	
 	private int column = 0;
 
 	public DefinitionBuilder(JPanel panel) {
+		this(panel, 0);
+	}
+
+	public DefinitionBuilder(JPanel panel, int gridY) {
 		this.layout = new GridBagLayout();
 		this.panel = panel;
+		this.gridY = gridY;
+		
 		panel.setLayout(layout);
 	}
 
@@ -44,14 +51,17 @@ public class DefinitionBuilder {
 
 		private Column() {
 			constraints.gridx = column * 2;
-			constraints.gridy = 0;
+			constraints.gridy = gridY;
 			constraints.insets = new Insets(0, 0, 0, 0);
+			if (column > 0) {
+				constraints.insets.left = columnSpacing;
+			}
 		}
 
 		private void nextRow(int height) {
 			term = false;
 			constraints.gridy += height;
-			constraints.insets = new Insets(spacing, 0, 0, 0);
+			constraints.insets.top = rowSpacing;
 		}
 		
 		public void skip() {
@@ -165,19 +175,6 @@ public class DefinitionBuilder {
 				layout.setConstraints(component, constraints);
 				return this;
 			}
-		}
-	}
-
-	private class Group extends JPanel {
-
-		public Group(JComponent component) {
-			super(new BorderLayout(10, 0));
-
-			add(component, BorderLayout.WEST);
-
-			JLabel rule = new JLabel();
-			rule.setBorder(new RuleBorder(RuleBorder.CENTER));
-			add(rule, BorderLayout.CENTER);
 		}
 	}
 }
