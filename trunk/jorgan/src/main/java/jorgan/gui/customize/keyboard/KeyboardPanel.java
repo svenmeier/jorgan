@@ -18,6 +18,13 @@
  */
 package jorgan.gui.customize.keyboard;
 
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -29,7 +36,9 @@ import jorgan.disposition.Keyboard;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.swing.BaseAction;
 import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
@@ -53,43 +62,60 @@ public class KeyboardPanel extends JPanel {
 
 	private JSpinner transposeSpinner;
 
+	private RecordAction recordAction = new RecordAction();
+
 	public KeyboardPanel(Keyboard keyboard) {
 		this.keyboard = keyboard;
 
-		DefinitionBuilder builder = new DefinitionBuilder(this);
+		setLayout(new BorderLayout());
 
-		Column column = builder.column();
+		add(new Group(new JLabel(Elements.getDisplayName(keyboard))),
+				BorderLayout.NORTH);
 
-		column.group(new JLabel(Elements.getDisplayName(keyboard)));
+		JPanel definitions = new JPanel();
+		add(definitions, BorderLayout.CENTER);
 
-		column.term(config.get("device").read(new JLabel()));
-		deviceComboBox = new JComboBox(DevicePool.instance()
-				.getMidiDeviceNames(Direction.IN));
+		DefinitionBuilder builder = new DefinitionBuilder(definitions);
+
+		Column firstColumn = builder.column();
+
+		firstColumn.term(config.get("device").read(new JLabel()));
+		deviceComboBox = new JComboBox();
 		deviceComboBox.setEditable(false);
-		column.definition(deviceComboBox).fillHorizontal();
+		deviceComboBox.addItemListener(recordAction);
+		firstColumn.definition(deviceComboBox).fillHorizontal();
 
-		column.term(config.get("channel").read(new JLabel()));
+		firstColumn.term(config.get("channel").read(new JLabel()));
 		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
-		column.definition(channelSpinner);
+		firstColumn.definition(channelSpinner);
 
-		column.term(config.get("from").read(new JLabel()));
-		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
-		column.definition(fromSpinner);
-
-		column.term(config.get("to").read(new JLabel()));
-		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
-		column.definition(toSpinner);
-
-		column.term(config.get("transpose").read(new JLabel()));
+		firstColumn.term(config.get("transpose").read(new JLabel()));
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -64, 63, 1));
-		column.definition(transposeSpinner);
+		firstColumn.definition(transposeSpinner);
+
+		Column secondColumn = builder.column();
+
+		secondColumn.term(config.get("from").read(new JLabel()));
+		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
+		secondColumn.definition(fromSpinner);
+
+		secondColumn.term(config.get("to").read(new JLabel()));
+		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
+		secondColumn.definition(toSpinner);
+
+		secondColumn.definition(new JButton(recordAction));
 
 		read();
 	}
 
 	private void read() {
+		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
+		String[] items = new String[1 + deviceNames.length];
+		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
+		deviceComboBox.setModel(new DefaultComboBoxModel(items));
 		deviceComboBox.setSelectedItem(keyboard.getInput());
-		
+
 		try {
 			channelSpinner.setValue(keyboard.getChannel());
 		} catch (ProcessingException e) {
@@ -116,7 +142,7 @@ public class KeyboardPanel extends JPanel {
 			}
 		} catch (ProcessingException ignore) {
 		}
-		
+
 		try {
 			if (fromSpinner.isEnabled()) {
 				keyboard.setPitch((Integer) fromSpinner.getValue(),
@@ -124,6 +150,19 @@ public class KeyboardPanel extends JPanel {
 						(Integer) transposeSpinner.getValue());
 			}
 		} catch (ProcessingException ignore) {
+		}
+	}
+
+	private class RecordAction extends BaseAction implements ItemListener {
+		public RecordAction() {
+			config.get("record").read(this);
+		}
+
+		public void itemStateChanged(ItemEvent e) {
+			setEnabled(deviceComboBox.getSelectedItem() != null);
+		}
+
+		public void actionPerformed(ActionEvent e) {
 		}
 	}
 }
