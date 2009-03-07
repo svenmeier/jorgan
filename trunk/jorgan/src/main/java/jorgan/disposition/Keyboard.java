@@ -185,8 +185,12 @@ public class Keyboard extends Element implements Input {
 			throws ProcessingException {
 
 		Command command = new Get(PressKey.PITCH);
-		if (transpose != 0) {
-			command = new Add(null, transpose, command);
+		
+		if (transpose < 0) {
+			command = new Sub(-transpose, command);
+		}
+		if (transpose > 0) {
+			command = new Add(transpose, command);
 		}
 		if (to < 127) {
 			command = new LessEqual(to, command);

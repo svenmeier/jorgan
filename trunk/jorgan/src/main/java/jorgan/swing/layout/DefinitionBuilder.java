@@ -23,7 +23,7 @@ public class DefinitionBuilder {
 	
 	private int gridY;
 	
-	private int column = 0;
+	private int columnIndex = 0;
 
 	public DefinitionBuilder(JPanel panel) {
 		this(panel, 0);
@@ -38,8 +38,8 @@ public class DefinitionBuilder {
 	}
 
 	public Column column() {
-		Column column = new Column();
-		this.column++;
+		Column column = new Column(this.columnIndex);
+		this.columnIndex++;
 		return column;
 	}
 
@@ -47,15 +47,15 @@ public class DefinitionBuilder {
 
 		private GridBagConstraints constraints = new GridBagConstraints();
 
+		private int columnIndex;
+		
 		private boolean term;
 
-		private Column() {
-			constraints.gridx = column * 2;
+		private Column(int columnIndex) {
+			this.columnIndex = columnIndex;
+			
 			constraints.gridy = gridY;
-			constraints.insets = new Insets(0, 0, 0, 0);
-			if (column > 0) {
-				constraints.insets.left = columnSpacing;
-			}
+			constraints.insets = new Insets(0, 2, 0, 2);
 		}
 
 		private void nextRow(int height) {
@@ -73,12 +73,16 @@ public class DefinitionBuilder {
 				nextRow(1);
 			}
 
+			constraints.gridx = columnIndex * 2;
 			constraints.gridwidth = 2;
 			constraints.gridheight = 1;
 			constraints.weightx = 1.0d;
 			constraints.weighty = 0.0d;
 			constraints.fill = GridBagConstraints.HORIZONTAL;
 			constraints.anchor = GridBagConstraints.WEST;
+			if (columnIndex > 0) {
+				constraints.insets.left = columnSpacing;
+			}
 			panel.add(new Group(component), constraints);
 
 			nextRow(1);
@@ -89,11 +93,15 @@ public class DefinitionBuilder {
 				nextRow(1);
 			}
 
+			constraints.gridx = columnIndex * 2;
 			constraints.gridwidth = 2;
 			constraints.gridheight = 1;
 			constraints.weightx = 1.0d;
 			constraints.weighty = 1.0d;
 			constraints.fill = GridBagConstraints.BOTH;
+			if (columnIndex > 0) {
+				constraints.insets.left = columnSpacing;
+			}
 			panel.add(component, constraints);
 
 			nextRow(1);
@@ -104,12 +112,16 @@ public class DefinitionBuilder {
 				nextRow(1);
 			}
 
+			constraints.gridx = columnIndex * 2;
 			constraints.gridwidth = 1;
 			constraints.gridheight = 1;
 			constraints.weightx = 0.0d;
 			constraints.weighty = 0.0d;
 			constraints.fill = GridBagConstraints.NONE;
 			constraints.anchor = GridBagConstraints.EAST;
+			if (columnIndex > 0) {
+				constraints.insets.left = columnSpacing;
+			}
 			panel.add(component, constraints);
 
 			term = true;
@@ -121,13 +133,14 @@ public class DefinitionBuilder {
 
 		public Definition definition(JComponent component, int height) {
 			GridBagConstraints constraints = (GridBagConstraints) this.constraints.clone();
-			constraints.gridx += 1;
+			constraints.gridx = columnIndex * 2 + 1;
 			constraints.gridwidth = 1;
 			constraints.gridheight = height;
 			constraints.weightx = 1.0d;
 			constraints.weighty = 0.0d;
 			constraints.fill = GridBagConstraints.NONE;
 			constraints.anchor = GridBagConstraints.WEST;
+			constraints.insets.left = 2;
 
 			Definition definition = new Definition(component, constraints);
 

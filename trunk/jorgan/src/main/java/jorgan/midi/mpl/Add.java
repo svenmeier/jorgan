@@ -28,8 +28,8 @@ public class Add extends ValueCommand {
 		super(name, value);
 	}
 
-	public Add(String name, float value, Command successor) {
-		super(name, value, successor);
+	public Add(float value, Command successor) {
+		super(null, value, successor);
 	}
 
 	@Override

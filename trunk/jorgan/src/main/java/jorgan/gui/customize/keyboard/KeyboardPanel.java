@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.ShortMessage;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -35,12 +37,14 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * A panel for a {@link Keyboard}.
@@ -85,15 +89,17 @@ public class KeyboardPanel extends JPanel {
 		deviceComboBox.addItemListener(recordAction);
 		firstColumn.definition(deviceComboBox).fillHorizontal();
 
-		firstColumn.term(config.get("channel").read(new JLabel()));
-		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
-		firstColumn.definition(channelSpinner);
-
 		firstColumn.term(config.get("transpose").read(new JLabel()));
 		transposeSpinner = new JSpinner(new SpinnerNumberModel(0, -64, 63, 1));
 		firstColumn.definition(transposeSpinner);
 
+		firstColumn.definition(new JButton(recordAction));
+
 		Column secondColumn = builder.column();
+
+		secondColumn.term(config.get("channel").read(new JLabel()));
+		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
+		secondColumn.definition(channelSpinner);
 
 		secondColumn.term(config.get("from").read(new JLabel()));
 		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
@@ -102,8 +108,6 @@ public class KeyboardPanel extends JPanel {
 		secondColumn.term(config.get("to").read(new JLabel()));
 		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
 		secondColumn.definition(toSpinner);
-
-		secondColumn.definition(new JButton(recordAction));
 
 		read();
 	}
@@ -154,8 +158,22 @@ public class KeyboardPanel extends JPanel {
 	}
 
 	private class RecordAction extends BaseAction implements ItemListener {
+
+		private MessageBox messageBox = new MessageBox(
+				MessageBox.OPTIONS_OK_CANCEL);
+
+		private int channel;
+
+		private int from;
+
+		private int to;
+
 		public RecordAction() {
 			config.get("record").read(this);
+
+			config.get("record/message").read(messageBox);
+			
+			setEnabled(false);
 		}
 
 		public void itemStateChanged(ItemEvent e) {
@@ -163,6 +181,47 @@ public class KeyboardPanel extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			channel = -1;
+			from = Integer.MAX_VALUE;
+			to = 0;
+
+			try {
+				ShortMessageRecorder recorder = new ShortMessageRecorder(
+						(String) deviceComboBox.getSelectedItem()) {
+					@Override
+					public boolean messageRecorded(ShortMessage message) {
+						if (isValid(message.getCommand())) {
+							if (channel == -1) {
+								channel = message.getChannel();
+							}
+
+							if (message.getChannel() == channel) {
+								from = Math.min(from, message.getData1());
+								to = Math.max(to, message.getData1());
+							}
+						}
+
+						return true;
+					}
+				};
+
+				int result = messageBox.show(KeyboardPanel.this);
+
+				recorder.close();
+
+				if (result == MessageBox.OPTION_OK && channel != -1) {
+					channelSpinner.setValue(channel);
+					fromSpinner.setValue(from);
+					toSpinner.setValue(to);
+				}
+			} catch (MidiUnavailableException cannotRecord) {
+			}
+		}
+
+		private boolean isValid(int command) {
+			return command == ShortMessage.NOTE_ON
+					|| command == ShortMessage.NOTE_OFF
+					|| command == ShortMessage.POLY_PRESSURE;
 		}
 	}
 }
