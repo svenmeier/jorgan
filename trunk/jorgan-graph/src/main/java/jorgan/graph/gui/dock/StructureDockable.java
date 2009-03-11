@@ -1,15 +1,14 @@
 package jorgan.graph.gui.dock;
 
-import gj.layout.DefaultLayout;
-import gj.layout.Layout2D;
-import gj.layout.LayoutAlgorithmException;
-import gj.layout.hierarchical.HierarchicalLayoutAlgorithm;
+import gj.layout.LayoutException;
+import gj.layout.graph.hierarchical.HierarchicalLayout;
 import gj.model.Edge;
-import gj.model.Graph;
 import gj.model.Vertex;
 import gj.ui.DefaultGraphRenderer;
 import gj.ui.GraphWidget;
 import gj.util.DefaultEdge;
+import gj.util.DefaultGraph;
+import gj.util.DefaultLayoutContext;
 import gj.util.DefaultVertex;
 import gj.util.EmptyGraph;
 
@@ -201,7 +200,7 @@ public class StructureDockable extends OrganDockable {
     
     // got a session?
     if (session==null) {
-      graphWidget.setGraph(new EmptyGraph());
+      graphWidget.setGraph2D(new EmptyGraph());
       return;
     }
     
@@ -209,25 +208,23 @@ public class StructureDockable extends OrganDockable {
     // TODO this is kinda bad to redo all over every time :)
     ElementGraph graph = new ElementGraph(sources());
     if (graph.getVertices().isEmpty()) {
-      graphWidget.setGraph(new EmptyGraph());
+      graphWidget.setGraph2D(new EmptyGraph());
       return;
     }
     
     // collect all info
-    Layout2D layout = new DefaultLayout(new Ellipse2D.Double(-30,-20,60,40));
     Rectangle bounds = new Rectangle();
     try {
-      HierarchicalLayoutAlgorithm a = new HierarchicalLayoutAlgorithm();
+      HierarchicalLayout a = new HierarchicalLayout();
       a.setDistanceBetweenLayers(30);
       a.setDistanceBetweenVertices(30);
       a.setOrderOfVerticesInLayer(new ElementComparator());
-      bounds = a.apply(graph, layout, null, null).getBounds();
-    } catch (LayoutAlgorithmException e) {
+      bounds = a.apply(graph, new DefaultLayoutContext()).getBounds();
+    } catch (LayoutException e) {
       // FIXME report something
       e.printStackTrace();
     }
-    graphWidget.setGraphLayout(layout);
-    graphWidget.setGraph(graph, bounds);
+    graphWidget.setGraph2D(graph, bounds);
     
   }
   
@@ -259,12 +256,13 @@ public class StructureDockable extends OrganDockable {
   /**
    * a graph of elements
    */
-  private class ElementGraph implements Graph {
+  private class ElementGraph extends DefaultGraph {
     
     private Map<Element, DefaultVertex<Element>> vertices = new HashMap<Element, DefaultVertex<Element>>();
     private List<DefaultEdge<Element>> edges = new ArrayList<DefaultEdge<Element>>();
     
     private ElementGraph(Set<Element> sources) {
+      super(null, new Ellipse2D.Double(-30,-20,60,40));
       for (Element source : sources) { 
         DefaultVertex<Element> vertex = new DefaultVertex<Element>(source); 
         vertices.put(source, vertex);
@@ -291,10 +289,12 @@ public class StructureDockable extends OrganDockable {
       return result;
     }
 
+    @Override
     public Collection<? extends Edge> getEdges() {
       return edges;
     }
 
+    @Override
     public Collection<? extends Vertex> getVertices() {
       return vertices.values();
     }
