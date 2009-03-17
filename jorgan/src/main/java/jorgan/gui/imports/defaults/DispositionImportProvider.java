@@ -23,7 +23,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -90,7 +89,7 @@ public class DispositionImportProvider implements ImportProvider {
 		File file = panel.fileSelector.getSelectedFile();
 		if (file != null) {
 			try {
-				elements.addAll(readElements(file));
+				elements = readElements(file);
 			} catch (IOException ex) {
 				panel.showMessage("exception/general", file.getPath());
 			} catch (Exception ex) {
@@ -110,9 +109,16 @@ public class DispositionImportProvider implements ImportProvider {
 	 * @throws IOException
 	 * @throws XMLFormatException
 	 */
-	private Set<Element> readElements(File file) throws IOException {
+	private List<Element> readElements(File file) throws IOException {
 		Organ organ = new DispositionStream().read(file);
-		return organ.getElements();
+
+		List<Element> elements = new ArrayList<Element>(organ.getElements());
+
+		for (Element element : elements) {
+			organ.removeElement(element);
+		}
+
+		return elements;
 	}
 
 	/**
@@ -148,7 +154,7 @@ public class DispositionImportProvider implements ImportProvider {
 		public void showMessage(String key, Object... args) {
 			MessageBox box = config.get(key).read(
 					new MessageBox(MessageBox.OPTIONS_OK));
-			box.show(panel);
+			box.show(panel, args);
 		}
 	}
 }
