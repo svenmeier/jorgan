@@ -19,11 +19,13 @@
 package jorgan.gui.console;
 
 import java.awt.Color;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.KeyEvent;
 import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
@@ -32,13 +34,18 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
+import jorgan.skin.ButtonLayer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 import jorgan.skin.Layer.ViewBinding;
+import jorgan.swing.StandardDialog;
 import bias.Configuration;
 
 /**
@@ -53,6 +60,11 @@ public class View<E extends Displayable> {
 	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
 	 */
 	public static final String BINDING_NAME = "name";
+
+	/**
+	 * The popup's key of for {@link ButtonLayer}s.
+	 */
+	public static final String BINDING_POPUP = "popup";
 
 	protected Dimension size = new Dimension();
 
@@ -218,7 +230,7 @@ public class View<E extends Displayable> {
 			try {
 				String line = reader.readLine();
 				if (line == null) {
-					return;
+					break;
 				}
 
 				int equalSign = line.indexOf("=");
@@ -242,6 +254,44 @@ public class View<E extends Displayable> {
 				throw new Error(unexpected);
 			}
 		}
+
+		setBinding(BINDING_POPUP, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+
+			public boolean isPressed() {
+				return false;
+			}
+
+			public void pressed() {
+				openPopup();
+			}
+
+			public void released() {
+			}
+		});
+	}
+
+	private void openPopup() {
+
+		JDialog dialog;
+
+		Window window = StandardDialog.getWindow(getContainer().getHost());
+		if (window instanceof JFrame) {
+			dialog = new JDialog((JFrame) window);
+		} else if (window instanceof JDialog) {
+			dialog = new JDialog((JDialog) window);
+		} else {
+			throw new Error("unable to get window ancestor");
+		}
+
+		onOpenPopup(dialog.getContentPane());
+
+		dialog.setVisible(true);
+	}
+
+	protected void onOpenPopup(Container container) {
 	}
 
 	protected void initStyle() {
