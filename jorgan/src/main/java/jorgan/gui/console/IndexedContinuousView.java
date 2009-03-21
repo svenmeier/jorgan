@@ -22,22 +22,23 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import jorgan.disposition.IndexedContinuous;
-import jorgan.disposition.Memory;
 import jorgan.skin.TextLayer;
 
 /**
- * A view that shows a {@link Memory}.
+ * A view that shows an {@link IndexedContinuous}.
  */
 public class IndexedContinuousView<E extends IndexedContinuous> extends
 		ContinuousView<E> {
 
 	/**
-	 * The key of the {@link IndexedContinuous#getIndex()} text for {@link TextLayer}s.
+	 * The key of the {@link IndexedContinuous#getIndex()} text for
+	 * {@link TextLayer}s.
 	 */
 	public static final String BINDING_INDEX = "index";
 
 	/**
-	 * The key of the {@link IndexedContinuous#getTitle()} text for {@link TextLayer}s.
+	 * The key of the {@link IndexedContinuous#getTitle()} text for
+	 * {@link TextLayer}s.
 	 */
 	public static final String BINDING_TITLE = "title";
 
@@ -66,7 +67,7 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 				return indexFormat.format(getElement().getIndex() + 1);
 			}
 		});
-		
+
 		setBinding(BINDING_TITLE, new TextLayer.Binding() {
 			public boolean isPressable() {
 				return false;
