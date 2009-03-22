@@ -19,12 +19,16 @@
 package jorgan.gui.console;
 
 import java.awt.Color;
+import java.awt.Insets;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
 
 import jorgan.disposition.Memory;
+import jorgan.skin.ButtonLayer;
+import jorgan.skin.Fill;
+import jorgan.skin.Layer;
 import jorgan.swing.list.FilterList;
 
 /**
@@ -40,6 +44,15 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	 */
 	public MemoryView(Memory memory) {
 		super(memory);
+	}
+
+	protected Layer createPressableLayer() {
+		ButtonLayer layer = new ButtonLayer();
+		layer.setBinding(BINDING_POPUP);
+		layer.setFill(Fill.BOTH);
+		layer.setPadding(new Insets(4, 4, 4, 4));
+
+		return layer;
 	}
 
 	@Override

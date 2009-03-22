@@ -59,14 +59,14 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
-		style.addChild(createTextNameLayer());
-		style.addChild(createTextValueLayer());
-		style.addChild(createSliderLayer());
+		style.addChild(createNameLayer());
+		style.addChild(createNumberLayer());
+		style.addChild(createPressableLayer());
 
 		return style;
 	}
 
-	protected Layer createTextNameLayer() {
+	protected Layer createNameLayer() {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(BINDING_NAME);
 		layer.setPadding(new Insets(4, 4, 4 + getDefaultFont().getSize(), 4));
@@ -76,7 +76,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		return layer;
 	}
 
-	protected Layer createTextValueLayer() {
+	protected Layer createNumberLayer() {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(BINDING_VALUE);
 		layer.setPadding(new Insets(4 + getDefaultFont().getSize(), 4, 4, 4));
@@ -86,7 +86,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		return layer;
 	}
 
-	protected Layer createSliderLayer() {
+	protected Layer createPressableLayer() {
 		SliderLayer layer = new SliderLayer();
 		layer.setBinding(BINDING_VALUE);
 		layer.setFill(Fill.BOTH);

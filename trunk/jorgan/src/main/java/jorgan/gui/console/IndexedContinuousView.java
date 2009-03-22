@@ -18,10 +18,12 @@
  */
 package jorgan.gui.console;
 
+import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
 import jorgan.disposition.IndexedContinuous;
+import jorgan.skin.Layer;
 import jorgan.skin.TextLayer;
 
 /**
@@ -78,4 +80,15 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 			}
 		});
 	}
+	
+	protected Layer createNumberLayer() {
+		TextLayer layer = new TextLayer();
+		layer.setBinding(BINDING_INDEX);
+		layer.setPadding(new Insets(4 + getDefaultFont().getSize(), 4, 4, 4));
+		layer.setFont(getDefaultFont());
+		layer.setColor(getDefaultColor());
+
+		return layer;
+	}
+
 }
