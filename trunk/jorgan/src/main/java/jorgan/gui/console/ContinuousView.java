@@ -24,6 +24,7 @@ import java.text.NumberFormat;
 
 import jorgan.disposition.Continuous;
 import jorgan.skin.Fill;
+import jorgan.skin.Layer;
 import jorgan.skin.SliderLayer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
@@ -65,7 +66,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		return style;
 	}
 
-	protected TextLayer createTextNameLayer() {
+	protected Layer createTextNameLayer() {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(BINDING_NAME);
 		layer.setPadding(new Insets(4, 4, 4 + getDefaultFont().getSize(), 4));
@@ -75,7 +76,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		return layer;
 	}
 
-	protected TextLayer createTextValueLayer() {
+	protected Layer createTextValueLayer() {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(BINDING_VALUE);
 		layer.setPadding(new Insets(4 + getDefaultFont().getSize(), 4, 4, 4));
@@ -85,7 +86,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		return layer;
 	}
 
-	protected SliderLayer createSliderLayer() {
+	protected Layer createSliderLayer() {
 		SliderLayer layer = new SliderLayer();
 		layer.setBinding(BINDING_VALUE);
 		layer.setFill(Fill.BOTH);
