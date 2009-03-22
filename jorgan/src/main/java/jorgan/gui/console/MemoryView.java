@@ -18,17 +18,19 @@
  */
 package jorgan.gui.console;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.swing.JLabel;
+import javax.swing.JComponent;
 
 import jorgan.disposition.Memory;
+import jorgan.swing.list.FilterList;
 
 /**
  * A view that shows a {@link Memory}.
  */
-public class MemoryView extends ContinuousView<Memory> {
+public class MemoryView extends IndexedContinuousView<Memory> {
 
 	/**
 	 * Constructor.
@@ -41,9 +43,41 @@ public class MemoryView extends ContinuousView<Memory> {
 	}
 
 	@Override
-	protected void onOpenPopup(Container container) {
-		container.setLayout(new BorderLayout());
+	protected JComponent createPopupContents() {
 
-		container.add(new JLabel("Hello Popup"), BorderLayout.NORTH);
+		FilterList<Integer> filterList = new FilterList<Integer>() {
+			@Override
+			protected List<Integer> getItems(String filter) {
+				List<Integer> items = new ArrayList<Integer>();
+				for (int i = 0; i < getElement().getSize(); i++) {
+					String title = getElement().getTitle(i);
+					if (title.contains(filter)) {
+						items.add(i);
+					}
+				}
+				return items;
+			}
+
+			@Override
+			protected String toString(Integer item) {
+				return (item.intValue() + 1) + " - "
+						+ getElement().getTitle(item);
+			}
+
+			@Override
+			protected void onSelectedItem(Integer item) {
+				getElement().setIndex(item.intValue());
+
+				closePopup();
+			}
+		};
+		filterList.setOpaque(true);
+		filterList.setBackground(new Color(255, 255, 225));
+
+		if (getElement().getIndex() != -1) {
+			filterList.setSelectedItem(getElement().getIndex());
+		}
+
+		return filterList;
 	}
 }
