@@ -89,6 +89,7 @@ import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
 import jorgan.swing.MacAdapter;
+import jorgan.swing.StandardDialog;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -223,6 +224,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private Action spreadVerticalAction = new LayoutAction(
 			new SpreadVerticalLayout());
+
+	private StandardDialog popup;
 
 	/**
 	 * Create a view panel.
@@ -422,6 +425,30 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			}
 		}
 		return null;
+	}
+
+	public void showPopup(View<? extends Displayable> view, JComponent contents) {
+		if (popup == null) {
+			popup = StandardDialog.create(this);
+			popup.setUndecorated(true);
+			popup.setModal(false);
+			popup.closeOnFocusLost();
+		}
+
+		popup.setSize(new Dimension(512, 256));
+		popup.setBody(contents);
+
+		Point location = getLocationOnScreen();
+		location.x += viewToScreen(view.getX(), false);
+		location.y += viewToScreen(view.getY(), false);
+		popup.setLocation(location);
+		popup.setVisible(true);
+	}
+
+	public void hidePopup() {
+		if (popup != null) {
+			popup.setVisible(false);
+		}
 	}
 
 	private void setConstructing(boolean constructing) {

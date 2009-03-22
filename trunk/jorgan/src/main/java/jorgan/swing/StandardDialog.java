@@ -30,6 +30,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowFocusListener;
 
 import javax.swing.Action;
 import javax.swing.BorderFactory;
@@ -147,6 +148,17 @@ public class StandardDialog extends JDialog {
 			@Override
 			public void windowClosing(WindowEvent ev) {
 				onCancel();
+			}
+		});
+	}
+
+	public void closeOnFocusLost() {
+		addWindowFocusListener(new WindowFocusListener() {
+			public void windowGainedFocus(WindowEvent e) {
+			}
+
+			public void windowLostFocus(WindowEvent e) {
+				setVisible(false);
 			}
 		});
 	}

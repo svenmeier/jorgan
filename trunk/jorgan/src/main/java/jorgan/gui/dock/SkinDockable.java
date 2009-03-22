@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
+import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
@@ -278,6 +279,12 @@ public class SkinDockable extends OrganDockable {
 						public void setLocation(
 								View<? extends Displayable> view, Point location) {
 						}
+
+						public void showPopup(View<? extends Displayable> view, JComponent contents) {
+						}
+						
+						public void hidePopup() {
+						}
 					});
 
 					styles.add(view);
@@ -308,7 +315,7 @@ public class SkinDockable extends OrganDockable {
 			this.view = (View<Displayable>) value;
 
 			setToolTipText(view.getStyle().getName());
-			
+
 			return super.getListCellRendererComponent(list, this, index,
 					isSelected, cellHasFocus);
 		}

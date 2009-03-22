@@ -20,11 +20,14 @@ package jorgan.swing.list;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.Action;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
+import javax.swing.KeyStroke;
 
 /**
  * Utility method for lists.
@@ -33,7 +36,8 @@ public class ListUtils {
 
 	/**
 	 * Add a listener to actions to the given list, i.e. the given listener is
-	 * notified if a cell is double clicked.
+	 * notified if a cell is clicked. If the listener is an instance of
+	 * {@link Action} it will be bound to {@link KeyEvent#VK_ENTER} too.
 	 * 
 	 * @param list
 	 *            the list to add the listener to
@@ -41,11 +45,11 @@ public class ListUtils {
 	 *            the listener to add
 	 */
 	public static void addActionListener(final JList list,
-			final ActionListener listener) {
+			final int clickCount, final ActionListener listener) {
 		list.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				if (e.getClickCount() == 2) {
+				if (e.getClickCount() == clickCount) {
 					if (list.getSelectedIndex() != -1) {
 						listener.actionPerformed(new ActionEvent(list,
 								ActionEvent.ACTION_PERFORMED, null));
@@ -53,6 +57,12 @@ public class ListUtils {
 				}
 			}
 		});
+
+		if (listener instanceof Action) {
+			list.getInputMap().put(
+					KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), listener);
+			list.getActionMap().put(listener, (Action)listener);
+		}
 	}
 
 	/**
