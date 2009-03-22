@@ -21,6 +21,8 @@ package jorgan.gui.console;
 import java.awt.Component;
 import java.awt.Point;
 
+import javax.swing.JComponent;
+
 import jorgan.disposition.Displayable;
 import jorgan.skin.Style;
 
@@ -38,7 +40,7 @@ public interface ViewContainer {
 	 * Get the style for the given view.
 	 */
 	public Style getStyle(View<? extends Displayable> view);
-	
+
 	/**
 	 * Get the location for the given view.
 	 */
@@ -56,4 +58,8 @@ public interface ViewContainer {
 	 *            view to repaint
 	 */
 	public void repaintView(View<? extends Displayable> view);
+
+	public void showPopup(View<? extends Displayable> view, JComponent contents);
+
+	public void hidePopup();
 }

@@ -27,6 +27,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Memory;
@@ -52,7 +53,7 @@ public class MemoryDockable extends OrganDockable {
 
 	private JTable table = new JTable();
 
-	private MemoryModel model = new MemoryModel();
+	private EventListener listener = new EventListener();
 
 	private OrganSession session;
 
@@ -64,16 +65,18 @@ public class MemoryDockable extends OrganDockable {
 	public MemoryDockable() {
 		config.read(this);
 
-		table.setModel(model);
+		table.setModel(new MemoryModel());
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
+		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
+		renderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
+		table.getColumnModel().getColumn(0).setCellRenderer(renderer);
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new StringCellEditor());
-		TableUtils.hideHeader(table);
 		TableUtils.fixColumnWidth(table, 0, "888");
+		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
 		setContent(new JScrollPane(table));
 
-		setMemory(null);
 	}
 
 	/**
@@ -84,7 +87,7 @@ public class MemoryDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(model);
+			this.session.removeOrganListener(listener);
 
 			setMemory(null);
 		}
@@ -92,7 +95,7 @@ public class MemoryDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(model);
+			this.session.addOrganListener(listener);
 
 			findMemory();
 		}
@@ -121,8 +124,7 @@ public class MemoryDockable extends OrganDockable {
 	private void setMemory(Memory memory) {
 		this.memory = memory;
 
-		model.fireTableDataChanged();
-
+		((MemoryModel) table.getModel()).fireTableDataChanged();
 		table.setVisible(memory != null);
 
 		updateSelection();
@@ -146,7 +148,7 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		// remove listener to avoid infinite loop
-		table.getSelectionModel().removeListSelectionListener(model);
+		table.getSelectionModel().removeListSelectionListener(listener);
 
 		int index = memory.getIndex();
 		if (index != table.getSelectedRow()) {
@@ -160,40 +162,10 @@ public class MemoryDockable extends OrganDockable {
 		table.setColumnSelectionInterval(0, 0);
 
 		// re-add listener
-		table.getSelectionModel().addListSelectionListener(model);
+		table.getSelectionModel().addListSelectionListener(listener);
 	}
 
-	private class MemoryModel extends AbstractTableModel implements
-			OrganListener, ListSelectionListener {
-
-		public int getColumnCount() {
-			return 2;
-		}
-
-		public int getRowCount() {
-			if (memory == null) {
-				return 0;
-			} else {
-				return memory.getSize();
-			}
-		}
-
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			if (columnIndex == 0) {
-				return "" + (rowIndex + 1);
-			}
-			return memory.getTitle(rowIndex);
-		}
-
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return (columnIndex == 1);
-		}
-
-		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			memory.setTitle(rowIndex, (String) aValue);
-		}
+	private class EventListener implements OrganListener, ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {
@@ -203,7 +175,7 @@ public class MemoryDockable extends OrganDockable {
 				}
 			}
 		}
-		
+
 		public void elementAdded(Element element) {
 			if (element instanceof Memory) {
 				setMemory((Memory) element);
@@ -224,19 +196,19 @@ public class MemoryDockable extends OrganDockable {
 
 		public void messageAdded(Element element, Message reference) {
 		}
-		
+
 		public void messageChanged(Element element, Message reference) {
 		}
-		
+
 		public void messageRemoved(Element element, Message reference) {
 		}
-		
+
 		public void referenceAdded(Element element, Reference<?> reference) {
 		}
-		
+
 		public void referenceChanged(Element element, Reference<?> reference) {
 		}
-		
+
 		public void referenceRemoved(Element element, Reference<?> reference) {
 		}
 	}
@@ -327,6 +299,38 @@ public class MemoryDockable extends OrganDockable {
 
 		public void valueChanged(ListSelectionEvent e) {
 			setEnabled(table.getSelectedRowCount() > 0);
+		}
+	}
+
+	private class MemoryModel extends AbstractTableModel {
+
+		public int getColumnCount() {
+			return 2;
+		}
+
+		public int getRowCount() {
+			if (memory == null) {
+				return 0;
+			} else {
+				return memory.getSize();
+			}
+		}
+
+		public Object getValueAt(int rowIndex, int columnIndex) {
+			if (columnIndex == 0) {
+				return "" + (rowIndex + 1);
+			}
+			return memory.getTitle(rowIndex);
+		}
+
+		@Override
+		public boolean isCellEditable(int rowIndex, int columnIndex) {
+			return (columnIndex == 1);
+		}
+
+		@Override
+		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+			memory.setTitle(rowIndex, (String) aValue);
 		}
 	}
 }

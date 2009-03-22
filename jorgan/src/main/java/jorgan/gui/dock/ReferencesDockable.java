@@ -137,7 +137,7 @@ public class ReferencesDockable extends OrganDockable {
 			}
 		});
 		list.addListSelectionListener(removeAction);
-		ListUtils.addActionListener(list, new ActionListener() {
+		ListUtils.addActionListener(list, 2, new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 

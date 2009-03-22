@@ -18,7 +18,6 @@
  */
 package jorgan.gui.console;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -34,8 +33,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JComponent;
-import javax.swing.JDialog;
-import javax.swing.JPanel;
 
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
