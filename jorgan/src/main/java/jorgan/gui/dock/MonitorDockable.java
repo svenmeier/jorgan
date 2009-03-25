@@ -32,7 +32,6 @@ import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
-import jorgan.play.event.PlayAdapter;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -148,9 +147,8 @@ public class MonitorDockable extends OrganDockable {
 		this.max = max;
 	}
 
-	private class InternalListener extends PlayAdapter {
+	private class InternalListener implements PlayListener {
 
-		@Override
 		public void received(int channel, int command, int data1, int data2) {
 
 			if (inputButton.isSelected()) {
@@ -158,7 +156,6 @@ public class MonitorDockable extends OrganDockable {
 			}
 		}
 
-		@Override
 		public void sent(int channel, int command, int data1, int data2) {
 
 			if (outputButton.isSelected()) {

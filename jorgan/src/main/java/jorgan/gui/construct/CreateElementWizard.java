@@ -27,7 +27,7 @@ import javax.swing.JComponent;
 import jorgan.disposition.Element;
 import jorgan.disposition.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Compound;
+import jorgan.session.undo.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;

@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
 
 import javax.swing.Action;
 import javax.swing.JList;
@@ -92,6 +93,18 @@ public class ListUtils {
 						list.setSelectedIndex(index);
 						popup.show(list, e.getX(), e.getY());
 					}
+				}
+			}
+		});
+	}
+	
+	public static void addHoverSelection(final JList list) {
+		list.addMouseMotionListener(new MouseMotionAdapter() {
+			@Override
+			public void mouseMoved(MouseEvent event) {
+				int index = list.locationToIndex(event.getPoint());
+				if (index != -1) {
+					list.setSelectedIndex(index);
 				}
 			}
 		});

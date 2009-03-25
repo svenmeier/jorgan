@@ -59,6 +59,7 @@ import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
+import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.DebugPanel;
 import jorgan.swing.Desktop;
@@ -73,16 +74,16 @@ import bias.util.MessageBuilder;
  */
 public class OrganFrame extends JFrame implements SessionAware {
 
-	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
-
-	private static Configuration config = Configuration.getRoot().get(
-			OrganFrame.class);
-
 	public static final int REGISTRATION_CHANGES_CONFIRM = 0;
 
 	public static final int REGISTRATION_CHANGES_SAVE = 1;
 
-	public static final int REGISTRATION_CHANGES_IGNORE = 2;
+	public static final int REGISTRATION_CHANGES_DISCARD = 2;
+
+	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
+
+	private static Configuration config = Configuration.getRoot().get(
+			OrganFrame.class);
 
 	/**
 	 * The suffix used for the frame title.
@@ -140,6 +141,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private JMenu recentsMenu = new JMenu();
 
+	private EventHandler handler = new EventHandler();
+
 	private boolean fullScreenOnLoad = false;
 
 	private int handleRegistrationChanges;
@@ -166,11 +169,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		config.get("construct").read(constructButton);
 		constructButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				if (constructButton.isSelected()) {
-					session.getPlay().close();
-				} else {
-					session.getPlay().open();
-				}
+				session.setConstructing(constructButton.isSelected());
 			};
 		});
 		toolBar.add(constructButton);
@@ -323,18 +322,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 			this.session.getPlay().destroy();
 
 			this.session.removeOrganObserver(saveAction);
+			this.session.addListener(handler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
 			this.session.addOrganObserver(saveAction);
+			this.session.addListener(handler);
 
-			if (!constructButton.isSelected()) {
-				session.getPlay().open();
-			}
+			constructButton.setSelected(this.session.isConstructing());
 		}
-		
+
 		updateTitle();
 
 		saveAction.clearChanges();
@@ -397,7 +396,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
 		} else {
-			Customization.offer(this, session);
+			Customization.onErrors(this, session);
 		}
 	}
 
@@ -443,7 +442,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		session.setFile(file);
 
 		updateTitle();
-		
+
 		saveAction.clearChanges();
 
 		buildRecentsMenu();
@@ -597,11 +596,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public boolean mustSave() {
 			return undoableChanges
-					|| (changes && (handleRegistrationChanges != REGISTRATION_CHANGES_IGNORE));
+					|| (changes && (handleRegistrationChanges != REGISTRATION_CHANGES_DISCARD));
 		}
 
 		public boolean mustConfirm() {
-			return handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM;
+			return undoableChanges
+					|| (handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM);
 		}
 
 		/**
@@ -784,6 +784,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			close();
+		}
+	}
+
+	private class EventHandler implements SessionListener {
+		public void constructingChanged(boolean constructing) {
+			constructButton.setSelected(constructing);
 		}
 	}
 }

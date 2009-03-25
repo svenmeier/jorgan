@@ -49,8 +49,8 @@ import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
@@ -171,7 +171,7 @@ public class SkinDockable extends OrganDockable {
 
 	private Displayable getDisplayable() {
 		if (session != null) {
-			Element element = session.getElementSelection()
+			Element element = session.getSelection()
 					.getSelectedElement();
 			if (element instanceof Displayable) {
 				return (Displayable) element;
@@ -214,8 +214,8 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	private class EventHandler extends OrganAdapter implements
-			ElementSelectionListener, ChangeListener, ListSelectionListener {
-		public void selectionChanged(ElementSelectionEvent ev) {
+			SelectionListener, ChangeListener, ListSelectionListener {
+		public void selectionChanged(SelectionEvent ev) {
 			update();
 		}
 

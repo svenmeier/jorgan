@@ -28,6 +28,7 @@ import javax.swing.JRadioButton;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
+import jorgan.gui.customize.Customization;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -55,16 +56,25 @@ public class GuiCategory extends JOrganCategory {
 	private Model fullScreenOnLoad = getModel(new Property(OrganFrame.class,
 			"fullScreenOnLoad"));
 
+	private Model handleErrors = getModel(new Property(Customization.class,
+			"handleErrors"));
+
 	private Model handleRegistrationChanges = getModel(new Property(
 			OrganFrame.class, "handleRegistrationChanges"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
-	private JRadioButton confirmChangesRadioButton = new JRadioButton();
+	private JRadioButton errorsOfferRadioButton = new JRadioButton();
 
-	private JRadioButton saveChangesRadioButton = new JRadioButton();
+	private JRadioButton errorsCustomizeRadioButton = new JRadioButton();
 
-	private JRadioButton ignoreChangesRadioButton = new JRadioButton();
+	private JRadioButton errorsIgnoreRadioButton = new JRadioButton();
+
+	private JRadioButton changesConfirmRadioButton = new JRadioButton();
+
+	private JRadioButton changesSaveRadioButton = new JRadioButton();
+
+	private JRadioButton changesDiscardRadioButton = new JRadioButton();
 
 	public GuiCategory() {
 		config.read(this);
@@ -89,20 +99,35 @@ public class GuiCategory extends JOrganCategory {
 		column.definition(config.get("fullScreenOnLoad").read(
 				fullScreenOnLoadCheckBox));
 
+		ButtonGroup errorGroup = new ButtonGroup();
+		column.term(config.get("handleErrors").read(new JLabel()));
+
+		config.get("errorsOffer").read(errorsOfferRadioButton);
+		errorGroup.add(errorsOfferRadioButton);
+		column.definition(errorsOfferRadioButton);
+
+		config.get("errorsCustomize").read(errorsCustomizeRadioButton);
+		errorGroup.add(errorsCustomizeRadioButton);
+		column.definition(errorsCustomizeRadioButton);
+
+		config.get("errorsIgnore").read(errorsIgnoreRadioButton);
+		errorGroup.add(errorsIgnoreRadioButton);
+		column.definition(errorsIgnoreRadioButton);
+
 		ButtonGroup changesGroup = new ButtonGroup();
-		column.term(config.get("changes").read(new JLabel()));
+		column.term(config.get("handleChanges").read(new JLabel()));
 
-		config.get("confirmChanges").read(confirmChangesRadioButton);
-		changesGroup.add(confirmChangesRadioButton);
-		column.definition(confirmChangesRadioButton);
+		config.get("changesConfirm").read(changesConfirmRadioButton);
+		changesGroup.add(changesConfirmRadioButton);
+		column.definition(changesConfirmRadioButton);
 
-		config.get("saveChanges").read(saveChangesRadioButton);
-		changesGroup.add(saveChangesRadioButton);
-		column.definition(saveChangesRadioButton);
+		config.get("changesSave").read(changesSaveRadioButton);
+		changesGroup.add(changesSaveRadioButton);
+		column.definition(changesSaveRadioButton);
 
-		config.get("ignoreChanges").read(ignoreChangesRadioButton);
-		changesGroup.add(ignoreChangesRadioButton);
-		column.definition(ignoreChangesRadioButton);
+		config.get("changesDiscard").read(changesDiscardRadioButton);
+		changesGroup.add(changesDiscardRadioButton);
+		column.definition(changesDiscardRadioButton);
 
 		return panel;
 	}
@@ -120,15 +145,27 @@ public class GuiCategory extends JOrganCategory {
 		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
 				.getValue());
 
+		switch ((Integer) handleErrors.getValue()) {
+		case Customization.ERROR_OFFER:
+			errorsOfferRadioButton.setSelected(true);
+			break;
+		case Customization.ERROR_CUSTOMIZE:
+			errorsCustomizeRadioButton.setSelected(true);
+			break;
+		case Customization.ERROR_IGNORE:
+			errorsIgnoreRadioButton.setSelected(true);
+			break;
+		}
+
 		switch ((Integer) handleRegistrationChanges.getValue()) {
 		case OrganFrame.REGISTRATION_CHANGES_CONFIRM:
-			confirmChangesRadioButton.setSelected(true);
+			changesConfirmRadioButton.setSelected(true);
 			break;
 		case OrganFrame.REGISTRATION_CHANGES_SAVE:
-			saveChangesRadioButton.setSelected(true);
+			changesSaveRadioButton.setSelected(true);
 			break;
-		case OrganFrame.REGISTRATION_CHANGES_IGNORE:
-			ignoreChangesRadioButton.setSelected(true);
+		case OrganFrame.REGISTRATION_CHANGES_DISCARD:
+			changesDiscardRadioButton.setSelected(true);
 			break;
 		}
 	}
@@ -139,14 +176,24 @@ public class GuiCategory extends JOrganCategory {
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 
-		int handle = 0;
-		if (confirmChangesRadioButton.isSelected()) {
-			handle = OrganFrame.REGISTRATION_CHANGES_CONFIRM;
-		} else if (saveChangesRadioButton.isSelected()) {
-			handle = OrganFrame.REGISTRATION_CHANGES_SAVE;
-		} else if (ignoreChangesRadioButton.isSelected()) {
-			handle = OrganFrame.REGISTRATION_CHANGES_IGNORE;
+		int errors = 0;
+		if (errorsOfferRadioButton.isSelected()) {
+			errors = Customization.ERROR_OFFER;
+		} else if (errorsCustomizeRadioButton.isSelected()) {
+			errors = Customization.ERROR_CUSTOMIZE;
+		} else if (errorsIgnoreRadioButton.isSelected()) {
+			errors = Customization.ERROR_IGNORE;
 		}
-		handleRegistrationChanges.setValue(handle);
+		handleErrors.setValue(errors);
+
+		int registrationChanges = 0;
+		if (changesConfirmRadioButton.isSelected()) {
+			registrationChanges = OrganFrame.REGISTRATION_CHANGES_CONFIRM;
+		} else if (changesSaveRadioButton.isSelected()) {
+			registrationChanges = OrganFrame.REGISTRATION_CHANGES_SAVE;
+		} else if (changesDiscardRadioButton.isSelected()) {
+			registrationChanges = OrganFrame.REGISTRATION_CHANGES_DISCARD;
+		}
+		handleRegistrationChanges.setValue(registrationChanges);
 	}
 }

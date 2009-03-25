@@ -26,10 +26,9 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.play.event.PlayAdapter;
 import jorgan.session.OrganSession;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 import bias.Configuration;
 
 /**
@@ -45,8 +44,6 @@ public class DescriptionDockable extends OrganDockable {
 	private OrganSession session;
 
 	private ElementHandler elementHandler = new ElementHandler();
-
-	private PlayHandler playHandler = new PlayHandler();
 
 	private Element element;
 
@@ -72,7 +69,7 @@ public class DescriptionDockable extends OrganDockable {
 	public boolean forPlay() {
 		return false;
 	}
-	
+
 	/**
 	 * Set the organ.
 	 * 
@@ -83,7 +80,6 @@ public class DescriptionDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.removeOrganListener(elementHandler);
 			this.session.removeSelectionListener(elementHandler);
-			this.session.removePlayerListener(playHandler);
 
 			write();
 		}
@@ -94,7 +90,6 @@ public class DescriptionDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.addOrganListener(elementHandler);
 			this.session.addSelectionListener(elementHandler);
-			this.session.addPlayerListener(playHandler);
 
 			read();
 		}
@@ -124,12 +119,12 @@ public class DescriptionDockable extends OrganDockable {
 	 * The handler of selections.
 	 */
 	private class ElementHandler extends OrganAdapter implements
-			ElementSelectionListener {
+			SelectionListener {
 
-		public void selectionChanged(ElementSelectionEvent ev) {
+		public void selectionChanged(SelectionEvent ev) {
 			write();
 
-			element = session.getElementSelection().getSelectedElement();
+			element = session.getSelection().getSelectedElement();
 
 			read();
 		}
@@ -137,21 +132,6 @@ public class DescriptionDockable extends OrganDockable {
 		@Override
 		public void propertyChanged(Element element, String name) {
 			read();
-		}
-	}
-
-	private class PlayHandler extends PlayAdapter {
-
-		@Override
-		public void opened() {
-			textArea.setEnabled(false);
-		}
-
-		@Override
-		public void closed() {
-			write();
-
-			textArea.setEnabled(true);
 		}
 	}
 }

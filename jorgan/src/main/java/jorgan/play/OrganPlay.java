@@ -46,7 +46,7 @@ import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.PlayListener;
 import jorgan.play.spi.ProviderRegistry;
 import jorgan.session.ElementProblems;
-import jorgan.session.event.Problem;
+import jorgan.session.problem.Problem;
 
 /**
  * A play of an organ.
@@ -119,30 +119,26 @@ public class OrganPlay implements Resolver {
 		return organ;
 	}
 
+	public void closed(Closed closed) {
+		boolean wasOpen = isOpen();
+		
+		if (wasOpen) {
+			close();
+		}
+		
+		closed.run();
+		
+		if (wasOpen) {
+			open();
+		}
+	}	
+	
 	public void addPlayerListener(PlayListener listener) {
 		listeners.add(listener);
 	}
 
 	public void removePlayerListener(PlayListener listener) {
 		listeners.remove(listener);
-	}
-
-	protected void fireClosed() {
-		if (listeners != null) {
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.closed();
-			}
-		}
-	}
-
-	protected void fireOpened() {
-		if (listeners != null) {
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
-				listener.opened();
-			}
-		}
 	}
 
 	/**
@@ -186,8 +182,6 @@ public class OrganPlay implements Resolver {
 		synchronized (RECEIVER_LOCK) {
 			open = true;
 		}
-
-		fireOpened();
 	}
 
 	private void openImpl() {
@@ -221,8 +215,6 @@ public class OrganPlay implements Resolver {
 		synchronized (CHANGE_LOCK) {
 			closeImpl();
 		}
-
-		fireClosed();
 	}
 
 	private void closeImpl() {

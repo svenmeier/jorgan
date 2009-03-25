@@ -21,6 +21,8 @@ package jorgan.session;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
@@ -31,10 +33,10 @@ import jorgan.disposition.event.OrganObserver;
 import jorgan.play.OrganPlay;
 import jorgan.play.Resolver;
 import jorgan.play.event.PlayListener;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
-import jorgan.session.event.ProblemListener;
-import jorgan.session.event.UndoListener;
+import jorgan.session.problem.ProblemListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
+import jorgan.session.undo.UndoListener;
 import spin.Spin;
 
 /**
@@ -60,7 +62,11 @@ public class OrganSession {
 
 	private ElementProblems problems;
 
-	private UndoManager undoManager;
+	private UndoManager undo;
+
+	private List<SessionListener> listeners = new ArrayList<SessionListener>();
+
+	private boolean constructing = false;
 
 	public OrganSession() {
 		this(createDefaultOrgan());
@@ -81,12 +87,12 @@ public class OrganSession {
 
 		play = new OrganPlay(organ, problems, new PlayResolver());
 
-		undoManager = new UndoManager(organ);
+		undo = new UndoManager(organ);
 
 		selection = new ElementSelection();
-		selection.addSelectionListener(new ElementSelectionListener() {
-			public void selectionChanged(ElementSelectionEvent ev) {
-				undoManager.compound();
+		selection.addSelectionListener(new SelectionListener() {
+			public void selectionChanged(SelectionEvent ev) {
+				undo.compound();
 			}
 		});
 
@@ -97,17 +103,18 @@ public class OrganSession {
 
 				problems.removeProblems(element);
 
-				undoManager.compound();
+				undo.compound();
 			}
 
 			@Override
 			public void elementAdded(Element element) {
 				selection.setSelectedElement(element);
 
-				undoManager.compound();
+				undo.compound();
 			}
 		}));
 
+		play.open();
 	}
 
 	public void setFile(File file) {
@@ -122,6 +129,38 @@ public class OrganSession {
 		return file;
 	}
 
+	public boolean isConstructing() {
+		return constructing;
+	}
+
+	public void setConstructing(boolean constructing) {
+		if (constructing != this.constructing) {
+			this.constructing = constructing;
+
+			if (constructing) {
+				if (play.isOpen()) {
+					play.close();
+				}
+			} else {
+				if (!play.isOpen()) {
+					play.open();
+				}
+			}
+			
+			for (SessionListener listener : listeners) {
+				listener.constructingChanged(constructing);
+			}
+		}
+	}
+
+	public void addListener(SessionListener listener) {
+		listeners.add(listener);
+	}
+
+	public void removeListener(SessionListener listener) {
+		listeners.remove(listener);
+	}
+
 	public Organ getOrgan() {
 		return organ;
 	}
@@ -131,27 +170,31 @@ public class OrganSession {
 	}
 
 	public UndoManager getUndoManager() {
-		return undoManager;
+		return undo;
 	}
 
-	public ElementSelection getElementSelection() {
+	public ElementSelection getSelection() {
 		return selection;
 	}
 
-	public void addSelectionListener(ElementSelectionListener listener) {
+	public ElementProblems getProblems() {
+		return problems;
+	}
+
+	public void addSelectionListener(SelectionListener listener) {
 		selection.addSelectionListener(listener);
 	}
 
-	public void removeSelectionListener(ElementSelectionListener listener) {
+	public void removeSelectionListener(SelectionListener listener) {
 		selection.removeSelectionListener(listener);
 	}
 
 	public void addUndoListener(UndoListener listener) {
-		undoManager.addUndoListener((UndoListener) Spin.over(listener));
+		undo.addUndoListener((UndoListener) Spin.over(listener));
 	}
 
 	public void removeUndoListener(UndoListener listener) {
-		undoManager.removeUndoListener((UndoListener) Spin.over(listener));
+		undo.removeUndoListener((UndoListener) Spin.over(listener));
 	}
 
 	public void addOrganListener(OrganListener listener) {
@@ -184,10 +227,6 @@ public class OrganSession {
 
 	public void removeProblemListener(ProblemListener listener) {
 		problems.removeProblemListener((ProblemListener) Spin.over(listener));
-	}
-
-	public ElementProblems getProblems() {
-		return problems;
 	}
 
 	private class PlayResolver implements Resolver {
