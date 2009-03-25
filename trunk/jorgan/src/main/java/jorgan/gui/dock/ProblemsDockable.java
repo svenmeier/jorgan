@@ -32,9 +32,9 @@ import javax.swing.table.AbstractTableModel;
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Problem;
-import jorgan.session.event.ProblemListener;
-import jorgan.session.event.Severity;
+import jorgan.session.problem.Problem;
+import jorgan.session.problem.ProblemListener;
+import jorgan.session.problem.Severity;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
@@ -187,8 +187,10 @@ public class ProblemsDockable extends OrganDockable {
 
 			Problem problem = problems.get(index);
 
-			session.getElementSelection().setSelectedElement(
+			session.getSelection().setSelectedElement(
 					problem.getElement(), problem.getLocation());
+			
+			session.setConstructing(true);
 		}
 	}
 }

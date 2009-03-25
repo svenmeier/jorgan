@@ -16,12 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.event;
+package jorgan.session.selection;
 
-import java.util.EventListener;
+import java.util.EventObject;
 
+public class SelectionEvent extends EventObject {
 
-public interface ElementSelectionListener extends EventListener {
-  
-  public void selectionChanged(ElementSelectionEvent ev);
+  public SelectionEvent(Object source) {
+    super(source);  
+  }
 }

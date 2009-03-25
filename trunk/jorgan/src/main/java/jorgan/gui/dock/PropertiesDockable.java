@@ -35,9 +35,9 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.info.spi.ProviderRegistry;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Compound;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
+import jorgan.session.undo.Compound;
 import jorgan.swing.beans.PropertiesPanel;
 import bias.Configuration;
 
@@ -125,13 +125,13 @@ public class PropertiesDockable extends OrganDockable {
 	 * The handler of selections.
 	 */
 	private class SelectionHandler extends OrganAdapter implements
-			ElementSelectionListener, ChangeListener {
+			SelectionListener, ChangeListener {
 
 		private boolean changing = false;
 
-		public void selectionChanged(ElementSelectionEvent ev) {
+		public void selectionChanged(SelectionEvent ev) {
 					
-			Element element = session.getElementSelection().getSelectedElement();
+			Element element = session.getSelection().getSelectedElement();
 			if (element == null) {
 				setStatus(null);
 			} else {
@@ -148,7 +148,7 @@ public class PropertiesDockable extends OrganDockable {
 				session.getUndoManager().compound();
 				
 				String property = panel.getProperty();
-				session.getElementSelection().setLocation(property);
+				session.getSelection().setLocation(property);
 
 				changing = false;
 			}
@@ -165,10 +165,10 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				panel.setBeans(session.getElementSelection()
+				panel.setBeans(session.getSelection()
 						.getSelectedElements());
 
-				Object location = session.getElementSelection().getLocation();
+				Object location = session.getSelection().getLocation();
 				if (location instanceof String) {
 					panel.setProperty((String) location);
 				} else {

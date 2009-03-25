@@ -16,24 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.event;
+package jorgan.session.undo;
 
 
-public class PlayAdapter implements PlayListener {
+/**
+ * A listener to undos.
+ */
+public interface UndoListener {
 
-	public void opened() {
-
-	}
-
-	public void closed() {
-
-	}
-
-	public void received(int channel, int command, int data1, int data2) {
-
-	}
-
-	public void sent(int channel, int command, int data1, int data2) {
-
-	}
+    public void changed();
 }

@@ -23,12 +23,12 @@ import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 
 public class ElementSelection {
 
-	private List<ElementSelectionListener> listeners = new ArrayList<ElementSelectionListener>();
+	private List<SelectionListener> listeners = new ArrayList<SelectionListener>();
 
 	private ArrayList<Element> history = new ArrayList<Element>();
 
@@ -281,7 +281,7 @@ public class ElementSelection {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addSelectionListener(ElementSelectionListener listener) {
+	public void addSelectionListener(SelectionListener listener) {
 		listeners.add(listener);
 	}
 
@@ -291,7 +291,7 @@ public class ElementSelection {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeSelectionListener(ElementSelectionListener listener) {
+	public void removeSelectionListener(SelectionListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -299,8 +299,8 @@ public class ElementSelection {
 	 * Fire a change to all registered change listeners.
 	 */
 	protected void fireStateChanged() {
-		for (ElementSelectionListener listener : new ArrayList<ElementSelectionListener>(listeners)) {
-			listener.selectionChanged(new ElementSelectionEvent(this));
+		for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
+			listener.selectionChanged(new SelectionEvent(this));
 		}
 	}
 }

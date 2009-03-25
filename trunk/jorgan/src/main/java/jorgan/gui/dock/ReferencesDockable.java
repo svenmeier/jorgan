@@ -48,8 +48,8 @@ import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
 import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
@@ -141,7 +141,7 @@ public class ReferencesDockable extends OrganDockable {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 
-				session.getElementSelection().setSelectedElement(element);
+				session.getSelection().setSelectedElement(element);
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
@@ -248,9 +248,9 @@ public class ReferencesDockable extends OrganDockable {
 		list.setVisible(false);
 
 		if (session != null
-				&& session.getElementSelection().getSelectionCount() == 1) {
+				&& session.getSelection().getSelectionCount() == 1) {
 
-			element = session.getElementSelection().getSelectedElement();
+			element = session.getSelection().getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
 				referencesToModel.update();
@@ -275,9 +275,9 @@ public class ReferencesDockable extends OrganDockable {
 	 * change on a MIDI thread.
 	 */
 	private class EventHandler extends OrganAdapter implements
-			ElementSelectionListener, OrganListener {
+			SelectionListener, OrganListener {
 
-		public void selectionChanged(ElementSelectionEvent ev) {
+		public void selectionChanged(SelectionEvent ev) {
 			updateReferences();
 		}
 

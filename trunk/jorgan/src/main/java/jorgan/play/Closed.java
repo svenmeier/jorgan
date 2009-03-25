@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.event;
+package jorgan.play;
 
 
 /**
- * A listener to events of a player.
+ * A closed.
  */
-public interface PlayListener {
+public interface Closed {
 
-	public void received(int channel, int command, int data1, int data2);
-
-	public void sent(int channel, int command, int data1, int data2);
+    public void run();
 }

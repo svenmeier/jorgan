@@ -31,21 +31,27 @@ import bias.swing.MessageBox;
  */
 public class Customization {
 
+	public static final int ERROR_OFFER = 0;
+
+	public static final int ERROR_CUSTOMIZE = 1;
+
+	public static final int ERROR_IGNORE = 2;
+
 	private static Configuration config = Configuration.getRoot().get(
 			Customization.class);
 
-	private Boolean customizeOnError = null;
+	private int handleErrors = ERROR_OFFER;
 
 	public Customization() {
 		config.read(this);
 	}
 
-	public void setCustomizeOnError(Boolean customizeOnError) {
-		this.customizeOnError = customizeOnError;
+	public void setHandleErrors(int handleErrors) {
+		this.handleErrors = handleErrors;
 	}
 
-	public Boolean getCustomizeOnError() {
-		return customizeOnError;
+	public int getHandleErrors() {
+		return handleErrors;
 	}
 
 	/**
@@ -56,7 +62,13 @@ public class Customization {
 	 * @return <code>true</code> if offer of customizazion is accepted
 	 */
 	public boolean offer(Component owner) {
-		if (customizeOnError == null) {
+		boolean result = false;
+
+		if (handleErrors == ERROR_CUSTOMIZE) {
+			result = true;
+		} else if (handleErrors == ERROR_IGNORE) {
+			result = false;
+		} else if (handleErrors == ERROR_OFFER) {
 			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
 			config.get("confirm").read(box);
 
@@ -64,31 +76,29 @@ public class Customization {
 			config.get("confirm/remember").read(rememberCheckBox);
 			box.setComponents(rememberCheckBox);
 
-			boolean customize = (box.show(owner) == MessageBox.OPTION_YES);
+			result = (box.show(owner) == MessageBox.OPTION_YES);
 
 			if (rememberCheckBox.isSelected()) {
-				customizeOnError = Boolean.valueOf(customize);
+				if (result) {
+					handleErrors = ERROR_CUSTOMIZE;
+				} else {
+					handleErrors = ERROR_IGNORE;
+				}
 			}
-
-			return customize;
 		}
 
-		if (customizeOnError.booleanValue()) {
-			return true;
-		}
-
-		return false;
+		return result;
 	}
 
 	/**
-	 * Offer customization.
+	 * Handle customization on errors.
 	 * 
 	 * @param owner
 	 *            owner of dialog
 	 * @param session
 	 *            organ to configure
 	 */
-	public static void offer(Component owner, OrganSession session) {
+	public static void onErrors(Component owner, OrganSession session) {
 
 		if (session.getProblems().hasErrors()) {
 			Customization customization = new Customization();

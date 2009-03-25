@@ -38,23 +38,22 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.disposition.Message;
-import jorgan.disposition.Reference;
-import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.spi.ProviderRegistry;
 import jorgan.gui.play.MessagesMonitor;
-import jorgan.play.event.PlayAdapter;
+import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
-import jorgan.session.event.Problem;
-import jorgan.session.event.ProblemListener;
-import jorgan.session.event.Severity;
-import jorgan.session.event.UndoListener;
+import jorgan.session.SessionListener;
+import jorgan.session.problem.Problem;
+import jorgan.session.problem.ProblemListener;
+import jorgan.session.problem.Severity;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
+import jorgan.session.undo.UndoListener;
 import jorgan.swing.BaseAction;
 import swingx.docking.Dockable;
 import swingx.docking.Docked;
@@ -143,7 +142,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 		widgets.add(backAction);
 		widgets.add(forwardAction);
-		
+
 		return widgets;
 	}
 
@@ -176,6 +175,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 			this.session.removeProblemListener(eventsListener);
 			this.session.removeSelectionListener(eventsListener);
 			this.session.removeUndoListener(eventsListener);
+			this.session.removeListener(eventsListener);
 
 			for (DockableAction action : dockableActions) {
 				action.getDockable().setSession(null);
@@ -193,6 +193,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		if (this.session != null) {
 			setConstructing(!this.session.getPlay().isOpen());
 
+			this.session.addListener(eventsListener);
 			this.session.addUndoListener(eventsListener);
 			this.session.addSelectionListener(eventsListener);
 			this.session.addProblemListener(eventsListener);
@@ -221,9 +222,9 @@ public class OrganPanel extends JPanel implements SessionAware {
 			backAction.setEnabled(false);
 			forwardAction.setEnabled(false);
 		} else {
-			backAction.setEnabled(session.getElementSelection().canBack());
+			backAction.setEnabled(session.getSelection().canBack());
 			forwardAction
-					.setEnabled(session.getElementSelection().canForward());
+					.setEnabled(session.getSelection().canForward());
 		}
 	}
 
@@ -271,7 +272,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		return session;
 	}
 
-	private void setConstructing(boolean constructing) {
+	public void setConstructing(boolean constructing) {
 
 		if (this.constructing != constructing) {
 			saveDocking();
@@ -362,17 +363,14 @@ public class OrganPanel extends JPanel implements SessionAware {
 	/**
 	 * The listener to events.
 	 */
-	private class EventsListener extends PlayAdapter implements
-			ProblemListener, OrganListener, ElementSelectionListener, UndoListener {
+	private class EventsListener extends OrganAdapter implements PlayListener,
+			ProblemListener, SelectionListener, UndoListener, SessionListener {
 
-		@Override
 		public void received(int channel, int command, int data1, int data2) {
 			messagesMonitor.input();
 		}
 
-		@Override
-		public void sent(int channel, int command, int data1,
-				int data2) {
+		public void sent(int channel, int command, int data1, int data2) {
 			messagesMonitor.output();
 		}
 
@@ -385,17 +383,13 @@ public class OrganPanel extends JPanel implements SessionAware {
 		public void problemRemoved(Problem ev) {
 		}
 
-		public void opened() {
-			setConstructing(false);
+		public void constructingChanged(boolean constructing) {
+			setConstructing(constructing);
 		}
 
-		public void closed() {
-			setConstructing(true);
-		}
-
-		public void selectionChanged(ElementSelectionEvent ev) {
-			if (session.getElementSelection().getSelectionCount() == 1) {
-				Element element = session.getElementSelection()
+		public void selectionChanged(SelectionEvent ev) {
+			if (session.getSelection().getSelectionCount() == 1) {
+				Element element = session.getSelection()
 						.getSelectedElement();
 				if (element instanceof Console) {
 					Console console = (Console) element;
@@ -408,12 +402,12 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 			updateHistory();
 		}
-		
+
 		public void changed() {
 			undoAction.setEnabled(session.getUndoManager().canUndo());
 			redoAction.setEnabled(session.getUndoManager().canRedo());
 		}
-		
+
 		public void elementAdded(Element element) {
 			if (element instanceof Console) {
 				addConsoleDockable((Console) element);
@@ -425,27 +419,6 @@ public class OrganPanel extends JPanel implements SessionAware {
 				removeConsoleDockable((Console) element);
 			}
 		}
-
-		public void messageAdded(Element element, Message message) {
-		}
-
-		public void messageChanged(Element element, Message message) {
-		}
-
-		public void messageRemoved(Element element, Message message) {
-		}
-
-		public void propertyChanged(Element element, String name) {
-		}
-
-		public void referenceAdded(Element element, Reference<?> reference) {
-		}
-
-		public void referenceChanged(Element element, Reference<?> reference) {
-		}
-
-		public void referenceRemoved(Element element, Reference<?> reference) {
-		}		
 	}
 
 	private class DockableAction extends BaseAction {
@@ -487,7 +460,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.getElementSelection().back();
+			session.getSelection().back();
 		}
 	}
 
@@ -502,7 +475,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.getElementSelection().forward();
+			session.getSelection().forward();
 		}
 	}
 

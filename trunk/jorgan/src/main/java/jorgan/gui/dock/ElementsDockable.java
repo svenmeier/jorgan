@@ -45,11 +45,11 @@ import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
 import jorgan.gui.construct.ElementComparator;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Compound;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
-import jorgan.session.event.Problem;
-import jorgan.session.event.ProblemListener;
+import jorgan.session.problem.Problem;
+import jorgan.session.problem.ProblemListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
+import jorgan.session.undo.Compound;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.util.Generics;
@@ -156,7 +156,7 @@ public class ElementsDockable extends OrganDockable {
 								added.add(clone);
 							}
 
-							session.getElementSelection().setSelectedElements(added);
+							session.getSelection().setSelectedElements(added);
 						}						
 					});					
 
@@ -232,7 +232,7 @@ public class ElementsDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.addOrganListener(elementsModel);
 			this.session.addProblemListener(elementsModel);
-			this.session.getElementSelection().addSelectionListener(
+			this.session.getSelection().addSelectionListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
@@ -254,18 +254,18 @@ public class ElementsDockable extends OrganDockable {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler implements ElementSelectionListener,
+	private class SelectionHandler implements SelectionListener,
 			ListSelectionListener {
 
 		private boolean updatingSelection = false;
 
-		public void selectionChanged(ElementSelectionEvent ev) {
+		public void selectionChanged(SelectionEvent ev) {
 			if (!updatingSelection) {
 				updatingSelection = true;
 
 				list.clearSelection();
 
-				List<Element> selectedElements = session.getElementSelection()
+				List<Element> selectedElements = session.getSelection()
 						.getSelectedElements();
 				for (int e = 0; e < selectedElements.size(); e++) {
 					Element element = selectedElements.get(e);
@@ -292,10 +292,10 @@ public class ElementsDockable extends OrganDockable {
 				Object[] values = list.getSelectedValues();
 
 				if (values.length == 1) {
-					session.getElementSelection().setSelectedElement(
+					session.getSelection().setSelectedElement(
 							(Element) values[0]);
 				} else {
-					session.getElementSelection().setSelectedElements(
+					session.getSelection().setSelectedElements(
 							Generics.asList(values, Element.class));
 				}
 
@@ -434,11 +434,11 @@ public class ElementsDockable extends OrganDockable {
 		public void run() {
 			List<Element> duplicated = new ArrayList<Element>();
 			for (Element element : new ArrayList<Element>(session
-					.getElementSelection().getSelectedElements())) {
+					.getSelection().getSelectedElements())) {
 				duplicated.add(session.getOrgan().duplicate(element));
 			}
 			
-			session.getElementSelection().setSelectedElements(duplicated);
+			session.getSelection().setSelectedElements(duplicated);
 		}
 	}
 
@@ -462,7 +462,7 @@ public class ElementsDockable extends OrganDockable {
 		
 		public void run() {
 			for (Element element : new ArrayList<Element>(session
-					.getElementSelection().getSelectedElements())) {
+					.getSelection().getSelectedElements())) {
 				session.getOrgan().removeElement(element);
 			}
 		}

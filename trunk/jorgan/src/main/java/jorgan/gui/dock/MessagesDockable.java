@@ -60,9 +60,9 @@ import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.NoOp;
 import jorgan.session.OrganSession;
-import jorgan.session.event.Compound;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
+import jorgan.session.undo.Compound;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
@@ -264,9 +264,9 @@ public class MessagesDockable extends OrganDockable {
 			table.setVisible(false);
 
 			if (session != null
-					&& session.getElementSelection().getSelectionCount() == 1) {
+					&& session.getSelection().getSelectionCount() == 1) {
 
-				element = session.getElementSelection().getSelectedElement();
+				element = session.getSelection().getSelectedElement();
 
 				for (Message message : element.getMessages()) {
 					messages.add(message);
@@ -289,7 +289,7 @@ public class MessagesDockable extends OrganDockable {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler implements ElementSelectionListener,
+	private class SelectionHandler implements SelectionListener,
 			ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -302,7 +302,7 @@ public class MessagesDockable extends OrganDockable {
 			recordAction.update();
 		}
 
-		public void selectionChanged(ElementSelectionEvent ev) {
+		public void selectionChanged(SelectionEvent ev) {
 			updateMessages();
 		}
 	}

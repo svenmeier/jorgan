@@ -63,7 +63,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ProviderRegistry;
@@ -77,13 +76,12 @@ import jorgan.gui.construct.layout.SpreadHorizontalLayout;
 import jorgan.gui.construct.layout.SpreadVerticalLayout;
 import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
-import jorgan.play.event.PlayAdapter;
-import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
-import jorgan.session.event.Problem;
-import jorgan.session.event.Severity;
+import jorgan.session.SessionListener;
+import jorgan.session.problem.Problem;
+import jorgan.session.problem.Severity;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
@@ -148,19 +146,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private List<Displayable> selectedDisplayables = new ArrayList<Displayable>();
 
 	/**
-	 * The listener to selection changes.
-	 */
-	private ElementSelectionListener selectionListener = new InternalDisplayableSelectionListener();
-
-	/**
 	 * The listener to organ changes.
 	 */
-	private OrganListener organListener = new InternalOrganListener();
-
-	/**
-	 * The listener to play changes.
-	 */
-	private PlayListener playListener = new InternalPlayListener();
+	private EventHandler eventHandler = new EventHandler();
 
 	/**
 	 * The listener to mouse (motion) events in play modus.
@@ -238,9 +226,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			throw new IllegalArgumentException("console must not be null");
 		}
 		this.session = session;
-		this.session.addOrganListener(organListener);
-		this.session.addSelectionListener(selectionListener);
-		this.session.addPlayerListener(playListener);
+		this.session.addOrganListener(eventHandler);
+		this.session.addSelectionListener(eventHandler);
+		this.session.addListener(eventHandler);
 
 		this.console = console;
 
@@ -288,14 +276,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			createView(reference.getElement());
 		}
 
-		constructing = this.session.getPlay().isOpen();
+		constructing = !this.session.isConstructing();
 		setConstructing(!constructing);
 	}
 
 	public void dispose() {
-		this.session.removeOrganListener(organListener);
-		this.session.removeSelectionListener(selectionListener);
-		this.session.removePlayerListener(playListener);
+		this.session.removeOrganListener(eventHandler);
+		this.session.removeSelectionListener(eventHandler);
+		this.session.removeListener(eventHandler);
 		this.session = null;
 	}
 
@@ -435,7 +423,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			popup.closeOnFocusLost();
 		}
 
-		popup.setSize(new Dimension(512, 256));
 		popup.setBody(contents);
 
 		Point location = getLocationOnScreen();
@@ -697,9 +684,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	/**
-	 * The listener to organ events.
+	 * The handler of events.
 	 */
-	private class InternalOrganListener extends OrganAdapter {
+	private class EventHandler extends OrganAdapter implements
+			SessionListener, SelectionListener {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
@@ -750,16 +738,39 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 			}
 		}
-	}
 
-	private class InternalPlayListener extends PlayAdapter {
-
-		public void opened() {
-			setConstructing(false);
+		public void constructingChanged(boolean constructing) {
+			setConstructing(constructing);
 		}
+		
+		public void selectionChanged(SelectionEvent ev) {
 
-		public void closed() {
-			setConstructing(true);
+			List<Element> newDisplayables = session.getSelection()
+					.getSelectedElements();
+
+			for (Element element : newDisplayables) {
+				if (selectedDisplayables.contains(element)) {
+					selectedDisplayables.remove(element);
+				} else if (element instanceof Displayable) {
+					selectedDisplayables.add((Displayable) element);
+				}
+			}
+
+			if (constructing) {
+				// clear deselected and mark new selected elements
+				constructMouseInputListener.updateSelection();
+			}
+
+			selectedDisplayables.clear();
+			for (Element element : newDisplayables) {
+				if (element instanceof Displayable) {
+					selectedDisplayables.add((Displayable) element);
+				}
+			}
+
+			if (constructing && selectedDisplayables.size() == 1) {
+				scrollDisplayableToVisible(selectedDisplayables.get(0));
+			}
 		}
 	}
 
@@ -797,15 +808,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			if (isMultiSelect(e)) {
 				if (pressedDisplayable != null) {
-					session.getElementSelection().addSelectedElement(
+					session.getSelection().addSelectedElement(
 							pressedDisplayable);
 				}
 			} else {
 				if (pressedDisplayable == null) {
-					session.getElementSelection().setSelectedElement(null);
+					session.getSelection().setSelectedElement(null);
 				} else {
 					if (!selectedDisplayables.contains(pressedDisplayable)) {
-						session.getElementSelection().setSelectedElement(
+						session.getSelection().setSelectedElement(
 								pressedDisplayable);
 					}
 				}
@@ -855,7 +866,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						elements.add(view.getElement());
 					}
 				}
-				session.getElementSelection().setSelectedElements(elements);
+				session.getSelection().setSelectedElements(elements);
 			} else {
 				View<? extends Displayable> view = getView(pressedDisplayable);
 
@@ -914,7 +925,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void mouseClicked(MouseEvent e) {
 			if (pressedDisplayable != null) {
 				if (isMultiSelect(e) && wasSelected) {
-					session.getElementSelection().removeSelectedElement(
+					session.getSelection().removeSelectedElement(
 							pressedDisplayable);
 				}
 			}
@@ -1124,42 +1135,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				throw ex;
 			} catch (Exception ex) {
 				dtde.dropComplete(false);
-			}
-		}
-	}
-
-	/**
-	 * The listener to element selections.
-	 */
-	private class InternalDisplayableSelectionListener implements
-			ElementSelectionListener {
-		public void selectionChanged(ElementSelectionEvent ev) {
-
-			List<Element> newDisplayables = session.getElementSelection()
-					.getSelectedElements();
-
-			for (Element element : newDisplayables) {
-				if (selectedDisplayables.contains(element)) {
-					selectedDisplayables.remove(element);
-				} else if (element instanceof Displayable) {
-					selectedDisplayables.add((Displayable) element);
-				}
-			}
-
-			if (constructing) {
-				// clear deselected and mark new selected elements
-				constructMouseInputListener.updateSelection();
-			}
-
-			selectedDisplayables.clear();
-			for (Element element : newDisplayables) {
-				if (element instanceof Displayable) {
-					selectedDisplayables.add((Displayable) element);
-				}
-			}
-
-			if (constructing && selectedDisplayables.size() == 1) {
-				scrollDisplayableToVisible(selectedDisplayables.get(0));
 			}
 		}
 	}

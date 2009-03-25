@@ -16,13 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.event;
+package jorgan.session.undo;
 
-import java.util.EventObject;
 
-public class ElementSelectionEvent extends EventObject {
+/**
+ * A compound.
+ */
+public interface Compound {
 
-  public ElementSelectionEvent(Object source) {
-    super(source);  
-  }
+    public void run();
 }

@@ -57,6 +57,7 @@ public abstract class FilterList<I> extends JPanel {
 	public FilterList() {
 		setLayout(new BorderLayout());
 
+		textField.setColumns(20);
 		textField.setBorder(new BorderSubstitute(textField));
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
@@ -96,6 +97,7 @@ public abstract class FilterList<I> extends JPanel {
 			}
 		});
 		ListUtils.addActionListener(list, 1, selectAction);
+		ListUtils.addHoverSelection(list);
 
 		scrollPane = new JScrollPane(list);
 		scrollPane

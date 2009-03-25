@@ -26,8 +26,8 @@ import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
-import jorgan.session.event.Compound;
-import jorgan.session.event.UndoListener;
+import jorgan.session.undo.Compound;
+import jorgan.session.undo.UndoListener;
 
 /**
  * A manager of {@link UndoableChange}s.

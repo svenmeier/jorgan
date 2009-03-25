@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.session.event.Problem;
-import jorgan.session.event.ProblemListener;
-import jorgan.session.event.Severity;
+import jorgan.session.problem.Problem;
+import jorgan.session.problem.ProblemListener;
+import jorgan.session.problem.Severity;
 
 /**
  * The problems.
