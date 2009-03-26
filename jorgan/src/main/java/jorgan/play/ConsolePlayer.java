@@ -28,7 +28,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
-import jorgan.session.problem.Severity;
+import jorgan.session.event.Severity;
 
 /**
  * A player of an console.

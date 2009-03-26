@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
+import javax.swing.border.LineBorder;
 
 import jorgan.disposition.Memory;
 import jorgan.skin.ButtonLayer;
@@ -35,6 +36,11 @@ import jorgan.swing.list.FilterList;
  * A view that shows a {@link Memory}.
  */
 public class MemoryView extends IndexedContinuousView<Memory> {
+
+	/**
+	 * TODO make configurable
+	 */
+	public static final Color color = new Color(255, 255, 225);
 
 	/**
 	 * Constructor.
@@ -85,7 +91,8 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 			}
 		};
 		filterList.setOpaque(true);
-		filterList.setBackground(new Color(255, 255, 225));
+		filterList.setBorder(new LineBorder(color.darker()));
+		filterList.setBackground(color);
 
 		if (getElement().getIndex() != -1) {
 			filterList.setSelectedItem(getElement().getIndex());

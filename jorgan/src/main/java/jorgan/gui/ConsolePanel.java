@@ -78,8 +78,8 @@ import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
+import jorgan.session.event.Severity;
 import jorgan.session.problem.Problem;
-import jorgan.session.problem.Severity;
 import jorgan.session.selection.SelectionEvent;
 import jorgan.session.selection.SelectionListener;
 import jorgan.skin.Skin;
@@ -525,7 +525,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * @param y
 	 *            y position to use
 	 */
-	protected void showPopup(int x, int y) {
+	protected void showMenu(int x, int y) {
 
 		if (pressedDisplayable != null) {
 			alignMenu.setEnabled(selectedDisplayables.size() > 1);
@@ -933,7 +933,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		protected void showPopup(MouseEvent e) {
 			if (e.isPopupTrigger()) {
-				ConsolePanel.this.showPopup(e.getX(), e.getY());
+				ConsolePanel.this.showMenu(e.getX(), e.getY());
 			}
 		}
 
