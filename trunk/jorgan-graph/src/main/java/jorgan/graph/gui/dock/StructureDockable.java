@@ -42,8 +42,8 @@ import jorgan.gui.img.ElementIcons;
 import jorgan.play.event.PlayListener;
 import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
-import jorgan.session.event.ElementSelectionEvent;
-import jorgan.session.event.ElementSelectionListener;
+import jorgan.session.selection.SelectionEvent;
+import jorgan.session.selection.SelectionListener;
 import jorgan.swing.button.ButtonGroup;
 import swingx.docking.Docked;
 import bias.Configuration;
@@ -304,10 +304,10 @@ public class StructureDockable extends OrganDockable {
   /**
    * our listener for organ events
    */
-  private class ListenerImpl implements MouseListener, OrganListener, ElementSelectionListener, PlayListener {
+  private class ListenerImpl implements MouseListener, OrganListener, SelectionListener, PlayListener {
     
-    public void selectionChanged(ElementSelectionEvent ev) {
-      ElementSelection es = session.getElementSelection();
+    public void selectionChanged(SelectionEvent ev) {
+      ElementSelection es = session.getSelection();
       selection = es.getSelectedElements();
       graphWidget.repaint();
     }
@@ -364,7 +364,7 @@ public class StructureDockable extends OrganDockable {
       if (vertex==null)
         return;
       Element element = vertex.getContent();
-      ElementSelection selection = session.getElementSelection();
+      ElementSelection selection = session.getSelection();
       if ((e.getModifiers()&MouseEvent.CTRL_MASK)!=0) {
         if (selection.isSelected(element))
           selection.removeSelectedElement(element);
