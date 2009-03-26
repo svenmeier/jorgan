@@ -16,11 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.problem;
+package jorgan.session.event;
 
+import jorgan.session.problem.Problem;
 
 /**
  * The severity of a {@link Problem}.
+ * 
+ * TODO move to jorgan.session.problem
  */
 public enum Severity {
 	WARNING, ERROR

@@ -34,9 +34,9 @@ import jorgan.io.DispositionFileFilter;
 import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
+import jorgan.session.event.Severity;
 import jorgan.session.problem.Problem;
 import jorgan.session.problem.ProblemListener;
-import jorgan.session.problem.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
