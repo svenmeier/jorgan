@@ -67,10 +67,18 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 		FilterList<Integer> filterList = new FilterList<Integer>() {
 			@Override
 			protected List<Integer> getItems(String filter) {
+				String title = filter.toLowerCase();
+				int index = -1;
+				try {
+					index = Integer.parseInt(filter) - 1;
+				} catch (NumberFormatException noIndex) {
+				}
+
 				List<Integer> items = new ArrayList<Integer>();
 				for (int i = 0; i < getElement().getSize(); i++) {
-					String title = getElement().getTitle(i);
-					if (title.contains(filter)) {
+					if (i == index
+							|| getElement().getTitle(i).toLowerCase().contains(
+									title)) {
 						items.add(i);
 					}
 				}
