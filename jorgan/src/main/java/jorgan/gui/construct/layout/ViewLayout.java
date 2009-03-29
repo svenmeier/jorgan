@@ -68,6 +68,10 @@ public abstract class ViewLayout {
 		this.name = name;
 	}
 
+	public boolean isAlign() {
+		return true;
+	}
+	
 	/**
 	 * Layout the given views.
 	 * 

@@ -53,6 +53,11 @@ public class SpreadHorizontalLayout extends ViewLayout {
 	}
 
 	@Override
+	public boolean isAlign() {
+		return false;
+	}
+	
+	@Override
 	protected void visit(View<? extends Displayable> view, int index) {
 		changePosition(view, x + (width * index / (count - 1))
 				- view.getWidth() / 2, view.getY());

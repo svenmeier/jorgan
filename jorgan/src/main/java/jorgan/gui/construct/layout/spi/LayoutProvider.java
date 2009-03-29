@@ -16,17 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.customize.spi;
+package jorgan.gui.construct.layout.spi;
 
 import java.util.List;
 
-import jorgan.gui.customize.Customizer;
-import jorgan.session.OrganSession;
+import jorgan.gui.construct.layout.ViewLayout;
 
 /**
- * A provider of {@link Customizer}s.
+ * A provider of a {@link ViewLayout}s.
  */
-public interface CustomizerProvider {
+public interface LayoutProvider {
 
-	public List<Customizer> getCustomizers(OrganSession session);
+	public List<ViewLayout> getLayouts();
 }

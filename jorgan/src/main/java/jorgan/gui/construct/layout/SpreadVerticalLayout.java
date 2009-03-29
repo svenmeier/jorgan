@@ -33,6 +33,11 @@ public class SpreadVerticalLayout extends ViewLayout {
 
     private int count;
 
+	@Override
+	public boolean isAlign() {
+		return false;
+	}	
+    
     @Override
 	protected void init(View<? extends Displayable> pressed, List<View<? extends Displayable>> views) {
 
