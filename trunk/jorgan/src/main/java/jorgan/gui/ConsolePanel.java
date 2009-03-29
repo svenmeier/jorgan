@@ -55,6 +55,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
+import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
@@ -66,14 +67,6 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ProviderRegistry;
-import jorgan.gui.construct.layout.AlignBottomLayout;
-import jorgan.gui.construct.layout.AlignCenterHorizontalLayout;
-import jorgan.gui.construct.layout.AlignCenterVerticalLayout;
-import jorgan.gui.construct.layout.AlignLeftLayout;
-import jorgan.gui.construct.layout.AlignRightLayout;
-import jorgan.gui.construct.layout.AlignTopLayout;
-import jorgan.gui.construct.layout.SpreadHorizontalLayout;
-import jorgan.gui.construct.layout.SpreadVerticalLayout;
 import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.session.OrganSession;
@@ -135,6 +128,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private boolean interpolate = false;
 
+	private Color popupBackgound = new Color(255, 255, 225);
+
 	/**
 	 * The element that is currently pressed.
 	 */
@@ -153,7 +148,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * The listener to mouse (motion) events in play modus.
 	 */
-	private PlayMouseInputListener playMouseInputListener = new PlayMouseInputListener();
+	private PlayHandler playMouseInputListener = new PlayHandler();
 
 	/**
 	 * The listener to mouse (motion) events in construction modus.
@@ -190,29 +185,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private Action arrangeHideAction = new ArrangeHideAction();
 
-	/*
-	 * The layouts.
-	 */
-	private Action alignLeftAction = new LayoutAction(new AlignLeftLayout());
-
-	private Action alignRightAction = new LayoutAction(new AlignRightLayout());
-
-	private Action alignCenterHorizontalAction = new LayoutAction(
-			new AlignCenterHorizontalLayout());
-
-	private Action alignTopAction = new LayoutAction(new AlignTopLayout());
-
-	private Action alignBottomAction = new LayoutAction(new AlignBottomLayout());
-
-	private Action alignCenterVerticalAction = new LayoutAction(
-			new AlignCenterVerticalLayout());
-
-	private Action spreadHorizontalAction = new LayoutAction(
-			new SpreadHorizontalLayout());
-
-	private Action spreadVerticalAction = new LayoutAction(
-			new SpreadVerticalLayout());
-
 	private StandardDialog popup;
 
 	/**
@@ -246,18 +218,17 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		config.get("alignMenu").read(alignMenu);
 		menu.add(alignMenu);
 
-		alignMenu.add(alignLeftAction);
-		alignMenu.add(alignCenterHorizontalAction);
-		alignMenu.add(alignRightAction);
-		alignMenu.add(alignTopAction);
-		alignMenu.add(alignCenterVerticalAction);
-		alignMenu.add(alignBottomAction);
-
 		config.get("spreadMenu").read(spreadMenu);
 		menu.add(spreadMenu);
 
-		spreadMenu.add(spreadHorizontalAction);
-		spreadMenu.add(spreadVerticalAction);
+		for (ViewLayout layout : jorgan.gui.construct.layout.spi.ProviderRegistry
+				.lookupLayouts()) {
+			if (layout.isAlign()) {
+				alignMenu.add(new LayoutAction(layout));
+			} else {
+				spreadMenu.add(new LayoutAction(layout));
+			}
+		}
 
 		config.get("arrangeMenu").read(arrangeMenu);
 		menu.add(arrangeMenu);
@@ -317,6 +288,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	public void setGrid(int grid) {
 		this.grid = grid;
+	}
+
+	public void setPopupBackground(Color color) {
+		this.popupBackgound = color;
+	}
+
+	public Color getPopupBackground() {
+		return popupBackgound;
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
@@ -423,6 +402,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			popup.closeOnFocusLost();
 		}
 
+		contents.setBorder(new LineBorder(popupBackgound.darker()));
+		contents.setBackground(popupBackgound);
 		popup.setBody(contents);
 
 		Point location = getLocationOnScreen();
@@ -686,8 +667,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * The handler of events.
 	 */
-	private class EventHandler extends OrganAdapter implements
-			SessionListener, SelectionListener {
+	private class EventHandler extends OrganAdapter implements SessionListener,
+			SelectionListener {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
@@ -742,7 +723,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void constructingChanged(boolean constructing) {
 			setConstructing(constructing);
 		}
-		
+
 		public void selectionChanged(SelectionEvent ev) {
 
 			List<Element> newDisplayables = session.getSelection()
@@ -1015,7 +996,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * The mouse listener for playing.
 	 */
-	private class PlayMouseInputListener extends MouseInputAdapter {
+	private class PlayHandler extends MouseInputAdapter {
 
 		View<? extends Displayable> view;
 
@@ -1024,12 +1005,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			int x = screenToView(e.getX());
 			int y = screenToView(e.getY());
 
-			View<? extends Displayable> view = getView(x, y);
-			if (view != null && view.isPressable(x, y)) {
-				this.view = view;
-				this.view.mousePressed(x, y);
-			} else {
-				this.view = null;
+			if (!e.isPopupTrigger()) {
+				View<? extends Displayable> view = getView(x, y);
+				if (view != null && view.isPressable(x, y)) {
+					this.view = view;
+					this.view.mousePressed(x, y);
+				} else {
+					this.view = null;
+				}
 			}
 			setToolTipText(null);
 		}

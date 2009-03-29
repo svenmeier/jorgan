@@ -59,7 +59,10 @@ public class ConsoleCategory extends JOrganCategory {
 	private Model foreground = getModel(new Property(ConsolePanel.class,
 			"foreground"));
 
-	private Model elementColor = getModel(new Property(View.class,
+	private Model popupBackground = getModel(new Property(ConsolePanel.class,
+	"popupBackground"));
+
+	private Model elementForeground = getModel(new Property(View.class,
 			"defaultColor"));
 
 	private Model elementFont = getModel(new Property(View.class, "defaultFont"));
@@ -82,7 +85,9 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private ColorSelector foregroundSelector = new ColorSelector();
 
-	private ColorSelector elementColorSelector = new ColorSelector();
+	private ColorSelector popupBackgroundSelector = new ColorSelector();
+
+	private ColorSelector elementForegroundSelector = new ColorSelector();
 
 	private FontSelector elementFontSelector = new FontSelector();
 
@@ -115,10 +120,15 @@ public class ConsoleCategory extends JOrganCategory {
 		column.term(config.get("foreground").read(new JLabel()));
 		column.definition(foregroundSelector);
 
+		column.group(config.get("popup").read(new JLabel()));
+
+		column.term(config.get("popupBackground").read(new JLabel()));
+		column.definition(popupBackgroundSelector);
+
 		column.group(config.get("element").read(new JLabel()));
 
-		column.term(config.get("elementColor").read(new JLabel()));
-		column.definition(elementColorSelector);
+		column.term(config.get("elementForeground").read(new JLabel()));
+		column.definition(elementForegroundSelector);
 
 		column.term(config.get("elementFont").read(new JLabel()));
 		column.definition(elementFontSelector).fillHorizontal();
@@ -153,7 +163,9 @@ public class ConsoleCategory extends JOrganCategory {
 		backgroundSelector.setSelectedColor((Color) background.getValue());
 		foregroundSelector.setSelectedColor((Color) foreground.getValue());
 
-		elementColorSelector.setSelectedColor((Color) elementColor.getValue());
+		popupBackgroundSelector.setSelectedColor((Color) popupBackground.getValue());
+
+		elementForegroundSelector.setSelectedColor((Color) elementForeground.getValue());
 		elementFontSelector.setSelectedFont((Font) elementFont.getValue());
 
 		shortcutCheckBox.setSelected((Boolean) showShortcut.getValue());
@@ -170,7 +182,9 @@ public class ConsoleCategory extends JOrganCategory {
 		background.setValue(backgroundSelector.getSelectedColor());
 		foreground.setValue(foregroundSelector.getSelectedColor());
 
-		elementColor.setValue(elementColorSelector.getSelectedColor());
+		popupBackground.setValue(popupBackgroundSelector.getSelectedColor());
+
+		elementForeground.setValue(elementForegroundSelector.getSelectedColor());
 		elementFont.setValue(elementFontSelector.getSelectedFont());
 
 		showShortcut.setValue(shortcutCheckBox.isSelected());
