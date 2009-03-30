@@ -358,7 +358,7 @@ public class Combination extends Switch implements Activating {
 	
 	// TODO call when memory changes
 	private void ensureSize(int size) {
-		for (AbstractReference reference : getReferences(AbstractReference.class)) {
+		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.setSize(size);
 		}
 	}
