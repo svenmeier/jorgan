@@ -670,13 +670,16 @@ public class ConsolePanel extends JPanel {
 	}
 
 	private class SwitchRow {
-		public Switch aSwitch;
 
-		public Activate activate;
+		private boolean changed = false;
+		
+		private Switch aSwitch;
 
-		public Deactivate deactivate;
+		private Activate activate;
 
-		public Toggle toggle;
+		private Deactivate deactivate;
+
+		private Toggle toggle;
 
 		public SwitchRow(Switch aSwitch) {
 			this.aSwitch = aSwitch;
@@ -703,26 +706,38 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void newActivate(int status, int data1, int data2) {
+			changed = true;
+			
 			activate = aSwitch.createActivate(status, data1, data2);
 		}
 
 		public void newDeactivate(int status, int data1, int data2) {
+			changed = true;
+			
 			deactivate = aSwitch.createDeactivate(status, data1, data2);
 		}
 
 		public void newToggle(int status, int data1, int data2) {
+			changed = true;
+			
 			toggle = aSwitch.createToggle(status, data1, data2);
 		}
 
 		public void clearActivate() {
+			changed = true;
+			
 			activate = null;
 		}
 
 		public void clearDeactivate() {
+			changed = true;
+			
 			deactivate = null;
 		}
 
 		public void clearToggle() {
+			changed = true;
+			
 			toggle = null;
 		}
 
@@ -741,28 +756,32 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void apply() {
-			aSwitch.removeMessages(Activate.class);
-			if (activate != null) {
-				aSwitch.addMessage(activate);
-			}
+			if (changed) {
+				aSwitch.removeMessages(Activate.class);
+				if (activate != null) {
+					aSwitch.addMessage(activate);
+				}
 
-			aSwitch.removeMessages(Deactivate.class);
-			if (deactivate != null) {
-				aSwitch.addMessage(deactivate);
-			}
+				aSwitch.removeMessages(Deactivate.class);
+				if (deactivate != null) {
+					aSwitch.addMessage(deactivate);
+				}
 
-			aSwitch.removeMessages(Toggle.class);
-			if (toggle != null) {
-				aSwitch.addMessage(toggle);
-			}
+				aSwitch.removeMessages(Toggle.class);
+				if (toggle != null) {
+					aSwitch.addMessage(toggle);
+				}
+			}			
 		}
 	}
 
 	private class ContinuousRow {
+		
+		private boolean changed = false;
 
-		public Continuous aContinuous;
+		private Continuous aContinuous;
 
-		public Change change;
+		private Change change;
 
 		public ContinuousRow(Continuous aContinuous) {
 			this.aContinuous = aContinuous;
@@ -778,18 +797,26 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void newChangeWithStatus(int min, int max, int data1, int data2) {
+			changed = true;
+			
 			change = aContinuous.createChangeWithStatus(min, max, data1, data2);
 		}
 
 		public void newChangeWithData1(int status, int min, int max, int data2) {
+			changed = true;
+			
 			change = aContinuous.createChangeWithData1(status, min, max, data2);
 		}
 
 		public void newChangeWithData2(int status, int data1, int min, int max) {
+			changed = true;
+			
 			change = aContinuous.createChangeWithData2(status, data1, min, max);
 		}
 
 		public void clearChange() {
+			changed = true;
+			
 			change = null;
 		}
 
@@ -802,9 +829,11 @@ public class ConsolePanel extends JPanel {
 		}
 
 		public void apply() {
-			aContinuous.removeMessages(Change.class);
-			if (change != null) {
-				aContinuous.addMessage(change);
+			if (changed) {
+				aContinuous.removeMessages(Change.class);
+				if (change != null) {
+					aContinuous.addMessage(change);
+				}
 			}
 		}
 	}
