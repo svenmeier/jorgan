@@ -80,7 +80,7 @@ public class SkinDockable extends OrganDockable {
 
 	private PercentSlider slider;
 
-	private List<View<?>> styles = new ArrayList<View<?>>();
+	private List<View<?>> views = new ArrayList<View<?>>();
 
 	private EventHandler eventHandler = new EventHandler();
 
@@ -98,7 +98,6 @@ public class SkinDockable extends OrganDockable {
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		list.setLayoutOrientation(JList.HORIZONTAL_WRAP);
 		list.setVisibleRowCount(-1);
-		list.setCellRenderer(new StyleRenderer());
 		list.addListSelectionListener(eventHandler);
 		ToolTipManager.sharedInstance().registerComponent(list);
 	}
@@ -145,19 +144,24 @@ public class SkinDockable extends OrganDockable {
 			}
 		}
 
+		// make sure model and renderer are created, otherwise both might hold
+		// reference to already closed dispositions
 		if (console == null) {
 			slider.setValue(1.0f);
 			slider.setEnabled(false);
+			list.setModel(new StylesModel());
+			list.setCellRenderer(new StyleRenderer());
 			setContent(null);
 		} else {
 			slider.setValue(displayable.getZoom());
 			slider.setEnabled(true);
 			list.setModel(new StylesModel());
+			list.setCellRenderer(new StyleRenderer());
 			setContent(new JScrollPane(list));
 
 			String style = displayable.getStyle();
 			if (style != null) {
-				for (View<?> view : styles) {
+				for (View<?> view : views) {
 					if (view.getStyle().getName().equals(style)) {
 						list.setSelectedValue(view, true);
 						break;
@@ -171,8 +175,7 @@ public class SkinDockable extends OrganDockable {
 
 	private Displayable getDisplayable() {
 		if (session != null) {
-			Element element = session.getSelection()
-					.getSelectedElement();
+			Element element = session.getSelection().getSelectedElement();
 			if (element instanceof Displayable) {
 				return (Displayable) element;
 			}
@@ -224,7 +227,7 @@ public class SkinDockable extends OrganDockable {
 			if (element == console) {
 				update();
 			} else if (element == SkinDockable.this.displayable) {
-				for (View<?> style : styles) {
+				for (View<?> style : views) {
 					style.changeUpdate();
 				}
 			}
@@ -240,11 +243,11 @@ public class SkinDockable extends OrganDockable {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (!updating) {
-				View<?> style = (View<?>) list.getSelectedValue();
-				if (style == null) {
+				View<?> view = (View<?>) list.getSelectedValue();
+				if (view == null) {
 					displayable.setStyle(null);
 				} else {
-					displayable.setStyle(style.getStyle().getName());
+					displayable.setStyle(view.getStyle().getName());
 				}
 			}
 		}
@@ -253,7 +256,7 @@ public class SkinDockable extends OrganDockable {
 	private class StylesModel extends AbstractListModel {
 
 		public StylesModel() {
-			styles.clear();
+			views.clear();
 
 			if (skin != null) {
 				for (final Style style : skin.createStyles()) {
@@ -280,24 +283,25 @@ public class SkinDockable extends OrganDockable {
 								View<? extends Displayable> view, Point location) {
 						}
 
-						public void showPopup(View<? extends Displayable> view, JComponent contents) {
+						public void showPopup(View<? extends Displayable> view,
+								JComponent contents) {
 						}
-						
+
 						public void hidePopup() {
 						}
 					});
 
-					styles.add(view);
+					views.add(view);
 				}
 			}
 		}
 
 		public int getSize() {
-			return styles.size();
+			return views.size();
 		}
 
 		public Object getElementAt(int index) {
-			return styles.get(index);
+			return views.get(index);
 		}
 	}
 
