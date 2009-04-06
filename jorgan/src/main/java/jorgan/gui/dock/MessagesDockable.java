@@ -516,7 +516,7 @@ public class MessagesDockable extends OrganDockable {
 					public boolean messageRecorded(final ShortMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								recorded((ShortMessage) message);
+								recorded(message);
 
 								messageBox.hide();
 							}
