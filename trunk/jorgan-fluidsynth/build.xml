@@ -49,6 +49,22 @@
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
+    <fail message="win.jdk not found">
+      <condition>
+        <resourcecount count="0">
+          <fileset dir="${win.jdk}" includes="*" />
+        </resourcecount>
+      </condition>
+    </fail>
+
+    <fail message="win.cc not found">
+      <condition>
+        <resourcecount count="0">
+          <fileset file="${win.cc}" />
+        </resourcecount>
+      </condition>
+    </fail>
+  	
     <exec failonerror="true" executable="${win.cc}">
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
@@ -69,10 +85,25 @@
   </target>
 	
   <target name="native-unix" depends="native-common" if="isUnix">
-  	<echo message="Note: requires package 'libfluidsynth-dev'" />
-  	
     <mkdir dir="./target/native" />
 
+    <fail message="unix.jdk not found">
+      <condition>
+        <resourcecount count="0">
+          <fileset dir="${win.jdk}" includes="*" />
+        </resourcecount>
+      </condition>
+    </fail>
+
+    <fail message="unix.cc not found">
+      <condition>
+        <resourcecount count="0">
+          <fileset file="${win.cc}" />
+        </resourcecount>
+      </condition>
+    </fail>
+  	
+  	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
