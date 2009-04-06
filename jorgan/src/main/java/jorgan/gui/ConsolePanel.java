@@ -256,6 +256,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		this.session.removeSelectionListener(eventHandler);
 		this.session.removeListener(eventHandler);
 		this.session = null;
+		
+		if (this.popup != null) {
+			this.popup.dispose();
+			this.popup = null;
+		}
 	}
 
 	@Override
