@@ -23,6 +23,7 @@ import java.awt.Point;
 
 import javax.swing.JComponent;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
 import jorgan.skin.Style;
 
@@ -62,4 +63,6 @@ public interface ViewContainer {
 	public void showPopup(View<? extends Displayable> view, JComponent contents);
 
 	public void hidePopup();
+
+	public void toFront(Console console);
 }

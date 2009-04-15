@@ -74,6 +74,10 @@ public abstract class Element implements Cloneable {
 			return false;
 		}
 
+		if (getReferenceCount() == getReferenceMax()) {
+			return false;
+		}
+		
 		if (!canReferenceDuplicates() && references(element)) {
 			return false;
 		}
@@ -81,6 +85,10 @@ public abstract class Element implements Cloneable {
 		return canReference(element.getClass());
 	}
 
+	protected int getReferenceMax() {
+		return Integer.MAX_VALUE;
+	}
+	
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return false;
 	}

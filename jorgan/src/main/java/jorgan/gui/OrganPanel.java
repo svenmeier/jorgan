@@ -39,6 +39,7 @@ import javax.swing.border.EmptyBorder;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.gui.ConsolePanel.ConsoleStack;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.OrganDockable;
@@ -64,7 +65,7 @@ import bias.Configuration;
 /**
  * Panel for display and editing of an organ.
  */
-public class OrganPanel extends JPanel implements SessionAware {
+public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 	private static final String DOCKING_VERSION = "1";
 
@@ -223,8 +224,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 			forwardAction.setEnabled(false);
 		} else {
 			backAction.setEnabled(session.getSelection().canBack());
-			forwardAction
-					.setEnabled(session.getSelection().canForward());
+			forwardAction.setEnabled(session.getSelection().canForward());
 		}
 	}
 
@@ -360,6 +360,11 @@ public class OrganPanel extends JPanel implements SessionAware {
 		config.write(this);
 	}
 
+	public void toFront(Console console) {
+		consoleDocking
+				.putDockable(console, consoleDocking.getDockable(console));
+	}
+
 	/**
 	 * The listener to events.
 	 */
@@ -389,8 +394,7 @@ public class OrganPanel extends JPanel implements SessionAware {
 
 		public void selectionChanged(SelectionEvent ev) {
 			if (session.getSelection().getSelectionCount() == 1) {
-				Element element = session.getSelection()
-						.getSelectedElement();
+				Element element = session.getSelection().getSelectedElement();
 				if (element instanceof Console) {
 					Console console = (Console) element;
 

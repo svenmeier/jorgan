@@ -743,8 +743,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 				ConsoleDialog dialog = dialogs.get(screen);
 				if (dialog == null) {
-					dialog = ConsoleDialog.create(OrganFrame.this, screen);
-					dialog.setSession(session);
+					dialog = ConsoleDialog.create(OrganFrame.this, session, screen);
 					dialogs.put(screen, dialog);
 				}
 				dialog.addConsole(console);
@@ -759,7 +758,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 				ConsoleDialog dialog = iterator.next();
 				dialog.setVisible(false);
 				dialog.dispose();
-				dialog.setSession(null);
 			}
 			dialogs.clear();
 		}

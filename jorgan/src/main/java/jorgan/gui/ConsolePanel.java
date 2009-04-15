@@ -603,6 +603,17 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return this;
 	}
 
+	public void toFront(Console console) {
+		Component parent = getParent();
+		while (parent != null) {
+			 if (parent instanceof ConsoleStack) {
+				 ((ConsoleStack) parent).toFront(console);
+				 break;
+			 }
+			 parent = parent.getParent();
+		}
+	}
+	
 	/**
 	 * Paint this component, i.e. the background, all views and a possibly
 	 * visible selections.
@@ -1282,5 +1293,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 			}
 		}
+	}
+	
+	public static interface ConsoleStack {
+		public void toFront(Console console);
 	}
 }

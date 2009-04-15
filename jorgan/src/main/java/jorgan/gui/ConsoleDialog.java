@@ -18,6 +18,7 @@
  */
 package jorgan.gui;
 
+import java.awt.Component;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
@@ -26,8 +27,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
+import java.util.Map;
 
-import javax.swing.AbstractButton;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
@@ -36,12 +38,14 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
+import jorgan.gui.ConsolePanel.ConsoleStack;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionAware;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
 import jorgan.swing.button.ButtonGroup;
@@ -50,7 +54,7 @@ import bias.Configuration;
 /**
  * JDialog subclass to show a console <em>full screen</em>.
  */
-public class ConsoleDialog extends JDialog implements SessionAware {
+public class ConsoleDialog extends JDialog implements ConsoleStack {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsoleDialog.class);
@@ -68,11 +72,9 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 
 	private JPopupMenu popup = new JPopupMenu();
 
-	private ButtonGroup group = new ButtonGroup() {
-		protected void onSelected(AbstractButton button) {
-			cardPanel.selectCard(button.getClientProperty(this));
-		}
-	};
+	private Map<Console, JCheckBoxMenuItem> menuItems = new HashMap<Console, JCheckBoxMenuItem>();
+
+	private ButtonGroup group = new ButtonGroup();
 
 	private OrganSession session;
 
@@ -84,7 +86,8 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 	 * @param configuration
 	 *            the graphics configuration
 	 */
-	public ConsoleDialog(JFrame owner, GraphicsConfiguration configuration) {
+	public ConsoleDialog(JFrame owner, GraphicsConfiguration configuration,
+			OrganSession session) {
 		super(owner, null, false, configuration);
 
 		setUndecorated(true);
@@ -99,9 +102,7 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 
 		popup.addSeparator();
 		popup.add(new CloseAction());
-	}
 
-	public void setSession(OrganSession session) {
 		this.session = session;
 	}
 
@@ -120,11 +121,38 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 
 		cardPanel.addCard(consolePanel, console);
 
-		JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
 				.getDisplayName(console));
-		check.putClientProperty(group, console);
+		menuItems.put(console, check);
+		check.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent event) {
+				if (check.isSelected()) {
+					toFront(console);
+				}
+			}
+		});
 		group.add(check);
 		popup.add(check, 0);
+	}
+
+	@Override
+	public synchronized void dispose() {
+		super.dispose();
+
+		session = null;
+		
+		menuItems.clear();
+
+		for (Component component : cardPanel.getComponents()) {
+			((ConsolePanel) component).dispose();
+		}
+		cardPanel.removeAll();
+	}
+
+	public void toFront(Console console) {
+		menuItems.get(console).setSelected(true);
+
+		cardPanel.selectCard(console);
 	}
 
 	/**
@@ -226,7 +254,8 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 	 *            screen
 	 * @return created dialog
 	 */
-	public static ConsoleDialog create(JFrame owner, String screen) {
+	public static ConsoleDialog create(JFrame owner, OrganSession session,
+			String screen) {
 
 		if (screen == null) {
 			throw new IllegalArgumentException("screen must not be null");
@@ -245,7 +274,7 @@ public class ConsoleDialog extends JDialog implements SessionAware {
 			environment.getDefaultScreenDevice().getDefaultConfiguration();
 		}
 
-		ConsoleDialog dialog = new ConsoleDialog(owner, configuration);
+		ConsoleDialog dialog = new ConsoleDialog(owner, configuration, session);
 
 		return dialog;
 	}

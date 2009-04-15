@@ -25,6 +25,7 @@ import jorgan.disposition.Activator;
 import jorgan.disposition.Captor;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
+import jorgan.disposition.ConsoleSwitcher;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.Coupler;
@@ -68,6 +69,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Incrementer.class);
 		classes.add(Memory.class);
 		classes.add(GenericSound.class);
+		classes.add(ConsoleSwitcher.class);
 
 		elementClasses = classes;
 	}

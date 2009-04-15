@@ -289,6 +289,9 @@ public class SkinDockable extends OrganDockable {
 
 						public void hidePopup() {
 						}
+						
+						public void toFront(Console console) {
+						}
 					});
 
 					views.add(view);
