@@ -38,6 +38,8 @@ public class Fluidsynth {
 
 	private int channels;
 
+	private int polyphony;
+
 	private String audioDriver;
 
 	private String audioDevice;
@@ -49,21 +51,22 @@ public class Fluidsynth {
 	private File soundfont;
 
 	public Fluidsynth() throws IllegalStateException, IOException {
-		this("", 16, 44100.0f, null, null, 16, 64);
+		this("", 16, 256, 44100.0f, null, null, 16, 64);
 	}
 
-	public Fluidsynth(String name, int channels, float sampleRate, String audioDriver,
+	public Fluidsynth(String name, int channels, int polyphony, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException {
 
 		this.name = name;
 		this.channels = channels;
+		this.polyphony = polyphony;
 		this.audioDriver = audioDriver;
 		this.audioDevice = audioDevice;
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		create(name, channels, sampleRate, audioDriver, audioDevice, buffers, bufferSize);
+		create(name, channels, polyphony, sampleRate, audioDriver, audioDevice, buffers, bufferSize);
 	}
 
 	public String getAudioDevice() {
@@ -86,6 +89,10 @@ public class Fluidsynth {
 		return channels;
 	}
 
+	public int getPolyphony() {
+		return polyphony;
+	}
+
 	public String getName() {
 		return name;
 	}
@@ -98,7 +105,7 @@ public class Fluidsynth {
 		destroy();
 	}
 
-	private native void create(String name, int channels, float sampleRate, String audioDriver,
+	private native void create(String name, int channels, int polyphony, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize)
 			throws IllegalStateException, IOException;
 

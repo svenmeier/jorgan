@@ -30,6 +30,8 @@ public class FluidsynthSound extends Sound {
 
 	private int channels = 32;
 	
+	private int polyphony = 256;
+	
 	private int sampleRate = 44100;
 	
 	// audio.driver [alsa, oss, jack, dsound, sndman, coreaudio, portaudio]
@@ -127,6 +129,32 @@ public class FluidsynthSound extends Sound {
 			this.channels = channels;
 
 			fireChange(new UndoablePropertyChange(oldChannels, this.channels));
+		}
+	}
+
+	public int getPolyphony() {
+		if (polyphony == 0) {
+			// backwards compatibiliy for dispositions without polyphony
+			polyphony = 256;
+		}
+		return polyphony;
+	}
+
+	public void setPolyphony(int polyphony) {
+		if (polyphony < 16) {
+			throw new IllegalArgumentException(
+					"polyphony must be greater or equal 16");
+		}
+		if (polyphony > 4096) {
+			throw new IllegalArgumentException("polyphony must be less or equal 4096");
+		}
+		
+		if (this.polyphony != polyphony) {
+			int oldPolyphony = this.polyphony;
+			
+			this.polyphony = polyphony;
+
+			fireChange(new UndoablePropertyChange(oldPolyphony, this.polyphony));
 		}
 	}
 
