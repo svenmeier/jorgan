@@ -28,23 +28,23 @@ public class FluidsynthSound extends Sound {
 	private String soundfont;
 
 	private int channels = 32;
-	
+
 	private int polyphony = 256;
-	
+
 	private int sampleRate = 44100;
-	
+
 	// audio.driver [alsa, oss, jack, dsound, sndman, coreaudio, portaudio]
 	private String audioDriver;
 
 	// audio.<driver>.device
 	private String audioDevice;
-	
+
 	// audio.periods [2-64]
 	private int audioBuffers = 8;
 
 	// audio.period-size [64-8192]
 	private int audioBufferSize = 512;
-	
+
 	private double gain = 0.5d;
 
 	private Reverb reverb;
@@ -56,42 +56,44 @@ public class FluidsynthSound extends Sound {
 
 		fireChange(new PropertyChange());
 	}
-	
+
 	public double getGain() {
 		return gain;
 	}
-	
+
 	public void setAudioDriver(String audioDriver) {
 		if (!Null.safeEquals(this.audioDriver, audioDriver)) {
 			String oldAudioDriver = this.audioDriver;
-			
+
 			if ("".equals(audioDriver)) {
 				audioDriver = null;
 			}
 			this.audioDriver = audioDriver;
-			
-			fireChange(new UndoablePropertyChange(oldAudioDriver, this.audioDriver));
+
+			fireChange(new UndoablePropertyChange(oldAudioDriver,
+					this.audioDriver));
 		}
 	}
-	
+
 	public int getSampleRate() {
 		return sampleRate;
 	}
-	
+
 	public void setSampleRate(int sampleRate) {
 		if (this.sampleRate != sampleRate) {
 			int oldSampleRate = this.sampleRate;
-			
+
 			this.sampleRate = sampleRate;
-			
-			fireChange(new UndoablePropertyChange(oldSampleRate, this.sampleRate));
+
+			fireChange(new UndoablePropertyChange(oldSampleRate,
+					this.sampleRate));
 		}
 	}
-	
+
 	public String getAudioDriver() {
 		return audioDriver;
 	}
-	
+
 	public String getSoundfont() {
 		return soundfont;
 	}
@@ -99,7 +101,7 @@ public class FluidsynthSound extends Sound {
 	public void setSoundfont(String soundfont) {
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			String oldSoundfont = this.soundfont;
-			
+
 			this.soundfont = soundfont;
 
 			fireChange(new UndoablePropertyChange(oldSoundfont, this.soundfont));
@@ -116,15 +118,17 @@ public class FluidsynthSound extends Sound {
 					"channels must be greater or equal 16");
 		}
 		if (channels > 256) {
-			throw new IllegalArgumentException("channels must be less or equal 256");
+			throw new IllegalArgumentException(
+					"channels must be less or equal 256");
 		}
 		if (channels % 16 != 0) {
-			throw new IllegalArgumentException("channels must be multiple of 16");
+			throw new IllegalArgumentException(
+					"channels must be multiple of 16");
 		}
-		
+
 		if (this.channels != channels) {
 			int oldChannels = this.channels;
-			
+
 			this.channels = channels;
 
 			fireChange(new UndoablePropertyChange(oldChannels, this.channels));
@@ -145,12 +149,13 @@ public class FluidsynthSound extends Sound {
 					"polyphony must be greater or equal 16");
 		}
 		if (polyphony > 4096) {
-			throw new IllegalArgumentException("polyphony must be less or equal 4096");
+			throw new IllegalArgumentException(
+					"polyphony must be less or equal 4096");
 		}
-		
+
 		if (this.polyphony != polyphony) {
 			int oldPolyphony = this.polyphony;
-			
+
 			this.polyphony = polyphony;
 
 			fireChange(new UndoablePropertyChange(oldPolyphony, this.polyphony));
@@ -163,7 +168,7 @@ public class FluidsynthSound extends Sound {
 
 	public void setChorus(Chorus chorus) {
 		this.chorus = chorus;
-		
+
 		fireChange(new PropertyChange());
 	}
 
@@ -173,10 +178,10 @@ public class FluidsynthSound extends Sound {
 
 	public void setReverb(Reverb reverb) {
 		this.reverb = reverb;
-		
+
 		fireChange(new PropertyChange());
 	}
-	
+
 	static double limit(double value) {
 		if (value > 1.0d) {
 			value = 1.0d;
@@ -184,7 +189,7 @@ public class FluidsynthSound extends Sound {
 		if (value < 0.0d) {
 			value = 0.0d;
 		}
-		
+
 		return value;
 	}
 
@@ -198,15 +203,17 @@ public class FluidsynthSound extends Sound {
 					"audioBuffers must be greater or equal 2");
 		}
 		if (audioBuffers > 16) {
-			throw new IllegalArgumentException("audioBuffers must be less than 16");
+			throw new IllegalArgumentException(
+					"audioBuffers must be less than 16");
 		}
 
 		if (this.audioBuffers != audioBuffers) {
 			int oldAudioBuffers = this.audioBuffers;
-			
+
 			this.audioBuffers = audioBuffers;
-			
-			fireChange(new UndoablePropertyChange(oldAudioBuffers, this.audioBuffers));
+
+			fireChange(new UndoablePropertyChange(oldAudioBuffers,
+					this.audioBuffers));
 		}
 	}
 
@@ -220,15 +227,17 @@ public class FluidsynthSound extends Sound {
 					"audioBufferSize must be greater or equal 64");
 		}
 		if (audioBufferSize > 8192) {
-			throw new IllegalArgumentException("audioBufferSize must be less than 8192");
+			throw new IllegalArgumentException(
+					"audioBufferSize must be less than 8192");
 		}
 
 		if (this.audioBufferSize != audioBufferSize) {
 			int oldAudioBufferSize = this.audioBufferSize;
-			
+
 			this.audioBufferSize = audioBufferSize;
 
-			fireChange(new UndoablePropertyChange(oldAudioBufferSize, this.audioBufferSize));
+			fireChange(new UndoablePropertyChange(oldAudioBufferSize,
+					this.audioBufferSize));
 		}
 	}
 
@@ -239,13 +248,26 @@ public class FluidsynthSound extends Sound {
 	public void setAudioDevice(String audioDevice) {
 		if (!Null.safeEquals(this.audioDevice, audioDevice)) {
 			String oldAudioDevice = this.audioDevice;
-			
+
 			if ("".equals(audioDevice)) {
 				audioDevice = null;
 			}
 			this.audioDevice = audioDevice;
-			
-			fireChange(new UndoablePropertyChange(oldAudioDevice, this.audioDevice));
+
+			fireChange(new UndoablePropertyChange(oldAudioDevice,
+					this.audioDevice));
 		}
-	}	
+	}
+
+	public boolean equals(FluidsynthSound sound) {
+
+		return Null.safeEquals(getAudioDriver(), sound.getAudioDriver())
+				&& Null.safeEquals(getAudioDevice(), sound.getAudioDevice())
+				&& getAudioBuffers() == sound.getAudioBuffers()
+				&& getAudioBufferSize() == sound.getAudioBufferSize()
+				&& getSampleRate() == sound.getSampleRate()
+				&& getPolyphony() == sound.getPolyphony()
+				&& getChannels() == sound.getChannels()
+				&& Null.safeEquals(getSoundfont(), sound.getSoundfont());
+	}
 }

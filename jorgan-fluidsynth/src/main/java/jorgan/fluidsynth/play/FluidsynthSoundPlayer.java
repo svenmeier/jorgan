@@ -26,7 +26,6 @@ import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
 import jorgan.play.SoundPlayer;
 import jorgan.session.event.Severity;
-import jorgan.util.Null;
 
 /**
  * A player for a {@link FluidsynthSound}.
@@ -54,16 +53,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		if (synth == null) {
 			createSynth();
 		} else {
-			if (!Null
-					.safeEquals(clone.getAudioDriver(), sound.getAudioDriver())
-					|| !Null.safeEquals(clone.getAudioDevice(), sound
-							.getAudioDevice())
-					|| clone.getAudioBuffers() != sound.getAudioBuffers()
-					|| clone.getAudioBufferSize() != sound.getAudioBufferSize()
-					|| clone.getSampleRate() != sound.getSampleRate()
-					|| clone.getChannels() != sound.getChannels()
-					|| !Null.safeEquals(clone.getSoundfont(), sound
-							.getSoundfont())) {
+			if (!clone.equals(synth)) {
 				destroySynth();
 				createSynth();
 			}
@@ -100,10 +90,10 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		removeProblem(Severity.ERROR, "audioDriver");
 		try {
-			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(), sound.getPolyphony(),
-					sound.getSampleRate(), sound.getAudioDriver(), sound
-							.getAudioDevice(), sound.getAudioBuffers(), sound
-							.getAudioBufferSize());
+			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(),
+					sound.getPolyphony(), sound.getSampleRate(), sound
+							.getAudioDriver(), sound.getAudioDevice(), sound
+							.getAudioBuffers(), sound.getAudioBufferSize());
 
 			clone = (FluidsynthSound) sound.clone();
 		} catch (IllegalStateException e) {
