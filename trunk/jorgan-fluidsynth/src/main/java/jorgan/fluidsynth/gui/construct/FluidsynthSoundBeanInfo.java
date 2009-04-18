@@ -22,6 +22,7 @@ import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.gui.construct.editor.AudioDeviceEditor;
 import jorgan.fluidsynth.gui.construct.editor.AudioDriverEditor;
 import jorgan.fluidsynth.gui.construct.editor.ChannelsEditor;
+import jorgan.fluidsynth.gui.construct.editor.PolyphonyEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
@@ -36,6 +37,7 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 		super.registerProperties();
 
 		add("channels", FluidsynthSound.class, ChannelsEditor.class);
+		add("polyphony", FluidsynthSound.class, PolyphonyEditor.class);
 		add("sampleRate", FluidsynthSound.class, IntegerEditor.class);
 		add("audioDriver", FluidsynthSound.class, AudioDriverEditor.class);
 		add("audioDevice", FluidsynthSound.class, AudioDeviceEditor.class);
