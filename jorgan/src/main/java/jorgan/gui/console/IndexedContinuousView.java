@@ -21,10 +21,17 @@ package jorgan.gui.console;
 import java.awt.Insets;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.JComponent;
 
 import jorgan.disposition.IndexedContinuous;
+import jorgan.skin.ButtonLayer;
+import jorgan.skin.Fill;
 import jorgan.skin.Layer;
 import jorgan.skin.TextLayer;
+import jorgan.swing.list.FilterList;
 
 /**
  * A view that shows an {@link IndexedContinuous}.
@@ -91,4 +98,58 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 		return layer;
 	}
 
+	protected Layer createPressableLayer() {
+		ButtonLayer layer = new ButtonLayer();
+		layer.setBinding(BINDING_POPUP);
+		layer.setFill(Fill.BOTH);
+		layer.setPadding(new Insets(4, 4, 4, 4));
+
+		return layer;
+	}
+
+	@Override
+	protected JComponent createPopupContents() {
+
+		FilterList<Integer> filterList = new FilterList<Integer>() {
+			@Override
+			protected List<Integer> getItems(String filter) {
+				String title = filter.toLowerCase();
+				int index = -1;
+				try {
+					index = Integer.parseInt(filter) - 1;
+				} catch (NumberFormatException noIndex) {
+				}
+
+				List<Integer> items = new ArrayList<Integer>();
+				for (int i = 0; i < getElement().getSize(); i++) {
+					if (i == index
+							|| getElement().getTitle(i).toLowerCase().contains(
+									title)) {
+						items.add(i);
+					}
+				}
+				return items;
+			}
+
+			@Override
+			protected String toString(Integer item) {
+				return (item.intValue() + 1) + " - "
+						+ getElement().getTitle(item);
+			}
+
+			@Override
+			protected void onSelectedItem(Integer item) {
+				getElement().setIndex(item.intValue());
+
+				closePopup();
+			}
+		};
+		filterList.setOpaque(true);
+
+		if (getElement().getIndex() != -1) {
+			filterList.setSelectedItem(getElement().getIndex());
+		}
+
+		return filterList;
+	}
 }

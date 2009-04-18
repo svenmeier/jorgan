@@ -36,6 +36,8 @@ public abstract class IndexedContinuous extends Continuous {
 	
 	public abstract void setTitle(String title);
 	
+	public abstract String getTitle(int index);
+	
 	@Override
 	protected void onValueChanged(float oldValue, float newValue) {
 		int oldIndex = getIndex(oldValue);
