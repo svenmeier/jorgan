@@ -100,7 +100,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		removeProblem(Severity.ERROR, "audioDriver");
 		try {
-			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(),
+			synth = new Fluidsynth(name(sound.getName()), sound.getChannels(), sound.getPolyphony(),
 					sound.getSampleRate(), sound.getAudioDriver(), sound
 							.getAudioDevice(), sound.getAudioBuffers(), sound
 							.getAudioBufferSize());
