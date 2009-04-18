@@ -53,7 +53,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		if (synth == null) {
 			createSynth();
 		} else {
-			if (!clone.equals(synth)) {
+			if (!clone.equals(sound)) {
 				destroySynth();
 				createSynth();
 			}
