@@ -57,7 +57,7 @@ struct Context *getContext(JNIEnv *env, jobject object) {
 }
 
 JNIEXPORT
-void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jstring name, jint channels, jfloat sampleRate, jstring audioDriver, jstring audioDevice, jint buffers, jint bufferSize) {
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject object, jstring name, jint channels, jint polyphony, jfloat sampleRate, jstring audioDriver, jstring audioDevice, jint buffers, jint bufferSize) {
   struct Context *context = createContext(env);
   if (context == NULL) {
     return;
@@ -68,8 +68,9 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_create(JNIEnv *env, jobject objec
   (*context).settings = new_fluid_settings();
 
   fluid_settings_setint((*context).settings, "synth.midi-channels", channels);
+  fluid_settings_setint((*context).settings, "synth.polyphony", polyphony);
   fluid_settings_setnum((*context).settings, "synth.sample-rate", sampleRate);
-
+  
   if (audioDriver != NULL) {
     const char* cAudioDriver = (*env)->GetStringUTFChars(env, audioDriver, NULL);
     fluid_settings_setstr((*context).settings, "audio.driver", (char*)cAudioDriver);
