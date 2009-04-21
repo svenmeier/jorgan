@@ -234,7 +234,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 	}
 
-	protected void addConsoleDockable(Console console) {
+	protected ConsoleDockable addConsoleDockable(Console console) {
 
 		ConsoleDockable dockable = new ConsoleDockable(console) {
 			@Override
@@ -253,6 +253,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		};
 
 		consoleDocking.putDockable(console, dockable);
+
+		return dockable;
 	}
 
 	protected void removeConsoleDockable(Console console) {
@@ -361,8 +363,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	}
 
 	public void toFront(Console console) {
-		consoleDocking
-				.putDockable(console, consoleDocking.getDockable(console));
+		Dockable dockable = consoleDocking.getDockable(console);
+		if (dockable == null) {
+			dockable = addConsoleDockable(console);
+		}
+		consoleDocking.putDockable(console, dockable);
 	}
 
 	/**

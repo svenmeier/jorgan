@@ -150,9 +150,12 @@ public class ConsoleDialog extends JDialog implements ConsoleStack {
 	}
 
 	public void toFront(Console console) {
-		menuItems.get(console).setSelected(true);
+		JCheckBoxMenuItem menuItem = menuItems.get(console);
+		if (menuItem != null) {
+			menuItem.setSelected(true);
 
-		cardPanel.selectCard(console);
+			cardPanel.selectCard(console);
+		}
 	}
 
 	/**
