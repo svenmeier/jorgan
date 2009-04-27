@@ -33,6 +33,7 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.event.Change;
@@ -43,6 +44,7 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ReceiverWrapper;
 import jorgan.midi.TransmitterWrapper;
+import jorgan.play.event.KeyListener;
 import jorgan.play.event.PlayListener;
 import jorgan.play.spi.ProviderRegistry;
 import jorgan.session.ElementProblems;
@@ -78,9 +80,14 @@ public class OrganPlay implements Resolver {
 	private EventHandler eventHandler = new EventHandler();
 
 	/**
-	 * All registered playerListeners.
+	 * All registered {@link PlayListener}s.
 	 */
-	private List<PlayListener> listeners = new ArrayList<PlayListener>();
+	private List<PlayListener> playListeners = new ArrayList<PlayListener>();
+
+	/**
+	 * All registered {@link KeyListener}s.
+	 */
+	private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
 
 	private ElementProblems problems = new ElementProblems();
 
@@ -134,33 +141,53 @@ public class OrganPlay implements Resolver {
 	}	
 	
 	public void addPlayerListener(PlayListener listener) {
-		listeners.add(listener);
+		playListeners.add(listener);
 	}
 
 	public void removePlayerListener(PlayListener listener) {
-		listeners.remove(listener);
+		playListeners.remove(listener);
 	}
 
-	/**
-	 * Fire input.
-	 */
+	public void addKeyListener(KeyListener listener) {
+		keyListeners.add(listener);
+	}
+
+	public void removeKeyListener(KeyListener listener) {
+		keyListeners.remove(listener);
+	}
+
+	protected void fireKeyPressed(Keyboard keyboard, int pitch, int velocity) {
+		if (keyListeners != null) {
+			for (int l = 0; l < keyListeners.size(); l++) {
+				KeyListener listener = keyListeners.get(l);
+				listener.keyPressed(keyboard, pitch, velocity);
+			}
+		}
+	}
+	
+	protected void fireKeyReleased(Keyboard keyboard, int pitch) {
+		if (keyListeners != null) {
+			for (int l = 0; l < keyListeners.size(); l++) {
+				KeyListener listener = keyListeners.get(l);
+				listener.keyReleased(keyboard, pitch);
+			}
+		}
+	}
+	
 	protected void fireReceived(Element element, InputMessage message,
 			int channel, int command, int data1, int data2) {
-		if (listeners != null) {
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
+		if (playListeners != null) {
+			for (int l = 0; l < playListeners.size(); l++) {
+				PlayListener listener = playListeners.get(l);
 				listener.received(channel, command, data1, data2);
 			}
 		}
 	}
 
-	/**
-	 * Fire output.
-	 */
 	protected void fireSent(int channel, int command, int data1, int data2) {
-		if (listeners != null) {
-			for (int l = 0; l < listeners.size(); l++) {
-				PlayListener listener = listeners.get(l);
+		if (playListeners != null) {
+			for (int l = 0; l < playListeners.size(); l++) {
+				PlayListener listener = playListeners.get(l);
 				listener.sent(channel, command, data1, data2);
 			}
 		}

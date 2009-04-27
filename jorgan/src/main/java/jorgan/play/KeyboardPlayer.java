@@ -130,6 +130,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		if (!pressed[pitch]) {
 			pressed[pitch] = true;
 
+			getOrganPlay().fireKeyPressed(keyboard, pitch, velocity);
+			
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
@@ -148,6 +150,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 		if (pressed[pitch]) {
 			pressed[pitch] = false;
+
+			getOrganPlay().fireKeyReleased(keyboard, pitch);
 
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
