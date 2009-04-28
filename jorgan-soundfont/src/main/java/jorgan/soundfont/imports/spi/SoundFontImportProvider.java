@@ -18,146 +18,23 @@
  */
 package jorgan.soundfont.imports.spi;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.JPanel;
-
-import jorgan.disposition.Element;
-import jorgan.disposition.Rank;
-import jorgan.disposition.Stop;
+import jorgan.gui.imports.spi.Import;
 import jorgan.gui.imports.spi.ImportProvider;
-import jorgan.riff.RiffChunk;
-import jorgan.riff.RiffFormatException;
-import jorgan.soundfont.Preset;
-import jorgan.soundfont.SoundfontReader;
-import jorgan.soundfont.imports.OptionsPanel;
-import bias.Configuration;
-import bias.swing.MessageBox;
+import jorgan.soundfont.imports.SoundFontImport;
 
 /**
- * A provider for an import from a SoundFont.
+ * A provider for {@link Import} from a SoundFont.
  */
 public class SoundFontImportProvider implements ImportProvider {
 
-	static Configuration config = Configuration.getRoot().get(
-			SoundFontImportProvider.class);
+	public List<Import> getImports() {
+		List<Import> imports = new ArrayList<Import>();
 
-	private OptionsPanel panel = new OptionsPanel();
+		imports.add(new SoundFontImport());
 
-	private String name;
-
-	private String description;
-
-	public SoundFontImportProvider() {
-		config.read(this);
-	}
-
-	public JPanel getOptionsPanel() {
-		return panel;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public boolean hasElements() {
-		File file = panel.getSelectedFile();
-
-		return file != null && file.exists() && file.isFile();
-	}
-
-	public List<Element> getElements() {
-		List<Element> elements = new ArrayList<Element>();
-
-		File file = panel.getSelectedFile();
-		int bank = panel.getBank();
-		if (file != null) {
-			try {
-				Set<Rank> ranks = readRanks(file, bank);
-
-				elements.addAll(ranks);
-
-				if (panel.getCreateStops()) {
-					for (Rank rank : ranks) {
-						Stop stop = new Stop();
-						stop.setName(rank.getName());
-						stop.reference(rank);
-						elements.add(stop);
-					}
-				}
-			} catch (RiffFormatException ex) {
-				showMessage("exception/invalid", file.getPath());
-			} catch (IOException ex) {
-				showMessage("exception/general", file.getPath());
-			}
-		}
-
-		return elements;
-	}
-
-	private void showMessage(String key, Object... args) {
-		MessageBox box = SoundFontImportProvider.config.get(key).read(
-				new MessageBox(MessageBox.OPTIONS_OK));
-		box.show(panel);
-	}
-
-	/**
-	 * Read ranks from the given soundfont file.
-	 * 
-	 * @param file
-	 *            file to read from
-	 * @return list of ranks
-	 * @throws IOException
-	 * @throws RiffFormatException
-	 */
-	private Set<Rank> readRanks(File file, int bank) throws IOException,
-			RiffFormatException {
-
-		Set<Rank> ranks = new HashSet<Rank>();
-
-		InputStream input = null;
-		try {
-			input = new FileInputStream(file);
-
-			RiffChunk riffChunk = new SoundfontReader(input).read();
-
-			List<Preset> presets = SoundfontReader.getPresets(riffChunk);
-			Collections.sort(presets);
-			for (int p = 0; p < presets.size(); p++) {
-				Preset preset = presets.get(p);
-
-				Rank rank = new Rank();
-				rank.setName(preset.getName());
-				rank.setProgram(preset.getProgram());
-				rank.setBank(bank);
-				ranks.add(rank);
-			}
-		} finally {
-			if (input != null) {
-				input.close();
-			}
-		}
-
-		return ranks;
+		return imports;
 	}
 }
