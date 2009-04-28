@@ -31,6 +31,8 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
+import com.sun.media.sound.MidiUtils;
+
 public class Recorder {
 
 	private static final float DEFAULT_DIVISION = Sequence.PPQ;
@@ -160,7 +162,30 @@ public class Recorder {
 		state = new Stopped();
 	}
 
+	/**
+	 * Record the given message. <br>
+	 * Note that recording is supported when this recorder {@link #isStopped()} too.
+	 * 
+	 * @param track
+	 *            track to add message to
+	 * @param message
+	 *            message to add
+	 * @throws IllegalArgumentException
+	 *             if track or message is invalid
+	 */
 	public void record(int track, MidiMessage message) {
+		if (track >= tracks.length) {
+			throw new IllegalArgumentException("invalid track");
+		}
+
+		if (MidiUtils.isMetaEndOfTrack(message)) {
+			throw new IllegalArgumentException("meta endOfTrack is invalid");
+		}
+		
+		if (state instanceof Playing) {
+			throw new IllegalStateException("record while playing is invalid");
+		}
+
 		long tick = millisToTick(getTime());
 
 		tracks[track].add(new MidiEvent(message, tick));
@@ -297,7 +322,7 @@ public class Recorder {
 				int track = -1;
 				long time = Long.MAX_VALUE;
 				MidiEvent event = null;
-				
+
 				for (int t = 0; t < tracks.length; t++) {
 					if (indices[t] < tracks[t].size()) {
 						MidiEvent candidate = tracks[t].get(indices[t]);
@@ -325,7 +350,7 @@ public class Recorder {
 					if (event != null) {
 						firePlayed(track, time, event.getMessage());
 					}
-					
+
 					indices[track]++;
 				} else {
 					try {
