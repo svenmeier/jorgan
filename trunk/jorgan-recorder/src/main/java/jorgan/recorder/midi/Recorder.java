@@ -31,8 +31,6 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
-import com.sun.media.sound.MidiUtils;
-
 public class Recorder {
 
 	private static final float DEFAULT_DIVISION = Sequence.PPQ;
@@ -178,8 +176,8 @@ public class Recorder {
 			throw new IllegalArgumentException("invalid track");
 		}
 
-		if (MidiUtils.isMetaEndOfTrack(message)) {
-			throw new IllegalArgumentException("meta endOfTrack is invalid");
+		if (isEndOfTrack(message)) {
+			throw new IllegalArgumentException("endOfTrack is invalid");
 		}
 		
 		if (state instanceof Playing) {
@@ -191,6 +189,18 @@ public class Recorder {
 		tracks[track].add(new MidiEvent(message, tick));
 
 		fireRecorded(track, tickToMillis(tick), message);
+	}
+
+	private boolean isEndOfTrack(MidiMessage message) {
+		if (message.getStatus() != 0xFF) {
+			return false;
+		}
+		if (message.getLength() != 3) {
+			return false;
+		}
+		
+		byte[] bytes = message.getMessage();
+		return bytes[1] == 0x2F && bytes[2] == 0x00;
 	}
 
 	protected void fireRecorded(int track, long millis, MidiMessage message) {
@@ -254,7 +264,9 @@ public class Recorder {
 		try {
 			sequence = MidiSystem.getSequence(input);
 		} catch (InvalidMidiDataException ex) {
-			throw new IOException(ex);
+			IOException ioEx = new IOException();
+			ioEx.initCause(ex);
+			throw ioEx;
 		}
 		setSequence(sequence);
 	}
