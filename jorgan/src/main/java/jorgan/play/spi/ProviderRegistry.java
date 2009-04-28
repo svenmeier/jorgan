@@ -18,54 +18,18 @@
  */
 package jorgan.play.spi;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.imageio.spi.ServiceRegistry;
-
 import jorgan.disposition.Element;
 import jorgan.play.Player;
+import jorgan.util.PluginUtils;
 
 public class ProviderRegistry {
 
-	private static final Logger logger = Logger
-			.getLogger(ProviderRegistry.class.getName());
-
-	/**
-	 * Utility method to get all registered providers.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<PlayerProvider> lookup() {
-		ArrayList<PlayerProvider> providers = new ArrayList<PlayerProvider>();
-
-		Iterator<PlayerProvider> iterator = ServiceRegistry
-				.lookupProviders(PlayerProvider.class);
-
-		while (iterator.hasNext()) {
-			try {
-				providers.add(iterator.next());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
-		}
-
-		return providers;
-	}
-
 	public static Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
-		for (PlayerProvider provider : lookup()) {
-			try {
-				player = provider.createPlayer(element);
-				if (player != null) {
-					return player;
-				}
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
+		for (PlayerProvider provider : PluginUtils.lookup(PlayerProvider.class)) {
+			player = provider.createPlayer(element);
+			if (player != null) {
+				return player;
 			}
 		}
 

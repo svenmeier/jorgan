@@ -4,18 +4,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.gui.preferences.category.AppCategory;
-import jorgan.gui.preferences.category.MidiCategory;
-import jorgan.gui.preferences.category.DispositionStreamCategory;
-import jorgan.gui.preferences.category.GuiCategory;
-import jorgan.gui.preferences.category.MidiMergerCategory;
 import jorgan.gui.preferences.category.CLICategory;
 import jorgan.gui.preferences.category.ConsoleCategory;
+import jorgan.gui.preferences.category.DispositionStreamCategory;
+import jorgan.gui.preferences.category.GuiCategory;
+import jorgan.gui.preferences.category.MidiCategory;
+import jorgan.gui.preferences.category.MidiMergerCategory;
+import jorgan.gui.preferences.spi.CategoryProvider;
 import bias.swing.Category;
 
 /**
  * Provider of categories in jOrgan core.
  */
-public class CoreCategoryProvider {
+public class DefaultCategoryProvider implements CategoryProvider {
 
 	public List<Category> getCategories() {
 		List<Category> categories = new ArrayList<Category>();

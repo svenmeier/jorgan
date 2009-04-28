@@ -24,16 +24,16 @@ import java.util.List;
 import javax.swing.JPanel;
 
 import jorgan.disposition.Element;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.gui.imports.spi.Import;
 import bias.Configuration;
 
 /**
- * A provider for an import from a patch list.
+ * An {@link Import} from a patch list.
  */
-public class PatchListImportProvider implements ImportProvider {
+public class PatchListImport implements Import {
 
 	private static Configuration config = Configuration.getRoot().get(
-			PatchListImportProvider.class);
+			PatchListImport.class);
 
 	private PatchListPanel panel = new PatchListPanel();
 
@@ -43,7 +43,7 @@ public class PatchListImportProvider implements ImportProvider {
 
 	private String description;
 
-	public PatchListImportProvider() {
+	public PatchListImport() {
 		config.read(this);
 	}
 

@@ -31,7 +31,7 @@ import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.gui.imports.spi.Import;
 import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -40,12 +40,12 @@ import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
- * A provider for an import from a disposition.
+ * An {@link Import} from a disposition.
  */
-public class DispositionImportProvider implements ImportProvider {
+public class DispositionImport implements Import {
 
 	private static Configuration config = Configuration.getRoot().get(
-			DispositionImportProvider.class);
+			DispositionImport.class);
 
 	private OptionsPanel panel = new OptionsPanel();
 
@@ -53,7 +53,7 @@ public class DispositionImportProvider implements ImportProvider {
 
 	private String description;
 
-	public DispositionImportProvider() {
+	public DispositionImport() {
 		config.read(this);
 	}
 

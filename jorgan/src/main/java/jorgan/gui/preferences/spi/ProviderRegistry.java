@@ -16,18 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.customize;
+package jorgan.gui.preferences.spi;
 
-import javax.swing.JComponent;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A customizer.
- */
-public interface Customizer {
+import jorgan.util.PluginUtils;
+import bias.swing.Category;
 
-	public String getDescription();
+public class ProviderRegistry {
 
-	public JComponent getComponent();
-	
-	public void apply();
+	@SuppressWarnings("unchecked")
+	public static List<Category> createCategories() {
+		ArrayList<Category> categories = new ArrayList<Category>();
+
+		for (CategoryProvider provider : PluginUtils
+				.lookup(CategoryProvider.class)) {
+			categories.addAll(provider.getCategories());
+		}
+
+		return categories;
+	}
 }

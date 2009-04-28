@@ -19,50 +19,19 @@
 package jorgan.gui.construct.info.spi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.imageio.spi.ServiceRegistry;
+import jorgan.util.PluginUtils;
 
 public class ProviderRegistry {
-
-	private static final Logger logger = Logger
-			.getLogger(ProviderRegistry.class.getName());
-
-	/**
-	 * Utility method to get all registered providers.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<BeanInfoProvider> lookup() {
-		ArrayList<BeanInfoProvider> providers = new ArrayList<BeanInfoProvider>();
-
-		Iterator<BeanInfoProvider> iterator = ServiceRegistry
-				.lookupProviders(BeanInfoProvider.class);
-
-		while (iterator.hasNext()) {
-			try {
-				providers.add(iterator.next());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
-		}
-
-		return providers;
-	}
 
 	public static String[] getBeanInfoSearchPath() {
 		List<String> paths = new ArrayList<String>();
 
-		List<BeanInfoProvider> providers = lookup();
+		List<BeanInfoProvider> providers = PluginUtils
+				.lookup(BeanInfoProvider.class);
 		for (BeanInfoProvider provider : providers) {
-			try {
-				paths.add(provider.getBeanInfoSearchPath());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
+			paths.add(provider.getBeanInfoSearchPath());
 		}
 
 		return paths.toArray(new String[paths.size()]);

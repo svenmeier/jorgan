@@ -52,10 +52,8 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
-import jorgan.gui.customize.Customization;
-import jorgan.gui.customize.CustomizeWizard;
-import jorgan.gui.imports.ImportWizard;
 import jorgan.gui.preferences.PreferencesDialog;
+import jorgan.gui.spi.ProviderRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
@@ -123,10 +121,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private SaveAsAction saveAsAction = new SaveAsAction();
 
-	private ImportAction importAction = new ImportAction();
-
-	private CustomizeAction customizeAction = new CustomizeAction();
-
 	private ExitAction exitAction = new ExitAction();
 
 	private FullScreenAction fullScreenAction = new FullScreenAction();
@@ -153,13 +147,49 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public OrganFrame() {
 		config.read(this);
 
-		JMenuBar menuBar = new JMenuBar();
-		setJMenuBar(menuBar);
-
 		// not neccessary for XP but for older Windows LookAndFeel
 		if (UIManager.getLookAndFeel().getName().indexOf("Windows") != -1) {
 			toolBar.setRollover(true);
 		}
+		toolBar.setFloatable(false);
+		getContentPane().add(toolBar, BorderLayout.NORTH);
+		buildToolBar();
+
+		getContentPane().add(statusBar, BorderLayout.SOUTH);
+		buildStatusBar();
+
+		getContentPane().add(organPanel, BorderLayout.CENTER);
+
+		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+		addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent ev) {
+				close();
+			}
+		});
+
+		if (MacAdapter.getInstance().isInstalled()) {
+			MacAdapter.getInstance().setQuitListener(exitAction);
+			MacAdapter.getInstance()
+					.setPreferencesListener(configurationAction);
+			MacAdapter.getInstance().setAboutListener(aboutAction);
+		}
+
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
+		// don't build menuBar, will be called automatically for new session
+
+		newOrgan();
+	}
+
+	private void buildStatusBar() {
+		for (Object widget : organPanel.getStatusBarWidgets()) {
+			statusBar.addStatus((JComponent) widget);
+		}
+	}
+
+	private void buildToolBar() {
+
 		toolBar.add(newAction);
 		toolBar.add(openAction);
 		toolBar.add(saveAction);
@@ -184,26 +214,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 				toolBar.add((JComponent) toolBarWidgets.get(w));
 			}
 		}
+	}
 
-		toolBar.setFloatable(false);
-		getContentPane().add(toolBar, BorderLayout.NORTH);
-
-		for (Object widget : organPanel.getStatusBarWidgets()) {
-			statusBar.addStatus((JComponent) widget);
-		}
-		getContentPane().add(statusBar, BorderLayout.SOUTH);
-
-		getContentPane().add(organPanel, BorderLayout.CENTER);
-
-		setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		addWindowListener(new WindowAdapter() {
-			@Override
-			public void windowClosing(WindowEvent ev) {
-				close();
-			}
-		});
-
-		MacAdapter tweakMac = MacAdapter.getInstance();
+	private void buildMenu() {
+		JMenuBar menuBar = getJMenuBar();
+		menuBar.removeAll();
 
 		JMenu fileMenu = new JMenu();
 		config.get("fileMenu").read(fileMenu);
@@ -215,12 +230,17 @@ public class OrganFrame extends JFrame implements SessionAware {
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
-		fileMenu.addSeparator();
-		fileMenu.add(importAction);
-		fileMenu.add(customizeAction);
-		if (tweakMac.isInstalled()) {
-			tweakMac.setQuitListener(exitAction);
-		} else {
+
+		List<Action> actions = ProviderRegistry.createActions(session);
+		if (actions.size() > 0) {
+			fileMenu.addSeparator();
+
+			for (Action action : actions) {
+				fileMenu.add(action);
+			}
+		}
+
+		if (!MacAdapter.getInstance().isInstalled()) {
 			fileMenu.addSeparator();
 			fileMenu.add(exitAction);
 		}
@@ -239,9 +259,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 				viewMenu.add((Action) widget);
 			}
 		}
-		if (tweakMac.isInstalled()) {
-			tweakMac.setPreferencesListener(configurationAction);
-		} else {
+		if (!MacAdapter.getInstance().isInstalled()) {
 			viewMenu.addSeparator();
 			viewMenu.add(configurationAction);
 		}
@@ -250,27 +268,25 @@ public class OrganFrame extends JFrame implements SessionAware {
 		config.get("helpMenu").read(helpMenu);
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
-		if (tweakMac.isInstalled()) {
-			tweakMac.setAboutListener(aboutAction);
-		} else {
+		if (!MacAdapter.getInstance().isInstalled()) {
 			helpMenu.add(aboutAction);
 		}
-
-		buildRecentsMenu();
-
-		newOrgan();
-	}
-
-	private void buildRecentsMenu() {
-		recentsMenu.removeAll();
 
 		List<File> recents = new DispositionStream().getRecentFiles();
 		for (int r = 0; r < recents.size(); r++) {
 			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
 		}
 
-		recentsMenu.revalidate();
-		recentsMenu.repaint();
+		menuBar.revalidate();
+		menuBar.repaint();
+
+		if (session.getFile() == null) {
+			setTitle(TITEL_SUFFIX);
+		} else {
+			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(session
+					.getFile())
+					+ " - " + TITEL_SUFFIX);
+		}
 	}
 
 	public boolean getFullScreenOnLoad() {
@@ -287,17 +303,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	public void setHandleRegistrationChanges(int handleRegistrationChanges) {
 		this.handleRegistrationChanges = handleRegistrationChanges;
-	}
-
-	private void updateTitle() {
-
-		if (session.getFile() == null) {
-			setTitle(TITEL_SUFFIX);
-		} else {
-			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(session
-					.getFile())
-					+ " - " + TITEL_SUFFIX);
-		}
 	}
 
 	/**
@@ -334,9 +339,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 			constructButton.setSelected(this.session.isConstructing());
 		}
 
-		updateTitle();
-
 		saveAction.clearChanges();
+
+		buildMenu();
 
 		organPanel.setSession(session);
 	}
@@ -391,12 +396,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		setSession(new OrganSession(organ, file));
 
-		buildRecentsMenu();
-
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
 		} else {
-			Customization.onErrors(this, session);
+			// TODO how to notify customizer?
+			// Customization.onErrors(this, session);
 		}
 	}
 
@@ -441,11 +445,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		session.setFile(file);
 
-		updateTitle();
-
 		saveAction.clearChanges();
 
-		buildRecentsMenu();
+		buildMenu();
 
 		return true;
 	}
@@ -665,32 +667,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			Desktop.browse("http://jorgan.sourceforge.net");
-		}
-	}
-
-	/**
-	 * The action that starts an import.
-	 */
-	private class ImportAction extends BaseAction {
-		private ImportAction() {
-			config.get("import").read(this);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			ImportWizard.showInDialog(OrganFrame.this, session);
-		}
-	}
-
-	/**
-	 * The action that starts the devices configuration wizard.
-	 */
-	private class CustomizeAction extends BaseAction {
-		private CustomizeAction() {
-			config.get("customize").read(this);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			CustomizeWizard.showInDialog(OrganFrame.this, session);
 		}
 	}
 

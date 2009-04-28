@@ -16,23 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.layout.spi;
+package jorgan.gui.spi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.gui.construct.layout.ViewLayout;
+import javax.swing.Action;
+
+import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
 public class ProviderRegistry {
 
-	public static List<ViewLayout> lookupLayouts() {
-		ArrayList<ViewLayout> layout = new ArrayList<ViewLayout>();
+	public static List<Action> createActions(OrganSession session) {
+		ArrayList<Action> actions = new ArrayList<Action>();
 
-		for (LayoutProvider provider : PluginUtils.lookup(LayoutProvider.class)) {
-			layout.addAll(provider.getLayouts());
+		for (SessionActionProvider provider : PluginUtils
+				.lookup(SessionActionProvider.class)) {
+			actions.addAll(provider.getActions(session));
 		}
 
-		return layout;
+		return actions;
 	}
 }

@@ -20,22 +20,10 @@ package jorgan.gui.imports.spi;
 
 import java.util.List;
 
-import javax.swing.JPanel;
-
-import jorgan.disposition.Element;
-
 /**
- * A provider of an import.
+ * A provider of {@link Import}s.
  */
 public interface ImportProvider {
 
-	public JPanel getOptionsPanel();
-
-	public String getName();
-
-	public String getDescription();
-
-	public abstract boolean hasElements();
-
-	public abstract List<Element> getElements();
+	public List<Import> getImports();
 }

@@ -19,51 +19,19 @@
 package jorgan.gui.dock.spi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.imageio.spi.ServiceRegistry;
 
 import jorgan.gui.dock.OrganDockable;
+import jorgan.util.PluginUtils;
 
 public class ProviderRegistry {
-
-	private static final Logger logger = Logger
-			.getLogger(ProviderRegistry.class.getName());
-
-	/**
-	 * Utility method to get all registered providers.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<DockableProvider> lookup() {
-		ArrayList<DockableProvider> providers = new ArrayList<DockableProvider>();
-
-		Iterator<DockableProvider> iterator = ServiceRegistry
-				.lookupProviders(DockableProvider.class);
-
-		while (iterator.hasNext()) {
-			try {
-				providers.add(iterator.next());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
-		}
-
-		return providers;
-	}
 
 	public static List<OrganDockable> getDockables() {
 		List<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
-		for (DockableProvider provider : lookup()) {
-			try {
-				dockables.addAll(provider.getDockables());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
+		for (DockableProvider provider : PluginUtils
+				.lookup(DockableProvider.class)) {
+			dockables.addAll(provider.getDockables());
 		}
 		return dockables;
 	}

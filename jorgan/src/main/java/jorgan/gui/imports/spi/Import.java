@@ -16,23 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.layout.spi;
+package jorgan.gui.imports.spi;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.gui.construct.layout.ViewLayout;
-import jorgan.util.PluginUtils;
+import javax.swing.JPanel;
 
-public class ProviderRegistry {
+import jorgan.disposition.Element;
 
-	public static List<ViewLayout> lookupLayouts() {
-		ArrayList<ViewLayout> layout = new ArrayList<ViewLayout>();
+/**
+ * An import.
+ */
+public interface Import {
 
-		for (LayoutProvider provider : PluginUtils.lookup(LayoutProvider.class)) {
-			layout.addAll(provider.getLayouts());
-		}
+	public JPanel getOptionsPanel();
 
-		return layout;
-	}
+	public String getName();
+
+	public String getDescription();
+
+	public abstract boolean hasElements();
+
+	public abstract List<Element> getElements();
 }

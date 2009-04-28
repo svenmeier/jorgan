@@ -19,37 +19,19 @@
 package jorgan.gui.imports.spi;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-import javax.imageio.spi.ServiceRegistry;
+import jorgan.util.PluginUtils;
 
 public class ProviderRegistry {
 
-	private static final Logger logger = Logger
-	.getLogger(ProviderRegistry.class.getName());
-	
-	/**
-	 * Utility method to get all importProviders that are registered as a
-	 * service.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<ImportProvider> lookup() {
-		ArrayList<ImportProvider> providers = new ArrayList<ImportProvider>();
+	public static List<Import> getImports() {
+		ArrayList<Import> actions = new ArrayList<Import>();
 
-		Iterator<ImportProvider> iterator = ServiceRegistry.lookupProviders(ImportProvider.class);
-
-		while (iterator.hasNext()) {
-			try {
-				providers.add(iterator.next());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}			
+		for (ImportProvider provider : PluginUtils.lookup(ImportProvider.class)) {
+			actions.addAll(provider.getImports());
 		}
 
-		return providers;
+		return actions;
 	}
 }

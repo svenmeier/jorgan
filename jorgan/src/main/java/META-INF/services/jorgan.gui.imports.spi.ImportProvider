@@ -1,2 +1,1 @@
-jorgan.gui.imports.defaults.PatchListImportProvider
-jorgan.gui.imports.defaults.DispositionImportProvider
+jorgan.gui.imports.defaults.DefaultImportProvider
