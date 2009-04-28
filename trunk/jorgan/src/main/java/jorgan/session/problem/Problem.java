@@ -19,7 +19,6 @@
 package jorgan.session.problem;
 
 import jorgan.disposition.Element;
-import jorgan.session.event.Severity;
 import jorgan.util.Null;
 
 /**

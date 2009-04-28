@@ -31,7 +31,7 @@ import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
-import jorgan.session.event.Severity;
+import jorgan.session.problem.Severity;
 
 /**
  * A player of an keyboard.

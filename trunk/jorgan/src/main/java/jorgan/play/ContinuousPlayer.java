@@ -23,7 +23,7 @@ import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Continuous.Changed;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.midi.mpl.Context;
-import jorgan.session.event.Severity;
+import jorgan.session.problem.Severity;
 
 /**
  * A player for a swell.
