@@ -31,24 +31,24 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.gui.imports.spi.Import;
 import jorgan.gui.imports.spi.ProviderRegistry;
 
 /**
- * A selection of an import method.
+ * A selection of an {@link Import}.
  */
-public class ProviderSelectionPanel extends JPanel {
+public class ImportSelectionPanel extends JPanel {
 
 	private JScrollPane scrollPane = new JScrollPane();
 
 	private JList list = new JList();
 
-	private List<ImportProvider> providers = new ArrayList<ImportProvider>();
+	private List<Import> imports = new ArrayList<Import>();
 
 	/**
 	 * Constructor.
 	 */
-	public ProviderSelectionPanel() {
+	public ImportSelectionPanel() {
 		setLayout(new BorderLayout(10, 10));
 
 		scrollPane.getViewport().setBackground(Color.white);
@@ -63,45 +63,45 @@ public class ProviderSelectionPanel extends JPanel {
 				});
 		scrollPane.setViewportView(list);
 
-		setImportProviders(ProviderRegistry.lookup());
+		setImports(ProviderRegistry.getImports());
 	}
 
 	/**
-	 * Set the {@link ImportProvider}s to choose from.
+	 * Set the {@link Import}s to choose from.
 	 * 
-	 * @param providers
+	 * @param imports
 	 *            providers
 	 */
-	public void setImportProviders(List<ImportProvider> providers) {
-		this.providers = providers;
+	public void setImports(List<Import> imports) {
+		this.imports = imports;
 
-		list.setModel(new ProvidersModel());
+		list.setModel(new ImportsModel());
 	}
 
 	/**
-	 * Get the selected provider.
+	 * Get the selected {@link Import}.
 	 * 
-	 * @return provider the selected provider
+	 * @return import the selected import
 	 */
-	public ImportProvider getSelectedImportProvider() {
+	public Import getSelectedImport() {
 		int index = list.getSelectedIndex();
 		if (index == -1) {
 			return null;
 		} else {
-			return providers.get(index);
+			return imports.get(index);
 		}
 	}
 
-	private class ProvidersModel extends AbstractListModel {
+	private class ImportsModel extends AbstractListModel {
 
 		public int getSize() {
-			return providers.size();
+			return imports.size();
 		}
 
 		public Object getElementAt(int index) {
-			ImportProvider provider = providers.get(index);
+			Import aImport = (Import) imports.get(index);
 
-			return provider.getName();
+			return aImport.getName();
 		}
 	}
 }

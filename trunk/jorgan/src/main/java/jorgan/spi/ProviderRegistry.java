@@ -18,52 +18,16 @@
  */
 package jorgan.spi;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javax.imageio.spi.ServiceRegistry;
-
+import jorgan.util.PluginUtils;
 import bias.store.CLIStore;
 
 public class ProviderRegistry {
 
-	private static final Logger logger = Logger
-			.getLogger(ProviderRegistry.class.getName());
-
-	/**
-	 * Utility method to get all registered providers.
-	 * 
-	 * @return providers of import
-	 */
-	public static List<OptionProvider> lookup() {
-		ArrayList<OptionProvider> providers = new ArrayList<OptionProvider>();
-
-		Iterator<OptionProvider> iterator = ServiceRegistry
-				.lookupProviders(OptionProvider.class);
-
-		while (iterator.hasNext()) {
-			try {
-				providers.add(iterator.next());
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
-		}
-
-		return providers;
-	}
-
 	public static CLIStore getOptions() {
 		CLIStore store = new CLIStore();
 
-		for (OptionProvider provider : lookup()) {
-			try {
-				provider.addOptions(store);
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
-			}
+		for (OptionProvider provider : PluginUtils.lookup(OptionProvider.class)) {
+			provider.addOptions(store);
 		}
 
 		return store;

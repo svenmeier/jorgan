@@ -26,7 +26,7 @@ import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.gui.construct.ElementsSelectionPanel;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.gui.imports.spi.Import;
 import jorgan.play.Closed;
 import jorgan.session.OrganSession;
 import jorgan.session.undo.Compound;
@@ -43,11 +43,9 @@ public class ImportWizard extends BasicWizard {
 	private static Configuration config = Configuration.getRoot().get(
 			ImportWizard.class);
 
-	private OrganSession
+	private OrganSession session;
 
-	session;
-
-	private ImportProvider provider;
+	private Import aImport;
 
 	private List<Element> elements;
 
@@ -103,7 +101,7 @@ public class ImportWizard extends BasicWizard {
 	 */
 	private class ProviderSelectionPage extends AbstractPage {
 
-		private ProviderSelectionPanel providerSelectionPanel = new ProviderSelectionPanel();
+		private ImportSelectionPanel importSelectionPanel = new ImportSelectionPanel();
 
 		public ProviderSelectionPage() {
 			config.get("providerSelection").read(this);
@@ -111,17 +109,17 @@ public class ImportWizard extends BasicWizard {
 
 		@Override
 		protected JComponent getComponentImpl() {
-			return providerSelectionPanel;
+			return importSelectionPanel;
 		}
 
 		@Override
 		public boolean allowsNext() {
-			return providerSelectionPanel.getSelectedImportProvider() != null;
+			return importSelectionPanel.getSelectedImport() != null;
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			provider = providerSelectionPanel.getSelectedImportProvider();
+			aImport = importSelectionPanel.getSelectedImport();
 
 			return true;
 		}
@@ -134,22 +132,22 @@ public class ImportWizard extends BasicWizard {
 
 		@Override
 		public String getDescription() {
-			return provider.getDescription();
+			return aImport.getDescription();
 		}
 
 		@Override
 		protected JComponent getComponentImpl() {
-			return provider.getOptionsPanel();
+			return aImport.getOptionsPanel();
 		}
 
 		@Override
 		public boolean allowsNext() {
-			return provider.hasElements();
+			return aImport.hasElements();
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			elements = provider.getElements();
+			elements = aImport.getElements();
 
 			return elements.size() > 0;
 		}

@@ -16,23 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.layout.spi;
+package jorgan.gui.imports.defaults;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.gui.construct.layout.ViewLayout;
-import jorgan.util.PluginUtils;
+import jorgan.gui.imports.spi.Import;
+import jorgan.gui.imports.spi.ImportProvider;
 
-public class ProviderRegistry {
+/**
+ * Default provider of {@link Import}s.
+ */
+public class DefaultImportProvider implements ImportProvider {
 
-	public static List<ViewLayout> lookupLayouts() {
-		ArrayList<ViewLayout> layout = new ArrayList<ViewLayout>();
+	public List<Import> getImports() {
+		List<Import> imports = new ArrayList<Import>();
 
-		for (LayoutProvider provider : PluginUtils.lookup(LayoutProvider.class)) {
-			layout.addAll(provider.getLayouts());
-		}
+		imports.add(new DispositionImport());
+		imports.add(new PatchListImport());
 
-		return layout;
+		return imports;
 	}
 }
