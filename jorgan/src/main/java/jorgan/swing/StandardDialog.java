@@ -38,7 +38,9 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JMenu;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
 import javax.swing.border.CompoundBorder;
@@ -420,11 +422,19 @@ public class StandardDialog extends JDialog {
 	 * @return containing window
 	 */
 	public static Window getWindow(Component component) {
-		if (component instanceof Window) {
-			return (Window) component;
-		}
+		while (component != null) {
+			if (component instanceof Window) {
+				return (Window)component;
+			}
 
-		return SwingUtilities.getWindowAncestor(component);
+			if (component instanceof JPopupMenu) {
+				component = ((JPopupMenu)component).getInvoker();
+			} else {
+				component = component.getParent();
+			}
+		}
+		
+		throw new IllegalArgumentException("unable to get window");
 	}
 
 	public static StandardDialog create(Component owner) {

@@ -31,6 +31,12 @@ import jorgan.gui.imports.spi.ImportProvider;
  * @see jorgan.creative.SoundFontManager
  */
 public class CreativeImportProvider implements ImportProvider {
+	
+	public CreativeImportProvider() {
+		// trigger loading of native library to fail early
+		new CreativeImport();
+	}
+	
 	public List<Import> getImports() {
 		List<Import> imports = new ArrayList<Import>();
 
