@@ -36,9 +36,8 @@ public class SessionRecorder {
 	public SessionRecorder(OrganSession session, Recorder recorder) {
 		this.recorder = recorder;
 		recorder.addListener(new RecorderListener() {
-
 			public void played(int track, long millis, MidiMessage message) {
-				// 
+				// TODO
 			}
 
 			public void recorded(int track, long millis, MidiMessage message) {
