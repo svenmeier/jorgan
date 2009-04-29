@@ -133,7 +133,7 @@ public class CLI implements UI, SessionAware {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.getPlay().destroy();
+			this.session.destroy();
 			this.session = null;
 		}
 
@@ -369,7 +369,7 @@ public class CLI implements UI, SessionAware {
 			}
 
 			if (session != null) {
-				session.getPlay().destroy();
+				session.destroy();
 				session = null;
 			}
 

@@ -24,4 +24,6 @@ package jorgan.session;
 public interface SessionListener {
 
 	public void constructingChanged(boolean constructing);
+	
+	public void destroyed();
 }

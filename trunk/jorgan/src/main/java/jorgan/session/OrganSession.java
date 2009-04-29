@@ -264,4 +264,12 @@ public class OrganSession {
 
 		return organ;
 	}
+
+	public void destroy() {
+		play.destroy();
+		
+		for (SessionListener listener : listeners) {
+			listener.destroyed();
+		}
+	}
 }

@@ -740,6 +740,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			setConstructing(constructing);
 		}
 
+		public void destroyed() {
+		}
+		
 		public void selectionChanged(SelectionEvent ev) {
 
 			List<Element> newDisplayables = session.getSelection()
