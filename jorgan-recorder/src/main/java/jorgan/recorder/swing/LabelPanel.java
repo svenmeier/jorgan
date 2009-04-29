@@ -29,10 +29,6 @@ import javax.swing.JPanel;
 
 public abstract class LabelPanel extends JPanel {
 
-	public LabelPanel() {
-		setFont(new Font("Monospaced", Font.PLAIN, 24));
-	}
-
 	protected abstract String getText();
 
 	@Override

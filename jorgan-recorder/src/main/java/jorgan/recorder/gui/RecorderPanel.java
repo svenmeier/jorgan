@@ -20,6 +20,7 @@ package jorgan.recorder.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -31,8 +32,6 @@ import java.util.TimeZone;
 
 import javax.sound.midi.MidiMessage;
 import javax.swing.JButton;
-import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
@@ -40,7 +39,6 @@ import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.recorder.swing.LabelPanel;
 import jorgan.swing.BaseAction;
-import jorgan.swing.StandardDialog;
 import spin.Spin;
 import bias.Configuration;
 
@@ -109,12 +107,12 @@ public class RecorderPanel extends JPanel {
 				}));
 
 		labelPanel = new LabelPanel() {
-
 			@Override
 			protected String getText() {
 				return format.format(new Date(getTime()));
 			}
 		};
+		labelPanel.setFont(new Font("Monospaced", Font.PLAIN, 32));
 		labelPanel.setForeground(Color.white);
 		labelPanel.setBackground(Color.black);
 		add(labelPanel, BorderLayout.CENTER);
@@ -230,22 +228,6 @@ public class RecorderPanel extends JPanel {
 				config.get("record").read(this);
 			}
 		}
-	}
-
-	/**
-	 * Show in a dialog.
-	 * 
-	 * @param owner
-	 *            owner of dialog
-	 */
-	public void showInDialog(JFrame owner) {
-		StandardDialog dialog = new StandardDialog(owner, false);
-		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-
-		dialog.setBody(this);
-
-		dialog.autoPosition();
-		dialog.setVisible(true);
 	}
 
 	private long getTime() {
