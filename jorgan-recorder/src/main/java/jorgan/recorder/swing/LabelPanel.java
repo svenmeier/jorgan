@@ -19,7 +19,6 @@
 package jorgan.recorder.swing;
 
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -35,7 +34,7 @@ public abstract class LabelPanel extends JPanel {
 	public Dimension getPreferredSize() {
 		return new Dimension(0, getFont().getSize());
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
@@ -53,7 +52,7 @@ public abstract class LabelPanel extends JPanel {
 		FontMetrics metrics = g.getFontMetrics();
 		int textWidth = metrics.stringWidth(text);
 
-		float factor = textWidth / (float)(width - insets.left - insets.right);
+		float factor = textWidth / (float) (width - insets.left - insets.right);
 		if (factor > 1.0f) {
 			size = size / factor;
 
