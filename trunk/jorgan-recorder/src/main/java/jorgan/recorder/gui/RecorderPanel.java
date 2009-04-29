@@ -41,6 +41,7 @@ import jorgan.recorder.midi.RecorderListener;
 import jorgan.recorder.swing.LabelPanel;
 import jorgan.swing.BaseAction;
 import jorgan.swing.StandardDialog;
+import spin.Spin;
 import bias.Configuration;
 
 public class RecorderPanel extends JPanel {
@@ -65,7 +66,7 @@ public class RecorderPanel extends JPanel {
 	private LabelPanel labelPanel;
 
 	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
-	
+
 	private Timer timer = new Timer(500, new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			updateLabel();
@@ -78,31 +79,34 @@ public class RecorderPanel extends JPanel {
 		this.recorder = recorder;
 
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
-		
-		recorder.addListener(new RecorderListener() {
-			public void played(int track, long millis, MidiMessage message) {
-			}
 
-			public void recorded(int track, long millis, MidiMessage message) {
-			}
+		recorder.addListener((RecorderListener) Spin
+				.over(new RecorderListener() {
+					public void played(int track, long millis,
+							MidiMessage message) {
+					}
 
-			public void playing() {
-				update();
-			}
+					public void recorded(int track, long millis,
+							MidiMessage message) {
+					}
 
-			public void recording() {
-				update();
-			}
+					public void playing() {
+						update();
+					}
 
-			public void stopped() {
-				update();
-			}
-			
-			private void update() {
-				playAction.update();
-				recordAction.update();
-			}
-		});
+					public void recording() {
+						update();
+					}
+
+					public void stopped() {
+						update();
+					}
+
+					private void update() {
+						playAction.update();
+						recordAction.update();
+					}
+				}));
 
 		labelPanel = new LabelPanel() {
 
@@ -199,9 +203,9 @@ public class RecorderPanel extends JPanel {
 
 		protected void update() {
 			if (recorder.isPlaying()) {
-				config.get("stop").read(this);				
+				config.get("stop").read(this);
 			} else {
-				config.get("play").read(this);				
+				config.get("play").read(this);
 			}
 		}
 	}
@@ -221,9 +225,9 @@ public class RecorderPanel extends JPanel {
 
 		protected void update() {
 			if (recorder.isRecording()) {
-				config.get("stop").read(this);				
+				config.get("stop").read(this);
 			} else {
-				config.get("record").read(this);				
+				config.get("record").read(this);
 			}
 		}
 	}
@@ -246,9 +250,5 @@ public class RecorderPanel extends JPanel {
 
 	private long getTime() {
 		return recorder.getTime();
-	}
-
-	public static void main(String[] args) {
-		new RecorderPanel(new Recorder(0)).showInDialog(null);
 	}
 }

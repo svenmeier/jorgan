@@ -1,6 +1,7 @@
 package jorgan.swing;
 
 import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.awt.datatransfer.StringSelection;
@@ -12,7 +13,6 @@ import java.util.logging.SimpleFormatter;
 
 import javax.swing.AbstractAction;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -112,8 +112,9 @@ public class DebugPanel extends JPanel {
 	 * @param owner
 	 *            owner of dialog
 	 */
-	public void showInDialog(JFrame owner) {
-		StandardDialog dialog = new StandardDialog(owner, false);
+	public void showInDialog(Component owner) {
+		StandardDialog dialog = StandardDialog.create(owner);
+		dialog.setModal(false);
 		dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 
 		dialog.setBody(this);

@@ -253,6 +253,36 @@ public class OrganPlay implements Resolver {
 		}
 	}
 
+	public void pressKey(Keyboard keyboard, int pitch, int velocity) {
+		KeyboardPlayer player = (KeyboardPlayer)getPlayer(keyboard);
+		if (player == null) {
+			throw new IllegalArgumentException("unkown keyboard");
+		}
+		
+		synchronized (RECEIVER_LOCK) {
+			if (open) {
+				synchronized (CHANGE_LOCK) {
+					player.press(pitch, velocity);
+				}
+			}
+		}
+	}
+
+	public void releaseKey(Keyboard keyboard, int pitch) {
+		KeyboardPlayer player = (KeyboardPlayer)getPlayer(keyboard);
+		if (player == null) {
+			throw new IllegalArgumentException("unkown keyboard");
+		}
+		
+		synchronized (RECEIVER_LOCK) {
+			if (open) {
+				synchronized (CHANGE_LOCK) {
+					player.release(pitch);
+				}
+			}
+		}
+	}
+
 	protected void createPlayer(Element element) {
 		Player<? extends Element> player = ProviderRegistry
 				.createPlayer(element);

@@ -124,7 +124,7 @@ public class Recorder {
 	public void play() {
 		stop();
 
-		state = new Playing();
+		new Playing();
 	}
 
 	public boolean isPlaying() {
@@ -138,7 +138,7 @@ public class Recorder {
 	public void record() {
 		stop();
 
-		state = new Recording();
+		new Recording();
 	}
 
 	public boolean isRecording() {
@@ -157,12 +157,13 @@ public class Recorder {
 			getTime();
 		}
 
-		state = new Stopped();
+		new Stopped();
 	}
 
 	/**
 	 * Record the given message. <br>
-	 * Note that recording is supported when this recorder {@link #isStopped()} too.
+	 * Note that recording is supported when this recorder {@link #isStopped()}
+	 * too.
 	 * 
 	 * @param track
 	 *            track to add message to
@@ -179,7 +180,7 @@ public class Recorder {
 		if (isEndOfTrack(message)) {
 			throw new IllegalArgumentException("endOfTrack is invalid");
 		}
-		
+
 		if (state instanceof Playing) {
 			throw new IllegalStateException("record while playing is invalid");
 		}
@@ -198,7 +199,7 @@ public class Recorder {
 		if (message.getLength() != 3) {
 			return false;
 		}
-		
+
 		byte[] bytes = message.getMessage();
 		return bytes[1] == 0x2F && bytes[2] == 0x00;
 	}
@@ -271,14 +272,17 @@ public class Recorder {
 		setSequence(sequence);
 	}
 
-	private interface State {
+	private abstract class State {
+		public State() {
+			state = this;
+		}
 
-		public long getTime();
+		public abstract long getTime();
 
-		public void stopping();
+		public abstract void stopping();
 	}
 
-	private class Stopped implements State {
+	private class Stopped extends State {
 		public Stopped() {
 			fireStopped();
 		}
@@ -291,7 +295,7 @@ public class Recorder {
 		}
 	}
 
-	private class Playing implements State, Runnable {
+	private class Playing extends State implements Runnable {
 
 		private long initialTime;
 
@@ -388,7 +392,7 @@ public class Recorder {
 		}
 	}
 
-	private class Recording implements State {
+	private class Recording extends State {
 
 		private long initialTime;
 
