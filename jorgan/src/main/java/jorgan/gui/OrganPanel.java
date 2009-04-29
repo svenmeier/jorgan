@@ -397,6 +397,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			setConstructing(constructing);
 		}
 
+		public void destroyed() {
+		}
+		
 		public void selectionChanged(SelectionEvent ev) {
 			if (session.getSelection().getSelectionCount() == 1) {
 				Element element = session.getSelection().getSelectedElement();

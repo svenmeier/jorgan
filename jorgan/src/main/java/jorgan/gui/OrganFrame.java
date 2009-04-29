@@ -310,7 +310,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private void close() {
 		if (canCloseOrgan()) {
-			session.getPlay().destroy();
+			session.destroy();
 
 			organPanel.closing();
 
@@ -324,7 +324,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		statusBar.setStatus(null);
 
 		if (this.session != null) {
-			this.session.getPlay().destroy();
+			this.session.destroy();
 
 			this.session.removeOrganObserver(saveAction);
 			this.session.addListener(handler);
@@ -764,6 +764,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private class EventHandler implements SessionListener {
 		public void constructingChanged(boolean constructing) {
 			constructButton.setSelected(constructing);
+		}
+		public void destroyed() {
 		}
 	}
 }
