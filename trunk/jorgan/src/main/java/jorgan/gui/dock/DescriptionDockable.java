@@ -19,6 +19,8 @@
 package jorgan.gui.dock;
 
 import java.awt.Color;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -61,6 +63,12 @@ public class DescriptionDockable extends OrganDockable {
 		textArea.setDisabledTextColor(Color.BLACK);
 		textArea.setLineWrap(true);
 		textArea.setWrapStyleWord(true);
+		textArea.addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusLost(FocusEvent e) {
+				write();
+			}
+		});
 
 		setContent(new JScrollPane(textArea));
 	}
