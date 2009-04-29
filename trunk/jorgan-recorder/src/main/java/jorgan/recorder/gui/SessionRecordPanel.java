@@ -9,6 +9,7 @@ import javax.swing.JPanel;
 
 import jorgan.recorder.SessionRecorder;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.swing.StandardDialog;
 import bias.Configuration;
 
@@ -29,12 +30,20 @@ public class SessionRecordPanel extends JPanel {
 	}
 
 	public static void showInDialog(Component owner, OrganSession session) {
-		StandardDialog dialog = StandardDialog.create(owner);
+		final StandardDialog dialog = StandardDialog.create(owner);
 		dialog.setModal(false);
+		dialog.setResizable(false);
 		
 		config.get("dialog").read(dialog);
 
 		final SessionRecorder recorder = new SessionRecorder(session);
+		session.addListener(new SessionListener() {
+			public void constructingChanged(boolean constructing) {
+			}
+			public void destroyed() {
+				dialog.setVisible(false);
+			}
+		});
 
 		SessionRecordPanel panel = new SessionRecordPanel(recorder);
 		dialog.setBody(panel);
