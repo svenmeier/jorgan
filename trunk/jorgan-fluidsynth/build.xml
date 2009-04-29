@@ -57,14 +57,6 @@
       </condition>
     </fail>
 
-    <fail message="win.cc not found">
-      <condition>
-        <resourcecount count="0">
-          <fileset file="${win.cc}" />
-        </resourcecount>
-      </condition>
-    </fail>
-  	
     <exec failonerror="true" executable="${win.cc}">
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
@@ -90,19 +82,11 @@
     <fail message="unix.jdk not found">
       <condition>
         <resourcecount count="0">
-          <fileset dir="${win.jdk}" includes="*" />
+          <fileset dir="${unix.jdk}" includes="*" />
         </resourcecount>
       </condition>
     </fail>
 
-    <fail message="unix.cc not found">
-      <condition>
-        <resourcecount count="0">
-          <fileset file="${win.cc}" />
-        </resourcecount>
-      </condition>
-    </fail>
-  	
   	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
