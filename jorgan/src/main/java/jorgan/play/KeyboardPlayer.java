@@ -124,7 +124,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	private void press(int pitch, int velocity) {
+	public void press(int pitch, int velocity) {
 		Keyboard keyboard = getElement();
 
 		if (!pressed[pitch]) {
@@ -144,7 +144,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	private void release(int pitch) {
+	public void release(int pitch) {
 
 		Keyboard keyboard = getElement();
 

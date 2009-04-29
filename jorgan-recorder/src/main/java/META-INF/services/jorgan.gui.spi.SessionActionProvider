@@ -1,1 +1,1 @@
-jorgan.recorder.gui.RecordAction
+jorgan.recorder.gui.spi.RecorderSessionActionProvider

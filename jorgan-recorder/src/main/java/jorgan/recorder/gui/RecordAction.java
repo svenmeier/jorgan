@@ -2,6 +2,8 @@ package jorgan.recorder.gui;
 
 import java.awt.event.ActionEvent;
 
+import javax.swing.JComponent;
+
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import bias.Configuration;
@@ -23,6 +25,6 @@ public class RecordAction extends BaseAction {
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		// TODO
+		SessionRecordPanel.showInDialog(((JComponent) ev.getSource()), session);
 	}
 }
