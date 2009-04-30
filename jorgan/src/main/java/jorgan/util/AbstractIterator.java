@@ -16,21 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder.midi;
+package jorgan.util;
 
-import javax.sound.midi.MidiMessage;
+import java.util.Iterator;
 
-public interface RecorderListener {
+public abstract class AbstractIterator<E> implements Iterator<E>, Iterable<E> {
 
-	public void recorded(int track, long millis, MidiMessage message);
-
-	public void played(int track, long millis, MidiMessage message);
-
-	public void playing();
-
-	public void recording();
+	public void remove() {
+		throw new UnsupportedOperationException();
+	}
 	
-	public void stopping();
-
-	public void stopped();
+	public Iterator<E> iterator() {
+		return this;
+	}
 }

@@ -52,6 +52,9 @@ public class RecorderTest extends TestCase {
 				System.out.println("Recording");
 			}
 
+			public void stopping() {
+			}
+			
 			public void stopped() {
 				System.out.println("Stopped");
 			}

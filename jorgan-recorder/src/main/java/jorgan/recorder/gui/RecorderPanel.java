@@ -96,6 +96,9 @@ public class RecorderPanel extends JPanel {
 						update();
 					}
 
+					public void stopping() {
+					}
+					
 					public void stopped() {
 						update();
 					}
