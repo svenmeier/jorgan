@@ -49,16 +49,21 @@ public class SessionRecorder {
 	public SessionRecorder(OrganSession session) {
 		this.session = session;
 
-		this.keyboards = new ArrayList<Keyboard>(session.getOrgan()
-				.getElements(Keyboard.class));
-
-		this.recorder = new Recorder(keyboards.size());
+		this.recorder = new Recorder();
+		initKeyboards();
 
 		session.getOrgan().addOrganListener(listener);
 		session.getPlay().addKeyListener(listener);
 		recorder.addListener(listener);
 	}
 
+	private void initKeyboards() {
+		keyboards = new ArrayList<Keyboard>(session.getOrgan()
+				.getElements(Keyboard.class));
+		
+		recorder.setTracks(keyboards.size());
+	}
+	
 	public Recorder getRecorder() {
 		return recorder;
 	}
@@ -84,6 +89,20 @@ public class SessionRecorder {
 	private class EventListener extends OrganAdapter implements KeyListener,
 			RecorderListener {
 
+		@Override
+		public void elementAdded(Element element) {
+			if (element instanceof Keyboard) {
+				initKeyboards();
+			}
+		}
+		
+		@Override
+		public void elementRemoved(Element element) {
+			if (element instanceof Keyboard) {
+				initKeyboards();
+			}
+		}
+		
 		@Override
 		public void propertyChanged(Element element, String name) {
 			// record activation/deactivation

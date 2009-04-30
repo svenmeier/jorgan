@@ -49,17 +49,25 @@ public class Recorder {
 
 	private List<RecorderListener> listeners = new ArrayList<RecorderListener>();
 
+	public Recorder() {
+		this(0);
+	}
+
 	public Recorder(int tracks) {
+		setTracks(0);
+	}
+
+	public Recorder(Sequence sequence) {
+		setSequence(sequence);
+	}
+
+	public void setTracks(int tracks) {
 		try {
 			setSequence(new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION,
 					tracks));
 		} catch (InvalidMidiDataException ex) {
 			throw new Error(ex);
 		}
-	}
-
-	public Recorder(Sequence sequence) {
-		setSequence(sequence);
 	}
 
 	public void setSequence(Sequence sequence) {
