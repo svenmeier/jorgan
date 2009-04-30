@@ -31,6 +31,8 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
+import jorgan.util.AbstractIterator;
+
 public class Recorder {
 
 	private static final float DEFAULT_DIVISION = Sequence.PPQ;
@@ -216,12 +218,6 @@ public class Recorder {
 		}
 	}
 
-	protected void fireStopped() {
-		for (RecorderListener listener : listeners) {
-			listener.stopped();
-		}
-	}
-
 	protected void firePlaying() {
 		for (RecorderListener listener : listeners) {
 			listener.playing();
@@ -231,6 +227,18 @@ public class Recorder {
 	protected void fireRecording() {
 		for (RecorderListener listener : listeners) {
 			listener.recording();
+		}
+	}
+
+	protected void fireStopped() {
+		for (RecorderListener listener : listeners) {
+			listener.stopped();
+		}
+	}
+
+	protected void fireStopping() {
+		for (RecorderListener listener : listeners) {
+			listener.stopping();
 		}
 	}
 
@@ -256,6 +264,29 @@ public class Recorder {
 				/ sequence.getResolution());
 	}
 
+	public Iterable<MidiMessage> iterator(final int track) {
+		return new AbstractIterator<MidiMessage>() {
+			private int index = 0;
+
+			public boolean hasNext() {
+				if (index == tracks[track].size() - 1) {
+					return false;
+				}
+
+				MidiEvent event = tracks[track].get(index);
+				return tickToMillis(event.getTick()) <= getTime();
+			}
+
+			public MidiMessage next() {
+				MidiEvent event = tracks[track].get(index);
+
+				index++;
+
+				return event.getMessage();
+			}
+		};
+	}
+
 	public void save(OutputStream output) throws IOException {
 		MidiSystem.write(sequence, 1, output);
 	}
@@ -279,7 +310,9 @@ public class Recorder {
 
 		public abstract long getTime();
 
-		public abstract void stopping();
+		public void stopping() {
+			fireStopping();
+		}
 	}
 
 	private class Stopped extends State {
@@ -289,9 +322,6 @@ public class Recorder {
 
 		public long getTime() {
 			return time;
-		}
-
-		public void stopping() {
 		}
 	}
 
@@ -328,7 +358,11 @@ public class Recorder {
 		}
 
 		public long getTime() {
-			return initialTime + (System.currentTimeMillis() - startMillis);
+			if (thread == null) {
+				return Recorder.this.time;
+			} else {
+				return initialTime + (System.currentTimeMillis() - startMillis);
+			}
 		}
 
 		public synchronized void run() {
@@ -389,6 +423,8 @@ public class Recorder {
 				} catch (InterruptedException interrupted) {
 				}
 			}
+
+			super.stopping();
 		}
 	}
 
@@ -418,6 +454,8 @@ public class Recorder {
 
 		public void stopping() {
 			long tick = millisToTick(Recorder.this.getTime());
+
+			super.stopping();
 
 			for (Track track : tracks) {
 				track.get(track.size() - 1).setTick(tick);

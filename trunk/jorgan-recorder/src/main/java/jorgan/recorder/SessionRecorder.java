@@ -19,7 +19,10 @@
 package jorgan.recorder;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -128,12 +131,57 @@ public class SessionRecorder {
 		}
 
 		public void playing() {
+			for (int track = 0; track < keyboards.size(); track++) {
+				Keyboard keyboard = keyboards.get(track);
+
+				for (ShortMessage message : getKeyPresses(track)) {
+					session.getPlay().pressKey(keyboard, message.getData1(),
+							message.getData2());
+				}
+			}
 		}
 
 		public void recording() {
 		}
 
+		public void stopping() {
+			if (recorder.isRecording()) {
+				for (int track = 0; track < keyboards.size(); track++) {
+					for (ShortMessage message : getKeyPresses(track)) {
+						recorder.record(track, createMessage(
+								ShortMessage.NOTE_OFF, message.getData1(), 0));
+					}
+				}
+			} else if (recorder.isPlaying()) {
+				for (int track = 0; track < keyboards.size(); track++) {
+					Keyboard keyboard = keyboards.get(track);
+
+					for (ShortMessage message : getKeyPresses(track)) {
+						session.getPlay().releaseKey(keyboard,
+								message.getData1());
+					}
+				}
+			}
+		}
+
 		public void stopped() {
 		}
+	}
+
+	private Collection<ShortMessage> getKeyPresses(int track) {
+		Map<Integer, ShortMessage> messages = new HashMap<Integer, ShortMessage>();
+
+		for (MidiMessage message : recorder.iterator(track)) {
+			if (message instanceof ShortMessage) {
+				ShortMessage shortMessage = (ShortMessage) message;
+				if (shortMessage.getStatus() == ShortMessage.NOTE_ON) {
+					messages.put(shortMessage.getData1(), shortMessage);
+				} else if (shortMessage.getStatus() == ShortMessage.NOTE_OFF) {
+					messages.remove(shortMessage.getData1());
+				}
+			}
+		}
+
+		return messages.values();
 	}
 }
