@@ -130,6 +130,9 @@ public class SessionRecorder {
 			}
 		}
 
+		public void trackCount(int tracks) {
+		}
+		
 		public void played(int track, long millis, MidiMessage message) {
 			// TODO handle invalid track
 			Keyboard keyboard = keyboards.get(track);
@@ -161,6 +164,12 @@ public class SessionRecorder {
 		}
 
 		public void recording() {
+			for (int track = 0; track < keyboards.size(); track++) {
+				for (ShortMessage message : getKeyPresses(track)) {
+					recorder.record(track, createMessage(
+							ShortMessage.NOTE_OFF, message.getData1(), 0));
+				}
+			}
 		}
 
 		public void stopping() {
@@ -190,7 +199,7 @@ public class SessionRecorder {
 	private Collection<ShortMessage> getKeyPresses(int track) {
 		Map<Integer, ShortMessage> messages = new HashMap<Integer, ShortMessage>();
 
-		for (MidiMessage message : recorder.iterator(track)) {
+		for (MidiMessage message : recorder.messagesForTrackTo(track, recorder.getCurrentTick())) {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 				if (shortMessage.getStatus() == ShortMessage.NOTE_ON) {

@@ -37,7 +37,7 @@ import javax.swing.Timer;
 
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
-import jorgan.recorder.swing.LabelPanel;
+import jorgan.recorder.swing.AdaptingLabel;
 import jorgan.swing.BaseAction;
 import spin.Spin;
 import bias.Configuration;
@@ -55,19 +55,17 @@ public class RecorderPanel extends JPanel {
 
 	private LastAction lastAction = new LastAction();
 
-	private PreviousAction previousAction = new PreviousAction();
-
-	private NextAction nextAction = new NextAction();
-
 	private RecordAction recordAction = new RecordAction();
 
-	private LabelPanel labelPanel;
+	private AdaptingLabel label;
+
+	private JPanel tracksPanel;
 
 	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
 	private Timer timer = new Timer(500, new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
-			updateLabel();
+			updateTime();
 		}
 	});
 
@@ -80,6 +78,10 @@ public class RecorderPanel extends JPanel {
 
 		recorder.addListener((RecorderListener) Spin
 				.over(new RecorderListener() {
+					public void trackCount(int tracks) {
+						updateTracksPanel();
+					}
+
 					public void played(int track, long millis,
 							MidiMessage message) {
 					}
@@ -98,7 +100,7 @@ public class RecorderPanel extends JPanel {
 
 					public void stopping() {
 					}
-					
+
 					public void stopped() {
 						update();
 					}
@@ -109,24 +111,27 @@ public class RecorderPanel extends JPanel {
 					}
 				}));
 
-		labelPanel = new LabelPanel() {
+		label = new AdaptingLabel() {
 			@Override
 			protected String getText() {
 				return format.format(new Date(getTime()));
 			}
 		};
-		labelPanel.setFont(new Font("Monospaced", Font.PLAIN, 32));
-		labelPanel.setForeground(Color.white);
-		labelPanel.setBackground(Color.black);
-		add(labelPanel, BorderLayout.CENTER);
+		label.setFont(new Font("Monospaced", Font.PLAIN, 32));
+		label.setOpaque(true);
+		label.setForeground(Color.white);
+		label.setBackground(Color.black);
+		add(label, BorderLayout.NORTH);
+
+		tracksPanel = new JPanel(new GridLayout(-1, 1));
+		tracksPanel.setBackground(Color.white);
+		add(tracksPanel, BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
 		add(buttonPanel, BorderLayout.SOUTH);
 
 		buttonPanel.add(new JButton(firstAction));
-		buttonPanel.add(new JButton(previousAction));
 		buttonPanel.add(new JButton(playAction));
-		buttonPanel.add(new JButton(nextAction));
 		buttonPanel.add(new JButton(lastAction));
 		buttonPanel.add(new JButton(recordAction));
 
@@ -139,10 +144,24 @@ public class RecorderPanel extends JPanel {
 				}
 			}
 		});
+
+		updateTracksPanel();
 	}
 
-	private void updateLabel() {
-		labelPanel.repaint();
+	protected void updateTracksPanel() {
+		tracksPanel.removeAll();
+
+		for (int track = 0; track < recorder.getTrackCount(); track++) {
+			tracksPanel.add(new TrackPanel(recorder, track));
+		}
+
+		tracksPanel.revalidate();
+		tracksPanel.repaint();
+	}
+
+	private void updateTime() {
+		label.repaint();
+		tracksPanel.repaint();
 	}
 
 	private class FirstAction extends BaseAction {
@@ -152,7 +171,7 @@ public class RecorderPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			recorder.first();
-			updateLabel();
+			updateTime();
 		}
 	}
 
@@ -163,29 +182,7 @@ public class RecorderPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			recorder.last();
-			updateLabel();
-		}
-	}
-
-	private class PreviousAction extends BaseAction {
-		public PreviousAction() {
-			config.get("previous").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			recorder.previous();
-			updateLabel();
-		}
-	}
-
-	private class NextAction extends BaseAction {
-		public NextAction() {
-			config.get("next").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			recorder.next();
-			updateLabel();
+			updateTime();
 		}
 	}
 

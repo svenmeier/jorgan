@@ -22,6 +22,8 @@ import javax.sound.midi.MidiMessage;
 
 public interface RecorderListener {
 
+	public void trackCount(int tracks);
+	
 	public void recorded(int track, long millis, MidiMessage message);
 
 	public void played(int track, long millis, MidiMessage message);
