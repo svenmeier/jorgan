@@ -36,6 +36,9 @@ public class RecorderTest extends TestCase {
 		Recorder recorder = new Recorder(1);
 		recorder.addListener(new RecorderListener() {
 			
+			public void trackCount(int tracks) {
+			}
+			
 			public void played(int track, long millis, MidiMessage message) {
 				trace(track, millis, message);
 			}

@@ -21,12 +21,11 @@ package jorgan.recorder.swing;
 import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 import java.awt.Insets;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
-public abstract class LabelPanel extends JPanel {
+public abstract class AdaptingLabel extends JComponent {
 
 	protected abstract String getText();
 
@@ -37,14 +36,14 @@ public abstract class LabelPanel extends JPanel {
 
 	@Override
 	public void paint(Graphics g) {
-		super.paint(g);
-		Graphics2D g2d = (Graphics2D) g;
-
-		String text = getText();
-
 		Insets insets = getInsets();
 		int width = getWidth();
 		int height = getHeight();
+
+		g.setColor(getBackground());
+		g.fillRect(0, 0, width, height);
+
+		String text = getText();
 
 		float size = (float) (height - insets.top - insets.bottom);
 		g.setFont(getFont().deriveFont(size));
@@ -65,7 +64,8 @@ public abstract class LabelPanel extends JPanel {
 		int textAscent = metrics.getAscent();
 		int textDescent = metrics.getDescent();
 
-		g2d.drawString(text, width / 2 - textWidth / 2, height / 2
+		g.setColor(getForeground());
+		g.drawString(text, width / 2 - textWidth / 2, height / 2
 				+ (textAscent + textDescent) / 2 - textDescent);
 	}
 }

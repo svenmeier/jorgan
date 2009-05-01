@@ -32,7 +32,6 @@ public class SessionRecordPanel extends JPanel {
 	public static void showInDialog(Component owner, OrganSession session) {
 		final StandardDialog dialog = StandardDialog.create(owner);
 		dialog.setModal(false);
-		dialog.setResizable(false);
 		
 		config.get("dialog").read(dialog);
 
