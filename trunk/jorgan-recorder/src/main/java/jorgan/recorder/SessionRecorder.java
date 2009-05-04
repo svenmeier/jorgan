@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
@@ -58,12 +59,12 @@ public class SessionRecorder {
 	}
 
 	private void initKeyboards() {
-		keyboards = new ArrayList<Keyboard>(session.getOrgan()
-				.getElements(Keyboard.class));
-		
+		keyboards = new ArrayList<Keyboard>(session.getOrgan().getElements(
+				Keyboard.class));
+
 		recorder.setTracks(keyboards.size());
 	}
-	
+
 	public Recorder getRecorder() {
 		return recorder;
 	}
@@ -95,14 +96,14 @@ public class SessionRecorder {
 				initKeyboards();
 			}
 		}
-		
+
 		@Override
 		public void elementRemoved(Element element) {
 			if (element instanceof Keyboard) {
 				initKeyboards();
 			}
 		}
-		
+
 		@Override
 		public void propertyChanged(Element element, String name) {
 			// record activation/deactivation
@@ -132,7 +133,7 @@ public class SessionRecorder {
 
 		public void trackCount(int tracks) {
 		}
-		
+
 		public void played(int track, long millis, MidiMessage message) {
 			// TODO handle invalid track
 			Keyboard keyboard = keyboards.get(track);
@@ -166,8 +167,8 @@ public class SessionRecorder {
 		public void recording() {
 			for (int track = 0; track < keyboards.size(); track++) {
 				for (ShortMessage message : getKeyPresses(track)) {
-					recorder.record(track, createMessage(
-							ShortMessage.NOTE_OFF, message.getData1(), 0));
+					recorder.record(track, createMessage(ShortMessage.NOTE_OFF,
+							message.getData1(), 0));
 				}
 			}
 		}
@@ -199,13 +200,14 @@ public class SessionRecorder {
 	private Collection<ShortMessage> getKeyPresses(int track) {
 		Map<Integer, ShortMessage> messages = new HashMap<Integer, ShortMessage>();
 
-		for (MidiMessage message : recorder.messagesForTrackTo(track, recorder.getCurrentTick())) {
-			if (message instanceof ShortMessage) {
-				ShortMessage shortMessage = (ShortMessage) message;
-				if (shortMessage.getStatus() == ShortMessage.NOTE_ON) {
-					messages.put(shortMessage.getData1(), shortMessage);
-				} else if (shortMessage.getStatus() == ShortMessage.NOTE_OFF) {
-					messages.remove(shortMessage.getData1());
+		for (MidiEvent event : recorder.messagesForTrackTo(track, recorder
+				.getCurrentTick())) {
+			if (event.getMessage() instanceof ShortMessage) {
+				ShortMessage message = (ShortMessage) event.getMessage();
+				if (message.getStatus() == ShortMessage.NOTE_ON) {
+					messages.put(message.getData1(), message);
+				} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
+					messages.remove(message.getData1());
 				}
 			}
 		}

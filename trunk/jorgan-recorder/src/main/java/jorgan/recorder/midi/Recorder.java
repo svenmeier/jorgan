@@ -201,6 +201,10 @@ public class Recorder {
 	 *             if track or message is invalid
 	 */
 	public void record(int track, MidiMessage message) {
+
+		updateTick();
+		long tick = currentTick;
+
 		if (track >= tracks.length) {
 			throw new IllegalArgumentException("invalid track");
 		}
@@ -213,11 +217,9 @@ public class Recorder {
 			throw new IllegalStateException("record while playing is invalid");
 		}
 
-		updateTick();
+		tracks[track].add(new MidiEvent(message, tick));
 
-		tracks[track].add(new MidiEvent(message, currentTick));
-
-		fireRecorded(track, tickToMillis(currentTick), message);
+		fireRecorded(track, tickToMillis(tick), message);
 	}
 
 	private boolean isEndOfTrack(MidiMessage message) {
@@ -274,7 +276,7 @@ public class Recorder {
 		}
 	}
 
-	private long millisToTick(long millis) {
+	public long millisToTick(long millis) {
 		float division = sequence.getDivisionType();
 		if (division == Sequence.PPQ) {
 			// default tempo is 120 beats per minute -> 2 beats per seconds
@@ -285,7 +287,7 @@ public class Recorder {
 				* sequence.getResolution() / 1000);
 	}
 
-	private long tickToMillis(long tick) {
+	public long tickToMillis(long tick) {
 		float division = sequence.getDivisionType();
 		if (division == Sequence.PPQ) {
 			// default tempo is 120 beats per minute -> 2 beats per seconds
@@ -302,13 +304,24 @@ public class Recorder {
 		return currentTick;
 	}
 
-	public Iterable<MidiMessage> messagesForTrack(final int track) {
-		return messagesForTrackTo(track, sequence.getTickLength());
+	public Iterable<MidiEvent> messagesForTrack(final int track) {
+		return messagesForTrack(track, 0, Long.MAX_VALUE);
 	}
 
-	public Iterable<MidiMessage> messagesForTrackTo(final int track,
-			final long tick) {
-		return new AbstractIterator<MidiMessage>() {
+	public Iterable<MidiEvent> messagesForTrackTo(final int track,
+			final long toTick) {
+		return messagesForTrack(track, 0, toTick);
+	}
+
+	public Iterable<MidiEvent> messagesForTrackFrom(final int track,
+			final long fromTick) {
+		return messagesForTrack(track, fromTick, Long.MAX_VALUE);
+	}
+
+	private Iterable<MidiEvent> messagesForTrack(final int track,
+			final long fromTick, final long toTick) {
+
+		return new AbstractIterator<MidiEvent>() {
 			private int index = 0;
 
 			public boolean hasNext() {
@@ -317,15 +330,23 @@ public class Recorder {
 				}
 
 				MidiEvent event = tracks[track].get(index);
-				return event.getTick() < tick;
+				return !isEndOfTrack(event.getMessage())
+						&& event.getTick() < toTick;
 			}
 
-			public MidiMessage next() {
+			public MidiEvent next() {
 				MidiEvent event = tracks[track].get(index);
 
 				index++;
 
-				return event.getMessage();
+				return event;
+			}
+
+			@Override
+			public void remove() {
+				index--;
+
+				tracks[track].remove(tracks[track].get(index));
 			}
 		};
 	}

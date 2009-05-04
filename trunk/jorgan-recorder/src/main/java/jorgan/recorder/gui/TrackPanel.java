@@ -25,6 +25,7 @@ import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
 
 import jorgan.recorder.midi.Recorder;
@@ -41,7 +42,7 @@ public class TrackPanel extends JComponent {
 
 		setPreferredSize(new Dimension(32, 32));
 		setBackground(Color.white);
-		setForeground(Color.red);
+		setForeground(Color.blue.brighter());
 
 		EventListener listener = new EventListener();
 		addMouseListener(listener);
@@ -53,12 +54,52 @@ public class TrackPanel extends JComponent {
 		int width = getWidth();
 		int height = getHeight();
 
-		g.setColor(getBackground());
-		g.fillRect(0, 0, width, height);
+		paintBackground(g, width, height);
 
-		g.setColor(getBackground().darker());
-		g.drawLine(0, height / 2, width, height / 2);
+		paintTicks(g, width, height);
 
+		paintMessages(g, width, height);
+
+		paintCursor(g, width, height);
+	}
+
+	private void paintMessages(Graphics g, int width, int height) {
+		g.setColor(getForeground());
+
+		int x = -1;
+		int count = 0;
+		for (MidiEvent event : recorder.messagesForTrack(track)) {
+			int nextX = millisToX(recorder.tickToMillis(event.getTick()));
+			if (nextX == x) {
+				count++;
+				continue;
+			}
+
+			paintMessages(g, width, height, x, count);
+			x = nextX;
+			count = 1;
+		}
+
+		paintMessages(g, width, height, x, count);
+	}
+
+	private void paintMessages(Graphics g, int width, int height, int x,
+			int count) {
+		if (count > 0) {
+			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
+			g.drawLine(x, height - temp, x, height);
+		}
+	}
+
+	private void paintCursor(Graphics g, int width, int height) {
+		g.setColor(Color.red);
+		long cursor = getCurrentTime();
+		int x = millisToX(cursor);
+		g.drawLine(x, 0, x, height);
+		g.drawLine(x - 1, 0, x - 1, height);
+	}
+
+	private void paintTicks(Graphics g, int width, int height) {
 		long total = getTotalTime();
 		long millis = 0;
 		long delta = 10 * Recorder.SECOND;
@@ -71,11 +112,14 @@ public class TrackPanel extends JComponent {
 
 			millis += delta;
 		}
+	}
 
-		g.setColor(getForeground());
-		long current = getCurrentTime();
-		int x = Math.min(width - 1, millisToX(current));
-		g.drawLine(x, 0, x, height);
+	private void paintBackground(Graphics g, int width, int height) {
+		g.setColor(getBackground());
+		g.fillRect(0, 0, width, height);
+
+		g.setColor(getBackground().darker());
+		g.drawLine(0, height - 1, width, height - 1);
 	}
 
 	private long getCurrentTime() {
@@ -107,7 +151,8 @@ public class TrackPanel extends JComponent {
 			if (this.offset == null) {
 				int offset = getOffset(e);
 				if (Math.abs(offset) < 4) {
-					setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+					setCursor(Cursor
+							.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 				} else {
 					setCursor(Cursor.getDefaultCursor());
 				}
@@ -119,7 +164,11 @@ public class TrackPanel extends JComponent {
 			int offset = getOffset(e);
 			if (Math.abs(offset) < 4) {
 				this.offset = offset;
+			} else {
+				this.offset = 0;
+				recorder.setTime(xToMillis(e.getX()));
 			}
+			setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 		}
 
 		@Override
@@ -133,12 +182,14 @@ public class TrackPanel extends JComponent {
 				int x = e.getX() - offset;
 
 				recorder.setTime(xToMillis(x));
+				
+				// repaint eagerly so the cursor does not drags behind 
+				repaint();
 			}
 		}
-		
+
 		@Override
 		public void mouseClicked(MouseEvent e) {
-			recorder.setTime(xToMillis(e.getX()));
 		}
 	}
 }
