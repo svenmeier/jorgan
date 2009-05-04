@@ -133,8 +133,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private JToggleButton constructButton = new JToggleButton();
 
-	private JMenu recentsMenu = new JMenu();
-
 	private EventHandler handler = new EventHandler();
 
 	private boolean fullScreenOnLoad = false;
@@ -225,6 +223,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		menuBar.add(fileMenu);
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
+		JMenu recentsMenu = new JMenu();
 		config.get("recentsMenu").read(recentsMenu);
 		fileMenu.add(recentsMenu);
 		fileMenu.addSeparator();
