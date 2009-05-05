@@ -107,30 +107,35 @@ public class Recorder {
 		return tickToMillis(currentTick);
 	}
 
+	public long getTotalTime() {
+		return tickToMillis(state.getTotalTicks());
+	}
+
 	public void setTime(long time) {
 		if (time < 0) {
 			throw new IllegalArgumentException("negative time");
 		}
+		
 		stop();
 
 		this.currentTick = Math.min(millisToTick(time), sequence
 				.getTickLength());
-	}
-
-	public long getTotalTime() {
-		return tickToMillis(state.getTotalTicks());
+		
+		fireChanged(tickToMillis(currentTick));
 	}
 
 	public void first() {
 		stop();
 
 		currentTick = 0;
+		fireChanged(0);
 	}
 
 	public void last() {
 		stop();
 
 		currentTick = sequence.getTickLength();
+		fireChanged(tickToMillis(currentTick));
 	}
 
 	public void previous() {
@@ -234,9 +239,15 @@ public class Recorder {
 		return bytes[1] == 0x2F && bytes[2] == 0x00;
 	}
 
+	protected void fireChanged(long millis) {
+		for (RecorderListener listener : listeners) {
+			listener.timeChanged(millis);
+		}
+	}
+
 	protected void fireTrackCount(int trackCount) {
 		for (RecorderListener listener : listeners) {
-			listener.trackCount(trackCount);
+			listener.tracksChanged(trackCount);
 		}
 	}
 
@@ -460,6 +471,8 @@ public class Recorder {
 						if (candidateTick < tick) {
 							track = t;
 							tick = candidateTick;
+
+							// don't play endOfTrack
 							if (indices[track] < tracks[track].size() - 1) {
 								event = candidate;
 							}
@@ -477,7 +490,6 @@ public class Recorder {
 						+ tickToMillis(tick - initialTick)
 						- System.currentTimeMillis();
 				if (sleepMillis <= 0) {
-					// don't play endOfTrack
 					if (event != null) {
 						firePlayed(track, tickToMillis(tick), event
 								.getMessage());
