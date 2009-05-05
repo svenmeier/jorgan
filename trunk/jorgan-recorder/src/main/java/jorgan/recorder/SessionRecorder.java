@@ -131,7 +131,10 @@ public class SessionRecorder {
 			}
 		}
 
-		public void trackCount(int tracks) {
+		public void timeChanged(long millis) {
+		}
+		
+		public void tracksChanged(int tracks) {
 		}
 
 		public void played(int track, long millis, MidiMessage message) {

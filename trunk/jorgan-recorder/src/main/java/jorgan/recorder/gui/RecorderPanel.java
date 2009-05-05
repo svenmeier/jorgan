@@ -78,8 +78,12 @@ public class RecorderPanel extends JPanel {
 
 		recorder.addListener((RecorderListener) Spin
 				.over(new RecorderListener() {
-					public void trackCount(int tracks) {
-						updateTracksPanel();
+					public void timeChanged(long millis) {
+						repaint();
+					}
+
+					public void tracksChanged(int tracks) {
+						updateTracks();
 					}
 
 					public void played(int track, long millis,
@@ -91,21 +95,21 @@ public class RecorderPanel extends JPanel {
 					}
 
 					public void playing() {
-						update();
+						updateActions();
 					}
 
 					public void recording() {
-						update();
+						updateActions();
 					}
 
 					public void stopping() {
 					}
 
 					public void stopped() {
-						update();
+						updateActions();
 					}
 
-					private void update() {
+					private void updateActions() {
 						playAction.update();
 						recordAction.update();
 					}
@@ -145,18 +149,22 @@ public class RecorderPanel extends JPanel {
 			}
 		});
 
-		updateTracksPanel();
+		updateTracks();
 	}
 
-	protected void updateTracksPanel() {
+	protected void updateTracks() {
 		tracksPanel.removeAll();
 
 		for (int track = 0; track < recorder.getTrackCount(); track++) {
-			tracksPanel.add(new TrackPanel(recorder, track));
+			tracksPanel.add(createTrackPanel(recorder, track));
 		}
 
 		tracksPanel.revalidate();
 		tracksPanel.repaint();
+	}
+
+	private TrackPanel createTrackPanel(Recorder recorder, int track) {
+		return new TrackPanel(recorder, track);
 	}
 
 	private void updateTime() {

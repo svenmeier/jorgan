@@ -40,13 +40,23 @@ public class TrackPanel extends JComponent {
 		this.recorder = recorder;
 		this.track = track;
 
-		setPreferredSize(new Dimension(32, 32));
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
 
 		EventListener listener = new EventListener();
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
+	}
+
+	@Override
+	public Dimension getPreferredSize() {
+		int size = getFont().getSize();
+
+		return new Dimension(size + 1, size + 1);
+	}
+
+	protected String getTitle() {
+		return "Track " + track;
 	}
 
 	@Override
@@ -57,6 +67,8 @@ public class TrackPanel extends JComponent {
 		paintBackground(g, width, height);
 
 		paintTicks(g, width, height);
+
+		paintTitle(g, width, height);
 
 		paintMessages(g, width, height);
 
@@ -99,7 +111,23 @@ public class TrackPanel extends JComponent {
 		g.drawLine(x - 1, 0, x - 1, height);
 	}
 
+	private void paintTitle(Graphics g, int width, int height) {
+		g.setFont(getFont());
+
+		String title = getTitle();
+		int titleWidth = g.getFontMetrics().stringWidth(title);
+		int titleHeight = getFont().getSize();
+
+		g.setColor(getBackground());
+		g.fillRect(1, 0, titleWidth + 1, titleHeight + 1);
+
+		g.setColor(getBackground().darker());
+		g.drawString(title, 1, titleHeight);
+	}
+
 	private void paintTicks(Graphics g, int width, int height) {
+		g.setColor(getBackground().darker());
+
 		long total = getTotalTime();
 		long millis = 0;
 		long delta = 10 * Recorder.SECOND;
@@ -182,9 +210,6 @@ public class TrackPanel extends JComponent {
 				int x = e.getX() - offset;
 
 				recorder.setTime(xToMillis(x));
-				
-				// repaint eagerly so the cursor does not drags behind 
-				repaint();
 			}
 		}
 
