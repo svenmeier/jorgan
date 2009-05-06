@@ -32,12 +32,12 @@ import java.util.TimeZone;
 
 import javax.sound.midi.MidiMessage;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
-import jorgan.recorder.swing.AdaptingLabel;
 import jorgan.swing.BaseAction;
 import spin.Spin;
 import bias.Configuration;
@@ -57,7 +57,7 @@ public class RecorderPanel extends JPanel {
 
 	private RecordAction recordAction = new RecordAction();
 
-	private AdaptingLabel label;
+	private JLabel label;
 
 	private JPanel tracksPanel;
 
@@ -79,7 +79,7 @@ public class RecorderPanel extends JPanel {
 		recorder.addListener((RecorderListener) Spin
 				.over(new RecorderListener() {
 					public void timeChanged(long millis) {
-						repaint();
+						updateTime();
 					}
 
 					public void tracksChanged(int tracks) {
@@ -115,16 +115,14 @@ public class RecorderPanel extends JPanel {
 					}
 				}));
 
-		label = new AdaptingLabel() {
-			@Override
-			protected String getText() {
-				return format.format(new Date(getTime()));
-			}
-		};
+		label = new JLabel();
 		label.setFont(new Font("Monospaced", Font.PLAIN, 32));
+		label.setVerticalAlignment(JLabel.CENTER);
+		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setOpaque(true);
 		label.setForeground(Color.white);
 		label.setBackground(Color.black);
+		label.setText(format.format(new Date(0)));
 		add(label, BorderLayout.NORTH);
 
 		tracksPanel = new JPanel(new GridLayout(-1, 1));
@@ -156,20 +154,23 @@ public class RecorderPanel extends JPanel {
 		tracksPanel.removeAll();
 
 		for (int track = 0; track < recorder.getTrackCount(); track++) {
-			tracksPanel.add(createTrackPanel(recorder, track));
+			TrackPanel trackPanel = createTrackPanel(recorder, track);
+			tracksPanel.add(trackPanel);
+			trackPanel.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		}
 
 		tracksPanel.revalidate();
 		tracksPanel.repaint();
 	}
 
-	private TrackPanel createTrackPanel(Recorder recorder, int track) {
+	protected TrackPanel createTrackPanel(Recorder recorder, int track) {
 		return new TrackPanel(recorder, track);
 	}
 
 	private void updateTime() {
-		label.repaint();
-		tracksPanel.repaint();
+		label.setText(format.format(new Date(getTime())));
+
+		repaint();
 	}
 
 	private class FirstAction extends BaseAction {
@@ -179,7 +180,6 @@ public class RecorderPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			recorder.first();
-			updateTime();
 		}
 	}
 
@@ -190,7 +190,6 @@ public class RecorderPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			recorder.last();
-			updateTime();
 		}
 	}
 

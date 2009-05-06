@@ -30,12 +30,14 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 
 public class SessionRecorder {
 
@@ -53,9 +55,18 @@ public class SessionRecorder {
 		this.recorder = new Recorder();
 		initKeyboards();
 
+		session.addListener(listener);
 		session.getOrgan().addOrganListener(listener);
 		session.getPlay().addKeyListener(listener);
 		recorder.addListener(listener);
+	}
+
+	public OrganSession getSession() {
+		return session;
+	}
+
+	public String getTitle(int track) {
+		return Elements.getDisplayName(keyboards.get(track));
 	}
 
 	private void initKeyboards() {
@@ -88,8 +99,15 @@ public class SessionRecorder {
 	}
 
 	private class EventListener extends OrganAdapter implements KeyListener,
-			RecorderListener {
+			RecorderListener, SessionListener {
+		
+		public void constructingChanged(boolean constructing) {
+			recorder.stop();
+		}
 
+		public void destroyed() {
+		}
+		
 		@Override
 		public void elementAdded(Element element) {
 			if (element instanceof Keyboard) {
@@ -133,7 +151,7 @@ public class SessionRecorder {
 
 		public void timeChanged(long millis) {
 		}
-		
+
 		public void tracksChanged(int tracks) {
 		}
 
