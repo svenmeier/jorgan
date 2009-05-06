@@ -64,54 +64,55 @@ public class TrackPanel extends JComponent {
 		int width = getWidth();
 		int height = getHeight();
 
-		paintBackground(g, width, height);
+		paintBackground(g, 0, 0, width, height);
 
-		paintTicks(g, width, height);
+		int titleHeight = getFont().getSize() + 1;
+		paintTitle(g, 0, 0, width, height);
 
-		paintTitle(g, width, height);
+		paintTicks(g, 0, titleHeight, width, height - titleHeight);
 
-		paintMessages(g, width, height);
+		paintMessages(g, 0, titleHeight, width, height - titleHeight);
 
-		paintCursor(g, width, height);
+		paintCursor(g, 0, 0, width, height);
 	}
 
-	private void paintMessages(Graphics g, int width, int height) {
+	private void paintMessages(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getForeground());
 
-		int x = -1;
+		int temp = -1;
 		int count = 0;
 		for (MidiEvent event : recorder.messagesForTrack(track)) {
 			int nextX = millisToX(recorder.tickToMillis(event.getTick()));
-			if (nextX == x) {
+			if (nextX == temp) {
 				count++;
 				continue;
 			}
 
-			paintMessages(g, width, height, x, count);
-			x = nextX;
+			paintMessage(g, temp, y, width, height, count);
+			temp = nextX;
 			count = 1;
 		}
 
-		paintMessages(g, width, height, x, count);
+		paintMessage(g, temp, y, width, height, count);
 	}
 
-	private void paintMessages(Graphics g, int width, int height, int x,
+	private void paintMessage(Graphics g, int x, int y, int width, int height, 
 			int count) {
 		if (count > 0) {
 			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
-			g.drawLine(x, height - temp, x, height);
+			g.drawLine(x, y + height - temp, x, y + height);
 		}
 	}
 
-	private void paintCursor(Graphics g, int width, int height) {
+	private void paintCursor(Graphics g, int x, int y, int width, int height) {
 		g.setColor(Color.red);
 		long cursor = getCurrentTime();
-		int x = millisToX(cursor);
-		g.drawLine(x, 0, x, height);
-		g.drawLine(x - 1, 0, x - 1, height);
+		x += millisToX(cursor);
+		g.drawLine(x, y, x, height);
+		g.drawLine(x - 1, y, x - 1, height);
 	}
 
-	private void paintTitle(Graphics g, int width, int height) {
+	private void paintTitle(Graphics g, int x, int y, int width, int height) {
 		g.setFont(getFont());
 
 		String title = getTitle();
@@ -119,35 +120,47 @@ public class TrackPanel extends JComponent {
 		int titleHeight = getFont().getSize();
 
 		g.setColor(getBackground());
-		g.fillRect(1, 0, titleWidth + 1, titleHeight + 1);
+		g.fillRect(x + 1, y, titleWidth + 1, titleHeight + 1);
 
-		g.setColor(getBackground().darker());
-		g.drawString(title, 1, titleHeight);
+		g.setColor(getForeground());
+		g.drawString(title, x + 1, y + titleHeight);
 	}
 
-	private void paintTicks(Graphics g, int width, int height) {
+	private void paintTicks(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getBackground().darker());
 
 		long total = getTotalTime();
 		long millis = 0;
 		long delta = 10 * Recorder.SECOND;
 		if (millisToX(delta) < 10) {
-			delta = Recorder.MINUTE;
+			delta = 30 * Recorder.SECOND;
 		}
+		if (millisToX(delta) < 10) {
+			delta = 60 * Recorder.SECOND;
+		}
+		
 		while (millis < total) {
-			int x = millisToX(millis);
-			g.drawLine(x, 0, x, height);
+			int tempX = x + millisToX(millis);
+			int tempHeight;
+			if (millis % (60 * Recorder.SECOND) == 0) {
+				tempHeight = height;
+			} else if (millis % (30 * Recorder.SECOND) == 0) {
+				tempHeight = height * 3 / 4;
+			} else {
+				tempHeight = height / 2;
+			}
+			g.drawLine(tempX, y + height - tempHeight, tempX, y + height);
 
 			millis += delta;
 		}
 	}
 
-	private void paintBackground(Graphics g, int width, int height) {
+	private void paintBackground(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getBackground());
-		g.fillRect(0, 0, width, height);
+		g.fillRect(x, y, width, height);
 
 		g.setColor(getBackground().darker());
-		g.drawLine(0, height - 1, width, height - 1);
+		g.drawLine(x, height - 1, width, height - 1);
 	}
 
 	private long getCurrentTime() {
@@ -189,6 +202,10 @@ public class TrackPanel extends JComponent {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				return;
+			}
+
 			int offset = getOffset(e);
 			if (Math.abs(offset) < 4) {
 				this.offset = offset;
