@@ -16,25 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports.defaults;
+package jorgan.importer.gui.spi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.gui.imports.spi.Import;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.importer.gui.Import;
+import jorgan.util.PluginUtils;
 
-/**
- * Default provider of {@link Import}s.
- */
-public class DefaultImportProvider implements ImportProvider {
+public class ProviderRegistry {
 
-	public List<Import> getImports() {
-		List<Import> imports = new ArrayList<Import>();
+	public static List<Import> getImports() {
+		ArrayList<Import> actions = new ArrayList<Import>();
 
-		imports.add(new DispositionImport());
-		imports.add(new PatchListImport());
+		for (ImportProvider provider : PluginUtils.lookup(ImportProvider.class)) {
+			actions.addAll(provider.getImports());
+		}
 
-		return imports;
+		return actions;
 	}
 }

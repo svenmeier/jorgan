@@ -1,14 +1,16 @@
-package jorgan.gui.spi;
+package jorgan.importer.gui.spi;
+
 
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.Action;
 
-import jorgan.gui.ImportAction;
+import jorgan.gui.spi.SessionActionProvider;
+import jorgan.importer.gui.ImportAction;
 import jorgan.session.OrganSession;
 
-public class DefaultSessionActionProvider implements SessionActionProvider {
+public class ImportSessionActionProvider implements SessionActionProvider {
 
 	public List<Action> getActions(OrganSession session) {
 		List<Action> actions = new ArrayList<Action>();

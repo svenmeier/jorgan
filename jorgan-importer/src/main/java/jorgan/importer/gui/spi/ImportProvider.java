@@ -16,22 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports.spi;
+package jorgan.importer.gui.spi;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.util.PluginUtils;
+import jorgan.importer.gui.Import;
 
-public class ProviderRegistry {
+/**
+ * A provider of {@link Import}s.
+ */
+public interface ImportProvider {
 
-	public static List<Import> getImports() {
-		ArrayList<Import> actions = new ArrayList<Import>();
-
-		for (ImportProvider provider : PluginUtils.lookup(ImportProvider.class)) {
-			actions.addAll(provider.getImports());
-		}
-
-		return actions;
-	}
+	public List<Import> getImports();
 }

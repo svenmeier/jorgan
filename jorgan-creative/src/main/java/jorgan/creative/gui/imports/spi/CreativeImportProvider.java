@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.creative.gui.imports.CreativeImport;
-import jorgan.gui.imports.spi.Import;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.importer.gui.Import;
+import jorgan.importer.gui.spi.ImportProvider;
 
 /**
  * A provider that of {@link Import}s from Creative soundcards.
@@ -31,12 +31,12 @@ import jorgan.gui.imports.spi.ImportProvider;
  * @see jorgan.creative.SoundFontManager
  */
 public class CreativeImportProvider implements ImportProvider {
-	
+
 	public CreativeImportProvider() {
 		// trigger loading of native library to fail early
 		new CreativeImport();
 	}
-	
+
 	public List<Import> getImports() {
 		List<Import> imports = new ArrayList<Import>();
 
