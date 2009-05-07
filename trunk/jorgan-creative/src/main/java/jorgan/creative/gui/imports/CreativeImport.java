@@ -29,7 +29,7 @@ import jorgan.creative.SoundFontManager;
 import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
-import jorgan.gui.imports.spi.Import;
+import jorgan.importer.gui.Import;
 import bias.Configuration;
 
 /**

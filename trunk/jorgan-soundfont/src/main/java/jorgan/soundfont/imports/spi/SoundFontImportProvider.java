@@ -21,8 +21,8 @@ package jorgan.soundfont.imports.spi;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.gui.imports.spi.Import;
-import jorgan.gui.imports.spi.ImportProvider;
+import jorgan.importer.gui.Import;
+import jorgan.importer.gui.spi.ImportProvider;
 import jorgan.soundfont.imports.SoundFontImport;
 
 /**

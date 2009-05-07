@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports;
+package jorgan.importer.gui;
 
 import java.awt.Component;
 import java.util.ArrayList;
@@ -26,7 +26,6 @@ import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.gui.construct.ElementsSelectionPanel;
-import jorgan.gui.imports.spi.Import;
 import jorgan.play.Closed;
 import jorgan.session.OrganSession;
 import jorgan.session.undo.Compound;

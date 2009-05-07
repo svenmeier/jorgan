@@ -33,7 +33,7 @@ import javax.swing.JPanel;
 import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
-import jorgan.gui.imports.spi.Import;
+import jorgan.importer.gui.Import;
 import jorgan.riff.RiffChunk;
 import jorgan.riff.RiffFormatException;
 import jorgan.soundfont.Preset;

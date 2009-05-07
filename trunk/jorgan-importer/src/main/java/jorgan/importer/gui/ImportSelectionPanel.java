@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports;
+package jorgan.importer.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -31,8 +31,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.gui.imports.spi.Import;
-import jorgan.gui.imports.spi.ProviderRegistry;
+import jorgan.importer.gui.spi.ProviderRegistry;
 
 /**
  * A selection of an {@link Import}.

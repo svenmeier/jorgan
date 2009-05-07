@@ -16,14 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports.spi;
+package jorgan.importer.gui.spi;
 
+import java.util.ArrayList;
 import java.util.List;
 
-/**
- * A provider of {@link Import}s.
- */
-public interface ImportProvider {
+import jorgan.importer.gui.Import;
+import jorgan.importer.gui.defaults.DispositionImport;
+import jorgan.importer.gui.defaults.PatchListImport;
 
-	public List<Import> getImports();
+/**
+ * Default provider of {@link Import}s.
+ */
+public class DefaultImportProvider implements ImportProvider {
+
+	public List<Import> getImports() {
+		List<Import> imports = new ArrayList<Import>();
+
+		imports.add(new DispositionImport());
+		imports.add(new PatchListImport());
+
+		return imports;
+	}
 }

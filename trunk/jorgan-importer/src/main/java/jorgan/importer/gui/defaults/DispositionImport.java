@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.imports.defaults;
+package jorgan.importer.gui.defaults;
 
 import java.awt.Insets;
 import java.io.File;
@@ -31,7 +31,7 @@ import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.gui.imports.spi.Import;
+import jorgan.importer.gui.Import;
 import jorgan.io.DispositionStream;
 import jorgan.swing.FileSelector;
 import jorgan.swing.layout.DefinitionBuilder;
