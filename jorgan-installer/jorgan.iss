@@ -11,8 +11,8 @@ AppPublisher=Sven Meier
 AppPublisherURL=http://jorgan.sourceforge.net
 AppSupportURL=http://jorgan.sourceforge.net
 AppUpdatesURL=http://jorgan.sourceforge.net
-AppVerName=jOrgan 3.6.1
-OutputBaseFilename=jOrgan-3.6.1-installer1
+AppVerName=jOrgan 4.0-alpha1
+OutputBaseFilename=jOrgan-4.0-alpha1-installer1
 OutputDir=.\target
 DefaultDirName={pf}\jOrgan
 DefaultGroupName=jOrgan
@@ -34,6 +34,9 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: "core"; Description: "Program Files"; Types: full custom; Flags: fixed
+Name: "customizer"; Description: "Customizer"; Types: full
+Name: "importer"; Description: "Importer"; Types: full
+Name: "recorder"; Description: "Recorder"; Types: full
 Name: "creative"; Description: "Creative Soundblaster"; Types: full
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: full
@@ -42,6 +45,9 @@ Name: "skins"; Description: "Skins"; Types: full
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
 Source: "..\core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
+Source: "..\customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
+Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
+Source: "..\recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
 Source: "..\creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
 Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
 Source: "..\linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
