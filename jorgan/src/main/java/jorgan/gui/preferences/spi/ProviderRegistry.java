@@ -26,7 +26,6 @@ import bias.swing.Category;
 
 public class ProviderRegistry {
 
-	@SuppressWarnings("unchecked")
 	public static List<Category> createCategories() {
 		ArrayList<Category> categories = new ArrayList<Category>();
 
