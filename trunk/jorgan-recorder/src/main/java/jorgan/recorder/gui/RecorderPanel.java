@@ -156,7 +156,6 @@ public class RecorderPanel extends JPanel {
 		for (int track = 0; track < recorder.getTrackCount(); track++) {
 			TrackPanel trackPanel = createTrackPanel(recorder, track);
 			tracksPanel.add(trackPanel);
-			trackPanel.setFont(new Font("Monospaced", Font.PLAIN, 16));
 		}
 
 		tracksPanel.revalidate();
@@ -165,6 +164,10 @@ public class RecorderPanel extends JPanel {
 
 	protected TrackPanel createTrackPanel(Recorder recorder, int track) {
 		return new TrackPanel(recorder, track);
+	}
+
+	private long getTime() {
+		return recorder.getTime();
 	}
 
 	private void updateTime() {
@@ -235,9 +238,5 @@ public class RecorderPanel extends JPanel {
 				config.get("record").read(this);
 			}
 		}
-	}
-
-	private long getTime() {
-		return recorder.getTime();
 	}
 }

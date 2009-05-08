@@ -52,7 +52,7 @@ public class TrackPanel extends JComponent {
 	public Dimension getPreferredSize() {
 		int size = getFont().getSize();
 
-		return new Dimension(size + 1, size + 1);
+		return new Dimension(size * 2, size * 2);
 	}
 
 	protected String getTitle() {
@@ -130,7 +130,6 @@ public class TrackPanel extends JComponent {
 		g.setColor(getBackground().darker());
 
 		long total = getTotalTime();
-		long millis = 0;
 		long delta = 10 * Recorder.SECOND;
 		if (millisToX(delta) < 10) {
 			delta = 30 * Recorder.SECOND;
@@ -139,6 +138,7 @@ public class TrackPanel extends JComponent {
 			delta = 60 * Recorder.SECOND;
 		}
 		
+		long millis = delta;
 		while (millis < total) {
 			int tempX = x + millisToX(millis);
 			int tempHeight;
