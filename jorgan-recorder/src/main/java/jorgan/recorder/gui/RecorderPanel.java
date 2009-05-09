@@ -31,31 +31,17 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import javax.sound.midi.MidiMessage;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.Timer;
 
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
-import jorgan.swing.BaseAction;
 import spin.Spin;
-import bias.Configuration;
 
 public class RecorderPanel extends JPanel {
 
-	private static final Configuration config = Configuration.getRoot().get(
-			RecorderPanel.class);
-
 	private Recorder recorder;
-
-	private PlayAction playAction = new PlayAction();
-
-	private FirstAction firstAction = new FirstAction();
-
-	private LastAction lastAction = new LastAction();
-
-	private RecordAction recordAction = new RecordAction();
 
 	private JLabel label;
 
@@ -95,23 +81,15 @@ public class RecorderPanel extends JPanel {
 					}
 
 					public void playing() {
-						updateActions();
 					}
 
 					public void recording() {
-						updateActions();
 					}
 
 					public void stopping() {
 					}
 
 					public void stopped() {
-						updateActions();
-					}
-
-					private void updateActions() {
-						playAction.update();
-						recordAction.update();
 					}
 				}));
 
@@ -128,14 +106,6 @@ public class RecorderPanel extends JPanel {
 		tracksPanel = new JPanel(new GridLayout(-1, 1));
 		tracksPanel.setBackground(Color.white);
 		add(tracksPanel, BorderLayout.CENTER);
-
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 4));
-		add(buttonPanel, BorderLayout.SOUTH);
-
-		buttonPanel.add(new JButton(firstAction));
-		buttonPanel.add(new JButton(playAction));
-		buttonPanel.add(new JButton(lastAction));
-		buttonPanel.add(new JButton(recordAction));
 
 		addHierarchyListener(new HierarchyListener() {
 			public void hierarchyChanged(HierarchyEvent e) {
@@ -174,69 +144,5 @@ public class RecorderPanel extends JPanel {
 		label.setText(format.format(new Date(getTime())));
 
 		repaint();
-	}
-
-	private class FirstAction extends BaseAction {
-		public FirstAction() {
-			config.get("first").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			recorder.first();
-		}
-	}
-
-	private class LastAction extends BaseAction {
-		public LastAction() {
-			config.get("last").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			recorder.last();
-		}
-	}
-
-	private class PlayAction extends BaseAction {
-		public PlayAction() {
-			config.get("play").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			if (recorder.isStopped()) {
-				recorder.play();
-			} else {
-				recorder.stop();
-			}
-		}
-
-		protected void update() {
-			if (recorder.isPlaying()) {
-				config.get("stop").read(this);
-			} else {
-				config.get("play").read(this);
-			}
-		}
-	}
-
-	private class RecordAction extends BaseAction {
-		public RecordAction() {
-			config.get("record").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			if (recorder.isRecording()) {
-				recorder.stop();
-			} else {
-				recorder.record();
-			}
-		}
-
-		protected void update() {
-			if (recorder.isRecording()) {
-				config.get("stop").read(this);
-			} else {
-				config.get("record").read(this);
-			}
-		}
 	}
 }

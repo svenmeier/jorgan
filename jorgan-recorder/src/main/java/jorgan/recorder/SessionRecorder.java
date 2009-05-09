@@ -37,6 +37,7 @@ import jorgan.play.event.KeyListener;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 
 public class SessionRecorder {
 
@@ -48,12 +49,13 @@ public class SessionRecorder {
 
 	private EventListener listener = new EventListener();
 
-	public SessionRecorder(OrganSession session) {
+	public SessionRecorder(OrganSession session, Recorder recorder) {
 		this.session = session;
+		this.recorder = recorder;
 
-		this.recorder = new Recorder();
 		initKeyboards();
 
+		session.addListener(listener);
 		session.getOrgan().addOrganListener(listener);
 		session.getPlay().addKeyListener(listener);
 		recorder.addListener(listener);
@@ -78,10 +80,6 @@ public class SessionRecorder {
 		recorder.setTracks(keyboards.size());
 	}
 
-	public Recorder getRecorder() {
-		return recorder;
-	}
-
 	public void dispose() {
 		recorder.removeListener(listener);
 		session.getPlay().removeKeyListener(listener);
@@ -101,8 +99,15 @@ public class SessionRecorder {
 	}
 
 	private class EventListener extends OrganAdapter implements KeyListener,
-			RecorderListener {
+			RecorderListener, SessionListener {
 
+		public void constructingChanged(boolean constructing) {
+			recorder.stop();
+		}
+		
+		public void destroyed() {
+		}
+		
 		@Override
 		public void elementAdded(Element element) {
 			if (element instanceof Keyboard) {
