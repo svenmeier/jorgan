@@ -96,7 +96,7 @@ public class TrackPanel extends JComponent {
 		paintMessage(g, temp, y, width, height, count);
 	}
 
-	private void paintMessage(Graphics g, int x, int y, int width, int height, 
+	private void paintMessage(Graphics g, int x, int y, int width, int height,
 			int count) {
 		if (count > 0) {
 			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
@@ -137,7 +137,7 @@ public class TrackPanel extends JComponent {
 		if (millisToX(delta) < 10) {
 			delta = 60 * Recorder.SECOND;
 		}
-		
+
 		long millis = delta;
 		while (millis < total) {
 			int tempX = x + millisToX(millis);

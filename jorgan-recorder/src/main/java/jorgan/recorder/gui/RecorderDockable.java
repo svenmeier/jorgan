@@ -19,12 +19,17 @@
 package jorgan.recorder.gui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
-import javax.sound.midi.MidiMessage;
+import javax.swing.Timer;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.midi.RecorderAdapter;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -36,6 +41,8 @@ public class RecorderDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			RecorderDockable.class);
+
+	private SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
 
 	private OrganSession session;
 
@@ -57,15 +64,23 @@ public class RecorderDockable extends OrganDockable {
 
 	private RecordAction recordAction = new RecordAction();
 
+	private Timer timer = new Timer(250, new ActionListener() {
+		public void actionPerformed(ActionEvent e) {
+			updateTime();
+		}
+	});
+
 	public RecorderDockable() {
 		config.read(this);
+
+		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
 	@Override
 	public boolean forConstruct() {
 		return false;
 	}
-	
+
 	@Override
 	public void docked(Docked docked) {
 		super.docked(docked);
@@ -78,6 +93,15 @@ public class RecorderDockable extends OrganDockable {
 		docked.addTool(playAction);
 		docked.addTool(lastAction);
 		docked.addTool(recordAction);
+
+		timer.start();
+	}
+
+	@Override
+	public void undocked() {
+		timer.stop();
+
+		super.undocked();
 	}
 
 	public void setSession(OrganSession session) {
@@ -92,36 +116,10 @@ public class RecorderDockable extends OrganDockable {
 
 		if (this.session != null) {
 			recorder = new Recorder();
-
-			sessionRecorder = new SessionRecorder(session, recorder);
-
-			setContent(new RecorderPanel(recorder) {
-				@Override
-				protected TrackPanel createTrackPanel(Recorder recorder,
-						final int track) {
-					return new TrackPanel(recorder, track) {
-						@Override
-						protected String getTitle() {
-							return RecorderDockable.this.getTitle(track);
-						}
-					};
-				}
-			});
-
 			recorder.addListener((RecorderListener) Spin
-					.over(new RecorderListener() {
+					.over(new RecorderAdapter() {
 						public void timeChanged(long millis) {
-						}
-
-						public void tracksChanged(int tracks) {
-						}
-
-						public void played(int track, long millis,
-								MidiMessage message) {
-						}
-
-						public void recorded(int track, long millis,
-								MidiMessage message) {
+							updateTime();
 						}
 
 						public void playing() {
@@ -130,9 +128,6 @@ public class RecorderDockable extends OrganDockable {
 
 						public void recording() {
 							updateActions();
-						}
-
-						public void stopping() {
 						}
 
 						public void stopped() {
@@ -144,7 +139,27 @@ public class RecorderDockable extends OrganDockable {
 							recordAction.update();
 						}
 					}));
+
+			setContent(new TracksPanel(recorder) {
+				@Override
+				protected TrackPanel createTrackPanel(Recorder recorder,
+						final int track) {
+					return new TrackPanel(recorder, track) {
+						@Override
+						protected String getTitle() {
+							return RecorderDockable.this.getTitle(track);
+						}
+					};
+				}
+			});
+			
+			sessionRecorder = new SessionRecorder(session, recorder);
 		}
+	}
+
+	private void updateTime() {
+		setStatus(format.format(new Date(recorder.getTime())));
+		getContent().repaint();
 	}
 
 	private String getTitle(int track) {
