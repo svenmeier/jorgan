@@ -22,11 +22,13 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
 
 import jorgan.recorder.midi.Recorder;
 
@@ -40,6 +42,7 @@ public class TrackPanel extends JComponent {
 		this.recorder = recorder;
 		this.track = track;
 
+		setBorder(new EmptyBorder(2, 2, 2, 2));
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
 
@@ -52,7 +55,8 @@ public class TrackPanel extends JComponent {
 	public Dimension getPreferredSize() {
 		int size = getFont().getSize();
 
-		return new Dimension(size * 2, size * 2);
+		return new Dimension(Math.round(256 * getDisplayTime()
+				/ Recorder.MINUTE), size * 3);
 	}
 
 	protected String getTitle() {
@@ -61,19 +65,29 @@ public class TrackPanel extends JComponent {
 
 	@Override
 	public void paint(Graphics g) {
+		int x = 0;
+		int y = 0;
 		int width = getWidth();
 		int height = getHeight();
 
-		paintBackground(g, 0, 0, width, height);
+		g.setColor(getBackground());
+		g.fillRect(x, y, width, height);
+
+		Insets insets = getInsets();
+		x += insets.left;
+		y += insets.top;
+		width -= insets.left + insets.right;
+		height -= insets.top + insets.bottom;
+
+		paintTitle(g, x, y, width, height);
 
 		int titleHeight = getFont().getSize() + 1;
-		paintTitle(g, 0, 0, width, height);
 
-		paintTicks(g, 0, titleHeight, width, height - titleHeight);
+		paintTicks(g, x, y + titleHeight, width, height - titleHeight);
 
-		paintMessages(g, 0, titleHeight, width, height - titleHeight);
+		paintMessages(g, x, y + titleHeight, width, height - titleHeight);
 
-		paintCursor(g, 0, 0, width, height);
+		paintCursor(g, x, y, width, height);
 	}
 
 	private void paintMessages(Graphics g, int x, int y, int width, int height) {
@@ -108,8 +122,8 @@ public class TrackPanel extends JComponent {
 		g.setColor(Color.red);
 		long cursor = getCurrentTime();
 		x += millisToX(cursor);
-		g.drawLine(x, y, x, height);
-		g.drawLine(x - 1, y, x - 1, height);
+		g.drawLine(x, y, x, y + height - 1);
+		g.drawLine(x - 1, y, x - 1, y + height - 1);
 	}
 
 	private void paintTitle(Graphics g, int x, int y, int width, int height) {
@@ -129,16 +143,11 @@ public class TrackPanel extends JComponent {
 	private void paintTicks(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getBackground().darker());
 
-		long total = getTotalTime();
-		long delta = 10 * Recorder.SECOND;
-		if (millisToX(delta) < 10) {
-			delta = 30 * Recorder.SECOND;
-		}
-		if (millisToX(delta) < 10) {
-			delta = 60 * Recorder.SECOND;
-		}
+		g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
 
-		long millis = delta;
+		long total = getDisplayTime();
+		long delta = 10 * Recorder.SECOND;
+		long millis = 0;
 		while (millis < total) {
 			int tempX = x + millisToX(millis);
 			int tempHeight;
@@ -149,34 +158,36 @@ public class TrackPanel extends JComponent {
 			} else {
 				tempHeight = height / 2;
 			}
-			g.drawLine(tempX, y + height - tempHeight, tempX, y + height);
+			g.drawLine(tempX, y + height - tempHeight, tempX, y + height - 1);
 
 			millis += delta;
 		}
-	}
-
-	private void paintBackground(Graphics g, int x, int y, int width, int height) {
-		g.setColor(getBackground());
-		g.fillRect(x, y, width, height);
-
-		g.setColor(getBackground().darker());
-		g.drawLine(x, height - 1, width, height - 1);
 	}
 
 	private long getCurrentTime() {
 		return recorder.getTime();
 	}
 
-	private long getTotalTime() {
+	private long getDisplayTime() {
 		return Math.max(recorder.getTotalTime(), Recorder.MINUTE);
 	}
 
 	private int millisToX(long millis) {
-		return Math.round(millis * getWidth() / getTotalTime());
+		// TODO must cache
+		Insets insets = getInsets();
+		
+		int width = getWidth() - insets.left - insets.right;
+		
+		return Math.round(millis * width / getDisplayTime());
 	}
 
 	private long xToMillis(int x) {
-		return Math.max(0, x * getTotalTime() / getWidth());
+		// TODO must cache
+		Insets insets = getInsets();
+		
+		int width = getWidth() - insets.left - insets.right;
+		
+		return Math.max(0, x * getDisplayTime() / width);
 	}
 
 	private class EventListener extends MouseAdapter {
