@@ -24,6 +24,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.swing.JScrollPane;
 import javax.swing.Timer;
 
 import jorgan.gui.dock.OrganDockable;
@@ -69,6 +70,8 @@ public class RecorderDockable extends OrganDockable {
 			updateTime();
 		}
 	});
+
+	private TracksPanel tracksPanel;
 
 	public RecorderDockable() {
 		config.read(this);
@@ -140,7 +143,7 @@ public class RecorderDockable extends OrganDockable {
 						}
 					}));
 
-			setContent(new TracksPanel(recorder) {
+			tracksPanel = new TracksPanel(recorder) {
 				@Override
 				protected TrackPanel createTrackPanel(Recorder recorder,
 						final int track) {
@@ -151,15 +154,17 @@ public class RecorderDockable extends OrganDockable {
 						}
 					};
 				}
-			});
-			
+			};
+			setContent(new JScrollPane(tracksPanel));
+
 			sessionRecorder = new SessionRecorder(session, recorder);
 		}
 	}
 
 	private void updateTime() {
 		setStatus(format.format(new Date(recorder.getTime())));
-		getContent().repaint();
+		tracksPanel.revalidate();
+		tracksPanel.repaint();
 	}
 
 	private String getTitle(int track) {
