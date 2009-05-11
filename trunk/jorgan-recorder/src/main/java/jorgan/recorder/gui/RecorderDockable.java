@@ -71,6 +71,8 @@ public class RecorderDockable extends OrganDockable {
 
 	private TracksPanel tracksPanel;
 
+	private TrackHeaders trackHeaders;
+
 	public RecorderDockable() {
 		config.read(this);
 
@@ -125,6 +127,11 @@ public class RecorderDockable extends OrganDockable {
 							updateTime();
 						}
 
+						@Override
+						public void tracksChanged(int tracks) {
+							updateTracks();
+						}
+						
 						public void playing() {
 							updateActions();
 						}
@@ -143,20 +150,17 @@ public class RecorderDockable extends OrganDockable {
 						}
 					}));
 
-			tracksPanel = new TracksPanel(recorder) {
-				@Override
-				protected TrackPanel createTrackPanel(Recorder recorder,
-						final int track) {
-					return new TrackPanel(recorder, track) {
-						@Override
-						protected String getTitle() {
-							return RecorderDockable.this.getTitle(track);
-						}
-					};
-				}
-			};
-			setContent(new JScrollPane(tracksPanel));
+			tracksPanel = new TracksPanel(recorder);
+			trackHeaders = new TrackHeaders(recorder);
+			JScrollPane scrollPane = new JScrollPane(tracksPanel);
+			scrollPane.setRowHeaderView(trackHeaders);
+			setContent(scrollPane);
 		}
+	}
+
+	protected void updateTracks() {
+		tracksPanel.updateTracks();
+		trackHeaders.updateTracks();
 	}
 
 	private void updateTime() {
@@ -164,10 +168,6 @@ public class RecorderDockable extends OrganDockable {
 				.getTime())));
 		tracksPanel.revalidate();
 		tracksPanel.repaint();
-	}
-
-	private String getTitle(int track) {
-		return sessionRecorder.getTitle(track);
 	}
 
 	private class NewAction extends BaseAction {

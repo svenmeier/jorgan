@@ -28,9 +28,6 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import jorgan.recorder.midi.Recorder;
-import jorgan.recorder.midi.RecorderAdapter;
-import jorgan.recorder.midi.RecorderListener;
-import spin.Spin;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
@@ -42,30 +39,20 @@ public class TracksPanel extends JPanel implements Scrollable {
 		setBackground(Color.white);
 
 		this.recorder = recorder;
-		recorder.addListener((RecorderListener) Spin
-				.over(new RecorderAdapter() {
-					public void tracksChanged(int tracks) {
-						updateTracks();
-					}
-				}));
 
 		updateTracks();
 	}
 
-	protected void updateTracks() {
+	public void updateTracks() {
 		removeAll();
 
 		for (int track = 0; track < recorder.getTrackCount(); track++) {
-			TrackPanel trackPanel = createTrackPanel(recorder, track);
+			TrackPanel trackPanel = new TrackPanel(recorder, track);
 			add(trackPanel);
 		}
 
 		revalidate();
 		repaint();
-	}
-
-	protected TrackPanel createTrackPanel(Recorder recorder, int track) {
-		return new TrackPanel(recorder, track);
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
