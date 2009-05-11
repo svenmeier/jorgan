@@ -47,8 +47,6 @@ public class RecorderDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private Recorder recorder;
-
 	private SessionRecorder sessionRecorder;
 
 	private NewAction newAction = new NewAction();
@@ -118,7 +116,9 @@ public class RecorderDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			recorder = new Recorder();
+			sessionRecorder = new SessionRecorder(session);
+
+			Recorder recorder = sessionRecorder.getRecorder();
 			recorder.addListener((RecorderListener) Spin
 					.over(new RecorderAdapter() {
 						public void timeChanged(long millis) {
@@ -156,13 +156,12 @@ public class RecorderDockable extends OrganDockable {
 				}
 			};
 			setContent(new JScrollPane(tracksPanel));
-
-			sessionRecorder = new SessionRecorder(session, recorder);
 		}
 	}
 
 	private void updateTime() {
-		setStatus(format.format(new Date(recorder.getTime())));
+		setStatus(format.format(new Date(sessionRecorder.getRecorder()
+				.getTime())));
 		tracksPanel.revalidate();
 		tracksPanel.repaint();
 	}
@@ -177,6 +176,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			sessionRecorder.reset();
 		}
 	}
 
@@ -204,7 +204,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			recorder.first();
+			sessionRecorder.getRecorder().first();
 		}
 	}
 
@@ -214,7 +214,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			recorder.last();
+			sessionRecorder.getRecorder().last();
 		}
 	}
 
@@ -224,15 +224,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (recorder.isStopped()) {
-				recorder.play();
+			if (sessionRecorder.getRecorder().isStopped()) {
+				sessionRecorder.getRecorder().play();
 			} else {
-				recorder.stop();
+				sessionRecorder.getRecorder().stop();
 			}
 		}
 
 		protected void update() {
-			if (recorder.isPlaying()) {
+			if (sessionRecorder.getRecorder().isPlaying()) {
 				config.get("stop").read(this);
 			} else {
 				config.get("play").read(this);
@@ -246,15 +246,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (recorder.isRecording()) {
-				recorder.stop();
+			if (sessionRecorder.getRecorder().isRecording()) {
+				sessionRecorder.getRecorder().stop();
 			} else {
-				recorder.record();
+				sessionRecorder.getRecorder().record();
 			}
 		}
 
 		protected void update() {
-			if (recorder.isRecording()) {
+			if (sessionRecorder.getRecorder().isRecording()) {
 				config.get("stop").read(this);
 			} else {
 				config.get("record").read(this);

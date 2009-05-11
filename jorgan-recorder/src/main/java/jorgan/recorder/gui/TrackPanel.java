@@ -28,11 +28,12 @@ import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
-import javax.swing.border.EmptyBorder;
 
 import jorgan.recorder.midi.Recorder;
 
 public class TrackPanel extends JComponent {
+
+	public static final int SECOND_WIDTH = 4;
 
 	private Recorder recorder;
 
@@ -42,7 +43,6 @@ public class TrackPanel extends JComponent {
 		this.recorder = recorder;
 		this.track = track;
 
-		setBorder(new EmptyBorder(2, 2, 2, 2));
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
 
@@ -53,10 +53,12 @@ public class TrackPanel extends JComponent {
 
 	@Override
 	public Dimension getPreferredSize() {
-		int size = getFont().getSize();
+		int height = getFont().getSize() * 4;
 
-		return new Dimension(Math.round(256 * getDisplayTime()
-				/ Recorder.MINUTE), size * 3);
+		int width = Math.round(SECOND_WIDTH * getDisplayTime()
+				/ Recorder.SECOND);
+
+		return new Dimension(width, height);
 	}
 
 	protected String getTitle() {
@@ -93,10 +95,13 @@ public class TrackPanel extends JComponent {
 	private void paintMessages(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getForeground());
 
+		Insets insets = getInsets();
+
 		int temp = -1;
 		int count = 0;
 		for (MidiEvent event : recorder.messagesForTrack(track)) {
-			int nextX = millisToX(recorder.tickToMillis(event.getTick()));
+			int nextX = millisToX(recorder.tickToMillis(event.getTick()),
+					insets);
 			if (nextX == temp) {
 				count++;
 				continue;
@@ -114,14 +119,17 @@ public class TrackPanel extends JComponent {
 			int count) {
 		if (count > 0) {
 			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
-			g.drawLine(x, y + height - temp, x, y + height);
+			g.drawLine(x, y + height - temp, x, y + height - 1);
 		}
 	}
 
 	private void paintCursor(Graphics g, int x, int y, int width, int height) {
+		Insets insets = getInsets();
+
 		g.setColor(Color.red);
 		long cursor = getCurrentTime();
-		x += millisToX(cursor);
+		x += millisToX(cursor, insets);
+
 		g.drawLine(x, y, x, y + height - 1);
 		g.drawLine(x - 1, y, x - 1, y + height - 1);
 	}
@@ -141,6 +149,8 @@ public class TrackPanel extends JComponent {
 	}
 
 	private void paintTicks(Graphics g, int x, int y, int width, int height) {
+		Insets insets = getInsets();
+
 		g.setColor(getBackground().darker());
 
 		g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
@@ -149,7 +159,7 @@ public class TrackPanel extends JComponent {
 		long delta = 10 * Recorder.SECOND;
 		long millis = 0;
 		while (millis < total) {
-			int tempX = x + millisToX(millis);
+			int tempX = x + millisToX(millis, insets);
 			int tempHeight;
 			if (millis % (60 * Recorder.SECOND) == 0) {
 				tempHeight = height;
@@ -172,21 +182,15 @@ public class TrackPanel extends JComponent {
 		return Math.max(recorder.getTotalTime(), Recorder.MINUTE);
 	}
 
-	private int millisToX(long millis) {
-		// TODO must cache
-		Insets insets = getInsets();
-		
+	private int millisToX(long millis, Insets insets) {
 		int width = getWidth() - insets.left - insets.right;
-		
+
 		return Math.round(millis * width / getDisplayTime());
 	}
 
-	private long xToMillis(int x) {
-		// TODO must cache
-		Insets insets = getInsets();
-		
+	private long xToMillis(int x, Insets insets) {
 		int width = getWidth() - insets.left - insets.right;
-		
+
 		return Math.max(0, x * getDisplayTime() / width);
 	}
 
@@ -195,7 +199,7 @@ public class TrackPanel extends JComponent {
 		private Integer offset;
 
 		private int getOffset(MouseEvent e) {
-			return e.getX() - millisToX(getCurrentTime());
+			return e.getX() - millisToX(getCurrentTime(), getInsets());
 		}
 
 		@Override
@@ -222,7 +226,7 @@ public class TrackPanel extends JComponent {
 				this.offset = offset;
 			} else {
 				this.offset = 0;
-				recorder.setTime(xToMillis(e.getX()));
+				recorder.setTime(xToMillis(e.getX(), getInsets()));
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 		}
@@ -237,7 +241,7 @@ public class TrackPanel extends JComponent {
 			if (offset != null) {
 				int x = e.getX() - offset;
 
-				recorder.setTime(xToMillis(x));
+				recorder.setTime(xToMillis(x, getInsets()));
 			}
 		}
 
