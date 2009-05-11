@@ -28,10 +28,13 @@ import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
+import javax.swing.border.EmptyBorder;
 
 import jorgan.recorder.midi.Recorder;
 
 public class TrackPanel extends JComponent {
+
+	public static final int HEIGHT = 64;
 
 	public static final int SECOND_WIDTH = 4;
 
@@ -43,6 +46,7 @@ public class TrackPanel extends JComponent {
 		this.recorder = recorder;
 		this.track = track;
 
+		setBorder(new EmptyBorder(2, 0, 2, 0));
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
 
@@ -53,7 +57,7 @@ public class TrackPanel extends JComponent {
 
 	@Override
 	public Dimension getPreferredSize() {
-		int height = getFont().getSize() * 4;
+		int height = HEIGHT;
 
 		int width = Math.round(SECOND_WIDTH * getDisplayTime()
 				/ Recorder.SECOND);
@@ -61,12 +65,10 @@ public class TrackPanel extends JComponent {
 		return new Dimension(width, height);
 	}
 
-	protected String getTitle() {
-		return "Track " + track;
-	}
-
 	@Override
 	public void paint(Graphics g) {
+		Insets insets = getInsets();
+
 		int x = 0;
 		int y = 0;
 		int width = getWidth();
@@ -75,19 +77,19 @@ public class TrackPanel extends JComponent {
 		g.setColor(getBackground());
 		g.fillRect(x, y, width, height);
 
-		Insets insets = getInsets();
 		x += insets.left;
 		y += insets.top;
 		width -= insets.left + insets.right;
 		height -= insets.top + insets.bottom;
 
-		paintTitle(g, x, y, width, height);
+		paintTicks(g, x, y, width, height);
 
-		int titleHeight = getFont().getSize() + 1;
+		paintMessages(g, x, y, width, height);
 
-		paintTicks(g, x, y + titleHeight, width, height - titleHeight);
-
-		paintMessages(g, x, y + titleHeight, width, height - titleHeight);
+		x -= insets.left;
+		y -= insets.top;
+		width += insets.left + insets.right;
+		height += insets.top + insets.bottom;
 
 		paintCursor(g, x, y, width, height);
 	}
@@ -132,20 +134,6 @@ public class TrackPanel extends JComponent {
 
 		g.drawLine(x, y, x, y + height - 1);
 		g.drawLine(x - 1, y, x - 1, y + height - 1);
-	}
-
-	private void paintTitle(Graphics g, int x, int y, int width, int height) {
-		g.setFont(getFont());
-
-		String title = getTitle();
-		int titleWidth = g.getFontMetrics().stringWidth(title);
-		int titleHeight = getFont().getSize();
-
-		g.setColor(getBackground());
-		g.fillRect(x + 1, y, titleWidth + 1, titleHeight + 1);
-
-		g.setColor(getForeground());
-		g.drawString(title, x + 1, y + titleHeight);
 	}
 
 	private void paintTicks(Graphics g, int x, int y, int width, int height) {
