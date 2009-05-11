@@ -58,7 +58,7 @@ public class Recorder {
 	}
 
 	public Recorder(int tracks) {
-		setTracks(0);
+		setTracks(tracks);
 	}
 
 	public Recorder(Sequence sequence) {

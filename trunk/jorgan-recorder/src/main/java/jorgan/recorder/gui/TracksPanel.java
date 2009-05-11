@@ -19,16 +19,20 @@
 package jorgan.recorder.gui;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Rectangle;
 
 import javax.swing.JPanel;
+import javax.swing.Scrollable;
+import javax.swing.SwingConstants;
 
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderAdapter;
 import jorgan.recorder.midi.RecorderListener;
 import spin.Spin;
 
-public class TracksPanel extends JPanel {
+public class TracksPanel extends JPanel implements Scrollable {
 
 	private Recorder recorder;
 
@@ -62,5 +66,46 @@ public class TracksPanel extends JPanel {
 
 	protected TrackPanel createTrackPanel(Recorder recorder, int track) {
 		return new TrackPanel(recorder, track);
+	}
+
+	public Dimension getPreferredScrollableViewportSize() {
+		int width = 60 * TrackPanel.SECOND_WIDTH;
+		int height = getPreferredSize().height;
+
+		return new Dimension(width, height);
+	}
+
+	public int getScrollableBlockIncrement(Rectangle visibleRect,
+			int orientation, int direction) {
+		int increment;
+
+		if (orientation == SwingConstants.HORIZONTAL) {
+			increment = visibleRect.width;
+		} else {
+			increment = visibleRect.height;
+		}
+
+		return increment;
+	}
+
+	public int getScrollableUnitIncrement(Rectangle visibleRect,
+			int orientation, int direction) {
+		int increment;
+
+		if (orientation == SwingConstants.HORIZONTAL) {
+			increment = 10 * TrackPanel.SECOND_WIDTH;
+		} else {
+			increment = getPreferredSize().height / recorder.getTrackCount();
+		}
+
+		return increment;
+	}
+
+	public boolean getScrollableTracksViewportHeight() {
+		return false;
+	}
+
+	public boolean getScrollableTracksViewportWidth() {
+		return false;
 	}
 }
