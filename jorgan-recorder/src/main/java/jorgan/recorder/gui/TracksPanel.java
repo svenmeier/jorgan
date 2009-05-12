@@ -18,22 +18,26 @@
  */
 package jorgan.recorder.gui;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 
+import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.SessionRecorder;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
-	private Recorder recorder;
+	private SessionRecorder recorder;
 
-	public TracksPanel(Recorder recorder) {
+	private Header header;
+
+	public TracksPanel(SessionRecorder recorder) {
 		super(new GridLayout(-1, 1));
 
 		setBackground(Color.white);
@@ -46,17 +50,21 @@ public class TracksPanel extends JPanel implements Scrollable {
 	public void updateTracks() {
 		removeAll();
 
-		for (int track = 0; track < recorder.getTrackCount(); track++) {
-			TrackPanel trackPanel = new TrackPanel(recorder, track);
+		for (int track = 0; track < recorder.getRecorder().getTrackCount(); track++) {
+			TrackGraph trackPanel = new TrackGraph(recorder, track);
 			add(trackPanel);
 		}
 
 		revalidate();
 		repaint();
+
+		if (header != null) {
+			header.updateTracks();
+		}
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
-		int width = 60 * TrackPanel.SECOND_WIDTH;
+		int width = 60 * TrackGraph.SECOND_WIDTH;
 		int height = getPreferredSize().height;
 
 		return new Dimension(width, height);
@@ -80,9 +88,10 @@ public class TracksPanel extends JPanel implements Scrollable {
 		int increment;
 
 		if (orientation == SwingConstants.HORIZONTAL) {
-			increment = 10 * TrackPanel.SECOND_WIDTH;
+			increment = 10 * TrackGraph.SECOND_WIDTH;
 		} else {
-			increment = getPreferredSize().height / recorder.getTrackCount();
+			increment = getPreferredSize().height
+					/ recorder.getRecorder().getTrackCount();
 		}
 
 		return increment;
@@ -94,5 +103,48 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 	public boolean getScrollableTracksViewportWidth() {
 		return false;
+	}
+
+	public JComponent getHeader() {
+		if (header == null) {
+			header = new Header();
+		}
+
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setBackground(Color.white);
+
+		wrapper.add(header, BorderLayout.NORTH);
+
+		return wrapper;
+	}
+
+	private class Header extends JPanel {
+
+		public Header() {
+			super(new GridLayout(-1, 1));
+
+			setBackground(Color.white);
+
+			updateTracks();
+		}
+
+		@Override
+		public Dimension getPreferredSize() {
+			int width = super.getPreferredSize().width;
+			int height = TracksPanel.this.getPreferredSize().height;
+
+			return new Dimension(width, height);
+		}
+
+		public void updateTracks() {
+			removeAll();
+
+			for (int track = 0; track < recorder.getRecorder().getTrackCount(); track++) {
+				add(new TrackHeader(recorder, track));
+			}
+
+			revalidate();
+			repaint();
+		}
 	}
 }
