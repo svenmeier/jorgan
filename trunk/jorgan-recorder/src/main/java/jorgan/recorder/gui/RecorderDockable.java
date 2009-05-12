@@ -20,6 +20,8 @@ package jorgan.recorder.gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -29,7 +31,7 @@ import javax.swing.Timer;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.SessionRecorder;
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.io.MidiStream;
 import jorgan.recorder.midi.RecorderAdapter;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.session.OrganSession;
@@ -47,7 +49,7 @@ public class RecorderDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private SessionRecorder sessionRecorder;
+	private SessionRecorder recorder;
 
 	private NewAction newAction = new NewAction();
 
@@ -70,8 +72,6 @@ public class RecorderDockable extends OrganDockable {
 	});
 
 	private TracksPanel tracksPanel;
-
-	private TrackHeaders trackHeaders;
 
 	public RecorderDockable() {
 		config.read(this);
@@ -109,8 +109,8 @@ public class RecorderDockable extends OrganDockable {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			sessionRecorder.dispose();
-			sessionRecorder = null;
+			recorder.dispose();
+			recorder = null;
 
 			setContent(null);
 		}
@@ -118,11 +118,10 @@ public class RecorderDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			sessionRecorder = new SessionRecorder(session);
+			recorder = new SessionRecorder(session);
 
-			Recorder recorder = sessionRecorder.getRecorder();
-			recorder.addListener((RecorderListener) Spin
-					.over(new RecorderAdapter() {
+			recorder.getRecorder().addListener(
+					(RecorderListener) Spin.over(new RecorderAdapter() {
 						public void timeChanged(long millis) {
 							updateTime();
 						}
@@ -131,7 +130,7 @@ public class RecorderDockable extends OrganDockable {
 						public void tracksChanged(int tracks) {
 							updateTracks();
 						}
-						
+
 						public void playing() {
 							updateActions();
 						}
@@ -151,21 +150,18 @@ public class RecorderDockable extends OrganDockable {
 					}));
 
 			tracksPanel = new TracksPanel(recorder);
-			trackHeaders = new TrackHeaders(recorder);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
-			scrollPane.setRowHeaderView(trackHeaders);
+			scrollPane.setRowHeaderView(tracksPanel.getHeader());
 			setContent(scrollPane);
 		}
 	}
 
 	protected void updateTracks() {
 		tracksPanel.updateTracks();
-		trackHeaders.updateTracks();
 	}
 
 	private void updateTime() {
-		setStatus(format.format(new Date(sessionRecorder.getRecorder()
-				.getTime())));
+		setStatus(format.format(new Date(recorder.getRecorder().getTime())));
 		tracksPanel.revalidate();
 		tracksPanel.repaint();
 	}
@@ -176,7 +172,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			sessionRecorder.reset();
+			recorder.reset();
 		}
 	}
 
@@ -186,6 +182,13 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			try {
+				new MidiStream().load(new File("test.mid"), recorder
+						.getRecorder());
+			} catch (IOException ex) {
+				// TODO
+				throw new Error(ex);
+			}
 		}
 	}
 
@@ -195,6 +198,13 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			try {
+				new MidiStream().save(new File("test.mid"), recorder
+						.getRecorder());
+			} catch (IOException ex) {
+				// TODO
+				throw new Error(ex);
+			}
 		}
 	}
 
@@ -204,7 +214,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			sessionRecorder.getRecorder().first();
+			recorder.getRecorder().first();
 		}
 	}
 
@@ -214,7 +224,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			sessionRecorder.getRecorder().last();
+			recorder.getRecorder().last();
 		}
 	}
 
@@ -224,15 +234,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (sessionRecorder.getRecorder().isStopped()) {
-				sessionRecorder.getRecorder().play();
+			if (recorder.getRecorder().isStopped()) {
+				recorder.getRecorder().play();
 			} else {
-				sessionRecorder.getRecorder().stop();
+				recorder.getRecorder().stop();
 			}
 		}
 
 		protected void update() {
-			if (sessionRecorder.getRecorder().isPlaying()) {
+			if (recorder.getRecorder().isPlaying()) {
 				config.get("stop").read(this);
 			} else {
 				config.get("play").read(this);
@@ -246,15 +256,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (sessionRecorder.getRecorder().isRecording()) {
-				sessionRecorder.getRecorder().stop();
+			if (recorder.getRecorder().isRecording()) {
+				recorder.getRecorder().stop();
 			} else {
-				sessionRecorder.getRecorder().record();
+				recorder.getRecorder().record();
 			}
 		}
 
 		protected void update() {
-			if (sessionRecorder.getRecorder().isRecording()) {
+			if (recorder.getRecorder().isRecording()) {
 				config.get("stop").read(this);
 			} else {
 				config.get("record").read(this);

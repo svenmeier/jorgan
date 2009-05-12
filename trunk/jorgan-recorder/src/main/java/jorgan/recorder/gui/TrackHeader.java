@@ -18,51 +18,26 @@
  */
 package jorgan.recorder.gui;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.EmptyBorder;
 
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.SessionRecorder;
 
-public class TrackHeaders extends JPanel {
+public class TrackHeader extends JPanel {
 
-	private Recorder recorder;
+	private SessionRecorder recorder;
 
-	private JPanel panel = new JPanel(new GridLayout(-1, 1));
-
-	public TrackHeaders(Recorder recorder) {
-		super(new BorderLayout());
-
-		setBackground(Color.white);
+	public TrackHeader(SessionRecorder recorder, int track) {
+		super(new GridLayout());
 
 		this.recorder = recorder;
 
-		panel.setBackground(Color.white);
-		add(panel, BorderLayout.NORTH);
-
-		updateTracks();
-	}
-
-	public void updateTracks() {
-		panel.removeAll();
-
-		for (int track = 0; track < recorder.getTrackCount(); track++) {
-			JLabel label = new JLabel("Track " + track) {
-				@Override
-				public Dimension getPreferredSize() {
-					Dimension size = super.getPreferredSize();
-					size.height = TrackPanel.HEIGHT;
-					return size;
-				}
-			};
-			panel.add(label);
-		}
-
-		panel.revalidate();
-		panel.repaint();
+		JLabel label = new JLabel();
+		label.setText(this.recorder.getTitle(track));
+		label.setBorder(new EmptyBorder(2, 2, 2, 2));
+		add(label);
 	}
 }

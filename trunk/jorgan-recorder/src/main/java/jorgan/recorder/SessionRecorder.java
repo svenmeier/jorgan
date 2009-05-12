@@ -94,14 +94,6 @@ public class SessionRecorder {
 		return "Track " + track;
 	}
 
-	private void checkTracks() {
-		Keyboard[] old = this.track2keyboard;
-
-		this.track2keyboard = new Keyboard[recorder.getTrackCount()];
-		System.arraycopy(old, 0, this.track2keyboard, 0, Math.min(
-				old.length, this.track2keyboard.length));
-	}
-
 	public void dispose() {
 		recorder.removeListener(listener);
 		session.getPlay().removeKeyListener(listener);
@@ -173,7 +165,7 @@ public class SessionRecorder {
 		}
 
 		public void tracksChanged(int tracks) {
-			checkTracks();
+			track2keyboard = new Keyboard[recorder.getTrackCount()];
 		}
 
 		public void played(int track, long millis, MidiMessage message) {

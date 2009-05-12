@@ -28,25 +28,24 @@ import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
-import javax.swing.border.EmptyBorder;
 
+import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.midi.Recorder;
 
-public class TrackPanel extends JComponent {
+public class TrackGraph extends JComponent {
 
-	public static final int HEIGHT = 64;
+	private static final int HEIGHT = 64;
 
 	public static final int SECOND_WIDTH = 4;
 
-	private Recorder recorder;
+	private SessionRecorder recorder;
 
 	private int track;
 
-	public TrackPanel(Recorder recorder, int track) {
+	public TrackGraph(SessionRecorder recorder, int track) {
 		this.recorder = recorder;
 		this.track = track;
 
-		setBorder(new EmptyBorder(2, 0, 2, 0));
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
 
@@ -67,8 +66,6 @@ public class TrackPanel extends JComponent {
 
 	@Override
 	public void paint(Graphics g) {
-		Insets insets = getInsets();
-
 		int x = 0;
 		int y = 0;
 		int width = getWidth();
@@ -77,19 +74,9 @@ public class TrackPanel extends JComponent {
 		g.setColor(getBackground());
 		g.fillRect(x, y, width, height);
 
-		x += insets.left;
-		y += insets.top;
-		width -= insets.left + insets.right;
-		height -= insets.top + insets.bottom;
-
 		paintTicks(g, x, y, width, height);
 
 		paintMessages(g, x, y, width, height);
-
-		x -= insets.left;
-		y -= insets.top;
-		width += insets.left + insets.right;
-		height += insets.top + insets.bottom;
 
 		paintCursor(g, x, y, width, height);
 	}
@@ -97,13 +84,11 @@ public class TrackPanel extends JComponent {
 	private void paintMessages(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getForeground());
 
-		Insets insets = getInsets();
-
 		int temp = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.messagesForTrack(track)) {
-			int nextX = millisToX(recorder.tickToMillis(event.getTick()),
-					insets);
+		for (MidiEvent event : recorder.getRecorder().messagesForTrack(track)) {
+			int nextX = millisToX(recorder.getRecorder().tickToMillis(
+					event.getTick()));
 			if (nextX == temp) {
 				count++;
 				continue;
@@ -126,19 +111,15 @@ public class TrackPanel extends JComponent {
 	}
 
 	private void paintCursor(Graphics g, int x, int y, int width, int height) {
-		Insets insets = getInsets();
-
 		g.setColor(Color.red);
 		long cursor = getCurrentTime();
-		x += millisToX(cursor, insets);
+		x += millisToX(cursor);
 
 		g.drawLine(x, y, x, y + height - 1);
 		g.drawLine(x - 1, y, x - 1, y + height - 1);
 	}
 
 	private void paintTicks(Graphics g, int x, int y, int width, int height) {
-		Insets insets = getInsets();
-
 		g.setColor(getBackground().darker());
 
 		g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
@@ -147,14 +128,16 @@ public class TrackPanel extends JComponent {
 		long delta = 10 * Recorder.SECOND;
 		long millis = 0;
 		while (millis < total) {
-			int tempX = x + millisToX(millis, insets);
+			int tempX = x + millisToX(millis);
 			int tempHeight;
-			if (millis % (60 * Recorder.SECOND) == 0) {
-				tempHeight = height;
-			} else if (millis % (30 * Recorder.SECOND) == 0) {
+			if (millis == 0) {
+				tempHeight = height * 4 / 4;
+			} else if (millis % (60 * Recorder.SECOND) == 0) {
 				tempHeight = height * 3 / 4;
+			} else if (millis % (30 * Recorder.SECOND) == 0) {
+				tempHeight = height * 2 / 4;
 			} else {
-				tempHeight = height / 2;
+				tempHeight = height * 1 / 4;
 			}
 			g.drawLine(tempX, y + height - tempHeight, tempX, y + height - 1);
 
@@ -163,15 +146,15 @@ public class TrackPanel extends JComponent {
 	}
 
 	private long getCurrentTime() {
-		return recorder.getTime();
+		return recorder.getRecorder().getTime();
 	}
 
 	private long getDisplayTime() {
-		return Math.max(recorder.getTotalTime(), Recorder.MINUTE);
+		return Math.max(recorder.getRecorder().getTotalTime(), Recorder.MINUTE);
 	}
 
-	private int millisToX(long millis, Insets insets) {
-		int width = getWidth() - insets.left - insets.right;
+	private int millisToX(long millis) {
+		int width = getWidth();
 
 		return Math.round(millis * width / getDisplayTime());
 	}
@@ -187,7 +170,7 @@ public class TrackPanel extends JComponent {
 		private Integer offset;
 
 		private int getOffset(MouseEvent e) {
-			return e.getX() - millisToX(getCurrentTime(), getInsets());
+			return e.getX() - millisToX(getCurrentTime());
 		}
 
 		@Override
@@ -214,7 +197,8 @@ public class TrackPanel extends JComponent {
 				this.offset = offset;
 			} else {
 				this.offset = 0;
-				recorder.setTime(xToMillis(e.getX(), getInsets()));
+				recorder.getRecorder()
+						.setTime(xToMillis(e.getX(), getInsets()));
 			}
 			setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
 		}
@@ -229,7 +213,7 @@ public class TrackPanel extends JComponent {
 			if (offset != null) {
 				int x = e.getX() - offset;
 
-				recorder.setTime(xToMillis(x, getInsets()));
+				recorder.getRecorder().setTime(xToMillis(x, getInsets()));
 			}
 		}
 
