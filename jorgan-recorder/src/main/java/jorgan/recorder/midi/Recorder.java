@@ -82,7 +82,7 @@ public class Recorder {
 		tracks = sequence.getTracks();
 		currentTick = 0;
 
-		fireTrackCount(tracks.length);
+		fireSequenceChanged();
 	}
 
 	public void addListener(RecorderListener listener) {
@@ -245,9 +245,9 @@ public class Recorder {
 		}
 	}
 
-	protected void fireTrackCount(int trackCount) {
+	protected void fireSequenceChanged() {
 		for (RecorderListener listener : listeners) {
-			listener.tracksChanged(trackCount);
+			listener.sequenceChanged();
 		}
 	}
 

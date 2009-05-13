@@ -29,7 +29,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.play.event.KeyListener;
@@ -67,14 +66,13 @@ public class SessionRecorder {
 
 		int track = 0;
 		for (Keyboard keyboard : keyboards) {
-			track2keyboard[track] = keyboard;
+			setKeyboard(track, keyboard);
 			track++;
 		}
 	}
 
 	private Set<Keyboard> getKeyboards() {
-		return session.getOrgan()
-				.getElements(Keyboard.class);
+		return session.getOrgan().getElements(Keyboard.class);
 	}
 
 	public OrganSession getSession() {
@@ -85,15 +83,17 @@ public class SessionRecorder {
 		recorder.stop();
 	}
 
-	public String getTitle(int track) {
-		if (track < track2keyboard.length) {
-			if (track2keyboard[track] != null) {
-				return Elements.getDisplayName(track2keyboard[track]);
-			}
-		}
-		return "Track " + track;
+	public Keyboard getKeyboard(int track) {
+		return track2keyboard[track];
 	}
 
+
+	public void setKeyboard(int track, Keyboard keyboard) {
+		recorder.stop();
+		
+		track2keyboard[track] = keyboard;
+	}
+	
 	public void dispose() {
 		recorder.removeListener(listener);
 		session.getPlay().removeKeyListener(listener);
@@ -164,7 +164,7 @@ public class SessionRecorder {
 		public void timeChanged(long millis) {
 		}
 
-		public void tracksChanged(int tracks) {
+		public void sequenceChanged() {
 			track2keyboard = new Keyboard[recorder.getTrackCount()];
 		}
 
