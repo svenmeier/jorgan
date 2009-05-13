@@ -28,7 +28,7 @@ public class RecorderAdapter implements RecorderListener {
 	public void timeChanged(long millis) {
 	}
 	
-	public void tracksChanged(int tracks) {
+	public void sequenceChanged() {
 	}
 	
 	public void recorded(int track, long millis, MidiMessage message) {

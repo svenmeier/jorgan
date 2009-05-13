@@ -35,7 +35,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 	private SessionRecorder recorder;
 
-	private Header header;
+	private HeaderPanel headerPanel = new HeaderPanel();
 
 	public TracksPanel(SessionRecorder recorder) {
 		super(new GridLayout(-1, 1));
@@ -49,18 +49,17 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 	public void updateTracks() {
 		removeAll();
+		headerPanel.removeAll();
 
 		for (int track = 0; track < recorder.getRecorder().getTrackCount(); track++) {
-			TrackGraph trackPanel = new TrackGraph(recorder, track);
-			add(trackPanel);
+			add(new TrackGraph(recorder, track));
+			headerPanel.add(new TrackHeader(recorder, track));
 		}
-
+		
 		revalidate();
 		repaint();
-
-		if (header != null) {
-			header.updateTracks();
-		}
+		headerPanel.revalidate();
+		headerPanel.repaint();
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
@@ -106,26 +105,20 @@ public class TracksPanel extends JPanel implements Scrollable {
 	}
 
 	public JComponent getHeader() {
-		if (header == null) {
-			header = new Header();
-		}
-
 		JPanel wrapper = new JPanel(new BorderLayout());
 		wrapper.setBackground(Color.white);
 
-		wrapper.add(header, BorderLayout.NORTH);
+		wrapper.add(headerPanel, BorderLayout.NORTH);
 
 		return wrapper;
 	}
 
-	private class Header extends JPanel {
+	private class HeaderPanel extends JPanel {
 
-		public Header() {
+		public HeaderPanel() {
 			super(new GridLayout(-1, 1));
 
 			setBackground(Color.white);
-
-			updateTracks();
 		}
 
 		@Override
@@ -134,17 +127,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 			int height = TracksPanel.this.getPreferredSize().height;
 
 			return new Dimension(width, height);
-		}
-
-		public void updateTracks() {
-			removeAll();
-
-			for (int track = 0; track < recorder.getRecorder().getTrackCount(); track++) {
-				add(new TrackHeader(recorder, track));
-			}
-
-			revalidate();
-			repaint();
 		}
 	}
 }

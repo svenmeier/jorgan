@@ -114,6 +114,12 @@ public class TrackGraph extends JComponent {
 		g.setColor(Color.red);
 		long cursor = getCurrentTime();
 		x += millisToX(cursor);
+		if (x <= 0) {
+			x = 1;
+		}
+		if (x >= width) {
+			x = width - 1;
+		}
 
 		g.drawLine(x, y, x, y + height - 1);
 		g.drawLine(x - 1, y, x - 1, y + height - 1);
@@ -143,6 +149,8 @@ public class TrackGraph extends JComponent {
 
 			millis += delta;
 		}
+		
+		g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
 	}
 
 	private long getCurrentTime() {

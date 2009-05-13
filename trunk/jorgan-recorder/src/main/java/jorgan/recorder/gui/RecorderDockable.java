@@ -127,7 +127,7 @@ public class RecorderDockable extends OrganDockable {
 						}
 
 						@Override
-						public void tracksChanged(int tracks) {
+						public void sequenceChanged() {
 							updateTracks();
 						}
 

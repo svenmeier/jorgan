@@ -34,13 +34,7 @@ public class RecorderTest extends TestCase {
 
 	public void test() throws Exception {
 		Recorder recorder = new Recorder(1);
-		recorder.addListener(new RecorderListener() {
-			
-			public void timeChanged(long millis) {
-			}
-			
-			public void tracksChanged(int tracks) {
-			}
+		recorder.addListener(new RecorderAdapter() {
 			
 			public void played(int track, long millis, MidiMessage message) {
 				trace(track, millis, message);
@@ -58,9 +52,6 @@ public class RecorderTest extends TestCase {
 				System.out.println("Recording");
 			}
 
-			public void stopping() {
-			}
-			
 			public void stopped() {
 				System.out.println("Stopped");
 			}
