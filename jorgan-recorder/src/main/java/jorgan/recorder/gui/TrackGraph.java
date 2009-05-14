@@ -74,6 +74,7 @@ public class TrackGraph extends JComponent {
 		g.setColor(getBackground());
 		g.fillRect(x, y, width, height);
 
+		// TODO paint inside clip rect only
 		paintTicks(g, x, y, width, height);
 
 		paintMessages(g, x, y, width, height);
@@ -84,22 +85,22 @@ public class TrackGraph extends JComponent {
 	private void paintMessages(Graphics g, int x, int y, int width, int height) {
 		g.setColor(getForeground());
 
-		int temp = -1;
+		int lastX = -1;
 		int count = 0;
 		for (MidiEvent event : recorder.getRecorder().messagesForTrack(track)) {
 			int nextX = millisToX(recorder.getRecorder().tickToMillis(
 					event.getTick()));
-			if (nextX == temp) {
+			if (nextX == lastX) {
 				count++;
 				continue;
 			}
 
-			paintMessage(g, temp, y, width, height, count);
-			temp = nextX;
+			paintMessage(g, lastX, y, width, height, count);
+			lastX = nextX;
 			count = 1;
 		}
 
-		paintMessage(g, temp, y, width, height, count);
+		paintMessage(g, lastX, y, width, height, count);
 	}
 
 	private void paintMessage(Graphics g, int x, int y, int width, int height,

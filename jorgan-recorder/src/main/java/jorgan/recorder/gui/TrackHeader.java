@@ -22,19 +22,24 @@ import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
+import javax.swing.JRadioButtonMenuItem;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
+import bias.Configuration;
+
+import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Keyboard;
 import jorgan.recorder.SessionRecorder;
 
 public class TrackHeader extends JPanel {
+
+	private static Configuration config = Configuration.getRoot().get(
+			TrackHeader.class);
 
 	private SessionRecorder recorder;
 
@@ -67,29 +72,41 @@ public class TrackHeader extends JPanel {
 	}
 
 	private String getTitle() {
-		Keyboard keyboard = recorder.getKeyboard(track);
-		if (keyboard == null) {
+		Element element = recorder.getElement(track);
+		if (element == null) {
 			return "Track " + track;
 		} else {
-			return Elements.getDisplayName(keyboard);
+			return Elements.getDisplayName(element);
 		}
 	}
 
 	protected void init(JPopupMenu menu) {
 		menu.removeAll();
 
-		for (final Keyboard keyboard : recorder.getSession().getOrgan()
-				.getElements(Keyboard.class)) {
+		final JRadioButtonMenuItem noneItem = new JRadioButtonMenuItem();
+		config.get("none").read(noneItem);
+		if (recorder.getElement(track) == null) {
+			noneItem.setSelected(true);
+		}
+		noneItem.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (noneItem.isSelected()) {
+					recorder.setElement(track, null);
+				}
+			}
+		});
+		menu.add(noneItem);
 
-			final JCheckBoxMenuItem item = new JCheckBoxMenuItem(Elements
-					.getDisplayName(keyboard));
-			if (recorder.getKeyboard(track) == keyboard) {
+		for (final Element element : recorder.getElements()) {
+			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(Elements
+					.getDisplayName(element));
+			if (recorder.getElement(track) == element) {
 				item.setSelected(true);
 			}
 			item.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (item.isSelected()) {
-						recorder.setKeyboard(track, keyboard);
+						recorder.setElement(track, element);
 					}
 				}
 			});
