@@ -47,14 +47,14 @@ public class MessageUtils {
 		return false;
 	}
 
-	public static ShortMessage createChannelMessage(int channel, int command,
+	public static ShortMessage createMessage(int channel, int command,
 			int data1, int data2) throws InvalidMidiDataException {
 
-		return createChannelMessage(channel | command, data1, data2);
+		return createMessage(channel | command, data1, data2);
 	}
 
-	public static ShortMessage createChannelMessage(int status, int data1,
-			int data2) throws InvalidMidiDataException {
+	public static ShortMessage createMessage(int status, int data1, int data2)
+			throws InvalidMidiDataException {
 
 		ShortMessage shortMessage = new ShortMessage();
 
@@ -65,4 +65,14 @@ public class MessageUtils {
 
 		return shortMessage;
 	}
+
+	public static ShortMessage newMessage(int status, int data1, int data2) {
+
+		try {
+			return createMessage(status, data1, data2);
+		} catch (InvalidMidiDataException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
 }
