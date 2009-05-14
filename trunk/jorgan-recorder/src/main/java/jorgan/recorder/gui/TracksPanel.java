@@ -106,8 +106,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 	public JComponent getHeader() {
 		JPanel wrapper = new JPanel(new BorderLayout());
-		wrapper.setBackground(Color.white);
-
 		wrapper.add(headerPanel, BorderLayout.NORTH);
 
 		return wrapper;
