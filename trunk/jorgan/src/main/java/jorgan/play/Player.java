@@ -203,7 +203,7 @@ public abstract class Player<E extends Element> {
 		if (context.process(message, 0, 0, 0)) {
 			ShortMessage shortMessage;
 			try {
-				shortMessage = MessageUtils.createChannelMessage(context
+				shortMessage = MessageUtils.createMessage(context
 						.getStatus(), context.getData1(), context.getData2());
 			} catch (InvalidMidiDataException ex) {
 				addProblem(Severity.ERROR, message, "messageInvalid", context
