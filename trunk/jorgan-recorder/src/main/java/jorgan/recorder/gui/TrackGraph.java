@@ -22,7 +22,7 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Insets;
+import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -66,76 +66,82 @@ public class TrackGraph extends JComponent {
 
 	@Override
 	public void paint(Graphics g) {
-		int x = 0;
-		int y = 0;
-		int width = getWidth();
-		int height = getHeight();
+		Rectangle bounds = g.getClipBounds();
 
 		g.setColor(getBackground());
-		g.fillRect(x, y, width, height);
+		g.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
 
-		// TODO paint inside clip rect only
-		paintTicks(g, x, y, width, height);
+		paintTicks(g, bounds);
 
-		paintMessages(g, x, y, width, height);
+		paintMessages(g, bounds);
 
-		paintCursor(g, x, y, width, height);
+		paintCursor(g, bounds);
 	}
 
-	private void paintMessages(Graphics g, int x, int y, int width, int height) {
+	private void paintMessages(Graphics g, Rectangle bounds) {
 		g.setColor(getForeground());
 
-		int lastX = -1;
+		int height = getHeight();
+
+		long tick = recorder.getRecorder().millisToTick(xToMillis(bounds.x));
+
+		int x = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.getRecorder().messagesForTrack(track)) {
+		for (MidiEvent event : recorder.getRecorder().messagesForTrackFrom(
+				track, tick)) {
 			int nextX = millisToX(recorder.getRecorder().tickToMillis(
 					event.getTick()));
-			if (nextX == lastX) {
+			if (nextX == x) {
 				count++;
 				continue;
 			}
 
-			paintMessage(g, lastX, y, width, height, count);
-			lastX = nextX;
+			paintMessage(g, x, height, count);
+			x = nextX;
 			count = 1;
+
+			if (x > bounds.x + bounds.width) {
+				break;
+			}
 		}
 
-		paintMessage(g, lastX, y, width, height, count);
+		paintMessage(g, x, height, count);
 	}
 
-	private void paintMessage(Graphics g, int x, int y, int width, int height,
-			int count) {
+	private void paintMessage(Graphics g, int x, int height, int count) {
 		if (count > 0) {
 			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
-			g.drawLine(x, y + height - temp, x, y + height - 1);
+			g.drawLine(x, height - temp, x, height - 1);
 		}
 	}
 
-	private void paintCursor(Graphics g, int x, int y, int width, int height) {
+	private void paintCursor(Graphics g, Rectangle bounds) {
 		g.setColor(Color.red);
-		long cursor = getCurrentTime();
-		x += millisToX(cursor);
+
+		int x = millisToX(getCurrentTime());
 		if (x <= 0) {
 			x = 1;
 		}
-		if (x >= width) {
-			x = width - 1;
+		if (x >= getWidth()) {
+			x = getWidth() - 1;
 		}
 
-		g.drawLine(x, y, x, y + height - 1);
-		g.drawLine(x - 1, y, x - 1, y + height - 1);
+		g.drawLine(x, 0, x, getHeight() - 1);
+		g.drawLine(x - 1, 0, x - 1, getHeight() - 1);
 	}
 
-	private void paintTicks(Graphics g, int x, int y, int width, int height) {
+	private void paintTicks(Graphics g, Rectangle bounds) {
 		g.setColor(getBackground().darker());
 
-		g.drawLine(x, y + height - 1, x + width - 1, y + height - 1);
+		int height = getHeight();
+		g.drawLine(0, height - 1, getWidth() - 1, height - 1);
+		g.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 
-		long total = getDisplayTime();
 		long delta = 10 * Recorder.SECOND;
-		long millis = 0;
+		long total = getDisplayTime();
+		long millis = xToMillis(bounds.x) / delta * delta;
 		while (millis < total) {
-			int tempX = x + millisToX(millis);
+			int x = millisToX(millis);
 			int tempHeight;
 			if (millis == 0) {
 				tempHeight = height * 4 / 4;
@@ -146,12 +152,14 @@ public class TrackGraph extends JComponent {
 			} else {
 				tempHeight = height * 1 / 4;
 			}
-			g.drawLine(tempX, y + height - tempHeight, tempX, y + height - 1);
+			g.drawLine(x, height - tempHeight, x, height - 1);
+
+			if (x > bounds.x + bounds.width) {
+				break;
+			}
 
 			millis += delta;
 		}
-		
-		g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);
 	}
 
 	private long getCurrentTime() {
@@ -168,10 +176,8 @@ public class TrackGraph extends JComponent {
 		return Math.round(millis * width / getDisplayTime());
 	}
 
-	private long xToMillis(int x, Insets insets) {
-		int width = getWidth() - insets.left - insets.right;
-
-		return Math.max(0, x * getDisplayTime() / width);
+	private long xToMillis(int x) {
+		return Math.max(0, x * getDisplayTime() / getWidth());
 	}
 
 	private class EventListener extends MouseAdapter {
@@ -187,12 +193,15 @@ public class TrackGraph extends JComponent {
 			if (this.offset == null) {
 				int offset = getOffset(e);
 				if (Math.abs(offset) < 4) {
-					setCursor(Cursor
-							.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+					showCursor();
 				} else {
 					setCursor(Cursor.getDefaultCursor());
 				}
 			}
+		}
+
+		private void showCursor() {
+			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 		}
 
 		@Override
@@ -206,10 +215,9 @@ public class TrackGraph extends JComponent {
 				this.offset = offset;
 			} else {
 				this.offset = 0;
-				recorder.getRecorder()
-						.setTime(xToMillis(e.getX(), getInsets()));
+				recorder.getRecorder().setTime(xToMillis(e.getX()));
 			}
-			setCursor(Cursor.getPredefinedCursor(Cursor.W_RESIZE_CURSOR));
+			showCursor();
 		}
 
 		@Override
@@ -222,7 +230,7 @@ public class TrackGraph extends JComponent {
 			if (offset != null) {
 				int x = e.getX() - offset;
 
-				recorder.getRecorder().setTime(xToMillis(x, getInsets()));
+				recorder.getRecorder().setTime(xToMillis(x));
 			}
 		}
 

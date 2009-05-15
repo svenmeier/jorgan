@@ -74,6 +74,12 @@ public class Recorder {
 		}
 	}
 
+	public void addTrack() {
+		sequence.createTrack();
+		
+		setSequence(sequence);
+	}
+	
 	public void setSequence(Sequence sequence) {
 		stop();
 
