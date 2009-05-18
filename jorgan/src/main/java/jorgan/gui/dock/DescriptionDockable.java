@@ -139,7 +139,9 @@ public class DescriptionDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			read();
+			if (element == DescriptionDockable.this.element && "description".equals(name)) {
+				read();
+			}
 		}
 	}
 }
