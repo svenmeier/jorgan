@@ -49,7 +49,7 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.getOrgan().removeOrganListener(eventHandler);
+			this.session.removeOrganListener(eventHandler);
 
 			setContent(null);
 			panel.dispose();
@@ -64,7 +64,7 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 			
 			updateTitle();
 			
-			this.session.getOrgan().addOrganListener(eventHandler);
+			this.session.addOrganListener(eventHandler);
 		}
 	}
 
