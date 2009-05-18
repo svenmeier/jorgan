@@ -331,10 +331,9 @@ public class StructureDockable extends OrganDockable {
 
     public void propertyChanged(Element element, String name) {
       // rebuild graph if name has changed (a change in order of vertices)
-      if ("name".equals(name))
-        rebuild();
-      else
-        graphWidget.repaint();
+      if ("name".equals(name)) {
+          rebuild();
+      }
     }
 
     public void referenceAdded(Element element, Reference<?> reference) {
@@ -342,7 +341,6 @@ public class StructureDockable extends OrganDockable {
     }
 
     public void referenceChanged(Element element, Reference<?> reference) {
-      rebuild();
     }
 
     public void referenceRemoved(Element element, Reference<?> reference) {
