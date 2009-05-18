@@ -352,9 +352,11 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void propertyChanged(Element element, String name) {
-			int index = elements.indexOf(element);
+			if ("name".equals(name) || "description".equals(name)) {
+				int index = elements.indexOf(element);
 
-			fireContentsChanged(this, index, index);
+				fireContentsChanged(this, index, index);
+			}
 		}
 
 		public void elementAdded(Element element) {
