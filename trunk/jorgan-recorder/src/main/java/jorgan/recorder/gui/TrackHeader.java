@@ -97,7 +97,7 @@ public class TrackHeader extends JPanel {
 		});
 		menu.add(noneItem);
 
-		for (final Element element : recorder.getElements()) {
+		for (final Element element : recorder.getTrackableElements()) {
 			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(Elements
 					.getDisplayName(element));
 			if (recorder.getElement(track) == element) {

@@ -19,20 +19,15 @@
 package jorgan.recorder;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.midi.MessageUtils;
-import jorgan.play.OrganPlay;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
@@ -68,23 +63,22 @@ public class SessionRecorder {
 	}
 
 	public void reset() {
-		List<Element> elements = getElements();
-
-		recorder.setTracks(elements.size());
-
 		int track = 0;
-		for (Element element : elements) {
-			setElement(track, element);
-			track++;
+		
+		List<Tracker> trackers = new ArrayList<Tracker>();
+		for (Element element : session.getOrgan().getElements()) {
+			Tracker tracker = createTracker(track, element);
+			if (tracker != null) {
+				trackers.add(tracker);
+				track++;
+			}
 		}
-	}
 
-	public List<Element> getElements() {
-		List<Element> elements = new ArrayList<Element>();
+		recorder.setTracks(trackers.size());
 
-		elements.addAll(session.getOrgan().getElements(Keyboard.class));
-
-		return elements;
+		for (Tracker tracker : trackers) {
+			this.trackers[tracker.getTrack()] = tracker;
+		}
 	}
 
 	public OrganSession getSession() {
@@ -99,18 +93,40 @@ public class SessionRecorder {
 		return trackers[track].getElement();
 	}
 
+	public List<Element> getTrackableElements() {
+		List<Element> elements = new ArrayList<Element>();
+		
+		for (Element element : session.getOrgan().getElements()) {
+			if (createTracker(0, element) != null) {
+				elements.add(element);
+			}
+		}
+		
+		return elements;
+	}
+	
 	public void setElement(int track, Element element) {
 		recorder.stop();
 
 		if (element == null) {
 			trackers[track] = new EmptyTracker(track);
 		} else {
-			if (element instanceof Keyboard) {
-				trackers[track] = new KeyboardTracker(track, (Keyboard) element);
-			} else {
+			Tracker tracker = createTracker(track, element);
+			if (tracker == null) {
 				throw new IllegalArgumentException("unsupported "
 						+ element.getClass().getName());
 			}
+			trackers[track] = tracker;
+		}
+	}
+
+	private Tracker createTracker(int track, Element element) {
+		if (element instanceof Keyboard) {
+			return new KeyboardTracker(this, track, (Keyboard) element);
+		} else if (element instanceof Console) {
+			return new ConsoleTracker(this, track, (Console) element);
+		} else {
+			return null;
 		}
 	}
 
@@ -195,157 +211,19 @@ public class SessionRecorder {
 		}
 	}
 
-	private Collection<ShortMessage> getKeyPresses(int track) {
-		Map<Integer, ShortMessage> messages = new HashMap<Integer, ShortMessage>();
-
-		for (MidiEvent event : recorder.messagesForTrackTo(track, recorder
-				.getCurrentTick())) {
-			if (event.getMessage() instanceof ShortMessage) {
-				ShortMessage message = (ShortMessage) event.getMessage();
-				if (message.getStatus() == ShortMessage.NOTE_ON) {
-					messages.put(message.getData1(), message);
-				} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
-					messages.remove(message.getData1());
-				}
-			}
-		}
-
-		return messages.values();
-	}
-
 	public Recorder getRecorder() {
 		return recorder;
-	}
-
-	/**
-	 * A tracker of a {@link Recorder}'s track.
-	 */
-	private abstract class Tracker {
-
-		public final int track;
-
-		protected Tracker(int track) {
-			this.track = track;
-		}
-
-		public abstract Element getElement();
-
-		public void playing() {
-		}
-
-		public void recording() {
-		}
-
-		public void recordStopping() {
-		}
-
-		public void playStopping() {
-		}
-
-		public void played(ShortMessage message) {
-		}
-
-		public void keyReleased(Keyboard keyboard, int pitch) {
-		}
-
-		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
-		}
 	}
 
 	private class EmptyTracker extends Tracker {
 
 		public EmptyTracker(int track) {
-			super(track);
+			super(SessionRecorder.this, track);
 		}
 
 		@Override
 		public Element getElement() {
 			return null;
-		}
-	}
-
-	private class KeyboardTracker extends Tracker {
-
-		private Keyboard keyboard;
-
-		public KeyboardTracker(int track, Keyboard keyboard) {
-			super(track);
-
-			this.keyboard = keyboard;
-		}
-
-		@Override
-		public Element getElement() {
-			return keyboard;
-		}
-
-		@Override
-		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
-			recorder.record(track, MessageUtils.newMessage(
-					ShortMessage.NOTE_ON, pitch, velocity));
-		}
-
-		@Override
-		public void keyReleased(Keyboard keyboard, int pitch) {
-			recorder.record(track, MessageUtils.newMessage(
-					ShortMessage.NOTE_OFF, pitch, 0));
-		}
-
-		@Override
-		public void played(ShortMessage message) {
-			if (message.getStatus() == ShortMessage.NOTE_ON) {
-				session.getPlay().pressKey(keyboard, message.getData1(),
-						message.getData2());
-			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
-				session.getPlay().releaseKey(keyboard, message.getData1());
-			}
-		}
-
-		/**
-		 * {@link OrganPlay#pressKey(Keyboard, int, int)} for all currently
-		 * pressed keys.
-		 */
-		@Override
-		public void playing() {
-			for (ShortMessage message : getKeyPresses(track)) {
-				session.getPlay().pressKey(keyboard, message.getData1(),
-						message.getData2());
-			}
-		}
-
-		/**
-		 * {@link Recorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
-		 * keys.
-		 */
-		@Override
-		public void recording() {
-			for (ShortMessage message : getKeyPresses(track)) {
-				recorder.record(track, MessageUtils.newMessage(
-						ShortMessage.NOTE_OFF, message.getData1(), 0));
-			}
-		}
-
-		/**
-		 * {@link Recorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
-		 * keys.
-		 */
-		@Override
-		public void recordStopping() {
-			for (ShortMessage message : getKeyPresses(track)) {
-				recorder.record(track, MessageUtils.newMessage(
-						ShortMessage.NOTE_OFF, message.getData1(), 0));
-			}
-		}
-
-		/**
-		 * {@link OrganPlay#releaseKey(Keyboard, int, int)} for all currently
-		 * pressed keys.
-		 */
-		@Override
-		public void playStopping() {
-			for (ShortMessage message : getKeyPresses(track)) {
-				session.getPlay().releaseKey(keyboard, message.getData1());
-			}
 		}
 	}
 }
