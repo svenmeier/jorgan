@@ -66,7 +66,7 @@ import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
-import jorgan.gui.console.spi.ProviderRegistry;
+import jorgan.gui.console.spi.ViewRegistry;
 import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.session.OrganSession;
@@ -221,7 +221,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		config.get("spreadMenu").read(spreadMenu);
 		menu.add(spreadMenu);
 
-		for (ViewLayout layout : jorgan.gui.construct.layout.spi.ProviderRegistry
+		for (ViewLayout layout : jorgan.gui.construct.layout.spi.LayoutRegistry
 				.lookupLayouts()) {
 			if (layout.isAlign()) {
 				alignMenu.add(new LayoutAction(layout));
@@ -483,7 +483,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void createView(Displayable element) {
-		View<? extends Displayable> view = ProviderRegistry.createView(element);
+		View<? extends Displayable> view = ViewRegistry.createView(element);
 
 		viewsByDisplayable.put(element, view);
 		view.setContainer(this);

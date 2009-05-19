@@ -25,7 +25,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.spi.ProviderRegistry;
+import jorgan.disposition.spi.ElementRegistry;
 import jorgan.session.OrganSession;
 import jorgan.session.undo.Compound;
 import jorgan.swing.wizard.AbstractPage;
@@ -113,7 +113,7 @@ public class CreateElementWizard extends BasicWizard {
 		public ElementPage() {
 			config.get("element").read(this);
 
-			elementPanel.setElementClasses(ProviderRegistry.getElementClasses());
+			elementPanel.setElementClasses(ElementRegistry.getElementClasses());
 		}
 
 		@Override

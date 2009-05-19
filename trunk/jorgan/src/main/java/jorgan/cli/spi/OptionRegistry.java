@@ -16,23 +16,20 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.layout.spi;
+package jorgan.cli.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.util.PluginUtils;
+import bias.store.CLIStore;
 
-public class ProviderRegistry {
+public class OptionRegistry {
 
-	public static List<ViewLayout> lookupLayouts() {
-		ArrayList<ViewLayout> layout = new ArrayList<ViewLayout>();
+	public static CLIStore getOptions() {
+		CLIStore store = new CLIStore();
 
-		for (LayoutProvider provider : PluginUtils.lookup(LayoutProvider.class)) {
-			layout.addAll(provider.getLayouts());
+		for (OptionProvider provider : PluginUtils.lookup(OptionProvider.class)) {
+			provider.addOptions(store);
 		}
 
-		return layout;
+		return store;
 	}
 }

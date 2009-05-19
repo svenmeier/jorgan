@@ -24,7 +24,7 @@ import java.awt.Window;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 
-import jorgan.gui.preferences.spi.ProviderRegistry;
+import jorgan.gui.preferences.spi.CategoryRegistry;
 import jorgan.swing.StandardDialog;
 import bias.Configuration;
 import bias.swing.CategoriesPanel;
@@ -66,7 +66,7 @@ public class PreferencesDialog extends StandardDialog {
 	}
 
 	private void init() {
-		categoriesPanel.setCategories(ProviderRegistry.createCategories());
+		categoriesPanel.setCategories(CategoryRegistry.createCategories());
 		setBody(categoriesPanel);
 
 		addOKAction();

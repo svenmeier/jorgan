@@ -47,7 +47,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
-import jorgan.gui.console.spi.ProviderRegistry;
+import jorgan.gui.console.spi.ViewRegistry;
 import jorgan.session.OrganSession;
 import jorgan.session.selection.SelectionEvent;
 import jorgan.session.selection.SelectionListener;
@@ -260,7 +260,7 @@ public class SkinDockable extends OrganDockable {
 
 			if (skin != null) {
 				for (final Style style : skin.createStyles()) {
-					View<?> view = ProviderRegistry.createView(displayable);
+					View<?> view = ViewRegistry.createView(displayable);
 					view.setContainer(new ViewContainer() {
 						public Component getHost() {
 							return list;

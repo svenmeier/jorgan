@@ -16,26 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.spi;
+package jorgan.gui.dock.spi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.Action;
-
-import jorgan.session.OrganSession;
+import jorgan.gui.dock.OrganDockable;
 import jorgan.util.PluginUtils;
 
-public class ProviderRegistry {
+public class DockableRegistry {
 
-	public static List<Action> createActions(OrganSession session) {
-		ArrayList<Action> actions = new ArrayList<Action>();
+	public static List<OrganDockable> getDockables() {
+		List<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
-		for (SessionActionProvider provider : PluginUtils
-				.lookup(SessionActionProvider.class)) {
-			actions.addAll(provider.getActions(session));
+		for (DockableProvider provider : PluginUtils
+				.lookup(DockableProvider.class)) {
+			dockables.addAll(provider.getDockables());
 		}
-
-		return actions;
+		return dockables;
 	}
 }

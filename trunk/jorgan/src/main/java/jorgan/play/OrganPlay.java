@@ -46,7 +46,7 @@ import jorgan.midi.ReceiverWrapper;
 import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.KeyListener;
 import jorgan.play.event.PlayListener;
-import jorgan.play.spi.ProviderRegistry;
+import jorgan.play.spi.PlayerRegistry;
 import jorgan.session.ElementProblems;
 import jorgan.session.problem.Problem;
 
@@ -284,7 +284,7 @@ public class OrganPlay implements Resolver {
 	}
 
 	protected void createPlayer(Element element) {
-		Player<? extends Element> player = ProviderRegistry
+		Player<? extends Element> player = PlayerRegistry
 				.createPlayer(element);
 
 		if (player != null) {

@@ -16,20 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.spi;
+package jorgan.disposition.spi;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import jorgan.disposition.Element;
 import jorgan.util.PluginUtils;
-import bias.store.CLIStore;
 
-public class ProviderRegistry {
+public class ElementRegistry {
 
-	public static CLIStore getOptions() {
-		CLIStore store = new CLIStore();
+	public static List<Class<? extends Element>> getElementClasses() {
+		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		for (OptionProvider provider : PluginUtils.lookup(OptionProvider.class)) {
-			provider.addOptions(store);
+		for (ElementProvider provider : PluginUtils
+				.lookup(ElementProvider.class)) {
+			classes.addAll(provider.getElementClasses());
 		}
 
-		return store;
+		return classes;
 	}
 }

@@ -1,4 +1,4 @@
-package jorgan.spi;
+package jorgan.cli.spi;
 
 import bias.store.CLIStore;
 import bias.util.cli.Option;

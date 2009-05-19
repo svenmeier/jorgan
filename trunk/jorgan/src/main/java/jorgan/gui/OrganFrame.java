@@ -53,7 +53,7 @@ import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
 import jorgan.gui.preferences.PreferencesDialog;
-import jorgan.gui.spi.ProviderRegistry;
+import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
@@ -230,7 +230,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
 
-		List<Action> actions = ProviderRegistry.createActions(session);
+		List<Action> actions = ActionRegistry.createActions(session);
 		if (actions.size() > 0) {
 			fileMenu.addSeparator();
 

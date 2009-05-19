@@ -16,24 +16,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition.spi;
+package jorgan.spi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.disposition.Element;
-import jorgan.util.PluginUtils;
+import jorgan.App;
+import bias.Store;
+import bias.store.DefaultingStore;
+import bias.store.PreferencesStore;
+import bias.store.PropertiesStore;
+import bias.store.ResourceBundlesStore;
 
-public class ProviderRegistry {
+public class DefaultConfigurationProvider implements ConfigurationProvider {
 
-	public static List<Class<? extends Element>> getElementClasses() {
-		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
+	public List<Store> getStores() {
+		ArrayList<Store> stores = new ArrayList<Store>();
 
-		for (ElementProvider provider : PluginUtils
-				.lookup(ElementProvider.class)) {
-			classes.addAll(provider.getElementClasses());
-		}
+		stores.add(new PropertiesStore(App.class, "app.properties"));
+		stores.add(new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(App.class, "preferences.properties")));
+		stores.add(new ResourceBundlesStore("i18n"));
 
-		return classes;
+		return stores;
 	}
+
 }

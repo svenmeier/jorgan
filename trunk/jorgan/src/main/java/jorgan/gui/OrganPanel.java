@@ -43,7 +43,7 @@ import jorgan.gui.ConsolePanel.ConsoleStack;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.OrganDockable;
-import jorgan.gui.dock.spi.ProviderRegistry;
+import jorgan.gui.dock.spi.DockableRegistry;
 import jorgan.gui.play.MessagesMonitor;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
@@ -123,7 +123,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		docking.setBorder(new EmptyBorder(2, 2, 2, 2));
 		add(docking, BorderLayout.CENTER);
 
-		for (OrganDockable dockable : ProviderRegistry.getDockables()) {
+		for (OrganDockable dockable : DockableRegistry.getDockables()) {
 			dockableActions.add(new DockableAction(dockable));
 		}
 
