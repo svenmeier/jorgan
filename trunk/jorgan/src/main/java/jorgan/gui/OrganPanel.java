@@ -56,6 +56,7 @@ import jorgan.session.selection.SelectionEvent;
 import jorgan.session.selection.SelectionListener;
 import jorgan.session.undo.UndoListener;
 import jorgan.swing.BaseAction;
+import jorgan.util.IOUtils;
 import swingx.docking.Dockable;
 import swingx.docking.Docked;
 import swingx.docking.DockingPane;
@@ -299,13 +300,15 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			docking = playDocking;
 		}
 		if (docking != null) {
+			Reader reader = new StringReader(docking);
 			try {
-				Reader reader = new StringReader(docking);
 				OrganPanelPersister persister = new OrganPanelPersister(reader);
 				persister.load();
 				return;
 			} catch (Exception ex) {
 				logger.log(Level.WARNING, "unable to load docking", ex);
+			} finally {
+				IOUtils.closeQuietly(reader);
 			}
 		}
 
@@ -315,19 +318,21 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		} else {
 			dockingXml = "play.xml";
 		}
+		Reader reader = new InputStreamReader(getClass()
+				.getResourceAsStream(dockingXml));
 		try {
-			Reader reader = new InputStreamReader(getClass()
-					.getResourceAsStream(dockingXml));
 			OrganPanelPersister persister = new OrganPanelPersister(reader);
 			persister.load();
 		} catch (Exception error) {
 			throw new Error("unable to load default docking");
+		} finally {
+			IOUtils.closeQuietly(reader);
 		}
 	}
 
 	protected void saveDocking() {
+		Writer writer = new StringWriter();
 		try {
-			Writer writer = new StringWriter();
 			OrganPanelPersister persister = new OrganPanelPersister(writer);
 			persister.save();
 			String docking = writer.toString();
@@ -338,6 +343,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			}
 		} catch (Exception ex) {
 			logger.log(Level.WARNING, "unable to save docking", ex);
+		} finally {
+			IOUtils.closeQuietly(writer);
 		}
 	}
 
