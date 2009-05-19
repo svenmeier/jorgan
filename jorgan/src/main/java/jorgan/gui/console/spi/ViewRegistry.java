@@ -16,24 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info.spi;
+package jorgan.gui.console.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import jorgan.disposition.Displayable;
+import jorgan.gui.console.View;
 import jorgan.util.PluginUtils;
 
-public class ProviderRegistry {
+public class ViewRegistry {
 
-	public static String[] getBeanInfoSearchPath() {
-		List<String> paths = new ArrayList<String>();
-
-		List<BeanInfoProvider> providers = PluginUtils
-				.lookup(BeanInfoProvider.class);
-		for (BeanInfoProvider provider : providers) {
-			paths.add(provider.getBeanInfoSearchPath());
+	@SuppressWarnings("unchecked")
+	public static View<?> createView(Displayable element) {
+		View<?> view = null;
+		for (ViewProvider provider : PluginUtils.lookup(ViewProvider.class)) {
+			view = provider.createView(element);
+			if (view != null) {
+				return view;
+			}
 		}
 
-		return paths.toArray(new String[paths.size()]);
+		return new View(element);
 	}
 }

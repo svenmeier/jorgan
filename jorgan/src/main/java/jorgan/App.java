@@ -22,15 +22,13 @@ import java.io.File;
 import java.util.Collection;
 
 import jorgan.cli.CLI;
+import jorgan.cli.spi.OptionRegistry;
 import jorgan.gui.GUI;
 import jorgan.io.DispositionStream;
-import jorgan.spi.ProviderRegistry;
+import jorgan.spi.ConfigurationRegistry;
 import bias.Configuration;
+import bias.Store;
 import bias.store.CLIStore;
-import bias.store.DefaultingStore;
-import bias.store.PreferencesStore;
-import bias.store.PropertiesStore;
-import bias.store.ResourceBundlesStore;
 import bias.util.cli.ArgsParser;
 import bias.util.cli.CLIException;
 import bias.util.cli.Option;
@@ -77,13 +75,11 @@ public class App {
 	private static Collection<Option> initConfiguration() {
 		Configuration configuration = Configuration.getRoot();
 
-		configuration
-				.addStore(new PropertiesStore(App.class, "app.properties"));
-		configuration.addStore(new DefaultingStore(PreferencesStore.user(),
-				new PropertiesStore(App.class, "preferences.properties")));
-		configuration.addStore(new ResourceBundlesStore("i18n"));
+		for (Store store : ConfigurationRegistry.getStores()) {
+			configuration.addStore(store);
+		}
 
-		CLIStore options = ProviderRegistry.getOptions();
+		CLIStore options = OptionRegistry.getOptions();
 		configuration.addStore(options);
 
 		return options.getOptions();

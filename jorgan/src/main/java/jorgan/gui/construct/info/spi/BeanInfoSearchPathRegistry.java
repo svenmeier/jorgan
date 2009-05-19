@@ -16,23 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play.spi;
+package jorgan.gui.construct.info.spi;
 
-import jorgan.disposition.Element;
-import jorgan.play.Player;
+import java.util.ArrayList;
+import java.util.List;
+
 import jorgan.util.PluginUtils;
 
-public class ProviderRegistry {
+public class BeanInfoSearchPathRegistry {
 
-	public static Player<? extends Element> createPlayer(Element element) {
-		Player<? extends Element> player = null;
-		for (PlayerProvider provider : PluginUtils.lookup(PlayerProvider.class)) {
-			player = provider.createPlayer(element);
-			if (player != null) {
-				return player;
-			}
+	public static String[] getBeanInfoSearchPath() {
+		List<String> paths = new ArrayList<String>();
+
+		List<BeanInfoProvider> providers = PluginUtils
+				.lookup(BeanInfoProvider.class);
+		for (BeanInfoProvider provider : providers) {
+			paths.add(provider.getBeanInfoSearchPath());
 		}
 
-		return player;
+		return paths.toArray(new String[paths.size()]);
 	}
 }

@@ -16,24 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.console.spi;
+package jorgan.gui.spi;
 
-import jorgan.disposition.Displayable;
-import jorgan.gui.console.View;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.Action;
+
+import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
-public class ProviderRegistry {
+public class ActionRegistry {
 
-	@SuppressWarnings("unchecked")
-	public static View<?> createView(Displayable element) {
-		View<?> view = null;
-		for (ViewProvider provider : PluginUtils.lookup(ViewProvider.class)) {
-			view = provider.createView(element);
-			if (view != null) {
-				return view;
-			}
+	public static List<Action> createActions(OrganSession session) {
+		ArrayList<Action> actions = new ArrayList<Action>();
+
+		for (SessionActionProvider provider : PluginUtils
+				.lookup(SessionActionProvider.class)) {
+			actions.addAll(provider.getActions(session));
 		}
 
-		return new View(element);
+		return actions;
 	}
 }

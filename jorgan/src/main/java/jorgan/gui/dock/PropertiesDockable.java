@@ -33,7 +33,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.construct.editor.ElementAwareEditor;
-import jorgan.gui.construct.info.spi.ProviderRegistry;
+import jorgan.gui.construct.info.spi.BeanInfoSearchPathRegistry;
 import jorgan.session.OrganSession;
 import jorgan.session.selection.SelectionEvent;
 import jorgan.session.selection.SelectionListener;
@@ -60,7 +60,7 @@ public class PropertiesDockable extends OrganDockable {
 		@Override
 		public BeanInfo getBeanInfo(Class<?> beanClass)
 				throws IntrospectionException {
-			Introspector.setBeanInfoSearchPath(ProviderRegistry
+			Introspector.setBeanInfoSearchPath(BeanInfoSearchPathRegistry
 					.getBeanInfoSearchPath());
 
 			return super.getBeanInfo(beanClass);

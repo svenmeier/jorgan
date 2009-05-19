@@ -16,24 +16,14 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.preferences.spi;
+package jorgan.spi;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.util.PluginUtils;
-import bias.swing.Category;
+import bias.Store;
 
-public class ProviderRegistry {
+public interface ConfigurationProvider {
 
-	public static List<Category> createCategories() {
-		ArrayList<Category> categories = new ArrayList<Category>();
+	public List<Store> getStores();
 
-		for (CategoryProvider provider : PluginUtils
-				.lookup(CategoryProvider.class)) {
-			categories.addAll(provider.getCategories());
-		}
-
-		return categories;
-	}
 }
