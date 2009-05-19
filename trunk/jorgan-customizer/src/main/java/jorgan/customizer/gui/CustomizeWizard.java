@@ -24,7 +24,7 @@ import java.util.List;
 
 import javax.swing.JComponent;
 
-import jorgan.customizer.gui.spi.ProviderRegistry;
+import jorgan.customizer.gui.spi.CustomizerRegistry;
 import jorgan.play.Closed;
 import jorgan.session.OrganSession;
 import jorgan.session.undo.Compound;
@@ -54,7 +54,7 @@ public class CustomizeWizard extends BasicWizard {
 	public CustomizeWizard(OrganSession session) {
 		this.session = session;
 
-		for (Customizer customizer : ProviderRegistry
+		for (Customizer customizer : CustomizerRegistry
 				.lookupCustomizers(session)) {
 			addCustomizer(customizer);
 		}

@@ -16,23 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.importer.gui.spi;
+package jorgan.customizer.gui.spi;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.importer.gui.Import;
+import jorgan.customizer.gui.Customizer;
+import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
-public class ProviderRegistry {
+public class CustomizerRegistry {
 
-	public static List<Import> getImports() {
-		ArrayList<Import> actions = new ArrayList<Import>();
+	public static List<Customizer> lookupCustomizers(OrganSession session) {
+		ArrayList<Customizer> customizers = new ArrayList<Customizer>();
 
-		for (ImportProvider provider : PluginUtils.lookup(ImportProvider.class)) {
-			actions.addAll(provider.getImports());
+		for (CustomizerProvider provider : PluginUtils
+				.lookup(CustomizerProvider.class)) {
+			customizers.addAll(provider.getCustomizers(session));
 		}
 
-		return actions;
+		return customizers;
 	}
 }
