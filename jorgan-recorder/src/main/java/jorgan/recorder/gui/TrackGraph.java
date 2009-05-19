@@ -34,7 +34,7 @@ import jorgan.recorder.midi.Recorder;
 
 public class TrackGraph extends JComponent {
 
-	private static final int HEIGHT = 64;
+	private static final int HEIGHT = 48;
 
 	public static final int SECOND_WIDTH = 4;
 
