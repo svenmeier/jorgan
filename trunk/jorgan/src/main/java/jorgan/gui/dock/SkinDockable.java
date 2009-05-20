@@ -44,6 +44,7 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
+import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
@@ -249,6 +250,20 @@ public class SkinDockable extends OrganDockable {
 				} else {
 					displayable.setStyle(view.getStyle().getName());
 				}
+			}
+		
+		}
+		@Override
+		public void referenceAdded(Element element, Reference<?> reference) {
+			if (element instanceof Console && reference.getElement() == SkinDockable.this.displayable) {
+				update();
+			}
+		}
+		
+		@Override
+		public void referenceRemoved(Element element, Reference<?> reference) {
+			if (element instanceof Console && reference.getElement() == SkinDockable.this.displayable) {
+				update();
 			}
 		}
 	}
