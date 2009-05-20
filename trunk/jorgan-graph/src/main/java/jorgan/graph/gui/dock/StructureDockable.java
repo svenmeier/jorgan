@@ -138,6 +138,7 @@ public class StructureDockable extends OrganDockable {
     for (JToggleButton button : sourcesToggles)
       docked.addTool(button);
     
+    rebuild();
   }
 
   /** calback - session opened */
@@ -148,6 +149,8 @@ public class StructureDockable extends OrganDockable {
       this.session.removeOrganListener(listener);
       this.session.removeSelectionListener(listener);
       this.session.removePlayerListener(listener);
+      
+      graphWidget.setGraph2D(new EmptyGraph());
     }
     
     this.session = session;
@@ -156,9 +159,9 @@ public class StructureDockable extends OrganDockable {
       this.session.addOrganListener(listener);
       this.session.addSelectionListener(listener);
       this.session.addPlayerListener(listener);
-    }
-    
-    rebuild();
+      
+      rebuild();
+    }    
   }
   
 
@@ -197,11 +200,8 @@ public class StructureDockable extends OrganDockable {
    * rebuild structure
    */
   private void rebuild() {
-    
-    // got a session?
-    if (session==null) {
-      graphWidget.setGraph2D(new EmptyGraph());
-      return;
+    if (!isDocked()) {
+    	return;
     }
     
     // build an element graph on all sources
@@ -309,7 +309,10 @@ public class StructureDockable extends OrganDockable {
     public void selectionChanged(SelectionEvent ev) {
       ElementSelection es = session.getSelection();
       selection = es.getSelectedElements();
-      graphWidget.repaint();
+      
+      if (isDocked()) {
+          graphWidget.repaint();
+      }
     }
     
     public void elementAdded(Element element) {
