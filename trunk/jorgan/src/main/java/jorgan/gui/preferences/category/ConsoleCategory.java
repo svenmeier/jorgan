@@ -50,6 +50,8 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private Model grid = getModel(new Property(ConsolePanel.class, "grid"));
 
+	private Model useXor = getModel(new Property(ConsolePanel.class, "useXor"));
+
 	private Model interpolate = getModel(new Property(ConsolePanel.class,
 			"interpolate"));
 
@@ -60,7 +62,7 @@ public class ConsoleCategory extends JOrganCategory {
 			"foreground"));
 
 	private Model popupBackground = getModel(new Property(ConsolePanel.class,
-	"popupBackground"));
+			"popupBackground"));
 
 	private Model elementForeground = getModel(new Property(View.class,
 			"defaultColor"));
@@ -78,6 +80,8 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			256, 1));
+
+	private JCheckBox useXorCheckBox = new JCheckBox();
 
 	private JCheckBox interpolateCheckBox = new JCheckBox();
 
@@ -111,6 +115,8 @@ public class ConsoleCategory extends JOrganCategory {
 
 		column.term(config.get("grid").read(new JLabel()));
 		column.definition(gridSpinner);
+
+		column.definition(config.get("useXor").read(useXorCheckBox));
 
 		column.definition(config.get("interpolate").read(interpolateCheckBox));
 
@@ -159,13 +165,16 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void read() {
 
 		gridSpinner.setValue(grid.getValue());
+		useXorCheckBox.setSelected((Boolean) useXor.getValue());
 		interpolateCheckBox.setSelected((Boolean) interpolate.getValue());
 		backgroundSelector.setSelectedColor((Color) background.getValue());
 		foregroundSelector.setSelectedColor((Color) foreground.getValue());
 
-		popupBackgroundSelector.setSelectedColor((Color) popupBackground.getValue());
+		popupBackgroundSelector.setSelectedColor((Color) popupBackground
+				.getValue());
 
-		elementForegroundSelector.setSelectedColor((Color) elementForeground.getValue());
+		elementForegroundSelector.setSelectedColor((Color) elementForeground
+				.getValue());
 		elementFontSelector.setSelectedFont((Font) elementFont.getValue());
 
 		shortcutCheckBox.setSelected((Boolean) showShortcut.getValue());
@@ -178,13 +187,15 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void write() {
 
 		grid.setValue(gridSpinner.getValue());
+		useXor.setValue(useXorCheckBox.isSelected());
 		interpolate.setValue(interpolateCheckBox.isSelected());
 		background.setValue(backgroundSelector.getSelectedColor());
 		foreground.setValue(foregroundSelector.getSelectedColor());
 
 		popupBackground.setValue(popupBackgroundSelector.getSelectedColor());
 
-		elementForeground.setValue(elementForegroundSelector.getSelectedColor());
+		elementForeground
+				.setValue(elementForegroundSelector.getSelectedColor());
 		elementFont.setValue(elementFontSelector.getSelectedFont());
 
 		showShortcut.setValue(shortcutCheckBox.isSelected());
