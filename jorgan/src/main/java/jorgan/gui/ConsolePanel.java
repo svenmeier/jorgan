@@ -885,8 +885,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					updateSelector(oldSelector, drag);
 				}
 			} else {
-				pressedView = null;
-				
 				// new positions of views might have changed preferred size
 				revalidate();
 			}
