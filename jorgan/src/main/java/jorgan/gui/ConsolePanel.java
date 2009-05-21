@@ -30,7 +30,6 @@ import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
-import java.awt.Stroke;
 import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -82,6 +81,7 @@ import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
 import jorgan.swing.MacAdapter;
+import jorgan.swing.Marker;
 import jorgan.swing.StandardDialog;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
@@ -140,9 +140,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private View<? extends Displayable> pressedView;
 
 	/**
-	 * The currently marked views.
+	 * The currently selected views.
 	 */
-	private List<View<? extends Displayable>> markedViews = new ArrayList<View<? extends Displayable>>();
+	private List<View<? extends Displayable>> selectedViews = new ArrayList<View<? extends Displayable>>();
 
 	/**
 	 * The listener to organ changes.
@@ -152,12 +152,12 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	/**
 	 * The listener to mouse (motion) events in play modus.
 	 */
-	private PlayHandler playMouseInputListener = new PlayHandler();
+	private PlayHandler playHandler = new PlayHandler();
 
 	/**
 	 * The listener to mouse (motion) events in construction modus.
 	 */
-	private ConstructionHandler constructMouseInputListener = new ConstructionHandler();
+	private ConstructionHandler constructionHandler = new ConstructionHandler();
 
 	/**
 	 * The listener to drop events.
@@ -258,7 +258,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public void setUseXOR(boolean useXor) {
 		this.useXor = useXor;
 	}
-	
+
 	public void dispose() {
 		this.session.removeOrganListener(eventHandler);
 		this.session.removeSelectionListener(eventHandler);
@@ -432,17 +432,17 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			this.constructing = constructing;
 
 			if (constructing) {
-				removeMouseListener(playMouseInputListener);
-				removeMouseMotionListener(playMouseInputListener);
+				removeMouseListener(playHandler);
+				removeMouseMotionListener(playHandler);
 
-				addMouseListener(constructMouseInputListener);
-				addMouseMotionListener(constructMouseInputListener);
+				addMouseListener(constructionHandler);
+				addMouseMotionListener(constructionHandler);
 			} else {
-				removeMouseListener(constructMouseInputListener);
-				removeMouseMotionListener(constructMouseInputListener);
+				removeMouseListener(constructionHandler);
+				removeMouseMotionListener(constructionHandler);
 
-				addMouseListener(playMouseInputListener);
-				addMouseMotionListener(playMouseInputListener);
+				addMouseListener(playHandler);
+				addMouseMotionListener(playHandler);
 			}
 		}
 	}
@@ -517,9 +517,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	protected void showMenu(int x, int y) {
 
 		if (pressedView != null) {
-			alignMenu.setEnabled(markedViews.size() > 1);
+			alignMenu.setEnabled(selectedViews.size() > 1);
 
-			spreadMenu.setEnabled(markedViews.size() > 2);
+			spreadMenu.setEnabled(selectedViews.size() > 2);
 
 			menu.show(this, x, y);
 		}
@@ -537,7 +537,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 */
 	protected View<? extends Displayable> getView(int x, int y) {
 		// prefer already marked
-		for (View<? extends Displayable> view : markedViews) {
+		for (View<? extends Displayable> view : selectedViews) {
 			if (view.contains(x, y)) {
 				return view;
 			}
@@ -628,7 +628,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		if (constructing) {
-			constructMouseInputListener.paint(graphics2D);
+			constructionHandler.paint(graphics2D);
 		}
 	}
 
@@ -699,6 +699,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						.getElement());
 				if (view != null) {
 					view.changeUpdate();
+
+					constructionHandler.updateViewMarkers();
 				}
 			}
 		}
@@ -730,25 +732,22 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void selectionChanged(SelectionEvent ev) {
 
-			List<View<? extends Displayable>> oldMarked = new ArrayList<View<? extends Displayable>>(
-					markedViews);
-
-			markedViews.clear();
+			selectedViews.clear();
 			for (Element element : session.getSelection().getSelectedElements()) {
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
-						markedViews.add(view);
+						selectedViews.add(view);
 					}
 				}
 			}
 
-			if (constructing) {
-				constructMouseInputListener.updateMarks(oldMarked, markedViews);
+			if (constructing && selectedViews.size() == 1) {
+				scrollDisplayableToVisible(selectedViews.get(0));
 			}
 
-			if (constructing && markedViews.size() == 1) {
-				scrollDisplayableToVisible(markedViews.get(0));
+			if (constructing) {
+				constructionHandler.updateViewMarkers();
 			}
 		}
 	}
@@ -758,11 +757,17 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 */
 	private class ConstructionHandler extends MouseInputAdapter {
 
-		private Point origin;
+		private Point pressedOrigin;
 
-		private Rectangle drag;
+		private boolean pressedWasSelected;
 
-		private boolean wasSelected;
+		private Point mouseFrom;
+
+		private Point mouseTo;
+
+		private Marker dragMarker;
+
+		private List<Marker> viewMarkers = new ArrayList<Marker>();
 
 		private final BasicStroke stroke = new BasicStroke(0.0f,
 				BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f,
@@ -775,17 +780,16 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			mouseFrom = e.getPoint();
 
 			session.getUndoManager().compound();
 
 			pressedView = getView(screenToView(e.getX()),
 					screenToView(e.getY()));
-
-			drag = new Rectangle(e.getX(), e.getY(), 0, 0);
 			if (pressedView != null) {
-				origin = new Point(pressedView.getX(), pressedView.getY());
-
-				wasSelected = markedViews.contains(pressedView);
+				pressedOrigin = new Point(pressedView.getX(), pressedView
+						.getY());
+				pressedWasSelected = selectedViews.contains(pressedView);
 			}
 
 			if (isMultiSelect(e)) {
@@ -797,7 +801,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (pressedView == null) {
 					session.getSelection().setSelectedElement(null);
 				} else {
-					if (!markedViews.contains(pressedView)) {
+					if (!selectedViews.contains(pressedView)) {
 						session.getSelection().setSelectedElement(
 								pressedView.getElement());
 					}
@@ -820,9 +824,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			Rectangle oldDrag = new Rectangle(drag);
-			drag.width = e.getX() - drag.x;
-			drag.height = e.getY() - drag.y;
+			mouseTo = e.getPoint();
 
 			if (pressedView == null) {
 				if (getCursor().getType() == Cursor.DEFAULT_CURSOR) {
@@ -830,36 +832,38 @@ public class ConsolePanel extends JComponent implements Scrollable,
 							.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
 				}
 
-				updateSelector(oldDrag, drag);
+				if (dragMarker != null) {
+					dragMarker.remove(ConsolePanel.this);
+					dragMarker = null;
+				}
 
-				int x1 = screenToView(Math.min(drag.x, drag.x + drag.width));
-				int y1 = screenToView(Math.min(drag.y, drag.y + drag.height));
-				int x2 = screenToView(Math.max(drag.x, drag.x + drag.width));
-				int y2 = screenToView(Math.max(drag.y, drag.y + drag.height));
+				dragMarker = new Marker(useXor, getForeground(), stroke,
+						mouseFrom, mouseTo);
+				dragMarker.add(ConsolePanel.this);
 
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (view.getX() > x1
-							&& (view.getX() + view.getWidth()) < x2
-							&& view.getY() > y1
-							&& (view.getY() + view.getHeight()) < y2) {
+					if (dragMarker.contains(screenToView(view.getX()),
+							screenToView(view.getY()), screenToView(view
+									.getWidth()),
+							screenToView(view.getHeight()))) {
 						elements.add(view.getElement());
 					}
 				}
 				session.getSelection().setSelectedElements(elements);
 			} else {
-				int deltaX = origin.x - pressedView.getX();
-				int deltaY = origin.y - pressedView.getY();
+				int deltaX = pressedOrigin.x - pressedView.getX();
+				int deltaY = pressedOrigin.y - pressedView.getY();
 
-				deltaX += grid(origin.x
-						+ screenToView(drag.width))
-						- origin.x;
-				deltaY += grid(origin.y
-						+ screenToView(drag.height))
-						- origin.y;
+				deltaX += grid(pressedOrigin.x
+						+ screenToView(mouseTo.x - mouseFrom.x))
+						- pressedOrigin.x;
+				deltaY += grid(pressedOrigin.y
+						+ screenToView(mouseTo.y - mouseFrom.y))
+						- pressedOrigin.y;
 
-				for (View<? extends Displayable> markedView : markedViews) {
+				for (View<? extends Displayable> markedView : selectedViews) {
 					console.setLocation(markedView.getElement(), markedView
 							.getX()
 							+ deltaX, markedView.getY() + deltaY);
@@ -876,18 +880,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			session.getUndoManager().compound();
 
-			Rectangle oldSelector = drag;
-			drag = null;
-
-			if (pressedView == null) {
-				if (oldSelector != null) {
-					setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-					updateSelector(oldSelector, drag);
-				}
-			} else {
-				// new positions of views might have changed preferred size
-				revalidate();
+			if (dragMarker != null) {
+				dragMarker.remove(ConsolePanel.this);
+				dragMarker = null;
 			}
+
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
+			// new positions of views might have changed preferred size
+			revalidate();
 
 			showPopup(e);
 		}
@@ -895,8 +896,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseClicked(MouseEvent e) {
 			if (pressedView != null) {
-				if (isMultiSelect(e) && wasSelected) {
-					session.getSelection().removeSelectedElement(
+				if (isMultiSelect(e)) {
+					if (pressedWasSelected) {
+						session.getSelection().removeSelectedElement(
+								pressedView.getElement());
+					}
+				} else {
+					session.getSelection().setSelectedElement(
 							pressedView.getElement());
 				}
 			}
@@ -908,131 +914,33 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			}
 		}
 
-		public void updateSelector(Rectangle oldSelector, Rectangle newSelector) {
-			if (isShowing()) {
-				if (useXor) {
-					Graphics g = getGraphics();
-					if (g != null) {
-						g.setColor(getForeground());
-						g.setXORMode(Color.white);
-
-						if (oldSelector != null) {
-							paintSelector(g, oldSelector);
-						}
-						if (newSelector != null) {
-							paintSelector(g, newSelector);
-						}
-
-						g.setPaintMode();
-						g.dispose();
-					}
-				} else {
-					if (oldSelector != null) {
-						int x = Math.min(oldSelector.x, oldSelector.x
-								+ oldSelector.width);
-						int y = Math.min(oldSelector.y, oldSelector.y
-								+ oldSelector.height);
-						int width = Math.abs(oldSelector.width);
-						int height = Math.abs(oldSelector.height);
-
-						repaint(x, y, width, height);
-					}
-					if (newSelector != null) {
-						int x = Math.min(newSelector.x, newSelector.x
-								+ newSelector.width);
-						int y = Math.min(newSelector.y, newSelector.y
-								+ newSelector.height);
-						int width = Math.abs(newSelector.width);
-						int height = Math.abs(newSelector.height);
-
-						repaint(x, y, width, height);
-					}
-				}
-			}
-		}
-
-		public void updateMarks(List<View<? extends Displayable>> oldMarked,
-				List<View<? extends Displayable>> newMarked) {
-			if (isShowing()) {
-				if (useXor) {
-					Graphics g = getGraphics();
-					if (g != null) {
-						g.setColor(getForeground());
-						g.setXORMode(Color.white);
-
-						for (View<? extends Displayable> view : oldMarked) {
-							if (!newMarked.contains(view)) {
-								markView(g, view);
-							}
-						}
-						for (View<? extends Displayable> view : newMarked) {
-							if (!oldMarked.contains(view)) {
-								markView(g, view);
-							}
-						}
-
-						g.setPaintMode();
-						g.dispose();
-					}
-				} else {
-					for (View<? extends Displayable> view : oldMarked) {
-						if (!newMarked.contains(view)) {
-							repaintView(view);
-						}
-					}
-					for (View<? extends Displayable> view : newMarked) {
-						if (!oldMarked.contains(view)) {
-							repaintView(view);
-						}
-					}
-				}
-			}
-		}
-
-		/**
-		 * Paint selection and selector.
-		 * 
-		 * @param g
-		 *            graphics to paint on
-		 */
 		public void paint(Graphics2D g) {
-			Stroke stroke = g.getStroke();
-
-			if (useXor) {
-				g.setColor(getForeground());
-				g.setXORMode(Color.white);
-			} else {
-				g.setColor(getForeground());
-				g.setStroke(this.stroke);
+			if (dragMarker != null) {
+				dragMarker.paint(g);
 			}
 
-			for (View<? extends Displayable> view : markedViews) {
-				markView(g, view);
+			for (Marker marker : viewMarkers) {
+				marker.paint(g);
 			}
-
-			if (pressedView == null && drag != null) {
-				paintSelector(g, drag);
-			}
-
-			g.setStroke(stroke);
-			g.setPaintMode();
 		}
 
-		private void markView(Graphics g, View<? extends Displayable> view) {
-			int x1 = viewToScreen(view.getX(), false);
-			int y1 = viewToScreen(view.getY(), false);
-			int x2 = viewToScreen(view.getX() + view.getWidth(), true);
-			int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+		public void updateViewMarkers() {
+			for (Marker marker : viewMarkers) {
+				marker.remove(ConsolePanel.this);
+			}
+			viewMarkers.clear();
 
-			g.drawRect(x1, y1, x2 - x1 - 1, y2 - y1 - 1);
-		}
+			for (View<? extends Displayable> view : selectedViews) {
+				Marker marker = new Marker(useXor, getForeground(), stroke,
+						viewToScreen(view.getX(), false), viewToScreen(view
+								.getY(), false), viewToScreen(view.getX()
+								+ view.getWidth(), true), viewToScreen(view
+								.getY()
+								+ view.getHeight(), true));
+				viewMarkers.add(marker);
 
-		private void paintSelector(Graphics g, Rectangle selector) {
-			int x1 = Math.min(selector.x, selector.x + selector.width);
-			int y1 = Math.min(selector.y, selector.y + selector.height);
-			int x2 = Math.max(selector.x, selector.x + selector.width);
-			int y2 = Math.max(selector.y, selector.y + selector.height);
-			g.drawRect(x1, y1, x2 - x1 - 1, y2 - y1 - 1);
+				marker.add(ConsolePanel.this);
+			}
 		}
 	}
 
@@ -1201,7 +1109,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (View<? extends Displayable> view : markedViews) {
+			for (View<? extends Displayable> view : selectedViews) {
 				console.toFront(view.getElement());
 			}
 		}
@@ -1213,7 +1121,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (View<? extends Displayable> view : markedViews) {
+			for (View<? extends Displayable> view : selectedViews) {
 				console.toBack(view.getElement());
 			}
 		}
@@ -1226,7 +1134,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void actionPerformed(ActionEvent e) {
 			for (View<? extends Displayable> view : new ArrayList<View<? extends Displayable>>(
-					markedViews)) {
+					selectedViews)) {
 				console.unreference(view.getElement());
 			}
 		}
@@ -1247,7 +1155,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			layout.layout(pressedView, markedViews);
+			layout.layout(pressedView, selectedViews);
 		}
 	}
 
