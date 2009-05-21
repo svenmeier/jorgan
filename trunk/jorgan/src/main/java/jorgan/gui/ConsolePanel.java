@@ -371,7 +371,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * @param element
 	 *            element to scroll to
 	 */
-	public void scrollDisplayableToVisible(View view) {
+	public void scrollDisplayableToVisible(View<?> view) {
 		int x1 = viewToScreen(view.getX(), false);
 		int y1 = viewToScreen(view.getY(), false);
 		int x2 = viewToScreen(view.getX() + view.getWidth(), true);
@@ -844,10 +844,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (dragMarker.contains(screenToView(view.getX()),
-							screenToView(view.getY()), screenToView(view
-									.getWidth()),
-							screenToView(view.getHeight()))) {
+					if (dragMarker.contains(viewToScreen(view.getX(), false),
+							viewToScreen(view.getY(), false), viewToScreen(view
+									.getWidth(), false),
+									viewToScreen(view.getHeight(), false))) {
 						elements.add(view.getElement());
 					}
 				}
