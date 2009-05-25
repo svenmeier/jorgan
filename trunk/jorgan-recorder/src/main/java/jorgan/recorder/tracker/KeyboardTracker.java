@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.tracker;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,19 +28,29 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
-import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
+import jorgan.play.event.KeyListener;
+import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.midi.Recorder;
 
-public class KeyboardTracker extends Tracker {
+public class KeyboardTracker extends AbstractTracker {
 
 	private Keyboard keyboard;
+
+	private EventHandler eventHandler = new EventHandler();
 
 	public KeyboardTracker(SessionRecorder recorder, int track,
 			Keyboard keyboard) {
 		super(recorder, track);
 
 		this.keyboard = keyboard;
+
+		getPlay().addKeyListener(eventHandler);
+	}
+
+	@Override
+	public void destroy() {
+		getPlay().removeKeyListener(eventHandler);
 	}
 
 	@Override
@@ -49,24 +59,16 @@ public class KeyboardTracker extends Tracker {
 	}
 
 	@Override
-	public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
-		getRecorder().record(getTrack(),
-				MessageUtils.newMessage(ShortMessage.NOTE_ON, pitch, velocity));
-	}
+	public void played(MidiMessage message) {
+		if (message instanceof ShortMessage) {
+			ShortMessage shortMessage = (ShortMessage) message;
 
-	@Override
-	public void keyReleased(Keyboard keyboard, int pitch) {
-		getRecorder().record(getTrack(),
-				MessageUtils.newMessage(ShortMessage.NOTE_OFF, pitch, 0));
-	}
-
-	@Override
-	public void played(ShortMessage message) {
-		if (message.getStatus() == ShortMessage.NOTE_ON) {
-			getPlay()
-					.pressKey(keyboard, message.getData1(), message.getData2());
-		} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
-			getPlay().releaseKey(keyboard, message.getData1());
+			if (message.getStatus() == ShortMessage.NOTE_ON) {
+				getPlay().pressKey(keyboard, shortMessage.getData1(),
+						shortMessage.getData2());
+			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
+				getPlay().releaseKey(keyboard, shortMessage.getData1());
+			}
 		}
 	}
 
@@ -89,10 +91,7 @@ public class KeyboardTracker extends Tracker {
 	@Override
 	public void recording() {
 		for (ShortMessage message : getKeyPresses()) {
-			getRecorder().record(
-					getTrack(),
-					MessageUtils.newMessage(ShortMessage.NOTE_OFF, message
-							.getData1(), 0));
+			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
 	}
 
@@ -103,10 +102,7 @@ public class KeyboardTracker extends Tracker {
 	@Override
 	public void recordStopping() {
 		for (ShortMessage message : getKeyPresses()) {
-			getRecorder().record(
-					getTrack(),
-					MessageUtils.newMessage(ShortMessage.NOTE_OFF, message
-							.getData1(), 0));
+			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
 	}
 
@@ -124,10 +120,7 @@ public class KeyboardTracker extends Tracker {
 	private Collection<ShortMessage> getKeyPresses() {
 		Map<Integer, ShortMessage> messages = new HashMap<Integer, ShortMessage>();
 
-		int track = getTrack();
-		
-		for (MidiEvent event : getRecorder().messagesForTrackTo(track,
-				getRecorder().getCurrentTick())) {
+		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof ShortMessage) {
 				ShortMessage message = (ShortMessage) event.getMessage();
 				if (message.getStatus() == ShortMessage.NOTE_ON) {
@@ -139,5 +132,15 @@ public class KeyboardTracker extends Tracker {
 		}
 
 		return messages.values();
+	}
+
+	private final class EventHandler implements KeyListener {
+		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
+			record(ShortMessage.NOTE_ON, pitch, velocity);
+		}
+
+		public void keyReleased(Keyboard keyboard, int pitch) {
+			record(ShortMessage.NOTE_OFF, pitch, 0);
+		}
 	}
 }

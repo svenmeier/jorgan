@@ -30,6 +30,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.SessionRecorderListener;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
@@ -43,11 +44,17 @@ public class TracksPanel extends JPanel implements Scrollable {
 		setBackground(Color.white);
 
 		this.recorder = recorder;
+		recorder.addListener(new SessionRecorderListener() {
+			public void trackerChanged(int track) {
+				createTracks();
+				
+			}
+		});
 
-		updateTracks();
+		createTracks();
 	}
 
-	public void updateTracks() {
+	private void createTracks() {
 		removeAll();
 		headerPanel.removeAll();
 

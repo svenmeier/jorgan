@@ -18,30 +18,10 @@
  */
 package jorgan.recorder;
 
-import javax.sound.midi.MidiMessage;
-
-import jorgan.disposition.Element;
-import jorgan.recorder.midi.Recorder;
-
 /**
- * A tracker of a {@link Recorder}'s track.
+ * A listener of a {@link SessionRecorder}.
  */
-public interface Tracker {
+public interface SessionRecorderListener {
 
-	public void destroy();
-
-	public int getTrack();
-
-	public Element getElement();
-
-	public void playing();
-
-	public void recording();
-
-	public void recordStopping();
-
-	public void playStopping();
-
-	public void played(MidiMessage message);
-
+	public void trackerChanged(int track);
 }

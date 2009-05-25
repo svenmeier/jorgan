@@ -126,11 +126,6 @@ public class RecorderDockable extends OrganDockable {
 							updateTime();
 						}
 
-						@Override
-						public void sequenceChanged() {
-							updateTracks();
-						}
-
 						public void playing() {
 							updateActions();
 						}
@@ -154,10 +149,6 @@ public class RecorderDockable extends OrganDockable {
 			scrollPane.setRowHeaderView(tracksPanel.getHeader());
 			setContent(scrollPane);
 		}
-	}
-
-	protected void updateTracks() {
-		tracksPanel.updateTracks();
 	}
 
 	private void updateTime() {
