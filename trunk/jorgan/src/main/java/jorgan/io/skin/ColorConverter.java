@@ -58,7 +58,7 @@ public class ColorConverter implements Converter {
 		int blue;
 
 		String value = reader.getValue();
-		if (value == null) {
+		if (value == null || "".equals(value.trim())) {
 			reader.moveDown();
 			red = Integer.parseInt(reader.getValue());
 			reader.moveUp();
@@ -71,6 +71,8 @@ public class ColorConverter implements Converter {
 			blue = Integer.parseInt(reader.getValue());
 			reader.moveUp();
 		} else {
+			value = value.trim();
+			
 			red = Integer.parseInt(value.substring(0, 2), 16);
 			green = Integer.parseInt(value.substring(2, 4), 16);
 			blue = Integer.parseInt(value.substring(4, 6), 16);
