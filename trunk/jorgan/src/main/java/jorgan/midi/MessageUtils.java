@@ -19,6 +19,7 @@
 package jorgan.midi;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
@@ -75,4 +76,15 @@ public class MessageUtils {
 		}
 	}
 
+	public static MidiMessage newMetaMessage(int type, byte[] data) {
+		MetaMessage message = new MetaMessage();
+		
+		try {
+			message.setMessage(type, data, data.length);
+		} catch (InvalidMidiDataException e) {
+			throw new IllegalArgumentException(e);
+		}
+		
+		return message;
+	}
 }
