@@ -18,13 +18,13 @@
  */
 package jorgan.io;
 
-import java.awt.Color;
-import java.awt.Font;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import jorgan.io.skin.ColorConverter;
+import jorgan.io.skin.FontConverter;
 import jorgan.skin.ButtonLayer;
 import jorgan.skin.CompositeLayer;
 import jorgan.skin.ImageLayer;
@@ -34,11 +34,6 @@ import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.Converter;
-import com.thoughtworks.xstream.converters.MarshallingContext;
-import com.thoughtworks.xstream.converters.UnmarshallingContext;
-import com.thoughtworks.xstream.io.HierarchicalStreamReader;
-import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import com.thoughtworks.xstream.io.xml.XppDriver;
 
 /**
@@ -77,91 +72,5 @@ public class SkinStream {
 		xstream.toXML(skin, out);
 
 		out.close();
-	}
-
-	private class FontConverter implements Converter {
-
-		@SuppressWarnings("unchecked")
-		public boolean canConvert(Class clazz) {
-			return clazz.equals(Font.class);
-		}
-
-		public void marshal(Object value, HierarchicalStreamWriter writer,
-				MarshallingContext context) {
-			Font font = (Font) value;
-
-			writer.startNode("name");
-			writer.setValue("" + font.getName());
-			writer.endNode();
-
-			writer.startNode("style");
-			writer.setValue("" + font.getStyle());
-			writer.endNode();
-
-			writer.startNode("size");
-			writer.setValue("" + font.getSize());
-			writer.endNode();
-		}
-
-		public Object unmarshal(HierarchicalStreamReader reader,
-				UnmarshallingContext context) {
-
-			reader.moveDown();
-			String name = reader.getValue();
-			reader.moveUp();
-
-			reader.moveDown();
-			int style = Integer.parseInt(reader.getValue());
-			reader.moveUp();
-
-			reader.moveDown();
-			int size = Integer.parseInt(reader.getValue());
-			reader.moveUp();
-
-			return new Font(name, style, size);
-		}
-	}
-
-	private class ColorConverter implements Converter {
-
-		@SuppressWarnings("unchecked")
-		public boolean canConvert(Class clazz) {
-			return clazz.equals(Color.class);
-		}
-
-		public void marshal(Object value, HierarchicalStreamWriter writer,
-				MarshallingContext context) {
-			Color color = (Color) value;
-
-			writer.startNode("red");
-			writer.setValue("" + color.getRed());
-			writer.endNode();
-
-			writer.startNode("green");
-			writer.setValue("" + color.getGreen());
-			writer.endNode();
-
-			writer.startNode("blue");
-			writer.setValue("" + color.getBlue());
-			writer.endNode();
-		}
-
-		public Object unmarshal(HierarchicalStreamReader reader,
-				UnmarshallingContext context) {
-
-			reader.moveDown();
-			int red = Integer.parseInt(reader.getValue());
-			reader.moveUp();
-
-			reader.moveDown();
-			int green = Integer.parseInt(reader.getValue());
-			reader.moveUp();
-
-			reader.moveDown();
-			int blue = Integer.parseInt(reader.getValue());
-			reader.moveUp();
-
-			return new Color(red, green, blue);
-		}
 	}
 }
