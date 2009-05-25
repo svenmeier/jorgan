@@ -16,23 +16,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.spi;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
+import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Tracker;
+import jorgan.recorder.tracker.ConsoleTracker;
+import jorgan.recorder.tracker.KeyboardTracker;
 
-public class ConsoleTracker extends Tracker {
+public class DefaultTrackerProvider implements TrackerProvider {
 
-	private Console console;
+	public Tracker createTracker(SessionRecorder recorder, int track,
+			Element element) {
+		if (element instanceof Keyboard) {
+			return new KeyboardTracker(recorder, track, (Keyboard) element);
+		} else if (element instanceof Console) {
+			return new ConsoleTracker(recorder, track, (Console) element);
+		} else {
+			return null;
+		}
 
-	public ConsoleTracker(SessionRecorder recorder, int track, Console console) {
-		super(recorder, track);
-
-		this.console = console;
-	}
-
-	@Override
-	public Element getElement() {
-		return console;
 	}
 }

@@ -16,32 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
-
-import javax.sound.midi.MidiMessage;
+package jorgan.recorder.spi;
 
 import jorgan.disposition.Element;
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Tracker;
 
-/**
- * A tracker of a {@link Recorder}'s track.
- */
-public interface Tracker {
+public interface TrackerProvider {
 
-	public void destroy();
-
-	public int getTrack();
-
-	public Element getElement();
-
-	public void playing();
-
-	public void recording();
-
-	public void recordStopping();
-
-	public void playStopping();
-
-	public void played(MidiMessage message);
-
+	public Tracker createTracker(SessionRecorder recorder, int track, Element element);
 }
