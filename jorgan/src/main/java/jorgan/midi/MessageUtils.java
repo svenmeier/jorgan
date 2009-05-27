@@ -28,6 +28,8 @@ import javax.sound.midi.ShortMessage;
  */
 public class MessageUtils {
 
+	public static final int META_END_OF_TRACK = 47;
+
 	/**
 	 * Test if the given message is a channel message.
 	 * 
