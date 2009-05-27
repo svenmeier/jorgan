@@ -59,7 +59,7 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	@Override
-	public void played(MidiMessage message) {
+	protected void onPlayed(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
@@ -77,7 +77,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * keys.
 	 */
 	@Override
-	public void playing() {
+	protected void onPlaying() {
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay()
 					.pressKey(keyboard, message.getData1(), message.getData2());
@@ -89,7 +89,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * keys.
 	 */
 	@Override
-	public void recording() {
+	protected void onRecording() {
 		for (ShortMessage message : getKeyPresses()) {
 			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
@@ -100,7 +100,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * keys.
 	 */
 	@Override
-	public void recordStopping() {
+	protected void onRecordStopping() {
 		for (ShortMessage message : getKeyPresses()) {
 			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
@@ -111,7 +111,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * pressed keys.
 	 */
 	@Override
-	public void playStopping() {
+	protected void onPlayStopping() {
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay().releaseKey(keyboard, message.getData1());
 		}
