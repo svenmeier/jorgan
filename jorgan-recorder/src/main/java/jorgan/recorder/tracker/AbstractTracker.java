@@ -27,6 +27,7 @@ import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.Tracker;
+import jorgan.recorder.midi.RecorderListener;
 
 public abstract class AbstractTracker implements Tracker {
 
@@ -34,18 +35,43 @@ public abstract class AbstractTracker implements Tracker {
 
 	private int track;
 
+	private boolean playing = true;
+
+	private boolean recording = true;
+
+	private EventListener listener = new EventListener();
+
 	protected AbstractTracker(SessionRecorder recorder, int track) {
 		this.recorder = recorder;
+		recorder.getRecorder().addListener(listener);
 
 		this.track = track;
 	}
 
 	public void destroy() {
+		recorder.getRecorder().removeListener(listener);
+
 		recorder = null;
 	}
 
 	public int getTrack() {
 		return track;
+	}
+
+	public void setRecording(boolean recording) {
+		this.recording = recording;
+	}
+
+	public boolean isRecording() {
+		return recording;
+	}
+
+	public void setPlaying(boolean playing) {
+		this.playing = playing;
+	}
+
+	public boolean isPlaying() {
+		return playing;
 	}
 
 	public Organ getOrgan() {
@@ -58,19 +84,19 @@ public abstract class AbstractTracker implements Tracker {
 
 	public abstract Element getElement();
 
-	public void playing() {
+	protected void onPlaying() {
 	}
 
-	public void recording() {
+	protected void onRecording() {
 	}
 
-	public void recordStopping() {
+	protected void onPlayStopping() {
 	}
 
-	public void playStopping() {
+	protected void onRecordStopping() {
 	}
 
-	public void played(MidiMessage message) {
+	protected void onPlayed(MidiMessage message) {
 	}
 
 	protected Iterable<MidiEvent> messages() {
@@ -83,8 +109,52 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected void record(MidiMessage message) {
-		if (recorder.getRecorder().isRecording()) {
+		if (recorder.getRecorder().isRecording() && isRecording()) {
 			recorder.getRecorder().record(getTrack(), message);
+		}
+	}
+
+	private class EventListener implements RecorderListener {
+
+		public void timeChanged(long millis) {
+		}
+
+		public void sequenceChanged() {
+		}
+
+		public void played(int track, long millis, MidiMessage message) {
+			if (track == getTrack() && isPlaying()) {
+				onPlayed(message);
+			}
+		}
+
+		public void recorded(int track, long millis, MidiMessage message) {
+		}
+
+		public void playing() {
+			if (track == getTrack() && isPlaying()) {
+				onPlaying();
+			}
+		}
+
+		public void recording() {
+			if (track == getTrack() && isRecording()) {
+				onRecording();
+			}
+		}
+
+		public void stopping() {
+			if (track == getTrack()) {
+				if (recorder.getRecorder().isPlaying() && isPlaying()) {
+					onPlayStopping();
+				}
+				if (recorder.getRecorder().isRecording() && isRecording()) {
+					onRecordStopping();
+				}
+			}
+		}
+
+		public void stopped() {
 		}
 	}
 }

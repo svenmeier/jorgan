@@ -18,7 +18,11 @@
  */
 package jorgan.recorder.tracker;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Console;
@@ -39,6 +43,8 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private EventListener eventListener = new EventListener();
 
+	private boolean ignoreChanges;
+
 	public ConsoleTracker(SessionRecorder recorder, int track, Console console) {
 		super(recorder, track);
 
@@ -58,7 +64,50 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	@Override
-	public void played(MidiMessage message) {
+	public void onPlaying() {
+		ignoreChanges = true;
+
+		Collection<Element> active = getActive();
+
+		for (Element element : getOrgan().getElements()) {
+			if (element instanceof Switch) {
+				Switch aSwitch = ((Switch) element);
+				aSwitch.setActive(active.contains(element));
+			}
+		}
+
+		ignoreChanges = false;
+	}
+
+	@Override
+	public void onRecording() {
+		ignoreChanges = true;
+
+		Collection<Element> active = getActive();
+
+		for (Element element : getOrgan().getElements()) {
+			if (element instanceof Switch) {
+				Switch aSwitch = ((Switch) element);
+
+				if (aSwitch.isActive() && !active.contains(aSwitch)) {
+					String string = PREFIX_ACTIVE + aSwitch.getName();
+
+					record(MessageUtils.newMetaMessage(Text.TYPE_TEXT,
+							new Text(string).getBytes()));
+				} else if (!aSwitch.isActive() && active.contains(aSwitch)) {
+					String string = PREFIX_INACTIVE + aSwitch.getName();
+
+					record(MessageUtils.newMetaMessage(Text.TYPE_TEXT,
+							new Text(string).getBytes()));
+				}
+			}
+		}
+
+		ignoreChanges = false;
+	}
+
+	@Override
+	public void onPlayed(MidiMessage message) {
 		if (message instanceof MetaMessage) {
 			MetaMessage metaMessage = (MetaMessage) message;
 
@@ -94,22 +143,54 @@ public class ConsoleTracker extends AbstractTracker {
 		return null;
 	}
 
+	private Collection<Element> getActive() {
+		HashSet<Element> active = new HashSet<Element>();
+
+		for (MidiEvent event : messages()) {
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == Text.TYPE_TEXT) {
+					String string = new Text(message.getData()).toString();
+
+					if (string.startsWith(PREFIX_ACTIVE)) {
+						Element element = getElement(string.substring(1));
+						if (element != null) {
+							active.add(element);
+						}
+					} else if (string.startsWith(PREFIX_INACTIVE)) {
+						Element element = getElement(string.substring(1));
+						if (element != null) {
+							active.remove(element);
+						}
+					}
+				}
+			}
+		}
+
+		return active;
+	}
+
 	private class EventListener extends OrganAdapter {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
+			if (ignoreChanges) {
+				return;
+			}
+
 			if (element instanceof Switch && "active".equals(name)) {
-				String string = element.getName();
+				String string;
 
 				if (((Switch) element).isActive()) {
-					string = PREFIX_ACTIVE + string;
+					string = PREFIX_ACTIVE;
 				} else {
-					string = PREFIX_INACTIVE + string;
+					string = PREFIX_INACTIVE;
 				}
 
-				Text text = new Text(string);
+				string += element.getName();
 
-				record(MessageUtils.newMetaMessage(Text.TYPE_TEXT, text.getBytes()));
+				record(MessageUtils.newMetaMessage(Text.TYPE_TEXT, new Text(
+						string).getBytes()));
 			}
 		}
 	}

@@ -38,7 +38,7 @@ import jorgan.session.SessionListener;
 public class SessionRecorder {
 
 	private List<SessionRecorderListener> listeners = new ArrayList<SessionRecorderListener>();
-	
+
 	private Recorder recorder;
 
 	private OrganSession session;
@@ -64,10 +64,10 @@ public class SessionRecorder {
 	public void addListener(SessionRecorderListener listener) {
 		listeners.add(listener);
 	}
-	
+
 	public void reset() {
 		int track;
-		
+
 		track = 0;
 		List<Tracker> trackers = new ArrayList<Tracker>();
 		for (Element element : session.getOrgan().getElements()) {
@@ -107,7 +107,7 @@ public class SessionRecorder {
 			Tracker tracker = TrackerRegistry.createTracker(this, 0, element);
 			if (tracker != null) {
 				tracker.destroy();
-				
+
 				elements.add(element);
 			}
 		}
@@ -117,18 +117,17 @@ public class SessionRecorder {
 
 	public void setElement(int track, Element element) {
 		Tracker tracker;
-		
+
 		if (element == null) {
 			tracker = new EmptyTracker(track);
 		} else {
-			tracker = TrackerRegistry.createTracker(this, track,
-					element);
+			tracker = TrackerRegistry.createTracker(this, track, element);
 			if (tracker == null) {
 				throw new IllegalArgumentException("unsupported "
 						+ element.getClass().getName());
 			}
 		}
-		
+
 		setTracker(track, tracker);
 	}
 
@@ -138,7 +137,7 @@ public class SessionRecorder {
 		trackers[track].destroy();
 
 		trackers[track] = tracker;
-		
+
 		fireTrackerChanged(track);
 	}
 
@@ -147,7 +146,7 @@ public class SessionRecorder {
 			listener.trackerChanged(track);
 		}
 	}
-	
+
 	public void dispose() {
 		recorder.removeListener(listener);
 		session.getOrgan().removeOrganListener(listener);
@@ -181,34 +180,18 @@ public class SessionRecorder {
 		}
 
 		public void played(int track, long millis, MidiMessage message) {
-			trackers[track].played(message);
 		}
 
 		public void recorded(int track, long millis, MidiMessage message) {
 		}
 
 		public void playing() {
-			for (Tracker tracker : trackers) {
-				tracker.playing();
-			}
 		}
 
 		public void recording() {
-			for (Tracker tracker : trackers) {
-				tracker.recording();
-			}
 		}
 
 		public void stopping() {
-			if (recorder.isRecording()) {
-				for (Tracker tracker : trackers) {
-					tracker.recordStopping();
-				}
-			} else if (recorder.isPlaying()) {
-				for (Tracker tracker : trackers) {
-					tracker.playStopping();
-				}
-			}
 		}
 
 		public void stopped() {
