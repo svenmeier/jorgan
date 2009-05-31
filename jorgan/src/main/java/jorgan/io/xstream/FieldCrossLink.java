@@ -25,13 +25,13 @@ import com.thoughtworks.xstream.converters.ConversionException;
 /**
  * A cross-link of a {@link Field}.
  */
-public class FieldCrosslink implements CrossLink {
+public class FieldCrossLink implements CrossLink {
 
 	private Class parentClass;
 
 	private Field field;
 
-	public FieldCrosslink(Class<?> owner, String field) {
+	public FieldCrossLink(Class<?> owner, String field) {
 		this.parentClass = owner;
 
 		try {
