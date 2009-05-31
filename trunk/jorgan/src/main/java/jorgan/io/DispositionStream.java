@@ -31,19 +31,24 @@ import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.xml.transform.TransformerException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.disposition.Organ;
+import jorgan.disposition.Reference;
 import jorgan.io.disposition.BooleanArrayConverter;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
-import jorgan.io.disposition.ElementConverter;
 import jorgan.io.disposition.FloatArrayConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
-import jorgan.io.disposition.ReferenceConverter;
+import jorgan.io.xstream.CrossLinkMarshallingStrategy;
+import jorgan.io.xstream.FieldCrosslink;
 import jorgan.util.IOUtils;
+
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParserException;
+
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
@@ -79,11 +84,15 @@ public class DispositionStream {
 	private int historySize = 0;
 
 	public DispositionStream() {
-		xstream.setMode(XStream.NO_REFERENCES);
+		CrossLinkMarshallingStrategy strategy = new CrossLinkMarshallingStrategy();
+		strategy.register(new FieldCrosslink(Reference.class, "element"));
+		xstream.setMarshallingStrategy(strategy);
+		xstream.aliasSystemAttribute("ref", "reference");
+
+		// never write class attribute
+		xstream.aliasSystemAttribute(null, "class");
 
 		xstream.registerConverter(new OrganConverter(xstream));
-		xstream.registerConverter(new ElementConverter(xstream));
-		xstream.registerConverter(new ReferenceConverter(xstream));
 		xstream.registerConverter(new BooleanArrayConverter());
 		xstream.registerConverter(new FloatArrayConverter());
 
@@ -111,19 +120,11 @@ public class DispositionStream {
 	}
 
 	public Organ read(InputStream in) throws IOException {
-		Organ organ = null;
+		InputStream converted = convert(in);
 
-		try {
-			InputStream converted = Conversion.convertAll(in);
+		Reader reader = new InputStreamReader(converted, ENCODING);
 
-			Reader reader = new InputStreamReader(converted, ENCODING);
-
-			organ = (Organ) xstream.fromXML(reader);
-		} catch (TransformerException ex) {
-			throw new ConversionException(ex);
-		}
-
-		return organ;
+		return (Organ) xstream.fromXML(reader);
 	}
 
 	public void write(Organ organ, File file) throws IOException {
@@ -220,5 +221,52 @@ public class DispositionStream {
 	private XmlFriendlyReplacer createReplacer() {
 		// replaced "$" and "_"
 		return new XmlFriendlyReplacer("-", "_");
+	}
+
+	private static final Logger logger = Logger.getLogger(Conversion.class
+			.getName());
+
+	private InputStream convert(InputStream in) throws ConversionException,
+			IOException {
+
+		in = new BufferedInputStream(in);
+
+		String version = getVersion(in);
+
+		boolean apply = false;
+		for (Conversion conversion : Conversion.list) {
+			if (apply || conversion.isApplicable(version)) {
+				apply = true;
+				
+				logger.log(Level.INFO, "applying '" + conversion + "'");
+
+				in = conversion.convert(in);
+			}
+		}
+		
+		return in;
+	}
+
+	private static String getVersion(InputStream in) throws IOException {
+		in.mark(2048);
+
+		String version;
+		try {
+			MXParser parser = new MXParser();
+
+			parser.setInput(new InputStreamReader(in, "UTF-8"));
+
+			parser.nextTag();
+
+			version = parser.getAttributeValue(null, "version");
+		} catch (XmlPullParserException e) {
+			IOException ex = new IOException();
+			ex.initCause(e);
+			throw ex;
+		}
+
+		in.reset();
+
+		return version;
 	}
 }

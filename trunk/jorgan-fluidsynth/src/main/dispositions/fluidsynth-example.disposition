@@ -1,39 +1,28 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.5.1">
+<organ version="@jorgan.version@">
   <elements>
-    <label id="1">
-      <zoom>1.0</zoom>
-      <name>Instructions</name>
-      <description>name=Activate the stops to hear them sound:</description>
-      <references/>
-      <messages/>
-    </label>
-    <fluidsynth.fluidsynthSound id="2">
-      <soundfont>fluidsynth-example.SF2</soundfont>
-      <channels>32</channels>
-      <sampleRate>44100</sampleRate>
-      <audioBuffers>16</audioBuffers>
-      <audioBufferSize>128</audioBufferSize>
-      <gain>0.2</gain>
-      <reverb>
-        <room>0.2</room>
-        <damping>0.0</damping>
-        <width>0.5</width>
-        <level>1.0</level>
-      </reverb>
-      <name></name>
+    <stop id="1">
+      <name>Stop 0</name>
       <description></description>
-      <references/>
+      <references>
+        <reference>
+          <element ref="2"/>
+        </reference>
+      </references>
       <messages/>
-    </fluidsynth.fluidsynthSound>
-    <rank id="3">
-      <channel></channel>
-      <delay>0</delay>
       <zoom>1.0</zoom>
+      <active>true</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <rank id="3">
       <name>Rank 1</name>
       <description></description>
       <references>
-        <reference id="2"/>
+        <reference>
+          <element ref="4"/>
+        </reference>
       </references>
       <messages>
         <rank-engaged>
@@ -67,15 +56,32 @@
           <data2></data2>
         </rank-noteMuted>
       </messages>
-    </rank>
-    <rank id="4">
+      <zoom>1.0</zoom>
       <channel></channel>
       <delay>0</delay>
+    </rank>
+    <stop id="5">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="3"/>
+        </reference>
+      </references>
+      <messages/>
       <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>-12</transpose>
+    </stop>
+    <rank id="2">
       <name>Rank 0</name>
       <description></description>
       <references>
-        <reference id="2"/>
+        <reference>
+          <element ref="4"/>
+        </reference>
       </references>
       <messages>
         <rank-engaged>
@@ -109,60 +115,69 @@
           <data2></data2>
         </rank-noteMuted>
       </messages>
-    </rank>
-    <console id="5">
       <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <label id="6">
+      <name>Instructions</name>
+      <description>name=Activate the stops to hear them sound:</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <fluidsynth.fluidsynthSound id="4">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <soundfont>fluidsynth-example.SF2</soundfont>
+      <channels>32</channels>
+      <polyphony>256</polyphony>
+      <sampleRate>44100</sampleRate>
+      <audioBuffers>16</audioBuffers>
+      <audioBufferSize>128</audioBufferSize>
+      <gain>0.2</gain>
+      <reverb>
+        <room>0.2</room>
+        <damping>0.0</damping>
+        <width>0.5</width>
+        <level>1.0</level>
+      </reverb>
+    </fluidsynth.fluidsynthSound>
+    <console id="7">
       <name></name>
       <description></description>
       <references>
-        <console-locationReference id="6">
+        <console-locationReference>
+          <element ref="1"/>
           <x>200</x>
           <y>70</y>
         </console-locationReference>
-        <console-locationReference id="7">
+        <console-locationReference>
+          <element ref="5"/>
           <x>200</x>
           <y>100</y>
         </console-locationReference>
-        <console-locationReference id="1">
+        <console-locationReference>
+          <element ref="6"/>
           <x>120</x>
           <y>40</y>
         </console-locationReference>
       </references>
       <messages/>
+      <zoom>1.0</zoom>
     </console>
-    <stop id="7">
-      <action>0</action>
-      <transpose>-12</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 1</name>
-      <description></description>
-      <references>
-        <reference id="3"/>
-      </references>
-      <messages/>
-    </stop>
-    <stop id="6">
-      <action>0</action>
-      <transpose>0</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 0</name>
-      <description></description>
-      <references>
-        <reference id="4"/>
-      </references>
-      <messages/>
-    </stop>
     <keyboard id="8">
-      <input>jOrgan Keyboard</input>
       <name></name>
       <description></description>
       <references>
-        <reference id="6"/>
-        <reference id="7"/>
+        <reference>
+          <element ref="1"/>
+        </reference>
+        <reference>
+          <element ref="5"/>
+        </reference>
       </references>
       <messages>
         <keyboard-pressKey>
@@ -181,6 +196,7 @@
           <data2>equal 0 | get velocity</data2>
         </keyboard-releaseKey>
       </messages>
+      <input>jOrgan Keyboard</input>
     </keyboard>
   </elements>
 </organ>
