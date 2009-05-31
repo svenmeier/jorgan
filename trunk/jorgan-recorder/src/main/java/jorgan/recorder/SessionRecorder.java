@@ -37,6 +37,12 @@ import jorgan.session.SessionListener;
  */
 public class SessionRecorder {
 
+	public static final int STATE_STOP = 0;
+
+	public static final int STATE_PLAY = 1;
+
+	public static final int STATE_RECORD = 2;
+
 	private List<SessionRecorderListener> listeners = new ArrayList<SessionRecorderListener>();
 
 	private Recorder recorder;
@@ -46,6 +52,8 @@ public class SessionRecorder {
 	private Tracker[] trackers = new Tracker[0];
 
 	private EventListener listener = new EventListener();
+
+	private int state = STATE_STOP;
 
 	/**
 	 * Record the given session.
@@ -93,9 +101,47 @@ public class SessionRecorder {
 	}
 
 	public void stop() {
-		recorder.stop();
+		if (state != STATE_STOP) {
+			recorder.stop();
+
+			state = STATE_STOP;
+
+			fireStateChanged();
+		}
 	}
 
+	public void play() {
+		state = STATE_PLAY;
+
+		recorder.start();
+
+		fireStateChanged();
+	}
+
+	public void record() {
+		state = STATE_RECORD;
+
+		recorder.start();
+
+		fireStateChanged();
+	}
+
+	public int getState() {
+		return state;
+	}
+
+	public void first() {
+		stop();
+		
+		recorder.setTime(0);
+	}
+
+	public void last() {
+		stop();
+		
+		recorder.setTime(recorder.getTotalTime());
+	}
+	
 	public Element getElement(int track) {
 		return trackers[track].getElement();
 	}
@@ -141,9 +187,25 @@ public class SessionRecorder {
 		fireTrackerChanged(track);
 	}
 
+	public Tracker getTracker(int track) {
+		return trackers[track];
+	}
+	
+	private void fireTimeChanged(long millis) {
+		for (SessionRecorderListener listener : listeners) {
+			listener.timeChanged(millis);
+		}
+	}
+
 	private void fireTrackerChanged(int track) {
 		for (SessionRecorderListener listener : listeners) {
 			listener.trackerChanged(track);
+		}
+	}
+
+	private void fireStateChanged() {
+		for (SessionRecorderListener listener : listeners) {
+			listener.stateChanged(state);
 		}
 	}
 
@@ -165,6 +227,7 @@ public class SessionRecorder {
 		}
 
 		public void timeChanged(long millis) {
+			fireTimeChanged(millis);
 		}
 
 		public void sequenceChanged() {
@@ -179,16 +242,19 @@ public class SessionRecorder {
 			}
 		}
 
-		public void played(int track, long millis, MidiMessage message) {
+		public void played(int track, MidiMessage message) {
 		}
 
-		public void recorded(int track, long millis, MidiMessage message) {
+		public void recorded(int track, MidiMessage message) {
 		}
 
-		public void playing() {
+		public void end(long millis) {
+			if (getState() == STATE_PLAY) {
+				stop();
+			}
 		}
 
-		public void recording() {
+		public void starting() {
 		}
 
 		public void stopping() {

@@ -55,18 +55,17 @@ public class SequenceUtils {
 	 * @see MidiEvent#getTick()
 	 */
 	public static int getIndex(Track track, long tick) {
-		// don't step over endOfTrack thus (size - 1)
-		for (int i = 0; i < track.size() - 1; i++) {
-			MidiEvent event = track.get(i);
+		int index;
+		for (index = 0; index < track.size(); index++) {
+			MidiEvent event = track.get(index);
 			if (event.getTick() >= tick) {
-				return i;
+				break;
 			}
 		}
-		return 0;
+		return index;
 	}
 
-	public static boolean isEndOfTrack(MidiEvent event) {
-		MidiMessage message = event.getMessage();
+	public static boolean isEndOfTrack(MidiMessage message) {
 		if (message instanceof MetaMessage) {
 			MetaMessage metaMessage = (MetaMessage) message;
 			return metaMessage.getType() == MessageUtils.META_END_OF_TRACK;

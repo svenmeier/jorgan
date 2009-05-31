@@ -18,6 +18,7 @@
  */
 package jorgan.recorder.gui;
 
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -30,11 +31,11 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
 
-import bias.Configuration;
-
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.swing.IconToggle;
+import bias.Configuration;
 
 public class TrackHeader extends JPanel {
 
@@ -45,16 +46,54 @@ public class TrackHeader extends JPanel {
 
 	private int track;
 
-	public TrackHeader(SessionRecorder recorder, int track) {
-		super(new GridLayout());
+	public TrackHeader(final SessionRecorder recorder, final int track) {
+		super(new BorderLayout());
 
 		this.recorder = recorder;
 		this.track = track;
 
 		JLabel label = new JLabel();
-		label.setText(getTitle());
+		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBorder(new EmptyBorder(2, 2, 2, 2));
-		add(label);
+		label.setText(getTitle());
+		add(label, BorderLayout.NORTH);
+
+		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+		add(buttonPanel, BorderLayout.CENTER);
+
+		IconToggle playToggle = new IconToggle() {
+			@Override
+			protected boolean isOn() {
+				return recorder.getTracker(track).plays();
+			}
+
+			@Override
+			protected void toggle() {
+				if (recorder.getState() == SessionRecorder.STATE_STOP) {
+					recorder.getTracker(track).setPlays(!isOn());
+					super.toggle();
+				}
+			}
+		};
+		config.get("play").read(playToggle);
+		buttonPanel.add(playToggle);
+
+		IconToggle recordToggle = new IconToggle() {
+			@Override
+			protected boolean isOn() {
+				return recorder.getTracker(track).records();
+			}
+
+			@Override
+			protected void toggle() {
+				if (recorder.getState() == SessionRecorder.STATE_STOP) {
+					recorder.getTracker(track).setRecords(!isOn());
+					super.toggle();
+				}
+			}
+		};
+		config.get("record").read(recordToggle);
+		buttonPanel.add(recordToggle);
 
 		final JPopupMenu menu = new JPopupMenu();
 		menu.addPopupMenuListener(new PopupMenuListener() {

@@ -45,9 +45,14 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 		this.recorder = recorder;
 		recorder.addListener(new SessionRecorderListener() {
+			public void timeChanged(long millis) {
+			}
+			
 			public void trackerChanged(int track) {
 				createTracks();
-				
+			}
+			
+			public void stateChanged(int state) {
 			}
 		});
 

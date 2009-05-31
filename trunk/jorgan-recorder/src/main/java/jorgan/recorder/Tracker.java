@@ -30,13 +30,13 @@ public interface Tracker {
 
 	public Element getElement();
 
-	public void setRecording(boolean recording);
+	public void setRecords(boolean recording);
 
-	public boolean isRecording();
+	public boolean records();
 
-	public void setPlaying(boolean playing);
+	public void setPlays(boolean playing);
 
-	public boolean isPlaying();
+	public boolean plays();
 
 	public void destroy();
 }

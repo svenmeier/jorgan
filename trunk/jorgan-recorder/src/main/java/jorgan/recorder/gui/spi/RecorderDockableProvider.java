@@ -5,7 +5,7 @@ import java.util.List;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.spi.DockableProvider;
-import jorgan.recorder.gui.RecorderDockable;
+import jorgan.recorder.gui.dock.RecorderDockable;
 
 public class RecorderDockableProvider implements DockableProvider {
 

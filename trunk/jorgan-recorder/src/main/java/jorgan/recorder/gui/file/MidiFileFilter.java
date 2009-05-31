@@ -16,30 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder.midi;
+package jorgan.recorder.gui.file;
 
-import javax.sound.midi.MidiMessage;
+import java.io.File;
+
+import javax.swing.filechooser.FileFilter;
 
 /**
- * Abstract base class for listeners.
+ * A filter for midi files.
  */
-public class RecorderAdapter implements RecorderListener {
+public class MidiFileFilter extends FileFilter {
 
-	public void timeChanged(long millis) {
-	}
-	
-	public void sequenceChanged() {
-	}
-	
-	public void played(int track, MidiMessage message) {
+	private jorgan.recorder.io.MidiFileFilter filter = new jorgan.recorder.io.MidiFileFilter();
+
+	@Override
+	public boolean accept(File file) {
+		return filter.accept(file);
 	}
 
-	public void end(long millis) {
-	}
-	
-	public void starting() {
-	}
-
-	public void stopping() {
+	@Override
+	public String getDescription() {
+		return "Midi File";
 	}
 }
