@@ -37,6 +37,8 @@ public class CrosslinkMarshallingStrategyTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		xstream = new XStream();
+		xstream.alias("foo", Foo.class);
+		xstream.alias("bar", Bar.class);
 
 		CrossLinkMarshallingStrategy strategy = new CrossLinkMarshallingStrategy();
 		strategy.register(new CrossLink() {
@@ -75,37 +77,24 @@ public class CrosslinkMarshallingStrategyTest extends TestCase {
 	}
 
 	public void testMarshal() throws Exception {
-		assertEquals("<jorgan.io.xstream.Foo>\n" + "  <bars>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"1\">\n"
-				+ "      <bar reference=\"2\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"2\">\n"
-				+ "      <bar reference=\"3\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"3\">\n"
-				+ "      <bar reference=\"1\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"4\">\n"
-				+ "      <bar reference=\"2\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n" + "  </bars>\n"
-				+ "</jorgan.io.xstream.Foo>", xstream.toXML(foo));
+		assertEquals("<foo>\n" + "  <bars>\n" + "    <bar id=\"1\">\n"
+				+ "      <bar reference=\"2\"/>\n" + "    </bar>\n"
+				+ "    <bar id=\"2\">\n" + "      <bar reference=\"3\"/>\n"
+				+ "    </bar>\n" + "    <bar id=\"3\">\n"
+				+ "      <bar reference=\"1\"/>\n" + "    </bar>\n"
+				+ "    <bar id=\"4\">\n" + "      <bar reference=\"2\"/>\n"
+				+ "    </bar>\n" + "  </bars>\n" + "</foo>", xstream.toXML(foo));
 	}
 
 	public void testUnmarshal() throws Exception {
-		Foo foo = (Foo) xstream.fromXML("<jorgan.io.xstream.Foo>\n"
-				+ "  <bars>\n" + "    <jorgan.io.xstream.Bar id=\"1\">\n"
-				+ "      <bar reference=\"2\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"2\">\n"
-				+ "      <bar reference=\"3\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"3\">\n"
-				+ "      <bar reference=\"1\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n"
-				+ "    <jorgan.io.xstream.Bar id=\"4\">\n"
-				+ "      <bar reference=\"2\"/>\n"
-				+ "    </jorgan.io.xstream.Bar>\n" + "  </bars>\n"
-				+ "</jorgan.io.xstream.Foo>");
+		Foo foo = (Foo) xstream.fromXML("<foo>\n" + "  <bars>\n"
+				+ "    <bar id=\"1\">\n" + "      <bar reference=\"2\"/>\n"
+				+ "    </bar>\n" + "    <bar id=\"2\">\n"
+				+ "      <bar reference=\"3\"/>\n" + "    </bar>\n"
+				+ "    <bar id=\"3\">\n" + "      <bar reference=\"1\"/>\n"
+				+ "    </bar>\n" + "    <bar id=\"4\">\n"
+				+ "      <bar reference=\"2\"/>\n" + "    </bar>\n"
+				+ "  </bars>\n" + "</foo>");
 
 		assertEquals(4, foo.bars.size());
 		assertEquals(foo.bars.get(1), foo.bars.get(0).bar);
@@ -113,12 +102,12 @@ public class CrosslinkMarshallingStrategyTest extends TestCase {
 		assertEquals(foo.bars.get(0), foo.bars.get(2).bar);
 		assertEquals(foo.bars.get(1), foo.bars.get(3).bar);
 	}
-}
 
-class Foo {
-	public List<Bar> bars = new ArrayList<Bar>();
-}
+	static class Foo {
+		public List<Bar> bars = new ArrayList<Bar>();
+	}
 
-class Bar {
-	public Bar bar;
+	static class Bar {
+		public Bar bar;
+	}
 }

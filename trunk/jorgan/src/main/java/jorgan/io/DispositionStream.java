@@ -43,7 +43,7 @@ import jorgan.io.disposition.FloatArrayConverter;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.xstream.CrossLinkMarshallingStrategy;
-import jorgan.io.xstream.FieldCrosslink;
+import jorgan.io.xstream.FieldCrossLink;
 import jorgan.util.IOUtils;
 
 import org.xmlpull.mxp1.MXParser;
@@ -85,7 +85,7 @@ public class DispositionStream {
 
 	public DispositionStream() {
 		CrossLinkMarshallingStrategy strategy = new CrossLinkMarshallingStrategy();
-		strategy.register(new FieldCrosslink(Reference.class, "element"));
+		strategy.register(new FieldCrossLink(Reference.class, "element"));
 		xstream.setMarshallingStrategy(strategy);
 		xstream.aliasSystemAttribute("ref", "reference");
 
