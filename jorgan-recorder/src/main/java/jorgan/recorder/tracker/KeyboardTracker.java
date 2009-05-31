@@ -77,7 +77,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * keys.
 	 */
 	@Override
-	protected void onPlaying() {
+	protected void onPlayStarting() {
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay()
 					.pressKey(keyboard, message.getData1(), message.getData2());
@@ -89,7 +89,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 * keys.
 	 */
 	@Override
-	protected void onRecording() {
+	protected void onRecordStarting() {
 		for (ShortMessage message : getKeyPresses()) {
 			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}

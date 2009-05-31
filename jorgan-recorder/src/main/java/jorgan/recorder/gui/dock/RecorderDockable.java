@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder.gui;
+package jorgan.recorder.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -26,19 +26,21 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.SessionRecorderListener;
+import jorgan.recorder.gui.TracksPanel;
 import jorgan.recorder.io.MidiStream;
-import jorgan.recorder.midi.RecorderAdapter;
-import jorgan.recorder.midi.RecorderListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 public class RecorderDockable extends OrganDockable {
 
@@ -120,25 +122,16 @@ public class RecorderDockable extends OrganDockable {
 		if (this.session != null) {
 			recorder = new SessionRecorder(session);
 
-			recorder.getRecorder().addListener(
-					(RecorderListener) Spin.over(new RecorderAdapter() {
+			recorder.addListener((SessionRecorderListener) Spin
+					.over(new SessionRecorderListener() {
 						public void timeChanged(long millis) {
 							updateTime();
 						}
 
-						public void playing() {
-							updateActions();
+						public void trackerChanged(int track) {
 						}
 
-						public void recording() {
-							updateActions();
-						}
-
-						public void stopped() {
-							updateActions();
-						}
-
-						private void updateActions() {
+						public void stateChanged(int state) {
 							playAction.update();
 							recordAction.update();
 						}
@@ -155,12 +148,17 @@ public class RecorderDockable extends OrganDockable {
 		if (recorder != null) {
 			setStatus(format.format(new Date(recorder.getRecorder().getTime()))
 					+ " / "
-					+ format
-							.format(new Date(recorder.getRecorder().getTotalTime())));
+					+ format.format(new Date(recorder.getRecorder()
+							.getTotalTime())));
 
 			tracksPanel.revalidate();
 			tracksPanel.repaint();
 		}
+	}
+
+	protected void showBoxMessage(String key, Object... args) {
+		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(
+				getContent(), args);
 	}
 
 	private class NewAction extends BaseAction {
@@ -179,12 +177,18 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			try {
-				new MidiStream().load(new File("test.mid"), recorder
-						.getRecorder());
-			} catch (IOException ex) {
-				// TODO
-				throw new Error(ex);
+			JFileChooser chooser = new JFileChooser();
+			chooser
+					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
+			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
+				File file = chooser.getSelectedFile();
+
+				try {
+					new MidiStream().load(file, recorder.getRecorder());
+				} catch (IOException ex) {
+					showBoxMessage("openMidiException", file.getName());
+					return;
+				}
 			}
 		}
 	}
@@ -195,12 +199,18 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			try {
-				new MidiStream().save(new File("test.mid"), recorder
-						.getRecorder());
-			} catch (IOException ex) {
-				// TODO
-				throw new Error(ex);
+			JFileChooser chooser = new JFileChooser();
+			chooser
+					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
+			if (chooser.showSaveDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
+				File file = chooser.getSelectedFile();
+
+				try {
+					new MidiStream().save(file, recorder.getRecorder());
+				} catch (IOException ex) {
+					showBoxMessage("saveMidiException", file.getName());
+					return;
+				}
 			}
 		}
 	}
@@ -211,7 +221,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			recorder.getRecorder().first();
+			recorder.first();
 		}
 	}
 
@@ -221,7 +231,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			recorder.getRecorder().last();
+			recorder.last();
 		}
 	}
 
@@ -231,15 +241,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (recorder.getRecorder().isStopped()) {
-				recorder.getRecorder().play();
+			if (recorder.getState() == SessionRecorder.STATE_PLAY) {
+				recorder.stop();
 			} else {
-				recorder.getRecorder().stop();
+				recorder.play();
 			}
 		}
 
 		protected void update() {
-			if (recorder.getRecorder().isPlaying()) {
+			if (recorder.getState() == SessionRecorder.STATE_PLAY) {
 				config.get("stop").read(this);
 			} else {
 				config.get("play").read(this);
@@ -253,15 +263,15 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (recorder.getRecorder().isRecording()) {
-				recorder.getRecorder().stop();
+			if (recorder.getState() == SessionRecorder.STATE_RECORD) {
+				recorder.stop();
 			} else {
-				recorder.getRecorder().record();
+				recorder.record();
 			}
 		}
 
 		protected void update() {
-			if (recorder.getRecorder().isRecording()) {
+			if (recorder.getState() == SessionRecorder.STATE_RECORD) {
 				config.get("stop").read(this);
 			} else {
 				config.get("record").read(this);

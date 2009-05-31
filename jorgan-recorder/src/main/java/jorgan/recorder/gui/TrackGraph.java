@@ -61,7 +61,7 @@ public class TrackGraph extends JComponent {
 		int width = Math.round(SECOND_WIDTH * getDisplayTime()
 				/ Recorder.SECOND);
 
-		return new Dimension(width, height);
+		return new Dimension(Math.max(2, width), height);
 	}
 
 	@Override
@@ -82,16 +82,21 @@ public class TrackGraph extends JComponent {
 		g.setColor(getForeground());
 
 		int height = getHeight();
+		int width = getWidth();
 
 		long tick = recorder.getRecorder().millisToTick(xToMillis(bounds.x));
 
 		int x = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.getRecorder().messagesForTrackFrom(
+		for (MidiEvent event : recorder.getRecorder().messagesForTrackFromTick(
 				track, tick)) {
 			int nextX = millisToX(recorder.getRecorder().tickToMillis(
 					event.getTick()));
-			if (nextX == x) {
+			if (nextX >= width) {
+				nextX = width - 1;
+			}
+			if (count == 0 || nextX == x) {
+				x = nextX;
 				count++;
 				continue;
 			}
@@ -110,8 +115,9 @@ public class TrackGraph extends JComponent {
 
 	private void paintMessage(Graphics g, int x, int height, int count) {
 		if (count > 0) {
-			int temp = Math.round((1 - (1 / (float) (count + 1))) * height);
-			g.drawLine(x, height - temp, x, height - 1);
+			int size = Math.round((1 - (1 / (float) (count + 1))) * height);
+			
+			g.drawLine(x, height - size, x, height - 1);
 		}
 	}
 
@@ -167,13 +173,16 @@ public class TrackGraph extends JComponent {
 	}
 
 	private long getDisplayTime() {
-		return Math.max(recorder.getRecorder().getTotalTime(), Recorder.MINUTE);
+		return recorder.getRecorder().getTotalTime();
 	}
 
 	private int millisToX(long millis) {
-		int width = getWidth();
-
-		return Math.round(millis * width / getDisplayTime());
+		long displayTime = getDisplayTime();
+		if (displayTime == 0) {
+			return 0;
+		}
+		
+		return Math.round(millis * getWidth() / displayTime);
 	}
 
 	private long xToMillis(int x) {

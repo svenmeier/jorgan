@@ -27,7 +27,6 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.recorder.midi.Recorder;
 import junit.framework.TestCase;
 
 public class RecorderTest extends TestCase {
@@ -35,29 +34,30 @@ public class RecorderTest extends TestCase {
 	public void test() throws Exception {
 		Recorder recorder = new Recorder(1);
 		recorder.addListener(new RecorderAdapter() {
-			
-			public void played(int track, long millis, MidiMessage message) {
-				trace(track, millis, message);
+
+			public void played(int track, MidiMessage message) {
+				trace("played ", track, message);
 			}
 
-			public void recorded(int track, long millis, MidiMessage message) {
-				trace(track, millis, message);
+			@Override
+			public void starting() {
+				System.out.println("Starting");
 			}
 
-			public void playing() {
-				System.out.println("Playing");
+			@Override
+			public void stopping() {
+				System.out.println("Stopping");
 			}
 
-			public void recording() {
-				System.out.println("Recording");
-			}
-
-			public void stopped() {
-				System.out.println("Stopped");
+			@Override
+			public void end(long millis) {
+				synchronized (RecorderTest.this) {
+					RecorderTest.this.notify();
+				}
 			}
 		});
 
-		recorder.record();
+		recorder.start();
 
 		keyPressed(recorder, 60, 100);
 
@@ -69,8 +69,8 @@ public class RecorderTest extends TestCase {
 		recorder.stop();
 
 		Thread.sleep(2000);
-		
-		recorder.record();
+
+		recorder.start();
 
 		Thread.sleep(1000);
 
@@ -99,21 +99,11 @@ public class RecorderTest extends TestCase {
 			input.close();
 		}
 
-		recorder.play();
-		
-		Thread.sleep(recorder.getTotalTime() + 1000);
+		recorder.start();
 
-		recorder.play();
-		
-		Thread.sleep(2000);
-
-		recorder.first();
-		
-		recorder.play();
-
-		Thread.sleep(2500);
-		
-		recorder.stop();
+		synchronized (this) {
+			wait();
+		}
 	}
 
 	private void keyPressed(Recorder recorder, int pitch, int velocity) {
@@ -136,10 +126,10 @@ public class RecorderTest extends TestCase {
 		recorder.record(0, message);
 	}
 
-	private void trace(int track, long millis, MidiMessage message) {
+	private void trace(String event, int track, MidiMessage message) {
+		System.out.print(event);
 		System.out.print("[" + track + "] ");
-		System.out.print(millis + " :");
-		
+
 		byte[] bytes = message.getMessage();
 		for (int b = 0; b < message.getLength(); b++) {
 			System.out.print(' ');

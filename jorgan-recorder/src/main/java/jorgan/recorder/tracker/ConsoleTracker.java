@@ -64,7 +64,7 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	@Override
-	public void onPlaying() {
+	public void onPlayStarting() {
 		ignoreChanges = true;
 
 		Collection<Element> active = getActive();
@@ -80,9 +80,7 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	@Override
-	public void onRecording() {
-		ignoreChanges = true;
-
+	public void onRecordStarting() {
 		Collection<Element> active = getActive();
 
 		for (Element element : getOrgan().getElements()) {
@@ -102,12 +100,12 @@ public class ConsoleTracker extends AbstractTracker {
 				}
 			}
 		}
-
-		ignoreChanges = false;
 	}
 
 	@Override
 	public void onPlayed(MidiMessage message) {
+		ignoreChanges = true;
+
 		if (message instanceof MetaMessage) {
 			MetaMessage metaMessage = (MetaMessage) message;
 
@@ -132,6 +130,8 @@ public class ConsoleTracker extends AbstractTracker {
 				}
 			}
 		}
+		
+		ignoreChanges = false;
 	}
 
 	private Element getElement(String name) {

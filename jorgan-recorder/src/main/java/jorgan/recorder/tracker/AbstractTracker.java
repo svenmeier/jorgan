@@ -18,6 +18,8 @@
  */
 package jorgan.recorder.tracker;
 
+import java.util.Iterator;
+
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
@@ -35,9 +37,9 @@ public abstract class AbstractTracker implements Tracker {
 
 	private int track;
 
-	private boolean playing = true;
+	private boolean plays = true;
 
-	private boolean recording = true;
+	private boolean records = true;
 
 	private EventListener listener = new EventListener();
 
@@ -58,20 +60,20 @@ public abstract class AbstractTracker implements Tracker {
 		return track;
 	}
 
-	public void setRecording(boolean recording) {
-		this.recording = recording;
+	public void setRecords(boolean records) {
+		this.records = records;
 	}
 
-	public boolean isRecording() {
-		return recording;
+	public boolean records() {
+		return records;
 	}
 
-	public void setPlaying(boolean playing) {
-		this.playing = playing;
+	public void setPlays(boolean plays) {
+		this.plays = plays;
 	}
 
-	public boolean isPlaying() {
-		return playing;
+	public boolean plays() {
+		return plays;
 	}
 
 	public Organ getOrgan() {
@@ -84,10 +86,10 @@ public abstract class AbstractTracker implements Tracker {
 
 	public abstract Element getElement();
 
-	protected void onPlaying() {
+	protected void onPlayStarting() {
 	}
 
-	protected void onRecording() {
+	protected void onRecordStarting() {
 	}
 
 	protected void onPlayStopping() {
@@ -100,8 +102,7 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected Iterable<MidiEvent> messages() {
-		return recorder.getRecorder().messagesForTrackTo(getTrack(),
-				recorder.getRecorder().getCurrentTick());
+		return recorder.getRecorder().messagesForTrackToCurrent(getTrack());
 	}
 
 	protected void record(int status, int data1, int data2) {
@@ -109,7 +110,7 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected void record(MidiMessage message) {
-		if (recorder.getRecorder().isRecording() && isRecording()) {
+		if (recorder.getState() == SessionRecorder.STATE_RECORD && records()) {
 			recorder.getRecorder().record(getTrack(), message);
 		}
 	}
@@ -122,34 +123,54 @@ public abstract class AbstractTracker implements Tracker {
 		public void sequenceChanged() {
 		}
 
-		public void played(int track, long millis, MidiMessage message) {
-			if (track == getTrack() && isPlaying()) {
+		public void played(int track, MidiMessage message) {
+			if (track == getTrack() && plays()) {
 				onPlayed(message);
 			}
 		}
 
-		public void recorded(int track, long millis, MidiMessage message) {
+		public void recorded(int track, MidiMessage message) {
 		}
 
-		public void playing() {
-			if (track == getTrack() && isPlaying()) {
-				onPlaying();
-			}
+		public void end(long millis) {
 		}
 
-		public void recording() {
-			if (track == getTrack() && isRecording()) {
-				onRecording();
+		public void starting() {
+			if (track == getTrack()) {
+				if (recorder.getState() == SessionRecorder.STATE_RECORD) {
+					if (records()) {
+						Iterator<MidiEvent> iterator = recorder.getRecorder()
+								.messagesForTrackFromCurrent(getTrack())
+								.iterator();
+						while (iterator.hasNext()) {
+							iterator.next();
+							iterator.remove();
+						}
+
+						onRecordStarting();
+					} else if (plays()) {
+						onPlayStarting();
+					}
+				} else if (recorder.getState() == SessionRecorder.STATE_PLAY) {
+					if (plays()) {
+						onPlayStarting();
+					}
+				}
 			}
 		}
 
 		public void stopping() {
 			if (track == getTrack()) {
-				if (recorder.getRecorder().isPlaying() && isPlaying()) {
-					onPlayStopping();
-				}
-				if (recorder.getRecorder().isRecording() && isRecording()) {
-					onRecordStopping();
+				if (recorder.getState() == SessionRecorder.STATE_RECORD) {
+					if (records()) {
+						onRecordStopping();
+					} else if (plays()) {
+						onPlayStopping();
+					}
+				} else if (recorder.getState() == SessionRecorder.STATE_PLAY) {
+					if (plays()) {
+						onPlayStopping();
+					}
 				}
 			}
 		}

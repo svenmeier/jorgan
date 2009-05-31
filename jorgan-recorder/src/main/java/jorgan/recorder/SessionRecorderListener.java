@@ -23,5 +23,9 @@ package jorgan.recorder;
  */
 public interface SessionRecorderListener {
 
+	public void timeChanged(long millis);
+	
 	public void trackerChanged(int track);
+	
+	public void stateChanged(int state);
 }

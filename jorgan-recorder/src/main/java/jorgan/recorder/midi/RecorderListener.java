@@ -42,53 +42,31 @@ public interface RecorderListener {
 	public void timeChanged(long millis);
 
 	/**
-	 * Notification of a recorded message.
-	 * 
-	 * @param track
-	 * @param millis
-	 * @param message
-	 * 
-	 * @see Recorder#record()
-	 * @see Recorder#record(int, MidiMessage)
-	 */
-	public void recorded(int track, long millis, MidiMessage message);
-
-	/**
 	 * Notification of a played message.
 	 * 
 	 * @param track
-	 * @param millis
 	 * @param message
 	 * 
 	 * @see Recorder#play()
 	 */
-	public void played(int track, long millis, MidiMessage message);
-
+	public void played(int track, MidiMessage message);
+	
 	/**
-	 * Notification that the recorder is now playing.
-	 * 
-	 * @see Recorder#play()
+	 * Notification that the recorder has reached the last tick.
 	 */
-	public void playing();
+	public void end(long millis);
 
 	/**
-	 * Notification that the recorder is now recording.
+	 * Notification that the recorder is now running.
 	 * 
-	 * @see Recorder#record()
+	 * @see Recorder#start()
 	 */
-	public void recording();
+	public void starting();
 
 	/**
-	 * Notification that the recorder is about to be stopped.
+	 * Notification that the recorder is now stopping.
 	 * 
 	 * @see Recorder#stop()
 	 */
 	public void stopping();
-
-	/**
-	 * Notification that the recorder has stopped.
-	 * 
-	 * @see Recorder#stop()
-	 */
-	public void stopped();
 }
