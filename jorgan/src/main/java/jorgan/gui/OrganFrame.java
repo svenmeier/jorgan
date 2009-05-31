@@ -282,7 +282,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (session.getFile() == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
-			setTitle(jorgan.io.DispositionFileFilter.removeSuffix(session
+			setTitle(jorgan.io.disposition.DispositionFileFilter.removeSuffix(session
 					.getFile())
 					+ " - " + TITEL_SUFFIX);
 		}
@@ -461,7 +461,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 				.getRecentDirectory());
 		chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 		if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-			File file = jorgan.io.DispositionFileFilter.addSuffix(chooser
+			File file = jorgan.io.disposition.DispositionFileFilter.addSuffix(chooser
 					.getSelectedFile());
 
 			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);

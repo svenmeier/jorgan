@@ -27,15 +27,15 @@ import javax.swing.filechooser.FileFilter;
  */
 public class DispositionFileFilter extends FileFilter {
 
-  private jorgan.io.DispositionFileFilter filter = new jorgan.io.DispositionFileFilter();
+	private jorgan.io.disposition.DispositionFileFilter filter = new jorgan.io.disposition.DispositionFileFilter();
 
-  @Override
-public boolean accept(File file) {
-    return filter.accept(file);
-  }
+	@Override
+	public boolean accept(File file) {
+		return filter.accept(file);
+	}
 
-  @Override
-public String getDescription() {
-    return "Disposition File";
-  }
+	@Override
+	public String getDescription() {
+		return "Disposition File";
+	}
 }
