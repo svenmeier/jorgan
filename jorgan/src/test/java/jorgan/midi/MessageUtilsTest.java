@@ -20,21 +20,26 @@ package jorgan.midi;
 
 import java.util.Arrays;
 
+import javax.sound.midi.MetaMessage;
+
 import junit.framework.TestCase;
 
 /**
- * Test for {@link Text}.
+ * Test for {@link MessageUtils}.
  */
-public class TextTest extends TestCase {
+public class MessageUtilsTest extends TestCase {
 
 	private static final String STRING = "Text-öäüß";
 
-	private static final byte[] BYTES = new byte[] { 84, 101, 120, 116, 45,
-			-61, -74, -61, -92, -61, -68, -61, -97 };
+	private static final byte[] BYTES = new byte[] { -1, 1, 13, 84, 101, 120,
+			116, 45, -61, -74, -61, -92, -61, -68, -61, -97 };
 
 	public void test() throws Exception {
-		assertTrue(Arrays.equals(BYTES, new Text(STRING).getBytes()));
+		assertTrue(Arrays.equals(BYTES, MessageUtils.newMetaMessage(
+				MessageUtils.META_TEXT, STRING).getMessage()));
 
-		assertEquals(STRING, new Text(BYTES).toString());
+		MetaMessage message = new MetaMessage(BYTES) {
+		};
+		assertEquals(STRING, MessageUtils.getText(message));
 	}
 }

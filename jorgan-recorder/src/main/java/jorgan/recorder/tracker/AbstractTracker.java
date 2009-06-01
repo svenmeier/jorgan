@@ -20,8 +20,10 @@ package jorgan.recorder.tracker;
 
 import java.util.Iterator;
 
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Track;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
@@ -177,5 +179,31 @@ public abstract class AbstractTracker implements Tracker {
 
 		public void stopped() {
 		}
+	}
+
+	/**
+	 * Set the name of the given track.
+	 * 
+	 * @param track
+	 * @param name
+	 */
+	public static void setTrackName(Track track, String name) {
+		MetaMessage message = MessageUtils.newMetaMessage(
+				MessageUtils.META_TRACK_NAME, name);
+
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * Get the name of the given track.
+	 * 
+	 * @param track
+	 * @return name
+	 */
+	public static String getTrackName(Track track) {
+		// TODO get message
+		MetaMessage message = new MetaMessage();
+
+		return MessageUtils.getText(message);
 	}
 }
