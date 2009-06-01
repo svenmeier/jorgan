@@ -18,6 +18,8 @@
  */
 package jorgan.midi;
 
+import java.io.UnsupportedEncodingException;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
@@ -27,6 +29,10 @@ import javax.sound.midi.ShortMessage;
  * Utils for messages.
  */
 public class MessageUtils {
+
+	public static final int META_TEXT = 1;
+
+	public static final int META_TRACK_NAME = 3;
 
 	public static final int META_END_OF_TRACK = 47;
 
@@ -78,15 +84,35 @@ public class MessageUtils {
 		}
 	}
 
-	public static MidiMessage newMetaMessage(int type, byte[] data) {
+	public static MetaMessage newMetaMessage(int type, byte[] data) {
 		MetaMessage message = new MetaMessage();
-		
+
 		try {
 			message.setMessage(type, data, data.length);
 		} catch (InvalidMidiDataException e) {
 			throw new IllegalArgumentException(e);
 		}
-		
+
 		return message;
+	}
+
+	public static MetaMessage newMetaMessage(int type, String data) {
+		byte[] bytes;
+
+		try {
+			bytes = data.getBytes("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new Error(e);
+		}
+		return newMetaMessage(type, bytes);
+	}
+
+	public static String getText(MetaMessage message) {
+		byte[] bytes = message.getData();
+		try {
+			return new String(bytes, "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			throw new Error(e);
+		}
 	}
 }

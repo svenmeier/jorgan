@@ -30,7 +30,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
-import jorgan.midi.Text;
 import jorgan.recorder.SessionRecorder;
 
 public class ConsoleTracker extends AbstractTracker {
@@ -90,13 +89,13 @@ public class ConsoleTracker extends AbstractTracker {
 				if (aSwitch.isActive() && !active.contains(aSwitch)) {
 					String string = PREFIX_ACTIVE + aSwitch.getName();
 
-					record(MessageUtils.newMetaMessage(Text.TYPE_TEXT,
-							new Text(string).getBytes()));
+					record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
+							string));
 				} else if (!aSwitch.isActive() && active.contains(aSwitch)) {
 					String string = PREFIX_INACTIVE + aSwitch.getName();
 
-					record(MessageUtils.newMetaMessage(Text.TYPE_TEXT,
-							new Text(string).getBytes()));
+					record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
+							string));
 				}
 			}
 		}
@@ -109,10 +108,8 @@ public class ConsoleTracker extends AbstractTracker {
 		if (message instanceof MetaMessage) {
 			MetaMessage metaMessage = (MetaMessage) message;
 
-			if (metaMessage.getType() == Text.TYPE_TEXT) {
-				Text text = new Text(metaMessage.getData());
-
-				String string = text.toString();
+			if (metaMessage.getType() == MessageUtils.META_TEXT) {
+				String string = MessageUtils.getText(metaMessage);
 				if (string.startsWith(PREFIX_ACTIVE)) {
 					Element element = getElement(string.substring(1));
 					if (element != null) {
@@ -130,7 +127,7 @@ public class ConsoleTracker extends AbstractTracker {
 				}
 			}
 		}
-		
+
 		ignoreChanges = false;
 	}
 
@@ -149,8 +146,8 @@ public class ConsoleTracker extends AbstractTracker {
 		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
-				if (message.getType() == Text.TYPE_TEXT) {
-					String string = new Text(message.getData()).toString();
+				if (message.getType() == MessageUtils.META_TEXT) {
+					String string = MessageUtils.getText(message);
 
 					if (string.startsWith(PREFIX_ACTIVE)) {
 						Element element = getElement(string.substring(1));
@@ -189,8 +186,8 @@ public class ConsoleTracker extends AbstractTracker {
 
 				string += element.getName();
 
-				record(MessageUtils.newMetaMessage(Text.TYPE_TEXT, new Text(
-						string).getBytes()));
+				record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
+						string));
 			}
 		}
 	}
