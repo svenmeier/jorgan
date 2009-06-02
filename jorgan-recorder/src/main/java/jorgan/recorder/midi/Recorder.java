@@ -239,29 +239,29 @@ public class Recorder {
 		return state.currentTick();
 	}
 
-	public Iterable<MidiEvent> messagesForTrack(final int track) {
-		return messagesForTrack(track, 0, Long.MAX_VALUE);
+	public Iterable<MidiEvent> events(final int track) {
+		return events(track, 0, Long.MAX_VALUE);
 	}
 
-	public Iterable<MidiEvent> messagesForTrackToCurrent(final int track) {
-		return messagesForTrackToTick(track, currentTick);
+	public Iterable<MidiEvent> eventsToCurrent(final int track) {
+		return eventsToTick(track, currentTick);
 	}
 
-	public Iterable<MidiEvent> messagesForTrackToTick(final int track,
+	public Iterable<MidiEvent> eventsToTick(final int track,
 			final long toTick) {
-		return messagesForTrack(track, 0, toTick);
+		return events(track, 0, toTick);
 	}
 
-	public Iterable<MidiEvent> messagesForTrackFromCurrent(final int track) {
-		return messagesForTrackFromTick(track, currentTick);
+	public Iterable<MidiEvent> eventsFromCurrent(final int track) {
+		return eventsFromTick(track, currentTick);
 	}
 
-	public Iterable<MidiEvent> messagesForTrackFromTick(final int track,
+	public Iterable<MidiEvent> eventsFromTick(final int track,
 			final long fromTick) {
-		return messagesForTrack(track, fromTick, Long.MAX_VALUE);
+		return events(track, fromTick, Long.MAX_VALUE);
 	}
 
-	private Iterable<MidiEvent> messagesForTrack(final int track,
+	private Iterable<MidiEvent> events(final int track,
 			final long fromTick, final long toTick) {
 
 		return new AbstractIterator<MidiEvent>() {

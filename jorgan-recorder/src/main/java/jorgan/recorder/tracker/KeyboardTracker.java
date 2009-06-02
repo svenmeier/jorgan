@@ -59,6 +59,18 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	@Override
+	protected boolean owns(MidiEvent event) {
+		MidiMessage message = event.getMessage();
+
+		if (message.getStatus() == ShortMessage.NOTE_ON
+				|| message.getStatus() == ShortMessage.NOTE_OFF) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
 	protected void onPlayed(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;

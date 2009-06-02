@@ -63,6 +63,19 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	@Override
+	protected boolean owns(MidiEvent event) {
+		if (event.getMessage() instanceof MetaMessage) {
+			MetaMessage message = (MetaMessage) event.getMessage();
+			
+			if (message.getType() == MessageUtils.META_TEXT) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	@Override
 	public void onPlayStarting() {
 		ignoreChanges = true;
 
