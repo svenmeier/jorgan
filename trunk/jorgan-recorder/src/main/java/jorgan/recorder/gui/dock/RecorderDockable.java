@@ -53,11 +53,11 @@ public class RecorderDockable extends OrganDockable {
 
 	private SessionRecorder recorder;
 
-	private NewAction newAction = new NewAction();
+	private ResetAction resetAction = new ResetAction();
 
-	private OpenAction openAction = new OpenAction();
+	private ImportAction importAction = new ImportAction();
 
-	private SaveAction saveAction = new SaveAction();
+	private ExportAction exportAction = new ExportAction();
 
 	private PlayAction playAction = new PlayAction();
 
@@ -90,9 +90,9 @@ public class RecorderDockable extends OrganDockable {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.addTool(newAction);
-		docked.addTool(openAction);
-		docked.addTool(saveAction);
+		docked.addTool(resetAction);
+		docked.addTool(importAction);
+		docked.addTool(exportAction);
 		docked.addToolSeparator();
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
@@ -161,9 +161,9 @@ public class RecorderDockable extends OrganDockable {
 				getContent(), args);
 	}
 
-	private class NewAction extends BaseAction {
-		public NewAction() {
-			config.get("new").read(this);
+	private class ResetAction extends BaseAction {
+		public ResetAction() {
+			config.get("reset").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -171,13 +171,14 @@ public class RecorderDockable extends OrganDockable {
 		}
 	}
 
-	private class OpenAction extends BaseAction {
-		public OpenAction() {
-			config.get("open").read(this);
+	private class ImportAction extends BaseAction {
+		public ImportAction() {
+			config.get("import").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser chooser = new JFileChooser();
+			chooser.setDialogTitle(getShortDescription());
 			chooser
 					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
@@ -186,20 +187,21 @@ public class RecorderDockable extends OrganDockable {
 				try {
 					new MidiStream().load(file, recorder.getRecorder());
 				} catch (IOException ex) {
-					showBoxMessage("openMidiException", file.getName());
+					showBoxMessage("importException", file.getName());
 					return;
 				}
 			}
 		}
 	}
 
-	private class SaveAction extends BaseAction {
-		public SaveAction() {
-			config.get("save").read(this);
+	private class ExportAction extends BaseAction {
+		public ExportAction() {
+			config.get("export").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
 			JFileChooser chooser = new JFileChooser();
+			chooser.setDialogTitle(getShortDescription());
 			chooser
 					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
 			if (chooser.showSaveDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
@@ -208,7 +210,7 @@ public class RecorderDockable extends OrganDockable {
 				try {
 					new MidiStream().save(file, recorder.getRecorder());
 				} catch (IOException ex) {
-					showBoxMessage("saveMidiException", file.getName());
+					showBoxMessage("exportException", file.getName());
 					return;
 				}
 			}

@@ -20,10 +20,8 @@ package jorgan.recorder.tracker;
 
 import java.util.Iterator;
 
-import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.Track;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
@@ -78,6 +76,8 @@ public abstract class AbstractTracker implements Tracker {
 		return plays;
 	}
 
+	public abstract Element getElement();
+
 	public Organ getOrgan() {
 		return recorder.getSession().getOrgan();
 	}
@@ -85,8 +85,6 @@ public abstract class AbstractTracker implements Tracker {
 	public OrganPlay getPlay() {
 		return recorder.getSession().getPlay();
 	}
-
-	public abstract Element getElement();
 
 	protected void onPlayStarting() {
 	}
@@ -104,7 +102,7 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected Iterable<MidiEvent> messages() {
-		return recorder.getRecorder().messagesForTrackToCurrent(getTrack());
+		return recorder.getRecorder().eventsToCurrent(getTrack());
 	}
 
 	protected void record(int status, int data1, int data2) {
@@ -116,6 +114,18 @@ public abstract class AbstractTracker implements Tracker {
 			recorder.getRecorder().record(getTrack(), message);
 		}
 	}
+
+	private void removeFollowingEvents() {
+		Iterator<MidiEvent> iterator = recorder.getRecorder()
+				.eventsFromCurrent(getTrack()).iterator();
+		while (iterator.hasNext()) {
+			if (owns(iterator.next())) {
+				iterator.remove();
+			}
+		}
+	}
+
+	protected abstract boolean owns(MidiEvent event);
 
 	private class EventListener implements RecorderListener {
 
@@ -141,13 +151,7 @@ public abstract class AbstractTracker implements Tracker {
 			if (track == getTrack()) {
 				if (recorder.getState() == SessionRecorder.STATE_RECORD) {
 					if (records()) {
-						Iterator<MidiEvent> iterator = recorder.getRecorder()
-								.messagesForTrackFromCurrent(getTrack())
-								.iterator();
-						while (iterator.hasNext()) {
-							iterator.next();
-							iterator.remove();
-						}
+						removeFollowingEvents();
 
 						onRecordStarting();
 					} else if (plays()) {
@@ -179,31 +183,5 @@ public abstract class AbstractTracker implements Tracker {
 
 		public void stopped() {
 		}
-	}
-
-	/**
-	 * Set the name of the given track.
-	 * 
-	 * @param track
-	 * @param name
-	 */
-	public static void setTrackName(Track track, String name) {
-		MetaMessage message = MessageUtils.newMetaMessage(
-				MessageUtils.META_TRACK_NAME, name);
-
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * Get the name of the given track.
-	 * 
-	 * @param track
-	 * @return name
-	 */
-	public static String getTrackName(Track track) {
-		// TODO get message
-		MetaMessage message = new MetaMessage();
-
-		return MessageUtils.getText(message);
 	}
 }

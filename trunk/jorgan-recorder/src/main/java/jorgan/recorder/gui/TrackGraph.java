@@ -88,7 +88,7 @@ public class TrackGraph extends JComponent {
 
 		int x = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.getRecorder().messagesForTrackFromTick(
+		for (MidiEvent event : recorder.getRecorder().eventsFromTick(
 				track, tick)) {
 			int nextX = millisToX(recorder.getRecorder().tickToMillis(
 					event.getTick()));

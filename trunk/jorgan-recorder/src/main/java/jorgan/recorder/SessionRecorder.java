@@ -19,12 +19,16 @@
 package jorgan.recorder;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
+import javax.sound.midi.MetaMessage;
+import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.midi.MessageUtils;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.midi.RecorderListener;
 import jorgan.recorder.spi.TrackerRegistry;
@@ -132,16 +136,16 @@ public class SessionRecorder {
 
 	public void first() {
 		stop();
-		
+
 		recorder.setTime(0);
 	}
 
 	public void last() {
 		stop();
-		
+
 		recorder.setTime(recorder.getTotalTime());
 	}
-	
+
 	public Element getElement(int track) {
 		return trackers[track].getElement();
 	}
@@ -180,6 +184,12 @@ public class SessionRecorder {
 	public void setTracker(int track, Tracker tracker) {
 		recorder.stop();
 
+		if (tracker.getElement() == null) {
+			setTrackName(track, null);
+		} else {
+			setTrackName(track, tracker.getElement().getName());
+		}
+
 		trackers[track].destroy();
 
 		trackers[track] = tracker;
@@ -190,7 +200,7 @@ public class SessionRecorder {
 	public Tracker getTracker(int track) {
 		return trackers[track];
 	}
-	
+
 	private void fireTimeChanged(long millis) {
 		for (SessionRecorderListener listener : listeners) {
 			listener.timeChanged(millis);
@@ -227,6 +237,8 @@ public class SessionRecorder {
 		}
 
 		public void timeChanged(long millis) {
+			stop();
+			
 			fireTimeChanged(millis);
 		}
 
@@ -238,7 +250,7 @@ public class SessionRecorder {
 			trackers = new Tracker[recorder.getTrackCount()];
 
 			for (int track = 0; track < trackers.length; track++) {
-				trackers[track] = new EmptyTracker(track);
+				trackers[track] = createTracker(track);
 			}
 		}
 
@@ -268,6 +280,70 @@ public class SessionRecorder {
 		return recorder;
 	}
 
+	private Tracker createTracker(int track) {
+		Tracker tracker;
+
+		String name = getTrackName(track);
+		if (name != null) {
+			Element element = session.getOrgan().getElement(name);
+			if (element != null) {
+				tracker = TrackerRegistry.createTracker(SessionRecorder.this,
+						track, element);
+				if (tracker != null) {
+					return tracker;
+				}
+			}
+		}
+
+		return new EmptyTracker(track);
+	}
+
+	/**
+	 * Set the name of the given track.
+	 * 
+	 * @param track
+	 * @param name
+	 */
+	private void setTrackName(int track, String name) {
+		Iterator<MidiEvent> iterator = recorder.events(track)
+				.iterator();
+		while (iterator.hasNext()) {
+			MidiEvent event = iterator.next();
+
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == MessageUtils.META_TRACK_NAME) {
+					iterator.remove();
+				}
+			}
+		}
+
+		if (name != null) {
+			recorder.setTime(0);
+			recorder.record(track, MessageUtils.newMetaMessage(
+					MessageUtils.META_TRACK_NAME, name));
+		}
+	}
+
+	/**
+	 * Get the name of the given track.
+	 * 
+	 * @param track
+	 * @return name
+	 */
+	private String getTrackName(int track) {
+		for (MidiEvent event : recorder.events(track)) {
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == MessageUtils.META_TRACK_NAME) {
+					return MessageUtils.getText(message);
+				}
+			}
+		}
+
+		return null;
+	}
+
 	private class EmptyTracker extends AbstractTracker {
 
 		public EmptyTracker(int track) {
@@ -277,6 +353,11 @@ public class SessionRecorder {
 		@Override
 		public Element getElement() {
 			return null;
+		}
+		
+		@Override
+		protected boolean owns(MidiEvent event) {
+			return false;
 		}
 	}
 }
