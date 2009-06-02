@@ -30,11 +30,15 @@ import com.thoughtworks.xstream.mapper.Mapper;
 
 public class CrossLinkUnmarshaller extends TreeUnmarshaller {
 
+	private CrossLink crossLink;
+	
 	private Map<Object, Object> values = new HashMap<Object, Object>();
 
 	public CrossLinkUnmarshaller(Object root, HierarchicalStreamReader reader,
-			ConverterLookup converterLookup, Mapper mapper) {
+			ConverterLookup converterLookup, Mapper mapper, CrossLink crossLink) {
 		super(root, reader, converterLookup, mapper);
+		
+		this.crossLink = crossLink;
 	}
 
 	protected Object convert(final Object parent, Class type,
@@ -55,7 +59,7 @@ public class CrossLinkUnmarshaller extends TreeUnmarshaller {
 						throw ex;
 					}
 
-					crossLink(parent, value);
+					crossLink.crossLink(parent, value);
 				}
 			}, 0);
 
@@ -72,9 +76,5 @@ public class CrossLinkUnmarshaller extends TreeUnmarshaller {
 
 			return item;
 		}
-	}
-
-	protected void crossLink(Object parent, Object item) {
-		throw new ConversionException("unable to cross-link");
 	}
 }

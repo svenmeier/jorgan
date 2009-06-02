@@ -34,43 +34,31 @@ import com.thoughtworks.xstream.mapper.Mapper;
 /**
  * A {@link TreeMarshallingStrategy} handling {@link CrossLink}s.
  */
-public class CrossLinkMarshallingStrategy extends AbstractTreeMarshallingStrategy implements CrossLink {
+public class CrossLinkMarshallingStrategy extends
+		AbstractTreeMarshallingStrategy implements CrossLink {
 
 	private List<CrossLink> crosslinks = new ArrayList<CrossLink>();
-	
+
 	/**
 	 * Register a {@link CrossLink}.
+	 * 
 	 * @param crosslink
 	 */
 	public void register(CrossLink crosslink) {
 		crosslinks.add(crosslink);
 	}
-	
+
 	protected TreeUnmarshaller createUnmarshallingContext(Object root,
 			HierarchicalStreamReader reader, ConverterLookup converterLookup,
 			Mapper mapper) {
-		return new CrossLinkUnmarshaller(root, reader, converterLookup, mapper) {
-			@Override
-			protected void crossLink(Object parent, Object item) {
-				CrossLinkMarshallingStrategy.this.crossLink(parent, item);
-			}
-		};
+		return new CrossLinkUnmarshaller(root, reader, converterLookup, mapper,
+				this);
 	}
 
 	protected TreeMarshaller createMarshallingContext(
 			HierarchicalStreamWriter writer, ConverterLookup converterLookup,
 			Mapper mapper) {
-		return new CrossLinkMarshaller(writer, converterLookup, mapper) {
-			@Override
-			protected boolean isCrossLinked(Object object) {
-				return CrossLinkMarshallingStrategy.this.isCrossLinked(object);
-			}
-
-			@Override
-			protected boolean isCrossLink(Object parent, Object object) {
-				return CrossLinkMarshallingStrategy.this.isCrossLink(parent, object);
-			}
-		};
+		return new CrossLinkMarshaller(writer, converterLookup, mapper, this);
 	}
 
 	public boolean isCrossLinked(Object object) {
@@ -79,7 +67,7 @@ public class CrossLinkMarshallingStrategy extends AbstractTreeMarshallingStrateg
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -89,7 +77,7 @@ public class CrossLinkMarshallingStrategy extends AbstractTreeMarshallingStrateg
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
