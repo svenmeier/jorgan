@@ -30,6 +30,8 @@ import com.thoughtworks.xstream.mapper.Mapper;
 
 public class CrossLinkMarshaller extends TreeMarshaller {
 
+	private CrossLink crossLink;
+	
 	private final IDGenerator idGenerator;
 
 	private ObjectIdDictionary references = new ObjectIdDictionary();
@@ -37,16 +39,18 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 	private FastStack parentStack = new FastStack(16);
 
 	public CrossLinkMarshaller(HierarchicalStreamWriter writer,
-			ConverterLookup converterLookup, Mapper mapper) {
-		this(writer, converterLookup, mapper, new SequenceGenerator(1));
+			ConverterLookup converterLookup, Mapper mapper, CrossLink crossLink) {
+		this(writer, converterLookup, mapper, new SequenceGenerator(1), crossLink);
 	}
 
 	public CrossLinkMarshaller(HierarchicalStreamWriter writer,
 			ConverterLookup converterLookup, Mapper mapper,
-			IDGenerator idGenerator) {
+			IDGenerator idGenerator, CrossLink crossLink) {
 		super(writer, converterLookup, mapper);
 
 		this.idGenerator = idGenerator;
+		
+		this.crossLink = crossLink;
 	}
 
 	public void convert(Object item, Converter converter) {
@@ -54,7 +58,7 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 			// strings, ints, dates, etc... don't bother using references.
 			converter.marshal(item, writer, this);
 		} else {
-			if (isCrossLink(parentStack.peek(), item)) {
+			if (crossLink.isCrossLink(parentStack.peek(), item)) {
 				String reference = getId(item);
 
 				String attributeName = getMapper().aliasForSystemAttribute(
@@ -63,7 +67,7 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 					writer.addAttribute(attributeName, reference);
 				}
 			} else {
-				if (isCrossLinked(item)) {
+				if (crossLink.isCrossLinked(item)) {
 					String id = getId(item);
 
 					String attributeName = getMapper().aliasForSystemAttribute(
@@ -81,14 +85,6 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 				}
 			}
 		}
-	}
-
-	protected boolean isCrossLinked(Object object) {
-		return false;
-	}
-
-	protected boolean isCrossLink(Object parent, Object object) {
-		return false;
 	}
 
 	private String getId(Object item) {
