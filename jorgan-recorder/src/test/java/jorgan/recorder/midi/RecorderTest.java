@@ -18,13 +18,9 @@
  */
 package jorgan.recorder.midi;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 
 import junit.framework.TestCase;
@@ -32,7 +28,7 @@ import junit.framework.TestCase;
 public class RecorderTest extends TestCase {
 
 	public void test() throws Exception {
-		Recorder recorder = new Recorder(1);
+		Recorder recorder = new Recorder(new Sequence(Sequence.PPQ, 50, 1));
 		recorder.addListener(new RecorderAdapter() {
 
 			public void played(int track, MidiMessage message) {
@@ -85,19 +81,7 @@ public class RecorderTest extends TestCase {
 
 		recorder.stop();
 
-		OutputStream output = new FileOutputStream("recorder.mid");
-		try {
-			recorder.save(output);
-		} finally {
-			output.close();
-		}
-
-		InputStream input = new FileInputStream("recorder.mid");
-		try {
-			recorder.load(input);
-		} finally {
-			input.close();
-		}
+		recorder.setTime(0);
 
 		recorder.start();
 

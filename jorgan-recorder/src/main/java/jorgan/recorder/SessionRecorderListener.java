@@ -23,9 +23,20 @@ package jorgan.recorder;
  */
 public interface SessionRecorderListener {
 
+	/**
+	 * @see SessionRecorder#setTime(long time)
+	 */
 	public void timeChanged(long millis);
 	
+	/**
+	 * @see SessionRecorder#setElement(int, jorgan.disposition.Element)
+	 */
 	public void trackerChanged(int track);
 	
+	/**
+	 * @see SessionRecorder#play()
+	 * @see SessionRecorder#record()
+	 * @see SessionRecorder#stop()
+	 */
 	public void stateChanged(int state);
 }

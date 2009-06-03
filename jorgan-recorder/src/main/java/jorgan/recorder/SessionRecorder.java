@@ -22,9 +22,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.Sequence;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
@@ -40,6 +42,10 @@ import jorgan.session.SessionListener;
  * A recorder of an {@link OrganSession}.
  */
 public class SessionRecorder {
+
+	private static final float DEFAULT_DIVISION = Sequence.PPQ;
+
+	private static final int DEFAULT_RESOLUTION = 50;
 
 	public static final int STATE_STOP = 0;
 
@@ -64,7 +70,7 @@ public class SessionRecorder {
 	 */
 	public SessionRecorder(OrganSession session) {
 		this.session = session;
-		this.recorder = new Recorder();
+		this.recorder = new Recorder(createSequence(0));
 
 		session.addListener(listener);
 		session.getOrgan().addOrganListener(listener);
@@ -78,9 +84,7 @@ public class SessionRecorder {
 	}
 
 	public void reset() {
-		int track;
-
-		track = 0;
+		int track = 0;
 		List<Tracker> trackers = new ArrayList<Tracker>();
 		for (Element element : session.getOrgan().getElements()) {
 			Tracker tracker = TrackerRegistry.createTracker(this, track,
@@ -91,12 +95,20 @@ public class SessionRecorder {
 			}
 		}
 
-		recorder.setTracks(trackers.size());
+		setSequence(createSequence(track));
 
 		track = 0;
 		for (Tracker tracker : trackers) {
 			setTracker(track, tracker);
 			track++;
+		}
+	}
+
+	private static Sequence createSequence(int tracks) {
+		try {
+			return new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, tracks);
+		} catch (InvalidMidiDataException ex) {
+			throw new Error(ex);
 		}
 	}
 
@@ -165,6 +177,10 @@ public class SessionRecorder {
 		return elements;
 	}
 
+	public void setTime(long time) {
+		recorder.setTime(time);
+	}
+	
 	public void setElement(int track, Element element) {
 		Tracker tracker;
 
@@ -181,7 +197,7 @@ public class SessionRecorder {
 		setTracker(track, tracker);
 	}
 
-	public void setTracker(int track, Tracker tracker) {
+	private void setTracker(int track, Tracker tracker) {
 		recorder.stop();
 
 		if (tracker.getElement() == null) {
@@ -190,7 +206,9 @@ public class SessionRecorder {
 			setTrackName(track, tracker.getElement().getName());
 		}
 
-		trackers[track].destroy();
+		if (trackers[track] != null) {
+			trackers[track].destroy();
+		}
 
 		trackers[track] = tracker;
 
@@ -238,20 +256,8 @@ public class SessionRecorder {
 
 		public void timeChanged(long millis) {
 			stop();
-			
+
 			fireTimeChanged(millis);
-		}
-
-		public void sequenceChanged() {
-			for (int track = 0; track < trackers.length; track++) {
-				trackers[track].destroy();
-			}
-
-			trackers = new Tracker[recorder.getTrackCount()];
-
-			for (int track = 0; track < trackers.length; track++) {
-				trackers[track] = createTracker(track);
-			}
 		}
 
 		public void played(int track, MidiMessage message) {
@@ -305,8 +311,7 @@ public class SessionRecorder {
 	 * @param name
 	 */
 	private void setTrackName(int track, String name) {
-		Iterator<MidiEvent> iterator = recorder.events(track)
-				.iterator();
+		Iterator<MidiEvent> iterator = recorder.events(track).iterator();
 		while (iterator.hasNext()) {
 			MidiEvent event = iterator.next();
 
@@ -354,10 +359,31 @@ public class SessionRecorder {
 		public Element getElement() {
 			return null;
 		}
-		
+
 		@Override
 		protected boolean owns(MidiEvent event) {
 			return false;
 		}
+	}
+
+	public void setSequence(Sequence sequence) {
+		for (int track = 0; track < trackers.length; track++) {
+			trackers[track].destroy();
+		}
+
+		recorder.setSequence(sequence);
+
+		trackers = new Tracker[recorder.getTrackCount()];
+		for (int track = 0; track < trackers.length; track++) {
+			trackers[track] = new EmptyTracker(track);
+		}
+
+		for (int track = 0; track < trackers.length; track++) {
+			setTracker(track, createTracker(track));
+		}
+	}
+
+	public Sequence getSequence() {
+		return recorder.getSequence();
 	}
 }
