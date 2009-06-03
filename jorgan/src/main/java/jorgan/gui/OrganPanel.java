@@ -206,10 +206,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 				action.getDockable().setSession(this.session);
 			}
 
-			for (Element element : this.session.getOrgan().getElements()) {
-				if (element instanceof Console) {
-					addConsoleDockable((Console) element);
-				}
+			for (Console console : this.session.getOrgan().getElements(Console.class)) {
+				addConsoleDockable(console);
 			}
 		}
 
