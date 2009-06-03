@@ -24,11 +24,13 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import jorgan.disposition.event.AbstractUndoableChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
+import jorgan.gui.construct.ElementComparator;
 
 /**
  * The container for all elements of an organ.
@@ -263,11 +265,11 @@ public class Organ {
 	 * 
 	 * @param clazz
 	 *            class to give elements for
-	 * @return elements
+	 * @return elements sorted by name
 	 */
 	@SuppressWarnings("unchecked")
-	public <E> Set<E> getElements(Class<E> clazz) {
-		Set<E> set = new HashSet<E>();
+	public <E extends Element> Set<E> getElements(Class<E> clazz) {
+		Set<E> set = new TreeSet<E>(new ElementComparator(true));
 
 		for (Element element : this.elements) {
 			if (clazz.isInstance(element)) {
