@@ -18,16 +18,11 @@
  */
 package jorgan.recorder.midi;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.Track;
 
@@ -39,10 +34,6 @@ public class Recorder {
 
 	public static final long MINUTE = 60 * SECOND;
 
-	private static final float DEFAULT_DIVISION = Sequence.PPQ;
-
-	private static final int DEFAULT_RESOLUTION = 50;
-
 	private Sequence sequence;
 
 	private Track[] tracks;
@@ -53,30 +44,7 @@ public class Recorder {
 
 	private List<RecorderListener> listeners = new ArrayList<RecorderListener>();
 
-	public Recorder() {
-		this(0);
-	}
-
-	public Recorder(int tracks) {
-		setTracks(tracks);
-	}
-
 	public Recorder(Sequence sequence) {
-		setSequence(sequence);
-	}
-
-	public void setTracks(int tracks) {
-		try {
-			setSequence(new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION,
-					tracks));
-		} catch (InvalidMidiDataException ex) {
-			throw new Error(ex);
-		}
-	}
-
-	public void addTrack() {
-		sequence.createTrack();
-
 		setSequence(sequence);
 	}
 
@@ -87,8 +55,10 @@ public class Recorder {
 
 		tracks = sequence.getTracks();
 		currentTick = 0;
+	}
 
-		fireSequenceChanged();
+	public Sequence getSequence() {
+		return sequence;
 	}
 
 	public void addListener(RecorderListener listener) {
@@ -182,13 +152,6 @@ public class Recorder {
 		}
 	}
 
-	private void fireSequenceChanged() {
-		for (RecorderListener listener : new ArrayList<RecorderListener>(
-				listeners)) {
-			listener.sequenceChanged();
-		}
-	}
-
 	private void firePlayed(int track, MidiMessage message) {
 		for (RecorderListener listener : listeners) {
 			listener.played(track, message);
@@ -247,8 +210,7 @@ public class Recorder {
 		return eventsToTick(track, currentTick);
 	}
 
-	public Iterable<MidiEvent> eventsToTick(final int track,
-			final long toTick) {
+	public Iterable<MidiEvent> eventsToTick(final int track, final long toTick) {
 		return events(track, 0, toTick);
 	}
 
@@ -261,8 +223,8 @@ public class Recorder {
 		return events(track, fromTick, Long.MAX_VALUE);
 	}
 
-	private Iterable<MidiEvent> events(final int track,
-			final long fromTick, final long toTick) {
+	private Iterable<MidiEvent> events(final int track, final long fromTick,
+			final long toTick) {
 
 		return new AbstractIterator<MidiEvent>() {
 			private int index = SequenceUtils.getIndex(tracks[track], fromTick) - 1;
@@ -291,22 +253,6 @@ public class Recorder {
 				index--;
 			}
 		};
-	}
-
-	public void save(OutputStream output) throws IOException {
-		MidiSystem.write(sequence, 1, output);
-	}
-
-	public void load(InputStream input) throws IOException {
-		Sequence sequence;
-		try {
-			sequence = MidiSystem.getSequence(input);
-		} catch (InvalidMidiDataException ex) {
-			IOException ioEx = new IOException();
-			ioEx.initCause(ex);
-			throw ioEx;
-		}
-		setSequence(sequence);
 	}
 
 	private abstract class State {

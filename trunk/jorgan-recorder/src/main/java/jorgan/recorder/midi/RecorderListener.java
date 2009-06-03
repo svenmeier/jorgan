@@ -26,11 +26,6 @@ import javax.sound.midi.MidiMessage;
 public interface RecorderListener {
 
 	/**
-	 * Notification of a complete change of the recorded sequence.
-	 */
-	public void sequenceChanged();
-
-	/**
 	 * Notification of a time change.
 	 * 
 	 * @param millis

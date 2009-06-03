@@ -29,7 +29,7 @@ import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.Tracker;
-import jorgan.recorder.midi.RecorderListener;
+import jorgan.recorder.midi.RecorderAdapter;
 
 public abstract class AbstractTracker implements Tracker {
 
@@ -127,24 +127,12 @@ public abstract class AbstractTracker implements Tracker {
 
 	protected abstract boolean owns(MidiEvent event);
 
-	private class EventListener implements RecorderListener {
-
-		public void timeChanged(long millis) {
-		}
-
-		public void sequenceChanged() {
-		}
+	private class EventListener extends RecorderAdapter {
 
 		public void played(int track, MidiMessage message) {
 			if (track == getTrack() && plays()) {
 				onPlayed(message);
 			}
-		}
-
-		public void recorded(int track, MidiMessage message) {
-		}
-
-		public void end(long millis) {
 		}
 
 		public void starting() {
@@ -179,9 +167,6 @@ public abstract class AbstractTracker implements Tracker {
 					}
 				}
 			}
-		}
-
-		public void stopped() {
 		}
 	}
 }

@@ -26,6 +26,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.Sequence;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
@@ -34,7 +37,6 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.SessionRecorderListener;
 import jorgan.recorder.gui.TracksPanel;
-import jorgan.recorder.io.MidiStream;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import spin.Spin;
@@ -185,9 +187,14 @@ public class RecorderDockable extends OrganDockable {
 				File file = chooser.getSelectedFile();
 
 				try {
-					new MidiStream().load(file, recorder.getRecorder());
+					Sequence sequence = MidiSystem.getSequence(file);
+
+					recorder.setSequence(sequence);
 				} catch (IOException ex) {
 					showBoxMessage("importException", file.getName());
+					return;
+				} catch (InvalidMidiDataException ex) {
+					showBoxMessage("importInvalid", file.getName());
 					return;
 				}
 			}
@@ -208,7 +215,7 @@ public class RecorderDockable extends OrganDockable {
 				File file = chooser.getSelectedFile();
 
 				try {
-					new MidiStream().save(file, recorder.getRecorder());
+					MidiSystem.write(recorder.getSequence(), 1, file);
 				} catch (IOException ex) {
 					showBoxMessage("exportException", file.getName());
 					return;
