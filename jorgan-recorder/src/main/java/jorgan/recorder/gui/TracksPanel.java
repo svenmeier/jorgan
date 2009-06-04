@@ -47,11 +47,11 @@ public class TracksPanel extends JPanel implements Scrollable {
 		recorder.addListener(new SessionRecorderListener() {
 			public void timeChanged(long millis) {
 			}
-			
+
 			public void trackerChanged(int track) {
 				createTracks();
 			}
-			
+
 			public void stateChanged(int state) {
 			}
 		});
@@ -63,11 +63,11 @@ public class TracksPanel extends JPanel implements Scrollable {
 		removeAll();
 		headerPanel.removeAll();
 
-		for (int track = 0; track < recorder.getRecorder().getTrackCount(); track++) {
+		for (int track = 0; track < recorder.getTrackerCount(); track++) {
 			add(new TrackGraph(recorder, track));
 			headerPanel.add(new TrackHeader(recorder, track));
 		}
-		
+
 		revalidate();
 		repaint();
 		headerPanel.revalidate();
@@ -101,8 +101,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 		if (orientation == SwingConstants.HORIZONTAL) {
 			increment = 10 * TrackGraph.SECOND_WIDTH;
 		} else {
-			increment = getPreferredSize().height
-					/ recorder.getRecorder().getTrackCount();
+			increment = getPreferredSize().height / recorder.getTrackerCount();
 		}
 
 		return increment;

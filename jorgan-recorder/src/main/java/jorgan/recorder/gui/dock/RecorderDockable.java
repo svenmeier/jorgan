@@ -148,10 +148,12 @@ public class RecorderDockable extends OrganDockable {
 
 	private void updateTime() {
 		if (recorder != null) {
-			setStatus(format.format(new Date(recorder.getRecorder().getTime()))
+			long time = recorder.getTime();
+			long totalTime = recorder.getTotalTime();
+			
+			setStatus(format.format(new Date(time))
 					+ " / "
-					+ format.format(new Date(recorder.getRecorder()
-							.getTotalTime())));
+					+ format.format(new Date(totalTime)));
 
 			tracksPanel.revalidate();
 			tracksPanel.repaint();

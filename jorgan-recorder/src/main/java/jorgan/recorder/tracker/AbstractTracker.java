@@ -29,7 +29,6 @@ import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.Tracker;
-import jorgan.recorder.midi.RecorderAdapter;
 
 public abstract class AbstractTracker implements Tracker {
 
@@ -41,18 +40,13 @@ public abstract class AbstractTracker implements Tracker {
 
 	private boolean records = true;
 
-	private EventListener listener = new EventListener();
-
 	protected AbstractTracker(SessionRecorder recorder, int track) {
 		this.recorder = recorder;
-		recorder.getRecorder().addListener(listener);
 
 		this.track = track;
 	}
 
 	public void destroy() {
-		recorder.getRecorder().removeListener(listener);
-
 		recorder = null;
 	}
 
@@ -86,19 +80,20 @@ public abstract class AbstractTracker implements Tracker {
 		return recorder.getSession().getPlay();
 	}
 
-	protected void onPlayStarting() {
+	public void onPlayStarting() {
 	}
 
-	protected void onRecordStarting() {
+	public void onRecordStarting() {
+		removeFollowingEvents();
 	}
 
-	protected void onPlayStopping() {
+	public void onPlayStopping() {
 	}
 
-	protected void onRecordStopping() {
+	public void onRecordStopping() {
 	}
 
-	protected void onPlayed(MidiMessage message) {
+	public void onPlayed(MidiMessage message) {
 	}
 
 	protected Iterable<MidiEvent> messages() {
@@ -126,47 +121,4 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected abstract boolean owns(MidiEvent event);
-
-	private class EventListener extends RecorderAdapter {
-
-		public void played(int track, MidiMessage message) {
-			if (track == getTrack() && plays()) {
-				onPlayed(message);
-			}
-		}
-
-		public void starting() {
-			if (track == getTrack()) {
-				if (recorder.getState() == SessionRecorder.STATE_RECORD) {
-					if (records()) {
-						removeFollowingEvents();
-
-						onRecordStarting();
-					} else if (plays()) {
-						onPlayStarting();
-					}
-				} else if (recorder.getState() == SessionRecorder.STATE_PLAY) {
-					if (plays()) {
-						onPlayStarting();
-					}
-				}
-			}
-		}
-
-		public void stopping() {
-			if (track == getTrack()) {
-				if (recorder.getState() == SessionRecorder.STATE_RECORD) {
-					if (records()) {
-						onRecordStopping();
-					} else if (plays()) {
-						onPlayStopping();
-					}
-				} else if (recorder.getState() == SessionRecorder.STATE_PLAY) {
-					if (plays()) {
-						onPlayStopping();
-					}
-				}
-			}
-		}
-	}
 }

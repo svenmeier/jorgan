@@ -18,9 +18,6 @@
  */
 package jorgan.recorder.midi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
@@ -28,7 +25,7 @@ import javax.sound.midi.Track;
 
 import jorgan.util.AbstractIterator;
 
-public class Recorder {
+public abstract class Recorder {
 
 	public static final long SECOND = 1000;
 
@@ -41,8 +38,6 @@ public class Recorder {
 	private long currentTick;
 
 	private State state;
-
-	private List<RecorderListener> listeners = new ArrayList<RecorderListener>();
 
 	public Recorder(Sequence sequence) {
 		setSequence(sequence);
@@ -61,14 +56,6 @@ public class Recorder {
 		return sequence;
 	}
 
-	public void addListener(RecorderListener listener) {
-		listeners.add(listener);
-	}
-
-	public void removeListener(RecorderListener listener) {
-		listeners.remove(listener);
-	}
-
 	public int getTrackCount() {
 		return tracks.length;
 	}
@@ -78,7 +65,7 @@ public class Recorder {
 	}
 
 	public long getTotalTime() {
-		return tickToMillis(state.getTotalTicks());
+		return tickToMillis(getTotalTicks());
 	}
 
 	public void setTime(long time) {
@@ -86,12 +73,29 @@ public class Recorder {
 			throw new IllegalArgumentException("negative time");
 		}
 
+		setTick(millisToTick(time));
+	}
+
+	private void setTick(long tick) {
 		stop();
 
-		this.currentTick = Math.min(millisToTick(time), sequence
-				.getTickLength());
+		this.currentTick = Math.min(tick, getTotalTicks() + 1);
+	}
 
-		fireTimeChanged(tickToMillis(currentTick));
+	private long getCurrentTick() {
+		return state.currentTick();
+	}
+
+	private long getTotalTicks() {
+		return state.totalTicks();
+	}
+
+	public void first() {
+		setTick(0);
+	}
+
+	public void last() {
+		setTick(sequence.getTickLength() + 1);
 	}
 
 	public void start() {
@@ -146,35 +150,13 @@ public class Recorder {
 		state.record(track, message);
 	}
 
-	private void fireTimeChanged(long millis) {
-		for (RecorderListener listener : listeners) {
-			listener.timeChanged(millis);
-		}
-	}
+	protected abstract void onPlayed(int track, MidiMessage message);
 
-	private void firePlayed(int track, MidiMessage message) {
-		for (RecorderListener listener : listeners) {
-			listener.played(track, message);
-		}
-	}
+	protected abstract void onEnd(long millis);
 
-	private void fireEnd(long millis) {
-		for (RecorderListener listener : listeners) {
-			listener.end(millis);
-		}
-	}
+	protected abstract void onStarting();
 
-	private void fireStarting() {
-		for (RecorderListener listener : listeners) {
-			listener.starting();
-		}
-	}
-
-	protected void fireStopping() {
-		for (RecorderListener listener : listeners) {
-			listener.stopping();
-		}
-	}
+	protected abstract void onStopping();
 
 	public long millisToTick(long millis) {
 		float division = sequence.getDivisionType();
@@ -196,10 +178,6 @@ public class Recorder {
 
 		return Math.round(((double) tick) * 1000 / division
 				/ sequence.getResolution());
-	}
-
-	public long getCurrentTick() {
-		return state.currentTick();
 	}
 
 	public Iterable<MidiEvent> events(final int track) {
@@ -262,12 +240,12 @@ public class Recorder {
 
 		public abstract void record(int track, MidiMessage message);
 
-		public abstract long getTotalTicks();
-
 		public abstract long currentTick();
 
+		public abstract long totalTicks();
+
 		public void stopping() {
-			fireStopping();
+			onStopping();
 		}
 	}
 
@@ -278,7 +256,7 @@ public class Recorder {
 		}
 
 		@Override
-		public long getTotalTicks() {
+		public long totalTicks() {
 			return sequence.getTickLength();
 		}
 
@@ -309,14 +287,9 @@ public class Recorder {
 			startMillis = System.currentTimeMillis();
 			thread = new Thread(this);
 
-			fireStarting();
+			onStarting();
 
 			thread.start();
-		}
-
-		@Override
-		public long getTotalTicks() {
-			return Math.max(currentTick(), sequence.getTickLength());
 		}
 
 		public long currentTick() {
@@ -324,12 +297,17 @@ public class Recorder {
 					+ millisToTick(System.currentTimeMillis() - startMillis);
 		}
 
+		@Override
+		public long totalTicks() {
+			return Math.max(sequence.getTickLength(), currentTick());
+		}
+
 		public synchronized void run() {
 			while (thread != null) {
 				long sleepMillis = playEvents();
 				if (sleepMillis == -1) {
 					thread = null;
-					fireEnd(tickToMillis(currentTick()));
+					onEnd(tickToMillis(currentTick()));
 					break;
 				} else {
 					try {
@@ -369,7 +347,7 @@ public class Recorder {
 						+ tickToMillis(nextEvent.getTick() - initialTick)
 						- System.currentTimeMillis();
 				if (sleepMillis <= 0) {
-					firePlayed(track, nextEvent.getMessage());
+					onPlayed(track, nextEvent.getMessage());
 
 					indices[track]++;
 				} else {
@@ -408,9 +386,7 @@ public class Recorder {
 			super.stopping();
 
 			// step behind last tick
-			currentTick = Math.min(currentTick++, sequence.getTickLength());
-
-			SequenceUtils.setTickLength(sequence, currentTick);
+			currentTick = Math.min(currentTick++, sequence.getTickLength() + 1);
 		}
 	}
 }
