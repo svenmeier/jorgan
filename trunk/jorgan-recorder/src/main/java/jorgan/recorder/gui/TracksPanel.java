@@ -48,18 +48,18 @@ public class TracksPanel extends JPanel implements Scrollable {
 			public void timeChanged(long millis) {
 			}
 
-			public void trackerChanged(int track) {
-				createTracks();
+			public void trackersChanged() {
+				initTracks();
 			}
 
 			public void stateChanged(int state) {
 			}
 		});
 
-		createTracks();
+		initTracks();
 	}
 
-	private void createTracks() {
+	private void initTracks() {
 		removeAll();
 		headerPanel.removeAll();
 
