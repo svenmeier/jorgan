@@ -169,11 +169,11 @@ public class TrackGraph extends JComponent {
 	}
 
 	private long getCurrentTime() {
-		return recorder.getRecorder().getTime();
+		return recorder.getTime();
 	}
 
 	private long getDisplayTime() {
-		return recorder.getRecorder().getTotalTime();
+		return recorder.getTotalTime();
 	}
 
 	private int millisToX(long millis) {
@@ -224,7 +224,7 @@ public class TrackGraph extends JComponent {
 				this.offset = offset;
 			} else {
 				this.offset = 0;
-				recorder.getRecorder().setTime(xToMillis(e.getX()));
+				recorder.setTime(xToMillis(e.getX()));
 			}
 			showCursor();
 		}
@@ -239,7 +239,7 @@ public class TrackGraph extends JComponent {
 			if (offset != null) {
 				int x = e.getX() - offset;
 
-				recorder.getRecorder().setTime(xToMillis(x));
+				recorder.setTime(xToMillis(x));
 			}
 		}
 

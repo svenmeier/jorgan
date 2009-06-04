@@ -18,6 +18,8 @@
  */
 package jorgan.recorder;
 
+import javax.sound.midi.MidiMessage;
+
 import jorgan.disposition.Element;
 import jorgan.recorder.midi.Recorder;
 
@@ -39,4 +41,14 @@ public interface Tracker {
 	public boolean plays();
 
 	public void destroy();
+
+	public void onPlayStarting();
+
+	public void onRecordStarting();
+
+	public void onPlayStopping();
+
+	public void onRecordStopping();
+
+	public void onPlayed(MidiMessage message);
 }

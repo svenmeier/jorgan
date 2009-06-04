@@ -28,30 +28,28 @@ import junit.framework.TestCase;
 public class RecorderTest extends TestCase {
 
 	public void test() throws Exception {
-		Recorder recorder = new Recorder(new Sequence(Sequence.PPQ, 50, 1));
-		recorder.addListener(new RecorderAdapter() {
-
-			public void played(int track, MidiMessage message) {
+		Recorder recorder = new Recorder(new Sequence(Sequence.PPQ, 50, 1)) {
+			protected void onPlayed(int track, MidiMessage message) {
 				trace("played ", track, message);
 			}
 
 			@Override
-			public void starting() {
+			protected void onStarting() {
 				System.out.println("Starting");
 			}
 
 			@Override
-			public void stopping() {
+			protected void onStopping() {
 				System.out.println("Stopping");
 			}
 
 			@Override
-			public void end(long millis) {
+			protected void onEnd(long millis) {
 				synchronized (RecorderTest.this) {
 					RecorderTest.this.notify();
 				}
 			}
-		});
+		};
 
 		recorder.start();
 

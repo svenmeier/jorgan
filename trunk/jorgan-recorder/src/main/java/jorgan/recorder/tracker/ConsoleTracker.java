@@ -77,6 +77,8 @@ public class ConsoleTracker extends AbstractTracker {
 	
 	@Override
 	public void onPlayStarting() {
+		super.onPlayStarting();
+		
 		ignoreChanges = true;
 
 		Collection<Element> active = getActive();
@@ -93,6 +95,8 @@ public class ConsoleTracker extends AbstractTracker {
 
 	@Override
 	public void onRecordStarting() {
+		super.onRecordStarting();
+		
 		Collection<Element> active = getActive();
 
 		for (Element element : getOrgan().getElements()) {

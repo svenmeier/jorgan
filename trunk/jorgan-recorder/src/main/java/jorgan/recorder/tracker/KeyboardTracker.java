@@ -70,8 +70,7 @@ public class KeyboardTracker extends AbstractTracker {
 		return false;
 	}
 
-	@Override
-	protected void onPlayed(MidiMessage message) {
+	public void onPlayed(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
@@ -88,8 +87,9 @@ public class KeyboardTracker extends AbstractTracker {
 	 * {@link OrganPlay#pressKey(Keyboard, int, int)} for all currently pressed
 	 * keys.
 	 */
-	@Override
-	protected void onPlayStarting() {
+	public void onPlayStarting() {
+		super.onPlayStarting();
+		
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay()
 					.pressKey(keyboard, message.getData1(), message.getData2());
@@ -100,8 +100,9 @@ public class KeyboardTracker extends AbstractTracker {
 	 * {@link Recorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
 	 * keys.
 	 */
-	@Override
-	protected void onRecordStarting() {
+	public void onRecordStarting() {
+		super.onRecordStarting();
+		
 		for (ShortMessage message : getKeyPresses()) {
 			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
@@ -111,8 +112,9 @@ public class KeyboardTracker extends AbstractTracker {
 	 * {@link Recorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
 	 * keys.
 	 */
-	@Override
-	protected void onRecordStopping() {
+	public void onRecordStopping() {
+		super.onRecordStopping();
+		
 		for (ShortMessage message : getKeyPresses()) {
 			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
 		}
@@ -122,8 +124,9 @@ public class KeyboardTracker extends AbstractTracker {
 	 * {@link OrganPlay#releaseKey(Keyboard, int, int)} for all currently
 	 * pressed keys.
 	 */
-	@Override
-	protected void onPlayStopping() {
+	public void onPlayStopping() {
+		super.onPlayStopping();
+		
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay().releaseKey(keyboard, message.getData1());
 		}

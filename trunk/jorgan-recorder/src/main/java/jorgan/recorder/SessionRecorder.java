@@ -32,7 +32,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.midi.Recorder;
-import jorgan.recorder.midi.RecorderListener;
 import jorgan.recorder.spi.TrackerRegistry;
 import jorgan.recorder.tracker.AbstractTracker;
 import jorgan.session.OrganSession;
@@ -70,11 +69,59 @@ public class SessionRecorder {
 	 */
 	public SessionRecorder(OrganSession session) {
 		this.session = session;
-		this.recorder = new Recorder(createSequence(0));
-
 		session.addListener(listener);
 		session.getOrgan().addOrganListener(listener);
-		recorder.addListener(listener);
+
+		this.recorder = new Recorder(createSequence(0)) {
+			@Override
+			protected void onPlayed(int track, MidiMessage message) {
+				Tracker tracker = trackers[track];
+				if (tracker.plays()) {
+					tracker.onPlayed(message);
+				}
+			}
+
+			@Override
+			protected void onEnd(long millis) {
+				if (getState() == STATE_PLAY) {
+					stop();
+				}
+			}
+
+			@Override
+			protected void onStarting() {
+				for (Tracker tracker : trackers) {
+					if (state == STATE_RECORD) {
+						if (tracker.records()) {
+							tracker.onRecordStarting();
+						} else if (tracker.plays()) {
+							tracker.onPlayStarting();
+						}
+					} else if (state == STATE_PLAY) {
+						if (tracker.plays()) {
+							tracker.onPlayStarting();
+						}
+					}
+				}
+			}
+
+			@Override
+			protected void onStopping() {
+				for (Tracker tracker : trackers) {
+					if (state == STATE_RECORD) {
+						if (tracker.records()) {
+							tracker.onRecordStopping();
+						} else if (tracker.plays()) {
+							tracker.onPlayStopping();
+						}
+					} else if (state == STATE_PLAY) {
+						if (tracker.plays()) {
+							tracker.onPlayStopping();
+						}
+					}
+				}
+			}
+		};
 
 		reset();
 	}
@@ -104,6 +151,29 @@ public class SessionRecorder {
 		}
 	}
 
+	public void setSequence(Sequence sequence) {
+		stop();
+
+		for (int track = 0; track < trackers.length; track++) {
+			trackers[track].destroy();
+		}
+
+		recorder.setSequence(sequence);
+
+		trackers = new Tracker[recorder.getTrackCount()];
+		for (int track = 0; track < trackers.length; track++) {
+			trackers[track] = new EmptyTracker(track);
+		}
+
+		for (int track = 0; track < trackers.length; track++) {
+			setTracker(track, createTracker(track));
+		}
+	}
+
+	public Sequence getSequence() {
+		return recorder.getSequence();
+	}
+
 	private static Sequence createSequence(int tracks) {
 		try {
 			return new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, tracks);
@@ -127,11 +197,13 @@ public class SessionRecorder {
 	}
 
 	public void play() {
-		state = STATE_PLAY;
+		if (state != STATE_PLAY) {
+			state = STATE_PLAY;
 
-		recorder.start();
+			recorder.start();
 
-		fireStateChanged();
+			fireStateChanged();
+		}
 	}
 
 	public void record() {
@@ -149,13 +221,13 @@ public class SessionRecorder {
 	public void first() {
 		stop();
 
-		recorder.setTime(0);
+		recorder.first();
 	}
 
 	public void last() {
 		stop();
 
-		recorder.setTime(recorder.getTotalTime());
+		recorder.last();
 	}
 
 	public Element getElement(int track) {
@@ -178,9 +250,21 @@ public class SessionRecorder {
 	}
 
 	public void setTime(long time) {
+		stop();
+
 		recorder.setTime(time);
+
+		fireTimeChanged(getTime());
 	}
-	
+
+	public long getTime() {
+		return recorder.getTime();
+	}
+
+	public long getTotalTime() {
+		return recorder.getTotalTime();
+	}
+
 	public void setElement(int track, Element element) {
 		Tracker tracker;
 
@@ -215,6 +299,10 @@ public class SessionRecorder {
 		fireTrackerChanged(track);
 	}
 
+	public int getTrackerCount() {
+		return trackers.length;
+	}
+
 	public Tracker getTracker(int track) {
 		return trackers[track];
 	}
@@ -238,47 +326,19 @@ public class SessionRecorder {
 	}
 
 	public void dispose() {
-		recorder.removeListener(listener);
 		session.getOrgan().removeOrganListener(listener);
+		session.removeListener(listener);
 
 		session = null;
 	}
 
-	private class EventListener extends OrganAdapter implements
-			RecorderListener, SessionListener {
+	private class EventListener extends OrganAdapter implements SessionListener {
 
 		public void constructingChanged(boolean constructing) {
-			recorder.stop();
+			stop();
 		}
 
 		public void destroyed() {
-		}
-
-		public void timeChanged(long millis) {
-			stop();
-
-			fireTimeChanged(millis);
-		}
-
-		public void played(int track, MidiMessage message) {
-		}
-
-		public void recorded(int track, MidiMessage message) {
-		}
-
-		public void end(long millis) {
-			if (getState() == STATE_PLAY) {
-				stop();
-			}
-		}
-
-		public void starting() {
-		}
-
-		public void stopping() {
-		}
-
-		public void stopped() {
 		}
 	}
 
@@ -364,26 +424,5 @@ public class SessionRecorder {
 		protected boolean owns(MidiEvent event) {
 			return false;
 		}
-	}
-
-	public void setSequence(Sequence sequence) {
-		for (int track = 0; track < trackers.length; track++) {
-			trackers[track].destroy();
-		}
-
-		recorder.setSequence(sequence);
-
-		trackers = new Tracker[recorder.getTrackCount()];
-		for (int track = 0; track < trackers.length; track++) {
-			trackers[track] = new EmptyTracker(track);
-		}
-
-		for (int track = 0; track < trackers.length; track++) {
-			setTracker(track, createTracker(track));
-		}
-	}
-
-	public Sequence getSequence() {
-		return recorder.getSequence();
 	}
 }
