@@ -29,7 +29,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.spi.TrackerRegistry;
@@ -70,58 +69,8 @@ public class SessionRecorder {
 	public SessionRecorder(OrganSession session) {
 		this.session = session;
 		session.addListener(listener);
-		session.getOrgan().addOrganListener(listener);
 
-		this.recorder = new Recorder(createSequence(0)) {
-			@Override
-			protected void onPlayed(int track, MidiMessage message) {
-				Tracker tracker = trackers[track];
-				if (tracker.plays()) {
-					tracker.onPlayed(message);
-				}
-			}
-
-			@Override
-			protected void onEnd(long millis) {
-				if (getState() == STATE_PLAY) {
-					stop();
-				}
-			}
-
-			@Override
-			protected void onStarting() {
-				for (Tracker tracker : trackers) {
-					if (state == STATE_RECORD) {
-						if (tracker.records()) {
-							tracker.onRecordStarting();
-						} else if (tracker.plays()) {
-							tracker.onPlayStarting();
-						}
-					} else if (state == STATE_PLAY) {
-						if (tracker.plays()) {
-							tracker.onPlayStarting();
-						}
-					}
-				}
-			}
-
-			@Override
-			protected void onStopping() {
-				for (Tracker tracker : trackers) {
-					if (state == STATE_RECORD) {
-						if (tracker.records()) {
-							tracker.onRecordStopping();
-						} else if (tracker.plays()) {
-							tracker.onPlayStopping();
-						}
-					} else if (state == STATE_PLAY) {
-						if (tracker.plays()) {
-							tracker.onPlayStopping();
-						}
-					}
-				}
-			}
-		};
+		this.recorder = new InternalRecorder();
 
 		reset();
 	}
@@ -131,6 +80,12 @@ public class SessionRecorder {
 	}
 
 	public void reset() {
+		stop();
+
+		for (int track = 0; track < trackers.length; track++) {
+			trackers[track].destroy();
+		}
+
 		int track = 0;
 		List<Tracker> trackers = new ArrayList<Tracker>();
 		for (Element element : session.getOrgan().getElements()) {
@@ -142,13 +97,15 @@ public class SessionRecorder {
 			}
 		}
 
-		setSequence(createSequence(track));
+		recorder.setSequence(createSequence(track));
 
 		track = 0;
 		for (Tracker tracker : trackers) {
 			setTracker(track, tracker);
 			track++;
 		}
+
+		fireTrackersChanged();
 	}
 
 	public void setSequence(Sequence sequence) {
@@ -162,12 +119,10 @@ public class SessionRecorder {
 
 		trackers = new Tracker[recorder.getTrackCount()];
 		for (int track = 0; track < trackers.length; track++) {
-			trackers[track] = new EmptyTracker(track);
-		}
-
-		for (int track = 0; track < trackers.length; track++) {
 			setTracker(track, createTracker(track));
 		}
+
+		fireTrackersChanged();
 	}
 
 	public Sequence getSequence() {
@@ -266,6 +221,8 @@ public class SessionRecorder {
 	}
 
 	public void setElement(int track, Element element) {
+		stop();
+
 		Tracker tracker;
 
 		if (element == null) {
@@ -279,11 +236,11 @@ public class SessionRecorder {
 		}
 
 		setTracker(track, tracker);
+		
+		fireTrackersChanged();
 	}
 
 	private void setTracker(int track, Tracker tracker) {
-		recorder.stop();
-
 		if (tracker.getElement() == null) {
 			setTrackName(track, null);
 		} else {
@@ -295,8 +252,6 @@ public class SessionRecorder {
 		}
 
 		trackers[track] = tracker;
-
-		fireTrackerChanged(track);
 	}
 
 	public int getTrackerCount() {
@@ -313,9 +268,9 @@ public class SessionRecorder {
 		}
 	}
 
-	private void fireTrackerChanged(int track) {
+	private void fireTrackersChanged() {
 		for (SessionRecorderListener listener : listeners) {
-			listener.trackerChanged(track);
+			listener.trackersChanged();
 		}
 	}
 
@@ -326,13 +281,68 @@ public class SessionRecorder {
 	}
 
 	public void dispose() {
-		session.getOrgan().removeOrganListener(listener);
 		session.removeListener(listener);
 
 		session = null;
 	}
 
-	private class EventListener extends OrganAdapter implements SessionListener {
+	private class InternalRecorder extends Recorder {
+
+		private InternalRecorder() {
+			super(createSequence(0));
+		}
+
+		@Override
+		protected void onPlayed(int track, MidiMessage message) {
+			Tracker tracker = trackers[track];
+			if (tracker.plays()) {
+				tracker.onPlayed(message);
+			}
+		}
+
+		@Override
+		protected void onEnd(long millis) {
+			if (getState() == STATE_PLAY) {
+				SessionRecorder.this.stop();
+			}
+		}
+
+		@Override
+		protected void onStarting() {
+			for (Tracker tracker : trackers) {
+				if (state == STATE_RECORD) {
+					if (tracker.records()) {
+						tracker.onRecordStarting();
+					} else if (tracker.plays()) {
+						tracker.onPlayStarting();
+					}
+				} else if (state == STATE_PLAY) {
+					if (tracker.plays()) {
+						tracker.onPlayStarting();
+					}
+				}
+			}
+		}
+
+		@Override
+		protected void onStopping() {
+			for (Tracker tracker : trackers) {
+				if (state == STATE_RECORD) {
+					if (tracker.records()) {
+						tracker.onRecordStopping();
+					} else if (tracker.plays()) {
+						tracker.onPlayStopping();
+					}
+				} else if (state == STATE_PLAY) {
+					if (tracker.plays()) {
+						tracker.onPlayStopping();
+					}
+				}
+			}
+		}
+	}
+
+	private class EventListener implements SessionListener {
 
 		public void constructingChanged(boolean constructing) {
 			stop();

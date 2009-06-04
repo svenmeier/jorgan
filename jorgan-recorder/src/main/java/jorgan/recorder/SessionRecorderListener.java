@@ -31,7 +31,7 @@ public interface SessionRecorderListener {
 	/**
 	 * @see SessionRecorder#setElement(int, jorgan.disposition.Element)
 	 */
-	public void trackerChanged(int track);
+	public void trackersChanged();
 	
 	/**
 	 * @see SessionRecorder#play()

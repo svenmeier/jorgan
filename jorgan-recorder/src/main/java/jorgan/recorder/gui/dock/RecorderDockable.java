@@ -130,7 +130,7 @@ public class RecorderDockable extends OrganDockable {
 							updateTime();
 						}
 
-						public void trackerChanged(int track) {
+						public void trackersChanged() {
 						}
 
 						public void stateChanged(int state) {
