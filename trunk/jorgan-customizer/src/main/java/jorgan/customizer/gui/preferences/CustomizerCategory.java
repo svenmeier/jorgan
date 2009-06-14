@@ -23,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import jorgan.customizer.gui.Customization;
+import jorgan.customizer.gui.CustomizeAction;
 import jorgan.gui.GUI;
 import jorgan.gui.preferences.category.GuiCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
@@ -42,7 +42,7 @@ public class CustomizerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			CustomizerCategory.class);
 
-	private Model handleErrors = getModel(new Property(Customization.class,
+	private Model handleErrors = getModel(new Property(CustomizeAction.class,
 			"handleErrors"));
 
 	private JRadioButton errorsOfferRadioButton = new JRadioButton();
@@ -89,13 +89,13 @@ public class CustomizerCategory extends JOrganCategory {
 	@Override
 	protected void read() {
 		switch ((Integer) handleErrors.getValue()) {
-		case Customization.ERROR_OFFER:
+		case CustomizeAction.ERROR_OFFER:
 			errorsOfferRadioButton.setSelected(true);
 			break;
-		case Customization.ERROR_CUSTOMIZE:
+		case CustomizeAction.ERROR_CUSTOMIZE:
 			errorsCustomizeRadioButton.setSelected(true);
 			break;
-		case Customization.ERROR_IGNORE:
+		case CustomizeAction.ERROR_IGNORE:
 			errorsIgnoreRadioButton.setSelected(true);
 			break;
 		}
@@ -105,11 +105,11 @@ public class CustomizerCategory extends JOrganCategory {
 	protected void write() {
 		int errors = 0;
 		if (errorsOfferRadioButton.isSelected()) {
-			errors = Customization.ERROR_OFFER;
+			errors = CustomizeAction.ERROR_OFFER;
 		} else if (errorsCustomizeRadioButton.isSelected()) {
-			errors = Customization.ERROR_CUSTOMIZE;
+			errors = CustomizeAction.ERROR_CUSTOMIZE;
 		} else if (errorsIgnoreRadioButton.isSelected()) {
-			errors = Customization.ERROR_IGNORE;
+			errors = CustomizeAction.ERROR_IGNORE;
 		}
 		handleErrors.setValue(errors);
 	}

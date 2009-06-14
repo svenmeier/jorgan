@@ -76,10 +76,14 @@ public class GenericSoundsCustomizer implements Customizer {
 	public JComponent getComponent() {
 		return scrollPane;
 	}
-	
+
 	public void apply() {
 		for (GenericSoundPanel panel : panels) {
 			panel.apply();
 		}
+	}
+
+	public static boolean customizes(OrganSession session) {
+		return session.getOrgan().getElements(GenericSound.class).size() > 0;
 	}
 }

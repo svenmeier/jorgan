@@ -109,10 +109,10 @@ public class KeyboardPanel extends JPanel {
 		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
 		secondColumn.definition(toSpinner);
 
-		read();
+		init();
 	}
 
-	private void read() {
+	private void init() {
 		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
 				Direction.IN);
 		String[] items = new String[1 + deviceNames.length];

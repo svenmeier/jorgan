@@ -23,17 +23,18 @@ import java.util.List;
 
 import javax.swing.Action;
 
+import jorgan.gui.OrganFrame;
 import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
 public class ActionRegistry {
 
-	public static List<Action> createActions(OrganSession session) {
+	public static List<Action> createActions(OrganSession session, OrganFrame frame) {
 		ArrayList<Action> actions = new ArrayList<Action>();
 
 		for (SessionActionProvider provider : PluginUtils
 				.lookup(SessionActionProvider.class)) {
-			actions.addAll(provider.getActions(session));
+			actions.addAll(provider.getActions(session, frame));
 		}
 
 		return actions;

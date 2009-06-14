@@ -1,27 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
-    <stop id="1">
-      <name>Stop 0</name>
-      <description></description>
-      <references>
-        <reference>
-          <element ref="2"/>
-        </reference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>true</active>
-      <locking>true</locking>
-      <action>0</action>
-      <transpose>0</transpose>
-    </stop>
-    <rank id="3">
+    <rank id="1">
       <name>Rank 1</name>
       <description></description>
       <references>
         <reference>
-          <element ref="4"/>
+          <element ref="2"/>
         </reference>
       </references>
       <messages>
@@ -60,27 +45,12 @@
       <channel></channel>
       <delay>0</delay>
     </rank>
-    <stop id="5">
-      <name>Stop 1</name>
-      <description></description>
-      <references>
-        <reference>
-          <element ref="3"/>
-        </reference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>true</locking>
-      <action>0</action>
-      <transpose>-12</transpose>
-    </stop>
-    <rank id="2">
+    <rank id="3">
       <name>Rank 0</name>
       <description></description>
       <references>
         <reference>
-          <element ref="4"/>
+          <element ref="2"/>
         </reference>
       </references>
       <messages>
@@ -119,64 +89,30 @@
       <channel></channel>
       <delay>0</delay>
     </rank>
-    <label id="6">
-      <name>Instructions</name>
-      <description>name=Activate the stops to hear them sound:</description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-    </label>
-    <fluidsynth.fluidsynthSound id="4">
-      <name></name>
-      <description></description>
-      <references/>
-      <messages/>
-      <soundfont>fluidsynth-example.SF2</soundfont>
-      <channels>32</channels>
-      <polyphony>256</polyphony>
-      <sampleRate>44100</sampleRate>
-      <audioBuffers>16</audioBuffers>
-      <audioBufferSize>128</audioBufferSize>
-      <gain>0.2</gain>
-      <reverb>
-        <room>0.2</room>
-        <damping>0.0</damping>
-        <width>0.5</width>
-        <level>1.0</level>
-      </reverb>
-    </fluidsynth.fluidsynthSound>
-    <console id="7">
-      <name></name>
+    <stop id="4">
+      <name>Stop 0</name>
       <description></description>
       <references>
-        <console-locationReference>
-          <element ref="1"/>
-          <x>200</x>
-          <y>70</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="5"/>
-          <x>200</x>
-          <y>100</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="6"/>
-          <x>120</x>
-          <y>40</y>
-        </console-locationReference>
+        <reference>
+          <element ref="3"/>
+        </reference>
       </references>
       <messages/>
       <zoom>1.0</zoom>
-    </console>
-    <keyboard id="8">
-      <name></name>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <keyboard id="5">
+      <name>My Keyboard</name>
       <description></description>
       <references>
         <reference>
-          <element ref="1"/>
+          <element ref="4"/>
         </reference>
         <reference>
-          <element ref="5"/>
+          <element ref="6"/>
         </reference>
       </references>
       <messages>
@@ -196,7 +132,71 @@
           <data2>equal 0 | get velocity</data2>
         </keyboard-releaseKey>
       </messages>
-      <input>jOrgan Keyboard</input>
+      <input>jOrgan Keyboard fail</input>
     </keyboard>
+    <fluidsynth.fluidsynthSound id="2">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <soundfont>fluidsynth-example.SF2</soundfont>
+      <channels>32</channels>
+      <polyphony>256</polyphony>
+      <sampleRate>44100</sampleRate>
+      <audioBuffers>16</audioBuffers>
+      <audioBufferSize>128</audioBufferSize>
+      <gain>0.2</gain>
+      <reverb>
+        <room>0.2</room>
+        <damping>0.0</damping>
+        <width>0.5</width>
+        <level>1.0</level>
+      </reverb>
+    </fluidsynth.fluidsynthSound>
+    <stop id="6">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="1"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>-12</transpose>
+    </stop>
+    <label id="7">
+      <name>Instructions</name>
+      <description>name=Activate the stops to hear them sound:</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <console id="8">
+      <name>My Console</name>
+      <description></description>
+      <references>
+        <console-locationReference>
+          <element ref="4"/>
+          <x>200</x>
+          <y>70</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="6"/>
+          <x>200</x>
+          <y>100</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="7"/>
+          <x>120</x>
+          <y>40</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
   </elements>
 </organ>

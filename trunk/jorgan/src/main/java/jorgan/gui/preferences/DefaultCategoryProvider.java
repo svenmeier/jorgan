@@ -9,7 +9,6 @@ import jorgan.gui.preferences.category.ConsoleCategory;
 import jorgan.gui.preferences.category.DispositionStreamCategory;
 import jorgan.gui.preferences.category.GuiCategory;
 import jorgan.gui.preferences.category.MidiCategory;
-import jorgan.gui.preferences.category.MidiMergerCategory;
 import jorgan.gui.preferences.spi.CategoryProvider;
 import bias.swing.Category;
 
@@ -27,7 +26,6 @@ public class DefaultCategoryProvider implements CategoryProvider {
 		categories.add(new DispositionStreamCategory());
 		categories.add(new CLICategory());
 		categories.add(new MidiCategory());
-		categories.add(new MidiMergerCategory());
 
 		return categories;
 	}
