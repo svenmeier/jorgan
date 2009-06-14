@@ -43,14 +43,14 @@ public class PluginUtils {
 
 		while (iterator.hasNext()) {
 			try {
-				P p = iterator.next();
-				if (clazz.isInstance(p)) {
-					providers.add(p);
+				P provider = iterator.next();
+				if (clazz.isInstance(provider)) {
+					providers.add(provider);
 				} else {					
 					logger.log(Level.WARNING, "provider not instance of " + clazz);
 				}
-			} catch (Throwable providerFailed) {
-				logger.log(Level.WARNING, "provider failed", providerFailed);
+			} catch (Throwable failure) {
+				logger.log(Level.WARNING, "provider failed", failure);
 			}
 		}
 

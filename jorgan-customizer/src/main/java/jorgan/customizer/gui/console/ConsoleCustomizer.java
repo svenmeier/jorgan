@@ -58,4 +58,8 @@ public class ConsoleCustomizer implements Customizer {
 	public void apply() {
 		panel.apply();
 	}
+
+	public static boolean customizes(OrganSession session, Console console) {
+		return console.getReferenceCount() > 0;
+	}
 }

@@ -171,7 +171,7 @@ public class Loopback implements MidiDevice {
 		return new LoopbackTransmitter();
 	}
 
-	protected synchronized void loopbackMessage(MidiMessage message, long timestamp) {
+	public synchronized void loopbackMessage(MidiMessage message, long timestamp) {
 		if (isOpen()) {
 			for (int r = 0; r < transmitters.size(); r++) {
 				LoopbackTransmitter transmitter = transmitters

@@ -199,8 +199,7 @@ public class DispositionStream {
 			}
 
 			recentDirectory = canonical.getParentFile();
-		} catch (IOException ex) {
-			// ignoe
+		} catch (IOException ignore) {
 		}
 
 		config.write(this);

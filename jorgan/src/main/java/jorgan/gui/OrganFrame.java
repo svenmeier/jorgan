@@ -230,7 +230,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		fileMenu.add(saveAction);
 		fileMenu.add(saveAsAction);
 
-		List<Action> actions = ActionRegistry.createActions(session);
+		List<Action> actions = ActionRegistry.createActions(session, this);
 		if (actions.size() > 0) {
 			fileMenu.addSeparator();
 
@@ -340,9 +340,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		saveAction.clearChanges();
 
-		buildMenu();
-
 		organPanel.setSession(session);
+		
+		buildMenu();
 	}
 
 	/**
@@ -397,9 +397,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
-		} else {
-			// TODO how to notify customizer?
-			// Customization.onErrors(this, session);
 		}
 	}
 

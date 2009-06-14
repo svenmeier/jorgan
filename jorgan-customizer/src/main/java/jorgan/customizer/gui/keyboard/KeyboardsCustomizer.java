@@ -75,10 +75,14 @@ public class KeyboardsCustomizer implements Customizer {
 	public JComponent getComponent() {
 		return scrollPane;
 	}
-	
+
 	public void apply() {
 		for (KeyboardPanel panel : panels) {
 			panel.apply();
 		}
+	}
+
+	public static boolean customizes(OrganSession session) {
+		return session.getOrgan().getElements(Keyboard.class).size() > 0;
 	}
 }
