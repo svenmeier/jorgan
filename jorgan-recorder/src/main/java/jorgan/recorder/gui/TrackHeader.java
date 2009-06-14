@@ -19,7 +19,8 @@
 package jorgan.recorder.gui;
 
 import java.awt.BorderLayout;
-import java.awt.GridLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -39,6 +40,8 @@ import bias.Configuration;
 
 public class TrackHeader extends JPanel {
 
+	private static final int MAX_WIDTH = 128;
+
 	private static Configuration config = Configuration.getRoot().get(
 			TrackHeader.class);
 
@@ -55,10 +58,11 @@ public class TrackHeader extends JPanel {
 		JLabel label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBorder(new EmptyBorder(2, 2, 2, 2));
-		label.setText(getTitle());
+		label.setText(getTrackName());
+		label.setToolTipText(getTrackName());
 		add(label, BorderLayout.NORTH);
 
-		JPanel buttonPanel = new JPanel(new GridLayout(1, 2));
+		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		add(buttonPanel, BorderLayout.CENTER);
 
 		IconToggle playToggle = new IconToggle() {
@@ -110,7 +114,14 @@ public class TrackHeader extends JPanel {
 		label.setComponentPopupMenu(menu);
 	}
 
-	private String getTitle() {
+	@Override
+	public Dimension getPreferredSize() {
+		Dimension size = super.getPreferredSize();
+		size.width = Math.min(size.width, MAX_WIDTH);
+		return size;
+	}
+
+	public String getTrackName() {
 		Element element = recorder.getElement(track);
 		if (element == null) {
 			return "Track " + track;

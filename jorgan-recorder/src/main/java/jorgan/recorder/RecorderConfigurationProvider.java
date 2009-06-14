@@ -16,27 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder.spi;
+package jorgan.recorder;
 
-import jorgan.disposition.Console;
-import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.recorder.SessionRecorder;
-import jorgan.recorder.Tracker;
-import jorgan.recorder.tracker.ConsoleTracker;
-import jorgan.recorder.tracker.KeyboardTracker;
+import java.util.ArrayList;
+import java.util.List;
 
-public class DefaultTrackerProvider implements TrackerProvider {
+import jorgan.spi.ConfigurationProvider;
+import bias.Store;
+import bias.store.DefaultingStore;
+import bias.store.PreferencesStore;
+import bias.store.PropertiesStore;
 
-	public Tracker createTracker(SessionRecorder recorder, int track,
-			Element element) {
-		if (element instanceof Keyboard) {
-			return new KeyboardTracker(recorder, track, (Keyboard) element);
-		} else if (element instanceof Console) {
-			return new ConsoleTracker(recorder, track, (Console) element);
-		} else {
-			return null;
-		}
+public class RecorderConfigurationProvider implements ConfigurationProvider {
 
+	public List<Store> getStores() {
+		ArrayList<Store> stores = new ArrayList<Store>();
+
+		stores.add(new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(getClass(), "preferences.properties")));
+
+		return stores;
 	}
+
 }
