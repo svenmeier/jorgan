@@ -3,6 +3,7 @@ package jorgan.recorder.swing;
 import java.awt.AlphaComposite;
 import java.awt.Component;
 import java.awt.Composite;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -19,6 +20,8 @@ public abstract class IconToggle extends JComponent {
 	private Icon offIcon = new EmptyIcon();
 
 	public IconToggle() {
+		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+		
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {

@@ -18,49 +18,24 @@
  */
 package jorgan.recorder;
 
-import javax.sound.midi.MidiMessage;
-
+import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.recorder.midi.Recorder;
+import jorgan.disposition.Keyboard;
+import jorgan.recorder.spi.TrackerProvider;
+import jorgan.recorder.tracker.ConsoleTracker;
+import jorgan.recorder.tracker.KeyboardTracker;
 
-/**
- * A tracker of a {@link Recorder}'s track.
- */
-public interface Tracker {
+public class DefaultTrackerProvider implements TrackerProvider {
 
-	public int getTrack();
+	public Tracker createTracker(SessionRecorder recorder, int track,
+			Element element) {
+		if (element instanceof Keyboard) {
+			return new KeyboardTracker(recorder, track, (Keyboard) element);
+		} else if (element instanceof Console) {
+			return new ConsoleTracker(recorder, track, (Console) element);
+		} else {
+			return null;
+		}
 
-	public Element getElement();
-
-	/**
-	 * TODO setRecordEnabled
-	 */
-	public void setRecords(boolean recording);
-
-	/**
-	 * TODO isRecordEnabled
-	 */
-	public boolean records();
-
-	/**
-	 * TODO setPlayEnabled
-	 */
-	public void setPlays(boolean playing);
-
-	/**
-	 * TODO isPlayEnabled
-	 */
-	public boolean plays();
-
-	public void destroy();
-
-	public void onPlayStarting();
-
-	public void onRecordStarting();
-
-	public void onPlayStopping();
-
-	public void onRecordStopping();
-
-	public void onPlayed(MidiMessage message);
+	}
 }

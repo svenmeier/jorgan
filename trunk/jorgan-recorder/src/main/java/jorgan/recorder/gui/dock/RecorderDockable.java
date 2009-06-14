@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.TimeZone;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.Sequence;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
@@ -37,6 +36,8 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.SessionRecorder;
 import jorgan.recorder.SessionRecorderListener;
 import jorgan.recorder.gui.TracksPanel;
+import jorgan.recorder.gui.file.MidiFileFilter;
+import jorgan.recorder.io.MidiStream;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import spin.Spin;
@@ -181,7 +182,10 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser chooser = new JFileChooser();
+			MidiStream midiStream = new MidiStream();
+
+			JFileChooser chooser = new JFileChooser(midiStream
+					.getRecentDirectory());
 			chooser.setDialogTitle(getShortDescription());
 			chooser
 					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
@@ -189,7 +193,7 @@ public class RecorderDockable extends OrganDockable {
 				File file = chooser.getSelectedFile();
 
 				try {
-					Sequence sequence = MidiSystem.getSequence(file);
+					Sequence sequence = midiStream.read(file);
 
 					recorder.setSequence(sequence);
 				} catch (IOException ex) {
@@ -209,15 +213,18 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			JFileChooser chooser = new JFileChooser();
+			MidiStream midiStream = new MidiStream();
+
+			JFileChooser chooser = new JFileChooser(midiStream
+					.getRecentDirectory());
 			chooser.setDialogTitle(getShortDescription());
-			chooser
-					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
+			chooser.setFileFilter(new MidiFileFilter());
 			if (chooser.showSaveDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
+				File file = jorgan.recorder.io.MidiFileFilter.addSuffix(chooser
+						.getSelectedFile());
 
 				try {
-					MidiSystem.write(recorder.getSequence(), 1, file);
+					midiStream.write(recorder.getSequence(), file);
 				} catch (IOException ex) {
 					showBoxMessage("exportException", file.getName());
 					return;
