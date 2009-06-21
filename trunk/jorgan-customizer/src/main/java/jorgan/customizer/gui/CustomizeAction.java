@@ -38,6 +38,8 @@ public class CustomizeAction extends BaseAction {
 
 	public CustomizeAction(OrganSession session, OrganFrame frame) {
 		this.session = session;
+		this.frame = frame;
+		
 		session.addListener(eventListener);
 
 		config.read(this);

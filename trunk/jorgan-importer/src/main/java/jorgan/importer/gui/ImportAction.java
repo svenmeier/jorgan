@@ -2,8 +2,7 @@ package jorgan.importer.gui;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.JComponent;
-
+import jorgan.gui.OrganFrame;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import bias.Configuration;
@@ -18,13 +17,16 @@ public class ImportAction extends BaseAction {
 
 	private OrganSession session;
 
-	public ImportAction(OrganSession session) {
+	private OrganFrame frame;
+
+	public ImportAction(OrganSession session, OrganFrame frame) {
 		this.session = session;
+		this.frame = frame;
 
 		config.read(this);
 	}
 
 	public void actionPerformed(ActionEvent ev) {
-		ImportWizard.showInDialog(((JComponent) ev.getSource()), session);
+		ImportWizard.showInDialog(frame, session);
 	}
 }
