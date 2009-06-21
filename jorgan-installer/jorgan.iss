@@ -34,24 +34,30 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
 Name: "core"; Description: "Program Files"; Types: full custom; Flags: fixed
-Name: "customizer"; Description: "Customizer"; Types: full
-Name: "importer"; Description: "Importer"; Types: full
-Name: "recorder"; Description: "Recorder"; Types: full
 Name: "creative"; Description: "Creative Soundblaster"; Types: full
+Name: "customizer"; Description: "Customizer"; Types: full
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
+Name: "importer"; Description: "Importer"; Types: full
+Name: "keyboard"; Description: "Keyboard"; Types: full
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: full
+Name: "midimerger"; Description: "Midi merger"; Types: full
+Name: "recorder"; Description: "Recorder"; Types: full
 Name: "skins"; Description: "Skins"; Types: full
+Name: "soundfont"; Description: "Soundfont"; Types: full
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
 Source: "..\core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
-Source: "..\customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
-Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
-Source: "..\recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
 Source: "..\creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
+Source: "..\customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
 Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
+Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
+Source: "..\keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
 Source: "..\linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
+Source: "..\midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
+Source: "..\recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
 Source: "..\skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
+Source: "..\soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan"; Filename: "{app}\jOrgan.exe"
