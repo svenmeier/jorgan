@@ -81,8 +81,8 @@ import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
 import jorgan.swing.MacAdapter;
-import jorgan.swing.Marker;
 import jorgan.swing.StandardDialog;
+import swingx.Marker;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -96,7 +96,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
 
-	private boolean useXor = false;
+	private boolean markXOR = false;
 
 	/**
 	 * The organ of the edited console.
@@ -255,8 +255,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		setConstructing(!constructing);
 	}
 
-	public void setUseXOR(boolean useXor) {
-		this.useXor = useXor;
+	public void setMarkXOR(boolean markXOR) {
+		this.markXOR = markXOR;
 	}
 
 	public void dispose() {
@@ -771,7 +771,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		private final BasicStroke stroke = new BasicStroke(0.0f,
 				BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f,
-				new float[] { 2.0f, 2.0f }, 0.0f);
+				new float[] { 4.0f, 4.0f }, 0.0f);
 
 		private boolean isMultiSelect(MouseEvent ev) {
 			return (ev.getModifiers() & Toolkit.getDefaultToolkit()
@@ -833,21 +833,19 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 
 				if (dragMarker != null) {
-					dragMarker.remove(ConsolePanel.this);
+					dragMarker.release();
 					dragMarker = null;
 				}
 
-				dragMarker = new Marker(useXor, getForeground(), stroke,
-						mouseFrom, mouseTo);
-				dragMarker.add(ConsolePanel.this);
+				dragMarker = createMarker(mouseFrom.x, mouseFrom.y, mouseTo.x, mouseTo.y);
 
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
 					if (dragMarker.contains(viewToScreen(view.getX(), false),
 							viewToScreen(view.getY(), false), viewToScreen(view
-									.getWidth(), false),
-									viewToScreen(view.getHeight(), false))) {
+									.getWidth(), false), viewToScreen(view
+									.getHeight(), false))) {
 						elements.add(view.getElement());
 					}
 				}
@@ -881,7 +879,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			session.getUndoManager().compound();
 
 			if (dragMarker != null) {
-				dragMarker.remove(ConsolePanel.this);
+				dragMarker.release();
 				dragMarker = null;
 			}
 
@@ -926,21 +924,24 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void updateViewMarkers() {
 			for (Marker marker : viewMarkers) {
-				marker.remove(ConsolePanel.this);
+				marker.release();
 			}
 			viewMarkers.clear();
 
 			for (View<? extends Displayable> view : selectedViews) {
-				Marker marker = new Marker(useXor, getForeground(), stroke,
-						viewToScreen(view.getX(), false), viewToScreen(view
-								.getY(), false), viewToScreen(view.getX()
+				viewMarkers.add(createMarker(viewToScreen(view.getX(), false),
+						viewToScreen(view.getY(), false), viewToScreen(view
+								.getX()
 								+ view.getWidth(), true), viewToScreen(view
 								.getY()
-								+ view.getHeight(), true));
-				viewMarkers.add(marker);
-
-				marker.add(ConsolePanel.this);
+								+ view.getHeight(), true)));
 			}
+		}
+
+		private Marker createMarker(int x1, int y1, int x2, int y2) {
+			return Marker.create(ConsolePanel.this, markXOR, null,
+					getForeground(), stroke, x1, y1, x2, y2);
+
 		}
 	}
 
@@ -949,7 +950,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 */
 	private class PlayHandler extends MouseInputAdapter {
 
-		View<? extends Displayable> view;
+		private View<? extends Displayable> view;
 
 		@Override
 		public void mousePressed(MouseEvent e) {
