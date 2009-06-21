@@ -29,8 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
-import jorgan.gui.preferences.category.MidiCategory;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midimerger.MergeInput;
@@ -80,7 +80,7 @@ public class MidiMergerCategory extends JOrganCategory {
 
 	@Override
 	public Class<? extends Category> getParentCategory() {
-		return MidiCategory.class;
+		return AppCategory.class;
 	}
 
 	@Override
