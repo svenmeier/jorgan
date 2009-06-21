@@ -34,10 +34,10 @@ import bias.util.Property;
 /**
  * Category.
  */
-public class MidiCategory extends JOrganCategory {
+public class MonitorCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			MidiCategory.class);
+			MonitorCategory.class);
 
 	private Model monitorMax = getModel(new Property(MonitorDockable.class,
 			"max"));
@@ -45,7 +45,7 @@ public class MidiCategory extends JOrganCategory {
 	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
 			1, 100000, 50));
 
-	public MidiCategory() {
+	public MonitorCategory() {
 		config.read(this);
 	}
 
@@ -55,8 +55,6 @@ public class MidiCategory extends JOrganCategory {
 
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 		Column column = builder.column();
-
-		column.group(config.get("monitor").read(new JLabel()));
 
 		column.term(config.get("monitorMax").read(new JLabel()));
 		column.definition(monitorMaxSpinner);
