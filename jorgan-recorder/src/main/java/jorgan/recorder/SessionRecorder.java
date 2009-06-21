@@ -82,27 +82,25 @@ public class SessionRecorder {
 	public void reset() {
 		stop();
 
-		for (int track = 0; track < trackers.length; track++) {
-			trackers[track].destroy();
+		for (int track = 0; track < this.trackers.length; track++) {
+			this.trackers[track].destroy();
 		}
+		this.trackers = null;
 
-		int track = 0;
 		List<Tracker> trackers = new ArrayList<Tracker>();
 		for (Element element : session.getOrgan().getElements()) {
-			Tracker tracker = TrackerRegistry.createTracker(this, track,
-					element);
+			Tracker tracker = TrackerRegistry.createTracker(this, trackers
+					.size(), element);
 			if (tracker != null) {
 				trackers.add(tracker);
-				track++;
 			}
 		}
 
-		recorder.setSequence(createSequence(track));
+		recorder.setSequence(createSequence(trackers.size()));
 
-		track = 0;
-		for (Tracker tracker : trackers) {
-			setTracker(track, tracker);
-			track++;
+		this.trackers = new Tracker[trackers.size()];
+		for (int track = 0; track < this.trackers.length; track++) {
+			setTracker(track, trackers.get(track));
 		}
 
 		fireTrackersChanged();
@@ -114,6 +112,7 @@ public class SessionRecorder {
 		for (int track = 0; track < trackers.length; track++) {
 			trackers[track].destroy();
 		}
+		trackers = null;
 
 		recorder.setSequence(sequence);
 
@@ -236,7 +235,7 @@ public class SessionRecorder {
 		}
 
 		setTracker(track, tracker);
-		
+
 		fireTrackersChanged();
 	}
 
@@ -301,7 +300,7 @@ public class SessionRecorder {
 		}
 
 		@Override
-		protected void onEnd(long millis) {
+		protected void onLast() {
 			if (getState() == STATE_PLAY) {
 				SessionRecorder.this.stop();
 			}

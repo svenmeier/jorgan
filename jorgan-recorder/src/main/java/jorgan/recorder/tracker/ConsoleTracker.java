@@ -34,6 +34,8 @@ import jorgan.recorder.SessionRecorder;
 
 public class ConsoleTracker extends AbstractTracker {
 
+	private static final String PREFIX_CHANGE = "<";
+
 	private static final String PREFIX_ACTIVE = "+";
 
 	private static final String PREFIX_INACTIVE = "-";
