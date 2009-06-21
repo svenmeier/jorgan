@@ -132,7 +132,7 @@
           <data2>equal 0 | get velocity</data2>
         </keyboard-releaseKey>
       </messages>
-      <input>jOrgan Keyboard fail</input>
+      <input>jOrgan Keyboard</input>
     </keyboard>
     <fluidsynth.fluidsynthSound id="2">
       <name></name>
