@@ -44,7 +44,7 @@ public class RecorderTest extends TestCase {
 			}
 
 			@Override
-			protected void onEnd(long millis) {
+			protected void onLast() {
 				synchronized (RecorderTest.this) {
 					RecorderTest.this.notify();
 				}

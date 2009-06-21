@@ -29,23 +29,6 @@ import jorgan.midi.MessageUtils;
 public class SequenceUtils {
 
 	/**
-	 * Set the tick length of all {@link Track}s of the given sequence to the
-	 * given minimal tick.
-	 * 
-	 * @param sequence
-	 * @param tick
-	 * @see Sequence#getTickLength()
-	 */
-	public static void setTickLength(Sequence sequence, long tick) {
-		for (Track track : sequence.getTracks()) {
-			MidiEvent endOfTrack = track.get(track.size() - 1);
-			if (endOfTrack.getTick() < tick) {
-				endOfTrack.setTick(tick);
-			}
-		}
-	}
-
-	/**
 	 * Get the index of the first {@link MidiEvent} in the given {@link Track}
 	 * at the given tick.
 	 * 
@@ -73,4 +56,20 @@ public class SequenceUtils {
 
 		return false;
 	}
+
+	/**
+	 * Shrink a sequence.
+	 * 
+	 * @param sequence
+	 */
+	public static void shrink(Sequence sequence) {
+		for (Track track : sequence.getTracks()) {
+			long lastTick = 0;
+			if (track.size() > 1) {
+				lastTick = track.get(track.size() - 2).getTick();
+			}
+			track.get(track.size() - 1).setTick(lastTick);
+		}
+	}
+
 }

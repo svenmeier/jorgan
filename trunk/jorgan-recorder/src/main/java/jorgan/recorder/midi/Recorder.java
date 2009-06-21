@@ -152,7 +152,7 @@ public abstract class Recorder {
 
 	protected abstract void onPlayed(int track, MidiMessage message);
 
-	protected abstract void onEnd(long millis);
+	protected abstract void onLast();
 
 	protected abstract void onStarting();
 
@@ -293,8 +293,12 @@ public abstract class Recorder {
 		}
 
 		public long currentTick() {
-			return initialTick
-					+ millisToTick(System.currentTimeMillis() - startMillis);
+			if (thread == null) {
+				return currentTick;
+			} else {
+				return initialTick
+						+ millisToTick(System.currentTimeMillis() - startMillis);
+			}
 		}
 
 		@Override
@@ -304,89 +308,95 @@ public abstract class Recorder {
 
 		public synchronized void run() {
 			while (thread != null) {
-				long sleepMillis = playEvents();
-				if (sleepMillis == -1) {
-					thread = null;
-					onEnd(tickToMillis(currentTick()));
-					break;
-				} else {
-					try {
-						wait(sleepMillis);
-					} catch (InterruptedException interrupted) {
+				playCurrentEvents();
+				
+				try {
+					MidiEvent event = nextEvent();
+					if (event == null) {
+						onLast();
+						wait();
+					} else {
+						long sleepMillis = startMillis
+								+ tickToMillis(event.getTick() - initialTick)
+								- System.currentTimeMillis();
+						if (sleepMillis > 0) {
+							wait(sleepMillis);
+						}
 					}
+				} catch (InterruptedException interrupted) {
 				}
 			}
 
 			notifyAll();
 		}
 
-		private long playEvents() {
-			while (true) {
-				int track = -1;
-				MidiEvent nextEvent = null;
+		private void playCurrentEvents() {
+			currentTick = currentTick();
+			for (int track = 0; track < tracks.length; track++) {
+				playEvents(track);
+			}
+		}
 
-				for (int t = 0; t < tracks.length; t++) {
-					if (indices[t] < tracks[t].size()) {
-						MidiEvent event = tracks[t].get(indices[t]);
-						if (!SequenceUtils.isEndOfTrack(event.getMessage())) {
-							if (nextEvent == null
-									|| event.getTick() < nextEvent.getTick()) {
-								nextEvent = event;
-								track = t;
-							}
+		private void playEvents(int track) {
+			while (indices[track] < tracks[track].size()) {
+				MidiEvent event = tracks[track].get(indices[track]);
+
+				if (SequenceUtils.isEndOfTrack(event.getMessage())) {
+					break;
+				}
+				
+				if (event.getTick() > currentTick) {
+					break;
+				}
+
+				onPlayed(track, event.getMessage());
+				indices[track]++;
+			}
+		}
+
+		private MidiEvent nextEvent() {
+			MidiEvent nextEvent = null;
+
+			for (int t = 0; t < tracks.length; t++) {
+				if (indices[t] < tracks[t].size()) {
+					MidiEvent event = tracks[t].get(indices[t]);
+					if (!SequenceUtils.isEndOfTrack(event.getMessage())) {
+						if (nextEvent == null
+								|| event.getTick() < nextEvent.getTick()) {
+							nextEvent = event;
 						}
 					}
 				}
-
-				if (track == -1
-						|| SequenceUtils.isEndOfTrack(nextEvent.getMessage())) {
-					return -1;
-				}
-
-				long sleepMillis = startMillis
-						+ tickToMillis(nextEvent.getTick() - initialTick)
-						- System.currentTimeMillis();
-				if (sleepMillis <= 0) {
-					onPlayed(track, nextEvent.getMessage());
-
-					indices[track]++;
-				} else {
-					return sleepMillis;
-				}
 			}
+
+			return nextEvent;
 		}
 
 		@Override
 		public synchronized void record(int track, MidiMessage message) {
-			long tick = currentTick();
+			playCurrentEvents();
 
-			if (thread != null) {
-				// first play all events with same time
-				playEvents();
-			}
-
-			tracks[track].add(new MidiEvent(message, tick));
+			tracks[track].add(new MidiEvent(message, currentTick));
 			indices[track]++;
 		}
 
 		@Override
 		public synchronized void stopping() {
-			currentTick = currentTick();
-
-			if (thread != null) {
-				thread.interrupt();
-				thread = null;
-
-				try {
-					wait();
-				} catch (InterruptedException interrupted) {
-				}
+			playCurrentEvents();
+			
+			thread.interrupt();
+			thread = null;
+			try {
+				wait();
+			} catch (InterruptedException interrupted) {
 			}
-
+			
 			super.stopping();
 
+			SequenceUtils.shrink(sequence);
+			
 			// step behind last tick
-			currentTick = Math.min(currentTick++, sequence.getTickLength() + 1);
+			currentTick = Math.min(currentTick, sequence.getTickLength()) + 1;
 		}
 	}
 }
