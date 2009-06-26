@@ -107,15 +107,6 @@ public class Organ {
 		return Collections.unmodifiableSet(elements);
 	}
 
-	public Element getElement(String name) {
-		for (Element element : elements) {
-			if (name.equals(element.getName())) {
-				return element;
-			}
-		}
-		return null;
-	}
-	
 	public boolean containsElement(Element element) {
 		return elements.contains(element);
 	}
