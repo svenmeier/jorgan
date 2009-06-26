@@ -19,6 +19,7 @@
 package jorgan.io;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -109,7 +110,7 @@ public class DispositionStream {
 	 * @throws Exception
 	 */
 	public Organ read(File file) throws IOException {
-		InputStream input = new BufferedInputStream(new FileInputStream(file));
+		InputStream input = new FileInputStream(file);
 
 		try {
 			Organ organ = read(input);
@@ -265,13 +266,18 @@ public class DispositionStream {
 	}
 
 	private static String getVersion(InputStream in) throws IOException {
-		in.mark(2048);
+		
+		// make sure the parse doesn't step over the mark limit
+		byte[] header = new byte[2048];
+		in.mark(header.length);
+		in.read(header, 0, header.length);
+		in.reset();
 
 		String version;
 		try {
 			MXParser parser = new MXParser();
 
-			parser.setInput(new InputStreamReader(in, "UTF-8"));
+			parser.setInput(new ByteArrayInputStream(header), "ASCII");
 
 			parser.nextTag();
 
@@ -281,8 +287,6 @@ public class DispositionStream {
 			ex.initCause(e);
 			throw ex;
 		}
-
-		in.reset();
 
 		return version;
 	}

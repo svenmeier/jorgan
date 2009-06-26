@@ -1,34 +1,34 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
-<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/jOrgan-core/src/jorgan/App.java"/>
-</listAttribute>
-<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
-<listEntry value="1"/>
-</listAttribute>
-<booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
-<listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;4&quot; path=&quot;1&quot; containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.defaultClasspath&quot;&gt;&#10;  &lt;memento project=&quot;jOrgan-core&quot; exportedEntriesOnly=&quot;false&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-creative&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-customizer&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-fluidsynth&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-importer&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-keyboard&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-linuxsampler&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-midimerger&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-recorder&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-soundfont&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-graph&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-core.jar&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-layouts.jar&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-ui.jar&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-synthesizer&quot;/&gt;"/>
-<listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-synthesizer/lib/gervill-0.8-fix1.jar&quot;/&gt;"/>
-</listAttribute>
-<booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
-<stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
-<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
-<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jOrgan-core"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../skins&#13;&#10;-Djorgan.creative.library.path=../creative/target/native&#13;&#10;-Djorgan.fluidsynth.library.path=../fluidsynth/target/native&#13;&#10;-Duser.language=en"/>
+  <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+    <listEntry value="/jOrgan-core"/>
+  </listAttribute>
+  <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
+  <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jOrgan-core"/>
+  <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+  <listAttribute key="org.eclipse.jdt.launching.CLASSPATH">
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;4&quot; path=&quot;1&quot; containerPath=&quot;org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry id=&quot;org.eclipse.jdt.launching.classpathentry.defaultClasspath&quot;&gt;&#10;  &lt;memento project=&quot;jOrgan-core&quot; exportedEntriesOnly=&quot;false&quot;/&gt;&#10;&lt;/runtimeClasspathEntry&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-creative&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-customizer&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-fluidsynth&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-importer&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-keyboard&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-linuxsampler&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-midimerger&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-recorder&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-soundfont&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-graph&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-core.jar&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-layouts.jar&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-graph/lib/gj-ui.jar&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;1&quot; path=&quot;3&quot; projectName=&quot;jOrgan-synthesizer&quot;/&gt;"/>
+    <listEntry value="&lt;?xml version=&quot;1.0&quot;?&gt;&#10;&lt;runtimeClasspathEntry type=&quot;2&quot; path=&quot;3&quot; internalArchive=&quot;/jOrgan-synthesizer/lib/gervill-0.8-fix1.jar&quot;/&gt;"/>
+  </listAttribute>
+  <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../skins&#10;-Djorgan.creative.library.path=../creative/target/native&#10;-Djorgan.fluidsynth.library.path=../fluidsynth/target/native&#10;-Duser.language=en"/>
+  <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
+  <booleanAttribute key="org.eclipse.debug.core.appendEnvironmentVariables" value="true"/>
+  <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+    <listEntry value="4"/>
+  </listAttribute>
 </launchConfiguration>
