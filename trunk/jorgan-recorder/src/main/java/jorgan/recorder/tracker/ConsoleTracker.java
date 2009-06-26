@@ -18,14 +18,12 @@
  */
 package jorgan.recorder.tracker;
 
-import java.util.Collection;
-import java.util.HashSet;
-
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
 import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
@@ -34,11 +32,13 @@ import jorgan.recorder.SessionRecorder;
 
 public class ConsoleTracker extends AbstractTracker {
 
-	private static final String PREFIX_CHANGE = "<";
-
 	private static final String PREFIX_ACTIVE = "+";
 
 	private static final String PREFIX_INACTIVE = "-";
+
+	private static final String PREFIX_CHANGE = "<";
+
+	private static final String SEPARATOR_CHANGE = ":";
 
 	private Console console;
 
@@ -68,28 +68,27 @@ public class ConsoleTracker extends AbstractTracker {
 	protected boolean owns(MidiEvent event) {
 		if (event.getMessage() instanceof MetaMessage) {
 			MetaMessage message = (MetaMessage) event.getMessage();
-			
+
 			if (message.getType() == MessageUtils.META_TEXT) {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	@Override
 	public void onPlayStarting() {
 		super.onPlayStarting();
-		
+
 		ignoreChanges = true;
 
-		Collection<Element> active = getActive();
+		for (Switch aSwitch : console.getReferenced(Switch.class)) {
+			aSwitch.setActive(getSequenceActive(aSwitch));
+		}
 
-		for (Element element : getOrgan().getElements()) {
-			if (element instanceof Switch) {
-				Switch aSwitch = ((Switch) element);
-				aSwitch.setActive(active.contains(element));
-			}
+		for (Continuous continuous : console.getReferenced(Continuous.class)) {
+			continuous.setValue(getSequenceValue(continuous));
 		}
 
 		ignoreChanges = false;
@@ -98,26 +97,55 @@ public class ConsoleTracker extends AbstractTracker {
 	@Override
 	public void onRecordStarting() {
 		super.onRecordStarting();
-		
-		Collection<Element> active = getActive();
 
-		for (Element element : getOrgan().getElements()) {
-			if (element instanceof Switch) {
-				Switch aSwitch = ((Switch) element);
+		for (Switch aSwitch : console.getReferenced(Switch.class)) {
+			if ("".equals(aSwitch.getName())) {
+				continue;
+			}
 
-				if (aSwitch.isActive() && !active.contains(aSwitch)) {
-					String string = PREFIX_ACTIVE + aSwitch.getName();
-
-					record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
-							string));
-				} else if (!aSwitch.isActive() && active.contains(aSwitch)) {
-					String string = PREFIX_INACTIVE + aSwitch.getName();
-
-					record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
-							string));
-				}
+			boolean sequenceActive = getSequenceActive(aSwitch);
+			if (sequenceActive != aSwitch.isActive()) {
+				record(createMessage(aSwitch));
 			}
 		}
+
+		for (Continuous continuous : console.getReferenced(Continuous.class)) {
+			if ("".equals(continuous.getName())) {
+				continue;
+			}
+
+			float value = getSequenceValue(continuous);
+			if (value != continuous.getValue()) {
+				record(createMessage(continuous));
+			}
+		}
+	}
+
+	private MidiMessage createMessage(Continuous continuous) {
+		StringBuilder builder = new StringBuilder();
+
+		builder.append(PREFIX_CHANGE);
+		builder.append(continuous.getValue());
+		builder.append(SEPARATOR_CHANGE);
+		builder.append(continuous.getName());
+
+		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
+				.toString());
+	}
+
+	private MidiMessage createMessage(Switch aSwitch) {
+		StringBuilder builder = new StringBuilder();
+
+		if (aSwitch.isActive()) {
+			builder.append(PREFIX_ACTIVE);
+		} else {
+			builder.append(PREFIX_INACTIVE);
+		}
+
+		builder.append(aSwitch.getName());
+
+		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
+				.toString());
 	}
 
 	@Override
@@ -129,18 +157,29 @@ public class ConsoleTracker extends AbstractTracker {
 
 			if (metaMessage.getType() == MessageUtils.META_TEXT) {
 				String string = MessageUtils.getText(metaMessage);
+
 				if (string.startsWith(PREFIX_ACTIVE)) {
-					Element element = getElement(string.substring(1));
-					if (element != null) {
-						if (element instanceof Switch) {
-							((Switch) element).setActive(true);
-						}
+					Switch aSwitch = getReferenced(string.substring(1), Switch.class);
+					if (aSwitch != null) {
+						aSwitch.setActive(true);
 					}
 				} else if (string.startsWith(PREFIX_INACTIVE)) {
-					Element element = getElement(string.substring(1));
-					if (element != null) {
-						if (element instanceof Switch) {
-							((Switch) element).setActive(false);
+					Switch aSwitch = getReferenced(string.substring(1), Switch.class);
+					if (aSwitch != null) {
+						aSwitch.setActive(false);
+					}
+				} else if (string.startsWith(PREFIX_CHANGE)) {
+					int separator = string.indexOf(SEPARATOR_CHANGE);
+					if (separator != -1) {
+						try {
+							float value = Float.parseFloat(string.substring(1,
+									separator));
+							Continuous continuous = getReferenced(string
+									.substring(separator + 1), Continuous.class);
+							if (continuous != null) {
+								continuous.setValue(value);
+							}
+						} catch (NumberFormatException noNumber) {
 						}
 					}
 				}
@@ -150,17 +189,47 @@ public class ConsoleTracker extends AbstractTracker {
 		ignoreChanges = false;
 	}
 
-	private Element getElement(String name) {
-		for (Element element : getOrgan().getElements()) {
-			if (name.equals(element.getName())) {
+	private <E extends Element> E getReferenced(String string, Class<E> clazz) {
+		for (E element : console.getReferenced(clazz)) {
+			if (string.equals(element.getName())) {
 				return element;
 			}
 		}
+		
 		return null;
 	}
 
-	private Collection<Element> getActive() {
-		HashSet<Element> active = new HashSet<Element>();
+	private float getSequenceValue(Continuous continuous) {
+		float value = 0.0f;
+
+		for (MidiEvent event : messages()) {
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == MessageUtils.META_TEXT) {
+					String string = MessageUtils.getText(message);
+
+					if (string.startsWith(PREFIX_CHANGE)) {
+						int separator = string.indexOf(SEPARATOR_CHANGE);
+						if (separator != -1) {
+							String name = string.substring(separator + 1);
+							if (name.equals(continuous.getName())) {
+								try {
+									value = Float.parseFloat(string.substring(
+											1, separator));
+								} catch (NumberFormatException noNumber) {
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return value;
+	}
+
+	private boolean getSequenceActive(Switch aSwitch) {
+		boolean active = false;
 
 		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof MetaMessage) {
@@ -169,14 +238,14 @@ public class ConsoleTracker extends AbstractTracker {
 					String string = MessageUtils.getText(message);
 
 					if (string.startsWith(PREFIX_ACTIVE)) {
-						Element element = getElement(string.substring(1));
-						if (element != null) {
-							active.add(element);
+						String name = string.substring(1);
+						if (name.equals(aSwitch.getName())) {
+							active = true;
 						}
 					} else if (string.startsWith(PREFIX_INACTIVE)) {
-						Element element = getElement(string.substring(1));
-						if (element != null) {
-							active.remove(element);
+						String name = string.substring(1);
+						if (name.equals(aSwitch.getName())) {
+							active = false;
 						}
 					}
 				}
@@ -194,19 +263,19 @@ public class ConsoleTracker extends AbstractTracker {
 				return;
 			}
 
+			if (!console.references(element)) {
+				return;
+			}
+
+			String elementName = element.getName();
+			if ("".equals(elementName)) {
+				return;
+			}
+
 			if (element instanceof Switch && "active".equals(name)) {
-				String string;
-
-				if (((Switch) element).isActive()) {
-					string = PREFIX_ACTIVE;
-				} else {
-					string = PREFIX_INACTIVE;
-				}
-
-				string += element.getName();
-
-				record(MessageUtils.newMetaMessage(MessageUtils.META_TEXT,
-						string));
+				record(createMessage((Switch) element));
+			} else if (element instanceof Continuous && "value".equals(name)) {
+				record(createMessage((Continuous) element));
 			}
 		}
 	}

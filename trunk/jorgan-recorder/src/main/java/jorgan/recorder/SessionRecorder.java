@@ -29,6 +29,7 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.spi.TrackerRegistry;
@@ -69,6 +70,7 @@ public class SessionRecorder {
 	public SessionRecorder(OrganSession session) {
 		this.session = session;
 		session.addListener(listener);
+		session.getOrgan().addOrganListener(listener);
 
 		this.recorder = new InternalRecorder();
 
@@ -88,12 +90,19 @@ public class SessionRecorder {
 		this.trackers = null;
 
 		List<Tracker> trackers = new ArrayList<Tracker>();
-		for (Element element : session.getOrgan().getElements()) {
+		for (Element element : session.getOrgan().getElements(Element.class)) {
+			if ("".equals(element.getName())) {
+				continue;
+			}
+			
 			Tracker tracker = TrackerRegistry.createTracker(this, trackers
 					.size(), element);
 			if (tracker != null) {
 				trackers.add(tracker);
 			}
+		}
+		if (trackers.isEmpty()) {
+			trackers.add(new EmptyTracker(0));
 		}
 
 		recorder.setSequence(createSequence(trackers.size()));
@@ -191,7 +200,7 @@ public class SessionRecorder {
 	public List<Element> getTrackableElements() {
 		List<Element> elements = new ArrayList<Element>();
 
-		for (Element element : session.getOrgan().getElements()) {
+		for (Element element : session.getOrgan().getElements(Element.class)) {
 			Tracker tracker = TrackerRegistry.createTracker(this, 0, element);
 			if (tracker != null) {
 				tracker.destroy();
@@ -223,7 +232,6 @@ public class SessionRecorder {
 		stop();
 
 		Tracker tracker;
-
 		if (element == null) {
 			tracker = new EmptyTracker(track);
 		} else {
@@ -233,7 +241,6 @@ public class SessionRecorder {
 						+ element.getClass().getName());
 			}
 		}
-
 		setTracker(track, tracker);
 
 		fireTrackersChanged();
@@ -281,6 +288,7 @@ public class SessionRecorder {
 
 	public void dispose() {
 		session.removeListener(listener);
+		session.getOrgan().removeOrganListener(listener);
 
 		session = null;
 	}
@@ -338,16 +346,6 @@ public class SessionRecorder {
 					}
 				}
 			}
-		}
-	}
-
-	private class EventListener implements SessionListener {
-
-		public void constructingChanged(boolean constructing) {
-			stop();
-		}
-
-		public void destroyed() {
 		}
 	}
 
@@ -432,6 +430,41 @@ public class SessionRecorder {
 		@Override
 		protected boolean owns(MidiEvent event) {
 			return false;
+		}
+	}
+	
+	private class EventListener extends OrganAdapter implements SessionListener {
+
+		public void constructingChanged(boolean constructing) {
+			stop();
+		}
+
+		public void destroyed() {
+		}
+		
+		@Override
+		public void propertyChanged(Element element, String name) {
+			if ("name".equals(name)) {
+				for (Tracker tracker : trackers) {
+					if (tracker.getElement() == element) {
+						if ("".equals(element.getName())) {
+							element = null;
+						}
+						setElement(tracker.getTrack(), element);
+						break;
+					}
+				}
+			}
+		}
+		
+		@Override
+		public void elementRemoved(Element element) {
+			for (Tracker tracker : trackers) {
+				if (tracker.getElement() == element) {
+					setElement(tracker.getTrack(), null);
+					break;
+				}
+			}
 		}
 	}
 }

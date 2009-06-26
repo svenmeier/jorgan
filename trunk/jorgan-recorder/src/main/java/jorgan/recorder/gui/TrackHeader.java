@@ -58,8 +58,13 @@ public class TrackHeader extends JPanel {
 		JLabel label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBorder(new EmptyBorder(2, 2, 2, 2));
-		label.setText(getTrackName());
-		label.setToolTipText(getTrackName());
+		Element element = recorder.getElement(track);
+		if (element == null) {
+			config.get("none").read(label);
+		} else {
+			label.setText(Elements.getDisplayName(element));
+		}
+		label.setToolTipText(label.getText());
 		add(label, BorderLayout.NORTH);
 
 		JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -111,7 +116,7 @@ public class TrackHeader extends JPanel {
 			public void popupMenuCanceled(PopupMenuEvent e) {
 			}
 		});
-		label.setComponentPopupMenu(menu);
+		label.setComponentPopupMenu(menu);		
 	}
 
 	@Override
@@ -121,30 +126,19 @@ public class TrackHeader extends JPanel {
 		return size;
 	}
 
-	public String getTrackName() {
-		Element element = recorder.getElement(track);
-		if (element == null) {
-			return "Track " + track;
-		} else {
-			return Elements.getDisplayName(element);
-		}
-	}
-
 	protected void init(JPopupMenu menu) {
 		menu.removeAll();
 
 		final JRadioButtonMenuItem noneItem = new JRadioButtonMenuItem();
 		config.get("none").read(noneItem);
-		if (recorder.getElement(track) == null) {
-			noneItem.setSelected(true);
-		}
+		noneItem.setSelected(recorder.getElement(track) == null);
 		noneItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (noneItem.isSelected()) {
 					recorder.setElement(track, null);
 				}
 			}
-		});
+		});		
 		menu.add(noneItem);
 
 		for (final Element element : recorder.getTrackableElements()) {
@@ -152,6 +146,9 @@ public class TrackHeader extends JPanel {
 					.getDisplayName(element));
 			if (recorder.getElement(track) == element) {
 				item.setSelected(true);
+			}
+			if ("".equals(element.getName())) {
+				item.setEnabled(false);
 			}
 			item.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {

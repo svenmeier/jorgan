@@ -151,11 +151,15 @@ public class KeyboardTracker extends AbstractTracker {
 
 	private final class EventHandler implements KeyListener {
 		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
-			record(ShortMessage.NOTE_ON, pitch, velocity);
+			if (keyboard == KeyboardTracker.this.keyboard) {
+				record(ShortMessage.NOTE_ON, pitch, velocity);				
+			}
 		}
 
 		public void keyReleased(Keyboard keyboard, int pitch) {
-			record(ShortMessage.NOTE_OFF, pitch, 0);
+			if (keyboard == KeyboardTracker.this.keyboard) {
+				record(ShortMessage.NOTE_OFF, pitch, 0);
+			}
 		}
 	}
 }

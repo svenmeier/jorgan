@@ -71,10 +71,6 @@ public class SkinManager implements ISkinManager {
 			try {
 				skin = new SkinStream().read(input);
 				skin.setSource(source);
-			} catch (Exception ex) {
-				IOException io = new IOException(ex.getMessage());
-				io.initCause(ex);
-				throw io;
 			} finally {
 				IOUtils.closeQuietly(input);
 			}

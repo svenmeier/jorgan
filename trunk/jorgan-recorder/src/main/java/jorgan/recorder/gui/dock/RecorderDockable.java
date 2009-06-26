@@ -143,12 +143,13 @@ public class RecorderDockable extends OrganDockable {
 			tracksPanel = new TracksPanel(recorder);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
 			scrollPane.setRowHeaderView(tracksPanel.getHeader());
+			scrollPane.setBackground(tracksPanel.getBackground());
 			setContent(scrollPane);
 		}
 	}
 
 	private void updateTime() {
-		if (recorder != null) {
+		if (recorder != null && tracksPanel != null) {
 			long time = recorder.getTime();
 			long totalTime = recorder.getTotalTime();
 			
@@ -156,8 +157,7 @@ public class RecorderDockable extends OrganDockable {
 					+ " / "
 					+ format.format(new Date(totalTime)));
 
-			tracksPanel.revalidate();
-			tracksPanel.repaint();
+			tracksPanel.updateTime();
 		}
 	}
 

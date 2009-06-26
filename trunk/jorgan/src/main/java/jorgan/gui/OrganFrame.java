@@ -55,6 +55,8 @@ import jorgan.disposition.event.UndoableChange;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
+import jorgan.io.disposition.ExtensionException;
+import jorgan.io.disposition.FormatException;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.SessionListener;
@@ -383,13 +385,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 		Organ organ;
 		try {
 			organ = new DispositionStream().read(file);
-		} catch (IOException ex) {
-			showBoxMessage("openOrganException", file.getName());
-			return;
-		} catch (Exception ex) {
-			logger.log(Level.INFO, "opening organ failed", ex);
+		} catch (ExtensionException ex) {
+			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			showBoxMessage("openOrganInvalid", file.getName());
+			showBoxMessage("openExtensionException", file.getName(), ex.getExtension());
+			return;
+		} catch (FormatException ex) {
+			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
+
+			showBoxMessage("openFormatException", file.getName());
+			return;
+		} catch (IOException ex) {
+			showBoxMessage("openIOException", file.getName());
 			return;
 		}
 
@@ -428,13 +435,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveOrganException", file.getName());
-
-			return false;
-		} catch (Exception ex) {
-			logger.log(Level.INFO, "saving organ failed", ex);
-
-			showBoxMessage("saveOrganInvalid", file.getName());
+			showBoxMessage("saveException", file.getName());
 
 			return false;
 		}
