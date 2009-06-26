@@ -64,8 +64,13 @@ public class SkinStream {
 	 * @throws Exception
 	 */
 	public Skin read(InputStream in) throws IOException {
-		Skin skin = (Skin) xstream.fromXML(new BufferedInputStream(in));
-		return skin;
+		try {
+			return  (Skin) xstream.fromXML(new BufferedInputStream(in));
+		} catch (Exception ex) {
+			IOException io = new IOException(ex.getMessage());
+			io.initCause(ex);
+			throw io;
+		}
 	}
 
 	public void write(Skin skin, OutputStream out) throws IOException {

@@ -19,12 +19,9 @@
 package jorgan.recorder.gui;
 
 import java.awt.Color;
-import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Rectangle;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
@@ -48,17 +45,13 @@ public class TrackGraph extends JComponent {
 
 		setBackground(Color.white);
 		setForeground(Color.blue.brighter());
-
-		EventListener listener = new EventListener();
-		addMouseListener(listener);
-		addMouseMotionListener(listener);
 	}
 
 	@Override
 	public Dimension getPreferredSize() {
 		int height = HEIGHT;
 
-		int width = Math.round(SECOND_WIDTH * getDisplayTime()
+		int width = Math.round(SECOND_WIDTH * recorder.getTotalTime()
 				/ Recorder.SECOND);
 
 		return new Dimension(Math.max(2, width), height);
@@ -88,8 +81,8 @@ public class TrackGraph extends JComponent {
 
 		int x = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.getRecorder().eventsFromTick(
-				track, tick)) {
+		for (MidiEvent event : recorder.getRecorder().eventsFromTick(track,
+				tick)) {
 			int nextX = millisToX(recorder.getRecorder().tickToMillis(
 					event.getTick()));
 			if (nextX >= width) {
@@ -116,7 +109,7 @@ public class TrackGraph extends JComponent {
 	private void paintMessage(Graphics g, int x, int height, int count) {
 		if (count > 0) {
 			int size = Math.round((1 - (1 / (float) (count + 1))) * height);
-			
+
 			g.drawLine(x, height - size, x, height - 1);
 		}
 	}
@@ -124,7 +117,7 @@ public class TrackGraph extends JComponent {
 	private void paintCursor(Graphics g, Rectangle bounds) {
 		g.setColor(Color.red);
 
-		int x = millisToX(getCurrentTime());
+		int x = millisToX(recorder.getTime());
 		if (x <= 0) {
 			x = 1;
 		}
@@ -144,7 +137,7 @@ public class TrackGraph extends JComponent {
 		g.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 
 		long delta = 10 * Recorder.SECOND;
-		long total = getDisplayTime();
+		long total = recorder.getTotalTime();
 		long millis = xToMillis(bounds.x) / delta * delta;
 		while (millis < total) {
 			int x = millisToX(millis);
@@ -168,83 +161,16 @@ public class TrackGraph extends JComponent {
 		}
 	}
 
-	private long getCurrentTime() {
-		return recorder.getTime();
-	}
-
-	private long getDisplayTime() {
-		return recorder.getTotalTime();
-	}
-
 	private int millisToX(long millis) {
-		long displayTime = getDisplayTime();
+		long displayTime = recorder.getTotalTime();
 		if (displayTime == 0) {
 			return 0;
 		}
-		
+
 		return Math.round(millis * getWidth() / displayTime);
 	}
 
 	private long xToMillis(int x) {
-		return Math.max(0, x * getDisplayTime() / getWidth());
-	}
-
-	private class EventListener extends MouseAdapter {
-
-		private Integer offset;
-
-		private int getOffset(MouseEvent e) {
-			return e.getX() - millisToX(getCurrentTime());
-		}
-
-		@Override
-		public void mouseMoved(MouseEvent e) {
-			if (this.offset == null) {
-				int offset = getOffset(e);
-				if (Math.abs(offset) < 4) {
-					showCursor();
-				} else {
-					setCursor(Cursor.getDefaultCursor());
-				}
-			}
-		}
-
-		private void showCursor() {
-			setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
-		}
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				return;
-			}
-
-			int offset = getOffset(e);
-			if (Math.abs(offset) < 4) {
-				this.offset = offset;
-			} else {
-				this.offset = 0;
-				recorder.setTime(xToMillis(e.getX()));
-			}
-			showCursor();
-		}
-
-		@Override
-		public void mouseReleased(MouseEvent e) {
-			offset = null;
-		}
-
-		@Override
-		public void mouseDragged(MouseEvent e) {
-			if (offset != null) {
-				int x = e.getX() - offset;
-
-				recorder.setTime(xToMillis(x));
-			}
-		}
-
-		@Override
-		public void mouseClicked(MouseEvent e) {
-		}
+		return Math.max(0, x * recorder.getTotalTime() / getWidth());
 	}
 }

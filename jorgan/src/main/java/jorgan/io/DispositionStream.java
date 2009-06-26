@@ -40,6 +40,7 @@ import jorgan.io.disposition.BooleanArrayConverter;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FloatArrayConverter;
+import jorgan.io.disposition.FormatException;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.xstream.CrossLinkMarshallingStrategy;
@@ -119,12 +120,29 @@ public class DispositionStream {
 		}
 	}
 
-	public Organ read(InputStream in) throws IOException {
+	public Organ read(InputStream in) throws IOException, FormatException {
 		InputStream converted = convert(in);
 
 		Reader reader = new InputStreamReader(converted, ENCODING);
 
-		return (Organ) xstream.fromXML(reader);
+		try {
+			return (Organ) xstream.fromXML(reader);
+		} catch (Exception ex) {
+			throw findFormatException(ex);
+		}
+	}
+
+	private FormatException findFormatException(Throwable ex) throws FormatException {
+		if (ex instanceof FormatException) {
+			return (FormatException)ex;
+		}
+		
+		Throwable cause = ex.getCause();
+		if (cause == null || cause == ex) {
+			return new FormatException(ex);
+		}
+		
+		return findFormatException(cause);
 	}
 
 	public void write(Organ organ, File file) throws IOException {

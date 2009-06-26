@@ -69,36 +69,52 @@ public class ClassMapper extends MapperWrapper {
 
 	@SuppressWarnings("unchecked")
 	public Class realClass(String name) {
+		RuntimeException exception;
+		
 		try {
-			StringBuffer buffer = new StringBuffer("jorgan.");
-
-			int index = name.indexOf('.');
-			if (index == -1) {
-				index = 0;
-			} else {
-				index++;
-				buffer.append(name.substring(0, index));
-			}
-			buffer.append("disposition.");
-
-			while (true) {
-				buffer.append(Character.toUpperCase(name.charAt(index)));
-				index++;
-				
-				int next = name.indexOf("$", index);
-				if (next == -1) {
-					buffer.append(name.substring(index, name.length()));
-					break;
-				} else {
-					buffer.append(name.substring(index, next));
-					buffer.append("$");
-					index = next + 1;
-				}
-			}
-
-			return Class.forName(buffer.toString());
-		} catch (Exception ex) {
+			return super.realClass(name);
+		} catch (RuntimeException ex) {
+			exception = ex;
 		}
-		return super.realClass(name);
+
+		String extension = null;
+		
+		StringBuffer buffer = new StringBuffer("jorgan.");
+
+		int index = name.indexOf('.');
+		if (index == -1) {
+			index = 0;
+		} else {
+			extension = name.substring(0, index);
+			index++;
+			buffer.append(extension);
+			buffer.append(".");
+		}
+		buffer.append("disposition.");
+
+		while (true) {
+			buffer.append(Character.toUpperCase(name.charAt(index)));
+			index++;
+			
+			int next = name.indexOf("$", index);
+			if (next == -1) {
+				buffer.append(name.substring(index, name.length()));
+				break;
+			} else {
+				buffer.append(name.substring(index, next));
+				buffer.append("$");
+				index = next + 1;
+			}
+		}
+
+		try {
+			return Class.forName(buffer.toString());
+		} catch (ClassNotFoundException e) {
+			if (extension == null) {
+				throw exception;
+			} else {
+				throw new ExtensionException(extension);
+			}
+		}
 	}
 }

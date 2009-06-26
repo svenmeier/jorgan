@@ -421,6 +421,7 @@ public class ElementsDockable extends OrganDockable {
 			list.addListSelectionListener(this);
 
 			register(list);
+			valueChanged(null);
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -451,7 +452,7 @@ public class ElementsDockable extends OrganDockable {
 			config.get("remove").read(this);
 
 			list.addListSelectionListener(this);
-			setEnabled(false);
+			valueChanged(null);
 		}
 
 		public void actionPerformed(ActionEvent ev) {

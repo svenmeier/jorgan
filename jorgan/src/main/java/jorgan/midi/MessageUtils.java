@@ -96,11 +96,11 @@ public class MessageUtils {
 		return message;
 	}
 
-	public static MetaMessage newMetaMessage(int type, String data) {
+	public static MetaMessage newMetaMessage(int type, String characters) {
 		byte[] bytes;
 
 		try {
-			bytes = data.getBytes("UTF-8");
+			bytes = characters.getBytes("UTF-8");
 		} catch (UnsupportedEncodingException e) {
 			throw new Error(e);
 		}
