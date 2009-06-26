@@ -358,12 +358,13 @@ public class SessionRecorder {
 
 		String name = getTrackName(track);
 		if (name != null) {
-			Element element = session.getOrgan().getElement(name);
-			if (element != null) {
-				tracker = TrackerRegistry.createTracker(SessionRecorder.this,
-						track, element);
-				if (tracker != null) {
-					return tracker;
+			for (Element element : session.getOrgan().getElements()) {
+				if (name.equals(element.getName())) {
+					tracker = TrackerRegistry.createTracker(SessionRecorder.this,
+							track, element);
+					if (tracker != null) {
+						return tracker;
+					}
 				}
 			}
 		}
