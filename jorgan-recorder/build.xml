@@ -35,6 +35,13 @@
       <fileset dir="./target/classes" />
   	</jar>
 
+  	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions">
+      <fileset dir="./src/main/dispositions">
+  		<include name="*"/>
+      </fileset>
+    </copy>
+  	
 	<zip destfile="./target/jOrgan-recorder-${recorder.version}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
