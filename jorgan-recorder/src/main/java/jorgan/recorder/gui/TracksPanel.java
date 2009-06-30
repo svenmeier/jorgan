@@ -119,10 +119,8 @@ public class TracksPanel extends JPanel implements Scrollable {
 		repaint();
 		revalidate();
 		
-		if (performance.getState() != Performance.STATE_STOP) {
-			int x = millisToX(performance.getTime());		
-			scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
-		}
+		int x = millisToX(performance.getTime());		
+		scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
 	}
 
 	public JComponent getHeader() {
