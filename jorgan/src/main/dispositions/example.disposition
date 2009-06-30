@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="@jorgan.version@">
+  <elements>
+    <captor id="1">
+      <name></name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="2"/>
+        </reference>
+        <reference>
+          <element ref="3"/>
+        </reference>
+        <reference>
+          <element ref="4"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+    </captor>
+    <stop id="5">
+      <name>Stop 0</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="6"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <rank id="7">
+      <name>Rank 1</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="8"/>
+        </reference>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 0</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 20</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <combination id="4">
+      <name>2</name>
+      <description></description>
+      <references>
+        <combination-switchReference>
+          <element ref="5"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="9"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="10"/>
+          <actives>1</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="11"/>
+          <actives>1</actives>
+        </combination-switchReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </combination>
+    <console id="12">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference>
+          <element ref="5"/>
+          <x>200</x>
+          <y>70</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="9"/>
+          <x>200</x>
+          <y>110</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="10"/>
+          <x>200</x>
+          <y>150</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="11"/>
+          <x>200</x>
+          <y>190</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="2"/>
+          <x>170</x>
+          <y>240</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="3"/>
+          <x>200</x>
+          <y>240</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="4"/>
+          <x>230</x>
+          <y>240</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="1"/>
+          <x>270</x>
+          <y>240</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <stop id="9">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="7"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>-12</transpose>
+    </stop>
+    <keyboard id="13">
+      <name></name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="10"/>
+        </reference>
+        <reference>
+          <element ref="11"/>
+        </reference>
+        <reference>
+          <element ref="5"/>
+        </reference>
+        <reference>
+          <element ref="9"/>
+        </reference>
+      </references>
+      <messages>
+        <keyboard-pressKey>
+          <status>equal 144</status>
+          <data1>greaterEqual 40 | get pitch</data1>
+          <data2>greater 0| get velocity</data2>
+        </keyboard-pressKey>
+        <keyboard-releaseKey>
+          <status>equal 128</status>
+          <data1>greaterEqual 40 | get pitch</data1>
+          <data2></data2>
+        </keyboard-releaseKey>
+        <keyboard-releaseKey>
+          <status>equal 144</status>
+          <data1>greaterEqual 40 | get pitch</data1>
+          <data2>equal 0 | get velocity</data2>
+        </keyboard-releaseKey>
+      </messages>
+      <input>jOrgan Keyboard</input>
+    </keyboard>
+    <rank id="6">
+      <name>Rank 0</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="8"/>
+        </reference>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 0</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 0</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <stop id="10">
+      <name>Stop 2</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="7"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <stop id="11">
+      <name>Stop 3</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="14"/>
+        </reference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <genericSound id="8">
+      <name>Sound</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <output>Java Sound Synthesizer</output>
+    </genericSound>
+    <combination id="3">
+      <name>1</name>
+      <description></description>
+      <references>
+        <combination-switchReference>
+          <element ref="5"/>
+          <actives>1</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="9"/>
+          <actives>1</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="10"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="11"/>
+          <actives>0</actives>
+        </combination-switchReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </combination>
+    <rank id="14">
+      <name>Rank 2</name>
+      <description></description>
+      <references>
+        <reference>
+          <element ref="8"/>
+        </reference>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 0</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 21</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <combination id="2">
+      <name>0</name>
+      <description></description>
+      <references>
+        <combination-switchReference>
+          <element ref="5"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="9"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="10"/>
+          <actives>0</actives>
+        </combination-switchReference>
+        <combination-switchReference>
+          <element ref="11"/>
+          <actives>0</actives>
+        </combination-switchReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </combination>
+  </elements>
+</organ>
