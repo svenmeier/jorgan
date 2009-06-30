@@ -31,6 +31,10 @@ import jorgan.midi.MessageUtils;
 import jorgan.recorder.Performance;
 import jorgan.recorder.disposition.PerformanceSwitch;
 
+/**
+ * Track all {@link Console}'s referenced {@link Switch}es and {@link Continuous}.
+ * Does not track instances of {@link PerformanceSwitch}.
+ */
 public class ConsoleTracker extends AbstractTracker {
 
 	private static final String PREFIX_ACTIVE = "+";
@@ -85,6 +89,10 @@ public class ConsoleTracker extends AbstractTracker {
 		ignoreChanges = true;
 
 		for (Switch aSwitch : console.getReferenced(Switch.class)) {
+			if (PerformanceSwitch.class.isInstance(aSwitch)) {
+				continue;
+			}
+			
 			aSwitch.setActive(getSequenceActive(aSwitch));
 		}
 
@@ -100,6 +108,10 @@ public class ConsoleTracker extends AbstractTracker {
 		super.onRecordStarting();
 
 		for (Switch aSwitch : console.getReferenced(Switch.class)) {
+			if (PerformanceSwitch.class.isInstance(aSwitch)) {
+				continue;
+			}
+
 			if ("".equals(aSwitch.getName())) {
 				continue;
 			}
