@@ -25,7 +25,7 @@ import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
 import jorgan.play.SoundPlayer;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Severity;
 
 /**
  * A player for a {@link FluidsynthSound}.

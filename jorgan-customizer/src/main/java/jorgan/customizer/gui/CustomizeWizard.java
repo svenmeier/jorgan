@@ -25,9 +25,11 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.customizer.gui.spi.CustomizerRegistry;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
 import jorgan.play.Closed;
+import jorgan.play.OrganPlay;
 import jorgan.session.OrganSession;
-import jorgan.session.undo.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -96,9 +98,9 @@ public class CustomizeWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.getUndoManager().compound(new Compound() {
+		session.get(UndoManager.class).compound(new Compound() {
 			public void run() {
-				session.getPlay().closed(new Closed() {
+				session.get(OrganPlay.class).closed(new Closed() {
 					public void run() {
 						for (Customizer customizer : customizers) {
 							customizer.apply();
