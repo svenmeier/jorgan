@@ -41,7 +41,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -65,27 +64,30 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ViewRegistry;
 import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.undo.UndoManager;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
-import jorgan.session.problem.Problem;
-import jorgan.session.problem.Severity;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
 import jorgan.swing.MacAdapter;
 import jorgan.swing.StandardDialog;
+import spin.Spin;
 import swingx.Marker;
 import swingx.dnd.ObjectTransferable;
 import bias.Configuration;
-import bias.util.MessageBuilder;
 
 /**
  * Panel that manages views to display a console of an organ.
@@ -202,8 +204,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			throw new IllegalArgumentException("console must not be null");
 		}
 		this.session = session;
-		this.session.addOrganListener(eventHandler);
-		this.session.addSelectionListener(eventHandler);
+		this.session.getOrgan().addOrganListener(
+				(OrganListener) Spin.over(eventHandler));
+		this.session.get(ElementSelection.class).addListener(eventHandler);
 		this.session.addListener(eventHandler);
 
 		this.console = console;
@@ -260,8 +263,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	public void dispose() {
-		this.session.removeOrganListener(eventHandler);
-		this.session.removeSelectionListener(eventHandler);
+		this.session.getOrgan().removeOrganListener(
+				(OrganListener) Spin.over(eventHandler));
+		this.session.get(ElementSelection.class).removeListener(eventHandler);
 		this.session.removeListener(eventHandler);
 		this.session = null;
 
@@ -457,28 +461,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void initSkin() {
-		session.getProblems().removeProblem(
+		session.get(ElementProblems.class).removeProblem(
 				new Problem(Severity.ERROR, console, "skin", null));
 
 		String skin = console.getSkin();
 		if (skin == null) {
 			this.skin = null;
 		} else {
-			try {
-				this.skin = SkinManager.instance().getSkin(
-						session.resolve(skin));
-			} catch (IOException ex) {
-				session.getProblems().addProblem(
-						new Problem(Severity.ERROR, console, "skin",
-								createMessage("skinLoad", skin)));
-			}
+			this.skin = session.get(SkinManager.class).getSkin(console);
 		}
-	}
-
-	protected String createMessage(String key, Object... args) {
-		MessageBuilder builder = new MessageBuilder();
-
-		return config.get(key).read(builder).build(args);
 	}
 
 	protected View<? extends Displayable> getView(Displayable element) {
@@ -730,10 +721,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void destroyed() {
 		}
 
-		public void selectionChanged(SelectionEvent ev) {
+		public void selectionChanged() {
 
 			selectedViews.clear();
-			for (Element element : session.getSelection().getSelectedElements()) {
+			for (Element element : session.get(ElementSelection.class)
+					.getSelectedElements()) {
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
@@ -782,7 +774,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void mousePressed(MouseEvent e) {
 			mouseFrom = e.getPoint();
 
-			session.getUndoManager().compound();
+			session.get(UndoManager.class).compound();
 
 			pressedView = getView(screenToView(e.getX()),
 					screenToView(e.getY()));
@@ -794,15 +786,16 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			if (isMultiSelect(e)) {
 				if (pressedView != null) {
-					session.getSelection().addSelectedElement(
+					session.get(ElementSelection.class).addSelectedElement(
 							pressedView.getElement());
 				}
 			} else {
 				if (pressedView == null) {
-					session.getSelection().setSelectedElement(null);
+					session.get(ElementSelection.class)
+							.setSelectedElement(null);
 				} else {
 					if (!selectedViews.contains(pressedView)) {
-						session.getSelection().setSelectedElement(
+						session.get(ElementSelection.class).setSelectedElement(
 								pressedView.getElement());
 					}
 				}
@@ -837,7 +830,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					dragMarker = null;
 				}
 
-				dragMarker = createMarker(mouseFrom.x, mouseFrom.y, mouseTo.x, mouseTo.y);
+				dragMarker = createMarker(mouseFrom.x, mouseFrom.y, mouseTo.x,
+						mouseTo.y);
 
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
@@ -849,7 +843,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						elements.add(view.getElement());
 					}
 				}
-				session.getSelection().setSelectedElements(elements);
+				session.get(ElementSelection.class).setSelectedElements(
+						elements);
 			} else {
 				int deltaX = pressedOrigin.x - pressedView.getX();
 				int deltaY = pressedOrigin.y - pressedView.getY();
@@ -876,7 +871,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseReleased(MouseEvent e) {
 
-			session.getUndoManager().compound();
+			session.get(UndoManager.class).compound();
 
 			if (dragMarker != null) {
 				dragMarker.release();
@@ -896,11 +891,12 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			if (pressedView != null) {
 				if (isMultiSelect(e)) {
 					if (pressedWasSelected) {
-						session.getSelection().removeSelectedElement(
-								pressedView.getElement());
+						session
+								.get(ElementSelection.class)
+								.removeSelectedElement(pressedView.getElement());
 					}
 				} else {
-					session.getSelection().setSelectedElement(
+					session.get(ElementSelection.class).setSelectedElement(
 							pressedView.getElement());
 				}
 			}

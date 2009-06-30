@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Locale;
 
 /**
- * Style.
+ * A skin.
  */
 public class Skin implements Resolver {
 
@@ -34,7 +34,7 @@ public class Skin implements Resolver {
 
 	private ArrayList<Style> styles = new ArrayList<Style>();
 
-	private transient SkinSource source;
+	private transient Resolver resolver;
 
 	public String getName() {
 		return name;
@@ -62,12 +62,8 @@ public class Skin implements Resolver {
 		return clones;
 	}
 
-	public void setSource(SkinSource source) {
-		this.source = source;
-	}
-
-	public SkinSource getSource() {
-		return source;
+	public void setResolver(Resolver resolver) {
+		this.resolver = resolver;
 	}
 
 	public Skin getSkin() {
@@ -113,7 +109,7 @@ public class Skin implements Resolver {
 			String localized = name.substring(0, suffix) + locale
 					+ name.substring(suffix);
 
-			URL url = source.getURL(localized);
+			URL url = resolver.resolve(localized);
 			if (probe(url)) {
 				return url;
 			}

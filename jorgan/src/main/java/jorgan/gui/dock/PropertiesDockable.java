@@ -32,13 +32,16 @@ import javax.swing.event.ChangeListener;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.info.spi.BeanInfoSearchPathRegistry;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
-import jorgan.session.undo.Compound;
 import jorgan.swing.beans.PropertiesPanel;
+import spin.Spin;
 import bias.Configuration;
 
 /**
@@ -72,17 +75,17 @@ public class PropertiesDockable extends OrganDockable {
 			PropertyEditor editor = super.getPropertyEditor(descriptor);
 
 			if (editor != null && editor instanceof ElementAwareEditor) {
-				((ElementAwareEditor) editor)
-						.setElement((Element) panel.getBeans().get(0));
+				((ElementAwareEditor) editor).setElement((Element) panel
+						.getBeans().get(0));
 			}
 
 			return editor;
 		}
-		
+
 		@Override
 		protected void onWriteProperty(final Method method, final Object value) {
-			
-			session.getUndoManager().compound(new Compound() {
+
+			session.get(UndoManager.class).compound(new Compound() {
 				public void run() {
 					writeProperty(method, value);
 				};
@@ -94,7 +97,7 @@ public class PropertiesDockable extends OrganDockable {
 		config.read(this);
 
 		panel.addChangeListener(selectionHandler);
-		
+
 		setContent(new JScrollPane(panel));
 	}
 
@@ -102,11 +105,13 @@ public class PropertiesDockable extends OrganDockable {
 	public boolean forPlay() {
 		return false;
 	}
-	
+
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeSelectionListener(selectionHandler);
-			this.session.removeOrganListener(selectionHandler);
+			this.session.get(ElementSelection.class).removeListener(
+					selectionHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(selectionHandler));
 
 			selectionHandler.clearProperties();
 		}
@@ -114,8 +119,10 @@ public class PropertiesDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addSelectionListener(selectionHandler);
-			this.session.addOrganListener(selectionHandler);
+			this.session.get(ElementSelection.class).addListener(
+					selectionHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(selectionHandler));
 
 			selectionHandler.updateProperties();
 		}
@@ -129,15 +136,16 @@ public class PropertiesDockable extends OrganDockable {
 
 		private boolean changing = false;
 
-		public void selectionChanged(SelectionEvent ev) {
-					
-			Element element = session.getSelection().getSelectedElement();
+		public void selectionChanged() {
+
+			Element element = session.get(ElementSelection.class)
+					.getSelectedElement();
 			if (element == null) {
 				setStatus(null);
 			} else {
 				setStatus(Elements.getDisplayName(element.getClass()));
 			}
-			
+
 			updateProperties();
 		}
 
@@ -145,10 +153,10 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				session.getUndoManager().compound();
-				
+				session.get(UndoManager.class).compound();
+
 				String property = panel.getProperty();
-				session.getSelection().setLocation(property);
+				session.get(ElementSelection.class).setLocation(property);
 
 				changing = false;
 			}
@@ -165,10 +173,11 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				panel.setBeans(session.getSelection()
+				panel.setBeans(session.get(ElementSelection.class)
 						.getSelectedElements());
 
-				Object location = session.getSelection().getLocation();
+				Object location = session.get(ElementSelection.class)
+						.getLocation();
 				if (location instanceof String) {
 					panel.setProperty((String) location);
 				} else {

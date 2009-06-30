@@ -47,13 +47,13 @@ import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.KeyListener;
 import jorgan.play.event.PlayListener;
 import jorgan.play.spi.PlayerRegistry;
-import jorgan.session.ElementProblems;
-import jorgan.session.problem.Problem;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
 
 /**
  * A play of an organ.
  */
-public class OrganPlay implements Resolver {
+public abstract class OrganPlay {
 
 	/**
 	 * Only one thread is allowed to change players at a time.
@@ -66,8 +66,6 @@ public class OrganPlay implements Resolver {
 	private final Object RECEIVER_LOCK = new Object();
 
 	private boolean open;
-
-	private Resolver resolver;
 
 	/**
 	 * Element to player mapping.
@@ -99,10 +97,9 @@ public class OrganPlay implements Resolver {
 	 * @param organ
 	 *            the organ to play
 	 */
-	public OrganPlay(Organ organ, ElementProblems problems, Resolver resolver) {
+	public OrganPlay(Organ organ, ElementProblems problems) {
 		this.organ = organ;
 		this.problems = problems;
-		this.resolver = resolver;
 
 		organ.addOrganListener(eventHandler);
 		organ.addOrganObserver(eventHandler);
@@ -420,7 +417,5 @@ public class OrganPlay implements Resolver {
 		};
 	}
 
-	public File resolve(String name) throws IOException {
-		return resolver.resolve(name);
-	}
+	public abstract File resolve(String name) throws IOException;
 }

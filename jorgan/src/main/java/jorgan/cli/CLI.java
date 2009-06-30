@@ -32,11 +32,12 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionStream;
 import jorgan.io.disposition.DispositionFileFilter;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.ProblemListener;
+import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
-import jorgan.session.problem.Problem;
-import jorgan.session.problem.ProblemListener;
-import jorgan.session.problem.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -45,11 +46,10 @@ import bias.util.MessageBuilder;
  */
 public class CLI implements UI, SessionAware {
 
-	private static final Logger logger = Logger.getLogger(CLI.class
-			.getName());
+	private static final Logger logger = Logger.getLogger(CLI.class.getName());
 
-	private static Configuration config = Configuration.getRoot().get(
-			CLI.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(CLI.class);
 
 	private Organ organ;
 
@@ -141,9 +141,10 @@ public class CLI implements UI, SessionAware {
 
 		if (session != null) {
 			this.session = session;
-			session.addProblemListener(problemListener);
+			session.get(ElementProblems.class).addListener(problemListener);
 
-			for (Problem problem : session.getProblems().getProblems()) {
+			for (Problem problem : session.get(ElementProblems.class)
+					.getProblems()) {
 				problemListener.problemAdded(problem);
 			}
 		}

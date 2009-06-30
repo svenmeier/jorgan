@@ -24,9 +24,11 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ConsolePanel;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
+import spin.Spin;
 import swingx.docking.DefaultDockable;
 import swingx.docking.Docked;
 
@@ -36,20 +38,21 @@ import swingx.docking.Docked;
 public class ConsoleDockable extends DefaultDockable implements SessionAware {
 
 	private EventHandler eventHandler = new EventHandler();
-	
+
 	private OrganSession session;
-	
+
 	private Console console;
-	
+
 	private ConsolePanel panel;
-	
+
 	public ConsoleDockable(Console console) {
 		this.console = console;
 	}
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(eventHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(eventHandler));
 
 			setContent(null);
 			panel.dispose();
@@ -57,14 +60,15 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 		}
 
 		this.session = session;
-		
+
 		if (this.session != null) {
 			panel = new ConsolePanel(this.session, console);
 			setContent(new JScrollPane(panel));
-			
+
 			updateTitle();
-			
-			this.session.addOrganListener(eventHandler);
+
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(eventHandler));
 		}
 	}
 
@@ -73,11 +77,11 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 		super.docked(docked);
 
 	}
-	
+
 	private void updateTitle() {
 		setTitle(Elements.getDisplayName(panel.getConsole()));
 	}
-	
+
 	private class EventHandler extends OrganAdapter {
 		@Override
 		public void propertyChanged(Element element, String name) {

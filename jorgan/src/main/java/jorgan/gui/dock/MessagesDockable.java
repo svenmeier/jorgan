@@ -56,17 +56,19 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.CreateMessageWizard;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
 import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.NoOp;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
-import jorgan.session.undo.Compound;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
+import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
 import bias.Configuration;
@@ -228,15 +230,19 @@ public class MessagesDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(tableModel);
-			this.session.removeSelectionListener(selectionHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(tableModel));
+			this.session.get(ElementSelection.class).removeListener(
+					selectionHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(tableModel);
-			this.session.addSelectionListener(selectionHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(tableModel));
+			this.session.get(ElementSelection.class).addListener(
+					selectionHandler);
 		}
 
 		if (transferable != null) {
@@ -264,9 +270,10 @@ public class MessagesDockable extends OrganDockable {
 			table.setVisible(false);
 
 			if (session != null
-					&& session.getSelection().getSelectionCount() == 1) {
+					&& session.get(ElementSelection.class).getSelectionCount() == 1) {
 
-				element = session.getSelection().getSelectedElement();
+				element = session.get(ElementSelection.class)
+						.getSelectedElement();
 
 				for (Message message : element.getMessages()) {
 					messages.add(message);
@@ -295,14 +302,14 @@ public class MessagesDockable extends OrganDockable {
 		public void valueChanged(ListSelectionEvent e) {
 			// TODO should change ElementSelection ?
 			if (session != null) {
-				session.getUndoManager().compound();
+				session.get(UndoManager.class).compound();
 			}
 
 			removeAction.update();
 			recordAction.update();
 		}
 
-		public void selectionChanged(SelectionEvent ev) {
+		public void selectionChanged() {
 			updateMessages();
 		}
 	}
@@ -454,7 +461,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.getUndoManager().compound(this);
+			session.get(UndoManager.class).compound(this);
 		}
 
 		public void update() {
@@ -531,7 +538,7 @@ public class MessagesDockable extends OrganDockable {
 
 				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
-				session.getUndoManager().compound();
+				session.get(UndoManager.class).compound();
 
 				int index = table.getSelectedRow();
 				if (index != -1) {
@@ -544,7 +551,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		private void recorded(ShortMessage shortMessage) {
-			session.getUndoManager().compound();
+			session.get(UndoManager.class).compound();
 
 			int index = table.getSelectedRow();
 			if (index != -1) {

@@ -32,11 +32,13 @@ import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
+import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -108,13 +110,15 @@ public class MonitorDockable extends OrganDockable {
 	@Override
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removePlayerListener(listener);
+			this.session.get(OrganPlay.class).removePlayerListener(
+					(PlayListener) Spin.over(listener));
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addPlayerListener(listener);
+			this.session.get(OrganPlay.class).addPlayerListener(
+					(PlayListener) Spin.over(listener));
 		}
 	}
 
@@ -296,6 +300,7 @@ public class MonitorDockable extends OrganDockable {
 	private class MessageCellRenderer extends IconTableCellRenderer {
 
 		private boolean showIcon;
+
 		private transient Message message;
 
 		public MessageCellRenderer(boolean showIcon) {

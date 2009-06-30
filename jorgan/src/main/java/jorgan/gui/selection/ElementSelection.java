@@ -16,15 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session;
+package jorgan.gui.selection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
 
 public class ElementSelection {
 
@@ -281,7 +279,7 @@ public class ElementSelection {
 	 * @param listener
 	 *            listener to add
 	 */
-	public void addSelectionListener(SelectionListener listener) {
+	public void addListener(SelectionListener listener) {
 		listeners.add(listener);
 	}
 
@@ -291,7 +289,7 @@ public class ElementSelection {
 	 * @param listener
 	 *            listener to remove
 	 */
-	public void removeSelectionListener(SelectionListener listener) {
+	public void removeListener(SelectionListener listener) {
 		listeners.remove(listener);
 	}
 
@@ -300,7 +298,7 @@ public class ElementSelection {
 	 */
 	protected void fireStateChanged() {
 		for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
-			listener.selectionChanged(new SelectionEvent(this));
+			listener.selectionChanged();
 		}
 	}
 }

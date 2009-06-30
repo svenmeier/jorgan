@@ -16,13 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.selection;
+package jorgan.skin;
 
-import java.util.EventObject;
+import java.io.File;
+import java.io.IOException;
 
-public class SelectionEvent extends EventObject {
+import jorgan.problem.ElementProblems;
+import jorgan.session.OrganSession;
+import jorgan.session.spi.SessionProvider;
 
-  public SelectionEvent(Object source) {
-    super(source);  
-  }
+public class SkinSessionProvider implements SessionProvider {
+
+	public Object create(final OrganSession session, Class<?> clazz) {
+		if (clazz == SkinManager.class) {
+			return new SkinManager(session.get(ElementProblems.class)) {
+				@Override
+				protected File resolve(String name) throws IOException {
+					return session.resolve(name);
+				}
+			};
+		}
+		return null;
+	}
 }

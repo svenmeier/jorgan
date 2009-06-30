@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session;
+package jorgan.gui.undo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,8 +26,6 @@ import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
-import jorgan.session.undo.Compound;
-import jorgan.session.undo.UndoListener;
 
 /**
  * A manager of {@link UndoableChange}s.
@@ -59,11 +57,11 @@ public class UndoManager {
 		});
 	}
 
-	public void addUndoListener(UndoListener listener) {
+	public void addListener(UndoListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeUndoListener(UndoListener listener) {
+	public void removeListener(UndoListener listener) {
 		listeners.remove(listener);
 	}
 

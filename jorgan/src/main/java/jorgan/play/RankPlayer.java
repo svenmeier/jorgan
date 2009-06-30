@@ -34,7 +34,7 @@ import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
 import jorgan.play.sound.DelayedChannel;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Severity;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.

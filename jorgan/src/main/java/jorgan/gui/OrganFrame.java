@@ -65,6 +65,7 @@ import jorgan.swing.DebugPanel;
 import jorgan.swing.Desktop;
 import jorgan.swing.MacAdapter;
 import jorgan.swing.StatusBar;
+import spin.Spin;
 import bias.Configuration;
 import bias.swing.MessageBox;
 import bias.util.MessageBuilder;
@@ -284,8 +285,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (session.getFile() == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
-			setTitle(jorgan.io.disposition.DispositionFileFilter.removeSuffix(session
-					.getFile())
+			setTitle(jorgan.io.disposition.DispositionFileFilter
+					.removeSuffix(session.getFile())
 					+ " - " + TITEL_SUFFIX);
 		}
 	}
@@ -327,14 +328,16 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (this.session != null) {
 			this.session.destroy();
 
-			this.session.removeOrganObserver(saveAction);
+			this.session.getOrgan().removeOrganObserver(
+					(OrganObserver) Spin.over(saveAction));
 			this.session.addListener(handler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganObserver(saveAction);
+			this.session.getOrgan().addOrganObserver(
+					(OrganObserver) Spin.over(saveAction));
 			this.session.addListener(handler);
 
 			constructButton.setSelected(this.session.isConstructing());
@@ -343,7 +346,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		saveAction.clearChanges();
 
 		organPanel.setSession(session);
-		
+
 		buildMenu();
 	}
 
@@ -388,7 +391,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (ExtensionException ex) {
 			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			showBoxMessage("openExtensionException", file.getName(), ex.getExtension());
+			showBoxMessage("openExtensionException", file.getName(), ex
+					.getExtension());
 			return;
 		} catch (FormatException ex) {
 			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
@@ -459,8 +463,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 				.getRecentDirectory());
 		chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 		if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-			File file = jorgan.io.disposition.DispositionFileFilter.addSuffix(chooser
-					.getSelectedFile());
+			File file = jorgan.io.disposition.DispositionFileFilter
+					.addSuffix(chooser.getSelectedFile());
 
 			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
 			config.get("saveOrganAsConfirmReplace").read(box);
@@ -716,7 +720,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 				ConsoleDialog dialog = dialogs.get(screen);
 				if (dialog == null) {
-					dialog = ConsoleDialog.create(OrganFrame.this, session, screen);
+					dialog = ConsoleDialog.create(OrganFrame.this, session,
+							screen);
 					dialogs.put(screen, dialog);
 				}
 				dialog.addConsole(console);
@@ -762,6 +767,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		public void constructingChanged(boolean constructing) {
 			constructButton.setSelected(constructing);
 		}
+
 		public void destroyed() {
 		}
 	}

@@ -22,30 +22,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganListener;
-import jorgan.disposition.event.OrganObserver;
-import jorgan.play.OrganPlay;
-import jorgan.play.Resolver;
-import jorgan.play.event.PlayListener;
-import jorgan.session.problem.ProblemListener;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
-import jorgan.session.undo.UndoListener;
-import spin.Spin;
+import jorgan.session.spi.SessionRegistry;
 
 /**
- * A session playing or constructing an organ via a GUI. <br>
- * Note that <em>Spin</em> ensures that listener methods are called on the
- * EDT, although a change in disposition or players might be triggered by a
- * change on a MIDI thread.
- * 
- * TODO remove spin dependencies - non-GUI clients don't need Spin
+ * A session of interaction with an {@link Organ}.
  */
 public class OrganSession {
 
@@ -56,17 +42,11 @@ public class OrganSession {
 
 	private Organ organ;
 
-	private OrganPlay play;
-
-	private ElementSelection selection;
-
-	private ElementProblems problems;
-
-	private UndoManager undo;
-
 	private List<SessionListener> listeners = new ArrayList<SessionListener>();
 
 	private boolean constructing = false;
+
+	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
 
 	public OrganSession() {
 		this(createDefaultOrgan());
@@ -82,39 +62,6 @@ public class OrganSession {
 		}
 		this.organ = organ;
 		this.file = file;
-
-		problems = new ElementProblems();
-
-		play = new OrganPlay(organ, problems, new PlayResolver());
-
-		undo = new UndoManager(organ);
-
-		selection = new ElementSelection();
-		selection.addSelectionListener(new SelectionListener() {
-			public void selectionChanged(SelectionEvent ev) {
-				undo.compound();
-			}
-		});
-
-		organ.addOrganListener((OrganListener) Spin.over(new OrganAdapter() {
-			@Override
-			public void elementRemoved(Element element) {
-				selection.clear(element);
-
-				problems.removeProblems(element);
-
-				undo.compound();
-			}
-
-			@Override
-			public void elementAdded(Element element) {
-				selection.setSelectedElement(element);
-
-				undo.compound();
-			}
-		}));
-
-		play.open();
 	}
 
 	public void setFile(File file) {
@@ -137,16 +84,6 @@ public class OrganSession {
 		if (constructing != this.constructing) {
 			this.constructing = constructing;
 
-			if (constructing) {
-				if (play.isOpen()) {
-					play.close();
-				}
-			} else {
-				if (!play.isOpen()) {
-					play.open();
-				}
-			}
-			
 			for (SessionListener listener : listeners) {
 				listener.constructingChanged(constructing);
 			}
@@ -165,74 +102,18 @@ public class OrganSession {
 		return organ;
 	}
 
-	public OrganPlay getPlay() {
-		return play;
-	}
-
-	public UndoManager getUndoManager() {
-		return undo;
-	}
-
-	public ElementSelection getSelection() {
-		return selection;
-	}
-
-	public ElementProblems getProblems() {
-		return problems;
-	}
-
-	public void addSelectionListener(SelectionListener listener) {
-		selection.addSelectionListener(listener);
-	}
-
-	public void removeSelectionListener(SelectionListener listener) {
-		selection.removeSelectionListener(listener);
-	}
-
-	public void addUndoListener(UndoListener listener) {
-		undo.addUndoListener((UndoListener) Spin.over(listener));
-	}
-
-	public void removeUndoListener(UndoListener listener) {
-		undo.removeUndoListener((UndoListener) Spin.over(listener));
-	}
-
-	public void addOrganListener(OrganListener listener) {
-		organ.addOrganListener((OrganListener) Spin.over(listener));
-	}
-
-	public void removeOrganListener(OrganListener listener) {
-		organ.removeOrganListener((OrganListener) Spin.over(listener));
-	}
-
-	public void addOrganObserver(OrganObserver observer) {
-		organ.addOrganObserver((OrganObserver) Spin.over(observer));
-	}
-
-	public void removeOrganObserver(OrganObserver observer) {
-		organ.removeOrganObserver((OrganObserver) Spin.over(observer));
-	}
-
-	public void addPlayerListener(PlayListener listener) {
-		play.addPlayerListener((PlayListener) Spin.over(listener));
-	}
-
-	public void removePlayerListener(PlayListener listener) {
-		play.removePlayerListener((PlayListener) Spin.over(listener));
-	}
-
-	public void addProblemListener(ProblemListener listener) {
-		problems.addProblemListener((ProblemListener) Spin.over(listener));
-	}
-
-	public void removeProblemListener(ProblemListener listener) {
-		problems.removeProblemListener((ProblemListener) Spin.over(listener));
-	}
-
-	private class PlayResolver implements Resolver {
-		public File resolve(String name) throws IOException {
-			return OrganSession.this.resolve(name);
+	@SuppressWarnings("unchecked")
+	public <T> T get(Class<T> clazz) {
+		T t = (T) ts.get(clazz);
+		if (t == null) {
+			t = (T) SessionRegistry.create(this, clazz);
+			if (t == null) {
+				throw new IllegalArgumentException();
+			} else {
+				ts.put(clazz, t);
+			}
 		}
+		return t;
 	}
 
 	public File resolve(String name) throws IOException {
@@ -266,8 +147,6 @@ public class OrganSession {
 	}
 
 	public void destroy() {
-		play.destroy();
-		
 		for (SessionListener listener : listeners) {
 			listener.destroyed();
 		}

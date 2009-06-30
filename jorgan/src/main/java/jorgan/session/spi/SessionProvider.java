@@ -16,15 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.session.spi;
 
-import java.io.File;
-import java.io.IOException;
+import jorgan.session.OrganSession;
 
 /**
- * A player of an console.
+ * A provider of {@link OrganSession} objects.
+ * 
+ * @see OrganSession#get(Class)
  */
-public interface Resolver {
-
-	public File resolve(String name) throws IOException;
+public interface SessionProvider {
+	public Object create(OrganSession session, Class<?> clazz);
 }

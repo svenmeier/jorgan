@@ -26,51 +26,87 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import jorgan.disposition.Console;
 import jorgan.io.SkinStream;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.Severity;
 import jorgan.util.IOUtils;
+import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Manager of skins.
  */
-public class SkinManager implements ISkinManager {
+public abstract class SkinManager {
+
+	private static Configuration config = Configuration.getRoot().get(
+			SkinManager.class);
 
 	private static final String SKIN_FILE = "skin.xml";
 
 	private static final String ZIP_SUFFIX = ".zip";
 
-	private static SkinManager instance;
+	private Map<String, Skin> skins = new HashMap<String, Skin>();
 
-	private Map<File, Skin> skins = new HashMap<File, Skin>();
+	private ElementProblems problems;
 
-	public Skin getSkin(File file) throws IOException {
-		if (file == null) {
-			throw new IllegalArgumentException("file must not be null");
+	public SkinManager(ElementProblems problems) {
+		this.problems = problems;
+	}
+
+	public Skin getSkin(Console console) {
+		if (console == null) {
+			throw new IllegalArgumentException("console must not be null");
 		}
-		file = file.getAbsoluteFile();
 
-		Skin skin = skins.get(file);
-		if (skin == null) {
-			skin = loadSkin(file);
+		problems.removeProblem(new Problem(Severity.ERROR, console, "skin",
+				null));
 
-			skins.put(file, skin);
+		if (console.getSkin() == null) {
+			return null;
+		}
+
+		Skin skin = skins.get(console.getSkin());
+		if (skin != null) {
+			return skin;
+		}
+
+		try {
+			skin = loadSkin(resolve(console.getSkin()));
+			skins.put(console.getSkin(), skin);
+		} catch (IOException e) {
+			problems.addProblem(new Problem(Severity.ERROR, console, "skin",
+					createMessage("skinLoad", skin)));
 		}
 
 		return skin;
 	}
 
+	protected abstract File resolve(String skin) throws IOException;
+
+	protected String createMessage(String key, Object... args) {
+		MessageBuilder builder = new MessageBuilder();
+
+		return config.get(key).read(builder).build(args);
+	}
+
 	private Skin loadSkin(File file) throws IOException {
 		Skin skin = null;
 
-		SkinSource source = createSkinDirectory(file);
-		if (source == null) {
-			source = createSkinZip(file);
+		Resolver resolver = createSkinDirectory(file);
+		if (resolver == null) {
+			resolver = createSkinZip(file);
+			if (resolver == null) {
+				throw new IOException();
+			}
 		}
 
-		if (source != null) {
-			InputStream input = source.getURL(SKIN_FILE).openStream();
+		if (resolver != null) {
+			InputStream input = resolver.resolve(SKIN_FILE).openStream();
 			try {
 				skin = new SkinStream().read(input);
-				skin.setSource(source);
+				skin.setResolver(resolver);
 			} finally {
 				IOUtils.closeQuietly(input);
 			}
@@ -79,7 +115,7 @@ public class SkinManager implements ISkinManager {
 		return skin;
 	}
 
-	private SkinSource createSkinDirectory(File file) {
+	private Resolver createSkinDirectory(File file) {
 
 		if (file.isDirectory()) {
 			return new SkinDirectory(file);
@@ -87,7 +123,7 @@ public class SkinManager implements ISkinManager {
 		return null;
 	}
 
-	private SkinSource createSkinZip(File file) {
+	private Resolver createSkinZip(File file) {
 
 		if (file.getName().endsWith(ZIP_SUFFIX)) {
 			return new SkinZip(file);
@@ -98,7 +134,7 @@ public class SkinManager implements ISkinManager {
 	/**
 	 * A source of a skin contained in a directory.
 	 */
-	private class SkinDirectory implements SkinSource {
+	private class SkinDirectory implements Resolver{
 
 		private File directory;
 
@@ -106,7 +142,7 @@ public class SkinManager implements ISkinManager {
 			this.directory = directory;
 		}
 
-		public URL getURL(String name) {
+		public URL resolve(String name) {
 			try {
 				return new File(directory, name).toURI().toURL();
 			} catch (MalformedURLException ex) {
@@ -118,7 +154,7 @@ public class SkinManager implements ISkinManager {
 	/**
 	 * A source of a skin contained in a zipFile.
 	 */
-	private class SkinZip implements SkinSource {
+	private class SkinZip implements Resolver {
 
 		private File file;
 
@@ -126,25 +162,12 @@ public class SkinManager implements ISkinManager {
 			this.file = file;
 		}
 
-		public URL getURL(String name) {
+		public URL resolve(String name) {
 			try {
 				return new URL("jar:" + file.toURI().toURL() + "!/" + name);
 			} catch (MalformedURLException ex) {
 				return null;
 			}
 		}
-	}
-
-	/**
-	 * Get the singleton instance.
-	 * 
-	 * @return manager of {@Skin}s.
-	 */
-	public static SkinManager instance() {
-		if (instance == null) {
-			instance = new SkinManager();
-		}
-
-		return instance;
 	}
 }
