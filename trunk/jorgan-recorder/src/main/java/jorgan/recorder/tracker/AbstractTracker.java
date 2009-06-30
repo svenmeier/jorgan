@@ -27,12 +27,12 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.Tracker;
 
 public abstract class AbstractTracker implements Tracker {
 
-	private SessionRecorder recorder;
+	private Performance performance;
 
 	private int track;
 
@@ -40,14 +40,14 @@ public abstract class AbstractTracker implements Tracker {
 
 	private boolean records = true;
 
-	protected AbstractTracker(SessionRecorder recorder, int track) {
-		this.recorder = recorder;
+	protected AbstractTracker(Performance performance, int track) {
+		this.performance = performance;
 
 		this.track = track;
 	}
 
 	public void destroy() {
-		recorder = null;
+		performance = null;
 	}
 
 	public int getTrack() {
@@ -73,11 +73,11 @@ public abstract class AbstractTracker implements Tracker {
 	public abstract Element getElement();
 
 	public Organ getOrgan() {
-		return recorder.getSession().getOrgan();
+		return performance.getPlay().getOrgan();
 	}
 
 	public OrganPlay getPlay() {
-		return recorder.getSession().getPlay();
+		return performance.getPlay();
 	}
 
 	public void onPlayStarting() {
@@ -97,7 +97,7 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected Iterable<MidiEvent> messages() {
-		return recorder.getRecorder().eventsToCurrent(getTrack());
+		return performance.getRecorder().eventsToCurrent(getTrack());
 	}
 
 	protected void record(int status, int data1, int data2) {
@@ -105,13 +105,13 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected void record(MidiMessage message) {
-		if (recorder.getState() == SessionRecorder.STATE_RECORD && records()) {
-			recorder.getRecorder().record(getTrack(), message);
+		if (performance.getState() == Performance.STATE_RECORD && records()) {
+			performance.getRecorder().record(getTrack(), message);
 		}
 	}
 
 	private void removeFollowingEvents() {
-		Iterator<MidiEvent> iterator = recorder.getRecorder()
+		Iterator<MidiEvent> iterator = performance.getRecorder()
 				.eventsFromCurrent(getTrack()).iterator();
 		while (iterator.hasNext()) {
 			if (owns(iterator.next())) {

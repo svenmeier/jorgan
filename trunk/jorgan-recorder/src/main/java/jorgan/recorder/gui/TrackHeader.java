@@ -34,7 +34,7 @@ import javax.swing.event.PopupMenuListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.swing.IconToggle;
 import bias.Configuration;
 
@@ -45,20 +45,20 @@ public class TrackHeader extends JPanel {
 	private static Configuration config = Configuration.getRoot().get(
 			TrackHeader.class);
 
-	private SessionRecorder recorder;
+	private Performance performance;
 
 	private int track;
 
-	public TrackHeader(final SessionRecorder recorder, final int track) {
+	public TrackHeader(final Performance performance, final int track) {
 		super(new BorderLayout());
 
-		this.recorder = recorder;
+		this.performance = performance;
 		this.track = track;
 
 		JLabel label = new JLabel();
 		label.setHorizontalAlignment(JLabel.CENTER);
 		label.setBorder(new EmptyBorder(2, 2, 2, 2));
-		Element element = recorder.getElement(track);
+		Element element = performance.getElement(track);
 		if (element == null) {
 			config.get("none").read(label);
 		} else {
@@ -73,13 +73,13 @@ public class TrackHeader extends JPanel {
 		IconToggle playToggle = new IconToggle() {
 			@Override
 			protected boolean isOn() {
-				return recorder.getTracker(track).plays();
+				return performance.getTracker(track).plays();
 			}
 
 			@Override
 			protected void toggle() {
-				if (recorder.getState() == SessionRecorder.STATE_STOP) {
-					recorder.getTracker(track).setPlays(!isOn());
+				if (performance.getState() == Performance.STATE_STOP) {
+					performance.getTracker(track).setPlays(!isOn());
 					super.toggle();
 				}
 			}
@@ -90,13 +90,13 @@ public class TrackHeader extends JPanel {
 		IconToggle recordToggle = new IconToggle() {
 			@Override
 			protected boolean isOn() {
-				return recorder.getTracker(track).records();
+				return performance.getTracker(track).records();
 			}
 
 			@Override
 			protected void toggle() {
-				if (recorder.getState() == SessionRecorder.STATE_STOP) {
-					recorder.getTracker(track).setRecords(!isOn());
+				if (performance.getState() == Performance.STATE_STOP) {
+					performance.getTracker(track).setRecords(!isOn());
 					super.toggle();
 				}
 			}
@@ -131,20 +131,20 @@ public class TrackHeader extends JPanel {
 
 		final JRadioButtonMenuItem noneItem = new JRadioButtonMenuItem();
 		config.get("none").read(noneItem);
-		noneItem.setSelected(recorder.getElement(track) == null);
+		noneItem.setSelected(performance.getElement(track) == null);
 		noneItem.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (noneItem.isSelected()) {
-					recorder.setElement(track, null);
+					performance.setElement(track, null);
 				}
 			}
 		});		
 		menu.add(noneItem);
 
-		for (final Element element : recorder.getTrackableElements()) {
+		for (final Element element : performance.getTrackableElements()) {
 			final JRadioButtonMenuItem item = new JRadioButtonMenuItem(Elements
 					.getDisplayName(element));
-			if (recorder.getElement(track) == element) {
+			if (performance.getElement(track) == element) {
 				item.setSelected(true);
 			}
 			if ("".equals(element.getName())) {
@@ -153,7 +153,7 @@ public class TrackHeader extends JPanel {
 			item.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (item.isSelected()) {
-						recorder.setElement(track, element);
+						performance.setElement(track, element);
 					}
 				}
 			});

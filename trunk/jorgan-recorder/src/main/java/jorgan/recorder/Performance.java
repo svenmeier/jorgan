@@ -31,16 +31,16 @@ import javax.sound.midi.Sequence;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
+import jorgan.play.OrganPlay;
 import jorgan.recorder.midi.Recorder;
 import jorgan.recorder.spi.TrackerRegistry;
 import jorgan.recorder.tracker.AbstractTracker;
 import jorgan.session.OrganSession;
-import jorgan.session.SessionListener;
 
 /**
  * A recorder of an {@link OrganSession}.
  */
-public class SessionRecorder {
+public class Performance {
 
 	private static final float DEFAULT_DIVISION = Sequence.PPQ;
 
@@ -52,11 +52,11 @@ public class SessionRecorder {
 
 	public static final int STATE_RECORD = 2;
 
-	private List<SessionRecorderListener> listeners = new ArrayList<SessionRecorderListener>();
+	private List<PerformanceListener> listeners = new ArrayList<PerformanceListener>();
 
 	private Recorder recorder;
 
-	private OrganSession session;
+	private OrganPlay play;
 
 	private Tracker[] trackers = new Tracker[0];
 
@@ -67,18 +67,25 @@ public class SessionRecorder {
 	/**
 	 * Record the given session.
 	 */
-	public SessionRecorder(OrganSession session) {
-		this.session = session;
-		session.addListener(listener);
-		session.getOrgan().addOrganListener(listener);
+	public Performance(OrganPlay play) {
+		this.play = play;
+		this.play.getOrgan().addOrganListener(listener);
 
 		this.recorder = new InternalRecorder();
 
 		reset();
 	}
 
-	public void addListener(SessionRecorderListener listener) {
+	public void addListener(PerformanceListener listener) {
 		listeners.add(listener);
+	}
+
+	public void removeListener(PerformanceListener listener) {
+		listeners.remove(listener);
+	}
+
+	public OrganPlay getPlay() {
+		return play;
 	}
 
 	public void reset() {
@@ -90,11 +97,11 @@ public class SessionRecorder {
 		this.trackers = null;
 
 		List<Tracker> trackers = new ArrayList<Tracker>();
-		for (Element element : session.getOrgan().getElements(Element.class)) {
+		for (Element element : play.getOrgan().getElements(Element.class)) {
 			if ("".equals(element.getName())) {
 				continue;
 			}
-			
+
 			Tracker tracker = TrackerRegistry.createTracker(this, trackers
 					.size(), element);
 			if (tracker != null) {
@@ -143,10 +150,6 @@ public class SessionRecorder {
 		} catch (InvalidMidiDataException ex) {
 			throw new Error(ex);
 		}
-	}
-
-	public OrganSession getSession() {
-		return session;
 	}
 
 	public void stop() {
@@ -200,7 +203,7 @@ public class SessionRecorder {
 	public List<Element> getTrackableElements() {
 		List<Element> elements = new ArrayList<Element>();
 
-		for (Element element : session.getOrgan().getElements(Element.class)) {
+		for (Element element : play.getOrgan().getElements(Element.class)) {
 			Tracker tracker = TrackerRegistry.createTracker(this, 0, element);
 			if (tracker != null) {
 				tracker.destroy();
@@ -269,28 +272,26 @@ public class SessionRecorder {
 	}
 
 	private void fireTimeChanged(long millis) {
-		for (SessionRecorderListener listener : listeners) {
+		for (PerformanceListener listener : listeners) {
 			listener.timeChanged(millis);
 		}
 	}
 
 	private void fireTrackersChanged() {
-		for (SessionRecorderListener listener : listeners) {
+		for (PerformanceListener listener : listeners) {
 			listener.trackersChanged();
 		}
 	}
 
 	private void fireStateChanged() {
-		for (SessionRecorderListener listener : listeners) {
+		for (PerformanceListener listener : listeners) {
 			listener.stateChanged(state);
 		}
 	}
 
 	public void dispose() {
-		session.removeListener(listener);
-		session.getOrgan().removeOrganListener(listener);
-
-		session = null;
+		play.getOrgan().removeOrganListener(listener);
+		play = null;
 	}
 
 	private class InternalRecorder extends Recorder {
@@ -310,7 +311,7 @@ public class SessionRecorder {
 		@Override
 		protected void onLast() {
 			if (getState() == STATE_PLAY) {
-				SessionRecorder.this.stop();
+				Performance.this.stop();
 			}
 		}
 
@@ -358,9 +359,9 @@ public class SessionRecorder {
 
 		String name = getTrackName(track);
 		if (name != null) {
-			for (Element element : session.getOrgan().getElements()) {
+			for (Element element : play.getOrgan().getElements()) {
 				if (name.equals(element.getName())) {
-					tracker = TrackerRegistry.createTracker(SessionRecorder.this,
+					tracker = TrackerRegistry.createTracker(Performance.this,
 							track, element);
 					if (tracker != null) {
 						return tracker;
@@ -420,7 +421,7 @@ public class SessionRecorder {
 	private class EmptyTracker extends AbstractTracker {
 
 		public EmptyTracker(int track) {
-			super(SessionRecorder.this, track);
+			super(Performance.this, track);
 		}
 
 		@Override
@@ -433,16 +434,9 @@ public class SessionRecorder {
 			return false;
 		}
 	}
-	
-	private class EventListener extends OrganAdapter implements SessionListener {
 
-		public void constructingChanged(boolean constructing) {
-			stop();
-		}
+	private class EventListener extends OrganAdapter {
 
-		public void destroyed() {
-		}
-		
 		@Override
 		public void propertyChanged(Element element, String name) {
 			if ("name".equals(name)) {
@@ -457,7 +451,7 @@ public class SessionRecorder {
 				}
 			}
 		}
-		
+
 		@Override
 		public void elementRemoved(Element element) {
 			for (Tracker tracker : trackers) {
