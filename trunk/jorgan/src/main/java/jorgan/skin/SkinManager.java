@@ -77,7 +77,7 @@ public abstract class SkinManager {
 			skins.put(console.getSkin(), skin);
 		} catch (IOException e) {
 			problems.addProblem(new Problem(Severity.ERROR, console, "skin",
-					createMessage("skinLoad", skin)));
+					createMessage("skinLoad", console.getSkin())));
 		}
 
 		return skin;
