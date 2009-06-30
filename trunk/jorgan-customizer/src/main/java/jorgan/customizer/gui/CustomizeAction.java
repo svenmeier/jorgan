@@ -8,6 +8,7 @@ import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
 import jorgan.gui.OrganFrame;
+import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
@@ -39,7 +40,7 @@ public class CustomizeAction extends BaseAction {
 	public CustomizeAction(OrganSession session, OrganFrame frame) {
 		this.session = session;
 		this.frame = frame;
-		
+
 		session.addListener(eventListener);
 
 		config.read(this);
@@ -102,7 +103,8 @@ public class CustomizeAction extends BaseAction {
 	}
 
 	private void check() {
-		if (!session.isConstructing() && session.getProblems().hasErrors()) {
+		if (!session.isConstructing()
+				&& session.get(ElementProblems.class).hasErrors()) {
 			if (offer(frame)) {
 				CustomizeWizard.showInDialog(frame, session);
 			}

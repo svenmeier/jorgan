@@ -23,7 +23,7 @@ import java.io.IOException;
 import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
 import jorgan.play.GenericSoundPlayer;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Severity;
 import jorgan.util.Null;
 
 /**

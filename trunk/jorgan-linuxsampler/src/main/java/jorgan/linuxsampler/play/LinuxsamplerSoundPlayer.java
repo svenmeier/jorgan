@@ -31,7 +31,7 @@ import jorgan.linuxsampler.Linuxsampler.Conversation;
 import jorgan.linuxsampler.disposition.LinuxsamplerSound;
 import jorgan.linuxsampler.io.FileWatcher;
 import jorgan.play.GenericSoundPlayer;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Severity;
 import jorgan.util.IOUtils;
 import jorgan.util.Null;
 

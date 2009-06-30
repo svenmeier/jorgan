@@ -39,12 +39,13 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.img.ElementIcons;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
+import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
-import jorgan.session.ElementSelection;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
 import jorgan.swing.button.ButtonGroup;
+import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
 
@@ -52,346 +53,373 @@ import bias.Configuration;
  * Dockable for showing structure of a disposition
  */
 public class StructureDockable extends OrganDockable {
-  
-  private static Configuration config = Configuration.getRoot().get(StructureDockable.class);
-  private GraphWidget graphWidget;
-  private ListenerImpl listener = new ListenerImpl(); 
-  private OrganSession session = null;
-  private List<Element> selection = new ArrayList<Element>();
-  
-  private List<Class<? extends Element>> sources = new ArrayList<Class<? extends Element>>();
-  private List<JToggleButton> sourcesToggles = new ArrayList<JToggleButton>();
-  
-  /**
-   * Constructor
-   */
-  public StructureDockable() {
-    config.read(this);
-    
-    graphWidget = new GraphWidget();
-    graphWidget.setRenderer(new DefaultGraphRenderer() {
-      @Override
-      @SuppressWarnings({ "unchecked" })
-      protected Color getColor(Vertex vertex) {
-        if (selection.isEmpty()) 
-          return Color.BLACK;
-        if (selection.contains(((DefaultVertex<Element>)vertex).getContent()))
-          return Color.BLUE;
-        return Color.LIGHT_GRAY;
-      }
-      @Override
-      @SuppressWarnings({ "unchecked" })
-      protected Color getColor(Edge edge) {
-        if (selection.isEmpty()) 
-          return Color.BLACK;
-        if ( selection.contains(((DefaultVertex<Element>)edge.getStart()).getContent()) || selection.contains(((DefaultVertex<Element>)edge.getEnd()).getContent()) )
-          return Color.BLUE;
-        return Color.LIGHT_GRAY;
-      }
-      @Override
-      @SuppressWarnings({ "unchecked" })
-      protected Icon getIcon(Vertex vertex) {
-        return ElementIcons.getIcon( ((DefaultVertex<Element>)vertex).getContent().getClass() );
-      }
-      @Override
-      @SuppressWarnings({ "unchecked" })
-      protected String getText(Vertex vertex) {
-        return name(((DefaultVertex<Element>)vertex).getContent());
-      }
-    });
-    
-    graphWidget.addMouseListener(listener);
-    
-    // prepare source buttons
-    sources.add(Captor.class);
-    sources.add(Keyboard.class);
 
-    ButtonGroup sourceGroup = new ButtonGroup() {
-      @Override
-      protected void onSelected(AbstractButton button) {
-        rebuild();
-      }
-    };
+	private static Configuration config = Configuration.getRoot().get(
+			StructureDockable.class);
 
-    for (int i=0;i<sources.size();i++) {
-      JToggleButton toggle = new JToggleButton(sources.get(i).getSimpleName(), ElementIcons.getIcon(sources.get(i)));
-      sourcesToggles.add(toggle);
-      sourceGroup.add(toggle);
-    }
-    
-    // prepare contents
-    setContent(new JScrollPane(graphWidget));
-    
-    // done
-  }
-  
-  @Override
-  public boolean forPlay() {
-    return false;
-  }
-  
-  /** callback - being docked */
-  @Override
-  public void docked(Docked docked) {
-    super.docked(docked);
+	private GraphWidget graphWidget;
 
-    for (JToggleButton button : sourcesToggles)
-      docked.addTool(button);
-    
-    rebuild();
-  }
+	private ListenerImpl listener = new ListenerImpl();
 
-  /** calback - session opened */
-  @Override
-  public void setSession(OrganSession session) {
+	private OrganSession session = null;
 
-    if (this.session!=null) {
-      this.session.removeOrganListener(listener);
-      this.session.removeSelectionListener(listener);
-      this.session.removePlayerListener(listener);
-      
-      graphWidget.setGraph2D(new EmptyGraph());
-    }
-    
-    this.session = session;
+	private List<Element> selection = new ArrayList<Element>();
 
-    if (this.session!=null) {
-      this.session.addOrganListener(listener);
-      this.session.addSelectionListener(listener);
-      this.session.addPlayerListener(listener);
-      
-      rebuild();
-    }    
-  }
-  
+	private List<Class<? extends Element>> sources = new ArrayList<Class<? extends Element>>();
 
-  /**
-   * create a non-empty name representation
-   */
-  private String name(Element element) {
-    return element.getName().length()>0 ? element.getName() : element.getClass().getSimpleName();
-  }
-                                        
-  
-  /**
-   * find all sources
-   */
-  private Set<Element> sources() {
-    
-    Class<? extends Element> sourcetype = null;
-    for (int i=0;i<sourcesToggles.size();i++) {
-      if (sourcesToggles.get(i).isSelected()) {
-        sourcetype = sources.get(i);
-        break;
-      }
-    }
-    if (sourcetype==null) throw new IllegalArgumentException("no source type selected");
-    
-    Set<Element> result = new HashSet<Element>();
-    for (Element element : session.getOrgan().getElements()) {
-      if (sourcetype.isAssignableFrom(element.getClass()))
-        result.add(element);
-    }
-    
-    return result;
-  }
-  
-  /**
-   * rebuild structure
-   */
-  private void rebuild() {
-    if (!isDocked()) {
-    	return;
-    }
-    
-    // build an element graph on all sources
-    // TODO this is kinda bad to redo all over every time :)
-    ElementGraph graph = new ElementGraph(sources());
-    if (graph.getVertices().isEmpty()) {
-      graphWidget.setGraph2D(new EmptyGraph());
-      return;
-    }
-    
-    // collect all info
-    Rectangle bounds = new Rectangle();
-    try {
-      HierarchicalLayout a = new HierarchicalLayout();
-      a.setDistanceBetweenLayers(30);
-      a.setDistanceBetweenVertices(30);
-      a.setOrderOfVerticesInLayer(new ElementComparator());
-      bounds = a.apply(graph, new DefaultLayoutContext()).getBounds();
-    } catch (LayoutException e) {
-      // FIXME report something
-      e.printStackTrace();
-    }
-    graphWidget.setGraph2D(graph, bounds);
-    
-  }
-  
-  /**
-   * our interpretation of sorted vertices in a layer
-   */
-  private class ElementComparator implements Comparator<Vertex> {
-    @SuppressWarnings({ "unchecked" })
-    public int compare(Vertex v1, Vertex v2) {
-      Element e1 = ((DefaultVertex<Element>)v1).getContent();
-      Element e2 = ((DefaultVertex<Element>)v2).getContent();
-      return name(e1).compareTo(name(e2));
-    }
-  } //ElementComparator
+	private List<JToggleButton> sourcesToggles = new ArrayList<JToggleButton>();
 
-  /** 
-   * a filter action
-   */
-  private class ElementFilter {
-    boolean isSelected;
-    Class<? extends Element> type;
-    
-    ElementFilter(Class<? extends Element> type, boolean isSelected) {
-      this.type = type;
-      this.isSelected = isSelected;
-    }
-  } //ElementFilter
-  
-  /**
-   * a graph of elements
-   */
-  private class ElementGraph extends DefaultGraph {
-    
-    private Map<Element, DefaultVertex<Element>> vertices = new HashMap<Element, DefaultVertex<Element>>();
-    private List<DefaultEdge<Element>> edges = new ArrayList<DefaultEdge<Element>>();
-    
-    private ElementGraph(Set<Element> sources) {
-      super(null, new Ellipse2D.Double(-30,-20,60,40));
-      for (Element source : sources) { 
-        DefaultVertex<Element> vertex = new DefaultVertex<Element>(source); 
-        vertices.put(source, vertex);
-        source2sink(vertex);
-      }
-    }
-    
-    private void source2sink(DefaultVertex<Element> from) {
+	/**
+	 * Constructor
+	 */
+	public StructureDockable() {
+		config.read(this);
 
-      for (Reference<? extends Element> reference : from.getContent().getReferences()) {
-        DefaultVertex<Element> to = vertex(reference.getElement());
-        edges.add(new DefaultEdge<Element>(from, to));
-        source2sink(to);
-      }
-      
-    }
-    
-    private DefaultVertex<Element> vertex(Element element) {
-      DefaultVertex<Element> result = vertices.get(element);
-      if (result==null) {
-        result = new DefaultVertex<Element>(element); 
-        vertices.put(element, result);  
-      }
-      return result;
-    }
+		graphWidget = new GraphWidget();
+		graphWidget.setRenderer(new DefaultGraphRenderer() {
+			@Override
+			@SuppressWarnings( { "unchecked" })
+			protected Color getColor(Vertex vertex) {
+				if (selection.isEmpty())
+					return Color.BLACK;
+				if (selection.contains(((DefaultVertex<Element>) vertex)
+						.getContent()))
+					return Color.BLUE;
+				return Color.LIGHT_GRAY;
+			}
 
-    @Override
-    public Collection<? extends Edge> getEdges() {
-      return edges;
-    }
+			@Override
+			@SuppressWarnings( { "unchecked" })
+			protected Color getColor(Edge edge) {
+				if (selection.isEmpty())
+					return Color.BLACK;
+				if (selection.contains(((DefaultVertex<Element>) edge
+						.getStart()).getContent())
+						|| selection.contains(((DefaultVertex<Element>) edge
+								.getEnd()).getContent()))
+					return Color.BLUE;
+				return Color.LIGHT_GRAY;
+			}
 
-    @Override
-    public Collection<? extends Vertex> getVertices() {
-      return vertices.values();
-    }
-    
-  } //ElementGraph
-  
-  /**
-   * our listener for organ events
-   */
-  private class ListenerImpl implements MouseListener, OrganListener, SelectionListener, PlayListener {
-    
-    public void selectionChanged(SelectionEvent ev) {
-      ElementSelection es = session.getSelection();
-      selection = es.getSelectedElements();
-      
-      if (isDocked()) {
-          graphWidget.repaint();
-      }
-    }
-    
-    public void elementAdded(Element element) {
-      rebuild();
-    }
+			@Override
+			@SuppressWarnings( { "unchecked" })
+			protected Icon getIcon(Vertex vertex) {
+				return ElementIcons.getIcon(((DefaultVertex<Element>) vertex)
+						.getContent().getClass());
+			}
 
-    public void elementRemoved(Element element) {
-      rebuild();
-    }
+			@Override
+			@SuppressWarnings( { "unchecked" })
+			protected String getText(Vertex vertex) {
+				return name(((DefaultVertex<Element>) vertex).getContent());
+			}
+		});
 
-    public void messageAdded(Element element, Message message) {
-    }
+		graphWidget.addMouseListener(listener);
 
-    public void messageChanged(Element element, Message message) {
-    }
+		// prepare source buttons
+		sources.add(Captor.class);
+		sources.add(Keyboard.class);
 
-    public void messageRemoved(Element element, Message message) {
-    }
+		ButtonGroup sourceGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				rebuild();
+			}
+		};
 
-    public void propertyChanged(Element element, String name) {
-      // rebuild graph if name has changed (a change in order of vertices)
-      if ("name".equals(name)) {
-          rebuild();
-      }
-    }
+		for (int i = 0; i < sources.size(); i++) {
+			JToggleButton toggle = new JToggleButton(sources.get(i)
+					.getSimpleName(), ElementIcons.getIcon(sources.get(i)));
+			sourcesToggles.add(toggle);
+			sourceGroup.add(toggle);
+		}
 
-    public void referenceAdded(Element element, Reference<?> reference) {
-      rebuild();
-    }
+		// prepare contents
+		setContent(new JScrollPane(graphWidget));
 
-    public void referenceChanged(Element element, Reference<?> reference) {
-    }
+		// done
+	}
 
-    public void referenceRemoved(Element element, Reference<?> reference) {
-      rebuild();
-    }
+	@Override
+	public boolean forPlay() {
+		return false;
+	}
 
-    public void mouseClicked(MouseEvent e) {
-    }
+	/** callback - being docked */
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
 
-    public void mouseEntered(MouseEvent e) {
-    }
+		for (JToggleButton button : sourcesToggles)
+			docked.addTool(button);
 
-    public void mouseExited(MouseEvent e) {
-    }
+		rebuild();
+	}
 
-    @SuppressWarnings({ "unchecked" })
-    public void mousePressed(MouseEvent e) {
-      DefaultVertex<Element> vertex = (DefaultVertex<Element>)graphWidget.getVertexAt(e.getPoint());
-      if (vertex==null)
-        return;
-      Element element = vertex.getContent();
-      ElementSelection selection = session.getSelection();
-      if ((e.getModifiers()&MouseEvent.CTRL_MASK)!=0) {
-        if (selection.isSelected(element))
-          selection.removeSelectedElement(element);
-        else
-          selection.addSelectedElement(element);
-      } else {
-        selection.setSelectedElement(element);
-      }
-    }
+	/** calback - session opened */
+	@Override
+	public void setSession(OrganSession session) {
 
-    public void mouseReleased(MouseEvent e) {
-    }
+		if (this.session != null) {
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(listener));
+			this.session.get(ElementSelection.class).removeListener(
+					(SelectionListener) Spin.over(listener));
+			this.session.get(OrganPlay.class).removePlayerListener(
+					(PlayListener) Spin.over(listener));
 
-    public void closed() {
-    }
+			graphWidget.setGraph2D(new EmptyGraph());
+		}
 
-    public void opened() {
-      graphWidget.repaint();
-    }
+		this.session = session;
 
-    public void received(int channel, int command, int data1, int data2) {
-    }
+		if (this.session != null) {
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(listener));
+			this.session.get(ElementSelection.class).addListener(
+					(SelectionListener) Spin.over(listener));
+			this.session.get(OrganPlay.class).addPlayerListener(
+					(PlayListener) Spin.over(listener));
 
-    public void sent(int channel, int command, int data1, int data2) {
-    }
-    
-  } //OrganCallback
+			rebuild();
+		}
+	}
+
+	/**
+	 * create a non-empty name representation
+	 */
+	private String name(Element element) {
+		return element.getName().length() > 0 ? element.getName() : element
+				.getClass().getSimpleName();
+	}
+
+	/**
+	 * find all sources
+	 */
+	private Set<Element> sources() {
+
+		Class<? extends Element> sourcetype = null;
+		for (int i = 0; i < sourcesToggles.size(); i++) {
+			if (sourcesToggles.get(i).isSelected()) {
+				sourcetype = sources.get(i);
+				break;
+			}
+		}
+		if (sourcetype == null)
+			throw new IllegalArgumentException("no source type selected");
+
+		Set<Element> result = new HashSet<Element>();
+		for (Element element : session.getOrgan().getElements()) {
+			if (sourcetype.isAssignableFrom(element.getClass()))
+				result.add(element);
+		}
+
+		return result;
+	}
+
+	/**
+	 * rebuild structure
+	 */
+	private void rebuild() {
+		if (!isDocked()) {
+			return;
+		}
+
+		// build an element graph on all sources
+		// TODO this is kinda bad to redo all over every time :)
+		ElementGraph graph = new ElementGraph(sources());
+		if (graph.getVertices().isEmpty()) {
+			graphWidget.setGraph2D(new EmptyGraph());
+			return;
+		}
+
+		// collect all info
+		Rectangle bounds = new Rectangle();
+		try {
+			HierarchicalLayout a = new HierarchicalLayout();
+			a.setDistanceBetweenLayers(30);
+			a.setDistanceBetweenVertices(30);
+			a.setOrderOfVerticesInLayer(new ElementComparator());
+			bounds = a.apply(graph, new DefaultLayoutContext()).getBounds();
+		} catch (LayoutException e) {
+			// FIXME report something
+			e.printStackTrace();
+		}
+		graphWidget.setGraph2D(graph, bounds);
+
+	}
+
+	/**
+	 * our interpretation of sorted vertices in a layer
+	 */
+	private class ElementComparator implements Comparator<Vertex> {
+		@SuppressWarnings( { "unchecked" })
+		public int compare(Vertex v1, Vertex v2) {
+			Element e1 = ((DefaultVertex<Element>) v1).getContent();
+			Element e2 = ((DefaultVertex<Element>) v2).getContent();
+			return name(e1).compareTo(name(e2));
+		}
+	} // ElementComparator
+
+	/**
+	 * a filter action
+	 */
+	private class ElementFilter {
+		boolean isSelected;
+
+		Class<? extends Element> type;
+
+		ElementFilter(Class<? extends Element> type, boolean isSelected) {
+			this.type = type;
+			this.isSelected = isSelected;
+		}
+	} // ElementFilter
+
+	/**
+	 * a graph of elements
+	 */
+	private class ElementGraph extends DefaultGraph {
+
+		private Map<Element, DefaultVertex<Element>> vertices = new HashMap<Element, DefaultVertex<Element>>();
+
+		private List<DefaultEdge<Element>> edges = new ArrayList<DefaultEdge<Element>>();
+
+		private ElementGraph(Set<Element> sources) {
+			super(null, new Ellipse2D.Double(-30, -20, 60, 40));
+			for (Element source : sources) {
+				DefaultVertex<Element> vertex = new DefaultVertex<Element>(
+						source);
+				vertices.put(source, vertex);
+				source2sink(vertex);
+			}
+		}
+
+		private void source2sink(DefaultVertex<Element> from) {
+
+			for (Reference<? extends Element> reference : from.getContent()
+					.getReferences()) {
+				DefaultVertex<Element> to = vertex(reference.getElement());
+				edges.add(new DefaultEdge<Element>(from, to));
+				source2sink(to);
+			}
+
+		}
+
+		private DefaultVertex<Element> vertex(Element element) {
+			DefaultVertex<Element> result = vertices.get(element);
+			if (result == null) {
+				result = new DefaultVertex<Element>(element);
+				vertices.put(element, result);
+			}
+			return result;
+		}
+
+		@Override
+		public Collection<? extends Edge> getEdges() {
+			return edges;
+		}
+
+		@Override
+		public Collection<? extends Vertex> getVertices() {
+			return vertices.values();
+		}
+
+	} // ElementGraph
+
+	/**
+	 * our listener for organ events
+	 */
+	private class ListenerImpl implements MouseListener, OrganListener,
+			SelectionListener, PlayListener {
+
+		public void selectionChanged() {
+			selection = session.get(ElementSelection.class)
+					.getSelectedElements();
+
+			if (isDocked()) {
+				graphWidget.repaint();
+			}
+		}
+
+		public void elementAdded(Element element) {
+			rebuild();
+		}
+
+		public void elementRemoved(Element element) {
+			rebuild();
+		}
+
+		public void messageAdded(Element element, Message message) {
+		}
+
+		public void messageChanged(Element element, Message message) {
+		}
+
+		public void messageRemoved(Element element, Message message) {
+		}
+
+		public void propertyChanged(Element element, String name) {
+			// rebuild graph if name has changed (a change in order of vertices)
+			if ("name".equals(name)) {
+				rebuild();
+			}
+		}
+
+		public void referenceAdded(Element element, Reference<?> reference) {
+			rebuild();
+		}
+
+		public void referenceChanged(Element element, Reference<?> reference) {
+		}
+
+		public void referenceRemoved(Element element, Reference<?> reference) {
+			rebuild();
+		}
+
+		public void mouseClicked(MouseEvent e) {
+		}
+
+		public void mouseEntered(MouseEvent e) {
+		}
+
+		public void mouseExited(MouseEvent e) {
+		}
+
+		@SuppressWarnings( { "unchecked" })
+		public void mousePressed(MouseEvent e) {
+			DefaultVertex<Element> vertex = (DefaultVertex<Element>) graphWidget
+					.getVertexAt(e.getPoint());
+			if (vertex == null)
+				return;
+			Element element = vertex.getContent();
+			ElementSelection selection = session.get(ElementSelection.class);
+			if ((e.getModifiers() & MouseEvent.CTRL_MASK) != 0) {
+				if (selection.isSelected(element))
+					selection.removeSelectedElement(element);
+				else
+					selection.addSelectedElement(element);
+			} else {
+				selection.setSelectedElement(element);
+			}
+		}
+
+		public void mouseReleased(MouseEvent e) {
+		}
+
+		public void closed() {
+		}
+
+		public void opened() {
+			graphWidget.repaint();
+		}
+
+		public void received(int channel, int command, int data1, int data2) {
+		}
+
+		public void sent(int channel, int command, int data1, int data2) {
+		}
+
+	} // OrganCallback
 
 }

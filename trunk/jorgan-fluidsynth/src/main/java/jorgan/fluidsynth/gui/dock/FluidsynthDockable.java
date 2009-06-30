@@ -34,6 +34,7 @@ import javax.swing.event.ChangeListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
@@ -42,6 +43,7 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.session.OrganSession;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import spin.Spin;
 import bias.Configuration;
 
 public class FluidsynthDockable extends OrganDockable {
@@ -171,13 +173,15 @@ public class FluidsynthDockable extends OrganDockable {
 	@Override
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(eventHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(eventHandler));
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(eventHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(eventHandler));
 		}
 
 		read();
