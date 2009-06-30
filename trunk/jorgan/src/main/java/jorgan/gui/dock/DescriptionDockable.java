@@ -28,9 +28,11 @@ import javax.swing.border.EmptyBorder;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
+import spin.Spin;
 import bias.Configuration;
 
 /**
@@ -86,8 +88,9 @@ public class DescriptionDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(elementHandler);
-			this.session.removeSelectionListener(elementHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(elementHandler));
+			this.session.get(ElementSelection.class).removeListener(elementHandler);
 
 			write();
 		}
@@ -96,8 +99,9 @@ public class DescriptionDockable extends OrganDockable {
 		this.element = null;
 
 		if (this.session != null) {
-			this.session.addOrganListener(elementHandler);
-			this.session.addSelectionListener(elementHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(elementHandler));
+			this.session.get(ElementSelection.class).addListener(elementHandler);
 
 			read();
 		}
@@ -129,17 +133,18 @@ public class DescriptionDockable extends OrganDockable {
 	private class ElementHandler extends OrganAdapter implements
 			SelectionListener {
 
-		public void selectionChanged(SelectionEvent ev) {
+		public void selectionChanged() {
 			write();
 
-			element = session.getSelection().getSelectedElement();
+			element = session.get(ElementSelection.class).getSelectedElement();
 
 			read();
 		}
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == DescriptionDockable.this.element && "description".equals(name)) {
+			if (element == DescriptionDockable.this.element
+					&& "description".equals(name)) {
 				read();
 			}
 		}

@@ -16,16 +16,28 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.problem;
+package jorgan.problem;
 
+import jorgan.disposition.Element;
+import jorgan.disposition.event.OrganAdapter;
+import jorgan.session.OrganSession;
+import jorgan.session.spi.SessionProvider;
 
-
-/**
- * A listener to problems.
- */
-public interface ProblemListener {
-
-    public void problemAdded(Problem problem);
-
-    public void problemRemoved(Problem problem);
+public class ElementProblemsSessionProvider implements SessionProvider {
+	
+	public Object create(OrganSession session, Class<?> clazz) {
+		if (clazz == ElementProblems.class) {
+			final ElementProblems problems = new ElementProblems();
+			
+			session.getOrgan().addOrganListener(new OrganAdapter() {
+				@Override
+				public void elementRemoved(Element element) {
+					problems.removeProblems(element);
+				}
+			});
+			
+			return problems;
+		}
+		return null;
+	}
 }

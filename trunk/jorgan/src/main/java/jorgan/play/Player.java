@@ -34,8 +34,8 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
-import jorgan.session.problem.Problem;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Problem;
+import jorgan.problem.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 

@@ -23,8 +23,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,16 +44,18 @@ import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganAdapter;
+import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ViewRegistry;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.PercentSlider;
+import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -106,15 +106,18 @@ public class SkinDockable extends OrganDockable {
 	@Override
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeSelectionListener(eventHandler);
-			this.session.removeOrganListener(eventHandler);
+			this.session.get(ElementSelection.class).removeListener(
+					eventHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(eventHandler));
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(eventHandler);
-			this.session.addSelectionListener(eventHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(eventHandler));
+			this.session.get(ElementSelection.class).addListener(eventHandler);
 		}
 
 		update();
@@ -176,7 +179,8 @@ public class SkinDockable extends OrganDockable {
 
 	private Displayable getDisplayable() {
 		if (session != null) {
-			Element element = session.getSelection().getSelectedElement();
+			Element element = session.get(ElementSelection.class)
+					.getSelectedElement();
 			if (element instanceof Displayable) {
 				return (Displayable) element;
 			}
@@ -201,25 +205,23 @@ public class SkinDockable extends OrganDockable {
 	private Skin getSkin(Console console) {
 		setStatus(null);
 
+		Skin skin = null;
 		if (console.getSkin() == null) {
 			setStatus(config.get("noSkin").read(new MessageBuilder()).build());
 		} else {
-			try {
-				File file = session.resolve(console.getSkin());
-
-				return SkinManager.instance().getSkin(file);
-			} catch (IOException ex) {
+			skin = session.get(SkinManager.class).getSkin(console);
+			if (skin == null) {
 				setStatus(config.get("skinFailed").read(new MessageBuilder())
 						.build());
 			}
 		}
 
-		return null;
+		return skin;
 	}
 
 	private class EventHandler extends OrganAdapter implements
 			SelectionListener, ChangeListener, ListSelectionListener {
-		public void selectionChanged(SelectionEvent ev) {
+		public void selectionChanged() {
 			update();
 		}
 
@@ -251,18 +253,21 @@ public class SkinDockable extends OrganDockable {
 					displayable.setStyle(view.getStyle().getName());
 				}
 			}
-		
+
 		}
+
 		@Override
 		public void referenceAdded(Element element, Reference<?> reference) {
-			if (element instanceof Console && reference.getElement() == SkinDockable.this.displayable) {
+			if (element instanceof Console
+					&& reference.getElement() == SkinDockable.this.displayable) {
 				update();
 			}
 		}
-		
+
 		@Override
 		public void referenceRemoved(Element element, Reference<?> reference) {
-			if (element instanceof Console && reference.getElement() == SkinDockable.this.displayable) {
+			if (element instanceof Console
+					&& reference.getElement() == SkinDockable.this.displayable) {
 				update();
 			}
 		}
@@ -304,7 +309,7 @@ public class SkinDockable extends OrganDockable {
 
 						public void hidePopup() {
 						}
-						
+
 						public void toFront(Console console) {
 						}
 					});

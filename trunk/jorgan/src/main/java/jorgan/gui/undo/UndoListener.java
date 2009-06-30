@@ -16,22 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.skin;
+package jorgan.gui.undo;
 
-import java.io.File;
-import java.io.IOException;
 
 /**
- * Manager of skins.
+ * A listener to undos.
  */
-public interface ISkinManager {
+public interface UndoListener {
 
-	/**
-	 * Get a skin with the given name.
-	 * 
-	 * @param name
-	 *            name of skin
-	 * @return skin
-	 */
-	public Skin getSkin(File file) throws IOException;
+    public void changed();
 }

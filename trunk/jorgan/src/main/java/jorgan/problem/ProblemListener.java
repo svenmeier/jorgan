@@ -16,13 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.undo;
+package jorgan.problem;
+
 
 
 /**
- * A compound.
+ * A listener to problems.
  */
-public interface Compound {
+public interface ProblemListener {
 
-    public void run();
+    public void problemAdded(Problem problem);
+
+    public void problemRemoved(Problem problem);
 }

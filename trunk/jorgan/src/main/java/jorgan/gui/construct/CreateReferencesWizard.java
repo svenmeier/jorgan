@@ -25,8 +25,9 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
-import jorgan.session.undo.Compound;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -80,7 +81,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.getUndoManager().compound(new Compound() {
+		session.get(UndoManager.class).compound(new Compound() {
 			public void run() {
 				for (int t = 0; t < referencesTo.size(); t++) {
 					Element referenced = referencesTo.get(t);

@@ -18,6 +18,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.dock.ElementsDockable;
 import jorgan.gui.img.ElementIcons;
+import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.swing.CompoundIcon;
 import jorgan.swing.list.CommentedCellRenderer;
@@ -32,8 +33,9 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	/**
 	 * Icon used for indication of a warning.
 	 */
-	private static final Icon warningIcon = new ImageIcon(ElementsDockable.class
-			.getResource("/jorgan/gui/img/elementWarning.gif"));
+	private static final Icon warningIcon = new ImageIcon(
+			ElementsDockable.class
+					.getResource("/jorgan/gui/img/elementWarning.gif"));
 
 	/**
 	 * Icon used for indication of an error.
@@ -77,9 +79,9 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 
 		Icon icon = ElementIcons.getIcon(element.getClass());
 		if (session != null) {
-			if (session.getProblems().hasErrors(element)) {
+			if (session.get(ElementProblems.class).hasErrors(element)) {
 				return new CompoundIcon(icon, errorIcon);
-			} else if (session.getProblems().hasWarnings(element)) {
+			} else if (session.get(ElementProblems.class).hasWarnings(element)) {
 				return new CompoundIcon(icon, warningIcon);
 			}
 		}

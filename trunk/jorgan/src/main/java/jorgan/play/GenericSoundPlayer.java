@@ -25,7 +25,7 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.GenericSound;
 import jorgan.midi.MessageUtils;
-import jorgan.session.problem.Severity;
+import jorgan.problem.Severity;
 
 /**
  * A player of a {@link jorgan.disposition.GenericSound}.

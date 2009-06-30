@@ -16,12 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.problem;
+package jorgan.gui.selection;
+
+import java.util.EventListener;
 
 
-/**
- * The severity of a {@link Problem}.
- */
-public enum Severity {
-	WARNING, ERROR
+public interface SelectionListener extends EventListener {
+  
+  public void selectionChanged();
 }

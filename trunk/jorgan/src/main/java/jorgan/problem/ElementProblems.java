@@ -16,16 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session;
+package jorgan.problem;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.session.problem.Problem;
-import jorgan.session.problem.ProblemListener;
-import jorgan.session.problem.Severity;
 
 /**
  * The problems.
@@ -140,11 +137,11 @@ public class ElementProblems {
 		return Collections.unmodifiableList(problems);
 	}
 
-	public void addProblemListener(ProblemListener listener) {
+	public void addListener(ProblemListener listener) {
 		listeners.add(listener);
 	}
 
-	public void removeProblemListener(ProblemListener listener) {
+	public void removeListener(ProblemListener listener) {
 		listeners.remove(listener);
 	}
 

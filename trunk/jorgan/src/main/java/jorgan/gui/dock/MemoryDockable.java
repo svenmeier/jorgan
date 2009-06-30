@@ -38,6 +38,7 @@ import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
+import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -87,7 +88,8 @@ public class MemoryDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(listener);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(listener));
 
 			setMemory(null);
 		}
@@ -95,7 +97,8 @@ public class MemoryDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(listener);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(listener));
 
 			findMemory();
 		}

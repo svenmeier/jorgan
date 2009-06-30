@@ -16,21 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session;
+package jorgan.gui.undo;
+
 
 /**
- * A listener of a {@link OrganSession}.
+ * A compound.
  */
-public interface SessionListener {
+public interface Compound {
 
-	/**
-	 * @see OrganSession#setConstructing(boolean)
-	 */
-	public void constructingChanged(boolean constructing);
-	
-	/**
-	 * @ſee {@link OrganSession#destroy()}
-	 *
-	 */
-	public void destroyed();
+    public void run();
 }

@@ -31,13 +31,16 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.ProblemListener;
+import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
-import jorgan.session.problem.Problem;
-import jorgan.session.problem.ProblemListener;
-import jorgan.session.problem.Severity;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
+import spin.Spin;
 import bias.Configuration;
 
 /**
@@ -106,7 +109,8 @@ public class ProblemsDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeProblemListener(tableModel);
+			this.session.get(ElementProblems.class).removeListener(
+					(ProblemListener) Spin.over(tableModel));
 
 			problems.clear();
 		}
@@ -114,9 +118,11 @@ public class ProblemsDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addProblemListener(tableModel);
+			this.session.get(ElementProblems.class).addListener(
+					(ProblemListener) Spin.over(tableModel));
 
-			this.problems.addAll(session.getProblems().getProblems());
+			this.problems.addAll(session.get(ElementProblems.class)
+					.getProblems());
 		}
 
 		tableModel.fireTableDataChanged();
@@ -187,9 +193,9 @@ public class ProblemsDockable extends OrganDockable {
 
 			Problem problem = problems.get(index);
 
-			session.getSelection().setSelectedElement(
+			session.get(ElementSelection.class).setSelectedElement(
 					problem.getElement(), problem.getLocation());
-			
+
 			session.setConstructing(true);
 		}
 	}

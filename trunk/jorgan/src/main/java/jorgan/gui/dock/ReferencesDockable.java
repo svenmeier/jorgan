@@ -47,12 +47,13 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
 import jorgan.gui.construct.ElementComparator;
+import jorgan.gui.selection.ElementSelection;
+import jorgan.gui.selection.SelectionListener;
 import jorgan.session.OrganSession;
-import jorgan.session.selection.SelectionEvent;
-import jorgan.session.selection.SelectionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
+import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
 import bias.Configuration;
@@ -71,7 +72,7 @@ public class ReferencesDockable extends OrganDockable {
 	private OrganSession session;
 
 	private Element element;
-	
+
 	private ObjectTransferable transferable;
 
 	private List<ReferrerReference> references = new ArrayList<ReferrerReference>();
@@ -141,7 +142,7 @@ public class ReferencesDockable extends OrganDockable {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 
-				session.getSelection().setSelectedElement(element);
+				session.get(ElementSelection.class).setSelectedElement(element);
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
@@ -164,9 +165,8 @@ public class ReferencesDockable extends OrganDockable {
 					}
 
 					transferable = new ObjectTransferable(subReferences);
-					
-					clip.setContents(transferable,
-							null);
+
+					clip.setContents(transferable, null);
 				}
 			}
 
@@ -221,22 +221,25 @@ public class ReferencesDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.removeOrganListener(eventHandler);
-			this.session.removeSelectionListener(eventHandler);
+			this.session.getOrgan().removeOrganListener(
+					(OrganListener) Spin.over(eventHandler));
+			this.session.get(ElementSelection.class).removeListener(
+					eventHandler);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.addOrganListener(eventHandler);
-			this.session.addSelectionListener(eventHandler);
+			this.session.getOrgan().addOrganListener(
+					(OrganListener) Spin.over(eventHandler));
+			this.session.get(ElementSelection.class).addListener(eventHandler);
 		}
 
 		if (transferable != null) {
 			transferable.clear();
 			transferable = null;
 		}
-		
+
 		updateReferences();
 	}
 
@@ -248,9 +251,9 @@ public class ReferencesDockable extends OrganDockable {
 		list.setVisible(false);
 
 		if (session != null
-				&& session.getSelection().getSelectionCount() == 1) {
+				&& session.get(ElementSelection.class).getSelectionCount() == 1) {
 
-			element = session.getSelection().getSelectedElement();
+			element = session.get(ElementSelection.class).getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
 				referencesToModel.update();
@@ -277,7 +280,7 @@ public class ReferencesDockable extends OrganDockable {
 	private class EventHandler extends OrganAdapter implements
 			SelectionListener, OrganListener {
 
-		public void selectionChanged(SelectionEvent ev) {
+		public void selectionChanged() {
 			updateReferences();
 		}
 
@@ -429,8 +432,7 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateReferencesWizard.showInDialog(list, session,
-					element);
+			CreateReferencesWizard.showInDialog(list, session, element);
 		}
 
 		public void update() {

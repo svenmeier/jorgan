@@ -16,12 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.session.selection;
+package jorgan.session.spi;
 
-import java.util.EventListener;
+import jorgan.session.OrganSession;
+import jorgan.util.PluginUtils;
 
+public class SessionRegistry {
 
-public interface SelectionListener extends EventListener {
-  
-  public void selectionChanged(SelectionEvent ev);
+	public static Object create(OrganSession session, Class<?> clazz) {
+		for (SessionProvider provider : PluginUtils
+				.lookup(SessionProvider.class)) {
+			Object object = provider.create(session, clazz);
+			if (object != null) {
+				return object;
+			}
+		}
+
+		return null;
+	}
 }
