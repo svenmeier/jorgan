@@ -19,10 +19,10 @@
 package jorgan.recorder.spi;
 
 import jorgan.disposition.Element;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.Tracker;
 
 public interface TrackerProvider {
 
-	public Tracker createTracker(SessionRecorder recorder, int track, Element element);
+	public Tracker createTracker(Performance performance, int track, Element element);
 }

@@ -26,7 +26,7 @@ import java.awt.Rectangle;
 import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
 
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.midi.Recorder;
 
 public class TrackGraph extends JComponent {
@@ -35,12 +35,12 @@ public class TrackGraph extends JComponent {
 
 	public static final int SECOND_WIDTH = 4;
 
-	private SessionRecorder recorder;
+	private Performance performance;
 
 	private int track;
 
-	public TrackGraph(SessionRecorder recorder, int track) {
-		this.recorder = recorder;
+	public TrackGraph(Performance performance, int track) {
+		this.performance = performance;
 		this.track = track;
 
 		setBackground(Color.white);
@@ -51,7 +51,7 @@ public class TrackGraph extends JComponent {
 	public Dimension getPreferredSize() {
 		int height = HEIGHT;
 
-		int width = Math.round(SECOND_WIDTH * recorder.getTotalTime()
+		int width = Math.round(SECOND_WIDTH * performance.getTotalTime()
 				/ Recorder.SECOND);
 
 		return new Dimension(Math.max(2, width), height);
@@ -77,13 +77,13 @@ public class TrackGraph extends JComponent {
 		int height = getHeight();
 		int width = getWidth();
 
-		long tick = recorder.getRecorder().millisToTick(xToMillis(bounds.x));
+		long tick = performance.getRecorder().millisToTick(xToMillis(bounds.x));
 
 		int x = -1;
 		int count = 0;
-		for (MidiEvent event : recorder.getRecorder().eventsFromTick(track,
+		for (MidiEvent event : performance.getRecorder().eventsFromTick(track,
 				tick)) {
-			int nextX = millisToX(recorder.getRecorder().tickToMillis(
+			int nextX = millisToX(performance.getRecorder().tickToMillis(
 					event.getTick()));
 			if (nextX >= width) {
 				nextX = width - 1;
@@ -117,7 +117,7 @@ public class TrackGraph extends JComponent {
 	private void paintCursor(Graphics g, Rectangle bounds) {
 		g.setColor(Color.red);
 
-		int x = millisToX(recorder.getTime());
+		int x = millisToX(performance.getTime());
 		if (x <= 0) {
 			x = 1;
 		}
@@ -137,7 +137,7 @@ public class TrackGraph extends JComponent {
 		g.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 
 		long delta = 10 * Recorder.SECOND;
-		long total = recorder.getTotalTime();
+		long total = performance.getTotalTime();
 		long millis = xToMillis(bounds.x) / delta * delta;
 		while (millis < total) {
 			int x = millisToX(millis);
@@ -162,7 +162,7 @@ public class TrackGraph extends JComponent {
 	}
 
 	private int millisToX(long millis) {
-		long displayTime = recorder.getTotalTime();
+		long displayTime = performance.getTotalTime();
 		if (displayTime == 0) {
 			return 0;
 		}
@@ -171,6 +171,6 @@ public class TrackGraph extends JComponent {
 	}
 
 	private long xToMillis(int x) {
-		return Math.max(0, x * recorder.getTotalTime() / getWidth());
+		return Math.max(0, x * performance.getTotalTime() / getWidth());
 	}
 }

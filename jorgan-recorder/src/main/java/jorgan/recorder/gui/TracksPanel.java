@@ -34,24 +34,24 @@ import javax.swing.SwingConstants;
 
 import spin.Spin;
 
-import jorgan.recorder.SessionRecorder;
-import jorgan.recorder.SessionRecorderListener;
+import jorgan.recorder.Performance;
+import jorgan.recorder.PerformanceListener;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
-	private SessionRecorder recorder;
+	private Performance performance;
 
 	private HeaderPanel headerPanel = new HeaderPanel();
 
 	private EventListener listener = new EventListener();
 
-	public TracksPanel(SessionRecorder recorder) {
+	public TracksPanel(Performance performance) {
 		super(new GridLayout(-1, 1));
 
 		setBackground(Color.white);
 
-		this.recorder = recorder;
-		recorder.addListener((SessionRecorderListener)Spin.over(listener));
+		this.performance = performance;
+		performance.addListener((PerformanceListener)Spin.over(listener));
 
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
@@ -63,9 +63,9 @@ public class TracksPanel extends JPanel implements Scrollable {
 		removeAll();
 		headerPanel.removeAll();
 
-		for (int track = 0; track < recorder.getTrackerCount(); track++) {
-			add(new TrackGraph(recorder, track));
-			headerPanel.add(new TrackHeader(recorder, track));
+		for (int track = 0; track < performance.getTrackerCount(); track++) {
+			add(new TrackGraph(performance, track));
+			headerPanel.add(new TrackHeader(performance, track));
 		}
 
 		revalidate();
@@ -101,7 +101,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 		if (orientation == SwingConstants.HORIZONTAL) {
 			increment = 10 * TrackGraph.SECOND_WIDTH;
 		} else {
-			increment = getPreferredSize().height / recorder.getTrackerCount();
+			increment = getPreferredSize().height / performance.getTrackerCount();
 		}
 
 		return increment;
@@ -119,8 +119,8 @@ public class TracksPanel extends JPanel implements Scrollable {
 		repaint();
 		revalidate();
 		
-		if (recorder.getState() != SessionRecorder.STATE_STOP) {
-			int x = millisToX(recorder.getTime());		
+		if (performance.getState() != Performance.STATE_STOP) {
+			int x = millisToX(performance.getTime());		
 			scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
 		}
 	}
@@ -149,12 +149,12 @@ public class TracksPanel extends JPanel implements Scrollable {
 		}
 	}
 
-	private class EventListener extends MouseAdapter implements SessionRecorderListener {
+	private class EventListener extends MouseAdapter implements PerformanceListener {
 
 		private Integer offset;
 
 		private int getOffset(MouseEvent e) {
-			return e.getX() - millisToX(recorder.getTime());
+			return e.getX() - millisToX(performance.getTime());
 		}
 
 		@Override
@@ -184,7 +184,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 				this.offset = offset;
 			} else {
 				this.offset = 0;
-				recorder.setTime(xToMillis(e.getX()));
+				performance.setTime(xToMillis(e.getX()));
 			}
 			showCursor();
 		}
@@ -199,7 +199,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 			if (offset != null) {
 				int x = e.getX() - offset;
 
-				recorder.setTime(xToMillis(x));
+				performance.setTime(xToMillis(x));
 			}
 		}
 
@@ -215,7 +215,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 	}
 
 	private int millisToX(long millis) {
-		long displayTime = recorder.getTotalTime();
+		long displayTime = performance.getTotalTime();
 		if (displayTime == 0) {
 			return 0;
 		}
@@ -224,6 +224,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 	}
 
 	private long xToMillis(int x) {
-		return Math.max(0, x * recorder.getTotalTime() / getWidth());
+		return Math.max(0, x * performance.getTotalTime() / getWidth());
 	}	
 }

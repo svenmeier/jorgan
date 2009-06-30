@@ -30,7 +30,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.KeyListener;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.midi.Recorder;
 
 public class KeyboardTracker extends AbstractTracker {
@@ -39,9 +39,9 @@ public class KeyboardTracker extends AbstractTracker {
 
 	private EventHandler eventHandler = new EventHandler();
 
-	public KeyboardTracker(SessionRecorder recorder, int track,
+	public KeyboardTracker(Performance performance, int track,
 			Keyboard keyboard) {
-		super(recorder, track);
+		super(performance, track);
 
 		this.keyboard = keyboard;
 

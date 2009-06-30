@@ -16,27 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.disposition;
+
+import jorgan.recorder.Performance;
 
 /**
- * A listener of a {@link SessionRecorder}.
  */
-public interface SessionRecorderListener {
+public class Play extends PerformanceSwitch {
 
-	/**
-	 * @see SessionRecorder#setTime(long time)
-	 */
-	public void timeChanged(long millis);
-	
-	/**
-	 * @see SessionRecorder#setElement(int, jorgan.disposition.Element)
-	 */
-	public void trackersChanged();
-	
-	/**
-	 * @see SessionRecorder#play()
-	 * @see SessionRecorder#record()
-	 * @see SessionRecorder#stop()
-	 */
-	public void stateChanged(int state);
+	@Override
+	public void perform(Performance performance) {
+		performance.play();
+	}
 }

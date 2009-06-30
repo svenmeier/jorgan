@@ -16,26 +16,25 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.disposition;
 
-import jorgan.disposition.Console;
+import java.util.ArrayList;
+import java.util.List;
+
 import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.recorder.spi.TrackerProvider;
-import jorgan.recorder.tracker.ConsoleTracker;
-import jorgan.recorder.tracker.KeyboardTracker;
+import jorgan.disposition.spi.ElementProvider;
 
-public class DefaultTrackerProvider implements TrackerProvider {
+/**
+ */
+public class RecorderElementProvider implements ElementProvider {
 
-	public Tracker createTracker(Performance performance, int track,
-			Element element) {
-		if (element instanceof Keyboard) {
-			return new KeyboardTracker(performance, track, (Keyboard) element);
-		} else if (element instanceof Console) {
-			return new ConsoleTracker(performance, track, (Console) element);
-		} else {
-			return null;
-		}
+	public List<Class<? extends Element>> getElementClasses() {
+		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
+		classes.add(Stop.class);
+		classes.add(Play.class);
+		classes.add(Record.class);
+
+		return classes;
 	}
 }

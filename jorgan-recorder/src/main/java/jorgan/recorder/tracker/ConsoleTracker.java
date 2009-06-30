@@ -28,7 +28,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
+import jorgan.recorder.disposition.PerformanceSwitch;
 
 public class ConsoleTracker extends AbstractTracker {
 
@@ -46,8 +47,8 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private boolean ignoreChanges;
 
-	public ConsoleTracker(SessionRecorder recorder, int track, Console console) {
-		super(recorder, track);
+	public ConsoleTracker(Performance performance, int track, Console console) {
+		super(performance, track);
 
 		this.console = console;
 
@@ -267,6 +268,10 @@ public class ConsoleTracker extends AbstractTracker {
 				return;
 			}
 
+			if (PerformanceSwitch.class.isInstance(element)) {
+				return;
+			}
+			
 			String elementName = element.getName();
 			if ("".equals(elementName)) {
 				return;

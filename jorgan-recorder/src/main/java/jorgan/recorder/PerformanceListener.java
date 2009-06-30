@@ -18,24 +18,25 @@
  */
 package jorgan.recorder;
 
-import jorgan.disposition.Console;
-import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.recorder.spi.TrackerProvider;
-import jorgan.recorder.tracker.ConsoleTracker;
-import jorgan.recorder.tracker.KeyboardTracker;
+/**
+ * A listener of a {@link Performance}.
+ */
+public interface PerformanceListener {
 
-public class DefaultTrackerProvider implements TrackerProvider {
-
-	public Tracker createTracker(Performance performance, int track,
-			Element element) {
-		if (element instanceof Keyboard) {
-			return new KeyboardTracker(performance, track, (Keyboard) element);
-		} else if (element instanceof Console) {
-			return new ConsoleTracker(performance, track, (Console) element);
-		} else {
-			return null;
-		}
-
-	}
+	/**
+	 * @see Performance#setTime(long time)
+	 */
+	public void timeChanged(long millis);
+	
+	/**
+	 * @see Performance#setElement(int, jorgan.disposition.Element)
+	 */
+	public void trackersChanged();
+	
+	/**
+	 * @see Performance#play()
+	 * @see Performance#record()
+	 * @see Performance#stop()
+	 */
+	public void stateChanged(int state);
 }

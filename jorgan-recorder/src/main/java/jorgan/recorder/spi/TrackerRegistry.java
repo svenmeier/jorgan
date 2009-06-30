@@ -19,19 +19,19 @@
 package jorgan.recorder.spi;
 
 import jorgan.disposition.Element;
-import jorgan.recorder.SessionRecorder;
+import jorgan.recorder.Performance;
 import jorgan.recorder.Tracker;
 import jorgan.util.PluginUtils;
 
 public class TrackerRegistry {
 
-	public static Tracker createTracker(SessionRecorder recorder, int track,
+	public static Tracker createTracker(Performance performance, int track,
 			Element element) {
 		Tracker tracker = null;
 
 		for (TrackerProvider provider : PluginUtils
 				.lookup(TrackerProvider.class)) {
-			tracker = provider.createTracker(recorder, track, element);
+			tracker = provider.createTracker(performance, track, element);
 			if (tracker != null) {
 				break;
 			}

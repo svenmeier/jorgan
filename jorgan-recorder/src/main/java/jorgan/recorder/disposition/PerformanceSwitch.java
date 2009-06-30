@@ -16,26 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.disposition;
 
-import jorgan.disposition.Console;
-import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
-import jorgan.recorder.spi.TrackerProvider;
-import jorgan.recorder.tracker.ConsoleTracker;
-import jorgan.recorder.tracker.KeyboardTracker;
+import jorgan.disposition.Switch;
+import jorgan.recorder.Performance;
 
-public class DefaultTrackerProvider implements TrackerProvider {
+/**
+ */
+public abstract class PerformanceSwitch extends Switch {
 
-	public Tracker createTracker(Performance performance, int track,
-			Element element) {
-		if (element instanceof Keyboard) {
-			return new KeyboardTracker(performance, track, (Keyboard) element);
-		} else if (element instanceof Console) {
-			return new ConsoleTracker(performance, track, (Console) element);
-		} else {
-			return null;
-		}
-
+	public PerformanceSwitch() {
+		setLocking(false);
 	}
+	
+	public abstract void perform(Performance performance);
 }
