@@ -166,6 +166,12 @@ public class Performance {
 		if (state != STATE_PLAY) {
 			state = STATE_PLAY;
 
+			recorder.stop();
+			
+			if (recorder.isLast()) {
+				recorder.first();
+			}
+			
 			recorder.start();
 
 			fireStateChanged();
