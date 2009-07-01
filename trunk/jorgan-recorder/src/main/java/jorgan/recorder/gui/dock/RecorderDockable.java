@@ -133,7 +133,7 @@ public class RecorderDockable extends OrganDockable {
 			tracksPanel = new TracksPanel(performance);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
 			scrollPane.setRowHeaderView(tracksPanel.getHeader());
-			scrollPane.setBackground(tracksPanel.getBackground());
+			scrollPane.getViewport().setBackground(tracksPanel.getBackground());
 			setContent(scrollPane);
 		}
 	}
