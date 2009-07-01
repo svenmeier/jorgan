@@ -90,7 +90,7 @@ public class DescriptionDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(elementHandler));
-			this.session.get(ElementSelection.class).removeListener(elementHandler);
+			this.session.lookup(ElementSelection.class).removeListener(elementHandler);
 
 			write();
 		}
@@ -101,7 +101,7 @@ public class DescriptionDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(elementHandler));
-			this.session.get(ElementSelection.class).addListener(elementHandler);
+			this.session.lookup(ElementSelection.class).addListener(elementHandler);
 
 			read();
 		}
@@ -136,7 +136,7 @@ public class DescriptionDockable extends OrganDockable {
 		public void selectionChanged() {
 			write();
 
-			element = session.get(ElementSelection.class).getSelectedElement();
+			element = session.lookup(ElementSelection.class).getSelectedElement();
 
 			read();
 		}

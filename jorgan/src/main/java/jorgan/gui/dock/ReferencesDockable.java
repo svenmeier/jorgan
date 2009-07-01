@@ -142,7 +142,7 @@ public class ReferencesDockable extends OrganDockable {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 
-				session.get(ElementSelection.class).setSelectedElement(element);
+				session.lookup(ElementSelection.class).setSelectedElement(element);
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
@@ -223,7 +223,7 @@ public class ReferencesDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(eventHandler));
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					eventHandler);
 		}
 
@@ -232,7 +232,7 @@ public class ReferencesDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventHandler));
-			this.session.get(ElementSelection.class).addListener(eventHandler);
+			this.session.lookup(ElementSelection.class).addListener(eventHandler);
 		}
 
 		if (transferable != null) {
@@ -251,9 +251,9 @@ public class ReferencesDockable extends OrganDockable {
 		list.setVisible(false);
 
 		if (session != null
-				&& session.get(ElementSelection.class).getSelectionCount() == 1) {
+				&& session.lookup(ElementSelection.class).getSelectionCount() == 1) {
 
-			element = session.get(ElementSelection.class).getSelectedElement();
+			element = session.lookup(ElementSelection.class).getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
 				referencesToModel.update();

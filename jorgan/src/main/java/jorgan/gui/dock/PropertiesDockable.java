@@ -85,7 +85,7 @@ public class PropertiesDockable extends OrganDockable {
 		@Override
 		protected void onWriteProperty(final Method method, final Object value) {
 
-			session.get(UndoManager.class).compound(new Compound() {
+			session.lookup(UndoManager.class).compound(new Compound() {
 				public void run() {
 					writeProperty(method, value);
 				};
@@ -108,7 +108,7 @@ public class PropertiesDockable extends OrganDockable {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(selectionHandler));
@@ -119,7 +119,7 @@ public class PropertiesDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.get(ElementSelection.class).addListener(
+			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(selectionHandler));
@@ -138,7 +138,7 @@ public class PropertiesDockable extends OrganDockable {
 
 		public void selectionChanged() {
 
-			Element element = session.get(ElementSelection.class)
+			Element element = session.lookup(ElementSelection.class)
 					.getSelectedElement();
 			if (element == null) {
 				setStatus(null);
@@ -153,10 +153,10 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				session.get(UndoManager.class).compound();
+				session.lookup(UndoManager.class).compound();
 
 				String property = panel.getProperty();
-				session.get(ElementSelection.class).setLocation(property);
+				session.lookup(ElementSelection.class).setLocation(property);
 
 				changing = false;
 			}
@@ -173,10 +173,10 @@ public class PropertiesDockable extends OrganDockable {
 			if (!changing) {
 				changing = true;
 
-				panel.setBeans(session.get(ElementSelection.class)
+				panel.setBeans(session.lookup(ElementSelection.class)
 						.getSelectedElements());
 
-				Object location = session.get(ElementSelection.class)
+				Object location = session.lookup(ElementSelection.class)
 						.getLocation();
 				if (location instanceof String) {
 					panel.setProperty((String) location);

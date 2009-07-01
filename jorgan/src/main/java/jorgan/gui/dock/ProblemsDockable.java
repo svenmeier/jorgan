@@ -109,7 +109,7 @@ public class ProblemsDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.get(ElementProblems.class).removeListener(
+			this.session.lookup(ElementProblems.class).removeListener(
 					(ProblemListener) Spin.over(tableModel));
 
 			problems.clear();
@@ -118,10 +118,10 @@ public class ProblemsDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.get(ElementProblems.class).addListener(
+			this.session.lookup(ElementProblems.class).addListener(
 					(ProblemListener) Spin.over(tableModel));
 
-			this.problems.addAll(session.get(ElementProblems.class)
+			this.problems.addAll(session.lookup(ElementProblems.class)
 					.getProblems());
 		}
 
@@ -193,7 +193,7 @@ public class ProblemsDockable extends OrganDockable {
 
 			Problem problem = problems.get(index);
 
-			session.get(ElementSelection.class).setSelectedElement(
+			session.lookup(ElementSelection.class).setSelectedElement(
 					problem.getElement(), problem.getLocation());
 
 			session.setConstructing(true);

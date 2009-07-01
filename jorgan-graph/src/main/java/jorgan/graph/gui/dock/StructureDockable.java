@@ -33,12 +33,12 @@ import javax.swing.JToggleButton;
 
 import jorgan.disposition.Captor;
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Message;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
-import jorgan.gui.img.ElementIcons;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
 import jorgan.play.OrganPlay;
@@ -104,7 +104,7 @@ public class StructureDockable extends OrganDockable {
 			@Override
 			@SuppressWarnings( { "unchecked" })
 			protected Icon getIcon(Vertex vertex) {
-				return ElementIcons.getIcon(((DefaultVertex<Element>) vertex)
+				return Elements.getIcon(((DefaultVertex<Element>) vertex)
 						.getContent().getClass());
 			}
 
@@ -130,7 +130,7 @@ public class StructureDockable extends OrganDockable {
 
 		for (int i = 0; i < sources.size(); i++) {
 			JToggleButton toggle = new JToggleButton(sources.get(i)
-					.getSimpleName(), ElementIcons.getIcon(sources.get(i)));
+					.getSimpleName(), Elements.getIcon(sources.get(i)));
 			sourcesToggles.add(toggle);
 			sourceGroup.add(toggle);
 		}
@@ -164,9 +164,9 @@ public class StructureDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(listener));
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					(SelectionListener) Spin.over(listener));
-			this.session.get(OrganPlay.class).removePlayerListener(
+			this.session.lookup(OrganPlay.class).removePlayerListener(
 					(PlayListener) Spin.over(listener));
 
 			graphWidget.setGraph2D(new EmptyGraph());
@@ -177,9 +177,9 @@ public class StructureDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(listener));
-			this.session.get(ElementSelection.class).addListener(
+			this.session.lookup(ElementSelection.class).addListener(
 					(SelectionListener) Spin.over(listener));
-			this.session.get(OrganPlay.class).addPlayerListener(
+			this.session.lookup(OrganPlay.class).addPlayerListener(
 					(PlayListener) Spin.over(listener));
 
 			rebuild();
@@ -334,7 +334,7 @@ public class StructureDockable extends OrganDockable {
 			SelectionListener, PlayListener {
 
 		public void selectionChanged() {
-			selection = session.get(ElementSelection.class)
+			selection = session.lookup(ElementSelection.class)
 					.getSelectedElements();
 
 			if (isDocked()) {
@@ -393,7 +393,7 @@ public class StructureDockable extends OrganDockable {
 			if (vertex == null)
 				return;
 			Element element = vertex.getContent();
-			ElementSelection selection = session.get(ElementSelection.class);
+			ElementSelection selection = session.lookup(ElementSelection.class);
 			if ((e.getModifiers() & MouseEvent.CTRL_MASK) != 0) {
 				if (selection.isSelected(element))
 					selection.removeSelectedElement(element);

@@ -84,9 +84,9 @@ public class ImportWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.get(UndoManager.class).compound(new Compound() {
+		session.lookup(UndoManager.class).compound(new Compound() {
 			public void run() {
-				session.get(OrganPlay.class).closed(new Closed() {
+				session.lookup(OrganPlay.class).closed(new Closed() {
 					public void run() {
 						session.getOrgan().addElements(selectedElements);
 					}

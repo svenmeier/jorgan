@@ -330,7 +330,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			this.session.getOrgan().removeOrganObserver(
 					(OrganObserver) Spin.over(saveAction));
-			this.session.addListener(handler);
+			this.session.removeListener(handler);
 		}
 
 		this.session = session;
@@ -389,8 +389,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 		try {
 			organ = new DispositionStream().read(file);
 		} catch (ExtensionException ex) {
-			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
-
 			showBoxMessage("openExtensionException", file.getName(), ex
 					.getExtension());
 			return;

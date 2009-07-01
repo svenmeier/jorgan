@@ -104,7 +104,7 @@ public class CustomizeAction extends BaseAction {
 
 	private void check() {
 		if (!session.isConstructing()
-				&& session.get(ElementProblems.class).hasErrors()) {
+				&& session.lookup(ElementProblems.class).hasErrors()) {
 			if (offer(frame)) {
 				CustomizeWizard.showInDialog(frame, session);
 			}

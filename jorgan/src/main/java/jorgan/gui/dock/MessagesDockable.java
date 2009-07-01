@@ -232,7 +232,7 @@ public class MessagesDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(tableModel));
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 		}
 
@@ -241,7 +241,7 @@ public class MessagesDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(tableModel));
-			this.session.get(ElementSelection.class).addListener(
+			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 		}
 
@@ -270,9 +270,9 @@ public class MessagesDockable extends OrganDockable {
 			table.setVisible(false);
 
 			if (session != null
-					&& session.get(ElementSelection.class).getSelectionCount() == 1) {
+					&& session.lookup(ElementSelection.class).getSelectionCount() == 1) {
 
-				element = session.get(ElementSelection.class)
+				element = session.lookup(ElementSelection.class)
 						.getSelectedElement();
 
 				for (Message message : element.getMessages()) {
@@ -302,7 +302,7 @@ public class MessagesDockable extends OrganDockable {
 		public void valueChanged(ListSelectionEvent e) {
 			// TODO should change ElementSelection ?
 			if (session != null) {
-				session.get(UndoManager.class).compound();
+				session.lookup(UndoManager.class).compound();
 			}
 
 			removeAction.update();
@@ -461,7 +461,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(UndoManager.class).compound(this);
+			session.lookup(UndoManager.class).compound(this);
 		}
 
 		public void update() {
@@ -538,7 +538,7 @@ public class MessagesDockable extends OrganDockable {
 
 				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
-				session.get(UndoManager.class).compound();
+				session.lookup(UndoManager.class).compound();
 
 				int index = table.getSelectedRow();
 				if (index != -1) {
@@ -551,7 +551,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		private void recorded(ShortMessage shortMessage) {
-			session.get(UndoManager.class).compound();
+			session.lookup(UndoManager.class).compound();
 
 			int index = table.getSelectedRow();
 			if (index != -1) {

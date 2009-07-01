@@ -102,8 +102,12 @@ public class OrganSession {
 		return organ;
 	}
 
+	public void ensure(Class<?> clazz) {
+		lookup(clazz);
+	}
+	
 	@SuppressWarnings("unchecked")
-	public <T> T get(Class<T> clazz) {
+	public <T> T lookup(Class<T> clazz) {
 		T t = (T) ts.get(clazz);
 		if (t == null) {
 			t = (T) SessionRegistry.create(this, clazz);

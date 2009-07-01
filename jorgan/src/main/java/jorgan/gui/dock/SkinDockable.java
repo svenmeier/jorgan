@@ -106,7 +106,7 @@ public class SkinDockable extends OrganDockable {
 	@Override
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					eventHandler);
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(eventHandler));
@@ -117,7 +117,7 @@ public class SkinDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventHandler));
-			this.session.get(ElementSelection.class).addListener(eventHandler);
+			this.session.lookup(ElementSelection.class).addListener(eventHandler);
 		}
 
 		update();
@@ -179,7 +179,7 @@ public class SkinDockable extends OrganDockable {
 
 	private Displayable getDisplayable() {
 		if (session != null) {
-			Element element = session.get(ElementSelection.class)
+			Element element = session.lookup(ElementSelection.class)
 					.getSelectedElement();
 			if (element instanceof Displayable) {
 				return (Displayable) element;
@@ -209,7 +209,7 @@ public class SkinDockable extends OrganDockable {
 		if (console.getSkin() == null) {
 			setStatus(config.get("noSkin").read(new MessageBuilder()).build());
 		} else {
-			skin = session.get(SkinManager.class).getSkin(console);
+			skin = session.lookup(SkinManager.class).getSkin(console);
 			if (skin == null) {
 				setStatus(config.get("skinFailed").read(new MessageBuilder())
 						.build());

@@ -110,14 +110,14 @@ public class MonitorDockable extends OrganDockable {
 	@Override
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.get(OrganPlay.class).removePlayerListener(
+			this.session.lookup(OrganPlay.class).removePlayerListener(
 					(PlayListener) Spin.over(listener));
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.get(OrganPlay.class).addPlayerListener(
+			this.session.lookup(OrganPlay.class).addPlayerListener(
 					(PlayListener) Spin.over(listener));
 		}
 	}

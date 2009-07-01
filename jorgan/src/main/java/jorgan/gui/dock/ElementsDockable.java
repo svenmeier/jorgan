@@ -147,7 +147,7 @@ public class ElementsDockable extends OrganDockable {
 					final Element[] subElements = (Element[]) ObjectTransferable
 							.getObject(t);
 
-					session.get(UndoManager.class).compound(new Compound() {
+					session.lookup(UndoManager.class).compound(new Compound() {
 						public void run() {
 							List<Element> added = new ArrayList<Element>();
 
@@ -159,7 +159,7 @@ public class ElementsDockable extends OrganDockable {
 								added.add(clone);
 							}
 
-							session.get(ElementSelection.class)
+							session.lookup(ElementSelection.class)
 									.setSelectedElements(added);
 						}
 					});
@@ -225,9 +225,9 @@ public class ElementsDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(elementsModel));
-			this.session.get(ElementProblems.class).removeListener(
+			this.session.lookup(ElementProblems.class).removeListener(
 					(ProblemListener) Spin.over(elementsModel));
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>();
@@ -239,9 +239,9 @@ public class ElementsDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(elementsModel));
-			this.session.get(ElementProblems.class).addListener(
+			this.session.lookup(ElementProblems.class).addListener(
 					(ProblemListener) Spin.over(elementsModel));
-			this.session.get(ElementSelection.class).addListener(
+			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
@@ -274,7 +274,7 @@ public class ElementsDockable extends OrganDockable {
 
 				list.clearSelection();
 
-				List<Element> selectedElements = session.get(
+				List<Element> selectedElements = session.lookup(
 						ElementSelection.class).getSelectedElements();
 				for (int e = 0; e < selectedElements.size(); e++) {
 					Element element = selectedElements.get(e);
@@ -301,10 +301,10 @@ public class ElementsDockable extends OrganDockable {
 				Object[] values = list.getSelectedValues();
 
 				if (values.length == 1) {
-					session.get(ElementSelection.class).setSelectedElement(
+					session.lookup(ElementSelection.class).setSelectedElement(
 							(Element) values[0]);
 				} else {
-					session.get(ElementSelection.class).setSelectedElements(
+					session.lookup(ElementSelection.class).setSelectedElements(
 							Generics.asList(values, Element.class));
 				}
 
@@ -435,7 +435,7 @@ public class ElementsDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				session.get(UndoManager.class).compound(this);
+				session.lookup(UndoManager.class).compound(this);
 			}
 		}
 
@@ -445,12 +445,12 @@ public class ElementsDockable extends OrganDockable {
 
 		public void run() {
 			List<Element> duplicated = new ArrayList<Element>();
-			for (Element element : new ArrayList<Element>(session.get(
+			for (Element element : new ArrayList<Element>(session.lookup(
 					ElementSelection.class).getSelectedElements())) {
 				duplicated.add(session.getOrgan().duplicate(element));
 			}
 
-			session.get(ElementSelection.class).setSelectedElements(duplicated);
+			session.lookup(ElementSelection.class).setSelectedElements(duplicated);
 		}
 	}
 
@@ -465,7 +465,7 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(UndoManager.class).compound(this);
+			session.lookup(UndoManager.class).compound(this);
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -473,7 +473,7 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void run() {
-			for (Element element : new ArrayList<Element>(session.get(
+			for (Element element : new ArrayList<Element>(session.lookup(
 					ElementSelection.class).getSelectedElements())) {
 				session.getOrgan().removeElement(element);
 			}

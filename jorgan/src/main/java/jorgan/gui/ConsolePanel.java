@@ -206,7 +206,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		this.session = session;
 		this.session.getOrgan().addOrganListener(
 				(OrganListener) Spin.over(eventHandler));
-		this.session.get(ElementSelection.class).addListener(eventHandler);
+		this.session.lookup(ElementSelection.class).addListener(eventHandler);
 		this.session.addListener(eventHandler);
 
 		this.console = console;
@@ -265,7 +265,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public void dispose() {
 		this.session.getOrgan().removeOrganListener(
 				(OrganListener) Spin.over(eventHandler));
-		this.session.get(ElementSelection.class).removeListener(eventHandler);
+		this.session.lookup(ElementSelection.class).removeListener(eventHandler);
 		this.session.removeListener(eventHandler);
 		this.session = null;
 
@@ -461,14 +461,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void initSkin() {
-		session.get(ElementProblems.class).removeProblem(
+		session.lookup(ElementProblems.class).removeProblem(
 				new Problem(Severity.ERROR, console, "skin", null));
 
 		String skin = console.getSkin();
 		if (skin == null) {
 			this.skin = null;
 		} else {
-			this.skin = session.get(SkinManager.class).getSkin(console);
+			this.skin = session.lookup(SkinManager.class).getSkin(console);
 		}
 	}
 
@@ -724,7 +724,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void selectionChanged() {
 
 			selectedViews.clear();
-			for (Element element : session.get(ElementSelection.class)
+			for (Element element : session.lookup(ElementSelection.class)
 					.getSelectedElements()) {
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
@@ -774,7 +774,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void mousePressed(MouseEvent e) {
 			mouseFrom = e.getPoint();
 
-			session.get(UndoManager.class).compound();
+			session.lookup(UndoManager.class).compound();
 
 			pressedView = getView(screenToView(e.getX()),
 					screenToView(e.getY()));
@@ -786,16 +786,16 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			if (isMultiSelect(e)) {
 				if (pressedView != null) {
-					session.get(ElementSelection.class).addSelectedElement(
+					session.lookup(ElementSelection.class).addSelectedElement(
 							pressedView.getElement());
 				}
 			} else {
 				if (pressedView == null) {
-					session.get(ElementSelection.class)
+					session.lookup(ElementSelection.class)
 							.setSelectedElement(null);
 				} else {
 					if (!selectedViews.contains(pressedView)) {
-						session.get(ElementSelection.class).setSelectedElement(
+						session.lookup(ElementSelection.class).setSelectedElement(
 								pressedView.getElement());
 					}
 				}
@@ -843,7 +843,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						elements.add(view.getElement());
 					}
 				}
-				session.get(ElementSelection.class).setSelectedElements(
+				session.lookup(ElementSelection.class).setSelectedElements(
 						elements);
 			} else {
 				int deltaX = pressedOrigin.x - pressedView.getX();
@@ -871,7 +871,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseReleased(MouseEvent e) {
 
-			session.get(UndoManager.class).compound();
+			session.lookup(UndoManager.class).compound();
 
 			if (dragMarker != null) {
 				dragMarker.release();
@@ -892,11 +892,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (isMultiSelect(e)) {
 					if (pressedWasSelected) {
 						session
-								.get(ElementSelection.class)
+								.lookup(ElementSelection.class)
 								.removeSelectedElement(pressedView.getElement());
 					}
 				} else {
-					session.get(ElementSelection.class).setSelectedElement(
+					session.lookup(ElementSelection.class).setSelectedElement(
 							pressedView.getElement());
 				}
 			}

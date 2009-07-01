@@ -81,7 +81,7 @@ public class CreateReferencesWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.get(UndoManager.class).compound(new Compound() {
+		session.lookup(UndoManager.class).compound(new Compound() {
 			public void run() {
 				for (int t = 0; t < referencesTo.size(); t++) {
 					Element referenced = referencesTo.get(t);
