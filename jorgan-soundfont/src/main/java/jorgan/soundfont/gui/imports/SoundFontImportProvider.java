@@ -16,22 +16,24 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.linuxsampler.gui.construct.spi;
+package jorgan.soundfont.gui.imports;
 
-import java.beans.BeanInfo;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.gui.construct.info.spi.BeanInfoProvider;
-import jorgan.linuxsampler.gui.construct.LinuxsamplerSoundBeanInfo;
+import jorgan.importer.gui.Import;
+import jorgan.importer.gui.spi.ImportProvider;
 
 /**
- * The default provider of {@link BeanInfo}s.
+ * A provider for {@link Import} from a SoundFont.
  */
-public class LinuxsamplerBeanInfoProvider implements BeanInfoProvider {
+public class SoundFontImportProvider implements ImportProvider {
 
-	private static final String BEAN_INFO_SEARCH_PATH = LinuxsamplerSoundBeanInfo.class
-			.getPackage().getName();
+	public List<Import> getImports() {
+		List<Import> imports = new ArrayList<Import>();
 
-	public String getBeanInfoSearchPath() {
-		return BEAN_INFO_SEARCH_PATH;
+		imports.add(new SoundFontImport());
+
+		return imports;
 	}
 }

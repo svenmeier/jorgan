@@ -16,22 +16,31 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.creative.disposition.spi;
+package jorgan.creative.gui.imports;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.creative.disposition.CreativeSound;
-import jorgan.disposition.Element;
-import jorgan.disposition.spi.ElementProvider;
+import jorgan.importer.gui.Import;
+import jorgan.importer.gui.spi.ImportProvider;
 
-public class CreativeElementProvider implements ElementProvider {
+/**
+ * A provider that of {@link Import}s from Creative soundcards.
+ * 
+ * @see jorgan.creative.SoundFontManager
+ */
+public class CreativeImportProvider implements ImportProvider {
 
-	public List<Class<? extends Element>> getElementClasses() {
-		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
+	public CreativeImportProvider() {
+		// trigger loading of native library to fail early
+		new CreativeImport();
+	}
 
-		classes.add(CreativeSound.class);
+	public List<Import> getImports() {
+		List<Import> imports = new ArrayList<Import>();
 
-		return classes;
+		imports.add(new CreativeImport());
+
+		return imports;
 	}
 }

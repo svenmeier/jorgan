@@ -16,19 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.linuxsampler.play.spi;
+package jorgan.creative.gui.construct;
 
-import jorgan.disposition.Element;
-import jorgan.linuxsampler.disposition.LinuxsamplerSound;
-import jorgan.linuxsampler.play.LinuxsamplerSoundPlayer;
-import jorgan.play.spi.PlayerProvider;
+import java.beans.BeanInfo;
 
-public class LinuxsamplerPlayerProvider implements PlayerProvider {
+import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
-	public LinuxsamplerSoundPlayer createPlayer(Element element) {
-		if (element.getClass() == LinuxsamplerSound.class) {
-			return new LinuxsamplerSoundPlayer((LinuxsamplerSound) element);
-		}
-		return null;
+/**
+ * The default provider of {@link BeanInfo}s.
+ */
+public class CreativeBeanInfoProvider implements BeanInfoProvider {
+
+	private static final String BEAN_INFO_SEARCH_PATH = CreativeSoundBeanInfo.class
+			.getPackage().getName();
+
+	public String getBeanInfoSearchPath() {
+		return BEAN_INFO_SEARCH_PATH;
 	}
 }

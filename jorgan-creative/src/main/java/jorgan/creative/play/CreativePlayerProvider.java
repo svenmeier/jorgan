@@ -16,10 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.creative.play.spi;
+package jorgan.creative.play;
 
 import jorgan.creative.disposition.CreativeSound;
-import jorgan.creative.play.CreativeSoundPlayer;
 import jorgan.disposition.Element;
 import jorgan.play.Player;
 import jorgan.play.spi.PlayerProvider;
