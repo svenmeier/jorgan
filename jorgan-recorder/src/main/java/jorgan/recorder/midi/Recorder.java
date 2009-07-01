@@ -98,6 +98,10 @@ public abstract class Recorder {
 		setTick(sequence.getTickLength() + 1);
 	}
 
+	public boolean isLast() {
+		return currentTick == sequence.getTickLength() + 1; 
+	}
+	
 	public void start() {
 		stop();
 
