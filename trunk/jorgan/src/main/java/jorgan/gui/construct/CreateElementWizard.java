@@ -80,7 +80,7 @@ public class CreateElementWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		session.get(UndoManager.class).compound(new Compound() {
+		session.lookup(UndoManager.class).compound(new Compound() {
 			public void run() {
 				session.getOrgan().addElement(element);
 

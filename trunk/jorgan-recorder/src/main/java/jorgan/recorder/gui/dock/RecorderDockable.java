@@ -126,7 +126,7 @@ public class RecorderDockable extends OrganDockable {
 		this.session = session;
 
 		if (this.session != null) {
-			performance = session.get(Performance.class);
+			performance = session.lookup(Performance.class);
 			performance.addListener((PerformanceListener) Spin
 					.over(eventListener));
 

@@ -36,7 +36,6 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.gui.img.ElementIcons;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.text.DocumentNotifier;
@@ -84,7 +83,7 @@ public class ElementCreationPanel extends JPanel {
 				super.getListCellRendererComponent(list, Elements.getDisplayName(clazz), index,
 						isSelected, cellHasFocus);
 
-				setIcon(ElementIcons.getIcon(clazz));
+				setIcon(Elements.getIcon(clazz));
 
 				return this;
 			}

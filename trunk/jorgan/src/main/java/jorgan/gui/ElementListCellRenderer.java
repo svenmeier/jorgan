@@ -17,7 +17,6 @@ import javax.swing.JList;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.dock.ElementsDockable;
-import jorgan.gui.img.ElementIcons;
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.swing.CompoundIcon;
@@ -77,11 +76,11 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	protected Icon getIcon(Element element) {
 		OrganSession session = getOrgan();
 
-		Icon icon = ElementIcons.getIcon(element.getClass());
+		Icon icon = Elements.getIcon(element.getClass());
 		if (session != null) {
-			if (session.get(ElementProblems.class).hasErrors(element)) {
+			if (session.lookup(ElementProblems.class).hasErrors(element)) {
 				return new CompoundIcon(icon, errorIcon);
-			} else if (session.get(ElementProblems.class).hasWarnings(element)) {
+			} else if (session.lookup(ElementProblems.class).hasWarnings(element)) {
 				return new CompoundIcon(icon, warningIcon);
 			}
 		}

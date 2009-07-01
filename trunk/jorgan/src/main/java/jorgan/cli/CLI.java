@@ -32,6 +32,9 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionStream;
 import jorgan.io.disposition.DispositionFileFilter;
+import jorgan.io.disposition.ExtensionException;
+import jorgan.io.disposition.FormatException;
+import jorgan.play.OrganPlay;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.ProblemListener;
@@ -57,7 +60,7 @@ public class CLI implements UI, SessionAware {
 
 	private Interpreter interpreter;
 
-	private InternalProblemListener problemListener = new InternalProblemListener();
+	private Listener listener = new Listener();
 
 	private boolean useDefaultEncoding;
 
@@ -122,30 +125,36 @@ public class CLI implements UI, SessionAware {
 
 			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));
-		} catch (IOException ex) {
-			writeMessage("openException", file.getName());
-		} catch (Exception ex) {
-			logger.log(Level.INFO, "opening organ failed", ex);
+		} catch (ExtensionException ex) {
+			writeMessage("openExtensionException", file.getName(), ex
+					.getExtension());
+			return;
+		} catch (FormatException ex) {
+			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			writeMessage("openInvalid", file.getName());
+			writeMessage("openFormatException", file.getName());
+			return;
+		} catch (IOException ex) {
+			writeMessage("openIOException", file.getName());
+			return;
 		}
 	}
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
+			this.session.lookup(ElementProblems.class).removeListener(listener);
 			this.session.destroy();
-			this.session = null;
 		}
 
 		this.session = session;
 
 		if (session != null) {
-			this.session = session;
-			session.get(ElementProblems.class).addListener(problemListener);
+			this.session.ensure(OrganPlay.class);
+			this.session.lookup(ElementProblems.class).addListener(listener);
 
-			for (Problem problem : session.get(ElementProblems.class)
+			for (Problem problem : session.lookup(ElementProblems.class)
 					.getProblems()) {
-				problemListener.problemAdded(problem);
+				listener.problemAdded(problem);
 			}
 		}
 	}
@@ -446,7 +455,7 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * The monitor of problems.
 	 */
-	private class InternalProblemListener implements ProblemListener {
+	private class Listener implements ProblemListener {
 
 		public void problemAdded(Problem problem) {
 

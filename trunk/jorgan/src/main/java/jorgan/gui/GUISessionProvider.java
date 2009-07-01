@@ -50,7 +50,7 @@ public class GUISessionProvider implements SessionProvider {
 			
 			selection.addListener(new SelectionListener() {
 				public void selectionChanged() {
-					session.get(UndoManager.class).compound();
+					session.lookup(UndoManager.class).compound();
 				}
 			});
 			session.getOrgan().addOrganListener(new OrganAdapter() {

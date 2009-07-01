@@ -31,7 +31,7 @@ public class RecorderSessionProvider implements SessionProvider {
 	public Object create(OrganSession session, Class<?> clazz) {
 		if (clazz == Performance.class) {
 			final Performance performance = new Performance(session
-					.get(OrganPlay.class));
+					.lookup(OrganPlay.class));
 			session.addListener(new SessionListener() {
 				public void constructingChanged(boolean constructing) {
 					performance.stop();

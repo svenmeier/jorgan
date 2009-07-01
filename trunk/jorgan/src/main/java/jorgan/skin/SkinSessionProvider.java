@@ -29,7 +29,7 @@ public class SkinSessionProvider implements SessionProvider {
 
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == SkinManager.class) {
-			return new SkinManager(session.get(ElementProblems.class)) {
+			return new SkinManager(session.lookup(ElementProblems.class)) {
 				@Override
 				protected File resolve(String name) throws IOException {
 					return session.resolve(name);

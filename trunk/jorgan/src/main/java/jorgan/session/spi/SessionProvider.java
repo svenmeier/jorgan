@@ -23,7 +23,7 @@ import jorgan.session.OrganSession;
 /**
  * A provider of {@link OrganSession} objects.
  * 
- * @see OrganSession#get(Class)
+ * @see OrganSession#lookup(Class)
  */
 public interface SessionProvider {
 	public Object create(OrganSession session, Class<?> clazz);

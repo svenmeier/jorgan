@@ -31,7 +31,7 @@ public class OrganPlaySessionProvider implements SessionProvider {
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == OrganPlay.class) {
 			final OrganPlay play = new OrganPlay(session.getOrgan(), session
-					.get(ElementProblems.class)) {
+					.lookup(ElementProblems.class)) {
 				@Override
 				public File resolve(String name) throws IOException {
 					return session.resolve(name);
@@ -55,7 +55,10 @@ public class OrganPlaySessionProvider implements SessionProvider {
 				}
 			});
 
-			play.open();
+			if (!session.isConstructing()) {
+				play.open();
+			}
+			
 			return play;
 		}
 		return null;

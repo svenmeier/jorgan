@@ -179,13 +179,13 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(eventsListener));
-			this.session.get(OrganPlay.class).removePlayerListener(
+			this.session.lookup(OrganPlay.class).removePlayerListener(
 					(PlayListener) Spin.over(eventsListener));
-			this.session.get(ElementProblems.class).removeListener(
+			this.session.lookup(ElementProblems.class).removeListener(
 					(ProblemListener) Spin.over(eventsListener));
-			this.session.get(UndoManager.class).removeListener(
+			this.session.lookup(UndoManager.class).removeListener(
 					(UndoListener) Spin.over(eventsListener));
-			this.session.get(ElementSelection.class).removeListener(
+			this.session.lookup(ElementSelection.class).removeListener(
 					eventsListener);
 			this.session.removeListener(eventsListener);
 
@@ -203,16 +203,16 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		this.session = session;
 
 		if (this.session != null) {
-			setConstructing(!this.session.get(OrganPlay.class).isOpen());
+			setConstructing(!this.session.lookup(OrganPlay.class).isOpen());
 
 			this.session.addListener(eventsListener);
-			this.session.get(ElementSelection.class)
+			this.session.lookup(ElementSelection.class)
 					.addListener(eventsListener);
-			this.session.get(UndoManager.class).addListener(
+			this.session.lookup(UndoManager.class).addListener(
 					(UndoListener) Spin.over(eventsListener));
-			this.session.get(ElementProblems.class).addListener(
+			this.session.lookup(ElementProblems.class).addListener(
 					(ProblemListener) Spin.over(eventsListener));
-			this.session.get(OrganPlay.class).addPlayerListener(
+			this.session.lookup(OrganPlay.class).addPlayerListener(
 					(PlayListener) Spin.over(eventsListener));
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventsListener));
@@ -239,8 +239,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			forwardAction.setEnabled(false);
 		} else {
 			backAction
-					.setEnabled(session.get(ElementSelection.class).canBack());
-			forwardAction.setEnabled(session.get(ElementSelection.class)
+					.setEnabled(session.lookup(ElementSelection.class).canBack());
+			forwardAction.setEnabled(session.lookup(ElementSelection.class)
 					.canForward());
 		}
 	}
@@ -424,8 +424,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void selectionChanged() {
-			if (session.get(ElementSelection.class).getSelectionCount() == 1) {
-				Element element = session.get(ElementSelection.class).getSelectedElement();
+			if (session.lookup(ElementSelection.class).getSelectionCount() == 1) {
+				Element element = session.lookup(ElementSelection.class).getSelectedElement();
 				if (element instanceof Console) {
 					Console console = (Console) element;
 
@@ -439,8 +439,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void changed() {
-			undoAction.setEnabled(session.get(UndoManager.class).canUndo());
-			redoAction.setEnabled(session.get(UndoManager.class).canRedo());
+			undoAction.setEnabled(session.lookup(UndoManager.class).canUndo());
+			redoAction.setEnabled(session.lookup(UndoManager.class).canRedo());
 		}
 
 		public void elementAdded(Element element) {
@@ -495,7 +495,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(ElementSelection.class).back();
+			session.lookup(ElementSelection.class).back();
 		}
 	}
 
@@ -510,7 +510,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(ElementSelection.class).forward();
+			session.lookup(ElementSelection.class).forward();
 		}
 	}
 
@@ -521,7 +521,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(UndoManager.class).undo();
+			session.lookup(UndoManager.class).undo();
 		}
 	}
 
@@ -532,7 +532,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			session.get(UndoManager.class).redo();
+			session.lookup(UndoManager.class).redo();
 		}
 	}
 
