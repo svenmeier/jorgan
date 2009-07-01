@@ -16,12 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.graph.gui.dock.spi;
+package jorgan.graph.gui.dock;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.graph.gui.dock.StructureDockable;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.dock.spi.DockableProvider;
 
