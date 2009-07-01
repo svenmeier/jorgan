@@ -16,14 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.linuxsampler.disposition.spi;
+package jorgan.linuxsampler.disposition;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.spi.ElementProvider;
-import jorgan.linuxsampler.disposition.LinuxsamplerSound;
 
 public class LinuxsamplerElementProvider implements ElementProvider {
 
