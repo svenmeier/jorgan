@@ -1,7 +1,11 @@
 package jorgan.disposition;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -14,6 +18,8 @@ public class Elements {
 	private static Configuration config = Configuration.getRoot();
 
 	private static Map<String, String> messages = new HashMap<String, String>();
+
+	private static HashMap<Class<?>, Icon> icons = new HashMap<Class<?>, Icon>();
 
 	/**
 	 * Get the display name of the given element.
@@ -65,5 +71,35 @@ public class Elements {
 			messages.put(completeKey, message);
 		}
 		return message;
+	}
+
+	/**
+	 * Get an icon representation for the given class.
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public static Icon getIcon(Class<?> clazz) {
+
+		Icon icon = icons.get(clazz);
+		if (icon == null) {
+			icon = createIcon(clazz);
+			icons.put(clazz, icon);
+		}
+
+		return icon;
+	}
+
+	private static Icon createIcon(Class<?> clazz) {
+		while (clazz != null) {
+			URL url = clazz
+					.getResource("img/" + clazz.getSimpleName() + ".gif");
+			if (url != null) {
+				return new ImageIcon(url);
+			}
+			clazz = clazz.getSuperclass();
+		}
+
+		throw new Error("no icon for " + clazz);
 	}
 }
