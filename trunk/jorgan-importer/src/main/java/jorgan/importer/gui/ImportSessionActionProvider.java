@@ -1,4 +1,4 @@
-package jorgan.importer.gui.spi;
+package jorgan.importer.gui;
 
 
 import java.util.ArrayList;
@@ -8,7 +8,6 @@ import javax.swing.Action;
 
 import jorgan.gui.OrganFrame;
 import jorgan.gui.spi.SessionActionProvider;
-import jorgan.importer.gui.ImportAction;
 import jorgan.session.OrganSession;
 
 public class ImportSessionActionProvider implements SessionActionProvider {

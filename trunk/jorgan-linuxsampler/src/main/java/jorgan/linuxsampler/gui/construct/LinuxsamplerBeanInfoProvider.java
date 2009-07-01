@@ -16,32 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.creative.gui.imports.spi;
+package jorgan.linuxsampler.gui.construct;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.BeanInfo;
 
-import jorgan.creative.gui.imports.CreativeImport;
-import jorgan.importer.gui.Import;
-import jorgan.importer.gui.spi.ImportProvider;
+import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
 /**
- * A provider that of {@link Import}s from Creative soundcards.
- * 
- * @see jorgan.creative.SoundFontManager
+ * The default provider of {@link BeanInfo}s.
  */
-public class CreativeImportProvider implements ImportProvider {
+public class LinuxsamplerBeanInfoProvider implements BeanInfoProvider {
 
-	public CreativeImportProvider() {
-		// trigger loading of native library to fail early
-		new CreativeImport();
-	}
+	private static final String BEAN_INFO_SEARCH_PATH = LinuxsamplerSoundBeanInfo.class
+			.getPackage().getName();
 
-	public List<Import> getImports() {
-		List<Import> imports = new ArrayList<Import>();
-
-		imports.add(new CreativeImport());
-
-		return imports;
+	public String getBeanInfoSearchPath() {
+		return BEAN_INFO_SEARCH_PATH;
 	}
 }

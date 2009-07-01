@@ -16,25 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.soundfont.imports.spi;
+package jorgan.creative.disposition;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.importer.gui.Import;
-import jorgan.importer.gui.spi.ImportProvider;
-import jorgan.soundfont.imports.SoundFontImport;
+import jorgan.disposition.Element;
+import jorgan.disposition.spi.ElementProvider;
 
-/**
- * A provider for {@link Import} from a SoundFont.
- */
-public class SoundFontImportProvider implements ImportProvider {
+public class CreativeElementProvider implements ElementProvider {
 
-	public List<Import> getImports() {
-		List<Import> imports = new ArrayList<Import>();
+	public List<Class<? extends Element>> getElementClasses() {
+		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		imports.add(new SoundFontImport());
+		classes.add(CreativeSound.class);
 
-		return imports;
+		return classes;
 	}
 }

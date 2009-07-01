@@ -1,4 +1,4 @@
-package jorgan.soundfont.imports;
+package jorgan.soundfont.gui.imports;
 
 import java.io.File;
 
