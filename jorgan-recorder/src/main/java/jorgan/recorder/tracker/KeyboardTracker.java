@@ -28,6 +28,7 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
+import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.Performance;
@@ -39,10 +40,12 @@ public class KeyboardTracker extends AbstractTracker {
 
 	private EventHandler eventHandler = new EventHandler();
 
-	public KeyboardTracker(Performance performance, int track,
-			Keyboard keyboard) {
+	public KeyboardTracker(Performance performance, int track, Keyboard keyboard) {
 		super(performance, track);
 
+		setPlayEnabled(true);
+		setRecordEnabled(true);
+		
 		this.keyboard = keyboard;
 
 		getPlay().addKeyListener(eventHandler);
@@ -89,7 +92,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 */
 	public void onPlayStarting() {
 		super.onPlayStarting();
-		
+
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay()
 					.pressKey(keyboard, message.getData1(), message.getData2());
@@ -102,9 +105,9 @@ public class KeyboardTracker extends AbstractTracker {
 	 */
 	public void onRecordStarting() {
 		super.onRecordStarting();
-		
+
 		for (ShortMessage message : getKeyPresses()) {
-			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
+			record(createMessage(message.getData1()));
 		}
 	}
 
@@ -114,10 +117,18 @@ public class KeyboardTracker extends AbstractTracker {
 	 */
 	public void onRecordStopping() {
 		super.onRecordStopping();
-		
+
 		for (ShortMessage message : getKeyPresses()) {
-			record(ShortMessage.NOTE_OFF, message.getData1(), 0);
+			record(createMessage(message.getData1()));
 		}
+	}
+
+	private ShortMessage createMessage(int pitch) {
+		return MessageUtils.newMessage(ShortMessage.NOTE_OFF, pitch, 0);
+	}
+
+	private ShortMessage createMessage(int pitch, int velocity) {
+		return MessageUtils.newMessage(ShortMessage.NOTE_ON, pitch, velocity);
 	}
 
 	/**
@@ -126,7 +137,7 @@ public class KeyboardTracker extends AbstractTracker {
 	 */
 	public void onPlayStopping() {
 		super.onPlayStopping();
-		
+
 		for (ShortMessage message : getKeyPresses()) {
 			getPlay().releaseKey(keyboard, message.getData1());
 		}
@@ -152,13 +163,13 @@ public class KeyboardTracker extends AbstractTracker {
 	private final class EventHandler implements KeyListener {
 		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
 			if (keyboard == KeyboardTracker.this.keyboard) {
-				record(ShortMessage.NOTE_ON, pitch, velocity);				
+				record(createMessage(pitch, velocity));
 			}
 		}
 
 		public void keyReleased(Keyboard keyboard, int pitch) {
 			if (keyboard == KeyboardTracker.this.keyboard) {
-				record(ShortMessage.NOTE_OFF, pitch, 0);
+				record(createMessage(pitch));
 			}
 		}
 	}

@@ -73,13 +73,13 @@ public class TrackHeader extends JPanel {
 		IconToggle playToggle = new IconToggle() {
 			@Override
 			protected boolean isOn() {
-				return performance.getTracker(track).plays();
+				return performance.getTracker(track).isPlayEnabled();
 			}
 
 			@Override
 			protected void toggle() {
 				if (performance.getState() == Performance.STATE_STOP) {
-					performance.getTracker(track).setPlays(!isOn());
+					performance.getTracker(track).setPlayEnabled(!isOn());
 					super.toggle();
 				}
 			}
@@ -90,13 +90,13 @@ public class TrackHeader extends JPanel {
 		IconToggle recordToggle = new IconToggle() {
 			@Override
 			protected boolean isOn() {
-				return performance.getTracker(track).records();
+				return performance.getTracker(track).isRecordEnabled();
 			}
 
 			@Override
 			protected void toggle() {
 				if (performance.getState() == Performance.STATE_STOP) {
-					performance.getTracker(track).setRecords(!isOn());
+					performance.getTracker(track).setRecordEnabled(!isOn());
 					super.toggle();
 				}
 			}

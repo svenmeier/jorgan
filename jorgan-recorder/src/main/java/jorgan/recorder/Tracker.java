@@ -32,25 +32,13 @@ public interface Tracker {
 
 	public Element getElement();
 
-	/**
-	 * TODO setRecordEnabled
-	 */
-	public void setRecords(boolean recording);
+	public void setRecordEnabled(boolean recording);
 
-	/**
-	 * TODO isRecordEnabled
-	 */
-	public boolean records();
+	public boolean isRecordEnabled();
 
-	/**
-	 * TODO setPlayEnabled
-	 */
-	public void setPlays(boolean playing);
+	public void setPlayEnabled(boolean playing);
 
-	/**
-	 * TODO isPlayEnabled
-	 */
-	public boolean plays();
+	public boolean isPlayEnabled();
 
 	public void destroy();
 

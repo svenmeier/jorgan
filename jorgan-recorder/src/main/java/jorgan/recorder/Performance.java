@@ -167,11 +167,11 @@ public class Performance {
 			state = STATE_PLAY;
 
 			recorder.stop();
-			
+
 			if (recorder.isLast()) {
 				recorder.first();
 			}
-			
+
 			recorder.start();
 
 			fireStateChanged();
@@ -200,6 +200,32 @@ public class Performance {
 		stop();
 
 		recorder.last();
+	}
+
+	public void record(int track, MidiMessage message) {
+		if (state == STATE_RECORD && getTracker(track).isRecordEnabled()) {
+			recorder.record(track, message);
+		}
+	}
+
+	public long millisToTick(long millis) {
+		return recorder.millisToTick(millis);
+	}
+
+	public Iterable<MidiEvent> eventsFromTick(int track, long tick) {
+		return recorder.eventsFromTick(track, tick);
+	}
+
+	public long tickToMillis(long tick) {
+		return recorder.tickToMillis(tick);
+	}
+
+	public Iterable<MidiEvent> eventsToCurrent(int track) {
+		return recorder.eventsToCurrent(track);
+	}
+
+	public Iterable<MidiEvent> eventsFromCurrent(int track) {
+		return recorder.eventsFromCurrent(track);
 	}
 
 	public Element getElement(int track) {
@@ -309,7 +335,7 @@ public class Performance {
 		@Override
 		protected void onPlayed(int track, MidiMessage message) {
 			Tracker tracker = trackers[track];
-			if (tracker.plays()) {
+			if (tracker.isPlayEnabled()) {
 				tracker.onPlayed(message);
 			}
 		}
@@ -325,13 +351,13 @@ public class Performance {
 		protected void onStarting() {
 			for (Tracker tracker : trackers) {
 				if (state == STATE_RECORD) {
-					if (tracker.records()) {
+					if (tracker.isRecordEnabled()) {
 						tracker.onRecordStarting();
-					} else if (tracker.plays()) {
+					} else if (tracker.isPlayEnabled()) {
 						tracker.onPlayStarting();
 					}
 				} else if (state == STATE_PLAY) {
-					if (tracker.plays()) {
+					if (tracker.isPlayEnabled()) {
 						tracker.onPlayStarting();
 					}
 				}
@@ -342,22 +368,18 @@ public class Performance {
 		protected void onStopping() {
 			for (Tracker tracker : trackers) {
 				if (state == STATE_RECORD) {
-					if (tracker.records()) {
+					if (tracker.isRecordEnabled()) {
 						tracker.onRecordStopping();
-					} else if (tracker.plays()) {
+					} else if (tracker.isPlayEnabled()) {
 						tracker.onPlayStopping();
 					}
 				} else if (state == STATE_PLAY) {
-					if (tracker.plays()) {
+					if (tracker.isPlayEnabled()) {
 						tracker.onPlayStopping();
 					}
 				}
 			}
 		}
-	}
-
-	public Recorder getRecorder() {
-		return recorder;
 	}
 
 	private Tracker createTracker(int track) {

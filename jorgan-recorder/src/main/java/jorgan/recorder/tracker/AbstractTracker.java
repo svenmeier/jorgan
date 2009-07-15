@@ -25,7 +25,6 @@ import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.recorder.Performance;
 import jorgan.recorder.Tracker;
@@ -36,9 +35,9 @@ public abstract class AbstractTracker implements Tracker {
 
 	private int track;
 
-	private boolean plays = true;
+	private boolean playEnabled = false;
 
-	private boolean records = true;
+	private boolean recordEnabled = false;
 
 	protected AbstractTracker(Performance performance, int track) {
 		this.performance = performance;
@@ -54,20 +53,20 @@ public abstract class AbstractTracker implements Tracker {
 		return track;
 	}
 
-	public void setRecords(boolean records) {
-		this.records = records;
+	public void setRecordEnabled(boolean records) {
+		this.recordEnabled = records;
 	}
 
-	public boolean records() {
-		return records;
+	public boolean isRecordEnabled() {
+		return recordEnabled;
 	}
 
-	public void setPlays(boolean plays) {
-		this.plays = plays;
+	public void setPlayEnabled(boolean plays) {
+		this.playEnabled = plays;
 	}
 
-	public boolean plays() {
-		return plays;
+	public boolean isPlayEnabled() {
+		return playEnabled;
 	}
 
 	public abstract Element getElement();
@@ -97,21 +96,15 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	protected Iterable<MidiEvent> messages() {
-		return performance.getRecorder().eventsToCurrent(getTrack());
-	}
-
-	protected void record(int status, int data1, int data2) {
-		record(MessageUtils.newMessage(status, data1, data2));
+		return performance.eventsToCurrent(getTrack());
 	}
 
 	protected void record(MidiMessage message) {
-		if (performance.getState() == Performance.STATE_RECORD && records()) {
-			performance.getRecorder().record(getTrack(), message);
-		}
+		performance.record(track, message);
 	}
 
 	private void removeFollowingEvents() {
-		Iterator<MidiEvent> iterator = performance.getRecorder()
+		Iterator<MidiEvent> iterator = performance
 				.eventsFromCurrent(getTrack()).iterator();
 		while (iterator.hasNext()) {
 			if (owns(iterator.next())) {
