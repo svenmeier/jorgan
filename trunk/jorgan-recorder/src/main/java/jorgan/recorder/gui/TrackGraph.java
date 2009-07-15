@@ -77,13 +77,13 @@ public class TrackGraph extends JComponent {
 		int height = getHeight();
 		int width = getWidth();
 
-		long tick = performance.getRecorder().millisToTick(xToMillis(bounds.x));
+		long tick = performance.millisToTick(xToMillis(bounds.x));
 
 		int x = -1;
 		int count = 0;
-		for (MidiEvent event : performance.getRecorder().eventsFromTick(track,
+		for (MidiEvent event : performance.eventsFromTick(track,
 				tick)) {
-			int nextX = millisToX(performance.getRecorder().tickToMillis(
+			int nextX = millisToX(performance.tickToMillis(
 					event.getTick()));
 			if (nextX >= width) {
 				nextX = width - 1;

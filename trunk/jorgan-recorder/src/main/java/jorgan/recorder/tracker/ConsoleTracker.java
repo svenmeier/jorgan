@@ -30,10 +30,11 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.Performance;
 import jorgan.recorder.disposition.PerformanceSwitch;
+import jorgan.recorder.midi.Recorder;
 
 /**
- * Track all {@link Console}'s referenced {@link Switch}es and {@link Continuous}.
- * Does not track instances of {@link PerformanceSwitch}.
+ * Track all {@link Console}'s referenced {@link Switch}es and
+ * {@link Continuous}. Does not track instances of {@link PerformanceSwitch}.
  */
 public class ConsoleTracker extends AbstractTracker {
 
@@ -53,6 +54,9 @@ public class ConsoleTracker extends AbstractTracker {
 
 	public ConsoleTracker(Performance performance, int track, Console console) {
 		super(performance, track);
+
+		// enable play only
+		setPlayEnabled(true);
 
 		this.console = console;
 
@@ -92,12 +96,18 @@ public class ConsoleTracker extends AbstractTracker {
 			if (PerformanceSwitch.class.isInstance(aSwitch)) {
 				continue;
 			}
-			
-			aSwitch.setActive(getSequenceActive(aSwitch));
+
+			Boolean active = getSequenceActive(aSwitch);
+			if (active != null) {
+				aSwitch.setActive(active);
+			}
 		}
 
 		for (Continuous continuous : console.getReferenced(Continuous.class)) {
-			continuous.setValue(getSequenceValue(continuous));
+			Float value = getSequenceValue(continuous);
+			if (value != null) {
+				continuous.setValue(value);
+			}
 		}
 
 		ignoreChanges = false;
@@ -116,8 +126,8 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			boolean sequenceActive = getSequenceActive(aSwitch);
-			if (sequenceActive != aSwitch.isActive()) {
+			Boolean active = getSequenceActive(aSwitch);
+			if (active == null || active != aSwitch.isActive()) {
 				record(createMessage(aSwitch));
 			}
 		}
@@ -127,8 +137,8 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			float value = getSequenceValue(continuous);
-			if (value != continuous.getValue()) {
+			Float value = getSequenceValue(continuous);
+			if (value == null || value != continuous.getValue()) {
 				record(createMessage(continuous));
 			}
 		}
@@ -172,12 +182,14 @@ public class ConsoleTracker extends AbstractTracker {
 				String string = MessageUtils.getText(metaMessage);
 
 				if (string.startsWith(PREFIX_ACTIVE)) {
-					Switch aSwitch = getReferenced(string.substring(1), Switch.class);
+					Switch aSwitch = getReferenced(string.substring(1),
+							Switch.class);
 					if (aSwitch != null) {
 						aSwitch.setActive(true);
 					}
 				} else if (string.startsWith(PREFIX_INACTIVE)) {
-					Switch aSwitch = getReferenced(string.substring(1), Switch.class);
+					Switch aSwitch = getReferenced(string.substring(1),
+							Switch.class);
 					if (aSwitch != null) {
 						aSwitch.setActive(false);
 					}
@@ -208,12 +220,16 @@ public class ConsoleTracker extends AbstractTracker {
 				return element;
 			}
 		}
-		
+
 		return null;
 	}
 
-	private float getSequenceValue(Continuous continuous) {
-		float value = 0.0f;
+	/**
+	 * Get the value for the given {@link Continuous} in the {@link Recorder} or
+	 * <code>null</code> if not known.
+	 */
+	private Float getSequenceValue(Continuous continuous) {
+		Float value = null;
 
 		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof MetaMessage) {
@@ -241,8 +257,12 @@ public class ConsoleTracker extends AbstractTracker {
 		return value;
 	}
 
-	private boolean getSequenceActive(Switch aSwitch) {
-		boolean active = false;
+	/**
+	 * Get the active state for the given {@link Switch} in the {@link Recorder}
+	 * or <code>null</code> if not known.
+	 */
+	private Boolean getSequenceActive(Switch aSwitch) {
+		Boolean active = null;
 
 		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof MetaMessage) {
@@ -283,7 +303,7 @@ public class ConsoleTracker extends AbstractTracker {
 			if (PerformanceSwitch.class.isInstance(element)) {
 				return;
 			}
-			
+
 			String elementName = element.getName();
 			if ("".equals(elementName)) {
 				return;
