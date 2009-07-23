@@ -134,13 +134,23 @@ public class Performance {
 
 		trackers = new Tracker[recorder.getTrackCount()];
 		for (int track = 0; track < trackers.length; track++) {
-			setTracker(track, createTracker(track));
+			Tracker tracker = readTracker(track);
+			if (tracker == null) {
+				tracker = new EmptyTracker(track);
+			}
+			setTracker(track, tracker);
 		}
 
 		fireTrackersChanged();
 	}
 
 	public Sequence getSequence() {
+		for (Tracker tracker : trackers) {
+			if (tracker.getElement() != null) {
+				writeTracker(tracker);
+			}
+		}
+
 		return recorder.getSequence();
 	}
 
@@ -282,12 +292,6 @@ public class Performance {
 	}
 
 	private void setTracker(int track, Tracker tracker) {
-		if (tracker.getElement() == null) {
-			setTrackName(track, null);
-		} else {
-			setTrackName(track, tracker.getElement().getName());
-		}
-
 		if (trackers[track] != null) {
 			trackers[track].destroy();
 		}
@@ -382,70 +386,6 @@ public class Performance {
 		}
 	}
 
-	private Tracker createTracker(int track) {
-		Tracker tracker;
-
-		String name = getTrackName(track);
-		if (name != null) {
-			for (Element element : play.getOrgan().getElements()) {
-				if (name.equals(element.getName())) {
-					tracker = TrackerRegistry.createTracker(Performance.this,
-							track, element);
-					if (tracker != null) {
-						return tracker;
-					}
-				}
-			}
-		}
-
-		return new EmptyTracker(track);
-	}
-
-	/**
-	 * Set the name of the given track.
-	 * 
-	 * @param track
-	 * @param name
-	 */
-	private void setTrackName(int track, String name) {
-		Iterator<MidiEvent> iterator = recorder.events(track).iterator();
-		while (iterator.hasNext()) {
-			MidiEvent event = iterator.next();
-
-			if (event.getMessage() instanceof MetaMessage) {
-				MetaMessage message = (MetaMessage) event.getMessage();
-				if (message.getType() == MessageUtils.META_TRACK_NAME) {
-					iterator.remove();
-				}
-			}
-		}
-
-		if (name != null) {
-			recorder.setTime(0);
-			recorder.record(track, MessageUtils.newMetaMessage(
-					MessageUtils.META_TRACK_NAME, name));
-		}
-	}
-
-	/**
-	 * Get the name of the given track.
-	 * 
-	 * @param track
-	 * @return name
-	 */
-	private String getTrackName(int track) {
-		for (MidiEvent event : recorder.events(track)) {
-			if (event.getMessage() instanceof MetaMessage) {
-				MetaMessage message = (MetaMessage) event.getMessage();
-				if (message.getType() == MessageUtils.META_TRACK_NAME) {
-					return MessageUtils.getText(message);
-				}
-			}
-		}
-
-		return null;
-	}
-
 	private class EmptyTracker extends AbstractTracker {
 
 		public EmptyTracker(int track) {
@@ -486,6 +426,82 @@ public class Performance {
 				if (tracker.getElement() == element) {
 					setElement(tracker.getTrack(), null);
 					break;
+				}
+			}
+		}
+	}
+
+	private Tracker readTracker(int track) {
+		Tracker tracker = null;
+
+		String name = null;
+		boolean playEnabled = false;
+		boolean recordEnabled = false;
+		for (MidiEvent event : recorder.eventsAtTick(track, 0)) {
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == MessageUtils.META_TRACK_NAME) {
+					name = MessageUtils.getText(message);
+				} else if (message.getType() == MessageUtils.META_CUE_POINT) {
+					if ("play".equals(MessageUtils.getText(message))) {
+						playEnabled = true;
+					} else if ("record".equals(MessageUtils.getText(message))) {
+						recordEnabled = true;
+					}
+				}
+
+			}
+		}
+
+		if (name != null) {
+			for (Element element : play.getOrgan().getElements()) {
+				if (name.equals(element.getName())) {
+					tracker = TrackerRegistry.createTracker(Performance.this,
+							track, element);
+					if (tracker != null) {
+						tracker.setPlayEnabled(playEnabled);
+						tracker.setRecordEnabled(recordEnabled);
+					}
+				}
+			}
+		}
+
+		return tracker;
+	}
+
+	private void writeTracker(Tracker tracker) {
+		Iterator<MidiEvent> iterator = recorder.eventsAtTick(tracker.getTrack(), 0)
+				.iterator();
+		while (iterator.hasNext()) {
+			MidiEvent event = iterator.next();
+
+			if (event.getMessage() instanceof MetaMessage) {
+				MetaMessage message = (MetaMessage) event.getMessage();
+				if (message.getType() == MessageUtils.META_TRACK_NAME
+						|| message.getType() == MessageUtils.META_CUE_POINT) {
+					iterator.remove();
+				}
+			}
+		}
+
+		if (tracker.getElement() != null) {
+			String name = tracker.getElement().getName();
+			if (!"".equals(tracker.getElement().getName())) {
+				recorder.setTime(0);
+
+				recorder.record(tracker.getTrack(), MessageUtils
+						.newMetaMessage(MessageUtils.META_TRACK_NAME, name));
+
+				if (tracker.isPlayEnabled()) {
+					recorder.record(tracker.getTrack(),
+							MessageUtils.newMetaMessage(
+									MessageUtils.META_CUE_POINT, "play"));
+				}
+
+				if (tracker.isRecordEnabled()) {
+					recorder.record(tracker.getTrack(), MessageUtils
+							.newMetaMessage(MessageUtils.META_CUE_POINT,
+									"record"));
 				}
 			}
 		}

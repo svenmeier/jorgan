@@ -188,6 +188,10 @@ public abstract class Recorder {
 		return events(track, 0, Long.MAX_VALUE);
 	}
 
+	public Iterable<MidiEvent> eventsAtTick(final int track, final long tick) {
+		return events(track, tick, tick + 1);
+	}
+
 	public Iterable<MidiEvent> eventsToCurrent(final int track) {
 		return eventsToTick(track, currentTick);
 	}

@@ -97,14 +97,14 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			Boolean active = getSequenceActive(aSwitch);
+			Boolean active = readSequenceActive(aSwitch);
 			if (active != null) {
 				aSwitch.setActive(active);
 			}
 		}
 
 		for (Continuous continuous : console.getReferenced(Continuous.class)) {
-			Float value = getSequenceValue(continuous);
+			Float value = readSequenceValue(continuous);
 			if (value != null) {
 				continuous.setValue(value);
 			}
@@ -126,7 +126,7 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			Boolean active = getSequenceActive(aSwitch);
+			Boolean active = readSequenceActive(aSwitch);
 			if (active == null || active != aSwitch.isActive()) {
 				record(createMessage(aSwitch));
 			}
@@ -137,7 +137,7 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			Float value = getSequenceValue(continuous);
+			Float value = readSequenceValue(continuous);
 			if (value == null || value != continuous.getValue()) {
 				record(createMessage(continuous));
 			}
@@ -228,7 +228,7 @@ public class ConsoleTracker extends AbstractTracker {
 	 * Get the value for the given {@link Continuous} in the {@link Recorder} or
 	 * <code>null</code> if not known.
 	 */
-	private Float getSequenceValue(Continuous continuous) {
+	private Float readSequenceValue(Continuous continuous) {
 		Float value = null;
 
 		for (MidiEvent event : messages()) {
@@ -261,7 +261,7 @@ public class ConsoleTracker extends AbstractTracker {
 	 * Get the active state for the given {@link Switch} in the {@link Recorder}
 	 * or <code>null</code> if not known.
 	 */
-	private Boolean getSequenceActive(Switch aSwitch) {
+	private Boolean readSequenceActive(Switch aSwitch) {
 		Boolean active = null;
 
 		for (MidiEvent event : messages()) {
