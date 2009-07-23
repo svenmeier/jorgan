@@ -26,6 +26,7 @@ import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
 import javax.swing.JComponent;
 import javax.swing.JPanel;
@@ -147,7 +148,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 		}
 	}
 
-	private class EventListener extends MouseAdapter implements PerformanceListener {
+	private class EventListener extends MouseAdapter implements MouseMotionListener, PerformanceListener {
 
 		private Integer offset;
 
@@ -155,7 +156,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 			return e.getX() - millisToX(performance.getTime());
 		}
 
-		@Override
 		public void mouseMoved(MouseEvent e) {
 			if (this.offset == null) {
 				int offset = getOffset(e);
@@ -192,7 +192,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 			offset = null;
 		}
 
-		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (offset != null) {
 				int x = e.getX() - offset;
