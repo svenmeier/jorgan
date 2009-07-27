@@ -41,6 +41,7 @@ public class CrossLinkUnmarshaller extends TreeUnmarshaller {
 		this.crossLink = crossLink;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Object convert(final Object parent, Class type,
 			Converter converter) {
 		String attributeName = getMapper().aliasForSystemAttribute("reference");
