@@ -27,7 +27,7 @@ import com.thoughtworks.xstream.converters.ConversionException;
  */
 public class FieldCrossLink implements CrossLink {
 
-	private Class parentClass;
+	private Class<?> parentClass;
 
 	private Field field;
 
