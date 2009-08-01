@@ -48,7 +48,6 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Combination.class);
 		classes.add(Captor.class);
 		classes.add(Incrementer.class);
-		classes.add(Memory.class);
 		classes.add(GenericSound.class);
 		classes.add(ConsoleSwitcher.class);
 

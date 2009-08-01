@@ -265,7 +265,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public void dispose() {
 		this.session.getOrgan().removeOrganListener(
 				(OrganListener) Spin.over(eventHandler));
-		this.session.lookup(ElementSelection.class).removeListener(eventHandler);
+		this.session.lookup(ElementSelection.class)
+				.removeListener(eventHandler);
 		this.session.removeListener(eventHandler);
 		this.session = null;
 
@@ -477,7 +478,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	private void createView(Displayable element) {
-		View<? extends Displayable> view = ViewRegistry.createView(element);
+		View<? extends Displayable> view = ViewRegistry.createView(session,
+				element);
 
 		viewsByDisplayable.put(element, view);
 		view.setContainer(this);
@@ -791,12 +793,12 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 			} else {
 				if (pressedView == null) {
-					session.lookup(ElementSelection.class)
-							.setSelectedElement(null);
+					session.lookup(ElementSelection.class).setSelectedElement(
+							null);
 				} else {
 					if (!selectedViews.contains(pressedView)) {
-						session.lookup(ElementSelection.class).setSelectedElement(
-								pressedView.getElement());
+						session.lookup(ElementSelection.class)
+								.setSelectedElement(pressedView.getElement());
 					}
 				}
 			}

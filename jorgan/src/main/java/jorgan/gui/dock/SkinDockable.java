@@ -117,7 +117,8 @@ public class SkinDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventHandler));
-			this.session.lookup(ElementSelection.class).addListener(eventHandler);
+			this.session.lookup(ElementSelection.class).addListener(
+					eventHandler);
 		}
 
 		update();
@@ -280,7 +281,8 @@ public class SkinDockable extends OrganDockable {
 
 			if (skin != null) {
 				for (final Style style : skin.createStyles()) {
-					View<?> view = ViewRegistry.createView(displayable);
+					View<?> view = ViewRegistry
+							.createView(session, displayable);
 					view.setContainer(new ViewContainer() {
 						public Component getHost() {
 							return list;

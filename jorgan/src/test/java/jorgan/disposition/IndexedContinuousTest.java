@@ -10,18 +10,6 @@ public class IndexedContinuousTest extends TestCase {
 			public int getSize() {
 				return 4;
 			}
-			@Override
-			public String getTitle() {
-				throw new UnsupportedOperationException();
-			}
-			@Override
-			public void setTitle(String title) {
-				throw new UnsupportedOperationException();
-			}
-			@Override
-			public String getTitle(int index) {
-				throw new UnsupportedOperationException();
-			}
 		};
 		
 		continuous.setValue(0.0f);
@@ -50,18 +38,6 @@ public class IndexedContinuousTest extends TestCase {
 			@Override
 			public int getSize() {
 				return 4;
-			}
-			@Override
-			public String getTitle() {
-				throw new UnsupportedOperationException();
-			}
-			@Override
-			public void setTitle(String title) {
-				throw new UnsupportedOperationException();
-			}
-			@Override
-			public String getTitle(int index) {
-				throw new UnsupportedOperationException();
 			}
 		};
 		

@@ -16,20 +16,27 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.gui.console;
 
-import jorgan.disposition.Memory;
-import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.disposition.IndexedContinuous;
+import jorgan.disposition.Regulator;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Memory}.
+ * A view that shows an {@link IndexedContinuous}.
  */
-public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
+public class RegulatorView extends IndexedContinuousView<Regulator> {
 
-	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	/**
+	 * Constructor.
+	 * 
+	 * @param memory
+	 *            memory to view
+	 */
+	public RegulatorView(Regulator element) {
+		super(element);
+	}
 
-		add("size", Memory.class, IntegerEditor.class);
+	protected String getTitle(int index) {
+		return getElement().getReference(index).getElement().getName();
 	}
 }

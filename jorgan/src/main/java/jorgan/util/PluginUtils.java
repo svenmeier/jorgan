@@ -45,7 +45,7 @@ public class PluginUtils {
 			try {
 				P provider = iterator.next();
 				if (clazz.isInstance(provider)) {
-					providers.add(provider);
+					providers.add(0, provider);
 				} else {					
 					logger.log(Level.WARNING, "provider not instance of " + clazz);
 				}
