@@ -20,15 +20,16 @@ package jorgan.gui.console.spi;
 
 import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
+import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
 public class ViewRegistry {
 
 	@SuppressWarnings("unchecked")
-	public static View<?> createView(Displayable element) {
+	public static View<?> createView(OrganSession session, Displayable element) {
 		View<?> view = null;
 		for (ViewProvider provider : PluginUtils.lookup(ViewProvider.class)) {
-			view = provider.createView(element);
+			view = provider.createView(session, element);
 			if (view != null) {
 				return view;
 			}

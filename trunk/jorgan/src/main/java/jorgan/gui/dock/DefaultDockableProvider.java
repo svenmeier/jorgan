@@ -37,7 +37,6 @@ public class DefaultDockableProvider implements DockableProvider {
 		dockables.add(new SkinDockable());
 
 		dockables.add(new MonitorDockable());
-		dockables.add(new MemoryDockable());
 		dockables.add(new ProblemsDockable());
 
 		return dockables;

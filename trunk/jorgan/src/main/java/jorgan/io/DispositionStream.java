@@ -37,10 +37,8 @@ import java.util.logging.Logger;
 
 import jorgan.disposition.Organ;
 import jorgan.disposition.Reference;
-import jorgan.io.disposition.BooleanArrayConverter;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
-import jorgan.io.disposition.FloatArrayConverter;
 import jorgan.io.disposition.FormatException;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
@@ -95,8 +93,6 @@ public class DispositionStream {
 		xstream.aliasSystemAttribute(null, "class");
 
 		xstream.registerConverter(new OrganConverter(xstream));
-		xstream.registerConverter(new BooleanArrayConverter());
-		xstream.registerConverter(new FloatArrayConverter());
 
 		config.read(this);
 	}
@@ -133,16 +129,17 @@ public class DispositionStream {
 		}
 	}
 
-	private FormatException findFormatException(Throwable ex) throws FormatException {
+	private FormatException findFormatException(Throwable ex)
+			throws FormatException {
 		if (ex instanceof FormatException) {
-			return (FormatException)ex;
+			return (FormatException) ex;
 		}
-		
+
 		Throwable cause = ex.getCause();
 		if (cause == null || cause == ex) {
 			return new FormatException(ex);
 		}
-		
+
 		return findFormatException(cause);
 	}
 
@@ -255,18 +252,18 @@ public class DispositionStream {
 		for (Conversion conversion : Conversion.list) {
 			if (apply || conversion.isApplicable(version)) {
 				apply = true;
-				
+
 				logger.log(Level.INFO, "applying '" + conversion + "'");
 
 				in = conversion.convert(in);
 			}
 		}
-		
+
 		return in;
 	}
 
 	private static String getVersion(InputStream in) throws IOException {
-		
+
 		// make sure the parse doesn't step over the mark limit
 		byte[] header = new byte[2048];
 		in.mark(header.length);

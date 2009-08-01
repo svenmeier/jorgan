@@ -36,7 +36,7 @@ import jorgan.swing.list.FilterList;
 /**
  * A view that shows an {@link IndexedContinuous}.
  */
-public class IndexedContinuousView<E extends IndexedContinuous> extends
+public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 		ContinuousView<E> {
 
 	/**
@@ -83,7 +83,7 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 			}
 
 			public String getText() {
-				return getElement().getTitle();
+				return getTitle(getElement().getIndex());
 			}
 		});
 	}
@@ -123,7 +123,7 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 				List<Integer> items = new ArrayList<Integer>();
 				for (int i = 0; i < getElement().getSize(); i++) {
 					if (i == index
-							|| getElement().getTitle(i).toLowerCase().contains(
+							|| getTitle(i).toLowerCase().contains(
 									title)) {
 						items.add(i);
 					}
@@ -134,7 +134,7 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 			@Override
 			protected String toString(Integer item) {
 				return (item.intValue() + 1) + " - "
-						+ getElement().getTitle(item);
+						+ getTitle(item);
 			}
 
 			@Override
@@ -152,4 +152,6 @@ public class IndexedContinuousView<E extends IndexedContinuous> extends
 
 		return filterList;
 	}
+	
+	protected abstract String getTitle(int index);
 }
