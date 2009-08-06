@@ -23,6 +23,13 @@ import jorgan.util.PluginUtils;
 
 public class SessionRegistry {
 
+	public static void init(OrganSession session) {
+		for (SessionProvider provider : PluginUtils
+				.lookup(SessionProvider.class)) {
+			provider.init(session);
+		}
+	}
+
 	public static Object create(OrganSession session, Class<?> clazz) {
 		for (SessionProvider provider : PluginUtils
 				.lookup(SessionProvider.class)) {

@@ -28,12 +28,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
-import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
-import jorgan.memory.Memory;
-import jorgan.memory.disposition.MemorySwitcher;
+import jorgan.memory.Store;
+import jorgan.memory.StoreListener;
+import jorgan.memory.disposition.Memory;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
@@ -44,7 +42,8 @@ import bias.Configuration;
 import bias.swing.MessageBox;
 
 /**
- * Dockable for editing of a {@link jorgan.disposition.Memory}.
+ * Dockable for editing of a {@link Memory}'s
+ * {@link jorgan.disposition.MemoryStore}.
  */
 public class MemoryDockable extends OrganDockable {
 
@@ -52,12 +51,14 @@ public class MemoryDockable extends OrganDockable {
 			MemoryDockable.class);
 
 	private JTable table = new JTable();
+	
+	private MemoryModel model = new MemoryModel();
 
-	private EventListener listener = new EventListener();
+	private EventHandler eventHandler = new EventHandler();
 
 	private OrganSession session;
 
-	private Memory memory;
+	private Store store;
 
 	/**
 	 * Constructor.
@@ -65,9 +66,9 @@ public class MemoryDockable extends OrganDockable {
 	public MemoryDockable() {
 		config.read(this);
 
-		table.setModel(new MemoryModel());
+		table.setModel(model);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		table.getSelectionModel().addListSelectionListener(listener);
+		table.getSelectionModel().addListSelectionListener(eventHandler);
 		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
 		renderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		table.getColumnModel().getColumn(0).setCellRenderer(renderer);
@@ -87,17 +88,19 @@ public class MemoryDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			session.getOrgan().removeOrganListener(
-					(OrganListener) Spin.over(listener));
-			setMemory(null);
+			store.removeListener((StoreListener) Spin.over(eventHandler));
+			store = null;
+			
+			model.fireTableDataChanged();
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			setMemory(session.lookup(Memory.class));
-			session.getOrgan().addOrganListener(
-					(OrganListener) Spin.over(listener));
+			store = session.lookup(Store.class);
+			store.addListener((StoreListener) Spin.over(eventHandler));
+
+			updateIndex();
 		}
 	}
 
@@ -112,88 +115,40 @@ public class MemoryDockable extends OrganDockable {
 		docked.addTool(new ClearAction());
 	}
 
-	private void setMemory(Memory memory) {
-		this.memory = memory;
-
-		((MemoryModel) table.getModel()).fireTableDataChanged();
-		table.setVisible(memory != null);
-
-		updateSelection();
-	}
-
-	private MemorySwitcher getSwitcher() {
-		for (MemorySwitcher switcher : session.getOrgan().getElements(
-				MemorySwitcher.class)) {
-			return switcher;
-		}
-		return null;
-	}
-
-	private int getIndex() {
-		MemorySwitcher switcher = getSwitcher();
-		if (switcher == null) {
-			return 0;
-		}
-		return switcher.getIndex();
-	}
-
-	private void setIndex(int index) {
-		MemorySwitcher switcher = getSwitcher();
-		if (switcher != null) {
-			switcher.setIndex(index);
-		}
-	}
-
-	private int getSize() {
-		MemorySwitcher switcher = getSwitcher();
-		if (switcher == null) {
-			return 0;
-		}
-		return switcher.getSize();
-	}
-
-	private void updateSelection() {
-		if (memory == null) {
-			return;
-		}
-
-		if (getSwitcher() == null) {
-			return;
-		}
-
-		int index = getIndex();
-		if (index != table.getSelectedRow()) {
-			if (table.getCellEditor() != null) {
-				table.getCellEditor().cancelCellEditing();
-				table.setCellEditor(null);
+	private void updateIndex() {
+		int index = store.getIndex();
+		if (index == -1) {
+			table.clearSelection();
+		} else {
+			if (index != table.getSelectedRow()) {
+				if (table.getCellEditor() != null) {
+					table.getCellEditor().cancelCellEditing();
+					table.setCellEditor(null);
+				}
+				table.setColumnSelectionInterval(0, 0);
+				table.getSelectionModel().setSelectionInterval(index, index);
+				table.scrollRectToVisible(table.getCellRect(index, 0, false));
 			}
-			table.getSelectionModel().setSelectionInterval(index, index);
-			table.scrollRectToVisible(table.getCellRect(index, 0, false));
 		}
-		table.setColumnSelectionInterval(0, 0);
 	}
 
-	private class EventListener extends OrganAdapter implements
-			ListSelectionListener {
+	private class EventHandler implements StoreListener, ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {
 				int row = table.getSelectedRow();
 				if (row != -1) {
-					setIndex(row);
+					store.setIndex(row);
 				}
 			}
 		}
 
-		@Override
-		public void propertyChanged(Element element, String name) {
-			if (element instanceof MemorySwitcher) {
-				if ("value".equals(name)) {
-					updateSelection();
-				} else if ("size".equals(name)) {
-					((MemoryModel) table.getModel()).fireTableDataChanged();
-				}
-			}
+		public void indexChanged(int index) {
+			updateIndex();
+		}
+
+		public void changed() {
+			model.fireTableDataChanged();
 		}
 	}
 
@@ -209,7 +164,8 @@ public class MemoryDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			int[] rows = table.getSelectedRows();
-			memory.swap(rows[0], rows[1]);
+
+			store.swap(rows[0], rows[1]);
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -231,7 +187,7 @@ public class MemoryDockable extends OrganDockable {
 			if (confirm()) {
 				int[] rows = table.getSelectedRows();
 				for (int r = 0; r < rows.length; r++) {
-					memory.clear(rows[r]);
+					store.clear(rows[r]);
 				}
 			}
 		}
@@ -273,10 +229,10 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public int getRowCount() {
-			if (memory == null) {
+			if (store == null) {
 				return 0;
 			} else {
-				return getSize();
+				return store.getSize();
 			}
 		}
 
@@ -284,7 +240,7 @@ public class MemoryDockable extends OrganDockable {
 			if (columnIndex == 0) {
 				return "" + (rowIndex + 1);
 			}
-			return memory.getLevel(rowIndex).getTitle();
+			return store.getTitle(rowIndex);
 		}
 
 		@Override
@@ -294,7 +250,7 @@ public class MemoryDockable extends OrganDockable {
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			memory.getLevel(rowIndex).setTitle((String) aValue);
+			store.setTitle(rowIndex, (String) aValue);
 		}
 	}
 }

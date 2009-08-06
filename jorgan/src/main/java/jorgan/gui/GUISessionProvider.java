@@ -28,6 +28,12 @@ import jorgan.session.spi.SessionProvider;
 
 public class GUISessionProvider implements SessionProvider {
 
+	/**
+	 * {@link UndoManager} and {@link ElementSelection} are optional.
+	 */
+	public void init(OrganSession session) {
+	}
+	
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == UndoManager.class) {
 			final UndoManager undoManager = new UndoManager(session.getOrgan());

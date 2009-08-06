@@ -34,7 +34,6 @@ import jorgan.io.DispositionStream;
 import jorgan.io.disposition.DispositionFileFilter;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
-import jorgan.play.OrganPlay;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.ProblemListener;
@@ -149,7 +148,6 @@ public class CLI implements UI, SessionAware {
 		this.session = session;
 
 		if (session != null) {
-			this.session.ensure(OrganPlay.class);
 			this.session.lookup(ElementProblems.class).addListener(listener);
 
 			for (Problem problem : session.lookup(ElementProblems.class)

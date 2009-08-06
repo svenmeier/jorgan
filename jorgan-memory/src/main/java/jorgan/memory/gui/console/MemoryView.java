@@ -16,22 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory;
+package jorgan.memory.gui.console;
 
+import jorgan.gui.console.IndexedContinuousView;
+import jorgan.memory.Store;
+import jorgan.memory.disposition.Memory;
+import jorgan.session.OrganSession;
 
-public class Level {
+/**
+ * A view that shows an {@link Memory}.
+ */
+public class MemoryView extends IndexedContinuousView<Memory> {
 
-	private String title = "";
+	private Store store;
 
-	public void setTitle(String title) {
-		this.title = title;
+	/**
+	 * Constructor.
+	 * 
+	 * @param session
+	 * 
+	 * @param memory
+	 *            memory to view
+	 */
+	public MemoryView(OrganSession session, Memory element) {
+		super(element);
+
+		store = session.lookup(Store.class);
 	}
 
-	public String getTitle() {
-		return title;
-	}
-
-	public void clear() {
-		title = "";
+	protected String getTitle(int index) {
+		return store.getTitle(index);
 	}
 }

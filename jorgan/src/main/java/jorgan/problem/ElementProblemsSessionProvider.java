@@ -24,6 +24,12 @@ import jorgan.session.OrganSession;
 import jorgan.session.spi.SessionProvider;
 
 public class ElementProblemsSessionProvider implements SessionProvider {
+
+	/**
+	 * {@link ElementProblems} is optional. 
+	 */
+	public void init(OrganSession session) {
+	}
 	
 	public Object create(OrganSession session, Class<?> clazz) {
 		if (clazz == ElementProblems.class) {

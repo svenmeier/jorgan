@@ -26,5 +26,8 @@ import jorgan.session.OrganSession;
  * @see OrganSession#lookup(Class)
  */
 public interface SessionProvider {
+	
+	public void init(OrganSession session);
+	
 	public Object create(OrganSession session, Class<?> clazz);
 }

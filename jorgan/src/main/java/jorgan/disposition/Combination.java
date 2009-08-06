@@ -18,7 +18,6 @@
  */
 package jorgan.disposition;
 
-
 public class Combination extends Switch implements Activating {
 
 	private transient boolean recalling;
@@ -67,7 +66,7 @@ public class Combination extends Switch implements Activating {
 
 	private void captureOrRecall() {
 		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
-			if (captor.isEngaged()) {
+			if (captor.isActive()) {
 				capture(captor);
 
 				return;
@@ -144,6 +143,14 @@ public class Combination extends Switch implements Activating {
 			super(element);
 		}
 
+		public void setActive(boolean active) {
+			this.active = active;
+		}
+
+		public boolean isActive() {
+			return active;
+		}
+
 		public boolean matches() {
 			return active == getElement().isActive();
 		}
@@ -178,6 +185,14 @@ public class Combination extends Switch implements Activating {
 
 		public ContinuousReference(Continuous element) {
 			super(element);
+		}
+
+		public float getValue() {
+			return value;
+		}
+
+		public void setValue(float value) {
+			this.value = value;
 		}
 
 		@Override

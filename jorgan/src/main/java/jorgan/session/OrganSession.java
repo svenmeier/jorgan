@@ -62,6 +62,8 @@ public class OrganSession {
 		}
 		this.organ = organ;
 		this.file = file;
+		
+		SessionRegistry.init(this);
 	}
 
 	public void setFile(File file) {
@@ -102,10 +104,6 @@ public class OrganSession {
 		return organ;
 	}
 
-	public void ensure(Class<?> clazz) {
-		lookup(clazz);
-	}
-	
 	@SuppressWarnings("unchecked")
 	public <T> T lookup(Class<T> clazz) {
 		T t = (T) ts.get(clazz);

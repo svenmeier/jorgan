@@ -27,6 +27,12 @@ import jorgan.session.spi.SessionProvider;
 
 public class SkinSessionProvider implements SessionProvider {
 
+	/**
+	 * {@link SkinManager} is optional.
+	 */
+	public void init(OrganSession session) {
+	}
+	
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == SkinManager.class) {
 			return new SkinManager(session.lookup(ElementProblems.class)) {
