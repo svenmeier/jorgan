@@ -16,36 +16,12 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.disposition;
+package jorgan.memory;
 
-import jorgan.disposition.Combination;
-import jorgan.disposition.Element;
-import jorgan.disposition.IndexedContinuous;
 
-public class MemorySwitcher extends IndexedContinuous {
+public interface StoreListener {
 
-	private int size = 64;
+	public void changed();
 
-	public MemorySwitcher() {
-	}
-
-	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Combination.class.isAssignableFrom(clazz);
-	}
-
-	@Override
-	public int getSize() {
-		return size;
-	}
-
-	public void setSize(int size) {
-		if (this.size != size) {
-			int oldSize = this.size;
-
-			this.size = size;
-
-			fireChange(new UndoablePropertyChange(oldSize, size));
-		}
-	}
+	public void indexChanged(int index);
 }

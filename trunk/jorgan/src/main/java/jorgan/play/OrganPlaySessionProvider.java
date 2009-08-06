@@ -28,6 +28,13 @@ import jorgan.session.spi.SessionProvider;
 
 public class OrganPlaySessionProvider implements SessionProvider {
 
+	/**
+	 * {@link OrganPlay} is required. 
+	 */
+	public void init(OrganSession session) {
+		session.lookup(OrganPlay.class);
+	}	
+
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == OrganPlay.class) {
 			final OrganPlay play = new OrganPlay(session.getOrgan(), session

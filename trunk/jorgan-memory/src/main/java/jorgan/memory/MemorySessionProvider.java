@@ -23,9 +23,17 @@ import jorgan.session.spi.SessionProvider;
 
 public class MemorySessionProvider implements SessionProvider {
 
+	/**
+	 * {@link Store} is always required.
+	 */
+	public void init(OrganSession session) {
+		session.lookup(Store.class);
+	}
+
 	public Object create(OrganSession session, Class<?> clazz) {
-		if (clazz == Memory.class) {
-			return new Memory();
+		if (clazz == Store.class) {
+			Store store = new Store(session.getOrgan());
+			return store;
 		}
 		return null;
 	}

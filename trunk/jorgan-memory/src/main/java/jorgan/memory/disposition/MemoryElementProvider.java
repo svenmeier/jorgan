@@ -29,7 +29,7 @@ public class MemoryElementProvider implements ElementProvider {
 	public List<Class<? extends Element>> getElementClasses() {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		classes.add(MemorySwitcher.class);
+		classes.add(Memory.class);
 
 		return classes;
 	}

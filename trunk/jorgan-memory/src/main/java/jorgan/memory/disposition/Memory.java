@@ -16,34 +16,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory;
+package jorgan.memory.disposition;
 
-import java.util.ArrayList;
-import java.util.List;
+import jorgan.disposition.Combination;
+import jorgan.disposition.Element;
+import jorgan.disposition.IndexedContinuous;
 
-public class Memory {
+public class Memory extends IndexedContinuous {
 
-	private List<Level> levels = new ArrayList<Level>();
+	private int size = 64;
 
 	public Memory() {
 	}
 
-	public Level getLevel(int index) {
-		while (index >= levels.size()) {
-			levels.add(new Level());
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Combination.class.isAssignableFrom(clazz);
+	}
+
+	@Override
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		if (this.size != size) {
+			int oldSize = this.size;
+
+			this.size = size;
+
+			fireChange(new UndoablePropertyChange(oldSize, size));
 		}
-		return levels.get(index);
-	}
-
-	public void swap(int index1, int index2) {
-		Level temp = levels.get(index1);
-
-		levels.set(index1, levels.get(index2));
-
-		levels.set(index2, temp);
-	}
-
-	public void clear(int index) {
-		levels.get(index).clear();
 	}
 }

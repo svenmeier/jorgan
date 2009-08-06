@@ -21,9 +21,9 @@ package jorgan.memory.gui.construct.info;
 import jorgan.gui.construct.info.IndexedContinuousBeanInfo;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Memory}.
+ * BeanInfo for {@link jorgan.disposition.MemoryStore}.
  */
-public class MemorySwitcherBeanInfo extends IndexedContinuousBeanInfo {
+public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 
 	@Override
 	protected void registerProperties() {

@@ -28,6 +28,12 @@ import jorgan.session.spi.SessionProvider;
 
 public class RecorderSessionProvider implements SessionProvider {
 
+	/**
+	 * {@link Performance} is optional.
+	 */
+	public void init(OrganSession session) {
+	}
+	
 	public Object create(OrganSession session, Class<?> clazz) {
 		if (clazz == Performance.class) {
 			final Performance performance = new Performance(session

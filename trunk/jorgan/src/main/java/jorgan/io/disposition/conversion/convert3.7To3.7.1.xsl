@@ -28,9 +28,9 @@
 	</xsl:template>
 
 	<xsl:template match="memory">
-		<memory.MemorySwitch>
+		<memory.memory>
 			<xsl:apply-templates select="references"/>
-		</memory.MemorySwitch>
+		</memory.memory>
 	</xsl:template>
 
   	<xsl:template match="@*|node()">
