@@ -31,7 +31,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.gui.dock.OrganDockable;
 import jorgan.memory.MemoryManager;
-import jorgan.memory.StoreListener;
+import jorgan.memory.MemoryManagerListener;
 import jorgan.memory.disposition.Memory;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -91,7 +91,7 @@ public class MemoryDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			manager.removeListener((StoreListener) Spin.over(eventHandler));
+			manager.removeListener((MemoryManagerListener) Spin.over(eventHandler));
 			manager = null;
 
 			model.fireTableDataChanged();
@@ -101,7 +101,7 @@ public class MemoryDockable extends OrganDockable {
 
 		if (this.session != null) {
 			manager = session.lookup(MemoryManager.class);
-			manager.addListener((StoreListener) Spin.over(eventHandler));
+			manager.addListener((MemoryManagerListener) Spin.over(eventHandler));
 
 			model.fireTableDataChanged();
 
@@ -153,7 +153,7 @@ public class MemoryDockable extends OrganDockable {
 		return true;
 	}
 
-	private class EventHandler implements StoreListener, ListSelectionListener {
+	private class EventHandler implements MemoryManagerListener, ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {

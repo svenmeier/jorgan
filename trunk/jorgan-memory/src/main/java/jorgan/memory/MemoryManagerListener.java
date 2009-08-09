@@ -18,8 +18,7 @@
  */
 package jorgan.memory;
 
-
-public interface StoreListener {
+public interface MemoryManagerListener {
 
 	public void changed();
 

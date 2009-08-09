@@ -22,6 +22,9 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.Switch;
 import jorgan.disposition.Combination.SwitchReference;
 
+/**
+ * The state of a {@link SwitchReference}.
+ */
 public class SwitchReferenceState extends ReferenceState<Switch> {
 
 	private boolean[] actives = new boolean[0];

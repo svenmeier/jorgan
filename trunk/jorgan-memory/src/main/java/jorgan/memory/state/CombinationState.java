@@ -27,6 +27,9 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Switch;
 
+/**
+ * The state of a {@link Combination}.
+ */
 public class CombinationState {
 
 	private Combination combination;
