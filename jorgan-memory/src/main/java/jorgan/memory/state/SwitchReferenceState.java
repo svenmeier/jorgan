@@ -44,6 +44,13 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 	}
 
 	@Override
+	public void clear(int index) {
+		ensureIndex(index);
+		
+		actives[index] = false;
+	}
+	
+	@Override
 	protected void read(Reference<?> reference, int index) {
 		SwitchReference temp = (SwitchReference) reference;
 

@@ -44,7 +44,13 @@ public class CombinationState {
 		return this.combination == combination;
 	}
 
-	private ReferenceState<?> getStore(Reference<?> reference) {
+	public void clear(int index) {
+		for (ReferenceState<?> state : states) {
+			state.clear(index);
+		}
+	}
+	
+	private ReferenceState<?> getState(Reference<?> reference) {
 		for (ReferenceState<?> state : states) {
 			if (state.isFor(reference.getElement())) {
 				return state;
@@ -67,7 +73,7 @@ public class CombinationState {
 
 	public void read(Combination combination, int index) {
 		for (Reference<?> reference : combination.getReferences()) {
-			ReferenceState<?> state = getStore(reference);
+			ReferenceState<?> state = getState(reference);
 			state.read(combination, index);
 		}
 	}

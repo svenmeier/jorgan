@@ -44,6 +44,13 @@ public class ContinuousReferenceState extends ReferenceState<Continuous> {
 	}
 
 	@Override
+	public void clear(int index) {
+		ensureIndex(index);
+		
+		values[index] = 0.0f;
+	}
+	
+	@Override
 	protected void read(Reference<?> reference, int index) {
 		ContinuousReference temp = (ContinuousReference) reference;
 

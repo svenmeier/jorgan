@@ -190,7 +190,13 @@ public abstract class MemoryManager {
 	public void clear(int index) {
 		if (memoryState == null) {
 			throw new IllegalStateException();
-		} 
+		}
+		
+		memoryState.clear(index);
+		
+		if (index == memory.getIndex()) {
+			write();
+		}
 	}
 
 	public String getTitle(int index) {

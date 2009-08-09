@@ -62,4 +62,6 @@ public abstract class ReferenceState<T extends Element> {
 	public boolean isFor(Object element) {
 		return element == this.element;
 	}
+
+	public abstract void clear(int index);
 }
