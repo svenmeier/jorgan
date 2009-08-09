@@ -22,7 +22,7 @@ import jorgan.recorder.Performance;
 
 /**
  */
-public class Record extends PerformanceSwitch {
+public class Record extends RecorderSwitch {
 
 	@Override
 	public void perform(Performance performance) {

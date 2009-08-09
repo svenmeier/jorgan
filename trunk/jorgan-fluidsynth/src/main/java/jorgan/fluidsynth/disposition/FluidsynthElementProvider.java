@@ -23,6 +23,7 @@ import java.util.List;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ElementProvider;
 
 /**
@@ -31,7 +32,7 @@ import jorgan.disposition.spi.ElementProvider;
  */
 public class FluidsynthElementProvider implements ElementProvider {
 
-	public List<Class<? extends Element>> getElementClasses() {
+	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
 		classes.add(FluidsynthSound.class);

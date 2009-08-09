@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.store;
+package jorgan.memory.state;
 
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Combination.ContinuousReference;
 
-public class ContinuousReferenceStore extends ReferenceStore<Continuous> {
+public class ContinuousReferenceState extends ReferenceState<Continuous> {
 
 	private float[] values = new float[0];
 
-	public ContinuousReferenceStore(Continuous element) {
+	public ContinuousReferenceState(Continuous element) {
 		super(element);
 	}
 

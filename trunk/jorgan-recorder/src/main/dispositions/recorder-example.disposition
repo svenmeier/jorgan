@@ -1,16 +1,35 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
-    <recorder.play id="1">
-      <name>Play</name>
+    <switch id="1">
+      <name>Switch</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+    </switch>
+    <recorder.record id="2">
+      <name>Record</name>
       <description></description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
       <locking>false</locking>
-    </recorder.play>
-    <keyboard id="2">
+    </recorder.record>
+    <continuous id="3">
+      <name>Continuous</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <locking>true</locking>
+      <threshold>0.0</threshold>
+      <value>0.41269842</value>
+    </continuous>
+    <keyboard id="4">
       <name>Keyboard</name>
       <description></description>
       <references/>
@@ -33,25 +52,56 @@
       </messages>
       <input>jOrgan Keyboard</input>
     </keyboard>
-    <recorder.record id="3">
-      <name>Record</name>
+    <console id="5">
+      <name>Console</name>
+      <description></description>
+      <references>
+        <console-locationReference>
+          <element ref="3"/>
+          <x>200</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="1"/>
+          <x>210</x>
+          <y>30</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="6"/>
+          <x>210</x>
+          <y>130</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="7"/>
+          <x>150</x>
+          <y>130</y>
+        </console-locationReference>
+        <console-locationReference>
+          <element ref="2"/>
+          <x>270</x>
+          <y>130</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <recorder.play id="6">
+      <name>Play</name>
       <description></description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
       <locking>false</locking>
-    </recorder.record>
-    <switch id="4">
-      <name>Switch</name>
+    </recorder.play>
+    <recorder.recorder id="8">
+      <name></name>
       <description></description>
       <references/>
       <messages/>
-      <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>true</locking>
-    </switch>
-    <recorder.stop id="5">
+      <performance>recorder-example.mid</performance>
+    </recorder.recorder>
+    <recorder.stop id="7">
       <name>Stop</name>
       <description></description>
       <references/>
@@ -60,48 +110,5 @@
       <active>false</active>
       <locking>false</locking>
     </recorder.stop>
-    <continuous id="6">
-      <name>Continuous</name>
-      <description></description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-      <locking>true</locking>
-      <threshold>0.0</threshold>
-      <value>0.6825397</value>
-    </continuous>
-    <console id="7">
-      <name>Console</name>
-      <description></description>
-      <references>
-        <console-locationReference>
-          <element ref="6"/>
-          <x>200</x>
-          <y>60</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="4"/>
-          <x>210</x>
-          <y>30</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="1"/>
-          <x>210</x>
-          <y>130</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="5"/>
-          <x>150</x>
-          <y>130</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="3"/>
-          <x>270</x>
-          <y>130</y>
-        </console-locationReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-    </console>
   </elements>
 </organ>

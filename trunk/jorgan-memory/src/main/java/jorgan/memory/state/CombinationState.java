@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.store;
+package jorgan.memory.state;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -27,13 +27,13 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Switch;
 
-public class CombinationStore {
+public class CombinationState {
 
 	private Combination combination;
 
-	private List<ReferenceStore<?>> stores = new ArrayList<ReferenceStore<?>>();
+	private List<ReferenceState<?>> states = new ArrayList<ReferenceState<?>>();
 
-	public CombinationStore(Combination combination) {
+	public CombinationState(Combination combination) {
 		this.combination = combination;
 	}
 
@@ -41,42 +41,42 @@ public class CombinationStore {
 		return this.combination == combination;
 	}
 
-	private ReferenceStore<?> getStore(Reference<?> reference) {
-		for (ReferenceStore<?> store : stores) {
-			if (store.isFor(reference.getElement())) {
-				return store;
+	private ReferenceState<?> getStore(Reference<?> reference) {
+		for (ReferenceState<?> state : states) {
+			if (state.isFor(reference.getElement())) {
+				return state;
 			}
 		}
 
-		ReferenceStore<?> store;
+		ReferenceState<?> state;
 		if (reference.getElement() instanceof Switch) {
-			store = new SwitchReferenceStore((Switch) reference.getElement());
+			state = new SwitchReferenceState((Switch) reference.getElement());
 		} else if (reference.getElement() instanceof Continuous) {
-			store = new ContinuousReferenceStore((Continuous) reference
+			state = new ContinuousReferenceState((Continuous) reference
 					.getElement());
 		} else {
 			throw new Error();
 		}
-		stores.add(store);
+		states.add(state);
 
-		return store;
+		return state;
 	}
 
 	public void read(Combination combination, int index) {
 		for (Reference<?> reference : combination.getReferences()) {
-			ReferenceStore<?> store = getStore(reference);
-			store.read(combination, index);
+			ReferenceState<?> state = getStore(reference);
+			state.read(combination, index);
 		}
 	}
 
 	public void write(Combination combination, int index) {
-		Iterator<ReferenceStore<?>> stores = this.stores.iterator();
-		while (stores.hasNext()) {
-			ReferenceStore<?> store = stores.next();
+		Iterator<ReferenceState<?>> iterator = this.states.iterator();
+		while (iterator.hasNext()) {
+			ReferenceState<?> state = iterator.next();
 			try {
-				store.write(combination, index);
+				state.write(combination, index);
 			} catch (IllegalArgumentException unkownReference) {
-				stores.remove();
+				iterator.remove();
 			}
 		}
 	}

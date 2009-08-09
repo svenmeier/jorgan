@@ -16,18 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder.disposition;
+package jorgan.recorder.gui.construct.info;
 
-import jorgan.disposition.Switch;
-import jorgan.recorder.Performance;
+import jorgan.gui.construct.editor.FileEditor;
+import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.recorder.disposition.Recorder;
 
 /**
+ * BeanInfo for {@link Recorder}.
  */
-public abstract class PerformanceSwitch extends Switch {
+public class RecorderBeanInfo extends ElementBeanInfo {
 
-	public PerformanceSwitch() {
-		setLocking(false);
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
+
+		add("performance", Recorder.class, FileEditor.class);
 	}
-	
-	public abstract void perform(Performance performance);
 }

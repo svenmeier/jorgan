@@ -16,22 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.store;
+package jorgan.memory.state;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Combination;
 import jorgan.memory.disposition.Memory;
-import jorgan.memory.store.CombinationStore;
+import jorgan.memory.state.CombinationState;
 
-public class MemoryStore {
+public class MemoryState {
 
 	private List<String> titles = new ArrayList<String>();
 
-	private List<CombinationStore> stores = new ArrayList<CombinationStore>();
+	private List<CombinationState> states = new ArrayList<CombinationState>();
 
-	public MemoryStore() {
+	public MemoryState() {
 	}
 
 	private void ensureIndex(List<?> list, int index) {
@@ -40,17 +40,17 @@ public class MemoryStore {
 		}
 	}
 
-	private CombinationStore getStore(Combination combination) {
-		for (CombinationStore store : stores) {
+	private CombinationState getState(Combination combination) {
+		for (CombinationState store : states) {
 			if (store.isFor(combination)) {
 				return store;
 			}
 		}
 
-		CombinationStore store = new CombinationStore(combination);
-		stores.add(store);
+		CombinationState state = new CombinationState(combination);
+		states.add(state);
 
-		return store;
+		return state;
 	}
 
 	public String getTitle(int index) {
@@ -72,25 +72,25 @@ public class MemoryStore {
 
 	public void read(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
-			CombinationStore store = getStore(combination);
-			if (store == null) {
-				store = new CombinationStore(combination);
-				stores.add(store);
+			CombinationState state = getState(combination);
+			if (state == null) {
+				state = new CombinationState(combination);
+				states.add(state);
 			}
 
-			store.read(combination, index);
+			state.read(combination, index);
 		}
 	}
 
 	public void write(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
-			CombinationStore store = getStore(combination);
-			if (store == null) {
-				store = new CombinationStore(combination);
-				stores.add(store);
+			CombinationState state = getState(combination);
+			if (state == null) {
+				state = new CombinationState(combination);
+				states.add(state);
 			}
 
-			store.write(combination, index);
+			state.write(combination, index);
 		}
 	}
 }

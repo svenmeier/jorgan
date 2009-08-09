@@ -20,6 +20,7 @@ package jorgan.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
@@ -420,6 +421,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			setConstructing(constructing);
 		}
 
+		public void saved(File file) {
+		}
+		
 		public void destroyed() {
 		}
 

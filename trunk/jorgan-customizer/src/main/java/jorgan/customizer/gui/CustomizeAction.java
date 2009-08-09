@@ -2,6 +2,7 @@ package jorgan.customizer.gui;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
+import java.io.File;
 
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
@@ -116,6 +117,9 @@ public class CustomizeAction extends BaseAction {
 		public void constructingChanged(boolean constructing) {
 		}
 
+		public void saved(File file) {
+		}
+		
 		public void destroyed() {
 			frame = null;
 		}

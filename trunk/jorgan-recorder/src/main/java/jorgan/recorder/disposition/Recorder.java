@@ -16,24 +16,29 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.disposition;
+
+import jorgan.disposition.Element;
+import jorgan.util.Null;
 
 /**
- * A listener of a {@link Performance}.
  */
-public interface PerformanceListener {
+public class Recorder extends Element {
 
-	/**
-	 * @see Performance#setTime(long time)
-	 */
-	public void timeChanged(long millis);
-	
-	/**
-	 * @see Performance#play()
-	 * @see Performance#record()
-	 * @see Performance#stop()
-	 */
-	public void stateChanged(int state);
-	
-	public void changed();	
+	private String performance;
+
+	public String getPerformance() {
+		return performance;
+	}
+
+	public void setPerformance(String performance) {
+		if (!Null.safeEquals(this.performance, performance)) {
+			String oldPerformance = this.performance;
+
+			this.performance = performance;
+
+			fireChange(new UndoablePropertyChange(oldPerformance,
+					this.performance));
+		}
+	}
 }

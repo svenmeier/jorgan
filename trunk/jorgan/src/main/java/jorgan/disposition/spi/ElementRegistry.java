@@ -22,16 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.util.PluginUtils;
 
 public class ElementRegistry {
 
-	public static List<Class<? extends Element>> getElementClasses() {
+	public static List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
 		for (ElementProvider provider : PluginUtils
 				.lookup(ElementProvider.class)) {
-			classes.addAll(provider.getElementClasses());
+			classes.addAll(provider.getElementClasses(organ));
 		}
 
 		return classes;

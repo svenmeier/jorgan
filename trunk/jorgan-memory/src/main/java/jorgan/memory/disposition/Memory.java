@@ -21,10 +21,13 @@ package jorgan.memory.disposition;
 import jorgan.disposition.Combination;
 import jorgan.disposition.Element;
 import jorgan.disposition.IndexedContinuous;
+import jorgan.util.Null;
 
 public class Memory extends IndexedContinuous {
 
 	private int size = 64;
+
+	private String store;
 
 	public Memory() {
 	}
@@ -46,6 +49,20 @@ public class Memory extends IndexedContinuous {
 			this.size = size;
 
 			fireChange(new UndoablePropertyChange(oldSize, size));
+		}
+	}
+
+	public String getStore() {
+		return store;
+	}
+
+	public void setStore(String store) {
+		if (!Null.safeEquals(this.store, store)) {
+			String oldStore = this.store;
+
+			this.store = store;
+
+			fireChange(new UndoablePropertyChange(oldStore, this.store));
 		}
 	}
 }

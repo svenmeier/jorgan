@@ -21,10 +21,10 @@ package jorgan.recorder;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Element;
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.midi.MessageRecorder;
 
 /**
- * A tracker of a {@link Recorder}'s track.
+ * A tracker of a {@link MessageRecorder}'s track.
  */
 public interface Tracker {
 

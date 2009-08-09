@@ -19,7 +19,6 @@
 package jorgan.session;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,6 +27,7 @@ import java.util.Map;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
+import jorgan.io.DispositionStream;
 import jorgan.session.spi.SessionRegistry;
 
 /**
@@ -48,30 +48,24 @@ public class OrganSession {
 
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
 
-	public OrganSession() {
-		this(createDefaultOrgan());
-	}
-
-	public OrganSession(Organ organ) {
-		this(organ, null);
-	}
-
-	public OrganSession(Organ organ, File file) {
-		if (organ == null) {
-			throw new IllegalArgumentException("organ must not be null");
-		}
-		this.organ = organ;
+	public OrganSession(File file) throws IOException {
 		this.file = file;
-		
+
+		if (file.exists()) {
+			organ = new DispositionStream().read(file);
+		} else {
+			organ = createDefaultOrgan();
+		}
+
 		SessionRegistry.init(this);
 	}
 
-	public void setFile(File file) {
-		if (this.file != null && file == null) {
-			throw new IllegalArgumentException("file cannot be set to null");
+	public void save() throws IOException {
+		new DispositionStream().write(organ, file);
+		
+		for (SessionListener listener : listeners) {
+			listener.saved(file);
 		}
-
-		this.file = file;
 	}
 
 	public File getFile() {
@@ -118,23 +112,11 @@ public class OrganSession {
 		return t;
 	}
 
-	public File resolve(String name) throws IOException {
+	public File resolve(String name) {
 		File file = new File(name);
 
 		if (!file.isAbsolute()) {
-			if (getFile() == null) {
-				file = null;
-			} else {
-				file = new File(getFile().getParentFile(), name);
-			}
-		}
-
-		if (file != null) {
-			file = file.getCanonicalFile();
-		}
-
-		if (file == null || !file.exists()) {
-			throw new FileNotFoundException();
+			file = new File(getFile().getParentFile(), name);
 		}
 
 		return file;

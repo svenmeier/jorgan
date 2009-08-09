@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.store;
+package jorgan.memory.state;
 
 import jorgan.disposition.Reference;
 import jorgan.disposition.Switch;
 import jorgan.disposition.Combination.SwitchReference;
 
-public class SwitchReferenceStore extends ReferenceStore<Switch> {
+public class SwitchReferenceState extends ReferenceState<Switch> {
 
 	private boolean[] actives = new boolean[0];
 
-	public SwitchReferenceStore(Switch element) {
+	public SwitchReferenceState(Switch element) {
 		super(element);
 	}
 

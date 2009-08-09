@@ -271,6 +271,29 @@ public class Organ {
 		return set;
 	}
 
+	/**
+	 * Get element of the given class.
+	 * 
+	 * @param clazz
+	 *            class to give element for
+	 * @return element
+	 */
+	@SuppressWarnings("unchecked")
+	public <E extends Element> E getElement(Class<E> clazz) {
+		E element = null;
+
+		for (Element candidate : this.elements) {
+			if (clazz.isInstance(candidate)) {
+				if (element != null) {
+					throw new IllegalStateException();
+				}
+				element = (E) candidate;
+			}
+		}
+
+		return element;
+	}
+
 	public Element duplicate(Element element) {
 		if (element.getOrgan() != this) {
 			throw new IllegalArgumentException("unkown element "

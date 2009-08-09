@@ -16,24 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.memory.gui.construct.info;
+
+import java.beans.BeanInfo;
+
+import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
 /**
- * A listener of a {@link Performance}.
+ * The default provider of {@link BeanInfo}s.
  */
-public interface PerformanceListener {
+public class MemoryBeanInfoProvider implements BeanInfoProvider {
 
-	/**
-	 * @see Performance#setTime(long time)
-	 */
-	public void timeChanged(long millis);
-	
-	/**
-	 * @see Performance#play()
-	 * @see Performance#record()
-	 * @see Performance#stop()
-	 */
-	public void stateChanged(int state);
-	
-	public void changed();	
+	private static final String BEAN_INFO_SEARCH_PATH = MemoryBeanInfo.class
+			.getPackage().getName();
+
+	public String getBeanInfoSearchPath() {
+		return BEAN_INFO_SEARCH_PATH;
+	}
 }
