@@ -73,6 +73,14 @@ public class MemoryState {
 		titles.set(index, title);
 	}
 
+	public void clear(int index) {
+		setTitle(index, null);
+		
+		for (CombinationState state : states) {
+			state.clear(index);
+		}
+	}
+
 	public void read(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
 			CombinationState state = getState(combination);
