@@ -116,7 +116,7 @@ public class TrackHeader extends JPanel {
 			public void popupMenuCanceled(PopupMenuEvent e) {
 			}
 		});
-		label.setComponentPopupMenu(menu);		
+		label.setComponentPopupMenu(menu);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class TrackHeader extends JPanel {
 					performance.setElement(track, null);
 				}
 			}
-		});		
+		});
 		menu.add(noneItem);
 
 		for (final Element element : performance.getTrackableElements()) {

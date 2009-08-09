@@ -118,9 +118,7 @@ public class CLI implements UI, SessionAware {
 	 */
 	public void openOrgan(File file) {
 		try {
-			Organ organ = new DispositionStream().read(file);
-
-			setSession(new OrganSession(organ, file));
+			setSession(new OrganSession(file));
 
 			writeMessage("openConfirm", DispositionFileFilter
 					.removeSuffix(file));

@@ -41,6 +41,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -720,6 +721,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			setConstructing(constructing);
 		}
 
+		public void saved(File file) {
+		}
+		
 		public void destroyed() {
 		}
 

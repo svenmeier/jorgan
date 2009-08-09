@@ -18,6 +18,8 @@
  */
 package jorgan.session;
 
+import java.io.File;
+
 /**
  * A listener of a {@link OrganSession}.
  */
@@ -29,8 +31,12 @@ public interface SessionListener {
 	public void constructingChanged(boolean constructing);
 	
 	/**
-	 * @ſee {@link OrganSession#destroy()}
-	 *
+	 * @see {@link OrganSession#save(java.io.File)}
+	 */
+	public void saved(File file);
+
+	/**
+	 * @see {@link OrganSession#destroy()}
 	 */
 	public void destroyed();
 }

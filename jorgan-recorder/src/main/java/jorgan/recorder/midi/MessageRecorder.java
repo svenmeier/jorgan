@@ -25,7 +25,7 @@ import javax.sound.midi.Track;
 
 import jorgan.util.AbstractIterator;
 
-public abstract class Recorder {
+public abstract class MessageRecorder {
 
 	public static final long SECOND = 1000;
 
@@ -39,17 +39,14 @@ public abstract class Recorder {
 
 	private State state;
 
-	public Recorder(Sequence sequence) {
-		setSequence(sequence);
-	}
-
-	public void setSequence(Sequence sequence) {
-		stop();
+	public MessageRecorder(Sequence sequence) {
 
 		this.sequence = sequence;
 
 		tracks = sequence.getTracks();
 		currentTick = 0;
+		
+		new Stopped();
 	}
 
 	public Sequence getSequence() {

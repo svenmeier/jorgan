@@ -114,7 +114,7 @@ public class CreateElementWizard extends BasicWizard {
 		public ElementPage() {
 			config.get("element").read(this);
 
-			elementPanel.setElementClasses(ElementRegistry.getElementClasses());
+			elementPanel.setElementClasses(ElementRegistry.getElementClasses(session.getOrgan()));
 		}
 
 		@Override

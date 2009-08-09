@@ -19,7 +19,7 @@
 package jorgan.memory.gui.console;
 
 import jorgan.gui.console.IndexedContinuousView;
-import jorgan.memory.Store;
+import jorgan.memory.MemoryManager;
 import jorgan.memory.disposition.Memory;
 import jorgan.session.OrganSession;
 
@@ -28,7 +28,7 @@ import jorgan.session.OrganSession;
  */
 public class MemoryView extends IndexedContinuousView<Memory> {
 
-	private Store store;
+	private MemoryManager manager;
 
 	/**
 	 * Constructor.
@@ -41,10 +41,10 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	public MemoryView(OrganSession session, Memory element) {
 		super(element);
 
-		store = session.lookup(Store.class);
+		manager = session.lookup(MemoryManager.class);
 	}
 
 	protected String getTitle(int index) {
-		return store.getTitle(index);
+		return manager.getTitle(index);
 	}
 }

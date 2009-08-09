@@ -20,14 +20,10 @@ package jorgan.recorder.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.Sequence;
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
@@ -36,8 +32,6 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.Performance;
 import jorgan.recorder.PerformanceListener;
 import jorgan.recorder.gui.TracksPanel;
-import jorgan.recorder.gui.file.MidiFileFilter;
-import jorgan.recorder.io.MidiStream;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import spin.Spin;
@@ -56,11 +50,7 @@ public class RecorderDockable extends OrganDockable {
 
 	private Performance performance;
 
-	private ResetAction resetAction = new ResetAction();
-
-	private ImportAction importAction = new ImportAction();
-
-	private ExportAction exportAction = new ExportAction();
+	private EjectAction ejectAction = new EjectAction();
 
 	private PlayAction playAction = new PlayAction();
 
@@ -95,9 +85,7 @@ public class RecorderDockable extends OrganDockable {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.addTool(resetAction);
-		docked.addTool(importAction);
-		docked.addTool(exportAction);
+		docked.addTool(ejectAction);
 		docked.addToolSeparator();
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
@@ -119,8 +107,6 @@ public class RecorderDockable extends OrganDockable {
 			performance.removeListener((PerformanceListener) Spin
 					.over(eventListener));
 			performance = null;
-
-			setContent(null);
 		}
 
 		this.session = session;
@@ -129,17 +115,35 @@ public class RecorderDockable extends OrganDockable {
 			performance = session.lookup(Performance.class);
 			performance.addListener((PerformanceListener) Spin
 					.over(eventListener));
+		}
 
+		update();
+	}
+
+	private void update() {
+		if (tracksPanel != null) {
+			tracksPanel.destroy();
+			tracksPanel = null;
+			setContent(null);
+		}
+
+		if (performance != null) {
 			tracksPanel = new TracksPanel(performance);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
 			scrollPane.setRowHeaderView(tracksPanel.getHeader());
 			scrollPane.getViewport().setBackground(tracksPanel.getBackground());
 			setContent(scrollPane);
 		}
+		
+		ejectAction.update();
+		playAction.update();
+		firstAction.update();
+		lastAction.update();
+		recordAction.update();
 	}
-
+	
 	private void updateTime() {
-		if (performance != null && tracksPanel != null) {
+		if (performance != null && performance.isEnabled()) {
 			long time = performance.getTime();
 			long totalTime = performance.getTotalTime();
 
@@ -147,6 +151,8 @@ public class RecorderDockable extends OrganDockable {
 					+ format.format(new Date(totalTime)));
 
 			tracksPanel.updateTime();
+		} else {
+			setStatus(null);
 		}
 	}
 
@@ -155,74 +161,59 @@ public class RecorderDockable extends OrganDockable {
 				getContent(), args);
 	}
 
-	private class ResetAction extends BaseAction {
-		public ResetAction() {
-			config.get("reset").read(this);
+	private boolean canEject() {
+		if (performance.isLoaded()) {
+			MessageBox box = new MessageBox(
+					MessageBox.OPTIONS_YES_NO_CANCEL);
+			config.get("eject/confirm").read(box);
+			int option = box.show(getContent());
+			if (option == MessageBox.OPTION_CANCEL) {
+				return false;
+			} else if (option == MessageBox.OPTION_YES) {
+				performance.save();
+			}
+		}
+		
+		return true;
+	}
+
+	private abstract class AbstractControlAction extends BaseAction {
+
+		public AbstractControlAction() {
+			setEnabled(false);
 		}
 
-		public void actionPerformed(ActionEvent e) {
-			performance.reset();
+		public void update() {
+			setEnabled(performance != null && performance.isLoaded());
 		}
 	}
 
-	private class ImportAction extends BaseAction {
-		public ImportAction() {
-			config.get("import").read(this);
+	private class EjectAction extends BaseAction {
+		public EjectAction() {
+			config.get("eject").read(this);
+			setEnabled(false);
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			MidiStream midiStream = new MidiStream();
+			if (!canEject()) {
+				return;
+			}
 
-			JFileChooser chooser = new JFileChooser(midiStream
-					.getRecentDirectory());
+			JFileChooser chooser = new JFileChooser(performance.getFile());
 			chooser.setDialogTitle(getShortDescription());
 			chooser
 					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
-
-				try {
-					Sequence sequence = midiStream.read(file);
-
-					performance.setSequence(sequence);
-				} catch (IOException ex) {
-					showBoxMessage("importException", file.getName());
-					return;
-				} catch (InvalidMidiDataException ex) {
-					showBoxMessage("importInvalid", file.getName());
-					return;
-				}
+				performance.setFile(chooser.getSelectedFile());
 			}
+		}
+
+		public void update() {
+			setEnabled(performance != null && performance.isEnabled());
 		}
 	}
 
-	private class ExportAction extends BaseAction {
-		public ExportAction() {
-			config.get("export").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			MidiStream midiStream = new MidiStream();
-
-			JFileChooser chooser = new JFileChooser(midiStream
-					.getRecentDirectory());
-			chooser.setDialogTitle(getShortDescription());
-			chooser.setFileFilter(new MidiFileFilter());
-			if (chooser.showSaveDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				File file = jorgan.recorder.io.MidiFileFilter.addSuffix(chooser
-						.getSelectedFile());
-
-				try {
-					midiStream.write(performance.getSequence(), file);
-				} catch (IOException ex) {
-					showBoxMessage("exportException", file.getName());
-					return;
-				}
-			}
-		}
-	}
-
-	private class FirstAction extends BaseAction {
+	private class FirstAction extends AbstractControlAction {
 		public FirstAction() {
 			config.get("first").read(this);
 		}
@@ -232,7 +223,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 	}
 
-	private class LastAction extends BaseAction {
+	private class LastAction extends AbstractControlAction {
 		public LastAction() {
 			config.get("last").read(this);
 		}
@@ -242,7 +233,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 	}
 
-	private class PlayAction extends BaseAction {
+	private class PlayAction extends AbstractControlAction {
 		public PlayAction() {
 			config.get("play").read(this);
 		}
@@ -255,8 +246,11 @@ public class RecorderDockable extends OrganDockable {
 			}
 		}
 
-		protected void update() {
-			if (performance.getState() == Performance.STATE_PLAY) {
+		public void update() {
+			super.update();
+
+			if (performance != null
+					&& performance.getState() == Performance.STATE_PLAY) {
 				config.get("stop").read(this);
 			} else {
 				config.get("play").read(this);
@@ -264,7 +258,7 @@ public class RecorderDockable extends OrganDockable {
 		}
 	}
 
-	private class RecordAction extends BaseAction {
+	private class RecordAction extends AbstractControlAction {
 		public RecordAction() {
 			config.get("record").read(this);
 		}
@@ -277,8 +271,11 @@ public class RecorderDockable extends OrganDockable {
 			}
 		}
 
-		protected void update() {
-			if (performance.getState() == Performance.STATE_RECORD) {
+		public void update() {
+			super.update();
+
+			if (performance != null
+					&& performance.getState() == Performance.STATE_RECORD) {
 				config.get("stop").read(this);
 			} else {
 				config.get("record").read(this);
@@ -291,7 +288,8 @@ public class RecorderDockable extends OrganDockable {
 			updateTime();
 		}
 
-		public void trackersChanged() {
+		public void changed() {
+			update();
 		}
 
 		public void stateChanged(int state) {

@@ -90,6 +90,8 @@ public class ElementsDockable extends OrganDockable {
 
 	private List<Element> elements = new ArrayList<Element>();
 
+	private AddAction addAction = new AddAction();
+
 	/**
 	 * Create a tree panel.
 	 */
@@ -196,7 +198,7 @@ public class ElementsDockable extends OrganDockable {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.addTool(new AddAction());
+		docked.addTool(addAction);
 		docked.addTool(new RemoveAction());
 
 		docked.addToolSeparator();
@@ -254,6 +256,8 @@ public class ElementsDockable extends OrganDockable {
 			elementsModel.update();
 		}
 
+		addAction.newSession();
+		
 		if (transferable != null) {
 			transferable.clear();
 			transferable = null;
@@ -412,8 +416,14 @@ public class ElementsDockable extends OrganDockable {
 
 		private AddAction() {
 			config.get("add").read(this);
+			
+			setEnabled(false);
 		}
 
+		public void newSession() {
+			setEnabled(session != null);
+		}
+		
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
 				CreateElementWizard.showInDialog(list, session);

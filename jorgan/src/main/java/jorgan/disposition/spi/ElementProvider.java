@@ -21,11 +21,12 @@ package jorgan.disposition.spi;
 import java.util.List;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 
 /**
  * A provider of {@link Element}s.
  */
 public interface ElementProvider {
 
-	public List<Class<? extends Element>> getElementClasses();
+	public List<Class<? extends Element>> getElementClasses(Organ organ);
 }

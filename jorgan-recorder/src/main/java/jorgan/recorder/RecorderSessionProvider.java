@@ -18,10 +18,13 @@
  */
 package jorgan.recorder;
 
+import java.io.File;
+
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.play.OrganPlay;
-import jorgan.recorder.disposition.PerformanceSwitch;
+import jorgan.problem.ElementProblems;
+import jorgan.recorder.disposition.RecorderSwitch;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
@@ -33,14 +36,24 @@ public class RecorderSessionProvider implements SessionProvider {
 	 */
 	public void init(OrganSession session) {
 	}
-	
-	public Object create(OrganSession session, Class<?> clazz) {
+
+	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == Performance.class) {
 			final Performance performance = new Performance(session
-					.lookup(OrganPlay.class));
+					.lookup(OrganPlay.class), session
+					.lookup(ElementProblems.class)) {
+				@Override
+				protected File resolve(String name) {
+					return session.resolve(name);
+				}
+			};
 			session.addListener(new SessionListener() {
 				public void constructingChanged(boolean constructing) {
 					performance.stop();
+				}
+
+				public void saved(File file) {
+					performance.save();
 				}
 
 				public void destroyed() {
@@ -50,11 +63,11 @@ public class RecorderSessionProvider implements SessionProvider {
 			session.getOrgan().addOrganListener(new OrganAdapter() {
 				@Override
 				public void propertyChanged(Element element, String name) {
-					if (PerformanceSwitch.class.isInstance(element)
+					if (RecorderSwitch.class.isInstance(element)
 							&& "active".equals(name)) {
-						PerformanceSwitch performanceSwitch = ((PerformanceSwitch) element);
-						if (performanceSwitch.isActive()) {
-							performanceSwitch.perform(performance);
+						RecorderSwitch recorderSwitch = ((RecorderSwitch) element);
+						if (recorderSwitch.isActive()) {
+							recorderSwitch.perform(performance);
 						}
 					}
 				}

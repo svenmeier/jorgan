@@ -29,12 +29,12 @@ import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.Performance;
-import jorgan.recorder.disposition.PerformanceSwitch;
-import jorgan.recorder.midi.Recorder;
+import jorgan.recorder.disposition.RecorderSwitch;
+import jorgan.recorder.midi.MessageRecorder;
 
 /**
  * Track all {@link Console}'s referenced {@link Switch}es and
- * {@link Continuous}. Does not track instances of {@link PerformanceSwitch}.
+ * {@link Continuous}. Does not track instances of {@link RecorderSwitch}.
  */
 public class ConsoleTracker extends AbstractTracker {
 
@@ -93,7 +93,7 @@ public class ConsoleTracker extends AbstractTracker {
 		ignoreChanges = true;
 
 		for (Switch aSwitch : console.getReferenced(Switch.class)) {
-			if (PerformanceSwitch.class.isInstance(aSwitch)) {
+			if (RecorderSwitch.class.isInstance(aSwitch)) {
 				continue;
 			}
 
@@ -118,7 +118,7 @@ public class ConsoleTracker extends AbstractTracker {
 		super.onRecordStarting();
 
 		for (Switch aSwitch : console.getReferenced(Switch.class)) {
-			if (PerformanceSwitch.class.isInstance(aSwitch)) {
+			if (RecorderSwitch.class.isInstance(aSwitch)) {
 				continue;
 			}
 
@@ -225,7 +225,7 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	/**
-	 * Get the value for the given {@link Continuous} in the {@link Recorder} or
+	 * Get the value for the given {@link Continuous} in the {@link MessageRecorder} or
 	 * <code>null</code> if not known.
 	 */
 	private Float readSequenceValue(Continuous continuous) {
@@ -258,7 +258,7 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	/**
-	 * Get the active state for the given {@link Switch} in the {@link Recorder}
+	 * Get the active state for the given {@link Switch} in the {@link MessageRecorder}
 	 * or <code>null</code> if not known.
 	 */
 	private Boolean readSequenceActive(Switch aSwitch) {
@@ -300,7 +300,7 @@ public class ConsoleTracker extends AbstractTracker {
 				return;
 			}
 
-			if (PerformanceSwitch.class.isInstance(element)) {
+			if (RecorderSwitch.class.isInstance(element)) {
 				return;
 			}
 

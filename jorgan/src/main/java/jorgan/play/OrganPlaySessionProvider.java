@@ -57,6 +57,9 @@ public class OrganPlaySessionProvider implements SessionProvider {
 					}
 				}
 
+				public void saved(File file) {
+				}
+				
 				public void destroyed() {
 					play.destroy();
 				}

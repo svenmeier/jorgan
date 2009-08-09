@@ -28,7 +28,7 @@ import junit.framework.TestCase;
 public class RecorderTest extends TestCase {
 
 	public void test() throws Exception {
-		Recorder recorder = new Recorder(new Sequence(Sequence.PPQ, 50, 1)) {
+		MessageRecorder recorder = new MessageRecorder(new Sequence(Sequence.PPQ, 50, 1)) {
 			protected void onPlayed(int track, MidiMessage message) {
 				trace("played ", track, message);
 			}
@@ -88,7 +88,7 @@ public class RecorderTest extends TestCase {
 		}
 	}
 
-	private void keyPressed(Recorder recorder, int pitch, int velocity) {
+	private void keyPressed(MessageRecorder recorder, int pitch, int velocity) {
 		ShortMessage message = new ShortMessage();
 		try {
 			message.setMessage(144, pitch, velocity);
@@ -98,7 +98,7 @@ public class RecorderTest extends TestCase {
 		recorder.record(0, message);
 	}
 
-	private void keyReleased(Recorder recorder, int pitch) {
+	private void keyReleased(MessageRecorder recorder, int pitch) {
 		ShortMessage message = new ShortMessage();
 		try {
 			message.setMessage(128, pitch, 0);

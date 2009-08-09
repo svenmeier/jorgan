@@ -22,14 +22,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ElementProvider;
 
 public class MemoryElementProvider implements ElementProvider {
 
-	public List<Class<? extends Element>> getElementClasses() {
+	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		classes.add(Memory.class);
+		if (organ.getElement(Memory.class) == null) {
+			classes.add(Memory.class);
+		}
 
 		return classes;
 	}

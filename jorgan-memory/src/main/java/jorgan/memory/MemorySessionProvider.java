@@ -18,22 +18,43 @@
  */
 package jorgan.memory;
 
+import java.io.File;
+
+import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
 
 public class MemorySessionProvider implements SessionProvider {
 
 	/**
-	 * {@link Store} is always required.
+	 * {@link MemoryManager} is always required.
 	 */
 	public void init(OrganSession session) {
-		session.lookup(Store.class);
+		session.lookup(MemoryManager.class);
 	}
 
-	public Object create(OrganSession session, Class<?> clazz) {
-		if (clazz == Store.class) {
-			Store store = new Store(session.getOrgan());
-			return store;
+	public Object create(final OrganSession session, Class<?> clazz) {
+		if (clazz == MemoryManager.class) {
+			final MemoryManager manager = new MemoryManager(session.getOrgan(),
+					session.lookup(ElementProblems.class)) {
+				@Override
+				protected File resolve(String name) {
+					return session.resolve(name);
+				}
+			};
+			session.addListener(new SessionListener() {
+				public void constructingChanged(boolean constructing) {
+				}
+
+				public void saved(File file) {
+					manager.save();
+				}
+
+				public void destroyed() {
+				}
+			});
+			return manager;
 		}
 		return null;
 	}

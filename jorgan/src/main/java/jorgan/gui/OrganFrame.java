@@ -48,13 +48,13 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.event.UndoableChange;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
+import jorgan.io.disposition.DispositionFileFilter;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
 import jorgan.session.OrganSession;
@@ -116,13 +116,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private DebugAction debugAction = new DebugAction();
 
-	private NewAction newAction = new NewAction();
-
 	private OpenAction openAction = new OpenAction();
 
 	private SaveAction saveAction = new SaveAction();
 
-	private SaveAsAction saveAsAction = new SaveAsAction();
+	private CloseAction closeAction = new CloseAction();
 
 	private ExitAction exitAction = new ExitAction();
 
@@ -178,9 +176,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
-		// don't build menuBar, will be called automatically for new session
-
-		newOrgan();
+		buildMenu();
 	}
 
 	private void buildStatusBar() {
@@ -191,7 +187,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private void buildToolBar() {
 
-		toolBar.add(newAction);
 		toolBar.add(openAction);
 		toolBar.add(saveAction);
 
@@ -200,7 +195,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 		config.get("construct").read(constructButton);
 		constructButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
-				session.setConstructing(constructButton.isSelected());
+				if (session != null) {
+					session.setConstructing(constructButton.isSelected());
+				}
 			};
 		});
 		toolBar.add(constructButton);
@@ -224,21 +221,22 @@ public class OrganFrame extends JFrame implements SessionAware {
 		JMenu fileMenu = new JMenu();
 		config.get("fileMenu").read(fileMenu);
 		menuBar.add(fileMenu);
-		fileMenu.add(newAction);
 		fileMenu.add(openAction);
 		JMenu recentsMenu = new JMenu();
 		config.get("recentsMenu").read(recentsMenu);
 		fileMenu.add(recentsMenu);
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
-		fileMenu.add(saveAsAction);
+		fileMenu.add(closeAction);
 
-		List<Action> actions = ActionRegistry.createActions(session, this);
-		if (actions.size() > 0) {
-			fileMenu.addSeparator();
+		if (session != null) {
+			List<Action> actions = ActionRegistry.createActions(session, this);
+			if (actions.size() > 0) {
+				fileMenu.addSeparator();
 
-			for (Action action : actions) {
-				fileMenu.add(action);
+				for (Action action : actions) {
+					fileMenu.add(action);
+				}
 			}
 		}
 
@@ -282,7 +280,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		menuBar.revalidate();
 		menuBar.repaint();
 
-		if (session.getFile() == null) {
+		if (session == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
 			setTitle(jorgan.io.disposition.DispositionFileFilter
@@ -312,7 +310,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private void close() {
 		if (canCloseOrgan()) {
-			session.destroy();
+			if (session != null) {
+				session.destroy();
+			}
 
 			organPanel.closing();
 
@@ -343,35 +343,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 			constructButton.setSelected(this.session.isConstructing());
 		}
 
-		saveAction.clearChanges();
+		saveAction.newSession();
+		closeAction.newSession();
 
 		organPanel.setSession(session);
 
 		buildMenu();
-	}
-
-	/**
-	 * Create a new organ without a file.
-	 */
-	public void newOrgan() {
-
-		if (canCloseOrgan()) {
-			setSession(new OrganSession());
-		}
-	}
-
-	/**
-	 * Open an organ.
-	 */
-	public void openOrgan() {
-		if (canCloseOrgan()) {
-			JFileChooser chooser = new JFileChooser(new DispositionStream()
-					.getRecentDirectory());
-			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
-			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-				openOrgan(chooser.getSelectedFile());
-			}
-		}
 	}
 
 	/**
@@ -381,13 +358,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 *            file to open organ from
 	 */
 	public void openOrgan(File file) {
-		// start with empty session in case the following opening fails *or*
+		// clear current session in case the following opening fails *or*
 		// the new session interferes with the current session
-		setSession(new OrganSession());
+		setSession(null);
 
-		Organ organ;
+		OrganSession session;
 		try {
-			organ = new DispositionStream().read(file);
+			session = new OrganSession(file);
 		} catch (ExtensionException ex) {
 			showBoxMessage("openExtensionException", file.getName(), ex
 					.getExtension());
@@ -402,7 +379,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			return;
 		}
 
-		setSession(new OrganSession(organ, file));
+		setSession(session);
 
 		if (fullScreenOnLoad) {
 			fullScreenAction.goFullScreen();
@@ -415,62 +392,21 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * @return was the organ saved
 	 */
 	public boolean saveOrgan() {
-		if (session.getFile() == null) {
-			return saveOrganAs();
-		} else {
-			return saveOrgan(session.getFile());
-		}
-	}
-
-	/**
-	 * Save the current organ to the given file.
-	 * 
-	 * @param file
-	 *            file to save organ to
-	 * @return was the organ saved
-	 */
-	public boolean saveOrgan(File file) {
 		try {
-			new DispositionStream().write(session.getOrgan(), file);
-
-			showStatusMessage("organSaved", new Object[0]);
+			session.save();
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveException", file.getName());
+			showBoxMessage("saveException", session.getFile().getName());
 
 			return false;
 		}
 
-		session.setFile(file);
-
-		saveAction.clearChanges();
+		saveAction.newSession();
 
 		buildMenu();
 
 		return true;
-	}
-
-	/**
-	 * Save the current organ.
-	 * 
-	 * @return was the organ saved
-	 */
-	public boolean saveOrganAs() {
-		JFileChooser chooser = new JFileChooser(new DispositionStream()
-				.getRecentDirectory());
-		chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
-		if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-			File file = jorgan.io.disposition.DispositionFileFilter
-					.addSuffix(chooser.getSelectedFile());
-
-			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO);
-			config.get("saveOrganAsConfirmReplace").read(box);
-			if (!file.exists() || box.show(this) == MessageBox.OPTION_YES) {
-				return saveOrgan(file);
-			}
-		}
-		return false;
 	}
 
 	/**
@@ -507,19 +443,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this,
 				args);
-	}
-
-	/**
-	 * The action that initiates a new organ.
-	 */
-	private class NewAction extends BaseAction {
-		private NewAction() {
-			config.get("new").read(this);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			newOrgan();
-		}
 	}
 
 	/**
@@ -570,15 +493,37 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			openOrgan();
+			if (canCloseOrgan()) {
+				JFileChooser chooser = new JFileChooser(new DispositionStream()
+						.getRecentDirectory());
+				chooser
+						.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
+				if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+					openOrgan(DispositionFileFilter.addSuffix(chooser
+							.getSelectedFile()));
+				}
+			}
 		}
 	}
 
-	/**
-	 * The action that saves an organ. <br/> Note that <em>Spin</em> ensures
-	 * that the methods of this listeners are called on the EDT, although a
-	 * change in the organ might be triggered by a change on a MIDI thread.
-	 */
+	private class CloseAction extends BaseAction {
+		private CloseAction() {
+			config.get("close").read(this);
+
+			setEnabled(false);
+		}
+
+		public void newSession() {
+			setEnabled(session != null);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			if (canCloseOrgan()) {
+				setSession(null);
+			}
+		}
+	}
+
 	private class SaveAction extends BaseAction implements OrganObserver {
 
 		private boolean changes = false;
@@ -593,6 +538,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			saveOrgan();
+
+			setEnabled(false);
 		}
 
 		public boolean mustSave() {
@@ -605,14 +552,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 					|| (handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM);
 		}
 
-		/**
-		 * Clear changes.
-		 */
-		public void clearChanges() {
+		public void newSession() {
 			changes = false;
 			undoableChanges = false;
 
-			setEnabled(session.getFile() == null);
+			setEnabled(false);
 		}
 
 		public void beforeChange(Change change) {
@@ -625,19 +569,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			}
 
 			setEnabled(true);
-		}
-	}
-
-	/**
-	 * The action that saves an organ under a new name.
-	 */
-	private class SaveAsAction extends BaseAction {
-		private SaveAsAction() {
-			config.get("saveAs").read(this);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			saveOrganAs();
 		}
 	}
 
@@ -764,6 +695,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private class EventHandler implements SessionListener {
 		public void constructingChanged(boolean constructing) {
 			constructButton.setSelected(constructing);
+		}
+
+		public void saved(File file) {
+			showStatusMessage("organSaved", new Object[0]);
 		}
 
 		public void destroyed() {

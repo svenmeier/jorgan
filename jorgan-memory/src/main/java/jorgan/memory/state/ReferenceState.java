@@ -16,17 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.store;
+package jorgan.memory.state;
 
 import jorgan.disposition.Combination;
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 
-public abstract class ReferenceStore<T extends Element> {
+public abstract class ReferenceState<T extends Element> {
 
 	private T element;
 
-	public ReferenceStore(T element) {
+	public ReferenceState(T element) {
 		this.element = element;
 	}
 

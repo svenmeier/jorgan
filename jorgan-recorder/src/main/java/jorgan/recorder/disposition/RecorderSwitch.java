@@ -16,24 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.disposition;
+
+import jorgan.disposition.Switch;
+import jorgan.recorder.Performance;
 
 /**
- * A listener of a {@link Performance}.
  */
-public interface PerformanceListener {
+public abstract class RecorderSwitch extends Switch {
 
-	/**
-	 * @see Performance#setTime(long time)
-	 */
-	public void timeChanged(long millis);
+	public RecorderSwitch() {
+		setLocking(false);
+	}
 	
-	/**
-	 * @see Performance#play()
-	 * @see Performance#record()
-	 * @see Performance#stop()
-	 */
-	public void stateChanged(int state);
-	
-	public void changed();	
+	public abstract void perform(Performance performance);
 }

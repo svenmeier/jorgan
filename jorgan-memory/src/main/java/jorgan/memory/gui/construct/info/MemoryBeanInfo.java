@@ -18,15 +18,19 @@
  */
 package jorgan.memory.gui.construct.info;
 
+import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.info.IndexedContinuousBeanInfo;
+import jorgan.memory.disposition.Memory;
 
 /**
- * BeanInfo for {@link jorgan.disposition.MemoryStore}.
+ * BeanInfo for {@link jorgan.disposition.MemoryState}.
  */
 public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
+
+		add("store", Memory.class, FileEditor.class);
 	}
 }

@@ -18,9 +18,12 @@
  */
 package jorgan.recorder;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -32,15 +35,28 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
-import jorgan.recorder.midi.Recorder;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.Severity;
+import jorgan.recorder.disposition.Recorder;
+import jorgan.recorder.io.MidiStream;
+import jorgan.recorder.midi.MessageRecorder;
 import jorgan.recorder.spi.TrackerRegistry;
 import jorgan.recorder.tracker.AbstractTracker;
 import jorgan.session.OrganSession;
+import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
- * A recorder of an {@link OrganSession}.
+ * A performance of an {@link OrganSession}.
  */
-public class Performance {
+public abstract class Performance {
+
+	private static Logger logger = Logger
+			.getLogger(Performance.class.getName());
+
+	private static Configuration config = Configuration.getRoot().get(
+			Performance.class);
 
 	private static final float DEFAULT_DIVISION = Sequence.PPQ;
 
@@ -54,9 +70,13 @@ public class Performance {
 
 	private List<PerformanceListener> listeners = new ArrayList<PerformanceListener>();
 
+	private MessageRecorder messageRecorder;
+
 	private Recorder recorder;
 
 	private OrganPlay play;
+
+	private ElementProblems problems;
 
 	private Tracker[] trackers = new Tracker[0];
 
@@ -67,13 +87,13 @@ public class Performance {
 	/**
 	 * Record the given session.
 	 */
-	public Performance(OrganPlay play) {
+	public Performance(OrganPlay play, ElementProblems problems) {
 		this.play = play;
 		this.play.getOrgan().addOrganListener(listener);
 
-		this.recorder = new InternalRecorder();
+		this.problems = problems;
 
-		reset();
+		load();
 	}
 
 	public void addListener(PerformanceListener listener) {
@@ -88,75 +108,117 @@ public class Performance {
 		return play;
 	}
 
-	public void reset() {
+	protected String createMessage(String key, Object... args) {
+		MessageBuilder builder = new MessageBuilder();
+
+		return config.get(key).read(builder).build(args);
+	}
+
+	protected abstract File resolve(String performance);
+
+	public void load() {
 		stop();
 
-		for (int track = 0; track < this.trackers.length; track++) {
-			this.trackers[track].destroy();
-		}
-		this.trackers = null;
+		initSequence(null);
 
-		List<Tracker> trackers = new ArrayList<Tracker>();
-		for (Element element : play.getOrgan().getElements(Element.class)) {
-			if ("".equals(element.getName())) {
-				continue;
+		recorder = play.getOrgan().getElement(Recorder.class);
+		if (recorder != null) {
+			problems.removeProblem(new Problem(Severity.ERROR, recorder,
+					"performance", null));
+
+			String performance = recorder.getPerformance();
+			if (performance != null) {
+				try {
+					File file = resolve(performance);
+
+					Sequence sequence;
+					if (file.exists()) {
+						sequence = new MidiStream().read(file);
+					} else {
+						sequence = createSequence();
+					}
+
+					initSequence(sequence);
+				} catch (Exception ex) {
+					problems.addProblem(new Problem(Severity.ERROR, recorder,
+							"performance", createMessage("load", performance)));
+				}
 			}
-
-			Tracker tracker = TrackerRegistry.createTracker(this, trackers
-					.size(), element);
-			if (tracker != null) {
-				trackers.add(tracker);
-			}
-		}
-		if (trackers.isEmpty()) {
-			trackers.add(new EmptyTracker(0));
 		}
 
-		recorder.setSequence(createSequence(trackers.size()));
-
-		this.trackers = new Tracker[trackers.size()];
-		for (int track = 0; track < this.trackers.length; track++) {
-			setTracker(track, trackers.get(track));
-		}
-
-		fireTrackersChanged();
+		fireChanged();
 	}
 
-	public void setSequence(Sequence sequence) {
+	public void save() {
 		stop();
 
-		for (int track = 0; track < trackers.length; track++) {
-			trackers[track].destroy();
-		}
-		trackers = null;
+		writeTrackers();
 
-		recorder.setSequence(sequence);
+		if (recorder != null) {
+			String performance = recorder.getPerformance();
+			if (performance != null) {
+				try {
+					Sequence sequence = this.messageRecorder.getSequence();
 
-		trackers = new Tracker[recorder.getTrackCount()];
-		for (int track = 0; track < trackers.length; track++) {
-			Tracker tracker = readTracker(track);
-			if (tracker == null) {
-				tracker = new EmptyTracker(track);
-			}
-			setTracker(track, tracker);
-		}
-
-		fireTrackersChanged();
-	}
-
-	public Sequence getSequence() {
-		for (Tracker tracker : trackers) {
-			if (tracker.getElement() != null) {
-				writeTracker(tracker);
+					new MidiStream().write(sequence, resolve(performance));
+				} catch (Exception ex) {
+					logger.log(Level.WARNING, ex.getMessage(), ex);
+				}
 			}
 		}
-
-		return recorder.getSequence();
 	}
 
-	private static Sequence createSequence(int tracks) {
+	public File getFile() {
+		if (recorder != null) {
+			String performance = recorder.getPerformance();
+			if (performance != null) {
+				return resolve(performance);
+			}
+		}
+		return null;
+	}
+
+	public void setFile(File file) {
+		if (recorder != null) {
+			recorder.setPerformance(file.getPath());
+		}
+	}
+
+	public boolean isEnabled() {
+		return recorder != null;
+	}
+
+	public boolean isLoaded() {
+		return messageRecorder != null;
+	}
+
+	private void initSequence(Sequence sequence) {
+		if (this.messageRecorder != null) {
+			for (int track = 0; track < trackers.length; track++) {
+				trackers[track].destroy();
+			}
+			trackers = null;
+
+			this.messageRecorder = null;
+		}
+
+		if (sequence != null) {
+			messageRecorder = new InternalRecorder(sequence);
+
+			trackers = new Tracker[messageRecorder.getTrackCount()];
+			for (int track = 0; track < trackers.length; track++) {
+				Tracker tracker = readTracker(track);
+				if (tracker == null) {
+					tracker = new EmptyTracker(track);
+				}
+				setTracker(track, tracker);
+			}
+		}
+	}
+
+	private Sequence createSequence() {
 		try {
-			return new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, tracks);
+			return new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, 1);
 		} catch (InvalidMidiDataException ex) {
 			throw new Error(ex);
 		}
@@ -164,7 +226,7 @@ public class Performance {
 
 	public void stop() {
 		if (state != STATE_STOP) {
-			recorder.stop();
+			messageRecorder.stop();
 
 			state = STATE_STOP;
 
@@ -176,13 +238,13 @@ public class Performance {
 		if (state != STATE_PLAY) {
 			state = STATE_PLAY;
 
-			recorder.stop();
+			messageRecorder.stop();
 
-			if (recorder.isLast()) {
-				recorder.first();
+			if (messageRecorder.isLast()) {
+				messageRecorder.first();
 			}
 
-			recorder.start();
+			messageRecorder.start();
 
 			fireStateChanged();
 		}
@@ -191,7 +253,7 @@ public class Performance {
 	public void record() {
 		state = STATE_RECORD;
 
-		recorder.start();
+		messageRecorder.start();
 
 		fireStateChanged();
 	}
@@ -203,39 +265,39 @@ public class Performance {
 	public void first() {
 		stop();
 
-		recorder.first();
+		messageRecorder.first();
 	}
 
 	public void last() {
 		stop();
 
-		recorder.last();
+		messageRecorder.last();
 	}
 
 	public void record(int track, MidiMessage message) {
 		if (state == STATE_RECORD && getTracker(track).isRecordEnabled()) {
-			recorder.record(track, message);
+			messageRecorder.record(track, message);
 		}
 	}
 
 	public long millisToTick(long millis) {
-		return recorder.millisToTick(millis);
+		return messageRecorder.millisToTick(millis);
 	}
 
 	public Iterable<MidiEvent> eventsFromTick(int track, long tick) {
-		return recorder.eventsFromTick(track, tick);
+		return messageRecorder.eventsFromTick(track, tick);
 	}
 
 	public long tickToMillis(long tick) {
-		return recorder.tickToMillis(tick);
+		return messageRecorder.tickToMillis(tick);
 	}
 
 	public Iterable<MidiEvent> eventsToCurrent(int track) {
-		return recorder.eventsToCurrent(track);
+		return messageRecorder.eventsToCurrent(track);
 	}
 
 	public Iterable<MidiEvent> eventsFromCurrent(int track) {
-		return recorder.eventsFromCurrent(track);
+		return messageRecorder.eventsFromCurrent(track);
 	}
 
 	public Element getElement(int track) {
@@ -260,17 +322,25 @@ public class Performance {
 	public void setTime(long time) {
 		stop();
 
-		recorder.setTime(time);
+		messageRecorder.setTime(time);
 
 		fireTimeChanged(getTime());
 	}
 
 	public long getTime() {
-		return recorder.getTime();
+		if (messageRecorder == null) {
+			return 0;
+		} else {
+			return messageRecorder.getTime();
+		}
 	}
 
 	public long getTotalTime() {
-		return recorder.getTotalTime();
+		if (messageRecorder == null) {
+			return 0;
+		} else {
+			return messageRecorder.getTotalTime();
+		}
 	}
 
 	public void setElement(int track, Element element) {
@@ -288,7 +358,7 @@ public class Performance {
 		}
 		setTracker(track, tracker);
 
-		fireTrackersChanged();
+		fireChanged();
 	}
 
 	private void setTracker(int track, Tracker tracker) {
@@ -313,9 +383,11 @@ public class Performance {
 		}
 	}
 
-	private void fireTrackersChanged() {
-		for (PerformanceListener listener : listeners) {
-			listener.trackersChanged();
+	private void fireChanged() {
+		// work on copy since change might remove listeners
+		for (PerformanceListener listener : new ArrayList<PerformanceListener>(
+				listeners)) {
+			listener.changed();
 		}
 	}
 
@@ -330,10 +402,10 @@ public class Performance {
 		play = null;
 	}
 
-	private class InternalRecorder extends Recorder {
+	private class InternalRecorder extends MessageRecorder {
 
-		private InternalRecorder() {
-			super(createSequence(0));
+		public InternalRecorder(Sequence sequence) {
+			super(sequence);
 		}
 
 		@Override
@@ -417,15 +489,30 @@ public class Performance {
 						break;
 					}
 				}
+			} else if (element == recorder) {
+				if ("performance".equals(name)) {
+					load();
+				}
+			}
+		}
+
+		@Override
+		public void elementAdded(Element element) {
+			if (recorder == null && element instanceof Recorder) {
+				load();
 			}
 		}
 
 		@Override
 		public void elementRemoved(Element element) {
-			for (Tracker tracker : trackers) {
-				if (tracker.getElement() == element) {
-					setElement(tracker.getTrack(), null);
-					break;
+			if (element == recorder) {
+				load();
+			} else {
+				for (Tracker tracker : trackers) {
+					if (tracker.getElement() == element) {
+						setElement(tracker.getTrack(), null);
+						break;
+					}
 				}
 			}
 		}
@@ -437,7 +524,7 @@ public class Performance {
 		String name = null;
 		boolean playEnabled = false;
 		boolean recordEnabled = false;
-		for (MidiEvent event : recorder.eventsAtTick(track, 0)) {
+		for (MidiEvent event : messageRecorder.eventsAtTick(track, 0)) {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TRACK_NAME) {
@@ -469,9 +556,17 @@ public class Performance {
 		return tracker;
 	}
 
+	public void writeTrackers() {
+		for (Tracker tracker : trackers) {
+			if (tracker.getElement() != null) {
+				writeTracker(tracker);
+			}
+		}
+	}
+
 	private void writeTracker(Tracker tracker) {
-		Iterator<MidiEvent> iterator = recorder.eventsAtTick(tracker.getTrack(), 0)
-				.iterator();
+		Iterator<MidiEvent> iterator = messageRecorder.eventsAtTick(
+				tracker.getTrack(), 0).iterator();
 		while (iterator.hasNext()) {
 			MidiEvent event = iterator.next();
 
@@ -487,19 +582,19 @@ public class Performance {
 		if (tracker.getElement() != null) {
 			String name = tracker.getElement().getName();
 			if (!"".equals(tracker.getElement().getName())) {
-				recorder.setTime(0);
+				messageRecorder.setTime(0);
 
-				recorder.record(tracker.getTrack(), MessageUtils
+				messageRecorder.record(tracker.getTrack(), MessageUtils
 						.newMetaMessage(MessageUtils.META_TRACK_NAME, name));
 
 				if (tracker.isPlayEnabled()) {
-					recorder.record(tracker.getTrack(),
+					messageRecorder.record(tracker.getTrack(),
 							MessageUtils.newMetaMessage(
 									MessageUtils.META_CUE_POINT, "play"));
 				}
 
 				if (tracker.isRecordEnabled()) {
-					recorder.record(tracker.getTrack(), MessageUtils
+					messageRecorder.record(tracker.getTrack(), MessageUtils
 							.newMetaMessage(MessageUtils.META_CUE_POINT,
 									"record"));
 				}

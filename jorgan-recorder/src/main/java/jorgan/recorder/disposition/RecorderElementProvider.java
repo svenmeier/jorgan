@@ -22,15 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ElementProvider;
 
 /**
  */
 public class RecorderElementProvider implements ElementProvider {
 
-	public List<Class<? extends Element>> getElementClasses() {
+	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
+		if (organ.getElement(Recorder.class) == null) {
+			classes.add(Recorder.class);
+		}
 		classes.add(Stop.class);
 		classes.add(Play.class);
 		classes.add(Record.class);
