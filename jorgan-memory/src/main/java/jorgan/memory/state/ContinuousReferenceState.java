@@ -22,6 +22,9 @@ import jorgan.disposition.Continuous;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Combination.ContinuousReference;
 
+/**
+ * The state of a {@link ContinuousReference}.
+ */
 public class ContinuousReferenceState extends ReferenceState<Continuous> {
 
 	private float[] values = new float[0];

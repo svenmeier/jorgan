@@ -25,6 +25,9 @@ import jorgan.disposition.Combination;
 import jorgan.memory.disposition.Memory;
 import jorgan.memory.state.CombinationState;
 
+/**
+ * The state of a {@link Memory}.
+ */
 public class MemoryState {
 
 	private List<String> titles = new ArrayList<String>();

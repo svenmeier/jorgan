@@ -35,12 +35,15 @@ import jorgan.problem.Severity;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
+/**
+ * A manager of {@link MemoryState}s.
+ */
 public abstract class MemoryManager {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MemoryManager.class);
 
-	private List<StoreListener> listeners = new ArrayList<StoreListener>();
+	private List<MemoryManagerListener> listeners = new ArrayList<MemoryManagerListener>();
 
 	private Memory memory;
 
@@ -106,11 +109,11 @@ public abstract class MemoryManager {
 		load();
 	}
 
-	public void removeListener(StoreListener listener) {
+	public void removeListener(MemoryManagerListener listener) {
 		this.listeners.remove(listener);
 	}
 
-	public void addListener(StoreListener listener) {
+	public void addListener(MemoryManagerListener listener) {
 		this.listeners.add(listener);
 	}
 
@@ -133,13 +136,13 @@ public abstract class MemoryManager {
 	protected abstract File resolve(String performance);
 
 	protected void fireIndexChanged() {
-		for (StoreListener listener : listeners) {
+		for (MemoryManagerListener listener : listeners) {
 			listener.indexChanged(getIndex());
 		}
 	}
 
 	protected void fireChanged() {
-		for (StoreListener listener : listeners) {
+		for (MemoryManagerListener listener : listeners) {
 			listener.changed();
 		}
 	}
