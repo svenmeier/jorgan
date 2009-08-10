@@ -366,16 +366,16 @@ public class OrganFrame extends JFrame implements SessionAware {
 		try {
 			session = new OrganSession(file);
 		} catch (ExtensionException ex) {
-			showBoxMessage("openExtensionException", file.getName(), ex
+			showBoxMessage("openExtensionException", MessageBox.OPTIONS_OK, file.getName(), ex
 					.getExtension());
 			return;
 		} catch (FormatException ex) {
 			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			showBoxMessage("openFormatException", file.getName());
+			showBoxMessage("openFormatException", MessageBox.OPTIONS_OK, file.getName());
 			return;
 		} catch (IOException ex) {
-			showBoxMessage("openIOException", file.getName());
+			showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file.getName());
 			return;
 		}
 
@@ -397,7 +397,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveException", session.getFile().getName());
+			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session.getFile().getName());
 
 			return false;
 		}
@@ -417,10 +417,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public boolean canCloseOrgan() {
 		if (saveAction.mustSave()) {
 			if (saveAction.mustConfirm()) {
-				MessageBox box = new MessageBox(
-						MessageBox.OPTIONS_YES_NO_CANCEL);
-				config.get("closeOrganConfirmChanges").read(box);
-				int option = box.show(this);
+				int option = showBoxMessage("closeOrganConfirmChanges", MessageBox.OPTIONS_YES_NO_CANCEL);
 				if (option == MessageBox.OPTION_CANCEL) {
 					return false;
 				} else if (option == MessageBox.OPTION_NO) {
@@ -439,9 +436,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 				args));
 	}
 
-	protected void showBoxMessage(String key, Object... args) {
+	protected int showBoxMessage(String key,int options, Object... args) {
 
-		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(this,
+		return config.get(key).read(new MessageBox(options)).show(this,
 				args);
 	}
 
@@ -634,7 +631,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 				goFullScreen();
 
 				if (dialogs.isEmpty()) {
-					showBoxMessage("noFullScreen");
+					showBoxMessage("noFullScreen", MessageBox.OPTIONS_OK);
 				}
 			}
 		}

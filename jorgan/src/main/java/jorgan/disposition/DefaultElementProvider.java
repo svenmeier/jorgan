@@ -54,6 +54,10 @@ public class DefaultElementProvider implements ElementProvider {
 		elementClasses = classes;
 	}
 
+	public void init(Organ organ) {
+		organ.addElement(new Console());
+	}
+	
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		return new ArrayList<Class<? extends Element>>(elementClasses);
 	}
