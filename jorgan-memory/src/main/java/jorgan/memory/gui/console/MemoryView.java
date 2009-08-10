@@ -18,17 +18,17 @@
  */
 package jorgan.memory.gui.console;
 
-import jorgan.gui.console.IndexedContinuousView;
-import jorgan.memory.MemoryManager;
+import jorgan.gui.console.TitledView;
+import jorgan.memory.Storage;
 import jorgan.memory.disposition.Memory;
 import jorgan.session.OrganSession;
 
 /**
  * A view that shows an {@link Memory}.
  */
-public class MemoryView extends IndexedContinuousView<Memory> {
+public class MemoryView extends TitledView<Memory> {
 
-	private MemoryManager manager;
+	private Storage manager;
 
 	/**
 	 * Constructor.
@@ -41,7 +41,7 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	public MemoryView(OrganSession session, Memory element) {
 		super(element);
 
-		manager = session.lookup(MemoryManager.class);
+		manager = session.lookup(Storage.class);
 	}
 
 	protected String getTitle(int index) {

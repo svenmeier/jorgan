@@ -19,6 +19,7 @@
 package jorgan.memory;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.memory.disposition.Memory;
+import jorgan.memory.io.MemoryStateStream;
 import jorgan.memory.state.MemoryState;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
@@ -38,12 +40,12 @@ import bias.util.MessageBuilder;
 /**
  * A manager of {@link MemoryState}s.
  */
-public abstract class MemoryManager {
+public abstract class Storage {
 
 	private static Configuration config = Configuration.getRoot().get(
-			MemoryManager.class);
+			Storage.class);
 
-	private List<MemoryManagerListener> listeners = new ArrayList<MemoryManagerListener>();
+	private List<StorageListener> listeners = new ArrayList<StorageListener>();
 
 	private Memory memory;
 
@@ -53,7 +55,7 @@ public abstract class MemoryManager {
 
 	private ElementProblems problems;
 
-	public MemoryManager(Organ organ, ElementProblems problems) {
+	public Storage(Organ organ, ElementProblems problems) {
 		this.organ = organ;
 		this.problems = problems;
 
@@ -109,17 +111,17 @@ public abstract class MemoryManager {
 		load();
 	}
 
-	public void removeListener(MemoryManagerListener listener) {
+	public void removeListener(StorageListener listener) {
 		this.listeners.remove(listener);
 	}
 
-	public void addListener(MemoryManagerListener listener) {
+	public void addListener(StorageListener listener) {
 		this.listeners.add(listener);
 	}
 
 	public File getFile() {
 		if (memory != null) {
-			String store = memory.getStore();
+			String store = memory.getStorage();
 			if (store != null) {
 				return resolve(store);
 			}
@@ -129,20 +131,20 @@ public abstract class MemoryManager {
 
 	public void setFile(File file) {
 		if (memory != null) {
-			memory.setStore(file.getPath());
+			memory.setStorage(file.getPath());
 		}
 	}
 
 	protected abstract File resolve(String performance);
 
 	protected void fireIndexChanged() {
-		for (MemoryManagerListener listener : listeners) {
+		for (StorageListener listener : listeners) {
 			listener.indexChanged(getIndex());
 		}
 	}
 
 	protected void fireChanged() {
-		for (MemoryManagerListener listener : listeners) {
+		for (StorageListener listener : listeners) {
 			listener.changed();
 		}
 	}
@@ -184,16 +186,16 @@ public abstract class MemoryManager {
 	public void swap(int index1, int index2) {
 		if (memoryState == null) {
 			throw new IllegalStateException();
-		} 
+		}
 	}
 
 	public void clear(int index) {
 		if (memoryState == null) {
 			throw new IllegalStateException();
 		}
-		
+
 		memoryState.clear(index);
-		
+
 		if (index == memory.getIndex()) {
 			write();
 		}
@@ -210,8 +212,8 @@ public abstract class MemoryManager {
 	public void setTitle(int index, String title) {
 		if (memoryState == null) {
 			throw new IllegalStateException();
-		} 
-		
+		}
+
 		memoryState.setTitle(index, title);
 	}
 
@@ -223,14 +225,13 @@ public abstract class MemoryManager {
 			problems.removeProblem(new Problem(Severity.ERROR, memory, "store",
 					null));
 
-			String store = memory.getStore();
+			String store = memory.getStorage();
 			if (store != null) {
 				try {
 					File file = resolve(store);
 
 					if (file.exists()) {
-						// TODO read state from file
-						memoryState = new MemoryState();
+						memoryState = new MemoryStateStream().read(file);
 					} else {
 						memoryState = new MemoryState();
 					}
@@ -244,8 +245,10 @@ public abstract class MemoryManager {
 		fireChanged();
 	}
 
-	public void save() {
-		// TODO save to file
+	public void save() throws IOException {
+		String storage = memory.getStorage();
+
+		new MemoryStateStream().write(memoryState, resolve(storage));
 	}
 
 	protected String createMessage(String key, Object... args) {

@@ -20,9 +20,12 @@ package jorgan.recorder.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
@@ -40,6 +43,9 @@ import bias.Configuration;
 import bias.swing.MessageBox;
 
 public class RecorderDockable extends OrganDockable {
+
+	private static Logger logger = Logger.getLogger(RecorderDockable.class
+			.getName());
 
 	private static Configuration config = Configuration.getRoot().get(
 			RecorderDockable.class);
@@ -85,12 +91,12 @@ public class RecorderDockable extends OrganDockable {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.addTool(ejectAction);
-		docked.addToolSeparator();
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
 		docked.addTool(lastAction);
 		docked.addTool(recordAction);
+		docked.addToolSeparator();
+		docked.addTool(ejectAction);
 
 		timer.start();
 	}
@@ -122,28 +128,27 @@ public class RecorderDockable extends OrganDockable {
 
 	private void update() {
 		if (tracksPanel != null) {
-			tracksPanel.destroy();
 			tracksPanel = null;
 			setContent(null);
 		}
 
-		if (performance != null) {
+		if (performance != null && performance.isLoaded()) {
 			tracksPanel = new TracksPanel(performance);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
 			scrollPane.setRowHeaderView(tracksPanel.getHeader());
 			scrollPane.getViewport().setBackground(tracksPanel.getBackground());
 			setContent(scrollPane);
 		}
-		
+
 		ejectAction.update();
 		playAction.update();
 		firstAction.update();
 		lastAction.update();
 		recordAction.update();
 	}
-	
+
 	private void updateTime() {
-		if (performance != null && performance.isEnabled()) {
+		if (performance != null && performance.isLoaded()) {
 			long time = performance.getTime();
 			long totalTime = performance.getTotalTime();
 
@@ -156,24 +161,39 @@ public class RecorderDockable extends OrganDockable {
 		}
 	}
 
-	protected void showBoxMessage(String key, Object... args) {
-		config.get(key).read(new MessageBox(MessageBox.OPTIONS_OK)).show(
-				getContent(), args);
+	protected int showBoxMessage(String key, int options, Object... args) {
+		return config.get(key).read(new MessageBox(options)).show(getContent(),
+				args);
 	}
 
 	private boolean canEject() {
 		if (performance.isLoaded()) {
-			MessageBox box = new MessageBox(
+			int option = showBoxMessage("eject/confirm",
 					MessageBox.OPTIONS_YES_NO_CANCEL);
-			config.get("eject/confirm").read(box);
-			int option = box.show(getContent());
 			if (option == MessageBox.OPTION_CANCEL) {
 				return false;
 			} else if (option == MessageBox.OPTION_YES) {
-				performance.save();
+				if (!save()) {
+					return false;
+				}
 			}
 		}
-		
+
+		return true;
+	}
+
+	private boolean save() {
+		try {
+			performance.save();
+		} catch (IOException ex) {
+			logger.log(Level.INFO, "saving performance failed", ex);
+
+			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session
+					.getFile().getName());
+
+			return false;
+		}
+
 		return true;
 	}
 

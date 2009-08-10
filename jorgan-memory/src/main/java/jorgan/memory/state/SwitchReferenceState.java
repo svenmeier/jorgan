@@ -51,14 +51,18 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 	}
 	
 	@Override
-	protected void read(Reference<?> reference, int index) {
+	public  void read(Reference<?> reference, int index) {
+		ensureIndex(index);
+		
 		SwitchReference temp = (SwitchReference) reference;
 
 		actives[index] = temp.isActive();
 	}
 
 	@Override
-	protected void write(Reference<?> reference, int index) {
+	public void write(Reference<?> reference, int index) {
+		ensureIndex(index);
+
 		SwitchReference temp = (SwitchReference) reference;
 
 		temp.setActive(actives[index]);

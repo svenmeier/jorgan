@@ -27,7 +27,7 @@ public class Memory extends IndexedContinuous {
 
 	private int size = 64;
 
-	private String store;
+	private String storage;
 
 	public Memory() {
 	}
@@ -52,17 +52,17 @@ public class Memory extends IndexedContinuous {
 		}
 	}
 
-	public String getStore() {
-		return store;
+	public String getStorage() {
+		return storage;
 	}
 
-	public void setStore(String store) {
-		if (!Null.safeEquals(this.store, store)) {
-			String oldStore = this.store;
+	public void setStorage(String storage) {
+		if (!Null.safeEquals(this.storage, storage)) {
+			String oldStore = this.storage;
 
-			this.store = store;
+			this.storage = storage;
 
-			fireChange(new UndoablePropertyChange(oldStore, this.store));
+			fireChange(new UndoablePropertyChange(oldStore, this.storage));
 		}
 	}
 }

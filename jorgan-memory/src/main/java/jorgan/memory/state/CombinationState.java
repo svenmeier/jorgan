@@ -19,7 +19,6 @@
 package jorgan.memory.state;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import jorgan.disposition.Combination;
@@ -32,26 +31,26 @@ import jorgan.disposition.Switch;
  */
 public class CombinationState {
 
-	private Combination combination;
+	private long id;
 
-	private List<ReferenceState<?>> states = new ArrayList<ReferenceState<?>>();
+	private List<ReferenceState<?>> references = new ArrayList<ReferenceState<?>>();
 
 	public CombinationState(Combination combination) {
-		this.combination = combination;
+		this.id = combination.getId();
 	}
 
 	public boolean isFor(Combination combination) {
-		return this.combination == combination;
+		return this.id == combination.getId();
 	}
 
 	public void clear(int index) {
-		for (ReferenceState<?> state : states) {
+		for (ReferenceState<?> state : references) {
 			state.clear(index);
 		}
 	}
-	
+
 	private ReferenceState<?> getState(Reference<?> reference) {
-		for (ReferenceState<?> state : states) {
+		for (ReferenceState<?> state : references) {
 			if (state.isFor(reference.getElement())) {
 				return state;
 			}
@@ -66,7 +65,7 @@ public class CombinationState {
 		} else {
 			throw new Error();
 		}
-		states.add(state);
+		references.add(state);
 
 		return state;
 	}
@@ -74,19 +73,14 @@ public class CombinationState {
 	public void read(Combination combination, int index) {
 		for (Reference<?> reference : combination.getReferences()) {
 			ReferenceState<?> state = getState(reference);
-			state.read(combination, index);
+			state.read(reference, index);
 		}
 	}
 
 	public void write(Combination combination, int index) {
-		Iterator<ReferenceState<?>> iterator = this.states.iterator();
-		while (iterator.hasNext()) {
-			ReferenceState<?> state = iterator.next();
-			try {
-				state.write(combination, index);
-			} catch (IllegalArgumentException unkownReference) {
-				iterator.remove();
-			}
+		for (Reference<?> reference : combination.getReferences()) {
+			ReferenceState<?> state = getState(reference);
+			state.write(reference, index);
 		}
 	}
 }

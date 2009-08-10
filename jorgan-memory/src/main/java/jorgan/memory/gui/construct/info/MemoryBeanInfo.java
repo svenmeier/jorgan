@@ -31,6 +31,6 @@ public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("store", Memory.class, FileEditor.class);
+		add("storage", Memory.class, FileEditor.class);
 	}
 }

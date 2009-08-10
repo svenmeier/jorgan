@@ -27,6 +27,10 @@ import jorgan.disposition.spi.ElementProvider;
 
 public class MemoryElementProvider implements ElementProvider {
 
+	public void init(Organ organ) {
+		organ.addElement(new Memory());
+	}
+	
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 

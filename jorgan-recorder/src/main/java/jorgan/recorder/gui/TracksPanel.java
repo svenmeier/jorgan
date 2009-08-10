@@ -34,8 +34,6 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import jorgan.recorder.Performance;
-import jorgan.recorder.PerformanceListener;
-import spin.Spin;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
@@ -51,33 +49,14 @@ public class TracksPanel extends JPanel implements Scrollable {
 		setBackground(Color.white);
 
 		this.performance = performance;
-		performance.addListener((PerformanceListener) Spin.over(listener));
 
 		addMouseListener(listener);
 		addMouseMotionListener(listener);
 
-		initTracks();
-	}
-
-	public void destroy() {
-		performance.removeListener((PerformanceListener) Spin.over(listener));
-	}
-
-	private void initTracks() {
-		removeAll();
-		headerPanel.removeAll();
-
-		if (performance.isLoaded()) {
-			for (int track = 0; track < performance.getTrackerCount(); track++) {
-				add(new TrackGraph(performance, track));
-				headerPanel.add(new TrackHeader(performance, track));
-			}
+		for (int track = 0; track < performance.getTrackerCount(); track++) {
+			add(new TrackGraph(performance, track));
+			headerPanel.add(new TrackHeader(performance, track));
 		}
-
-		revalidate();
-		repaint();
-		headerPanel.revalidate();
-		headerPanel.repaint();
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
@@ -155,7 +134,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 	}
 
 	private class EventListener extends MouseAdapter implements
-			MouseMotionListener, PerformanceListener {
+			MouseMotionListener {
 
 		private Integer offset;
 
@@ -205,16 +184,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 				performance.setTime(xToMillis(x));
 			}
-		}
-
-		public void timeChanged(long millis) {
-		}
-
-		public void changed() {
-			initTracks();
-		}
-
-		public void stateChanged(int state) {
 		}
 	}
 

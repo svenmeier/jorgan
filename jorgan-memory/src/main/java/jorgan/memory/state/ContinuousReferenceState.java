@@ -51,14 +51,18 @@ public class ContinuousReferenceState extends ReferenceState<Continuous> {
 	}
 	
 	@Override
-	protected void read(Reference<?> reference, int index) {
+	public void read(Reference<?> reference, int index) {
+		ensureIndex(index);
+		
 		ContinuousReference temp = (ContinuousReference) reference;
 
 		values[index] = temp.getValue();
 	}
 
 	@Override
-	protected void write(Reference<?> reference, int index) {
+	public void write(Reference<?> reference, int index) {
+		ensureIndex(index);
+
 		ContinuousReference temp = (ContinuousReference) reference;
 
 		temp.setValue(values[index]);

@@ -18,7 +18,10 @@
  */
 package jorgan.memory;
 
-public interface MemoryManagerListener {
+/**
+ * A listener to a {@link Storage}.
+ */
+public interface StorageListener {
 
 	public void changed();
 
