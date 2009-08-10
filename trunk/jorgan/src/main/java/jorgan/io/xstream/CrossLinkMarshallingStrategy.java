@@ -61,9 +61,9 @@ public class CrossLinkMarshallingStrategy extends
 		return new CrossLinkMarshaller(writer, converterLookup, mapper, this);
 	}
 
-	public boolean isCrossLinked(Object object) {
+	public boolean isLinked(Object object) {
 		for (CrossLink crosslink : crosslinks) {
-			if (crosslink.isCrossLinked(object)) {
+			if (crosslink.isLinked(object)) {
 				return true;
 			}
 		}
@@ -71,9 +71,9 @@ public class CrossLinkMarshallingStrategy extends
 		return false;
 	}
 
-	public boolean isCrossLink(Object parent, Object child) {
+	public boolean isLink(Object parent, Object child) {
 		for (CrossLink crosslink : crosslinks) {
-			if (crosslink.isCrossLink(parent, child)) {
+			if (crosslink.isLink(parent, child)) {
 				return true;
 			}
 		}
@@ -81,10 +81,10 @@ public class CrossLinkMarshallingStrategy extends
 		return false;
 	}
 
-	public void crossLink(Object parent, Object child) {
+	public void link(Object parent, Object child) {
 		for (CrossLink crosslink : crosslinks) {
-			if (crosslink.isCrossLink(parent, child)) {
-				crosslink.crossLink(parent, child);
+			if (crosslink.isLink(parent, child)) {
+				crosslink.link(parent, child);
 				return;
 			}
 		}

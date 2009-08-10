@@ -60,7 +60,7 @@ public class CrossLinkUnmarshaller extends TreeUnmarshaller {
 						throw ex;
 					}
 
-					crossLink.crossLink(parent, value);
+					crossLink.link(parent, value);
 				}
 			}, 0);
 

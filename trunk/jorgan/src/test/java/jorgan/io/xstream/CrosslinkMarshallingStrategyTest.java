@@ -42,15 +42,15 @@ public class CrosslinkMarshallingStrategyTest extends TestCase {
 
 		CrossLinkMarshallingStrategy strategy = new CrossLinkMarshallingStrategy();
 		strategy.register(new CrossLink() {
-			public boolean isCrossLinked(Object item) {
+			public boolean isLinked(Object item) {
 				return item instanceof Bar;
 			}
 
-			public boolean isCrossLink(Object parent, Object child) {
+			public boolean isLink(Object parent, Object child) {
 				return parent instanceof Bar && child instanceof Bar;
 			}
 
-			public void crossLink(Object parent, Object child) {
+			public void link(Object parent, Object child) {
 				if (parent instanceof Bar) {
 					((Bar) parent).bar = (Bar) child;
 				}

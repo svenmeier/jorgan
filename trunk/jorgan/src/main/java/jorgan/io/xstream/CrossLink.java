@@ -29,7 +29,7 @@ public interface CrossLink {
 	 * @param object
 	 * @return
 	 */
-	public boolean isCrossLinked(Object object);
+	public boolean isLinked(Object object);
 
 	/**
 	 * Is the reference from the given parent to a child a cross-link.
@@ -38,7 +38,7 @@ public interface CrossLink {
 	 * @param child
 	 * @return
 	 */
-	public boolean isCrossLink(Object parent, Object child);
+	public boolean isLink(Object parent, Object child);
 
 	/**
 	 * Cross-link the parent with the given child.
@@ -46,5 +46,5 @@ public interface CrossLink {
 	 * @param parent
 	 * @param child
 	 */
-	public void crossLink(Object parent, Object child);
+	public void link(Object parent, Object child);
 }
