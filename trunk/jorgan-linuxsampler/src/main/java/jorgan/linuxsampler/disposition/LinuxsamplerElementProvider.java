@@ -27,6 +27,9 @@ import jorgan.disposition.spi.ElementProvider;
 
 public class LinuxsamplerElementProvider implements ElementProvider {
 
+	public void init(Organ organ) {
+	}
+	
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 

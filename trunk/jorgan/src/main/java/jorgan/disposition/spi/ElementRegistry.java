@@ -27,6 +27,13 @@ import jorgan.util.PluginUtils;
 
 public class ElementRegistry {
 
+	public static void init(Organ organ) {
+		for (ElementProvider provider : PluginUtils
+				.lookup(ElementProvider.class)) {
+			provider.init(organ);
+		}
+	}
+	
 	public static List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 

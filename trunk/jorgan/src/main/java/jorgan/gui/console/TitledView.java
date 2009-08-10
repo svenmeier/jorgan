@@ -34,9 +34,9 @@ import jorgan.skin.TextLayer;
 import jorgan.swing.list.FilterList;
 
 /**
- * A view that shows an {@link IndexedContinuous}.
+ * A view that shows titles for an {@link IndexedContinuous}.
  */
-public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
+public abstract class TitledView<E extends IndexedContinuous> extends
 		ContinuousView<E> {
 
 	/**
@@ -46,7 +46,7 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 	public static final String BINDING_INDEX = "index";
 
 	/**
-	 * The key of the {@link IndexedContinuous#getTitle()} text for
+	 * The key of the current {@link #getTitle(int)} text for
 	 * {@link TextLayer}s.
 	 */
 	public static final String BINDING_TITLE = "title";
@@ -59,7 +59,7 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 	 * @param memory
 	 *            memory to view
 	 */
-	public IndexedContinuousView(E element) {
+	public TitledView(E element) {
 		super(element);
 	}
 
@@ -87,7 +87,7 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 			}
 		});
 	}
-	
+
 	protected Layer createNumberLayer() {
 		TextLayer layer = new TextLayer();
 		layer.setBinding(BINDING_INDEX);
@@ -122,9 +122,7 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 
 				List<Integer> items = new ArrayList<Integer>();
 				for (int i = 0; i < getElement().getSize(); i++) {
-					if (i == index
-							|| getTitle(i).toLowerCase().contains(
-									title)) {
+					if (i == index || getTitle(i).toLowerCase().contains(title)) {
 						items.add(i);
 					}
 				}
@@ -133,8 +131,7 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 
 			@Override
 			protected String toString(Integer item) {
-				return (item.intValue() + 1) + " - "
-						+ getTitle(item);
+				return (item.intValue() + 1) + " - " + getTitle(item);
 			}
 
 			@Override
@@ -152,6 +149,6 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous> extends
 
 		return filterList;
 	}
-	
+
 	protected abstract String getTitle(int index);
 }

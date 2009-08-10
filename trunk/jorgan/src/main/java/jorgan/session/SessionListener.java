@@ -19,6 +19,7 @@
 package jorgan.session;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * A listener of a {@link OrganSession}.
@@ -31,9 +32,10 @@ public interface SessionListener {
 	public void constructingChanged(boolean constructing);
 	
 	/**
+	 * @throws IOException 
 	 * @see {@link OrganSession#save(java.io.File)}
 	 */
-	public void saved(File file);
+	public void saved(File file) throws IOException;
 
 	/**
 	 * @see {@link OrganSession#destroy()}

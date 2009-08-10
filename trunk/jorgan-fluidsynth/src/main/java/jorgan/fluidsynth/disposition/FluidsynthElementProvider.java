@@ -32,6 +32,9 @@ import jorgan.disposition.spi.ElementProvider;
  */
 public class FluidsynthElementProvider implements ElementProvider {
 
+	public void init(Organ organ) {
+	}
+	
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 

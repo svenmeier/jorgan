@@ -38,13 +38,13 @@ public abstract class Element implements Cloneable {
 	 * The organ this element belongs to.
 	 */
 	private Organ organ;
-
+	
 	/**
 	 * The name of this element.
 	 */
 	private String name = "";
 
-	/**
+	/**String
 	 * The description of this element.
 	 */
 	private String description = "";
@@ -59,6 +59,10 @@ public abstract class Element implements Cloneable {
 
 	private List<Message> messages = new ArrayList<Message>();
 
+	public long getId() {
+		return System.identityHashCode(this);
+	}
+	
 	/**
 	 * Test if this element can reference the given element. <br>
 	 * An element can be referenced if it is not identical to this, is currently

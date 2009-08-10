@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import jorgan.disposition.Console;
 import jorgan.disposition.Organ;
+import jorgan.disposition.spi.ElementRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.session.spi.SessionRegistry;
 
@@ -54,7 +54,7 @@ public class OrganSession {
 		if (file.exists()) {
 			organ = new DispositionStream().read(file);
 		} else {
-			organ = createDefaultOrgan();
+			organ = createOrgan();
 		}
 
 		SessionRegistry.init(this);
@@ -62,7 +62,7 @@ public class OrganSession {
 
 	public void save() throws IOException {
 		new DispositionStream().write(organ, file);
-		
+
 		for (SessionListener listener : listeners) {
 			listener.saved(file);
 		}
@@ -122,10 +122,10 @@ public class OrganSession {
 		return file;
 	}
 
-	private static Organ createDefaultOrgan() {
+	private Organ createOrgan() {
 		Organ organ = new Organ();
 
-		organ.addElement(new Console());
+		ElementRegistry.init(organ);
 
 		return organ;
 	}

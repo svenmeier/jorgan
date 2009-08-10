@@ -24,7 +24,7 @@ import jorgan.disposition.Regulator;
 /**
  * A view that shows an {@link IndexedContinuous}.
  */
-public class RegulatorView extends IndexedContinuousView<Regulator> {
+public class RegulatorView extends TitledView<Regulator> {
 
 	/**
 	 * Constructor.

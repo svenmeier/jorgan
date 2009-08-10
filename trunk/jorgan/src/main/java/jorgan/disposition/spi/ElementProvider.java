@@ -28,5 +28,7 @@ import jorgan.disposition.Organ;
  */
 public interface ElementProvider {
 
+	public void init(Organ organ);
+	
 	public List<Class<? extends Element>> getElementClasses(Organ organ);
 }
