@@ -19,11 +19,10 @@
 package jorgan.recorder;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -51,9 +50,6 @@ import bias.util.MessageBuilder;
  * A performance of an {@link OrganSession}.
  */
 public abstract class Performance {
-
-	private static Logger logger = Logger
-			.getLogger(Performance.class.getName());
 
 	private static Configuration config = Configuration.getRoot().get(
 			Performance.class);
@@ -149,23 +145,15 @@ public abstract class Performance {
 		fireChanged();
 	}
 
-	public void save() {
+	public void save() throws IOException {
 		stop();
 
 		writeTrackers();
 
-		if (recorder != null) {
-			String performance = recorder.getPerformance();
-			if (performance != null) {
-				try {
-					Sequence sequence = this.messageRecorder.getSequence();
+		String performance = recorder.getPerformance();
+		Sequence sequence = this.messageRecorder.getSequence();
 
-					new MidiStream().write(sequence, resolve(performance));
-				} catch (Exception ex) {
-					logger.log(Level.WARNING, ex.getMessage(), ex);
-				}
-			}
-		}
+		new MidiStream().write(sequence, resolve(performance));
 	}
 
 	public File getFile() {

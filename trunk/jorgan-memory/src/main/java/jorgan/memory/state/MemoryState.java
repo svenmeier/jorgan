@@ -23,7 +23,6 @@ import java.util.List;
 
 import jorgan.disposition.Combination;
 import jorgan.memory.disposition.Memory;
-import jorgan.memory.state.CombinationState;
 
 /**
  * The state of a {@link Memory}.
@@ -32,7 +31,7 @@ public class MemoryState {
 
 	private List<String> titles = new ArrayList<String>();
 
-	private List<CombinationState> states = new ArrayList<CombinationState>();
+	private List<CombinationState> combinations = new ArrayList<CombinationState>();
 
 	public MemoryState() {
 	}
@@ -44,14 +43,14 @@ public class MemoryState {
 	}
 
 	private CombinationState getState(Combination combination) {
-		for (CombinationState store : states) {
+		for (CombinationState store : combinations) {
 			if (store.isFor(combination)) {
 				return store;
 			}
 		}
 
 		CombinationState state = new CombinationState(combination);
-		states.add(state);
+		combinations.add(state);
 
 		return state;
 	}
@@ -63,7 +62,7 @@ public class MemoryState {
 		if (title == null) {
 			title = "";
 		}
-		
+
 		return title;
 	}
 
@@ -75,8 +74,8 @@ public class MemoryState {
 
 	public void clear(int index) {
 		setTitle(index, null);
-		
-		for (CombinationState state : states) {
+
+		for (CombinationState state : combinations) {
 			state.clear(index);
 		}
 	}
@@ -86,7 +85,7 @@ public class MemoryState {
 			CombinationState state = getState(combination);
 			if (state == null) {
 				state = new CombinationState(combination);
-				states.add(state);
+				combinations.add(state);
 			}
 
 			state.read(combination, index);
@@ -98,7 +97,7 @@ public class MemoryState {
 			CombinationState state = getState(combination);
 			if (state == null) {
 				state = new CombinationState(combination);
-				states.add(state);
+				combinations.add(state);
 			}
 
 			state.write(combination, index);

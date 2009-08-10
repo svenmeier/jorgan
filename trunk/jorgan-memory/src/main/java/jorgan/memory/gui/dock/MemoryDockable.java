@@ -19,6 +19,9 @@
 package jorgan.memory.gui.dock;
 
 import java.awt.event.ActionEvent;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
@@ -30,8 +33,8 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.gui.dock.OrganDockable;
-import jorgan.memory.MemoryManager;
-import jorgan.memory.MemoryManagerListener;
+import jorgan.memory.Storage;
+import jorgan.memory.StorageListener;
 import jorgan.memory.disposition.Memory;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -48,6 +51,9 @@ import bias.swing.MessageBox;
  */
 public class MemoryDockable extends OrganDockable {
 
+	private static Logger logger = Logger.getLogger(MemoryDockable.class
+			.getName());
+
 	private static Configuration config = Configuration.getRoot().get(
 			MemoryDockable.class);
 
@@ -59,7 +65,7 @@ public class MemoryDockable extends OrganDockable {
 
 	private OrganSession session;
 
-	private MemoryManager manager;
+	private Storage storage;
 
 	private EjectAction ejectAction = new EjectAction();
 
@@ -91,23 +97,25 @@ public class MemoryDockable extends OrganDockable {
 	 */
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			manager.removeListener((MemoryManagerListener) Spin.over(eventHandler));
-			manager = null;
-
-			model.fireTableDataChanged();
+			storage.removeListener((StorageListener) Spin.over(eventHandler));
+			storage = null;
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			manager = session.lookup(MemoryManager.class);
-			manager.addListener((MemoryManagerListener) Spin.over(eventHandler));
-
-			model.fireTableDataChanged();
-
-			updateIndex();
+			storage = session.lookup(Storage.class);
+			storage.addListener((StorageListener) Spin.over(eventHandler));
 		}
+		
+		update();
+	}
+	
+	private void update() {
+		model.fireTableDataChanged();
 
+		updateIndex();
+		
 		ejectAction.update();
 	}
 
@@ -115,51 +123,73 @@ public class MemoryDockable extends OrganDockable {
 	public void docked(Docked docked) {
 		super.docked(docked);
 
-		docked.addTool(ejectAction);
-		docked.addToolSeparator();
 		docked.addTool(new SwapAction());
 		docked.addTool(new ClearAction());
+		docked.addToolSeparator();
+		docked.addTool(ejectAction);
 	}
 
 	private void updateIndex() {
-		int index = manager.getIndex();
-		if (index == -1) {
-			table.clearSelection();
-		} else {
-			if (index != table.getSelectedRow()) {
-				if (table.getCellEditor() != null) {
-					table.getCellEditor().cancelCellEditing();
-					table.setCellEditor(null);
+		if (storage != null) {
+			int index = storage.getIndex();
+			if (index == -1) {
+				table.clearSelection();
+			} else {
+				if (index != table.getSelectedRow()) {
+					if (table.getCellEditor() != null) {
+						table.getCellEditor().cancelCellEditing();
+						table.setCellEditor(null);
+					}
+					table.setColumnSelectionInterval(0, 0);
+					table.getSelectionModel().setSelectionInterval(index, index);
+					table.scrollRectToVisible(table.getCellRect(index, 0, false));
 				}
-				table.setColumnSelectionInterval(0, 0);
-				table.getSelectionModel().setSelectionInterval(index, index);
-				table.scrollRectToVisible(table.getCellRect(index, 0, false));
 			}
 		}
 	}
 
 	private boolean canEject() {
-		if (manager.isLoaded()) {
-			MessageBox box = new MessageBox(MessageBox.OPTIONS_YES_NO_CANCEL);
-			config.get("eject/confirm").read(box);
-			int option = box.show(getContent());
+		if (storage.isLoaded()) {
+			int option = showBoxMessage("eject/confirm", MessageBox.OPTIONS_YES_NO_CANCEL);
 			if (option == MessageBox.OPTION_CANCEL) {
 				return false;
 			} else if (option == MessageBox.OPTION_YES) {
-				manager.save();
+				if (!save()) {
+					return false;
+				}
 			}
 		}
 
 		return true;
 	}
 
-	private class EventHandler implements MemoryManagerListener, ListSelectionListener {
+	private boolean save() {
+		try {
+			storage.save();
+		} catch (IOException ex) {
+			logger.log(Level.INFO, "saving storage failed", ex);
+
+			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session.getFile().getName());
+
+			return false;
+		}
+
+		return true;
+	}
+
+	protected int showBoxMessage(String key, int options, Object... args) {
+		return config.get(key).read(new MessageBox(options)).show(
+				getContent().getTopLevelAncestor(), args);
+	}
+
+	private class EventHandler implements StorageListener,
+			ListSelectionListener {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (table.getSelectedRowCount() == 1) {
 				int row = table.getSelectedRow();
 				if (row != -1) {
-					manager.setIndex(row);
+					storage.setIndex(row);
 				}
 			}
 		}
@@ -169,9 +199,7 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public void changed() {
-			model.fireTableDataChanged();
-
-			ejectAction.update();
+			update();
 		}
 	}
 
@@ -188,7 +216,7 @@ public class MemoryDockable extends OrganDockable {
 		public void actionPerformed(ActionEvent ev) {
 			int[] rows = table.getSelectedRows();
 
-			manager.swap(rows[0], rows[1]);
+			storage.swap(rows[0], rows[1]);
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -210,16 +238,15 @@ public class MemoryDockable extends OrganDockable {
 			if (confirm()) {
 				int[] rows = table.getSelectedRows();
 				for (int r = 0; r < rows.length; r++) {
-					manager.clear(rows[r]);
+					storage.clear(rows[r]);
 				}
 			}
 		}
 
 		private boolean confirm() {
 
-			MessageBox box = config.get("clearConfirm").read(
-					new MessageBox(MessageBox.OPTIONS_YES_NO));
-			return box.show(table) == MessageBox.OPTION_YES;
+			int option = showBoxMessage("clear/confirm", MessageBox.OPTIONS_YES_NO_CANCEL);
+			return option == MessageBox.OPTION_YES;
 		}
 
 		public void valueChanged(ListSelectionEvent e) {
@@ -235,7 +262,7 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public void update() {
-			setEnabled(manager != null && manager.isEnabled());
+			setEnabled(storage != null && storage.isEnabled());
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -243,10 +270,10 @@ public class MemoryDockable extends OrganDockable {
 				return;
 			}
 
-			JFileChooser chooser = new JFileChooser(manager.getFile());
+			JFileChooser chooser = new JFileChooser(storage.getFile());
 			chooser.setDialogTitle(getShortDescription());
-			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				manager.setFile(chooser.getSelectedFile());
+			if (chooser.showOpenDialog(getContent().getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
+				storage.setFile(chooser.getSelectedFile());
 			}
 		}
 	}
@@ -258,10 +285,10 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public int getRowCount() {
-			if (manager == null) {
+			if (storage == null) {
 				return 0;
 			} else {
-				return manager.getSize();
+				return storage.getSize();
 			}
 		}
 
@@ -269,7 +296,7 @@ public class MemoryDockable extends OrganDockable {
 			if (columnIndex == 0) {
 				return "" + (rowIndex + 1);
 			}
-			return manager.getTitle(rowIndex);
+			return storage.getTitle(rowIndex);
 		}
 
 		@Override
@@ -279,7 +306,7 @@ public class MemoryDockable extends OrganDockable {
 
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			manager.setTitle(rowIndex, (String) aValue);
+			storage.setTitle(rowIndex, (String) aValue);
 		}
 	}
 }

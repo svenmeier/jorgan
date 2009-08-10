@@ -19,6 +19,7 @@
 package jorgan.recorder;
 
 import java.io.File;
+import java.io.IOException;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
@@ -52,8 +53,10 @@ public class RecorderSessionProvider implements SessionProvider {
 					performance.stop();
 				}
 
-				public void saved(File file) {
-					performance.save();
+				public void saved(File file) throws IOException {
+					if (performance.isLoaded()) {
+						performance.save();
+					}
 				}
 
 				public void destroyed() {

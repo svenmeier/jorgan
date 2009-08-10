@@ -19,6 +19,7 @@
 package jorgan.memory;
 
 import java.io.File;
+import java.io.IOException;
 
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
@@ -28,15 +29,15 @@ import jorgan.session.spi.SessionProvider;
 public class MemorySessionProvider implements SessionProvider {
 
 	/**
-	 * {@link MemoryManager} is always required.
+	 * {@link Storage} is always required.
 	 */
 	public void init(OrganSession session) {
-		session.lookup(MemoryManager.class);
+		session.lookup(Storage.class);
 	}
 
 	public Object create(final OrganSession session, Class<?> clazz) {
-		if (clazz == MemoryManager.class) {
-			final MemoryManager manager = new MemoryManager(session.getOrgan(),
+		if (clazz == Storage.class) {
+			final Storage storage = new Storage(session.getOrgan(),
 					session.lookup(ElementProblems.class)) {
 				@Override
 				protected File resolve(String name) {
@@ -47,14 +48,16 @@ public class MemorySessionProvider implements SessionProvider {
 				public void constructingChanged(boolean constructing) {
 				}
 
-				public void saved(File file) {
-					manager.save();
+				public void saved(File file) throws IOException {
+					if (storage.isLoaded()) {
+						storage.save();
+					}
 				}
 
 				public void destroyed() {
 				}
 			});
-			return manager;
+			return storage;
 		}
 		return null;
 	}

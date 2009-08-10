@@ -18,49 +18,25 @@
  */
 package jorgan.memory.state;
 
-import jorgan.disposition.Combination;
 import jorgan.disposition.Element;
 import jorgan.disposition.Reference;
 
 public abstract class ReferenceState<T extends Element> {
 
-	private T element;
+	private long id;
 
 	public ReferenceState(T element) {
-		this.element = element;
-	}
-
-	public Element getElement() {
-		return element;
+		this.id = element.getId();
 	}
 
 	protected abstract void ensureIndex(int index);
 
-	public void read(Combination combination, int index) {
-		ensureIndex(index);
+	public abstract void read(Reference<?> reference, int index);
 
-		try {
-			Reference<?> reference = combination.getReference(getElement());
+	public abstract void write(Reference<?> reference, int index);
 
-			read(reference, index);
-		} catch (IllegalArgumentException e) {
-		}
-	}
-
-	protected abstract void read(Reference<?> reference, int index);
-
-	public void write(Combination combination, int index) {
-		ensureIndex(index);
-
-		Reference<?> reference = combination.getReference(getElement());
-
-		write(reference, index);
-	}
-
-	protected abstract void write(Reference<?> reference, int index);
-
-	public boolean isFor(Object element) {
-		return element == this.element;
+	public boolean isFor(Element element) {
+		return this.id == element.getId();
 	}
 
 	public abstract void clear(int index);
