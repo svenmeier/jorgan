@@ -38,10 +38,10 @@ public class FieldCrossLinkTest extends TestCase {
 	public void test() throws Exception {
 		FieldCrossLink crossLink = new FieldCrossLink(Bar.class, "bar");
 
-		assertTrue(crossLink.isCrossLinked(parent));
-		assertTrue(crossLink.isCrossLink(parent, child));
+		assertTrue(crossLink.isLinked(parent));
+		assertTrue(crossLink.isLink(parent, child));
 
-		crossLink.crossLink(parent, child);
+		crossLink.link(parent, child);
 
 		assertEquals(parent.bar, child);
 	}

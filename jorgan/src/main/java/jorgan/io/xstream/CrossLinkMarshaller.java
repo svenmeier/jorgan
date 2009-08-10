@@ -58,7 +58,7 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 			// strings, ints, dates, etc... don't bother using references.
 			converter.marshal(item, writer, this);
 		} else {
-			if (crossLink.isCrossLink(parentStack.peek(), item)) {
+			if (crossLink.isLink(parentStack.peek(), item)) {
 				String reference = getId(item);
 
 				String attributeName = getMapper().aliasForSystemAttribute(
@@ -67,7 +67,7 @@ public class CrossLinkMarshaller extends TreeMarshaller {
 					writer.addAttribute(attributeName, reference);
 				}
 			} else {
-				if (crossLink.isCrossLinked(item)) {
+				if (crossLink.isLinked(item)) {
 					String id = getId(item);
 
 					String attributeName = getMapper().aliasForSystemAttribute(

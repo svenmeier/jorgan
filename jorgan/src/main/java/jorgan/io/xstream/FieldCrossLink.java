@@ -42,15 +42,15 @@ public class FieldCrossLink implements CrossLink {
 		}
 	}
 
-	public boolean isCrossLinked(Object object) {
+	public boolean isLinked(Object object) {
 		return field.getType().isInstance(object);
 	}
 
-	public boolean isCrossLink(Object parent, Object child) {
-		return parentClass.isInstance(parent) && isCrossLinked(child);
+	public boolean isLink(Object parent, Object child) {
+		return parentClass.isInstance(parent) && isLinked(child);
 	}
 
-	public void crossLink(Object parent, Object child) {
+	public void link(Object parent, Object child) {
 		try {
 			field.set(parent, child);
 		} catch (IllegalAccessException ex) {
