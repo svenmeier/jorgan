@@ -20,12 +20,11 @@ package jorgan.io.disposition;
 
 import java.lang.reflect.Field;
 
-import jorgan.Info;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
+import jorgan.disposition.Reference;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -33,20 +32,16 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Converter for {@link Organ}s that adds version information an marshalling
- * and sets parent reference on unmarshalling.
- * 
- * @see #marshallVersion(HierarchicalStreamWriter)
- * @see #unmarshallElementsOrgan(Organ)
+ * Converter for {@link Reference}s.
  */
-public class OrganConverter implements Converter {
+public class ReferenceConverter implements Converter {
 
-	private static Field elementOrganField;
+	private static Field referenceElementField;
 
 	static {
 		try {
-			elementOrganField = Element.class.getDeclaredField("organ");
-			elementOrganField.setAccessible(true);
+			referenceElementField = Reference.class.getDeclaredField("element");
+			referenceElementField.setAccessible(true);
 		} catch (Exception ex) {
 			throw new Error(ex);
 		}
@@ -54,10 +49,10 @@ public class OrganConverter implements Converter {
 
 	private Converter nested;
 
-	public OrganConverter(XStream xstream) {
+	public ReferenceConverter(XStream xstream) {
 		xstream.registerConverter(this);
 
-		xstream.omitField(Element.class, "organ");
+		xstream.omitField(Reference.class, "element");
 
 		nested = xstream.getConverterLookup().lookupConverterForType(
 				Object.class);
@@ -65,7 +60,7 @@ public class OrganConverter implements Converter {
 
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
-		return Organ.class.isAssignableFrom(clazz);
+		return Reference.class.isAssignableFrom(clazz);
 	}
 
 	/**
@@ -73,51 +68,38 @@ public class OrganConverter implements Converter {
 	 */
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-		Organ organ = (Organ) value;
+		Reference<?> reference = (Reference) value;
 
-		marshallVersion(writer);
+		writer.addAttribute("id", "" + reference.getElement().getId());
 
-		nested.marshal(organ, writer, context);
-	}
-
-	/**
-	 * Write version information to the organ element.
-	 * 
-	 * @param writer
-	 *            writer
-	 */
-	protected void marshallVersion(HierarchicalStreamWriter writer) {
-		writer.addAttribute("version", new Info().getVersion());
+		nested.marshal(reference, writer, context);
 	}
 
 	/**
 	 * @see #unmarshallElementsOrgan(Organ)
 	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
-			UnmarshallingContext context) {
+			final UnmarshallingContext context) {
 
-		Organ organ = (Organ) nested.unmarshal(reader, context);
+		final long id = Long.valueOf(reader.getAttribute("id"));
 
-		unmarshallElementsOrgan(organ);
-		
-		context.put(Organ.class, organ);
+		final Reference<?> reference = (Reference) nested.unmarshal(reader,
+				context);
 
-		return organ;
-	}
+		context.addCompletionCallback(new Runnable() {
+			public void run() {
+				Organ organ = (Organ) context.get(Organ.class);
 
-	/**
-	 * Set the parent reference in all elements of the given organ.
-	 * 
-	 * @param organ
-	 *            organ
-	 */
-	protected void unmarshallElementsOrgan(Organ organ) {
-		try {
-			for (Element element : organ.getElements()) {
-				elementOrganField.set(element, organ);
+				Element element = organ.getElement(id);
+
+				try {
+					referenceElementField.set(reference, element);
+				} catch (Exception ex) {
+					throw new Error(ex);
+				}
 			}
-		} catch (Exception ex) {
-			throw new ConversionException(ex);
-		}
+		}, 0);
+
+		return reference;
 	}
 }
