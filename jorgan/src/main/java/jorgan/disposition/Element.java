@@ -34,6 +34,8 @@ import jorgan.util.Null;
  */
 public abstract class Element implements Cloneable {
 
+	private long id;
+	
 	/**
 	 * The organ this element belongs to.
 	 */
@@ -44,7 +46,7 @@ public abstract class Element implements Cloneable {
 	 */
 	private String name = "";
 
-	/**String
+	/**
 	 * The description of this element.
 	 */
 	private String description = "";
@@ -60,7 +62,14 @@ public abstract class Element implements Cloneable {
 	private List<Message> messages = new ArrayList<Message>();
 
 	public long getId() {
-		return System.identityHashCode(this);
+		return id;
+	}
+	
+	/**
+	 * @see Organ#addElement(Element)
+	 */
+	void setId(long id) {
+		this.id = id;
 	}
 	
 	/**

@@ -1,0 +1,31 @@
+<memory>
+  <titles>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+    <null/>
+  </titles>
+  <combinations>
+    <combination id="2">
+      <references>
+        <continuous id="3">
+          <values>0.15873016,0.6825397,0.7777778</values>
+        </continuous>
+        <switch id="1">
+          <actives>true,false,true</actives>
+        </switch>
+      </references>
+    </combination>
+  </combinations>
+</memory>

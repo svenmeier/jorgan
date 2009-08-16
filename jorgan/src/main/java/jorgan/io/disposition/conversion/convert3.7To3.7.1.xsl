@@ -1,9 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" >
 
+	<xsl:template match="reference">
+		<xsl:copy>
+			<xsl:attribute name="id">
+				<xsl:value-of select="element/@ref"/>
+			</xsl:attribute>
+		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="console-locationReference">
+		<xsl:copy>
+			<xsl:attribute name="id">
+				<xsl:value-of select="element/@ref"/>
+			</xsl:attribute>
+
+			<xsl:apply-templates select="x|y"/>
+		</xsl:copy>
+	</xsl:template>
+
 	<xsl:template match="combination-switchReference">
 		<xsl:copy>
-			<xsl:apply-templates select="element"/>
+			<xsl:attribute name="id">
+				<xsl:value-of select="element/@ref"/>
+			</xsl:attribute>
 
 			<active>
 				<xsl:choose>
@@ -16,7 +36,9 @@
 
 	<xsl:template match="combination-continuousReference">
 		<xsl:copy>
-			<xsl:apply-templates select="element"/>
+			<xsl:attribute name="id">
+				<xsl:value-of select="element/@ref"/>
+			</xsl:attribute>
 
 			<value>
 				<xsl:choose>

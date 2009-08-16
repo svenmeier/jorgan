@@ -1,6 +1,74 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
+    <continuous id="3">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <locking>true</locking>
+      <threshold>0.0</threshold>
+      <value>0.7777778</value>
+    </continuous>
+    <console id="4">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="5">
+          <x>70</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="2">
+          <x>170</x>
+          <y>70</y>
+        </console-locationReference>
+        <console-locationReference id="6">
+          <x>190</x>
+          <y>160</y>
+        </console-locationReference>
+        <console-locationReference id="3">
+          <x>320</x>
+          <y>40</y>
+        </console-locationReference>
+        <console-locationReference id="1">
+          <x>320</x>
+          <y>100</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <combination id="2">
+      <name></name>
+      <description></description>
+      <references>
+        <combination-continuousReference id="3">
+          <value>0.7777778</value>
+        </combination-continuousReference>
+        <combination-switchReference id="1">
+          <active>true</active>
+        </combination-switchReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </combination>
+    <memory.memory id="5">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <locking>true</locking>
+      <threshold>0.0</threshold>
+      <value>0.0390625</value>
+      <size>64</size>
+      <storage>memory-example.memory</storage>
+    </memory.memory>
     <switch id="1">
       <name></name>
       <description></description>
@@ -10,90 +78,11 @@
       <active>true</active>
       <locking>true</locking>
     </switch>
-    <combination id="2">
-      <name></name>
-      <description></description>
-      <references>
-        <combination-continuousReference>
-          <element ref="3"/>
-          <value>0.15873016</value>
-        </combination-continuousReference>
-        <combination-switchReference>
-          <element ref="1"/>
-          <active>true</active>
-        </combination-switchReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>false</locking>
-    </combination>
-    <console id="4">
-      <name></name>
-      <description></description>
-      <references>
-        <console-locationReference>
-          <element ref="5"/>
-          <x>70</x>
-          <y>60</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="2"/>
-          <x>170</x>
-          <y>70</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="6"/>
-          <x>190</x>
-          <y>160</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="3"/>
-          <x>320</x>
-          <y>40</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="1"/>
-          <x>320</x>
-          <y>100</y>
-        </console-locationReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-    </console>
-    <memory.memory id="5">
-      <name></name>
-      <description></description>
-      <references>
-        <reference>
-          <element ref="2"/>
-        </reference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <locking>true</locking>
-      <threshold>0.0</threshold>
-      <value>0.0234375</value>
-      <size>64</size>
-      <storage>memory-example.memory</storage>
-    </memory.memory>
-    <continuous id="3">
-      <name></name>
-      <description></description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-      <locking>true</locking>
-      <threshold>0.0</threshold>
-      <value>0.15873016</value>
-    </continuous>
     <captor id="6">
       <name></name>
       <description></description>
       <references>
-        <reference>
-          <element ref="2"/>
-        </reference>
+        <reference id="2"/>
       </references>
       <messages/>
       <zoom>1.0</zoom>

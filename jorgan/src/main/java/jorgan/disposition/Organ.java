@@ -119,8 +119,26 @@ public class Organ {
 		}
 	}
 
+	private long createId(Element element) {
+		boolean present = false;
+		long max = 0;
+		for (Element other : elements) {
+			if (other.getId() == element.getId()) {
+				present = true;
+			}
+			max = Math.max(max, other.getId());
+		}
+		if (!present) {
+			return element.getId();
+		} else {
+			return max + 1;
+		}
+	}
+	
 	public void addElement(final Element element) {
 
+		element.setId(createId(element));
+		
 		elements.add(element);
 		element.setOrgan(this);
 
@@ -314,5 +332,15 @@ public class Organ {
 		}
 
 		return clone;
+	}
+
+	public Element getElement(long id) {
+		for (Element element : elements) {
+			if (element.getId() == id) {
+				return element;
+			}
+		}
+
+		throw new IllegalArgumentException("unkown id '" + id + "'");
 	}
 }

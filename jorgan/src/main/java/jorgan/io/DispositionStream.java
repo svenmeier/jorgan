@@ -35,15 +35,14 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.disposition.Reference;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FormatException;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
-import jorgan.io.xstream.CrossLinkMarshallingStrategy;
-import jorgan.io.xstream.FieldCrossLink;
+import jorgan.io.disposition.ReferenceConverter;
 import jorgan.util.IOUtils;
 
 import org.xmlpull.mxp1.MXParser;
@@ -53,6 +52,7 @@ import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
 import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
 import com.thoughtworks.xstream.io.xml.XppDriver;
@@ -84,15 +84,20 @@ public class DispositionStream {
 	private int historySize = 0;
 
 	public DispositionStream() {
-		CrossLinkMarshallingStrategy strategy = new CrossLinkMarshallingStrategy();
-		strategy.register(new FieldCrossLink(Reference.class, "element"));
+		TreeMarshallingStrategy strategy = new TreeMarshallingStrategy();
 		xstream.setMarshallingStrategy(strategy);
-		xstream.aliasSystemAttribute("ref", "reference");
 
 		// never write class attribute
 		xstream.aliasSystemAttribute(null, "class");
 
+		// element identification
+		xstream.useAttributeFor(Element.class, "id");
+		
+		// organ -> element relationship
 		xstream.registerConverter(new OrganConverter(xstream));
+
+		// reference -> element relationship
+		xstream.registerConverter(new ReferenceConverter(xstream));
 
 		config.read(this);
 	}
