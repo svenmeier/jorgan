@@ -26,6 +26,7 @@ import jorgan.disposition.Reference;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
+import com.thoughtworks.xstream.converters.DataHolder;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
@@ -33,6 +34,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
  * Converter for {@link Reference}s.
+ * 
+ * @see OrganConverter
+ * @see DataHolder#get(Object)
  */
 public class ReferenceConverter implements Converter {
 
