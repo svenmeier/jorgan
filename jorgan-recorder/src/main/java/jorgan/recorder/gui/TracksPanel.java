@@ -175,6 +175,10 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				return;
+			}
+			
 			offset = null;
 		}
 

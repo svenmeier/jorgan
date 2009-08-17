@@ -74,7 +74,7 @@ public abstract class Performance {
 
 	private ElementProblems problems;
 
-	private Tracker[] trackers = new Tracker[0];
+	private List<Tracker> trackers = new ArrayList<Tracker>();
 
 	private EventListener listener = new EventListener();
 
@@ -182,10 +182,10 @@ public abstract class Performance {
 
 	private void initSequence(Sequence sequence) {
 		if (this.messageRecorder != null) {
-			for (int track = 0; track < trackers.length; track++) {
-				trackers[track].destroy();
+			for (Tracker tracker : trackers) {
+				tracker.destroy();
 			}
-			trackers = null;
+			trackers.clear();
 
 			this.messageRecorder = null;
 		}
@@ -193,13 +193,13 @@ public abstract class Performance {
 		if (sequence != null) {
 			messageRecorder = new InternalRecorder(sequence);
 
-			trackers = new Tracker[messageRecorder.getTrackCount()];
-			for (int track = 0; track < trackers.length; track++) {
+			trackers = new ArrayList<Tracker>();
+			for (int track = 0; track < messageRecorder.getTrackCount(); track++) {
 				Tracker tracker = readTracker(track);
 				if (tracker == null) {
 					tracker = new EmptyTracker(this, track);
 				}
-				setTracker(track, tracker);
+				trackers.add(tracker);
 			}
 		}
 	}
@@ -289,7 +289,7 @@ public abstract class Performance {
 	}
 
 	public Element getElement(int track) {
-		return trackers[track].getElement();
+		return trackers.get(track).getElement();
 	}
 
 	public List<Element> getTrackableElements() {
@@ -334,6 +334,8 @@ public abstract class Performance {
 	public void setElement(int track, Element element) {
 		stop();
 
+		trackers.get(track).destroy();
+
 		Tracker tracker;
 		if (element == null) {
 			tracker = new EmptyTracker(this, track);
@@ -344,27 +346,47 @@ public abstract class Performance {
 						+ element.getClass().getName());
 			}
 		}
-		setTracker(track, tracker);
+
+		trackers.set(track, tracker);
 
 		fireChanged();
 	}
 
-	private void setTracker(int track, Tracker tracker) {
-		if (trackers[track] != null) {
-			trackers[track].destroy();
-		}
-
-		trackers[track] = tracker;
-	}
-
 	public int getTrackerCount() {
-		return trackers.length;
+		return trackers.size();
 	}
 
 	public Tracker getTracker(int track) {
-		return trackers[track];
+		return trackers.get(track);
 	}
 
+	public void removeTrack(int track) {
+		
+		writeTrackers();
+		
+		Sequence sequence = messageRecorder.getSequence();
+		sequence.deleteTrack(sequence.getTracks()[track]);
+		if (sequence.getTracks().length == 0) {
+			sequence.createTrack();
+		}
+		
+		initSequence(sequence);
+		
+		fireChanged();
+	}
+	
+	public void addTrack() {
+		
+		writeTrackers();
+		
+		Sequence sequence = messageRecorder.getSequence();
+		sequence.createTrack();
+		
+		initSequence(sequence);
+		
+		fireChanged();
+	}
+	
 	private void fireTimeChanged(long millis) {
 		for (PerformanceListener listener : listeners) {
 			listener.timeChanged(millis);
@@ -398,7 +420,7 @@ public abstract class Performance {
 
 		@Override
 		protected void onPlayed(int track, MidiMessage message) {
-			Tracker tracker = trackers[track];
+			Tracker tracker = trackers.get(track);
 			if (tracker.isPlayEnabled()) {
 				tracker.onPlayed(message);
 			}
@@ -517,7 +539,7 @@ public abstract class Performance {
 		return null;
 	}
 
-	public void writeTrackers() {
+	private void writeTrackers() {
 		for (Tracker tracker : trackers) {
 			if (tracker.getElement() != null) {
 				writeTracker(tracker);

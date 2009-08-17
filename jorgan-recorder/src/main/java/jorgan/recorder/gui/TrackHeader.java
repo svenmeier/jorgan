@@ -21,6 +21,7 @@ package jorgan.recorder.gui;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -36,6 +37,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.recorder.Performance;
 import jorgan.recorder.swing.IconToggle;
+import jorgan.swing.BaseAction;
 import bias.Configuration;
 
 public class TrackHeader extends JPanel {
@@ -155,6 +157,31 @@ public class TrackHeader extends JPanel {
 				}
 			});
 			menu.add(item);
+		}
+
+		menu.addSeparator();
+
+		menu.add(new AddAction());
+		menu.add(new RemoveAction());
+	}
+
+	private class RemoveAction extends BaseAction {
+		public RemoveAction() {
+			config.get("remove").read(this);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			performance.removeTrack(track);
+		}
+	}
+
+	private class AddAction extends BaseAction {
+		public AddAction() {
+			config.get("add").read(this);
+		}
+
+		public void actionPerformed(ActionEvent e) {
+			performance.addTrack();
 		}
 	}
 }
