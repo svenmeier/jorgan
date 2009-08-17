@@ -162,8 +162,8 @@ public class RecorderDockable extends OrganDockable {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options)).show(getContent(),
-				args);
+		return config.get(key).read(new MessageBox(options)).show(
+				getContent().getTopLevelAncestor(), args);
 	}
 
 	private boolean canEject() {
