@@ -41,7 +41,7 @@ import jorgan.recorder.disposition.Recorder;
 import jorgan.recorder.io.MidiStream;
 import jorgan.recorder.midi.MessageRecorder;
 import jorgan.recorder.spi.TrackerRegistry;
-import jorgan.recorder.tracker.AbstractTracker;
+import jorgan.recorder.tracker.EmptyTracker;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -197,7 +197,7 @@ public abstract class Performance {
 			for (int track = 0; track < trackers.length; track++) {
 				Tracker tracker = readTracker(track);
 				if (tracker == null) {
-					tracker = new EmptyTracker(track);
+					tracker = new EmptyTracker(this, track);
 				}
 				setTracker(track, tracker);
 			}
@@ -336,7 +336,7 @@ public abstract class Performance {
 
 		Tracker tracker;
 		if (element == null) {
-			tracker = new EmptyTracker(track);
+			tracker = new EmptyTracker(this, track);
 		} else {
 			tracker = TrackerRegistry.createTracker(this, track, element);
 			if (tracker == null) {
@@ -446,41 +446,12 @@ public abstract class Performance {
 		}
 	}
 
-	private class EmptyTracker extends AbstractTracker {
-
-		public EmptyTracker(int track) {
-			super(Performance.this, track);
-		}
-
-		@Override
-		public Element getElement() {
-			return null;
-		}
-
-		@Override
-		protected boolean owns(MidiEvent event) {
-			return false;
-		}
-	}
-
 	private class EventListener extends OrganAdapter {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if ("name".equals(name)) {
-				for (Tracker tracker : trackers) {
-					if (tracker.getElement() == element) {
-						if ("".equals(element.getName())) {
-							element = null;
-						}
-						setElement(tracker.getTrack(), element);
-						break;
-					}
-				}
-			} else if (element == recorder) {
-				if ("performance".equals(name)) {
-					load();
-				}
+			if (element == recorder && "performance".equals(name)) {
+				load();
 			}
 		}
 
@@ -507,16 +478,14 @@ public abstract class Performance {
 	}
 
 	private Tracker readTracker(int track) {
-		Tracker tracker = null;
-
-		String name = null;
+		String id = null;
 		boolean playEnabled = false;
 		boolean recordEnabled = false;
 		for (MidiEvent event : messageRecorder.eventsAtTick(track, 0)) {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TRACK_NAME) {
-					name = MessageUtils.getText(message);
+					id = MessageUtils.getText(message);
 				} else if (message.getType() == MessageUtils.META_CUE_POINT) {
 					if ("play".equals(MessageUtils.getText(message))) {
 						playEnabled = true;
@@ -528,20 +497,24 @@ public abstract class Performance {
 			}
 		}
 
-		if (name != null) {
-			for (Element element : play.getOrgan().getElements()) {
-				if (name.equals(element.getName())) {
-					tracker = TrackerRegistry.createTracker(Performance.this,
-							track, element);
-					if (tracker != null) {
-						tracker.setPlayEnabled(playEnabled);
-						tracker.setRecordEnabled(recordEnabled);
-					}
-				}
+		if (id != null) {
+			Element element;
+			try {
+				element = play.getOrgan().getElement(Long.parseLong((id)));
+			} catch (Exception e) {
+				return null;
+			}
+
+			Tracker tracker = TrackerRegistry.createTracker(Performance.this,
+					track, element);
+			if (tracker != null) {
+				tracker.setPlayEnabled(playEnabled);
+				tracker.setRecordEnabled(recordEnabled);
+				return tracker;
 			}
 		}
 
-		return tracker;
+		return null;
 	}
 
 	public void writeTrackers() {
@@ -568,24 +541,20 @@ public abstract class Performance {
 		}
 
 		if (tracker.getElement() != null) {
-			String name = tracker.getElement().getName();
-			if (!"".equals(tracker.getElement().getName())) {
-				messageRecorder.setTime(0);
+			messageRecorder.setTime(0);
 
+			messageRecorder.record(tracker.getTrack(), MessageUtils
+					.newMetaMessage(MessageUtils.META_TRACK_NAME, ""
+							+ tracker.getElement().getId()));
+
+			if (tracker.isPlayEnabled()) {
 				messageRecorder.record(tracker.getTrack(), MessageUtils
-						.newMetaMessage(MessageUtils.META_TRACK_NAME, name));
+						.newMetaMessage(MessageUtils.META_CUE_POINT, "play"));
+			}
 
-				if (tracker.isPlayEnabled()) {
-					messageRecorder.record(tracker.getTrack(),
-							MessageUtils.newMetaMessage(
-									MessageUtils.META_CUE_POINT, "play"));
-				}
-
-				if (tracker.isRecordEnabled()) {
-					messageRecorder.record(tracker.getTrack(), MessageUtils
-							.newMetaMessage(MessageUtils.META_CUE_POINT,
-									"record"));
-				}
+			if (tracker.isRecordEnabled()) {
+				messageRecorder.record(tracker.getTrack(), MessageUtils
+						.newMetaMessage(MessageUtils.META_CUE_POINT, "record"));
 			}
 		}
 	}

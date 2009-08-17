@@ -122,10 +122,6 @@ public class ConsoleTracker extends AbstractTracker {
 				continue;
 			}
 
-			if ("".equals(aSwitch.getName())) {
-				continue;
-			}
-
 			Boolean active = readSequenceActive(aSwitch);
 			if (active == null || active != aSwitch.isActive()) {
 				record(createMessage(aSwitch));
@@ -133,9 +129,6 @@ public class ConsoleTracker extends AbstractTracker {
 		}
 
 		for (Continuous continuous : console.getReferenced(Continuous.class)) {
-			if ("".equals(continuous.getName())) {
-				continue;
-			}
 
 			Float value = readSequenceValue(continuous);
 			if (value == null || value != continuous.getValue()) {
@@ -150,7 +143,7 @@ public class ConsoleTracker extends AbstractTracker {
 		builder.append(PREFIX_CHANGE);
 		builder.append(continuous.getValue());
 		builder.append(SEPARATOR_CHANGE);
-		builder.append(continuous.getName());
+		builder.append(continuous.getId());
 
 		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
@@ -165,7 +158,7 @@ public class ConsoleTracker extends AbstractTracker {
 			builder.append(PREFIX_INACTIVE);
 		}
 
-		builder.append(aSwitch.getName());
+		builder.append(aSwitch.getId());
 
 		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
@@ -216,7 +209,7 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private <E extends Element> E getReferenced(String string, Class<E> clazz) {
 		for (E element : console.getReferenced(clazz)) {
-			if (string.equals(element.getName())) {
+			if (hasId(element, string)) {
 				return element;
 			}
 		}
@@ -224,9 +217,17 @@ public class ConsoleTracker extends AbstractTracker {
 		return null;
 	}
 
+	private boolean hasId(Element element, String id) {
+		try {
+			return element.getId() == Long.parseLong(id);
+		} catch (Exception ex) {
+		}
+		return false;
+	}
+
 	/**
-	 * Get the value for the given {@link Continuous} in the {@link MessageRecorder} or
-	 * <code>null</code> if not known.
+	 * Get the value for the given {@link Continuous} in the
+	 * {@link MessageRecorder} or <code>null</code> if not known.
 	 */
 	private Float readSequenceValue(Continuous continuous) {
 		Float value = null;
@@ -240,8 +241,8 @@ public class ConsoleTracker extends AbstractTracker {
 					if (string.startsWith(PREFIX_CHANGE)) {
 						int separator = string.indexOf(SEPARATOR_CHANGE);
 						if (separator != -1) {
-							String name = string.substring(separator + 1);
-							if (name.equals(continuous.getName())) {
+							if (hasId(continuous, string
+									.substring(separator + 1))) {
 								try {
 									value = Float.parseFloat(string.substring(
 											1, separator));
@@ -258,8 +259,8 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	/**
-	 * Get the active state for the given {@link Switch} in the {@link MessageRecorder}
-	 * or <code>null</code> if not known.
+	 * Get the active state for the given {@link Switch} in the
+	 * {@link MessageRecorder} or <code>null</code> if not known.
 	 */
 	private Boolean readSequenceActive(Switch aSwitch) {
 		Boolean active = null;
@@ -271,13 +272,11 @@ public class ConsoleTracker extends AbstractTracker {
 					String string = MessageUtils.getText(message);
 
 					if (string.startsWith(PREFIX_ACTIVE)) {
-						String name = string.substring(1);
-						if (name.equals(aSwitch.getName())) {
+						if (hasId(aSwitch, string.substring(1))) {
 							active = true;
 						}
 					} else if (string.startsWith(PREFIX_INACTIVE)) {
-						String name = string.substring(1);
-						if (name.equals(aSwitch.getName())) {
+						if (hasId(aSwitch, string.substring(1))) {
 							active = false;
 						}
 					}
@@ -301,11 +300,6 @@ public class ConsoleTracker extends AbstractTracker {
 			}
 
 			if (RecorderSwitch.class.isInstance(element)) {
-				return;
-			}
-
-			String elementName = element.getName();
-			if ("".equals(elementName)) {
 				return;
 			}
 

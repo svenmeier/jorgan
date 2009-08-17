@@ -147,9 +147,6 @@ public class TrackHeader extends JPanel {
 			if (performance.getElement(track) == element) {
 				item.setSelected(true);
 			}
-			if ("".equals(element.getName())) {
-				item.setEnabled(false);
-			}
 			item.addItemListener(new ItemListener() {
 				public void itemStateChanged(ItemEvent e) {
 					if (item.isSelected()) {

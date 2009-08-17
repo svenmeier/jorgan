@@ -232,6 +232,7 @@ public abstract class Storage {
 
 					if (file.exists()) {
 						memoryState = new MemoryStateStream().read(file);
+						write();
 					} else {
 						memoryState = new MemoryState();
 					}
