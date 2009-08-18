@@ -51,7 +51,7 @@
 
 	<xsl:template match="memory">
 		<memory.memory>
-			<xsl:apply-templates select="references"/>
+			<xsl:apply-templates select="@id|name|description|references|messages|style|zoom|locking|threshold|value"/>
 		</memory.memory>
 	</xsl:template>
 
