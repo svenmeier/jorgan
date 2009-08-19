@@ -69,7 +69,7 @@ public abstract class Storage {
 						fireIndexChanged();
 					} else if ("size".equals(name)) {
 						fireChanged();
-					} else if ("store".equals(name)) {
+					} else if ("storage".equals(name)) {
 						load();
 					}
 				}
@@ -131,7 +131,11 @@ public abstract class Storage {
 
 	public void setFile(File file) {
 		if (memory != null) {
-			memory.setStorage(file.getPath());
+			if (file == null) {
+				memory.setStorage(null);
+			} else {
+				memory.setStorage(file.getPath());
+			}
 		}
 	}
 

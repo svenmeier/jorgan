@@ -219,8 +219,9 @@ public class RecorderDockable extends OrganDockable {
 				return;
 			}
 
+			performance.setFile(null);
+			
 			JFileChooser chooser = new JFileChooser(performance.getFile());
-			chooser.setDialogTitle(getShortDescription());
 			chooser
 					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {

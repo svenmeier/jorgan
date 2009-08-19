@@ -270,8 +270,9 @@ public class MemoryDockable extends OrganDockable {
 				return;
 			}
 
+			storage.setFile(null);
+
 			JFileChooser chooser = new JFileChooser(storage.getFile());
-			chooser.setDialogTitle(getShortDescription());
 			if (chooser.showOpenDialog(getContent().getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
 				storage.setFile(chooser.getSelectedFile());
 			}
