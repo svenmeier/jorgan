@@ -199,12 +199,14 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					removeConsoleDockable((Console) element);
 				}
 			}
+
+			setConstructing(false);
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			setConstructing(!this.session.lookup(OrganPlay.class).isOpen());
+			setConstructing(this.session.isConstructing());
 
 			this.session.addListener(eventsListener);
 			this.session.lookup(ElementSelection.class)

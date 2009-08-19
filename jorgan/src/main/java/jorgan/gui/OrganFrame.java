@@ -193,6 +193,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		toolBar.addSeparator();
 
 		config.get("construct").read(constructButton);
+		constructButton.setEnabled(false);
 		constructButton.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				if (session != null) {
@@ -339,9 +340,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 			this.session.getOrgan().addOrganObserver(
 					(OrganObserver) Spin.over(saveAction));
 			this.session.addListener(handler);
-
-			constructButton.setSelected(this.session.isConstructing());
 		}
+
+		constructButton.setEnabled(this.session != null);
+		constructButton.setSelected(this.session != null
+				&& this.session.isConstructing());
 
 		saveAction.newSession();
 		closeAction.newSession();
@@ -366,16 +369,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 		try {
 			session = new OrganSession(file);
 		} catch (ExtensionException ex) {
-			showBoxMessage("openExtensionException", MessageBox.OPTIONS_OK, file.getName(), ex
-					.getExtension());
+			showBoxMessage("openExtensionException", MessageBox.OPTIONS_OK,
+					file.getName(), ex.getExtension());
 			return;
 		} catch (FormatException ex) {
 			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			showBoxMessage("openFormatException", MessageBox.OPTIONS_OK, file.getName());
+			showBoxMessage("openFormatException", MessageBox.OPTIONS_OK, file
+					.getName());
 			return;
 		} catch (IOException ex) {
-			showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file.getName());
+			showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file
+					.getName());
 			return;
 		}
 
@@ -397,7 +402,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session.getFile().getName());
+			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session
+					.getFile().getName());
 
 			return false;
 		}
@@ -417,7 +423,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public boolean canCloseOrgan() {
 		if (saveAction.mustSave()) {
 			if (saveAction.mustConfirm()) {
-				int option = showBoxMessage("closeOrganConfirmChanges", MessageBox.OPTIONS_YES_NO_CANCEL);
+				int option = showBoxMessage("closeOrganConfirmChanges",
+						MessageBox.OPTIONS_YES_NO_CANCEL);
 				if (option == MessageBox.OPTION_CANCEL) {
 					return false;
 				} else if (option == MessageBox.OPTION_NO) {
@@ -436,10 +443,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 				args));
 	}
 
-	protected int showBoxMessage(String key,int options, Object... args) {
+	protected int showBoxMessage(String key, int options, Object... args) {
 
-		return config.get(key).read(new MessageBox(options)).show(this,
-				args);
+		return config.get(key).read(new MessageBox(options)).show(this, args);
 	}
 
 	/**
