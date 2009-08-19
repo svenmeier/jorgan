@@ -168,7 +168,11 @@ public abstract class Performance {
 
 	public void setFile(File file) {
 		if (recorder != null) {
-			recorder.setPerformance(file.getPath());
+			if (file == null) {
+				recorder.setPerformance(null);
+			} else {
+				recorder.setPerformance(file.getPath());
+			}
 		}
 	}
 
