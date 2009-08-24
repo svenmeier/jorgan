@@ -1,15 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.7">
+<organ version="@jorgan.version@">
   <elements>
-    <switch id="1">
-      <name>Switch</name>
+    <recorder.play id="6">
+      <name>Play</name>
       <description></description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
-    </switch>
+      <locking>false</locking>
+    </recorder.play>
+    <console id="5">
+      <name>Console</name>
+      <description></description>
+      <references>
+        <console-locationReference id="3">
+          <x>200</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="1">
+          <x>210</x>
+          <y>30</y>
+        </console-locationReference>
+        <console-locationReference id="6">
+          <x>210</x>
+          <y>130</y>
+        </console-locationReference>
+        <console-locationReference id="7">
+          <x>150</x>
+          <y>130</y>
+        </console-locationReference>
+        <console-locationReference id="2">
+          <x>270</x>
+          <y>130</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
     <recorder.record id="2">
       <name>Record</name>
       <description></description>
@@ -19,16 +47,31 @@
       <active>false</active>
       <locking>false</locking>
     </recorder.record>
-    <continuous id="3">
-      <name>Continuous</name>
+    <recorder.stop id="7">
+      <name>Stop</name>
       <description></description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </recorder.stop>
+    <recorder.recorder id="8">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <performance>recorder-example.mid</performance>
+    </recorder.recorder>
+    <switch id="1">
+      <name>Switch</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
       <locking>true</locking>
-      <threshold>0.0</threshold>
-      <value>0.41269842</value>
-    </continuous>
+    </switch>
     <keyboard id="4">
       <name>Keyboard</name>
       <description></description>
@@ -52,63 +95,15 @@
       </messages>
       <input>jOrgan Keyboard</input>
     </keyboard>
-    <console id="5">
-      <name>Console</name>
-      <description></description>
-      <references>
-        <console-locationReference>
-          <element ref="3"/>
-          <x>200</x>
-          <y>60</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="1"/>
-          <x>210</x>
-          <y>30</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="6"/>
-          <x>210</x>
-          <y>130</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="7"/>
-          <x>150</x>
-          <y>130</y>
-        </console-locationReference>
-        <console-locationReference>
-          <element ref="2"/>
-          <x>270</x>
-          <y>130</y>
-        </console-locationReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-    </console>
-    <recorder.play id="6">
-      <name>Play</name>
+    <continuous id="3">
+      <name>Continuous</name>
       <description></description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>false</locking>
-    </recorder.play>
-    <recorder.recorder id="8">
-      <name></name>
-      <description></description>
-      <references/>
-      <messages/>
-      <performance>recorder-example.mid</performance>
-    </recorder.recorder>
-    <recorder.stop id="7">
-      <name>Stop</name>
-      <description></description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>false</locking>
-    </recorder.stop>
+      <locking>true</locking>
+      <threshold>0.0</threshold>
+      <value>0.2857143</value>
+    </continuous>
   </elements>
 </organ>
