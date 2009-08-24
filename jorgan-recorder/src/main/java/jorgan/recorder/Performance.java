@@ -519,14 +519,13 @@ public abstract class Performance {
 						recordEnabled = true;
 					}
 				}
-
 			}
 		}
 
 		if (id != null) {
 			Element element;
 			try {
-				element = play.getOrgan().getElement(Long.parseLong((id)));
+				element = play.getOrgan().getElement(Long.valueOf(id));
 			} catch (Exception e) {
 				return null;
 			}
