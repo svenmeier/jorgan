@@ -34,12 +34,12 @@ import jorgan.util.Null;
  */
 public abstract class Element implements Cloneable {
 
-	private long id;
+	Long id;
 	
 	/**
 	 * The organ this element belongs to.
 	 */
-	private Organ organ;
+	Organ organ;
 	
 	/**
 	 * The name of this element.
@@ -61,15 +61,8 @@ public abstract class Element implements Cloneable {
 
 	private List<Message> messages = new ArrayList<Message>();
 
-	public long getId() {
+	public Long getId() {
 		return id;
-	}
-	
-	/**
-	 * @see Organ#addElement(Element)
-	 */
-	void setId(long id) {
-		this.id = id;
 	}
 	
 	/**
@@ -118,7 +111,7 @@ public abstract class Element implements Cloneable {
 		return organ;
 	}
 
-	protected void setOrgan(Organ organ) {
+	void setOrgan(Organ organ) {
 		if (organ == null) {
 			// we keep references to other elements so this element can be
 			// re-added (eventually cloned) to the previous organ
