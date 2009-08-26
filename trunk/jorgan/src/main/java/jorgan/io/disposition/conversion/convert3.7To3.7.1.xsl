@@ -4,7 +4,7 @@
 	<xsl:template match="reference">
 		<xsl:copy>
 			<xsl:attribute name="id">
-				<xsl:value-of select="element/@ref"/>
+				<xsl:value-of select="translate(element/@ref, '-', '0')"/>
 			</xsl:attribute>
 		</xsl:copy>
 	</xsl:template>
@@ -12,7 +12,7 @@
 	<xsl:template match="console-locationReference">
 		<xsl:copy>
 			<xsl:attribute name="id">
-				<xsl:value-of select="element/@ref"/>
+				<xsl:value-of select="translate(element/@ref, '-', '0')"/>
 			</xsl:attribute>
 
 			<xsl:apply-templates select="x|y"/>
@@ -22,7 +22,7 @@
 	<xsl:template match="combination-switchReference">
 		<xsl:copy>
 			<xsl:attribute name="id">
-				<xsl:value-of select="element/@ref"/>
+				<xsl:value-of select="translate(element/@ref, '-', '0')"/>
 			</xsl:attribute>
 
 			<active>
@@ -37,7 +37,7 @@
 	<xsl:template match="combination-continuousReference">
 		<xsl:copy>
 			<xsl:attribute name="id">
-				<xsl:value-of select="element/@ref"/>
+				<xsl:value-of select="translate(element/@ref, '-', '0')"/>
 			</xsl:attribute>
 
 			<value>
@@ -55,6 +55,12 @@
 		</memory.memory>
 	</xsl:template>
 
+	<xsl:template match="@id">
+		<xsl:attribute name="id">
+			<xsl:value-of select="translate(., '-', '0')"/>
+		</xsl:attribute>
+	</xsl:template>
+	
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>

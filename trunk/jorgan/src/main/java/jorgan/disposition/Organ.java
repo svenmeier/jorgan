@@ -119,25 +119,38 @@ public class Organ {
 		}
 	}
 
-	private long createId(Element element) {
-		boolean present = false;
-		long max = 0;
+	private Long createId(Element element) {
+		Long id = element.getId();
+		
+		long maxId = 0;
 		for (Element other : elements) {
-			if (other.getId() == element.getId()) {
-				present = true;
+			if (other != element) {
+				Long otherId = other.getId();
+				if (otherId != null) {
+					maxId = Math.max(maxId, otherId);
+
+					if (id != null && id.equals(otherId)) {
+						id = null;
+					}
+				}
 			}
-			max = Math.max(max, other.getId());
 		}
-		if (!present) {
-			return element.getId();
+		
+		if (id != null) {
+			return id;
 		} else {
-			return max + 1;
+			return maxId + 1;
 		}
+	}
+	
+	public void bind(Element element) {
+		element.id = createId(element);
+		element.organ = this;
 	}
 	
 	public void addElement(final Element element) {
 
-		element.setId(createId(element));
+		element.id = createId(element);
 		
 		elements.add(element);
 		element.setOrgan(this);
@@ -334,9 +347,9 @@ public class Organ {
 		return clone;
 	}
 
-	public Element getElement(long id) {
+	public Element getElement(Long id) {
 		for (Element element : elements) {
-			if (element.getId() == id) {
+			if (element.getId().equals(id)) {
 				return element;
 			}
 		}

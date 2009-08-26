@@ -18,14 +18,11 @@
  */
 package jorgan.io.disposition;
 
-import java.lang.reflect.Field;
-
 import jorgan.Info;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -37,20 +34,9 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
  * and sets parent reference on unmarshalling.
  * 
  * @see #marshallVersion(HierarchicalStreamWriter)
- * @see #unmarshallElementsOrgan(Organ)
+ * @see #initElementsOrgan(Organ)
  */
 public class OrganConverter implements Converter {
-
-	private static Field elementOrganField;
-
-	static {
-		try {
-			elementOrganField = Element.class.getDeclaredField("organ");
-			elementOrganField.setAccessible(true);
-		} catch (Exception ex) {
-			throw new Error(ex);
-		}
-	}
 
 	private Converter nested;
 
@@ -91,33 +77,19 @@ public class OrganConverter implements Converter {
 	}
 
 	/**
-	 * @see #unmarshallElementsOrgan(Organ)
+	 * @see #initElementsOrgan(Organ)
 	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
 		Organ organ = (Organ) nested.unmarshal(reader, context);
 
-		unmarshallElementsOrgan(organ);
-		
+		for (Element element : organ.getElements()) {
+			organ.bind(element);
+		}
+
 		context.put(Organ.class, organ);
 
 		return organ;
-	}
-
-	/**
-	 * Set the parent reference in all elements of the given organ.
-	 * 
-	 * @param organ
-	 *            organ
-	 */
-	protected void unmarshallElementsOrgan(Organ organ) {
-		try {
-			for (Element element : organ.getElements()) {
-				elementOrganField.set(element, organ);
-			}
-		} catch (Exception ex) {
-			throw new ConversionException(ex);
-		}
 	}
 }

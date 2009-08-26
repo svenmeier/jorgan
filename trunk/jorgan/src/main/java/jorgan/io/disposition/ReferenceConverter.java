@@ -85,7 +85,7 @@ public class ReferenceConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			final UnmarshallingContext context) {
 
-		final long id = Long.valueOf(reader.getAttribute("id"));
+		final Long id = Long.valueOf(reader.getAttribute("id"));
 
 		final Reference<?> reference = (Reference) nested.unmarshal(reader,
 				context);

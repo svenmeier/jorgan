@@ -91,7 +91,7 @@
 				<xsl:if test="//soundSource[@id = $id]">
 		      		<reference>
 		      			<xsl:attribute name="id">
-							<xsl:value-of select="@id"/>-<xsl:value-of select="$program"/>
+							<xsl:value-of select="@id"/>0<xsl:value-of select="$program"/>
 						</xsl:attribute>
 		      		</reference>
 	      		</xsl:if>
@@ -334,7 +334,7 @@
 			<xsl:if test="not($remainder)">
 			    <rank>
 			    	<xsl:attribute name="id">
-			    		<xsl:value-of select="$id"/>-<xsl:value-of select="$program"/>
+			    		<xsl:value-of select="$id"/>0<xsl:value-of select="$program"/>
 			    	</xsl:attribute>
 					<xsl:if test="$device">
 						<output><xsl:value-of select="$device"/></output>
