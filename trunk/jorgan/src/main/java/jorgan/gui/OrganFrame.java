@@ -310,11 +310,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * Stop.
 	 */
 	private void close() {
-		if (canCloseOrgan()) {
-			if (session != null) {
-				session.destroy();
-			}
-
+		if (closeOrgan()) {
 			organPanel.closing();
 
 			config.write(this);
@@ -361,9 +357,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 *            file to open organ from
 	 */
 	public void openOrgan(File file) {
-		// clear current session in case the following opening fails *or*
-		// the new session interferes with the current session
-		setSession(null);
+		closeOrgan();
 
 		OrganSession session;
 		try {
@@ -416,23 +410,16 @@ public class OrganFrame extends JFrame implements SessionAware {
 	}
 
 	/**
-	 * Can the current organ be closed.
+	 * Close the current organ.
 	 * 
-	 * @return <code>true</code> if organ can be closed
+	 * @return <code>true</code> if organ was closed
 	 */
-	public boolean canCloseOrgan() {
-		if (saveAction.mustSave()) {
-			if (saveAction.mustConfirm()) {
-				int option = showBoxMessage("closeOrganConfirmChanges",
-						MessageBox.OPTIONS_YES_NO_CANCEL);
-				if (option == MessageBox.OPTION_CANCEL) {
-					return false;
-				} else if (option == MessageBox.OPTION_NO) {
-					return true;
-				}
-			}
-			return saveOrgan();
+	public boolean closeOrgan() {
+		if (!saveAction.checkSave()) {
+			return false;
 		}
+		
+		setSession(null);
 
 		return true;
 	}
@@ -468,9 +455,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (canCloseOrgan()) {
-				openOrgan(new File((String) getValue(Action.SHORT_DESCRIPTION)));
+			if (!closeOrgan()) {
+				return;
 			}
+			
+			openOrgan(new File((String) getValue(Action.SHORT_DESCRIPTION)));
 		}
 	}
 
@@ -496,15 +485,17 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (canCloseOrgan()) {
-				JFileChooser chooser = new JFileChooser(new DispositionStream()
-						.getRecentDirectory());
-				chooser
-						.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
-				if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-					openOrgan(DispositionFileFilter.addSuffix(chooser
-							.getSelectedFile()));
-				}
+			if (!closeOrgan()) {
+				return;
+			}
+			
+			JFileChooser chooser = new JFileChooser(new DispositionStream()
+					.getRecentDirectory());
+			chooser
+					.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
+			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+				openOrgan(DispositionFileFilter.addSuffix(chooser
+						.getSelectedFile()));
 			}
 		}
 	}
@@ -521,9 +512,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			if (canCloseOrgan()) {
-				setSession(null);
-			}
+			closeOrgan();
 		}
 	}
 
@@ -539,18 +528,38 @@ public class OrganFrame extends JFrame implements SessionAware {
 			setEnabled(false);
 		}
 
+		public boolean checkSave() {
+			if (mustSave()) {
+				if (saveAction.mustConfirm()) {
+					int option = showBoxMessage("closeOrganConfirmChanges",
+							MessageBox.OPTIONS_YES_NO_CANCEL);
+					if (option == MessageBox.OPTION_CANCEL) {
+						return false;
+					} else if (option == MessageBox.OPTION_NO) {
+						return true;
+					}
+				}
+
+				if (!saveOrgan()) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
 		public void actionPerformed(ActionEvent ev) {
 			saveOrgan();
 
 			setEnabled(false);
 		}
 
-		public boolean mustSave() {
+		private boolean mustSave() {
 			return undoableChanges
 					|| (changes && (handleRegistrationChanges != REGISTRATION_CHANGES_DISCARD));
 		}
 
-		public boolean mustConfirm() {
+		private boolean mustConfirm() {
 			return undoableChanges
 					|| (handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM);
 		}
