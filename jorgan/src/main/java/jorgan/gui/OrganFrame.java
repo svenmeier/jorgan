@@ -393,6 +393,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public boolean saveOrgan() {
 		try {
 			session.save();
+			
+			showStatusMessage("organSaved");
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
@@ -426,8 +428,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	protected void showStatusMessage(String key, Object... args) {
 
-		statusBar.setStatus(config.get(key).read(new MessageBuilder()).build(
-				args));
+		if (key == null) {
+			statusBar.setStatus(null);
+		} else {
+			statusBar.setStatus(config.get(key).read(new MessageBuilder()).build(
+					args));
+		}
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
@@ -575,6 +581,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void afterChange(Change change) {
+			showStatusMessage(null);
+
 			changes = true;
 			if (change instanceof UndoableChange) {
 				undoableChanges = true;
@@ -710,7 +718,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void saved(File file) {
-			showStatusMessage("organSaved", new Object[0]);
 		}
 
 		public void destroyed() {
