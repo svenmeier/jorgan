@@ -10,6 +10,7 @@ call %ANT% -buildfile ../fluidsynth/build.xml
 call %ANT% -buildfile ../importer/build.xml
 call %ANT% -buildfile ../keyboard/build.xml
 call %ANT% -buildfile ../linuxsampler/build.xml
+call %ANT% -buildfile ../memory/build.xml
 call %ANT% -buildfile ../midimerger/build.xml
 call %ANT% -buildfile ../recorder/build.xml
 call %ANT% -buildfile ../skins/build.xml

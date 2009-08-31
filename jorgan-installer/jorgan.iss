@@ -40,6 +40,7 @@ Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
 Name: "importer"; Description: "Importer"; Types: full
 Name: "keyboard"; Description: "Keyboard"; Types: full
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: full
+Name: "memory"; Description: "Memory"; Types: full
 Name: "midimerger"; Description: "Midi merger"; Types: full
 Name: "recorder"; Description: "Recorder"; Types: full
 Name: "skins"; Description: "Skins"; Types: full
@@ -54,6 +55,7 @@ Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsyn
 Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
 Source: "..\keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
 Source: "..\linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
+Source: "..\memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
 Source: "..\midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
 Source: "..\recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
 Source: "..\skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
