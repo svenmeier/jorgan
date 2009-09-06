@@ -167,7 +167,7 @@ public class RecorderDockable extends OrganDockable {
 	}
 
 	private boolean canEject() {
-		if (performance.isLoaded()) {
+		if (performance.isLoaded() && performance.isChanged()) {
 			int option = showBoxMessage("eject/confirm",
 					MessageBox.OPTIONS_YES_NO_CANCEL);
 			if (option == MessageBox.OPTION_CANCEL) {
