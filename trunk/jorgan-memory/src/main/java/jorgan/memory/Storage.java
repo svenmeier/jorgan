@@ -123,9 +123,9 @@ public abstract class Storage {
 
 	public File getFile() {
 		if (memory != null) {
-			String store = memory.getStorage();
-			if (store != null) {
-				return resolve(store);
+			String storage = memory.getStorage();
+			if (storage != null) {
+				return resolve(storage);
 			}
 		}
 		return null;
@@ -232,13 +232,13 @@ public abstract class Storage {
 		
 		memory = organ.getElement(Memory.class);
 		if (memory != null) {
-			problems.removeProblem(new Problem(Severity.ERROR, memory, "store",
+			problems.removeProblem(new Problem(Severity.ERROR, memory, "storage",
 					null));
 
-			String store = memory.getStorage();
-			if (store != null) {
+			String storage = memory.getStorage();
+			if (storage != null) {
 				try {
-					File file = resolve(store);
+					File file = resolve(storage);
 
 					if (file.exists()) {
 						memoryState = new MemoryStateStream().read(file);
@@ -248,7 +248,7 @@ public abstract class Storage {
 					}
 				} catch (Exception e) {
 					problems.addProblem(new Problem(Severity.ERROR, memory,
-							"store", createMessage("load", store)));
+							"storage", createMessage("load", storage)));
 				}
 			}
 		}
