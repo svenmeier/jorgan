@@ -43,16 +43,7 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 	}
 
 	public Channel filter(Channel channel) {
-		ChannelFilter channelFilter = new ChannelFilter(channel);
-
-		SwitchFilter filter = getElement();
-		if (filter.isEngaged()) {
-			channelFilter.engaged();
-		} else {
-			channelFilter.disengaged();
-		}
-
-		return channelFilter;
+		return new ChannelFilter(channel);
 	}
 
 	@Override
@@ -92,6 +83,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 	private class ChannelFilter extends PlayerContext implements Channel {
 
 		private Channel channel;
+		
+		private boolean inited = false;
 
 		public ChannelFilter(Channel channel) {
 			this.channel = channel;
@@ -99,18 +92,32 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			channels.add(this);
 		}
 
+		public void init() {
+			// no need if already done
+			if (!inited) {
+				SwitchFilter filter = getElement();
+				if (filter.isEngaged()) {
+					engaged();
+				} else {
+					disengaged();
+				}
+			}
+			
+			channel.init();
+		}
+		
 		public void sendMessage(int command, int data1, int data2) {
 			SwitchFilter element = getElement();
 
-			boolean filtered = false;
+			boolean intercepted = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
 				if (process(message, command, data1, data2)) {
-					filtered = true;
+					intercepted = true;
 				}
 			}
 
-			if (filtered) {
+			if (intercepted) {
 				if (element.isEngaged()) {
 					engaged();
 				} else {
@@ -125,6 +132,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 				output(engaged, this);
 			}
+			
+			inited = true;
 		}
 
 		private void disengaged() {
@@ -132,6 +141,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 					Disengaged.class)) {
 				output(disengaged, this);
 			}
+			
+			inited = true;
 		}
 
 		public void sendFilteredMessage(int command, int data1, int data2) {

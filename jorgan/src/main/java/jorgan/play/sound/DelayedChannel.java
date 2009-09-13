@@ -51,6 +51,10 @@ public class DelayedChannel implements Channel {
 		this.delay = delay;
 	}
 
+	public void init() {
+		channel.init();
+	}
+	
 	public void sendMessage(final int command, final int data1, final int data2) {
 		new DelayedInvocation() {
 			@Override

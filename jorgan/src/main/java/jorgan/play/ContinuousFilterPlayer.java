@@ -42,11 +42,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	public Channel filter(Channel channel) {
-		ChannelFilter channelFilter = new ChannelFilter(channel);
-
-		channelFilter.engaging();
-
-		return channelFilter;
+		return new ChannelFilter(channel);
 	}
 
 	@Override
@@ -78,6 +74,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	private class ChannelFilter extends PlayerContext implements Channel {
 
 		private Channel channel;
+		
+		private boolean inited;
 
 		public ChannelFilter(Channel channel) {
 			this.channel = channel;
@@ -85,18 +83,27 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			channels.add(this);
 		}
 
+		public void init() {
+			// no need if already done
+			if (!inited) {
+				engaging();
+			}
+			
+			channel.init();
+		}
+		
 		public void sendMessage(int command, int data1, int data2) {
 			ContinuousFilter element = getElement();
 
-			boolean filtered = false;
+			boolean intercepted = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
 				if (process(message, command, data1, data2)) {
-					filtered = true;
+					intercepted = true;
 				}
 			}
 
-			if (filtered) {
+			if (intercepted) {
 				engaging();
 			} else {
 				channel.sendMessage(command, data1, data2);
@@ -110,6 +117,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 				set(Engaging.VALUE, filter.getValue());
 				output(engaging, this);
 			}
+			
+			inited = true;
 		}
 
 		public void sendFilteredMessage(int command, int data1, int data2) {

@@ -23,6 +23,8 @@ package jorgan.play.sound;
  */
 public interface Channel {
 
+	public void init();
+	
 	/**
 	 * Send a message.
 	 * 
