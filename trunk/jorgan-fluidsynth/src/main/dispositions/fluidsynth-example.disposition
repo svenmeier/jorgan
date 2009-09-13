@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.7">
+<organ version="@jorgan.version@">
   <elements>
     <rank id="1">
       <name>Rank 1</name>
@@ -12,6 +12,11 @@
       <messages>
         <rank-engaged>
           <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
           <data1>set 0</data1>
           <data2>set 0</data2>
         </rank-engaged>
@@ -20,11 +25,6 @@
           <data1>set 1</data1>
           <data2></data2>
         </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-disengaged>
         <rank-disengaged>
           <status>set 176</status>
           <data1>set 123</data1>
@@ -56,6 +56,11 @@
       <messages>
         <rank-engaged>
           <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
           <data1>set 0</data1>
           <data2>set 0</data2>
         </rank-engaged>
@@ -64,11 +69,6 @@
           <data1>set 0</data1>
           <data2></data2>
         </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-disengaged>
         <rank-disengaged>
           <status>set 176</status>
           <data1>set 123</data1>
