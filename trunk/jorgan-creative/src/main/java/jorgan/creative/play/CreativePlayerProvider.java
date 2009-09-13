@@ -18,6 +18,7 @@
  */
 package jorgan.creative.play;
 
+import jorgan.creative.SoundFontManager;
 import jorgan.creative.disposition.CreativeSound;
 import jorgan.disposition.Element;
 import jorgan.play.Player;
@@ -27,6 +28,11 @@ import jorgan.play.spi.PlayerProvider;
  * Provider of creative players.
  */
 public class CreativePlayerProvider implements PlayerProvider {
+
+	public CreativePlayerProvider() {
+		// trigger loading of native library to fail early
+		new SoundFontManager();
+	}
 
 	public Player<CreativeSound> createPlayer(Element element) {
 		if (element.getClass() == CreativeSound.class) {
