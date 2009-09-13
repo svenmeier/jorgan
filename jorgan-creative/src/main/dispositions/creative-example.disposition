@@ -1,64 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.5.1">
+<organ version="@jorgan.version@">
   <elements>
-    <rank id="1">
-      <channel></channel>
-      <delay>0</delay>
-      <zoom>1.0</zoom>
-      <name>Rank 1</name>
-      <description></description>
-      <references>
-        <reference id="2"/>
-      </references>
-      <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 0</data1>
-          <data2>set 1</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 1</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
-      </messages>
-    </rank>
-    <stop id="3">
-      <action>0</action>
-      <transpose>0</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 0</name>
-      <description></description>
-      <references>
-        <reference id="4"/>
-      </references>
-      <messages/>
-    </stop>
     <console id="5">
-      <screen>:0.0</screen>
-      <zoom>1.0</zoom>
       <name></name>
       <description></description>
       <references>
@@ -76,9 +19,10 @@
         </console-locationReference>
       </references>
       <messages/>
+      <zoom>1.0</zoom>
+      <screen>:0.0</screen>
     </console>
     <keyboard id="8">
-      <input>jOrgan Keyboard</input>
       <name></name>
       <description></description>
       <references>
@@ -102,32 +46,19 @@
           <data2>equal 0 | get velocity</data2>
         </keyboard-releaseKey>
       </messages>
+      <input>jOrgan Keyboard</input>
     </keyboard>
-    <stop id="6">
-      <action>0</action>
-      <transpose>-12</transpose>
-      <active>false</active>
-      <locking>true</locking>
-      <zoom>1.0</zoom>
-      <name>Stop 1</name>
+    <creative.creativeSound id="2">
+      <name></name>
       <description></description>
-      <references>
-        <reference id="1"/>
-      </references>
-      <messages/>
-    </stop>
-    <label id="7">
-      <zoom>1.0</zoom>
-      <name>Instructions</name>
-      <description>name=Use the Device Wizard to adjust the output of the CreativeSound element.  Then activate the stops to hear them sound:</description>
       <references/>
       <messages/>
-    </label>
-    <rank id="4">
-      <channel></channel>
-      <delay>0</delay>
-      <zoom>1.0</zoom>
-      <name>Rank 0</name>
+      <output>SB Live! Synth A [BC00]</output>
+      <soundfont>creative-example.SF2</soundfont>
+      <bank>1</bank>
+    </creative.creativeSound>
+    <rank id="1">
+      <name>Rank 1</name>
       <description></description>
       <references>
         <reference id="2"/>
@@ -135,19 +66,19 @@
       <messages>
         <rank-engaged>
           <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
           <data1>set 0</data1>
           <data2>set 1</data2>
         </rank-engaged>
         <rank-engaged>
           <status>set 192</status>
-          <data1>set 0</data1>
+          <data1>set 1</data1>
           <data2></data2>
         </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-disengaged>
         <rank-disengaged>
           <status>set 176</status>
           <data1>set 123</data1>
@@ -164,15 +95,84 @@
           <data2></data2>
         </rank-noteMuted>
       </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
     </rank>
-    <creative.creativeSound id="2">
-      <soundfont>creative-example.SF2</soundfont>
-      <bank>1</bank>
-      <output>SB Live! Synth A [BC00]</output>
-      <name></name>
+    <rank id="4">
+      <name>Rank 0</name>
       <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 1</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 0</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <label id="7">
+      <name>Instructions</name>
+      <description>name=Use the Device Wizard to adjust the output of the CreativeSound element.  Then activate the stops to hear them sound:</description>
       <references/>
       <messages/>
-    </creative.creativeSound>
+      <zoom>1.0</zoom>
+    </label>
+    <stop id="3">
+      <name>Stop 0</name>
+      <description></description>
+      <references>
+        <reference id="4"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <stop id="6">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference id="1"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+      <action>0</action>
+      <transpose>-12</transpose>
+    </stop>
   </elements>
 </organ>
