@@ -88,6 +88,9 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 			channels.set(channel, this);
 		}
 
+		public void init() {
+		}
+		
 		/**
 		 * Release.
 		 */

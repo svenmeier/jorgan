@@ -75,9 +75,12 @@ public class RankPlayer extends Player<Rank> {
 				SoundPlayer<?> player = (SoundPlayer<?>) getOrganPlay()
 						.getPlayer(sound);
 
-				channel = player.createChannel(new RankChannelFilter(rank
-						.getChannel()));
-				break;
+				// sound might not have player
+				if (player != null) {
+					channel = player.createChannel(new RankChannelFilter(rank
+							.getChannel()));
+					break;
+				}
 			}
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
@@ -108,7 +111,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		this.channel = new ChannelImpl(channel);
-		this.channel.engaged();
+		this.channel.init();
 	}
 
 	private void disengaged() {
@@ -173,6 +176,12 @@ public class RankPlayer extends Player<Rank> {
 			this.channel = channel;
 		}
 
+		public void init() {
+			engaged();
+			
+			channel.init();
+		}
+		
 		public void engaged() {
 			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 				output(engaged, this);
@@ -213,6 +222,9 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private class DeadChannel implements Channel {
+		public void init() {
+		}
+		
 		public void sendMessage(int command, int data1, int data2) {
 		}
 
