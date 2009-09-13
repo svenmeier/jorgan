@@ -61,6 +61,30 @@
 		</xsl:attribute>
 	</xsl:template>
 	
+	<xsl:template match="rank">
+		<rank>
+			<xsl:apply-templates select="@*|*[not(self::messages)]"/>
+			<messages>
+				<xsl:for-each select="messages/rank-disengaged">
+					<xsl:if test="status = 'set 176' and data1 = 'set 121'">
+						<rank-engaged>
+							<status>set 176</status>
+							<data1>set 121</data1>
+							<data2></data2>
+						</rank-engaged>
+					</xsl:if>
+				</xsl:for-each>
+				<xsl:for-each select="messages/*">
+					<xsl:if test="not(status = 'set 176') or not(data1 = 'set 121') or not(name() = 'rank-disengaged')">
+						<xsl:copy>
+							<xsl:apply-templates select="node()"/>
+						</xsl:copy>
+					</xsl:if>
+				</xsl:for-each>
+			</messages>
+		</rank>
+	</xsl:template>
+
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
