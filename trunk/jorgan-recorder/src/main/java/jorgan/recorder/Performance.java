@@ -159,7 +159,7 @@ public abstract class Performance {
 
 		new MidiStream().write(sequence, resolve(performance));
 		
-		changed = true;
+		changed = false;
 	}
 
 	public File getFile() {
