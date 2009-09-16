@@ -398,7 +398,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session
+			showBoxMessage("saveIOException", MessageBox.OPTIONS_OK, session
 					.getFile().getName());
 
 			return false;
