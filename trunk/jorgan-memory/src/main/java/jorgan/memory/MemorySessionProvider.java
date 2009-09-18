@@ -48,6 +48,9 @@ public class MemorySessionProvider implements SessionProvider {
 				public void constructingChanged(boolean constructing) {
 				}
 
+				public void modified() {
+				}
+				
 				public void saved(File file) throws IOException {
 					if (storage.isLoaded()) {
 						storage.save();

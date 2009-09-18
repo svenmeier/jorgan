@@ -208,7 +208,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		if (this.session != null) {
 			setConstructing(this.session.isConstructing());
 
-			this.session.addListener(eventsListener);
+			this.session.addListener((SessionListener)Spin.over(eventsListener));
 			this.session.lookup(ElementSelection.class)
 					.addListener(eventsListener);
 			this.session.lookup(UndoManager.class).addListener(
@@ -444,7 +444,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			updateHistory();
 		}
 
-		public void changed() {
+		public void modified() {
 			undoAction.setEnabled(session.lookup(UndoManager.class).canUndo());
 			redoAction.setEnabled(session.lookup(UndoManager.class).canRedo());
 		}

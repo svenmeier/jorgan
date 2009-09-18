@@ -55,8 +55,8 @@ public class GuiCategory extends JOrganCategory {
 	private Model fullScreenOnLoad = getModel(new Property(OrganFrame.class,
 			"fullScreenOnLoad"));
 
-	private Model handleRegistrationChanges = getModel(new Property(
-			OrganFrame.class, "handleRegistrationChanges"));
+	private Model handleChanges = getModel(new Property(
+			OrganFrame.class, "handleChanges"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
@@ -120,14 +120,14 @@ public class GuiCategory extends JOrganCategory {
 		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
 				.getValue());
 
-		switch ((Integer) handleRegistrationChanges.getValue()) {
-		case OrganFrame.REGISTRATION_CHANGES_CONFIRM:
+		switch ((Integer) handleChanges.getValue()) {
+		case OrganFrame.CHANGES_CONFIRM:
 			changesConfirmRadioButton.setSelected(true);
 			break;
-		case OrganFrame.REGISTRATION_CHANGES_SAVE:
+		case OrganFrame.CHANGES_SAVE:
 			changesSaveRadioButton.setSelected(true);
 			break;
-		case OrganFrame.REGISTRATION_CHANGES_DISCARD:
+		case OrganFrame.CHANGES_DISCARD:
 			changesDiscardRadioButton.setSelected(true);
 			break;
 		}
@@ -141,12 +141,12 @@ public class GuiCategory extends JOrganCategory {
 
 		int registrationChanges = 0;
 		if (changesConfirmRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.REGISTRATION_CHANGES_CONFIRM;
+			registrationChanges = OrganFrame.CHANGES_CONFIRM;
 		} else if (changesSaveRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.REGISTRATION_CHANGES_SAVE;
+			registrationChanges = OrganFrame.CHANGES_SAVE;
 		} else if (changesDiscardRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.REGISTRATION_CHANGES_DISCARD;
+			registrationChanges = OrganFrame.CHANGES_DISCARD;
 		}
-		handleRegistrationChanges.setValue(registrationChanges);
+		handleChanges.setValue(registrationChanges);
 	}
 }

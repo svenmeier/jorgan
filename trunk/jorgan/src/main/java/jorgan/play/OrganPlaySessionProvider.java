@@ -57,6 +57,9 @@ public class OrganPlaySessionProvider implements SessionProvider {
 					}
 				}
 
+				public void modified() {
+				}
+				
 				public void saved(File file) {
 				}
 				

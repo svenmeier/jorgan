@@ -117,6 +117,9 @@ public class CustomizeAction extends BaseAction {
 		public void constructingChanged(boolean constructing) {
 		}
 
+		public void modified() {
+		}
+		
 		public void saved(File file) {
 		}
 		

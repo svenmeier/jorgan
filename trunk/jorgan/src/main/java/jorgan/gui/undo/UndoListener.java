@@ -24,5 +24,5 @@ package jorgan.gui.undo;
  */
 public interface UndoListener {
 
-    public void changed();
+    public void modified();
 }
