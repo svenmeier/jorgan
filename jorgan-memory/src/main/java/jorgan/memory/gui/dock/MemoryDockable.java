@@ -149,7 +149,7 @@ public class MemoryDockable extends OrganDockable {
 	}
 
 	private boolean canEject() {
-		if (storage.isLoaded() && storage.isChanged()) {
+		if (storage.isLoaded() && storage.isModified()) {
 			int option = showBoxMessage("eject/confirm", MessageBox.OPTIONS_YES_NO_CANCEL);
 			if (option == MessageBox.OPTION_CANCEL) {
 				return false;
