@@ -55,7 +55,7 @@ public abstract class Storage {
 
 	private ElementProblems problems;
 
-	private boolean changed = false;
+	private boolean modified = false;
 
 	public Storage(Organ organ, ElementProblems problems) {
 		this.organ = organ;
@@ -181,7 +181,7 @@ public abstract class Storage {
 		if (memoryState != null) {
 			memoryState.read(memory, getIndex());
 			
-			changed  = true;
+			modified  = true;
 		}
 	}
 
@@ -224,7 +224,7 @@ public abstract class Storage {
 
 		memoryState.setTitle(index, title);
 		
-		changed = true;
+		modified = true;
 	}
 
 	public void load() {
@@ -253,7 +253,7 @@ public abstract class Storage {
 			}
 		}
 
-		changed = false;
+		modified = false;
 
 		fireChanged();
 	}
@@ -263,7 +263,7 @@ public abstract class Storage {
 
 		new MemoryStateStream().write(memoryState, resolve(storage));
 		
-		changed = false;
+		modified = false;
 	}
 
 	protected String createMessage(String key, Object... args) {
@@ -280,7 +280,7 @@ public abstract class Storage {
 		return memoryState != null;
 	}
 	
-	public boolean isChanged() {
-		return changed;
+	public boolean isModified() {
+		return modified;
 	}	
 }

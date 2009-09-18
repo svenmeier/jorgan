@@ -80,7 +80,7 @@ public abstract class Performance {
 
 	private int state = STATE_STOP;
 
-	private boolean changed = false;
+	private boolean modified = false;
 
 	/**
 	 * Record the given session.
@@ -144,7 +144,7 @@ public abstract class Performance {
 			}
 		}
 
-		changed = false;
+		modified = false;
 		
 		fireChanged();
 	}
@@ -159,7 +159,7 @@ public abstract class Performance {
 
 		new MidiStream().write(sequence, resolve(performance));
 		
-		changed = false;
+		modified = false;
 	}
 
 	public File getFile() {
@@ -193,8 +193,8 @@ public abstract class Performance {
 		return messageRecorder != null;
 	}
 
-	public boolean isChanged() {
-		return changed ;
+	public boolean isModified() {
+		return modified;
 	}
 	
 	private void initSequence(Sequence sequence) {
@@ -260,7 +260,7 @@ public abstract class Performance {
 
 		messageRecorder.start();
 
-		changed = true;
+		modified = true;
 		
 		fireStateChanged();
 	}
@@ -368,7 +368,7 @@ public abstract class Performance {
 
 		trackers.set(track, tracker);
 
-		changed = true;
+		modified = true;
 		
 		fireChanged();
 	}
@@ -393,7 +393,7 @@ public abstract class Performance {
 		
 		initSequence(sequence);
 		
-		changed = true;
+		modified = true;
 		
 		fireChanged();
 	}
@@ -407,7 +407,7 @@ public abstract class Performance {
 		
 		initSequence(sequence);
 		
-		changed = true;
+		modified = true;
 		
 		fireChanged();
 	}
