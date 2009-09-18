@@ -48,9 +48,6 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.event.Change;
-import jorgan.disposition.event.OrganObserver;
-import jorgan.disposition.event.UndoableChange;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
@@ -75,11 +72,11 @@ import bias.util.MessageBuilder;
  */
 public class OrganFrame extends JFrame implements SessionAware {
 
-	public static final int REGISTRATION_CHANGES_CONFIRM = 0;
+	public static final int CHANGES_CONFIRM = 0;
 
-	public static final int REGISTRATION_CHANGES_SAVE = 1;
+	public static final int CHANGES_SAVE = 1;
 
-	public static final int REGISTRATION_CHANGES_DISCARD = 2;
+	public static final int CHANGES_DISCARD = 2;
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
@@ -138,7 +135,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private boolean fullScreenOnLoad = false;
 
-	private int handleRegistrationChanges;
+	private int handleChanges;
 
 	/**
 	 * Create a new organFrame.
@@ -298,12 +295,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 		this.fullScreenOnLoad = fullScreenOnLoad;
 	}
 
-	public int getHandleRegistrationChanges() {
-		return handleRegistrationChanges;
+	public int getHandleChanges() {
+		return handleChanges;
 	}
 
-	public void setHandleRegistrationChanges(int handleRegistrationChanges) {
-		this.handleRegistrationChanges = handleRegistrationChanges;
+	public void setHandleChanges(int handleChanges) {
+		this.handleChanges = handleChanges;
 	}
 
 	/**
@@ -325,25 +322,21 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (this.session != null) {
 			this.session.destroy();
 
-			this.session.getOrgan().removeOrganObserver(
-					(OrganObserver) Spin.over(saveAction));
-			this.session.removeListener(handler);
+			this.session.removeListener((SessionListener) Spin.over(handler));
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.getOrgan().addOrganObserver(
-					(OrganObserver) Spin.over(saveAction));
-			this.session.addListener(handler);
+			this.session.addListener((SessionListener) Spin.over(handler));
 		}
 
 		constructButton.setEnabled(this.session != null);
 		constructButton.setSelected(this.session != null
 				&& this.session.isConstructing());
 
-		saveAction.newSession();
-		closeAction.newSession();
+		saveAction.onSession();
+		closeAction.onSession();
 
 		organPanel.setSession(session);
 
@@ -393,7 +386,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public boolean saveOrgan() {
 		try {
 			session.save();
-			
+
 			showStatusMessage("organSaved");
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
@@ -403,8 +396,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			return false;
 		}
-
-		saveAction.newSession();
 
 		buildMenu();
 
@@ -420,7 +411,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (!saveAction.checkSave()) {
 			return false;
 		}
-		
+
 		setSession(null);
 
 		return true;
@@ -431,8 +422,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (key == null) {
 			statusBar.setStatus(null);
 		} else {
-			statusBar.setStatus(config.get(key).read(new MessageBuilder()).build(
-					args));
+			statusBar.setStatus(config.get(key).read(new MessageBuilder())
+					.build(args));
 		}
 	}
 
@@ -464,7 +455,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			if (!closeOrgan()) {
 				return;
 			}
-			
+
 			openOrgan(new File((String) getValue(Action.SHORT_DESCRIPTION)));
 		}
 	}
@@ -494,11 +485,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 			if (!closeOrgan()) {
 				return;
 			}
-			
+
 			JFileChooser chooser = new JFileChooser(new DispositionStream()
 					.getRecentDirectory());
-			chooser
-					.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
+			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				openOrgan(DispositionFileFilter.addSuffix(chooser
 						.getSelectedFile()));
@@ -513,7 +503,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			setEnabled(false);
 		}
 
-		public void newSession() {
+		public void onSession() {
 			setEnabled(session != null);
 		}
 
@@ -522,11 +512,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 	}
 
-	private class SaveAction extends BaseAction implements OrganObserver {
-
-		private boolean changes = false;
-
-		private boolean undoableChanges = false;
+	private class SaveAction extends BaseAction {
 
 		private SaveAction() {
 			config.get("save").read(this);
@@ -535,8 +521,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public boolean checkSave() {
-			if (mustSave()) {
-				if (saveAction.mustConfirm()) {
+			if (session != null && session.isModified() && handleChanges != CHANGES_DISCARD) {
+				if (handleChanges == CHANGES_CONFIRM) {
 					int option = showBoxMessage("closeOrganConfirmChanges",
 							MessageBox.OPTIONS_YES_NO_CANCEL);
 					if (option == MessageBox.OPTION_CANCEL) {
@@ -550,45 +536,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 					return false;
 				}
 			}
-			
+
 			return true;
 		}
 
 		public void actionPerformed(ActionEvent ev) {
 			saveOrgan();
-
-			setEnabled(false);
 		}
 
-		private boolean mustSave() {
-			return undoableChanges
-					|| (changes && (handleRegistrationChanges != REGISTRATION_CHANGES_DISCARD));
-		}
-
-		private boolean mustConfirm() {
-			return undoableChanges
-					|| (handleRegistrationChanges == REGISTRATION_CHANGES_CONFIRM);
-		}
-
-		public void newSession() {
-			changes = false;
-			undoableChanges = false;
-
-			setEnabled(false);
-		}
-
-		public void beforeChange(Change change) {
-		}
-
-		public void afterChange(Change change) {
-			showStatusMessage(null);
-
-			changes = true;
-			if (change instanceof UndoableChange) {
-				undoableChanges = true;
-			}
-
-			setEnabled(true);
+		public void onSession() {
+			setEnabled(session != null && session.isModified());
+			
+			statusBar.setStatus(null);
 		}
 	}
 
@@ -717,7 +676,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 			constructButton.setSelected(constructing);
 		}
 
+		public void modified() {
+			saveAction.onSession();
+		}
+		
 		public void saved(File file) {
+			saveAction.onSession();
 		}
 
 		public void destroyed() {

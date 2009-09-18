@@ -53,6 +53,9 @@ public class RecorderSessionProvider implements SessionProvider {
 					performance.stop();
 				}
 
+				public void modified() {
+				}
+				
 				public void saved(File file) throws IOException {
 					if (performance.isLoaded()) {
 						performance.save();

@@ -26,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 
 import jorgan.disposition.Organ;
+import jorgan.disposition.event.Change;
+import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.spi.ElementRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.session.spi.SessionRegistry;
@@ -44,6 +46,8 @@ public class OrganSession {
 
 	private List<SessionListener> listeners = new ArrayList<SessionListener>();
 
+	private boolean modified = false;
+	
 	private boolean constructing = false;
 
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
@@ -57,12 +61,37 @@ public class OrganSession {
 			organ = createOrgan();
 		}
 
+		organ.addOrganObserver(new OrganObserver() {
+			public void beforeChange(Change change) {
+			}
+
+			public void afterChange(Change change) {
+				markModified();
+			}
+		});
+		
 		SessionRegistry.init(this);
 	}
 
+	public boolean isModified() {
+		return modified;
+	}
+	
+	public void markModified() {
+		if (!modified) {
+			modified = true;
+
+			for (SessionListener listener : listeners) {
+				listener.modified();
+			}
+		}
+	}
+	
 	public void save() throws IOException {
 		new DispositionStream().write(organ, file);
 
+		modified = false;
+		
 		for (SessionListener listener : listeners) {
 			listener.saved(file);
 		}

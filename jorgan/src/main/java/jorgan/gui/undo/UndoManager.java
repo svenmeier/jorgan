@@ -87,7 +87,7 @@ public class UndoManager {
 
 	private void fireChange() {
 		for (UndoListener listener : listeners) {
-			listener.changed();
+			listener.modified();
 		}
 	}
 

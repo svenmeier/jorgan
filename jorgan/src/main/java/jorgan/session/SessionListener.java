@@ -32,6 +32,11 @@ public interface SessionListener {
 	public void constructingChanged(boolean constructing);
 	
 	/**
+	 * @see {@link OrganSession#markModified()}
+	 */
+	public void modified();
+	
+	/**
 	 * @throws IOException 
 	 * @see {@link OrganSession#save(java.io.File)}
 	 */
