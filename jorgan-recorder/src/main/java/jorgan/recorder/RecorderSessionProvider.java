@@ -47,6 +47,12 @@ public class RecorderSessionProvider implements SessionProvider {
 				protected File resolve(String name) {
 					return session.resolve(name);
 				}
+				@Override
+				protected void markModified() {
+					super.markModified();
+					
+					session.markModified();
+				}
 			};
 			session.addListener(new SessionListener() {
 				public void constructingChanged(boolean constructing) {

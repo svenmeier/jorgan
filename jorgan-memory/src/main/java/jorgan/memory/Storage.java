@@ -224,7 +224,7 @@ public abstract class Storage {
 
 		memoryState.setTitle(index, title);
 		
-		modified = true;
+		markModified();
 	}
 
 	public void load() {
@@ -282,5 +282,9 @@ public abstract class Storage {
 	
 	public boolean isModified() {
 		return modified;
-	}	
+	}
+	
+	protected void markModified() {
+		this.modified = true;
+	}
 }
