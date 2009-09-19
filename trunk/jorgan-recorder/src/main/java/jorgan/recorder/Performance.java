@@ -197,6 +197,10 @@ public abstract class Performance {
 		return modified;
 	}
 	
+	protected void markModified() {
+		modified = true;
+	}
+	
 	private void initSequence(Sequence sequence) {
 		if (this.messageRecorder != null) {
 			for (Tracker tracker : trackers) {
@@ -260,7 +264,7 @@ public abstract class Performance {
 
 		messageRecorder.start();
 
-		modified = true;
+		markModified();
 		
 		fireStateChanged();
 	}
@@ -368,7 +372,7 @@ public abstract class Performance {
 
 		trackers.set(track, tracker);
 
-		modified = true;
+		markModified();
 		
 		fireChanged();
 	}
@@ -393,7 +397,7 @@ public abstract class Performance {
 		
 		initSequence(sequence);
 		
-		modified = true;
+		markModified();
 		
 		fireChanged();
 	}
@@ -407,7 +411,7 @@ public abstract class Performance {
 		
 		initSequence(sequence);
 		
-		modified = true;
+		markModified();
 		
 		fireChanged();
 	}
