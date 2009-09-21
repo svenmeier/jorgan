@@ -48,7 +48,7 @@ public class Memory extends IndexedContinuous {
 
 			this.size = size;
 
-			fireChange(new UndoablePropertyChange(oldSize, size));
+			fireChange(new PropertyChange(oldSize, size));
 		}
 	}
 
@@ -62,7 +62,7 @@ public class Memory extends IndexedContinuous {
 
 			this.storage = storage;
 
-			fireChange(new UndoablePropertyChange(oldStore, this.storage));
+			fireChange(new PropertyChange(oldStore, this.storage));
 		}
 	}
 }

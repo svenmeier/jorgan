@@ -56,13 +56,13 @@ public class Combination extends Switch implements Activating {
 		}
 	}
 
-	@Override
-	protected void onEngaged(boolean engaged) {
-		// no need to captureOrRecall if onActivated() already did it
-		if (engaged && !isActive()) {
-			captureOrRecall();
-		}
-	}
+//	 captureOrRecall on engaged no longer supported for simplicity
+//	@Override
+//	protected void onEngaged(boolean engaged) {
+//		if (engaged) {
+//			captureOrRecall();
+//		}
+//	}
 
 	private void captureOrRecall() {
 		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
@@ -94,7 +94,7 @@ public class Combination extends Switch implements Activating {
 		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.capture();
 
-			fireChange(new ReferenceChange(reference));
+			fireChange(new FastReferenceChange(reference));
 		}
 
 		captor.combinationCaptured();
@@ -120,6 +120,10 @@ public class Combination extends Switch implements Activating {
 		}
 	}
 
+	public boolean isRecalling() {
+		return recalling;
+	}
+	
 	private static abstract class AbstractReference<E extends Element> extends
 			Reference<E> {
 

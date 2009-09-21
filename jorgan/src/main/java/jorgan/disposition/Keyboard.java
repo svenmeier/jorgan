@@ -63,7 +63,7 @@ public class Keyboard extends Element implements Input {
 
 			this.input = input;
 
-			fireChange(new UndoablePropertyChange(oldInput, this.input));
+			fireChange(new PropertyChange(oldInput, this.input));
 		}
 	}
 

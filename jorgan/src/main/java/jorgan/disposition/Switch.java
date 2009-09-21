@@ -49,7 +49,7 @@ public class Switch extends Engageable {
 
 			this.shortcut = shortcut;
 
-			fireChange(new UndoablePropertyChange(oldShortcut, this.shortcut));
+			fireChange(new PropertyChange(oldShortcut, this.shortcut));
 		}
 	}
 
@@ -68,18 +68,11 @@ public class Switch extends Engageable {
 		if (this.active != active) {
 			this.active = active;
 
-			// the following block should be in sync with
-			// Engageable#engagingChanged(boolean), first fire change, then
-			// check change of engaging
-			{
-				fireChange(new PropertyChange());
-
-				if (isEngagedChange(active)) {
-					onEngaged(active);
-				}
-			}
+			fireChange(new FastPropertyChange("active"));
 
 			onActivated(active);
+
+			engagingChanged(active);
 
 			for (Activating activating : getOrgan().getReferrer(this,
 					Activating.class)) {
@@ -108,7 +101,7 @@ public class Switch extends Engageable {
 
 			this.locking = locking;
 
-			fireChange(new UndoablePropertyChange(oldLocking, this.locking));
+			fireChange(new PropertyChange(oldLocking, this.locking));
 		}
 	}
 

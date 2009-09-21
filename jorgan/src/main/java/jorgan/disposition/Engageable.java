@@ -18,7 +18,6 @@
  */
 package jorgan.disposition;
 
-
 /**
  * Can this element be engaged.
  */
@@ -49,29 +48,13 @@ public class Engageable extends Displayable {
 	 */
 	public final void engagingChanged(boolean engaged) {
 
-		if (isEngagedChange(engaged)) {
-			fireChange(new PropertyChange());
+		int engagedCount = getEngagedCount();
+
+		if ((engaged && engagedCount == 1) || (!engaged && engagedCount == 0)) {
+			fireChange(new FastPropertyChange("engaged"));
 
 			onEngaged(engaged);
 		}
-	}
-
-	protected final boolean isEngagedChange(boolean engaged) {
-		int engagedCount = getEngagedCount();
-
-		if (engaged) {
-			if (engagedCount == 1) {
-				// first engaged
-				return true;
-			}
-		} else {
-			if (engagedCount == 0) {
-				// last disengaged
-				return true;
-			}
-		}
-
-		return false;
 	}
 
 	protected int getEngagedCount() {

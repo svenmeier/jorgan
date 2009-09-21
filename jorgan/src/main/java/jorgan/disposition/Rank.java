@@ -133,7 +133,7 @@ public class Rank extends Engageable {
 			}
 			this.delay = delay;
 
-			fireChange(new UndoablePropertyChange(oldDelay, this.delay));
+			fireChange(new PropertyChange(oldDelay, this.delay));
 		}
 	}
 
@@ -151,7 +151,7 @@ public class Rank extends Engageable {
 
 			this.channel = channel;
 
-			fireChange(new UndoablePropertyChange(oldChannel, this.channel));
+			fireChange(new PropertyChange(oldChannel, this.channel));
 		}
 	}
 

@@ -39,7 +39,7 @@ public class LinuxsamplerSound extends GenericSound {
 			
 			this.host = host;
 
-			fireChange(new UndoablePropertyChange(oldHost, this.host));
+			fireChange(new PropertyChange(oldHost, this.host));
 		}
 	}
 
@@ -53,7 +53,7 @@ public class LinuxsamplerSound extends GenericSound {
 			
 			this.port = port;
 
-			fireChange(new UndoablePropertyChange(oldPort, this.port));
+			fireChange(new PropertyChange(oldPort, this.port));
 		}
 	}
 
@@ -67,7 +67,7 @@ public class LinuxsamplerSound extends GenericSound {
 			
 			this.lscp = lscp;
 
-			fireChange(new UndoablePropertyChange(oldLscp, this.lscp));
+			fireChange(new PropertyChange(oldLscp, this.lscp));
 		}
 	}
 }

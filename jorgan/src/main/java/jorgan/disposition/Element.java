@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import jorgan.disposition.event.AbstractUndoableChange;
+import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.UndoableChange;
@@ -167,7 +167,7 @@ public abstract class Element implements Cloneable {
 
 		references.add(index, reference);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.referenceAdded(Element.this, reference);
 			}
@@ -280,7 +280,7 @@ public abstract class Element implements Cloneable {
 
 		references.remove(reference);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.referenceRemoved(Element.this, reference);
 			}
@@ -327,7 +327,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.name = name.trim();
 
-			fireChange(new UndoablePropertyChange(oldName, this.name));
+			fireChange(new PropertyChange(oldName, this.name));
 		}
 	}
 
@@ -355,7 +355,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.description = description;
 
-			fireChange(new UndoablePropertyChange(oldDescription,
+			fireChange(new PropertyChange(oldDescription,
 					this.description));
 		}
 	}
@@ -432,7 +432,7 @@ public abstract class Element implements Cloneable {
 
 		this.messages.add(index, message);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.messageAdded(Element.this, message);
 			}
@@ -456,7 +456,7 @@ public abstract class Element implements Cloneable {
 
 		this.messages.remove(message);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.messageRemoved(Element.this, message);
 			}
@@ -512,7 +512,7 @@ public abstract class Element implements Cloneable {
 
 		message.change(status, data1, data2);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.messageChanged(Element.this, message);
 			}
@@ -538,7 +538,7 @@ public abstract class Element implements Cloneable {
 
 		references.add(oldIndex < index ? index - 1 : index, reference);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.referenceChanged(Element.this, reference);
 			}
@@ -553,10 +553,32 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
-	public class PropertyChange implements Change {
+	public class FastPropertyChange implements Change {
+		
+		private String name;
+
+		public FastPropertyChange(String name) {
+			this.name = name;
+		}
+
+		public void notify(OrganListener listener) {
+			listener.propertyChanged(Element.this, name);
+		}
+	}
+
+	public class PropertyChange implements
+			UndoableChange {
+
 		private String methodName;
 
-		public PropertyChange() {
+		private Object oldValue;
+
+		private Object newValue;
+
+		public PropertyChange(Object oldValue, Object newValue) {
+			this.oldValue = oldValue;
+			this.newValue = newValue;
+			
 			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 			for (StackTraceElement element : stack) {
 				if (element.getMethodName().startsWith("set")) {
@@ -584,19 +606,6 @@ public abstract class Element implements Cloneable {
 			}
 			throw new UnsupportedOperationException(methodName);
 		}
-	}
-
-	public class UndoablePropertyChange extends PropertyChange implements
-			UndoableChange {
-
-		private Object oldValue;
-
-		private Object newValue;
-
-		public UndoablePropertyChange(Object oldValue, Object newValue) {
-			this.oldValue = oldValue;
-			this.newValue = newValue;
-		}
 
 		public void undo() {
 			invoke(oldValue);
@@ -619,8 +628,8 @@ public abstract class Element implements Cloneable {
 		}
 
 		public boolean replaces(UndoableChange change) {
-			if (change instanceof UndoablePropertyChange) {
-				UndoablePropertyChange other = (UndoablePropertyChange) change;
+			if (change instanceof PropertyChange) {
+				PropertyChange other = (PropertyChange) change;
 				if (this.getElement() == other.getElement()
 						&& this.getName().equals(other.getName())) {
 					this.newValue = other.newValue;
@@ -633,10 +642,10 @@ public abstract class Element implements Cloneable {
 		}
 	}
 
-	public class ReferenceChange implements Change {
+	public class FastReferenceChange implements Change {
 		private Reference<?> reference;
 
-		public ReferenceChange(Reference<?> reference) {
+		public FastReferenceChange(Reference<?> reference) {
 			this.reference = reference;
 		}
 
