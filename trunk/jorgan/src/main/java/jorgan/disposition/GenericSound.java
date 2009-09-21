@@ -34,7 +34,7 @@ public class GenericSound extends Sound implements Output {
 			
 			this.output = output;
 
-			fireChange(new UndoablePropertyChange(oldOutput, this.output));
+			fireChange(new PropertyChange(oldOutput, this.output));
 		}
 	}
 }

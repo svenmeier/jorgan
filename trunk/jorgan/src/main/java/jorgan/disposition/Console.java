@@ -41,7 +41,7 @@ public class Console extends Displayable implements Input, Output {
 
 			this.input = input;
 
-			fireChange(new UndoablePropertyChange(oldInput, this.input));
+			fireChange(new PropertyChange(oldInput, this.input));
 		}
 	}
 
@@ -55,7 +55,7 @@ public class Console extends Displayable implements Input, Output {
 
 			this.output = output;
 
-			fireChange(new UndoablePropertyChange(oldOutput, this.output));
+			fireChange(new PropertyChange(oldOutput, this.output));
 		}
 	}
 
@@ -98,7 +98,7 @@ public class Console extends Displayable implements Input, Output {
 
 			this.skin = skin;
 
-			fireChange(new UndoablePropertyChange(oldSkin, this.skin));
+			fireChange(new PropertyChange(oldSkin, this.skin));
 		}
 	}
 
@@ -108,7 +108,7 @@ public class Console extends Displayable implements Input, Output {
 
 			this.screen = screen;
 
-			fireChange(new UndoablePropertyChange(oldScreen, this.screen));
+			fireChange(new PropertyChange(oldScreen, this.screen));
 		}
 	}
 

@@ -37,7 +37,7 @@ public class Recorder extends Element {
 
 			this.performance = performance;
 
-			fireChange(new UndoablePropertyChange(oldPerformance,
+			fireChange(new PropertyChange(oldPerformance,
 					this.performance));
 		}
 	}

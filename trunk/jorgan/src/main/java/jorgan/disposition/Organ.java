@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
-import jorgan.disposition.event.AbstractUndoableChange;
+import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
@@ -155,7 +155,7 @@ public class Organ {
 		elements.add(element);
 		element.setOrgan(this);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.elementAdded(element);
 			}
@@ -184,7 +184,7 @@ public class Organ {
 		elements.remove(element);
 		element.setOrgan(null);
 
-		fireChange(new AbstractUndoableChange() {
+		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
 				listener.elementRemoved(element);
 			}

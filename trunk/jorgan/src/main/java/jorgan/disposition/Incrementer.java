@@ -40,14 +40,15 @@ public class Incrementer extends Switch {
 			increment();		
 		}
 	}	
-	
-	@Override
-	protected void onEngaged(boolean engaged) {
-		// no need to increment if onActivated() already did it
-		if (engaged && !isActive()) {
-			increment();
-		}
-	}
+
+// increment on engaged no longer supported for simplicity
+//	@Override
+//	protected void onEngaged(boolean engaged) {
+//		// no need to increment if onActivated() already did it
+//		if (engaged && !isActive()) {
+//			increment();
+//		}
+//	}
 
 	private void increment() {
 		for (IndexedContinuous continuous : getReferenced(IndexedContinuous.class)) {
