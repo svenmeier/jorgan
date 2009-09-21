@@ -22,6 +22,7 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
+import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
@@ -303,6 +304,12 @@ public class ConsoleTracker extends AbstractTracker {
 				return;
 			}
 
+			for (Combination combination : getOrgan().getReferrer(element, Combination.class)) {
+				if (combination.isRecalling()) {
+					return;
+				}
+			}
+			
 			if (element instanceof Switch && "active".equals(name)) {
 				record(createMessage((Switch) element));
 			} else if (element instanceof Continuous && "value".equals(name)) {
