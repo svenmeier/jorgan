@@ -34,6 +34,7 @@ import jorgan.memory.state.MemoryState;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
+import jorgan.util.Null;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
@@ -222,9 +223,12 @@ public abstract class Storage {
 			throw new IllegalStateException();
 		}
 
-		memoryState.setTitle(index, title);
-		
-		markModified();
+		String oldTitle = memoryState.getTitle(index);
+		if (!Null.safeEquals(oldTitle, title)) {
+			memoryState.setTitle(index, title);
+			
+			markModified();
+		}
 	}
 
 	public void load() {
