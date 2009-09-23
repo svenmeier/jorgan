@@ -1,29 +1,18 @@
 <memory>
   <titles>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
-    <null/>
+    <string>Continuos: 0,25  Switch: on</string>
+    <string>Continuos: 0,50  Switch: on</string>
+    <string>Continuos: 0,75  Switch: off</string>
+    <string>Continuos: 1,00  Switch: on</string>
   </titles>
   <combinations>
     <combination id="2">
       <references>
         <continuous id="3">
-          <values>0.15873016,0.6825397,0.7777778</values>
+          <values>0.25,0.5,0.75,1.0</values>
         </continuous>
         <switch id="1">
-          <actives>true,false,true</actives>
+          <actives>true,true,false,true</actives>
         </switch>
       </references>
     </combination>
