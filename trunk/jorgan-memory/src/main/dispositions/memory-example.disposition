@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
+    <combination id="2">
+      <name></name>
+      <description></description>
+      <references>
+        <combination-continuousReference id="3">
+          <value>0.25</value>
+        </combination-continuousReference>
+        <combination-switchReference id="1">
+          <active>true</active>
+        </combination-switchReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+    </combination>
     <continuous id="3">
       <name></name>
       <description></description>
@@ -9,7 +25,7 @@
       <zoom>1.0</zoom>
       <locking>true</locking>
       <threshold>0.0</threshold>
-      <value>0.7777778</value>
+      <value>0.0</value>
     </continuous>
     <console id="4">
       <name></name>
@@ -39,22 +55,6 @@
       <messages/>
       <zoom>1.0</zoom>
     </console>
-    <combination id="2">
-      <name></name>
-      <description></description>
-      <references>
-        <combination-continuousReference id="3">
-          <value>0.7777778</value>
-        </combination-continuousReference>
-        <combination-switchReference id="1">
-          <active>true</active>
-        </combination-switchReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>false</active>
-      <locking>false</locking>
-    </combination>
     <memory.memory id="5">
       <name></name>
       <description></description>
@@ -65,19 +65,10 @@
       <zoom>1.0</zoom>
       <locking>true</locking>
       <threshold>0.0</threshold>
-      <value>0.0390625</value>
-      <size>64</size>
+      <value>0.125</value>
+      <size>4</size>
       <storage>memory-example.memory</storage>
     </memory.memory>
-    <switch id="1">
-      <name></name>
-      <description></description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>true</active>
-      <locking>true</locking>
-    </switch>
     <captor id="6">
       <name></name>
       <description></description>
@@ -89,5 +80,14 @@
       <active>false</active>
       <locking>true</locking>
     </captor>
+    <switch id="1">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+    </switch>
   </elements>
 </organ>
