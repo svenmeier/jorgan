@@ -19,6 +19,7 @@
 package jorgan.memory.gui.construct.info;
 
 import jorgan.gui.construct.editor.FileEditor;
+import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.info.IndexedContinuousBeanInfo;
 import jorgan.memory.disposition.Memory;
 
@@ -31,6 +32,7 @@ public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
+		add("size", Memory.class, IntegerEditor.class);
 		add("storage", Memory.class, FileEditor.class);
 	}
 }
