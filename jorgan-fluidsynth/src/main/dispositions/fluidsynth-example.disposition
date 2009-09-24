@@ -5,9 +5,7 @@
       <name>Rank 1</name>
       <description></description>
       <references>
-        <reference>
-          <element ref="2"/>
-        </reference>
+        <reference id="2"/>
       </references>
       <messages>
         <rank-engaged>
@@ -49,9 +47,7 @@
       <name>Rank 0</name>
       <description></description>
       <references>
-        <reference>
-          <element ref="2"/>
-        </reference>
+        <reference id="2"/>
       </references>
       <messages>
         <rank-engaged>
@@ -93,9 +89,7 @@
       <name>Stop 0</name>
       <description></description>
       <references>
-        <reference>
-          <element ref="3"/>
-        </reference>
+        <reference id="3"/>
       </references>
       <messages/>
       <zoom>1.0</zoom>
@@ -108,12 +102,8 @@
       <name>My Keyboard</name>
       <description></description>
       <references>
-        <reference>
-          <element ref="4"/>
-        </reference>
-        <reference>
-          <element ref="6"/>
-        </reference>
+        <reference id="4"/>
+        <reference id="6"/>
       </references>
       <messages>
         <keyboard-pressKey>
@@ -157,9 +147,7 @@
       <name>Stop 1</name>
       <description></description>
       <references>
-        <reference>
-          <element ref="1"/>
-        </reference>
+        <reference id="1"/>
       </references>
       <messages/>
       <zoom>1.0</zoom>
@@ -179,18 +167,15 @@
       <name>My Console</name>
       <description></description>
       <references>
-        <console-locationReference>
-          <element ref="4"/>
+        <console-locationReference id="4">
           <x>200</x>
           <y>70</y>
         </console-locationReference>
-        <console-locationReference>
-          <element ref="6"/>
+        <console-locationReference id="6">
           <x>200</x>
           <y>100</y>
         </console-locationReference>
-        <console-locationReference>
-          <element ref="7"/>
+        <console-locationReference id="7">
           <x>120</x>
           <y>40</y>
         </console-locationReference>
