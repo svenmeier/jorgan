@@ -43,6 +43,10 @@ public class Memory extends IndexedContinuous {
 	}
 
 	public void setSize(int size) {
+		if (size <= 0) {
+			throw new IllegalArgumentException("size must be greater 0");
+		}
+		
 		if (this.size != size) {
 			int oldSize = this.size;
 
