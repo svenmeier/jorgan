@@ -48,10 +48,10 @@ import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
 import jorgan.disposition.Console;
+import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
-import jorgan.io.disposition.DispositionFileFilter;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
 import jorgan.session.OrganSession;
@@ -281,8 +281,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (session == null) {
 			setTitle(TITEL_SUFFIX);
 		} else {
-			setTitle(jorgan.io.disposition.DispositionFileFilter
-					.removeSuffix(session.getFile())
+			setTitle(DispositionFileFilter.removeSuffix(session.getFile())
 					+ " - " + TITEL_SUFFIX);
 		}
 	}
@@ -490,8 +489,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 					.getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-				openOrgan(DispositionFileFilter.addSuffix(chooser
-						.getSelectedFile()));
+				File file = chooser.getSelectedFile();
+				if (!file.exists()) {
+					file = DispositionFileFilter.addSuffix(file);
+				}
+				openOrgan(file);
 			}
 		}
 	}
@@ -521,7 +523,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public boolean checkSave() {
-			if (session != null && session.isModified() && handleChanges != CHANGES_DISCARD) {
+			if (session != null && session.isModified()
+					&& handleChanges != CHANGES_DISCARD) {
 				if (handleChanges == CHANGES_CONFIRM) {
 					int option = showBoxMessage("closeOrganConfirmChanges",
 							MessageBox.OPTIONS_YES_NO_CANCEL);
@@ -546,7 +549,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void onSession() {
 			setEnabled(session != null && session.isModified());
-			
+
 			statusBar.setStatus(null);
 		}
 	}
@@ -679,7 +682,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		public void modified() {
 			saveAction.onSession();
 		}
-		
+
 		public void saved(File file) {
 			saveAction.onSession();
 		}
