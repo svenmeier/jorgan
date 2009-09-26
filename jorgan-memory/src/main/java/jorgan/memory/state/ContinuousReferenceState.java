@@ -51,6 +51,15 @@ public class ContinuousReferenceState extends ReferenceState<Continuous> {
 	}
 	
 	@Override
+	public void swap(int index1, int index2) {
+		ensureIndex(Math.max(index1, index2));
+		
+		float value1 = values[index1];
+		values[index1] = values[index2];
+		values[index2] = value1;
+	}
+	
+	@Override
 	public void read(Reference<?> reference, int index) {
 		ensureIndex(index);
 		

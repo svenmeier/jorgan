@@ -51,6 +51,15 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 	}
 	
 	@Override
+	public void swap(int index1, int index2) {
+		ensureIndex(Math.max(index1, index2));
+
+		boolean active1 = actives[index1];
+		actives[index1] = actives[index2];
+		actives[index2] = active1;
+	}
+	
+	@Override
 	public  void read(Reference<?> reference, int index) {
 		ensureIndex(index);
 		

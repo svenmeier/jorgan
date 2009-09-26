@@ -40,4 +40,6 @@ public abstract class ReferenceState<T extends Element> {
 	}
 
 	public abstract void clear(int index);
+
+	public abstract void swap(int index1, int index2);
 }
