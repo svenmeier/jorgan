@@ -70,8 +70,6 @@ public class Switch extends Engageable {
 
 			fireChange(new FastPropertyChange("active"));
 
-			onActivated(active);
-
 			engagingChanged(active);
 
 			for (Activating activating : getOrgan().getReferrer(this,
@@ -79,12 +77,6 @@ public class Switch extends Engageable {
 				activating.activeChanged(this, active);
 			}
 		}
-	}
-
-	/**
-	 * Hook method on change of {@link #isActive()}.
-	 */
-	protected void onActivated(boolean active) {
 	}
 
 	public boolean isActive() {

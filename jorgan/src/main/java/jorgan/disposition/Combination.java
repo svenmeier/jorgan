@@ -50,19 +50,11 @@ public class Combination extends Switch implements Activating {
 	}
 
 	@Override
-	protected void onActivated(boolean active) {
-		if (active) {
+	protected void onEngaged(boolean engaged) {
+		if (engaged) {
 			captureOrRecall();
 		}
 	}
-
-//	 captureOrRecall on engaged no longer supported for simplicity
-//	@Override
-//	protected void onEngaged(boolean engaged) {
-//		if (engaged) {
-//			captureOrRecall();
-//		}
-//	}
 
 	private void captureOrRecall() {
 		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
