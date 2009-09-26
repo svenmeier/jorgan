@@ -31,7 +31,6 @@ import jorgan.UI;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.io.DispositionStream;
-import jorgan.io.disposition.DispositionFileFilter;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
 import jorgan.problem.ElementProblems;
@@ -120,8 +119,7 @@ public class CLI implements UI, SessionAware {
 		try {
 			setSession(new OrganSession(file));
 
-			writeMessage("openConfirm", DispositionFileFilter
-					.removeSuffix(file));
+			writeMessage("openConfirm", file);
 		} catch (ExtensionException ex) {
 			writeMessage("openExtensionException", file.getName(), ex
 					.getExtension());
