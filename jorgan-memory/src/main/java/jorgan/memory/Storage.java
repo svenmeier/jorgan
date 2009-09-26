@@ -84,6 +84,8 @@ public abstract class Storage {
 					if (memory != null && memory.references(element)) {
 						read();
 					}
+				} else if (element == memory) {
+					read();
 				}
 			}
 

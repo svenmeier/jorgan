@@ -20,6 +20,7 @@ package jorgan.recorder.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -35,6 +36,7 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.recorder.Performance;
 import jorgan.recorder.PerformanceListener;
 import jorgan.recorder.gui.TracksPanel;
+import jorgan.recorder.gui.file.MidiFileFilter;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import spin.Spin;
@@ -220,12 +222,16 @@ public class RecorderDockable extends OrganDockable {
 			}
 
 			performance.setFile(null);
-			
+
 			JFileChooser chooser = new JFileChooser(performance.getFile());
 			chooser
-					.setFileFilter(new jorgan.recorder.gui.file.MidiFileFilter());
+					.setFileFilter(new MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				performance.setFile(chooser.getSelectedFile());
+				File file = chooser.getSelectedFile();
+				if (!file.exists()) {
+					file = MidiFileFilter.addSuffix(file);
+				}
+				performance.setFile(file);
 			}
 		}
 
