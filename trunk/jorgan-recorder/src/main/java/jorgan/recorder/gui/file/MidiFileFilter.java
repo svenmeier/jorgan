@@ -27,15 +27,55 @@ import javax.swing.filechooser.FileFilter;
  */
 public class MidiFileFilter extends FileFilter {
 
-	private jorgan.recorder.io.MidiFileFilter filter = new jorgan.recorder.io.MidiFileFilter();
+	/**
+	 * The file suffix of midi files.
+	 */
+	public static final String FILE_SUFFIX = ".mid";
 
-	@Override
+	/**
+	 * @see java.io.FileFilter#accept(File)
+	 * 
+	 * @param file
+	 *            file to accept
+	 * @return <code>true</code> for directories and dispositions
+	 */
 	public boolean accept(File file) {
-		return filter.accept(file);
+		return file.isDirectory() || file.getName().endsWith(FILE_SUFFIX);
 	}
 
 	@Override
 	public String getDescription() {
 		return "Midi File";
+	}
+
+	/**
+	 * Get the name of the file without suffix.
+	 * 
+	 * @param file
+	 *            file to get name for
+	 * @return name of file
+	 * @see #FILE_SUFFIX
+	 */
+	public static String removeSuffix(File file) {
+		String name = file.getName();
+		if (name.endsWith(FILE_SUFFIX)) {
+			name = name.substring(0, name.indexOf(FILE_SUFFIX));
+		}
+		return name;
+	}
+
+	/**
+	 * Add the suffix to the given file.
+	 * 
+	 * @param file
+	 *            file to add suffix for
+	 * @return resulting file
+	 */
+	public static File addSuffix(File file) {
+		String name = file.getName();
+		if (!name.endsWith(FILE_SUFFIX)) {
+			file = new File(file.getParentFile(), name + FILE_SUFFIX);
+		}
+		return file;
 	}
 }

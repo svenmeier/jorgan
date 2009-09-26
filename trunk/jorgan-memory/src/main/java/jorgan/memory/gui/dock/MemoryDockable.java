@@ -19,6 +19,7 @@
 package jorgan.memory.gui.dock;
 
 import java.awt.event.ActionEvent;
+import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,6 +37,7 @@ import jorgan.gui.dock.OrganDockable;
 import jorgan.memory.Storage;
 import jorgan.memory.StorageListener;
 import jorgan.memory.disposition.Memory;
+import jorgan.memory.gui.file.MemoryFileFilter;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.StringCellEditor;
@@ -273,8 +275,13 @@ public class MemoryDockable extends OrganDockable {
 			storage.setFile(null);
 
 			JFileChooser chooser = new JFileChooser(storage.getFile());
+			chooser.setFileFilter(new MemoryFileFilter());
 			if (chooser.showOpenDialog(getContent().getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
-				storage.setFile(chooser.getSelectedFile());
+				File file = chooser.getSelectedFile();
+				if (!file.exists()) {
+					file = MemoryFileFilter.addSuffix(file);
+				}
+				storage.setFile(file);
 			}
 		}
 	}
