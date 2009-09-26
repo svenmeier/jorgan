@@ -196,6 +196,16 @@ public abstract class Storage {
 		if (memoryState == null) {
 			throw new IllegalStateException();
 		}
+		
+		memoryState.swap(index1, index2);
+
+		markModified();
+
+		if (index1 == memory.getIndex() || index2 == memory.getIndex()) {
+			write();
+		}
+		
+		fireChanged();	
 	}
 
 	public void clear(int index) {
@@ -205,9 +215,13 @@ public abstract class Storage {
 
 		memoryState.clear(index);
 
+		markModified();
+
 		if (index == memory.getIndex()) {
 			write();
 		}
+		
+		fireChanged();	
 	}
 
 	public String getTitle(int index) {
@@ -228,6 +242,8 @@ public abstract class Storage {
 			memoryState.setTitle(index, title);
 			
 			markModified();
+			
+			fireChanged();
 		}
 	}
 
@@ -249,6 +265,7 @@ public abstract class Storage {
 						write();
 					} else {
 						memoryState = new MemoryState();
+						read();
 					}
 				} catch (Exception e) {
 					problems.addProblem(new Problem(Severity.ERROR, memory,

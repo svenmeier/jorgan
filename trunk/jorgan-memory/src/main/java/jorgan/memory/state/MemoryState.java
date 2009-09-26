@@ -80,6 +80,16 @@ public class MemoryState {
 		}
 	}
 
+	public void swap(int index1, int index2) {
+		String title1 = getTitle(index1);
+		setTitle(index1, getTitle(index2));
+		setTitle(index2, title1);
+
+		for (CombinationState state : combinations) {
+			state.swap(index1, index2);
+		}
+	}
+	
 	public void read(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
 			CombinationState state = getState(combination);
