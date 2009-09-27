@@ -274,7 +274,7 @@ public class MemoryDockable extends OrganDockable {
 
 			storage.setFile(null);
 
-			JFileChooser chooser = new JFileChooser(storage.getFile());
+			JFileChooser chooser = new JFileChooser(session.getFile());
 			chooser.setFileFilter(new MemoryFileFilter());
 			if (chooser.showOpenDialog(getContent().getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
