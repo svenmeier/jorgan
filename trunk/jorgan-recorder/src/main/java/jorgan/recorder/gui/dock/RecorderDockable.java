@@ -223,7 +223,7 @@ public class RecorderDockable extends OrganDockable {
 
 			performance.setFile(null);
 
-			JFileChooser chooser = new JFileChooser(performance.getFile());
+			JFileChooser chooser = new JFileChooser(session.getFile());
 			chooser
 					.setFileFilter(new MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
