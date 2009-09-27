@@ -35,21 +35,21 @@ public class Rank extends Engageable {
 	private int delay = 0;
 
 	public Rank() {
+		// control change, reset all, -
+		addMessage(new Engaged().change(new Set(176), new Set(121),
+				new NoOp()));
 		// control change, bank select, 0
 		addMessage(new Engaged().change(new Set(176), new Set(0), new Set(0)));
 		// program change, 0, -
 		addMessage(new Engaged().change(new Set(192), new Set(0), new NoOp()));
-		// control change, reset all, -
-		addMessage(new Disengaged().change(new Set(176), new Set(121),
-				new NoOp()));
-		// control change, all notes off, -
-		addMessage(new Disengaged().change(new Set(176), new Set(123),
-				new NoOp()));
 		// note on, pitch, velocity
 		addMessage(new NotePlayed().change(new Set(144), new Set("pitch"),
 				new Set("velocity")));
 		// note off, pitch, -
 		addMessage(new NoteMuted().change(new Set(128), new Set("pitch"),
+				new NoOp()));
+		// control change, all notes off, -
+		addMessage(new Disengaged().change(new Set(176), new Set(123),
 				new NoOp()));
 	}
 
