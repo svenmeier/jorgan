@@ -20,8 +20,6 @@ package jorgan.gui;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
@@ -29,10 +27,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,10 +39,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 
-import jorgan.disposition.Console;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.spi.ActionRegistry;
@@ -121,8 +114,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private ExitAction exitAction = new ExitAction();
 
-	private FullScreenAction fullScreenAction = new FullScreenAction();
-
 	private PreferencesAction configurationAction = new PreferencesAction();
 
 	private WebsiteAction websiteAction = new WebsiteAction();
@@ -132,9 +123,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private JToggleButton constructButton = new JToggleButton();
 
 	private EventHandler handler = new EventHandler();
-
-	private boolean fullScreenOnLoad = false;
-
+	
 	private int handleChanges;
 
 	/**
@@ -220,9 +209,15 @@ public class OrganFrame extends JFrame implements SessionAware {
 		config.get("fileMenu").read(fileMenu);
 		menuBar.add(fileMenu);
 		fileMenu.add(openAction);
+
 		JMenu recentsMenu = new JMenu();
 		config.get("recentsMenu").read(recentsMenu);
+		List<File> recents = new DispositionStream().getRecentFiles();
+		for (int r = 0; r < recents.size(); r++) {
+			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
+		}
 		fileMenu.add(recentsMenu);
+		
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
 		fileMenu.add(closeAction);
@@ -246,8 +241,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 		JMenu viewMenu = new JMenu();
 		config.get("viewMenu").read(viewMenu);
 		menuBar.add(viewMenu);
-		viewMenu.add(fullScreenAction);
-		viewMenu.addSeparator();
 		viewMenu.add(debugAction);
 		viewMenu.addSeparator();
 		for (Object widget : organPanel.getMenuWidgets()) {
@@ -270,11 +263,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			helpMenu.add(aboutAction);
 		}
 
-		List<File> recents = new DispositionStream().getRecentFiles();
-		for (int r = 0; r < recents.size(); r++) {
-			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
-		}
-
 		menuBar.revalidate();
 		menuBar.repaint();
 
@@ -284,14 +272,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			setTitle(DispositionFileFilter.removeSuffix(session.getFile())
 					+ " - " + TITEL_SUFFIX);
 		}
-	}
-
-	public boolean getFullScreenOnLoad() {
-		return fullScreenOnLoad;
-	}
-
-	public void setFullScreenOnLoad(boolean fullScreenOnLoad) {
-		this.fullScreenOnLoad = fullScreenOnLoad;
 	}
 
 	public int getHandleChanges() {
@@ -371,10 +351,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		setSession(session);
-
-		if (fullScreenOnLoad) {
-			fullScreenAction.goFullScreen();
-		}
 	}
 
 	/**
@@ -395,8 +371,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			return false;
 		}
-
-		buildMenu();
 
 		return true;
 	}
@@ -592,72 +566,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void actionPerformed(ActionEvent ev) {
 			PreferencesDialog.show(OrganFrame.this);
-		}
-	}
-
-	/**
-	 * The action that initiates full screen.
-	 */
-	private class FullScreenAction extends BaseAction implements
-			ComponentListener {
-
-		private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
-
-		private FullScreenAction() {
-			config.get("fullScreen").read(this);
-
-			getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-					KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
-			getRootPane().getActionMap().put(this, this);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			if (dialogs.isEmpty()) {
-				goFullScreen();
-
-				if (dialogs.isEmpty()) {
-					showBoxMessage("noFullScreen", MessageBox.OPTIONS_OK);
-				}
-			}
-		}
-
-		private void goFullScreen() {
-			for (Console console : session.getOrgan()
-					.getElements(Console.class)) {
-				String screen = console.getScreen();
-				if (screen == null) {
-					continue;
-				}
-
-				ConsoleDialog dialog = dialogs.get(screen);
-				if (dialog == null) {
-					dialog = ConsoleDialog.create(OrganFrame.this, session,
-							screen);
-					dialogs.put(screen, dialog);
-				}
-				dialog.addConsole(console);
-				dialog.addComponentListener(this);
-				dialog.setVisible(true);
-			}
-		}
-
-		public void componentHidden(ComponentEvent e) {
-			Iterator<ConsoleDialog> iterator = dialogs.values().iterator();
-			while (iterator.hasNext()) {
-				ConsoleDialog dialog = iterator.next();
-				dialog.setVisible(false);
-				dialog.dispose();
-			}
-			dialogs.clear();
-		}
-
-		public void componentMoved(ComponentEvent e) {
-		}
-
-		public void componentResized(ComponentEvent e) {
-		}
-
-		public void componentShown(ComponentEvent e) {
 		}
 	}
 

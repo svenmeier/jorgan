@@ -103,6 +103,10 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	public void setScreen(String screen) {
+		if ("".equals(screen)) {
+			screen = null;
+		}
+		
 		if (!Null.safeEquals(this.screen, screen)) {
 			String oldScreen = this.screen;
 
@@ -112,6 +116,10 @@ public class Console extends Displayable implements Input, Output {
 		}
 	}
 
+	public boolean showFullScreen() {
+		return screen != null;
+	}
+	
 	public void setLocation(final Element element, final int x, final int y) {
 		final LocationReference reference = (LocationReference) getReference(element);
 
