@@ -62,6 +62,10 @@ public class Conversion {
 		this.xsl = xsl;
 	}
 
+	public String getPattern() {
+		return this.pattern.toString();
+	}
+	
 	public boolean isApplicable(String header) {
 		return pattern.matcher(header).matches();
 	}

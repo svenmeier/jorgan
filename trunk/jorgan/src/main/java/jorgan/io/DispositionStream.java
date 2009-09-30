@@ -267,7 +267,7 @@ public class DispositionStream {
 		return in;
 	}
 
-	private static String getVersion(InputStream in) throws IOException {
+	public static String getVersion(InputStream in) throws IOException {
 
 		// make sure the parse doesn't step over the mark limit
 		byte[] header = new byte[2048];
