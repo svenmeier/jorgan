@@ -149,6 +149,9 @@ public class SoundFontImport implements Import {
 				rank.setName(preset.getName());
 				rank.setProgram(preset.getProgram());
 				rank.setBank(bank);
+				if (!this.panel.getTouchSensitive()) {
+					rank.setVelocity(100);
+				}
 				ranks.add(rank);
 			}
 		} finally {

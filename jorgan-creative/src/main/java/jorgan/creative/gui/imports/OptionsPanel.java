@@ -18,7 +18,6 @@
  */
 package jorgan.creative.gui.imports;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.event.ItemEvent;
@@ -27,6 +26,7 @@ import java.awt.event.ItemListener;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -35,6 +35,8 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
 
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
 /**
@@ -50,11 +52,16 @@ public class OptionsPanel extends JPanel {
 	private JScrollPane scrollPane = new JScrollPane();
 
 	private JTable table = new JTable();
-	
+
 	private JCheckBox stopsCheckBox = new JCheckBox();
 
+	private JCheckBox touchSensitiveCheckBox = new JCheckBox();
+
 	public OptionsPanel(Device[] devices) {
-		setLayout(new BorderLayout(2, 2));
+		DefinitionBuilder builder = new DefinitionBuilder(this);
+		Column column = builder.column();
+
+		column.term(config.get("device").read(new JLabel()));
 
 		comboBox.setModel(new DefaultComboBoxModel(devices));
 		comboBox.addItemListener(new ItemListener() {
@@ -63,10 +70,12 @@ public class OptionsPanel extends JPanel {
 				firePropertyChange("stops", null, null);
 			}
 		});
-		add(comboBox, BorderLayout.NORTH);
+		column.definition(comboBox).fillHorizontal();
+
+		column.term(config.get("bank").read(new JLabel()));
 
 		scrollPane.getViewport().setBackground(Color.white);
-		add(scrollPane, BorderLayout.CENTER);
+		column.definition(scrollPane).growVertical().fillBoth();
 
 		table.setModel(new BanksModel());
 		table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -79,8 +88,11 @@ public class OptionsPanel extends JPanel {
 					}
 				});
 		scrollPane.setViewportView(table);
-		
-		add(config.get("stops").read(stopsCheckBox), BorderLayout.SOUTH);
+
+		column.definition(config.get("stops").read(stopsCheckBox));
+
+		column.definition(config.get("touchSensitive").read(
+				touchSensitiveCheckBox));
 	}
 
 	public class BanksModel extends AbstractTableModel {
@@ -149,8 +161,12 @@ public class OptionsPanel extends JPanel {
 
 		return device.banks.get(index);
 	}
-	
+
 	public boolean getCreateStops() {
 		return stopsCheckBox.isSelected();
+	}
+
+	public boolean getTouchSensitive() {
+		return touchSensitiveCheckBox.isSelected();
 	}
 }
