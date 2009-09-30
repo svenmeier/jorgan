@@ -82,9 +82,18 @@ public class Rank extends Engageable {
 			addMessage(engaged);
 		}
 		// control change, bank select, bank
-		engaged.change("set 176", "set 0", "set " + bank);
+		engaged.change(new Set(176), new Set(0), new Set(bank));
 	}
 
+	public void setVelocity(int velocity) {
+		NotePlayed notePlayed = getNotePlayed();
+		if (notePlayed == null) {
+			notePlayed = new NotePlayed();
+			addMessage(notePlayed);
+		}
+		notePlayed.change(new Set(144), new Set("pitch"), new Set(velocity));
+	}
+	
 	/**
 	 * Get the {@link Engaged} message sending a midi program change.
 	 * 
@@ -100,7 +109,7 @@ public class Rank extends Engageable {
 	}
 
 	/**
-	 * Get the {@link Engaged} message sending a midi bank sekect.
+	 * Get the {@link Engaged} message sending a midi bank select.
 	 * 
 	 * @return bank select message
 	 */
@@ -110,6 +119,18 @@ public class Rank extends Engageable {
 					&& "set 0".equals(engaged.getData1())) {
 				return engaged;
 			}
+		}
+		return null;
+	}
+
+	/**
+	 * Get the {@link NotePlayed} message.
+	 * 
+	 * @return bank select message
+	 */
+	private NotePlayed getNotePlayed() {
+		for (NotePlayed notePlayed : getMessages(NotePlayed.class)) {
+			return notePlayed;
 		}
 		return null;
 	}
