@@ -136,6 +136,9 @@ public class CreativeImport implements Import {
 					rank.setName(preset);
 					rank.setProgram(p);
 					rank.setBank(bank.number);
+					if (!this.panel.getTouchSensitive()) {
+						rank.setVelocity(100);
+					}
 					ranks.add(rank);
 				}
 			} catch (IllegalArgumentException invalidPreset) {
