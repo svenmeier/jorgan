@@ -33,6 +33,10 @@
 
   	<jar file="./target/marshal/lib/memory.jar">
       <fileset dir="./target/classes" />
+      <manifest>
+        <attribute name="Main-class" value="jorgan.memory.util.Extract" />
+        <attribute name="Class-Path" value="core.jar" />
+      </manifest>
   	</jar>
 
   	<mkdir dir="./target/marshal/dispositions" />
