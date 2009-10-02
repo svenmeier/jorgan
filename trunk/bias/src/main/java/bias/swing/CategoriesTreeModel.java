@@ -49,7 +49,7 @@ public class CategoriesTreeModel extends DefaultTreeModel {
 		append(root, null);
 	}
 
-	private void append(DefaultMutableTreeNode parentNode, Class parentCategory) {
+	private void append(DefaultMutableTreeNode parentNode, Class<?> parentCategory) {
 		for (Category category : categories) {
 			if (category.getParentCategory() == parentCategory) {
 				DefaultMutableTreeNode child = new DefaultMutableTreeNode(
