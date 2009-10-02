@@ -7,7 +7,7 @@ import java.lang.reflect.Type;
 public class EnumConverter implements Converter {
 
 	public String toString(Object object, Type type) throws Exception {
-		Enum e = (Enum) object;
+		Enum<?> e = (Enum<?>) object;
 
 		return e.name();
 	}

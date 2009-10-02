@@ -67,7 +67,7 @@ public final class WeakObject<T> extends WeakReference<T> {
 			return true;
 
 		if (object != null && object.getClass() == getClass()) {
-			WeakObject soft = (WeakObject) object;
+			WeakObject<?> soft = (WeakObject) object;
 
 			Object a = this.get();
 			Object b = soft.get();

@@ -108,7 +108,7 @@ public class WeakSetTest extends TestCase {
 
 		set.add(null);
 
-		Iterator iterator = set.iterator();
+		Iterator<String> iterator = set.iterator();
 
 		assertTrue(iterator.hasNext());
 		iterator.next();

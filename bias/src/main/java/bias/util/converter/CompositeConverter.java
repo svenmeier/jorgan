@@ -62,7 +62,7 @@ public class CompositeConverter implements Converter {
 
 				converter = getConverter(parameterizedType.getRawType());
 			} else if (type instanceof Class) {
-				Class clazz = (Class) type;
+				Class<?> clazz = (Class<?>) type;
 
 				if (clazz.isArray()) {
 					converter = getConverter(Array.class);

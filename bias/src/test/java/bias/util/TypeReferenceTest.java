@@ -33,7 +33,7 @@ public class TypeReferenceTest extends TestCase {
 		List<String> listOfStrings = new TypeReference<ArrayList<String>>() {
 		}.newInstance();
 
-		List listOfObjects = new TypeReference<ArrayList>() {
+		List<?> listOfObjects = new TypeReference<ArrayList<?>>() {
 		}.newInstance();
 
 		String string = new TypeReference<String>() {

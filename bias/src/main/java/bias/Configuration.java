@@ -289,13 +289,13 @@ public class Configuration {
 		return configuration;
 	}
 
-	public Configuration get(final Class path) {
+	public Configuration get(final Class<?> path) {
 		return get(path.getName().replace('.', '/'));
 	}
 
 	private Map<String, Property> properties = new HashMap<String, Property>();
 
-	private Property getProperty(Class clazz, String key) {
+	private Property getProperty(Class<?> clazz, String key) {
 		String name = key.substring(key.lastIndexOf('/') + 1);
 
 		String lookup = clazz.getName() + "." + name;

@@ -71,7 +71,7 @@ public class WeakSet<E> extends AbstractSet<E> implements Set<E> {
 			public boolean hasNext() {
 				if (next == UNKOWN) {
 					while (iter.hasNext()) {
-						WeakObject weak = iter.next();
+						WeakObject<E> weak = iter.next();
 						Object obj = null;
 						if (weak != null && (obj = weak.get()) == null) {
 							// object has been reclaimed by the GC

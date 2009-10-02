@@ -32,7 +32,7 @@ import bias.ConfigurationException;
  */
 public class Property {
 
-	private Class owningClass;
+	private Class<?> owningClass;
 
 	private String name;
 
@@ -44,14 +44,14 @@ public class Property {
 
 	private Set setter;
 
-	public Property(Class owningClass, String name) {
+	public Property(Class<?> owningClass, String name) {
 		this.owningClass = owningClass;
 		this.name = name;
 
 		init();
 	}
 
-	public Class getOwningClass() {
+	public Class<?> getOwningClass() {
 		return owningClass;
 	}
 
@@ -129,7 +129,7 @@ public class Property {
 
 	protected void init()  {
 
-		Class owningClass = this.owningClass;
+		Class<?> owningClass = this.owningClass;
 		String name = this.name;
 
 		StringTokenizer tokens = new StringTokenizer(this.name, ".");
@@ -163,7 +163,7 @@ public class Property {
 		}
 	}
 
-	private Set createSet(Class owningClass, String name, Type type) {
+	private Set createSet(Class<?> owningClass, String name, Type type) {
 		try {
 			return new MethodSet(owningClass, name, type);
 		} catch (Exception noMethod) {
@@ -177,7 +177,7 @@ public class Property {
 		return null;
 	}
 
-	private Get createGet(Class owningClass, String name) {
+	private Get createGet(Class<?> owningClass, String name) {
 		try {
 			return new MethodGet(owningClass, name);
 		} catch (Exception noMethod) {
@@ -227,7 +227,7 @@ public class Property {
 	private static interface Get {
 		public Object get(Object owner) throws Exception;
 
-		public Class getType();
+		public Class<?> getType();
 
 		public Type getGenericType();
 	}
@@ -254,7 +254,7 @@ public class Property {
 					throw noGet;
 				}
 
-				Class type = method.getReturnType();
+				Class<?> type = method.getReturnType();
 				if (type != Boolean.class && type != Boolean.TYPE) {
 					throw noGet;
 				}
@@ -265,7 +265,7 @@ public class Property {
 			return method.getGenericReturnType();
 		}
 
-		public Class getType() {
+		public Class<?> getType() {
 			return method.getReturnType();
 		}
 
@@ -277,7 +277,7 @@ public class Property {
 	private static class FieldGet implements Get {
 		private Field field;
 
-		public FieldGet(Class owningClass, String name) throws Exception {
+		public FieldGet(Class<?> owningClass, String name) throws Exception {
 			while (owningClass != Object.class) {
 				Field[] fields = owningClass.getDeclaredFields();
 				for (Field field : fields) {
@@ -302,7 +302,7 @@ public class Property {
 			return field.getGenericType();
 		}
 
-		public Class getType() {
+		public Class<?> getType() {
 			return field.getType();
 		}
 	}
@@ -317,7 +317,7 @@ public class Property {
 
 		private Method method;
 
-		public MethodSet(Class owningClass, String name, Type type) throws Exception {
+		public MethodSet(Class<?> owningClass, String name, Type type) throws Exception {
 			String methodName = "set" + Character.toUpperCase(name.charAt(0))
 					+ name.substring(1);
 
@@ -348,7 +348,7 @@ public class Property {
 	private static class FieldSet implements Set {
 		private Field field;
 
-		public FieldSet(Class owningClass, String name) throws Exception {
+		public FieldSet(Class<?> owningClass, String name) throws Exception {
 			while (owningClass != Object.class) {
 				Field[] fields = owningClass.getDeclaredFields();
 				for (Field field : fields) {
