@@ -35,7 +35,7 @@
       <fileset dir="./target/classes" />
       <manifest>
         <attribute name="Main-class" value="jorgan.memory.util.Extract" />
-        <attribute name="Class-Path" value="core.jar" />
+        <attribute name="Class-Path" value="core.jar xpp3_min-1.1.4c.jar" />
       </manifest>
   	</jar>
 
