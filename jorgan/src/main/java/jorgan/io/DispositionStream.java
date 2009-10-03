@@ -19,7 +19,6 @@
 package jorgan.io;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -44,10 +43,6 @@ import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
 import jorgan.util.IOUtils;
-
-import org.xmlpull.mxp1.MXParser;
-import org.xmlpull.v1.XmlPullParserException;
-
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
@@ -92,7 +87,7 @@ public class DispositionStream {
 
 		// element identification
 		xstream.useAttributeFor(Element.class, "id");
-		
+
 		// organ -> element relationship
 		xstream.registerConverter(new OrganConverter(xstream));
 
@@ -251,7 +246,7 @@ public class DispositionStream {
 
 		in = new BufferedInputStream(in);
 
-		String version = getVersion(in);
+		String version = Conversion.getVersion(in);
 
 		boolean apply = false;
 		for (Conversion conversion : Conversion.list) {
@@ -265,31 +260,5 @@ public class DispositionStream {
 		}
 
 		return in;
-	}
-
-	public static String getVersion(InputStream in) throws IOException {
-
-		// make sure the parse doesn't step over the mark limit
-		byte[] header = new byte[2048];
-		in.mark(header.length);
-		in.read(header, 0, header.length);
-		in.reset();
-
-		String version;
-		try {
-			MXParser parser = new MXParser();
-
-			parser.setInput(new ByteArrayInputStream(header), "ASCII");
-
-			parser.nextTag();
-
-			version = parser.getAttributeValue(null, "version");
-		} catch (XmlPullParserException e) {
-			IOException ex = new IOException();
-			ex.initCause(e);
-			throw ex;
-		}
-
-		return version;
 	}
 }

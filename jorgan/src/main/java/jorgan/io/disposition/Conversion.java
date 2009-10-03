@@ -18,6 +18,7 @@
  */
 package jorgan.io.disposition;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,6 +31,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import org.xmlpull.mxp1.MXParser;
+import org.xmlpull.v1.XmlPullParserException;
 
 public class Conversion {
 
@@ -98,5 +102,31 @@ public class Conversion {
 			ex.initCause(e);
 			throw ex;
 		}
+	}
+	
+	public static String getVersion(InputStream in) throws IOException {
+
+		// make sure the parse doesn't step over the mark limit
+		byte[] header = new byte[2048];
+		in.mark(header.length);
+		in.read(header, 0, header.length);
+		in.reset();
+
+		String version;
+		try {
+			MXParser parser = new MXParser();
+
+			parser.setInput(new ByteArrayInputStream(header), "ASCII");
+
+			parser.nextTag();
+
+			version = parser.getAttributeValue(null, "version");
+		} catch (XmlPullParserException e) {
+			IOException ex = new IOException();
+			ex.initCause(e);
+			throw ex;
+		}
+
+		return version;
 	}
 }
