@@ -16,7 +16,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import jorgan.gui.file.DispositionFileFilter;
-import jorgan.io.DispositionStream;
 import jorgan.io.disposition.Conversion;
 
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -33,7 +32,7 @@ public class Extract {
 
 		in = new BufferedInputStream(in);
 
-		String version = DispositionStream.getVersion(in);
+		String version = Conversion.getVersion(in);
 
 		boolean apply = false;
 		for (Conversion conversion : Conversion.list) {
@@ -83,27 +82,20 @@ public class Extract {
 	}
 
 	public static void main(String[] args) {
-		if (args.length < 1 || args.length > 2) {
-			System.out
-					.println("Supply source disposition and target memory file");
+		if (args.length != 1) {
+			System.out.println("supply disposition file name");
 			System.exit(1);
 			return;
 		}
 
 		File in = new File(args[0]);
-		File out;
-		if (args.length == 1) {
-			String name;
-			if (args[0].endsWith(DispositionFileFilter.FILE_SUFFIX)) {
-				name = args[0].substring(0, args[0].length()
-						- DispositionFileFilter.FILE_SUFFIX.length());
-			} else {
-				name = args[0];
-			}
-			out = new File(name + ".memory");
-		} else {
-			out = new File(args[1]);
+
+		String name = args[0];
+		if (name.endsWith(DispositionFileFilter.FILE_SUFFIX)) {
+			name = name.substring(0, name.length()
+					- DispositionFileFilter.FILE_SUFFIX.length());
 		}
+		File out = new File(name + ".memory");
 
 		try {
 			new Extract().now(in, out);
