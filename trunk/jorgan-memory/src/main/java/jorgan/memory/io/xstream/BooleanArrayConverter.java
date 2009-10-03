@@ -57,7 +57,10 @@ public class BooleanArrayConverter implements Converter {
 				",");
 		boolean[] bs = new boolean[tokens.countTokens()];
 		for (int b = 0; b < bs.length; b++) {
-			bs[b] = Boolean.parseBoolean(tokens.nextToken().trim());
+			String token = tokens.nextToken().trim();
+			if ("1".equals(token) || "true".equals(token)) {
+				bs[b] = true;
+			}
 		}
 		return bs;
 	}
