@@ -98,7 +98,7 @@ public class KeyboardPanel extends JPanel {
 		Column secondColumn = builder.column();
 
 		secondColumn.term(config.get("channel").read(new JLabel()));
-		channelSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 15, 1));
+		channelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
 		secondColumn.definition(channelSpinner);
 
 		secondColumn.term(config.get("from").read(new JLabel()));
@@ -121,7 +121,7 @@ public class KeyboardPanel extends JPanel {
 		deviceComboBox.setSelectedItem(keyboard.getInput());
 
 		try {
-			channelSpinner.setValue(keyboard.getChannel());
+			channelSpinner.setValue(keyboard.getChannel() + 1);
 		} catch (ProcessingException e) {
 			channelSpinner.setEnabled(false);
 		}
@@ -142,7 +142,7 @@ public class KeyboardPanel extends JPanel {
 
 		try {
 			if (channelSpinner.isEnabled()) {
-				keyboard.setChannel((Integer) channelSpinner.getValue());
+				keyboard.setChannel(((Integer) channelSpinner.getValue()) - 1);
 			}
 		} catch (ProcessingException ignore) {
 		}
