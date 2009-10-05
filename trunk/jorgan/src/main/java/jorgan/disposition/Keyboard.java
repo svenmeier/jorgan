@@ -86,7 +86,7 @@ public class Keyboard extends Element implements Input {
 		}
 
 		if (!found) {
-			throw new ProcessingException("");
+			throw new ProcessingException("no channel");
 		}
 		return channel;
 	}
