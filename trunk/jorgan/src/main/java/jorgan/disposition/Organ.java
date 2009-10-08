@@ -311,18 +311,13 @@ public class Organ {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends Element> E getElement(Class<E> clazz) {
-		E element = null;
-
 		for (Element candidate : this.elements) {
 			if (clazz.isInstance(candidate)) {
-				if (element != null) {
-					throw new IllegalStateException();
-				}
-				element = (E) candidate;
+				return (E) candidate;
 			}
 		}
 
-		return element;
+		return null;
 	}
 
 	public Element duplicate(Element element) {
