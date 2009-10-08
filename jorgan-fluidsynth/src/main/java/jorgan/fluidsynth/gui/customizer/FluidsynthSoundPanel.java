@@ -18,39 +18,38 @@
  */
 package jorgan.fluidsynth.gui.customizer;
 
-import java.util.Set;
-
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import jorgan.disposition.Elements;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 
-public class FluidsynthSoundsPanel extends JPanel {
+public class FluidsynthSoundPanel extends JPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
-			FluidsynthSoundsPanel.class);
+			FluidsynthSoundPanel.class);
 
 	private JSpinner audioBuffersSpinner;
 
 	private JSpinner audioBufferSizeSpinner;
 
-	private Set<FluidsynthSound> sounds;
+	private FluidsynthSound sound;
 
-	public FluidsynthSoundsPanel(Set<FluidsynthSound> sounds) {
+	public FluidsynthSoundPanel(FluidsynthSound sound) {
 		config.read(this);
 
-		this.sounds = sounds;
+		this.sound = sound;
 
 		DefinitionBuilder builder = new DefinitionBuilder(this);
 
 		Column column = builder.column();
 
-		column.group(config.get("audioBuffer").read(new JLabel()));
+		column.group(new JLabel(Elements.getDisplayName(sound)));
 
 		column.term(config.get("audioBuffers").read(new JLabel()));
 		audioBuffersSpinner = new JSpinner(new SpinnerNumberModel(2, 2, 16, 1));
@@ -65,33 +64,12 @@ public class FluidsynthSoundsPanel extends JPanel {
 	}
 
 	private void init() {
-		int audioBuffers = -1;
-		int audioBufferSize = -1;
-
-		for (FluidsynthSound sound : sounds) {
-			audioBuffers = Math.max(audioBuffers, sound.getAudioBuffers());
-			audioBufferSize = Math
-					.max(audioBuffers, sound.getAudioBufferSize());
-		}
-
-		if (audioBuffers == -1) {
-			audioBuffersSpinner.setEnabled(false);
-			audioBufferSizeSpinner.setEnabled(false);
-		} else {
-			audioBuffersSpinner.setValue(audioBuffers);
-			audioBufferSizeSpinner.setValue(audioBufferSize);
-		}
+		audioBuffersSpinner.setValue(sound.getAudioBuffers());
+		audioBufferSizeSpinner.setValue(sound.getAudioBufferSize());
 	}
 
 	public void apply() {
-		if (audioBufferSizeSpinner.isEnabled()) {
-			int audioBuffers = (Integer) audioBuffersSpinner.getValue();
-			int audioBufferSize = (Integer) audioBufferSizeSpinner.getValue();
-
-			for (FluidsynthSound sound : sounds) {
-				sound.setAudioBuffers(audioBuffers);
-				sound.setAudioBufferSize(audioBufferSize);
-			}
-		}
+		sound.setAudioBuffers((Integer) audioBuffersSpinner.getValue());
+		sound.setAudioBufferSize((Integer) audioBufferSizeSpinner.getValue());
 	}
 }

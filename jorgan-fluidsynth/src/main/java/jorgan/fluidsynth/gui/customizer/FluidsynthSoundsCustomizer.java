@@ -18,15 +18,23 @@
  */
 package jorgan.fluidsynth.gui.customizer;
 
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 import jorgan.customizer.gui.Customizer;
+import jorgan.disposition.Keyboard;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 
 /**
- * customizer of {@link FluidsynthSound}s.
+ * customizer of {@link Keyboard}s.
  */
 public class FluidsynthSoundsCustomizer implements Customizer {
 
@@ -35,13 +43,26 @@ public class FluidsynthSoundsCustomizer implements Customizer {
 
 	private String description;
 
-	private FluidsynthSoundsPanel panel;
+	private JScrollPane scrollPane;
+
+	private List<FluidsynthSoundPanel> panels = new ArrayList<FluidsynthSoundPanel>();
 
 	public FluidsynthSoundsCustomizer(OrganSession session) {
 		config.read(this);
 
-		panel = new FluidsynthSoundsPanel(session.getOrgan().getElements(
-				FluidsynthSound.class));
+		scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
+
+		JPanel grid = new JPanel(new GridLayout(0, 1));
+		scrollPane.setViewportView(grid);
+
+		for (FluidsynthSound sound : session.getOrgan().getElements(FluidsynthSound.class)) {
+			FluidsynthSoundPanel panel = new FluidsynthSoundPanel(sound);
+			panels.add(panel);
+			grid.add(panel);
+		}
 	}
 
 	public String getDescription() {
@@ -53,11 +74,13 @@ public class FluidsynthSoundsCustomizer implements Customizer {
 	}
 
 	public JComponent getComponent() {
-		return panel;
+		return scrollPane;
 	}
 
 	public void apply() {
-		panel.apply();
+		for (FluidsynthSoundPanel panel : panels) {
+			panel.apply();
+		}
 	}
 
 	public static boolean customizes(OrganSession session) {
