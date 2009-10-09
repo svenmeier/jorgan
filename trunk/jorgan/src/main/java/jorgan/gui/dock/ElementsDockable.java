@@ -43,7 +43,8 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
-import jorgan.gui.construct.ElementComparator;
+import jorgan.gui.construct.ElementNameComparator;
+import jorgan.gui.construct.ElementTypeComparator;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
 import jorgan.gui.undo.Compound;
@@ -54,6 +55,7 @@ import jorgan.problem.ProblemListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
+import jorgan.util.ComparatorChain;
 import jorgan.util.Generics;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -248,16 +250,12 @@ public class ElementsDockable extends OrganDockable {
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
 					.getElements());
-			if (sortByNameButton.isSelected()) {
-				Collections.sort(elements, new ElementComparator(true));
-			} else if (sortByTypeButton.isSelected()) {
-				Collections.sort(elements, new ElementComparator(false));
-			}
+			elementsModel.sort();
 			elementsModel.update();
 		}
 
 		addAction.newSession();
-		
+
 		if (transferable != null) {
 			transferable.clear();
 			transferable = null;
@@ -318,9 +316,9 @@ public class ElementsDockable extends OrganDockable {
 	}
 
 	/**
-	 * Note that <em>Spin</em> ensures that the organListener methods are
-	 * called on the EDT, although a change in the organ might be triggered by a
-	 * change on a MIDI thread.
+	 * Note that <em>Spin</em> ensures that the organListener methods are called
+	 * on the EDT, although a change in the organ might be triggered by a change
+	 * on a MIDI thread.
 	 */
 	private class ElementsModel extends AbstractListModel implements
 			ProblemListener, OrganListener {
@@ -378,11 +376,23 @@ public class ElementsDockable extends OrganDockable {
 			int index = elements.size() - 1;
 			fireIntervalAdded(this, index, index);
 
-			Collections.sort(elements, new ElementComparator(sortByNameButton
-					.isSelected()));
+			sort();
+
 			fireContentsChanged(this, 0, index);
 
 			selectionHandler.selectionChanged();
+		}
+
+		private void sort() {
+			if (sortByNameButton.isSelected()) {
+				Collections.sort(elements, ComparatorChain.of(
+						new ElementNameComparator(),
+						new ElementTypeComparator()));
+			} else {
+				Collections.sort(elements, ComparatorChain.of(
+						new ElementTypeComparator(),
+						new ElementNameComparator()));
+			}
 		}
 
 		public void elementRemoved(Element element) {
@@ -416,14 +426,14 @@ public class ElementsDockable extends OrganDockable {
 
 		private AddAction() {
 			config.get("add").read(this);
-			
+
 			setEnabled(false);
 		}
 
 		public void newSession() {
 			setEnabled(session != null);
 		}
-		
+
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
 				CreateElementWizard.showInDialog(list, session);
@@ -460,7 +470,8 @@ public class ElementsDockable extends OrganDockable {
 				duplicated.add(session.getOrgan().duplicate(element));
 			}
 
-			session.lookup(ElementSelection.class).setSelectedElements(duplicated);
+			session.lookup(ElementSelection.class).setSelectedElements(
+					duplicated);
 		}
 	}
 

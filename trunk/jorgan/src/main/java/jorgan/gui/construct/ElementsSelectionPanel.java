@@ -92,7 +92,7 @@ public class ElementsSelectionPanel extends JPanel {
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
 
-		Collections.sort(elements, new ElementComparator(false));
+		Collections.sort(elements, new ElementTypeComparator());
 
 		elementsList.setModel(new ElementsModel());
 

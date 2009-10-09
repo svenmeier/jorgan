@@ -46,13 +46,15 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateReferencesWizard;
-import jorgan.gui.construct.ElementComparator;
+import jorgan.gui.construct.ElementNameComparator;
+import jorgan.gui.construct.ElementTypeComparator;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.list.ListUtils;
+import jorgan.util.ComparatorChain;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
@@ -142,7 +144,8 @@ public class ReferencesDockable extends OrganDockable {
 			public void actionPerformed(ActionEvent e) {
 				Element element = (Element) list.getSelectedValue();
 
-				session.lookup(ElementSelection.class).setSelectedElement(element);
+				session.lookup(ElementSelection.class).setSelectedElement(
+						element);
 			}
 		});
 		list.setTransferHandler(new TransferHandler() {
@@ -232,7 +235,8 @@ public class ReferencesDockable extends OrganDockable {
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventHandler));
-			this.session.lookup(ElementSelection.class).addListener(eventHandler);
+			this.session.lookup(ElementSelection.class).addListener(
+					eventHandler);
 		}
 
 		if (transferable != null) {
@@ -253,7 +257,8 @@ public class ReferencesDockable extends OrganDockable {
 		if (session != null
 				&& session.lookup(ElementSelection.class).getSelectionCount() == 1) {
 
-			element = session.lookup(ElementSelection.class).getSelectedElement();
+			element = session.lookup(ElementSelection.class)
+					.getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
 				referencesToModel.update();
@@ -322,6 +327,25 @@ public class ReferencesDockable extends OrganDockable {
 	private abstract class ReferencesModel extends AbstractListModel implements
 			Comparator<ReferrerReference> {
 
+		private Comparator<Element> nameType = ComparatorChain.of(
+				new ElementNameComparator(), new ElementTypeComparator());
+		private Comparator<Element> typeName = ComparatorChain.of(
+				new ElementTypeComparator(), new ElementNameComparator());
+
+		public int compare(ReferrerReference reference1,
+				ReferrerReference reference2) {
+			Element element1 = getElement(reference1);
+			Element element2 = getElement(reference2);
+
+			if (sortByNameButton.isSelected()) {
+				return nameType.compare(element1, element2);
+			} else if (sortByTypeButton.isSelected()) {
+				return typeName.compare(element1, element2);
+			} else {
+				return 0;
+			}
+		}
+
 		public int getSize() {
 			return references.size();
 		}
@@ -339,20 +363,6 @@ public class ReferencesDockable extends OrganDockable {
 			references = getReferences();
 
 			Collections.sort(references, this);
-		}
-
-		public int compare(ReferrerReference reference1,
-				ReferrerReference reference2) {
-			Element element1 = getElement(reference1);
-			Element element2 = getElement(reference2);
-
-			if (sortByNameButton.isSelected()) {
-				return ElementComparator.compareByName(element1, element2);
-			} else if (sortByTypeButton.isSelected()) {
-				return ElementComparator.compareByType(element1, element2);
-			} else {
-				return 0;
-			}
 		}
 
 		protected abstract List<ReferrerReference> getReferences();
