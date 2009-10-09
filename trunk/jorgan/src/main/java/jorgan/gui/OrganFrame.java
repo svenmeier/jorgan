@@ -429,7 +429,15 @@ public class OrganFrame extends JFrame implements SessionAware {
 				return;
 			}
 
-			openOrgan(new File((String) getValue(Action.SHORT_DESCRIPTION)));
+			File file = new File((String) getValue(Action.SHORT_DESCRIPTION));
+			if (!file.exists()) {
+				showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file
+						.getName());
+
+				return;
+			}
+			
+			openOrgan(file);
 		}
 	}
 
