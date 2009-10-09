@@ -30,7 +30,9 @@ import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
-import jorgan.gui.construct.ElementComparator;
+import jorgan.gui.construct.ElementNameComparator;
+import jorgan.util.ComparatorChain;
+import jorgan.util.IdentityComparator;
 
 /**
  * The container for all elements of an organ.
@@ -121,7 +123,7 @@ public class Organ {
 
 	private Long createId(Element element) {
 		Long id = element.getId();
-		
+
 		long maxId = 0;
 		for (Element other : elements) {
 			if (other != element) {
@@ -135,23 +137,23 @@ public class Organ {
 				}
 			}
 		}
-		
+
 		if (id != null) {
 			return id;
 		} else {
 			return maxId + 1;
 		}
 	}
-	
+
 	public void bind(Element element) {
 		element.id = createId(element);
 		element.organ = this;
 	}
-	
+
 	public void addElement(final Element element) {
 
 		element.id = createId(element);
-		
+
 		elements.add(element);
 		element.setOrgan(this);
 
@@ -291,7 +293,8 @@ public class Organ {
 	 */
 	@SuppressWarnings("unchecked")
 	public <E extends Element> Set<E> getElements(Class<E> clazz) {
-		Set<E> set = new TreeSet<E>(new ElementComparator(true));
+		Set<E> set = new TreeSet<E>(ComparatorChain.of(
+				new ElementNameComparator(), new IdentityComparator()));
 
 		for (Element element : this.elements) {
 			if (clazz.isInstance(element)) {

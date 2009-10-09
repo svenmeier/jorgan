@@ -26,39 +26,9 @@ import jorgan.disposition.Elements;
 /**
  * Comparator of elements.
  */
-public class ElementComparator implements Comparator<Element> {
-
-	private boolean alphabet;
-
-	public ElementComparator(boolean alphabet) {
-		this.alphabet = alphabet;
-	}
+public class ElementTypeComparator implements Comparator<Element> {
 
 	public int compare(Element e1, Element e2) {
-
-		if (alphabet) {
-			int result = compareByName(e1, e2);
-			if (result == 0) {
-				result = compareByType(e1, e2);
-			}
-			return result;
-		} else {
-			int result = compareByType(e1, e2);
-			if (result == 0) {
-				result = compareByName(e1, e2);
-			}
-			return result;
-		}
-	}
-
-	public static int compareByName(Element e1, Element e2) {
-
-		return Elements.getDisplayName(e1).compareTo(
-				Elements.getDisplayName(e2));
-	}
-
-	public static int compareByType(Element e1, Element e2) {
-
 		return Elements.getDisplayName(e1.getClass()).compareTo(
 				Elements.getDisplayName(e2.getClass()));
 	}
