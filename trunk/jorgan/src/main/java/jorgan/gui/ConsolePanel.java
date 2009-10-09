@@ -1055,10 +1055,12 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					if (console.canReference(element)) {
 						console.reference(element);
 					}
-
-					View<? extends Displayable> view = getView((Displayable) element);
-					if (view != null) {
-						views.add(view);
+					
+					if (element instanceof Displayable) {
+						View<? extends Displayable> view = getView((Displayable) element);
+						if (view != null) {
+							views.add(view);
+						}
 					}
 				}
 				// new positions of (old) views might have changed preferred
