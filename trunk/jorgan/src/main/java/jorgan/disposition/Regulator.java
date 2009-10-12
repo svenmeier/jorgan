@@ -22,7 +22,7 @@ package jorgan.disposition;
  * An regulator of {@link jorgan.disposition.Switch}es.
  */
 public class Regulator extends IndexedContinuous implements Engaging,
-		Activating {
+		Switch.Dependent {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -40,12 +40,12 @@ public class Regulator extends IndexedContinuous implements Engaging,
 
 	public void setTitle(String title) {
 		int index = getIndex();
-		
+
 		if (index < getSize()) {
 			getReference(index).getElement().setName(title);
 		}
 	}
-	
+
 	/**
 	 * A regulator enages the referenced {@link Switch} corresponding to the
 	 * current {@link #getIndex()}.

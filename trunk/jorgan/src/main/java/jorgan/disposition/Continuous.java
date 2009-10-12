@@ -68,6 +68,11 @@ public class Continuous extends Displayable {
 			fireChange(new FastPropertyChange("value"));
 
 			onValueChanged(oldValue, this.value);
+
+			for (Dependent dependent : getOrgan().getReferrer(this,
+					Dependent.class)) {
+				dependent.valueChanged(this, value);
+			}
 		}
 	}
 
@@ -150,5 +155,14 @@ public class Continuous extends Displayable {
 	public static class Changed extends OutputMessage {
 
 		public static final String VALUE = "value";
+	}
+
+	public static interface Dependent {
+
+		/**
+		 * Notification from a referenced {@link Continuous} of a change in
+		 * {@link Continuous#getValue()}.
+		 */
+		public void valueChanged(Continuous element, float value);
 	}
 }
