@@ -18,7 +18,8 @@
  */
 package jorgan.disposition;
 
-public class Combination extends Switch implements Activating {
+public class Combination extends Switch implements Continuous.Dependent,
+		Switch.Dependent {
 
 	private transient boolean recalling;
 
@@ -112,10 +113,30 @@ public class Combination extends Switch implements Activating {
 		}
 	}
 
+	public void valueChanged(Continuous element, float value) {
+		if (recalling) {
+			return;
+		}
+
+		if (!references((Element) element)) {
+			throw new IllegalArgumentException("does not reference '" + element
+					+ "'");
+		}
+
+		if (isActive()) {
+			for (ContinuousReference reference : getReferences(ContinuousReference.class)) {
+				if (!reference.matches()) {
+					setActive(false);
+					break;
+				}
+			}
+		}
+	}
+
 	public boolean isRecalling() {
 		return recalling;
 	}
-	
+
 	private static abstract class AbstractReference<E extends Element> extends
 			Reference<E> {
 
@@ -181,6 +202,10 @@ public class Combination extends Switch implements Activating {
 
 		public ContinuousReference(Continuous element) {
 			super(element);
+		}
+
+		public boolean matches() {
+			return value == getElement().getValue();
 		}
 
 		public float getValue() {

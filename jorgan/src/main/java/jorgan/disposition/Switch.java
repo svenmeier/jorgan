@@ -72,9 +72,9 @@ public class Switch extends Engageable {
 
 			engagingChanged(active);
 
-			for (Activating activating : getOrgan().getReferrer(this,
-					Activating.class)) {
-				activating.activeChanged(this, active);
+			for (Dependent dependent : getOrgan().getReferrer(this,
+					Dependent.class)) {
+				dependent.activeChanged(this, active);
 			}
 		}
 	}
@@ -162,5 +162,19 @@ public class Switch extends Engageable {
 	}
 
 	public static class Deactivated extends OutputMessage {
+	}
+
+	/**
+	 * An element that is dependent on {@link Switch}es.
+	 * 
+	 * @see Switch#setActive(boolean)
+	 */
+	public static interface Dependent {
+
+		/**
+		 * Notification from a referenced {@link Switch} of a change in
+		 * {@link Switch#isActive())}.
+		 */
+		public void activeChanged(Switch element, boolean active);
 	}
 }
