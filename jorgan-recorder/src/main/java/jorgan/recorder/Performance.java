@@ -234,6 +234,10 @@ public abstract class Performance {
 	}
 
 	public void stop() {
+		if (messageRecorder == null) {
+			return;
+		}
+
 		if (state != STATE_STOP) {
 			messageRecorder.stop();
 
@@ -244,6 +248,10 @@ public abstract class Performance {
 	}
 
 	public void play() {
+		if (messageRecorder == null) {
+			return;
+		}
+		
 		if (state != STATE_PLAY) {
 			state = STATE_PLAY;
 
@@ -260,6 +268,10 @@ public abstract class Performance {
 	}
 
 	public void record() {
+		if (messageRecorder == null) {
+			return;
+		}
+		
 		state = STATE_RECORD;
 
 		messageRecorder.start();
