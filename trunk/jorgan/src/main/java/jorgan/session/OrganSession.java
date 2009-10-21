@@ -24,6 +24,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
@@ -31,11 +33,19 @@ import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.spi.ElementRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.session.spi.SessionRegistry;
+import jorgan.util.ShutdownHook;
+import bias.Configuration;
 
 /**
  * A session of interaction with an {@link Organ}.
  */
 public class OrganSession {
+
+	private static Logger logger = Logger.getLogger(OrganSession.class
+			.getName());
+
+	private static Configuration config = Configuration.getRoot().get(
+			OrganSession.class);
 
 	/**
 	 * The file the current organ is associated with.
@@ -47,10 +57,12 @@ public class OrganSession {
 	private List<SessionListener> listeners = new ArrayList<SessionListener>();
 
 	private boolean modified = false;
-	
+
 	private boolean constructing = false;
 
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
+
+	private ShutdownHook shutdownHook;
 
 	public OrganSession(File file) throws IOException {
 		this.file = file;
@@ -69,14 +81,40 @@ public class OrganSession {
 				markModified();
 			}
 		});
-		
+
 		SessionRegistry.init(this);
+		
+		config.read(this);
+	}
+
+	public void setSaveOnShutdown(boolean save) {
+		if (save) {
+			if (shutdownHook == null) {
+				shutdownHook = new ShutdownHook(new Runnable() {
+					public void run() {
+						if (modified) {
+							try {
+								save();
+							} catch (IOException e) {
+								logger.log(Level.WARNING,
+										"unable to save on shutdown");
+							}
+						}
+					}
+				});
+			}
+		} else {
+			if (shutdownHook != null) {
+				shutdownHook.destroy();
+				shutdownHook = null;
+			}
+		}
 	}
 
 	public boolean isModified() {
 		return modified;
 	}
-	
+
 	public void markModified() {
 		if (!modified) {
 			modified = true;
@@ -86,12 +124,12 @@ public class OrganSession {
 			}
 		}
 	}
-	
+
 	public void save() throws IOException {
 		new DispositionStream().write(organ, file);
 
 		modified = false;
-		
+
 		for (SessionListener listener : listeners) {
 			listener.saved(file);
 		}
@@ -162,6 +200,10 @@ public class OrganSession {
 	public void destroy() {
 		for (SessionListener listener : listeners) {
 			listener.destroyed();
+		}
+
+		if (shutdownHook != null) {
+			shutdownHook.destroy();
 		}
 	}
 }
