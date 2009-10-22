@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 
 import jorgan.App;
+import jorgan.session.OrganSession;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -39,7 +40,12 @@ public class AppCategory extends JOrganCategory {
 	private Model openRecentOnStartup = getModel(new Property(App.class,
 			"openRecentOnStartup"));
 
+	private Model saveOnShutdown = getModel(new Property(OrganSession.class,
+			"saveOnShutdown"));
+
 	private JCheckBox openRecentOnStartupCheckBox = new JCheckBox();
+
+	private JCheckBox saveOnShutdownCheckBox = new JCheckBox();
 
 	public AppCategory() {
 		config.read(this);
@@ -56,6 +62,9 @@ public class AppCategory extends JOrganCategory {
 		column.definition(config.get("openRecentOnStartup").read(
 				openRecentOnStartupCheckBox));
 
+		column.definition(config.get("saveOnShutdown").read(
+				saveOnShutdownCheckBox));
+
 		return panel;
 	}
 
@@ -63,10 +72,13 @@ public class AppCategory extends JOrganCategory {
 	protected void read() {
 		openRecentOnStartupCheckBox.setSelected((Boolean) openRecentOnStartup
 				.getValue());
+		saveOnShutdownCheckBox.setSelected((Boolean) saveOnShutdown.getValue());
 	}
 
 	@Override
 	protected void write() {
 		openRecentOnStartup.setValue(openRecentOnStartupCheckBox.isSelected());
+		
+		saveOnShutdown.setValue(saveOnShutdownCheckBox.isSelected());
 	}
 }
