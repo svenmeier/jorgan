@@ -83,7 +83,7 @@ public class OrganSession {
 		});
 
 		SessionRegistry.init(this);
-		
+
 		config.read(this);
 	}
 
@@ -93,11 +93,13 @@ public class OrganSession {
 				shutdownHook = new ShutdownHook(new Runnable() {
 					public void run() {
 						if (modified) {
+							logger.log(Level.INFO, "save on shutdown");
+
 							try {
 								save();
-							} catch (IOException e) {
+							} catch (IOException ex) {
 								logger.log(Level.WARNING,
-										"unable to save on shutdown");
+										"unable to save on shutdown", ex);
 							}
 						}
 					}
