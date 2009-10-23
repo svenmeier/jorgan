@@ -26,6 +26,10 @@ public class Record extends RecorderSwitch {
 
 	@Override
 	public void perform(Performance performance) {
-		performance.record();
+		if (isActive()) {
+			performance.record();
+		} else {
+			performance.stop();
+		}
 	}
 }
