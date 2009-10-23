@@ -53,7 +53,12 @@ public class RecorderView extends View<Recorder> implements TitledView {
 			public String getText() {
 				String performance = getElement().getPerformance();
 				if (performance == null) {
-					performance = "-";
+					performance = "";
+				} else {
+					int slash = performance.lastIndexOf('/');
+					if (slash != -1) {
+						performance = performance.substring(slash + 1);
+					}
 				}
 				return performance;
 			}

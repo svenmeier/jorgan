@@ -62,6 +62,8 @@ public class LinuxsamplerSound extends GenericSound {
 	}
 
 	public void setLscp(String lscp) {
+		lscp = cleanPath(lscp);
+		
 		if (!Null.safeEquals(this.lscp, lscp)) {
 			String oldLscp = this.lscp;
 			

@@ -553,6 +553,14 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
+	protected static String cleanPath(String path) {
+		if (path == null) {
+			return null;
+		}
+		
+		return path.replace('\\', '/');
+	}
+
 	public class FastPropertyChange implements Change {
 		
 		private String name;
