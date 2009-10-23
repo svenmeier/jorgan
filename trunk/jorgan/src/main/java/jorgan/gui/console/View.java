@@ -295,6 +295,10 @@ public class View<E extends Displayable> {
 		size = style.getSize();
 
 		zoom = element.getZoom();
+		if (zoom < 0.5f) {
+			// don't trust the element's zoom
+			zoom = 0.5f;
+		}
 	}
 
 	protected void repaint() {
