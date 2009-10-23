@@ -26,6 +26,10 @@ public class Play extends RecorderSwitch {
 
 	@Override
 	public void perform(Performance performance) {
-		performance.play();
+		if (isActive()) {
+			performance.play();
+		} else {
+			performance.stop();
+		}
 	}
 }

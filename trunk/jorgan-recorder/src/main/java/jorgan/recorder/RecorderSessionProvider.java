@@ -47,10 +47,11 @@ public class RecorderSessionProvider implements SessionProvider {
 				protected File resolve(String name) {
 					return session.resolve(name);
 				}
+
 				@Override
 				protected void markModified() {
 					super.markModified();
-					
+
 					session.markModified();
 				}
 			};
@@ -61,7 +62,7 @@ public class RecorderSessionProvider implements SessionProvider {
 
 				public void modified() {
 				}
-				
+
 				public void saved(File file) throws IOException {
 					if (performance.isLoaded()) {
 						performance.save();
@@ -78,9 +79,7 @@ public class RecorderSessionProvider implements SessionProvider {
 					if (RecorderSwitch.class.isInstance(element)
 							&& "active".equals(name)) {
 						RecorderSwitch recorderSwitch = ((RecorderSwitch) element);
-						if (recorderSwitch.isActive()) {
-							recorderSwitch.perform(performance);
-						}
+						recorderSwitch.perform(performance);
 					}
 				}
 			});

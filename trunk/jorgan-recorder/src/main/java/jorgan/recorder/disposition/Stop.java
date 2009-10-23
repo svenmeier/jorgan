@@ -26,6 +26,8 @@ public class Stop extends RecorderSwitch {
 
 	@Override
 	public void perform(Performance performance) {
-		performance.stop();
+		if (isActive()) {
+			performance.stop();
+		}
 	}
 }
