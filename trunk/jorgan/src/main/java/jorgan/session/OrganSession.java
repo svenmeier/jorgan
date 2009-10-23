@@ -107,7 +107,7 @@ public class OrganSession {
 			}
 		} else {
 			if (shutdownHook != null) {
-				shutdownHook.destroy();
+				shutdownHook.release();
 				shutdownHook = null;
 			}
 		}
@@ -205,7 +205,7 @@ public class OrganSession {
 		}
 
 		if (shutdownHook != null) {
-			shutdownHook.destroy();
+			shutdownHook.release();
 		}
 	}
 }

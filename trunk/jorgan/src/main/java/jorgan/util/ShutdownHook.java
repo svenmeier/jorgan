@@ -33,7 +33,7 @@ public class ShutdownHook extends Thread {
 		runnable.run();
 	}
 	
-	public void destroy() {
+	public void release() {
 		Runtime.getRuntime().removeShutdownHook(this);
 	}
 }
