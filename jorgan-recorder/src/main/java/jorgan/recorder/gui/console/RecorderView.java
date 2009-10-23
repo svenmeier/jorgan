@@ -16,19 +16,18 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.gui.console;
+package jorgan.recorder.gui.console;
 
-import jorgan.gui.console.IndexedContinuousView;
-import jorgan.memory.Storage;
-import jorgan.memory.disposition.Memory;
+import jorgan.gui.console.TitledView;
+import jorgan.gui.console.View;
+import jorgan.recorder.disposition.Recorder;
 import jorgan.session.OrganSession;
+import jorgan.skin.TextLayer;
 
 /**
- * A view that shows a {@link Memory}.
+ * A view that shows a {@link Recorder}.
  */
-public class MemoryView extends IndexedContinuousView<Memory> {
-
-	private Storage manager;
+public class RecorderView extends View<Recorder> implements TitledView {
 
 	/**
 	 * Constructor.
@@ -38,13 +37,26 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	 * @param memory
 	 *            memory to view
 	 */
-	public MemoryView(OrganSession session, Memory element) {
+	public RecorderView(OrganSession session, Recorder element) {
 		super(element);
-
-		manager = session.lookup(Storage.class);
 	}
 
-	protected String getTitle(int index) {
-		return manager.getTitle(index);
+	@Override
+	protected void initBindings() {
+		super.initBindings();
+
+		setBinding(BINDING_TITLE, new TextLayer.Binding() {
+			public boolean isPressable() {
+				return false;
+			}
+
+			public String getText() {
+				String performance = getElement().getPerformance();
+				if (performance == null) {
+					performance = "-";
+				}
+				return performance;
+			}
+		});
 	}
 }

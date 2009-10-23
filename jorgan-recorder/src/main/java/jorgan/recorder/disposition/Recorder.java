@@ -18,12 +18,12 @@
  */
 package jorgan.recorder.disposition;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Displayable;
 import jorgan.util.Null;
 
 /**
  */
-public class Recorder extends Element {
+public class Recorder extends Displayable {
 
 	private String performance;
 
@@ -37,8 +37,7 @@ public class Recorder extends Element {
 
 			this.performance = performance;
 
-			fireChange(new PropertyChange(oldPerformance,
-					this.performance));
+			fireChange(new PropertyChange(oldPerformance, this.performance));
 		}
 	}
 }
