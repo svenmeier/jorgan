@@ -61,6 +61,8 @@ public class Memory extends IndexedContinuous {
 	}
 
 	public void setStorage(String storage) {
+		storage = cleanPath(storage);
+
 		if (!Null.safeEquals(this.storage, storage)) {
 			String oldStore = this.storage;
 

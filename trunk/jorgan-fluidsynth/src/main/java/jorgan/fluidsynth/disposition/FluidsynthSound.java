@@ -97,6 +97,8 @@ public class FluidsynthSound extends Sound {
 	}
 
 	public void setSoundfont(String soundfont) {
+		soundfont = cleanPath(soundfont);
+		
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			String oldSoundfont = this.soundfont;
 

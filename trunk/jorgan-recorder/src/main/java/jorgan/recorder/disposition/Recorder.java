@@ -32,6 +32,8 @@ public class Recorder extends Displayable {
 	}
 
 	public void setPerformance(String performance) {
+		performance = cleanPath(performance);
+		
 		if (!Null.safeEquals(this.performance, performance)) {
 			String oldPerformance = this.performance;
 

@@ -32,6 +32,8 @@ public class CreativeSound extends GenericSound {
 	}
 
 	public void setSoundfont(String soundfont) {
+		soundfont = cleanPath(soundfont);
+		
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			String oldSoundfont = this.soundfont;
 			

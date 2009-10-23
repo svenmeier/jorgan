@@ -93,6 +93,8 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	public void setSkin(String skin) {
+		skin = cleanPath(skin);
+		
 		if (!Null.safeEquals(this.skin, skin)) {
 			String oldSkin = this.skin;
 
