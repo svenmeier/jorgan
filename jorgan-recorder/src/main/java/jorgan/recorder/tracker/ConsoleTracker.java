@@ -22,6 +22,8 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
+import bias.Configuration;
+
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -39,6 +41,9 @@ import jorgan.recorder.midi.MessageRecorder;
  */
 public class ConsoleTracker extends AbstractTracker {
 
+	private static Configuration config = Configuration.getRoot().get(
+			ConsoleTracker.class);
+
 	private static final String PREFIX_ACTIVE = "+";
 
 	private static final String PREFIX_INACTIVE = "-";
@@ -51,11 +56,15 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private EventListener eventListener = new EventListener();
 
+	private boolean recordCombinationRecalls;
+	
 	private boolean ignoreChanges;
 
 	public ConsoleTracker(Performance performance, int track, Console console) {
 		super(performance, track);
 
+		config.read(this);
+		
 		// enable play only
 		setPlayEnabled(true);
 
@@ -64,6 +73,10 @@ public class ConsoleTracker extends AbstractTracker {
 		getOrgan().addOrganListener(eventListener);
 	}
 
+	public void setRecordCombinationRecalls(boolean recordCombinationRecalls) {
+		this.recordCombinationRecalls = recordCombinationRecalls;
+	}
+	
 	@Override
 	public void destroy() {
 		getOrgan().removeOrganListener(eventListener);
@@ -304,8 +317,14 @@ public class ConsoleTracker extends AbstractTracker {
 				return;
 			}
 
-			for (Combination combination : getOrgan().getReferrer(element, Combination.class)) {
-				if (combination.isRecalling()) {
+			if (recordCombinationRecalls) {
+				for (Combination combination : getOrgan().getReferrer(element, Combination.class)) {
+					if (combination.isRecalling()) {
+						return;
+					}
+				}
+			} else {
+				if (element instanceof Combination) {
 					return;
 				}
 			}
