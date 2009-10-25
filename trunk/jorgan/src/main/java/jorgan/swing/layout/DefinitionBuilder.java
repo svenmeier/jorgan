@@ -88,7 +88,7 @@ public class DefinitionBuilder {
 			nextRow(1);
 		}
 
-		public void box(JComponent component) {
+		public Space box(JComponent component) {
 			if (term) {
 				nextRow(1);
 			}
@@ -97,17 +97,19 @@ public class DefinitionBuilder {
 			constraints.gridwidth = 2;
 			constraints.gridheight = 1;
 			constraints.weightx = 1.0d;
-			constraints.weighty = 1.0d;
+			constraints.weighty = 0.0d;
 			constraints.fill = GridBagConstraints.BOTH;
 			if (columnIndex > 0) {
 				constraints.insets.left = columnSpacing;
 			}
-			panel.add(component, constraints);
+			Space space = new Space(component, constraints);
 
 			nextRow(1);
+			
+			return space;
 		}
 
-		public void term(JComponent component) {
+		public Space term(JComponent component) {
 			if (term) {
 				nextRow(1);
 			}
@@ -122,16 +124,15 @@ public class DefinitionBuilder {
 			if (columnIndex > 0) {
 				constraints.insets.left = columnSpacing;
 			}
-			panel.add(component, constraints);
 
-			term = true;
+			return new Space(component, constraints);
 		}
 
-		public Definition definition(JComponent component) {
+		public Space definition(JComponent component) {
 			return definition(component, 1);
 		}
 
-		public Definition definition(JComponent component, int height) {
+		public Space definition(JComponent component, int height) {
 			GridBagConstraints constraints = (GridBagConstraints) this.constraints.clone();
 			constraints.gridx = columnIndex * 2 + 1;
 			constraints.gridwidth = 1;
@@ -142,18 +143,18 @@ public class DefinitionBuilder {
 			constraints.anchor = GridBagConstraints.WEST;
 			constraints.insets.left = 2;
 
-			Definition definition = new Definition(component, constraints);
+			Space space = new Space(component, constraints);
 
 			nextRow(height);
 
-			return definition;
+			return space;
 		}
 
-		public class Definition {
+		public class Space {
 			private JComponent component;
 			private GridBagConstraints constraints;
 
-			private Definition(JComponent component,
+			private Space(JComponent component,
 					GridBagConstraints constraints) {
 				this.component = component;
 				this.constraints = constraints;
@@ -161,28 +162,28 @@ public class DefinitionBuilder {
 				panel.add(component, constraints);
 			}
 
-			public Definition fillHorizontal() {
+			public Space fillHorizontal() {
 				this.constraints.fill = GridBagConstraints.HORIZONTAL;
 
 				layout.setConstraints(component, constraints);
 				return this;
 			}
 
-			public Definition fillVertical() {
+			public Space fillVertical() {
 				this.constraints.fill = GridBagConstraints.VERTICAL;
 
 				layout.setConstraints(component, constraints);
 				return this;
 			}
 
-			public Definition fillBoth() {
+			public Space fillBoth() {
 				this.constraints.fill = GridBagConstraints.BOTH;
 
 				layout.setConstraints(component, constraints);
 				return this;
 			}
 
-			public Definition growVertical() {
+			public Space growVertical() {
 				this.constraints.weighty = 1.0f;
 
 				layout.setConstraints(component, constraints);
