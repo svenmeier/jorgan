@@ -140,7 +140,7 @@ public class ConsolePanel extends JPanel {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setPreferredSize(new Dimension(160, 160));
-		column.box(scrollPane);
+		column.box(scrollPane).growVertical();
 
 		switchesTable = new JTable();
 		config.get("switchesTable").read(switchesModel);
@@ -168,7 +168,7 @@ public class ConsolePanel extends JPanel {
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		scrollPane.setPreferredSize(new Dimension(160, 160));
-		column.box(scrollPane);
+		column.box(scrollPane).growVertical();
 
 		continuousTable = new JTable();
 		config.get("continuousTable").read(continuousModel);
