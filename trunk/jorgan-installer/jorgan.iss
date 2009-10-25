@@ -36,6 +36,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 Name: "core"; Description: "Program Files"; Types: full custom; Flags: fixed
 Name: "creative"; Description: "Creative Soundblaster"; Types: full
 Name: "customizer"; Description: "Customizer"; Types: full
+Name: "executor"; Description: "Executor"; Types: full
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
 Name: "importer"; Description: "Importer"; Types: full
 Name: "keyboard"; Description: "Keyboard"; Types: full
@@ -51,6 +52,7 @@ Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
 Source: "..\core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
 Source: "..\customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
+Source: "..\executor\target\marshal\*"; DestDir: "{app}"; Components: executor; Flags: recursesubdirs createallsubdirs
 Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
 Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
 Source: "..\keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
