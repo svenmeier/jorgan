@@ -6,6 +6,7 @@ set INNO_SETUP="C:\Programme\Inno Setup 5\ISCC.exe"
 call %ANT% -buildfile ../core/build.xml
 call %ANT% -buildfile ../creative/build.xml
 call %ANT% -buildfile ../customizer/build.xml
+call %ANT% -buildfile ../executor/build.xml
 call %ANT% -buildfile ../fluidsynth/build.xml
 call %ANT% -buildfile ../importer/build.xml
 call %ANT% -buildfile ../keyboard/build.xml
