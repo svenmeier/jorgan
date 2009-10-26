@@ -68,7 +68,7 @@ public class Switch extends Engageable {
 		if (this.active != active) {
 			this.active = active;
 
-			fireChange(new FastPropertyChange("active"));
+			fireChange(new FastPropertyChange("active", false));
 
 			engagingChanged(active);
 

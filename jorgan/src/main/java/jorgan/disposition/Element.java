@@ -564,11 +564,18 @@ public abstract class Element implements Cloneable {
 	public class FastPropertyChange implements Change {
 		
 		private String name;
+		
+		private boolean derived;
 
-		public FastPropertyChange(String name) {
+		public FastPropertyChange(String name, boolean derived) {
 			this.name = name;
+			this.derived = derived;
 		}
 
+		public boolean isDerived() {
+			return derived;
+		}
+		
 		public void notify(OrganListener listener) {
 			listener.propertyChanged(Element.this, name);
 		}

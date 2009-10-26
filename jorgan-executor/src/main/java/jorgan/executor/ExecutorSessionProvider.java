@@ -24,7 +24,7 @@ import bias.Configuration;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.executor.disposition.ExecutorSwitch;
+import jorgan.executor.disposition.Executor;
 import jorgan.session.OrganSession;
 import jorgan.session.spi.SessionProvider;
 
@@ -46,11 +46,11 @@ public class ExecutorSessionProvider implements SessionProvider {
 		session.getOrgan().addOrganListener(new OrganAdapter() {
 			@Override
 			public void propertyChanged(Element element, String name) {
-				if (ExecutorSwitch.class.isInstance(element)
+				if (Executor.class.isInstance(element)
 						&& "active".equals(name)) {
-					ExecutorSwitch executorSwitch = ((ExecutorSwitch) element);
+					Executor executorSwitch = ((Executor) element);
 
-					if (executorSwitch.isActive() && allowExecute) {
+					if (!executorSwitch.isActive() && allowExecute) {
 						execute(session, executorSwitch);
 					}
 				}
@@ -62,7 +62,7 @@ public class ExecutorSessionProvider implements SessionProvider {
 		return null;
 	}
 
-	private void execute(OrganSession session, ExecutorSwitch executorSwitch) {
+	private void execute(OrganSession session, Executor executorSwitch) {
 		try {
 			if (executorSwitch.getSave()) {
 				session.save();

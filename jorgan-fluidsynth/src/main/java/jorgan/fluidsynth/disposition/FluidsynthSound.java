@@ -54,7 +54,7 @@ public class FluidsynthSound extends Sound {
 	public void setGain(double gain) {
 		this.gain = FluidsynthSound.limit(gain);
 
-		fireChange(new FastPropertyChange("gain"));
+		fireChange(new FastPropertyChange("gain", false));
 	}
 
 	public double getGain() {
@@ -169,7 +169,7 @@ public class FluidsynthSound extends Sound {
 	public void setChorus(Chorus chorus) {
 		this.chorus = chorus;
 
-		fireChange(new FastPropertyChange("chorus"));
+		fireChange(new FastPropertyChange("chorus", false));
 	}
 
 	public Reverb getReverb() {
@@ -179,7 +179,7 @@ public class FluidsynthSound extends Sound {
 	public void setReverb(Reverb reverb) {
 		this.reverb = reverb;
 
-		fireChange(new FastPropertyChange("reverb"));
+		fireChange(new FastPropertyChange("reverb", false));
 	}
 
 	static double limit(double value) {

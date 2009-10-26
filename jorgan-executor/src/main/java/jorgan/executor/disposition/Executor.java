@@ -23,13 +23,13 @@ import jorgan.util.Null;
 
 /**
  */
-public class ExecutorSwitch extends Switch {
+public class Executor extends Switch {
 
 	private boolean save;
 
 	private String command;
 
-	public ExecutorSwitch() {
+	public Executor() {
 		setLocking(false);
 	}
 

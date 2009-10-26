@@ -51,7 +51,7 @@ public class Engageable extends Displayable {
 		int engagedCount = getEngagedCount();
 
 		if ((engaged && engagedCount == 1) || (!engaged && engagedCount == 0)) {
-			fireChange(new FastPropertyChange("engaged"));
+			fireChange(new FastPropertyChange("engaged", true));
 
 			onEngaged(engaged);
 		}
