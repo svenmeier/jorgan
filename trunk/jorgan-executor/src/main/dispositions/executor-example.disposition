@@ -8,6 +8,17 @@
       <messages/>
       <zoom>1.0</zoom>
     </label>
+    <executor.executor id="3">
+      <name>Executor</name>
+      <description>name = Open http://jorgan.sf.net in Firefox</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>false</locking>
+      <save>true</save>
+      <command>firefox http://jorgan.sf.net</command>
+    </executor.executor>
     <console id="2">
       <name></name>
       <description></description>
@@ -24,16 +35,5 @@
       <messages/>
       <zoom>1.0</zoom>
     </console>
-    <executor.executorSwitch id="3">
-      <name>Executor</name>
-      <description>name = Open http://jorgan.sf.net in Firefox</description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-      <active>true</active>
-      <locking>false</locking>
-      <save>true</save>
-      <command>firefox http://jorgan.sf.net</command>
-    </executor.executorSwitch>
   </elements>
 </organ>

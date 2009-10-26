@@ -35,7 +35,7 @@ public class ExecutorElementProvider implements ElementProvider {
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		classes.add(ExecutorSwitch.class);
+		classes.add(Executor.class);
 
 		return classes;
 	}

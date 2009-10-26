@@ -79,7 +79,9 @@ public class RecorderSessionProvider implements SessionProvider {
 					if (RecorderSwitch.class.isInstance(element)
 							&& "active".equals(name)) {
 						RecorderSwitch recorderSwitch = ((RecorderSwitch) element);
-						recorderSwitch.perform(performance);
+						if (!recorderSwitch.isActive()) {
+							recorderSwitch.perform(performance);
+						}
 					}
 				}
 			});

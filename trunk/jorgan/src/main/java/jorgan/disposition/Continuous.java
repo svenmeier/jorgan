@@ -65,7 +65,7 @@ public class Continuous extends Displayable {
 
 			this.value = value;
 
-			fireChange(new FastPropertyChange("value"));
+			fireChange(new FastPropertyChange("value", false));
 
 			onValueChanged(oldValue, this.value);
 

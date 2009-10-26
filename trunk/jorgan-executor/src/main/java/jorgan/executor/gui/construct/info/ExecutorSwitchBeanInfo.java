@@ -18,13 +18,13 @@
  */
 package jorgan.executor.gui.construct.info;
 
-import jorgan.executor.disposition.ExecutorSwitch;
+import jorgan.executor.disposition.Executor;
 import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
 
 /**
- * BeanInfo for {@link ExecutorSwitch}.
+ * BeanInfo for {@link Executor}.
  */
 public class ExecutorSwitchBeanInfo extends ElementBeanInfo {
 
@@ -32,7 +32,7 @@ public class ExecutorSwitchBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("save", ExecutorSwitch.class, BooleanEditor.class);
-		add("command", ExecutorSwitch.class, StringEditor.class);
+		add("save", Executor.class, BooleanEditor.class);
+		add("command", Executor.class, StringEditor.class);
 	}
 }

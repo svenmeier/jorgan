@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import jorgan.disposition.Organ;
+import jorgan.disposition.Element.FastPropertyChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.spi.ElementRegistry;
@@ -75,10 +76,17 @@ public class OrganSession {
 
 		organ.addOrganObserver(new OrganObserver() {
 			public void beforeChange(Change change) {
+				if (change instanceof FastPropertyChange) {
+					if (((FastPropertyChange) change).isDerived()) {
+						// don't mark modified for derived changes
+						return;
+					}
+				}
+				
+				markModified();
 			}
 
 			public void afterChange(Change change) {
-				markModified();
 			}
 		});
 

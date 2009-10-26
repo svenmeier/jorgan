@@ -445,6 +445,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void modified() {
+		}
+		
+		public void done() {
 			undoAction.setEnabled(session.lookup(UndoManager.class).canUndo());
 			redoAction.setEnabled(session.lookup(UndoManager.class).canRedo());
 		}
