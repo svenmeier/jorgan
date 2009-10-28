@@ -81,6 +81,8 @@ public abstract class Performance {
 	private int state = STATE_STOP;
 
 	private boolean modified = false;
+	
+	private boolean encodeNames = false;
 
 	/**
 	 * Record the given session.
@@ -145,7 +147,7 @@ public abstract class Performance {
 		}
 
 		modified = false;
-		
+
 		fireChanged();
 	}
 
@@ -158,7 +160,7 @@ public abstract class Performance {
 		Sequence sequence = this.messageRecorder.getSequence();
 
 		new MidiStream().write(sequence, resolve(performance));
-		
+
 		modified = false;
 	}
 
@@ -196,11 +198,11 @@ public abstract class Performance {
 	public boolean isModified() {
 		return modified;
 	}
-	
+
 	protected void markModified() {
 		modified = true;
 	}
-	
+
 	private void initSequence(Sequence sequence) {
 		if (this.messageRecorder != null) {
 			for (Tracker tracker : trackers) {
@@ -251,7 +253,7 @@ public abstract class Performance {
 		if (messageRecorder == null) {
 			return;
 		}
-		
+
 		if (state != STATE_PLAY) {
 			state = STATE_PLAY;
 
@@ -271,13 +273,13 @@ public abstract class Performance {
 		if (messageRecorder == null) {
 			return;
 		}
-		
+
 		state = STATE_RECORD;
 
 		messageRecorder.start();
 
 		markModified();
-		
+
 		fireStateChanged();
 	}
 
@@ -385,7 +387,7 @@ public abstract class Performance {
 		trackers.set(track, tracker);
 
 		markModified();
-		
+
 		fireChanged();
 	}
 
@@ -398,36 +400,36 @@ public abstract class Performance {
 	}
 
 	public void removeTrack(int track) {
-		
+
 		writeTrackers();
-		
+
 		Sequence sequence = messageRecorder.getSequence();
 		sequence.deleteTrack(sequence.getTracks()[track]);
 		if (sequence.getTracks().length == 0) {
 			sequence.createTrack();
 		}
-		
+
 		initSequence(sequence);
-		
+
 		markModified();
-		
+
 		fireChanged();
 	}
-	
+
 	public void addTrack() {
-		
+
 		writeTrackers();
-		
+
 		Sequence sequence = messageRecorder.getSequence();
 		sequence.createTrack();
-		
+
 		initSequence(sequence);
-		
+
 		markModified();
-		
+
 		fireChanged();
 	}
-	
+
 	private void fireTimeChanged(long millis) {
 		for (PerformanceListener listener : listeners) {
 			listener.timeChanged(millis);
@@ -541,14 +543,18 @@ public abstract class Performance {
 	}
 
 	private Tracker readTracker(int track) {
-		String id = null;
+		Element element = null;
 		boolean playEnabled = false;
 		boolean recordEnabled = false;
+
 		for (MidiEvent event : messageRecorder.eventsAtTick(track, 0)) {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TRACK_NAME) {
-					id = MessageUtils.getText(message);
+					try {
+						element = decode(MessageUtils.getText(message));
+					} catch (IllegalArgumentException invalidMessage) {
+					}
 				} else if (message.getType() == MessageUtils.META_CUE_POINT) {
 					if ("play".equals(MessageUtils.getText(message))) {
 						playEnabled = true;
@@ -559,21 +565,12 @@ public abstract class Performance {
 			}
 		}
 
-		if (id != null) {
-			Element element;
-			try {
-				element = play.getOrgan().getElement(Long.valueOf(id));
-			} catch (Exception e) {
-				return null;
-			}
-
-			Tracker tracker = TrackerRegistry.createTracker(Performance.this,
-					track, element);
-			if (tracker != null) {
-				tracker.setPlayEnabled(playEnabled);
-				tracker.setRecordEnabled(recordEnabled);
-				return tracker;
-			}
+		Tracker tracker = TrackerRegistry.createTracker(Performance.this,
+				track, element);
+		if (tracker != null) {
+			tracker.setPlayEnabled(playEnabled);
+			tracker.setRecordEnabled(recordEnabled);
+			return tracker;
 		}
 
 		return null;
@@ -606,8 +603,8 @@ public abstract class Performance {
 			messageRecorder.setTime(0);
 
 			messageRecorder.record(tracker.getTrack(), MessageUtils
-					.newMetaMessage(MessageUtils.META_TRACK_NAME, ""
-							+ tracker.getElement().getId()));
+					.newMetaMessage(MessageUtils.META_TRACK_NAME,
+							encode(tracker.getElement())));
 
 			if (tracker.isPlayEnabled()) {
 				messageRecorder.record(tracker.getTrack(), MessageUtils
@@ -619,5 +616,35 @@ public abstract class Performance {
 						.newMetaMessage(MessageUtils.META_CUE_POINT, "record"));
 			}
 		}
+	}
+
+	public String encode(Element element) {
+		StringBuilder text = new StringBuilder();
+
+		if (encodeNames) {
+			text.append(element.getName());
+			text.append(" ");
+		}
+		text.append("[");
+		text.append(element.getId());
+		text.append("]");
+
+		return text.toString();
+	}
+
+	public Element decode(String string) throws IllegalArgumentException {
+
+		long id;
+
+		try {
+			int to = string.lastIndexOf(']');
+			int from = string.lastIndexOf('[', to);
+
+			id = Long.parseLong(string.substring(from + 1, to));
+		} catch (Exception e) {
+			throw new IllegalArgumentException(string);
+		}
+
+		return play.getOrgan().getElement(id);
 	}
 }

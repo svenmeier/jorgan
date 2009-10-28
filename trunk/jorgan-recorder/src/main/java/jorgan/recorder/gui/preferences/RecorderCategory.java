@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
+import jorgan.recorder.Performance;
 import jorgan.recorder.tracker.ConsoleTracker;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -42,7 +43,12 @@ public class RecorderCategory extends JOrganCategory {
 	private Model recordCombinationRecalls = getModel(new Property(
 			ConsoleTracker.class, "recordCombinationRecalls"));
 
+	private Model encodeNames = getModel(new Property(Performance.class,
+			"encodeNames"));
+
 	private JCheckBox recordCombinationRecallsCheckBox = new JCheckBox();
+
+	private JCheckBox encodeNamesCheckBox = new JCheckBox();
 
 	public RecorderCategory() {
 		config.read(this);
@@ -61,6 +67,8 @@ public class RecorderCategory extends JOrganCategory {
 
 		Column column = builder.column();
 
+		column.definition(config.get("encodeNames").read(encodeNamesCheckBox));
+
 		column.definition(config.get("recordCombinationRecalls").read(
 				recordCombinationRecallsCheckBox));
 
@@ -69,12 +77,16 @@ public class RecorderCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
+		encodeNamesCheckBox.setSelected((Boolean) encodeNames.getValue());
+
 		recordCombinationRecallsCheckBox
 				.setSelected((Boolean) recordCombinationRecalls.getValue());
 	}
 
 	@Override
 	protected void write() {
+		encodeNames.setValue(encodeNamesCheckBox.isSelected());
+
 		recordCombinationRecalls.setValue(recordCombinationRecallsCheckBox
 				.isSelected());
 	}
