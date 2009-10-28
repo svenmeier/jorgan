@@ -29,23 +29,23 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Types]
-Name: "full"; Description: "Full installation"
+Name: "standard"; Description: "Standard installation"
 Name: "custom"; Description: "Custom installation"; Flags: iscustom
 
 [Components]
-Name: "core"; Description: "Program Files"; Types: full custom; Flags: fixed
-Name: "creative"; Description: "Creative Soundblaster"; Types: full
-Name: "customizer"; Description: "Customizer"; Types: full
+Name: "core"; Description: "Program Files"; Types: standard custom; Flags: fixed
+Name: "creative"; Description: "Creative Soundblaster"; Types: standard
+Name: "customizer"; Description: "Customizer"; Types: standard
 Name: "executor"; Description: "Executor"; Types: 
-Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: full
-Name: "importer"; Description: "Importer"; Types: full
-Name: "keyboard"; Description: "Keyboard"; Types: full
-Name: "linuxsampler"; Description: "Linuxsampler"; Types: full
-Name: "memory"; Description: "Memory"; Types: full
-Name: "midimerger"; Description: "Midi merger"; Types: full
-Name: "recorder"; Description: "Recorder"; Types: full
-Name: "skins"; Description: "Skins"; Types: full
-Name: "soundfont"; Description: "Soundfont"; Types: full
+Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: standard
+Name: "importer"; Description: "Importer"; Types: standard
+Name: "keyboard"; Description: "Keyboard"; Types: standard
+Name: "linuxsampler"; Description: "Linuxsampler"; Types: standard
+Name: "memory"; Description: "Memory"; Types: standard
+Name: "midimerger"; Description: "Midi merger"; Types: standard
+Name: "recorder"; Description: "Recorder"; Types: standard
+Name: "skins"; Description: "Skins"; Types: standard
+Name: "soundfont"; Description: "Soundfont"; Types: standard
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
