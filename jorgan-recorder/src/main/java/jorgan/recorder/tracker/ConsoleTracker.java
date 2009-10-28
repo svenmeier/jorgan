@@ -22,8 +22,6 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
-import bias.Configuration;
-
 import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -34,6 +32,7 @@ import jorgan.midi.MessageUtils;
 import jorgan.recorder.Performance;
 import jorgan.recorder.disposition.RecorderSwitch;
 import jorgan.recorder.midi.MessageRecorder;
+import bias.Configuration;
 
 /**
  * Track all {@link Console}'s referenced {@link Switch}es and
@@ -50,21 +49,19 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private static final String PREFIX_CHANGE = "<";
 
-	private static final String SEPARATOR_CHANGE = ":";
-
 	private Console console;
 
 	private EventListener eventListener = new EventListener();
 
 	private boolean recordCombinationRecalls;
-	
+
 	private boolean ignoreChanges;
 
 	public ConsoleTracker(Performance performance, int track, Console console) {
 		super(performance, track);
 
 		config.read(this);
-		
+
 		// enable play only
 		setPlayEnabled(true);
 
@@ -76,7 +73,7 @@ public class ConsoleTracker extends AbstractTracker {
 	public void setRecordCombinationRecalls(boolean recordCombinationRecalls) {
 		this.recordCombinationRecalls = recordCombinationRecalls;
 	}
-	
+
 	@Override
 	public void destroy() {
 		getOrgan().removeOrganListener(eventListener);
@@ -156,8 +153,8 @@ public class ConsoleTracker extends AbstractTracker {
 
 		builder.append(PREFIX_CHANGE);
 		builder.append(continuous.getValue());
-		builder.append(SEPARATOR_CHANGE);
-		builder.append(continuous.getId());
+		builder.append(" ");
+		builder.append(encode(continuous));
 
 		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
@@ -172,7 +169,8 @@ public class ConsoleTracker extends AbstractTracker {
 			builder.append(PREFIX_INACTIVE);
 		}
 
-		builder.append(aSwitch.getId());
+		builder.append(" ");
+		builder.append(encode(aSwitch));
 
 		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
@@ -186,34 +184,29 @@ public class ConsoleTracker extends AbstractTracker {
 			MetaMessage metaMessage = (MetaMessage) message;
 
 			if (metaMessage.getType() == MessageUtils.META_TEXT) {
-				String string = MessageUtils.getText(metaMessage);
+				String text = MessageUtils.getText(metaMessage);
 
-				if (string.startsWith(PREFIX_ACTIVE)) {
-					Switch aSwitch = getReferenced(string.substring(1),
-							Switch.class);
-					if (aSwitch != null) {
-						aSwitch.setActive(true);
-					}
-				} else if (string.startsWith(PREFIX_INACTIVE)) {
-					Switch aSwitch = getReferenced(string.substring(1),
-							Switch.class);
-					if (aSwitch != null) {
-						aSwitch.setActive(false);
-					}
-				} else if (string.startsWith(PREFIX_CHANGE)) {
-					int separator = string.indexOf(SEPARATOR_CHANGE);
-					if (separator != -1) {
-						try {
-							float value = Float.parseFloat(string.substring(1,
-									separator));
-							Continuous continuous = getReferenced(string
-									.substring(separator + 1), Continuous.class);
-							if (continuous != null) {
-								continuous.setValue(value);
-							}
-						} catch (NumberFormatException noNumber) {
+				try {
+					if (text.startsWith(PREFIX_ACTIVE)) {
+						Switch aSwitch = getReferenced(text, Switch.class);
+						if (aSwitch != null) {
+							aSwitch.setActive(true);
+						}
+					} else if (text.startsWith(PREFIX_INACTIVE)) {
+						Switch aSwitch = getReferenced(text, Switch.class);
+						if (aSwitch != null) {
+							aSwitch.setActive(false);
+						}
+					} else if (text.startsWith(PREFIX_CHANGE)) {
+						float value = Float.parseFloat(text.substring(1, text
+								.indexOf(' ')));
+						Continuous continuous = getReferenced(text,
+								Continuous.class);
+						if (continuous != null) {
+							continuous.setValue(value);
 						}
 					}
+				} catch (IllegalArgumentException invalidMessage) {
 				}
 			}
 		}
@@ -221,22 +214,15 @@ public class ConsoleTracker extends AbstractTracker {
 		ignoreChanges = false;
 	}
 
-	private <E extends Element> E getReferenced(String string, Class<E> clazz) {
-		for (E element : console.getReferenced(clazz)) {
-			if (hasId(element, string)) {
-				return element;
-			}
+	@SuppressWarnings("unchecked")
+	private <E extends Element> E getReferenced(String text, Class<E> clazz)
+			throws IllegalArgumentException {
+		Element element = decode(text);
+		if (clazz.isInstance(element) && console.references(element)) {
+			return (E) element;
 		}
 
 		return null;
-	}
-
-	private boolean hasId(Element element, String id) {
-		try {
-			return element.getId() == Long.parseLong(id);
-		} catch (Exception ex) {
-		}
-		return false;
 	}
 
 	/**
@@ -250,20 +236,16 @@ public class ConsoleTracker extends AbstractTracker {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TEXT) {
-					String string = MessageUtils.getText(message);
+					String text = MessageUtils.getText(message);
 
-					if (string.startsWith(PREFIX_CHANGE)) {
-						int separator = string.indexOf(SEPARATOR_CHANGE);
-						if (separator != -1) {
-							if (hasId(continuous, string
-									.substring(separator + 1))) {
-								try {
-									value = Float.parseFloat(string.substring(
-											1, separator));
-								} catch (NumberFormatException noNumber) {
-								}
+					try {
+						if (text.startsWith(PREFIX_CHANGE)) {
+							if (continuous == decode(text)) {
+								value = Float.parseFloat(text.substring(1, text
+										.indexOf(' ')));
 							}
 						}
+					} catch (IllegalArgumentException invalidMessage) {
 					}
 				}
 			}
@@ -283,16 +265,17 @@ public class ConsoleTracker extends AbstractTracker {
 			if (event.getMessage() instanceof MetaMessage) {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TEXT) {
-					String string = MessageUtils.getText(message);
+					String text = MessageUtils.getText(message);
 
-					if (string.startsWith(PREFIX_ACTIVE)) {
-						if (hasId(aSwitch, string.substring(1))) {
-							active = true;
+					try {
+						if (aSwitch == decode(text)) {
+							if (text.startsWith(PREFIX_ACTIVE)) {
+								active = true;
+							} else if (text.startsWith(PREFIX_INACTIVE)) {
+								active = false;
+							}
 						}
-					} else if (string.startsWith(PREFIX_INACTIVE)) {
-						if (hasId(aSwitch, string.substring(1))) {
-							active = false;
-						}
+					} catch (IllegalArgumentException invalidMessage) {
 					}
 				}
 			}
@@ -318,7 +301,8 @@ public class ConsoleTracker extends AbstractTracker {
 			}
 
 			if (recordCombinationRecalls) {
-				for (Combination combination : getOrgan().getReferrer(element, Combination.class)) {
+				for (Combination combination : getOrgan().getReferrer(element,
+						Combination.class)) {
 					if (combination.isRecalling()) {
 						return;
 					}
@@ -328,7 +312,7 @@ public class ConsoleTracker extends AbstractTracker {
 					return;
 				}
 			}
-			
+
 			if (element instanceof Switch && "active".equals(name)) {
 				record(createMessage((Switch) element));
 			} else if (element instanceof Continuous && "value".equals(name)) {
