@@ -22,7 +22,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
-import jorgan.executor.ExecutorSessionProvider;
+import jorgan.executor.Executions;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -40,10 +40,10 @@ public class ExecutorCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ExecutorCategory.class);
 
-	private Model allowExecute = getModel(new Property(
-			ExecutorSessionProvider.class, "allowExecute"));
+	private Model executionsAllowed = getModel(new Property(Executions.class,
+			"allowed"));
 
-	private JCheckBox allowExecuteCheckBox = new JCheckBox();
+	private JCheckBox executionsAllowedCheckBox = new JCheckBox();
 
 	public ExecutorCategory() {
 		config.read(this);
@@ -66,18 +66,18 @@ public class ExecutorCategory extends JOrganCategory {
 
 		column
 				.definition(config.get("allowExecute").read(
-						allowExecuteCheckBox));
+						executionsAllowedCheckBox));
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
-		allowExecuteCheckBox.setSelected((Boolean) allowExecute.getValue());
+		executionsAllowedCheckBox.setSelected((Boolean) executionsAllowed.getValue());
 	}
 
 	@Override
 	protected void write() {
-		allowExecute.setValue(allowExecuteCheckBox.isSelected());
+		executionsAllowed.setValue(executionsAllowedCheckBox.isSelected());
 	}
 }
