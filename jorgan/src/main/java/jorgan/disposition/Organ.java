@@ -345,7 +345,7 @@ public class Organ {
 		return clone;
 	}
 
-	public Element getElement(Long id) {
+	public Element getElement(Long id) throws IllegalArgumentException {
 		for (Element element : elements) {
 			if (element.getId().equals(id)) {
 				return element;
