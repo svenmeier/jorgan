@@ -18,64 +18,16 @@
  */
 package jorgan.executor;
 
-import java.io.IOException;
-
-import bias.Configuration;
-
-import jorgan.disposition.Element;
-import jorgan.disposition.event.OrganAdapter;
-import jorgan.executor.disposition.Executor;
 import jorgan.session.OrganSession;
 import jorgan.session.spi.SessionProvider;
 
 public class ExecutorSessionProvider implements SessionProvider {
 
-	private static final Configuration config = Configuration.getRoot().get(ExecutorSessionProvider.class);
-	
-	private boolean allowExecute = false;
-
-	public ExecutorSessionProvider() {
-		config.read(this);
-	}
-	
-	public void setExecute(boolean allowExecute) {
-		this.allowExecute = allowExecute;
-	}
-
 	public void init(final OrganSession session) {
-		session.getOrgan().addOrganListener(new OrganAdapter() {
-			@Override
-			public void propertyChanged(Element element, String name) {
-				if (Executor.class.isInstance(element)
-						&& "active".equals(name)) {
-					Executor executorSwitch = ((Executor) element);
-
-					if (!executorSwitch.isActive() && allowExecute) {
-						execute(session, executorSwitch);
-					}
-				}
-			}
-		});
+		new Executions(session);
 	}
 
 	public Object create(OrganSession session, Class<?> clazz) {
 		return null;
-	}
-
-	private void execute(OrganSession session, Executor executorSwitch) {
-		try {
-			if (executorSwitch.getSave()) {
-				session.save();
-			}
-
-			String command = executorSwitch.getCommand();
-
-			if (command != null) {
-				Runtime.getRuntime().exec(command, null,
-						session.getFile().getParentFile());
-			}
-		} catch (IOException e) {
-			// what to do ??
-		}
 	}
 }
