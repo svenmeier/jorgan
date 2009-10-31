@@ -48,12 +48,13 @@ public class Executor extends Switch {
 	}
 
 	public void setCommand(String command) {
+		if ("".equals(command)) {
+			command = null;
+		}
+
 		if (!Null.safeEquals(this.command, command)) {
 			String oldCommand = this.command;
 
-			if ("".equals(command)) {
-				command = null;
-			}
 			this.command = command;
 
 			fireChange(new PropertyChange(oldCommand, this.command));
