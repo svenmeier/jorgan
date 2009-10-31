@@ -26,7 +26,7 @@ import jorgan.gui.construct.info.ElementBeanInfo;
 /**
  * BeanInfo for {@link Executor}.
  */
-public class ExecutorSwitchBeanInfo extends ElementBeanInfo {
+public class ExecutorBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {
