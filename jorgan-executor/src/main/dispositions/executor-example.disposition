@@ -10,14 +10,13 @@
     </label>
     <executor.executor id="3">
       <name>Executor</name>
-      <description>name = Open http://jorgan.sf.net in Firefox</description>
+      <description>name = Save disposition</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
       <locking>false</locking>
       <save>true</save>
-      <command>firefox http://jorgan.sf.net</command>
     </executor.executor>
     <console id="2">
       <name></name>
