@@ -26,7 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import jorgan.gui.FullScreen;
+import jorgan.gui.FullScreenAction;
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
 import jorgan.swing.button.ButtonGroup;
@@ -53,7 +53,7 @@ public class GuiCategory extends JOrganCategory {
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	private Model fullScreenOnLoad = getModel(new Property(FullScreen.class,
+	private Model fullScreenOnLoad = getModel(new Property(FullScreenAction.class,
 			"onLoad"));
 
 	private Model handleChanges = getModel(new Property(
