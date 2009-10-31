@@ -18,6 +18,7 @@
  */
 package jorgan.executor;
 
+import java.io.File;
 import java.io.IOException;
 
 import jorgan.disposition.Element;
@@ -77,10 +78,10 @@ public class Executions extends OrganAdapter {
 			}
 
 			String command = executor.getCommand();
-
 			if (command != null) {
-				Runtime.getRuntime().exec(command, null,
-						session.getFile().getParentFile());
+				File file = session.resolve(command);
+				Runtime.getRuntime().exec(file.getCanonicalPath(), null,
+						session.getFile().getParentFile().getCanonicalFile());
 			}
 		} catch (IOException e) {
 			addProblem(executor, e);
