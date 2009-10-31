@@ -94,7 +94,7 @@ public class FullScreen extends Window implements ConsoleStack {
 		
 		if (device.isDisplayChangeSupported()) {
 			try {
-				device.setDisplayMode(new DisplayMode(640, 480, 8, 60));
+				device.setDisplayMode(new DisplayMode(640, 480, -1, 60));
 			} catch (RuntimeException ex) {
 				device.setFullScreenWindow(null);
 				throw ex;
