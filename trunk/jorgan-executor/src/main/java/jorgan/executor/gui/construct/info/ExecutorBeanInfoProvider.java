@@ -27,7 +27,7 @@ import jorgan.gui.construct.info.spi.BeanInfoProvider;
  */
 public class ExecutorBeanInfoProvider implements BeanInfoProvider {
 
-	private static final String BEAN_INFO_SEARCH_PATH = ExecutorSwitchBeanInfo.class
+	private static final String BEAN_INFO_SEARCH_PATH = ExecutorBeanInfo.class
 			.getPackage().getName();
 
 	public String getBeanInfoSearchPath() {
