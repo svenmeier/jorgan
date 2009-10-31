@@ -610,12 +610,6 @@ public class ConsolePanel extends JPanel {
 
 		private Map<String, Float> map = new HashMap<String, Float>();
 
-		private int status;
-
-		private int data1;
-
-		private int data2;
-
 		public float get(String name) {
 			Float temp = map.get(name);
 			if (temp == null) {
@@ -627,22 +621,6 @@ public class ConsolePanel extends JPanel {
 
 		public void set(String name, float value) {
 			map.put(name, value);
-		}
-
-		public void clear() {
-			map.clear();
-		}
-
-		public int getStatus() {
-			return status;
-		}
-
-		public int getData1() {
-			return data1;
-		}
-
-		public int getData2() {
-			return data2;
 		}
 
 		public boolean process(Message message, int status, int data1, int data2) {
@@ -659,9 +637,6 @@ public class ConsolePanel extends JPanel {
 				if (Float.isNaN(fData2)) {
 					return false;
 				}
-				this.status = Math.round(fStatus);
-				this.data1 = Math.round(fData1);
-				this.data2 = Math.round(fData2);
 			} catch (ProcessingException ex) {
 				return false;
 			}
