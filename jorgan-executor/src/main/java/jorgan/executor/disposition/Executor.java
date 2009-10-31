@@ -48,9 +48,7 @@ public class Executor extends Switch {
 	}
 
 	public void setCommand(String command) {
-		if ("".equals(command)) {
-			command = null;
-		}
+		command = cleanPath(command);
 
 		if (!Null.safeEquals(this.command, command)) {
 			String oldCommand = this.command;
