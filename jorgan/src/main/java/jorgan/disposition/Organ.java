@@ -20,7 +20,6 @@ package jorgan.disposition;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -49,7 +48,7 @@ public class Organ {
 	 */
 	private transient List<OrganObserver> observers;
 
-	private Set<Element> elements = new HashSet<Element>();
+	private List<Element> elements = new ArrayList<Element>();
 
 	/**
 	 * Add a listener to this organ.
@@ -106,7 +105,7 @@ public class Organ {
 	}
 
 	public Set<Element> getElements() {
-		return Collections.unmodifiableSet(elements);
+		return new HashSet<Element>(elements);
 	}
 
 	public boolean containsElement(Element element) {
@@ -145,12 +144,18 @@ public class Organ {
 		}
 	}
 
+	/**
+	 * This method is not part of this class' public API!
+	 */
 	public void bind(Element element) {
 		element.id = createId(element);
 		element.organ = this;
 	}
 
 	public void addElement(final Element element) {
+		if (elements.contains(element)) {
+			throw new IllegalArgumentException("already added");
+		}
 
 		element.id = createId(element);
 
