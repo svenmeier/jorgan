@@ -1,174 +1,286 @@
+/*
+ * jOrgan - Java Virtual Organ
+ * Copyright (C) 2003 Sven Meier
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ */
 package jorgan.gui;
 
+import java.awt.Component;
+import java.awt.DisplayMode;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.KeyEventDispatcher;
+import java.awt.KeyboardFocusManager;
+import java.awt.Rectangle;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import javax.swing.JComponent;
-import javax.swing.KeyStroke;
-import javax.swing.SwingUtilities;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
-import jorgan.disposition.Element;
-import jorgan.disposition.Message;
-import jorgan.disposition.Reference;
-import jorgan.disposition.event.OrganListener;
+import jorgan.disposition.Elements;
+import jorgan.gui.ConsolePanel.ConsoleStack;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
-import spin.Spin;
+import jorgan.swing.CardPanel;
+import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
 
 /**
- * An action for initiating full screen.
+ * A window shown <em>full screen</em>.
  */
-public class FullScreen extends BaseAction implements ComponentListener {
+public class FullScreen extends Window implements ConsoleStack {
 
 	private static Configuration config = Configuration.getRoot().get(
 			FullScreen.class);
 
-	private boolean onLoad = false;
+	/**
+	 * The handler of mouse events.
+	 */
+	private MouseHandler mouseHandler = new MouseHandler();
 
-	private Map<String, ConsoleDialog> dialogs = new HashMap<String, ConsoleDialog>();
+	private JScrollPane scrollPane = new JScrollPane(
+			JScrollPane.VERTICAL_SCROLLBAR_NEVER,
+			JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+	private CardPanel cardPanel = new CardPanel();
+
+	private JPopupMenu popup = new JPopupMenu();
+
+	private Map<Console, JCheckBoxMenuItem> menuItems = new HashMap<Console, JCheckBoxMenuItem>();
+
+	private ButtonGroup group = new ButtonGroup();
 
 	private OrganSession session;
 
-	private OrganFrame frame;
+	/**
+	 */
+	public FullScreen(OrganSession session, String screen) {
+		super(null);
 
-	public FullScreen(OrganSession session, OrganFrame frame) {
-		this.session = session;
-		this.session.getOrgan().addOrganListener(
-				(OrganListener) Spin.over(new OrganListener() {
+		if (session == null) {
+			throw new IllegalArgumentException("session must not be null");
+		}
+		if (screen == null) {
+			throw new IllegalArgumentException("screen must not be null");
+		}
 
-					public void elementAdded(Element element) {
-						if (element instanceof Console) {
-							update();
-						}
-					}
-
-					public void elementRemoved(Element element) {
-					}
-
-					public void messageAdded(Element element, Message message) {
-					}
-
-					public void messageChanged(Element element, Message message) {
-					}
-
-					public void messageRemoved(Element element, Message message) {
-					}
-
-					public void propertyChanged(Element element, String name) {
-						if (element instanceof Console && "screen".equals(name)) {
-							update();
-						}
-					}
-
-					public void referenceAdded(Element element,
-							Reference<?> reference) {
-					}
-
-					public void referenceChanged(Element element,
-							Reference<?> reference) {
-					}
-
-					public void referenceRemoved(Element element,
-							Reference<?> reference) {
-					}
-				}));
-
-		this.frame = frame;
-
-		config.read(this);
-
-		frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
-				KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0), this);
-		frame.getRootPane().getActionMap().put(this, this);
-
-		update();
+		GraphicsDevice device = getGraphicsDevice(screen);
+		device.setFullScreenWindow(this);
 		
-		if (isEnabled() && frame.isDisplayable()) {
-			SwingUtilities.invokeLater(new Runnable() {
-				public void run() {
-					check();
+		if (device.isDisplayChangeSupported()) {
+			try {
+				device.setDisplayMode(new DisplayMode(640, 480, 8, 60));
+			} catch (RuntimeException ex) {
+				device.setFullScreenWindow(null);
+				throw ex;
+			}
+		}
+
+		scrollPane.setBorder(null);
+		add(scrollPane);
+		scrollPane.setViewportView(cardPanel);
+
+		popup.addSeparator();
+		popup.add(new CloseAction());
+
+		this.session = session;
+
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.addKeyEventDispatcher(processor);
+	}
+
+	@Override
+	public synchronized void dispose() {
+		super.dispose();
+
+		session = null;
+
+		menuItems.clear();
+
+		for (Component component : cardPanel.getComponents()) {
+			((ConsolePanel) component).dispose();
+		}
+		cardPanel.removeAll();
+
+		KeyboardFocusManager.getCurrentKeyboardFocusManager()
+				.removeKeyEventDispatcher(processor);
+	}
+
+	/**
+	 * Add a console to be shown full screen.
+	 * 
+	 * @param console
+	 *            console to add
+	 */
+	public void addConsole(final Console console) {
+
+		ConsolePanel consolePanel = new ConsolePanel(session, console);
+
+		consolePanel.addMouseListener(mouseHandler);
+		consolePanel.addMouseMotionListener(mouseHandler);
+
+		cardPanel.addCard(consolePanel, console);
+
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
+				.getDisplayName(console));
+		menuItems.put(console, check);
+		check.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent event) {
+				if (check.isSelected()) {
+					toFront(console);
 				}
-			});
+			}
+		});
+		group.add(check);
+		popup.add(check, 0);
+	}
+
+	private GraphicsDevice getGraphicsDevice(String screen) {
+		GraphicsEnvironment environment = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = environment.getScreenDevices();
+		for (GraphicsDevice device : devices) {
+			if (device.getIDstring().equals(screen)) {
+				return device;
+			}
+		}
+
+		throw new IllegalArgumentException("unkown device '" + screen + "'");
+	}
+
+	public void toFront(Console console) {
+		JCheckBoxMenuItem menuItem = menuItems.get(console);
+		if (menuItem != null) {
+			menuItem.setSelected(true);
+
+			cardPanel.selectCard(console);
 		}
 	}
 
-	public void setOnLoad(boolean onLoad) {
-		this.onLoad = onLoad;
-	}
+	/**
+	 * The handler for mouse events.
+	 */
+	private class MouseHandler extends MouseInputAdapter implements
+			ActionListener {
 
-	public boolean getOnLoad() {
-		return onLoad;
-	}
+		private Timer timer;
 
-	public void update() {
-		for (Console console : session.getOrgan().getElements(Console.class)) {
-			if (console.showFullScreen()) {
-				setEnabled(true);
+		private int deltaX;
+
+		private int deltaY;
+
+		private MouseHandler() {
+			timer = new Timer(50, this);
+		}
+
+		@Override
+		public void mousePressed(MouseEvent e) {
+			checkPopup(e);
+		}
+
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			checkPopup(e);
+		}
+
+		protected void checkPopup(MouseEvent e) {
+			if (e.isPopupTrigger()) {
+				popup.show(e.getComponent(), e.getX(), e.getY());
+			}
+		}
+
+		@Override
+		public void mouseExited(MouseEvent e) {
+			if (timer.isRunning()) {
+				timer.stop();
+			}
+		}
+
+		@Override
+		public void mouseMoved(MouseEvent e) {
+
+			if (popup.isVisible()) {
 				return;
 			}
+
+			Rectangle rect = scrollPane.getViewport().getViewRect();
+
+			int x = e.getX() - (rect.x + rect.width / 2);
+			int y = e.getY() - (rect.y + rect.height / 2);
+
+			deltaX = (int) (Math.pow((double) x / (rect.width / 2), 5) * (rect.width / 5));
+			deltaY = (int) (Math.pow((double) y / (rect.height / 2), 5) * (rect.height / 5));
+
+			if (deltaX != 0 || deltaY != 0) {
+				if (!timer.isRunning()) {
+					timer.start();
+				}
+			} else {
+				if (timer.isRunning()) {
+					timer.stop();
+				}
+			}
 		}
-		setEnabled(false);
+
+		public void actionPerformed(ActionEvent e) {
+			// must change horizontal and vertical value separately
+			// or otherwise scrollpane will not use blitting :(
+			scrollPane.getHorizontalScrollBar().setValue(
+					scrollPane.getHorizontalScrollBar().getValue() + deltaX);
+			scrollPane.getVerticalScrollBar().setValue(
+					scrollPane.getVerticalScrollBar().getValue() + deltaY);
+		}
 	}
 
-	private void check() {
-		if (onLoad) {
-			goFullScreen();
-		}
-	}
-	
-	public void destroy() {
-		frame.getRootPane().getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW)
-				.remove(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
-		frame.getRootPane().getActionMap().remove(this);
+	protected void leave() {
 	}
 
-	public void actionPerformed(ActionEvent ev) {
-		if (dialogs.isEmpty()) {
-			goFullScreen();
+	private class CloseAction extends BaseAction {
+
+		private CloseAction() {
+			config.get("close").read(this);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			leave();
 		}
 	}
 
-	private void goFullScreen() {
-		for (Console console : session.getOrgan().getElements(Console.class)) {
-			String screen = console.getScreen();
-			if (screen == null) {
-				continue;
+	private KeyEventDispatcher processor = new KeyEventDispatcher() {
+
+		public boolean dispatchKeyEvent(KeyEvent e) {
+			if (e.getID() == KeyEvent.KEY_PRESSED
+					&& e.getKeyCode() == KeyEvent.VK_F11) {
+				leave();
+				return true;
 			}
 
-			ConsoleDialog dialog = dialogs.get(screen);
-			if (dialog == null) {
-				dialog = ConsoleDialog.create(frame, session, screen);
-				dialogs.put(screen, dialog);
-			}
-			dialog.addConsole(console);
-			dialog.addComponentListener(this);
-			dialog.setVisible(true);
+			return false;
 		}
-	}
-
-	public void componentHidden(ComponentEvent e) {
-		Iterator<ConsoleDialog> iterator = dialogs.values().iterator();
-		while (iterator.hasNext()) {
-			ConsoleDialog dialog = iterator.next();
-			dialog.setVisible(false);
-			dialog.dispose();
-		}
-		dialogs.clear();
-	}
-
-	public void componentMoved(ComponentEvent e) {
-	}
-
-	public void componentResized(ComponentEvent e) {
-	}
-
-	public void componentShown(ComponentEvent e) {
-	}
+	};
 }

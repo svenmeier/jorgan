@@ -15,7 +15,7 @@ public class DefaultSessionActionProvider implements SessionActionProvider {
 
 	public List<Action> getActions(OrganSession session, OrganFrame frame) {
 
-		final FullScreen action = new FullScreen(session, frame);
+		final FullScreenAction action = new FullScreenAction(session, frame);
 
 		session.addListener(new SessionListener() {
 
