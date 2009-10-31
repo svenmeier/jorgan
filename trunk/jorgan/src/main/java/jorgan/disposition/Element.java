@@ -554,7 +554,7 @@ public abstract class Element implements Cloneable {
 	}
 
 	protected static String cleanPath(String path) {
-		if (path == null) {
+		if (path == null || "".equals(path)) {
 			return null;
 		}
 		
