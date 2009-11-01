@@ -4,6 +4,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -39,8 +41,14 @@ public class FullScreenAction extends BaseAction {
 	private Map<String, FullScreen> screens = new HashMap<String, FullScreen>();
 
 	private OrganSession session;
+	
+	private OrganFrame frame;
+
+	private WindowAdapter windowAdapter;
 
 	public FullScreenAction(OrganSession session, OrganFrame frame) {
+		config.read(this);
+
 		this.session = session;
 		this.session.getOrgan().addOrganListener(
 				(OrganListener) Spin.over(new OrganAdapter() {
@@ -58,7 +66,15 @@ public class FullScreenAction extends BaseAction {
 					}
 				}));
 
-		config.read(this);
+		this.frame = frame;
+
+		windowAdapter = new WindowAdapter() {
+			@Override
+			public void windowActivated(WindowEvent e) {
+				leaveFullScreen();
+			}
+		};
+		frame.addWindowListener(windowAdapter);
 
 		setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
 
@@ -75,6 +91,8 @@ public class FullScreenAction extends BaseAction {
 
 	public void destroy() {
 		leaveFullScreen();
+		
+		frame.removeWindowListener(windowAdapter);
 	}
 
 	public void setOnLoad(boolean onLoad) {
@@ -144,6 +162,7 @@ public class FullScreenAction extends BaseAction {
 					leaveFullScreen();
 				}
 			});
+			
 			screens.put(screen, fullScreen);
 		}
 		return fullScreen;
