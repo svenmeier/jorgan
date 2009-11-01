@@ -19,6 +19,7 @@
 package jorgan.gui;
 
 import java.awt.Component;
+import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
@@ -78,17 +79,11 @@ public class FullScreen extends Window implements ConsoleStack {
 
 	/**
 	 */
-	public FullScreen(OrganSession session, GraphicsDevice device, boolean real) {
-		super(null, device.getDefaultConfiguration());
-
-		if (real) {
-			device.setFullScreenWindow(this);
-		} else {
-			setBounds(device.getDefaultConfiguration().getBounds());
-			setVisible(true);
-		}
+	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
+		super(null, configuration);
 
 		scrollPane.setBorder(null);
+		scrollPane.setOpaque(true);
 		add(scrollPane);
 		scrollPane.setViewportView(cardPanel);
 
@@ -273,7 +268,17 @@ public class FullScreen extends Window implements ConsoleStack {
 
 	public static FullScreen create(OrganSession session, String screen,
 			boolean real) throws IllegalArgumentException {
+
 		GraphicsDevice device = getGraphicsDevice(screen);
-		return new FullScreen(session, device, real);
+		GraphicsConfiguration configuration = device.getDefaultConfiguration();
+
+		FullScreen fullScreen = new FullScreen(session, configuration);
+		if (real) {
+			device.setFullScreenWindow(fullScreen);
+		} else {
+			fullScreen.setBounds(device.getDefaultConfiguration().getBounds());
+			fullScreen.setVisible(true);
+		}
+		return fullScreen;
 	}
 }
