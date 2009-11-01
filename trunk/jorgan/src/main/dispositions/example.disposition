@@ -207,7 +207,6 @@
       </references>
       <messages/>
       <zoom>1.0</zoom>
-      <screen>:0.0</screen>
     </console>
     <stop id="5">
       <name>Stop 0</name>
