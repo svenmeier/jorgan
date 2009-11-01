@@ -19,7 +19,6 @@
 package jorgan.gui;
 
 import java.awt.Component;
-import java.awt.DisplayMode;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
@@ -79,26 +78,14 @@ public class FullScreen extends Window implements ConsoleStack {
 
 	/**
 	 */
-	public FullScreen(OrganSession session, String screen) {
-		super(null);
+	public FullScreen(OrganSession session, GraphicsDevice device, boolean real) {
+		super(null, device.getDefaultConfiguration());
 
-		if (session == null) {
-			throw new IllegalArgumentException("session must not be null");
-		}
-		if (screen == null) {
-			throw new IllegalArgumentException("screen must not be null");
-		}
-
-		GraphicsDevice device = getGraphicsDevice(screen);
-		device.setFullScreenWindow(this);
-		
-		if (device.isDisplayChangeSupported()) {
-			try {
-				device.setDisplayMode(new DisplayMode(640, 480, -1, 60));
-			} catch (RuntimeException ex) {
-				device.setFullScreenWindow(null);
-				throw ex;
-			}
+		if (real) {
+			device.setFullScreenWindow(this);
+		} else {
+			setBounds(device.getDefaultConfiguration().getBounds());
+			setVisible(true);
 		}
 
 		scrollPane.setBorder(null);
@@ -158,19 +145,6 @@ public class FullScreen extends Window implements ConsoleStack {
 		});
 		group.add(check);
 		popup.add(check, 0);
-	}
-
-	private GraphicsDevice getGraphicsDevice(String screen) {
-		GraphicsEnvironment environment = GraphicsEnvironment
-				.getLocalGraphicsEnvironment();
-		GraphicsDevice[] devices = environment.getScreenDevices();
-		for (GraphicsDevice device : devices) {
-			if (device.getIDstring().equals(screen)) {
-				return device;
-			}
-		}
-
-		throw new IllegalArgumentException("unkown device '" + screen + "'");
 	}
 
 	public void toFront(Console console) {
@@ -257,7 +231,8 @@ public class FullScreen extends Window implements ConsoleStack {
 		}
 	}
 
-	protected void leave() {
+	private void leave() {
+		setVisible(false);
 	}
 
 	private class CloseAction extends BaseAction {
@@ -272,7 +247,6 @@ public class FullScreen extends Window implements ConsoleStack {
 	}
 
 	private KeyEventDispatcher processor = new KeyEventDispatcher() {
-
 		public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getID() == KeyEvent.KEY_PRESSED
 					&& e.getKeyCode() == KeyEvent.VK_F11) {
@@ -283,4 +257,23 @@ public class FullScreen extends Window implements ConsoleStack {
 			return false;
 		}
 	};
+
+	private static GraphicsDevice getGraphicsDevice(String screen) {
+		GraphicsEnvironment environment = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = environment.getScreenDevices();
+		for (GraphicsDevice device : devices) {
+			if (device.getIDstring().equals(screen)) {
+				return device;
+			}
+		}
+
+		throw new IllegalArgumentException("unkown device '" + screen + "'");
+	}
+
+	public static FullScreen create(OrganSession session, String screen,
+			boolean real) throws IllegalArgumentException {
+		GraphicsDevice device = getGraphicsDevice(screen);
+		return new FullScreen(session, device, real);
+	}
 }
