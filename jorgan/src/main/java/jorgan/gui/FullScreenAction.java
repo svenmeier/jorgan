@@ -1,6 +1,8 @@
 package jorgan.gui;
 
 import java.awt.event.ActionEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +33,8 @@ public class FullScreenAction extends BaseAction {
 			.getName());
 
 	private boolean onLoad = false;
+	
+	private boolean real = false;
 
 	private Map<String, FullScreen> screens = new HashMap<String, FullScreen>();
 
@@ -77,10 +81,10 @@ public class FullScreenAction extends BaseAction {
 		this.onLoad = onLoad;
 	}
 
-	public boolean getOnLoad() {
-		return onLoad;
+	public void setReal(boolean real) {
+		this.real = real;
 	}
-
+	
 	public void update() {
 		for (Console console : session.getOrgan().getElements(Console.class)) {
 			if (console.showFullScreen()) {
@@ -113,7 +117,7 @@ public class FullScreenAction extends BaseAction {
 			FullScreen fullScreen;
 			try {
 				fullScreen = getScreen(screen);
-			} catch (Exception ex) {
+			} catch (IllegalArgumentException ex) {
 				logger.log(Level.WARNING, "full screen", ex);
 				continue;
 			}
@@ -124,24 +128,24 @@ public class FullScreenAction extends BaseAction {
 		}
 	}
 
-	private FullScreen getScreen(String screen) {
-		FullScreen dialog = screens.get(screen);
-		if (dialog == null) {
-			dialog = new FullScreen(session, screen) {
-				@Override
-				protected void leave() {
-					leaveFullScreen();
-				}
-			};
-			screens.put(screen, dialog);
-		}
-		return dialog;
-	}
-
 	private void leaveFullScreen() {
 		for (FullScreen fullScreen : screens.values()) {
 			fullScreen.dispose();
 		}
 		screens.clear();
+	}
+	
+	private FullScreen getScreen(String screen) throws IllegalArgumentException {
+		FullScreen fullScreen = screens.get(screen);
+		if (fullScreen == null) {
+			fullScreen = FullScreen.create(session, screen, real);
+			fullScreen.addComponentListener(new ComponentAdapter() {
+				public void componentHidden(ComponentEvent ev) {
+					leaveFullScreen();
+				}
+			});
+			screens.put(screen, fullScreen);
+		}
+		return fullScreen;
 	}
 }
