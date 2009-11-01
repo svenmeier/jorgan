@@ -21,12 +21,12 @@ package jorgan.executor.gui.construct.info;
 import jorgan.executor.disposition.Executor;
 import jorgan.gui.construct.editor.BooleanEditor;
 import jorgan.gui.construct.editor.StringEditor;
-import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.gui.construct.info.SwitchBeanInfo;
 
 /**
  * BeanInfo for {@link Executor}.
  */
-public class ExecutorBeanInfo extends ElementBeanInfo {
+public class ExecutorBeanInfo extends SwitchBeanInfo {
 
 	@Override
 	protected void registerProperties() {
