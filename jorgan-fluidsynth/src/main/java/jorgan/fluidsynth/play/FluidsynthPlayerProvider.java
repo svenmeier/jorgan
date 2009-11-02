@@ -26,7 +26,7 @@ import jorgan.play.spi.PlayerProvider;
 public class FluidsynthPlayerProvider implements PlayerProvider {
 
 	public Player<FluidsynthSound> createPlayer(Element element) {
-		if (element.getClass() == FluidsynthSound.class) {
+		if (element instanceof FluidsynthSound) {
 			return new FluidsynthSoundPlayer((FluidsynthSound) element);
 		}
 		return null;
