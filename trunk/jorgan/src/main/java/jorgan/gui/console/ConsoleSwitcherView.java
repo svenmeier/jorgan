@@ -20,7 +20,6 @@ package jorgan.gui.console;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.ConsoleSwitcher;
-import jorgan.disposition.Switch;
 
 /**
  * A view for a {@link ConsoleSwitcher}.
@@ -28,16 +27,16 @@ import jorgan.disposition.Switch;
 public class ConsoleSwitcherView extends SwitchView {
 
 	private boolean enaged;
-	
+
 	/**
 	 * Constructor.
 	 * 
 	 * @param element
 	 *            the relement to view
 	 */
-	public ConsoleSwitcherView(Switch element) {
+	public ConsoleSwitcherView(ConsoleSwitcher element) {
 		super(element);
-		
+
 		enaged = element.isEngaged();
 	}
 
@@ -48,13 +47,14 @@ public class ConsoleSwitcherView extends SwitchView {
 		ViewContainer container = getContainer();
 		if (container != null) {
 			if (enaged && !getElement().isEngaged()) {
-				for (Console console : getElement().getReferenced(Console.class)) {
+				for (Console console : getElement()
+						.getReferenced(Console.class)) {
 					container.toFront(console);
 					break;
 				}
 			}
 		}
-		
+
 		this.enaged = getElement().isEngaged();
 	}
 }
