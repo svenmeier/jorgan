@@ -14,14 +14,15 @@ public class DefaultViewProvider implements ViewProvider {
 	public View<?> createView(OrganSession session, Displayable element) {
 		View<? extends Displayable> view = null;
 
-		if (element instanceof ConsoleSwitcher) {
+		// specific views first
+		if (element instanceof Regulator) {
+			view = new RegulatorView((Regulator) element);
+		} else if (element instanceof ConsoleSwitcher) {
 			view = new ConsoleSwitcherView((ConsoleSwitcher) element);
 		} else if (element instanceof Switch) {
 			view = new SwitchView((Switch) element);
 		} else if (element instanceof Engageable) {
 			view = new EngageableView<Engageable>((Engageable) element);
-		} else if (element instanceof Regulator) {
-			view = new RegulatorView((Regulator) element);
 		} else if (element instanceof Continuous) {
 			view = new ContinuousView<Continuous>((Continuous) element);
 		}
