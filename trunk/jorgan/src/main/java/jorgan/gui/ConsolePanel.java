@@ -478,11 +478,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return viewsByDisplayable.get(element);
 	}
 
-	private void createView(Displayable element) {
+	private void createView(Displayable displayable) {
 		View<? extends Displayable> view = ViewRegistry.createView(session,
-				element);
+				displayable);
 
-		viewsByDisplayable.put(element, view);
+		viewsByDisplayable.put(displayable, view);
 		view.setContainer(this);
 
 		repaint();
