@@ -25,7 +25,7 @@ import jorgan.play.spi.PlayerProvider;
 public class LinuxsamplerPlayerProvider implements PlayerProvider {
 
 	public LinuxsamplerSoundPlayer createPlayer(Element element) {
-		if (element.getClass() == LinuxsamplerSound.class) {
+		if (element instanceof LinuxsamplerSound) {
 			return new LinuxsamplerSoundPlayer((LinuxsamplerSound) element);
 		}
 		return null;

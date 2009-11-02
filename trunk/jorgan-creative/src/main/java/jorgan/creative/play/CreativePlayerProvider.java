@@ -35,7 +35,7 @@ public class CreativePlayerProvider implements PlayerProvider {
 	}
 
 	public Player<CreativeSound> createPlayer(Element element) {
-		if (element.getClass() == CreativeSound.class) {
+		if (element instanceof CreativeSound) {
 			return new CreativeSoundPlayer((CreativeSound) element);
 		}
 		return null;
