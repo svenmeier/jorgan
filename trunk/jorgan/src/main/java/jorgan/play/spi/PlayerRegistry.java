@@ -26,10 +26,16 @@ public class PlayerRegistry {
 
 	public static Player<? extends Element> createPlayer(Element element) {
 		Player<? extends Element> player = null;
+
 		for (PlayerProvider provider : PluginUtils.lookup(PlayerProvider.class)) {
-			player = provider.createPlayer(element);
-			if (player != null) {
-				return player;
+			Player<?> candidate = provider.createPlayer(element);
+			if (candidate != null) {
+				// prefer more specific player
+				if (player == null
+						|| player.getClass().isAssignableFrom(
+								candidate.getClass())) {
+					player = candidate;
+				}
 			}
 		}
 

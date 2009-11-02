@@ -25,16 +25,24 @@ import jorgan.util.PluginUtils;
 
 public class ViewRegistry {
 
-	@SuppressWarnings("unchecked")
 	public static View<?> createView(OrganSession session, Displayable element) {
 		View<?> view = null;
 		for (ViewProvider provider : PluginUtils.lookup(ViewProvider.class)) {
-			view = provider.createView(session, element);
-			if (view != null) {
-				return view;
+			View<?> candidate = provider.createView(session, element);
+			if (candidate != null) {
+				// prefer more specific view
+				if (view == null
+						|| view.getClass().isAssignableFrom(
+								candidate.getClass())) {
+					view = candidate;
+				}
 			}
 		}
 
-		return new View(element);
+		if (view == null) {
+			view = new View<Displayable>(element);
+		}
+
+		return view;
 	}
 }
