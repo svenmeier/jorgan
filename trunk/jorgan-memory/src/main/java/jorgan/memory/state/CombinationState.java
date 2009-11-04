@@ -84,6 +84,11 @@ public class CombinationState {
 		}
 	}
 
+	public void read(Reference<?> reference, int index) {
+		ReferenceState<?> state = getState(reference);
+		state.read(reference, index);
+	}
+
 	public void write(Combination combination, int index) {
 		for (Reference<?> reference : combination.getReferences()) {
 			ReferenceState<?> state = getState(reference);
