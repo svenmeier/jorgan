@@ -81,7 +81,7 @@ public class FullScreen extends Window implements ConsoleStack {
 	 */
 	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
 		super(null, configuration);
-
+		
 		scrollPane.setBorder(null);
 		scrollPane.setOpaque(true);
 		add(scrollPane);
@@ -276,6 +276,7 @@ public class FullScreen extends Window implements ConsoleStack {
 		if (real) {
 			device.setFullScreenWindow(fullScreen);
 		} else {
+			fullScreen.setAlwaysOnTop(true);
 			fullScreen.setBounds(device.getDefaultConfiguration().getBounds());
 			fullScreen.setVisible(true);
 		}
