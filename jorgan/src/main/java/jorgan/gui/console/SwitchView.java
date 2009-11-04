@@ -34,7 +34,7 @@ import jorgan.skin.TextLayer;
 /**
  * A view for a {@link Switch}.
  */
-public class SwitchView extends EngageableView<Switch> {
+public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 	public static final String BINDING_ACTIVE = "active";
 	
@@ -44,7 +44,7 @@ public class SwitchView extends EngageableView<Switch> {
 	 * @param element
 	 *            the element to view
 	 */
-	public SwitchView(Switch element) {
+	public SwitchView(E element) {
 		super(element);
 	}
 

@@ -24,7 +24,7 @@ import jorgan.disposition.ConsoleSwitcher;
 /**
  * A view for a {@link ConsoleSwitcher}.
  */
-public class ConsoleSwitcherView extends SwitchView {
+public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 
 	private boolean enaged;
 
