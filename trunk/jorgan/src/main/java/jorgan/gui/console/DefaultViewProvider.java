@@ -20,7 +20,7 @@ public class DefaultViewProvider implements ViewProvider {
 		} else if (element instanceof ConsoleSwitcher) {
 			view = new ConsoleSwitcherView((ConsoleSwitcher) element);
 		} else if (element instanceof Switch) {
-			view = new SwitchView((Switch) element);
+			view = new SwitchView<Switch>((Switch) element);
 		} else if (element instanceof Engageable) {
 			view = new EngageableView<Engageable>((Engageable) element);
 		} else if (element instanceof Continuous) {
