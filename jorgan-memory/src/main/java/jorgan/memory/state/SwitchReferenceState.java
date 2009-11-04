@@ -60,7 +60,7 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 	}
 	
 	@Override
-	public  void read(Reference<?> reference, int index) {
+	public void read(Reference<?> reference, int index) {
 		ensureIndex(index);
 		
 		SwitchReference temp = (SwitchReference) reference;

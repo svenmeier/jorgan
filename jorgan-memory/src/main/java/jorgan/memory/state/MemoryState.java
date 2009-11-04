@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.disposition.Combination;
+import jorgan.disposition.Reference;
 import jorgan.memory.disposition.Memory;
 
 /**
@@ -43,9 +44,9 @@ public class MemoryState {
 	}
 
 	private CombinationState getState(Combination combination) {
-		for (CombinationState store : combinations) {
-			if (store.isFor(combination)) {
-				return store;
+		for (CombinationState state : combinations) {
+			if (state.isFor(combination)) {
+				return state;
 			}
 		}
 
@@ -93,22 +94,18 @@ public class MemoryState {
 	public void read(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
 			CombinationState state = getState(combination);
-			if (state == null) {
-				state = new CombinationState(combination);
-				combinations.add(state);
-			}
-
 			state.read(combination, index);
 		}
 	}
 
+	public void read(Combination combination, Reference<?> reference, int index) {
+		CombinationState state = getState(combination);
+		state.read(reference, index);
+	}
+	
 	public void write(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
 			CombinationState state = getState(combination);
-			if (state == null) {
-				state = new CombinationState(combination);
-				combinations.add(state);
-			}
 
 			state.write(combination, index);
 		}

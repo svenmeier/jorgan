@@ -50,7 +50,7 @@ public abstract class Storage {
 
 	private Memory memory;
 
-	private MemoryState memoryState;
+	private MemoryState state;
 
 	private Organ organ;
 
@@ -82,7 +82,7 @@ public abstract class Storage {
 			public void referenceAdded(Element element, Reference<?> reference) {
 				if (element instanceof Combination) {
 					if (memory != null && memory.references(element)) {
-						read();
+						readReference((Combination)element, reference);
 					}
 				} else if (element == memory) {
 					read();
@@ -93,7 +93,7 @@ public abstract class Storage {
 			public void referenceChanged(Element element, Reference<?> reference) {
 				if (element instanceof Combination) {
 					if (memory != null && memory.references(element)) {
-						read();
+						readReference((Combination)element, reference);
 					}
 				}
 			}
@@ -159,7 +159,7 @@ public abstract class Storage {
 	}
 
 	public int getSize() {
-		if (memoryState == null) {
+		if (state == null) {
 			return 0;
 		} else {
 			return memory.getSize();
@@ -167,7 +167,7 @@ public abstract class Storage {
 	}
 
 	public int getIndex() {
-		if (memoryState == null) {
+		if (state == null) {
 			return -1;
 		} else {
 			return memory.getIndex();
@@ -181,25 +181,33 @@ public abstract class Storage {
 	}
 
 	public void read() {
-		if (memoryState != null) {
-			memoryState.read(memory, getIndex());
+		if (state != null) {
+			state.read(memory, getIndex());
+			
+			modified  = true;
+		}
+	}
+
+	public void readReference(Combination combination, Reference<?> reference) {
+		if (state != null) {
+			state.read(combination, reference, getIndex());
 			
 			modified  = true;
 		}
 	}
 
 	public void write() {
-		if (memoryState != null) {
-			memoryState.write(memory, getIndex());
+		if (state != null) {
+			state.write(memory, getIndex());
 		}
 	}
 
 	public void swap(int index1, int index2) {
-		if (memoryState == null) {
+		if (state == null) {
 			throw new IllegalStateException();
 		}
 		
-		memoryState.swap(index1, index2);
+		state.swap(index1, index2);
 
 		markModified();
 
@@ -211,11 +219,11 @@ public abstract class Storage {
 	}
 
 	public void clear(int index) {
-		if (memoryState == null) {
+		if (state == null) {
 			throw new IllegalStateException();
 		}
 
-		memoryState.clear(index);
+		state.clear(index);
 
 		markModified();
 
@@ -227,21 +235,21 @@ public abstract class Storage {
 	}
 
 	public String getTitle(int index) {
-		if (memoryState == null) {
+		if (state == null) {
 			return "";
 		} else {
-			return memoryState.getTitle(index);
+			return state.getTitle(index);
 		}
 	}
 
 	public void setTitle(int index, String title) {
-		if (memoryState == null) {
+		if (state == null) {
 			throw new IllegalStateException();
 		}
 
-		String oldTitle = memoryState.getTitle(index);
+		String oldTitle = state.getTitle(index);
 		if (!Null.safeEquals(oldTitle, title)) {
-			memoryState.setTitle(index, title);
+			state.setTitle(index, title);
 			
 			markModified();
 			
@@ -250,7 +258,7 @@ public abstract class Storage {
 	}
 
 	public void load() {
-		memoryState = null;
+		state = null;
 		
 		memory = organ.getElement(Memory.class);
 		if (memory != null) {
@@ -263,10 +271,10 @@ public abstract class Storage {
 					File file = resolve(storage);
 
 					if (file.exists()) {
-						memoryState = new MemoryStateStream().read(file);
+						state = new MemoryStateStream().read(file);
 						write();
 					} else {
-						memoryState = new MemoryState();
+						state = new MemoryState();
 						read();
 					}
 				} catch (Exception e) {
@@ -284,7 +292,7 @@ public abstract class Storage {
 	public void save() throws IOException {
 		String storage = memory.getStorage();
 
-		new MemoryStateStream().write(memoryState, resolve(storage));
+		new MemoryStateStream().write(state, resolve(storage));
 		
 		modified = false;
 	}
@@ -300,7 +308,7 @@ public abstract class Storage {
 	}
 
 	public boolean isLoaded() {
-		return memoryState != null;
+		return state != null;
 	}
 	
 	public boolean isModified() {
