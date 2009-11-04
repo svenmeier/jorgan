@@ -25,7 +25,6 @@ import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
 import java.awt.Rectangle;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -34,6 +33,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JDialog;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
@@ -53,7 +53,7 @@ import bias.Configuration;
 /**
  * A window shown <em>full screen</em>.
  */
-public class FullScreen extends Window implements ConsoleStack {
+public class FullScreen extends JDialog implements ConsoleStack {
 
 	private static Configuration config = Configuration.getRoot().get(
 			FullScreen.class);
@@ -80,8 +80,10 @@ public class FullScreen extends Window implements ConsoleStack {
 	/**
 	 */
 	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
-		super(null, configuration);
-		
+		super((JDialog) null, "", false, configuration);
+
+		setUndecorated(true);
+
 		scrollPane.setBorder(null);
 		scrollPane.setOpaque(true);
 		add(scrollPane);
@@ -276,7 +278,6 @@ public class FullScreen extends Window implements ConsoleStack {
 		if (real) {
 			device.setFullScreenWindow(fullScreen);
 		} else {
-			fullScreen.setAlwaysOnTop(true);
 			fullScreen.setBounds(device.getDefaultConfiguration().getBounds());
 			fullScreen.setVisible(true);
 		}
