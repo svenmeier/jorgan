@@ -21,7 +21,6 @@ package jorgan.gui.construct;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -91,8 +90,6 @@ public class ElementsSelectionPanel extends JPanel {
 	 */
 	public void setElements(List<Element> elements) {
 		this.elements = elements;
-
-		Collections.sort(elements, new ElementTypeComparator());
 
 		elementsList.setModel(new ElementsModel());
 

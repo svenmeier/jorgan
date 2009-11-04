@@ -256,9 +256,11 @@ public class Organ {
 	 *            element to get candidates for
 	 * @return candidates
 	 */
-	public List<Element> getReferenceToCandidates(Element element) {
+	@SuppressWarnings("unchecked")
+	public Set<Element> getReferenceToCandidates(Element element) {
 
-		List<Element> candidates = new ArrayList<Element>();
+		Set<Element> candidates = new TreeSet<Element>(ComparatorChain.of(
+				new ElementNameComparator(), new IdentityComparator()));
 
 		for (Element candidate : elements) {
 			if (element.canReference(candidate)) {
@@ -276,9 +278,11 @@ public class Organ {
 	 *            element to find candidates for
 	 * @return candidates, never null
 	 */
-	public List<Element> getReferencedFromCandidates(Element element) {
+	@SuppressWarnings("unchecked")
+	public Set<Element> getReferencedFromCandidates(Element element) {
 
-		List<Element> candidates = new ArrayList<Element>();
+		Set<Element> candidates = new TreeSet<Element>(ComparatorChain.of(
+				new ElementNameComparator(), new IdentityComparator()));
 
 		for (Element candidate : elements) {
 			if (candidate.canReference(element)) {

@@ -97,7 +97,7 @@ public class CreateElementWizard extends BasicWizard {
 				}
 			}
 		});
-			
+
 		return true;
 	}
 
@@ -114,7 +114,8 @@ public class CreateElementWizard extends BasicWizard {
 		public ElementPage() {
 			config.get("element").read(this);
 
-			elementPanel.setElementClasses(ElementRegistry.getElementClasses(session.getOrgan()));
+			elementPanel.setElementClasses(ElementRegistry
+					.getElementClasses(session.getOrgan()));
 		}
 
 		@Override
@@ -164,8 +165,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(session.getOrgan()
-					.getReferenceToCandidates(element));
+			elementsSelectionPanel.setElements(new ArrayList<Element>(session
+					.getOrgan().getReferenceToCandidates(element)));
 
 			referencesTo = new ArrayList<Element>();
 		}
@@ -196,8 +197,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(session.getOrgan()
-					.getReferencedFromCandidates(element));
+			elementsSelectionPanel.setElements(new ArrayList<Element>(session
+					.getOrgan().getReferencedFromCandidates(element)));
 
 			referencedFrom = new ArrayList<Element>();
 		}

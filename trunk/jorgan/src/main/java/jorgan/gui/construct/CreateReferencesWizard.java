@@ -94,7 +94,7 @@ public class CreateReferencesWizard extends BasicWizard {
 				}
 			}
 		});
-		
+
 		return true;
 	}
 
@@ -108,8 +108,8 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ReferencesToPage() {
 			config.get("referencesTo").read(this);
 
-			elementsSelectionPanel.setElements(session.getOrgan()
-					.getReferenceToCandidates(element));
+			elementsSelectionPanel.setElements(new ArrayList<Element>(session
+					.getOrgan().getReferenceToCandidates(element)));
 		}
 
 		@Override
@@ -135,8 +135,8 @@ public class CreateReferencesWizard extends BasicWizard {
 		private ReferencedByPage() {
 			config.get("referencedBy").read(this);
 
-			elementsSelectionPanel.setElements(session.getOrgan()
-					.getReferencedFromCandidates(element));
+			elementsSelectionPanel.setElements(new ArrayList<Element>(session
+					.getOrgan().getReferencedFromCandidates(element)));
 		}
 
 		@Override
