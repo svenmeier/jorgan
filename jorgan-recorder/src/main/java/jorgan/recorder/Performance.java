@@ -81,8 +81,8 @@ public abstract class Performance {
 	private int state = STATE_STOP;
 
 	private boolean modified = false;
-	
-	private boolean encodeNames = false;
+
+	private ElementEncoder encoder;
 
 	/**
 	 * Record the given session.
@@ -92,6 +92,8 @@ public abstract class Performance {
 		this.play.getOrgan().addOrganListener(listener);
 
 		this.problems = problems;
+
+		this.encoder = new ElementEncoder(play.getOrgan());
 
 		load();
 	}
@@ -430,6 +432,9 @@ public abstract class Performance {
 		fireChanged();
 	}
 
+	public void autoTracks() {
+	}
+
 	private void fireTimeChanged(long millis) {
 		for (PerformanceListener listener : listeners) {
 			listener.timeChanged(millis);
@@ -552,7 +557,7 @@ public abstract class Performance {
 				MetaMessage message = (MetaMessage) event.getMessage();
 				if (message.getType() == MessageUtils.META_TRACK_NAME) {
 					try {
-						element = decode(MessageUtils.getText(message));
+						element = encoder.decode(MessageUtils.getText(message));
 					} catch (IllegalArgumentException invalidMessage) {
 					}
 				} else if (message.getType() == MessageUtils.META_CUE_POINT) {
@@ -603,8 +608,8 @@ public abstract class Performance {
 			messageRecorder.setTime(0);
 
 			messageRecorder.record(tracker.getTrack(), MessageUtils
-					.newMetaMessage(MessageUtils.META_TRACK_NAME,
-							encode(tracker.getElement())));
+					.newMetaMessage(MessageUtils.META_TRACK_NAME, encoder
+							.encode(tracker.getElement())));
 
 			if (tracker.isPlayEnabled()) {
 				messageRecorder.record(tracker.getTrack(), MessageUtils
@@ -617,34 +622,8 @@ public abstract class Performance {
 			}
 		}
 	}
-
-	public String encode(Element element) {
-		StringBuilder text = new StringBuilder();
-
-		if (encodeNames) {
-			text.append(element.getName());
-			text.append(" ");
-		}
-		text.append("[");
-		text.append(element.getId());
-		text.append("]");
-
-		return text.toString();
-	}
-
-	public Element decode(String string) throws IllegalArgumentException {
-
-		long id;
-
-		try {
-			int to = string.lastIndexOf(']');
-			int from = string.lastIndexOf('[', to);
-
-			id = Long.parseLong(string.substring(from + 1, to));
-		} catch (Exception e) {
-			throw new IllegalArgumentException(string);
-		}
-
-		return play.getOrgan().getElement(id);
+	
+	public ElementEncoder getEncoder() {
+		return encoder;
 	}
 }

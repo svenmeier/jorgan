@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
-import jorgan.recorder.Performance;
+import jorgan.recorder.ElementEncoder;
 import jorgan.recorder.tracker.ConsoleTracker;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -43,8 +43,8 @@ public class RecorderCategory extends JOrganCategory {
 	private Model recordCombinationRecalls = getModel(new Property(
 			ConsoleTracker.class, "recordCombinationRecalls"));
 
-	private Model encodeNames = getModel(new Property(Performance.class,
-			"encodeNames"));
+	private Model encodeNames = getModel(new Property(ElementEncoder.class,
+			"name"));
 
 	private JCheckBox recordCombinationRecallsCheckBox = new JCheckBox();
 
