@@ -116,11 +116,11 @@ public abstract class AbstractTracker implements Tracker {
 	protected abstract boolean owns(MidiEvent event);
 
 	public Element decode(String string) throws IllegalArgumentException {
-		return performance.decode(string);
+		return performance.getEncoder().decode(string);
 	}
 
 	public String encode(Element element) {
-		return performance.encode(element);
+		return performance.getEncoder().encode(element);
 	}
 
 }
