@@ -139,12 +139,14 @@ public abstract class Storage {
 			if (file == null) {
 				memory.setStorage(null);
 			} else {
-				memory.setStorage(file.getPath());
+				memory.setStorage(deresolve(file));
 			}
 		}
 	}
 
 	protected abstract File resolve(String performance);
+
+	protected abstract String deresolve(File file);
 
 	protected void fireIndexChanged() {
 		for (StorageListener listener : listeners) {

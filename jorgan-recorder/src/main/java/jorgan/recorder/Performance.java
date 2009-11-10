@@ -118,6 +118,8 @@ public abstract class Performance {
 
 	protected abstract File resolve(String performance);
 
+	protected abstract String deresolve(File file);
+
 	public void load() {
 		stop();
 
@@ -181,7 +183,7 @@ public abstract class Performance {
 			if (file == null) {
 				recorder.setPerformance(null);
 			} else {
-				recorder.setPerformance(file.getPath());
+				recorder.setPerformance(deresolve(file));
 			}
 		}
 	}

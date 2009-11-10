@@ -37,16 +37,22 @@ public class MemorySessionProvider implements SessionProvider {
 
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == Storage.class) {
-			final Storage storage = new Storage(session.getOrgan(),
-					session.lookup(ElementProblems.class)) {
+			final Storage storage = new Storage(session.getOrgan(), session
+					.lookup(ElementProblems.class)) {
 				@Override
 				protected File resolve(String name) {
 					return session.resolve(name);
 				}
+
+				@Override
+				protected String deresolve(File file) {
+					return session.deresolve(file);
+				}
+
 				@Override
 				protected void markModified() {
 					super.markModified();
-					
+
 					session.markModified();
 				}
 			};
@@ -56,7 +62,7 @@ public class MemorySessionProvider implements SessionProvider {
 
 				public void modified() {
 				}
-				
+
 				public void saved(File file) throws IOException {
 					if (storage.isLoaded()) {
 						storage.save();
