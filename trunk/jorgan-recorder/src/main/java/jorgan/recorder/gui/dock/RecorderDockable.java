@@ -43,6 +43,7 @@ import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
 import bias.swing.MessageBox;
+import bias.util.MessageBuilder;
 
 public class RecorderDockable extends OrganDockable {
 
@@ -78,9 +79,13 @@ public class RecorderDockable extends OrganDockable {
 
 	private EventListener eventListener = new EventListener();
 
+	private MessageBuilder statusBuilder = new MessageBuilder();
+	
 	public RecorderDockable() {
 		config.read(this);
 
+		config.get("status").read(statusBuilder);
+		
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
@@ -147,15 +152,18 @@ public class RecorderDockable extends OrganDockable {
 		firstAction.update();
 		lastAction.update();
 		recordAction.update();
+
+		updateTime();
 	}
 
 	private void updateTime() {
 		if (performance != null && performance.isLoaded()) {
+			String name = MidiFileFilter.removeSuffix(performance.getFile());
 			long time = performance.getTime();
 			long totalTime = performance.getTotalTime();
 
-			setStatus(format.format(new Date(time)) + " / "
-					+ format.format(new Date(totalTime)));
+			setStatus(statusBuilder.build(name, format.format(new Date(time)),
+					format.format(new Date(totalTime))));
 
 			tracksPanel.updateTime();
 		} else {
@@ -225,8 +233,7 @@ public class RecorderDockable extends OrganDockable {
 
 			JFileChooser chooser = new JFileChooser(session.getFile());
 			config.get("eject/chooser").read(chooser);
-			chooser
-					.setFileFilter(new MidiFileFilter());
+			chooser.setFileFilter(new MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
 				if (!file.exists()) {

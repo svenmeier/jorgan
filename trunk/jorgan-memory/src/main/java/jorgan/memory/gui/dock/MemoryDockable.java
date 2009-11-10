@@ -109,16 +109,22 @@ public class MemoryDockable extends OrganDockable {
 			storage = session.lookup(Storage.class);
 			storage.addListener((StorageListener) Spin.over(eventHandler));
 		}
-		
+
 		update();
 	}
-	
+
 	private void update() {
 		model.fireTableDataChanged();
 
 		updateIndex();
-		
+
 		ejectAction.update();
+
+		if (storage != null && storage.isLoaded()) {
+			setStatus(MemoryFileFilter.removeSuffix(storage.getFile()));
+		} else {
+			setStatus(null);
+		}
 	}
 
 	@Override
@@ -143,8 +149,10 @@ public class MemoryDockable extends OrganDockable {
 						table.setCellEditor(null);
 					}
 					table.setColumnSelectionInterval(0, 0);
-					table.getSelectionModel().setSelectionInterval(index, index);
-					table.scrollRectToVisible(table.getCellRect(index, 0, false));
+					table.getSelectionModel()
+							.setSelectionInterval(index, index);
+					table.scrollRectToVisible(table
+							.getCellRect(index, 0, false));
 				}
 			}
 		}
@@ -152,7 +160,8 @@ public class MemoryDockable extends OrganDockable {
 
 	private boolean canEject() {
 		if (storage.isLoaded() && storage.isModified()) {
-			int option = showBoxMessage("eject/confirm", MessageBox.OPTIONS_YES_NO_CANCEL);
+			int option = showBoxMessage("eject/confirm",
+					MessageBox.OPTIONS_YES_NO_CANCEL);
 			if (option == MessageBox.OPTION_CANCEL) {
 				return false;
 			} else if (option == MessageBox.OPTION_YES) {
@@ -171,7 +180,8 @@ public class MemoryDockable extends OrganDockable {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving storage failed", ex);
 
-			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session.getFile().getName());
+			showBoxMessage("saveException", MessageBox.OPTIONS_OK, session
+					.getFile().getName());
 
 			return false;
 		}
@@ -247,7 +257,8 @@ public class MemoryDockable extends OrganDockable {
 
 		private boolean confirm() {
 
-			int option = showBoxMessage("clear/confirm", MessageBox.OPTIONS_YES_NO_CANCEL);
+			int option = showBoxMessage("clear/confirm",
+					MessageBox.OPTIONS_YES_NO_CANCEL);
 			return option == MessageBox.OPTION_YES;
 		}
 
