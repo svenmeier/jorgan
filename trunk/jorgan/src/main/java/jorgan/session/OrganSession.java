@@ -189,6 +189,22 @@ public class OrganSession {
 		return t;
 	}
 
+	public String deresolve(File file) {
+		if (file.isAbsolute()) {
+			String directory = this.file.getParentFile().getAbsolutePath().replace('\\', '/');
+			if (!directory.endsWith("/")) {
+				directory += "/";
+			}
+			
+			String path = file.getPath().replace('\\', '/');
+			if (path.startsWith(directory)) {
+				return path.substring(directory.length());
+			}
+		}
+		
+		return file.getPath();
+	}
+
 	public File resolve(String name) {
 		File file = new File(name);
 

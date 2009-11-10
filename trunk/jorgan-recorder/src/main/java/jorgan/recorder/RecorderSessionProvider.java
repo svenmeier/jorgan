@@ -49,6 +49,11 @@ public class RecorderSessionProvider implements SessionProvider {
 				}
 
 				@Override
+				protected String deresolve(File file) {
+					return session.deresolve(file);
+				}
+
+				@Override
 				protected void markModified() {
 					super.markModified();
 
