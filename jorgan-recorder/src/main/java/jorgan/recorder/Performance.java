@@ -135,12 +135,7 @@ public abstract class Performance {
 				try {
 					File file = resolve(performance);
 
-					Sequence sequence;
-					if (file.exists()) {
-						sequence = new MidiStream().read(file);
-					} else {
-						sequence = createSequence();
-					}
+					Sequence sequence = new MidiStream().read(file);
 
 					initSequence(sequence);
 				} catch (Exception ex) {
@@ -178,11 +173,23 @@ public abstract class Performance {
 		return null;
 	}
 
+	/**
+	 * Set the file to be used as performance. Creates an empty performance if
+	 * the file doesn't exist.
+	 */
 	public void setFile(File file) {
 		if (recorder != null) {
 			if (file == null) {
 				recorder.setPerformance(null);
 			} else {
+				if (!file.exists()) {
+					try {
+						new MidiStream().write(createSequence(), file);
+					} catch (IOException ex) {
+						// load will show problem
+					}
+				}
+
 				recorder.setPerformance(deresolve(file));
 			}
 		}
@@ -624,7 +631,7 @@ public abstract class Performance {
 			}
 		}
 	}
-	
+
 	public ElementEncoder getEncoder() {
 		return encoder;
 	}
