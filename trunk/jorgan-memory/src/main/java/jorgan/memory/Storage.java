@@ -82,7 +82,7 @@ public abstract class Storage {
 			public void referenceAdded(Element element, Reference<?> reference) {
 				if (element instanceof Combination) {
 					if (memory != null && memory.references(element)) {
-						readReference((Combination)element, reference);
+						readReference((Combination) element, reference);
 					}
 				} else if (element == memory) {
 					read();
@@ -93,7 +93,7 @@ public abstract class Storage {
 			public void referenceChanged(Element element, Reference<?> reference) {
 				if (element instanceof Combination) {
 					if (memory != null && memory.references(element)) {
-						readReference((Combination)element, reference);
+						readReference((Combination) element, reference);
 					}
 				}
 			}
@@ -134,11 +134,23 @@ public abstract class Storage {
 		return null;
 	}
 
+	/**
+	 * Set the file to be used as storage. Creates an empty storage if the file
+	 * doesn't exist.
+	 */
 	public void setFile(File file) {
 		if (memory != null) {
 			if (file == null) {
 				memory.setStorage(null);
 			} else {
+				if (!file.exists()) {
+					try {
+						new MemoryStateStream().write(new MemoryState(), file);
+					} catch (IOException ex) {
+						// load will show problem
+					}
+				}
+
 				memory.setStorage(deresolve(file));
 			}
 		}
@@ -185,16 +197,16 @@ public abstract class Storage {
 	public void read() {
 		if (state != null) {
 			state.read(memory, getIndex());
-			
-			modified  = true;
+
+			modified = true;
 		}
 	}
 
 	public void readReference(Combination combination, Reference<?> reference) {
 		if (state != null) {
 			state.read(combination, reference, getIndex());
-			
-			modified  = true;
+
+			modified = true;
 		}
 	}
 
@@ -208,7 +220,7 @@ public abstract class Storage {
 		if (state == null) {
 			throw new IllegalStateException();
 		}
-		
+
 		state.swap(index1, index2);
 
 		markModified();
@@ -216,8 +228,8 @@ public abstract class Storage {
 		if (index1 == memory.getIndex() || index2 == memory.getIndex()) {
 			write();
 		}
-		
-		fireChanged();	
+
+		fireChanged();
 	}
 
 	public void clear(int index) {
@@ -232,8 +244,8 @@ public abstract class Storage {
 		if (index == memory.getIndex()) {
 			write();
 		}
-		
-		fireChanged();	
+
+		fireChanged();
 	}
 
 	public String getTitle(int index) {
@@ -252,33 +264,29 @@ public abstract class Storage {
 		String oldTitle = state.getTitle(index);
 		if (!Null.safeEquals(oldTitle, title)) {
 			state.setTitle(index, title);
-			
+
 			markModified();
-			
+
 			fireChanged();
 		}
 	}
 
 	public void load() {
 		state = null;
-		
+
 		memory = organ.getElement(Memory.class);
 		if (memory != null) {
-			problems.removeProblem(new Problem(Severity.ERROR, memory, "storage",
-					null));
+			problems.removeProblem(new Problem(Severity.ERROR, memory,
+					"storage", null));
 
 			String storage = memory.getStorage();
 			if (storage != null) {
 				try {
 					File file = resolve(storage);
 
-					if (file.exists()) {
-						state = new MemoryStateStream().read(file);
-						write();
-					} else {
-						state = new MemoryState();
-						read();
-					}
+					state = new MemoryStateStream().read(file);
+
+					write();
 				} catch (Exception e) {
 					problems.addProblem(new Problem(Severity.ERROR, memory,
 							"storage", createMessage("load", storage)));
@@ -295,7 +303,7 @@ public abstract class Storage {
 		String storage = memory.getStorage();
 
 		new MemoryStateStream().write(state, resolve(storage));
-		
+
 		modified = false;
 	}
 
@@ -312,11 +320,11 @@ public abstract class Storage {
 	public boolean isLoaded() {
 		return state != null;
 	}
-	
+
 	public boolean isModified() {
 		return modified;
 	}
-	
+
 	protected void markModified() {
 		this.modified = true;
 	}
