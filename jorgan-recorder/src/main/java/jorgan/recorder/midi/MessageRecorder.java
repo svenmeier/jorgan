@@ -25,7 +25,7 @@ import javax.sound.midi.Track;
 
 import jorgan.util.AbstractIterator;
 
-public abstract class MessageRecorder {
+public class MessageRecorder {
 
 	public static final long SECOND = 1000;
 
@@ -151,13 +151,17 @@ public abstract class MessageRecorder {
 		state.record(track, message);
 	}
 
-	protected abstract void onPlayed(int track, MidiMessage message);
+	protected void onPlayed(int track, MidiMessage message) {
+	}
 
-	protected abstract void onLast();
+	protected void onLast() {
+	}
 
-	protected abstract void onStarting();
+	protected void onStarting() {
+	}
 
-	protected abstract void onStopping();
+	protected void onStopping() {
+	}
 
 	public long millisToTick(long millis) {
 		float division = sequence.getDivisionType();

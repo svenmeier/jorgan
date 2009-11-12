@@ -24,8 +24,6 @@ import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
-import jorgan.play.OrganPlay;
 import jorgan.recorder.Performance;
 import jorgan.recorder.Tracker;
 
@@ -35,17 +33,19 @@ public abstract class AbstractTracker implements Tracker {
 
 	private int track;
 
-	private boolean playEnabled = false;
+	private boolean playEnabled = true;
 
-	private boolean recordEnabled = false;
+	private boolean recordEnabled = true;
 
-	protected AbstractTracker(Performance performance, int track) {
-		this.performance = performance;
-
+	protected AbstractTracker(int track) {
 		this.track = track;
 	}
 
-	public void destroy() {
+	public void attach(Performance performance) {
+		this.performance = performance;
+	}
+
+	public void detach() {
 		performance = null;
 	}
 
@@ -70,14 +70,6 @@ public abstract class AbstractTracker implements Tracker {
 	}
 
 	public abstract Element getElement();
-
-	public Organ getOrgan() {
-		return performance.getPlay().getOrgan();
-	}
-
-	public OrganPlay getPlay() {
-		return performance.getPlay();
-	}
 
 	public void onPlayStarting() {
 	}

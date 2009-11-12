@@ -26,6 +26,7 @@ import jorgan.disposition.Combination;
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
+import jorgan.disposition.Organ;
 import jorgan.disposition.Switch;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
@@ -57,26 +58,33 @@ public class ConsoleTracker extends AbstractTracker {
 
 	private boolean ignoreChanges;
 
-	public ConsoleTracker(Performance performance, int track, Console console) {
-		super(performance, track);
+	private Organ organ;
+
+	public ConsoleTracker(int track, Console console) {
+		super(track);
 
 		config.read(this);
 
-		// enable play only
-		setPlayEnabled(true);
-
 		this.console = console;
+	}
 
-		getOrgan().addOrganListener(eventListener);
+	public void attach(Performance performance) {
+		super.attach(performance);
+
+		this.organ = performance.getPlay().getOrgan();
+		organ.addOrganListener(eventListener);
+	}
+
+	@Override
+	public void detach() {
+		organ.removeOrganListener(eventListener);
+		organ = null;
+
+		super.detach();
 	}
 
 	public void setRecordCombinationRecalls(boolean recordCombinationRecalls) {
 		this.recordCombinationRecalls = recordCombinationRecalls;
-	}
-
-	@Override
-	public void destroy() {
-		getOrgan().removeOrganListener(eventListener);
 	}
 
 	@Override
@@ -301,7 +309,7 @@ public class ConsoleTracker extends AbstractTracker {
 			}
 
 			if (recordCombinationRecalls) {
-				for (Combination combination : getOrgan().getReferrer(element,
+				for (Combination combination : organ.getReferrer(element,
 						Combination.class)) {
 					if (combination.isRecalling()) {
 						return;

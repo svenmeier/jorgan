@@ -27,12 +27,11 @@ import jorgan.recorder.tracker.KeyboardTracker;
 
 public class DefaultTrackerProvider implements TrackerProvider {
 
-	public Tracker createTracker(Performance performance, int track,
-			Element element) {
+	public Tracker createTracker(int track, Element element) {
 		if (element instanceof Keyboard) {
-			return new KeyboardTracker(performance, track, (Keyboard) element);
+			return new KeyboardTracker(track, (Keyboard) element);
 		} else if (element instanceof Console) {
-			return new ConsoleTracker(performance, track, (Console) element);
+			return new ConsoleTracker(track, (Console) element);
 		} else {
 			return null;
 		}
