@@ -40,7 +40,9 @@ public interface Tracker {
 
 	public boolean isPlayEnabled();
 
-	public void destroy();
+	public void attach(Performance performance);
+	
+	public void detach();
 
 	public void onPlayStarting();
 

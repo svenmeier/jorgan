@@ -163,10 +163,6 @@ public class TrackHeader extends JPanel {
 
 		menu.add(new AddAction());
 		menu.add(new RemoveAction());
-
-		menu.addSeparator();
-		
-		menu.add(new AutoAction());
 	}
 
 	private class RemoveAction extends BaseAction {
@@ -186,16 +182,6 @@ public class TrackHeader extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			performance.addTrack();
-		}
-	}
-	
-	private class AutoAction extends BaseAction {
-		public AutoAction() {
-			config.get("auto").read(this);
-		}
-
-		public void actionPerformed(ActionEvent e) {
-			performance.autoTracks();
 		}
 	}
 }

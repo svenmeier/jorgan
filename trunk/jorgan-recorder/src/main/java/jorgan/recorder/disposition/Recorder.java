@@ -18,7 +18,10 @@
  */
 package jorgan.recorder.disposition;
 
+import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
+import jorgan.disposition.Element;
+import jorgan.disposition.Keyboard;
 import jorgan.util.Null;
 
 /**
@@ -41,5 +44,10 @@ public class Recorder extends Displayable {
 
 			fireChange(new PropertyChange(oldPerformance, this.performance));
 		}
+	}
+	
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return clazz == Keyboard.class || clazz == Console.class;
 	}
 }

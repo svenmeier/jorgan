@@ -217,7 +217,7 @@ public abstract class Performance {
 	private void initSequence(Sequence sequence) {
 		if (this.messageRecorder != null) {
 			for (Tracker tracker : trackers) {
-				tracker.destroy();
+				tracker.detach();
 			}
 			trackers.clear();
 
@@ -231,7 +231,7 @@ public abstract class Performance {
 			for (int track = 0; track < messageRecorder.getTrackCount(); track++) {
 				Tracker tracker = readTracker(track);
 				if (tracker == null) {
-					tracker = new EmptyTracker(this, track);
+					tracker = new EmptyTracker(track);
 				}
 				trackers.add(tracker);
 			}
@@ -239,11 +239,33 @@ public abstract class Performance {
 	}
 
 	private Sequence createSequence() {
+
+		List<Tracker> trackers = new ArrayList<Tracker>();
+		for (Element element : this.recorder.getReferenced(Element.class)) {
+			Tracker tracker = TrackerRegistry.createTracker(trackers.size(),
+					element);
+			if (tracker != null) {
+				trackers.add(tracker);
+			}
+		}
+
+		Sequence sequence;
 		try {
-			return new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, 1);
+			if (trackers.size() == 0) {
+				sequence = new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION, 1);
+			} else {
+				sequence = new Sequence(DEFAULT_DIVISION, DEFAULT_RESOLUTION,
+						trackers.size());
+				MessageRecorder recorder = new MessageRecorder(sequence);
+				for (Tracker tracker : trackers) {
+					writeTracker(recorder, tracker);
+				}
+			}
 		} catch (InvalidMidiDataException ex) {
 			throw new Error(ex);
 		}
+
+		return sequence;
 	}
 
 	public void stop() {
@@ -344,10 +366,8 @@ public abstract class Performance {
 		List<Element> elements = new ArrayList<Element>();
 
 		for (Element element : play.getOrgan().getElements(Element.class)) {
-			Tracker tracker = TrackerRegistry.createTracker(this, 0, element);
+			Tracker tracker = TrackerRegistry.createTracker(0, element);
 			if (tracker != null) {
-				tracker.destroy();
-
 				elements.add(element);
 			}
 		}
@@ -382,19 +402,19 @@ public abstract class Performance {
 	public void setElement(int track, Element element) {
 		stop();
 
-		trackers.get(track).destroy();
+		trackers.get(track).detach();
 
 		Tracker tracker;
 		if (element == null) {
-			tracker = new EmptyTracker(this, track);
+			tracker = new EmptyTracker(track);
 		} else {
-			tracker = TrackerRegistry.createTracker(this, track, element);
+			tracker = TrackerRegistry.createTracker(track, element);
 			if (tracker == null) {
 				throw new IllegalArgumentException("unsupported "
 						+ element.getClass().getName());
 			}
 		}
-
+		tracker.attach(this);
 		trackers.set(track, tracker);
 
 		markModified();
@@ -579,9 +599,9 @@ public abstract class Performance {
 			}
 		}
 
-		Tracker tracker = TrackerRegistry.createTracker(Performance.this,
-				track, element);
+		Tracker tracker = TrackerRegistry.createTracker(track, element);
 		if (tracker != null) {
+			tracker.attach(this);
 			tracker.setPlayEnabled(playEnabled);
 			tracker.setRecordEnabled(recordEnabled);
 			return tracker;
@@ -593,12 +613,12 @@ public abstract class Performance {
 	private void writeTrackers() {
 		for (Tracker tracker : trackers) {
 			if (tracker.getElement() != null) {
-				writeTracker(tracker);
+				writeTracker(messageRecorder, tracker);
 			}
 		}
 	}
 
-	private void writeTracker(Tracker tracker) {
+	private void writeTracker(MessageRecorder messageRecorder, Tracker tracker) {
 		Iterator<MidiEvent> iterator = messageRecorder.eventsAtTick(
 				tracker.getTrack(), 0).iterator();
 		while (iterator.hasNext()) {

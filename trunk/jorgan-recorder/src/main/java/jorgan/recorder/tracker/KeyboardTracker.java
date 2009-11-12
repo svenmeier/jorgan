@@ -40,20 +40,27 @@ public class KeyboardTracker extends AbstractTracker {
 
 	private EventHandler eventHandler = new EventHandler();
 
-	public KeyboardTracker(Performance performance, int track, Keyboard keyboard) {
-		super(performance, track);
+	private OrganPlay play;
 
-		setPlayEnabled(true);
-		setRecordEnabled(true);
-		
+	public KeyboardTracker(int track, Keyboard keyboard) {
+		super(track);
+
 		this.keyboard = keyboard;
+	}
 
-		getPlay().addKeyListener(eventHandler);
+	public void attach(Performance performance) {
+		super.attach(performance);
+
+		this.play = performance.getPlay();
+		play.addKeyListener(eventHandler);
 	}
 
 	@Override
-	public void destroy() {
-		getPlay().removeKeyListener(eventHandler);
+	public void detach() {
+		play.removeKeyListener(eventHandler);
+		play = null;
+
+		super.detach();
 	}
 
 	@Override
@@ -78,10 +85,10 @@ public class KeyboardTracker extends AbstractTracker {
 			ShortMessage shortMessage = (ShortMessage) message;
 
 			if (message.getStatus() == ShortMessage.NOTE_ON) {
-				getPlay().pressKey(keyboard, shortMessage.getData1(),
-						shortMessage.getData2());
+				play.pressKey(keyboard, shortMessage.getData1(), shortMessage
+						.getData2());
 			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
-				getPlay().releaseKey(keyboard, shortMessage.getData1());
+				play.releaseKey(keyboard, shortMessage.getData1());
 			}
 		}
 	}
@@ -94,14 +101,13 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onPlayStarting();
 
 		for (ShortMessage message : getKeyPresses()) {
-			getPlay()
-					.pressKey(keyboard, message.getData1(), message.getData2());
+			play.pressKey(keyboard, message.getData1(), message.getData2());
 		}
 	}
 
 	/**
-	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
-	 * keys.
+	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all
+	 * currently pressed keys.
 	 */
 	public void onRecordStarting() {
 		super.onRecordStarting();
@@ -112,8 +118,8 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	/**
-	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all currently pressed
-	 * keys.
+	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all
+	 * currently pressed keys.
 	 */
 	public void onRecordStopping() {
 		super.onRecordStopping();
@@ -139,7 +145,7 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onPlayStopping();
 
 		for (ShortMessage message : getKeyPresses()) {
-			getPlay().releaseKey(keyboard, message.getData1());
+			play.releaseKey(keyboard, message.getData1());
 		}
 	}
 

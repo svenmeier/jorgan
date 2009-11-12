@@ -21,12 +21,11 @@ package jorgan.recorder.tracker;
 import javax.sound.midi.MidiEvent;
 
 import jorgan.disposition.Element;
-import jorgan.recorder.Performance;
 
 public class EmptyTracker extends AbstractTracker {
 
-	public EmptyTracker(Performance performance, int track) {
-		super(performance, track);
+	public EmptyTracker(int track) {
+		super(track);
 	}
 
 	@Override
