@@ -112,14 +112,6 @@ public class Organ {
 		return elements.contains(element);
 	}
 
-	public void addElements(Collection<Element> elements) {
-		this.elements.addAll(elements);
-
-		for (Element element : elements) {
-			addElement(element);
-		}
-	}
-
 	private Long createId(Element element) {
 		Long id = element.getId();
 
@@ -152,14 +144,33 @@ public class Organ {
 		element.organ = this;
 	}
 
-	public void addElement(final Element element) {
-		if (elements.contains(element)) {
-			throw new IllegalArgumentException("already added");
+	public void addElements(Collection<Element> elements) {
+		for (Element element : elements) {
+			if (this.elements.contains(element)) {
+				throw new IllegalArgumentException("already added");
+			}
 		}
 
+		// add elements in one go so they keep their references
+		this.elements.addAll(elements);
+
+		for (Element element : elements) {
+			addElementImpl(element);
+		}
+	}
+
+	public void addElement(final Element element) {
+		if (this.elements.contains(element)) {
+			throw new IllegalArgumentException("already added");
+		}
+		elements.add(element);
+		
+		addElementImpl(element);
+	}
+
+	private void addElementImpl(final Element element) {
 		element.id = createId(element);
 
-		elements.add(element);
 		element.setOrgan(this);
 
 		fireChange(new AbstractChange() {
