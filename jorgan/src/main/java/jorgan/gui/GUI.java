@@ -1,8 +1,8 @@
 package jorgan.gui;
 
 import java.awt.Toolkit;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
 import java.lang.reflect.InvocationTargetException;
@@ -157,18 +157,16 @@ public class GUI implements UI {
 		}
 	}
 
-	private static class FrameContext extends ComponentAdapter implements
-			Runnable {
+	private static class FrameContext extends WindowAdapter implements Runnable {
 
 		public void run() {
 			frame = new OrganFrame();
-			frame.addComponentListener(this);
+			frame.addWindowListener(this);
 			frame.setVisible(true);
 		}
 
 		@Override
-		public synchronized void componentHidden(ComponentEvent e) {
-			frame.dispose();
+		public synchronized void windowClosed(WindowEvent e) {
 			frame = null;
 
 			notify();

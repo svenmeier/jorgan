@@ -4,8 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,8 +43,6 @@ public class FullScreenAction extends BaseAction {
 
 	private OrganFrame frame;
 
-	private WindowAdapter windowAdapter;
-
 	public FullScreenAction(OrganSession session, OrganFrame frame) {
 		config.read(this);
 
@@ -71,14 +67,6 @@ public class FullScreenAction extends BaseAction {
 
 		this.problems = session.lookup(ElementProblems.class);
 
-		windowAdapter = new WindowAdapter() {
-			@Override
-			public void windowActivated(WindowEvent e) {
-				leaveFullScreen();
-			}
-		};
-		frame.addWindowListener(windowAdapter);
-
 		setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0));
 
 		update();
@@ -94,8 +82,6 @@ public class FullScreenAction extends BaseAction {
 
 	public void destroy() {
 		leaveFullScreen();
-
-		frame.removeWindowListener(windowAdapter);
 	}
 
 	public void setOnLoad(boolean onLoad) {
@@ -149,6 +135,8 @@ public class FullScreenAction extends BaseAction {
 				fullScreen.addConsole(console);
 			}
 		}
+		
+		frame.setVisible(false);
 	}
 
 	private void leaveFullScreen() {
@@ -156,6 +144,8 @@ public class FullScreenAction extends BaseAction {
 			fullScreen.dispose();
 		}
 		screens.clear();
+		
+		frame.setVisible(true);
 	}
 
 	private FullScreen getScreen(String screen) throws IllegalArgumentException {

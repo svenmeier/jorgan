@@ -149,7 +149,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent ev) {
-				close();
+				exit();
 			}
 		});
 
@@ -285,13 +285,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * Stop.
 	 */
-	private void close() {
+	private void exit() {
 		if (closeOrgan()) {
 			organPanel.closing();
 
 			config.write(this);
 
 			setVisible(false);
+			dispose();
 		}
 	}
 
@@ -586,7 +587,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			close();
+			exit();
 		}
 	}
 

@@ -82,6 +82,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
 		super((JDialog) null, "", false, configuration);
 
+		config.read(this);
+		
 		setUndecorated(true);
 
 		scrollPane.setBorder(null);
@@ -278,7 +280,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		if (real) {
 			device.setFullScreenWindow(fullScreen);
 		} else {
-			fullScreen.setBounds(device.getDefaultConfiguration().getBounds());
+			fullScreen.setBounds(new Rectangle(200, 200));
+//			fullScreen.setBounds(device.getDefaultConfiguration().getBounds());
 			fullScreen.setVisible(true);
 		}
 		return fullScreen;
