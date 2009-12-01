@@ -1,5 +1,7 @@
 package jorgan.creative;
 
+import java.io.File;
+
 import junit.framework.TestCase;
 
 /**
@@ -14,42 +16,36 @@ public class SoundFontManagerTest extends TestCase {
 
 	public void test() throws Exception {
 
-		SoundFontManager mgr = new SoundFontManager();
-
 		// Access it
-		int num = mgr.getNumDevices();
-		System.out.println("Number of Devices: " + num);
+		String[] deviceNames = SoundFontManager.getDeviceNames();
+		System.out.println("Number of Devices: " + deviceNames.length);
 
 		// Loop over devices
-		for (int i = 0; i < num; i++) {
+		for (String deviceName : deviceNames) {
 			// get its name
-			System.out.println("Device #" + i + ": " + mgr.getDeviceName(i));
-
+			System.out.println("Device : " + deviceName);
 			// loop through its banks
 			for (int j = 0; j <= 127; j++) {
-				if (mgr.isBankUsed(i, j)) {
+				SoundFontManager manager = new SoundFontManager(deviceName, j);
+				if (manager.isLoaded()) {
 					System.out.println("Bank #" + j + ": "
-							+ mgr.getBankDescriptor(i, j));
+							+ manager.getDescriptor());
 				}
 			}
 		}
 
-		int dev = 0, bank = 25;
+		SoundFontManager manager = new SoundFontManager(deviceNames[0], 25);
 
 		// Try to load a font
-		mgr.loadBank(dev, bank,
-				"c:/programme/creative/soundfonts/english organ_102.sf2");
-
-		System.out.println("Filename in Bank #" + bank + ": "
-				+ mgr.getBankFileName(dev, bank));
+		manager.load(new File("./src/main/dispositions/creative-example.SF2"));
 
 		// loop through its programs
 		for (int p = 0; p < 128; p++) {
 			System.out.println("Program #" + p + ": "
-					+ mgr.getPresetDescriptor(dev, bank, p));
+					+ manager.getPresetDescriptor(p));
 		}
 
-		// Clear bank
-		mgr.clearBank(dev, bank);
+		// Clear
+		manager.clear();
 	}
 }

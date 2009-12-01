@@ -37,8 +37,6 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 	public CreativeSoundPlayer(CreativeSound output) {
 		super(output);
-
-		manager = new SoundFontManager();
 	}
 
 	@Override
@@ -78,49 +76,39 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		removeProblem(Severity.ERROR, "soundfont");
 		removeProblem(Severity.ERROR, null);
 
-		if (manager.isSupported()) {
-			if (sound.getOutput() != null && sound.getSoundfont() != null) {
-				int index;
+		String output = sound.getOutput();
+		if (output != null) {
+			try {
+				manager = new SoundFontManager(output, sound.getBank());
+			} catch (IllegalArgumentException ex) {
+				addProblem(Severity.ERROR, "output", "invalid", sound
+						.getOutput());
+				return;
+			}
 
-				try {
-					index = manager.getDeviceIndex(sound.getOutput());
-				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "output", "noCreativeDevice",
-							sound.getOutput());
-					return;
-				}
+			try {
+				manager.clear();
+			} catch (Exception ignore) {
+			}
 
+			if (sound.getSoundfont() != null) {
 				try {
-					manager.clearBank(index, sound.getBank());
-				} catch (Exception ignore) {
-				}
-
-				try {
-					manager.loadBank(index, sound.getBank(), resolve(
-							sound.getSoundfont()).getCanonicalPath());
+					manager.load(resolve(sound.getSoundfont()));
 
 					clone = (CreativeSound) sound.clone();
-				} catch (IllegalArgumentException ex) {
-					addProblem(Severity.ERROR, "bank", "invalidBank", sound
-							.getBank());
-					return;
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
 							sound.getSoundfont());
 					return;
 				}
 			}
-		} else {
-			addProblem(Severity.ERROR, null, "unsupported");
 		}
 	}
 
 	private void destroyManager() {
 		if (clone != null) {
 			try {
-				int index = manager.getDeviceIndex(clone.getOutput());
-
-				manager.clearBank(index, clone.getBank());
+				manager.clear();
 			} catch (Exception ignore) {
 			}
 

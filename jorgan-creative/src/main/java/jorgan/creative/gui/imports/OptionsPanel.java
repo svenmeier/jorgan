@@ -148,8 +148,12 @@ public class OptionsPanel extends JPanel {
 		}
 	}
 
+	public Device getSelectedDevice() {
+		return (Device) comboBox.getSelectedItem();
+	}
+	
 	public Bank getSelectedBank() {
-		Device device = (Device) comboBox.getSelectedItem();
+		Device device = getSelectedDevice();
 		if (device == null) {
 			return null;
 		}
