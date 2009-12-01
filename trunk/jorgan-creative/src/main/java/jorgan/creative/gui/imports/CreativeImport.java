@@ -44,7 +44,7 @@ public class CreativeImport implements Import {
 
 	private OptionsPanel panel;
 
-	private Device[] devices = new Device[0];
+	private List<Device> devices = new ArrayList<Device>();
 
 	private String name;
 
@@ -53,31 +53,26 @@ public class CreativeImport implements Import {
 	public CreativeImport() {
 		config.read(this);
 
-		SoundFontManager manager = new SoundFontManager();
-		if (manager.isSupported()) {
-			devices = new Device[manager.getNumDevices()];
-			for (int d = 0; d < devices.length; d++) {
-				devices[d] = new Device(manager.getDeviceName(d));
+		for (String deviceName : SoundFontManager.getDeviceNames()) {
+			Device device = new Device(deviceName);
+			devices.add(device);
 
-				for (int b = 0; b < 127; b++) {
-					try {
-						if (manager.isBankUsed(d, b)) {
-							devices[d].banks.add(new Bank(b, manager
-									.getBankDescriptor(d, b)));
-						}
-					} catch (IllegalArgumentException ex) {
-						// bank is illegal??
+			for (int b = 0; b < 127; b++) {
+				SoundFontManager manager = new SoundFontManager(deviceName, b);
+				try {
+					if (manager.isLoaded()) {
+						device.banks.add(new Bank(b, manager.getDescriptor()));
 					}
+				} catch (IllegalArgumentException ex) {
+					// bank is illegal??
 				}
 			}
-		} else {
-			devices = new Device[0];
 		}
 	}
 
 	public JPanel getOptionsPanel() {
 		if (panel == null) {
-			panel = new OptionsPanel(devices);
+			panel = new OptionsPanel(devices.toArray(new Device[0]));
 		}
 		return panel;
 	}
@@ -126,11 +121,12 @@ public class CreativeImport implements Import {
 	private Set<Rank> readRanks(Bank bank) {
 		Set<Rank> ranks = new HashSet<Rank>();
 
-		SoundFontManager manager = new SoundFontManager();
+		SoundFontManager manager = new SoundFontManager(panel
+				.getSelectedDevice().name, bank.number);
 
 		for (int p = 0; p < 128; p++) {
 			try {
-				String preset = manager.getPresetDescriptor(0, bank.number, p);
+				String preset = manager.getPresetDescriptor(p);
 				if (preset != null && !"".equals(preset)) {
 					Rank rank = new Rank();
 					rank.setName(preset);

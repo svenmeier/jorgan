@@ -68,7 +68,7 @@
     WORD num = 0;
     LRESULT rc = pSFManager101API->SF_GetNumDevs(&num);
     if (rc != SFERR_NOERR) {
-      return throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      return throwException(env, "java/lang/Error", "rc %d", rc);
     }
     
     // done
@@ -92,7 +92,7 @@
     if (rc == SFERR_DEVICE_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // make sure the device name has a trailing 0 and convert into jstring
@@ -125,7 +125,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     return bank2result==65535 ? JNI_FALSE : JNI_TRUE; 
@@ -157,7 +157,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // grab the text from the buffer
@@ -167,43 +167,6 @@
     return result;
   }
 	
-  /**
-   * Class:     jorgan_creative_SoundFontManager
-   * Method:    getBankFileName
-   * Signature: (II)Ljava/lang/String;
-   */
-  JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getBankFileName(JNIEnv *env, jobject obj, jint device, jint bank) {
-	
-    // prepare midi descriptor
-    CSFMIDILocation midiLocation;
-    midiLocation.m_BankIndex = bank;
-    midiLocation.m_PresetIndex = 0; // isn't used
-
-    // prepare buffer TODO this is good for a filename with up to 256-2 characters in length
-    char file[256];
-    
-    CSFBufferObject buffer;
-    memset(&buffer, 0, sizeof(buffer));
-    buffer.m_Size = strlen(file);
-    buffer.m_Buffer = file;
-
-    // do the call  
-    LRESULT rc = pSFManager101API->SF_GetLoadedBankPathname(device, &midiLocation, &buffer);
-    if (rc == SFERR_DEVICE_INVALID) {
-      throwException(env, "java/lang/IllegalArgumentException", "invalid device %d", device);
-    } else if (rc == SFERR_BANK_INDEX_INVALID) {
-      throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
-    } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
-    }
-
-    // grab the text from the buffer
-    jstring result = (*env)->NewStringUTF(env, file);
-
-    // done
-    return result;
-  }
-
   /**
    * Class:     jorgan_creative_SoundFontManager
    * Method:    loadBank
@@ -241,7 +204,7 @@
     } else if (rc == SFERR_SYSMEM_INSUFFICIENT || rc == SFERR_SOUNDMEM_INSUFFICIENT) {
       throwException(env, "java/io/IOException", "insufficient memory");
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // release string
@@ -273,7 +236,7 @@
     } else if (rc == SFERR_DEVICE_BUSY) {
       throwException(env, "java/io/IOException", "device busy");
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // done
@@ -307,7 +270,7 @@
     } else if (rc == SFERR_BANK_INDEX_INVALID) {
       throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", bank);
     } else if (rc != SFERR_NOERR) {
-      throwException(env, "jorgan/creative/UnknownException", "rc %d", rc);
+      throwException(env, "java/lang/Error", "rc %d", rc);
     }
 
     // grab the text from the buffer

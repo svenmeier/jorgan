@@ -29,7 +29,7 @@
     </copy>
   </target>
 
-  <target name="native" depends="native-windows">
+  <target name="native" depends="native-unix, native-windows">
   </target>
 
   <target name="native-common" depends="compile">
@@ -74,11 +74,39 @@
       <arg value="-Wall" />
       <arg value="-Wl,--kill-at" />
       <arg value="-shared" />
-      <arg value="./src/main/native/creativeJNI.c" />
+      <arg value="./src/main/native/win/creativeJNI.c" />
       <arg line="-o ./target/native/creativeJNI.dll" />
     </exec>
     
   	<property name="package" value="win-${os.arch}"/>
+  </target>
+
+  <target name="native-unix" depends="native-common" if="isUnix">
+    <mkdir dir="./target/native" />
+
+    <fail message="unix.jdk not found">
+      <condition>
+        <resourcecount count="0">
+          <fileset dir="${unix.jdk}" includes="*" />
+        </resourcecount>
+      </condition>
+    </fail>
+
+  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx'" />  	
+    <exec failonerror="true" executable="${unix.cc}">
+      <arg value="-I${unix.jdk}/include" />
+      <arg value="-I${unix.jdk}/include/linux" />
+      <arg value="-I./lib/linux/include" />
+      <arg value="-I./target/native" />
+      <arg value="-Wall" />
+      <arg value="-fPIC" />
+      <arg value="-shared" />
+      <arg value="-lawe" />
+      <arg line="./src/main/native/linux/creativeJNI.c" />
+      <arg line="-o ./target/native/creativeJNI.so" />
+    </exec>
+  	
+  	<property name="package" value="unix-${os.arch}"/>
   </target>
 
   <target name="dist" depends="clean, compile, native">
