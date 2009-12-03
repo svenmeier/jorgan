@@ -18,6 +18,11 @@
  */
 package jorgan.fluidsynth;
 
+import java.io.File;
+import java.util.List;
+
+import javax.sound.midi.ShortMessage;
+
 import junit.framework.TestCase;
 
 /**
@@ -30,22 +35,30 @@ public class FluidsynthTest extends TestCase {
 	}
 	
 	public void test() throws Exception {
-		Fluidsynth synth = new Fluidsynth();
+		List<String> drivers = Fluidsynth.getAudioDrivers();
+		for (String driver : drivers) {
+			System.out.println(driver);
+			for (String device : Fluidsynth.getAudioDevices(driver)) {
+				System.out.println("  " + device);
+			}
+		}
 		
-		synth.soundFontLoad("/home/sven/Desktop/Jeux14.SF2");
-		synth.programChange(0, 0);
-		synth.noteOn(0, 64, 100);
+		Fluidsynth synth = new Fluidsynth("test", 16, "alsa");
+		
+		synth.soundFontLoad(new File("./src/main/dispositions/fluidsynth-example.SF2"));
+		synth.send(0, ShortMessage.PROGRAM_CHANGE, 0, 0);
+		synth.send(0, ShortMessage.NOTE_ON, 64, 100);
 		
 		synchronized (this) {
 			wait(1000);
 		}
 		
-		synth.noteOff(0, 64);
+		synth.send(0, ShortMessage.NOTE_OFF, 64, 0);
 
 		synchronized (this) {
 			wait(1000);
 		}
 		
-		synth.dispose();
+		synth.destroy();
 	}
 }

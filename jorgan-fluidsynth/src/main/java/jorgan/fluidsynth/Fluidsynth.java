@@ -20,6 +20,7 @@ package jorgan.fluidsynth;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.List;
 
 import javax.sound.midi.ShortMessage;
@@ -33,6 +34,8 @@ import jorgan.util.NativeUtils;
 public class Fluidsynth {
 
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
+
+	private ByteBuffer context;
 
 	private String name;
 
@@ -51,12 +54,17 @@ public class Fluidsynth {
 	private File soundfont;
 
 	public Fluidsynth() throws IllegalStateException, IOException {
-		this("", 16, 256, 44100.0f, null, null, 16, 64);
+		this("", 16, null);
 	}
 
-	public Fluidsynth(String name, int channels, int polyphony, float sampleRate, String audioDriver,
-			String audioDevice, int buffers, int bufferSize)
-			throws IllegalStateException, IOException {
+	public Fluidsynth(String name, int channels, String audioDriver) throws IllegalStateException, IOException {
+		this(name, channels, 256, 44100.0f, audioDriver, null, 16, 64);
+	}
+
+	public Fluidsynth(String name, int channels, int polyphony,
+			float sampleRate, String audioDriver, String audioDevice,
+			int buffers, int bufferSize) throws IllegalStateException,
+			IOException {
 
 		this.name = name;
 		this.channels = channels;
@@ -66,7 +74,8 @@ public class Fluidsynth {
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		create(name, channels, polyphony, sampleRate, audioDriver, audioDevice, buffers, bufferSize);
+		context = init(name, channels, polyphony, sampleRate, audioDriver, audioDevice,
+				buffers, bufferSize);
 	}
 
 	public String getAudioDevice() {
@@ -101,65 +110,93 @@ public class Fluidsynth {
 		return soundfont;
 	}
 
-	public void dispose() {
-		destroy();
-	}
-
-	private native void create(String name, int channels, int polyphony, float sampleRate, String audioDriver,
-			String audioDevice, int buffers, int bufferSize)
-			throws IllegalStateException, IOException;
-
-	private native void destroy();
-
 	public void soundFontLoad(File soundfont) throws IOException {
 		this.soundfont = soundfont;
 
-		soundFontLoad(soundfont.getAbsolutePath());
+		soundFontLoad(context, soundfont.getAbsolutePath());
 	}
 
-	public native void soundFontLoad(String filename) throws IOException;
+	public void setGain(float gain) {
+		setGain(context, gain);
+	}
 
-	public native void setGain(float gain);
+	public void setReverbOn(boolean b) {
+		setReverbOn(context, b);
+	}
 
-	public native void noteOn(int channel, int key, int velocity);
+	public void setReverb(double roomsize, double damping, double width,
+			double level) {
+		setReverb(context, roomsize, damping, width, level);
+	}
 
-	public native void noteOff(int channel, int key);
+	public void setChorusOn(boolean b) {
+		setChorusOn(context, b);
+	}
 
-	public native void controlChange(int channel, int controller, int value);
-
-	public native void pitchBend(int channel, int bend);
-
-	public native void programChange(int channel, int program);
-
-	public native void setReverbOn(boolean b);
-
-	public native void setReverb(double roomsize, double damping, double width,
-			double level);
-
-	public native void setChorusOn(boolean b);
-
-	public native void setChorus(int nr, double level, double speed,
-			double depth_ms, int type);
+	public void setChorus(int nr, double level, double speed, double depth_ms,
+			int type) {
+		setChorus(context, nr, level, speed, depth_ms, type);
+	}
 
 	public void send(int channel, int command, int data1, int data2) {
 		switch (command) {
 		case ShortMessage.NOTE_ON:
-			noteOn(channel, data1, data2);
+			noteOn(context, channel, data1, data2);
 			break;
 		case ShortMessage.NOTE_OFF:
-			noteOff(channel, data1);
+			noteOff(context, channel, data1);
 			break;
 		case ShortMessage.PROGRAM_CHANGE:
-			programChange(channel, data1);
+			programChange(context, channel, data1);
 			break;
 		case ShortMessage.CONTROL_CHANGE:
-			controlChange(channel, data1, data2);
+			controlChange(context, channel, data1, data2);
 			break;
 		case ShortMessage.PITCH_BEND:
-			pitchBend(channel, (data2 * 128) + data1);
+			pitchBend(context, channel, (data2 * 128) + data1);
 			break;
 		}
 	}
+
+	public void destroy() {
+		destroy(context);
+		context = null;
+	}
+
+	private static native ByteBuffer init(String name, int channels,
+			int polyphony, float sampleRate, String audioDriver, String audioDevice, int buffers,
+			int bufferSize) throws IllegalStateException, IOException;
+
+	private static native void destroy(ByteBuffer context);
+
+	private native void soundFontLoad(ByteBuffer context, String filename)
+			throws IOException;
+
+	private static native void noteOn(ByteBuffer context, int channel, int key,
+			int velocity);
+
+	private static native void noteOff(ByteBuffer context, int channel, int key);
+
+	private static native void controlChange(ByteBuffer context, int channel,
+			int controller, int value);
+
+	private static native void pitchBend(ByteBuffer context, int channel,
+			int bend);
+
+	private static native void programChange(ByteBuffer context, int channel,
+			int program);
+
+	private static native void setGain(ByteBuffer context, float gain);
+
+	private static native void setReverbOn(ByteBuffer context, boolean b);
+
+	private static native void setReverb(ByteBuffer context, double roomsize,
+			double damping, double width, double level);
+
+	private static native void setChorusOn(ByteBuffer context, boolean b);
+
+	private static native void setChorus(ByteBuffer context, int nr,
+			double level, double speed, double depth_ms, int type);
 
 	/**
 	 * Get the available {@link #getAudioDriver()}s.
