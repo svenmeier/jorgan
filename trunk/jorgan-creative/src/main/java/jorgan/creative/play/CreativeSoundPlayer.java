@@ -72,28 +72,30 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		CreativeSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "output");
-		removeProblem(Severity.ERROR, "bank");
 		removeProblem(Severity.ERROR, "soundfont");
 		removeProblem(Severity.ERROR, null);
 
 		String output = sound.getOutput();
 		if (output != null) {
 			try {
-				manager = new SoundFontManager(output, sound.getBank());
+				manager = new SoundFontManager(output);
 			} catch (IllegalArgumentException ex) {
-				addProblem(Severity.ERROR, "output", "invalid", sound
+				addProblem(Severity.ERROR, "output", "outputInvalid", sound
 						.getOutput());
 				return;
 			}
 
 			try {
-				manager.clear();
-			} catch (Exception ignore) {
+				manager.clear(sound.getBank());
+			} catch (IllegalArgumentException ex) {
+				addProblem(Severity.ERROR, "bank", "bankInvalid",
+						sound.getBank());
+				return;
 			}
 
 			if (sound.getSoundfont() != null) {
 				try {
-					manager.load(resolve(sound.getSoundfont()));
+					manager.load(sound.getBank(), resolve(sound.getSoundfont()));
 
 					clone = (CreativeSound) sound.clone();
 				} catch (IOException ex) {
@@ -108,7 +110,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 	private void destroyManager() {
 		if (clone != null) {
 			try {
-				manager.clear();
+				manager.clear(clone.getBank());
 			} catch (Exception ignore) {
 			}
 

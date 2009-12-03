@@ -52,18 +52,24 @@ public class SoundFontManager {
 
 	private String deviceName;
 
-	private int bank;
-
-	public SoundFontManager(String deviceName, int bank) {
+	public SoundFontManager(String deviceName)
+			throws IllegalArgumentException {
 		this.deviceName = deviceName;
-		this.bank = bank;
+
+		init();
 	}
 
-	public boolean isLoaded() {
-		return isBankUsed(getIndex(), bank);
+	public String getDeviceName() {
+		return deviceName;
 	}
+	
+	private native void init();
+	
+	public native void clear(int bank);
 
-	public void load(File file) throws IllegalArgumentException, IOException {
+	public native boolean isLoaded(int bank);
+
+	public void load(int bank, File file) throws IOException {
 		String fileName;
 		try {
 			fileName = file.getCanonicalPath();
@@ -71,58 +77,12 @@ public class SoundFontManager {
 			throw new Error(e);
 		}
 
-		loadBank(getIndex(), bank, fileName);
+		load(bank, fileName);
 	}
 
-	public String getDescriptor() {
-		return getBankDescriptor(getIndex(), bank);
-	}
+	public native void load(int bank, String fileName) throws IOException;
+	
+	public native String getDescriptor(int bank);
 
-	public String getPresetDescriptor(int preset)
-			throws IllegalArgumentException {
-		return getPresetDescriptor(getIndex(), bank, preset);
-	}
-
-	public void clear() throws IllegalArgumentException, IOException {
-		clearBank(getIndex(), bank);
-	}
-
-	private int getIndex() {
-		for (int i = 0; i < getNumDevices(); i++) {
-			if (getDeviceName(i).equals(deviceName)) {
-				return i;
-			}
-		}
-		throw new IllegalStateException();
-	}
-
-	private static native int getNumDevices();
-
-	private static native String getDeviceName(int device)
-			throws IllegalArgumentException;
-
-	private static native boolean isBankUsed(int device, int bank)
-			throws IllegalArgumentException;
-
-	private static native String getBankDescriptor(int device, int bank)
-			throws IllegalArgumentException;
-
-	private static native void loadBank(int device, int bank, String fileName)
-			throws IllegalArgumentException, IOException;
-
-	private static native void clearBank(int device, int bank)
-			throws IllegalArgumentException, IOException;
-
-	private static native String getPresetDescriptor(int device, int bank,
-			int preset) throws IllegalArgumentException;
-
-	public static String[] getDeviceNames() {
-		String[] deviceNames = new String[getNumDevices()];
-
-		for (int i = 0; i < deviceNames.length; i++) {
-			deviceNames[i] = getDeviceName(i);
-		}
-
-		return deviceNames;
-	}
+	public native String getPresetDescriptor(int bank, int preset);
 }

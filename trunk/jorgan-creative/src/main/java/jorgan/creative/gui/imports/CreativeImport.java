@@ -30,6 +30,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
 import jorgan.importer.gui.Import;
+import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import bias.Configuration;
 
 /**
@@ -53,15 +55,21 @@ public class CreativeImport implements Import {
 	public CreativeImport() {
 		config.read(this);
 
-		for (String deviceName : SoundFontManager.getDeviceNames()) {
+		for (String deviceName : DevicePool.instance().getMidiDeviceNames(Direction.OUT)) {
+			SoundFontManager manager;
+			try {
+				manager = new SoundFontManager(deviceName);
+			} catch (IllegalArgumentException noCreativeDevice) {
+				continue;
+			}
+
 			Device device = new Device(deviceName);
 			devices.add(device);
 
 			for (int b = 0; b < 127; b++) {
-				SoundFontManager manager = new SoundFontManager(deviceName, b);
 				try {
-					if (manager.isLoaded()) {
-						device.banks.add(new Bank(b, manager.getDescriptor()));
+					if (manager.isLoaded(b)) {
+						device.banks.add(new Bank(b, manager.getDescriptor(b)));
 					}
 				} catch (IllegalArgumentException ex) {
 					// bank is illegal??
@@ -122,11 +130,11 @@ public class CreativeImport implements Import {
 		Set<Rank> ranks = new HashSet<Rank>();
 
 		SoundFontManager manager = new SoundFontManager(panel
-				.getSelectedDevice().name, bank.number);
+				.getSelectedDevice().name);
 
 		for (int p = 0; p < 128; p++) {
 			try {
-				String preset = manager.getPresetDescriptor(p);
+				String preset = manager.getPresetDescriptor(bank.number, p);
 				if (preset != null && !"".equals(preset)) {
 					Rank rank = new Rank();
 					rank.setName(preset);
