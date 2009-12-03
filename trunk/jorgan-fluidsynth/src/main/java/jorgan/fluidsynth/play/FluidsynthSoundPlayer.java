@@ -155,7 +155,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 	private void destroySynth() {
 		if (synth != null) {
-			synth.dispose();
+			synth.destroy();
 			synth = null;
 
 			clone = null;
