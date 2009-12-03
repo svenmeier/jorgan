@@ -98,11 +98,31 @@
       <arg value="-I${unix.jdk}/include/linux" />
       <arg value="-I./lib/linux/include" />
       <arg value="-I./target/native" />
+      <arg value="-I${unix.awesfx}/include" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
-      <arg value="-lawe" />
       <arg line="./src/main/native/linux/creativeJNI.c" />
+      <arg line="${unix.awesfx}/awelib/awe_parm.c" />
+      <arg line="${unix.awesfx}/awelib/bool.c" />
+      <arg line="${unix.awesfx}/awelib/cmpopen.c" />
+      <arg line="${unix.awesfx}/awelib/dummy.c" />
+      <arg line="${unix.awesfx}/awelib/dynload.c" />
+      <arg line="${unix.awesfx}/awelib/fskip.c" />
+      <arg line="${unix.awesfx}/awelib/gentxt.c" />
+      <arg line="${unix.awesfx}/awelib/loadbank.c" />
+      <arg line="${unix.awesfx}/awelib/loadtext.c" />
+      <arg line="${unix.awesfx}/awelib/malloc.c" />
+      <arg line="${unix.awesfx}/awelib/optfile.c" />
+      <arg line="${unix.awesfx}/awelib/parsesf.c" />
+      <arg line="${unix.awesfx}/awelib/path.c" />
+      <arg line="${unix.awesfx}/awelib/sample.c" />
+      <arg line="${unix.awesfx}/awelib/sbkconv.c" />
+      <arg line="${unix.awesfx}/awelib/sffile.c" />
+      <arg line="${unix.awesfx}/awelib/sfitem.c" />
+      <arg line="${unix.awesfx}/awelib/sfopts.c" />
+      <arg line="${unix.awesfx}/awelib/sfout.c" />
+      <arg line="${unix.awesfx}/awelib/slist.c" />
       <arg line="-o ./target/native/creativeJNI.so" />
     </exec>
   	
