@@ -20,6 +20,7 @@ package jorgan.creative;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
@@ -30,6 +31,68 @@ import jorgan.util.NativeUtils;
 public class SoundFontManager {
 
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
+
+	private String deviceName;
+
+	private ByteBuffer context;
+
+	public SoundFontManager(String deviceName) throws IllegalArgumentException {
+		this.deviceName = deviceName;
+
+		context = init(deviceName);
+	}
+
+	public String getDeviceName() {
+		return deviceName;
+	}
+
+	public void clear(int bank) {
+		clear(context, bank);
+	}
+
+	public boolean isLoaded(int bank) {
+		return isLoaded(context, bank);
+	}
+
+	public void load(int bank, File file) throws IOException {
+		String fileName;
+		try {
+			fileName = file.getCanonicalPath();
+		} catch (IOException e) {
+			throw new Error(e);
+		}
+
+		load(context, bank, fileName);
+	}
+
+	public String getDescriptor(int bank) {
+		return getDescriptor(context, bank);
+	}
+
+	public String getPresetDescriptor(int bank, int preset) {
+		return getPresetDescriptor(context, bank, preset);
+	}
+
+	public void destroy() {
+		destroy(context);
+		context = null;
+	}
+	
+	private static native ByteBuffer init(String deviceName);
+
+	private static native void destroy(ByteBuffer context);
+
+	private static native void clear(ByteBuffer context, int bank);
+
+	private static native boolean isLoaded(ByteBuffer context, int bank);
+
+	private static native void load(ByteBuffer context, int bank,
+			String fileName) throws IOException;
+
+	private static native String getDescriptor(ByteBuffer context, int bank);
+
+	private static native String getPresetDescriptor(ByteBuffer context,
+			int bank, int preset);
 
 	/**
 	 * Load the native library "creativeJNI" from the path specified via the
@@ -49,40 +112,4 @@ public class SoundFontManager {
 
 		System.load(NativeUtils.getLibraryName(file, "creativeJNI"));
 	}
-
-	private String deviceName;
-
-	public SoundFontManager(String deviceName)
-			throws IllegalArgumentException {
-		this.deviceName = deviceName;
-
-		init();
-	}
-
-	public String getDeviceName() {
-		return deviceName;
-	}
-	
-	private native void init();
-	
-	public native void clear(int bank);
-
-	public native boolean isLoaded(int bank);
-
-	public void load(int bank, File file) throws IOException {
-		String fileName;
-		try {
-			fileName = file.getCanonicalPath();
-		} catch (IOException e) {
-			throw new Error(e);
-		}
-
-		load(bank, fileName);
-	}
-
-	public native void load(int bank, String fileName) throws IOException;
-	
-	public native String getDescriptor(int bank);
-
-	public native String getPresetDescriptor(int bank, int preset);
 }

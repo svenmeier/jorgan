@@ -23,6 +23,7 @@ public class SoundFontManagerTest extends TestCase {
 		for (String deviceName : DevicePool.instance().getMidiDeviceNames(Direction.OUT)) {
 			try {
 				manager = new SoundFontManager(deviceName);
+				break;
 			} catch (IllegalArgumentException noCreativeDevice) {
 			}
 		}
@@ -37,5 +38,7 @@ public class SoundFontManagerTest extends TestCase {
 		}
 
 		manager.clear(bank);
+		
+		manager.destroy();
 	}
 }

@@ -75,6 +75,8 @@ public class CreativeImport implements Import {
 					// bank is illegal??
 				}
 			}
+			
+			manager.destroy();
 		}
 	}
 
@@ -148,6 +150,8 @@ public class CreativeImport implements Import {
 			} catch (IllegalArgumentException invalidPreset) {
 			}
 		}
+		
+		manager.destroy();
 
 		return ranks;
 	}
