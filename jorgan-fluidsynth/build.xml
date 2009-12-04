@@ -61,6 +61,7 @@
     <exec failonerror="true" executable="${win.cc}">
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
+      <arg value="-I${jorgan.jni.path}/src/main/native" />
       <arg value="-I./lib/win32/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
@@ -68,6 +69,7 @@
       <arg value="-Wl,-L./lib/win32" />
       <arg value="-Wl,-llibfluidsynth-1" />
       <arg value="-shared" />
+      <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
@@ -92,11 +94,13 @@
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
+      <arg value="-I${jorgan.jni.path}/src/main/native" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
       <arg value="-Wl,-lfluidsynth" />
+      <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
     </exec>
