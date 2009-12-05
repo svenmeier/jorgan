@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-void throwException(JNIEnv* env, char* exception, char* pattern, ...) {
+void jorgan_throwException(JNIEnv* env, char* exception, char* pattern, ...) {
 
 	va_list args;
 	va_start(args, pattern);
