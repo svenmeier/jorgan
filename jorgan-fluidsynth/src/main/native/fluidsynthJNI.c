@@ -19,15 +19,15 @@ Context* createContext() {
 
 void destroyContext(JNIEnv* env, Context* context) {
 	if (context->adriver != NULL) {
-		jorgan_log(env, "deleting audio driver");
+		jorgan_info(env, "deleting audio driver");
 		delete_fluid_audio_driver(context->adriver);
 	}
 	if (context->synth != NULL) {
-		jorgan_log(env, "deleting synth");
+		jorgan_info(env, "deleting synth");
 		delete_fluid_synth(context->synth);
 	}
 	if (context->settings != NULL) {
-		jorgan_log(env, "deleting settings");
+		jorgan_info(env, "deleting settings");
 		delete_fluid_settings(context->settings);
 	}
 	free(context);

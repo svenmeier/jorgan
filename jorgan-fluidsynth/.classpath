@@ -6,5 +6,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-core"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-customizer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-jni"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
