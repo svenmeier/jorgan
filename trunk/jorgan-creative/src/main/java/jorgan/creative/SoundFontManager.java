@@ -36,6 +36,10 @@ public class SoundFontManager {
 
 	private ByteBuffer context;
 
+	/**
+	 * @throws IllegalArgumentException
+	 *             if device is not a Creative device
+	 */
 	public SoundFontManager(String deviceName) throws IllegalArgumentException {
 		this.deviceName = deviceName;
 
@@ -46,7 +50,7 @@ public class SoundFontManager {
 		return deviceName;
 	}
 
-	public void clear(int bank) {
+	public void clear(int bank) throws IOException {
 		clear(context, bank);
 	}
 
@@ -65,11 +69,20 @@ public class SoundFontManager {
 		load(context, bank, fileName);
 	}
 
-	public String getDescriptor(int bank) {
+	/**
+	 * @throws IllegalArgumentException
+	 *             if bank is invalid
+	 */
+	public String getDescriptor(int bank) throws IllegalArgumentException {
 		return getDescriptor(context, bank);
 	}
 
-	public String getPresetDescriptor(int bank, int preset) {
+	/**
+	 * @throws IllegalArgumentException
+	 *             if bank or preset are invalid
+	 */
+	public String getPresetDescriptor(int bank, int preset)
+			throws IllegalArgumentException {
 		return getPresetDescriptor(context, bank, preset);
 	}
 
@@ -77,22 +90,24 @@ public class SoundFontManager {
 		destroy(context);
 		context = null;
 	}
-	
+
 	private static native ByteBuffer init(String deviceName);
 
 	private static native void destroy(ByteBuffer context);
 
-	private static native void clear(ByteBuffer context, int bank);
+	private static native void clear(ByteBuffer context, int bank)
+			throws IOException;
 
 	private static native boolean isLoaded(ByteBuffer context, int bank);
 
 	private static native void load(ByteBuffer context, int bank,
 			String fileName) throws IOException;
 
-	private static native String getDescriptor(ByteBuffer context, int bank);
+	private static native String getDescriptor(ByteBuffer context, int bank)
+			throws IllegalArgumentException;
 
 	private static native String getPresetDescriptor(ByteBuffer context,
-			int bank, int preset);
+			int bank, int preset) throws IllegalArgumentException;
 
 	/**
 	 * Load the native library "creativeJNI" from the path specified via the

@@ -7,7 +7,7 @@ import jorgan.midi.Direction;
 import junit.framework.TestCase;
 
 /**
- * A simple test for our SoundFontManager
+ * A simple test for {@link SoundFontManager}.
  */
 public class SoundFontManagerTest extends TestCase {
 
@@ -28,15 +28,26 @@ public class SoundFontManagerTest extends TestCase {
 			}
 		}
 		
+		assertNotNull(manager);
+		
 		int bank = 25;
 
-		manager.load(bank, new File("./src/main/dispositions/creative-example.SF2"));
-
-		for (int p = 0; p < 128; p++) {
-			System.out.println("Program #" + p + ": "
-					+ manager.getPresetDescriptor(bank, p));
+		if (manager.isLoaded(bank)) {
+			manager.clear(bank);
 		}
+		manager.load(bank, new File("./src/main/dispositions/creative-example.SF2"));
+		assertTrue(manager.isLoaded(bank));
 
+		assertEquals("C:\\Dokumente und Einstellungen\\Administrator\\Desktop\\001-012-CC_Montre 8.sf2", manager.getDescriptor(bank));
+		assertEquals("preset 0", manager.getPresetDescriptor(bank, 0));
+		assertEquals("preset 1", manager.getPresetDescriptor(bank, 1));
+
+		try {
+			manager.getPresetDescriptor(bank, 2);
+			fail();
+		} catch (IllegalArgumentException invalidPreset) {
+		}
+		
 		manager.clear(bank);
 		
 		manager.destroy();

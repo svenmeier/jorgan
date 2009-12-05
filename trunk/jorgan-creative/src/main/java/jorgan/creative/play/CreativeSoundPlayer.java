@@ -89,10 +89,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 			try {
 				manager.clear(sound.getBank());
-			} catch (IllegalArgumentException ex) {
-				addProblem(Severity.ERROR, "bank", "bankInvalid",
-						sound.getBank());
-				return;
+			} catch (IOException ignore) {
 			}
 
 			if (sound.getSoundfont() != null) {
