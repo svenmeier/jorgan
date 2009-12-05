@@ -55,7 +55,7 @@
       <messages/>
       <output>SB Live! Synth A [BC00]</output>
       <soundfont>creative-example.SF2</soundfont>
-      <bank>1</bank>
+      <bank>25</bank>
     </creative.creativeSound>
     <rank id="1">
       <name>Rank 1</name>
@@ -72,7 +72,7 @@
         <rank-engaged>
           <status>set 176</status>
           <data1>set 0</data1>
-          <data2>set 1</data2>
+          <data2>set 25</data2>
         </rank-engaged>
         <rank-engaged>
           <status>set 192</status>
@@ -114,7 +114,7 @@
         <rank-engaged>
           <status>set 176</status>
           <data1>set 0</data1>
-          <data2>set 1</data2>
+          <data2>set 25</data2>
         </rank-engaged>
         <rank-engaged>
           <status>set 192</status>
