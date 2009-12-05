@@ -59,13 +59,37 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 	Context* context = createContext();
 
 	const char* deviceName = (char*) (*env)->GetStringUTFChars(env, jdeviceName, NULL);
-
 	context->deviceName = (char*)calloc(strlen(deviceName) + 1, sizeof(char));
 	strcat(context->deviceName, deviceName);
-
-	// TODO context->deviceIndex
-
 	(*env)->ReleaseStringUTFChars(env, jdeviceName, deviceName);
+
+	int deviceIndex = -1;
+    WORD count = 0;
+    LRESULT rc = pSFManager101API->SF_GetNumDevs(&count);
+    if (rc != SFERR_NOERR) {
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
+		return NULL;
+    }
+	for (int i = 0; i < count; i++) {
+		CSFCapsObject caps;
+		memset(&caps, 0, sizeof(caps));
+		caps.m_SizeOf = sizeof(caps);
+	    LRESULT rc = pSFManager101API->SF_GetDevCaps(device, &caps);
+	    if (rc != SFERR_NOERR) {
+			jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
+			return NULL;
+	    }
+
+		if (strcmp(context->deviceName, &caps.m_DevName) == 0) {
+			deviceIndex = i;
+			break;
+		}
+	}
+	if (deviceIndex == -1) {
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "no creative device");
+		return NULL;
+	}
+	context->deviceIndex = deviceIndex;
 
 	return (*env)->NewDirectByteBuffer(env, (void*) context, sizeof(Context));
 }
