@@ -111,7 +111,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_clear(JNIEnv* env, 
 	LRESULT rc = pSFManager101API->SF_ClearLoadedBank(context->deviceIndex, &midiLocation);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/io/IOException", "invalid bank");
 	} else if (rc == SFERR_DEVICE_BUSY) {
 		jorgan_throwException(env, "java/io/IOException", "device busy");
 	} else if (rc != SFERR_NOERR) {
@@ -126,7 +126,8 @@ JNIEXPORT jboolean JNICALL Java_jorgan_creative_SoundFontManager_isLoaded(JNIEnv
 
 	LRESULT rc = pSFManager101API->SF_IsMIDIBankUsed(context->deviceIndex, &bank);
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		// signal that is isn't used :(
+		// jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc != SFERR_NOERR) {
 		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
@@ -152,7 +153,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 	LRESULT rc = pSFManager101API->SF_LoadBank(context->deviceIndex, &midiLocation, &buffer);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/io/IOException", "invalid bank");
 	} else if (rc == SFERR_DEVICE_BUSY) {
 		jorgan_throwException(env, "java/io/IOException", "device busy");
 	} else if (rc == SFERR_PATHNAME_INVALID || rc == SFERR_FORMAT_INVALID) {
@@ -207,6 +208,8 @@ JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescrip
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
 		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+	} else if (rc == SFERR_PRESET_INDEX_INVALID) {
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid preset %d", jpreset);
 	} else if (rc != SFERR_NOERR) {
 		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
