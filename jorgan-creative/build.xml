@@ -67,6 +67,7 @@
     </fail>
   	
     <exec failonerror="true" executable="${win.cc}">
+      <arg value="-std=c99" />
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
