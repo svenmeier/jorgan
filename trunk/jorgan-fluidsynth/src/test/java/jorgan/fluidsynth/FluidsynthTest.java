@@ -31,9 +31,10 @@ import junit.framework.TestCase;
 public class FluidsynthTest extends TestCase {
 
 	static {
-		System.setProperty(Fluidsynth.JORGAN_FLUIDSYNTH_LIBRARY_PATH, "./target/native");
+		System.setProperty(Fluidsynth.JORGAN_FLUIDSYNTH_LIBRARY_PATH,
+				"./target/native");
 	}
-	
+
 	public void test() throws Exception {
 		List<String> drivers = Fluidsynth.getAudioDrivers();
 		for (String driver : drivers) {
@@ -43,22 +44,23 @@ public class FluidsynthTest extends TestCase {
 			}
 		}
 
-		Fluidsynth synth = new Fluidsynth(); 
-		
-		synth.soundFontLoad(new File("./src/main/dispositions/fluidsynth-example.SF2"));
+		Fluidsynth synth = new Fluidsynth();
+
+		synth.soundFontLoad(new File(
+				"./src/main/dispositions/fluidsynth-example.SF2"));
 		synth.send(0, ShortMessage.PROGRAM_CHANGE, 0, 0);
 		synth.send(0, ShortMessage.NOTE_ON, 64, 100);
-		
+
 		synchronized (this) {
 			wait(1000);
 		}
-		
+
 		synth.send(0, ShortMessage.NOTE_OFF, 64, 0);
 
 		synchronized (this) {
 			wait(1000);
 		}
-		
+
 		synth.destroy();
 	}
 }
