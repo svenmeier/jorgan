@@ -74,13 +74,13 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 		CSFCapsObject caps;
 		memset(&caps, 0, sizeof(caps));
 		caps.m_SizeOf = sizeof(caps);
-	    LRESULT rc = pSFManager101API->SF_GetDevCaps(device, &caps);
+	    LRESULT rc = pSFManager101API->SF_GetDevCaps(i, &caps);
 	    if (rc != SFERR_NOERR) {
 			jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 			return NULL;
 	    }
 
-		if (strcmp(context->deviceName, &caps.m_DevName) == 0) {
+		if (strcmp(context->deviceName, caps.m_DevName) == 0) {
 			deviceIndex = i;
 			break;
 		}
@@ -147,16 +147,16 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 	memset(&buffer, 0, sizeof(buffer));
 	buffer.m_Size = strlen(fileName);
 	buffer.m_Flag = SFFLAG_OPER_FILE;
-	buffer.m_Buffer = fileName;
+	buffer.m_Buffer = (char*)fileName;
 
-	LRESULT rc = pSFManager101API->SF_LoadBank(device, &midiLocation, &buffer);
+	LRESULT rc = pSFManager101API->SF_LoadBank(context->deviceIndex, &midiLocation, &buffer);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
 		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc == SFERR_DEVICE_BUSY) {
 		jorgan_throwException(env, "java/io/IOException", "device busy");
 	} else if (rc == SFERR_PATHNAME_INVALID || rc == SFERR_FORMAT_INVALID) {
-		jorgan_throwException(env, "java/io/FileNotFoundException", "%s", file);
+		jorgan_throwException(env, "java/io/FileNotFoundException", "%s", fileName);
 	} else if (rc == SFERR_SYSMEM_INSUFFICIENT || rc == SFERR_SOUNDMEM_INSUFFICIENT) {
 		jorgan_throwException(env, "java/io/IOException", "insufficient memory");
 	} else if (rc != SFERR_NOERR) {
@@ -196,7 +196,7 @@ JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescrip
 
 	CSFMIDILocation midiLocation;
 	midiLocation.m_BankIndex = jbank;
-	midiLocation.m_PresetIndex = program;
+	midiLocation.m_PresetIndex = jpreset;
 
 	CSFBufferObject buffer;
 	memset(&buffer, 0, sizeof(buffer));
