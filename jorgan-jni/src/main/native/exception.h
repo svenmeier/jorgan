@@ -1,3 +1,3 @@
 #include <jni.h>
 
-void throwException(JNIEnv* env, char* exception, char* pattern, ...);
+void jorgan_throwException(JNIEnv* env, char* exception, char* pattern, ...);

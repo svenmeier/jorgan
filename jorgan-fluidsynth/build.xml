@@ -70,6 +70,7 @@
       <arg value="-Wl,-llibfluidsynth-1" />
       <arg value="-shared" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
+      <arg line="${jorgan.jni.path}/src/main/native/logger.c" />
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
@@ -101,6 +102,7 @@
       <arg value="-shared" />
       <arg value="-Wl,-lfluidsynth" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
+      <arg line="${jorgan.jni.path}/src/main/native/logger.c" />
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
     </exec>

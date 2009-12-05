@@ -42,7 +42,7 @@ public class FluidsynthTest extends TestCase {
 				System.out.println("  " + device);
 			}
 		}
-		
+
 		Fluidsynth synth = new Fluidsynth("test", 16, "alsa");
 		
 		synth.soundFontLoad(new File("./src/main/dispositions/fluidsynth-example.SF2"));

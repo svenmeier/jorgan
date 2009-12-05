@@ -87,11 +87,11 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_clear(JNIEnv* env, 
 	LRESULT rc = pSFManager101API->SF_ClearLoadedBank(context->deviceIndex, &midiLocation);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc == SFERR_DEVICE_BUSY) {
-		throwException(env, "java/io/IOException", "device busy");
+		jorgan_throwException(env, "java/io/IOException", "device busy");
 	} else if (rc != SFERR_NOERR) {
-		throwException(env, "java/lang/Error", "rc %d", rc);
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
 }
 
@@ -102,9 +102,9 @@ JNIEXPORT jboolean JNICALL Java_jorgan_creative_SoundFontManager_isLoaded(JNIEnv
 
 	LRESULT rc = pSFManager101API->SF_IsMIDIBankUsed(context->deviceIndex, &bank);
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc != SFERR_NOERR) {
-		throwException(env, "java/lang/Error", "rc %d", rc);
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
 
 	return bank == 65535 ? JNI_FALSE : JNI_TRUE; 
@@ -128,15 +128,15 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 	LRESULT rc = pSFManager101API->SF_LoadBank(device, &midiLocation, &buffer);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc == SFERR_DEVICE_BUSY) {
-		throwException(env, "java/io/IOException", "device busy");
+		jorgan_throwException(env, "java/io/IOException", "device busy");
 	} else if (rc == SFERR_PATHNAME_INVALID || rc == SFERR_FORMAT_INVALID) {
-		throwException(env, "java/io/FileNotFoundException", "%s", file);
+		jorgan_throwException(env, "java/io/FileNotFoundException", "%s", file);
 	} else if (rc == SFERR_SYSMEM_INSUFFICIENT || rc == SFERR_SOUNDMEM_INSUFFICIENT) {
-		throwException(env, "java/io/IOException", "insufficient memory");
+		jorgan_throwException(env, "java/io/IOException", "insufficient memory");
 	} else if (rc != SFERR_NOERR) {
-		throwException(env, "java/lang/Error", "rc %d", rc);
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
 
 	(*env)->ReleaseStringUTFChars(env, jfileName, fileName);
@@ -157,9 +157,9 @@ JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getDescriptor(JN
 
 	LRESULT rc = pSFManager101API->SF_GetLoadedBankDescriptor(context->deviceIndex, &midiLocation, &buffer);
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc != SFERR_NOERR) {
-		throwException(env, "java/lang/Error", "rc %d", rc);
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
 
 	return (*env)->NewStringUTF(env, desc);
@@ -182,9 +182,9 @@ JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescrip
 	LRESULT rc = pSFManager101API->SF_GetLoadedPresetDescriptor(context->deviceIndex, &midiLocation, &buffer);
 
 	if (rc == SFERR_BANK_INDEX_INVALID) {
-		throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
+		jorgan_throwException(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc != SFERR_NOERR) {
-		throwException(env, "java/lang/Error", "rc %d", rc);
+		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
 	}
 
 	return (*env)->NewStringUTF(env, descriptor);

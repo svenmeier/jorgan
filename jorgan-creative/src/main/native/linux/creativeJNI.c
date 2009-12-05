@@ -96,11 +96,11 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 }
 
 JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getDescriptor(JNIEnv *env, jclass jclass, jobject jcontext, jint jbank) {
-	throwException(env, "java/lang/UnsupportedOperationException", "not implemented");
+	jorgan_throwException(env, "java/lang/UnsupportedOperationException", "not implemented");
 	return NULL;
 }
 	
 JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescriptor(JNIEnv *env, jclass jclass, jobject jcontext, jint jbank, jint jpreset) {
-	throwException(env, "java/lang/UnsupportedOperationException", "not implemented");
+	jorgan_throwException(env, "java/lang/UnsupportedOperationException", "not implemented");
 	return NULL;
 }

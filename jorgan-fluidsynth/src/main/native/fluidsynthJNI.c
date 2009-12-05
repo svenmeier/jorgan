@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "exception.h"
+#include "logger.h"
 #include "fluidsynth.h"
 #include "jorgan.fluidsynth.Fluidsynth.h"
 
@@ -16,14 +17,17 @@ Context* createContext() {
 	return (Context*) malloc(sizeof(Context));
 }
 
-void destroyContext(Context* context) {
+void destroyContext(JNIEnv* env, Context* context) {
 	if (context->adriver != NULL) {
+		jorgan_log(env, "deleting audio driver");
 		delete_fluid_audio_driver(context->adriver);
 	}
 	if (context->synth != NULL) {
+		jorgan_log(env, "deleting synth");
 		delete_fluid_synth(context->synth);
 	}
 	if (context->settings != NULL) {
+		jorgan_log(env, "deleting settings");
 		delete_fluid_settings(context->settings);
 	}
 	free(context);
@@ -68,15 +72,15 @@ jobject Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclass, jstri
 
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
-		throwException(env, "java/lang/IllegalStateException", "Couldn't create synth");
-		destroyContext(context);
+		jorgan_throwException(env, "java/lang/IllegalStateException", "Couldn't create synth");
+		destroyContext(env, context);
 		return NULL;
 	}
 
 	context->adriver = new_fluid_audio_driver(context->settings, context->synth);
 	if (context->adriver == NULL) {
-		throwException(env, "java/io/IOException", "Couldn't create audio driver");
-		destroyContext(context);
+		jorgan_throwException(env, "java/io/IOException", "Couldn't create audio driver");
+		destroyContext(env, context);
 		return NULL;
 	}
 
@@ -87,7 +91,7 @@ JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_destroy(JNIEnv* env, jclass jclass, jobject jcontext) {
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
-	destroyContext(context);
+	destroyContext(env, context);
 }
 
 JNIEXPORT
@@ -97,7 +101,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass
 	const char* filename = (*env)->GetStringUTFChars(env, jfilename, NULL);
 	int soundfont = fluid_synth_sfload(context->synth , filename, 0);
 	if (soundfont == -1) {
-		throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", filename, soundfont);
+		jorgan_throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", filename, soundfont);
 	}
 	(*env)->ReleaseStringUTFChars(env, jfilename, filename);
 }
