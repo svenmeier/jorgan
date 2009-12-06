@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <alsa/asoundlib.h>
+#include <awebank.h>
+#include <sfopts.h>
+#include <seq.h>
 #include "exception.h"
-#include "awebank.h"
-#include "sfopts.h"
-#include "seq.h"
+#include "logging.h"
 #include "jorgan.creative.SoundFontManager.h"
 
 static AWEOps load_ops = {
@@ -23,11 +24,11 @@ typedef struct _Context {
 	char* deviceName;
 } Context;
 
-Context* createContext() {
+static Context* createContext() {
 	return (Context*) malloc(sizeof(Context));
 }
 
-void destroyContext(Context* context) {
+static void destroyContext(Context* context) {
 	free(context->deviceName);
 
 	free(context);
@@ -51,6 +52,8 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 	}
 	context->deviceName = (char*)calloc(strlen(deviceName) + 1, sizeof(char));
 	strncpy(context->deviceName, leftBrace, rightBrace - leftBrace);
+
+	jorgan_info(env, context->deviceName);
 
 	(*env)->ReleaseStringUTFChars(env, jdeviceName, deviceName);
 

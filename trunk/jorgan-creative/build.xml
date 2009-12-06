@@ -95,7 +95,7 @@
       </condition>
     </fail>
 
-  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx'" />  	
+  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx_0.5.1a.orig'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
@@ -106,9 +106,8 @@
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
-      <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
-      <arg line="./src/main/native/linux/creativeJNI.c" />
-<!--  <arg line="${unix.awesfx}/awelib/awe_parm.c" />
+      <arg value="-Wl,-lasound" />
+      <arg line="${unix.awesfx}/awelib/awe_parm.c" />
       <arg line="${unix.awesfx}/awelib/bool.c" />
       <arg line="${unix.awesfx}/awelib/cmpopen.c" />
       <arg line="${unix.awesfx}/awelib/dummy.c" />
@@ -127,10 +126,14 @@
       <arg line="${unix.awesfx}/awelib/sfitem.c" />
       <arg line="${unix.awesfx}/awelib/sfopts.c" />
       <arg line="${unix.awesfx}/awelib/sfout.c" />
-      <arg line="${unix.awesfx}/awelib/slist.c" /> -->
+      <arg line="${unix.awesfx}/awelib/slist.c" />
+      <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
+      <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
+      <arg line="./src/main/native/linux/alsa.c" />
+      <arg line="./src/main/native/linux/creativeJNI.c" />
       <arg line="-o ./target/native/libcreativeJNI.so" />
     </exec>
-  	
+
   	<property name="package" value="unix-${os.arch}"/>
   </target>
 

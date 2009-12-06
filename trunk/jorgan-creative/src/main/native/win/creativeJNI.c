@@ -44,11 +44,11 @@ typedef struct _Context {
     int deviceIndex;
 } Context;
 
-Context* createContext() {
+static Context* createContext() {
 	return (Context*) malloc(sizeof(Context));
 }
 
-void destroyContext(Context* context) {
+static void destroyContext(Context* context) {
 	free(context->deviceName);
 
 	free(context);
@@ -68,6 +68,7 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
     LRESULT rc = pSFManager101API->SF_GetNumDevs(&count);
     if (rc != SFERR_NOERR) {
 		jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
+		destroyContext(env, context);
 		return NULL;
     }
 	for (int i = 0; i < count; i++) {
@@ -77,6 +78,7 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 	    LRESULT rc = pSFManager101API->SF_GetDevCaps(i, &caps);
 	    if (rc != SFERR_NOERR) {
 			jorgan_throwException(env, "java/lang/Error", "rc %d", rc);
+			destroyContext(env, context);
 			return NULL;
 	    }
 
@@ -87,6 +89,7 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 	}
 	if (deviceIndex == -1) {
 		jorgan_throwException(env, "java/lang/IllegalArgumentException", "no creative device");
+		destroyContext(env, context);
 		return NULL;
 	}
 	context->deviceIndex = deviceIndex;
