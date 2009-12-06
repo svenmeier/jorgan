@@ -1,13 +1,15 @@
 package jorgan.memory.io;
 
-
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Reader;
+import java.io.Writer;
 
 import jorgan.memory.io.xstream.BooleanArrayConverter;
 import jorgan.memory.io.xstream.FloatArrayConverter;
@@ -25,6 +27,8 @@ import com.thoughtworks.xstream.io.xml.XppDriver;
  * A {@link MemoryState} streamer.
  */
 public class MemoryStateStream {
+
+	private static final String ENCODING = "UTF-8";
 
 	private XStream xstream = new XStream(new XppDriver());
 
@@ -53,8 +57,10 @@ public class MemoryStateStream {
 	}
 
 	public MemoryState read(InputStream in) throws IOException {
+		Reader reader = new InputStreamReader(in, ENCODING);
+
 		try {
-			return (MemoryState) xstream.fromXML(new BufferedInputStream(in));
+			return (MemoryState) xstream.fromXML(reader);
 		} catch (Exception ex) {
 			IOException io = new IOException(ex.getMessage());
 			io.initCause(ex);
@@ -74,8 +80,10 @@ public class MemoryStateStream {
 
 	public void write(MemoryState memoryState, OutputStream out)
 			throws IOException {
-		xstream.toXML(memoryState, out);
-
-		out.close();
+		Writer writer = new OutputStreamWriter(out, ENCODING);
+		writer
+				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
+						+ "\" ?>\n");
+		xstream.toXML(memoryState, writer);
 	}
 }
