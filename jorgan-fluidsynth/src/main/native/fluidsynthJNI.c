@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "exception.h"
-#include "logger.h"
+#include "logging.h"
 #include "fluidsynth.h"
 #include "jorgan.fluidsynth.Fluidsynth.h"
 
@@ -13,11 +13,11 @@ typedef struct _Context {
 	fluid_audio_driver_t* adriver;
 } Context;
 
-Context* createContext() {
+static Context* createContext() {
 	return (Context*) malloc(sizeof(Context));
 }
 
-void destroyContext(JNIEnv* env, Context* context) {
+static void destroyContext(JNIEnv* env, Context* context) {
 	if (context->adriver != NULL) {
 		jorgan_info(env, "deleting audio driver");
 		delete_fluid_audio_driver(context->adriver);
@@ -182,7 +182,7 @@ typedef struct _ForEachData {
 	jmethodID jadd;
 } ForEachData;
 
-void initData(JNIEnv* env, ForEachData* data) {
+static void initData(JNIEnv* env, ForEachData* data) {
 	data->env = env;
 
 	jclass class = (*env)->FindClass(env, "java/util/ArrayList");
@@ -193,7 +193,7 @@ void initData(JNIEnv* env, ForEachData* data) {
 	data->jadd = (*env)->GetMethodID(env, class, "add", "(Ljava/lang/Object;)Z");
 }
 
-void onOption(void* vdata, char* name, char* value) {
+static void onOption(void* vdata, char* name, char* value) {
 	ForEachData* data = (ForEachData*)vdata;
 
 	JNIEnv* env = data->env;
