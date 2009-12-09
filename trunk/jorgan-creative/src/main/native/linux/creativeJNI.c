@@ -41,25 +41,31 @@ static void close_emux()
 
 static int open_emux(char *name)
 {
-	snd_hwdep_info_t *info;
+	snd_hwdep_info_t* info;
 	unsigned int version;
 
-	if (snd_hwdep_open(&hwdep, name, 0) < 0)
+	if (snd_hwdep_open(&hwdep, name, 0) < 0) {
 		return -1;
+	}
 
 	snd_hwdep_info_alloca(&info);
-	if (snd_hwdep_info(hwdep, info) < 0)
+	if (snd_hwdep_info(hwdep, info) < 0) {
 		close_emux();
 		return -1;
-	if (strcmp(snd_hwdep_info_get_name(info), SNDRV_EMUX_HWDEP_NAME))
+	}
+	if (strcmp(snd_hwdep_info_get_name(info), SNDRV_EMUX_HWDEP_NAME)) {
 		close_emux();
 		return -1;
-	if (snd_hwdep_ioctl(hwdep, SNDRV_EMUX_IOCTL_VERSION, &version) < 0)
+	}
+	if (snd_hwdep_ioctl(hwdep, SNDRV_EMUX_IOCTL_VERSION, &version) < 0) {
 		close_emux();
 		return -1;
-	if ((version >> 16) != 0x01) /* version 1 compatible */
+	}
+	if ((version >> 16) != 0x01) {
+		/* version 1 compatible */
 		close_emux();
 		return -1;
+	}
 
 	return 0;
 }
