@@ -18,6 +18,7 @@
  */
 package jorgan.creative.gui.imports;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -55,11 +56,12 @@ public class CreativeImport implements Import {
 	public CreativeImport() {
 		config.read(this);
 
-		for (String deviceName : DevicePool.instance().getMidiDeviceNames(Direction.OUT)) {
+		for (String deviceName : DevicePool.instance().getMidiDeviceNames(
+				Direction.OUT)) {
 			SoundFontManager manager;
 			try {
 				manager = new SoundFontManager(deviceName);
-			} catch (IllegalArgumentException noCreativeDevice) {
+			} catch (IOException noCreativeDevice) {
 				continue;
 			}
 
@@ -75,7 +77,7 @@ public class CreativeImport implements Import {
 					// bank is illegal??
 				}
 			}
-			
+
 			manager.destroy();
 		}
 	}
@@ -131,8 +133,12 @@ public class CreativeImport implements Import {
 	private Set<Rank> readRanks(Bank bank) {
 		Set<Rank> ranks = new HashSet<Rank>();
 
-		SoundFontManager manager = new SoundFontManager(panel
-				.getSelectedDevice().name);
+		SoundFontManager manager;
+		try {
+			manager = new SoundFontManager(panel.getSelectedDevice().name);
+		} catch (IOException e) {
+			throw new Error(e);
+		}
 
 		for (int p = 0; p < 128; p++) {
 			try {
@@ -150,7 +156,7 @@ public class CreativeImport implements Import {
 			} catch (IllegalArgumentException invalidPreset) {
 			}
 		}
-		
+
 		manager.destroy();
 
 		return ranks;

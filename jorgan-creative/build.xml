@@ -95,14 +95,13 @@
       </condition>
     </fail>
 
-  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx_0.5.1a.orig'" />  	
+  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
-      <arg value="-I./lib/linux/include" />
-      <arg value="-I./target/native" />
       <arg value="-I${unix.awesfx}/include" />
+      <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
@@ -129,7 +128,6 @@
       <arg line="${unix.awesfx}/awelib/slist.c" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
-      <arg line="./src/main/native/linux/alsa.c" />
       <arg line="./src/main/native/linux/creativeJNI.c" />
       <arg line="-o ./target/native/libcreativeJNI.so" />
     </exec>
