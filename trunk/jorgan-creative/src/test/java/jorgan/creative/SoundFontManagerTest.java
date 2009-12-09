@@ -1,6 +1,7 @@
 package jorgan.creative;
 
 import java.io.File;
+import java.io.IOException;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -24,32 +25,33 @@ public class SoundFontManagerTest extends TestCase {
 			try {
 				manager = new SoundFontManager(deviceName);
 				break;
-			} catch (IllegalArgumentException noCreativeDevice) {
+			} catch (IOException noCreativeDevice) {
+				System.out.println(noCreativeDevice.getMessage());
 			}
 		}
 		
-		assertNotNull(manager);
-		
-		int bank = 25;
+		if (manager != null) {
+			int bank = 25;
 
-		if (manager.isLoaded(bank)) {
+			if (manager.isLoaded(bank)) {
+				manager.clear(bank);
+			}
+			manager.load(bank, new File("./src/main/dispositions/creative-example.SF2"));
+			assertTrue(manager.isLoaded(bank));
+
+			assertEquals("C:\\Dokumente und Einstellungen\\Administrator\\Desktop\\001-012-CC_Montre 8.sf2", manager.getDescriptor(bank));
+			assertEquals("preset 0", manager.getPresetDescriptor(bank, 0));
+			assertEquals("preset 1", manager.getPresetDescriptor(bank, 1));
+
+			try {
+				manager.getPresetDescriptor(bank, 2);
+				fail();
+			} catch (IllegalArgumentException invalidPreset) {
+			}
+			
 			manager.clear(bank);
+			
+			manager.destroy();
 		}
-		manager.load(bank, new File("./src/main/dispositions/creative-example.SF2"));
-		assertTrue(manager.isLoaded(bank));
-
-		assertEquals("C:\\Dokumente und Einstellungen\\Administrator\\Desktop\\001-012-CC_Montre 8.sf2", manager.getDescriptor(bank));
-		assertEquals("preset 0", manager.getPresetDescriptor(bank, 0));
-		assertEquals("preset 1", manager.getPresetDescriptor(bank, 1));
-
-		try {
-			manager.getPresetDescriptor(bank, 2);
-			fail();
-		} catch (IllegalArgumentException invalidPreset) {
-		}
-		
-		manager.clear(bank);
-		
-		manager.destroy();
 	}
 }

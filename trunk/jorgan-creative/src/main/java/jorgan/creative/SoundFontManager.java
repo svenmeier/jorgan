@@ -40,7 +40,7 @@ public class SoundFontManager {
 	 * @throws IllegalArgumentException
 	 *             if device is not a Creative device
 	 */
-	public SoundFontManager(String deviceName) throws IllegalArgumentException {
+	public SoundFontManager(String deviceName) throws IOException {
 		this.deviceName = deviceName;
 
 		context = init(deviceName);
