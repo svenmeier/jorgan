@@ -165,7 +165,7 @@ public class Fluidsynth {
 
 	private static native ByteBuffer init(String name, int channels,
 			int polyphony, float sampleRate, String audioDriver, String audioDevice, int buffers,
-			int bufferSize) throws IllegalStateException, IOException;
+			int bufferSize) throws IOException;
 
 	private static native void destroy(ByteBuffer context);
 
