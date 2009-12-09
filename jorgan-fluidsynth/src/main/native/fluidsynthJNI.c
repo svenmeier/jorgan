@@ -72,7 +72,7 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
-		jorgan_throwException(env, "java/lang/IllegalStateException", "Couldn't create synth");
+		jorgan_throwException(env, "java/io/IOException", "Couldn't create synth");
 		destroyContext(env, context);
 		return NULL;
 	}
