@@ -2,22 +2,27 @@ package jorgan.lan;
 
 import java.io.IOException;
 
+import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.lan.net.MessagePort;
 import jorgan.midi.Loopback;
+import jorgan.midi.MessageUtils;
 
+/**
+ * A remote {@link MidiDevice} over LAN.
+ */
 public class LanDevice extends Loopback {
 
 	private int index;
-	
+
 	private MessagePort port;
-	
+
 	public LanDevice(int index, Info info) {
 		super(info, true, false);
-		
+
 		this.index = index;
 	}
 
@@ -27,13 +32,19 @@ public class LanDevice extends Loopback {
 
 		try {
 			port = new MessagePort(index);
-		} catch (IOException ex) {
+
+			probe();
+		} catch (Exception ex) {
 			close();
 
 			MidiUnavailableException exception = new MidiUnavailableException();
-			ex.initCause(ex);
+			exception.initCause(ex);
 			throw exception;
 		}
+	}
+
+	private void probe() throws IOException {
+		port.send(MessageUtils.newMessage(ShortMessage.ACTIVE_SENSING, 0, 0));
 	}
 
 	@Override
@@ -50,7 +61,8 @@ public class LanDevice extends Loopback {
 			try {
 				port.send((ShortMessage) message);
 			} catch (IOException e) {
-				throw new IllegalStateException(e);
+				// nothing we can do about it, receivers are expected to work
+				// flawlessly, #probe() must have worked
 			}
 		}
 	}
