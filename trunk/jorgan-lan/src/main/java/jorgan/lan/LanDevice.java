@@ -2,6 +2,7 @@ package jorgan.lan;
 
 import java.io.IOException;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
@@ -9,7 +10,6 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.lan.net.MessagePort;
 import jorgan.midi.Loopback;
-import jorgan.midi.MessageUtils;
 
 /**
  * A remote {@link MidiDevice} over LAN.
@@ -44,7 +44,13 @@ public class LanDevice extends Loopback {
 	}
 
 	private void probe() throws IOException {
-		port.send(MessageUtils.newMessage(ShortMessage.ACTIVE_SENSING, 0, 0));
+		ShortMessage message = new ShortMessage();
+		try {
+			message.setMessage(ShortMessage.ACTIVE_SENSING);
+		} catch (InvalidMidiDataException e) {
+			throw new Error(e);
+		}
+		port.send(message);
 	}
 
 	@Override
