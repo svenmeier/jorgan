@@ -69,9 +69,6 @@ public class MessageUtils {
 
 		ShortMessage shortMessage = new ShortMessage();
 
-		if (status < 0x00 || status >= 0xF0) {
-			throw new InvalidMidiDataException("no channel status: " + status);
-		}
 		shortMessage.setMessage(status, data1, data2);
 
 		return shortMessage;
