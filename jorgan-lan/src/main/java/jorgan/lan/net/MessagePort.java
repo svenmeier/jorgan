@@ -31,8 +31,6 @@ public class MessagePort {
 
 	public static final int PORT_BASE = 21928;
 
-	public static final int PORT_COUNT = 20;
-
 	private DatagramSocket socket;
 
 	private InetAddress group;

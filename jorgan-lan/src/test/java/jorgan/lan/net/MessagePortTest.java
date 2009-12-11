@@ -7,7 +7,7 @@ import junit.framework.TestCase;
 /**
  * Test for {@link MessagePort}.
  */
-public class SenderTest extends TestCase {
+public class MessagePortTest extends TestCase {
 
 	public void test() throws Exception {
 		
