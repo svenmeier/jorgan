@@ -30,6 +30,7 @@ public class SoundFontManagerTest extends TestCase {
 			}
 		}
 		
+		System.out.println(manager.getDeviceName());
 		if (manager != null) {
 			int bank = 25;
 
@@ -39,7 +40,7 @@ public class SoundFontManagerTest extends TestCase {
 			manager.load(bank, new File("./src/main/dispositions/creative-example.SF2"));
 			assertTrue(manager.isLoaded(bank));
 
-			assertEquals("C:\\Dokumente und Einstellungen\\Administrator\\Desktop\\001-012-CC_Montre 8.sf2", manager.getDescriptor(bank));
+			assertEquals("jOrgan Example Soundfont", manager.getDescriptor(bank));
 			assertEquals("preset 0", manager.getPresetDescriptor(bank, 0));
 			assertEquals("preset 1", manager.getPresetDescriptor(bank, 1));
 
