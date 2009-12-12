@@ -37,7 +37,7 @@ public class SoundFontManager {
 	private ByteBuffer context;
 
 	/**
-	 * @throws IllegalArgumentException
+	 * @throws IOException
 	 *             if device is not a Creative device
 	 */
 	public SoundFontManager(String deviceName) throws IOException {
