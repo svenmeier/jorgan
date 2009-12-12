@@ -27,16 +27,8 @@ public class LanDeviceProvider extends MidiDeviceProvider {
 
 	public void setCount(int count) {
 		this.count = count;
-		
-		while (devices.size() < count) {
-			devices.add(createDevice(devices.size()));
-		}
-	}
 
-	private LanDevice createDevice(int index) {
-		return new LanDevice(index, new Info("jOrgan LAN " + (index + 1),
-				"jOrgan", "jOrgan Midi over LAN", "1.0") {
-		});
+		ensureDevices(count);
 	}
 
 	@Override
@@ -60,5 +52,17 @@ public class LanDeviceProvider extends MidiDeviceProvider {
 		}
 
 		return null;
+	}
+
+	private static synchronized void ensureDevices(int count) {
+		while (devices.size() < count) {
+			devices.add(createDevice(devices.size()));
+		}
+	}
+
+	private static LanDevice createDevice(int index) {
+		return new LanDevice(index, new Info("jOrgan LAN " + (index + 1),
+				"jOrgan", "jOrgan Midi over LAN", "1.0") {
+		});
 	}
 }
