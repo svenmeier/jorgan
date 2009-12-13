@@ -19,6 +19,7 @@
 package jorgan.fluidsynth;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 import javax.sound.midi.ShortMessage;
@@ -42,6 +43,12 @@ public class FluidsynthTest extends TestCase {
 			for (String device : Fluidsynth.getAudioDevices(driver)) {
 				System.out.println("  " + device);
 			}
+		}
+
+		try {
+			new Fluidsynth("unkown driver", 16, "foo_bar");
+			fail();
+		} catch (IOException expected) {
 		}
 
 		Fluidsynth synth = new Fluidsynth();
