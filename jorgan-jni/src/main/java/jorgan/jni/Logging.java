@@ -39,4 +39,9 @@ public final class Logging {
 	private static void warning(String message) {
 		logger.log(Level.WARNING, message);
 	}
+	
+	@SuppressWarnings("unused")
+	private static void severe(String message) {
+		logger.log(Level.SEVERE, message);
+	}
 }
