@@ -119,7 +119,9 @@ typedef struct _Context {
 } Context;
 
 static Context* createContext() {
-	return (Context*) malloc(sizeof(Context));
+	Context* context = (Context*) malloc(sizeof(Context));
+	context->deviceName = NULL;
+	return context;
 }
 
 static void destroyContext(Context* context) {

@@ -45,7 +45,10 @@ typedef struct _Context {
 } Context;
 
 static Context* createContext() {
-	return (Context*) malloc(sizeof(Context));
+	Context* context = (Context*) malloc(sizeof(Context));
+	context->deviceName = NULL;
+	context->deviceIndex = 0;
+	return context;
 }
 
 static void destroyContext(Context* context) {
@@ -60,7 +63,7 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 
 	const char* deviceName = (char*) (*env)->GetStringUTFChars(env, jdeviceName, NULL);
 	context->deviceName = (char*)calloc(strlen(deviceName) + 1, sizeof(char));
-	strcat(context->deviceName, deviceName);
+	strcpy(context->deviceName, deviceName);
 	(*env)->ReleaseStringUTFChars(env, jdeviceName, deviceName);
 
 	int deviceIndex = -1;
