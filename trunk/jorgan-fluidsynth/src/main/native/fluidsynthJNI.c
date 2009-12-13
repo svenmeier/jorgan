@@ -14,7 +14,11 @@ typedef struct _Context {
 } Context;
 
 static Context* createContext() {
-	return (Context*) malloc(sizeof(Context));
+	Context* context = (Context*) malloc(sizeof(Context));
+	context->settings = NULL;
+	context->synth = NULL;
+	context->adriver = NULL;
+	return context;
 }
 
 static void destroyContext(JNIEnv* env, Context* context) {
