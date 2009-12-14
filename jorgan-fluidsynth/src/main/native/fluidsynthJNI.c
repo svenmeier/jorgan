@@ -10,21 +10,21 @@
 typedef struct _Context {
 	fluid_settings_t* settings;
 	fluid_synth_t* synth;
-	fluid_audio_driver_t* adriver;
+	fluid_audio_driver_t* driver;
 } Context;
 
 static Context* createContext() {
 	Context* context = (Context*) malloc(sizeof(Context));
 	context->settings = NULL;
 	context->synth = NULL;
-	context->adriver = NULL;
+	context->driver = NULL;
 	return context;
 }
 
 static void destroyContext(JNIEnv* env, Context* context) {
-	if (context->adriver != NULL) {
+	if (context->driver != NULL) {
 		jorgan_info(env, "deleting audio driver");
-		delete_fluid_audio_driver(context->adriver);
+		delete_fluid_audio_driver(context->driver);
 	}
 	if (context->synth != NULL) {
 		jorgan_info(env, "deleting synth");
@@ -76,15 +76,15 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
-		jorgan_throwException(env, "java/io/IOException", "Couldn't create synth");
 		destroyContext(env, context);
+		jorgan_throwException(env, "java/io/IOException", "Couldn't create synth");
 		return NULL;
 	}
 
-	context->adriver = new_fluid_audio_driver(context->settings, context->synth);
-	if (context->adriver == NULL) {
-		jorgan_throwException(env, "java/io/IOException", "Couldn't create audio driver");
+	context->driver = new_fluid_audio_driver(context->settings, context->synth);
+	if (context->driver == NULL) {
 		destroyContext(env, context);
+		jorgan_throwException(env, "java/io/IOException", "Couldn't create audio driver");
 		return NULL;
 	}
 
@@ -103,11 +103,13 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	const char* filename = (*env)->GetStringUTFChars(env, jfilename, NULL);
-	int soundfont = fluid_synth_sfload(context->synth , filename, 0);
-	if (soundfont == -1) {
-		jorgan_throwException(env, "java/io/IOException", "Couldn't load file %s, error %d", filename, soundfont);
-	}
+	int rc = fluid_synth_sfload(context->synth , filename, 0);
 	(*env)->ReleaseStringUTFChars(env, jfilename, filename);
+
+	if (rc == -1) {
+		jorgan_throwException(env, "java/io/IOException", "Couldn't load soundfont, rc %d", rc);
+		return;
+	}
 }
 
 JNIEXPORT

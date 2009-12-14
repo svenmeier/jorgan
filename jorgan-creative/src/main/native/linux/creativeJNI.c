@@ -156,8 +156,8 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 	initDeviceName(context, env, jdeviceName);
 
 	if (open_emux(context->deviceName) != 0) {
-		jorgan_throwException(env, "java/io/IOException", "no Creative device '%s'", context->deviceName);
 		destroyContext(context);
+		jorgan_throwException(env, "java/io/IOException", "no Creative device '%s'", context->deviceName);
 		return NULL;
 	}
 	close_emux();
@@ -176,7 +176,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_clear(JNIEnv* env, 
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	if (open_emux(context->deviceName) != 0) {
-		jorgan_throwException(env, "java/lang/IllegalStateException", "no Creative device");
+		jorgan_throwException(env, "java/lang/Error", "no Creative device");
 		return;
 	}
 
@@ -196,7 +196,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	if (open_emux(context->deviceName) != 0) {
-		jorgan_throwException(env, "java/lang/IllegalStateException", "no Creative device");
+		jorgan_throwException(env, "java/lang/Error", "no Creative device");
 		return;
 	}
 
