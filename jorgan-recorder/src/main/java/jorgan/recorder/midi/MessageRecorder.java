@@ -330,13 +330,11 @@ public class MessageRecorder {
 								- System.currentTimeMillis();
 						if (sleepMillis > 0) {
 							wait(sleepMillis);
-						}
+						}	
 					}
 				} catch (InterruptedException interrupted) {
 				}
 			}
-
-			notifyAll();
 		}
 
 		private void playCurrentEvents() {
@@ -392,13 +390,10 @@ public class MessageRecorder {
 		@Override
 		public synchronized void stopping() {
 			playCurrentEvents();
-			
+
+			// stop possible waiting thread (could be current)
 			thread.interrupt();
 			thread = null;
-			try {
-				wait();
-			} catch (InterruptedException interrupted) {
-			}
 			
 			super.stopping();
 
