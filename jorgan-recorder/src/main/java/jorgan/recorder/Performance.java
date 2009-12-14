@@ -485,6 +485,8 @@ public abstract class Performance {
 	}
 
 	public void dispose() {
+		stop();
+		
 		play.getOrgan().removeOrganListener(listener);
 		play = null;
 	}
