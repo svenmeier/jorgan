@@ -283,18 +283,19 @@ public class MemoryDockable extends OrganDockable {
 				return;
 			}
 
-			storage.setFile(null);
-
+			File file;
 			JFileChooser chooser = new JFileChooser(session.getFile());
 			config.get("eject/chooser").read(chooser);
 			chooser.setFileFilter(new MemoryFileFilter());
 			if (chooser.showOpenDialog(getContent().getTopLevelAncestor()) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
+				file = chooser.getSelectedFile();
 				if (!file.exists()) {
 					file = MemoryFileFilter.addSuffix(file);
 				}
-				storage.setFile(file);
+			} else {
+				file = null;
 			}
+			storage.setFile(file);
 		}
 	}
 
