@@ -225,22 +225,25 @@ public class RecorderDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
+			performance.stop();
+			
 			if (!canEject()) {
 				return;
 			}
 
-			performance.setFile(null);
-
+			File file;
 			JFileChooser chooser = new JFileChooser(session.getFile());
 			config.get("eject/chooser").read(chooser);
 			chooser.setFileFilter(new MidiFileFilter());
 			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
-				File file = chooser.getSelectedFile();
+				file = chooser.getSelectedFile();
 				if (!file.exists()) {
 					file = MidiFileFilter.addSuffix(file);
 				}
-				performance.setFile(file);
+			} else {
+				file = null;
 			}
+			performance.setFile(file);
 		}
 
 		public void update() {
