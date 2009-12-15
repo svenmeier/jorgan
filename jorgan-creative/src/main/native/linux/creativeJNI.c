@@ -157,7 +157,7 @@ jobject JNICALL Java_jorgan_creative_SoundFontManager_init(JNIEnv* env, jclass j
 
 	if (open_emux(context->deviceName) != 0) {
 		destroyContext(context);
-		jorgan_throwException(env, "java/io/IOException", "no Creative device '%s'", context->deviceName);
+		jorgan_throw(env, IO_EXCEPTION, "no Creative device '%s'", context->deviceName);
 		return NULL;
 	}
 	close_emux();
@@ -176,7 +176,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_clear(JNIEnv* env, 
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	if (open_emux(context->deviceName) != 0) {
-		jorgan_throwException(env, "java/lang/Error", "no Creative device");
+		jorgan_throw(env, ERROR, "no Creative device");
 		return;
 	}
 
@@ -196,7 +196,7 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	if (open_emux(context->deviceName) != 0) {
-		jorgan_throwException(env, "java/lang/Error", "no Creative device");
+		jorgan_throw(env, ERROR, "no Creative device");
 		return;
 	}
 
@@ -210,11 +210,11 @@ JNIEXPORT void JNICALL Java_jorgan_creative_SoundFontManager_load(JNIEnv *env, j
 }
 
 JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getDescriptor(JNIEnv *env, jclass jclass, jobject jcontext, jint jbank) {
-	jorgan_throwException(env, "java/lang/IllegalArgumentException", "not implemented");
+	jorgan_throw(env, ILLEGAL_ARGUMENT_EXCEPTION, "not implemented");
 	return NULL;
 }
 	
 JNIEXPORT jstring JNICALL Java_jorgan_creative_SoundFontManager_getPresetDescriptor(JNIEnv *env, jclass jclass, jobject jcontext, jint jbank, jint jpreset) {
-	jorgan_throwException(env, "java/lang/IllegalArgumentException", "not implemented");
+	jorgan_throw(env, ILLEGAL_ARGUMENT_EXCEPTION, "not implemented");
 	return NULL;
 }

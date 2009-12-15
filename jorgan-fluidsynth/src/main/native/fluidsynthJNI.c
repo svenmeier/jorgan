@@ -77,14 +77,14 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
 		destroyContext(env, context);
-		jorgan_throwException(env, "java/io/IOException", "Couldn't create synth");
+		jorgan_throw(env, IO_EXCEPTION, "Couldn't create synth");
 		return NULL;
 	}
 
 	context->driver = new_fluid_audio_driver(context->settings, context->synth);
 	if (context->driver == NULL) {
 		destroyContext(env, context);
-		jorgan_throwException(env, "java/io/IOException", "Couldn't create audio driver");
+		jorgan_throw(env, IO_EXCEPTION, "Couldn't create audio driver");
 		return NULL;
 	}
 
@@ -107,7 +107,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass
 	(*env)->ReleaseStringUTFChars(env, jfilename, filename);
 
 	if (rc == -1) {
-		jorgan_throwException(env, "java/io/IOException", "Couldn't load soundfont, rc %d", rc);
+		jorgan_throw(env, IO_EXCEPTION, "Couldn't load soundfont, rc %d", rc);
 		return;
 	}
 }
