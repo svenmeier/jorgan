@@ -140,7 +140,7 @@ JNIEXPORT jboolean JNICALL Java_jorgan_creative_SoundFontManager_isLoaded(JNIEnv
 		// jorgan_throw(env, "java/lang/IllegalArgumentException", "invalid bank %d", jbank);
 	} else if (rc != SFERR_NOERR) {
 		jorgan_throw(env, ERROR, "rc %d", rc);
-		return;
+		return 0;
 	}
 
 	return bank == 65535 ? JNI_FALSE : JNI_TRUE; 
