@@ -23,15 +23,12 @@ static Context* createContext() {
 
 static void destroyContext(JNIEnv* env, Context* context) {
 	if (context->driver != NULL) {
-		jorgan_info(env, "deleting audio driver");
 		delete_fluid_audio_driver(context->driver);
 	}
 	if (context->synth != NULL) {
-		jorgan_info(env, "deleting synth");
 		delete_fluid_synth(context->synth);
 	}
 	if (context->settings != NULL) {
-		jorgan_info(env, "deleting settings");
 		delete_fluid_settings(context->settings);
 	}
 	free(context);
@@ -49,30 +46,37 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 	
 	if (jaudioDriver != NULL) {
 		const char* audioDriver = (*env)->GetStringUTFChars(env, jaudioDriver, NULL);
-		fluid_settings_setstr(context->settings, "audio.driver", (char*)audioDriver);
-		(*env)->ReleaseStringUTFChars(env, jaudioDriver, audioDriver);
-	}
 
-	if (jaudioDevice != NULL) {
-		const char* audioDevice = (*env)->GetStringUTFChars(env, jaudioDevice, NULL);
-		fluid_settings_setstr(context->settings, "audio.alsa.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.oss.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.jack.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.dsound.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.sndman.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.coreaudio.device", (char*)audioDevice);
-		fluid_settings_setstr(context->settings, "audio.portaudio.device", (char*)audioDevice);
-		(*env)->ReleaseStringUTFChars(env, jaudioDevice, audioDevice);
+		fluid_settings_setstr(context->settings, "audio.driver", (char*)audioDriver);
+
+		if (jaudioDevice != NULL) {
+			const char* audioDevice = (*env)->GetStringUTFChars(env, jaudioDevice, NULL);
+
+			const char* prefix = "audio.";
+			const char* suffix = ".device";
+			char* key = (char*)calloc(strlen(prefix) + strlen(audioDriver) + strlen(suffix) + 1, sizeof(char));
+			strcat(key, prefix);
+			strcat(key, audioDriver);
+			strcat(key, suffix);
+			fluid_settings_setstr(context->settings, key, (char*)audioDevice);
+			free(key);
+
+			(*env)->ReleaseStringUTFChars(env, jaudioDevice, audioDevice);
+		}
+
+		(*env)->ReleaseStringUTFChars(env, jaudioDriver, audioDriver);
 	}
 
 	fluid_settings_setint(context->settings, "audio.periods", jbuffers);
 	fluid_settings_setint(context->settings, "audio.period-size", jbufferSize);
 
 	// JACK specialities
-	fluid_settings_setint(context->settings, "audio.jack.autoconnect", 1);
-	const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
-	fluid_settings_setstr(context->settings, "audio.jack.id", (char*)name);
-	(*env)->ReleaseStringUTFChars(env, jname, name);
+	{
+		fluid_settings_setint(context->settings, "audio.jack.autoconnect", 1);
+		const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
+		fluid_settings_setstr(context->settings, "audio.jack.id", (char*)name);
+		(*env)->ReleaseStringUTFChars(env, jname, name);
+	}
 
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
