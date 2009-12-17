@@ -332,8 +332,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 					return value;
 				} catch (Exception ex) {
-					logger.log(Level.WARNING, "unable to get property value",
-							ex);
+					logger.log(Level.WARNING, "unable to get property value '"
+							+ descriptors[rowIndex].getName() + "'", ex);
 				}
 				return null;
 			}
@@ -427,7 +427,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	/**
 	 * Hook method for subclasses that want to implement a custom find of a
-	 * {@link PropertyEditor} if none is defined by a {@link PropertyDescriptor}.
+	 * {@link PropertyEditor} if none is defined by a {@link PropertyDescriptor}
+	 * .
 	 * 
 	 * @see java.beans.PropertyDescriptor#getPropertyEditorClass()
 	 * 
