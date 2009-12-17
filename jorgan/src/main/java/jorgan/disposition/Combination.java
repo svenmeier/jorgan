@@ -53,22 +53,32 @@ public class Combination extends Switch implements Continuous.Dependent,
 	@Override
 	protected void onEngaged(boolean engaged) {
 		if (engaged) {
-			captureOrRecall();
-		}
-	}
+			recall();
 
-	private void captureOrRecall() {
-		for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
-			if (captor.isActive()) {
-				capture(captor);
-
-				return;
+			for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+				captor.setActive(false);
 			}
 		}
-
-		recall();
 	}
 
+	/**
+	 * Capture on explicit activation only. 
+	 */
+	@Override
+	protected void onActivated(boolean active) {
+		if (active) {
+			for (Captor captor : getOrgan().getReferrer(this, Captor.class)) {
+				if (captor.isActive()) {
+					capture(captor);
+
+					return;
+				}
+			}
+
+			recall();
+		}
+	}
+	
 	private void recall() {
 
 		try {
@@ -90,7 +100,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 			fireChange(new FastReferenceChange(reference));
 		}
 
-		captor.combinationCaptured();
+		captor.setActive(false);
 	}
 
 	public void activeChanged(Switch element, boolean active) {

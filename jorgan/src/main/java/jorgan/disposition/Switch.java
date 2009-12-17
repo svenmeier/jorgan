@@ -69,6 +69,8 @@ public class Switch extends Engageable {
 			this.active = active;
 
 			fireChange(new FastPropertyChange("active", false));
+			
+			onActivated(active);
 
 			engagingChanged(active);
 
@@ -77,6 +79,9 @@ public class Switch extends Engageable {
 				dependent.activeChanged(this, active);
 			}
 		}
+	}
+
+	protected void onActivated(boolean active) {
 	}
 
 	public boolean isActive() {
