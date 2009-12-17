@@ -24,8 +24,4 @@ public class Captor extends Switch {
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Combination.class.isAssignableFrom(clazz);
 	}
-
-	public void combinationCaptured() {
-		setActive(false);
-	}
 }
