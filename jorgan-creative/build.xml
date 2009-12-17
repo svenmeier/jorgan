@@ -101,6 +101,7 @@
       <arg value="-I${unix.jdk}/include/linux" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
       <arg value="-I${unix.awesfx}/include" />
+      <arg value="-I./src/main/native/linux" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
@@ -128,6 +129,7 @@
       <arg line="${unix.awesfx}/awelib/slist.c" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
+      <arg line="./src/main/native/linux/emux.c" />
       <arg line="./src/main/native/linux/creativeJNI.c" />
       <arg line="-o ./target/native/libcreativeJNI.so" />
     </exec>
