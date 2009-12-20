@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="3.8.1">
   <elements>
     <combination id="2">
       <name></name>
@@ -33,23 +33,31 @@
       <references>
         <console-locationReference id="5">
           <x>70</x>
-          <y>60</y>
+          <y>70</y>
         </console-locationReference>
         <console-locationReference id="2">
-          <x>170</x>
+          <x>210</x>
           <y>70</y>
         </console-locationReference>
         <console-locationReference id="6">
-          <x>190</x>
-          <y>160</y>
+          <x>230</x>
+          <y>170</y>
         </console-locationReference>
         <console-locationReference id="3">
-          <x>320</x>
-          <y>40</y>
+          <x>360</x>
+          <y>50</y>
         </console-locationReference>
         <console-locationReference id="1">
-          <x>320</x>
+          <x>360</x>
           <y>100</y>
+        </console-locationReference>
+        <console-locationReference id="7">
+          <x>20</x>
+          <y>10</y>
+        </console-locationReference>
+        <console-locationReference id="8">
+          <x>40</x>
+          <y>140</y>
         </console-locationReference>
       </references>
       <messages/>
@@ -89,5 +97,21 @@
       <active>false</active>
       <locking>true</locking>
     </switch>
+    <label id="7">
+      <name></name>
+      <description>
+name = The Combination controls the Continuous and Switch element.  Open the Memory view to see what is captured on each level of the Memory element.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <label id="8">
+      <name></name>
+      <description>
+name = With the Captor you may change the captured state of the Combination element.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
   </elements>
 </organ>
