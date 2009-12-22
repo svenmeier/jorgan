@@ -64,7 +64,7 @@ Source: "..\skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags:
 Source: "..\soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\jOrgan"; Filename: "{app}\jOrgan.exe"
+Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,jOrgan}"; Filename: "http://jorgan.sourceforge.net"
 Name: "{group}\{cm:UninstallProgram,jOrgan}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\jOrgan"; Filename: "{app}\jOrgan.exe"; Tasks: desktopicon
@@ -77,11 +77,4 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
 
-[Code]
-var
-  DataDir: String;
-function GetDataDir(S: String): String;
-begin
-  { Return the selected DataDir }
-  Result := DataDir;
-end;
+
