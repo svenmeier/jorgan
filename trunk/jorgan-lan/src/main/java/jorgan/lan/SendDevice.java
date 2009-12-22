@@ -8,19 +8,19 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.lan.net.MessagePort;
+import jorgan.lan.net.MessageSender;
 import jorgan.midi.Loopback;
 
 /**
  * A remote {@link MidiDevice} over LAN.
  */
-public class LanDevice extends Loopback {
+public class SendDevice extends Loopback implements IpMidi {
 
 	private int index;
 
-	private MessagePort port;
+	private MessageSender port;
 
-	public LanDevice(int index, Info info) {
+	public SendDevice(int index, Info info) {
 		super(info, true, false);
 
 		this.index = index;
@@ -31,7 +31,7 @@ public class LanDevice extends Loopback {
 		super.open();
 
 		try {
-			port = new MessagePort(index);
+			port = new MessageSender(GROUP, PORT_BASE + index);
 
 			probe();
 		} catch (Exception ex) {
@@ -55,8 +55,10 @@ public class LanDevice extends Loopback {
 
 	@Override
 	public synchronized void close() {
-		port.close();
-		port = null;
+		if (port != null) {
+			port.close();
+			port = null;
+		}
 
 		super.close();
 	}

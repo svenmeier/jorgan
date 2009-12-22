@@ -20,30 +20,25 @@ package jorgan.lan.net;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.MulticastSocket;
 
 import javax.sound.midi.ShortMessage;
 
-public class MessagePort {
+public class MessageSender {
 
-	public static final String GROUP = "225.0.0.37";
-
-	public static final int PORT_BASE = 21928;
-
-	private DatagramSocket socket;
+	private MulticastSocket socket;
 
 	private InetAddress group;
 
 	private int port;
 
-	public MessagePort(int index) throws IOException {
-		this.port = PORT_BASE + index;
-
-		group = InetAddress.getByName(GROUP);
+	public MessageSender(String group, int port) throws IOException {
+		this.port = port;
+		this.group = InetAddress.getByName(group);
 
 		try {
-			socket = new DatagramSocket();
+			socket = new MulticastSocket();
 		} catch (IOException e) {
 			close();
 
@@ -62,7 +57,7 @@ public class MessagePort {
 		if (socket == null) {
 			throw new IllegalStateException("not open");
 		}
-		
+
 		DatagramPacket packet = new DatagramPacket(message.getMessage(),
 				message.getLength(), group, port);
 		socket.send(packet);
