@@ -17,51 +17,83 @@ public class LanDeviceProvider extends MidiDeviceProvider {
 	private static Configuration config = Configuration.getRoot().get(
 			LanDeviceProvider.class);
 
-	private static final List<LanDevice> devices = new ArrayList<LanDevice>();
+	private static final List<SendDevice> senders = new ArrayList<SendDevice>();
 
-	private int count;
+	private static final List<ReceiveDevice> receivers = new ArrayList<ReceiveDevice>();
+
+	private int senderCount;
+
+	private int receiverCount;
 
 	public LanDeviceProvider() {
 		config.read(this);
 	}
 
-	public void setCount(int count) {
-		this.count = count;
+	public void setSenderCount(int count) {
+		this.senderCount = count;
 
-		ensureDevices(count);
+		ensureSenders(count);
+	}
+
+	public void setReceiverCount(int count) {
+		this.receiverCount = count;
+
+		ensureReceivers(count);
 	}
 
 	@Override
 	public MidiDevice.Info[] getDeviceInfo() {
 
-		Info[] infos = new Info[count];
+		ArrayList<Info> infos = new ArrayList<Info>();
 
-		for (int i = 0; i < count; i++) {
-			infos[i] = devices.get(i).getDeviceInfo();
+		for (int i = 0; i < senderCount; i++) {
+			infos.add(senders.get(i).getDeviceInfo());
 		}
 
-		return infos;
+		for (int i = 0; i < receiverCount; i++) {
+			infos.add(receivers.get(i).getDeviceInfo());
+		}
+
+		return infos.toArray(new Info[infos.size()]);
 	}
 
 	@Override
 	public MidiDevice getDevice(MidiDevice.Info info) {
-		for (LanDevice device : devices) {
-			if (device.getDeviceInfo() == info) {
-				return device;
+		for (SendDevice sender : senders) {
+			if (sender.getDeviceInfo() == info) {
+				return sender;
+			}
+		}
+
+		for (ReceiveDevice receiver : receivers) {
+			if (receiver.getDeviceInfo() == info) {
+				return receiver;
 			}
 		}
 
 		return null;
 	}
 
-	private static synchronized void ensureDevices(int count) {
-		while (devices.size() < count) {
-			devices.add(createDevice(devices.size()));
+	private static synchronized void ensureSenders(int count) {
+		while (senders.size() < count) {
+			senders.add(createSender(senders.size()));
 		}
 	}
 
-	private static LanDevice createDevice(int index) {
-		return new LanDevice(index, new Info("jOrgan LAN " + (index + 1),
+	private static synchronized void ensureReceivers(int count) {
+		while (receivers.size() < count) {
+			receivers.add(createReceiver(receivers.size()));
+		}
+	}
+
+	private static SendDevice createSender(int index) {
+		return new SendDevice(index, new Info("jOrgan LAN " + (index + 1),
+				"jOrgan", "jOrgan Midi over LAN", "1.0") {
+		});
+	}
+
+	private static ReceiveDevice createReceiver(int index) {
+		return new ReceiveDevice(index, new Info("jOrgan LAN " + (index + 1),
 				"jOrgan", "jOrgan Midi over LAN", "1.0") {
 		});
 	}

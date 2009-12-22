@@ -26,8 +26,8 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
-import jorgan.lan.LanDevice;
 import jorgan.lan.LanDeviceProvider;
+import jorgan.lan.SendDevice;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -35,17 +35,22 @@ import bias.swing.Category;
 import bias.util.Property;
 
 /**
- * {@link LanDevice} category.
+ * {@link SendDevice} category.
  */
 public class LanCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
 			LanCategory.class);
 
-	private Model count = getModel(new Property(LanDeviceProvider.class,
-			"count"));
+	private Model senderCount = getModel(new Property(LanDeviceProvider.class,
+			"senderCount"));
 
-	private JSpinner countSpinner;
+	private Model receiverCount = getModel(new Property(
+			LanDeviceProvider.class, "receiverCount"));
+
+	private JSpinner senderCountSpinner;
+
+	private JSpinner receiverCountSpinner;
 
 	public LanCategory() {
 		config.read(this);
@@ -64,21 +69,29 @@ public class LanCategory extends JOrganCategory {
 
 		Column column = builder.column();
 
-		column.term(config.get("count").read(new JLabel()));
+		column.term(config.get("senderCount").read(new JLabel()));
 
-		countSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 256, 1));
-		column.definition(countSpinner);
+		senderCountSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 256, 1));
+		column.definition(senderCountSpinner);
+
+		column.term(config.get("receiverCount").read(new JLabel()));
+
+		receiverCountSpinner = new JSpinner(
+				new SpinnerNumberModel(0, 0, 256, 1));
+		column.definition(receiverCountSpinner);
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
-		countSpinner.setValue(count.getValue());
+		senderCountSpinner.setValue(senderCount.getValue());
+		receiverCountSpinner.setValue(receiverCount.getValue());
 	}
 
 	@Override
 	protected void write() {
-		count.setValue(countSpinner.getValue());
+		senderCount.setValue(senderCountSpinner.getValue());
+		receiverCount.setValue(receiverCountSpinner.getValue());
 	}
 }
