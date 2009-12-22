@@ -420,7 +420,10 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 				return (PropertyEditor) descriptor.getPropertyEditorClass()
 						.newInstance();
 			} catch (Exception ex) {
-				throw new IntrospectionException(ex.getMessage());
+				IntrospectionException introspectionException = new IntrospectionException(
+						ex.getMessage());
+				introspectionException.initCause(ex);
+				throw introspectionException;
 			}
 		}
 	}
