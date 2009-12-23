@@ -39,9 +39,9 @@ public class MessageReceiver {
 
 	private byte[] bytes = new byte[3];
 
-	public MessageReceiver(String group, int port) throws IOException {
+	public MessageReceiver(InetAddress group, int port) throws IOException {
 		this.port = port;
-		this.group = InetAddress.getByName(group);
+		this.group = group;
 
 		try {
 			socket = new MulticastSocket(this.port);
@@ -80,6 +80,9 @@ public class MessageReceiver {
 	}
 
 	private void receive(DatagramSocket socket) throws IOException {
+		bytes[0] = 0;
+		bytes[1] = 0;
+		bytes[2] = 0;
 		DatagramPacket packet = new DatagramPacket(bytes, 0, 3);
 		socket.receive(packet);
 
