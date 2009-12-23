@@ -33,7 +33,6 @@ import jorgan.session.OrganSession;
  */
 public class DefaultCustomizerProvider implements CustomizerProvider {
 
-	@Override
 	public int getOrder() {
 		return 0;
 	}
