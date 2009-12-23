@@ -22,11 +22,12 @@ import java.util.List;
 
 import jorgan.customizer.gui.Customizer;
 import jorgan.session.OrganSession;
+import jorgan.util.PluginUtils.Ordering;
 
 /**
  * A provider of {@link Customizer}s.
  */
-public interface CustomizerProvider {
+public interface CustomizerProvider extends Ordering {
 
 	public List<Customizer> getCustomizers(OrganSession session);
 }

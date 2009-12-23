@@ -33,6 +33,11 @@ import jorgan.session.OrganSession;
  */
 public class DefaultCustomizerProvider implements CustomizerProvider {
 
+	@Override
+	public int getOrder() {
+		return 0;
+	}
+
 	public List<Customizer> getCustomizers(OrganSession session) {
 		List<Customizer> customizers = new ArrayList<Customizer>();
 

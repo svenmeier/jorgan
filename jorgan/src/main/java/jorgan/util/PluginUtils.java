@@ -19,6 +19,8 @@
 package jorgan.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,15 +48,34 @@ public class PluginUtils {
 				P provider = iterator.next();
 				if (clazz.isInstance(provider)) {
 					providers.add(0, provider);
-				} else {					
-					logger.log(Level.WARNING, "provider not instance of " + clazz);
+				} else {
+					logger.log(Level.WARNING, "provider not instance of "
+							+ clazz);
 				}
 			} catch (Throwable failure) {
 				logger.log(Level.WARNING, "provider failed", failure);
 			}
 		}
 
+		if (Ordering.class.isAssignableFrom(clazz)) {
+			Collections.sort(providers, new Comparator<P>() {
+				public int compare(P provider1, P provider2) {
+					return ((Ordering) provider1).getOrder()
+							- ((Ordering) provider2).getOrder();
+				};
+			});
+		}
+
 		return providers;
 	}
 
+	/**
+	 * Optional interface for providers which define an ordering.
+	 */
+	public static interface Ordering {
+		/**
+		 * Get order, <code>0</code> highest.
+		 */
+		public int getOrder();
+	}
 }
