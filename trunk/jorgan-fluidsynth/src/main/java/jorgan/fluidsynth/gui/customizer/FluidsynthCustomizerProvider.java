@@ -9,6 +9,11 @@ import jorgan.session.OrganSession;
 
 public class FluidsynthCustomizerProvider implements CustomizerProvider {
 
+	@Override
+	public int getOrder() {
+		return 1000;
+	}
+
 	public List<Customizer> getCustomizers(OrganSession session) {
 		List<Customizer> customizers = new ArrayList<Customizer>();
 
