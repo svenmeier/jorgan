@@ -75,7 +75,9 @@
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
   	
-  	<copy file="./lib/win32/libfluidsynth-1.dll" todir="./target/native" />
+  	<copy todir="./target/native">
+  		<fileset dir="./lib/win32" includes="*.dll"/>
+  	</copy>
   	
   	<property name="package" value="win-${os.arch}"/>
   </target>
