@@ -53,7 +53,6 @@ public class MessageReceiver {
 		}
 
 		thread = new Thread(new Runnable() {
-			@Override
 			public void run() {
 				DatagramSocket socket = MessageReceiver.this.socket;
 				while (socket != null) {
