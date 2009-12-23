@@ -27,12 +27,12 @@ import jorgan.util.PluginUtils;
 public class ImportRegistry {
 
 	public static List<Import> getImports() {
-		ArrayList<Import> actions = new ArrayList<Import>();
+		ArrayList<Import> imports = new ArrayList<Import>();
 
 		for (ImportProvider provider : PluginUtils.lookup(ImportProvider.class)) {
-			actions.addAll(provider.getImports());
+			imports.addAll(provider.getImports());
 		}
 
-		return actions;
+		return imports;
 	}
 }
