@@ -33,9 +33,9 @@ public class MessageSender {
 
 	private int port;
 
-	public MessageSender(String group, int port) throws IOException {
+	public MessageSender(InetAddress group, int port) throws IOException {
 		this.port = port;
-		this.group = InetAddress.getByName(group);
+		this.group = group;
 
 		try {
 			socket = new MulticastSocket();
