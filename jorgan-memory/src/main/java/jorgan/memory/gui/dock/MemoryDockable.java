@@ -128,8 +128,7 @@ public class MemoryDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
+	protected void addTools(Docked docked) {
 
 		docked.addTool(new SwapAction());
 		docked.addTool(new ClearAction());

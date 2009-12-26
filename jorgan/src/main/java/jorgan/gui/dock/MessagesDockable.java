@@ -204,8 +204,7 @@ public class MessagesDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
+	protected void addTools(Docked docked) {
 
 		docked.addTool(addAction);
 		docked.addTool(removeAction);
@@ -270,7 +269,8 @@ public class MessagesDockable extends OrganDockable {
 			table.setVisible(false);
 
 			if (session != null
-					&& session.lookup(ElementSelection.class).getSelectionCount() == 1) {
+					&& session.lookup(ElementSelection.class)
+							.getSelectionCount() == 1) {
 
 				element = session.lookup(ElementSelection.class)
 						.getSelectedElement();

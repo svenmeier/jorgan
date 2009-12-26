@@ -123,8 +123,7 @@ public class MonitorDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
+	protected void addTools(Docked docked) {
 
 		docked.addTool(inputButton);
 		docked.addTool(outputButton);

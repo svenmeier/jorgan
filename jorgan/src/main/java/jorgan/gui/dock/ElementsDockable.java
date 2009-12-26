@@ -197,8 +197,7 @@ public class ElementsDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
+	protected void addTools(Docked docked) {
 
 		docked.addTool(addAction);
 		docked.addTool(new RemoveAction());

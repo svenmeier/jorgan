@@ -80,12 +80,12 @@ public class RecorderDockable extends OrganDockable {
 	private EventListener eventListener = new EventListener();
 
 	private MessageBuilder statusBuilder = new MessageBuilder();
-	
+
 	public RecorderDockable() {
 		config.read(this);
 
 		config.get("status").read(statusBuilder);
-		
+
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
 	}
 
@@ -95,8 +95,7 @@ public class RecorderDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
+	protected void addTools(Docked docked) {
 
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
@@ -104,6 +103,11 @@ public class RecorderDockable extends OrganDockable {
 		docked.addTool(recordAction);
 		docked.addToolSeparator();
 		docked.addTool(ejectAction);
+	}
+
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
 
 		timer.start();
 	}
@@ -226,7 +230,7 @@ public class RecorderDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent e) {
 			performance.stop();
-			
+
 			if (!canEject()) {
 				return;
 			}
