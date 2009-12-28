@@ -36,7 +36,7 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 Name: "core"; Description: "Program Files"; Types: standard custom; Flags: fixed
 Name: "creative"; Description: "Creative Soundblaster"; Types: standard
 Name: "customizer"; Description: "Customizer"; Types: standard
-Name: "executor"; Description: "Executor"; Types: 
+Name: "executor"; Description: "Executor"; Types: standard
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: standard
 Name: "importer"; Description: "Importer"; Types: standard
 Name: "keyboard"; Description: "Keyboard"; Types: standard
