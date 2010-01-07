@@ -56,32 +56,45 @@ public class FluidsynthTest extends TestCase {
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
 
-		int shift = -150;
-		synth
-				.setTuning(0, 0, "Test", new double[] { shift, shift, shift,
-						shift, shift, shift, shift, shift, shift, shift, shift,
-						shift });
+		synth.setTuning(0, 0, "Test", new double[] { 0.0d, 0.0d, 0.0d, 0.0d,
+				0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d });
 
-		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
-		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, 3);
-		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, 0);
+		// tuningBank select
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, 4);
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 38, 0);
+		// tuningProgram select
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, 3);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 38, 0);
 
 		synth.send(0, ShortMessage.PROGRAM_CHANGE, 0, 0);
-		synth.send(0, ShortMessage.NOTE_ON, 64, 100);
 
-		synchronized (this) {
-			wait(1000);
-		}
-
-		synth.send(0, ShortMessage.NOTE_OFF, 64, 0);
+		play(synth, 60);
+		play(synth, 62);
+		play(synth, 64);
+		play(synth, 65);
+		play(synth, 67);
+		play(synth, 69);
+		play(synth, 71);
+		play(synth, 72);
 
 		synchronized (this) {
 			wait(1000);
 		}
 
 		synth.destroy();
+	}
+
+	private void play(Fluidsynth synth, int pitch) throws Exception {
+		synth.send(0, ShortMessage.NOTE_ON, pitch, 100);
+
+		synchronized (this) {
+			wait(1000);
+		}
+
+		synth.send(0, ShortMessage.NOTE_OFF, pitch, 0);
 	}
 }
