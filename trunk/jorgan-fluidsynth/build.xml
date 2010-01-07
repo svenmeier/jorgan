@@ -95,6 +95,7 @@
 
   	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
+      <arg value="-std=c99" />
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
