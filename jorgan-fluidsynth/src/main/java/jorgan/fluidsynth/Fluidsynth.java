@@ -57,7 +57,8 @@ public class Fluidsynth {
 		this("", 16, null);
 	}
 
-	public Fluidsynth(String name, int channels, String audioDriver) throws IllegalStateException, IOException {
+	public Fluidsynth(String name, int channels, String audioDriver)
+			throws IllegalStateException, IOException {
 		this(name, channels, 256, 44100.0f, audioDriver, null, 16, 64);
 	}
 
@@ -74,8 +75,8 @@ public class Fluidsynth {
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		context = init(name, channels, polyphony, sampleRate, audioDriver, audioDevice,
-				buffers, bufferSize);
+		context = init(name, channels, polyphony, sampleRate, audioDriver,
+				audioDevice, buffers, bufferSize);
 	}
 
 	public String getAudioDevice() {
@@ -138,6 +139,11 @@ public class Fluidsynth {
 		setChorus(context, nr, level, speed, depth_ms, type);
 	}
 
+	public void setTuning(int tuningBank, int tuningProgram, String name,
+			double[] derivations) {
+		setTuning(context, tuningBank, tuningProgram, name, derivations);
+	}
+
 	public void send(int channel, int command, int data1, int data2) {
 		switch (command) {
 		case ShortMessage.NOTE_ON:
@@ -164,8 +170,8 @@ public class Fluidsynth {
 	}
 
 	private static native ByteBuffer init(String name, int channels,
-			int polyphony, float sampleRate, String audioDriver, String audioDevice, int buffers,
-			int bufferSize) throws IOException;
+			int polyphony, float sampleRate, String audioDriver,
+			String audioDevice, int buffers, int bufferSize) throws IOException;
 
 	private static native void destroy(ByteBuffer context);
 
@@ -197,6 +203,9 @@ public class Fluidsynth {
 
 	private static native void setChorus(ByteBuffer context, int nr,
 			double level, double speed, double depth_ms, int type);
+
+	private static native void setTuning(ByteBuffer context, int tuningBank,
+			int tuningProgram, String name, double[] derivations);
 
 	/**
 	 * Get the available {@link #getAudioDriver()}s.
