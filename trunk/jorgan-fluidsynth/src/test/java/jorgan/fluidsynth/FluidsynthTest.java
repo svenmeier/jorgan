@@ -56,8 +56,9 @@ public class FluidsynthTest extends TestCase {
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
 
-		synth.setTuning(0, 0, "Test", new double[] { 0.0d, 0.0d, 0.0d, 0.0d,
-				0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d });
+		synth.setTuning(0, 0, "Pietro Aaron", new double[] { 0.0d, -24.0d,
+				-7.0d, +10.0d, -14.0d, +3.0d, -21.0d, -4.0d, -28.0d, -11.0d,
+				+6.0d, -18.0d });
 
 		// tuningBank select
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
