@@ -83,7 +83,6 @@ import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
 import jorgan.swing.BaseAction;
-import jorgan.swing.MacAdapter;
 import jorgan.swing.StandardDialog;
 import spin.Spin;
 import swingx.Marker;
@@ -208,7 +207,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		this.session.getOrgan().addOrganListener(
 				(OrganListener) Spin.over(eventHandler));
 		this.session.lookup(ElementSelection.class).addListener(eventHandler);
-		this.session.addListener((SessionListener)Spin.over(eventHandler));
+		this.session.addListener((SessionListener) Spin.over(eventHandler));
 
 		this.console = console;
 
@@ -723,10 +722,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void modified() {
 		}
-		
+
 		public void saved(File file) {
 		}
-		
+
 		public void destroyed() {
 		}
 
@@ -1029,16 +1028,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void dragOver(DropTargetDragEvent dtde) {
-			if (MacAdapter.isMac()
-					|| !System.getProperty("java.version").startsWith("1.5")) {
-				dtde.acceptDrag(DnDConstants.ACTION_LINK);
-			} else {
-				// BUG 4869264:
-				// On non-Mac systems with Java 5 the LINK action is not
-				// accepted by default but user has to press CTRL by himself,
-				// so just accept MOVE.
-				dtde.acceptDrag(DnDConstants.ACTION_MOVE);
-			}
+			dtde.acceptDrag(DnDConstants.ACTION_LINK);
 		}
 
 		public void drop(DropTargetDropEvent dtde) {
@@ -1055,7 +1045,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					if (console.canReference(element)) {
 						console.reference(element);
 					}
-					
+
 					if (element instanceof Displayable) {
 						View<? extends Displayable> view = getView((Displayable) element);
 						if (view != null) {
