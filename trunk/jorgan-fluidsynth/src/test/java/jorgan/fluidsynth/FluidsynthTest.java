@@ -55,6 +55,20 @@ public class FluidsynthTest extends TestCase {
 
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
+
+		int shift = -150;
+		synth
+				.setTuning(0, 0, "Test", new double[] { shift, shift, shift,
+						shift, shift, shift, shift, shift, shift, shift, shift,
+						shift });
+
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, 3);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, 4);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, 0);
+
 		synth.send(0, ShortMessage.PROGRAM_CHANGE, 0, 0);
 		synth.send(0, ShortMessage.NOTE_ON, 64, 100);
 
