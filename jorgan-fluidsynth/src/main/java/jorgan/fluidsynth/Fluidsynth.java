@@ -59,7 +59,7 @@ public class Fluidsynth {
 
 	public Fluidsynth(String name, int channels, String audioDriver)
 			throws IllegalStateException, IOException {
-		this(name, channels, 256, 44100.0f, audioDriver, null, 16, 64);
+		this(name, channels, 256, 44100.0f, audioDriver, null, 8, 512);
 	}
 
 	public Fluidsynth(String name, int channels, int polyphony,
