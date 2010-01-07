@@ -186,6 +186,20 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setChorus(JNIEnv* env, jclass jcl
 	fluid_synth_set_chorus(context->synth, jnr, jlevel, jspeed, jdepth_ms, jtype);
 }
 
+JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setTuning(JNIEnv* env, jclass jclass, jobject jcontext, jint jtuningBank, jint jtuningProgram, jstring jname, jdoubleArray jderivations) {
+	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
+
+	jdouble derivations[12];
+	(*env)->GetDoubleArrayRegion(env, jderivations, 0, 12, derivations);
+
+	const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
+
+	fluid_synth_create_octave_tuning(context->synth, jtuningBank, jtuningProgram, (char*)name, derivations);
+
+	(*env)->ReleaseStringUTFChars(env, jname, name);
+}
+
 typedef struct _ForEachData {
 	JNIEnv *env;
 	jobject jlist;
