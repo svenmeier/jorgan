@@ -25,29 +25,43 @@
 extern "C" {
 #endif
 
+/**
+ * @file event.h
+ * @brief Sequencer event functions and defines.
+ *
+ * Functions and constants for creating/processing sequencer events.
+ */
 
+/**
+ * Sequencer event type enumeration.
+ */
 enum fluid_seq_event_type {
-  FLUID_SEQ_NOTE = 0,
-  FLUID_SEQ_NOTEON,
-  FLUID_SEQ_NOTEOFF,
-  FLUID_SEQ_ALLSOUNDSOFF,
-  FLUID_SEQ_ALLNOTESOFF,
-  FLUID_SEQ_BANKSELECT,
-  FLUID_SEQ_PROGRAMCHANGE,
-  FLUID_SEQ_PROGRAMSELECT,
-  FLUID_SEQ_PITCHBEND,
-  FLUID_SEQ_PITCHWHHELSENS,
-  FLUID_SEQ_MODULATION,
-  FLUID_SEQ_SUSTAIN,
-  FLUID_SEQ_CONTROLCHANGE,
-  FLUID_SEQ_PAN,
-  FLUID_SEQ_VOLUME,
-  FLUID_SEQ_REVERBSEND,
-  FLUID_SEQ_CHORUSSEND,
-  FLUID_SEQ_TIMER,
-  FLUID_SEQ_ANYCONTROLCHANGE,	// used for remove_events only
-  FLUID_SEQ_LASTEVENT  
+  FLUID_SEQ_NOTE = 0,		/**< Note event with duration */
+  FLUID_SEQ_NOTEON,		/**< Note on event */
+  FLUID_SEQ_NOTEOFF,		/**< Note off event */
+  FLUID_SEQ_ALLSOUNDSOFF,	/**< All sounds off event */
+  FLUID_SEQ_ALLNOTESOFF,	/**< All notes off event */
+  FLUID_SEQ_BANKSELECT,		/**< Bank select message */
+  FLUID_SEQ_PROGRAMCHANGE,	/**< Program change message */
+  FLUID_SEQ_PROGRAMSELECT,	/**< Program select message (DOCME) */
+  FLUID_SEQ_PITCHBEND,		/**< Pitch bend message */
+  FLUID_SEQ_PITCHWHEELSENS,	/**< Pitch wheel sensitivity set message @since 1.1.0 was mispelled previously */
+  FLUID_SEQ_MODULATION,		/**< Modulation controller event */
+  FLUID_SEQ_SUSTAIN,		/**< Sustain controller event */
+  FLUID_SEQ_CONTROLCHANGE,	/**< MIDI control change event */
+  FLUID_SEQ_PAN,		/**< Stereo pan set event */
+  FLUID_SEQ_VOLUME,		/**< Volume set event */
+  FLUID_SEQ_REVERBSEND,		/**< Reverb send set event */
+  FLUID_SEQ_CHORUSSEND,		/**< Chorus send set event */
+  FLUID_SEQ_TIMER,		/**< Timer event (DOCME) */
+  FLUID_SEQ_ANYCONTROLCHANGE,	/**< DOCME (used for remove_events only) */
+  FLUID_SEQ_CHANNELPRESSURE,    /**< Channel aftertouch event @since 1.1.0 */
+  FLUID_SEQ_SYSTEMRESET,        /**< System reset event @since 1.1.0 */
+  FLUID_SEQ_UNREGISTERING,      /**< Called when a sequencer client is being unregistered. @since 1.1.0 */
+  FLUID_SEQ_LASTEVENT		/**< Defines the count of event enums */
 };
+
+#define FLUID_SEQ_PITCHWHHELSENS        FLUID_SEQ_PITCHWHEELSENS        /**< Old deprecated misspelling of #FLUID_SEQ_PITCHWHEELSENS */
 
 /* Event alloc/free */
 FLUIDSYNTH_API fluid_event_t* new_fluid_event(void);
@@ -89,8 +103,15 @@ FLUIDSYNTH_API void fluid_event_volume(fluid_event_t* evt, int channel, short va
 FLUIDSYNTH_API void fluid_event_reverb_send(fluid_event_t* evt, int channel, short val);
 FLUIDSYNTH_API void fluid_event_chorus_send(fluid_event_t* evt, int channel, short val);
 
+FLUIDSYNTH_API void fluid_event_channel_pressure(fluid_event_t* evt, int channel, short val);
+FLUIDSYNTH_API void fluid_event_system_reset(fluid_event_t* evt);
+
+
 /* Only for removing events */
 FLUIDSYNTH_API void fluid_event_any_control_change(fluid_event_t* evt, int channel);
+
+/* Only when unregistering clients */
+FLUIDSYNTH_API void fluid_event_unregistering(fluid_event_t* evt);
 
 /* Accessing event data */
 FLUIDSYNTH_API int fluid_event_get_type(fluid_event_t* evt);
