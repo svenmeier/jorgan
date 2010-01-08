@@ -18,7 +18,13 @@
  */
 package jorgan.fluidsynth.disposition;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import jorgan.disposition.Sound;
+import jorgan.disposition.event.AbstractChange;
+import jorgan.disposition.event.OrganListener;
 import jorgan.util.Null;
 
 /**
@@ -50,6 +56,8 @@ public class FluidsynthSound extends Sound {
 	private Reverb reverb;
 
 	private Chorus chorus;
+
+	private List<Tuning> tunings = new ArrayList<Tuning>();
 
 	public void setGain(double gain) {
 		this.gain = FluidsynthSound.limit(gain);
@@ -98,7 +106,7 @@ public class FluidsynthSound extends Sound {
 
 	public void setSoundfont(String soundfont) {
 		soundfont = cleanPath(soundfont);
-		
+
 		if (!Null.safeEquals(this.soundfont, soundfont)) {
 			String oldSoundfont = this.soundfont;
 
@@ -180,6 +188,64 @@ public class FluidsynthSound extends Sound {
 		this.reverb = reverb;
 
 		fireChange(new FastPropertyChange("reverb", false));
+	}
+
+	public List<Tuning> getTunings() {
+		return Collections.unmodifiableList(tunings);
+	}
+
+	public void changeTuning(final Tuning tuning, final String name,
+			final double[] derivations) {
+		if (!tunings.contains(tuning)) {
+			throw new IllegalArgumentException("unkown tuning");
+		}
+
+		final String oldName = tuning.getName();
+		final double[] oldDerviations = tuning.getDerivations();
+
+		fireChange(new AbstractChange() {
+			public void notify(OrganListener listener) {
+				listener.propertyChanged(FluidsynthSound.this, "tunings");
+			}
+
+			public void undo() {
+				tuning.change(oldName, oldDerviations);
+			}
+
+			public void redo() {
+				changeTuning(tuning, name, derivations);
+			}
+		});
+	}
+
+	public void addTuning(final Tuning tuning) {
+		if (tunings == null) {
+			tunings = new ArrayList<Tuning>();
+		}
+
+		tunings.add(tuning);
+
+		fireChange(new AbstractChange() {
+			public void notify(OrganListener listener) {
+				listener.propertyChanged(FluidsynthSound.this, "tunings");
+			}
+
+			public void undo() {
+				removeTuning(tuning);
+			}
+
+			public void redo() {
+				addTuning(tuning);
+			}
+		});
+	}
+
+	public void removeTuning(Tuning tuning) {
+		if (!tunings.contains(tuning)) {
+			throw new IllegalArgumentException("unkown tuning");
+		}
+
+		tunings.remove(tuning);
 	}
 
 	static double limit(double value) {

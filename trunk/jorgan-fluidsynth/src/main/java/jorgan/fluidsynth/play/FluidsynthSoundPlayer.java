@@ -24,6 +24,7 @@ import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
+import jorgan.fluidsynth.disposition.Tuning;
 import jorgan.play.SoundPlayer;
 import jorgan.problem.Severity;
 
@@ -149,6 +150,13 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 				synth.setChorus((int) (chorus.getNr() * 100),
 						chorus.getLevel() * 10, chorus.getSpeed() * 5, chorus
 								.getDepth() * 10, chorus.getType().ordinal());
+			}
+
+			int tuningProgram = 0;
+			for (Tuning tuning : sound.getTunings()) {
+				synth.setTuning(0, tuningProgram, tuning.getName(), tuning
+						.getDerivations());
+				tuningProgram++;
 			}
 		}
 	}
