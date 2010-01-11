@@ -19,6 +19,7 @@
 package jorgan.io;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -65,7 +66,7 @@ public class SkinStream {
 	 */
 	public Skin read(InputStream in) throws IOException {
 		try {
-			return  (Skin) xstream.fromXML(new BufferedInputStream(in));
+			return (Skin) xstream.fromXML(new BufferedInputStream(in));
 		} catch (Exception ex) {
 			IOException io = new IOException(ex.getMessage());
 			io.initCause(ex);
@@ -74,7 +75,7 @@ public class SkinStream {
 	}
 
 	public void write(Skin skin, OutputStream out) throws IOException {
-		xstream.toXML(skin, out);
+		xstream.toXML(skin, new BufferedOutputStream(out));
 
 		out.close();
 	}
