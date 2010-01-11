@@ -19,6 +19,7 @@
 package jorgan.io;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -118,7 +119,7 @@ public class DispositionStream {
 	}
 
 	public Organ read(InputStream in) throws IOException, FormatException {
-		InputStream converted = convert(in);
+		BufferedInputStream converted = convert(in);
 
 		Reader reader = new InputStreamReader(converted, ENCODING);
 
@@ -164,7 +165,8 @@ public class DispositionStream {
 
 	public void write(Organ organ, OutputStream out) throws IOException {
 
-		Writer writer = new OutputStreamWriter(out, ENCODING);
+		Writer writer = new OutputStreamWriter(new BufferedOutputStream(out),
+				ENCODING);
 		writer
 				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
 						+ "\" ?>\n");
@@ -241,12 +243,12 @@ public class DispositionStream {
 	private static final Logger logger = Logger.getLogger(Conversion.class
 			.getName());
 
-	private InputStream convert(InputStream in) throws ConversionException,
-			IOException {
+	private BufferedInputStream convert(InputStream in)
+			throws ConversionException, IOException {
 
-		in = new BufferedInputStream(in);
+		BufferedInputStream buffered = new BufferedInputStream(in);
 
-		String version = Conversion.getVersion(in);
+		String version = Conversion.getVersion(buffered);
 
 		boolean apply = false;
 		for (Conversion conversion : Conversion.list) {
@@ -255,10 +257,10 @@ public class DispositionStream {
 
 				logger.log(Level.INFO, "applying '" + conversion + "'");
 
-				in = conversion.convert(in);
+				buffered = new BufferedInputStream(conversion.convert(buffered));
 			}
 		}
 
-		return in;
+		return buffered;
 	}
 }

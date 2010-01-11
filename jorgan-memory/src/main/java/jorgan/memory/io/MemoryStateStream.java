@@ -1,5 +1,7 @@
 package jorgan.memory.io;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -57,7 +59,8 @@ public class MemoryStateStream {
 	}
 
 	public MemoryState read(InputStream in) throws IOException {
-		Reader reader = new InputStreamReader(in, ENCODING);
+		Reader reader = new InputStreamReader(new BufferedInputStream(in),
+				ENCODING);
 
 		try {
 			return (MemoryState) xstream.fromXML(reader);
@@ -80,7 +83,8 @@ public class MemoryStateStream {
 
 	public void write(MemoryState memoryState, OutputStream out)
 			throws IOException {
-		Writer writer = new OutputStreamWriter(out, ENCODING);
+		Writer writer = new OutputStreamWriter(new BufferedOutputStream(out),
+				ENCODING);
 		writer
 				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
 						+ "\" ?>\n");
