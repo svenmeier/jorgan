@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.memory.io.xstream;
+package jorgan.io.xstream;
 
 import java.util.StringTokenizer;
 
@@ -26,9 +26,9 @@ import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
-public class BooleanArrayConverter implements Converter {
+public class DoubleArrayConverter implements Converter {
 
-	private Class<?> clazz = new boolean[0].getClass();
+	private Class<?> clazz = new double[0].getClass();
 
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
@@ -37,14 +37,14 @@ public class BooleanArrayConverter implements Converter {
 
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
-		boolean[] bs = (boolean[]) value;
+		double[] ds = (double[]) value;
 
-		StringBuffer buffer = new StringBuffer(bs.length * 2);
-		for (boolean b : bs) {
+		StringBuffer buffer = new StringBuffer(ds.length * 5);
+		for (double d : ds) {
 			if (buffer.length() > 0) {
 				buffer.append(",");
 			}
-			buffer.append(b);
+			buffer.append(d);
 		}
 
 		writer.setValue(buffer.toString());
@@ -53,15 +53,11 @@ public class BooleanArrayConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		StringTokenizer tokens = new StringTokenizer(reader.getValue(),
-				",");
-		boolean[] bs = new boolean[tokens.countTokens()];
-		for (int b = 0; b < bs.length; b++) {
-			String token = tokens.nextToken().trim();
-			if ("1".equals(token) || "true".equals(token)) {
-				bs[b] = true;
-			}
+		StringTokenizer tokens = new StringTokenizer(reader.getValue(), ",");
+		double[] ds = new double[tokens.countTokens()];
+		for (int d = 0; d < ds.length; d++) {
+			ds[d] = Double.parseDouble(tokens.nextToken().trim());
 		}
-		return bs;
+		return ds;
 	}
 }

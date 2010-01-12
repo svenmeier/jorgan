@@ -256,18 +256,22 @@ public class SkinDockable extends OrganDockable {
 		}
 
 		@Override
-		public void referenceAdded(Element element, Reference<?> reference) {
-			if (element instanceof Console
-					&& reference.getElement() == SkinDockable.this.displayable) {
-				update();
+		public void indexedPropertyAdded(Element element, String name, Object value) {
+			if (element instanceof Console && Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+				if (reference.getElement() == SkinDockable.this.displayable) {
+					update();
+				}
 			}
 		}
 
 		@Override
-		public void referenceRemoved(Element element, Reference<?> reference) {
-			if (element instanceof Console
-					&& reference.getElement() == SkinDockable.this.displayable) {
-				update();
+		public void indexedPropertyRemoved(Element element, String name, Object value) {
+			if (element instanceof Console && Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+				if (reference.getElement() == SkinDockable.this.displayable) {
+					update();
+				}
 			}
 		}
 	}

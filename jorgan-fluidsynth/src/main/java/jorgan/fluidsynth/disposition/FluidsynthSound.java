@@ -31,6 +31,8 @@ import jorgan.util.Null;
  */
 public class FluidsynthSound extends Sound {
 
+	public static final String TUNINGS = "tunings";
+
 	private String soundfont;
 
 	private int channels = 32;
@@ -203,9 +205,12 @@ public class FluidsynthSound extends Sound {
 		final String oldName = tuning.getName();
 		final double[] oldDerviations = tuning.getDerivations();
 
+		tuning.change(name, derivations);
+
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.propertyChanged(FluidsynthSound.this, "tunings");
+				listener.indexedPropertyChanged(FluidsynthSound.this, TUNINGS,
+						tuning);
 			}
 
 			public void undo() {
@@ -227,7 +232,8 @@ public class FluidsynthSound extends Sound {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.propertyChanged(FluidsynthSound.this, "tunings");
+				listener.indexedPropertyChanged(FluidsynthSound.this, TUNINGS,
+						tuning);
 			}
 
 			public void undo() {
@@ -240,12 +246,27 @@ public class FluidsynthSound extends Sound {
 		});
 	}
 
-	public void removeTuning(Tuning tuning) {
+	public void removeTuning(final Tuning tuning) {
 		if (!tunings.contains(tuning)) {
 			throw new IllegalArgumentException("unkown tuning");
 		}
 
 		tunings.remove(tuning);
+
+		fireChange(new AbstractChange() {
+			public void notify(OrganListener listener) {
+				listener.indexedPropertyChanged(FluidsynthSound.this, TUNINGS,
+						tuning);
+			}
+
+			public void undo() {
+				addTuning(tuning);
+			}
+
+			public void redo() {
+				removeTuning(tuning);
+			}
+		});
 	}
 
 	static double limit(double value) {

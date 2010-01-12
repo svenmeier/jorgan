@@ -19,29 +19,21 @@
 package jorgan.disposition.event;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Message;
-import jorgan.disposition.Reference;
 
 /**
  * A listener to organ changes.
  */
 public interface OrganListener {
-	
-	public void elementAdded(Element element);
-	
-	public void elementRemoved(Element element);
-	
-	public void propertyChanged(Element element, String name);
-	
-	public void referenceAdded(Element element, Reference<?> reference);
-	
-	public void referenceRemoved(Element element, Reference<?> reference);
-	
-	public void referenceChanged(Element element, Reference<?> reference);
 
-	public void messageAdded(Element element, Message message);
-	
-	public void messageRemoved(Element element, Message message);
-	
-	public void messageChanged(Element element, Message message);
+	public void elementAdded(Element element);
+
+	public void elementRemoved(Element element);
+
+	public void propertyChanged(Element element, String name);
+
+	public void indexedPropertyAdded(Element element, String name, Object value);
+
+	public void indexedPropertyRemoved(Element element, String name, Object value);
+
+	public void indexedPropertyChanged(Element element, String name, Object value);
 }

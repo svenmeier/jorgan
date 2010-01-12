@@ -79,21 +79,28 @@ public abstract class Storage {
 			}
 
 			@Override
-			public void referenceAdded(Element element, Reference<?> reference) {
-				if (element instanceof Combination) {
-					if (memory != null && memory.references(element)) {
-						readReference((Combination) element, reference);
+			public void indexedPropertyAdded(Element element, String name, Object value) {
+				if (Element.REFERENCE.equals(name)) {
+					Reference<?> reference = (Reference<?>) value;
+					if (element instanceof Combination) {
+						if (memory != null && memory.references(element)) {
+							readReference((Combination) element, reference);
+						}
+					} else if (element == memory) {
+						read();
 					}
-				} else if (element == memory) {
-					read();
 				}
 			}
 
 			@Override
-			public void referenceChanged(Element element, Reference<?> reference) {
-				if (element instanceof Combination) {
-					if (memory != null && memory.references(element)) {
-						readReference((Combination) element, reference);
+			public void indexedPropertyChanged(Element element, String name,
+					Object value) {
+				if (Element.REFERENCE.equals(name)) {
+					Reference<?> reference = (Reference<?>) value;
+					if (element instanceof Combination) {
+						if (memory != null && memory.references(element)) {
+							readReference((Combination) element, reference);
+						}
 					}
 				}
 			}

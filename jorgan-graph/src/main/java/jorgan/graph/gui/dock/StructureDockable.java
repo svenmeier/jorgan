@@ -35,8 +35,8 @@ import jorgan.disposition.Captor;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
-import jorgan.disposition.Message;
 import jorgan.disposition.Reference;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.selection.ElementSelection;
@@ -330,7 +330,7 @@ public class StructureDockable extends OrganDockable {
 	/**
 	 * our listener for organ events
 	 */
-	private class ListenerImpl implements MouseListener, OrganListener,
+	private class ListenerImpl extends OrganAdapter implements MouseListener, 
 			SelectionListener, PlayListener {
 
 		public void selectionChanged() {
@@ -342,6 +342,7 @@ public class StructureDockable extends OrganDockable {
 			}
 		}
 
+		@Override
 		public void elementAdded(Element element) {
 			rebuild();
 		}
@@ -349,16 +350,7 @@ public class StructureDockable extends OrganDockable {
 		public void elementRemoved(Element element) {
 			rebuild();
 		}
-
-		public void messageAdded(Element element, Message message) {
-		}
-
-		public void messageChanged(Element element, Message message) {
-		}
-
-		public void messageRemoved(Element element, Message message) {
-		}
-
+		
 		public void propertyChanged(Element element, String name) {
 			// rebuild graph if name has changed (a change in order of vertices)
 			if ("name".equals(name)) {
@@ -366,15 +358,20 @@ public class StructureDockable extends OrganDockable {
 			}
 		}
 
-		public void referenceAdded(Element element, Reference<?> reference) {
-			rebuild();
+		@Override
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				rebuild();
+			}
 		}
 
-		public void referenceChanged(Element element, Reference<?> reference) {
-		}
-
-		public void referenceRemoved(Element element, Reference<?> reference) {
-			rebuild();
+		@Override
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				rebuild();
+			}
 		}
 
 		public void mouseClicked(MouseEvent e) {

@@ -69,14 +69,12 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	@Override
-	protected boolean validReference(
-			Reference<? extends Element> reference) {
+	protected boolean validReference(Reference<? extends Element> reference) {
 		return reference.getClass() == LocationReference.class;
 	}
 
 	@Override
-	protected Reference<? extends Element> createReference(
-			Element element) {
+	protected Reference<? extends Element> createReference(Element element) {
 		if (element instanceof Displayable) {
 			return new LocationReference((Displayable) element);
 		} else {
@@ -94,7 +92,7 @@ public class Console extends Displayable implements Input, Output {
 
 	public void setSkin(String skin) {
 		skin = cleanPath(skin);
-		
+
 		if (!Null.safeEquals(this.skin, skin)) {
 			String oldSkin = this.skin;
 
@@ -108,7 +106,7 @@ public class Console extends Displayable implements Input, Output {
 		if ("".equals(screen)) {
 			screen = null;
 		}
-		
+
 		if (!Null.safeEquals(this.screen, screen)) {
 			String oldScreen = this.screen;
 
@@ -121,7 +119,7 @@ public class Console extends Displayable implements Input, Output {
 	public boolean showFullScreen() {
 		return screen != null;
 	}
-	
+
 	public void setLocation(final Element element, final int x, final int y) {
 		final LocationReference reference = (LocationReference) getReference(element);
 
@@ -232,8 +230,8 @@ public class Console extends Displayable implements Input, Output {
 
 		private int newY;
 
-		public LocationChange(LocationReference reference, int oldX, int oldY, int x,
-				int y) {
+		public LocationChange(LocationReference reference, int oldX, int oldY,
+				int x, int y) {
 			this.reference = reference;
 
 			this.oldX = oldX;
@@ -244,7 +242,7 @@ public class Console extends Displayable implements Input, Output {
 		}
 
 		public void notify(OrganListener listener) {
-			listener.referenceChanged(Console.this, reference);
+			listener.indexedPropertyChanged(Console.this, REFERENCE, reference);
 		}
 
 		public void undo() {

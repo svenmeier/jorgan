@@ -36,15 +36,12 @@ public class SpinnerCellEditor extends AbstractCellEditor implements
 
 	private JSpinner spinner = new JSpinner();
 
-	/**
-	 * Constructor.
-	 * 
-	 * @param min	minimum value
-	 * @param max	maximum value
-	 * @param stepSize	step size
-	 */
 	public SpinnerCellEditor(int min, int max, int stepSize) {
-		spinner.setModel(new SpinnerNumberModel(0, min, max, stepSize));
+		spinner.setModel(new SpinnerNumberModel(min, min, max, stepSize));
+	}
+
+	public SpinnerCellEditor(double min, double max, double stepSize) {
+		spinner.setModel(new SpinnerNumberModel(min, min, max, stepSize));
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value,

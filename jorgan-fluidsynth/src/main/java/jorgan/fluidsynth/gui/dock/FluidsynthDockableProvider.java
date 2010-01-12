@@ -29,7 +29,8 @@ public class FluidsynthDockableProvider implements DockableProvider {
 	public List<OrganDockable> getDockables() {
 		ArrayList<OrganDockable> dockables = new ArrayList<OrganDockable>();
 
-		dockables.add(new FluidsynthDockable());
+		dockables.add(new EffectsDockable());
+		dockables.add(new TuningsDockable());
 
 		return dockables;
 	}
