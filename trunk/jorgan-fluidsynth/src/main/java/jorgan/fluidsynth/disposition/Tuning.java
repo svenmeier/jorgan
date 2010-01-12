@@ -18,8 +18,11 @@
  */
 package jorgan.fluidsynth.disposition;
 
+import java.util.Arrays;
 
 public class Tuning {
+
+	public static final int COUNT = 12;
 
 	private String name = "";
 
@@ -30,12 +33,12 @@ public class Tuning {
 	}
 
 	public double[] getDerivations() {
-		return derivations;
+		return Arrays.copyOf(derivations, COUNT);
 	}
 
 	public double getDerivation(int index) {
-		if (index < 0 || index > 11) {
-			throw new IllegalArgumentException("index must be from 0 to 11");
+		if (index < 0 || index >= COUNT) {
+			throw new IllegalArgumentException("invalid index " + index);
 		}
 
 		return this.derivations[index];
@@ -50,11 +53,23 @@ public class Tuning {
 		if (derivations == null) {
 			throw new IllegalArgumentException("must not be null");
 		}
-		if (derivations.length != 12) {
+		if (derivations.length != COUNT) {
 			throw new IllegalArgumentException("must have length 12");
 		}
 		this.derivations = derivations;
 
 		return this;
+	}
+
+	/**
+	 * Always cloneable.
+	 */
+	@Override
+	public Tuning clone() {
+		try {
+			return (Tuning) super.clone();
+		} catch (CloneNotSupportedException ex) {
+			throw new Error(ex);
+		}
 	}
 }

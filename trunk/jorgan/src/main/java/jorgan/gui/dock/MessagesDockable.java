@@ -50,7 +50,6 @@ import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
-import jorgan.disposition.Reference;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
@@ -391,8 +390,12 @@ public class MessagesDockable extends OrganDockable {
 			element.changeMessage(message, status, data1, data2);
 		}
 
-		public void messageAdded(Element element, Message message) {
-			if (element == MessagesDockable.this.element) {
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
+			if (Element.MESSAGE.equals(name)
+					&& element == MessagesDockable.this.element) {
+				Message message = (Message) value;
+
 				updateMessages();
 
 				int index = messages.indexOf(message);
@@ -400,14 +403,20 @@ public class MessagesDockable extends OrganDockable {
 			}
 		}
 
-		public void messageRemoved(Element element, Message message) {
-			if (element == MessagesDockable.this.element) {
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
+			if (Element.MESSAGE.equals(name)
+					&& element == MessagesDockable.this.element) {
 				updateMessages();
 			}
 		}
 
-		public void messageChanged(Element element, Message message) {
-			if (element == MessagesDockable.this.element) {
+		public void indexedPropertyChanged(Element element, String name,
+				Object value) {
+			if (Element.MESSAGE.equals(name)
+					&& element == MessagesDockable.this.element) {
+				Message message = (Message) value;
+
 				updateMessages();
 
 				int index = messages.indexOf(message);
@@ -422,15 +431,6 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void propertyChanged(Element element, String name) {
-		}
-
-		public void referenceAdded(Element element, Reference<?> reference) {
-		}
-
-		public void referenceChanged(Element element, Reference<?> reference) {
-		}
-
-		public void referenceRemoved(Element element, Reference<?> reference) {
 		}
 	}
 

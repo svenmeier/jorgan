@@ -38,8 +38,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Message;
-import jorgan.disposition.Reference;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
@@ -402,22 +400,13 @@ public class ElementsDockable extends OrganDockable {
 			fireIntervalRemoved(this, index, index);
 		}
 
-		public void messageAdded(Element element, Message reference) {
+		public void indexedPropertyAdded(Element element, String name, Object value) {
 		}
 
-		public void messageChanged(Element element, Message reference) {
+		public void indexedPropertyChanged(Element element, String name, Object value) {
 		}
 
-		public void messageRemoved(Element element, Message reference) {
-		}
-
-		public void referenceAdded(Element element, Reference<?> reference) {
-		}
-
-		public void referenceChanged(Element element, Reference<?> reference) {
-		}
-
-		public void referenceRemoved(Element element, Reference<?> reference) {
+		public void indexedPropertyRemoved(Element element, String name, Object value) {
 		}
 	}
 

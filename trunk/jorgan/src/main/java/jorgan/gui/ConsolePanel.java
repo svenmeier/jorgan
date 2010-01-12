@@ -686,8 +686,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
-		public void referenceChanged(Element element, Reference<?> reference) {
-			if (element == console) {
+		public void indexedPropertyChanged(Element element, String name, Object value) {
+			if (element == console && Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+
 				View<? extends Displayable> view = getView((Displayable) reference
 						.getElement());
 				if (view != null) {
@@ -699,8 +701,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
-		public void referenceAdded(Element element, Reference<?> reference) {
-			if (element == console) {
+		public void indexedPropertyAdded(Element element, String name, Object value) {
+			if (element == console && Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+
 				if (reference.getElement() instanceof Displayable) {
 					createView((Displayable) reference.getElement());
 				}
@@ -708,8 +712,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
-		public void referenceRemoved(Element element, Reference<?> reference) {
-			if (element == console) {
+		public void indexedPropertyRemoved(Element element, String name, Object value) {
+			if (element == console && Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+
 				if (reference.getElement() instanceof Displayable) {
 					dropView((Displayable) reference.getElement());
 				}

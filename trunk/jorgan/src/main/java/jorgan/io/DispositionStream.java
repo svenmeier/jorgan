@@ -43,6 +43,10 @@ import jorgan.io.disposition.FormatException;
 import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
+import jorgan.io.xstream.BooleanArrayConverter;
+import jorgan.io.xstream.DoubleArrayConverter;
+import jorgan.io.xstream.FloatArrayConverter;
+import jorgan.io.xstream.IntArrayConverter;
 import jorgan.util.IOUtils;
 import bias.Configuration;
 
@@ -94,6 +98,12 @@ public class DispositionStream {
 
 		// reference -> element relationship
 		xstream.registerConverter(new ReferenceConverter(xstream));
+
+		// primitives
+		xstream.registerConverter(new BooleanArrayConverter());
+		xstream.registerConverter(new IntArrayConverter());
+		xstream.registerConverter(new FloatArrayConverter());
+		xstream.registerConverter(new DoubleArrayConverter());
 
 		config.read(this);
 	}

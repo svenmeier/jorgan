@@ -142,6 +142,12 @@
         <width>0.5</width>
         <level>1.0</level>
       </reverb>
+      <tunings>
+        <fluidsynth.tuning>
+          <name>Test</name>
+          <derivations>0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0</derivations>
+        </fluidsynth.tuning>
+      </tunings>
     </fluidsynth.fluidsynthSound>
     <stop id="6">
       <name>Stop 1</name>

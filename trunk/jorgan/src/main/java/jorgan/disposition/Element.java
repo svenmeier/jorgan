@@ -34,13 +34,17 @@ import jorgan.util.Null;
  */
 public abstract class Element implements Cloneable {
 
+	public static final String REFERENCE = "reference";
+
+	public static final String MESSAGE = "message";
+
 	Long id;
-	
+
 	/**
 	 * The organ this element belongs to.
 	 */
 	Organ organ;
-	
+
 	/**
 	 * The name of this element.
 	 */
@@ -64,7 +68,7 @@ public abstract class Element implements Cloneable {
 	public Long getId() {
 		return id;
 	}
-	
+
 	/**
 	 * Test if this element can reference the given element. <br>
 	 * An element can be referenced if it is not identical to this, is currently
@@ -83,7 +87,7 @@ public abstract class Element implements Cloneable {
 		if (getReferenceCount() == getReferenceMax()) {
 			return false;
 		}
-		
+
 		if (!canReferenceDuplicates() && references(element)) {
 			return false;
 		}
@@ -94,7 +98,7 @@ public abstract class Element implements Cloneable {
 	protected int getReferenceMax() {
 		return Integer.MAX_VALUE;
 	}
-	
+
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return false;
 	}
@@ -169,7 +173,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.referenceAdded(Element.this, reference);
+				listener.indexedPropertyAdded(Element.this, REFERENCE, reference);
 			}
 
 			public void undo() {
@@ -282,7 +286,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.referenceRemoved(Element.this, reference);
+				listener.indexedPropertyRemoved(Element.this, REFERENCE, reference);
 			}
 
 			public void undo() {
@@ -355,8 +359,7 @@ public abstract class Element implements Cloneable {
 			}
 			this.description = description;
 
-			fireChange(new PropertyChange(oldDescription,
-					this.description));
+			fireChange(new PropertyChange(oldDescription, this.description));
 		}
 	}
 
@@ -434,7 +437,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.messageAdded(Element.this, message);
+				listener.indexedPropertyAdded(Element.this, MESSAGE, message);
 			}
 
 			public void undo() {
@@ -458,7 +461,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.messageRemoved(Element.this, message);
+				listener.indexedPropertyRemoved(Element.this, MESSAGE, message);
 			}
 
 			public void undo() {
@@ -514,7 +517,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.messageChanged(Element.this, message);
+				listener.indexedPropertyChanged(Element.this, MESSAGE, message);
 			}
 
 			public void undo() {
@@ -540,7 +543,7 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.referenceChanged(Element.this, reference);
+				listener.indexedPropertyChanged(Element.this, REFERENCE, reference);
 			}
 
 			public void undo() {
@@ -557,14 +560,14 @@ public abstract class Element implements Cloneable {
 		if (path == null || "".equals(path)) {
 			return null;
 		}
-		
+
 		return path.replace('\\', '/');
 	}
 
 	public class FastPropertyChange implements Change {
-		
+
 		private String name;
-		
+
 		private boolean derived;
 
 		public FastPropertyChange(String name, boolean derived) {
@@ -575,14 +578,13 @@ public abstract class Element implements Cloneable {
 		public boolean isDerived() {
 			return derived;
 		}
-		
+
 		public void notify(OrganListener listener) {
 			listener.propertyChanged(Element.this, name);
 		}
 	}
 
-	public class PropertyChange implements
-			UndoableChange {
+	public class PropertyChange implements UndoableChange {
 
 		private String methodName;
 
@@ -593,7 +595,7 @@ public abstract class Element implements Cloneable {
 		public PropertyChange(Object oldValue, Object newValue) {
 			this.oldValue = oldValue;
 			this.newValue = newValue;
-			
+
 			StackTraceElement[] stack = Thread.currentThread().getStackTrace();
 			for (StackTraceElement element : stack) {
 				if (element.getMethodName().startsWith("set")) {
@@ -669,7 +671,7 @@ public abstract class Element implements Cloneable {
 		}
 
 		public void notify(OrganListener listener) {
-			listener.referenceChanged(Element.this, reference);
+			listener.indexedPropertyChanged(Element.this, REFERENCE, reference);
 		}
 	}
 }

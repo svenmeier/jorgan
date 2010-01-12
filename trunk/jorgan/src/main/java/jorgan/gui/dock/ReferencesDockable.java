@@ -288,36 +288,47 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void referenceAdded(Element element, Reference<?> reference) {
-			if (ReferencesDockable.this.element != null
-					&& getReferencesModel().onReferenceChange(element,
-							reference)) {
-				updateReferences();
+		public void indexedPropertyAdded(Element element, String name, Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
 
-				for (int r = 0; r < references.size(); r++) {
-					ReferrerReference rr = references.get(r);
-					if (rr.getReference() == reference) {
-						list.setSelectedIndex(r);
+				if (ReferencesDockable.this.element != null
+						&& getReferencesModel().onReferenceChange(element,
+								reference)) {
+					updateReferences();
+
+					for (int r = 0; r < references.size(); r++) {
+						ReferrerReference rr = references.get(r);
+						if (rr.getReference() == reference) {
+							list.setSelectedIndex(r);
+						}
 					}
 				}
 			}
 		}
 
 		@Override
-		public void referenceRemoved(Element element, Reference<?> reference) {
-			if (ReferencesDockable.this.element != null
-					&& getReferencesModel().onReferenceChange(element,
-							reference)) {
-				updateReferences();
+		public void indexedPropertyRemoved(Element element, String name, Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+
+				if (ReferencesDockable.this.element != null
+						&& getReferencesModel().onReferenceChange(element,
+								reference)) {
+					updateReferences();
+				}
 			}
 		}
 
 		@Override
-		public void referenceChanged(Element element, Reference<?> reference) {
-			if (ReferencesDockable.this.element != null
-					&& getReferencesModel().onReferenceChange(element,
-							reference)) {
-				updateReferences();
+		public void indexedPropertyChanged(Element element, String name, Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+				if (ReferencesDockable.this.element != null
+						&& getReferencesModel().onReferenceChange(element,
+								reference)) {
+					updateReferences();
+				}
 			}
 		}
 	}

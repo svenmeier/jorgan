@@ -46,10 +46,10 @@ import jorgan.swing.layout.DefinitionBuilder.Column;
 import spin.Spin;
 import bias.Configuration;
 
-public class FluidsynthDockable extends OrganDockable {
+public class EffectsDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
-			FluidsynthDockable.class);
+			EffectsDockable.class);
 
 	private JPanel panel;
 
@@ -83,7 +83,7 @@ public class FluidsynthDockable extends OrganDockable {
 
 	private boolean readWrite = false;
 
-	public FluidsynthDockable() {
+	public EffectsDockable() {
 		config.read(this);
 
 		panel = new JPanel();

@@ -13,8 +13,10 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
-import jorgan.memory.io.xstream.BooleanArrayConverter;
-import jorgan.memory.io.xstream.FloatArrayConverter;
+import jorgan.io.xstream.BooleanArrayConverter;
+import jorgan.io.xstream.DoubleArrayConverter;
+import jorgan.io.xstream.FloatArrayConverter;
+import jorgan.io.xstream.IntArrayConverter;
 import jorgan.memory.state.CombinationState;
 import jorgan.memory.state.ContinuousReferenceState;
 import jorgan.memory.state.MemoryState;
@@ -43,8 +45,11 @@ public class MemoryStateStream {
 		xstream.useAttributeFor(CombinationState.class, "id");
 		xstream.useAttributeFor(ReferenceState.class, "id");
 
-		xstream.registerConverter(new FloatArrayConverter());
+		// primitives
 		xstream.registerConverter(new BooleanArrayConverter());
+		xstream.registerConverter(new IntArrayConverter());
+		xstream.registerConverter(new FloatArrayConverter());
+		xstream.registerConverter(new DoubleArrayConverter());
 	}
 
 	public MemoryState read(File file) throws IOException {
