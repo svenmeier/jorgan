@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="3.8.2">
   <elements>
     <rank id="1">
       <name>Rank 1</name>
@@ -135,8 +135,8 @@
       <channels>32</channels>
       <polyphony>256</polyphony>
       <sampleRate>44100</sampleRate>
-      <audioBuffers>16</audioBuffers>
-      <audioBufferSize>128</audioBufferSize>
+      <audioBuffers>8</audioBuffers>
+      <audioBufferSize>512</audioBufferSize>
       <gain>0.2</gain>
       <reverb>
         <room>0.2</room>
@@ -151,7 +151,7 @@
         </fluidsynth.tuning>
         <fluidsynth.tuning>
           <name>Queer</name>
-          <derivations>0.0,0.0,20.0,0.0,0.0,0.0,0.0,-20.0,0.0,0.0,0.0,0.0</derivations>
+          <derivations>0.0,0.0,40.0,0.0,0.0,0.0,0.0,-40.0,0.0,0.0,0.0,0.0</derivations>
         </fluidsynth.tuning>
       </tunings>
     </fluidsynth.fluidsynthSound>
@@ -204,46 +204,36 @@
       <description></description>
       <references/>
       <messages>
-        <switch-deactivated>
-          <status>176</status>
-          <data1>101</data1>
-          <data2>0</data2>
-        </switch-deactivated>
-        <switch-deactivated>
-          <status>176</status>
-          <data1>100</data1>
-          <data2>3</data2>
-        </switch-deactivated>
-        <switch-deactivated>
-          <status>176</status>
-          <data1>6</data1>
-          <data2>0</data2>
-        </switch-deactivated>
-        <switch-deactivated>
-          <status>176</status>
-          <data1>38</data1>
-          <data2>0</data2>
-        </switch-deactivated>
-        <switch-activated>
-          <status>176</status>
-          <data1>101</data1>
-          <data2>0</data2>
-        </switch-activated>
-        <switch-activated>
-          <status>176</status>
-          <data1>100</data1>
-          <data2>3</data2>
-        </switch-activated>
-        <switch-activated>
-          <status>176</status>
-          <data1>6</data1>
-          <data2>0</data2>
-        </switch-activated>
-        <switch-activated>
-          <status>176</status>
-          <data1>38</data1>
-          <data2>1</data2>
-        </switch-activated>
+        <switchFilter-disengaged>
+          <status>set 176</status>
+          <data1>set 101</data1>
+          <data2>set 0</data2>
+        </switchFilter-disengaged>
+        <switchFilter-disengaged>
+          <status>set 176</status>
+          <data1>set 100</data1>
+          <data2>set 3</data2>
+        </switchFilter-disengaged>
+        <switchFilter-disengaged>
+          <status>set 176</status>
+          <data1>set 6</data1>
+          <data2>set 0</data2>
+        </switchFilter-disengaged>
+        <switchFilter-engaged>
+          <status>set 176</status>
+          <data1>set 101</data1>
+          <data2>set 0</data2>
+        </switchFilter-engaged>
+        <switchFilter-engaged>
+          <status>set 176</status>
+          <data1>set 100</data1>
+          <data2>set 3</data2>
+        </switchFilter-engaged>
+        <switchFilter-engaged>
+          <status>set 176</status>
+          <data1>set 6</data1>
+          <data2>set 1</data2>
+        </switchFilter-engaged>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>

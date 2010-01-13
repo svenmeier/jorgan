@@ -193,6 +193,9 @@ public class FluidsynthSound extends Sound {
 	}
 
 	public List<Tuning> getTunings() {
+		if (tunings == null) {
+			tunings = new ArrayList<Tuning>();
+		}
 		return Collections.unmodifiableList(tunings);
 	}
 
