@@ -129,10 +129,10 @@ public class TuningsDockable extends OrganDockable {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		table.getColumnModel().getColumn(1).setCellEditor(
+		table.getColumnModel().getColumn(0).setCellEditor(
 				new StringCellEditor());
 		for (int p = 0; p < Tuning.COUNT; p++) {
-			table.getColumnModel().getColumn(p + 2).setCellEditor(
+			table.getColumnModel().getColumn(p + 1).setCellEditor(
 					new SpinnerCellEditor(-128.0d, 128.d, 1.0d));
 		}
 		TableUtils.pleasantLookAndFeel(table);
@@ -252,7 +252,7 @@ public class TuningsDockable extends OrganDockable {
 	public class TuningsModel extends AbstractTableModel implements
 			OrganListener {
 
-		private String[] columnNames = new String[14];
+		private String[] columnNames = new String[13];
 
 		private void update() {
 			fireTableDataChanged();
@@ -264,7 +264,7 @@ public class TuningsDockable extends OrganDockable {
 		}
 
 		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != 14) {
+			if (columnNames.length != 13) {
 				throw new IllegalArgumentException();
 			}
 
@@ -281,19 +281,16 @@ public class TuningsDockable extends OrganDockable {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex >= 1;
+			return true;
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Tuning tuning = tunings.get(rowIndex);
 
-			switch (columnIndex) {
-			case 0:
-				return rowIndex + 1;
-			case 1:
+			if (columnIndex == 0) {
 				return tuning.getName();
-			default:
-				return tuning.getDerivation(columnIndex - 2);
+			} else {
+				return tuning.getDerivation(columnIndex - 1);
 			}
 		}
 
@@ -303,10 +300,10 @@ public class TuningsDockable extends OrganDockable {
 
 			String name = tuning.getName();
 			double[] derivations = tuning.getDerivations();
-			if (columnIndex == 1) {
+			if (columnIndex == 0) {
 				name = (String) value;
 			} else {
-				derivations[columnIndex - 2] = (Double) value;
+				derivations[columnIndex - 1] = (Double) value;
 			}
 
 			sound.changeTuning(tuning, name, derivations);
@@ -365,6 +362,7 @@ public class TuningsDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			sound.addTuning(new Tuning());
 		}
 
 		public void update() {

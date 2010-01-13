@@ -6,6 +6,7 @@
       <description></description>
       <references>
         <reference id="2"/>
+        <reference id="9"/>
       </references>
       <messages>
         <rank-engaged>
@@ -48,6 +49,7 @@
       <description></description>
       <references>
         <reference id="2"/>
+        <reference id="9"/>
       </references>
       <messages>
         <rank-engaged>
@@ -144,8 +146,12 @@
       </reverb>
       <tunings>
         <fluidsynth.tuning>
-          <name>Test</name>
+          <name>Equal</name>
           <derivations>0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0</derivations>
+        </fluidsynth.tuning>
+        <fluidsynth.tuning>
+          <name>Queer</name>
+          <derivations>0.0,0.0,20.0,0.0,0.0,0.0,0.0,-20.0,0.0,0.0,0.0,0.0</derivations>
         </fluidsynth.tuning>
       </tunings>
     </fluidsynth.fluidsynthSound>
@@ -185,9 +191,63 @@
           <x>120</x>
           <y>40</y>
         </console-locationReference>
+        <console-locationReference id="9">
+          <x>370</x>
+          <y>90</y>
+        </console-locationReference>
       </references>
       <messages/>
       <zoom>1.0</zoom>
     </console>
+    <switchFilter id="9">
+      <name>Tuning</name>
+      <description></description>
+      <references/>
+      <messages>
+        <switch-deactivated>
+          <status>176</status>
+          <data1>101</data1>
+          <data2>0</data2>
+        </switch-deactivated>
+        <switch-deactivated>
+          <status>176</status>
+          <data1>100</data1>
+          <data2>3</data2>
+        </switch-deactivated>
+        <switch-deactivated>
+          <status>176</status>
+          <data1>6</data1>
+          <data2>0</data2>
+        </switch-deactivated>
+        <switch-deactivated>
+          <status>176</status>
+          <data1>38</data1>
+          <data2>0</data2>
+        </switch-deactivated>
+        <switch-activated>
+          <status>176</status>
+          <data1>101</data1>
+          <data2>0</data2>
+        </switch-activated>
+        <switch-activated>
+          <status>176</status>
+          <data1>100</data1>
+          <data2>3</data2>
+        </switch-activated>
+        <switch-activated>
+          <status>176</status>
+          <data1>6</data1>
+          <data2>0</data2>
+        </switch-activated>
+        <switch-activated>
+          <status>176</status>
+          <data1>38</data1>
+          <data2>1</data2>
+        </switch-activated>
+      </messages>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+    </switchFilter>
   </elements>
 </organ>
