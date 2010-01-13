@@ -26,7 +26,7 @@ public class Tuning {
 
 	private String name = "";
 
-	private double[] derivations;
+	private double[] derivations = new double[COUNT];
 
 	public String getName() {
 		return name;
