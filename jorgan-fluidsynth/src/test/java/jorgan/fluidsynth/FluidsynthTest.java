@@ -56,16 +56,15 @@ public class FluidsynthTest extends TestCase {
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
 
-		synth.setTuning(0, 0, "Pietro Aaron", new double[] { 0.0d, -48.0d,
-				-14.0d, +20.0d, -28.0d, +6.0d, -42.0d, -8.0d, -56.0d, -22.0d,
-				+12.0d, -36.0d });
+		synth.setTuning(0, 1, "Test", new double[] { 0.0d, 0.0d, -40.0d, 0.0d,
+				0.0d, 0.0d, 0.0d, +40.0d, 0.0d, 0.0d, 0.0d, 0.0d });
 
-		// select tuningBank
-		rpn(synth, 0, 4, 0, 0);
-		// select tuningProgram
-		rpn(synth, 0, 3, 0, 0);
-
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 121, 0);
+		synth.send(0, ShortMessage.CONTROL_CHANGE, 0, 0);
 		synth.send(0, ShortMessage.PROGRAM_CHANGE, 0, 0);
+
+		// select tuningProgram
+		rpn(synth, 0, 3, 1);
 
 		play(synth, 60);
 		play(synth, 62);
@@ -83,12 +82,10 @@ public class FluidsynthTest extends TestCase {
 		synth.destroy();
 	}
 
-	private void rpn(Fluidsynth synth, int msb, int lsb, int msbValue,
-			int lsbValue) {
+	private void rpn(Fluidsynth synth, int msb, int lsb, int msbValue) {
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 101, msb);
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 100, lsb);
 		synth.send(0, ShortMessage.CONTROL_CHANGE, 6, msbValue);
-		synth.send(0, ShortMessage.CONTROL_CHANGE, 38, lsbValue);
 	}
 
 	private void play(Fluidsynth synth, int pitch) throws Exception {
