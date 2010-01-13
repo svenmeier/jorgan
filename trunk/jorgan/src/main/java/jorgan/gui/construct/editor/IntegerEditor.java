@@ -25,6 +25,7 @@ import java.text.ParseException;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 
 /**
  * PropertyEditor for an integer property.
@@ -42,16 +43,18 @@ public class IntegerEditor extends CustomEditor {
 	public IntegerEditor(int min, int delta, int max) {
 		this(min, min, delta, max);
 	}
-	
+
 	public IntegerEditor(int value, int min, int delta, int max) {
 		spinner = new JSpinner(new SpinnerNumberModel(value, min, max, delta));
-		spinner.setBorder(null);
 
-		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-				.getEditor();
-		editor.getTextField().setBorder(null);
+		try {
+			spinner.setBorder(new EmptyBorder(0, 0, 0, 0));
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
+		} catch (Exception keepBorders) {
+		}
 	}
-
 
 	@Override
 	public String format(Object value) {
@@ -79,8 +82,7 @@ public class IntegerEditor extends CustomEditor {
 			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
 					.getEditor();
 			editor.commitEdit();
-		} catch (ParseException ex) {
-			// invalid value so keep previous value
+		} catch (ParseException invalidValueKeepPrevious) {
 		}
 
 		return spinner.getValue();

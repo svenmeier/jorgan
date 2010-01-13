@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -40,7 +41,7 @@ public class StringCellEditor extends AbstractCellEditor implements
 	 */
 	public StringCellEditor() {
 		textField = new JTextField();
-		textField.setBorder(null);
+		textField.setBorder(new EmptyBorder(0, 0, 0, 0));
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				stopCellEditing();
@@ -51,7 +52,7 @@ public class StringCellEditor extends AbstractCellEditor implements
 	protected JTextField getTextField() {
 		return textField;
 	}
-	
+
 	public Component getTableCellEditorComponent(JTable table, Object value,
 			boolean isSelected, int row, int column) {
 		textField.setText((String) value);

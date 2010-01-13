@@ -19,11 +19,13 @@
 package jorgan.swing.table;
 
 import java.awt.Component;
+import java.text.ParseException;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
 
 /**
@@ -38,10 +40,27 @@ public class SpinnerCellEditor extends AbstractCellEditor implements
 
 	public SpinnerCellEditor(int min, int max, int stepSize) {
 		spinner.setModel(new SpinnerNumberModel(min, min, max, stepSize));
+
+		initSpinner();
 	}
 
 	public SpinnerCellEditor(double min, double max, double stepSize) {
 		spinner.setModel(new SpinnerNumberModel(min, min, max, stepSize));
+
+		initSpinner();
+	}
+
+	/**
+	 * Must be called after setting the model.
+	 */
+	private void initSpinner() {
+		try {
+			spinner.setBorder(new EmptyBorder(0, 0, 0, 0));
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
+		} catch (Exception keepBorders) {
+		}
 	}
 
 	public Component getTableCellEditorComponent(JTable table, Object value,
@@ -53,6 +72,13 @@ public class SpinnerCellEditor extends AbstractCellEditor implements
 	}
 
 	public Object getCellEditorValue() {
+		try {
+			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
+					.getEditor();
+			editor.commitEdit();
+		} catch (ParseException invalidValueKeepPrevious) {
+		}
+
 		return spinner.getValue();
 	}
 
