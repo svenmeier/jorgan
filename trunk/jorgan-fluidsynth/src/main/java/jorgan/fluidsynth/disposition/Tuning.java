@@ -20,7 +20,7 @@ package jorgan.fluidsynth.disposition;
 
 import java.util.Arrays;
 
-public class Tuning {
+public class Tuning implements Cloneable {
 
 	public static final int COUNT = 12;
 

@@ -192,10 +192,11 @@ public class FluidsynthSound extends Sound {
 		fireChange(new FastPropertyChange("reverb", false));
 	}
 
+	public int getTuningCount() {
+		return tunings.size();
+	}
+
 	public List<Tuning> getTunings() {
-		if (tunings == null) {
-			tunings = new ArrayList<Tuning>();
-		}
 		return Collections.unmodifiableList(tunings);
 	}
 
@@ -227,15 +228,19 @@ public class FluidsynthSound extends Sound {
 	}
 
 	public void addTuning(final Tuning tuning) {
-		if (tunings == null) {
-			tunings = new ArrayList<Tuning>();
+		addTuning(tuning, tunings.size());
+	}
+
+	public void addTuning(final Tuning tuning, final int index) {
+		if (this.tunings.size() < index) {
+			throw new IllegalArgumentException("index '" + index + "'");
 		}
 
-		tunings.add(tuning);
+		tunings.add(index, tuning);
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.indexedPropertyChanged(FluidsynthSound.this, TUNINGS,
+				listener.indexedPropertyAdded(FluidsynthSound.this, TUNINGS,
 						tuning);
 			}
 
@@ -244,7 +249,7 @@ public class FluidsynthSound extends Sound {
 			}
 
 			public void redo() {
-				addTuning(tuning);
+				addTuning(tuning, index);
 			}
 		});
 	}
@@ -258,7 +263,7 @@ public class FluidsynthSound extends Sound {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.indexedPropertyChanged(FluidsynthSound.this, TUNINGS,
+				listener.indexedPropertyRemoved(FluidsynthSound.this, TUNINGS,
 						tuning);
 			}
 
