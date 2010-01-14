@@ -32,6 +32,7 @@ import java.util.List;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.CellEditor;
+import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
@@ -134,7 +135,45 @@ public class MessagesDockable extends OrganDockable {
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
+		table.setDragEnabled(true);
+		table.setDropMode(DropMode.INSERT_ROWS);
 		table.setTransferHandler(new TransferHandler() {
+			@Override
+			public int getSourceActions(JComponent c) {
+				return COPY | MOVE;
+			}
+
+			@Override
+			public boolean canImport(TransferSupport support) {
+				return true;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c) {
+				int[] rows = table.getSelectedRows();
+
+				Message[] subMessages = new Message[rows.length];
+				for (int t = 0; t < subMessages.length; t++) {
+					subMessages[t] = messages.get(rows[t]);
+				}
+
+				return new ObjectTransferable(subMessages);
+			}
+
+			@Override
+			protected void exportDone(JComponent source, Transferable t,
+					int action) {
+				try {
+					if (action == MOVE) {
+						Message[] subMessages = (Message[]) ObjectTransferable
+								.getObject(t);
+						for (Message message : subMessages) {
+							element.removeMessage(message);
+						}
+					}
+				} catch (Exception noExport) {
+				}
+			}
 
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
@@ -159,12 +198,20 @@ public class MessagesDockable extends OrganDockable {
 			}
 
 			@Override
-			public boolean importData(JComponent comp, Transferable t) {
+			public boolean importData(TransferSupport support) {
 				try {
+					int index = element.getMessageCount();
+					if (support.isDrop()) {
+						JTable.DropLocation location = (JTable.DropLocation) support
+								.getDropLocation();
+						index = location.getRow();
+					}
+
 					Message[] subMessages = (Message[]) ObjectTransferable
-							.getObject(t);
+							.getObject(support.getTransferable());
 					for (Message message : subMessages) {
-						element.addMessage(message.clone());
+						element.addMessage(message.clone(), index);
+						index++;
 					}
 
 					return true;
@@ -310,6 +357,15 @@ public class MessagesDockable extends OrganDockable {
 
 		public void selectionChanged() {
 			updateMessages();
+
+			Object location = session.lookup(ElementSelection.class)
+					.getLocation();
+			if (location instanceof Message) {
+				int row = messages.indexOf(location);
+				if (row != -1) {
+					table.getSelectionModel().setSelectionInterval(row, row);
+				}
+			}
 		}
 	}
 

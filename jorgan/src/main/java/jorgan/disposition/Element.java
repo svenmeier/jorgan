@@ -173,7 +173,8 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.indexedPropertyAdded(Element.this, REFERENCE, reference);
+				listener.indexedPropertyAdded(Element.this, REFERENCE,
+						reference);
 			}
 
 			public void undo() {
@@ -286,7 +287,8 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.indexedPropertyRemoved(Element.this, REFERENCE, reference);
+				listener.indexedPropertyRemoved(Element.this, REFERENCE,
+						reference);
 			}
 
 			public void undo() {
@@ -409,6 +411,10 @@ public abstract class Element implements Cloneable {
 
 	public List<Class<? extends Message>> getMessageClasses() {
 		return new ArrayList<Class<? extends Message>>();
+	}
+
+	public int getMessageCount() {
+		return messages.size();
 	}
 
 	public List<Message> getMessages() {
@@ -543,7 +549,8 @@ public abstract class Element implements Cloneable {
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
-				listener.indexedPropertyChanged(Element.this, REFERENCE, reference);
+				listener.indexedPropertyChanged(Element.this, REFERENCE,
+						reference);
 			}
 
 			public void undo() {

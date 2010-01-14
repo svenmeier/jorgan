@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.CellEditor;
+import javax.swing.DropMode;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -46,6 +47,7 @@ import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
@@ -89,7 +91,45 @@ public class TuningsDockable extends OrganDockable {
 		config.get("table").read(tableModel);
 		table.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		table.setModel(tableModel);
+		table.setDragEnabled(true);
+		table.setDropMode(DropMode.INSERT_ROWS);
 		table.setTransferHandler(new TransferHandler() {
+			@Override
+			public int getSourceActions(JComponent c) {
+				return COPY | MOVE;
+			}
+
+			@Override
+			public boolean canImport(TransferSupport support) {
+				return true;
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c) {
+				int[] rows = table.getSelectedRows();
+
+				Tuning[] subTunings = new Tuning[rows.length];
+				for (int t = 0; t < subTunings.length; t++) {
+					subTunings[t] = tunings.get(rows[t]);
+				}
+
+				return new ObjectTransferable(subTunings);
+			}
+
+			@Override
+			protected void exportDone(JComponent source, Transferable t,
+					int action) {
+				try {
+					if (action == MOVE) {
+						Tuning[] subTunings = (Tuning[]) ObjectTransferable
+								.getObject(t);
+						for (Tuning tuning : subTunings) {
+							sound.removeTuning(tuning);
+						}
+					}
+				} catch (Exception noExport) {
+				}
+			}
 
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
@@ -114,12 +154,19 @@ public class TuningsDockable extends OrganDockable {
 			}
 
 			@Override
-			public boolean importData(JComponent comp, Transferable t) {
+			public boolean importData(TransferSupport support) {
 				try {
+					int index = sound.getTuningCount();
+					if (support.isDrop()) {
+						JTable.DropLocation location = (JTable.DropLocation) support
+								.getDropLocation();
+						index = location.getRow();
+					}
 					Tuning[] subTunings = (Tuning[]) ObjectTransferable
-							.getObject(t);
+							.getObject(support.getTransferable());
 					for (Tuning tuning : subTunings) {
-						sound.addTuning(tuning.clone());
+						sound.addTuning(tuning.clone(), index);
+						index++;
 					}
 
 					return true;
@@ -129,10 +176,11 @@ public class TuningsDockable extends OrganDockable {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		table.getColumnModel().getColumn(0).setCellEditor(
+		new IconTableCellRenderer(getIcon()).configureTableColumn(table, 0);
+		table.getColumnModel().getColumn(1).setCellEditor(
 				new StringCellEditor());
 		for (int p = 0; p < Tuning.COUNT; p++) {
-			table.getColumnModel().getColumn(p + 1).setCellEditor(
+			table.getColumnModel().getColumn(p + 2).setCellEditor(
 					new SpinnerCellEditor(-128.0d, 128.d, 1.0d));
 		}
 		TableUtils.pleasantLookAndFeel(table);
@@ -252,7 +300,7 @@ public class TuningsDockable extends OrganDockable {
 	public class TuningsModel extends AbstractTableModel implements
 			OrganListener {
 
-		private String[] columnNames = new String[13];
+		private String[] columnNames = new String[14];
 
 		private void update() {
 			fireTableDataChanged();
@@ -264,7 +312,7 @@ public class TuningsDockable extends OrganDockable {
 		}
 
 		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != 13) {
+			if (columnNames.length != this.columnNames.length) {
 				throw new IllegalArgumentException();
 			}
 
@@ -281,16 +329,18 @@ public class TuningsDockable extends OrganDockable {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return true;
+			return columnIndex > 0;
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Tuning tuning = tunings.get(rowIndex);
 
 			if (columnIndex == 0) {
+				return null;
+			} else if (columnIndex == 1) {
 				return tuning.getName();
 			} else {
-				return tuning.getDerivation(columnIndex - 1);
+				return tuning.getDerivation(columnIndex - 2);
 			}
 		}
 
@@ -300,10 +350,10 @@ public class TuningsDockable extends OrganDockable {
 
 			String name = tuning.getName();
 			double[] derivations = tuning.getDerivations();
-			if (columnIndex == 0) {
+			if (columnIndex == 1) {
 				name = (String) value;
 			} else {
-				derivations[columnIndex - 1] = (Double) value;
+				derivations[columnIndex - 2] = (Double) value;
 			}
 
 			sound.changeTuning(tuning, name, derivations);

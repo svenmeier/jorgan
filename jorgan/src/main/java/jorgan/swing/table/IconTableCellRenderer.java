@@ -28,6 +28,15 @@ import javax.swing.table.TableColumn;
  */
 public class IconTableCellRenderer extends DefaultTableCellRenderer {
 
+	private Icon icon;
+
+	public IconTableCellRenderer() {
+	}
+
+	public IconTableCellRenderer(Icon icon) {
+		this.icon = icon;
+	}
+
 	/**
 	 * Overriden for icon specific behaviour.
 	 */
@@ -53,7 +62,11 @@ public class IconTableCellRenderer extends DefaultTableCellRenderer {
 	 * @return icon
 	 */
 	protected Icon getIcon(Object value) {
-		return (Icon) value;
+		if (value instanceof Icon) {
+			return (Icon) value;
+		} else {
+			return icon;
+		}
 	}
 
 	/**
