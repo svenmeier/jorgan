@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.8.2">
+<organ version="@jorgan.version@">
   <elements>
     <rank id="1">
       <name>Rank 1</name>
@@ -169,8 +169,8 @@
       <transpose>-12</transpose>
     </stop>
     <label id="7">
-      <name>Instructions</name>
-      <description>name=Activate the stops to hear them sound:</description>
+      <name></name>
+      <description>name=Stop 0 and Stop 1 control Rank 0 and Rank 1 respectively, each utilizing the same Fluidsynth Sound.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
@@ -180,20 +180,28 @@
       <description></description>
       <references>
         <console-locationReference id="4">
-          <x>200</x>
-          <y>70</y>
+          <x>220</x>
+          <y>80</y>
         </console-locationReference>
         <console-locationReference id="6">
-          <x>200</x>
-          <y>100</y>
+          <x>350</x>
+          <y>80</y>
         </console-locationReference>
         <console-locationReference id="7">
-          <x>120</x>
+          <x>40</x>
           <y>40</y>
         </console-locationReference>
         <console-locationReference id="9">
-          <x>370</x>
-          <y>90</y>
+          <x>280</x>
+          <y>170</y>
+        </console-locationReference>
+        <console-locationReference id="10">
+          <x>70</x>
+          <y>130</y>
+        </console-locationReference>
+        <console-locationReference id="11">
+          <x>68</x>
+          <y>210</y>
         </console-locationReference>
       </references>
       <messages/>
@@ -239,5 +247,19 @@
       <active>false</active>
       <locking>true</locking>
     </switchFilter>
+    <label id="10">
+      <name></name>
+      <description>name=This Switch Filter sends RPN 0,3 Midi messages to switch between two different tunings.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <label id="11">
+      <name></name>
+      <description>name=Open the Tunings View and select the Fluidsynth Sound to inspect the configured tunings.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
   </elements>
 </organ>

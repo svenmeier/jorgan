@@ -117,6 +117,7 @@ public abstract class OrganPlay {
 		for (Player<? extends Element> player : players.values()) {
 			player.setOrganPlay(null);
 		}
+		players.clear();
 	}
 
 	public Organ getOrgan() {
@@ -125,18 +126,18 @@ public abstract class OrganPlay {
 
 	public void closed(Closed closed) {
 		boolean wasOpen = isOpen();
-		
+
 		if (wasOpen) {
 			close();
 		}
-		
+
 		closed.run();
-		
+
 		if (wasOpen) {
 			open();
 		}
-	}	
-	
+	}
+
 	public void addPlayerListener(PlayListener listener) {
 		playListeners.add(listener);
 	}
@@ -161,7 +162,7 @@ public abstract class OrganPlay {
 			}
 		}
 	}
-	
+
 	protected void fireKeyReleased(Keyboard keyboard, int pitch) {
 		if (keyListeners != null) {
 			for (int l = 0; l < keyListeners.size(); l++) {
@@ -170,7 +171,7 @@ public abstract class OrganPlay {
 			}
 		}
 	}
-	
+
 	protected void fireReceived(Element element, InputMessage message,
 			int channel, int command, int data1, int data2) {
 		if (playListeners != null) {
@@ -251,11 +252,11 @@ public abstract class OrganPlay {
 	}
 
 	public void pressKey(Keyboard keyboard, int pitch, int velocity) {
-		KeyboardPlayer player = (KeyboardPlayer)getPlayer(keyboard);
+		KeyboardPlayer player = (KeyboardPlayer) getPlayer(keyboard);
 		if (player == null) {
 			throw new IllegalArgumentException("unkown keyboard");
 		}
-		
+
 		synchronized (RECEIVER_LOCK) {
 			if (open) {
 				synchronized (CHANGE_LOCK) {
@@ -266,11 +267,11 @@ public abstract class OrganPlay {
 	}
 
 	public void releaseKey(Keyboard keyboard, int pitch) {
-		KeyboardPlayer player = (KeyboardPlayer)getPlayer(keyboard);
+		KeyboardPlayer player = (KeyboardPlayer) getPlayer(keyboard);
 		if (player == null) {
 			throw new IllegalArgumentException("unkown keyboard");
 		}
-		
+
 		synchronized (RECEIVER_LOCK) {
 			if (open) {
 				synchronized (CHANGE_LOCK) {
@@ -281,8 +282,7 @@ public abstract class OrganPlay {
 	}
 
 	protected void createPlayer(Element element) {
-		Player<? extends Element> player = PlayerRegistry
-				.createPlayer(element);
+		Player<? extends Element> player = PlayerRegistry.createPlayer(element);
 
 		if (player != null) {
 			player.setOrganPlay(this);
@@ -352,8 +352,9 @@ public abstract class OrganPlay {
 	 * Create a transmitter for the device with the given name. The returned
 	 * transmitter will automatically close the device when
 	 * {@link Transmitter#close()} is called on it.<br>
-	 * Note: The receiver set on the created transmitter ({@link Transmitter#setReceiver(Receiver)})
-	 * will be synchronized, see {@link #RECEIVER_LOCK} and {@link #CHANGE_LOCK}.
+	 * Note: The receiver set on the created transmitter (
+	 * {@link Transmitter#setReceiver(Receiver)}) will be synchronized, see
+	 * {@link #RECEIVER_LOCK} and {@link #CHANGE_LOCK}.
 	 * 
 	 * @param deviceName
 	 *            the name of the device

@@ -246,6 +246,8 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			table.removeEditor();
+
 			if (confirm()) {
 				int[] rows = table.getSelectedRows();
 				for (int r = 0; r < rows.length; r++) {
