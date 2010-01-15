@@ -55,7 +55,8 @@ public class Conversion {
 			new Conversion("3\\.5-beta.*", "convert3.5-betaTo3.5.xsl"),
 			new Conversion("3\\.5", "convert3.5To3.5.1.xsl"),
 			new Conversion("3\\.[5|6].*", "convert3.6To3.7.xsl"),
-			new Conversion("3\\.7", "convert3.7To3.8.xsl") };
+			new Conversion("3\\.7", "convert3.7To3.8.xsl"),
+			new Conversion("3\\.8", "convert3.8To3.9.xsl") };
 
 	private Pattern pattern;
 
@@ -69,7 +70,7 @@ public class Conversion {
 	public String getPattern() {
 		return this.pattern.toString();
 	}
-	
+
 	public boolean isApplicable(String header) {
 		return pattern.matcher(header).matches();
 	}
@@ -103,7 +104,7 @@ public class Conversion {
 			throw ex;
 		}
 	}
-	
+
 	public static String getVersion(InputStream in) throws IOException {
 
 		// make sure the parse doesn't step over the mark limit
