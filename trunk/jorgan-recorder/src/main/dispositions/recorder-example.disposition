@@ -15,24 +15,32 @@
       <description></description>
       <references>
         <console-locationReference id="3">
-          <x>200</x>
+          <x>211</x>
           <y>60</y>
         </console-locationReference>
         <console-locationReference id="1">
-          <x>210</x>
+          <x>217</x>
           <y>30</y>
         </console-locationReference>
         <console-locationReference id="6">
-          <x>210</x>
-          <y>130</y>
+          <x>223</x>
+          <y>150</y>
         </console-locationReference>
         <console-locationReference id="7">
           <x>150</x>
-          <y>130</y>
+          <y>150</y>
         </console-locationReference>
         <console-locationReference id="2">
-          <x>270</x>
-          <y>130</y>
+          <x>290</x>
+          <y>150</y>
+        </console-locationReference>
+        <console-locationReference id="9">
+          <x>104</x>
+          <y>110</y>
+        </console-locationReference>
+        <console-locationReference id="10">
+          <x>110</x>
+          <y>190</y>
         </console-locationReference>
       </references>
       <messages/>
@@ -61,6 +69,7 @@
       <description></description>
       <references/>
       <messages/>
+      <zoom>0.0</zoom>
       <performance>recorder-example.mid</performance>
     </recorder.recorder>
     <switch id="1">
@@ -105,5 +114,19 @@
       <threshold>0.0</threshold>
       <value>0.2857143</value>
     </continuous>
+    <label id="9">
+      <name></name>
+      <description>name=Use the following Switches to control the Recorder.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <label id="10">
+      <name></name>
+      <description>name=Open the Recorder View to inspect the recording.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
   </elements>
 </organ>

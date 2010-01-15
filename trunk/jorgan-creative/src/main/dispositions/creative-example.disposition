@@ -6,15 +6,15 @@
       <description></description>
       <references>
         <console-locationReference id="3">
-          <x>200</x>
-          <y>70</y>
+          <x>140</x>
+          <y>90</y>
         </console-locationReference>
         <console-locationReference id="6">
-          <x>200</x>
-          <y>100</y>
+          <x>280</x>
+          <y>90</y>
         </console-locationReference>
         <console-locationReference id="7">
-          <x>120</x>
+          <x>50</x>
           <y>40</y>
         </console-locationReference>
       </references>
@@ -143,7 +143,7 @@
     </rank>
     <label id="7">
       <name>Instructions</name>
-      <description>name=Use the Customizer to adjust the output of the CreativeSound element.  Then activate the stops to hear them sound:</description>
+      <description>name=Use the Customizer to adjust the output of the Creative Sound element.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
