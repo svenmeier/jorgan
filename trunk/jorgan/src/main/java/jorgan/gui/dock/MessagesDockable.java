@@ -331,6 +331,16 @@ public class MessagesDockable extends OrganDockable {
 
 				tableModel.update();
 				table.setVisible(true);
+
+				Object location = session.lookup(ElementSelection.class)
+						.getLocation();
+				if (location instanceof Message) {
+					int row = messages.indexOf(location);
+					if (row != -1) {
+						table.getSelectionModel()
+								.setSelectionInterval(row, row);
+					}
+				}
 			}
 
 			addAction.update();
@@ -357,15 +367,6 @@ public class MessagesDockable extends OrganDockable {
 
 		public void selectionChanged() {
 			updateMessages();
-
-			Object location = session.lookup(ElementSelection.class)
-					.getLocation();
-			if (location instanceof Message) {
-				int row = messages.indexOf(location);
-				if (row != -1) {
-					table.getSelectionModel().setSelectionInterval(row, row);
-				}
-			}
 		}
 	}
 
@@ -450,12 +451,7 @@ public class MessagesDockable extends OrganDockable {
 				Object value) {
 			if (Element.MESSAGE.equals(name)
 					&& element == MessagesDockable.this.element) {
-				Message message = (Message) value;
-
 				updateMessages();
-
-				int index = messages.indexOf(message);
-				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 
@@ -471,12 +467,7 @@ public class MessagesDockable extends OrganDockable {
 				Object value) {
 			if (Element.MESSAGE.equals(name)
 					&& element == MessagesDockable.this.element) {
-				Message message = (Message) value;
-
 				updateMessages();
-
-				int index = messages.indexOf(message);
-				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 
@@ -517,6 +508,8 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			table.removeEditor();
+
 			session.lookup(UndoManager.class).compound(this);
 		}
 

@@ -269,6 +269,16 @@ public class TuningsDockable extends OrganDockable {
 					tableModel.update();
 					table.setVisible(true);
 				}
+
+				Object location = session.lookup(ElementSelection.class)
+						.getLocation();
+				if (location instanceof Tuning) {
+					int row = tunings.indexOf(location);
+					if (row != -1) {
+						table.getSelectionModel()
+								.setSelectionInterval(row, row);
+					}
+				}
 			}
 
 			addAction.update();
@@ -363,12 +373,7 @@ public class TuningsDockable extends OrganDockable {
 				Object value) {
 			if (FluidsynthSound.TUNINGS.equals(name)
 					&& element == TuningsDockable.this.sound) {
-				Tuning tuning = (Tuning) value;
-
 				updateTunings();
-
-				int index = tunings.indexOf(tuning);
-				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 
@@ -384,12 +389,7 @@ public class TuningsDockable extends OrganDockable {
 				Object value) {
 			if (FluidsynthSound.TUNINGS.equals(name)
 					&& element == TuningsDockable.this.sound) {
-				Tuning tuning = (Tuning) value;
-
 				updateTunings();
-
-				int index = tunings.indexOf(tuning);
-				table.getSelectionModel().setSelectionInterval(index, index);
 			}
 		}
 
@@ -428,12 +428,14 @@ public class TuningsDockable extends OrganDockable {
 			setEnabled(false);
 		}
 
-		public void actionPerformed(ActionEvent ev) {
-			session.lookup(UndoManager.class).compound(this);
-		}
-
 		public void update() {
 			setEnabled(table.getSelectedRow() != -1);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			table.removeEditor();
+
+			session.lookup(UndoManager.class).compound(this);
 		}
 
 		public void run() {

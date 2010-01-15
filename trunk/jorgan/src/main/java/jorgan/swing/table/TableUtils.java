@@ -24,7 +24,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.lang.reflect.Method;
 
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
@@ -74,21 +73,10 @@ public class TableUtils {
 
 		table.setGridColor(new JLabel().getBackground());
 		table.setSurrendersFocusOnKeystroke(true);
-		table.putClientProperty("JTable.autoStartsEdit", Boolean.TRUE);
+		table.setFillsViewportHeight(true);
+		// table.putClientProperty("JTable.autoStartsEdit", Boolean.TRUE);
 		table.putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
-
-		try {
-			if (setFillsViewportHeight == null) {
-				setFillsViewportHeight = table.getClass().getMethod(
-						"setFillsViewportHeight", new Class[] { Boolean.TYPE });
-			}
-			setFillsViewportHeight.invoke(table, new Object[] { Boolean.TRUE });
-		} catch (Exception notJava6) {
-			// unsupported before Java 6
-		}
 	}
-
-	private static Method setFillsViewportHeight;
 
 	/**
 	 * Hide the header of the given table.

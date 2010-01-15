@@ -50,6 +50,8 @@ import jorgan.gui.construct.ElementNameComparator;
 import jorgan.gui.construct.ElementTypeComparator;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
@@ -266,6 +268,19 @@ public class ReferencesDockable extends OrganDockable {
 				list.setModel(referencedFromModel);
 			}
 			list.setVisible(true);
+
+			Object location = session.lookup(ElementSelection.class)
+					.getLocation();
+			if (location instanceof Reference<?>) {
+				Reference<?> reference = (Reference<?>) location;
+
+				for (int r = 0; r < references.size(); r++) {
+					ReferrerReference rr = references.get(r);
+					if (rr.getReference() == reference) {
+						list.setSelectedIndex(r);
+					}
+				}
+			}
 		}
 
 		addAction.update();
@@ -288,27 +303,8 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void indexedPropertyAdded(Element element, String name, Object value) {
-			if (Element.REFERENCE.equals(name)) {
-				Reference<?> reference = (Reference<?>) value;
-
-				if (ReferencesDockable.this.element != null
-						&& getReferencesModel().onReferenceChange(element,
-								reference)) {
-					updateReferences();
-
-					for (int r = 0; r < references.size(); r++) {
-						ReferrerReference rr = references.get(r);
-						if (rr.getReference() == reference) {
-							list.setSelectedIndex(r);
-						}
-					}
-				}
-			}
-		}
-
-		@Override
-		public void indexedPropertyRemoved(Element element, String name, Object value) {
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
 			if (Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 
@@ -321,7 +317,22 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void indexedPropertyChanged(Element element, String name, Object value) {
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
+			if (Element.REFERENCE.equals(name)) {
+				Reference<?> reference = (Reference<?>) value;
+
+				if (ReferencesDockable.this.element != null
+						&& getReferencesModel().onReferenceChange(element,
+								reference)) {
+					updateReferences();
+				}
+			}
+		}
+
+		@Override
+		public void indexedPropertyChanged(Element element, String name,
+				Object value) {
 			if (Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 				if (ReferencesDockable.this.element != null
@@ -460,7 +471,7 @@ public class ReferencesDockable extends OrganDockable {
 	}
 
 	private class RemoveAction extends BaseAction implements
-			ListSelectionListener {
+			ListSelectionListener, Compound {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
@@ -469,6 +480,10 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			session.lookup(UndoManager.class).compound(this);
+		}
+
+		public void run() {
 			int[] indices = list.getSelectedIndices();
 			ReferrerReference[] subReferences = new ReferrerReference[indices.length];
 			for (int r = 0; r < subReferences.length; r++) {

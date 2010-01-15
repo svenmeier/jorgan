@@ -33,11 +33,11 @@ public class GUISessionProvider implements SessionProvider {
 	 */
 	public void init(OrganSession session) {
 	}
-	
+
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == UndoManager.class) {
 			final UndoManager undoManager = new UndoManager(session.getOrgan());
-			
+
 			session.getOrgan().addOrganListener(new OrganAdapter() {
 				@Override
 				public void elementRemoved(Element element) {
@@ -49,11 +49,11 @@ public class GUISessionProvider implements SessionProvider {
 					undoManager.compound();
 				}
 			});
-			
+
 			return undoManager;
 		} else if (clazz == ElementSelection.class) {
 			final ElementSelection selection = new ElementSelection();
-			
+
 			selection.addListener(new SelectionListener() {
 				public void selectionChanged() {
 					session.lookup(UndoManager.class).compound();
@@ -61,16 +61,30 @@ public class GUISessionProvider implements SessionProvider {
 			});
 			session.getOrgan().addOrganListener(new OrganAdapter() {
 				@Override
+				public void elementAdded(Element element) {
+					selection.setSelectedElement(element);
+				}
+
+				@Override
 				public void elementRemoved(Element element) {
 					selection.clear(element);
 				}
 
 				@Override
-				public void elementAdded(Element element) {
-					selection.setSelectedElement(element);
+				public void indexedPropertyAdded(Element element, String name,
+						Object value) {
+					selection.setSelectedElement(element, value);
+				}
+
+				@Override
+				public void indexedPropertyRemoved(Element element,
+						String name, Object value) {
+					if (selection.getLocation() == value) {
+						selection.setLocation(null);
+					}
 				}
 			});
-			
+
 			return selection;
 		}
 		return null;
