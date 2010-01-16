@@ -21,6 +21,7 @@ LicenseFile=..\core\docs\license.txt
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
 SolidCompression=yes
+ChangesAssociations=yes
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
@@ -74,7 +75,11 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.
 Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\jOrgan.exe"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.exe"; ValueType: string; ValueName: "Version"; ValueData: "{#VERSION}"; Flags: uninsdeletekey
 
+Root: HKCR; Subkey: ".disposition"; ValueType: string; ValueName: ""; ValueData: "jOrganDisposition"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jOrganDisposition"; ValueType: string; ValueName: ""; ValueData: "jOrgan Disposition"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "jOrganDisposition\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\jOrgan.exe,0"
+Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\jOrgan.exe"" ""%1"""
+
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
-
 
