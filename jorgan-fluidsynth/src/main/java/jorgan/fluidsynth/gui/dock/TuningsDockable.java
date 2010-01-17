@@ -154,25 +154,32 @@ public class TuningsDockable extends OrganDockable {
 			}
 
 			@Override
-			public boolean importData(TransferSupport support) {
+			public boolean importData(final TransferSupport support) {
 				try {
-					int index = sound.getTuningCount();
-					if (support.isDrop()) {
-						JTable.DropLocation location = (JTable.DropLocation) support
-								.getDropLocation();
-						index = location.getRow();
-					}
-					Tuning[] subTunings = (Tuning[]) ObjectTransferable
+					final Tuning[] subTunings = (Tuning[]) ObjectTransferable
 							.getObject(support.getTransferable());
-					for (Tuning tuning : subTunings) {
-						sound.addTuning(tuning.clone(), index);
-						index++;
-					}
+
+					session.lookup(UndoManager.class).compound(new Compound() {
+						@Override
+						public void run() {
+							int index = sound.getTuningCount();
+							if (support.isDrop()) {
+								JTable.DropLocation location = (JTable.DropLocation) support
+										.getDropLocation();
+								index = location.getRow();
+							}
+							for (Tuning tuning : subTunings) {
+								sound.addTuning(tuning.clone(), index);
+								index++;
+							}
+						}
+					});
 
 					return true;
 				} catch (Exception noImport) {
 					return false;
 				}
+
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);

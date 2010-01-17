@@ -198,22 +198,27 @@ public class MessagesDockable extends OrganDockable {
 			}
 
 			@Override
-			public boolean importData(TransferSupport support) {
+			public boolean importData(final TransferSupport support) {
 				try {
-					int index = element.getMessageCount();
-					if (support.isDrop()) {
-						JTable.DropLocation location = (JTable.DropLocation) support
-								.getDropLocation();
-						index = location.getRow();
-					}
-
-					Message[] subMessages = (Message[]) ObjectTransferable
+					final Message[] subMessages = (Message[]) ObjectTransferable
 							.getObject(support.getTransferable());
-					for (Message message : subMessages) {
-						element.addMessage(message.clone(), index);
-						index++;
-					}
 
+					session.lookup(UndoManager.class).compound(new Compound() {
+						@Override
+						public void run() {
+							int index = element.getMessageCount();
+							if (support.isDrop()) {
+								JTable.DropLocation location = (JTable.DropLocation) support
+										.getDropLocation();
+								index = location.getRow();
+							}
+
+							for (Message message : subMessages) {
+								element.addMessage(message.clone(), index);
+								index++;
+							}
+						}
+					});
 					return true;
 				} catch (Exception noImport) {
 					return false;
