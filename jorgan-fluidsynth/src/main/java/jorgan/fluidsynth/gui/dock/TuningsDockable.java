@@ -342,6 +342,15 @@ public class TuningsDockable extends OrganDockable {
 			return columnIndex > 0;
 		}
 
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex >= 2) {
+				return Double.class;
+			}
+
+			return super.getColumnClass(columnIndex);
+		}
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			Tuning tuning = tunings.get(rowIndex);
 
