@@ -188,7 +188,7 @@ public class TuningsDockable extends OrganDockable {
 				new StringCellEditor());
 		for (int p = 0; p < Tuning.COUNT; p++) {
 			table.getColumnModel().getColumn(p + 2).setCellEditor(
-					new SpinnerCellEditor(-128.0d, 128.d, 1.0d));
+					new SpinnerCellEditor(-100.0d, +100.0d, 1.0d));
 		}
 		TableUtils.pleasantLookAndFeel(table);
 
