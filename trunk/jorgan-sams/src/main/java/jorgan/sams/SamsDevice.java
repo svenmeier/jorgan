@@ -19,7 +19,9 @@
 package jorgan.sams;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
 import jorgan.midi.DevicePool;
@@ -34,7 +36,11 @@ public class SamsDevice extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			SamsDevice.class);
 
-	private Sams sam = new Sams("jOrgan Keyboard");
+	private Sams sams = new Sams("jOrgan Keyboard");
+
+	private SamsReceiver receiver;
+
+	private SamsTransmitter transmitter;
 
 	/**
 	 * Create a new midiMerger.
@@ -43,7 +49,7 @@ public class SamsDevice extends Loopback {
 	 *            info to use
 	 */
 	public SamsDevice(MidiDevice.Info info) {
-		super(info, true, true);
+		super(info, false, true);
 
 		config.read(this);
 	}
@@ -56,7 +62,8 @@ public class SamsDevice extends Loopback {
 		super.open();
 
 		try {
-			new SAMReceiver(sam);
+			receiver = new SamsReceiver(sams);
+			transmitter = new SamsTransmitter(sams);
 		} catch (MidiUnavailableException ex) {
 			close();
 
@@ -64,61 +71,91 @@ public class SamsDevice extends Loopback {
 		}
 	}
 
-	/**
-	 * One receiver used for each input device.
-	 */
-	private class SAMReceiver extends LoopbackReceiver {
+	@Override
+	protected void onReceived(MidiMessage message, long timeStamp) {
+		coilOn(message);
+	}
 
-		/**
-		 * The input device to receive messages from.
-		 */
-		private MidiDevice device;
+	@Override
+	public synchronized void close() {
+		super.close();
 
-		/**
-		 * The transmitter of the input device.
-		 */
-		private Transmitter transmitter;
-
-		/**
-		 * Create a new receiver for the given input.
-		 * 
-		 * @param device
-		 *            name of device to create receiver for
-		 * @throws MidiUnavailableException
-		 *             if input device is unavailable
-		 */
-		public SAMReceiver(Sams sam) throws MidiUnavailableException {
-
-			// Important: assure successfull opening of MIDI device
-			// before storing reference in instance variable
-			MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(
-					sam.getDevice(), Direction.OUT);
-			toBeOpened.open();
-			this.device = toBeOpened;
-
-			transmitter = this.device.getTransmitter();
-			transmitter.setReceiver(this);
+		if (receiver != null) {
+			receiver.close();
+			receiver = null;
 		}
 
-		/**
-		 * Closing this receiver also closes the device transmitted to.
-		 */
+		if (transmitter != null) {
+			transmitter.close();
+			transmitter = null;
+		}
+	}
+
+	private class SamsReceiver implements Receiver {
+
+		private MidiDevice device;
+
+		private Transmitter transmitter;
+
+		public SamsReceiver(Sams sam) throws MidiUnavailableException {
+
+			this.device = DevicePool.instance().getMidiDevice(sam.getDevice(),
+					Direction.IN);
+			this.device.open();
+
+			try {
+				transmitter = this.device.getTransmitter();
+				transmitter.setReceiver(this);
+			} catch (MidiUnavailableException ex) {
+				this.device.close();
+
+				throw ex;
+			}
+		}
+
+		@Override
+		public void send(MidiMessage message, long timeStamp) {
+			coilOff(message);
+		}
+
 		@Override
 		public void close() {
-			super.close();
+			transmitter.close();
+			device.close();
+		}
+	}
 
-			if (transmitter != null) {
-				transmitter.close();
-			}
+	private class SamsTransmitter {
 
-			if (device != null) {
-				device.close();
+		private MidiDevice device;
+
+		private Receiver receiver;
+
+		public SamsTransmitter(Sams sam) throws MidiUnavailableException {
+			this.device = DevicePool.instance().getMidiDevice(sam.getDevice(),
+					Direction.OUT);
+			this.device.open();
+
+			try {
+				this.receiver = this.device.getReceiver();
+			} catch (MidiUnavailableException ex) {
+				this.device.close();
+
+				throw ex;
 			}
+		}
+
+		public void close() {
+			device.close();
+		}
+
+		public void transmit(MidiMessage message, long timeStamp) {
+			receiver.send(message, timeStamp);
 		}
 	}
 
 	public Sams getSAM() {
-		return sam;
+		return sams;
 	}
 
 	public void setSAM(Sams sam) {
@@ -126,6 +163,18 @@ public class SamsDevice extends Loopback {
 			throw new IllegalArgumentException("must not be null");
 		}
 
-		this.sam = sam;
+		this.sams = sam;
+	}
+
+	/**
+	 * TODO
+	 */
+	private void coilOn(MidiMessage message) {
+	}
+
+	/**
+	 * TODO
+	 */
+	private void coilOff(MidiMessage message) {
 	}
 }

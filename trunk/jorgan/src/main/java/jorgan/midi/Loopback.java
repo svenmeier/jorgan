@@ -171,13 +171,19 @@ public class Loopback implements MidiDevice {
 		return new LoopbackTransmitter();
 	}
 
-	public synchronized void loopbackMessage(MidiMessage message, long timestamp) {
+	/**
+	 * Default implementation delegates to {@link #transmit(MidiMessage, long)}.
+	 */
+	protected void onReceived(MidiMessage message, long timeStamp) {
+		transmit(message, timeStamp);
+	}
+
+	protected synchronized void transmit(MidiMessage message, long timeStamp) {
 		if (isOpen()) {
 			for (int r = 0; r < transmitters.size(); r++) {
-				LoopbackTransmitter transmitter = transmitters
-						.get(r);
+				LoopbackTransmitter transmitter = transmitters.get(r);
 
-				transmitter.transmit(message, timestamp);
+				transmitter.transmit(message, timeStamp);
 			}
 		}
 	}
@@ -210,7 +216,7 @@ public class Loopback implements MidiDevice {
 	 * 
 	 * @see #getTransmitter()
 	 */
-	protected class LoopbackTransmitter implements Transmitter {
+	private class LoopbackTransmitter implements Transmitter {
 
 		private boolean closed = false;
 
@@ -274,7 +280,7 @@ public class Loopback implements MidiDevice {
 	 * 
 	 * @see #getReceiver()
 	 */
-	protected class LoopbackReceiver implements Receiver {
+	private class LoopbackReceiver implements Receiver {
 
 		private boolean closed = false;
 
@@ -295,22 +301,7 @@ public class Loopback implements MidiDevice {
 				throw new IllegalStateException("already closed");
 			}
 
-			message = filter(message);
-
-			if (message != null) {
-				loopbackMessage(message, timeStamp);
-			}
-		}
-
-		/**
-		 * Hook method for subclasses that want to filter messages.
-		 * 
-		 * @param message
-		 *            message to filter
-		 * @return filtered message
-		 */
-		protected MidiMessage filter(MidiMessage message) {
-			return message;
+			onReceived(message, timeStamp);
 		}
 
 		/**
