@@ -1,6 +1,7 @@
 package jorgan.keyboard;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
@@ -18,10 +19,7 @@ public class KeyboardProvider extends MidiDeviceProvider {
 			"Keyboard of jOrgan", "1.0") {
 	};
 
-	/**
-	 * The loopback.
-	 */
-	private static Loopback loopback;
+	private static Keyboard keyboard;
 
 	@Override
 	public MidiDevice.Info[] getDeviceInfo() {
@@ -32,21 +30,31 @@ public class KeyboardProvider extends MidiDeviceProvider {
 	@Override
 	public MidiDevice getDevice(MidiDevice.Info info) {
 		if (INFO == info) {
-			return getLoopback();
+			return getKeyboard();
 		}
 
 		return null;
 	}
 
-	/**
-	 * Get the loopback for this device.
-	 * 
-	 * @return the lookback
-	 */
-	public static synchronized Loopback getLoopback() {
-		if (loopback == null) {
-			loopback = new Loopback(INFO, false, true);
+	private static synchronized Keyboard getKeyboard() {
+		if (keyboard == null) {
+			keyboard = new Keyboard();
 		}
-		return loopback;
+		return keyboard;
+	}
+
+	public static void transmit(MidiMessage message, long timeStamp) {
+		getKeyboard().transmit(message, timeStamp);
+	}
+
+	private static class Keyboard extends Loopback {
+		public Keyboard() {
+			super(INFO, false, true);
+		}
+
+		@Override
+		protected synchronized void transmit(MidiMessage message, long timeStamp) {
+			super.transmit(message, timeStamp);
+		}
 	}
 }

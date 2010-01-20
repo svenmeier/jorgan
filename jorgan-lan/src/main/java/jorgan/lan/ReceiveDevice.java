@@ -32,7 +32,7 @@ public class ReceiveDevice extends Loopback {
 
 	private int index;
 
-	private MessageReceiver port;
+	private MessageReceiver receiver;
 
 	public ReceiveDevice(int index, Info info) {
 		super(info, false, true);
@@ -45,10 +45,10 @@ public class ReceiveDevice extends Loopback {
 		super.open();
 
 		try {
-			port = new MessageReceiver(IpMidi.GROUP, IpMidi.port(index)) {
+			receiver = new MessageReceiver(IpMidi.GROUP, IpMidi.port(index)) {
 				@Override
 				protected void onReceived(ShortMessage message) {
-					loopbackMessage(message, -1);
+					transmit(message, -1);
 				}
 			};
 		} catch (Exception ex) {
@@ -62,9 +62,9 @@ public class ReceiveDevice extends Loopback {
 
 	@Override
 	public synchronized void close() {
-		if (port != null) {
-			port.close();
-			port = null;
+		if (receiver != null) {
+			receiver.close();
+			receiver = null;
 		}
 
 		super.close();

@@ -36,7 +36,7 @@ public class SendDevice extends Loopback {
 
 	private int index;
 
-	private MessageSender port;
+	private MessageSender sender;
 
 	public SendDevice(int index, Info info) {
 		super(info, true, false);
@@ -49,7 +49,7 @@ public class SendDevice extends Loopback {
 		super.open();
 
 		try {
-			port = new MessageSender(IpMidi.GROUP, IpMidi.port(index));
+			sender = new MessageSender(IpMidi.GROUP, IpMidi.port(index));
 
 			probe();
 		} catch (Exception ex) {
@@ -68,24 +68,24 @@ public class SendDevice extends Loopback {
 		} catch (InvalidMidiDataException e) {
 			throw new Error(e);
 		}
-		port.send(message);
+		sender.send(message);
 	}
 
 	@Override
 	public synchronized void close() {
-		if (port != null) {
-			port.close();
-			port = null;
+		if (sender != null) {
+			sender.close();
+			sender = null;
 		}
 
 		super.close();
 	}
 
 	@Override
-	public synchronized void loopbackMessage(MidiMessage message, long timestamp) {
+	protected void onReceived(MidiMessage message, long timeStamp) {
 		if (message instanceof ShortMessage) {
 			try {
-				port.send((ShortMessage) message);
+				sender.send((ShortMessage) message);
 			} catch (IOException e) {
 				// nothing we can do about it, receivers are expected to work
 				// flawlessly, #probe() must have worked

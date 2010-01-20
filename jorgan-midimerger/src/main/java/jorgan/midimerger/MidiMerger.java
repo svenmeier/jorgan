@@ -25,6 +25,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
@@ -40,11 +41,13 @@ public class MidiMerger extends Loopback {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMerger.class);
-	
+
 	/**
 	 * The list of inputs to merge.
 	 */
 	private List<MergeInput> inputs = new ArrayList<MergeInput>();
+
+	private List<Receiver> mergers = new ArrayList<Receiver>();
 
 	/**
 	 * Create a new midiMerger.
@@ -54,20 +57,17 @@ public class MidiMerger extends Loopback {
 	 */
 	public MidiMerger(MidiDevice.Info info) {
 		super(info, false, true);
-		
+
 		config.read(this);
 	}
 
-	/**
-	 * Overriden to create receivers for all devices to merge.
-	 */
 	@Override
-	public void open() throws MidiUnavailableException {
+	public synchronized void open() throws MidiUnavailableException {
 		super.open();
 
 		try {
 			for (MergeInput input : inputs) {
-				new MergeReceiver(input.getDevice(), input.getChannel());
+				mergers.add(new Merger(input.getDevice(), input.getChannel()));
 			}
 		} catch (MidiUnavailableException ex) {
 			close();
@@ -76,10 +76,17 @@ public class MidiMerger extends Loopback {
 		}
 	}
 
-	/**
-	 * One receiver used for each input device.
-	 */
-	private class MergeReceiver extends LoopbackReceiver {
+	@Override
+	public synchronized void close() {
+		super.close();
+
+		for (Receiver merger : mergers) {
+			merger.close();
+		}
+		mergers.clear();
+	}
+
+	private class Merger implements Receiver {
 
 		/**
 		 * The input device to receive messages from.
@@ -92,8 +99,8 @@ public class MidiMerger extends Loopback {
 		private Transmitter transmitter;
 
 		/**
-		 * The channel to map message to or <code>-1</code> if no mapping
-		 * should be performed.
+		 * The channel to map message to or <code>-1</code> if no mapping should
+		 * be performed.
 		 */
 		private int channel;
 
@@ -107,30 +114,31 @@ public class MidiMerger extends Loopback {
 		 * @throws MidiUnavailableException
 		 *             if input device is unavailable
 		 */
-		public MergeReceiver(String device, int channel)
+		public Merger(String device, int channel)
 				throws MidiUnavailableException {
 
-			// Important: assure successfull opening of MIDI device
-			// before storing reference in instance variable
-			MidiDevice toBeOpened = DevicePool.instance().getMidiDevice(device, Direction.IN);
-			toBeOpened.open();
-			this.device = toBeOpened;
-
-			transmitter = this.device.getTransmitter();
-			transmitter.setReceiver(this);
+			this.device = DevicePool.instance().getMidiDevice(device,
+					Direction.IN);
+			this.device.open();
 
 			this.channel = channel;
+
+			try {
+				transmitter = this.device.getTransmitter();
+				transmitter.setReceiver(this);
+			} catch (MidiUnavailableException ex) {
+				this.device.close();
+
+				throw ex;
+			}
 		}
 
-		/**
-		 * Apply channel mapping.
-		 */
 		@Override
-		protected MidiMessage filter(MidiMessage message) {
+		public void send(MidiMessage message, long timestamp) {
 			if (message instanceof ShortMessage) {
 				message = mapChannel((ShortMessage) message);
 			}
-			return message;
+			transmit(message, timestamp);
 		}
 
 		/**
@@ -159,27 +167,18 @@ public class MidiMerger extends Loopback {
 			return message;
 		}
 
-		/**
-		 * Closing this receiver also closes the device listened to.
-		 */
 		@Override
 		public void close() {
-			super.close();
+			transmitter.close();
 
-			if (transmitter != null) {
-				transmitter.close();
-			}
-
-			if (device != null) {
-				device.close();
-			}
+			device.close();
 		}
 	}
 
 	public List<MergeInput> getInputs() {
 		return inputs;
 	}
-	
+
 	/**
 	 * Set the inputs to merge. <br>
 	 * This change has immediate effect only If this midiMerger is not currently

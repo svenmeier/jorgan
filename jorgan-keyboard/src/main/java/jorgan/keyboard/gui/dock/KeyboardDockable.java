@@ -6,7 +6,6 @@ import javax.sound.midi.Receiver;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.keyboard.KeyboardProvider;
 import jorgan.keyboard.gui.KeyboardPanel;
-import jorgan.midi.Loopback;
 import bias.Configuration;
 
 /**
@@ -26,10 +25,8 @@ public class KeyboardDockable extends OrganDockable {
 		config.read(this);
 
 		keyboard.setReceiver(new Receiver() {
-			private Loopback loopback = KeyboardProvider.getLoopback();
-
 			public void send(MidiMessage message, long timeStamp) {
-				loopback.loopbackMessage(message, timeStamp);
+				KeyboardProvider.transmit(message, timeStamp);
 			}
 
 			public void close() {
