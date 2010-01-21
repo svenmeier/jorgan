@@ -22,6 +22,7 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
+import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 import jorgan.midi.DevicePool;
@@ -36,7 +37,7 @@ public class SamsDevice extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			SamsDevice.class);
 
-	private Sams sams = new Sams("jOrgan Keyboard");
+	private Sams sams;
 
 	private SamsReceiver receiver;
 
@@ -49,7 +50,7 @@ public class SamsDevice extends Loopback {
 	 *            info to use
 	 */
 	public SamsDevice(MidiDevice.Info info) {
-		super(info, false, true);
+		super(info, true, true);
 
 		config.read(this);
 	}
@@ -72,8 +73,13 @@ public class SamsDevice extends Loopback {
 	}
 
 	@Override
-	protected void onReceived(MidiMessage message, long timeStamp) {
-		coilOn(message);
+	protected void onLoopIn(MidiMessage message, long timeStamp) {
+		if (message instanceof ShortMessage) {
+			ShortMessage shortMessage = (ShortMessage) message;
+			magnetOff(sams.inverse(shortMessage));
+
+			magnetOn(shortMessage);
+		}
 	}
 
 	@Override
@@ -115,7 +121,11 @@ public class SamsDevice extends Loopback {
 
 		@Override
 		public void send(MidiMessage message, long timeStamp) {
-			coilOff(message);
+			if (message instanceof ShortMessage) {
+				magnetOff((ShortMessage) message);
+			}
+
+			loopOut(message, timeStamp);
 		}
 
 		@Override
@@ -166,15 +176,22 @@ public class SamsDevice extends Loopback {
 		this.sams = sam;
 	}
 
-	/**
-	 * TODO
-	 */
-	private void coilOn(MidiMessage message) {
+	private void magnetOn(ShortMessage message) {
+		transmitter.transmit(message, -1);
+
+		delayMagnetOff(message);
 	}
 
-	/**
-	 * TODO
-	 */
-	private void coilOff(MidiMessage message) {
+	private void delayMagnetOff(final ShortMessage message) {
+		Runnable runnable = new Runnable() {
+			@Override
+			public void run() {
+				magnetOff((ShortMessage) message);
+			}
+		};
+	}
+
+	private void magnetOff(ShortMessage message) {
+		transmitter.transmit(sams.reverse(message), -1);
 	}
 }

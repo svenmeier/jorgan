@@ -18,22 +18,13 @@
  */
 package jorgan.sams;
 
-public class Sams {
+import javax.sound.midi.ShortMessage;
 
-	private String device;
+public interface Sams {
 
-	public Sams() {
-	}
+	public String getDevice();
 
-	public Sams(String device) {
-		this.device = device;
-	}
+	public ShortMessage reverse(ShortMessage message);
 
-	public String getDevice() {
-		return device;
-	}
-
-	public void setDevice(String device) {
-		this.device = device;
-	}
+	public ShortMessage inverse(ShortMessage message);
 }
