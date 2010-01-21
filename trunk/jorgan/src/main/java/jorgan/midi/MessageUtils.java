@@ -33,7 +33,7 @@ public class MessageUtils {
 	public static final int META_TEXT = 1;
 
 	public static final int META_TRACK_NAME = 3;
-	
+
 	public static final int META_CUE_POINT = 7;
 
 	public static final int META_END_OF_TRACK = 47;
@@ -78,6 +78,16 @@ public class MessageUtils {
 
 		try {
 			return createMessage(status, data1, data2);
+		} catch (InvalidMidiDataException e) {
+			throw new IllegalArgumentException(e);
+		}
+	}
+
+	public static ShortMessage newMessage(int channel, int command, int data1,
+			int data2) {
+
+		try {
+			return createMessage(channel, command, data1, data2);
 		} catch (InvalidMidiDataException e) {
 			throw new IllegalArgumentException(e);
 		}
