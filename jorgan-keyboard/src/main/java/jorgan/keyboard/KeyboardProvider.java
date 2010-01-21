@@ -44,7 +44,7 @@ public class KeyboardProvider extends MidiDeviceProvider {
 	}
 
 	public static void transmit(MidiMessage message, long timeStamp) {
-		getKeyboard().transmit(message, timeStamp);
+		getKeyboard().loopOut(message, timeStamp);
 	}
 
 	private static class Keyboard extends Loopback {
@@ -53,8 +53,8 @@ public class KeyboardProvider extends MidiDeviceProvider {
 		}
 
 		@Override
-		protected synchronized void transmit(MidiMessage message, long timeStamp) {
-			super.transmit(message, timeStamp);
+		protected synchronized void loopOut(MidiMessage message, long timeStamp) {
+			super.loopOut(message, timeStamp);
 		}
 	}
 }

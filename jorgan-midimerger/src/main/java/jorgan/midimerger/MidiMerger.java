@@ -138,7 +138,7 @@ public class MidiMerger extends Loopback {
 			if (message instanceof ShortMessage) {
 				message = mapChannel((ShortMessage) message);
 			}
-			transmit(message, timestamp);
+			loopOut(message, timestamp);
 		}
 
 		/**
