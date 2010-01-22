@@ -18,6 +18,7 @@
  */
 package jorgan.gui.construct;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -59,7 +60,8 @@ public class MessageCreationPanel extends JPanel {
 
 		column.term(config.get("type").read(new JLabel()));
 
-		typeList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		typeList
+				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent e) {
 				firePropertyChange("message", null, null);
@@ -86,18 +88,17 @@ public class MessageCreationPanel extends JPanel {
 	 * 
 	 * @return the message
 	 */
-	public Message getMessage() {
-		Message message = null;
+	public List<Message> getMessages() {
+		List<Message> messages = new ArrayList<Message>();
 
-		int index = typeList.getSelectedIndex();
-		if (index != -1) {
+		for (int index : typeList.getSelectedIndices()) {
 			try {
-				message = messageClasses.get(index).newInstance();
+				messages.add(messageClasses.get(index).newInstance());
 			} catch (Exception ex) {
 				throw new Error(ex);
 			}
 		}
-		return message;
+		return messages;
 	}
 
 	private class TypeListModel extends AbstractListModel {

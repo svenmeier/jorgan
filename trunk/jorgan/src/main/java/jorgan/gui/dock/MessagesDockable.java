@@ -495,8 +495,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateMessageWizard
-					.showInDialog(table, session.getOrgan(), element);
+			CreateMessageWizard.showInDialog(table, session, element);
 		}
 
 		public void update() {
