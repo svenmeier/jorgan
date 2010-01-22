@@ -20,12 +20,15 @@ package jorgan.gui.construct;
 
 import java.awt.Component;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Message;
-import jorgan.disposition.Organ;
+import jorgan.gui.undo.Compound;
+import jorgan.gui.undo.UndoManager;
+import jorgan.session.OrganSession;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
 import jorgan.swing.wizard.WizardDialog;
@@ -41,7 +44,9 @@ public class CreateMessageWizard extends BasicWizard {
 
 	private Element element;
 
-	private Message message;
+	private List<Message> messages = new ArrayList<Message>();
+
+	private OrganSession session;
 
 	/**
 	 * Create a new wizard.
@@ -51,7 +56,9 @@ public class CreateMessageWizard extends BasicWizard {
 	 * @param element
 	 *            the element to create references for
 	 */
-	public CreateMessageWizard(Organ organ, Element element) {
+	public CreateMessageWizard(OrganSession session, Element element) {
+		this.session = session;
+
 		this.element = element;
 
 		addPage(new MessagePage());
@@ -64,7 +71,7 @@ public class CreateMessageWizard extends BasicWizard {
 	 */
 	@Override
 	public boolean allowsFinish() {
-		return message != null;
+		return !messages.isEmpty();
 	}
 
 	/**
@@ -73,7 +80,14 @@ public class CreateMessageWizard extends BasicWizard {
 	@Override
 	protected boolean finishImpl() {
 
-		element.addMessage(message);
+		session.lookup(UndoManager.class).compound(new Compound() {
+			@Override
+			public void run() {
+				for (Message message : messages) {
+					element.addMessage(message);
+				}
+			}
+		});
 
 		return true;
 	}
@@ -100,7 +114,7 @@ public class CreateMessageWizard extends BasicWizard {
 
 		@Override
 		protected void changing() {
-			message = messagePanel.getMessage();
+			messages = messagePanel.getMessages();
 
 			super.changing();
 		}
@@ -116,11 +130,11 @@ public class CreateMessageWizard extends BasicWizard {
 	 * @param element
 	 *            element to add created references to
 	 */
-	public static void showInDialog(Component owner, Organ organ,
+	public static void showInDialog(Component owner, OrganSession session,
 			Element element) {
 
 		WizardDialog dialog = WizardDialog.create(owner);
-		dialog.setWizard(new CreateMessageWizard(organ, element));
+		dialog.setWizard(new CreateMessageWizard(session, element));
 
 		config.get("dialog").read(dialog);
 		dialog.setVisible(true);
