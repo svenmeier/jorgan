@@ -40,6 +40,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganListener;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Tuning;
+import jorgan.fluidsynth.gui.construct.CreateTuningWizard;
 import jorgan.gui.dock.OrganDockable;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
@@ -427,12 +428,12 @@ public class TuningsDockable extends OrganDockable {
 			setEnabled(false);
 		}
 
-		public void actionPerformed(ActionEvent ev) {
-			sound.addTuning(new Tuning());
-		}
-
 		public void update() {
 			setEnabled(sound != null);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			CreateTuningWizard.showInDialog(getContent(), session, sound);
 		}
 	}
 

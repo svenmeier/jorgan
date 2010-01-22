@@ -16,21 +16,26 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.gui.construct;
+package jorgan.fluidsynth;
 
-import java.beans.BeanInfo;
+import java.util.ArrayList;
+import java.util.List;
 
-import jorgan.gui.construct.info.spi.BeanInfoProvider;
+import jorgan.spi.ConfigurationProvider;
+import bias.Store;
+import bias.store.DefaultingStore;
+import bias.store.PreferencesStore;
+import bias.store.PropertiesStore;
 
-/**
- * The default provider of {@link BeanInfo}s.
- */
-public class FluidsynthBeanInfoProvider implements BeanInfoProvider {
+public class FluidsynthConfigurationProvider implements ConfigurationProvider {
 
-	private static final String BEAN_INFO_SEARCH_PATH = FluidsynthSoundBeanInfo.class
-			.getPackage().getName();
+	public List<Store> getStores() {
+		ArrayList<Store> stores = new ArrayList<Store>();
 
-	public String getBeanInfoSearchPath() {
-		return BEAN_INFO_SEARCH_PATH;
+		stores.add(new DefaultingStore(PreferencesStore.user(),
+				new PropertiesStore(getClass(), "preferences.properties")));
+
+		return stores;
 	}
+
 }
