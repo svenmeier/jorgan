@@ -61,9 +61,6 @@ public class Tuning implements Cloneable {
 		return this;
 	}
 
-	/**
-	 * Always cloneable.
-	 */
 	@Override
 	public Tuning clone() {
 		try {
