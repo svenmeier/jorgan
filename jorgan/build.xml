@@ -15,7 +15,7 @@
     <target name="build" depends="init" description="Build the source" >
         <mkdir dir="./target/classes"/>
 
-    	<javac debug="true" source="1.5" target="1.5" destdir="./target/classes" srcdir="./src">
+    	<javac debug="true" source="1.5" target="1.5" destdir="./target/classes" srcdir="./src/main/java">
         	<compilerarg value="-Xlint:all,-serial"/>
         	<classpath>
 	            <fileset dir="./lib">
@@ -24,16 +24,16 @@
         	</classpath>
         </javac>
 
-    	<native2ascii encoding="UTF8" src="src" dest="./target/classes" includes="**/i18n*.properties" />
+    	<native2ascii encoding="UTF8" src="src/main/java" dest="./target/classes" includes="**/i18n*.properties" />
     		
     	<copy todir="./target/classes" filtering="true">
-            <fileset dir="./src" >
+            <fileset dir="./src/main/java" >
                 <include name="**/*.properties" />
             </fileset>
         </copy>        	
     	
     	<copy todir="./target/classes">
-            <fileset dir="./src">
+            <fileset dir="./src/main/java">
                 <exclude name="**/*.java" />
             	<exclude name="**/i18n*.properties" />
             	<exclude name="**/*.properties" />
@@ -47,7 +47,7 @@
 		<input message="Enter language code (e.g. 'de' without quotes)" addproperty="language"/>
 
 		<copy todir="./target/classes" filtering="true">
-            <fileset dir="./src" >
+            <fileset dir="./src/main/java" >
                 <include name="**/i18n.properties" />
             </fileset>
 			<globmapper from="*.properties" to="*_${language}.properties"/>
@@ -91,15 +91,9 @@
 
         <mkdir dir="./target/marshal/dispositions" />
         <copy todir="./target/marshal/dispositions" filtering="true">
-            <fileset dir="./dispositions" />
+            <fileset dir="./src/main/dispositions" />
 		</copy>
 
         <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
     </target>
-
-	<target name="deploy" description="deploy the application on SourceForge" depends="dist">
-		<ftp server="upload.sourceforge.net" userid="anonymous" password="" remotedir="/incoming">
-			<fileset file="./target/jOrgan-${jorgan.version}.zip" />
-		</ftp>
-	</target>	
 </project>
