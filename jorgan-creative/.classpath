@@ -3,9 +3,9 @@
 	<classpathentry kind="src" path="src/main/java"/>
 	<classpathentry kind="src" path="src/test/java"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-core"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3.8.1"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-importer"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jOrgan-jni"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jorgan"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-importer"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-jni"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
