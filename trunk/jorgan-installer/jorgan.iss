@@ -17,7 +17,7 @@ OutputDir=.\target
 DefaultDirName={pf}\jOrgan
 DefaultGroupName=jOrgan
 DisableProgramGroupPage=yes
-LicenseFile=..\core\docs\license.txt
+LicenseFile=..\jorgan\docs\license.txt
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
 SolidCompression=yes
@@ -50,19 +50,19 @@ Name: "soundfont"; Description: "Soundfont"; Types: standard
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
-Source: "..\core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
-Source: "..\creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
-Source: "..\customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
-Source: "..\executor\target\marshal\*"; DestDir: "{app}"; Components: executor; Flags: recursesubdirs createallsubdirs
-Source: "..\fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
-Source: "..\importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
-Source: "..\keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
-Source: "..\linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
-Source: "..\memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
-Source: "..\midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
-Source: "..\recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
-Source: "..\skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
-Source: "..\soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-executor\target\marshal\*"; DestDir: "{app}"; Components: executor; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"
