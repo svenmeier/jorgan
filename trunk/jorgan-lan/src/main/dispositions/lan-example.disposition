@@ -3,7 +3,7 @@
   <elements>
     <label id="7">
       <name></name>
-      <description>name=The switch and continous will report all changes with MIDI messages over LAN.</description>
+      <description>name=On every change the Switch and Continous element send MIDI messages over LAN.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
@@ -18,14 +18,14 @@
         </console-locationReference>
         <console-locationReference id="9">
           <x>150</x>
-          <y>80</y>
+          <y>76</y>
         </console-locationReference>
         <console-locationReference id="10">
-          <x>300</x>
-          <y>80</y>
+          <x>280</x>
+          <y>70</y>
         </console-locationReference>
         <console-locationReference id="11">
-          <x>120</x>
+          <x>110</x>
           <y>120</y>
         </console-locationReference>
       </references>
@@ -87,7 +87,7 @@
     </continuous>
     <label id="11">
       <name></name>
-      <description>name=Start ipMidi or multimidicast to see the messages.</description>
+      <description>name=Start ipMidi or multimidicast to see sent messages.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
