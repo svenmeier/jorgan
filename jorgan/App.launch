@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
-<listEntry value="/jorgan/src/jorgan/App.java"/>
+<listEntry value="/jorgan/src/main/java/jorgan/App.java"/>
 </listAttribute>
 <listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
 <listEntry value="1"/>
@@ -29,5 +29,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jorgan"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../skins&#10;-Djorgan.creative.library.path=../creative/target/native&#10;-Djorgan.fluidsynth.library.path=../fluidsynth/target/native&#10;-Duser.language=en"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../jorgan-skins&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#10;-Duser.language=en"/>
 </launchConfiguration>
