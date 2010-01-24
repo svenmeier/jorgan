@@ -27,6 +27,10 @@
 	       	<exclude name="**/i18n*.properties" />
         </fileset>
     </copy>
+  	
+	<copy todir="./target/classes">
+		<fileset dir="./src/main/resources" />
+    </copy>
   </target>
 
   <target name="native" depends="native-unix, native-windows">
