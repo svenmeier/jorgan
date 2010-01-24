@@ -19,7 +19,6 @@
 package jorgan.fluidsynth.gui.construct;
 
 import java.awt.Component;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -128,7 +127,7 @@ public class CreateTuningWizard extends BasicWizard {
 			} finally {
 				input.close();
 			}
-		} catch (IOException e) {
+		} catch (Exception e) {
 			logger.log(Level.WARNING, e.getMessage(), e);
 
 			tunings = Collections.emptyList();
