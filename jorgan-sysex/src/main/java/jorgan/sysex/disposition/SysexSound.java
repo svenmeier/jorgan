@@ -1,6 +1,7 @@
 package jorgan.sysex.disposition;
 
 import jorgan.disposition.GenericSound;
+import jorgan.util.Null;
 
 public class SysexSound extends GenericSound {
 
@@ -9,7 +10,13 @@ public class SysexSound extends GenericSound {
 	private String close;
 
 	public void setOpen(String open) {
-		this.open = open;
+		if (!Null.safeEquals(this.open, open)) {
+			String oldOpen = this.open;
+
+			this.open = open;
+
+			fireChange(new PropertyChange(oldOpen, this.open));
+		}
 	}
 
 	public String getOpen() {
@@ -17,7 +24,13 @@ public class SysexSound extends GenericSound {
 	}
 
 	public void setClose(String close) {
-		this.close = close;
+		if (!Null.safeEquals(this.close, close)) {
+			String oldClose = this.close;
+
+			this.close = close;
+
+			fireChange(new PropertyChange(oldClose, this.close));
+		}
 	}
 
 	public String getClose() {
