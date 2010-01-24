@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="@jorgan.version@">
+  <elements>
+    <console id="3">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <sysex.sysexSound id="4">
+      <name>test</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <open>null</open>
+      <close>null</close>
+    </sysex.sysexSound>
+    <sysex.sysexSound id="5">
+      <name>test</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <open>null</open>
+      <close>null</close>
+    </sysex.sysexSound>
+    <sysex.sysexSound id="6">
+      <name>test</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <open>null</open>
+      <close>null</close>
+    </sysex.sysexSound>
+  </elements>
+</organ>
