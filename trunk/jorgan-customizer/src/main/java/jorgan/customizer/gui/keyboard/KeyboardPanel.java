@@ -172,7 +172,7 @@ public class KeyboardPanel extends JPanel {
 			config.get("record").read(this);
 
 			config.get("record/message").read(messageBox);
-			
+
 			setEnabled(false);
 		}
 
@@ -210,7 +210,7 @@ public class KeyboardPanel extends JPanel {
 				recorder.close();
 
 				if (result == MessageBox.OPTION_OK && channel != -1) {
-					channelSpinner.setValue(channel);
+					channelSpinner.setValue(channel + 1);
 					fromSpinner.setValue(from);
 					toSpinner.setValue(to);
 				}
