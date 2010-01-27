@@ -22,52 +22,47 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.midi.MessageUtils;
 
-public class NoteSams implements Sams {
+public class NoteOnOffEncoding implements Encoding {
 
-	private String device;
+	public void changeTab(SamsDevice device, ShortMessage message) {
+		int index = message.getData1();
 
-	public String getDevice() {
-		return device;
-	}
-
-	public void setDevice(String device) {
-		this.device = device;
-	}
-
-	public boolean accepts(ShortMessage message) {
-		return message.getCommand() == ShortMessage.NOTE_ON
-				&& message.getData2() == 1;
-	}
-
-	public ShortMessage reverse(ShortMessage message) {
-		if (!accepts(message)) {
-			throw new IllegalArgumentException("not accepted");
-		}
-
-		int command;
 		if (message.getCommand() == ShortMessage.NOTE_ON) {
-			command = ShortMessage.NOTE_OFF;
-		} else {
-			command = ShortMessage.NOTE_ON;
+			device.getTab(index).change(true);
+		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
+			device.getTab(index).change(false);
 		}
-
-		return MessageUtils.newMessage(message.getChannel(), command, message
-				.getData1(), message.getData2());
 	}
 
-	public ShortMessage inverse(ShortMessage message) {
-		if (!accepts(message)) {
-			throw new IllegalArgumentException("not accepted");
+	@Override
+	public void tabChanged(SamsDevice device, ShortMessage message) {
+		int index = message.getData1();
+
+		if (message.getCommand() == ShortMessage.NOTE_ON) {
+			device.getTab(index).onChanged(true);
+		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
+			device.getTab(index).onChanged(false);
 		}
+	}
+
+	@Override
+	public ShortMessage encode(int index, boolean onMagnet, boolean on) {
+		int status;
+		if (onMagnet) {
+			status = ShortMessage.NOTE_ON;
+		} else {
+			status = ShortMessage.NOTE_OFF;
+		}
+
+		int data1 = index;
 
 		int data2;
-		if (message.getData2() == 0) {
+		if (on) {
 			data2 = 1;
 		} else {
 			data2 = 0;
 		}
 
-		return MessageUtils.newMessage(message.getChannel(), message
-				.getCommand(), message.getData1(), data2);
+		return MessageUtils.newMessage(status, data1, data2);
 	}
 }

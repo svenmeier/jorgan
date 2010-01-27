@@ -37,11 +37,15 @@ public class SamsDevice extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			SamsDevice.class);
 
-	private Sams sams;
+	private String device;
+
+	private Encoding encoding;
 
 	private SamsReceiver receiver;
 
 	private SamsTransmitter transmitter;
+
+	private Tab[] tabs = new Tab[128];
 
 	/**
 	 * Create a new midiMerger.
@@ -53,6 +57,30 @@ public class SamsDevice extends Loopback {
 		super(info, true, true);
 
 		config.read(this);
+
+		for (int t = 0; t < tabs.length; t++) {
+			tabs[t] = new Tab(t);
+		}
+	}
+
+	public String getDevice() {
+		return device;
+	}
+
+	public void setDevice(String device) {
+		this.device = device;
+	}
+
+	public Encoding getSchema() {
+		return encoding;
+	}
+
+	public void setSchema(Encoding schema) {
+		if (schema == null) {
+			throw new IllegalArgumentException("must not be null");
+		}
+
+		this.encoding = schema;
 	}
 
 	/**
@@ -63,8 +91,8 @@ public class SamsDevice extends Loopback {
 		super.open();
 
 		try {
-			receiver = new SamsReceiver(sams);
-			transmitter = new SamsTransmitter(sams);
+			receiver = new SamsReceiver();
+			transmitter = new SamsTransmitter();
 		} catch (MidiUnavailableException ex) {
 			close();
 
@@ -77,11 +105,7 @@ public class SamsDevice extends Loopback {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
-			if (sams.accepts(shortMessage)) {
-				magnetOff(sams.inverse(shortMessage));
-
-				magnetOn(shortMessage);
-			}
+			encoding.changeTab(this, shortMessage);
 		}
 	}
 
@@ -100,15 +124,70 @@ public class SamsDevice extends Loopback {
 		}
 	}
 
+	public Tab getTab(int index) {
+		return tabs[index];
+	}
+
+	public class Tab {
+
+		private int index;
+
+		private Magnet onMagnet = new Magnet();
+
+		private Magnet offMagnet = new Magnet();
+
+		public Tab(int index) {
+			this.index = index;
+		}
+
+		public synchronized void change(boolean on) {
+			if (on) {
+				offMagnet.off();
+				onMagnet.on();
+			} else {
+				onMagnet.off();
+				offMagnet.on();
+			}
+		}
+
+		public synchronized void onChanged(boolean on) {
+			if (on) {
+				onMagnet.off();
+			} else {
+				offMagnet.off();
+			}
+		}
+
+		private class Magnet {
+			private boolean on;
+
+			public void on() {
+				if (!on) {
+					transmitter.transmit(encoding.encode(index,
+							onMagnet == this, true));
+					on = true;
+				}
+			}
+
+			public void off() {
+				if (on) {
+					transmitter.transmit(encoding.encode(index,
+							onMagnet == this, false));
+					on = false;
+				}
+			}
+		}
+	}
+
 	private class SamsReceiver implements Receiver {
 
 		private MidiDevice device;
 
 		private Transmitter transmitter;
 
-		public SamsReceiver(Sams sam) throws MidiUnavailableException {
+		public SamsReceiver() throws MidiUnavailableException {
 
-			this.device = DevicePool.instance().getMidiDevice(sam.getDevice(),
+			this.device = DevicePool.instance().getMidiDevice(getDevice(),
 					Direction.IN);
 			this.device.open();
 
@@ -127,12 +206,8 @@ public class SamsDevice extends Loopback {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				if (sams.accepts(shortMessage)) {
-					magnetOff(shortMessage);
-				}
+				encoding.tabChanged(SamsDevice.this, shortMessage);
 			}
-
-			loopOut(message, timeStamp);
 		}
 
 		@Override
@@ -148,8 +223,8 @@ public class SamsDevice extends Loopback {
 
 		private Receiver receiver;
 
-		public SamsTransmitter(Sams sam) throws MidiUnavailableException {
-			this.device = DevicePool.instance().getMidiDevice(sam.getDevice(),
+		public SamsTransmitter() throws MidiUnavailableException {
+			this.device = DevicePool.instance().getMidiDevice(getDevice(),
 					Direction.OUT);
 			this.device.open();
 
@@ -166,35 +241,8 @@ public class SamsDevice extends Loopback {
 			device.close();
 		}
 
-		public void transmit(MidiMessage message, long timeStamp) {
-			receiver.send(message, timeStamp);
+		public void transmit(MidiMessage message) {
+			receiver.send(message, -1);
 		}
-	}
-
-	public Sams getSAM() {
-		return sams;
-	}
-
-	public void setSAM(Sams sam) {
-		if (sam == null) {
-			throw new IllegalArgumentException("must not be null");
-		}
-
-		this.sams = sam;
-	}
-
-	private void magnetOn(final ShortMessage message) {
-		transmitter.transmit(message, -1);
-
-		Runnable runnable = new Runnable() {
-			@Override
-			public void run() {
-				magnetOff((ShortMessage) message);
-			}
-		};
-	}
-
-	private void magnetOff(ShortMessage message) {
-		transmitter.transmit(sams.reverse(message), -1);
 	}
 }

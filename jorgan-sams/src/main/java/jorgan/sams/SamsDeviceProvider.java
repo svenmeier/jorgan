@@ -23,7 +23,7 @@ import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
 /**
- * The provider of {@link Sams} devices.
+ * The provider of {@link Encoding} devices.
  * 
  * @see jorgan.sam.SamMerger
  */
