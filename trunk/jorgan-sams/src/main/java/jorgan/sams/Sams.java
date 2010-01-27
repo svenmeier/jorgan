@@ -27,4 +27,6 @@ public interface Sams {
 	public ShortMessage reverse(ShortMessage message);
 
 	public ShortMessage inverse(ShortMessage message);
+
+	public boolean accepts(ShortMessage message);
 }

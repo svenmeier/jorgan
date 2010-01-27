@@ -22,7 +22,7 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.midi.MessageUtils;
 
-public class NoteOnOffSams implements Sams {
+public class NoteSams implements Sams {
 
 	private String device;
 
@@ -34,36 +34,40 @@ public class NoteOnOffSams implements Sams {
 		this.device = device;
 	}
 
-	public ShortMessage reverse(ShortMessage message) {
-		if (message.getCommand() == ShortMessage.NOTE_ON
-				|| message.getCommand() == ShortMessage.NOTE_OFF) {
-			int command;
-			if (message.getCommand() == ShortMessage.NOTE_ON) {
-				command = ShortMessage.NOTE_OFF;
-			} else {
-				command = ShortMessage.NOTE_ON;
-			}
+	public boolean accepts(ShortMessage message) {
+		return message.getCommand() == ShortMessage.NOTE_ON
+				&& message.getData2() == 1;
+	}
 
-			return MessageUtils.newMessage(message.getChannel(), command,
-					message.getData1(), message.getData2());
+	public ShortMessage reverse(ShortMessage message) {
+		if (!accepts(message)) {
+			throw new IllegalArgumentException("not accepted");
 		}
-		return message;
+
+		int command;
+		if (message.getCommand() == ShortMessage.NOTE_ON) {
+			command = ShortMessage.NOTE_OFF;
+		} else {
+			command = ShortMessage.NOTE_ON;
+		}
+
+		return MessageUtils.newMessage(message.getChannel(), command, message
+				.getData1(), message.getData2());
 	}
 
 	public ShortMessage inverse(ShortMessage message) {
-		if (message.getCommand() == ShortMessage.NOTE_ON
-				|| message.getCommand() == ShortMessage.NOTE_OFF) {
-			int data2;
-			if (message.getData2() == 0) {
-				data2 = 1;
-			} else {
-				data2 = 0;
-			}
-
-			return MessageUtils.newMessage(message.getChannel(), message
-					.getCommand(), message.getData1(), data2);
+		if (!accepts(message)) {
+			throw new IllegalArgumentException("not accepted");
 		}
 
-		return message;
+		int data2;
+		if (message.getData2() == 0) {
+			data2 = 1;
+		} else {
+			data2 = 0;
+		}
+
+		return MessageUtils.newMessage(message.getChannel(), message
+				.getCommand(), message.getData1(), data2);
 	}
 }

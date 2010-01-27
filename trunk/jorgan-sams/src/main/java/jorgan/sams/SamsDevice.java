@@ -76,9 +76,12 @@ public class SamsDevice extends Loopback {
 	protected void onLoopIn(MidiMessage message, long timeStamp) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
-			magnetOff(sams.inverse(shortMessage));
 
-			magnetOn(shortMessage);
+			if (sams.accepts(shortMessage)) {
+				magnetOff(sams.inverse(shortMessage));
+
+				magnetOn(shortMessage);
+			}
 		}
 	}
 
@@ -122,7 +125,11 @@ public class SamsDevice extends Loopback {
 		@Override
 		public void send(MidiMessage message, long timeStamp) {
 			if (message instanceof ShortMessage) {
-				magnetOff((ShortMessage) message);
+				ShortMessage shortMessage = (ShortMessage) message;
+
+				if (sams.accepts(shortMessage)) {
+					magnetOff(shortMessage);
+				}
 			}
 
 			loopOut(message, timeStamp);
@@ -176,13 +183,9 @@ public class SamsDevice extends Loopback {
 		this.sams = sam;
 	}
 
-	private void magnetOn(ShortMessage message) {
+	private void magnetOn(final ShortMessage message) {
 		transmitter.transmit(message, -1);
 
-		delayMagnetOff(message);
-	}
-
-	private void delayMagnetOff(final ShortMessage message) {
 		Runnable runnable = new Runnable() {
 			@Override
 			public void run() {
