@@ -23,13 +23,19 @@ import java.beans.BeanInfo;
 import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
 /**
- * The default provider of {@link BeanInfo}s.
+ * Hook into jOrgan's bean editing management. Registered via Java's services
+ * lookup, see file
+ * <code>/META-INF/services/jorgan.gui.construct.info.spi.BeanInfoProvider</code>
+ * .
  */
 public class SysexBeanInfoProvider implements BeanInfoProvider {
 
 	private static final String BEAN_INFO_SEARCH_PATH = SysexBeanInfoProvider.class
 			.getPackage().getName();
 
+	/**
+	 * Let jOrgan search for {@link BeanInfo}s in this package.
+	 */
 	public String getBeanInfoSearchPath() {
 		return BEAN_INFO_SEARCH_PATH;
 	}

@@ -23,7 +23,7 @@ import jorgan.gui.construct.info.GenericSoundBeanInfo;
 import jorgan.sysex.disposition.SysexSound;
 
 /**
- * BeanInfo for {@link SysexSound}.
+ * BeanInfo for {@link SysexSound}, i.e. configure how properties are edited.
  */
 public class SysexSoundBeanInfo extends GenericSoundBeanInfo {
 

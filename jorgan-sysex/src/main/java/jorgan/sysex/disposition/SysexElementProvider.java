@@ -26,12 +26,21 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ElementProvider;
 
 /**
+ * Hook into jOrgan's element management. Registered via Java's services lookup,
+ * see file
+ * <code>/META-INF/services/jorgan.disposition.spi.ElementProvider</code>.
  */
 public class SysexElementProvider implements ElementProvider {
 
+	/**
+	 * Do nothing with new organs.
+	 */
 	public void init(Organ organ) {
 	}
 
+	/**
+	 * Let jOrgan know of the {@link SysexSound} element.
+	 */
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
