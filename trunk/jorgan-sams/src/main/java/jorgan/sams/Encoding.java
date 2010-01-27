@@ -20,13 +20,11 @@ package jorgan.sams;
 
 import javax.sound.midi.ShortMessage;
 
-public interface Sams {
+public interface Encoding {
 
-	public String getDevice();
+	public void changeTab(SamsDevice device, ShortMessage message);
 
-	public ShortMessage reverse(ShortMessage message);
+	public void tabChanged(SamsDevice device, ShortMessage message);
 
-	public ShortMessage inverse(ShortMessage message);
-
-	public boolean accepts(ShortMessage message);
+	public ShortMessage encode(int index, boolean onMagnet, boolean on);
 }
