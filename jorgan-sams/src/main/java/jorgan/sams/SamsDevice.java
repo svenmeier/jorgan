@@ -37,15 +37,19 @@ public class SamsDevice extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			SamsDevice.class);
 
-	private String device;
+	private String device = "VirMIDI [hw:1,0]";
 
-	private Encoding encoding;
+	private long maxDelay = 1000;
+
+	private Encoding encoding = new NoteOnOffEncoding();
 
 	private SamsReceiver receiver;
 
 	private SamsTransmitter transmitter;
 
 	private Tab[] tabs = new Tab[128];
+
+	private Thread autoOffThread;
 
 	/**
 	 * Create a new midiMerger.
@@ -71,16 +75,24 @@ public class SamsDevice extends Loopback {
 		this.device = device;
 	}
 
-	public Encoding getSchema() {
+	public long getMaxDelay() {
+		return maxDelay;
+	}
+
+	public void setMaxDelay(long maxDelay) {
+		this.maxDelay = maxDelay;
+	}
+
+	public Encoding getEncoding() {
 		return encoding;
 	}
 
-	public void setSchema(Encoding schema) {
-		if (schema == null) {
+	public void setEncoding(Encoding encoding) {
+		if (encoding == null) {
 			throw new IllegalArgumentException("must not be null");
 		}
 
-		this.encoding = schema;
+		this.encoding = encoding;
 	}
 
 	/**
@@ -98,20 +110,39 @@ public class SamsDevice extends Loopback {
 
 			throw ex;
 		}
+
+		autoOffThread = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				while (autoOffThread == Thread.currentThread()) {
+					long now = System.currentTimeMillis();
+
+					long next = checkAutoOff(now);
+					try {
+						Thread.sleep(Math.max(0, next - now));
+					} catch (InterruptedException interrupted) {
+					}
+				}
+			}
+		}, "jOrgan SAMs");
+		autoOffThread.start();
 	}
 
-	@Override
-	protected void onLoopIn(MidiMessage message, long timeStamp) {
-		if (message instanceof ShortMessage) {
-			ShortMessage shortMessage = (ShortMessage) message;
+	protected long checkAutoOff(long time) {
+		long next = Long.MAX_VALUE;
 
-			encoding.changeTab(this, shortMessage);
+		for (Tab tab : tabs) {
+			next = Math.min(tab.checkAutoOff(time), next);
 		}
+
+		return next;
 	}
 
 	@Override
 	public synchronized void close() {
 		super.close();
+
+		autoOffThread = null;
 
 		if (receiver != null) {
 			receiver.close();
@@ -121,6 +152,15 @@ public class SamsDevice extends Loopback {
 		if (transmitter != null) {
 			transmitter.close();
 			transmitter = null;
+		}
+	}
+
+	@Override
+	protected void onLoopIn(MidiMessage message) {
+		if (message instanceof ShortMessage) {
+			ShortMessage shortMessage = (ShortMessage) message;
+
+			encoding.decodeChangeTab(this, shortMessage);
 		}
 	}
 
@@ -140,6 +180,11 @@ public class SamsDevice extends Loopback {
 			this.index = index;
 		}
 
+		public synchronized long checkAutoOff(long time) {
+			return Math.min(onMagnet.checkAutoOff(time), offMagnet
+					.checkAutoOff(time));
+		}
+
 		public synchronized void change(boolean on) {
 			if (on) {
 				offMagnet.off();
@@ -153,28 +198,59 @@ public class SamsDevice extends Loopback {
 		public synchronized void onChanged(boolean on) {
 			if (on) {
 				onMagnet.off();
+
+				loopOut(encoding.encodeTabChanged(index, on));
 			} else {
 				offMagnet.off();
+
+				loopOut(encoding.encodeTabChanged(index, on));
 			}
 		}
 
 		private class Magnet {
-			private boolean on;
+			private long autoOff = Long.MAX_VALUE;
+
+			private boolean isOn() {
+				return autoOff < Long.MAX_VALUE;
+			}
 
 			public void on() {
-				if (!on) {
-					transmitter.transmit(encoding.encode(index,
-							onMagnet == this, true));
-					on = true;
+				if (!isOn()) {
+					autoOff = System.currentTimeMillis() + maxDelay;
+					autoOffThread.interrupt();
+
+					ShortMessage message;
+					if (onMagnet == this) {
+						message = encoding.encodeOnMagnet(index, true);
+					} else {
+						message = encoding.encodeOffMagnet(index, true);
+					}
+					transmitter.transmit(message);
 				}
 			}
 
 			public void off() {
-				if (on) {
-					transmitter.transmit(encoding.encode(index,
-							onMagnet == this, false));
-					on = false;
+				if (isOn()) {
+					autoOff = Long.MAX_VALUE;
+
+					ShortMessage message;
+					if (onMagnet == this) {
+						message = encoding.encodeOnMagnet(index, false);
+					} else {
+						message = encoding.encodeOffMagnet(index, false);
+					}
+					transmitter.transmit(message);
 				}
+			}
+
+			public long checkAutoOff(long time) {
+				if (isOn()) {
+					if (time > autoOff) {
+						off();
+					}
+				}
+
+				return autoOff;
 			}
 		}
 	}
@@ -206,7 +282,7 @@ public class SamsDevice extends Loopback {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				encoding.tabChanged(SamsDevice.this, shortMessage);
+				encoding.decodeTabChanged(SamsDevice.this, shortMessage);
 			}
 		}
 

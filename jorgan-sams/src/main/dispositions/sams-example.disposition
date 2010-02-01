@@ -16,12 +16,24 @@
       </references>
       <messages/>
       <zoom>1.0</zoom>
+      <output>jOrgan SAMs</output>
     </console>
     <switch id="1202">
       <name></name>
       <description></description>
       <references/>
-      <messages/>
+      <messages>
+        <switch-activated>
+          <status>set 144</status>
+          <data1>set 60</data1>
+          <data2>set 1</data2>
+        </switch-activated>
+        <switch-deactivated>
+          <status>set 128</status>
+          <data1>set 60 </data1>
+          <data2>set 1</data2>
+        </switch-deactivated>
+      </messages>
       <zoom>1.0</zoom>
       <active>false</active>
       <locking>true</locking>
