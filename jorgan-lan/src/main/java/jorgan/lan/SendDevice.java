@@ -82,7 +82,7 @@ public class SendDevice extends Loopback {
 	}
 
 	@Override
-	protected void onLoopIn(MidiMessage message, long timeStamp) {
+	protected void onLoopIn(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			try {
 				sender.send((ShortMessage) message);

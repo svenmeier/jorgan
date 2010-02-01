@@ -48,7 +48,7 @@ public class ReceiveDevice extends Loopback {
 			receiver = new MessageReceiver(IpMidi.GROUP, IpMidi.port(index)) {
 				@Override
 				protected void onReceived(ShortMessage message) {
-					loopOut(message, -1);
+					loopOut(message);
 				}
 			};
 		} catch (Exception ex) {
