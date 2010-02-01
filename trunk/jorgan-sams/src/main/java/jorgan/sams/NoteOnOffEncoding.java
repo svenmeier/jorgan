@@ -24,7 +24,7 @@ import jorgan.midi.MessageUtils;
 
 public class NoteOnOffEncoding implements Encoding {
 
-	public void changeTab(SamsDevice device, ShortMessage message) {
+	public void decodeChangeTab(SamsDevice device, ShortMessage message) {
 		int index = message.getData1();
 
 		if (message.getCommand() == ShortMessage.NOTE_ON) {
@@ -35,7 +35,7 @@ public class NoteOnOffEncoding implements Encoding {
 	}
 
 	@Override
-	public void tabChanged(SamsDevice device, ShortMessage message) {
+	public void decodeTabChanged(SamsDevice device, ShortMessage message) {
 		int index = message.getData1();
 
 		if (message.getCommand() == ShortMessage.NOTE_ON) {
@@ -46,23 +46,19 @@ public class NoteOnOffEncoding implements Encoding {
 	}
 
 	@Override
-	public ShortMessage encode(int index, boolean onMagnet, boolean on) {
-		int status;
-		if (onMagnet) {
-			status = ShortMessage.NOTE_ON;
-		} else {
-			status = ShortMessage.NOTE_OFF;
-		}
+	public ShortMessage encodeOffMagnet(int index, boolean on) {
+		return MessageUtils
+				.newMessage(ShortMessage.NOTE_OFF, index, on ? 1 : 0);
+	}
 
-		int data1 = index;
+	@Override
+	public ShortMessage encodeOnMagnet(int index, boolean on) {
+		return MessageUtils.newMessage(ShortMessage.NOTE_ON, index, on ? 1 : 0);
+	}
 
-		int data2;
-		if (on) {
-			data2 = 1;
-		} else {
-			data2 = 0;
-		}
-
-		return MessageUtils.newMessage(status, data1, data2);
+	@Override
+	public ShortMessage encodeTabChanged(int index, boolean on) {
+		return MessageUtils.newMessage(on ? ShortMessage.NOTE_ON
+				: ShortMessage.NOTE_OFF, index, 0);
 	}
 }

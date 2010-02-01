@@ -22,9 +22,13 @@ import javax.sound.midi.ShortMessage;
 
 public interface Encoding {
 
-	public void changeTab(SamsDevice device, ShortMessage message);
+	public void decodeChangeTab(SamsDevice device, ShortMessage message);
 
-	public void tabChanged(SamsDevice device, ShortMessage message);
+	public void decodeTabChanged(SamsDevice device, ShortMessage message);
 
-	public ShortMessage encode(int index, boolean onMagnet, boolean on);
+	public ShortMessage encodeOnMagnet(int index, boolean on);
+
+	public ShortMessage encodeOffMagnet(int index, boolean on);
+
+	public ShortMessage encodeTabChanged(int index, boolean on);
 }
