@@ -174,16 +174,16 @@ public class Loopback implements MidiDevice {
 	/**
 	 * Default implementation delegates to {@link #loopOut(MidiMessage, long)}.
 	 */
-	protected void onLoopIn(MidiMessage message, long timeStamp) {
-		loopOut(message, timeStamp);
+	protected void onLoopIn(MidiMessage message) {
+		loopOut(message);
 	}
 
-	protected synchronized void loopOut(MidiMessage message, long timeStamp) {
+	protected synchronized void loopOut(MidiMessage message) {
 		if (isOpen()) {
 			for (int r = 0; r < transmitters.size(); r++) {
 				LoopbackTransmitter transmitter = transmitters.get(r);
 
-				transmitter.transmit(message, timeStamp);
+				transmitter.transmit(message);
 			}
 		}
 	}
@@ -254,9 +254,9 @@ public class Loopback implements MidiDevice {
 		 * @param message
 		 *            message to transmit
 		 */
-		protected void transmit(MidiMessage message, long timeStamp) {
+		protected void transmit(MidiMessage message) {
 			if (receiver != null) {
-				receiver.send(message, timeStamp);
+				receiver.send(message, -1);
 			}
 		}
 
@@ -301,7 +301,7 @@ public class Loopback implements MidiDevice {
 				throw new IllegalStateException("already closed");
 			}
 
-			onLoopIn(message, timeStamp);
+			onLoopIn(message);
 		}
 
 		/**
