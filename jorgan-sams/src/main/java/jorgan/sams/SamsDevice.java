@@ -39,7 +39,7 @@ public class SamsDevice extends Loopback {
 
 	private String device = "VirMIDI [hw:1,0]";
 
-	private long maxDelay = 1000;
+	private long maxOn = 1000;
 
 	private Encoding encoding = new NoteOnOffEncoding();
 
@@ -75,12 +75,12 @@ public class SamsDevice extends Loopback {
 		this.device = device;
 	}
 
-	public long getMaxDelay() {
-		return maxDelay;
+	public long getMaxOn() {
+		return maxOn;
 	}
 
-	public void setMaxDelay(long maxDelay) {
-		this.maxDelay = maxDelay;
+	public void setMaxOn(long maxOn) {
+		this.maxOn = maxOn;
 	}
 
 	public Encoding getEncoding() {
@@ -216,7 +216,7 @@ public class SamsDevice extends Loopback {
 
 			public void on() {
 				if (!isOn()) {
-					autoOff = System.currentTimeMillis() + maxDelay;
+					autoOff = System.currentTimeMillis() + maxOn;
 					autoOffThread.interrupt();
 
 					ShortMessage message;
@@ -245,7 +245,7 @@ public class SamsDevice extends Loopback {
 
 			public long checkAutoOff(long time) {
 				if (isOn()) {
-					if (time > autoOff) {
+					if (autoOff < time) {
 						off();
 					}
 				}
