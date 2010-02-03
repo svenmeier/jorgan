@@ -5,7 +5,7 @@ The team behind jOrgan (sorted by last name) :
 
     Contributors :
       . Sörfõzõ Bence <sfbence@egon.gyaloglo.hu> (theatre skin)
-      . Bernd Casper <herz-casper@web.de> (element icons)
+      . Bernd Casper <bernd@rite-instruments.de> (element icons)
 
     Translators :
       . Crew Glazjev <thorgeir@tut.by> (Russian translation)
