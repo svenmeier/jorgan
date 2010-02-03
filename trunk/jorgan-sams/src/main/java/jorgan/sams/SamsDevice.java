@@ -120,18 +120,26 @@ public class SamsDevice extends Loopback {
 		autoOffThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				while (autoOffThread == Thread.currentThread()) {
-					long now = System.currentTimeMillis();
-
-					long next = checkAutoOff(now);
-					try {
-						Thread.sleep(Math.max(0, next - now));
-					} catch (InterruptedException interrupted) {
-					}
-				}
+				checkAutoOff();
 			}
 		}, "jOrgan SAMs");
 		autoOffThread.start();
+	}
+
+	public synchronized void autoOffUpdate() {
+		notify();
+	}
+
+	private synchronized void checkAutoOff() {
+		while (autoOffThread == Thread.currentThread()) {
+			long now = System.currentTimeMillis();
+
+			long next = checkAutoOff(now);
+			try {
+				wait(Math.max(0, next - now));
+			} catch (InterruptedException interrupted) {
+			}
+		}
 	}
 
 	protected long checkAutoOff(long time) {
@@ -146,7 +154,10 @@ public class SamsDevice extends Loopback {
 
 	@Override
 	public synchronized void close() {
-		autoOffThread = null;
+		if (autoOffThread != null) {
+			notify();
+			autoOffThread = null;
+		}
 
 		for (Tab tab : tabs) {
 			tab.reset();
@@ -238,7 +249,7 @@ public class SamsDevice extends Loopback {
 			public void on() {
 				if (!isOn()) {
 					autoOff = System.currentTimeMillis() + duration;
-					autoOffThread.interrupt();
+					autoOffUpdate();
 
 					ShortMessage message;
 					if (onMagnet == this) {
