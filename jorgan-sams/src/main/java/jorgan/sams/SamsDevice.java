@@ -37,9 +37,11 @@ public class SamsDevice extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			SamsDevice.class);
 
-	private String device = "VirMIDI [hw:1,0]";
+	private String input;
 
-	private long maxOn = 1000;
+	private String output;
+
+	private long duration = 500;
 
 	private Encoding encoding = new NoteOnOffEncoding();
 
@@ -51,36 +53,36 @@ public class SamsDevice extends Loopback {
 
 	private Thread autoOffThread;
 
-	/**
-	 * Create a new midiMerger.
-	 * 
-	 * @param info
-	 *            info to use
-	 */
 	public SamsDevice(MidiDevice.Info info) {
 		super(info, true, true);
-
-		config.read(this);
 
 		for (int t = 0; t < tabs.length; t++) {
 			tabs[t] = new Tab(t);
 		}
 	}
 
-	public String getDevice() {
-		return device;
+	public String getInput() {
+		return input;
 	}
 
-	public void setDevice(String device) {
-		this.device = device;
+	public void setInput(String input) {
+		this.input = input;
 	}
 
-	public long getMaxOn() {
-		return maxOn;
+	public String getOutput() {
+		return output;
 	}
 
-	public void setMaxOn(long maxOn) {
-		this.maxOn = maxOn;
+	public void setOutput(String output) {
+		this.output = output;
+	}
+
+	public long getDuration() {
+		return duration;
+	}
+
+	public void setDuration(long duration) {
+		this.duration = duration;
 	}
 
 	public Encoding getEncoding() {
@@ -95,16 +97,20 @@ public class SamsDevice extends Loopback {
 		this.encoding = encoding;
 	}
 
-	/**
-	 * Overriden to create receivers for all devices to merge.
-	 */
 	@Override
 	public void open() throws MidiUnavailableException {
 		super.open();
 
+		config.read(this);
+
 		try {
-			receiver = new SamsReceiver();
-			transmitter = new SamsTransmitter();
+			if (input != null) {
+				receiver = new SamsReceiver();
+			}
+
+			if (output != null) {
+				transmitter = new SamsTransmitter();
+			}
 		} catch (MidiUnavailableException ex) {
 			close();
 
@@ -140,9 +146,11 @@ public class SamsDevice extends Loopback {
 
 	@Override
 	public synchronized void close() {
-		super.close();
-
 		autoOffThread = null;
+
+		for (Tab tab : tabs) {
+			tab.reset();
+		}
 
 		if (receiver != null) {
 			receiver.close();
@@ -153,6 +161,8 @@ public class SamsDevice extends Loopback {
 			transmitter.close();
 			transmitter = null;
 		}
+
+		super.close();
 	}
 
 	@Override
@@ -168,6 +178,12 @@ public class SamsDevice extends Loopback {
 		return tabs[index];
 	}
 
+	private void transmit(ShortMessage message) {
+		if (transmitter != null) {
+			transmitter.transmit(message);
+		}
+	}
+
 	public class Tab {
 
 		private int index;
@@ -178,6 +194,11 @@ public class SamsDevice extends Loopback {
 
 		public Tab(int index) {
 			this.index = index;
+		}
+
+		public void reset() {
+			offMagnet.off();
+			onMagnet.off();
 		}
 
 		public synchronized long checkAutoOff(long time) {
@@ -216,7 +237,7 @@ public class SamsDevice extends Loopback {
 
 			public void on() {
 				if (!isOn()) {
-					autoOff = System.currentTimeMillis() + maxOn;
+					autoOff = System.currentTimeMillis() + duration;
 					autoOffThread.interrupt();
 
 					ShortMessage message;
@@ -225,7 +246,7 @@ public class SamsDevice extends Loopback {
 					} else {
 						message = encoding.encodeOffMagnet(index, true);
 					}
-					transmitter.transmit(message);
+					transmit(message);
 				}
 			}
 
@@ -239,7 +260,7 @@ public class SamsDevice extends Loopback {
 					} else {
 						message = encoding.encodeOffMagnet(index, false);
 					}
-					transmitter.transmit(message);
+					transmit(message);
 				}
 			}
 
@@ -263,7 +284,7 @@ public class SamsDevice extends Loopback {
 
 		public SamsReceiver() throws MidiUnavailableException {
 
-			this.device = DevicePool.instance().getMidiDevice(getDevice(),
+			this.device = DevicePool.instance().getMidiDevice(input,
 					Direction.IN);
 			this.device.open();
 
@@ -300,7 +321,7 @@ public class SamsDevice extends Loopback {
 		private Receiver receiver;
 
 		public SamsTransmitter() throws MidiUnavailableException {
-			this.device = DevicePool.instance().getMidiDevice(getDevice(),
+			this.device = DevicePool.instance().getMidiDevice(output,
 					Direction.OUT);
 			this.device.open();
 
