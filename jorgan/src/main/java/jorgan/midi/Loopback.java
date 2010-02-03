@@ -268,9 +268,9 @@ public class Loopback implements MidiDevice {
 				if (closed) {
 					throw new IllegalStateException("already closed");
 				}
-
-				transmitters.remove(this);
 				closed = true;
+				
+				transmitters.remove(this);
 			}
 		}
 	}
