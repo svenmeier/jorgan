@@ -47,18 +47,19 @@ public class NoteOnOffEncoding implements Encoding {
 
 	@Override
 	public ShortMessage encodeOffMagnet(int index, boolean on) {
-		return MessageUtils
-				.newMessage(ShortMessage.NOTE_OFF, index, on ? 1 : 0);
+		return MessageUtils.newMessage(ShortMessage.NOTE_OFF, index, on ? 127
+				: 0);
 	}
 
 	@Override
 	public ShortMessage encodeOnMagnet(int index, boolean on) {
-		return MessageUtils.newMessage(ShortMessage.NOTE_ON, index, on ? 1 : 0);
+		return MessageUtils.newMessage(ShortMessage.NOTE_ON, index, on ? 127
+				: 0);
 	}
 
 	@Override
 	public ShortMessage encodeTabChanged(int index, boolean on) {
 		return MessageUtils.newMessage(on ? ShortMessage.NOTE_ON
-				: ShortMessage.NOTE_OFF, index, 0);
+				: ShortMessage.NOTE_OFF, index, 127);
 	}
 }
