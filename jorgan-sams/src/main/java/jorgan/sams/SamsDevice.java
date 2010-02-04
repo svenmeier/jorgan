@@ -18,6 +18,8 @@
  */
 package jorgan.sams;
 
+import java.util.Arrays;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
@@ -181,7 +183,7 @@ public class SamsDevice extends Loopback {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
-			encoding.decodeChangeTab(this, shortMessage);
+			encoding.decodeChangeTab(Arrays.asList(tabs), shortMessage);
 		}
 	}
 
@@ -314,7 +316,7 @@ public class SamsDevice extends Loopback {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				encoding.decodeTabChanged(SamsDevice.this, shortMessage);
+				encoding.decodeTabChanged(Arrays.asList(tabs), shortMessage);
 			}
 		}
 

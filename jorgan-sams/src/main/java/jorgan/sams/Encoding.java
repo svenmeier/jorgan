@@ -18,13 +18,17 @@
  */
 package jorgan.sams;
 
+import java.util.List;
+
 import javax.sound.midi.ShortMessage;
+
+import jorgan.sams.SamsDevice.Tab;
 
 public interface Encoding {
 
-	public void decodeChangeTab(SamsDevice device, ShortMessage message);
+	public void decodeChangeTab(List<Tab> tabs, ShortMessage message);
 
-	public void decodeTabChanged(SamsDevice device, ShortMessage message);
+	public void decodeTabChanged(List<Tab> tabs, ShortMessage message);
 
 	public ShortMessage encodeOnMagnet(int index, boolean on);
 
