@@ -18,30 +18,33 @@
  */
 package jorgan.sams;
 
+import java.util.List;
+
 import javax.sound.midi.ShortMessage;
 
 import jorgan.midi.MessageUtils;
+import jorgan.sams.SamsDevice.Tab;
 
 public class NoteOnOffEncoding implements Encoding {
 
-	public void decodeChangeTab(SamsDevice device, ShortMessage message) {
+	public void decodeChangeTab(List<Tab> tabs, ShortMessage message) {
 		int index = message.getData1();
 
 		if (message.getCommand() == ShortMessage.NOTE_ON) {
-			device.getTab(index).change(true);
+			tabs.get(index).change(true);
 		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
-			device.getTab(index).change(false);
+			tabs.get(index).change(false);
 		}
 	}
 
 	@Override
-	public void decodeTabChanged(SamsDevice device, ShortMessage message) {
+	public void decodeTabChanged(List<Tab> tabs, ShortMessage message) {
 		int index = message.getData1();
 
 		if (message.getCommand() == ShortMessage.NOTE_ON) {
-			device.getTab(index).onChanged(true);
+			tabs.get(index).onChanged(true);
 		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
-			device.getTab(index).onChanged(false);
+			tabs.get(index).onChanged(false);
 		}
 	}
 
