@@ -75,6 +75,10 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		}
 	}
 
+	protected Receiver getReceiver() {
+		return receiver;
+	}
+
 	@Override
 	protected boolean send(int channel, int command, int data1, int data2) {
 		if (receiver == null) {
@@ -83,8 +87,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 
 		ShortMessage message;
 		try {
-			message = MessageUtils.createMessage(channel, command,
-					data1, data2);
+			message = MessageUtils
+					.createMessage(channel, command, data1, data2);
 		} catch (InvalidMidiDataException e) {
 			throw new Error(e);
 		}
