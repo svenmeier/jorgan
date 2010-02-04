@@ -36,7 +36,7 @@ import jorgan.util.IOUtils;
 import jorgan.util.Null;
 
 /**
- * A player for a {@link FluidsynthSound}.
+ * A player for a {@link LinuxsamplerSound}.
  */
 public class LinuxsamplerSoundPlayer extends
 		GenericSoundPlayer<LinuxsamplerSound> {
