@@ -14,8 +14,8 @@
       <references/>
       <messages/>
       <output>Java Sound Synthesizer</output>
-      <open>./sysex-example-open.midi</open>
-      <close>./sysex-example-close.midi</close>
+      <open>./sysex-example-open.mid</open>
+      <close>./sysex-example-close.mid</close>
     </sysex.sysexSound>
   </elements>
 </organ>

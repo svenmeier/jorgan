@@ -61,6 +61,8 @@ public class SysexSoundPlayer extends GenericSoundPlayer<SysexSound> {
 	}
 
 	private void send(String property, String value) {
+		removeProblem(Severity.ERROR, property);
+
 		Receiver receiver = getReceiver();
 		if (receiver != null) {
 			try {
