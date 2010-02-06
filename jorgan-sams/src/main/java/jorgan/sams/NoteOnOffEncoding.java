@@ -23,7 +23,7 @@ import java.util.List;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.midi.MessageUtils;
-import jorgan.sams.SamsDevice.Tab;
+import jorgan.sams.Magnets.Tab;
 
 public class NoteOnOffEncoding implements Encoding {
 

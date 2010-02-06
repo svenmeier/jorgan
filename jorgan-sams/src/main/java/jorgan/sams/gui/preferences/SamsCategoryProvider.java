@@ -14,7 +14,7 @@ public class SamsCategoryProvider implements CategoryProvider {
 	public List<Category> getCategories() {
 		List<Category> categories = new ArrayList<Category>();
 
-		categories.add(new SamsCategory());
+		categories.add(new MagnetsCategory());
 
 		return categories;
 	}

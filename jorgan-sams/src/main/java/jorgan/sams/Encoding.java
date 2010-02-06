@@ -22,7 +22,7 @@ import java.util.List;
 
 import javax.sound.midi.ShortMessage;
 
-import jorgan.sams.SamsDevice.Tab;
+import jorgan.sams.Magnets.Tab;
 
 public interface Encoding {
 

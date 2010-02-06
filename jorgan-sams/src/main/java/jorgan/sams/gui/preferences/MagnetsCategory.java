@@ -29,7 +29,7 @@ import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
-import jorgan.sams.SamsDevice;
+import jorgan.sams.Magnets;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.spinner.SpinnerUtils;
@@ -38,18 +38,18 @@ import bias.swing.Category;
 import bias.util.Property;
 
 /**
- * {@link SamsDevice} category.
+ * {@link Magnets} category.
  */
-public class SamsCategory extends JOrganCategory {
+public class MagnetsCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			SamsCategory.class);
+			MagnetsCategory.class);
 
-	private Model input = getModel(new Property(SamsDevice.class, "input"));
+	private Model input = getModel(new Property(Magnets.class, "input"));
 
-	private Model output = getModel(new Property(SamsDevice.class, "output"));
+	private Model output = getModel(new Property(Magnets.class, "output"));
 
-	private Model duration = getModel(new Property(SamsDevice.class, "duration"));
+	private Model duration = getModel(new Property(Magnets.class, "duration"));
 
 	private JComboBox inputComboBox = new JComboBox();
 
@@ -58,7 +58,7 @@ public class SamsCategory extends JOrganCategory {
 	private JSpinner durationSpinner = new JSpinner(SpinnerUtils.create(0l, 0l,
 			5000l, 100l));
 
-	public SamsCategory() {
+	public MagnetsCategory() {
 		config.read(this);
 	}
 
