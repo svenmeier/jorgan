@@ -18,77 +18,46 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.BorderLayout;
 import java.awt.Component;
-import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.io.File;
 
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JPanel;
 import javax.swing.JTextField;
+
+import jorgan.swing.FileField;
 
 /**
  * PropertyEditor for a file property.
  */
-public class FileEditor extends CustomEditor implements ActionListener {
+public class FileEditor extends CustomEditor {
 
-	private JPanel panel = new JPanel();
-
-	private JTextField textField = new JTextField();
-
-	private JButton button = new JButton("...");
-
-	private JFileChooser fileChooser;
-
-	public FileEditor() {
-		panel.setLayout(new BorderLayout());
-
-		button.setFocusable(false);
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.addActionListener(this);
-		panel.add(button, BorderLayout.EAST);
-
-		textField.setBorder(null);
-		panel.add(textField, BorderLayout.CENTER);
-	}
+	private FileField field = new FileField() {
+		protected JTextField createTextField() {
+			JTextField textField = new JTextField();
+			textField.setBorder(null);
+			return textField;
+		}
+	};
 
 	@Override
 	public Component getCustomEditor(Object value) {
 
-		textField.setText(format(value));
+		if (value == null) {
+			field.setFile(null);
+		} else {
+			field.setFile(new File((String) value));
+		}
 
-		return panel;
+		return field;
 	}
 
 	@Override
 	protected Object getEditedValue() {
 
-		String file = textField.getText();
-		if ("".equals(file)) {
+		File file = field.getFile();
+		if (file == null) {
 			return null;
 		} else {
-			return file;
-		}
-	}
-
-	public void actionPerformed(ActionEvent ev) {
-
-		if (fileChooser == null) {
-			fileChooser = new JFileChooser();
-			fileChooser.setDialogType(JFileChooser.OPEN_DIALOG);
-			fileChooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-			fileChooser.setMultiSelectionEnabled(false);
-		}
-
-		if (!"".equals(textField.getText())) {
-			fileChooser.setSelectedFile(new File(textField.getText()));
-		}
-
-		if (fileChooser.showOpenDialog(button) == JFileChooser.APPROVE_OPTION) {
-			textField.setText(fileChooser.getSelectedFile().getPath());
+			return file.getPath();
 		}
 	}
 
