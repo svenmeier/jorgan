@@ -187,10 +187,6 @@ public class SamsDevice extends Loopback {
 		}
 	}
 
-	public Tab getTab(int index) {
-		return tabs[index];
-	}
-
 	private void transmit(ShortMessage message) {
 		if (transmitter != null) {
 			transmitter.transmit(message);
