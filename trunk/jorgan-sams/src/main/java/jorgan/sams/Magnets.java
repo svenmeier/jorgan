@@ -34,10 +34,10 @@ import bias.Configuration;
 
 /**
  */
-public class SamsDevice extends Loopback {
+public class Magnets extends Loopback {
 
 	private static Configuration config = Configuration.getRoot().get(
-			SamsDevice.class);
+			Magnets.class);
 
 	private String input;
 
@@ -55,7 +55,7 @@ public class SamsDevice extends Loopback {
 
 	private Thread autoOffThread;
 
-	public SamsDevice(MidiDevice.Info info) {
+	public Magnets(MidiDevice.Info info) {
 		super(info, true, true);
 
 		for (int t = 0; t < tabs.length; t++) {

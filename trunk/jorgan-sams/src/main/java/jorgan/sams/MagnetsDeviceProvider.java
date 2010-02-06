@@ -23,21 +23,21 @@ import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
 /**
- * The provider of {@link SamsDevice}s.
+ * The provider of {@link Magnets}s.
  */
-public class SamsDeviceProvider extends MidiDeviceProvider {
+public class MagnetsDeviceProvider extends MidiDeviceProvider {
 
 	/**
 	 * The device info for this providers device.
 	 */
-	public static final Info INFO = new Info("jOrgan SAMs", "jOrgan",
-			"jOrgan Stop Action Magnets", "1.0") {
+	public static final Info INFO = new Info("jOrgan Magnets", "jOrgan",
+			"jOrgan Magnets", "1.0") {
 	};
 
 	/**
 	 * The device.
 	 */
-	private static SamsDevice device;
+	private static Magnets device;
 
 	@Override
 	public MidiDevice.Info[] getDeviceInfo() {
@@ -47,9 +47,9 @@ public class SamsDeviceProvider extends MidiDeviceProvider {
 
 	@Override
 	public MidiDevice getDevice(MidiDevice.Info info) {
-		if (SamsDeviceProvider.INFO == info) {
+		if (MagnetsDeviceProvider.INFO == info) {
 			if (device == null) {
-				device = new SamsDevice(info);
+				device = new Magnets(info);
 			}
 
 			return device;
