@@ -19,14 +19,15 @@
 package jorgan.play;
 
 import jorgan.disposition.Switch;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Activated;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.disposition.Switch.Deactivated;
 import jorgan.disposition.Switch.Initiate;
 import jorgan.disposition.Switch.Toggle;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.midi.mpl.Context;
+import jorgan.util.Null;
 
 /**
  * An base for players that control {@link Switch}es.
@@ -35,8 +36,15 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private PlayerContext activeContext = new PlayerContext();
 
+	private Boolean lastActive;
+
 	public SwitchPlayer(E element) {
 		super(element);
+	}
+
+	@Override
+	protected void openImpl() {
+		lastActive = null;
 	}
 
 	@Override
@@ -63,10 +71,14 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		if (isOpen()) {
 			Switch element = getElement();
 
-			if (element.isActive()) {
-				activated();
-			} else {
-				deactivated();
+			boolean active = element.isActive();
+			if (!Null.safeEquals(this.lastActive, active)) {
+				if (active) {
+					activated();
+				} else {
+					deactivated();
+				}
+				this.lastActive = active;
 			}
 		}
 	}
