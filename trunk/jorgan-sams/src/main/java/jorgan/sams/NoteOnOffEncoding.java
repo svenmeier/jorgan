@@ -41,9 +41,11 @@ public class NoteOnOffEncoding implements Encoding {
 	public void decodeTabChanged(List<Tab> tabs, ShortMessage message) {
 		int index = message.getData1();
 
-		if (message.getCommand() == ShortMessage.NOTE_ON) {
+		if (message.getCommand() == ShortMessage.NOTE_ON
+				&& message.getData2() == 127) {
 			tabs.get(index).onChanged(true);
-		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
+		} else if (message.getCommand() == ShortMessage.NOTE_OFF
+				&& message.getData2() == 127) {
 			tabs.get(index).onChanged(false);
 		}
 	}

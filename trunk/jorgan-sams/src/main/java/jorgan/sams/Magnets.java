@@ -53,7 +53,7 @@ public class Magnets extends Loopback {
 
 	private Tab[] tabs = new Tab[128];
 
-	private Thread autoOffThread;
+	private Thread durationThread;
 
 	public Magnets(MidiDevice.Info info) {
 		super(info, true, true);
@@ -119,46 +119,45 @@ public class Magnets extends Loopback {
 			throw ex;
 		}
 
-		autoOffThread = new Thread(new Runnable() {
+		durationThread = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				checkAutoOff();
+				checkDuration();
 			}
-		}, "jOrgan SAMs");
-		autoOffThread.start();
+		}, "jOrgan Magnets");
+		durationThread.start();
 	}
 
 	public synchronized void autoOffUpdate() {
 		notify();
 	}
 
-	private synchronized void checkAutoOff() {
-		while (autoOffThread == Thread.currentThread()) {
+	private synchronized void checkDuration() {
+		while (durationThread == Thread.currentThread()) {
 			long now = System.currentTimeMillis();
-
-			long next = checkAutoOff(now);
+			long then = checkDuration(now);
 			try {
-				wait(Math.max(0, next - now));
+				wait(Math.max(0, then - now));
 			} catch (InterruptedException interrupted) {
 			}
 		}
 	}
 
-	protected long checkAutoOff(long time) {
-		long next = Long.MAX_VALUE;
+	protected long checkDuration(long now) {
+		long then = Long.MAX_VALUE;
 
 		for (Tab tab : tabs) {
-			next = Math.min(tab.checkAutoOff(time), next);
+			then = Math.min(tab.checkDuration(now), then);
 		}
 
-		return next;
+		return then;
 	}
 
 	@Override
 	public synchronized void close() {
-		if (autoOffThread != null) {
-			notify();
-			autoOffThread = null;
+		if (durationThread != null) {
+			durationThread = null;
+			notifyAll();
 		}
 
 		for (Tab tab : tabs) {
@@ -179,7 +178,7 @@ public class Magnets extends Loopback {
 	}
 
 	@Override
-	protected void onLoopIn(MidiMessage message) {
+	protected synchronized void onLoopIn(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
@@ -210,12 +209,12 @@ public class Magnets extends Loopback {
 			onMagnet.off();
 		}
 
-		public synchronized long checkAutoOff(long time) {
-			return Math.min(onMagnet.checkAutoOff(time), offMagnet
-					.checkAutoOff(time));
+		public long checkDuration(long time) {
+			return Math.min(onMagnet.checkDuration(time), offMagnet
+					.checkDuration(time));
 		}
 
-		public synchronized void change(boolean on) {
+		public void change(boolean on) {
 			if (on) {
 				offMagnet.off();
 				onMagnet.on();
@@ -225,7 +224,7 @@ public class Magnets extends Loopback {
 			}
 		}
 
-		public synchronized void onChanged(boolean on) {
+		public void onChanged(boolean on) {
 			if (on) {
 				onMagnet.off();
 
@@ -238,15 +237,15 @@ public class Magnets extends Loopback {
 		}
 
 		private class Magnet {
-			private long autoOff = Long.MAX_VALUE;
+			private long offTime = Long.MAX_VALUE;
 
 			private boolean isOn() {
-				return autoOff < Long.MAX_VALUE;
+				return offTime < Long.MAX_VALUE;
 			}
 
 			public void on() {
 				if (!isOn()) {
-					autoOff = System.currentTimeMillis() + duration;
+					offTime = System.currentTimeMillis() + duration;
 					autoOffUpdate();
 
 					ShortMessage message;
@@ -261,7 +260,7 @@ public class Magnets extends Loopback {
 
 			public void off() {
 				if (isOn()) {
-					autoOff = Long.MAX_VALUE;
+					offTime = Long.MAX_VALUE;
 
 					ShortMessage message;
 					if (onMagnet == this) {
@@ -273,14 +272,14 @@ public class Magnets extends Loopback {
 				}
 			}
 
-			public long checkAutoOff(long time) {
+			public long checkDuration(long time) {
 				if (isOn()) {
-					if (autoOff < time) {
+					if (offTime <= time) {
 						off();
 					}
 				}
 
-				return autoOff;
+				return offTime;
 			}
 		}
 	}
@@ -312,7 +311,10 @@ public class Magnets extends Loopback {
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
 
-				encoding.decodeTabChanged(Arrays.asList(tabs), shortMessage);
+				synchronized (Magnets.this) {
+					encoding
+							.decodeTabChanged(Arrays.asList(tabs), shortMessage);
+				}
 			}
 		}
 
