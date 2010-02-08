@@ -16,23 +16,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sysex;
+package jorgan.sysex.disposition;
 
-import javax.sound.midi.ShortMessage;
+import jorgan.disposition.Console;
+import jorgan.util.Null;
 
-import jorgan.midi.MessageUtils;
+/**
+ */
+public class SysexConsole extends Console {
 
-public class NoteOnEncoding implements Encoding {
+	private String mapping;
 
-	public ShortMessage encode(int index) {
-		return MessageUtils.newMessage(ShortMessage.NOTE_ON, index, 127);
+	public void setMapping(String mapping) {
+		if (!Null.safeEquals(this.mapping, mapping)) {
+			String oldSysex = this.mapping;
+
+			this.mapping = mapping;
+
+			fireChange(new PropertyChange(oldSysex, this.mapping));
+		}
 	}
 
-	public int decode(ShortMessage message) {
-		if (message.getStatus() == ShortMessage.NOTE_ON) {
-			return message.getData1();
-		}
+	public String getMapping() {
+		return mapping;
+	}
 
-		return -1;
+	public Encoding getEncoding() {
+		return new NoteOnEncoding();
 	}
 }

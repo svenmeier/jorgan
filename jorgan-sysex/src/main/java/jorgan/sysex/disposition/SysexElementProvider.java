@@ -45,6 +45,7 @@ public class SysexElementProvider implements ElementProvider {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
 		classes.add(SysexSound.class);
+		classes.add(SysexConsole.class);
 
 		return classes;
 	}

@@ -16,45 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sysex;
+package jorgan.sysex.gui.construct.info;
 
-import javax.sound.midi.MidiDevice;
-import javax.sound.midi.MidiDevice.Info;
-import javax.sound.midi.spi.MidiDeviceProvider;
+import jorgan.gui.construct.editor.FileEditor;
+import jorgan.gui.construct.info.ConsoleBeanInfo;
+import jorgan.sysex.disposition.SysexConsole;
+import jorgan.sysex.disposition.SysexSound;
 
 /**
- * The provider of {@link SysexMapper}s.
+ * BeanInfo for {@link SysexSound}, i.e. configure how properties are edited.
  */
-public class SysexDeviceProvider extends MidiDeviceProvider {
-
-	/**
-	 * The device info for this providers device.
-	 */
-	public static final Info INFO = new Info("jOrgan Sysex Mapper", "jOrgan",
-			"jOrgan Sysex Mapper", "1.0") {
-	};
-
-	/**
-	 * The device.
-	 */
-	private static SysexMapper device;
+public class SysexConsoleBeanInfo extends ConsoleBeanInfo {
 
 	@Override
-	public MidiDevice.Info[] getDeviceInfo() {
+	protected void registerProperties() {
+		super.registerProperties();
 
-		return new MidiDevice.Info[] { INFO };
-	}
-
-	@Override
-	public MidiDevice getDevice(MidiDevice.Info info) {
-		if (SysexDeviceProvider.INFO == info) {
-			if (device == null) {
-				device = new SysexMapper(info);
-			}
-
-			return device;
-		}
-
-		return null;
+		add("mapping", SysexConsole.class, FileEditor.class);
 	}
 }

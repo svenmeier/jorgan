@@ -16,26 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sysex;
+package jorgan.sysex.disposition;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.sound.midi.ShortMessage;
 
-import jorgan.spi.ConfigurationProvider;
-import bias.Store;
-import bias.store.DefaultingStore;
-import bias.store.PreferencesStore;
-import bias.store.PropertiesStore;
+public interface Encoding {
 
-public class SysexConfigurationProvider implements ConfigurationProvider {
+	public ShortMessage encode(int index);
 
-	public List<Store> getStores() {
-		ArrayList<Store> stores = new ArrayList<Store>();
-
-		stores.add(new DefaultingStore(PreferencesStore.user(),
-				new PropertiesStore(getClass(), "preferences.properties")));
-
-		return stores;
-	}
-
+	public int decode(ShortMessage message);
 }

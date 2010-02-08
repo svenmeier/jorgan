@@ -16,13 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sysex;
+package jorgan.sysex.disposition;
 
 import javax.sound.midi.ShortMessage;
 
-public interface Encoding {
+import jorgan.midi.MessageUtils;
 
-	public ShortMessage encode(int index);
+public class NoteOnEncoding implements Encoding {
 
-	public int decode(ShortMessage message);
+	public ShortMessage encode(int index) {
+		return MessageUtils.newMessage(ShortMessage.NOTE_ON, index, 127);
+	}
+
+	public int decode(ShortMessage message) {
+		if (message.getStatus() == ShortMessage.NOTE_ON) {
+			return message.getData1();
+		}
+
+		return -1;
+	}
 }
