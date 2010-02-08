@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
-    <console id="1201">
-      <name></name>
-      <description></description>
-      <references>
-        <console-locationReference id="1202">
-          <x>250</x>
-          <y>60</y>
-        </console-locationReference>
-        <console-locationReference id="1203">
-          <x>60</x>
-          <y>20</y>
-        </console-locationReference>
-        <console-locationReference id="1204">
-          <x>30</x>
-          <y>90</y>
-        </console-locationReference>
-      </references>
-      <messages/>
-      <zoom>1.0</zoom>
-      <input>jOrgan Magnets</input>
-      <output>jOrgan Magnets</output>
-    </console>
     <switch id="1202">
       <name></name>
       <description></description>
@@ -57,5 +35,28 @@
       <messages/>
       <zoom>1.0</zoom>
     </label>
+    <sams.samsConsole id="1205">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="1204">
+          <x>20</x>
+          <y>100</y>
+        </console-locationReference>
+        <console-locationReference id="1203">
+          <x>40</x>
+          <y>20</y>
+        </console-locationReference>
+        <console-locationReference id="1202">
+          <x>230</x>
+          <y>60</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <input>jOrgan Midi Logger</input>
+      <output>jOrgan Midi Logger</output>
+      <duration>500</duration>
+    </sams.samsConsole>
   </elements>
 </organ>
