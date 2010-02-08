@@ -20,10 +20,11 @@ package jorgan.sysex.gui.construct.info;
 
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.info.GenericSoundBeanInfo;
+import jorgan.sysex.disposition.SysexConsole;
 import jorgan.sysex.disposition.SysexSound;
 
 /**
- * BeanInfo for {@link SysexSound}, i.e. configure how properties are edited.
+ * BeanInfo for {@link SysexConsole}.
  */
 public class SysexSoundBeanInfo extends GenericSoundBeanInfo {
 

@@ -19,14 +19,18 @@
 package jorgan.sysex.play;
 
 import jorgan.disposition.Element;
+import jorgan.play.Player;
 import jorgan.play.spi.PlayerProvider;
+import jorgan.sysex.disposition.SysexConsole;
 import jorgan.sysex.disposition.SysexSound;
 
 public class SysexPlayerProvider implements PlayerProvider {
 
-	public SysexSoundPlayer createPlayer(Element element) {
+	public Player<?> createPlayer(Element element) {
 		if (element instanceof SysexSound) {
 			return new SysexSoundPlayer((SysexSound) element);
+		} else if (element instanceof SysexConsole) {
+			return new SysexConsolePlayer((SysexConsole) element);
 		}
 		return null;
 	}

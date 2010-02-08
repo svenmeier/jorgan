@@ -1,13 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <organ version="@jorgan.version@">
   <elements>
-    <console id="3">
-      <name></name>
-      <description></description>
-      <references/>
-      <messages/>
-      <zoom>1.0</zoom>
-    </console>
     <sysex.sysexSound id="6">
       <name></name>
       <description></description>
@@ -17,5 +10,12 @@
       <open>./sysex-example-open.mid</open>
       <close>./sysex-example-close.mid</close>
     </sysex.sysexSound>
+    <sysex.sysexConsole id="7">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </sysex.sysexConsole>
   </elements>
 </organ>
