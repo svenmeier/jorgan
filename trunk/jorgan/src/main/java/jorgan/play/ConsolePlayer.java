@@ -33,13 +33,13 @@ import jorgan.problem.Severity;
 /**
  * A player of an console.
  */
-public class ConsolePlayer extends Player<Console> {
+public class ConsolePlayer<E extends Console> extends Player<E> {
 
 	private Transmitter transmitter;
 
 	private Receiver receiver;
 
-	public ConsolePlayer(Console console) {
+	public ConsolePlayer(E console) {
 		super(console);
 	}
 
@@ -106,14 +106,39 @@ public class ConsolePlayer extends Player<Console> {
 
 	@Override
 	protected void send(ShortMessage message, Context context) {
+		fireSent(message);
 
+		send(message);
+	}
+
+	protected void fireSent(ShortMessage message) {
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireSent(message.getChannel(), message.getCommand(),
+					message.getData1(), message.getData2());
+
+		}
+	}
+
+	protected void send(MidiMessage message) {
 		if (receiver != null) {
 			receiver.send(message, -1);
+		}
+	}
 
-			if (getOrganPlay() != null) {
-				getOrganPlay().fireSent(message.getChannel(),
-						message.getCommand(), message.getData1(),
-						message.getData2());
+	protected void receive(MidiMessage message) {
+		if (MessageUtils.isChannelMessage(message)) {
+			ShortMessage shortMessage = (ShortMessage) message;
+
+			getOrganPlay().fireReceived(getElement(), null,
+					shortMessage.getChannel(), shortMessage.getCommand(),
+					shortMessage.getData1(), shortMessage.getData2());
+
+			for (Element element : getElement().getReferenced(Element.class)) {
+				Player<? extends Element> player = getOrganPlay().getPlayer(
+						element);
+				if (player != null) {
+					player.received(shortMessage);
+				}
 			}
 		}
 	}
@@ -127,22 +152,7 @@ public class ConsolePlayer extends Player<Console> {
 		}
 
 		public void send(MidiMessage message, long timeStamp) {
-			if (MessageUtils.isChannelMessage(message)) {
-				ShortMessage shortMessage = (ShortMessage)message;
-				
-				getOrganPlay().fireReceived(getElement(), null,
-						shortMessage.getChannel(), shortMessage.getCommand(),
-						shortMessage.getData1(), shortMessage.getData2());		
-				
-				for (Element element : getElement()
-						.getReferenced(Element.class)) {
-					Player<? extends Element> player = getOrganPlay()
-							.getPlayer(element);
-					if (player != null) {
-						player.received(shortMessage);
-					}
-				}
-			}
+			receive(message);
 		}
 	}
 }
