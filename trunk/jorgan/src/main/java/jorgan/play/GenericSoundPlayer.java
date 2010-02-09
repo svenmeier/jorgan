@@ -19,6 +19,7 @@
 package jorgan.play;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
@@ -75,16 +76,22 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		}
 	}
 
-	protected Receiver getReceiver() {
-		return receiver;
-	}
-
-	@Override
-	protected boolean send(int channel, int command, int data1, int data2) {
+	protected boolean send(MidiMessage message) {
 		if (receiver == null) {
 			return false;
 		}
 
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireSent(message);
+		}
+
+		receiver.send(message, -1);
+
+		return true;
+	}
+
+	@Override
+	protected boolean send(int channel, int command, int data1, int data2) {
 		ShortMessage message;
 		try {
 			message = MessageUtils
@@ -92,8 +99,6 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		} catch (InvalidMidiDataException e) {
 			throw new Error(e);
 		}
-		receiver.send(message, -1);
-
-		return true;
+		return send(message);
 	}
 }

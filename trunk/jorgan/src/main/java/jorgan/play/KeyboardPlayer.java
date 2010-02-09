@@ -176,9 +176,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		if (MessageUtils.isChannelMessage(message)) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
-			getOrganPlay().fireReceived(getElement(), null,
-					shortMessage.getChannel(), shortMessage.getCommand(),
-					shortMessage.getData1(), shortMessage.getData2());
+			getOrganPlay().fireReceived(shortMessage);
 
 			onReceived(shortMessage);
 		}

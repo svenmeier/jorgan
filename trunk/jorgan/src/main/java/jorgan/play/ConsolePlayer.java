@@ -21,12 +21,10 @@ package jorgan.play;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.midi.MessageUtils;
 import jorgan.problem.Severity;
 
 /**
@@ -116,12 +114,8 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	 */
 	public void send(MidiMessage message) {
 		if (receiver != null) {
-			if (getOrganPlay() != null
-					&& MessageUtils.isChannelMessage(message)) {
-				ShortMessage shortMessage = (ShortMessage) message;
-				getOrganPlay().fireSent(shortMessage.getChannel(),
-						shortMessage.getCommand(), shortMessage.getData1(),
-						shortMessage.getData2());
+			if (getOrganPlay() != null) {
+				getOrganPlay().fireSent(message);
 
 			}
 
@@ -130,11 +124,8 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	}
 
 	protected void receive(MidiMessage message) {
-		if (MessageUtils.isChannelMessage(message)) {
-			ShortMessage shortMessage = (ShortMessage) message;
-			getOrganPlay().fireReceived(getElement(), null,
-					shortMessage.getChannel(), shortMessage.getCommand(),
-					shortMessage.getData1(), shortMessage.getData2());
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireReceived(message);
 		}
 
 		for (Element element : getElement().getReferenced(Element.class)) {

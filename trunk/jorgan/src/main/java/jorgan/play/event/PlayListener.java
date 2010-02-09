@@ -18,13 +18,14 @@
  */
 package jorgan.play.event;
 
+import javax.sound.midi.MidiMessage;
 
 /**
  * A listener to events of a player.
  */
 public interface PlayListener {
 
-	public void received(int channel, int command, int data1, int data2);
+	public void received(MidiMessage message);
 
-	public void sent(int channel, int command, int data1, int data2);
+	public void sent(MidiMessage message);
 }
