@@ -30,7 +30,6 @@ import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
 
-import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
 import jorgan.problem.Severity;
 import jorgan.sysex.disposition.SysexConsole;
@@ -78,12 +77,12 @@ public class SysexConsolePlayer extends ConsolePlayer<SysexConsole> {
 	}
 
 	@Override
-	protected void send(ShortMessage message, Context context) {
-		fireSent(message);
-
-		SysexMessage mapped = map(message);
-		if (mapped != null) {
-			send(mapped);
+	public void send(MidiMessage message) {
+		if (message instanceof ShortMessage) {
+			SysexMessage mapped = map((ShortMessage) message);
+			if (mapped != null) {
+				super.send(mapped);
+			}
 		}
 	}
 
