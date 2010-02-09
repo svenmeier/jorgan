@@ -27,7 +27,6 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.midi.MessageUtils;
-import jorgan.midi.mpl.Context;
 import jorgan.problem.Severity;
 
 /**
@@ -73,7 +72,14 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 			try {
 				transmitter = getOrganPlay().createTransmitter(
 						console.getInput());
-				transmitter.setReceiver(new ReceiverImpl());
+				transmitter.setReceiver(new Receiver() {
+					public void close() {
+					}
+
+					public void send(MidiMessage message, long timeStamp) {
+						receive(message);
+					}
+				});
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "input", "deviceUnavailable",
 						console.getInput());
@@ -104,23 +110,21 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 		}
 	}
 
-	@Override
-	protected void send(ShortMessage message, Context context) {
-		fireSent(message);
-
-		send(message);
-	}
-
-	protected void fireSent(ShortMessage message) {
-		if (getOrganPlay() != null) {
-			getOrganPlay().fireSent(message.getChannel(), message.getCommand(),
-					message.getData1(), message.getData2());
-
-		}
-	}
-
-	protected void send(MidiMessage message) {
+	/**
+	 * Send a message - may be called by all players handling referenced
+	 * elements.
+	 */
+	public void send(MidiMessage message) {
 		if (receiver != null) {
+			if (getOrganPlay() != null
+					&& MessageUtils.isChannelMessage(message)) {
+				ShortMessage shortMessage = (ShortMessage) message;
+				getOrganPlay().fireSent(shortMessage.getChannel(),
+						shortMessage.getCommand(), shortMessage.getData1(),
+						shortMessage.getData2());
+
+			}
+
 			receiver.send(message, -1);
 		}
 	}
@@ -128,31 +132,17 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	protected void receive(MidiMessage message) {
 		if (MessageUtils.isChannelMessage(message)) {
 			ShortMessage shortMessage = (ShortMessage) message;
-
 			getOrganPlay().fireReceived(getElement(), null,
 					shortMessage.getChannel(), shortMessage.getCommand(),
 					shortMessage.getData1(), shortMessage.getData2());
+		}
 
-			for (Element element : getElement().getReferenced(Element.class)) {
-				Player<? extends Element> player = getOrganPlay().getPlayer(
-						element);
-				if (player != null) {
-					player.received(shortMessage);
-				}
+		for (Element element : getElement().getReferenced(Element.class)) {
+			Player<? extends Element> player = getOrganPlay()
+					.getPlayer(element);
+			if (player != null) {
+				player.onReceived(message);
 			}
-		}
-	}
-
-	/**
-	 * The receiver of messages - notifies referenced elements of a received
-	 * message.
-	 */
-	private class ReceiverImpl implements Receiver {
-		public void close() {
-		}
-
-		public void send(MidiMessage message, long timeStamp) {
-			receive(message);
 		}
 	}
 }

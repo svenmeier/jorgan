@@ -30,14 +30,14 @@ import jorgan.problem.Severity;
  */
 public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
-	private PlayerContext valueContext = new PlayerContext();
+	private PlayerContext outputContext = new PlayerContext();
 
 	public ContinuousPlayer(E continuous) {
 		super(continuous);
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 		Continuous continuous = getElement();
 
 		if (message instanceof Change) {
@@ -52,7 +52,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 				continuous.setValue(value);
 			}
 		} else {
-			super.input(message, context);
+			super.onInput(message, context);
 		}
 	}
 
@@ -67,10 +67,10 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private void changed() {
 		Continuous continuous = getElement();
-		valueContext.set(Changed.VALUE, continuous.getValue());
+		outputContext.set(Changed.VALUE, continuous.getValue());
 
 		for (Changed message : getElement().getMessages(Changed.class)) {
-			output(message, valueContext);
+			output(message, outputContext);
 		}
 	}
 }

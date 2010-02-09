@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Console;
@@ -48,7 +49,7 @@ public abstract class Player<E extends Element> {
 
 	private OrganPlay organPlay;
 
-	private PlayerContext receivedContext = new PlayerContext();
+	private PlayerContext inputContext = new PlayerContext();
 
 	/**
 	 * The element played by this player.
@@ -177,12 +178,18 @@ public abstract class Player<E extends Element> {
 	public void update() {
 	}
 
-	protected final void received(ShortMessage shortMessage) {
-		for (InputMessage message : element.getMessages(InputMessage.class)) {
-			if (receivedContext.process(message, shortMessage.getStatus(),
-					shortMessage.getData1(), shortMessage.getData2())) {
+	public final void onReceived(MidiMessage message) {
+		if (MessageUtils.isChannelMessage(message)) {
+			ShortMessage shortMessage = (ShortMessage) message;
 
-				input(message, receivedContext);
+			for (InputMessage inputMessage : element
+					.getMessages(InputMessage.class)) {
+				if (inputContext.process(inputMessage,
+						shortMessage.getStatus(), shortMessage.getData1(),
+						shortMessage.getData2())) {
+
+					onInput(inputMessage, inputContext);
+				}
 			}
 		}
 	}
@@ -195,7 +202,7 @@ public abstract class Player<E extends Element> {
 	 * @param context
 	 *            the message context
 	 */
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 
 	}
 
@@ -203,34 +210,35 @@ public abstract class Player<E extends Element> {
 		if (context.process(message, 0, 0, 0)) {
 			ShortMessage shortMessage;
 			try {
-				shortMessage = MessageUtils.createMessage(context
-						.getStatus(), context.getData1(), context.getData2());
+				shortMessage = MessageUtils.createMessage(context.getStatus(),
+						context.getData1(), context.getData2());
 			} catch (InvalidMidiDataException ex) {
 				addProblem(Severity.ERROR, message, "messageInvalid", context
 						.getStatus(), context.getData1(), context.getData2());
 				return;
 			}
 
-			send(shortMessage, context);
+			onOutput(shortMessage, context);
 		}
 	}
 
 	/**
-	 * Send a message - default implementation forwards messages to referring
-	 * {@link Console}s.
+	 * Handle message output - default implementation lets referring
+	 * {@link Console}s send the message.
+	 * 
+	 * @see ConsolePlayer#send(javax.sound.midi.MidiMessage)
 	 */
-	protected void send(ShortMessage message, Context context) {
-		for (Element console : organPlay.getOrgan().getReferrer(element,
+	protected void onOutput(ShortMessage message, Context context) {
+		for (Console console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
-			Player<? extends Element> player = getOrganPlay()
-					.getPlayer(console);
+			Player<Console> player = getOrganPlay().getPlayer(console);
 			if (player != null) {
-				player.send(message, context);
+				((ConsolePlayer<Console>) player).send(message);
 			}
 		}
 	}
 
-	public E getElement() {
+	public final E getElement() {
 		return element;
 	}
 

@@ -62,12 +62,12 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	@Override
-	public void send(ShortMessage message, Context context) {
+	public void onOutput(ShortMessage message, Context context) {
 		if (context instanceof ChannelFilter) {
 			((ChannelFilter) context).sendFilteredMessage(message.getCommand(),
 					message.getData1(), message.getData2());
 		} else {
-			super.send(message, context);
+			super.onOutput(message, context);
 		}
 	}
 

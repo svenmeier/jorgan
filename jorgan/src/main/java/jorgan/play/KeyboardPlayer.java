@@ -58,7 +58,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	@Override
 	public void update() {
 		super.update();
-		
+
 		Keyboard keyboard = getElement();
 
 		if (keyboard.getInput() == null) {
@@ -78,7 +78,14 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			try {
 				transmitter = getOrganPlay().createTransmitter(
 						keyboard.getInput());
-				transmitter.setReceiver(new ReceiverImpl());
+				transmitter.setReceiver(new Receiver() {
+					public void close() {
+					}
+
+					public void send(MidiMessage message, long timeStamp) {
+						receive(message);
+					}
+				});
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "input", "deviceUnavailable",
 						keyboard.getInput());
@@ -99,7 +106,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 		if (message instanceof PressKey) {
 			int pitch = Math.round(context.get(PressKey.PITCH));
 			if (pitch < 0 || pitch > 127) {
@@ -120,7 +127,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			}
 			release(pitch);
 		} else {
-			super.input(message, context);
+			super.onInput(message, context);
 		}
 	}
 
@@ -131,7 +138,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			pressed[pitch] = true;
 
 			getOrganPlay().fireKeyPressed(keyboard, pitch, velocity);
-			
+
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
@@ -165,20 +172,15 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	private class ReceiverImpl implements Receiver {
-		public void close() {
-		}
+	protected void receive(MidiMessage message) {
+		if (MessageUtils.isChannelMessage(message)) {
+			ShortMessage shortMessage = (ShortMessage) message;
 
-		public void send(MidiMessage message, long timeStamp) {
-			if (MessageUtils.isChannelMessage(message)) {
-				ShortMessage shortMessage = (ShortMessage)message;
-				
-				getOrganPlay().fireReceived(getElement(), null,
-						shortMessage.getChannel(), shortMessage.getCommand(),
-						shortMessage.getData1(), shortMessage.getData2());		
+			getOrganPlay().fireReceived(getElement(), null,
+					shortMessage.getChannel(), shortMessage.getCommand(),
+					shortMessage.getData1(), shortMessage.getData2());
 
-				received(shortMessage);
-			}
+			onReceived(shortMessage);
 		}
 	}
 }
