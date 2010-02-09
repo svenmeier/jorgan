@@ -152,15 +152,15 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
 		public void onChanged(boolean on) {
 			if (on) {
+				SamsConsolePlayer.super.receive(getElement().getEncoding()
+						.encodeTabChanged(index, on));
+
 				onMagnet.off();
-
-				SamsConsolePlayer.super.receive(getElement().getEncoding()
-						.encodeTabChanged(index, on));
 			} else {
-				offMagnet.off();
-
 				SamsConsolePlayer.super.receive(getElement().getEncoding()
 						.encodeTabChanged(index, on));
+
+				offMagnet.off();
 			}
 		}
 
