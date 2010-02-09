@@ -23,7 +23,6 @@ import java.util.Arrays;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
-import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
 import jorgan.sams.disposition.SamsConsole;
 
@@ -95,14 +94,20 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		return then;
 	}
 
+	/**
+	 * Overriden to let encoding decode change of tab.
+	 */
 	@Override
-	protected synchronized void send(ShortMessage message, Context context) {
-		fireSent(message);
-
-		getElement().getEncoding()
-				.decodeChangeTab(Arrays.asList(tabs), message);
+	public synchronized void send(MidiMessage message) {
+		if (message instanceof ShortMessage) {
+			getElement().getEncoding().decodeChangeTab(Arrays.asList(tabs),
+					(ShortMessage) message);
+		}
 	}
 
+	/**
+	 * Overriden to let encoding decode tab changes.
+	 */
 	@Override
 	protected synchronized void receive(MidiMessage message) {
 		if (message instanceof ShortMessage) {
@@ -180,7 +185,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 						message = getElement().getEncoding().encodeOffMagnet(
 								index, true);
 					}
-					send(message);
+					SamsConsolePlayer.super.send(message);
 				}
 			}
 
@@ -196,7 +201,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 						message = getElement().getEncoding().encodeOffMagnet(
 								index, false);
 					}
-					send(message);
+					SamsConsolePlayer.super.send(message);
 				}
 			}
 
