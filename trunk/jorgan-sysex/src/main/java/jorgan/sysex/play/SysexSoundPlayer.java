@@ -23,7 +23,6 @@ import java.io.File;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
-import javax.sound.midi.Receiver;
 import javax.sound.midi.Sequence;
 import javax.sound.midi.SysexMessage;
 import javax.sound.midi.Track;
@@ -63,25 +62,22 @@ public class SysexSoundPlayer extends GenericSoundPlayer<SysexSound> {
 	private void send(String property, String value) {
 		removeProblem(Severity.ERROR, property);
 
-		Receiver receiver = getReceiver();
-		if (receiver != null) {
-			try {
-				File file = resolve(value);
+		try {
+			File file = resolve(value);
 
-				Sequence sequence = MidiSystem.getSequence(file);
+			Sequence sequence = MidiSystem.getSequence(file);
 
-				Track track = sequence.getTracks()[0];
-				for (int e = 0; e < track.size(); e++) {
-					MidiEvent event = track.get(e);
+			Track track = sequence.getTracks()[0];
+			for (int e = 0; e < track.size(); e++) {
+				MidiEvent event = track.get(e);
 
-					MidiMessage message = event.getMessage();
-					if (message instanceof SysexMessage) {
-						receiver.send(message, -1);
-					}
+				MidiMessage message = event.getMessage();
+				if (message instanceof SysexMessage) {
+					send(message);
 				}
-			} catch (Exception e) {
-				addProblem(Severity.ERROR, property, "invalid", value);
 			}
+		} catch (Exception e) {
+			addProblem(Severity.ERROR, property, "invalid", value);
 		}
 	}
 }
