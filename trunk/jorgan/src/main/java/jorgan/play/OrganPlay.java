@@ -182,7 +182,7 @@ public abstract class OrganPlay {
 		}
 	}
 
-	protected void fireSent(int channel, int command, int data1, int data2) {
+	public void fireSent(int channel, int command, int data1, int data2) {
 		if (playListeners != null) {
 			for (int l = 0; l < playListeners.size(); l++) {
 				PlayListener listener = playListeners.get(l);
@@ -191,8 +191,9 @@ public abstract class OrganPlay {
 		}
 	}
 
-	protected Player<? extends Element> getPlayer(Element element) {
-		return players.get(element);
+	@SuppressWarnings("unchecked")
+	protected <E extends Element> Player<E> getPlayer(E element) {
+		return (Player<E>) players.get(element);
 	}
 
 	public void open() {

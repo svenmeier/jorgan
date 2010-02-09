@@ -34,7 +34,7 @@ import jorgan.util.Null;
  */
 public class SwitchPlayer<E extends Switch> extends Player<E> {
 
-	private PlayerContext activeContext = new PlayerContext();
+	private PlayerContext outputContext = new PlayerContext();
 
 	private Boolean lastActive;
 
@@ -48,7 +48,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 	}
 
 	@Override
-	protected void input(InputMessage message, Context context) {
+	protected void onInput(InputMessage message, Context context) {
 		Switch element = getElement();
 
 		if (message instanceof Activate) {
@@ -60,7 +60,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		} else if (message instanceof Initiate) {
 			element.initiate();
 		} else {
-			super.input(message, context);
+			super.onInput(message, context);
 		}
 	}
 
@@ -85,13 +85,13 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private void activated() {
 		for (Activated message : getElement().getMessages(Activated.class)) {
-			output(message, activeContext);
+			output(message, outputContext);
 		}
 	}
 
 	private void deactivated() {
 		for (Deactivated message : getElement().getMessages(Deactivated.class)) {
-			output(message, activeContext);
+			output(message, outputContext);
 		}
 	}
 }

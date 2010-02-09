@@ -21,7 +21,7 @@ public class DefaultPlayerProvider implements PlayerProvider {
 
 		// specific players first
 		if (element instanceof Console) {
-			player = new ConsolePlayer((Console) element);
+			player = new ConsolePlayer<Console>((Console) element);
 		} else if (element instanceof Keyboard) {
 			player = new KeyboardPlayer((Keyboard) element);
 		} else if (element instanceof Keyer) {

@@ -123,7 +123,7 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void send(ShortMessage message, Context context) {
+	protected void onOutput(ShortMessage message, Context context) {
 		channel.sendMessage(message.getCommand(), message.getData1(), message
 				.getData2());
 	}
