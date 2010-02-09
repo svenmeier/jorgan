@@ -23,6 +23,8 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
 import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -32,6 +34,7 @@ import javax.swing.ToolTipManager;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
+import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
@@ -152,21 +155,27 @@ public class MonitorDockable extends OrganDockable {
 
 	private class InternalListener implements PlayListener {
 
-		public void received(int channel, int command, int data1, int data2) {
-
-			if (inputButton.isSelected()) {
-				add(new Message(true, channel, command, data1, data2));
+		@Override
+		public void received(MidiMessage message) {
+			if (inputButton.isSelected()
+					&& MessageUtils.isChannelMessage(message)) {
+				add(true, (ShortMessage) message);
 			}
 		}
 
-		public void sent(int channel, int command, int data1, int data2) {
-
-			if (outputButton.isSelected()) {
-				add(new Message(false, channel, command, data1, data2));
+		@Override
+		public void sent(MidiMessage message) {
+			if (outputButton.isSelected()
+					&& MessageUtils.isChannelMessage(message)) {
+				add(false, (ShortMessage) message);
 			}
 		}
 
-		private void add(Message message) {
+		private void add(boolean input, ShortMessage shortMessage) {
+			Message message = new Message(input, shortMessage.getChannel(),
+					shortMessage.getCommand(), shortMessage.getData1(),
+					shortMessage.getData2());
+
 			messages.add(message);
 			int row = messages.size() - 1;
 

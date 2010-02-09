@@ -33,6 +33,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sound.midi.MidiMessage;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -208,9 +209,10 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		if (this.session != null) {
 			setConstructing(this.session.isConstructing());
 
-			this.session.addListener((SessionListener)Spin.over(eventsListener));
-			this.session.lookup(ElementSelection.class)
-					.addListener(eventsListener);
+			this.session.addListener((SessionListener) Spin
+					.over(eventsListener));
+			this.session.lookup(ElementSelection.class).addListener(
+					eventsListener);
 			this.session.lookup(UndoManager.class).addListener(
 					(UndoListener) Spin.over(eventsListener));
 			this.session.lookup(ElementProblems.class).addListener(
@@ -241,8 +243,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			backAction.setEnabled(false);
 			forwardAction.setEnabled(false);
 		} else {
-			backAction
-					.setEnabled(session.lookup(ElementSelection.class).canBack());
+			backAction.setEnabled(session.lookup(ElementSelection.class)
+					.canBack());
 			forwardAction.setEnabled(session.lookup(ElementSelection.class)
 					.canForward());
 		}
@@ -402,11 +404,13 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	private class EventsListener extends OrganAdapter implements PlayListener,
 			ProblemListener, SelectionListener, UndoListener, SessionListener {
 
-		public void received(int channel, int command, int data1, int data2) {
+		@Override
+		public void received(MidiMessage message) {
 			messagesMonitor.input();
 		}
 
-		public void sent(int channel, int command, int data1, int data2) {
+		@Override
+		public void sent(MidiMessage message) {
 			messagesMonitor.output();
 		}
 
@@ -425,13 +429,14 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 		public void saved(File file) {
 		}
-		
+
 		public void destroyed() {
 		}
 
 		public void selectionChanged() {
 			if (session.lookup(ElementSelection.class).getSelectionCount() == 1) {
-				Element element = session.lookup(ElementSelection.class).getSelectedElement();
+				Element element = session.lookup(ElementSelection.class)
+						.getSelectedElement();
 				if (element instanceof Console) {
 					Console console = (Console) element;
 
@@ -446,7 +451,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 		public void modified() {
 		}
-		
+
 		public void done() {
 			undoAction.setEnabled(session.lookup(UndoManager.class).canUndo());
 			redoAction.setEnabled(session.lookup(UndoManager.class).canRedo());

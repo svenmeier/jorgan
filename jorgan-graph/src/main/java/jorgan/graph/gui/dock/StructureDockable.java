@@ -166,8 +166,6 @@ public class StructureDockable extends OrganDockable {
 					(OrganListener) Spin.over(listener));
 			this.session.lookup(ElementSelection.class).removeListener(
 					(SelectionListener) Spin.over(listener));
-			this.session.lookup(OrganPlay.class).removePlayerListener(
-					(PlayListener) Spin.over(listener));
 
 			graphWidget.setGraph2D(new EmptyGraph());
 		}
@@ -331,7 +329,7 @@ public class StructureDockable extends OrganDockable {
 	 * our listener for organ events
 	 */
 	private class ListenerImpl extends OrganAdapter implements MouseListener, 
-			SelectionListener, PlayListener {
+			SelectionListener {
 
 		public void selectionChanged() {
 			selection = session.lookup(ElementSelection.class)
@@ -403,20 +401,6 @@ public class StructureDockable extends OrganDockable {
 
 		public void mouseReleased(MouseEvent e) {
 		}
-
-		public void closed() {
-		}
-
-		public void opened() {
-			graphWidget.repaint();
-		}
-
-		public void received(int channel, int command, int data1, int data2) {
-		}
-
-		public void sent(int channel, int command, int data1, int data2) {
-		}
-
 	} // OrganCallback
 
 }
