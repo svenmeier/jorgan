@@ -51,11 +51,11 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
 					for (int e = 0; e < keyer.getReferenceCount(); e++) {
 						Element element = keyer.getReference(e).getElement();
 
-						Player<? extends Element> player = getOrganPlay()
+						KeyablePlayer<?> player = (KeyablePlayer<?>) getOrganPlay()
 								.getPlayer(element);
 						if (player != null) {
-							((KeyablePlayer<?>) player).keyDown(keyer
-									.getPitch(), keyer.getVelocity());
+							player.keyDown(keyer.getPitch(), keyer
+									.getVelocity());
 						}
 					}
 					keying = true;

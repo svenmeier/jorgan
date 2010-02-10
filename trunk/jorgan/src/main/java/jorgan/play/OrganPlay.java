@@ -189,9 +189,8 @@ public abstract class OrganPlay {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <E extends Element> Player<E> getPlayer(E element) {
-		return (Player<E>) players.get(element);
+	protected Player<?> getPlayer(Element element) {
+		return players.get(element);
 	}
 
 	public void open() {

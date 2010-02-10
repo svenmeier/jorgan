@@ -231,9 +231,10 @@ public abstract class Player<E extends Element> {
 	protected void onOutput(ShortMessage message, Context context) {
 		for (Console console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
-			Player<Console> player = getOrganPlay().getPlayer(console);
+			ConsolePlayer<?> player = (ConsolePlayer<?>) getOrganPlay()
+					.getPlayer(console);
 			if (player != null) {
-				((ConsolePlayer<Console>) player).send(message);
+				player.send(message);
 			}
 		}
 	}
