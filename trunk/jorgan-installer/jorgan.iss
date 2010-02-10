@@ -45,8 +45,10 @@ Name: "linuxsampler"; Description: "Linuxsampler"; Types: standard
 Name: "memory"; Description: "Memory"; Types: standard
 Name: "midimerger"; Description: "Midi merger"; Types: standard
 Name: "recorder"; Description: "Recorder"; Types: standard
+Name: "sams"; Description: "SAMs"; Types:
 Name: "skins"; Description: "Skins"; Types: standard
 Name: "soundfont"; Description: "Soundfont"; Types: standard
+Name: "sysex"; Description: "Sysex"; Types:
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
@@ -61,8 +63,10 @@ Source: "..\jorgan-linuxsampler\target\marshal\*"; DestDir: "{app}"; Components:
 Source: "..\jorgan-memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-recorder\target\marshal\*"; DestDir: "{app}"; Components: recorder; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-sams\target\marshal\*"; DestDir: "{app}"; Components: sams; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-sysex\target\marshal\*"; DestDir: "{app}"; Components: sysex; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"

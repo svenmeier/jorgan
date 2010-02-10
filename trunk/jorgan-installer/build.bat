@@ -14,8 +14,10 @@ call %ANT% -buildfile ../jorgan-linuxsampler/build.xml
 call %ANT% -buildfile ../jorgan-memory/build.xml
 call %ANT% -buildfile ../jorgan-midimerger/build.xml
 call %ANT% -buildfile ../jorgan-recorder/build.xml
+call %ANT% -buildfile ../jorgan-sams/build.xml
 call %ANT% -buildfile ../jorgan-skins/build.xml
 call %ANT% -buildfile ../jorgan-soundfont/build.xml
+call %ANT% -buildfile ../jorgan-sysex/build.xml
 
 :Clean
 rmdir /S /Q target
