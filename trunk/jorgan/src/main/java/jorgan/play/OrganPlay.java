@@ -200,26 +200,25 @@ public abstract class OrganPlay {
 		}
 
 		synchronized (CHANGE_LOCK) {
-			openImpl();
+			Iterator<Player<? extends Element>> iterator = players.values()
+					.iterator();
+			while (iterator.hasNext()) {
+				Player<? extends Element> player = iterator.next();
+				player.open();
+			}
 		}
 
 		synchronized (RECEIVER_LOCK) {
 			open = true;
 		}
-	}
 
-	private void openImpl() {
-		Iterator<Player<? extends Element>> iterator = players.values()
-				.iterator();
-		while (iterator.hasNext()) {
-			Player<? extends Element> player = iterator.next();
-			player.open();
-		}
-
-		iterator = players.values().iterator();
-		while (iterator.hasNext()) {
-			Player<? extends Element> player = iterator.next();
-			player.update();
+		synchronized (CHANGE_LOCK) {
+			Iterator<Player<? extends Element>> iterator = players.values()
+					.iterator();
+			while (iterator.hasNext()) {
+				Player<? extends Element> player = iterator.next();
+				player.update();
+			}
 		}
 	}
 
@@ -232,21 +231,18 @@ public abstract class OrganPlay {
 			throw new IllegalStateException("not open");
 		}
 
+		// lock out receivers before trying to aquire change lock
 		synchronized (RECEIVER_LOCK) {
 			open = false;
 		}
 
 		synchronized (CHANGE_LOCK) {
-			closeImpl();
-		}
-	}
-
-	private void closeImpl() {
-		Iterator<Player<? extends Element>> iterator = players.values()
-				.iterator();
-		while (iterator.hasNext()) {
-			Player<? extends Element> player = iterator.next();
-			player.close();
+			Iterator<Player<? extends Element>> iterator = players.values()
+					.iterator();
+			while (iterator.hasNext()) {
+				Player<? extends Element> player = iterator.next();
+				player.close();
+			}
 		}
 	}
 
@@ -310,6 +306,8 @@ public abstract class OrganPlay {
 
 	private class EventHandler extends OrganAdapter implements OrganObserver {
 
+		private boolean changedClosed = false;
+
 		@Override
 		public void propertyChanged(Element element, String name) {
 			synchronized (CHANGE_LOCK) {
@@ -336,13 +334,15 @@ public abstract class OrganPlay {
 
 		public void beforeChange(Change change) {
 			if (open && change instanceof UndoableChange) {
-				closeImpl();
+				close();
+				changedClosed = true;
 			}
 		}
 
 		public void afterChange(Change change) {
-			if (open && change instanceof UndoableChange) {
-				openImpl();
+			if (changedClosed) {
+				changedClosed = false;
+				open();
 			}
 		}
 	}
