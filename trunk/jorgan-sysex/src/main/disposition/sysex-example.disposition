@@ -59,7 +59,7 @@
     </switch>
     <label id="9">
       <name></name>
-      <description>name=The following switch sends a Note-on message with data1=1 and data1=0  on activation and deactivation respectively.</description>
+      <description>name=The following switch sends a Note-on message with data1=1 on activation  and and data1=0 on deactivation.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>

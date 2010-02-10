@@ -23,14 +23,14 @@
     </switch>
     <label id="1203">
       <name></name>
-      <description>name=The following switch sends one Midi message on activation and deactivation only:</description>
+      <description>name=The following switch sends one Midi message on activation and deactivation:</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
     </label>
     <label id="1204">
       <name></name>
-      <description>name=Open the debug log from the view menu to see the actual Midi messages for the magnets.</description>
+      <description>name=Open the monitor view to see the actual Midi messages for the magnets.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
@@ -40,16 +40,20 @@
       <description></description>
       <references>
         <console-locationReference id="1204">
-          <x>20</x>
+          <x>60</x>
           <y>100</y>
         </console-locationReference>
         <console-locationReference id="1203">
-          <x>40</x>
+          <x>50</x>
           <y>20</y>
         </console-locationReference>
         <console-locationReference id="1202">
           <x>230</x>
           <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="1206">
+          <x>20</x>
+          <y>140</y>
         </console-locationReference>
       </references>
       <messages/>
@@ -58,5 +62,12 @@
       <output>jOrgan Midi Logger</output>
       <duration>500</duration>
     </sams.samsConsole>
+    <label id="1206">
+      <name></name>
+      <description>name=If you clear the console&apos;s input you&apos;ll see the magnets put off after the configured duration.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
   </elements>
 </organ>
