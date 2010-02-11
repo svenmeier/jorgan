@@ -75,11 +75,9 @@ public class ReferencesDockable extends OrganDockable {
 	 */
 	private OrganSession session;
 
-	private Element element;
-
 	private ObjectTransferable transferable;
 
-	private List<ReferrerReference> references = new ArrayList<ReferrerReference>();
+	private List<Item> items = new ArrayList<Item>();
 
 	private EventHandler eventHandler = new EventHandler();
 
@@ -96,10 +94,6 @@ public class ReferencesDockable extends OrganDockable {
 	private JToggleButton sortByNameButton = new JToggleButton();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
-
-	private ReferencesToModel referencesToModel = new ReferencesToModel();
-
-	private ReferencedFromModel referencedFromModel = new ReferencedFromModel();
 
 	/**
 	 * Create a tree panel.
@@ -134,7 +128,6 @@ public class ReferencesDockable extends OrganDockable {
 		sortGroup.add(sortByTypeButton);
 
 		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		list.setModel(referencesToModel);
 		list.setCellRenderer(new ElementListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
@@ -157,19 +150,19 @@ public class ReferencesDockable extends OrganDockable {
 					int action) throws IllegalStateException {
 				int[] indices = list.getSelectedIndices();
 				if (indices.length > 0) {
-					ReferrerReference[] subReferences = new ReferrerReference[indices.length];
-					for (int r = 0; r < subReferences.length; r++) {
-						subReferences[r] = references.get(indices[r]);
+					Item[] subItems = new Item[indices.length];
+					for (int r = 0; r < subItems.length; r++) {
+						subItems[r] = items.get(indices[r]);
 					}
 
 					if (action == DnDConstants.ACTION_MOVE) {
-						for (ReferrerReference reference : subReferences) {
+						for (Item reference : subItems) {
 							reference.getReferrer().removeReference(
 									reference.getReference());
 						}
 					}
 
-					transferable = new ObjectTransferable(subReferences);
+					transferable = new ObjectTransferable(subItems);
 
 					clip.setContents(transferable, null);
 				}
@@ -177,18 +170,25 @@ public class ReferencesDockable extends OrganDockable {
 
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
-				if (element != null) {
-					try {
-						for (ReferrerReference reference : (ReferrerReference[]) ObjectTransferable
-								.getObject(t)) {
-							try {
-								getReferencesModel().add(reference);
-							} catch (Exception invalidReference) {
+				try {
+					final Item[] items = (Item[]) ObjectTransferable
+							.getObject(t);
+
+					final ReferencesModel model = getReferencesModel();
+
+					session.lookup(UndoManager.class).compound(new Compound() {
+						@Override
+						public void run() {
+							for (Item item : items) {
+								try {
+									model.add(item);
+								} catch (Exception invalidReference) {
+								}
 							}
 						}
-						return true;
-					} catch (Exception noReferrerReferences) {
-					}
+					});
+					return true;
+				} catch (Exception noReferrerReferences) {
 				}
 				return false;
 			}
@@ -248,8 +248,7 @@ public class ReferencesDockable extends OrganDockable {
 	}
 
 	private void updateReferences() {
-		element = null;
-		references.clear();
+		items.clear();
 
 		list.setModel(new DefaultListModel());
 		list.setVisible(false);
@@ -257,15 +256,13 @@ public class ReferencesDockable extends OrganDockable {
 		if (session != null
 				&& session.lookup(ElementSelection.class).getSelectionCount() == 1) {
 
-			element = session.lookup(ElementSelection.class)
+			Element element = session.lookup(ElementSelection.class)
 					.getSelectedElement();
 
 			if (referencesToButton.isSelected()) {
-				referencesToModel.update();
-				list.setModel(referencesToModel);
+				list.setModel(new ReferencesToModel(element));
 			} else {
-				referencedFromModel.update();
-				list.setModel(referencedFromModel);
+				list.setModel(new ReferencedFromModel(element));
 			}
 			list.setVisible(true);
 
@@ -274,8 +271,8 @@ public class ReferencesDockable extends OrganDockable {
 			if (location instanceof Reference<?>) {
 				Reference<?> reference = (Reference<?>) location;
 
-				for (int r = 0; r < references.size(); r++) {
-					ReferrerReference rr = references.get(r);
+				for (int r = 0; r < items.size(); r++) {
+					Item rr = items.get(r);
 					if (rr.getReference() == reference) {
 						list.setSelectedIndex(r);
 					}
@@ -288,6 +285,13 @@ public class ReferencesDockable extends OrganDockable {
 
 	private ReferencesModel getReferencesModel() {
 		return (ReferencesModel) list.getModel();
+	}
+
+	private Element getElement() {
+		if (list.getModel() instanceof ReferencesModel) {
+			return ((ReferencesModel) list.getModel()).getElement();
+		}
+		return null;
 	}
 
 	/**
@@ -308,7 +312,7 @@ public class ReferencesDockable extends OrganDockable {
 			if (Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 
-				if (ReferencesDockable.this.element != null
+				if (getElement() != null
 						&& getReferencesModel().onReferenceChange(element,
 								reference)) {
 					updateReferences();
@@ -322,7 +326,7 @@ public class ReferencesDockable extends OrganDockable {
 			if (Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 
-				if (ReferencesDockable.this.element != null
+				if (getElement() != null
 						&& getReferencesModel().onReferenceChange(element,
 								reference)) {
 					updateReferences();
@@ -335,7 +339,7 @@ public class ReferencesDockable extends OrganDockable {
 				Object value) {
 			if (Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
-				if (ReferencesDockable.this.element != null
+				if (getElement() != null
 						&& getReferencesModel().onReferenceChange(element,
 								reference)) {
 					updateReferences();
@@ -345,17 +349,32 @@ public class ReferencesDockable extends OrganDockable {
 	}
 
 	private abstract class ReferencesModel extends AbstractListModel implements
-			Comparator<ReferrerReference> {
+			Comparator<Item> {
+
+		private Element element;
 
 		private Comparator<Element> nameType = ComparatorChain.of(
 				new ElementNameComparator(), new ElementTypeComparator());
 		private Comparator<Element> typeName = ComparatorChain.of(
 				new ElementTypeComparator(), new ElementNameComparator());
 
-		public int compare(ReferrerReference reference1,
-				ReferrerReference reference2) {
-			Element element1 = getElement(reference1);
-			Element element2 = getElement(reference2);
+		protected ReferencesModel(Element element) {
+			this.element = element;
+
+			items = createItems();
+
+			Collections.sort(items, this);
+		}
+
+		public Element getElement() {
+			return element;
+		}
+
+		protected abstract List<Item> createItems();
+
+		public int compare(Item item1, Item item2) {
+			Element element1 = getElement(item1);
+			Element element2 = getElement(item2);
 
 			if (sortByNameButton.isSelected()) {
 				return nameType.compare(element1, element2);
@@ -367,89 +386,90 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public int getSize() {
-			return references.size();
+			return items.size();
 		}
 
 		public Object getElementAt(int index) {
-			return getElement(references.get(index));
+			return getElement(items.get(index));
 		}
 
-		public abstract void add(ReferrerReference references);
+		public abstract void add(Item item);
 
 		public abstract boolean onReferenceChange(Element element,
 				Reference<?> reference);
 
-		public void update() {
-			references = getReferences();
-
-			Collections.sort(references, this);
-		}
-
-		protected abstract List<ReferrerReference> getReferences();
-
-		protected abstract Element getElement(ReferrerReference reference);
+		protected abstract Element getElement(Item item);
 	}
 
 	private class ReferencesToModel extends ReferencesModel {
 
+		protected ReferencesToModel(Element element) {
+			super(element);
+		}
+
 		@Override
-		public void add(ReferrerReference reference) {
-			element.addReference(reference.getReference().clone());
+		public void add(Item item) {
+			getElement().addReference(item.getReference().clone());
 		}
 
 		@Override
 		public boolean onReferenceChange(Element element, Reference<?> reference) {
-			return element == ReferencesDockable.this.element;
+			return element == this.getElement();
 		}
 
 		@Override
-		protected List<ReferrerReference> getReferences() {
-			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
+		protected List<Item> createItems() {
+			List<Item> items = new ArrayList<Item>();
 
-			for (Reference<? extends Element> reference : element
+			for (Reference<? extends Element> reference : getElement()
 					.getReferences()) {
-				references.add(new ReferrerReference(element, reference));
+				items.add(new Item(getElement(), reference));
 			}
 
-			return references;
+			return items;
 		}
 
 		@Override
-		protected Element getElement(ReferrerReference reference) {
-			return reference.getReference().getElement();
+		protected Element getElement(Item item) {
+			return item.getReference().getElement();
 		}
 	}
 
 	private class ReferencedFromModel extends ReferencesModel {
 
-		@Override
-		public void add(ReferrerReference reference) {
-			reference.getReferrer().addReference(
-					reference.getReference().clone(element));
+		protected ReferencedFromModel(Element element) {
+			super(element);
 		}
 
 		@Override
-		public boolean onReferenceChange(Element element, Reference<?> reference) {
-			return reference.getElement() == ReferencesDockable.this.element;
+		public void add(Item item) {
+			item.getReferrer().addReference(
+					item.getReference().clone(getElement()));
 		}
 
 		@Override
-		protected List<ReferrerReference> getReferences() {
-			List<ReferrerReference> references = new ArrayList<ReferrerReference>();
+		public boolean onReferenceChange(Element element, Reference<?> item) {
+			return item.getElement() == this.getElement();
+		}
 
-			for (Element aReferrer : element.getOrgan().getReferrer(element)) {
-				for (Reference<? extends Element> reference : aReferrer
-						.getReferences(element)) {
-					references.add(new ReferrerReference(aReferrer, reference));
+		@Override
+		protected List<Item> createItems() {
+			List<Item> items = new ArrayList<Item>();
+
+			for (Element referrer : getElement().getOrgan().getReferrer(
+					getElement())) {
+				for (Reference<? extends Element> reference : referrer
+						.getReferences(getElement())) {
+					items.add(new Item(referrer, reference));
 				}
 			}
 
-			return references;
+			return items;
 		}
 
 		@Override
-		protected Element getElement(ReferrerReference reference) {
-			return reference.getReferrer();
+		protected Element getElement(Item item) {
+			return item.getReferrer();
 		}
 	}
 
@@ -462,11 +482,11 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			CreateReferencesWizard.showInDialog(list, session, element);
+			CreateReferencesWizard.showInDialog(list, session, getElement());
 		}
 
 		public void update() {
-			setEnabled(element != null);
+			setEnabled(getElement() != null);
 		}
 	}
 
@@ -485,12 +505,12 @@ public class ReferencesDockable extends OrganDockable {
 
 		public void run() {
 			int[] indices = list.getSelectedIndices();
-			ReferrerReference[] subReferences = new ReferrerReference[indices.length];
+			Item[] subReferences = new Item[indices.length];
 			for (int r = 0; r < subReferences.length; r++) {
-				subReferences[r] = references.get(indices[r]);
+				subReferences[r] = items.get(indices[r]);
 			}
 
-			for (ReferrerReference reference : subReferences) {
+			for (Item reference : subReferences) {
 				reference.getReferrer().removeReference(
 						reference.getReference());
 			}
@@ -501,14 +521,13 @@ public class ReferencesDockable extends OrganDockable {
 		}
 	}
 
-	public static class ReferrerReference {
+	public static class Item {
 
 		private Element referrer;
 
 		private Reference<? extends Element> reference;
 
-		public ReferrerReference(Element referrer,
-				Reference<? extends Element> reference) {
+		public Item(Element referrer, Reference<? extends Element> reference) {
 			this.referrer = referrer;
 			this.reference = reference;
 		}
