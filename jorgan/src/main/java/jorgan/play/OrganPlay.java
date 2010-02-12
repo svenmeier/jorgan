@@ -245,31 +245,16 @@ public abstract class OrganPlay {
 		}
 	}
 
-	public void pressKey(Keyboard keyboard, int pitch, int velocity) {
-		KeyboardPlayer player = (KeyboardPlayer) getPlayer(keyboard);
+	public void play(Element element, Playing playing) {
+		Player<?> player = getPlayer(element);
 		if (player == null) {
-			throw new IllegalArgumentException("unkown keyboard");
+			throw new IllegalArgumentException("unkown element");
 		}
 
 		synchronized (RECEIVER_LOCK) {
 			if (open) {
 				synchronized (CHANGE_LOCK) {
-					player.press(pitch, velocity);
-				}
-			}
-		}
-	}
-
-	public void releaseKey(Keyboard keyboard, int pitch) {
-		KeyboardPlayer player = (KeyboardPlayer) getPlayer(keyboard);
-		if (player == null) {
-			throw new IllegalArgumentException("unkown keyboard");
-		}
-
-		synchronized (RECEIVER_LOCK) {
-			if (open) {
-				synchronized (CHANGE_LOCK) {
-					player.release(pitch);
+					playing.play(player);
 				}
 			}
 		}
@@ -417,4 +402,8 @@ public abstract class OrganPlay {
 	}
 
 	public abstract File resolve(String name) throws IOException;
+
+	public interface Playing {
+		public void play(Player<?> player);
+	}
 }
