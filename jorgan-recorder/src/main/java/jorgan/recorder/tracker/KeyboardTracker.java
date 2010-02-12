@@ -29,7 +29,10 @@ import javax.sound.midi.ShortMessage;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.midi.MessageUtils;
+import jorgan.play.KeyboardPlayer;
 import jorgan.play.OrganPlay;
+import jorgan.play.Player;
+import jorgan.play.OrganPlay.Playing;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.Performance;
 import jorgan.recorder.midi.MessageRecorder;
@@ -85,10 +88,10 @@ public class KeyboardTracker extends AbstractTracker {
 			ShortMessage shortMessage = (ShortMessage) message;
 
 			if (message.getStatus() == ShortMessage.NOTE_ON) {
-				play.pressKey(keyboard, shortMessage.getData1(), shortMessage
+				pressKey(keyboard, shortMessage.getData1(), shortMessage
 						.getData2());
 			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
-				play.releaseKey(keyboard, shortMessage.getData1());
+				releaseKey(keyboard, shortMessage.getData1());
 			}
 		}
 	}
@@ -101,7 +104,7 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onPlayStarting();
 
 		for (ShortMessage message : getKeyPresses()) {
-			play.pressKey(keyboard, message.getData1(), message.getData2());
+			pressKey(keyboard, message.getData1(), message.getData2());
 		}
 	}
 
@@ -145,7 +148,7 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onPlayStopping();
 
 		for (ShortMessage message : getKeyPresses()) {
-			play.releaseKey(keyboard, message.getData1());
+			releaseKey(keyboard, message.getData1());
 		}
 	}
 
@@ -178,5 +181,23 @@ public class KeyboardTracker extends AbstractTracker {
 				record(createMessage(pitch));
 			}
 		}
+	}
+
+	private void pressKey(Keyboard keyboard, final int pitch, final int velocity) {
+		play.play(keyboard, new Playing() {
+			@Override
+			public void play(Player<?> player) {
+				((KeyboardPlayer) player).press(pitch, velocity);
+			}
+		});
+	}
+
+	private void releaseKey(Keyboard keyboard, final int pitch) {
+		play.play(keyboard, new Playing() {
+			@Override
+			public void play(Player<?> player) {
+				((KeyboardPlayer) player).release(pitch);
+			}
+		});
 	}
 }
