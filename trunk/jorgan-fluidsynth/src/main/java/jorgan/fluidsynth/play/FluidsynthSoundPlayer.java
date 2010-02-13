@@ -20,11 +20,14 @@ package jorgan.fluidsynth.play;
 
 import java.io.IOException;
 
+import javax.sound.midi.ShortMessage;
+
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
 import jorgan.fluidsynth.disposition.Tuning;
+import jorgan.midi.MessageUtils;
 import jorgan.play.SoundPlayer;
 import jorgan.problem.Severity;
 
@@ -79,6 +82,12 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	protected boolean send(int channel, int command, int data1, int data2) {
 		if (synth == null) {
 			return false;
+		}
+
+		if (getOrganPlay() != null) {
+			ShortMessage message = MessageUtils.newMessage(channel, command,
+					data1, data2);
+			getOrganPlay().fireSent(message);
 		}
 
 		synth.send(channel, command, data1, data2);
