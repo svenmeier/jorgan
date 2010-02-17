@@ -29,7 +29,7 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
 	}
 
 	@Override
-	protected void activateKey(int pitch, int velocity) {
+	protected void onKeyDown(int pitch, int velocity) {
 		Coupler coupler = getElement();
 
 		for (Reference<? extends Element> reference : coupler.getReferences()) {
@@ -41,7 +41,7 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
 	}
 
 	@Override
-	protected void deactivateKey(int pitch) {
+	protected void onKeyUp(int pitch) {
 		Coupler coupler = getElement();
 
 		for (Reference<? extends Element> reference : coupler.getReferences()) {

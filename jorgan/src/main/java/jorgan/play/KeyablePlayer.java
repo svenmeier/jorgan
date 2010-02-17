@@ -19,6 +19,7 @@
 package jorgan.play;
 
 import jorgan.disposition.Keyable;
+import jorgan.util.Null;
 
 /**
  * A player for a keyable.
@@ -31,7 +32,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 	private Action action;
 
-	protected boolean activated = false;
+	private Boolean engaged;
 
 	protected KeyablePlayer(E keyable) {
 		super(keyable);
@@ -39,8 +40,11 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 	@Override
 	protected void openImpl() {
-		Keyable keyable = getElement();
+		super.openImpl();
 
+		this.engaged = null;
+
+		Keyable keyable = getElement();
 		switch (keyable.getAction()) {
 		case Keyable.ACTION_STRAIGHT:
 			action = new Action();
@@ -80,11 +84,11 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		}
 	}
 
-	protected abstract void activateKey(int pitch, int velocity);
+	protected abstract void onKeyDown(int pitch, int velocity);
 
-	protected abstract void deactivateKey(int pitch);
+	protected abstract void onKeyUp(int pitch);
 
-	public void keyDown(int pitch, int velocity) {
+	public final void keyDown(int pitch, int velocity) {
 
 		Keyable keyable = getElement();
 
@@ -100,7 +104,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		}
 	}
 
-	public void keyUp(int pitch) {
+	public final void keyUp(int pitch) {
 		Keyable keyable = getElement();
 
 		pitch += keyable.getTranspose();
@@ -117,16 +121,14 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		super.update();
 
 		if (isOpen()) {
-			if (getElement().isEngaged()) {
-				if (!activated) {
-					activated = true;
-					action.activated();
+			boolean engaged = getElement().isEngaged();
+			if (!Null.safeEquals(this.engaged, engaged)) {
+				if (engaged) {
+					action.engaged();
+				} else {
+					action.disengaged();
 				}
-			} else {
-				if (activated) {
-					action.deactivated();
-					activated = false;
-				}
+				this.engaged = engaged;
 			}
 		}
 	}
@@ -134,29 +136,29 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 	private class Action {
 
 		public void keyDown(int pitch, int velocity) {
-			if (activated) {
-				KeyablePlayer.this.activateKey(pitch, velocity);
+			if (engaged) {
+				KeyablePlayer.this.onKeyDown(pitch, velocity);
 			}
 		}
 
 		public void keyUp(int pitch) {
-			if (activated) {
-				KeyablePlayer.this.deactivateKey(pitch);
+			if (engaged) {
+				KeyablePlayer.this.onKeyUp(pitch);
 			}
 		}
 
-		public void activated() {
+		public void engaged() {
 			for (int p = 0; p < pressedKeys.length; p++) {
 				if (pressedKeys[p] > 0) {
-					KeyablePlayer.this.activateKey(p, velocities[p]);
+					KeyablePlayer.this.onKeyDown(p, velocities[p]);
 				}
 			}
 		}
 
-		public void deactivated() {
+		public void disengaged() {
 			for (int p = 0; p < pressedKeys.length; p++) {
 				if (pressedKeys[p] > 0) {
-					KeyablePlayer.this.deactivateKey(p);
+					KeyablePlayer.this.onKeyUp(p);
 				}
 			}
 		}
@@ -164,48 +166,48 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 	private class InverseAction extends Action {
 		public void keyDown(int pitch, int velocity) {
-			if (!activated) {
-				KeyablePlayer.this.activateKey(pitch, velocity);
+			if (!engaged) {
+				KeyablePlayer.this.onKeyDown(pitch, velocity);
 			}
 		}
 
 		public void keyUp(int pitch) {
-			if (!activated) {
-				KeyablePlayer.this.deactivateKey(pitch);
+			if (!engaged) {
+				KeyablePlayer.this.onKeyUp(pitch);
 			}
 		}
-		
-		public void activated() {
-			super.deactivated();
+
+		public void engaged() {
+			super.disengaged();
 		}
 
-		public void deactivated() {
-			super.activated();
+		public void disengaged() {
+			super.engaged();
 		}
 	}
 
 	private class HighestPitchAction extends Action {
 		@Override
 		public void keyDown(int pitch, int velocity) {
-			if (activated) {
+			if (engaged) {
 				int highest = getHighestPitch();
 				if (highest == -1 || pitch > highest) {
 					if (highest != -1) {
-						KeyablePlayer.this.deactivateKey(highest);
+						KeyablePlayer.this.onKeyUp(highest);
 					}
-					KeyablePlayer.this.activateKey(pitch, velocity);
+					KeyablePlayer.this.onKeyDown(pitch, velocity);
 				}
 			}
 		}
 
 		@Override
 		public void keyUp(int pitch) {
-			if (activated) {
+			if (engaged) {
 				int highest = getHighestPitch();
 				if (pitch > highest || highest == -1) {
-					KeyablePlayer.this.deactivateKey(pitch);
+					KeyablePlayer.this.onKeyUp(pitch);
 					if (highest != -1) {
-						KeyablePlayer.this.activateKey(highest,
+						KeyablePlayer.this.onKeyDown(highest,
 								velocities[highest]);
 					}
 				}
@@ -213,18 +215,18 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		}
 
 		@Override
-		public void activated() {
+		public void engaged() {
 			int highest = getHighestPitch();
 			if (highest != -1) {
-				KeyablePlayer.this.activateKey(highest, velocities[highest]);
+				KeyablePlayer.this.onKeyDown(highest, velocities[highest]);
 			}
 		}
 
 		@Override
-		public void deactivated() {
+		public void disengaged() {
 			int highest = getHighestPitch();
 			if (highest != -1) {
-				KeyablePlayer.this.deactivateKey(highest);
+				KeyablePlayer.this.onKeyUp(highest);
 			}
 		}
 
@@ -241,44 +243,44 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 	private class LowestPitchAction extends Action {
 		@Override
 		public void keyDown(int pitch, int velocity) {
-			if (activated) {
+			if (engaged) {
 				int lowest = getLowestPitch();
 				if (lowest == -1 || pitch < lowest) {
 					if (lowest != -1) {
-						KeyablePlayer.this.deactivateKey(lowest);
+						KeyablePlayer.this.onKeyUp(lowest);
 					}
-					KeyablePlayer.this.activateKey(pitch, velocity);
+					KeyablePlayer.this.onKeyDown(pitch, velocity);
 				}
 			}
 		}
 
 		@Override
 		public void keyUp(int pitch) {
-			if (activated) {
+			if (engaged) {
 				int lowest = getLowestPitch();
 				if (pitch < lowest || lowest == -1) {
-					KeyablePlayer.this.deactivateKey(pitch);
+					KeyablePlayer.this.onKeyUp(pitch);
 					if (lowest != -1) {
-						KeyablePlayer.this.activateKey(lowest,
-								velocities[lowest]);
+						KeyablePlayer.this
+								.onKeyDown(lowest, velocities[lowest]);
 					}
 				}
 			}
 		}
 
 		@Override
-		public void activated() {
+		public void engaged() {
 			int lowest = getLowestPitch();
 			if (lowest != -1) {
-				KeyablePlayer.this.activateKey(lowest, velocities[lowest]);
+				KeyablePlayer.this.onKeyDown(lowest, velocities[lowest]);
 			}
 		}
 
 		@Override
-		public void deactivated() {
+		public void disengaged() {
 			int lowest = getLowestPitch();
 			if (lowest != -1) {
-				KeyablePlayer.this.deactivateKey(lowest);
+				KeyablePlayer.this.onKeyUp(lowest);
 			}
 		}
 
@@ -298,13 +300,13 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 		@Override
 		public void keyDown(int pitch, int velocity) {
-			if (activated) {
+			if (engaged) {
 				if (!hasPitch()) {
 					this.velocity = velocity;
 
 					Keyable keyable = getElement();
 
-					KeyablePlayer.this.activateKey(60 + keyable.getTranspose(),
+					KeyablePlayer.this.onKeyDown(60 + keyable.getTranspose(),
 							velocity);
 				}
 			}
@@ -312,31 +314,31 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 		@Override
 		public void keyUp(int pitch) {
-			if (activated) {
+			if (engaged) {
 				if (!hasPitch()) {
 					Keyable keyable = getElement();
 
 					pitch = 60 + keyable.getTranspose();
-					KeyablePlayer.this.deactivateKey(pitch);
+					KeyablePlayer.this.onKeyUp(pitch);
 				}
 			}
 		}
 
 		@Override
-		public void activated() {
+		public void engaged() {
 			if (hasPitch()) {
 				Keyable keyable = getElement();
 
 				int pitch = 60 + keyable.getTranspose();
-				KeyablePlayer.this.activateKey(pitch, velocity);
+				KeyablePlayer.this.onKeyDown(pitch, velocity);
 			}
 		}
 
 		@Override
-		public void deactivated() {
+		public void disengaged() {
 			if (hasPitch()) {
 				Keyable keyable = getElement();
-				KeyablePlayer.this.deactivateKey(60 + keyable.getTranspose());
+				KeyablePlayer.this.onKeyUp(60 + keyable.getTranspose());
 			}
 		}
 
@@ -356,7 +358,7 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		public void keyDown(int pitch, int velocity) {
 			super.keyDown(pitch, velocity);
 
-			if (activated) {
+			if (engaged) {
 				stuckKeys[pitch] = true;
 			}
 		}
@@ -367,30 +369,30 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 		@Override
 		public void keyDown(int pitch, int velocity) {
-			if (!activated || !stuckKeys[pitch]) {
-				KeyablePlayer.this.activateKey(pitch, velocity);
+			if (!engaged || !stuckKeys[pitch]) {
+				KeyablePlayer.this.onKeyDown(pitch, velocity);
 			}
 		}
 
 		@Override
 		public void keyUp(int pitch) {
-			if (!activated || !stuckKeys[pitch]) {
-				KeyablePlayer.this.deactivateKey(pitch);
+			if (!engaged || !stuckKeys[pitch]) {
+				KeyablePlayer.this.onKeyUp(pitch);
 			}
 		}
 
 		@Override
-		public void activated() {
+		public void engaged() {
 			for (int k = 0; k < pressedKeys.length; k++) {
 				stuckKeys[k] = pressedKeys[k] > 0;
 			}
 		}
 
 		@Override
-		public void deactivated() {
+		public void disengaged() {
 			for (int k = 0; k < pressedKeys.length; k++) {
 				if (stuckKeys[k] && pressedKeys[k] == 0) {
-					KeyablePlayer.this.deactivateKey(k);
+					KeyablePlayer.this.onKeyUp(k);
 				}
 			}
 		}

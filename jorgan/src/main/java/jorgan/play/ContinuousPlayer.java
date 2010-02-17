@@ -26,7 +26,7 @@ import jorgan.midi.mpl.Context;
 import jorgan.problem.Severity;
 
 /**
- * A player for a swell.
+ * A player for a {@link Continuous} element.
  */
 public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 

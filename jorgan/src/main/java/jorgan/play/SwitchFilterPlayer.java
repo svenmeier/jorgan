@@ -29,6 +29,7 @@ import jorgan.disposition.SwitchFilter.Disengaged;
 import jorgan.disposition.SwitchFilter.Engaged;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
+import jorgan.util.Null;
 
 /**
  * A player for an {@link SwitchFilter}.
@@ -51,14 +52,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 		super.update();
 
 		if (isOpen()) {
-			SwitchFilter filter = getElement();
-
 			for (ChannelFilter channel : channels) {
-				if (filter.isEngaged()) {
-					channel.engaged();
-				} else {
-					channel.disengaged();
-				}
+				channel.update();
 			}
 		}
 	}
@@ -83,8 +78,8 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 	private class ChannelFilter extends PlayerContext implements Channel {
 
 		private Channel channel;
-		
-		private boolean inited = false;
+
+		private Boolean engaged = null;
 
 		public ChannelFilter(Channel channel) {
 			this.channel = channel;
@@ -92,20 +87,26 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			channels.add(this);
 		}
 
+		@Override
 		public void init() {
-			// no need if already done
-			if (!inited) {
-				SwitchFilter filter = getElement();
-				if (filter.isEngaged()) {
+			update();
+
+			channel.init();
+		}
+
+		protected void update() {
+			boolean engaged = getElement().isEngaged();
+
+			if (!Null.safeEquals(this.engaged, engaged)) {
+				if (engaged) {
 					engaged();
 				} else {
 					disengaged();
 				}
+				this.engaged = engaged;
 			}
-			
-			channel.init();
 		}
-		
+
 		public void sendMessage(int command, int data1, int data2) {
 			SwitchFilter element = getElement();
 
@@ -118,11 +119,13 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			}
 
 			if (intercepted) {
-				if (element.isEngaged()) {
+				boolean engaged = element.isEngaged();
+				if (engaged) {
 					engaged();
 				} else {
 					disengaged();
 				}
+				this.engaged = engaged;
 			} else {
 				channel.sendMessage(command, data1, data2);
 			}
@@ -132,8 +135,6 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 				output(engaged, this);
 			}
-			
-			inited = true;
 		}
 
 		private void disengaged() {
@@ -141,8 +142,6 @@ public class SwitchFilterPlayer extends SwitchPlayer<SwitchFilter> implements
 					Disengaged.class)) {
 				output(disengaged, this);
 			}
-			
-			inited = true;
 		}
 
 		public void sendFilteredMessage(int command, int data1, int data2) {

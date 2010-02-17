@@ -33,7 +33,7 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 
 	
 	@Override
-	protected void activateKey(int pitch, int velocity) {
+	protected void onKeyDown(int pitch, int velocity) {
 		Stop stop = getElement();
 
 		for (Reference<? extends Element> reference : stop.getReferences()) {
@@ -45,7 +45,7 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 	}
 
 	@Override
-	protected void deactivateKey(int pitch) {
+	protected void onKeyUp(int pitch) {
 		Stop stop = getElement();
 
 		for (Reference<? extends Element> reference : stop.getReferences()) {
