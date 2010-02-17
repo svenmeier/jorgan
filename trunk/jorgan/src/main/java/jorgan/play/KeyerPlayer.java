@@ -20,23 +20,24 @@ package jorgan.play;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyer;
+import jorgan.util.Null;
 
 /**
  * A player of a keyer.
  */
 public class KeyerPlayer extends SwitchPlayer<Keyer> {
 
-	private boolean keying = false;
+	private Boolean engaged = null;
 
 	public KeyerPlayer(Keyer keyer) {
 		super(keyer);
 	}
 
 	@Override
-	protected void closeImpl() {
-		super.closeImpl();
+	protected void openImpl() {
+		super.openImpl();
 
-		keying = false;
+		engaged = null;
 	}
 
 	@Override
@@ -46,8 +47,9 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
 		if (isOpen()) {
 			Keyer keyer = getElement();
 
-			if (keyer.isEngaged()) {
-				if (!keying) {
+			boolean engaged = keyer.isEngaged();
+			if (!Null.safeEquals(this.engaged, engaged)) {
+				if (engaged) {
 					for (int e = 0; e < keyer.getReferenceCount(); e++) {
 						Element element = keyer.getReference(e).getElement();
 
@@ -58,10 +60,7 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
 									.getVelocity());
 						}
 					}
-					keying = true;
-				}
-			} else {
-				if (keying) {
+				} else {
 					for (int e = 0; e < keyer.getReferenceCount(); e++) {
 						Element element = keyer.getReference(e).getElement();
 
@@ -71,8 +70,9 @@ public class KeyerPlayer extends SwitchPlayer<Keyer> {
 							((KeyablePlayer<?>) player).keyUp(keyer.getPitch());
 						}
 					}
-					keying = false;
 				}
+
+				this.engaged = engaged;
 			}
 		}
 	}

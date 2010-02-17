@@ -36,7 +36,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private PlayerContext outputContext = new PlayerContext();
 
-	private Boolean lastActive;
+	private Boolean active;
 
 	public SwitchPlayer(E element) {
 		super(element);
@@ -44,7 +44,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	@Override
 	protected void openImpl() {
-		lastActive = null;
+		active = null;
 	}
 
 	@Override
@@ -69,16 +69,14 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		super.update();
 
 		if (isOpen()) {
-			Switch element = getElement();
-
-			boolean active = element.isActive();
-			if (!Null.safeEquals(this.lastActive, active)) {
+			boolean active = getElement().isActive();
+			if (!Null.safeEquals(this.active, active)) {
 				if (active) {
 					activated();
 				} else {
 					deactivated();
 				}
-				this.lastActive = active;
+				this.active = active;
 			}
 		}
 	}

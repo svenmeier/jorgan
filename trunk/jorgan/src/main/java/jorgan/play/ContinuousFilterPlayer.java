@@ -28,9 +28,10 @@ import jorgan.disposition.ContinuousFilter.Engaging;
 import jorgan.disposition.Filter.Intercept;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
+import jorgan.util.Null;
 
 /**
- * A player for a swell.
+ * A player for a {@link ContinuousFilter}.
  */
 public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 		implements FilterPlayer {
@@ -56,7 +57,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 
 		if (isOpen()) {
 			for (ChannelFilter channel : channels) {
-				channel.engaging();
+				channel.update();
 			}
 		}
 	}
@@ -74,8 +75,8 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	private class ChannelFilter extends PlayerContext implements Channel {
 
 		private Channel channel;
-		
-		private boolean inited;
+
+		private Float value;
 
 		public ChannelFilter(Channel channel) {
 			this.channel = channel;
@@ -84,14 +85,21 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 		}
 
 		public void init() {
-			// no need if already done
-			if (!inited) {
-				engaging();
-			}
-			
+			update();
+
 			channel.init();
 		}
-		
+
+		public void update() {
+			float value = getElement().getValue();
+
+			if (!Null.safeEquals(this.value, value)) {
+				engaging(value);
+
+				this.value = value;
+			}
+		}
+
 		public void sendMessage(int command, int data1, int data2) {
 			ContinuousFilter element = getElement();
 
@@ -104,21 +112,19 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			}
 
 			if (intercepted) {
-				engaging();
+				float value = element.getValue();
+				engaging(value);
+				this.value = value;
 			} else {
 				channel.sendMessage(command, data1, data2);
 			}
 		}
 
-		private void engaging() {
-			ContinuousFilter filter = getElement();
-
+		private void engaging(float value) {
 			for (Engaging engaging : getElement().getMessages(Engaging.class)) {
-				set(Engaging.VALUE, filter.getValue());
+				set(Engaging.VALUE, value);
 				output(engaging, this);
 			}
-			
-			inited = true;
 		}
 
 		public void sendFilteredMessage(int command, int data1, int data2) {
