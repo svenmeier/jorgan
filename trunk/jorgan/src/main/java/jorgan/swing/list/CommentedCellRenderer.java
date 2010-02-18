@@ -66,7 +66,7 @@ public class CommentedCellRenderer extends JPanel implements ListCellRenderer {
 		if (rendererComponent != null) {
 			return rendererComponent.getAccessibleContext();
 		}
-		return null;
+		return super.getAccessibleContext();
 	}
 
 	public Component getListCellRendererComponent(JList list, Object value,
