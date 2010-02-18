@@ -4,6 +4,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -27,7 +28,7 @@ public class CommentedCellRenderer extends JPanel implements ListCellRenderer {
 	private JLabel commentRenderer = new JLabel();
 
 	/**
-	 * Constructor using a default cell renderer.
+	 * Constructor using a default cell rendereJPanelr.
 	 */
 	public CommentedCellRenderer() {
 		this(new DefaultListCellRenderer());
@@ -52,13 +53,22 @@ public class CommentedCellRenderer extends JPanel implements ListCellRenderer {
 	/**
 	 * Set the nested renderer.
 	 * 
-	 * @param renderer	the renderer
+	 * @param renderer
+	 *            the renderer
 	 */
 	public void setRenderer(ListCellRenderer renderer) {
 		this.renderer = renderer;
 		this.rendererComponent = null;
 	}
-	
+
+	@Override
+	public AccessibleContext getAccessibleContext() {
+		if (rendererComponent != null) {
+			return rendererComponent.getAccessibleContext();
+		}
+		return null;
+	}
+
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
 

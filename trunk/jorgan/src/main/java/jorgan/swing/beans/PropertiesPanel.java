@@ -309,6 +309,15 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 			}
 		}
 
+		@Override
+		public Class<?> getColumnClass(int columnIndex) {
+			if (columnIndex == 0) {
+				return String.class;
+			} else {
+				return Object.class;
+			}
+		}
+
 		public Object getValueAt(int rowIndex, int columnIndex) {
 			if (columnIndex == 0) {
 				return descriptors[rowIndex].getDisplayName();
