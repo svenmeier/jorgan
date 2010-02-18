@@ -372,18 +372,11 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 		public void valueChanged(ListSelectionEvent e) {
 			if (descriptors != null && descriptors.length > 0) {
-				if (e.getSource() == table.getColumnModel().getSelectionModel()) {
-					if (table.getSelectedColumn() == 0) {
-						table.getColumnModel().getSelectionModel()
-								.setSelectionInterval(1, 1);
-					}
+				int row = table.getSelectedRow();
+				if (row == -1) {
+					setProperty(null);
 				} else {
-					int row = table.getSelectedRow();
-					if (row == -1) {
-						setProperty(null);
-					} else {
-						setProperty(descriptors[row].getName());
-					}
+					setProperty(descriptors[row].getName());
 				}
 			}
 		}
