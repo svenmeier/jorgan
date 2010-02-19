@@ -26,7 +26,7 @@ import jorgan.disposition.ConsoleSwitcher;
  */
 public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 
-	private boolean enaged;
+	private boolean engaged;
 
 	/**
 	 * Constructor.
@@ -37,7 +37,7 @@ public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 	public ConsoleSwitcherView(ConsoleSwitcher element) {
 		super(element);
 
-		enaged = element.isEngaged();
+		engaged = element.isEngaged();
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 
 		ViewContainer container = getContainer();
 		if (container != null) {
-			if (enaged && !getElement().isEngaged()) {
+			if (engaged && !getElement().isEngaged()) {
 				for (Console console : getElement()
 						.getReferenced(Console.class)) {
 					container.toFront(console);
@@ -55,6 +55,6 @@ public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 			}
 		}
 
-		this.enaged = getElement().isEngaged();
+		this.engaged = getElement().isEngaged();
 	}
 }
