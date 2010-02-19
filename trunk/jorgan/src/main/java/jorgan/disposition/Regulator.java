@@ -21,8 +21,7 @@ package jorgan.disposition;
 /**
  * An regulator of {@link jorgan.disposition.Switch}es.
  */
-public class Regulator extends IndexedContinuous implements Engaging,
-		Switch.Dependent {
+public class Regulator extends IndexedContinuous implements Switch.Dependent {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -39,22 +38,10 @@ public class Regulator extends IndexedContinuous implements Engaging,
 	}
 
 	/**
-	 * A regulator enages the referenced {@link Switch} corresponding to the
-	 * current {@link #getIndex()}.
-	 */
-	public boolean engages(Engageable element) {
-		if (!references((Element) element)) {
-			throw new IllegalArgumentException("does not reference '" + element
-					+ "'");
-		}
-
-		return getReference(getIndex()).getElement() == element;
-	}
-
-	/**
 	 * Adjust {@link #getIndex()} if corresponding referenced {@link Switch} is
 	 * engaged.
 	 */
+	@Override
 	public void activeChanged(Switch element, boolean active) {
 		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
@@ -70,10 +57,7 @@ public class Regulator extends IndexedContinuous implements Engaging,
 
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
-		// Disengage old switch first to save resources. Note that referenced
-		// switches (including further referenced switches in case of an
-		// Activator) will stay engaged if they are reference by the new switch.
-		((Switch) getReference(oldIndex).getElement()).engagingChanged(false);
-		((Switch) getReference(newIndex).getElement()).engagingChanged(true);
+		((Switch) getReference(newIndex).getElement()).setActive(true);
+		((Switch) getReference(oldIndex).getElement()).setActive(false);
 	}
 }
