@@ -50,6 +50,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Incrementer.class);
 		classes.add(GenericSound.class);
 		classes.add(ConsoleSwitcher.class);
+		classes.add(Loopback.class);
 
 		elementClasses = classes;
 	}
@@ -57,7 +58,7 @@ public class DefaultElementProvider implements ElementProvider {
 	public void init(Organ organ) {
 		organ.addElement(new Console());
 	}
-	
+
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		return new ArrayList<Class<? extends Element>>(elementClasses);
 	}
