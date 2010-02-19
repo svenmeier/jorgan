@@ -57,13 +57,6 @@ public class Combination extends Switch implements Continuous.Dependent,
 		}
 	}
 
-	@Override
-	protected void onActivated(boolean active) {
-		if (active) {
-			captureOrRecall();
-		}
-	}
-
 	/**
 	 * Capture or recall is possible either via {@link #onEngaged(boolean)} or
 	 * {@link #onActivated(boolean)}.
