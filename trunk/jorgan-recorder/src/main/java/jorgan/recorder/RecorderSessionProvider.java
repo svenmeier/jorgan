@@ -82,9 +82,9 @@ public class RecorderSessionProvider implements SessionProvider {
 				@Override
 				public void propertyChanged(Element element, String name) {
 					if (RecorderSwitch.class.isInstance(element)
-							&& "active".equals(name)) {
+							&& "engaged".equals(name)) {
 						RecorderSwitch recorderSwitch = ((RecorderSwitch) element);
-						if (!recorderSwitch.isActive()) {
+						if (!recorderSwitch.isEngaged()) {
 							recorderSwitch.perform(performance);
 						}
 					}
