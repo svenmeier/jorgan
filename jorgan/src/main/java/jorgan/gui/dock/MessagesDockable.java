@@ -45,6 +45,7 @@ import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
+import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
@@ -65,7 +66,6 @@ import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.NoOp;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
-import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
@@ -226,23 +226,25 @@ public class MessagesDockable extends OrganDockable {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		new IconTableCellRenderer() {
-			@Override
-			protected Icon getIcon(Object value) {
-				if (value instanceof InputMessage) {
-					return inputIcon;
-				} else if (value instanceof OutputMessage) {
-					return outputIcon;
-				} else {
-					return interceptIcon;
-				}
-			}
-		}.configureTableColumn(table, 0);
+		table.getColumnModel().getColumn(0).setCellRenderer(
+				new DefaultTableCellRenderer() {
+					@Override
+					protected void setValue(Object value) {
+						if (value instanceof InputMessage) {
+							setIcon(inputIcon);
+						} else if (value instanceof OutputMessage) {
+							setIcon(outputIcon);
+						} else {
+							setIcon(interceptIcon);
+						}
+						setText(Elements.getDisplayName(value.getClass()));
+					}
+				});
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new StringCellEditor());
 		table.getColumnModel().getColumn(2).setCellEditor(
 				new StringCellEditor());
 		table.getColumnModel().getColumn(3).setCellEditor(
-				new StringCellEditor());
-		table.getColumnModel().getColumn(4).setCellEditor(
 				new StringCellEditor());
 		TableUtils.pleasantLookAndFeel(table);
 
@@ -383,7 +385,7 @@ public class MessagesDockable extends OrganDockable {
 	public class MessagesModel extends AbstractTableModel implements
 			OrganListener {
 
-		private String[] columnNames = new String[5];
+		private String[] columnNames = new String[4];
 
 		private void update() {
 			fireTableDataChanged();
@@ -399,7 +401,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public int getColumnCount() {
-			return 5;
+			return 4;
 		}
 
 		public int getRowCount() {
@@ -408,7 +410,7 @@ public class MessagesDockable extends OrganDockable {
 
 		@Override
 		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex >= 2;
+			return columnIndex > 0;
 		}
 
 		public Object getValueAt(int rowIndex, int columnIndex) {
@@ -418,12 +420,10 @@ public class MessagesDockable extends OrganDockable {
 			case 0:
 				return message;
 			case 1:
-				return Elements.getDisplayName(message.getClass());
-			case 2:
 				return message.getStatus();
-			case 3:
+			case 2:
 				return message.getData1();
-			case 4:
+			case 3:
 				return message.getData2();
 			default:
 				throw new IllegalArgumentException("" + columnIndex);
@@ -438,13 +438,13 @@ public class MessagesDockable extends OrganDockable {
 			String data1 = message.getData1();
 			String data2 = message.getData2();
 			switch (columnIndex) {
-			case 2:
+			case 1:
 				status = (String) aValue;
 				break;
-			case 3:
+			case 2:
 				data1 = (String) aValue;
 				break;
-			case 4:
+			case 3:
 				data2 = (String) aValue;
 				break;
 			}
