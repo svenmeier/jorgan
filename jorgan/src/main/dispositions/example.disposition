@@ -204,6 +204,10 @@
           <x>270</x>
           <y>240</y>
         </console-locationReference>
+        <console-locationReference id="1203">
+          <x>330</x>
+          <y>90</y>
+        </console-locationReference>
       </references>
       <messages/>
       <zoom>1.0</zoom>
@@ -333,5 +337,14 @@
       <messages/>
       <output>Java Sound Synthesizer</output>
     </genericSound>
+    <switch id="1203">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <locking>true</locking>
+    </switch>
   </elements>
 </organ>
