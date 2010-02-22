@@ -88,7 +88,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 
 	private void capture(Captor captor) {
 
-		captor.setActive(false);
+		captor.activate(false);
 
 		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.capture();
@@ -110,7 +110,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 		if (isActive()) {
 			for (SwitchReference reference : getReferences(SwitchReference.class)) {
 				if (!reference.matches()) {
-					setActive(false);
+					activate(false);
 					break;
 				}
 			}
@@ -183,7 +183,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 
 		@Override
 		public void recall() {
-			getElement().setActive(active);
+			getElement().activate(active);
 		}
 
 		@Override

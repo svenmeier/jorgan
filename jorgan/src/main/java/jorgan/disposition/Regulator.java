@@ -57,7 +57,7 @@ public class Regulator extends IndexedContinuous implements Switch.Dependent {
 
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
-		((Switch) getReference(newIndex).getElement()).setActive(true);
-		((Switch) getReference(oldIndex).getElement()).setActive(false);
+		((Switch) getReference(newIndex).getElement()).activate(true);
+		((Switch) getReference(oldIndex).getElement()).activate(false);
 	}
 }
