@@ -10,6 +10,7 @@ call %ANT% -buildfile ../jorgan-executor/build.xml
 call %ANT% -buildfile ../jorgan-fluidsynth/build.xml
 call %ANT% -buildfile ../jorgan-importer/build.xml
 call %ANT% -buildfile ../jorgan-keyboard/build.xml
+call %ANT% -buildfile ../jorgan-lan/build.xml
 call %ANT% -buildfile ../jorgan-linuxsampler/build.xml
 call %ANT% -buildfile ../jorgan-memory/build.xml
 call %ANT% -buildfile ../jorgan-midimerger/build.xml

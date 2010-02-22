@@ -41,6 +41,7 @@ Name: "executor"; Description: "Executor"; Types: standard
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: standard
 Name: "importer"; Description: "Importer"; Types: standard
 Name: "keyboard"; Description: "Keyboard"; Types: standard
+Name: "lan"; Description: "LAN"; Types: standard
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: standard
 Name: "memory"; Description: "Memory"; Types: standard
 Name: "midimerger"; Description: "Midi merger"; Types: standard
@@ -59,6 +60,7 @@ Source: "..\jorgan-executor\target\marshal\*"; DestDir: "{app}"; Components: exe
 Source: "..\jorgan-fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-importer\target\marshal\*"; DestDir: "{app}"; Components: importer; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-lan\target\marshal\*"; DestDir: "{app}"; Components: lan; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
