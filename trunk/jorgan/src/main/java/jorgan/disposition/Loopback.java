@@ -43,7 +43,7 @@ public class Loopback extends Element implements Switch.Dependent {
 
 	private void loopback(boolean active) {
 		for (Switch element : getReferenced(Switch.class)) {
-			element.setActive(active);
+			element.activate(active);
 		}
 	}
 }

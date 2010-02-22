@@ -58,8 +58,17 @@ public class Switch extends Engageable {
 	}
 
 	public void initiate() {
-		if (!isActive()) {
+		setActive(true);
+		setActive(false);
+	}
+
+	public void activate(boolean active) {
+		if (active) {
 			setActive(true);
+			if (!isLocking()) {
+				setActive(false);
+			}
+		} else {
 			setActive(false);
 		}
 	}
@@ -69,7 +78,7 @@ public class Switch extends Engageable {
 			this.active = active;
 
 			fireChange(new FastPropertyChange("active", false));
-			
+
 			onActivated(active);
 
 			engagingChanged(active);
