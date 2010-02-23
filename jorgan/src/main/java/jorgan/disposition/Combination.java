@@ -18,8 +18,7 @@
  */
 package jorgan.disposition;
 
-public class Combination extends Switch implements Continuous.Dependent,
-		Switch.Dependent {
+public class Combination extends Switch implements Observer {
 
 	private transient boolean recalling;
 
@@ -97,7 +96,8 @@ public class Combination extends Switch implements Continuous.Dependent,
 		}
 	}
 
-	public void activeChanged(Switch element, boolean active) {
+	@Override
+	public void changed(Element element) {
 		if (recalling) {
 			return;
 		}
@@ -108,29 +108,9 @@ public class Combination extends Switch implements Continuous.Dependent,
 		}
 
 		if (isActive()) {
-			for (SwitchReference reference : getReferences(SwitchReference.class)) {
+			for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 				if (!reference.matches()) {
 					activate(false);
-					break;
-				}
-			}
-		}
-	}
-
-	public void valueChanged(Continuous element, float value) {
-		if (recalling) {
-			return;
-		}
-
-		if (!references((Element) element)) {
-			throw new IllegalArgumentException("does not reference '" + element
-					+ "'");
-		}
-
-		if (isActive()) {
-			for (ContinuousReference reference : getReferences(ContinuousReference.class)) {
-				if (!reference.matches()) {
-					setActive(false);
 					break;
 				}
 			}
@@ -151,6 +131,8 @@ public class Combination extends Switch implements Continuous.Dependent,
 		public abstract void capture();
 
 		public abstract void recall();
+
+		public abstract boolean matches();
 	}
 
 	/**
@@ -172,6 +154,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 			return active;
 		}
 
+		@Override
 		public boolean matches() {
 			return active == getElement().isActive();
 		}
@@ -208,6 +191,7 @@ public class Combination extends Switch implements Continuous.Dependent,
 			super(element);
 		}
 
+		@Override
 		public boolean matches() {
 			return value == getElement().getValue();
 		}

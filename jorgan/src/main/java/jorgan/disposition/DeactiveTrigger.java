@@ -19,31 +19,25 @@
 package jorgan.disposition;
 
 /**
- * An Loopback of {@link jorgan.disposition.Switch}es.
+ * An trigger of {@link jorgan.disposition.Switch}es.
  */
-public class Loopback extends Element implements Switch.Dependent {
+public class DeactiveTrigger extends Element implements Observer {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Switch.class.isAssignableFrom(clazz)
-				|| Loopback.class.isAssignableFrom(clazz);
+		return Switch.class.isAssignableFrom(clazz);
 	}
 
 	@Override
-	public void activeChanged(Switch element, boolean active) {
+	public void changed(Element element) {
 		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
 
-		for (Loopback loopback : getReferenced(Loopback.class)) {
-			loopback.loopback(active);
-		}
-	}
-
-	private void loopback(boolean active) {
-		for (Switch element : getReferenced(Switch.class)) {
-			element.activate(active);
+		Switch first = (Switch) getReference(0).getElement();
+		if (first != element && !((Switch) element).isActive()) {
+			first.activate(true);
 		}
 	}
 }
