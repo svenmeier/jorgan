@@ -69,9 +69,9 @@ public class Continuous extends Displayable {
 
 			onValueChanged(oldValue, this.value);
 
-			for (Dependent dependent : getOrgan().getReferrer(this,
-					Dependent.class)) {
-				dependent.valueChanged(this, value);
+			for (Observer observer : getOrgan().getReferrer(this,
+					Observer.class)) {
+				observer.changed(this);
 			}
 		}
 	}
@@ -155,14 +155,5 @@ public class Continuous extends Displayable {
 	public static class Changed extends OutputMessage {
 
 		public static final String VALUE = "value";
-	}
-
-	public static interface Dependent {
-
-		/**
-		 * Notification from a referenced {@link Continuous} of a change in
-		 * {@link Continuous#getValue()}.
-		 */
-		public void valueChanged(Continuous element, float value);
 	}
 }

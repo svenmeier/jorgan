@@ -19,9 +19,9 @@
 package jorgan.disposition;
 
 /**
- * An regulator of {@link jorgan.disposition.Switch}es.
+ * An trigger of {@link jorgan.disposition.Switch}es.
  */
-public class Regulator extends IndexedContinuous implements Observer {
+public class ActiveTrigger extends Element implements Observer {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -29,38 +29,15 @@ public class Regulator extends IndexedContinuous implements Observer {
 	}
 
 	@Override
-	protected boolean canReferenceDuplicates() {
-		return true;
-	}
-
-	public int getSize() {
-		return getReferenceCount();
-	}
-
-	/**
-	 * Adjust {@link #getIndex()} if corresponding referenced {@link Switch}
-	 * changed.
-	 */
-	@Override
 	public void changed(Element element) {
 		if (!references((Element) element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
 
-		if (element instanceof Switch) {
-			Switch aSwitch = (Switch) element;
-			if (aSwitch.isActive()) {
-				if (getReference(getIndex()).getElement() != element) {
-					setIndex(getReferencedIndex(element));
-				}
-			}
+		Switch first = (Switch) getReference(0).getElement();
+		if (first != element && ((Switch) element).isActive()) {
+			first.activate(true);
 		}
-	}
-
-	@Override
-	protected void onIndexChanged(int oldIndex, int newIndex) {
-		((Switch) getReference(newIndex).getElement()).activate(true);
-		((Switch) getReference(oldIndex).getElement()).activate(false);
 	}
 }
