@@ -16,28 +16,22 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.gui.construct.info;
+
+import jorgan.disposition.Foo;
+import jorgan.gui.construct.editor.BooleanEditor;
 
 /**
- * An trigger of {@link jorgan.disposition.Switch}es.
+ * BeanInfo for {@link jorgan.disposition.Foo}.
  */
-public class DeactiveTrigger extends Element implements Observer {
+public class FooBeanInfo extends ElementBeanInfo {
 
 	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Switch.class.isAssignableFrom(clazz);
-	}
+	protected void registerProperties() {
+		super.registerProperties();
 
-	@Override
-	public void changed(Element element) {
-		if (!references((Element) element)) {
-			throw new IllegalArgumentException("does not reference '" + element
-					+ "'");
-		}
-
-		Switch first = (Switch) getReference(0).getElement();
-		if (first != element && !((Switch) element).isActive()) {
-			first.activate(true);
-		}
+		add("onActivated", Foo.class, BooleanEditor.class);
+		add("onDeactivated", Foo.class, BooleanEditor.class);
+		add("onChanged", Foo.class, BooleanEditor.class);
 	}
 }
