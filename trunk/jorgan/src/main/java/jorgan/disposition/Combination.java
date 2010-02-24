@@ -102,7 +102,7 @@ public class Combination extends Switch implements Observer {
 			return;
 		}
 
-		if (!references((Element) element)) {
+		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
