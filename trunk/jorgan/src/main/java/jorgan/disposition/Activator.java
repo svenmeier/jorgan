@@ -19,7 +19,6 @@
 package jorgan.disposition;
 
 /**
- * An activator.
  */
 public class Activator extends Switch implements Engaging {
 

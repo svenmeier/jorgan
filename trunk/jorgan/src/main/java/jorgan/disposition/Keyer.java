@@ -6,7 +6,7 @@
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- *
+ *Activator
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,11 +18,10 @@
  */
 package jorgan.disposition;
 
-
 /**
  * A keyer initiates a key press when {@link Switch#isEngaged()}.
  */
-public class Keyer extends Activator {
+public class Keyer extends Switch {
 
 	private int pitch = 64;
 
@@ -36,7 +35,7 @@ public class Keyer extends Activator {
 	public void setPitch(int pitch) {
 		if (this.pitch != pitch) {
 			int oldPitch = this.pitch;
-			
+
 			this.pitch = pitch;
 
 			fireChange(new PropertyChange(oldPitch, this.pitch));
