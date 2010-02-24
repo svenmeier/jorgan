@@ -43,7 +43,7 @@ public class Regulator extends IndexedContinuous implements Observer {
 	 */
 	@Override
 	public void changed(Element element) {
-		if (!references((Element) element)) {
+		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}

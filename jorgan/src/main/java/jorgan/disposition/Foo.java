@@ -81,7 +81,7 @@ public class Foo extends Element implements Observer {
 
 	@Override
 	public void changed(Element element) {
-		if (!references((Element) element)) {
+		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
 		}
