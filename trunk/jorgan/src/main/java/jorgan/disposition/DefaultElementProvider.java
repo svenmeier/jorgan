@@ -50,7 +50,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Incrementer.class);
 		classes.add(GenericSound.class);
 		classes.add(ConsoleSwitcher.class);
-		classes.add(Foo.class);
+		classes.add(Synchronizer.class);
 
 		elementClasses = classes;
 	}
