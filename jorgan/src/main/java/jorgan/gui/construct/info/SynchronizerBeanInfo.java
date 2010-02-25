@@ -18,20 +18,19 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Foo;
+import jorgan.disposition.Synchronizer;
 import jorgan.gui.construct.editor.BooleanEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Foo}.
+ * BeanInfo for a {@link jorgan.disposition.Synchronizer}.
  */
-public class FooBeanInfo extends ElementBeanInfo {
+public class SynchronizerBeanInfo extends SwitchBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("onActivated", Foo.class, BooleanEditor.class);
-		add("onDeactivated", Foo.class, BooleanEditor.class);
-		add("onChanged", Foo.class, BooleanEditor.class);
+		add("whenActivated", Synchronizer.class, BooleanEditor.class);
+		add("whenDeactivated", Synchronizer.class, BooleanEditor.class);
 	}
 }
