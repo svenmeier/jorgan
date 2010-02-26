@@ -85,8 +85,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		}
 
 		if (getOrganPlay() != null) {
-			ShortMessage message = MessageUtils.newMessage(channel, command,
-					data1, data2);
+			ShortMessage message = MessageUtils.newMessage(channel & 0xf,
+					command, data1, data2);
 			getOrganPlay().fireSent(message);
 		}
 
