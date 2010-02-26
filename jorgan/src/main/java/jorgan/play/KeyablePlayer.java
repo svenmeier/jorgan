@@ -89,6 +89,10 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 	protected abstract void onKeyUp(int pitch);
 
 	public final void keyDown(int pitch, int velocity) {
+		if (engaged == null) {
+			// other elements might already be keying before we updated
+			update();
+		}
 
 		Keyable keyable = getElement();
 
@@ -105,6 +109,11 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 	}
 
 	public final void keyUp(int pitch) {
+		if (engaged == null) {
+			// other elements might already be keying before we updated
+			update();
+		}
+
 		Keyable keyable = getElement();
 
 		pitch += keyable.getTranspose();
