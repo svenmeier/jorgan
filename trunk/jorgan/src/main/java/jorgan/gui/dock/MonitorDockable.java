@@ -157,26 +157,20 @@ public class MonitorDockable extends OrganDockable {
 
 		@Override
 		public void received(MidiMessage message) {
-			if (inputButton.isSelected()
-					&& MessageUtils.isChannelMessage(message)) {
-				add(true, (ShortMessage) message);
+			if (inputButton.isSelected()) {
+				add(true, message);
 			}
 		}
 
 		@Override
 		public void sent(MidiMessage message) {
-			if (outputButton.isSelected()
-					&& MessageUtils.isChannelMessage(message)) {
-				add(false, (ShortMessage) message);
+			if (outputButton.isSelected()) {
+				add(false, message);
 			}
 		}
 
-		private void add(boolean input, ShortMessage shortMessage) {
-			Message message = new Message(input, shortMessage.getChannel(),
-					shortMessage.getCommand(), shortMessage.getData1(),
-					shortMessage.getData2());
-
-			messages.add(message);
+		private void add(boolean input, MidiMessage message) {
+			messages.add(new Message(input, message));
 			int row = messages.size() - 1;
 
 			tableModel.fireTableRowsInserted(row, row);
@@ -231,7 +225,7 @@ public class MonitorDockable extends OrganDockable {
 			case 1:
 				return message.getChannel();
 			case 2:
-				return message.getCommand();
+				return message.getStatus();
 			case 3:
 				return message.getData1();
 			case 4:
@@ -245,22 +239,27 @@ public class MonitorDockable extends OrganDockable {
 
 		private boolean input;
 
-		private int channel;
+		private int channel = -1;
 
-		private int command;
+		private int status;
 
-		private int data1;
+		private int data1 = -1;
 
-		private int data2;
+		private int data2 = -1;
 
-		public Message(boolean input, int channel, int command, int data1,
-				int data2) {
+		public Message(boolean input, MidiMessage message) {
 			this.input = input;
 
-			this.channel = channel;
-			this.command = command;
-			this.data1 = data1;
-			this.data2 = data2;
+			this.status = message.getStatus();
+			if (message instanceof ShortMessage) {
+				ShortMessage shortMessage = (ShortMessage) message;
+				this.data1 = shortMessage.getData1();
+				this.data2 = shortMessage.getData2();
+
+				if (MessageUtils.isChannelMessage(shortMessage)) {
+					this.channel = shortMessage.getChannel();
+				}
+			}
 		}
 
 		public boolean isInput() {
@@ -271,8 +270,8 @@ public class MonitorDockable extends OrganDockable {
 			return channel;
 		}
 
-		public int getCommand() {
-			return command;
+		public int getStatus() {
+			return status;
 		}
 
 		public int getData1() {
@@ -286,19 +285,24 @@ public class MonitorDockable extends OrganDockable {
 		public String getDescription() {
 			MessageBuilder builder = new MessageBuilder();
 
-			config.get(command + ">" + data1 + ">" + data2).read(builder);
+			int status = this.status;
+			if (channel != -1) {
+				status -= channel;
+			}
+
+			config.get(status + ">" + data1 + ">" + data2).read(builder);
 			if (!builder.hasPattern()) {
-				config.get(command + ">" + data1).read(builder);
+				config.get(status + ">" + data1).read(builder);
 				if (!builder.hasPattern()) {
-					config.get("" + command).read(builder);
+					config.get("" + status).read(builder);
 				}
 			}
-			return builder.build(command, data1, data2);
+			return builder.build(status, data1, data2);
 		}
 
 		public Color getColor() {
-			if (command >= 0x80 && command < 0xf0) {
-				return colors[(command - 0x80) >> 4];
+			if (status >= 0x80 && status < 0xf0) {
+				return colors[(status - 0x80) >> 4];
 			} else {
 				return Color.white;
 			}
