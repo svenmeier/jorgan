@@ -23,13 +23,13 @@ package jorgan.disposition;
  */
 public class Synchronizer extends Switch implements Observer {
 
-	private boolean whenActivated = true;
+	private Action whenActivated = Action.ACTIVATE;
 
-	private boolean whenDeactivated = true;
+	private Action whenDeactivated = Action.DEACTIVATE;
 
-	public void setWhenActivated(boolean whenActivated) {
+	public void setWhenActivated(Action whenActivated) {
 		if (this.whenActivated != whenActivated) {
-			boolean oldWhenActivated = this.whenActivated;
+			Action oldWhenActivated = this.whenActivated;
 
 			this.whenActivated = whenActivated;
 
@@ -37,13 +37,13 @@ public class Synchronizer extends Switch implements Observer {
 		}
 	}
 
-	public boolean getWhenActivated() {
+	public Action getWhenActivated() {
 		return this.whenActivated;
 	}
 
-	public void setWhenDeactivated(boolean whenDeactivated) {
+	public void setWhenDeactivated(Action whenDeactivated) {
 		if (this.whenDeactivated != whenDeactivated) {
-			boolean oldWhenDeactivated = this.whenDeactivated;
+			Action oldWhenDeactivated = this.whenDeactivated;
 
 			this.whenDeactivated = whenDeactivated;
 
@@ -52,7 +52,7 @@ public class Synchronizer extends Switch implements Observer {
 		}
 	}
 
-	public boolean getWhenDeactivated() {
+	public Action getWhenDeactivated() {
 		return this.whenDeactivated;
 	}
 
@@ -72,12 +72,34 @@ public class Synchronizer extends Switch implements Observer {
 			Switch changed = (Switch) element;
 			Switch first = (Switch) getReference(0).getElement();
 			if (changed != first) {
-				if (changed.isActive() && whenActivated) {
-					first.activate(true);
-				} else if (!changed.isActive() && whenDeactivated) {
-					first.activate(false);
+				if (changed.isActive()) {
+					whenActivated.perform(first);
+				} else if (!changed.isActive()) {
+					whenDeactivated.perform(first);
 				}
 			}
 		}
+	}
+
+	public static enum Action {
+		NOTHING {
+			@Override
+			public void perform(Switch element) {
+			}
+		},
+		ACTIVATE {
+			@Override
+			public void perform(Switch element) {
+				element.activate(true);
+			}
+		},
+		DEACTIVATE {
+			@Override
+			public void perform(Switch element) {
+				element.activate(false);
+			}
+		};
+
+		public abstract void perform(Switch element);
 	}
 }

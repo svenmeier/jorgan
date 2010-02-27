@@ -16,22 +16,44 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct.info;
+package jorgan.gui.construct.editor;
+
+import java.beans.PropertyEditorSupport;
 
 import jorgan.disposition.Synchronizer;
-import jorgan.gui.construct.editor.SynchronizeActionEditor;
+import jorgan.disposition.Synchronizer.Action;
 
 /**
- * BeanInfo for a {@link jorgan.disposition.Synchronizer}.
+ * Property editor for an action property of a <code>Keyable</code>.
  */
-public class SynchronizerBeanInfo extends SwitchBeanInfo {
+public class SynchronizeActionEditor extends PropertyEditorSupport {
+
+	private String[] tags;
+
+	/**
+	 * Constructor.
+	 */
+	public SynchronizeActionEditor() {
+		Action[] actions = Synchronizer.Action.values();
+
+		tags = new String[actions.length];
+		for (int t = 0; t < tags.length; t++) {
+			tags[t] = actions[t].name();
+		}
+	}
 
 	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	public String[] getTags() {
+		return tags;
+	}
 
-		add("whenActivated", Synchronizer.class, SynchronizeActionEditor.class);
-		add("whenDeactivated", Synchronizer.class,
-				SynchronizeActionEditor.class);
+	@Override
+	public String getAsText() {
+		return ((Action) getValue()).name();
+	}
+
+	@Override
+	public void setAsText(String string) {
+		setValue(Action.valueOf(string));
 	}
 }
