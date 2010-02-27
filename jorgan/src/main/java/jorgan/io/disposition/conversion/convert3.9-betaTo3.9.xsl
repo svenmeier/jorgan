@@ -5,7 +5,7 @@
 		<xsl:copy>
 			<xsl:choose>
 				<xsl:when test="node() = 'true'">ACTIVATE</xsl:when>
-				<xsl:otherwise>NOTHING</xsl:otherwise>
+				<xsl:otherwise>IGNORE</xsl:otherwise>
 			</xsl:choose>
 		</xsl:copy>
 	</xsl:template>
@@ -14,7 +14,7 @@
 		<xsl:copy>
 			<xsl:choose>
 				<xsl:when test="node() = 'true'">DEACTIVATE</xsl:when>
-				<xsl:otherwise>NOTHING</xsl:otherwise>
+				<xsl:otherwise>IGNORE</xsl:otherwise>
 			</xsl:choose>
 		</xsl:copy>
 	</xsl:template>
