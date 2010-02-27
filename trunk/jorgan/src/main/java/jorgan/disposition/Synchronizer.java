@@ -82,7 +82,7 @@ public class Synchronizer extends Switch implements Observer {
 	}
 
 	public static enum Action {
-		NOTHING {
+		IGNORE {
 			@Override
 			public void perform(Switch element) {
 			}
