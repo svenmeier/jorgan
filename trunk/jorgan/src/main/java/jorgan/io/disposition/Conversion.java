@@ -56,7 +56,8 @@ public class Conversion {
 			new Conversion("3\\.5", "convert3.5To3.5.1.xsl"),
 			new Conversion("3\\.[5|6].*", "convert3.6To3.7.xsl"),
 			new Conversion("3\\.7", "convert3.7To3.8.xsl"),
-			new Conversion("3\\.8.*", "convert3.8To3.9.xsl") };
+			new Conversion("3\\.8.*", "convert3.8To3.9-beta.xsl"),
+			new Conversion("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl") };
 
 	private Pattern pattern;
 
