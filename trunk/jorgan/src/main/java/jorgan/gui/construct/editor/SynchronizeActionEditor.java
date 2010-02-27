@@ -49,7 +49,11 @@ public class SynchronizeActionEditor extends PropertyEditorSupport {
 
 	@Override
 	public String getAsText() {
-		return ((Action) getValue()).name();
+		Action value = (Action) getValue();
+		if (value == null) {
+			return null;
+		}
+		return value.name();
 	}
 
 	@Override
