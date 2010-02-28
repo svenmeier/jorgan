@@ -73,7 +73,9 @@ public class GUISessionProvider implements SessionProvider {
 				@Override
 				public void indexedPropertyAdded(Element element, String name,
 						Object value) {
-					selection.setSelectedElement(element, value);
+					if (selection.getSelectedElement() == element) {
+						selection.setSelectedElement(element, value);
+					}
 				}
 
 				@Override
