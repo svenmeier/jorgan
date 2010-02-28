@@ -37,7 +37,7 @@ import jorgan.skin.TextLayer;
 public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 	public static final String BINDING_ACTIVE = "active";
-	
+
 	/**
 	 * Constructor.
 	 * 
@@ -89,7 +89,8 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			if (element.isLocking()) {
 				// do nothing - activate/deactivate on release instead)
 			} else {
-				// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys cannot
+				// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys
+				// cannot
 				// be used for non-locking elements :(
 				element.setActive(true);
 			}
@@ -110,7 +111,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			}
 		}
 	}
-	
+
 	@Override
 	protected Style createDefaultStyle() {
 		Style style = new Style();
@@ -155,13 +156,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 				g.drawRect(x, y, width - 1, height - 1);
 
 				if (activated) {
-					g.drawLine(x + 3, y + 5, x + 3, y + 7);
-					g.drawLine(x + 4, y + 6, x + 4, y + 8);
-					g.drawLine(x + 5, y + 7, x + 5, y + 9);
-					g.drawLine(x + 6, y + 6, x + 6, y + 8);
-					g.drawLine(x + 7, y + 5, x + 7, y + 7);
-					g.drawLine(x + 8, y + 4, x + 8, y + 6);
-					g.drawLine(x + 9, y + 3, x + 9, y + 5);
+					g.fillRect(x + 2, y + 2, width - 4, height - 4);
 				}
 			}
 		};
@@ -172,7 +167,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 		return layer;
 	}
-	
+
 	@Override
 	public void paint(Graphics2D g) {
 		super.paint(g);
