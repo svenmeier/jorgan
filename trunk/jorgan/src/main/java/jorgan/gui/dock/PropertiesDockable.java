@@ -42,6 +42,7 @@ import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.beans.PropertiesPanel;
 import spin.Spin;
+import swingx.docking.Docked;
 import bias.Configuration;
 
 /**
@@ -99,6 +100,13 @@ public class PropertiesDockable extends OrganDockable {
 		panel.addChangeListener(selectionHandler);
 
 		setContent(new JScrollPane(panel));
+	}
+
+	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		selectionHandler.updateProperties();
 	}
 
 	@Override
@@ -164,7 +172,7 @@ public class PropertiesDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (panel.getBeans().contains(element)) {
+			if (panel.isDisplayable() && panel.getBeans().contains(element)) {
 				updateProperties();
 			}
 		}
