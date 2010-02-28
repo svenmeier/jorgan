@@ -125,6 +125,13 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	@Override
+	public void docked(Docked docked) {
+		super.docked(docked);
+
+		update();
+	}
+
+	@Override
 	public boolean forPlay() {
 		return false;
 	}
@@ -147,9 +154,9 @@ public class SkinDockable extends OrganDockable {
 			}
 		}
 
-		// make sure model and renderer are created, otherwise both might hold
-		// reference to already closed dispositions
 		if (console == null) {
+			// make sure model and renderer are re-created, otherwise both might
+			// hold reference to an already closed disposition
 			slider.setValue(1.0f);
 			slider.setEnabled(false);
 			list.setModel(new StylesModel());
@@ -226,6 +233,10 @@ public class SkinDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
+			if (!list.isDisplayable()) {
+				return;
+			}
+
 			if (element == console) {
 				update();
 			} else if (element == SkinDockable.this.displayable) {
@@ -256,7 +267,8 @@ public class SkinDockable extends OrganDockable {
 		}
 
 		@Override
-		public void indexedPropertyAdded(Element element, String name, Object value) {
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
 			if (element instanceof Console && Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 				if (reference.getElement() == SkinDockable.this.displayable) {
@@ -266,7 +278,8 @@ public class SkinDockable extends OrganDockable {
 		}
 
 		@Override
-		public void indexedPropertyRemoved(Element element, String name, Object value) {
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
 			if (element instanceof Console && Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 				if (reference.getElement() == SkinDockable.this.displayable) {
