@@ -250,13 +250,18 @@ public class Fluidsynth {
 		}
 
 		try {
-			// for Windows we load fluidsynth explicitely from extension
+			// for Windows we load depedents explicitely from extension
 			System.load(NativeUtils.getLibraryName(file, "libglib-2.0-0"));
 			System.load(NativeUtils.getLibraryName(file, "libgthread-2.0-0"));
+		} catch (UnsatisfiedLinkError error) {
+			// should be on system library path
+		}
+
+		try {
+			// for Windows we load fluidsynth explicitely from extension
 			System.load(NativeUtils.getLibraryName(file, "libfluidsynth-1"));
 		} catch (UnsatisfiedLinkError error) {
-			// should be on system library path, thus will be automagically
-			// loadad with following JNI wrapper
+			// should be on system library path
 		}
 
 		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
