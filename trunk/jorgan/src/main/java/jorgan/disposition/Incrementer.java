@@ -24,9 +24,9 @@ package jorgan.disposition;
 public class Incrementer extends Switch {
 
 	private int delta = 1;
-	
+
 	public Incrementer() {
-		setLocking(false);
+		setDuration(0);
 	}
 
 	@Override

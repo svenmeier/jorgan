@@ -64,6 +64,8 @@ public abstract class OrganPlay {
 	 */
 	private final Object RECEIVER_LOCK = new Object();
 
+	private Clock clock;
+
 	private boolean open;
 
 	/**
@@ -211,6 +213,8 @@ public abstract class OrganPlay {
 			open = true;
 		}
 
+		clock = new Clock(this);
+
 		synchronized (CHANGE_LOCK) {
 			Iterator<Player<? extends Element>> iterator = players.values()
 					.iterator();
@@ -221,6 +225,10 @@ public abstract class OrganPlay {
 		}
 	}
 
+	public Clock getClock() {
+		return clock;
+	}
+
 	public boolean isOpen() {
 		return open;
 	}
@@ -229,6 +237,9 @@ public abstract class OrganPlay {
 		if (!open) {
 			throw new IllegalStateException("not open");
 		}
+
+		clock.destroy();
+		clock = null;
 
 		// lock out receivers before trying to aquire change lock
 		synchronized (RECEIVER_LOCK) {

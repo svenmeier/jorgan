@@ -35,23 +35,27 @@ import jorgan.midi.mpl.Sub;
  */
 public class Continuous extends Displayable {
 
-	private boolean locking = true;
+	private int duration = -1;
 
 	private float threshold = 0.0f;
 
 	private float value = 0.0f;
 
-	public boolean isLocking() {
-		return locking;
+	public int getDuration() {
+		return duration;
 	}
 
-	public void setLocking(boolean locking) {
-		if (this.locking != locking) {
-			boolean oldLocking = this.locking;
+	public void setDuration(int duration) {
+		if (duration < -1) {
+			duration = -1;
+		}
 
-			this.locking = locking;
+		if (this.duration != duration) {
+			int oldDuration = this.duration;
 
-			fireChange(new PropertyChange(oldLocking, this.locking));
+			this.duration = duration;
+
+			fireChange(new PropertyChange(oldDuration, this.duration));
 		}
 	}
 

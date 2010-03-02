@@ -89,6 +89,19 @@ public abstract class Player<E extends Element> {
 		return organPlay;
 	}
 
+	public final E getElement() {
+		return element;
+	}
+
+	/**
+	 * Alarm notification.
+	 * 
+	 * @see OrganPlay#getClock()
+	 * @see Clock#alarm(Element, long)
+	 */
+	public void onAlarm(long time) {
+	}
+
 	/**
 	 * Test is this player is open.
 	 * 
@@ -237,10 +250,6 @@ public abstract class Player<E extends Element> {
 				player.send(message);
 			}
 		}
-	}
-
-	public final E getElement() {
-		return element;
 	}
 
 	protected class PlayerContext implements Context {

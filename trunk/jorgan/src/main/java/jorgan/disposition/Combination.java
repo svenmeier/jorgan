@@ -23,7 +23,7 @@ public class Combination extends Switch implements Observer {
 	private transient boolean recalling;
 
 	public Combination() {
-		setLocking(false);
+		setDuration(0);
 	}
 
 	@Override

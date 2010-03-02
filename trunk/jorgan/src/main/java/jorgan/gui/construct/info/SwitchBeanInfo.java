@@ -20,6 +20,7 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Switch;
 import jorgan.gui.construct.editor.BooleanEditor;
+import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.ShortcutEditor;
 
 /**
@@ -31,8 +32,8 @@ public class SwitchBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-        add("shortcut", Switch.class, ShortcutEditor.class);		
+		add("shortcut", Switch.class, ShortcutEditor.class);
 		add("active", Switch.class, BooleanEditor.class);
-		add("locking", Switch.class, BooleanEditor.class);
+		add("duration", Switch.class, IntegerEditor.class);
 	}
 }

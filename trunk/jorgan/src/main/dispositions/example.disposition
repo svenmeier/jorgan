@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="3.9-beta5">
   <elements>
     <combination id="3">
       <name>1</name>
@@ -21,7 +21,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>false</locking>
+      <duration>0</duration>
     </combination>
     <captor id="1">
       <name></name>
@@ -34,7 +34,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </captor>
     <rank id="7">
       <name>Rank 1</name>
@@ -87,7 +87,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
     </stop>
@@ -100,7 +100,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
     </stop>
@@ -166,7 +166,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>false</locking>
+      <duration>0</duration>
     </combination>
     <console id="1201">
       <name></name>
@@ -229,7 +229,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
     </stop>
@@ -253,7 +253,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>false</locking>
+      <duration>0</duration>
     </combination>
     <stop id="9">
       <name>Stop 1</name>
@@ -264,7 +264,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
     </stop>
@@ -358,9 +358,9 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>true</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <whenActivated>ACTIVATE</whenActivated>
-      <whenDeactivated>DEACTIVATE</whenDeactivated>
+      <whenDeactivated>ACTIVATE</whenDeactivated>
     </synchronizer>
     <switch id="1206">
       <name></name>
@@ -369,11 +369,11 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>2000</duration>
     </switch>
     <label id="1207">
       <name></name>
-      <description>name=New in 3.9:  The Synchronizer synchronizes the following Switch  whenever one of the Stops is activated or deactivated:</description>
+      <description>name=New in 3.9:  The Synchronizer activates the following Switch  whenever one of the Stops is activated or deactivated:</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>

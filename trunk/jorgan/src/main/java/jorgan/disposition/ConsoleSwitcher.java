@@ -24,13 +24,13 @@ package jorgan.disposition;
 public class ConsoleSwitcher extends Switch {
 
 	public ConsoleSwitcher() {
-		setLocking(false);
+		setDuration(0);
 	}
 
 	public int getReferenceMax() {
 		return 1;
 	}
-	
+
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Console.class.isAssignableFrom(clazz);

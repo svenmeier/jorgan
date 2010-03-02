@@ -32,8 +32,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
 	private Tab[] tabs = new Tab[128];
 
-	private Thread durationThread;
-
 	public SamsConsolePlayer(SamsConsole console) {
 		super(console);
 
@@ -43,25 +41,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 	}
 
 	@Override
-	protected synchronized void openImpl() {
-		super.openImpl();
-
-		durationThread = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				checkDuration();
-			}
-		}, "jOrgan Magnets");
-		durationThread.start();
-	}
-
-	@Override
-	protected synchronized void closeImpl() {
-		if (durationThread != null) {
-			durationThread = null;
-			notifyAll();
-		}
-
+	protected void closeImpl() {
 		for (Tab tab : tabs) {
 			tab.reset();
 		}
@@ -69,36 +49,18 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		super.closeImpl();
 	}
 
-	public synchronized void durationUpdate() {
-		notify();
-	}
-
-	private synchronized void checkDuration() {
-		while (durationThread == Thread.currentThread()) {
-			long now = System.currentTimeMillis();
-			long then = checkDuration(now);
-			try {
-				wait(Math.max(0, then - now));
-			} catch (InterruptedException interrupted) {
-			}
-		}
-	}
-
-	protected long checkDuration(long now) {
-		long then = Long.MAX_VALUE;
-
+	@Override
+	public void onAlarm(long now) {
 		for (Tab tab : tabs) {
-			then = Math.min(tab.checkDuration(now), then);
+			tab.checkDuration(now);
 		}
-
-		return then;
 	}
 
 	/**
 	 * Overriden to let encoding decode change of tab.
 	 */
 	@Override
-	public synchronized void send(MidiMessage message) {
+	public void send(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			getElement().getEncoding().decodeChangeTab(Arrays.asList(tabs),
 					(ShortMessage) message);
@@ -109,7 +71,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 	 * Overriden to let encoding decode tab changes.
 	 */
 	@Override
-	protected synchronized void receive(MidiMessage message) {
+	protected void receive(MidiMessage message) {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
@@ -135,9 +97,9 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 			onMagnet.off();
 		}
 
-		public long checkDuration(long time) {
-			return Math.min(onMagnet.checkDuration(time), offMagnet
-					.checkDuration(time));
+		public void checkDuration(long time) {
+			onMagnet.checkDuration(time);
+			offMagnet.checkDuration(time);
 		}
 
 		public void change(boolean on) {
@@ -175,7 +137,8 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 				if (!isOn()) {
 					offTime = System.currentTimeMillis()
 							+ getElement().getDuration();
-					durationUpdate();
+
+					getOrganPlay().getClock().alarm(getElement(), offTime);
 
 					ShortMessage message;
 					if (onMagnet == this) {
@@ -205,14 +168,12 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 				}
 			}
 
-			public long checkDuration(long time) {
+			public void checkDuration(long time) {
 				if (isOn()) {
 					if (offTime <= time) {
 						off();
 					}
 				}
-
-				return offTime;
 			}
 		}
 	}

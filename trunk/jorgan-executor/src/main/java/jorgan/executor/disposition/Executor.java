@@ -30,7 +30,7 @@ public class Executor extends Switch {
 	private String command;
 
 	public Executor() {
-		setLocking(false);
+		setDuration(0);
 	}
 
 	public void setSave(boolean save) {

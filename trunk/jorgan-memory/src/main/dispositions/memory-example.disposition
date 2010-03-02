@@ -15,7 +15,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>false</locking>
+      <duration>0</duration>
     </combination>
     <continuous id="3">
       <name></name>
@@ -23,7 +23,7 @@
       <references/>
       <messages/>
       <zoom>1.0</zoom>
-      <locking>true</locking>
+      <duration>-1</duration>
       <threshold>0.0</threshold>
       <value>0.0</value>
     </continuous>
@@ -71,7 +71,7 @@
       </references>
       <messages/>
       <zoom>1.0</zoom>
-      <locking>true</locking>
+      <duration>-1</duration>
       <threshold>0.0</threshold>
       <value>0.125</value>
       <size>4</size>
@@ -86,7 +86,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </captor>
     <switch id="1">
       <name></name>
@@ -95,7 +95,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </switch>
     <label id="7">
       <name></name>
