@@ -25,6 +25,18 @@
 		</xsl:copy>
 	</xsl:template>
 
+	<xsl:template match="locking">
+		<duration>
+			<xsl:choose>
+				<xsl:when test="node() = 'true'">-1</xsl:when>
+				<xsl:when test="node() = 'false'">0</xsl:when>
+				<xsl:otherwise>
+					<xsl:value-of select="node()"/>
+				</xsl:otherwise>
+			</xsl:choose>
+		</duration>
+	</xsl:template>
+
   	<xsl:template match="@*|node()">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>

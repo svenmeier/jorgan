@@ -15,7 +15,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>false</locking>
+      <duration>0</duration>
       <save>true</save>
     </executor.executor>
     <console id="2">

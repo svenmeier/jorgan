@@ -96,7 +96,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
     </stop>
@@ -164,7 +164,7 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
     </stop>
@@ -245,7 +245,7 @@
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </switchFilter>
     <label id="10">
       <name></name>

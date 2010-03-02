@@ -38,6 +38,8 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private Boolean active;
 
+	private Long deactivateTime;
+
 	public SwitchPlayer(E element) {
 		super(element);
 	}
@@ -81,9 +83,29 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		}
 	}
 
+	@Override
+	public void onAlarm(long time) {
+		if (deactivateTime != null) {
+			if (deactivateTime == time) {
+				getElement().setActive(false);
+			}
+		}
+	}
+
 	private void activated() {
-		for (Activated message : getElement().getMessages(Activated.class)) {
+		Switch element = getElement();
+
+		for (Activated message : element.getMessages(Activated.class)) {
 			output(message, outputContext);
+		}
+
+		int duration = element.getDuration();
+		if (duration > 0) {
+			deactivateTime = System.currentTimeMillis() + duration;
+
+			getOrganPlay().getClock().alarm(element, deactivateTime);
+		} else {
+			deactivateTime = null;
 		}
 	}
 

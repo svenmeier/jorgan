@@ -55,7 +55,7 @@
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </switch>
     <label id="9">
       <name></name>

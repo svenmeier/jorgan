@@ -62,7 +62,7 @@
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
-      <locking>true</locking>
+      <duration>-1</duration>
     </switch>
     <continuous id="10">
       <name></name>
@@ -81,7 +81,7 @@
         </continuous-changed>
       </messages>
       <zoom>1.0</zoom>
-      <locking>true</locking>
+      <duration>-1</duration>
       <threshold>0.0</threshold>
       <value>1.0</value>
     </continuous>

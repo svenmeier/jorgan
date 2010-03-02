@@ -94,13 +94,14 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 
 		return layer;
 	}
-	
-	private class ValueBindings implements TextLayer.Binding, SliderLayer.Binding {
-		
+
+	private class ValueBindings implements TextLayer.Binding,
+			SliderLayer.Binding {
+
 		public boolean isPressable() {
 			return true;
 		}
-		
+
 		public String getText() {
 			return valueFormat.format(getElement().getValue());
 		}
@@ -114,7 +115,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		}
 
 		public void released() {
-			if (!getElement().isLocking()) {
+			if (getElement().getDuration() == 0) {
 				getElement().setValue(0);
 			}
 		}

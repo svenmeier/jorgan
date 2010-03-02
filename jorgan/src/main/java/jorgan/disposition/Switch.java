@@ -35,7 +35,7 @@ public class Switch extends Engageable {
 
 	private boolean active = false;
 
-	private boolean locking = true;
+	private int duration = -1;
 
 	private Shortcut shortcut;
 
@@ -65,7 +65,7 @@ public class Switch extends Engageable {
 	public void activate(boolean active) {
 		if (active) {
 			setActive(true);
-			if (!isLocking()) {
+			if (duration == 0) {
 				setActive(false);
 			}
 		} else {
@@ -97,17 +97,21 @@ public class Switch extends Engageable {
 		return active;
 	}
 
-	public boolean isLocking() {
-		return locking;
+	public int getDuration() {
+		return duration;
 	}
 
-	public void setLocking(boolean locking) {
-		if (this.locking != locking) {
-			boolean oldLocking = this.locking;
+	public void setDuration(int duration) {
+		if (duration < -1) {
+			duration = -1;
+		}
 
-			this.locking = locking;
+		if (this.duration != duration) {
+			int oldDuration = this.duration;
 
-			fireChange(new PropertyChange(oldLocking, this.locking));
+			this.duration = duration;
+
+			fireChange(new PropertyChange(oldDuration, this.duration));
 		}
 	}
 
