@@ -18,8 +18,9 @@
  */
 package jorgan.play;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.Set;
+import java.util.List;
 import java.util.TreeSet;
 
 import jorgan.disposition.Element;
@@ -33,7 +34,7 @@ public class Clock {
 
 	private Thread thread;
 
-	private Set<Alarm> alarms = new TreeSet<Alarm>();
+	private TreeSet<Alarm> alarms = new TreeSet<Alarm>();
 
 	public Clock(OrganPlay play) {
 		this.play = play;
@@ -43,34 +44,44 @@ public class Clock {
 			public void run() {
 				Clock.this.run();
 			}
-		}, "jOrgan Alarm");
+		}, "jOrgan Clock");
 		thread.start();
 	}
 
 	private synchronized void run() {
 		while (thread == Thread.currentThread()) {
-			long time = System.currentTimeMillis();
+			long now = System.currentTimeMillis();
 
-			long next = Long.MAX_VALUE;
+			List<Alarm> pasts = new ArrayList<Alarm>();
 
-			Iterator<Alarm> iterator = alarms.iterator();
-			while (iterator.hasNext()) {
-				Alarm alarm = iterator.next();
-				if (alarm.check(time)) {
-					iterator.remove();
-				} else {
-					next = alarm.getTime();
-					break;
+			synchronized (alarms) {
+				Iterator<Alarm> iterator = alarms.iterator();
+				while (iterator.hasNext()) {
+					Alarm alarm = iterator.next();
+					if (alarm.getTime() <= now) {
+						iterator.remove();
+						pasts.add(alarm);
+					} else {
+						break;
+					}
 				}
 			}
 
-			try {
-				if (next == Long.MAX_VALUE) {
-					wait();
-				} else {
-					wait(next - time);
+			// trigger past alarms outside of synchronized block to prevent
+			// deadlock
+			for (Alarm past : pasts) {
+				past.trigger();
+			}
+
+			synchronized (alarms) {
+				try {
+					if (alarms.isEmpty()) {
+						alarms.wait();
+					} else {
+						alarms.wait(alarms.first().getTime() - now);
+					}
+				} catch (InterruptedException interrupted) {
 				}
-			} catch (InterruptedException interrupted) {
 			}
 		}
 	}
@@ -78,18 +89,21 @@ public class Clock {
 	/**
 	 * Alarm for the element at the given time.
 	 */
-	public synchronized void alarm(Element element, long time) {
-		alarms.add(new Alarm(element, time));
+	public void alarm(Element element, long time) {
 
-		notifyAll();
+		synchronized (alarms) {
+			alarms.add(new Alarm(element, time));
+			alarms.notifyAll();
+		}
 	}
 
-	public synchronized void destroy() {
+	public void destroy() {
 		thread = null;
 
-		alarms.clear();
-
-		notifyAll();
+		synchronized (alarms) {
+			alarms.clear();
+			alarms.notifyAll();
+		}
 	}
 
 	private class Alarm implements Comparable<Alarm>, Playing {
@@ -101,20 +115,19 @@ public class Clock {
 		public Alarm(Element element, long time) {
 			this.element = element;
 			this.time = time;
+			System.out.println("init " + element.getClass().getSimpleName()
+					+ " " + time);
 		}
 
 		public long getTime() {
 			return time;
 		}
 
-		public boolean check(long time) {
-			if (time >= this.time) {
-				play.play(element, this);
+		public void trigger() {
+			System.out.println("trigger " + element.getClass().getSimpleName()
+					+ " " + time);
 
-				return true;
-			} else {
-				return false;
-			}
+			play.play(element, this);
 		}
 
 		@Override
@@ -124,9 +137,7 @@ public class Clock {
 
 		@Override
 		public int compareTo(Alarm alarm) {
-			boolean first = this.time - alarm.time < 0;
-
-			return first ? -1 : 1;
+			return (this.time < alarm.time) ? -1 : 1;
 		}
 	}
 }

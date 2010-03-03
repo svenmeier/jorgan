@@ -135,11 +135,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
 			public void on() {
 				if (!isOn()) {
-					offTime = System.currentTimeMillis()
-							+ getElement().getDuration();
-
-					getOrganPlay().getClock().alarm(getElement(), offTime);
-
 					ShortMessage message;
 					if (onMagnet == this) {
 						message = getElement().getEncoding().encodeOnMagnet(
@@ -149,6 +144,10 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 								index, true);
 					}
 					SamsConsolePlayer.super.send(message);
+
+					offTime = System.currentTimeMillis()
+							+ getElement().getDuration();
+					getOrganPlay().getClock().alarm(getElement(), offTime);
 				}
 			}
 

@@ -60,9 +60,11 @@ public abstract class OrganPlay {
 	private final Object CHANGE_LOCK = new Object();
 
 	/**
-	 * Only one receiver is allowed to send a message into players at a time.
+	 * Java's MIDI system is locked while a receiver is called. This lock is
+	 * used to prevent a deadlock in {@link #close()} if a Midi thread is still
+	 * running through players.
 	 */
-	private final Object RECEIVER_LOCK = new Object();
+	private final Object MIDI_SYSTEM_LOCK = new Object();
 
 	private Clock clock;
 
@@ -209,7 +211,7 @@ public abstract class OrganPlay {
 			}
 		}
 
-		synchronized (RECEIVER_LOCK) {
+		synchronized (MIDI_SYSTEM_LOCK) {
 			open = true;
 		}
 
@@ -242,7 +244,7 @@ public abstract class OrganPlay {
 		clock = null;
 
 		// lock out receivers before trying to aquire change lock
-		synchronized (RECEIVER_LOCK) {
+		synchronized (MIDI_SYSTEM_LOCK) {
 			open = false;
 		}
 
@@ -262,11 +264,9 @@ public abstract class OrganPlay {
 			throw new IllegalArgumentException("unkown element");
 		}
 
-		synchronized (RECEIVER_LOCK) {
-			if (open) {
-				synchronized (CHANGE_LOCK) {
-					playing.play(player);
-				}
+		if (open) {
+			synchronized (CHANGE_LOCK) {
+				playing.play(player);
 			}
 		}
 	}
@@ -348,7 +348,7 @@ public abstract class OrganPlay {
 	 * {@link Transmitter#close()} is called on it.<br>
 	 * Note: The receiver set on the created transmitter (
 	 * {@link Transmitter#setReceiver(Receiver)}) will be synchronized, see
-	 * {@link #RECEIVER_LOCK} and {@link #CHANGE_LOCK}.
+	 * {@link #MIDI_SYSTEM_LOCK} and {@link #CHANGE_LOCK}.
 	 * 
 	 * @param deviceName
 	 *            the name of the device
@@ -373,7 +373,7 @@ public abstract class OrganPlay {
 			public void setReceiver(final Receiver receiver) {
 				super.setReceiver(new ReceiverWrapper(receiver) {
 					public void send(MidiMessage message, long timestamp) {
-						synchronized (RECEIVER_LOCK) {
+						synchronized (MIDI_SYSTEM_LOCK) {
 							if (open) {
 								synchronized (CHANGE_LOCK) {
 									super.send(message, timestamp);

@@ -27,6 +27,10 @@ public class SamsConsole extends Console {
 	private long duration;
 
 	public void setDuration(long duration) {
+		if (duration < 0) {
+			duration = 0;
+		}
+
 		if (this.duration != duration) {
 			long oldDuration = this.duration;
 

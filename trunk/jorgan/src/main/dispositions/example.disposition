@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="3.9-beta5">
+<organ version="@jorgan.version@">
   <elements>
     <combination id="3">
       <name>1</name>
@@ -216,6 +216,10 @@
           <x>340</x>
           <y>90</y>
         </console-locationReference>
+        <console-locationReference id="1208">
+          <x>360</x>
+          <y>180</y>
+        </console-locationReference>
       </references>
       <messages/>
       <zoom>1.0</zoom>
@@ -369,11 +373,18 @@
       <messages/>
       <zoom>1.0</zoom>
       <active>false</active>
-      <duration>2000</duration>
+      <duration>1000</duration>
     </switch>
     <label id="1207">
       <name></name>
       <description>name=New in 3.9:  The Synchronizer activates the following Switch  whenever one of the Stops is activated or deactivated:</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <label id="1208">
+      <name></name>
+      <description>name=With the new &apos;duration&apos; property the switch is  configured to deactivate after 1 second.</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
