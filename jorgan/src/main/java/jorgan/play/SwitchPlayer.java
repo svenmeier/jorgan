@@ -38,7 +38,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	private Boolean active;
 
-	private Long deactivateTime;
+	private Long alarmTime;
 
 	public SwitchPlayer(E element) {
 		super(element);
@@ -85,10 +85,8 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 	@Override
 	public void onAlarm(long time) {
-		if (deactivateTime != null) {
-			if (deactivateTime == time) {
-				getElement().setActive(false);
-			}
+		if (alarmTime != null && alarmTime == time) {
+			getElement().setActive(false);
 		}
 	}
 
@@ -101,11 +99,11 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 
 		int duration = element.getDuration();
 		if (duration > 0) {
-			deactivateTime = System.currentTimeMillis() + duration;
+			alarmTime = System.currentTimeMillis() + duration;
 
-			getOrganPlay().getClock().alarm(element, deactivateTime);
+			getOrganPlay().getClock().alarm(element, alarmTime);
 		} else {
-			deactivateTime = null;
+			alarmTime = null;
 		}
 	}
 
