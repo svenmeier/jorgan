@@ -115,8 +115,6 @@ public class Clock {
 		public Alarm(Element element, long time) {
 			this.element = element;
 			this.time = time;
-			System.out.println("init " + element.getClass().getSimpleName()
-					+ " " + time);
 		}
 
 		public long getTime() {
@@ -124,9 +122,6 @@ public class Clock {
 		}
 
 		public void trigger() {
-			System.out.println("trigger " + element.getClass().getSimpleName()
-					+ " " + time);
-
 			play.play(element, this);
 		}
 
