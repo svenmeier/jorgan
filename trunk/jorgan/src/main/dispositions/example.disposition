@@ -377,7 +377,7 @@
     </switch>
     <label id="1207">
       <name></name>
-      <description>name=New in 3.9:  The Synchronizer activates the following Switch  whenever one of the Stops is activated or deactivated:</description>
+      <description>name=New in 3.9:  The Synchronizer activates the Switch whenever  one of the Stops is activated or deactivated:</description>
       <references/>
       <messages/>
       <zoom>1.0</zoom>
