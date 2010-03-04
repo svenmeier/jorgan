@@ -29,7 +29,6 @@ import java.util.logging.Logger;
 import jorgan.Info;
 import jorgan.UI;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Organ;
 import jorgan.io.DispositionStream;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
@@ -51,8 +50,6 @@ public class CLI implements UI, SessionAware {
 
 	private static Configuration config = Configuration.getRoot()
 			.get(CLI.class);
-
-	private Organ organ;
 
 	private OrganSession session;
 
@@ -158,7 +155,8 @@ public class CLI implements UI, SessionAware {
 	 */
 	protected void saveOrgan() {
 		try {
-			new DispositionStream().write(organ, session.getFile());
+			new DispositionStream()
+					.write(session.getOrgan(), session.getFile());
 
 			writeMessage("saveConfirm");
 		} catch (Exception ex) {
