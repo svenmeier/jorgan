@@ -55,14 +55,12 @@ import jorgan.problem.Problem;
 public abstract class OrganPlay {
 
 	/**
-	 * Only one thread is allowed to change players at a time.
+	 * Only one thread is allowed to play.
 	 */
 	private final Object CHANGE_LOCK = new Object();
 
 	/**
-	 * Java's MIDI system is locked while a receiver is called. This lock is
-	 * used to prevent a deadlock in {@link #close()} if a Midi thread is still
-	 * running through players.
+	 * See {@link #close()}.
 	 */
 	private final Object MIDI_SYSTEM_LOCK = new Object();
 
@@ -202,27 +200,25 @@ public abstract class OrganPlay {
 			throw new IllegalStateException("already open");
 		}
 
-		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values()
-					.iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.open();
-			}
-		}
-
 		synchronized (MIDI_SYSTEM_LOCK) {
-			open = true;
-		}
+			synchronized (CHANGE_LOCK) {
+				Iterator<Player<? extends Element>> toOpen = players.values()
+						.iterator();
+				while (toOpen.hasNext()) {
+					Player<? extends Element> player = toOpen.next();
+					player.open();
+				}
 
-		clock = new Clock(this);
+				open = true;
 
-		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values()
-					.iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.update();
+				clock = new Clock(this);
+
+				Iterator<Player<? extends Element>> toUpdate = players.values()
+						.iterator();
+				while (toUpdate.hasNext()) {
+					Player<? extends Element> player = toUpdate.next();
+					player.update();
+				}
 			}
 		}
 	}
@@ -243,7 +239,14 @@ public abstract class OrganPlay {
 		clock.destroy();
 		clock = null;
 
-		// lock out receivers before trying to aquire change lock
+		// Java's MIDI system is locked while a receiver is called. In rare
+		// cases this might lead to a deadlock:
+		// * the SWING thread tries to close playing, aquiring the CHANGE_LOCK
+		// * a MIDI thread starts holding a lock on the MIDI system
+		// * the MIDI thread is received waiting on the CHANGE_LOCK
+		// * on the SWING thread a MIDI device is closed
+		// * the SWING thread waits on the MIDI system's lock
+		// * DEADLOCK!
 		synchronized (MIDI_SYSTEM_LOCK) {
 			open = false;
 		}
@@ -264,9 +267,11 @@ public abstract class OrganPlay {
 			throw new IllegalArgumentException("unkown element");
 		}
 
-		if (open) {
-			synchronized (CHANGE_LOCK) {
-				playing.play(player);
+		synchronized (MIDI_SYSTEM_LOCK) {
+			if (open) {
+				synchronized (CHANGE_LOCK) {
+					playing.play(player);
+				}
 			}
 		}
 	}
@@ -305,25 +310,31 @@ public abstract class OrganPlay {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			synchronized (CHANGE_LOCK) {
-				Player<? extends Element> player = getPlayer(element);
-				if (player != null) {
-					player.update();
+			synchronized (MIDI_SYSTEM_LOCK) {
+				synchronized (CHANGE_LOCK) {
+					Player<? extends Element> player = getPlayer(element);
+					if (player != null) {
+						player.update();
+					}
 				}
 			}
 		}
 
 		@Override
 		public void elementAdded(Element element) {
-			synchronized (CHANGE_LOCK) {
-				createPlayer(element);
+			synchronized (MIDI_SYSTEM_LOCK) {
+				synchronized (CHANGE_LOCK) {
+					createPlayer(element);
+				}
 			}
 		}
 
 		@Override
 		public void elementRemoved(Element element) {
-			synchronized (CHANGE_LOCK) {
-				dropPlayer(element);
+			synchronized (MIDI_SYSTEM_LOCK) {
+				synchronized (CHANGE_LOCK) {
+					dropPlayer(element);
+				}
 			}
 		}
 
@@ -345,10 +356,7 @@ public abstract class OrganPlay {
 	/**
 	 * Create a transmitter for the device with the given name. The returned
 	 * transmitter will automatically close the device when
-	 * {@link Transmitter#close()} is called on it.<br>
-	 * Note: The receiver set on the created transmitter (
-	 * {@link Transmitter#setReceiver(Receiver)}) will be synchronized, see
-	 * {@link #MIDI_SYSTEM_LOCK} and {@link #CHANGE_LOCK}.
+	 * {@link Transmitter#close()} is called on it.
 	 * 
 	 * @param deviceName
 	 *            the name of the device
