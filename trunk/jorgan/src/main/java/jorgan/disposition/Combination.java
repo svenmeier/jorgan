@@ -126,6 +126,8 @@ public class Combination extends Switch implements Observer {
 
 		public AbstractReference(E element) {
 			super(element);
+
+			capture();
 		}
 
 		public abstract void capture();
