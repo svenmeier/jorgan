@@ -142,7 +142,7 @@ public class Combination extends Switch implements Observer {
 	 */
 	public static class SwitchReference extends AbstractReference<Switch> {
 
-		private boolean active = true;
+		private boolean active;
 
 		public SwitchReference(Switch element) {
 			super(element);
@@ -187,7 +187,7 @@ public class Combination extends Switch implements Observer {
 	public static class ContinuousReference extends
 			AbstractReference<Continuous> {
 
-		private float value = 1.0f;
+		private float value;
 
 		public ContinuousReference(Continuous element) {
 			super(element);
