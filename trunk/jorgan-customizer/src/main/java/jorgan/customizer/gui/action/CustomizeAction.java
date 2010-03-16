@@ -1,4 +1,4 @@
-package jorgan.customizer.gui;
+package jorgan.customizer.gui.action;
 
 import java.awt.Component;
 import java.awt.event.ActionEvent;
@@ -8,6 +8,7 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
+import jorgan.customizer.gui.CustomizeWizard;
 import jorgan.gui.OrganFrame;
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;

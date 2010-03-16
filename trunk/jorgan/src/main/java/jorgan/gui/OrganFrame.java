@@ -41,9 +41,9 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
+import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
-import jorgan.gui.spi.ActionRegistry;
 import jorgan.io.DispositionStream;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
@@ -123,7 +123,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private JToggleButton constructButton = new JToggleButton();
 
 	private EventHandler handler = new EventHandler();
-	
+
 	private int handleChanges;
 
 	/**
@@ -160,6 +160,15 @@ public class OrganFrame extends JFrame implements SessionAware {
 			MacAdapter.getInstance().setAboutListener(aboutAction);
 		}
 
+		config.get("construct").read(constructButton);
+		constructButton.addItemListener(new ItemListener() {
+			public void itemStateChanged(ItemEvent e) {
+				if (session != null) {
+					session.setConstructing(constructButton.isSelected());
+				}
+			};
+		});
+
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		buildMenu();
@@ -172,31 +181,23 @@ public class OrganFrame extends JFrame implements SessionAware {
 	}
 
 	private void buildToolBar() {
+		toolBar.removeAll();
 
 		toolBar.add(openAction);
 		toolBar.add(saveAction);
 
-		toolBar.addSeparator();
+		if (session != null && !this.session.isSealed()) {
+			toolBar.addSeparator();
+			toolBar.add(constructButton);
 
-		config.get("construct").read(constructButton);
-		constructButton.setEnabled(false);
-		constructButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (session != null) {
-					session.setConstructing(constructButton.isSelected());
+			List<Action> actions = ActionRegistry.createToolbarActions(session,
+					this);
+			if (actions.size() > 0) {
+				toolBar.addSeparator();
+
+				for (Action action : actions) {
+					toolBar.add(action);
 				}
-			};
-		});
-		toolBar.add(constructButton);
-
-		toolBar.addSeparator();
-
-		List<?> toolBarWidgets = organPanel.getToolBarWidgets();
-		for (int w = 0; w < toolBarWidgets.size(); w++) {
-			if (toolBarWidgets.get(w) instanceof Action) {
-				toolBar.add((Action) toolBarWidgets.get(w));
-			} else {
-				toolBar.add((JComponent) toolBarWidgets.get(w));
 			}
 		}
 	}
@@ -217,13 +218,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
 		}
 		fileMenu.add(recentsMenu);
-		
+
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
 		fileMenu.add(closeAction);
 
 		if (session != null) {
-			List<Action> actions = ActionRegistry.createActions(session, this);
+			List<Action> actions = ActionRegistry.createMenuActions(session,
+					this);
 			if (actions.size() > 0) {
 				fileMenu.addSeparator();
 
@@ -311,7 +313,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			this.session.addListener((SessionListener) Spin.over(handler));
 		}
 
-		constructButton.setEnabled(this.session != null);
 		constructButton.setSelected(this.session != null
 				&& this.session.isConstructing());
 
@@ -320,6 +321,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		organPanel.setSession(session);
 
+		buildToolBar();
 		buildMenu();
 	}
 
@@ -437,7 +439,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 				return;
 			}
-			
+
 			openOrgan(file);
 		}
 	}

@@ -23,7 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import jorgan.customizer.gui.CustomizeAction;
+import jorgan.customizer.gui.action.CustomizeAction;
 import jorgan.gui.GUI;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;

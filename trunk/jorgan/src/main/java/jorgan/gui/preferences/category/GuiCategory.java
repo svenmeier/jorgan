@@ -26,9 +26,9 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
-import jorgan.gui.FullScreenAction;
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
+import jorgan.gui.action.FullScreenAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;

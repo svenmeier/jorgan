@@ -1,8 +1,9 @@
-package jorgan.importer.gui;
+package jorgan.importer.gui.action;
 
 import java.awt.event.ActionEvent;
 
 import jorgan.gui.OrganFrame;
+import jorgan.importer.gui.ImportWizard;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import bias.Configuration;
