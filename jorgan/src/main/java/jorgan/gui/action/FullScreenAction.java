@@ -1,9 +1,11 @@
-package jorgan.gui;
+package jorgan.gui.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.KeyEvent;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,10 +16,13 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.FullScreen;
+import jorgan.gui.OrganFrame;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
 import spin.Spin;
 import bias.Configuration;
@@ -47,6 +52,20 @@ public class FullScreenAction extends BaseAction {
 		config.read(this);
 
 		this.session = session;
+		this.session.addListener(new SessionListener() {
+			public void constructingChanged(boolean constructing) {
+			}
+
+			public void modified() {
+			}
+
+			public void saved(File file) throws IOException {
+			}
+
+			public void destroyed() {
+				leaveFullScreen();
+			}
+		});
 		this.session.getOrgan().addOrganListener(
 				(OrganListener) Spin.over(new OrganAdapter() {
 
@@ -78,10 +97,6 @@ public class FullScreenAction extends BaseAction {
 				}
 			});
 		}
-	}
-
-	public void destroy() {
-		leaveFullScreen();
 	}
 
 	public void setOnLoad(boolean onLoad) {
@@ -135,7 +150,7 @@ public class FullScreenAction extends BaseAction {
 				fullScreen.addConsole(console);
 			}
 		}
-		
+
 		frame.setVisible(false);
 	}
 
@@ -144,7 +159,7 @@ public class FullScreenAction extends BaseAction {
 			fullScreen.dispose();
 		}
 		screens.clear();
-		
+
 		frame.setVisible(true);
 	}
 

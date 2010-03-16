@@ -61,6 +61,8 @@ public class OrganSession {
 
 	private boolean constructing = false;
 
+	private boolean sealed = false;
+
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
 
 	private ShutdownHook shutdownHook;
@@ -82,7 +84,7 @@ public class OrganSession {
 						return;
 					}
 				}
-				
+
 				markModified();
 			}
 
@@ -93,6 +95,14 @@ public class OrganSession {
 		SessionRegistry.init(this);
 
 		config.read(this);
+	}
+
+	public void setSealed(boolean sealed) {
+		this.sealed = sealed;
+	}
+
+	public boolean isSealed() {
+		return sealed;
 	}
 
 	public void setSaveOnShutdown(boolean save) {
@@ -154,6 +164,10 @@ public class OrganSession {
 	}
 
 	public void setConstructing(boolean constructing) {
+		if (sealed && constructing) {
+			return;
+		}
+
 		if (constructing != this.constructing) {
 			this.constructing = constructing;
 
@@ -191,17 +205,18 @@ public class OrganSession {
 
 	public String deresolve(File file) {
 		if (file.isAbsolute()) {
-			String directory = this.file.getParentFile().getAbsolutePath().replace('\\', '/');
+			String directory = this.file.getParentFile().getAbsolutePath()
+					.replace('\\', '/');
 			if (!directory.endsWith("/")) {
 				directory += "/";
 			}
-			
+
 			String path = file.getPath().replace('\\', '/');
 			if (path.startsWith(directory)) {
 				return path.substring(directory.length());
 			}
 		}
-		
+
 		return file.getPath();
 	}
 

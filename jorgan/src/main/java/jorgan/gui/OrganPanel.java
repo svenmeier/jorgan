@@ -50,8 +50,6 @@ import jorgan.gui.dock.spi.DockableRegistry;
 import jorgan.gui.play.MessagesMonitor;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
-import jorgan.gui.undo.UndoListener;
-import jorgan.gui.undo.UndoManager;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
 import jorgan.problem.ElementProblems;
@@ -106,14 +104,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 */
 	private DockingPane consoleDocking = new BordererDockingPane();
 
-	private BackAction backAction = new BackAction();
-
-	private ForwardAction forwardAction = new ForwardAction();
-
-	private UndoAction undoAction = new UndoAction();
-
-	private RedoAction redoAction = new RedoAction();
-
 	private MessagesMonitor messagesMonitor = new MessagesMonitor();
 
 	private String playDocking;
@@ -136,23 +126,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		loadDocking();
-	}
-
-	/**
-	 * Get widgets (i.e. actions or components) for the toolbar.
-	 * 
-	 * @return widgets
-	 */
-	public List<Object> getToolBarWidgets() {
-		List<Object> widgets = new ArrayList<Object>();
-
-		widgets.add(undoAction);
-		widgets.add(redoAction);
-
-		widgets.add(backAction);
-		widgets.add(forwardAction);
-
-		return widgets;
 	}
 
 	/**
@@ -185,8 +158,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					(PlayListener) Spin.over(eventsListener));
 			this.session.lookup(ElementProblems.class).removeListener(
 					(ProblemListener) Spin.over(eventsListener));
-			this.session.lookup(UndoManager.class).removeListener(
-					(UndoListener) Spin.over(eventsListener));
 			this.session.lookup(ElementSelection.class).removeListener(
 					eventsListener);
 			this.session.removeListener(eventsListener);
@@ -213,8 +184,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					.over(eventsListener));
 			this.session.lookup(ElementSelection.class).addListener(
 					eventsListener);
-			this.session.lookup(UndoManager.class).addListener(
-					(UndoListener) Spin.over(eventsListener));
 			this.session.lookup(ElementProblems.class).addListener(
 					(ProblemListener) Spin.over(eventsListener));
 			this.session.lookup(OrganPlay.class).addPlayerListener(
@@ -230,23 +199,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					Console.class)) {
 				addConsoleDockable(console);
 			}
-		}
-
-		undoAction.setEnabled(false);
-		redoAction.setEnabled(false);
-
-		updateHistory();
-	}
-
-	protected void updateHistory() {
-		if (session == null || !constructing) {
-			backAction.setEnabled(false);
-			forwardAction.setEnabled(false);
-		} else {
-			backAction.setEnabled(session.lookup(ElementSelection.class)
-					.canBack());
-			forwardAction.setEnabled(session.lookup(ElementSelection.class)
-					.canForward());
 		}
 	}
 
@@ -307,8 +259,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 			config.write(this);
 		}
-
-		updateHistory();
 
 		updateActions();
 	}
@@ -402,7 +352,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 * The listener to events.
 	 */
 	private class EventsListener extends OrganAdapter implements PlayListener,
-			ProblemListener, SelectionListener, UndoListener, SessionListener {
+			ProblemListener, SelectionListener, SessionListener {
 
 		@Override
 		public void received(MidiMessage message) {
@@ -445,16 +395,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					}
 				}
 			}
-
-			updateHistory();
 		}
 
 		public void modified() {
-		}
-
-		public void done() {
-			undoAction.setEnabled(session.lookup(UndoManager.class).canUndo());
-			redoAction.setEnabled(session.lookup(UndoManager.class).canRedo());
 		}
 
 		public void elementAdded(Element element) {
@@ -495,58 +438,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 		public void actionPerformed(ActionEvent ev) {
 			docking.putDockable(dockable.getKey(), dockable);
-		}
-	}
-
-	/**
-	 * The action that steps back to the previous element.
-	 */
-	private class BackAction extends BaseAction {
-		private BackAction() {
-			config.get("back").read(this);
-
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			session.lookup(ElementSelection.class).back();
-		}
-	}
-
-	/**
-	 * The action that steps forward to the next element.
-	 */
-	private class ForwardAction extends BaseAction {
-		private ForwardAction() {
-			config.get("forward").read(this);
-
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			session.lookup(ElementSelection.class).forward();
-		}
-	}
-
-	private class UndoAction extends BaseAction {
-		private UndoAction() {
-			config.get("undo").read(this);
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			session.lookup(UndoManager.class).undo();
-		}
-	}
-
-	private class RedoAction extends BaseAction {
-		private RedoAction() {
-			config.get("redo").read(this);
-			setEnabled(false);
-		}
-
-		public void actionPerformed(ActionEvent ev) {
-			session.lookup(UndoManager.class).redo();
 		}
 	}
 
