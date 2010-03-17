@@ -147,8 +147,11 @@ public class GUI implements UI {
 		public void handle(Throwable throwable) {
 			log.log(Level.SEVERE, throwable.getMessage(), throwable);
 
-			config.get("exception").read(new MessageBox(MessageBox.OPTIONS_OK))
-					.show(frame);
+			MessageBox box = config.get("exception").read(
+					new MessageBox(MessageBox.OPTIONS_OK_CANCEL));
+			if (box.show(frame) == MessageBox.OPTION_OK) {
+				System.exit(1);
+			}
 		}
 
 		public void uncaughtException(final Thread thread,
