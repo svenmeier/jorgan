@@ -429,7 +429,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void update() {
-			if (constructing) {
+			if (session != null && constructing) {
 				setEnabled(dockable.forConstruct());
 			} else {
 				setEnabled(dockable.forPlay());
