@@ -1,0 +1,10 @@
+#Fri Jan 22 16:46:31 CET 2010
+eclipse.preferences.version=1
+encoding//src/main/java/jorgan/fluidsynth/disposition/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/disposition/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/gui/construct/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/gui/customizer/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/gui/customizer/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/gui/dock/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/gui/dock/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/fluidsynth/play/i18n.properties=UTF-8
