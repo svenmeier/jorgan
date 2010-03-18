@@ -200,6 +200,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 				}
 			}
 		}
+
+		toolBar.repaint();
+		toolBar.revalidate();
 	}
 
 	private void buildMenu() {
