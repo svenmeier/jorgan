@@ -168,7 +168,9 @@ public class DispositionStream {
 
 		new History(file).move(historySize);
 
-		temp.renameTo(file);
+		if (!temp.renameTo(file)) {
+			throw new IOException("unable to rename");
+		}
 
 		addRecentFile(file);
 	}
