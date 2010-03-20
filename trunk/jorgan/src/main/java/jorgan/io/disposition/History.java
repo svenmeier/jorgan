@@ -83,7 +83,7 @@ public class History {
 	private List<Integer> getExistingNumbers() {
 		final List<Integer> numbers = new ArrayList<Integer>();
 
-		final Pattern pattern = Pattern.compile("\\." + file.getName()
+		final Pattern pattern = Pattern.compile("." + file.getName()
 				+ "~(\\d*)");
 
 		parent.list(new FilenameFilter() {
@@ -102,7 +102,7 @@ public class History {
 	}
 
 	private File getHistory(Integer number) {
-		return new File(parent, "\\." + file.getName() + "~" + number);
+		return new File(parent, "." + file.getName() + "~" + number);
 	}
 
 	private void deleteExceedingHistories(int max) {
