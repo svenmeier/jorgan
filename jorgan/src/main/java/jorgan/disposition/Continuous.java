@@ -37,7 +37,7 @@ public class Continuous extends Displayable {
 
 	private int duration = -1;
 
-	private float threshold = 0.0f;
+	private float threshold = 0.05f;
 
 	private float value = 0.0f;
 
