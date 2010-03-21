@@ -83,7 +83,7 @@ public class History {
 	private List<Integer> getExistingNumbers() {
 		final List<Integer> numbers = new ArrayList<Integer>();
 
-		final Pattern pattern = Pattern.compile("." + file.getName()
+		final Pattern pattern = Pattern.compile("\\." + file.getName()
 				+ "~(\\d*)");
 
 		parent.list(new FilenameFilter() {
