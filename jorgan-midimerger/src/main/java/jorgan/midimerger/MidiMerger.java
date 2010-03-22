@@ -19,9 +19,9 @@
 package jorgan.midimerger;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
@@ -32,6 +32,8 @@ import javax.sound.midi.Transmitter;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.Loopback;
+import jorgan.midi.MessageUtils;
+import jorgan.midimerger.Mapping.Mode;
 import bias.Configuration;
 
 /**
@@ -42,10 +44,7 @@ public class MidiMerger extends Loopback {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMerger.class);
 
-	/**
-	 * The list of inputs to merge.
-	 */
-	private List<MergeInput> inputs = new ArrayList<MergeInput>();
+	private Mapping mapping = new Mapping();
 
 	private List<Receiver> mergers = new ArrayList<Receiver>();
 
@@ -66,13 +65,24 @@ public class MidiMerger extends Loopback {
 		super.open();
 
 		try {
-			for (MergeInput input : inputs) {
-				mergers.add(new Merger(input.getDevice(), input.getChannel()));
+			int index = 0;
+			for (String name : getDeviceNames()) {
+				Mode mode = mapping.getMode(index);
+				if (mode != Mode.SKIP) {
+					mergers.add(new Merger(name, mode));
+				}
+				index++;
 			}
 		} catch (MidiUnavailableException ex) {
 			close();
 
 			throw ex;
+		}
+
+		if (mergers.isEmpty()) {
+			close();
+
+			throw new MidiUnavailableException();
 		}
 	}
 
@@ -98,30 +108,25 @@ public class MidiMerger extends Loopback {
 		 */
 		private Transmitter transmitter;
 
-		/**
-		 * The channel to map message to or <code>-1</code> if no mapping should
-		 * be performed.
-		 */
-		private int channel;
+		private Mode mode;
 
 		/**
 		 * Create a new receiver for the given input.
 		 * 
 		 * @param device
 		 *            name of device to create receiver for
-		 * @param channel
+		 * @param mode
 		 *            channel to map messages to
 		 * @throws MidiUnavailableException
 		 *             if input device is unavailable
 		 */
-		public Merger(String device, int channel)
-				throws MidiUnavailableException {
+		public Merger(String device, Mode mode) throws MidiUnavailableException {
 
 			this.device = DevicePool.instance().getMidiDevice(device,
 					Direction.IN);
 			this.device.open();
 
-			this.channel = channel;
+			this.mode = mode;
 
 			try {
 				transmitter = this.device.getTransmitter();
@@ -135,7 +140,7 @@ public class MidiMerger extends Loopback {
 
 		@Override
 		public void send(MidiMessage message, long timestamp) {
-			if (message instanceof ShortMessage) {
+			if (MessageUtils.isChannelMessage(message)) {
 				message = mapChannel((ShortMessage) message);
 			}
 			loopOut(message);
@@ -151,19 +156,13 @@ public class MidiMerger extends Loopback {
 		private MidiMessage mapChannel(ShortMessage message) {
 
 			int command = message.getCommand();
+			int channel = message.getChannel();
 			int data1 = message.getData1();
 			int data2 = message.getData2();
 
-			if (command < 0xF0 && channel != -1) {
-				try {
-					ShortMessage mapped = new ShortMessage();
-					mapped.setMessage(command, channel, data1, data2);
-					message = mapped;
-				} catch (InvalidMidiDataException ex) {
-					throw new Error(
-							"unexpected invalid data in MidiMerger channel mapping");
-				}
-			}
+			message = MessageUtils.newMessage(command, mode.map(channel),
+					data1, data2);
+
 			return message;
 		}
 
@@ -175,23 +174,38 @@ public class MidiMerger extends Loopback {
 		}
 	}
 
-	public List<MergeInput> getInputs() {
-		return inputs;
+	public Mapping getMapping() {
+		return mapping;
 	}
 
 	/**
-	 * Set the inputs to merge. <br>
-	 * This change has immediate effect only If this midiMerger is not currently
+	 * Set the mapping. <br>
+	 * This change has immediate effect only if this midiMerger is not currently
 	 * open, otherwise it is delayed until the next opening.
 	 * 
-	 * @param inputs
-	 *            the inputs to merge
+	 * @param mapping
+	 *            the channel mapping
 	 */
-	public void setInputs(List<MergeInput> inputs) {
-		if (inputs == null) {
-			throw new IllegalArgumentException("inputs must not be null");
+	public void setMapping(Mapping mapping) {
+		if (mapping == null) {
+			throw new IllegalArgumentException("mapping must not be null");
 		}
 
-		this.inputs = inputs;
+		this.mapping = mapping;
+	}
+
+	public static List<String> getDeviceNames() {
+		List<String> names = new ArrayList<String>();
+
+		for (String name : DevicePool.instance().getMidiDeviceNames(
+				Direction.IN)) {
+			if (!MidiMergerProvider.INFO.getName().equals(name)) {
+				names.add(name);
+			}
+		}
+
+		Collections.sort(names);
+
+		return names;
 	}
 }
