@@ -23,7 +23,15 @@ import jorgan.disposition.Element;
 /**
  * A default implementation of a listener to organ changes.
  */
-public class OrganAdapter implements OrganListener {
+public class OrganAdapter implements OrganListener, OrganObserver {
+
+	@Override
+	public void beforeChange(Change change) {
+	}
+
+	@Override
+	public void afterChange(Change change) {
+	}
 
 	public void elementAdded(Element element) {
 	}
@@ -37,9 +45,11 @@ public class OrganAdapter implements OrganListener {
 	public void indexedPropertyAdded(Element element, String name, Object value) {
 	}
 
-	public void indexedPropertyChanged(Element element, String name, Object value) {
+	public void indexedPropertyChanged(Element element, String name,
+			Object value) {
 	}
 
-	public void indexedPropertyRemoved(Element element, String name, Object value) {
+	public void indexedPropertyRemoved(Element element, String name,
+			Object value) {
 	}
 }

@@ -669,10 +669,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			if (element == console) {
 				initSkin();
 
-				consoleView.changeUpdate();
+				consoleView.update();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					view.changeUpdate();
+					view.update();
 				}
 
 				repaint();
@@ -680,20 +680,25 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			} else if (element instanceof Displayable) {
 				View<? extends Displayable> view = getView((Displayable) element);
 				if (view != null) {
-					view.changeUpdate();
+					if (session.isConstructing()) {
+						view.update();
+					} else {
+						view.update(name);
+					}
 				}
 			}
 		}
 
 		@Override
-		public void indexedPropertyChanged(Element element, String name, Object value) {
+		public void indexedPropertyChanged(Element element, String name,
+				Object value) {
 			if (element == console && Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 
 				View<? extends Displayable> view = getView((Displayable) reference
 						.getElement());
 				if (view != null) {
-					view.changeUpdate();
+					view.update();
 
 					constructionHandler.updateViewMarkers();
 				}
@@ -701,7 +706,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
-		public void indexedPropertyAdded(Element element, String name, Object value) {
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
 			if (element == console && Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 
@@ -712,7 +718,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
-		public void indexedPropertyRemoved(Element element, String name, Object value) {
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
 			if (element == console && Element.REFERENCE.equals(name)) {
 				Reference<?> reference = (Reference<?>) value;
 

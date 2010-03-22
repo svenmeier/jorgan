@@ -52,7 +52,7 @@ public abstract class Displayable extends Element {
 	public void setStyle(String style) {
 		if (!Null.safeEquals(this.style, style)) {
 			String oldStyle = this.style;
-			
+
 			this.style = style;
 
 			fireChange(new PropertyChange(oldStyle, style));
@@ -60,13 +60,18 @@ public abstract class Displayable extends Element {
 	}
 
 	public float getZoom() {
+		if (zoom < 0.5f) {
+			// maybe old zoom
+			zoom = 0.5f;
+		}
+
 		return zoom;
 	}
 
 	public void setZoom(float zoom) {
 		if (zoom != this.zoom) {
 			float oldZoom = this.zoom;
-			
+
 			if (zoom < MIN_ZOOM) {
 				zoom = MIN_ZOOM;
 			}

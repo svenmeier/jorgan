@@ -241,7 +241,7 @@ public class SkinDockable extends OrganDockable {
 				update();
 			} else if (element == SkinDockable.this.displayable) {
 				for (View<?> style : views) {
-					style.changeUpdate();
+					style.update();
 				}
 			}
 		}
