@@ -140,7 +140,7 @@ public class View<E extends Displayable> {
 		this.container = container;
 
 		if (container != null) {
-			changeUpdate();
+			update();
 		}
 	}
 
@@ -181,25 +181,22 @@ public class View<E extends Displayable> {
 
 	/**
 	 * Update this view in response to a change of an element.
-	 * 
-	 * @param event
-	 *            event of disposition
 	 */
-	public void changeUpdate() {
+	public void update() {
 
-		if (container != null) {
-			// issure repaint so old location gets cleared
-			// in case of a changed bounds
-			repaint();
+		repaint();
 
-			initLocation();
+		initLocation();
 
-			initBindings();
+		initBindings();
 
-			initStyle();
+		initStyle();
 
-			repaint();
-		}
+		repaint();
+	}
+
+	public void update(String name) {
+		repaint();
 	}
 
 	protected void initLocation() {
@@ -422,8 +419,6 @@ public class View<E extends Displayable> {
 
 	public void setDefaultColor(Color color) {
 		this.defaultColor = color;
-
-		changeUpdate();
 	}
 
 	public Font getDefaultFont() {
@@ -432,8 +427,6 @@ public class View<E extends Displayable> {
 
 	public void setDefaultFont(Font font) {
 		this.defaultFont = font;
-
-		changeUpdate();
 	}
 
 	public Color getShortcutColor() {
@@ -442,8 +435,6 @@ public class View<E extends Displayable> {
 
 	public void setShortcutColor(Color shortcutColor) {
 		this.shortcutColor = shortcutColor;
-
-		changeUpdate();
 	}
 
 	public Font getShortcutFont() {
@@ -452,8 +443,6 @@ public class View<E extends Displayable> {
 
 	public void setShortcutFont(Font shortcutFont) {
 		this.shortcutFont = shortcutFont;
-
-		changeUpdate();
 	}
 
 	public boolean isShowShortcut() {
@@ -462,8 +451,6 @@ public class View<E extends Displayable> {
 
 	public void setShowShortcut(boolean showShortcut) {
 		this.showShortcut = showShortcut;
-
-		changeUpdate();
 	}
 
 	public Style getStyle() {

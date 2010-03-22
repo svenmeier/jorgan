@@ -151,7 +151,9 @@ public class FullScreenAction extends BaseAction {
 			}
 		}
 
-		frame.setVisible(false);
+		if (!screens.isEmpty()) {
+			frame.setVisible(false);
+		}
 	}
 
 	private void leaveFullScreen() {

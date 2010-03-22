@@ -60,6 +60,8 @@ public class Regulator extends IndexedContinuous implements Observer {
 
 	@Override
 	protected void onIndexChanged(int oldIndex, int newIndex) {
+		super.onIndexChanged(oldIndex, newIndex);
+
 		((Switch) getReference(newIndex).getElement()).activate(true);
 		((Switch) getReference(oldIndex).getElement()).activate(false);
 	}
