@@ -36,6 +36,15 @@ public class RegulatorView extends IndexedContinuousView<Regulator> {
 		super(element);
 	}
 
+	@Override
+	public void update(String name) {
+		if ("index".equals(name)) {
+			updateBinding(BINDING_TITLE);
+		}
+
+		super.update(name);
+	}
+
 	protected String getTitle(int index) {
 		return getElement().getReference(index).getElement().getName();
 	}

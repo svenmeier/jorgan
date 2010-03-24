@@ -130,6 +130,10 @@ public class View<E extends Displayable> {
 		return type.cast(binding);
 	}
 
+	protected void updateBinding(String name) {
+		style.updateBinding(name);
+	}
+
 	/**
 	 * Set the container.
 	 * 
@@ -183,20 +187,14 @@ public class View<E extends Displayable> {
 	 * Update this view in response to a change of an element.
 	 */
 	public void update() {
-
-		repaint();
-
 		initLocation();
 
 		initBindings();
 
 		initStyle();
-
-		repaint();
 	}
 
 	public void update(String name) {
-		repaint();
 	}
 
 	protected void initLocation() {
@@ -296,10 +294,6 @@ public class View<E extends Displayable> {
 			// don't trust the element's zoom
 			zoom = 0.5f;
 		}
-	}
-
-	protected void repaint() {
-		container.repaintView(this);
 	}
 
 	/**

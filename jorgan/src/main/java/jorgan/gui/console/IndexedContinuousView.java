@@ -60,11 +60,10 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous>
 	@Override
 	public void update(String name) {
 		if ("index".equals(name)) {
-			// index changes displayed title
-			super.update();
-		} else {
-			super.update(name);
+			updateBinding(BINDING_INDEX);
 		}
+
+		super.update(name);
 	}
 
 	@Override

@@ -18,28 +18,49 @@
  */
 package jorgan.skin;
 
+import java.util.List;
+
 /**
  * Style.
  */
 public class Style extends CompositeLayer implements Cloneable {
 
-    private String name = "";
+	private String name = "";
 
-    public void setName(String name) {
-        if (name == null) {
-            throw new IllegalArgumentException("name cannot be null");
-        }
-        this.name = name;
-    }
+	public void setName(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException("name cannot be null");
+		}
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    @Override
+	@Override
 	public Object clone() {
-        Style clone = (Style) super.clone();
+		Style clone = (Style) super.clone();
 
-        return clone;
-    }
+		return clone;
+	}
+
+	public void updateBinding(String name) {
+		updateBinding(this, name);
+	}
+
+	private void updateBinding(Layer layer, String name) {
+		if (name.equals(layer.getBinding())) {
+			layer.setView(view);
+		}
+
+		if (layer instanceof CompositeLayer) {
+			List<Layer> children = ((CompositeLayer) layer).getChildren();
+
+			for (Layer child : children) {
+				updateBinding(child, name);
+			}
+		}
+	}
+
 }

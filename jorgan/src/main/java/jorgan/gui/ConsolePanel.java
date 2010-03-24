@@ -568,7 +568,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		return new Dimension(viewToScreen(x, true), viewToScreen(y, true));
 	}
 
-	public void repaintView(View<? extends Displayable> view) {
+	private void repaintView(View<? extends Displayable> view) {
 		int x1 = viewToScreen(view.getX(), false);
 		int y1 = viewToScreen(view.getY(), false);
 		int x2 = viewToScreen(view.getX() + view.getWidth(), true);
@@ -680,11 +680,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			} else if (element instanceof Displayable) {
 				View<? extends Displayable> view = getView((Displayable) element);
 				if (view != null) {
+					repaintView(view);
+
 					if (session.isConstructing()) {
 						view.update();
 					} else {
 						view.update(name);
 					}
+
+					repaintView(view);
 				}
 			}
 		}
