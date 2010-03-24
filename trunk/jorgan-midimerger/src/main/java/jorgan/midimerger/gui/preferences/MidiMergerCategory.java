@@ -20,6 +20,7 @@ package jorgan.midimerger.gui.preferences;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -30,10 +31,12 @@ import javax.swing.table.AbstractTableModel;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
-import jorgan.midimerger.Mapping;
+import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
+import jorgan.midimerger.MergeInput;
 import jorgan.midimerger.MidiMerger;
-import jorgan.midimerger.Mapping.Mode;
-import jorgan.swing.table.EnumCellEditor;
+import jorgan.midimerger.MidiMergerProvider;
+import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import jorgan.swing.text.MultiLineLabel;
 import bias.Configuration;
@@ -48,9 +51,17 @@ public class MidiMergerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerCategory.class);
 
-	private Model mapping = getModel(new Property(MidiMerger.class, "mapping"));
+	private Model inputs = getModel(new Property(MidiMerger.class, "inputs"));
 
-	private List<String> names;
+	/**
+	 * All available inputs.
+	 */
+	private List<MergeInput> allInputs = new ArrayList<MergeInput>();
+
+	/**
+	 * All currently selected inputs - this is a subset of {@link #allInputs}.
+	 */
+	private List<MergeInput> selectedInputs;
 
 	private JScrollPane scrollPane = new JScrollPane();
 
@@ -59,7 +70,7 @@ public class MidiMergerCategory extends JOrganCategory {
 	/**
 	 * The table model for the mergeInputs.
 	 */
-	private ChannelsModel tableModel = new ChannelsModel();
+	private InputsModel tableModel = new InputsModel();
 
 	public MidiMergerCategory() {
 		config.read(this);
@@ -80,9 +91,9 @@ public class MidiMergerCategory extends JOrganCategory {
 				BorderLayout.NORTH);
 
 		table.setModel(tableModel);
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new EnumCellEditor(Mode.class));
+		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
 		TableUtils.pleasantLookAndFeel(table);
+		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
 		scrollPane.setViewportView(table);
 		scrollPane.setPreferredSize(new Dimension(0, 0));
 		panel.add(scrollPane, BorderLayout.CENTER);
@@ -90,7 +101,10 @@ public class MidiMergerCategory extends JOrganCategory {
 		return panel;
 	}
 
-	public class ChannelsModel extends AbstractTableModel {
+	/**
+	 * The table model for handling of inputs to the Midi-Merger.
+	 */
+	public class InputsModel extends AbstractTableModel {
 
 		private String[] columnNames = new String[getColumnCount()];
 
@@ -103,7 +117,7 @@ public class MidiMergerCategory extends JOrganCategory {
 		}
 
 		public int getColumnCount() {
-			return 2;
+			return 3;
 		}
 
 		@Override
@@ -111,43 +125,114 @@ public class MidiMergerCategory extends JOrganCategory {
 			return columnNames[column];
 		}
 
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return Boolean.class;
+			case 1:
+				return String.class;
+			case 2:
+				return Integer.class;
+			}
+			return null;
+		}
+
 		public int getRowCount() {
-			return names.size();
+			return allInputs.size();
 		}
 
 		public Object getValueAt(int row, int column) {
+			MergeInput input = allInputs.get(row);
+
 			switch (column) {
 			case 0:
-				return names.get(row);
+				return selectedInputs.contains(input) ? Boolean.TRUE
+						: Boolean.FALSE;
 			case 1:
-				return ((Mapping) mapping.getValue()).getMode(row);
+				return input.getDevice();
+			case 2:
+				return new Integer(input.getChannel() + 1);
 			}
 			return null;
 		}
 
 		@Override
 		public boolean isCellEditable(int row, int column) {
-			return column == 1;
+			MergeInput input = allInputs.get(row);
+
+			return column == 0
+					|| (selectedInputs.contains(input) && column == 2);
 		}
 
 		@Override
 		public void setValueAt(Object aValue, int row, int column) {
-			Mode mode = (Mode) aValue;
+			MergeInput input = allInputs.get(row);
 
-			((Mapping) mapping.getValue()).setMode(row, mode);
+			switch (column) {
+			case 0:
+				Boolean selected = (Boolean) aValue;
+				if (selected.booleanValue()) {
+					if (!selectedInputs.contains(input)) {
+						selectedInputs.add(input);
+					}
+				} else {
+					if (selectedInputs.contains(input)) {
+						input.setChannel(-1);
+						selectedInputs.remove(input);
+					}
+				}
+				break;
+			case 2:
+				Integer channel = (Integer) aValue;
+				input.setChannel(channel.intValue() - 1);
+				break;
+			}
 
 			this.fireTableRowsUpdated(row, row);
 		}
 	}
 
+	private int indexOfMergeInput(String device) {
+		for (int i = 0; i < allInputs.size(); i++) {
+			MergeInput input = allInputs.get(i);
+			if (device.equals(input.getDevice())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
 	@Override
+	@SuppressWarnings("unchecked")
 	protected void read() {
-		names = MidiMerger.getDeviceNames();
+		// create inputs for all devices (excluding MidiMerger)
+		allInputs = new ArrayList<MergeInput>();
+
+		String[] devices = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
+		for (String device : devices) {
+			if (!MidiMergerProvider.INFO.getName().equals(device)) {
+				allInputs.add(new MergeInput(device, -1));
+			}
+		}
+
+		// get all currently selected inputs
+		selectedInputs = (List<MergeInput>) inputs.getValue();
+		for (MergeInput selectedInput : selectedInputs) {
+			int index = indexOfMergeInput(selectedInput.getDevice());
+			if (index == -1) {
+				allInputs.add(selectedInput);
+			} else {
+				allInputs.set(index, selectedInput);
+			}
+		}
 
 		tableModel.fireTableDataChanged();
 	}
 
 	@Override
 	protected void write() {
+		inputs.setValue(selectedInputs);
 	}
 }
