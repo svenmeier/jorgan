@@ -60,6 +60,26 @@ public class MidiMerger extends Loopback {
 		config.read(this);
 	}
 
+	public Mapping getMapping() {
+		return mapping;
+	}
+
+	/**
+	 * Set the mapping. <br>
+	 * This change has immediate effect only if this midiMerger is not currently
+	 * open, otherwise it is delayed until the next opening.
+	 * 
+	 * @param mapping
+	 *            the channel mapping
+	 */
+	public void setMapping(Mapping mapping) {
+		if (mapping == null) {
+			throw new IllegalArgumentException("mapping must not be null");
+		}
+
+		this.mapping = mapping;
+	}
+
 	@Override
 	public synchronized void open() throws MidiUnavailableException {
 		super.open();
@@ -172,26 +192,6 @@ public class MidiMerger extends Loopback {
 
 			device.close();
 		}
-	}
-
-	public Mapping getMapping() {
-		return mapping;
-	}
-
-	/**
-	 * Set the mapping. <br>
-	 * This change has immediate effect only if this midiMerger is not currently
-	 * open, otherwise it is delayed until the next opening.
-	 * 
-	 * @param mapping
-	 *            the channel mapping
-	 */
-	public void setMapping(Mapping mapping) {
-		if (mapping == null) {
-			throw new IllegalArgumentException("mapping must not be null");
-		}
-
-		this.mapping = mapping;
 	}
 
 	public static List<String> getDeviceNames() {

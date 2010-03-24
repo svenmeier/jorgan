@@ -18,6 +18,8 @@
  */
 package jorgan.midimerger;
 
+import java.util.Arrays;
+
 public class Mapping {
 
 	private Mode[] modes;
@@ -56,6 +58,7 @@ public class Mapping {
 	private void ensureIndex(int index) {
 		if (index >= modes.length) {
 			Mode[] temp = new Mode[index + 1];
+			Arrays.fill(temp, Mode.SKIP);
 			System.arraycopy(modes, 0, temp, 0, modes.length);
 			modes = temp;
 		}
