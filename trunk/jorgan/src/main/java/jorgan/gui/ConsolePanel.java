@@ -38,6 +38,7 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.AffineTransform;
@@ -50,6 +51,7 @@ import java.util.Map;
 import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
@@ -62,6 +64,7 @@ import javax.swing.event.MouseInputAdapter;
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
@@ -73,6 +76,7 @@ import jorgan.gui.construct.layout.StackVerticalLayout;
 import jorgan.gui.construct.layout.ViewLayout;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
@@ -182,6 +186,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private JMenu arrangeMenu = new JMenu();
 
+	private JMenu sendMenu = new JMenu();
+
 	/**
 	 * The arrangements.
 	 */
@@ -243,6 +249,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		arrangeMenu.add(arrangeToFrontAction);
 		arrangeMenu.add(arrangeToBackAction);
 		arrangeMenu.add(arrangeHideAction);
+
+		config.get("sendMenu").read(sendMenu);
+		menu.add(sendMenu);
 
 		initSkin();
 
@@ -513,6 +522,24 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			alignMenu.setEnabled(selectedViews.size() > 1);
 
 			spreadMenu.setEnabled(selectedViews.size() > 2);
+
+			sendMenu.removeAll();
+			sendMenu.setEnabled(false);
+			for (final Console other : session.getOrgan().getElements(
+					Console.class)) {
+				if (other != console) {
+					JMenuItem consoleItem = new JMenuItem(Elements
+							.getDisplayName(other));
+					consoleItem.addActionListener(new ActionListener() {
+						@Override
+						public void actionPerformed(ActionEvent e) {
+							sendTo(other);
+						}
+					});
+					sendMenu.add(consoleItem);
+					sendMenu.setEnabled(true);
+				}
+			}
 
 			menu.show(this, x, y);
 		}
@@ -826,7 +853,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 			}
 
-			showPopup(e);
+			showMenu(e);
 		}
 
 		@Override
@@ -908,7 +935,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			// new positions of views might have changed preferred size
 			revalidate();
 
-			showPopup(e);
+			showMenu(e);
 		}
 
 		@Override
@@ -927,7 +954,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			}
 		}
 
-		protected void showPopup(MouseEvent e) {
+		protected void showMenu(MouseEvent e) {
 			if (e.isPopupTrigger()) {
 				ConsolePanel.this.showMenu(e.getX(), e.getY());
 			}
@@ -1201,6 +1228,23 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			description = description.substring(0, newLine);
 		}
 		return description;
+	}
+
+	private void sendTo(final Console other) {
+		session.lookup(UndoManager.class).compound(new Compound() {
+			@Override
+			public void run() {
+				for (Element element : session.lookup(ElementSelection.class)
+						.getSelectedElements()) {
+					Reference<? extends Element> reference = console
+							.getReference(element);
+
+					console.removeReference(reference);
+
+					other.addReference(reference);
+				}
+			}
+		});
 	}
 
 	private class ConsoleView extends View<Console> {
