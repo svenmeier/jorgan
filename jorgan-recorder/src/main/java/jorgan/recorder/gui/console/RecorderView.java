@@ -42,6 +42,15 @@ public class RecorderView extends View<Recorder> implements TitledView {
 	}
 
 	@Override
+	public void update(String name) {
+		if ("performance".equals(name)) {
+			updateBinding(BINDING_TITLE);
+		}
+
+		super.update(name);
+	}
+
+	@Override
 	protected void initBindings() {
 		super.initBindings();
 
