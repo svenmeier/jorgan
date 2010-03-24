@@ -44,6 +44,15 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 		manager = session.lookup(Storage.class);
 	}
 
+	@Override
+	public void update(String name) {
+		if ("storage".equals(name)) {
+			updateBinding(BINDING_TITLE);
+		}
+
+		super.update(name);
+	}
+
 	protected String getTitle(int index) {
 		return manager.getTitle(index);
 	}
