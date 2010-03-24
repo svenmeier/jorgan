@@ -49,6 +49,15 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 	}
 
 	@Override
+	public void update(String name) {
+		if ("value".equals(name)) {
+			updateBinding(BINDING_VALUE);
+		}
+
+		super.update(name);
+	}
+
+	@Override
 	protected void initBindings() {
 		super.initBindings();
 

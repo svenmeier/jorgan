@@ -312,10 +312,6 @@ public class SkinDockable extends OrganDockable {
 							return style;
 						}
 
-						public void repaintView(View<? extends Displayable> view) {
-							list.repaint();
-						}
-
 						public void setLocation(
 								View<? extends Displayable> view, Point location) {
 						}

@@ -52,14 +52,6 @@ public interface ViewContainer {
 	 */
 	public void setLocation(View<? extends Displayable> view, Point location);
 
-	/**
-	 * Request repainting of a view.
-	 * 
-	 * @param view
-	 *            view to repaint
-	 */
-	public void repaintView(View<? extends Displayable> view);
-
 	public void showPopup(View<? extends Displayable> view, JComponent contents);
 
 	public void hidePopup();
