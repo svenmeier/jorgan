@@ -38,6 +38,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
@@ -86,8 +87,6 @@ public class ElementsDockable extends OrganDockable {
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
 
-	private ElementsModel elementsModel = new ElementsModel();
-
 	private List<Element> elements = new ArrayList<Element>();
 
 	private AddAction addAction = new AddAction();
@@ -99,7 +98,7 @@ public class ElementsDockable extends OrganDockable {
 
 		config.read(this);
 
-		list.setModel(elementsModel);
+		list.setModel(new ElementsModel());
 		list.setCellRenderer(new ElementListCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
@@ -225,30 +224,31 @@ public class ElementsDockable extends OrganDockable {
 
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
-					(OrganListener) Spin.over(elementsModel));
+					(OrganListener) Spin.over(selectionHandler));
 			this.session.lookup(ElementProblems.class).removeListener(
-					(ProblemListener) Spin.over(elementsModel));
+					(ProblemListener) Spin.over(selectionHandler));
 			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>();
-			elementsModel.update();
+			list.setModel(new ElementsModel());
 		}
 
 		this.session = session;
 
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
-					(OrganListener) Spin.over(elementsModel));
+					(OrganListener) Spin.over(selectionHandler));
 			this.session.lookup(ElementProblems.class).addListener(
-					(ProblemListener) Spin.over(elementsModel));
+					(ProblemListener) Spin.over(selectionHandler));
 			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 
 			elements = new ArrayList<Element>(this.session.getOrgan()
 					.getElements());
-			elementsModel.sort();
-			elementsModel.update();
+			list.setModel(new ElementsModel());
+
+			selectionHandler.selectionChanged();
 		}
 
 		addAction.newSession();
@@ -262,8 +262,8 @@ public class ElementsDockable extends OrganDockable {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler implements SelectionListener,
-			ListSelectionListener {
+	private class SelectionHandler extends OrganAdapter implements
+			SelectionListener, ListSelectionListener, ProblemListener {
 
 		private boolean updatingSelection = false;
 
@@ -302,13 +302,37 @@ public class ElementsDockable extends OrganDockable {
 				if (values.length == 1) {
 					session.lookup(ElementSelection.class).setSelectedElement(
 							(Element) values[0]);
-				} else {
+				} else if (!elements.isEmpty()) {
 					session.lookup(ElementSelection.class).setSelectedElements(
 							Generics.asList(values, Element.class));
 				}
 
 				updatingSelection = false;
 			}
+		}
+
+		public void problemAdded(Problem problem) {
+			((ElementsModel) list.getModel()).update(problem.getElement());
+		}
+
+		public void problemRemoved(Problem problem) {
+			((ElementsModel) list.getModel()).update(problem.getElement());
+		}
+
+		public void propertyChanged(Element element, String name) {
+			((ElementsModel) list.getModel()).update(element);
+		}
+
+		public void elementAdded(Element element) {
+			elements.add(element);
+
+			list.setModel(new ElementsModel());
+		}
+
+		public void elementRemoved(Element element) {
+			elements.remove(element);
+
+			list.setModel(new ElementsModel());
 		}
 	}
 
@@ -317,20 +341,16 @@ public class ElementsDockable extends OrganDockable {
 	 * on the EDT, although a change in the organ might be triggered by a change
 	 * on a MIDI thread.
 	 */
-	private class ElementsModel extends AbstractListModel implements
-			ProblemListener, OrganListener {
+	private class ElementsModel extends AbstractListModel {
 
-		private int size = -1;
+		public ElementsModel() {
+			sort();
+		}
 
-		private void update() {
-			if (size != -1) {
-				if (elements.size() > size) {
-					fireIntervalAdded(this, size, elements.size() - 1);
-				} else if (elements.size() < size) {
-					fireIntervalRemoved(this, elements.size(), size - 1);
-				}
-				size = elements.size();
-			}
+		public void update(Element element) {
+			int index = elements.indexOf(element);
+
+			fireContentsChanged(this, index, index);
 		}
 
 		public Object getElementAt(int index) {
@@ -338,46 +358,7 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public int getSize() {
-			size = elements.size();
-
-			return size;
-		}
-
-		public void problemAdded(Problem problem) {
-			updateProblem(problem);
-		}
-
-		public void problemRemoved(Problem problem) {
-			updateProblem(problem);
-		}
-
-		private void updateProblem(Problem problem) {
-
-			Element element = problem.getElement();
-			int index = elements.indexOf(element);
-
-			fireContentsChanged(this, index, index);
-		}
-
-		public void propertyChanged(Element element, String name) {
-			if ("name".equals(name) || "description".equals(name)) {
-				int index = elements.indexOf(element);
-
-				fireContentsChanged(this, index, index);
-			}
-		}
-
-		public void elementAdded(Element element) {
-			elements.add(element);
-
-			int index = elements.size() - 1;
-			fireIntervalAdded(this, index, index);
-
-			sort();
-
-			fireContentsChanged(this, 0, index);
-
-			selectionHandler.selectionChanged();
+			return elements.size();
 		}
 
 		private void sort() {
@@ -390,23 +371,6 @@ public class ElementsDockable extends OrganDockable {
 						new ElementTypeComparator(),
 						new ElementNameComparator()));
 			}
-		}
-
-		public void elementRemoved(Element element) {
-			int index = elements.indexOf(element);
-
-			elements.remove(element);
-
-			fireIntervalRemoved(this, index, index);
-		}
-
-		public void indexedPropertyAdded(Element element, String name, Object value) {
-		}
-
-		public void indexedPropertyChanged(Element element, String name, Object value) {
-		}
-
-		public void indexedPropertyRemoved(Element element, String name, Object value) {
 		}
 	}
 

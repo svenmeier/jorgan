@@ -30,7 +30,6 @@ import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import spin.Spin;
 import swingx.docking.DefaultDockable;
-import swingx.docking.Docked;
 
 /**
  * Panel that manages views to display a console of an organ.
@@ -70,12 +69,6 @@ public class ConsoleDockable extends DefaultDockable implements SessionAware {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventHandler));
 		}
-	}
-
-	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
-
 	}
 
 	private void updateTitle() {
