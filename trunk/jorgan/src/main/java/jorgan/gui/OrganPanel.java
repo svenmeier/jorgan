@@ -95,7 +95,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	/*
 	 * The outer dockingPane.
 	 */
-	private DockingPane docking = new BordererDockingPane();
+	private DockingPane docking = new BordererDockingPane() {
+		protected void dismissDockable(Dockable dockable) {
+			((OrganDockable) dockable).setSession(null);
+		};
+	};
 
 	private Set<DockableAction> dockableActions = new HashSet<DockableAction>();
 
@@ -162,8 +166,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					eventsListener);
 			this.session.removeListener(eventsListener);
 
-			for (DockableAction action : dockableActions) {
-				action.getDockable().setSession(null);
+			for (Object key : docking.getDockableKeys()) {
+				Dockable dockable = docking.getDockable(key);
+				if (dockable != null) {
+					((OrganDockable) dockable).setSession(null);
+				}
 			}
 
 			for (Element element : this.session.getOrgan().getElements()) {
@@ -191,8 +198,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(eventsListener));
 
-			for (DockableAction action : dockableActions) {
-				action.getDockable().setSession(this.session);
+			for (Object key : docking.getDockableKeys()) {
+				Dockable dockable = docking.getDockable(key);
+				if (dockable != null) {
+					((OrganDockable) dockable).setSession(this.session);
+				}
 			}
 
 			for (Console console : this.session.getOrgan().getElements(
@@ -437,6 +447,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			dockable.setSession(session);
+
 			docking.putDockable(dockable.getKey(), dockable);
 		}
 	}
@@ -463,8 +475,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		@Override
 		protected Dockable resolveDockable(Object key) {
 			for (DockableAction action : dockableActions) {
-				if (action.getDockable().getKey().equals(key)) {
-					return action.getDockable();
+				OrganDockable dockable = action.getDockable();
+				if (dockable.getKey().equals(key)) {
+					dockable.setSession(session);
+
+					return dockable;
 				}
 			}
 			return null;

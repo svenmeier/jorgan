@@ -125,13 +125,6 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
-
-		update();
-	}
-
-	@Override
 	public boolean forPlay() {
 		return false;
 	}
@@ -233,10 +226,6 @@ public class SkinDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (!list.isDisplayable()) {
-				return;
-			}
-
 			if (element == console) {
 				update();
 			} else if (element == SkinDockable.this.displayable) {
