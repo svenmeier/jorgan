@@ -228,9 +228,9 @@ public class SkinDockable extends OrganDockable {
 		public void propertyChanged(Element element, String name) {
 			if (element == console) {
 				update();
-			} else if (element == SkinDockable.this.displayable) {
-				for (View<?> style : views) {
-					style.update();
+			} else if (element == displayable) {
+				for (View<?> view : views) {
+					view.update();
 				}
 			}
 		}
