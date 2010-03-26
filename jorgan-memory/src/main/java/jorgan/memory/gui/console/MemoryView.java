@@ -46,7 +46,7 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 
 	@Override
 	public void update(String name) {
-		if ("storage".equals(name)) {
+		if ("index".equals(name)) {
 			updateBinding(BINDING_TITLE);
 		}
 
