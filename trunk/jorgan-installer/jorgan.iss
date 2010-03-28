@@ -28,6 +28,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
+Name: "associate"; Description: "Associate .disposition files"; Flags: checked
 
 [Types]
 Name: "standard"; Description: "Standard installation"
@@ -81,10 +82,10 @@ Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.
 Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.exe"; ValueType: string; ValueName: "Path"; ValueData: "{app}\jOrgan.exe"; Flags: uninsdeletekey
 Root: HKLM; Subkey: "Software\Microsoft\Windows\CurrentVersion\App Paths\jOrgan.exe"; ValueType: string; ValueName: "Version"; ValueData: "{#VERSION}"; Flags: uninsdeletekey
 
-Root: HKCR; Subkey: ".disposition"; ValueType: string; ValueName: ""; ValueData: "jOrganDisposition"; Flags: uninsdeletevalue
-Root: HKCR; Subkey: "jOrganDisposition"; ValueType: string; ValueName: ""; ValueData: "jOrgan Disposition"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "jOrganDisposition\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\jOrgan.exe,0"
-Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\jOrgan.exe"" ""%1"""
+Root: HKCR; Subkey: ".disposition"; ValueType: string; ValueName: ""; ValueData: "jOrganDisposition"; Tasks: associate; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "jOrganDisposition"; ValueType: string; ValueName: ""; ValueData: "jOrgan Disposition"; Tasks: associate; Flags: uninsdeletekey
+Root: HKCR; Subkey: "jOrganDisposition\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\jOrgan.exe,0"; Tasks: associate
+Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\jOrgan.exe"" ""%1"""; Tasks: associate
 
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
