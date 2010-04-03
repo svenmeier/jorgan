@@ -59,10 +59,8 @@ public class Executions extends OrganAdapter {
 		if (Executor.class.isInstance(element)) {
 			Executor executor = ((Executor) element);
 
-			if ("active".equals(name)) {
-				if (!executor.isActive() && allowed) {
-					execute(session, executor);
-				}
+			if ("engaged".equals(name) && !executor.isEngaged()) {
+				execute(session, executor);
 			} else if ("command".equals(name)) {
 				removeProblem(executor);
 			}
@@ -70,6 +68,10 @@ public class Executions extends OrganAdapter {
 	}
 
 	private void execute(OrganSession session, Executor executor) {
+		if (!allowed) {
+			return;
+		}
+
 		removeProblem(executor);
 
 		try {
