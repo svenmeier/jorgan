@@ -33,7 +33,6 @@ import java.util.Set;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -54,6 +53,7 @@ import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Switch.Activate;
 import jorgan.disposition.Switch.Deactivate;
 import jorgan.disposition.Switch.Toggle;
+import jorgan.gui.FullScreen;
 import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -61,6 +61,7 @@ import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
+import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.ActionCellEditor;
@@ -80,6 +81,8 @@ public class ConsolePanel extends JPanel {
 			.getResource("img/input.gif"));
 
 	private Console console;
+
+	private JComboBox screenComboBox;
 
 	private JComboBox deviceComboBox;
 
@@ -115,6 +118,11 @@ public class ConsolePanel extends JPanel {
 		DefinitionBuilder builder = new DefinitionBuilder(this);
 
 		Column column = builder.column();
+
+		column.term(config.get("screen").read(new JLabel()));
+		screenComboBox = new JComboBox();
+		screenComboBox.setEditable(false);
+		column.definition(screenComboBox).fillHorizontal();
 
 		column.term(config.get("device").read(new JLabel()));
 		deviceComboBox = new JComboBox();
@@ -182,11 +190,13 @@ public class ConsolePanel extends JPanel {
 	}
 
 	private void read() {
-		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
-				Direction.IN);
-		String[] items = new String[1 + deviceNames.length];
-		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
-		this.deviceComboBox.setModel(new DefaultComboBoxModel(items));
+		this.screenComboBox.setModel(ComboBoxUtils
+				.createModelWithNull(FullScreen.getIDs()));
+		this.screenComboBox.setSelectedItem(console.getScreen());
+
+		this.deviceComboBox.setModel(ComboBoxUtils
+				.createModelWithNull(DevicePool.instance().getMidiDeviceNames(
+						Direction.IN)));
 		this.deviceComboBox.setSelectedItem(console.getInput());
 
 		switchRows = new ArrayList<SwitchRow>();
@@ -241,6 +251,7 @@ public class ConsolePanel extends JPanel {
 	}
 
 	public void apply() {
+		console.setScreen((String) this.screenComboBox.getSelectedItem());
 		console.setInput(getDeviceName());
 
 		for (SwitchRow switchRow : switchRows) {
@@ -647,7 +658,7 @@ public class ConsolePanel extends JPanel {
 	private class SwitchRow {
 
 		private boolean changed = false;
-		
+
 		private Switch aSwitch;
 
 		private Activate activate;
@@ -682,37 +693,37 @@ public class ConsolePanel extends JPanel {
 
 		public void newActivate(int status, int data1, int data2) {
 			changed = true;
-			
+
 			activate = aSwitch.createActivate(status, data1, data2);
 		}
 
 		public void newDeactivate(int status, int data1, int data2) {
 			changed = true;
-			
+
 			deactivate = aSwitch.createDeactivate(status, data1, data2);
 		}
 
 		public void newToggle(int status, int data1, int data2) {
 			changed = true;
-			
+
 			toggle = aSwitch.createToggle(status, data1, data2);
 		}
 
 		public void clearActivate() {
 			changed = true;
-			
+
 			activate = null;
 		}
 
 		public void clearDeactivate() {
 			changed = true;
-			
+
 			deactivate = null;
 		}
 
 		public void clearToggle() {
 			changed = true;
-			
+
 			toggle = null;
 		}
 
@@ -746,12 +757,12 @@ public class ConsolePanel extends JPanel {
 				if (toggle != null) {
 					aSwitch.addMessage(toggle);
 				}
-			}			
+			}
 		}
 	}
 
 	private class ContinuousRow {
-		
+
 		private boolean changed = false;
 
 		private Continuous aContinuous;
@@ -773,25 +784,25 @@ public class ConsolePanel extends JPanel {
 
 		public void newChangeWithStatus(int min, int max, int data1, int data2) {
 			changed = true;
-			
+
 			change = aContinuous.createChangeWithStatus(min, max, data1, data2);
 		}
 
 		public void newChangeWithData1(int status, int min, int max, int data2) {
 			changed = true;
-			
+
 			change = aContinuous.createChangeWithData1(status, min, max, data2);
 		}
 
 		public void newChangeWithData2(int status, int data1, int min, int max) {
 			changed = true;
-			
+
 			change = aContinuous.createChangeWithData2(status, data1, min, max);
 		}
 
 		public void clearChange() {
 			changed = true;
-			
+
 			change = null;
 		}
 

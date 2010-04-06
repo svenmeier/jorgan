@@ -25,7 +25,6 @@ import java.awt.event.ItemListener;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -40,6 +39,7 @@ import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
+import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -113,11 +113,8 @@ public class KeyboardPanel extends JPanel {
 	}
 
 	private void init() {
-		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
-				Direction.IN);
-		String[] items = new String[1 + deviceNames.length];
-		System.arraycopy(deviceNames, 0, items, 1, deviceNames.length);
-		deviceComboBox.setModel(new DefaultComboBoxModel(items));
+		deviceComboBox.setModel(ComboBoxUtils.createModelWithNull(DevicePool
+				.instance().getMidiDeviceNames(Direction.IN)));
 		deviceComboBox.setSelectedItem(keyboard.getInput());
 
 		try {
