@@ -28,7 +28,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
-Name: "associate"; Description: "Associate .disposition files"; Flags: checked
+Name: "associate"; Description: "Associate .disposition files"; Flags:
 
 [Types]
 Name: "standard"; Description: "Standard installation"
