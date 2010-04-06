@@ -26,11 +26,7 @@ import jorgan.disposition.Element;
 public class OrganAdapter implements OrganListener, OrganObserver {
 
 	@Override
-	public void beforeChange(Change change) {
-	}
-
-	@Override
-	public void afterChange(Change change) {
+	public void onChange(Change change) {
 	}
 
 	public void elementAdded(Element element) {

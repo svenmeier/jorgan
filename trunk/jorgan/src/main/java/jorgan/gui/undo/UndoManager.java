@@ -46,13 +46,10 @@ public class UndoManager {
 
 	public UndoManager(Organ organ) {
 		organ.addOrganObserver(new OrganObserver() {
-			public void beforeChange(Change change) {
+			public void onChange(Change change) {
 				if (change instanceof UndoableChange) {
 					add((UndoableChange) change);
 				}
-			}
-
-			public void afterChange(Change change) {
 			}
 		});
 	}
