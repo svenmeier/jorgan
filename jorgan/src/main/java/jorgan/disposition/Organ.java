@@ -164,7 +164,7 @@ public class Organ {
 			throw new IllegalArgumentException("already added");
 		}
 		elements.add(element);
-		
+
 		addElementImpl(element);
 	}
 
@@ -222,7 +222,7 @@ public class Organ {
 			// observer might remove itself when notified so work on copy
 			for (OrganObserver observer : new ArrayList<OrganObserver>(
 					observers)) {
-				observer.beforeChange(change);
+				observer.onChange(change);
 			}
 		}
 
@@ -231,14 +231,6 @@ public class Organ {
 			for (OrganListener listener : new ArrayList<OrganListener>(
 					listeners)) {
 				change.notify(listener);
-			}
-		}
-
-		if (observers != null) {
-			// observer might remove itself when notified so work on copy
-			for (OrganObserver observer : new ArrayList<OrganObserver>(
-					observers)) {
-				observer.afterChange(change);
 			}
 		}
 	}

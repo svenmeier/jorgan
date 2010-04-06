@@ -28,6 +28,7 @@ import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
@@ -35,10 +36,7 @@ import javax.sound.midi.Transmitter;
 import jorgan.disposition.Element;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Organ;
-import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.disposition.event.OrganObserver;
-import jorgan.disposition.event.UndoableChange;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ReceiverWrapper;
@@ -54,15 +52,7 @@ import jorgan.problem.Problem;
  */
 public abstract class OrganPlay {
 
-	/**
-	 * Only one thread is allowed to play.
-	 */
-	private final Object CHANGE_LOCK = new Object();
-
-	/**
-	 * See {@link #close()}.
-	 */
-	private final Object MIDI_SYSTEM_LOCK = new Object();
+	private final MidiGate gate = new MidiGate();
 
 	private Clock clock;
 
@@ -103,12 +93,13 @@ public abstract class OrganPlay {
 		this.problems = problems;
 
 		organ.addOrganListener(eventHandler);
-		organ.addOrganObserver(eventHandler);
 
 		for (Element element : organ.getElements()) {
 			createPlayer(element);
 		}
 	}
+
+	public abstract File resolve(String name) throws IOException;
 
 	public void destroy() {
 		if (isOpen()) {
@@ -195,36 +186,37 @@ public abstract class OrganPlay {
 		return players.get(element);
 	}
 
+	public Clock getClock() {
+		return clock;
+	}
+
 	public void open() {
+		openImpl();
+
+		gate.allow();
+	}
+
+	private synchronized void openImpl() {
 		if (open) {
 			throw new IllegalStateException("already open");
 		}
+		open = true;
 
-		synchronized (MIDI_SYSTEM_LOCK) {
-			synchronized (CHANGE_LOCK) {
-				Iterator<Player<? extends Element>> toOpen = players.values()
-						.iterator();
-				while (toOpen.hasNext()) {
-					Player<? extends Element> player = toOpen.next();
-					player.open();
-				}
-
-				open = true;
-
-				clock = new Clock(this);
-
-				Iterator<Player<? extends Element>> toUpdate = players.values()
-						.iterator();
-				while (toUpdate.hasNext()) {
-					Player<? extends Element> player = toUpdate.next();
-					player.update();
-				}
-			}
+		Iterator<Player<? extends Element>> toOpen = players.values()
+				.iterator();
+		while (toOpen.hasNext()) {
+			Player<? extends Element> player = toOpen.next();
+			player.open();
 		}
-	}
 
-	public Clock getClock() {
-		return clock;
+		clock = new Clock(this);
+
+		Iterator<Player<? extends Element>> toUpdate = players.values()
+				.iterator();
+		while (toUpdate.hasNext()) {
+			Player<? extends Element> player = toUpdate.next();
+			player.update();
+		}
 	}
 
 	public boolean isOpen() {
@@ -232,6 +224,12 @@ public abstract class OrganPlay {
 	}
 
 	public void close() {
+		gate.deny();
+
+		closeImpl();
+	}
+
+	private synchronized void closeImpl() {
 		if (!open) {
 			throw new IllegalStateException("not open");
 		}
@@ -239,44 +237,30 @@ public abstract class OrganPlay {
 		clock.destroy();
 		clock = null;
 
-		// Java's MIDI system is locked while a receiver is called. In rare
-		// cases this might lead to a deadlock:
-		// * the SWING thread tries to close playing, aquiring the CHANGE_LOCK
-		// * a MIDI thread starts holding a lock on the MIDI system
-		// * the MIDI thread is received waiting on the CHANGE_LOCK
-		// * on the SWING thread a MIDI device is closed
-		// * the SWING thread waits on the MIDI system's lock
-		// * DEADLOCK!
-		synchronized (MIDI_SYSTEM_LOCK) {
-			open = false;
+		Iterator<Player<? extends Element>> iterator = players.values()
+				.iterator();
+		while (iterator.hasNext()) {
+			Player<? extends Element> player = iterator.next();
+			player.close();
 		}
 
-		synchronized (CHANGE_LOCK) {
-			Iterator<Player<? extends Element>> iterator = players.values()
-					.iterator();
-			while (iterator.hasNext()) {
-				Player<? extends Element> player = iterator.next();
-				player.close();
-			}
-		}
+		open = false;
 	}
 
-	public void play(Element element, Playing playing) {
+	public synchronized void play(Element element, Playing playing) {
+		if (!open) {
+			return;
+		}
+
 		Player<?> player = getPlayer(element);
 		if (player == null) {
 			throw new IllegalArgumentException("unkown element");
 		}
 
-		synchronized (MIDI_SYSTEM_LOCK) {
-			if (open) {
-				synchronized (CHANGE_LOCK) {
-					playing.play(player);
-				}
-			}
-		}
+		playing.play(player);
 	}
 
-	protected void createPlayer(Element element) {
+	private synchronized void createPlayer(Element element) {
 		Player<? extends Element> player = PlayerRegistry.createPlayer(element);
 
 		if (player != null) {
@@ -287,7 +271,14 @@ public abstract class OrganPlay {
 		}
 	}
 
-	protected void dropPlayer(Element element) {
+	private synchronized void updatePlayer(Element element) {
+		Player<? extends Element> player = getPlayer(element);
+		if (player != null) {
+			player.update();
+		}
+	}
+
+	private synchronized void dropPlayer(Element element) {
 		Player<? extends Element> player = players.get(element);
 		if (player != null) {
 			players.remove(element);
@@ -304,52 +295,21 @@ public abstract class OrganPlay {
 		problems.removeProblem(problem);
 	}
 
-	private class EventHandler extends OrganAdapter implements OrganObserver {
-
-		private boolean changedClosed = false;
+	private class EventHandler extends OrganAdapter {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			synchronized (MIDI_SYSTEM_LOCK) {
-				synchronized (CHANGE_LOCK) {
-					Player<? extends Element> player = getPlayer(element);
-					if (player != null) {
-						player.update();
-					}
-				}
-			}
+			updatePlayer(element);
 		}
 
 		@Override
 		public void elementAdded(Element element) {
-			synchronized (MIDI_SYSTEM_LOCK) {
-				synchronized (CHANGE_LOCK) {
-					createPlayer(element);
-				}
-			}
+			createPlayer(element);
 		}
 
 		@Override
 		public void elementRemoved(Element element) {
-			synchronized (MIDI_SYSTEM_LOCK) {
-				synchronized (CHANGE_LOCK) {
-					dropPlayer(element);
-				}
-			}
-		}
-
-		public void beforeChange(Change change) {
-			if (open && change instanceof UndoableChange) {
-				close();
-				changedClosed = true;
-			}
-		}
-
-		public void afterChange(Change change) {
-			if (changedClosed) {
-				changedClosed = false;
-				open();
-			}
+			dropPlayer(element);
 		}
 	}
 
@@ -381,9 +341,9 @@ public abstract class OrganPlay {
 			public void setReceiver(final Receiver receiver) {
 				super.setReceiver(new ReceiverWrapper(receiver) {
 					public void send(MidiMessage message, long timestamp) {
-						synchronized (MIDI_SYSTEM_LOCK) {
-							if (open) {
-								synchronized (CHANGE_LOCK) {
+						synchronized (gate) {
+							if (gate.isAllowed()) {
+								synchronized (OrganPlay.this) {
 									super.send(message, timestamp);
 								}
 							}
@@ -420,9 +380,41 @@ public abstract class OrganPlay {
 		};
 	}
 
-	public abstract File resolve(String name) throws IOException;
+	/**
+	 * A gate for the {@link MidiSystem} preventing dead-locks.
+	 */
+	private class MidiGate {
+		private boolean allowed = false;
+
+		public synchronized void allow() {
+			this.allowed = true;
+		}
+
+		public synchronized void deny() {
+			this.allowed = false;
+		}
+
+		/**
+		 * Invocations of this method and the allowed code have to be enclosed
+		 * in a synchronized block:
+		 * 
+		 * <pre>
+		 * synchronized(gate) {
+		 *   if (gate.isAllowed()) {
+		 *     ...
+		 *   }
+		 * }
+		 * </pre>
+		 * 
+		 * @return
+		 */
+		public boolean isAllowed() {
+			return allowed;
+		}
+	}
 
 	public interface Playing {
 		public void play(Player<?> player);
 	}
+
 }

@@ -77,7 +77,7 @@ public class OrganSession {
 		}
 
 		organ.addOrganObserver(new OrganObserver() {
-			public void beforeChange(Change change) {
+			public void onChange(Change change) {
 				if (change instanceof FastPropertyChange) {
 					if (((FastPropertyChange) change).isDerived()) {
 						// don't mark modified for derived changes
@@ -86,9 +86,6 @@ public class OrganSession {
 				}
 
 				markModified();
-			}
-
-			public void afterChange(Change change) {
 			}
 		});
 

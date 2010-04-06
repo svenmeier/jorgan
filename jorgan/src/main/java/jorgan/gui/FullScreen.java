@@ -80,10 +80,11 @@ public class FullScreen extends JDialog implements ConsoleStack {
 	/**
 	 */
 	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
-		super((JDialog) null, configuration.getDevice().getIDstring(), false, configuration);
+		super((JDialog) null, configuration.getDevice().getIDstring(), false,
+				configuration);
 
 		config.read(this);
-		
+
 		setUndecorated(true);
 
 		scrollPane.setBorder(null);
@@ -284,5 +285,17 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			fullScreen.setVisible(true);
 		}
 		return fullScreen;
+	}
+
+	public static String[] getIDs() {
+		GraphicsEnvironment environment = GraphicsEnvironment
+				.getLocalGraphicsEnvironment();
+		GraphicsDevice[] devices = environment.getScreenDevices();
+
+		String[] ids = new String[devices.length];
+		for (int d = 0; d < devices.length; d++) {
+			ids[d] = devices[d].getIDstring();
+		}
+		return ids;
 	}
 }

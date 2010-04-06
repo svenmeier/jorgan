@@ -18,9 +18,10 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
 import java.beans.PropertyEditorSupport;
+
+import jorgan.gui.FullScreen;
+import jorgan.swing.ComboBoxUtils;
 
 /**
  * Property editor for a screen property.
@@ -32,19 +33,11 @@ public class ScreenEditor extends PropertyEditorSupport {
 	@Override
 	public String[] getTags() {
 		if (tags == null) {
-			GraphicsEnvironment environment = GraphicsEnvironment
-					.getLocalGraphicsEnvironment();
-			GraphicsDevice[] devices = environment.getScreenDevices();
-
-			tags = new String[devices.length + 1];
-			tags[0] = null;
-			for (int d = 0; d < devices.length; d++) {
-				tags[d + 1] = devices[d].getIDstring();
-			}
+			tags = ComboBoxUtils.withNull(FullScreen.getIDs());
 		}
 		return tags;
 	}
-	
+
 	@Override
 	public String getAsText() {
 

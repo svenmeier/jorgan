@@ -22,6 +22,7 @@ import java.beans.PropertyEditorSupport;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.swing.ComboBoxUtils;
 
 /**
  * Property editor for a input device property.
@@ -31,12 +32,8 @@ public class InDeviceEditor extends PropertyEditorSupport {
 	private String[] tags;
 
 	public InDeviceEditor() {
-		String[] deviceNames = DevicePool.instance().getMidiDeviceNames(
-				Direction.IN);
-
-		tags = new String[1 + deviceNames.length];
-
-		System.arraycopy(deviceNames, 0, tags, 1, deviceNames.length);
+		tags = ComboBoxUtils.withNull(DevicePool.instance().getMidiDeviceNames(
+				Direction.IN));
 	}
 
 	@Override

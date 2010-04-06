@@ -18,13 +18,10 @@
  */
 package jorgan.disposition.event;
 
-
 /**
  * A listener to organ changes.
  */
 public interface OrganObserver {
 
-	public void beforeChange(Change change);
-	
-	public void afterChange(Change change);
+	public void onChange(Change change);
 }
