@@ -110,6 +110,8 @@ public abstract class OrganPlay {
 			player.setOrganPlay(null);
 		}
 		players.clear();
+
+		organ.removeOrganListener(eventHandler);
 	}
 
 	public Organ getOrgan() {
@@ -193,7 +195,7 @@ public abstract class OrganPlay {
 	public void open() {
 		openImpl();
 
-		gate.allow();
+		gate.open();
 	}
 
 	private synchronized void openImpl() {
@@ -224,7 +226,7 @@ public abstract class OrganPlay {
 	}
 
 	public void close() {
-		gate.deny();
+		gate.close();
 
 		closeImpl();
 	}
@@ -342,7 +344,7 @@ public abstract class OrganPlay {
 				super.setReceiver(new ReceiverWrapper(receiver) {
 					public void send(MidiMessage message, long timestamp) {
 						synchronized (gate) {
-							if (gate.isAllowed()) {
+							if (gate.enter()) {
 								synchronized (OrganPlay.this) {
 									super.send(message, timestamp);
 								}
@@ -384,32 +386,32 @@ public abstract class OrganPlay {
 	 * A gate for the {@link MidiSystem} preventing dead-locks.
 	 */
 	private class MidiGate {
-		private boolean allowed = false;
+		private boolean open = false;
 
-		public synchronized void allow() {
-			this.allowed = true;
+		public synchronized void open() {
+			this.open = true;
 		}
 
-		public synchronized void deny() {
-			this.allowed = false;
+		public synchronized void close() {
+			this.open = false;
 		}
 
 		/**
-		 * Invocations of this method and the allowed code have to be enclosed
-		 * in a synchronized block:
+		 * Entering the gate and the code executed inside the gate have to be
+		 * enclosed in a synchronized block:
 		 * 
 		 * <pre>
 		 * synchronized(gate) {
-		 *   if (gate.isAllowed()) {
+		 *   if (gate.enter()) {
 		 *     ...
 		 *   }
 		 * }
 		 * </pre>
 		 * 
-		 * @return
+		 * @return can this gate be entered
 		 */
-		public boolean isAllowed() {
-			return allowed;
+		public boolean enter() {
+			return open;
 		}
 	}
 
