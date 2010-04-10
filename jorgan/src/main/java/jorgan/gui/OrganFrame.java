@@ -44,6 +44,7 @@ import javax.swing.UIManager;
 import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
+import jorgan.gui.undo.UndoManager;
 import jorgan.io.DispositionStream;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
@@ -64,12 +65,6 @@ import bias.util.MessageBuilder;
  * The jOrgan frame.
  */
 public class OrganFrame extends JFrame implements SessionAware {
-
-	public static final int CHANGES_CONFIRM = 0;
-
-	public static final int CHANGES_SAVE = 1;
-
-	public static final int CHANGES_DISCARD = 2;
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
@@ -124,7 +119,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private EventHandler handler = new EventHandler();
 
-	private int handleChanges;
+	private Changes changes = Changes.CONFIRM;
 
 	/**
 	 * Create a new organFrame.
@@ -279,12 +274,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 	}
 
-	public int getHandleChanges() {
-		return handleChanges;
+	public Changes getChanges() {
+		return changes;
 	}
 
-	public void setHandleChanges(int handleChanges) {
-		this.handleChanges = handleChanges;
+	public void setChanges(Changes changes) {
+		this.changes = changes;
 	}
 
 	/**
@@ -387,8 +382,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 * @return <code>true</code> if organ was closed
 	 */
 	public boolean closeOrgan() {
-		if (!saveAction.checkSave()) {
-			return false;
+		if (session != null && session.isModified()) {
+			if (!changes.onClose(this, session)) {
+				return false;
+			}
 		}
 
 		setSession(null);
@@ -510,27 +507,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			setEnabled(false);
 		}
 
-		public boolean checkSave() {
-			if (session != null && session.isModified()
-					&& handleChanges != CHANGES_DISCARD) {
-				if (handleChanges == CHANGES_CONFIRM) {
-					int option = showBoxMessage("closeOrganConfirmChanges",
-							MessageBox.OPTIONS_YES_NO_CANCEL);
-					if (option == MessageBox.OPTION_CANCEL) {
-						return false;
-					} else if (option == MessageBox.OPTION_NO) {
-						return true;
-					}
-				}
-
-				if (!saveOrgan()) {
-					return false;
-				}
-			}
-
-			return true;
-		}
-
 		public void actionPerformed(ActionEvent ev) {
 			saveOrgan();
 		}
@@ -611,5 +587,43 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		public void destroyed() {
 		}
+	}
+
+	public static enum Changes {
+		DISCARD {
+			public boolean onClose(OrganFrame frame, OrganSession session) {
+				return true;
+			}
+		},
+
+		SAVE_REGISTRATIONS {
+			public boolean onClose(OrganFrame frame, OrganSession session) {
+				if (session.lookup(UndoManager.class).canUndo()) {
+					return CONFIRM.onClose(frame, session);
+				} else {
+					return frame.saveOrgan();
+				}
+			}
+		},
+		CONFIRM {
+			public boolean onClose(OrganFrame frame, OrganSession session) {
+				int option = frame.showBoxMessage("closeOrganConfirmChanges",
+						MessageBox.OPTIONS_YES_NO_CANCEL);
+				if (option == MessageBox.OPTION_CANCEL) {
+					return false;
+				} else if (option == MessageBox.OPTION_NO) {
+					return true;
+				}
+
+				return frame.saveOrgan();
+			}
+		},
+		SAVE {
+			public boolean onClose(OrganFrame frame, OrganSession session) {
+				return frame.saveOrgan();
+			}
+		};
+
+		public abstract boolean onClose(OrganFrame frame, OrganSession session);
 	}
 }
