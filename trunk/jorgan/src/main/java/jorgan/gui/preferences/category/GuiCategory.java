@@ -28,6 +28,7 @@ import javax.swing.JRadioButton;
 
 import jorgan.gui.GUI;
 import jorgan.gui.OrganFrame;
+import jorgan.gui.OrganFrame.Changes;
 import jorgan.gui.action.FullScreenAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -53,19 +54,20 @@ public class GuiCategory extends JOrganCategory {
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	private Model fullScreenOnLoad = getModel(new Property(FullScreenAction.class,
-			"onLoad"));
+	private Model fullScreenOnLoad = getModel(new Property(
+			FullScreenAction.class, "onLoad"));
 
-	private Model handleChanges = getModel(new Property(
-			OrganFrame.class, "handleChanges"));
+	private Model changes = getModel(new Property(OrganFrame.class, "changes"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
+
+	private JRadioButton changesDiscardRadioButton = new JRadioButton();
+
+	private JRadioButton changesSaveRegistrationsRadioButton = new JRadioButton();
 
 	private JRadioButton changesConfirmRadioButton = new JRadioButton();
 
 	private JRadioButton changesSaveRadioButton = new JRadioButton();
-
-	private JRadioButton changesDiscardRadioButton = new JRadioButton();
 
 	public GuiCategory() {
 		config.read(this);
@@ -91,7 +93,16 @@ public class GuiCategory extends JOrganCategory {
 				fullScreenOnLoadCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
-		column.term(config.get("handleChanges").read(new JLabel()));
+		column.term(config.get("changes").read(new JLabel()));
+
+		config.get("changesDiscard").read(changesDiscardRadioButton);
+		changesGroup.add(changesDiscardRadioButton);
+		column.definition(changesDiscardRadioButton);
+
+		config.get("changesSaveRegistrations").read(
+				changesSaveRegistrationsRadioButton);
+		changesGroup.add(changesSaveRegistrationsRadioButton);
+		column.definition(changesSaveRegistrationsRadioButton);
 
 		config.get("changesConfirm").read(changesConfirmRadioButton);
 		changesGroup.add(changesConfirmRadioButton);
@@ -100,10 +111,6 @@ public class GuiCategory extends JOrganCategory {
 		config.get("changesSave").read(changesSaveRadioButton);
 		changesGroup.add(changesSaveRadioButton);
 		column.definition(changesSaveRadioButton);
-
-		config.get("changesDiscard").read(changesDiscardRadioButton);
-		changesGroup.add(changesDiscardRadioButton);
-		column.definition(changesDiscardRadioButton);
 
 		return panel;
 	}
@@ -121,15 +128,18 @@ public class GuiCategory extends JOrganCategory {
 		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
 				.getValue());
 
-		switch ((Integer) handleChanges.getValue()) {
-		case OrganFrame.CHANGES_CONFIRM:
+		switch ((Changes) changes.getValue()) {
+		case DISCARD:
+			changesDiscardRadioButton.setSelected(true);
+			break;
+		case SAVE_REGISTRATIONS:
+			changesSaveRegistrationsRadioButton.setSelected(true);
+			break;
+		case CONFIRM:
 			changesConfirmRadioButton.setSelected(true);
 			break;
-		case OrganFrame.CHANGES_SAVE:
+		case SAVE:
 			changesSaveRadioButton.setSelected(true);
-			break;
-		case OrganFrame.CHANGES_DISCARD:
-			changesDiscardRadioButton.setSelected(true);
 			break;
 		}
 	}
@@ -140,14 +150,16 @@ public class GuiCategory extends JOrganCategory {
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 
-		int registrationChanges = 0;
-		if (changesConfirmRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.CHANGES_CONFIRM;
+		Changes value = null;
+		if (changesDiscardRadioButton.isSelected()) {
+			value = Changes.DISCARD;
+		} else if (changesSaveRegistrationsRadioButton.isSelected()) {
+			value = Changes.SAVE_REGISTRATIONS;
+		} else if (changesConfirmRadioButton.isSelected()) {
+			value = Changes.CONFIRM;
 		} else if (changesSaveRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.CHANGES_SAVE;
-		} else if (changesDiscardRadioButton.isSelected()) {
-			registrationChanges = OrganFrame.CHANGES_DISCARD;
+			value = Changes.SAVE;
 		}
-		handleChanges.setValue(registrationChanges);
+		changes.setValue(value);
 	}
 }
