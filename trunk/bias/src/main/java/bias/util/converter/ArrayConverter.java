@@ -33,7 +33,7 @@ public class ArrayConverter implements Converter {
 
 	public String toString(Object array, Type type) throws Exception {
 		int length = Array.getLength(array);
-		Class<?> componentType = ((Class) type).getComponentType();
+		Class<?> componentType = ((Class<?>) type).getComponentType();
 
 		String[] tokens = new String[length];
 		for (int i = 0; i < length; i++) {
@@ -48,7 +48,7 @@ public class ArrayConverter implements Converter {
 
 		String[] tokens = new Tokenizer(string).getTokens();
 
-		Class<?> componentType = ((Class) type).getComponentType();
+		Class<?> componentType = ((Class<?>) type).getComponentType();
 
 		Object array = Array.newInstance(componentType, tokens.length);
 		for (int i = 0; i < tokens.length; i++) {
