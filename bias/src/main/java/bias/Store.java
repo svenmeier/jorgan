@@ -21,13 +21,12 @@ package bias;
 import java.lang.reflect.Type;
 import java.util.Collection;
 
-import bias.store.ErrorHandler;
 import bias.store.StoreListener;
 
 /**
  * A store of values.
  */
-public interface Store extends ErrorHandler {
+public interface Store {
 
 	public boolean hasKey(String key);
 	

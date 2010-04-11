@@ -34,11 +34,6 @@ public class DefaultingStore extends AbstractStore {
 
 	public DefaultingStore(Store store, Store defaultsStore) {
 		this.store = store;
-		store.addListener(new StoreListener() {
-			public void valueChanged(Store store, String key) {
-				notifyListeners(key);
-			}
-		});
 		this.defaultsStore = defaultsStore;
 	}
 
@@ -59,10 +54,14 @@ public class DefaultingStore extends AbstractStore {
 	@Override
 	protected Object getValueImpl(String key, Type type) {
 		if (store.getKeys(getPath(key)).contains(key)) {
-			return store.getValue(key, type);
-		} else {
-			return defaultsStore.getValue(key, type);
+			try {
+				return store.getValue(key, type);
+			} catch (Exception ex) {
+				onError(key, ex);
+			}
 		}
+		
+		return defaultsStore.getValue(key, type);
 	}
 
 	@Override
