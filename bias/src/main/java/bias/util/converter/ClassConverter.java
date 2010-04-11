@@ -33,6 +33,6 @@ public class ClassConverter implements Converter {
 	}
 
 	public String toString(Object object, Type type) {
-		return ((Class) object).getName();
+		return ((Class<?>) object).getName();
 	}
 }

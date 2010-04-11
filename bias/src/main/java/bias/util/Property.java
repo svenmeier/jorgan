@@ -193,8 +193,8 @@ public class Property {
 
 	public String getTypeName() {
 
-		if (type instanceof Class) {
-			return ((Class) type).getName();
+		if (type instanceof Class<?>) {
+			return ((Class<?>) type).getName();
 		} else if (type instanceof ParameterizedType) {
 			return ((ParameterizedType) type).toString();
 		} else {

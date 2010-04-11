@@ -61,7 +61,7 @@ public class CompositeConverter implements Converter {
 				ParameterizedType parameterizedType = (ParameterizedType) type;
 
 				converter = getConverter(parameterizedType.getRawType());
-			} else if (type instanceof Class) {
+			} else if (type instanceof Class<?>) {
 				Class<?> clazz = (Class<?>) type;
 
 				if (clazz.isArray()) {
