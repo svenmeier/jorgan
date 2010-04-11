@@ -37,16 +37,10 @@ public abstract class AbstractStore implements Store {
 
 	private Map<String, Collection<String>> keys = new HashMap<String, Collection<String>>();
 
-	private ErrorHandler handler = new ErrorHandler() {
-		public void onError(String key, Exception ex) {
-			System.err.println("illegal key '" + key + "' : " + ex.getMessage());
-		};
-	};
-
 	private List<StoreListener> listeners = new ArrayList<StoreListener>();
 
 	public void onError(String key, Exception ex) {
-		handler.onError(key, ex);
+		System.err.println("illegal key '" + key + "' : " + ex.getMessage());
 	}
 
 	public void addListener(StoreListener listener) {
@@ -65,10 +59,6 @@ public abstract class AbstractStore implements Store {
 		for (StoreListener listener : listeners) {
 			listener.valueChanged(this, key);
 		}
-	}
-
-	public void setErrorHandler(ErrorHandler handler) {
-		this.handler = handler;
 	}
 
 	public final Collection<String> getKeys(String path) {
@@ -99,6 +89,8 @@ public abstract class AbstractStore implements Store {
 		if (!keys.contains(key)) {
 			keys.add(key);
 		}
+
+		notifyListeners(key);
 	}
 
 	protected abstract void setValueImpl(String key, Type type, Object value);

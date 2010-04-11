@@ -73,8 +73,6 @@ public abstract class ConvertingStore extends AbstractStore {
 		try {
 			String string = getConverter().toString(value, type);
 			putString(key, string);
-
-			notifyListeners(key);
 		} catch (Exception ex) {
 			throw new ConfigurationException(ex);
 		}
