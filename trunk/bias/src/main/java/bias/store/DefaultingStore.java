@@ -19,7 +19,7 @@
 package bias.store;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
+import java.util.Set;
 
 import bias.Store;
 
@@ -43,7 +43,7 @@ public class DefaultingStore extends AbstractStore {
 	}
 
 	@Override
-	protected Collection<String> getKeysImpl(String path) {
+	protected Set<String> getKeysImpl(String path) {
 		return defaultsStore.getKeys(path);
 	}
 
@@ -60,7 +60,7 @@ public class DefaultingStore extends AbstractStore {
 				onError(key, ex);
 			}
 		}
-		
+
 		return defaultsStore.getValue(key, type);
 	}
 

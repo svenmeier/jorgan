@@ -20,10 +20,10 @@ package bias.store;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bias.ConfigurationException;
 import bias.Store;
@@ -35,7 +35,7 @@ import bias.Store;
  */
 public abstract class AbstractStore implements Store {
 
-	private Map<String, Collection<String>> keys = new HashMap<String, Collection<String>>();
+	private Map<String, Set<String>> keys = new HashMap<String, Set<String>>();
 
 	private List<StoreListener> listeners = new ArrayList<StoreListener>();
 
@@ -55,14 +55,14 @@ public abstract class AbstractStore implements Store {
 		return false;
 	}
 	
-	protected void notifyListeners(String key) {
+	private void notifyListeners(String key) {
 		for (StoreListener listener : listeners) {
 			listener.valueChanged(this, key);
 		}
 	}
 
-	public final Collection<String> getKeys(String path) {
-		Collection<String> keys = this.keys.get(path);
+	public final Set<String> getKeys(String path) {
+		Set<String> keys = this.keys.get(path);
 		if (keys == null) {
 			keys = getKeysImpl(path);
 			this.keys.put(path, keys);
@@ -80,15 +80,13 @@ public abstract class AbstractStore implements Store {
 		}
 	}
 	
-	protected abstract Collection<String> getKeysImpl(String path);
+	protected abstract Set<String> getKeysImpl(String path);
 
 	public final void setValue(String key, Type type, Object value) {
 		setValueImpl(key, type, value);
 
-		Collection<String> keys = getKeys(getPath(key));
-		if (!keys.contains(key)) {
-			keys.add(key);
-		}
+		Set<String> keys = getKeys(getPath(key));
+		keys.add(key);
 
 		notifyListeners(key);
 	}

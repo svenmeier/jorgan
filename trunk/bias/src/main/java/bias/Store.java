@@ -19,7 +19,7 @@
 package bias;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
+import java.util.Set;
 
 import bias.store.StoreListener;
 
@@ -29,7 +29,7 @@ import bias.store.StoreListener;
 public interface Store {
 
 	public boolean hasKey(String key);
-	
+
 	/**
 	 * Get the keys with the given path.
 	 * 
@@ -37,7 +37,7 @@ public interface Store {
 	 *            path to get keys for
 	 * @return keys
 	 */
-	public Collection<String> getKeys(String path);
+	public Set<String> getKeys(String path);
 
 	/**
 	 * Get the value for the given key.
@@ -79,6 +79,6 @@ public interface Store {
 	 *            listener to remove
 	 */
 	public void removeListener(StoreListener listener);
-	
+
 	public boolean isReadOnly();
 }

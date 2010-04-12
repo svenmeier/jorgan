@@ -19,12 +19,11 @@
 package bias;
 
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.Collections;
-
-import bias.store.StoreListener;
+import java.util.Set;
 
 import junit.framework.TestCase;
+import bias.store.StoreListener;
 
 /**
  * Test for {@link bias.Configuration}s.
@@ -56,7 +55,7 @@ public class ConfigurationTest extends TestCase {
 	public void testHasKey() {
 		assertTrue(store.hasKey(TestStore.KEY));
 	}
-	
+
 	public void testRead() {
 		config.read(this);
 		assertEquals(store.value, this.property);
@@ -87,16 +86,16 @@ public class ConfigurationTest extends TestCase {
 		public void onError(String key, Exception ex) {
 			fail();
 		}
-		
-		public Collection<String> getKeys(String path) throws ConfigurationException {
+
+		public Set<String> getKeys(String path) throws ConfigurationException {
 			assertEquals(PATH, path);
-			return Collections.<String> singletonList(KEY);
+			return Collections.singleton(KEY);
 		}
 
 		public boolean hasKey(String key) {
 			return KEY.equals(key);
 		}
-		
+
 		public Object getValue(String key, Type type)
 				throws ConfigurationException {
 			assertEquals(KEY, key);
@@ -114,7 +113,7 @@ public class ConfigurationTest extends TestCase {
 
 		public void removeListener(StoreListener listener) {
 		}
-		
+
 		public boolean isReadOnly() {
 			return false;
 		}

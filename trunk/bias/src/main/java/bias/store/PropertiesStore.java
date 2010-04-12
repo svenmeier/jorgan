@@ -20,9 +20,9 @@ package bias.store;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * A store using {@link java.util.Properties}.
@@ -53,9 +53,10 @@ public class PropertiesStore extends ConvertingStore {
 
 		InputStream input = clazz.getResourceAsStream(name);
 		if (input == null) {
-			throw new IllegalArgumentException("properties '" + name + "' not found");
+			throw new IllegalArgumentException("properties '" + name
+					+ "' not found");
 		}
-		
+
 		try {
 			properties.load(input);
 		} catch (IOException ex) {
@@ -73,8 +74,8 @@ public class PropertiesStore extends ConvertingStore {
 	}
 
 	@Override
-	protected List<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		for (Object object : this.properties.keySet()) {
 			String key = (String) object;

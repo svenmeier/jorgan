@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import bias.util.cli.CLIException;
 import bias.util.cli.Input;
@@ -115,8 +117,8 @@ public class CLIStore extends AbstractStore {
 	}
 
 	@Override
-	protected Collection<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		for (String key : this.values.keySet()) {
 			if (getPath(key).equals(path)) {

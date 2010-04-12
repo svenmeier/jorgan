@@ -18,11 +18,11 @@
  */
 package bias.store;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 import bias.ConfigurationException;
 
@@ -41,8 +41,8 @@ public class ResourceBundlesStore extends ConvertingStore {
 	}
 
 	@Override
-	protected List<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		String subpath = "";
 		while (true) {
@@ -110,7 +110,7 @@ public class ResourceBundlesStore extends ConvertingStore {
 	@Override
 	protected void putString(String key, String string) {
 	}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return true;
