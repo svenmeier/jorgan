@@ -18,8 +18,8 @@
  */
 package bias.store;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 
@@ -39,8 +39,8 @@ public class PreferencesStore extends ConvertingStore {
 	}
 
 	@Override
-	protected List<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		Preferences node = preferences.node(path);
 		try {

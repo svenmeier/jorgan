@@ -18,10 +18,10 @@
  */
 package bias.store;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * A store using {@link System#getProperties()}.
@@ -50,8 +50,8 @@ public class SystemStore extends ConvertingStore {
 	}
 
 	@Override
-	protected List<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		for (Object object : this.mapping.keySet()) {
 			String key = (String) object;

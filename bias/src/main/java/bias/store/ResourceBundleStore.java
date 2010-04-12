@@ -18,10 +18,10 @@
  */
 package bias.store;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.ResourceBundle;
+import java.util.Set;
 
 /**
  * A store using {@link ResourceBundle}.
@@ -57,8 +57,8 @@ public class ResourceBundleStore extends ConvertingStore {
 	}
 
 	@Override
-	protected List<String> getKeysImpl(String path) {
-		List<String> keys = new ArrayList<String>();
+	protected Set<String> getKeysImpl(String path) {
+		Set<String> keys = new HashSet<String>();
 
 		for (Object object : Collections.list(bundle.getKeys())) {
 			String key = (String) object;
@@ -79,7 +79,7 @@ public class ResourceBundleStore extends ConvertingStore {
 	@Override
 	protected void putString(String key, String string) {
 	}
-	
+
 	@Override
 	public boolean isReadOnly() {
 		return true;
