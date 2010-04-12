@@ -46,7 +46,7 @@ public class Memory extends IndexedContinuous {
 		if (size <= 0) {
 			throw new IllegalArgumentException("size must be greater 0");
 		}
-		
+
 		if (this.size != size) {
 			int oldSize = this.size;
 
@@ -64,11 +64,9 @@ public class Memory extends IndexedContinuous {
 		storage = cleanPath(storage);
 
 		if (!Null.safeEquals(this.storage, storage)) {
-			String oldStore = this.storage;
-
 			this.storage = storage;
 
-			fireChange(new PropertyChange(oldStore, this.storage));
+			fireChange(new FastPropertyChange("storage", false));
 		}
 	}
 }

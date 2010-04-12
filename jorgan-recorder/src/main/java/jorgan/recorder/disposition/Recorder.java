@@ -36,16 +36,14 @@ public class Recorder extends Displayable {
 
 	public void setPerformance(String performance) {
 		performance = cleanPath(performance);
-		
-		if (!Null.safeEquals(this.performance, performance)) {
-			String oldPerformance = this.performance;
 
+		if (!Null.safeEquals(this.performance, performance)) {
 			this.performance = performance;
 
-			fireChange(new PropertyChange(oldPerformance, this.performance));
+			fireChange(new FastPropertyChange("performance", false));
 		}
 	}
-	
+
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return clazz == Keyboard.class || clazz == Console.class;
