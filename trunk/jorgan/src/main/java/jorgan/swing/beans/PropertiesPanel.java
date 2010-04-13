@@ -45,7 +45,6 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellEditor;
 
 import jorgan.gui.OrganPanel;
 import jorgan.swing.table.TableUtils;
@@ -170,10 +169,7 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 *            the beans
 	 */
 	public void setBeans(List<?> beans) {
-		TableCellEditor cellEditor = table.getCellEditor();
-		if (cellEditor != null) {
-			cellEditor.stopCellEditing();
-		}
+		TableUtils.stopEdit(table);
 
 		this.beans = new ArrayList<Object>(beans);
 
