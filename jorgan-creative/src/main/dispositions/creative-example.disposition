@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="@jorgan.version@">
+  <elements>
+    <console id="5">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="3">
+          <x>140</x>
+          <y>90</y>
+        </console-locationReference>
+        <console-locationReference id="6">
+          <x>280</x>
+          <y>90</y>
+        </console-locationReference>
+        <console-locationReference id="7">
+          <x>50</x>
+          <y>40</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <screen>:0.0</screen>
+    </console>
+    <keyboard id="8">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="3"/>
+        <reference id="6"/>
+      </references>
+      <messages>
+        <keyboard-pressKey>
+          <status>equal 144</status>
+          <data1>get pitch</data1>
+          <data2>greater 0| get velocity</data2>
+        </keyboard-pressKey>
+        <keyboard-releaseKey>
+          <status>equal 128</status>
+          <data1>get pitch</data1>
+          <data2></data2>
+        </keyboard-releaseKey>
+        <keyboard-releaseKey>
+          <status>equal 144</status>
+          <data1>get pitch</data1>
+          <data2>equal 0 | get velocity</data2>
+        </keyboard-releaseKey>
+      </messages>
+      <input>jOrgan Keyboard</input>
+    </keyboard>
+    <creative.creativeSound id="2">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <output>SB Live! Synth A [BC00]</output>
+      <soundfont>creative-example.SF2</soundfont>
+      <bank>25</bank>
+    </creative.creativeSound>
+    <rank id="1">
+      <name>Rank 1</name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 25</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 1</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <rank id="4">
+      <name>Rank 0</name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 121</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 176</status>
+          <data1>set 0</data1>
+          <data2>set 25</data2>
+        </rank-engaged>
+        <rank-engaged>
+          <status>set 192</status>
+          <data1>set 0</data1>
+          <data2></data2>
+        </rank-engaged>
+        <rank-disengaged>
+          <status>set 176</status>
+          <data1>set 123</data1>
+          <data2></data2>
+        </rank-disengaged>
+        <rank-notePlayed>
+          <status>set 144</status>
+          <data1>set pitch</data1>
+          <data2>set velocity</data2>
+        </rank-notePlayed>
+        <rank-noteMuted>
+          <status>set 128</status>
+          <data1>set pitch</data1>
+          <data2></data2>
+        </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <label id="7">
+      <name>Instructions</name>
+      <description>name=Use the Customizer to adjust the output of the Creative Sound element.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <stop id="3">
+      <name>Stop 0</name>
+      <description></description>
+      <references>
+        <reference id="4"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+      <action>0</action>
+      <transpose>0</transpose>
+    </stop>
+    <stop id="6">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference id="1"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+      <action>0</action>
+      <transpose>-12</transpose>
+    </stop>
+  </elements>
+</organ>
