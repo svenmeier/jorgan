@@ -25,6 +25,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
+import javax.swing.CellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
@@ -142,5 +143,21 @@ public class TableUtils {
 				}
 			}
 		});
+	}
+
+	public static void stopEdit(JTable table) {
+		CellEditor editor = table.getCellEditor();
+		if (editor != null) {
+			editor.stopCellEditing();
+		}
+		table.setCellEditor(null);
+	}
+
+	public static void cancelEdit(JTable table) {
+		CellEditor editor = table.getCellEditor();
+		if (editor != null) {
+			editor.cancelCellEditing();
+		}
+		table.setCellEditor(null);
 	}
 }

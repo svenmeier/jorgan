@@ -31,7 +31,6 @@ import java.util.List;
 
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
-import javax.swing.CellEditor;
 import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -267,13 +266,6 @@ public class MessagesDockable extends OrganDockable {
 		docked.addTool(recordAction);
 	}
 
-	private void commitEdit() {
-		CellEditor editor = table.getCellEditor();
-		if (editor != null) {
-			editor.stopCellEditing();
-		}
-	}
-
 	/**
 	 * Set the organ to be edited.
 	 * 
@@ -314,7 +306,8 @@ public class MessagesDockable extends OrganDockable {
 
 		try {
 			updating = true;
-			commitEdit();
+
+			TableUtils.stopEdit(table);
 
 			element = null;
 			messages.clear();

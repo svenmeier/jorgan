@@ -114,6 +114,8 @@ public class MemoryDockable extends OrganDockable {
 	}
 
 	private void update() {
+		TableUtils.cancelEdit(table);
+
 		model.fireTableDataChanged();
 
 		updateIndex();
@@ -143,10 +145,7 @@ public class MemoryDockable extends OrganDockable {
 				table.clearSelection();
 			} else {
 				if (index != table.getSelectedRow()) {
-					if (table.getCellEditor() != null) {
-						table.getCellEditor().cancelCellEditing();
-						table.setCellEditor(null);
-					}
+					TableUtils.cancelEdit(table);
 					table.setColumnSelectionInterval(0, 0);
 					table.getSelectionModel()
 							.setSelectionInterval(index, index);
