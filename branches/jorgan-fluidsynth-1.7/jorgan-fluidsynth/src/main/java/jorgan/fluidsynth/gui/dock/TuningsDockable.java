@@ -25,7 +25,6 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.CellEditor;
 import javax.swing.DropMode;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
@@ -207,13 +206,6 @@ public class TuningsDockable extends OrganDockable {
 		docked.addTool(removeAction);
 	}
 
-	private void commitEdit() {
-		CellEditor editor = table.getCellEditor();
-		if (editor != null) {
-			editor.stopCellEditing();
-		}
-	}
-
 	/**
 	 * Set the organ to be edited.
 	 * 
@@ -254,7 +246,8 @@ public class TuningsDockable extends OrganDockable {
 
 		try {
 			updating = true;
-			commitEdit();
+
+			TableUtils.stopEdit(table);
 
 			sound = null;
 			tunings.clear();
