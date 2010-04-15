@@ -63,7 +63,6 @@ import jorgan.swing.BaseAction;
 import jorgan.util.IOUtils;
 import spin.Spin;
 import swingx.docking.Dockable;
-import swingx.docking.Docked;
 import swingx.docking.DockingPane;
 import swingx.docking.persistence.XMLPersister;
 import bias.Configuration;
@@ -96,6 +95,29 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 * The outer dockingPane.
 	 */
 	private DockingPane docking = new BordererDockingPane() {
+		@Override
+		protected JComponent createComponent(Object key) {
+			if ("consoles".equals(key)) {
+				return consoleDocking;
+			} else {
+				return null;
+			}
+		}
+
+		@Override
+		protected Dockable createDockable(Object key) {
+			for (DockableAction action : dockableActions) {
+				OrganDockable dockable = action.getDockable();
+				if (dockable.getKey().equals(key)) {
+					dockable.setSession(session);
+
+					return dockable;
+				}
+			}
+			return null;
+		}
+
+		@Override
 		protected void dismissDockable(Dockable dockable) {
 			((OrganDockable) dockable).setSession(null);
 		};
@@ -106,7 +128,12 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	/*
 	 * The inner dockingPane that holds all consoles.
 	 */
-	private DockingPane consoleDocking = new BordererDockingPane();
+	private DockingPane consoleDocking = new BordererDockingPane() {
+		@Override
+		protected void dismissDockable(Dockable dockable) {
+			((ConsoleDockable) dockable).setSession(null);
+		};
+	};
 
 	private MessagesMonitor messagesMonitor = new MessagesMonitor();
 
@@ -219,23 +246,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	}
 
 	protected ConsoleDockable addConsoleDockable(Console console) {
-
-		ConsoleDockable dockable = new ConsoleDockable(console) {
-			@Override
-			public void docked(Docked docked) {
-				super.docked(docked);
-
-				setSession(session);
-			}
-
-			@Override
-			public void undocked() {
-				setSession(null);
-
-				super.undocked();
-			}
-		};
-
+		ConsoleDockable dockable = new ConsoleDockable(console);
+		dockable.setSession(session);
 		consoleDocking.putDockable(console, dockable);
 
 		return dockable;
@@ -283,8 +295,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		if (docking != null) {
 			Reader reader = new StringReader(docking);
 			try {
-				OrganPanelPersister persister = new OrganPanelPersister(reader);
-				persister.load();
+				new XMLPersister(this.docking, reader, DOCKING_VERSION).load();
 				return;
 			} catch (Exception ex) {
 				logger.log(Level.WARNING, "unable to load docking", ex);
@@ -302,8 +313,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		Reader reader = new InputStreamReader(getClass().getResourceAsStream(
 				dockingXml));
 		try {
-			OrganPanelPersister persister = new OrganPanelPersister(reader);
-			persister.load();
+			new XMLPersister(this.docking, reader, DOCKING_VERSION).load();
 		} catch (Exception error) {
 			throw new Error("unable to load default docking");
 		} finally {
@@ -314,8 +324,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	protected void saveDocking() {
 		Writer writer = new StringWriter();
 		try {
-			OrganPanelPersister persister = new OrganPanelPersister(writer);
-			persister.save();
+			new XMLPersister(docking, writer, DOCKING_VERSION).save();
 			String docking = writer.toString();
 			if (constructing) {
 				constructDocking = docking;
@@ -354,8 +363,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		Dockable dockable = consoleDocking.getDockable(console);
 		if (dockable == null) {
 			dockable = addConsoleDockable(console);
+		} else {
+			consoleDocking.putDockable(console, dockable);
 		}
-		consoleDocking.putDockable(console, dockable);
 	}
 
 	/**
@@ -450,39 +460,6 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			dockable.setSession(session);
 
 			docking.putDockable(dockable.getKey(), dockable);
-		}
-	}
-
-	private class OrganPanelPersister extends XMLPersister {
-
-		private OrganPanelPersister(Reader reader) {
-			super(docking, reader, DOCKING_VERSION);
-		}
-
-		private OrganPanelPersister(Writer writer) {
-			super(docking, writer, DOCKING_VERSION);
-		}
-
-		@Override
-		protected JComponent resolveComponent(Object key) {
-			if ("consoles".equals(key)) {
-				return consoleDocking;
-			} else {
-				return null;
-			}
-		}
-
-		@Override
-		protected Dockable resolveDockable(Object key) {
-			for (DockableAction action : dockableActions) {
-				OrganDockable dockable = action.getDockable();
-				if (dockable.getKey().equals(key)) {
-					dockable.setSession(session);
-
-					return dockable;
-				}
-			}
-			return null;
 		}
 	}
 }
