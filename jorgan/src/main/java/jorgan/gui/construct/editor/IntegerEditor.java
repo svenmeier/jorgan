@@ -37,7 +37,7 @@ public class IntegerEditor extends CustomEditor {
 	private JSpinner spinner;
 
 	public IntegerEditor() {
-		this(Integer.MIN_VALUE, 1, Integer.MAX_VALUE);
+		this(0, Integer.MIN_VALUE, 1, Integer.MAX_VALUE);
 	}
 
 	public IntegerEditor(int min, int delta, int max) {
