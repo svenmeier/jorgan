@@ -45,16 +45,12 @@ public class SendDevice extends Loopback {
 	}
 
 	@Override
-	public synchronized void open() throws MidiUnavailableException {
-		super.open();
-
+	protected synchronized void openImpl() throws MidiUnavailableException {
 		try {
 			sender = new MessageSender(IpMidi.GROUP, IpMidi.port(index));
 
 			probe();
 		} catch (Exception ex) {
-			close();
-
 			MidiUnavailableException exception = new MidiUnavailableException();
 			exception.initCause(ex);
 			throw exception;
@@ -72,13 +68,13 @@ public class SendDevice extends Loopback {
 	}
 
 	@Override
-	public synchronized void close() {
+	protected synchronized void closeImpl() {
 		if (sender != null) {
 			sender.close();
 			sender = null;
 		}
 
-		super.close();
+		super.closeImpl();
 	}
 
 	@Override
