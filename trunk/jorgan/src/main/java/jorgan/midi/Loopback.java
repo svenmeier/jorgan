@@ -120,11 +120,21 @@ public class Loopback implements MidiDevice {
 		return -1;
 	}
 
-	public synchronized void open() throws MidiUnavailableException {
+	public void open() throws MidiUnavailableException {
 		if (isOpen()) {
 			return;
 		}
+
+		try {
+			openImpl();
+		} finally {
+			close();
+		}
+
 		open = true;
+	}
+
+	protected synchronized void openImpl() throws MidiUnavailableException {
 	}
 
 	/**
@@ -191,23 +201,26 @@ public class Loopback implements MidiDevice {
 	/**
 	 * Close this device.
 	 */
-	public synchronized void close() {
+	public void close() {
 		if (open) {
 			open = false;
+			closeImpl();
+		}
+	}
 
-			// important: work on copy of transmitter list as closing of
-			// transmitter removes it from list
-			Iterator<Transmitter> transmitters = getTransmitters().iterator();
-			while (transmitters.hasNext()) {
-				transmitters.next().close();
-			}
+	protected synchronized void closeImpl() {
+		// important: work on copy of transmitter list as closing of
+		// transmitter removes it from list
+		Iterator<Transmitter> transmitters = getTransmitters().iterator();
+		while (transmitters.hasNext()) {
+			transmitters.next().close();
+		}
 
-			// important: work on copy of receiver list as closing of
-			// receiver removes it from list
-			Iterator<Receiver> receivers = getReceivers().iterator();
-			while (receivers.hasNext()) {
-				receivers.next().close();
-			}
+		// important: work on copy of receiver list as closing of
+		// receiver removes it from list
+		Iterator<Receiver> receivers = getReceivers().iterator();
+		while (receivers.hasNext()) {
+			receivers.next().close();
 		}
 	}
 
@@ -269,7 +282,7 @@ public class Loopback implements MidiDevice {
 					throw new IllegalStateException("already closed");
 				}
 				closed = true;
-				
+
 				transmitters.remove(this);
 			}
 		}

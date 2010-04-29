@@ -28,7 +28,6 @@ import java.util.Map;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
@@ -39,6 +38,7 @@ import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.midi.MidiGate;
 import jorgan.midi.ReceiverWrapper;
 import jorgan.midi.TransmitterWrapper;
 import jorgan.play.event.KeyListener;
@@ -341,17 +341,13 @@ public abstract class OrganPlay {
 			}
 
 			public void setReceiver(final Receiver receiver) {
-				super.setReceiver(new ReceiverWrapper(receiver) {
+				super.setReceiver(gate.guard(new ReceiverWrapper(receiver) {
 					public void send(MidiMessage message, long timestamp) {
-						synchronized (gate) {
-							if (gate.enter()) {
-								synchronized (OrganPlay.this) {
-									super.send(message, timestamp);
-								}
-							}
+						synchronized (OrganPlay.this) {
+							super.send(message, timestamp);
 						}
 					}
-				});
+				}));
 			}
 		};
 	}
@@ -380,39 +376,6 @@ public abstract class OrganPlay {
 				device.close();
 			}
 		};
-	}
-
-	/**
-	 * A gate for the {@link MidiSystem} preventing dead-locks.
-	 */
-	private class MidiGate {
-		private boolean open = false;
-
-		public synchronized void open() {
-			this.open = true;
-		}
-
-		public synchronized void close() {
-			this.open = false;
-		}
-
-		/**
-		 * Entering the gate and the code executed inside the gate have to be
-		 * enclosed in a synchronized block:
-		 * 
-		 * <pre>
-		 * synchronized(gate) {
-		 *   if (gate.enter()) {
-		 *     ...
-		 *   }
-		 * }
-		 * </pre>
-		 * 
-		 * @return can this gate be entered
-		 */
-		public boolean enter() {
-			return open;
-		}
 	}
 
 	public interface Playing {
