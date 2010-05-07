@@ -14,35 +14,12 @@
 	</xsl:template>
 
 	<xsl:template match="rank">
-		<rank>
-			<xsl:apply-templates select="@*|delay|description|messages|name|style|zoom"/>
-			<channel><xsl:value-of select="channels"/></channel>
-			<references>
-				<xsl:apply-templates select="references/*"/>
-				<xsl:if test="output">
-					<reference>
-						<xsl:attribute name="id"><xsl:value-of select="output"/></xsl:attribute>
-					</reference>
-				</xsl:if>
-			</references>
-		</rank>		
-		
-		<xsl:call-template name="genericSound"/>
-	</xsl:template>
-
-  	<xsl:template match="@*|node()">
-		<xsl:copy>
-			<xsl:apply-templates select="@*|node()"/>
-		</xsl:copy>
-	</xsl:template>
-	
-	<xsl:template name="genericSound">
+		<xsl:variable name="output" select="output"/>
 		<xsl:if test="output">
-			<xsl:variable name="output" select="output"/>
 			<xsl:variable name="remainder" select="following::rank[output=$output]"/>
 			<xsl:if test="not($remainder)">
 				<genericSound>
-					<xsl:attribute name="id"><xsl:value-of select="output"/></xsl:attribute>
+					<xsl:attribute name="id"><xsl:value-of select="translate(generate-id(.), translate(generate-id(.), '0123456789', ''), '')"/></xsl:attribute>
 					<description></description>
 					<output><xsl:value-of select="output"/></output>
 					<messages/>
@@ -52,5 +29,26 @@
 				</genericSound>
 			</xsl:if>
 		</xsl:if>
+
+		<rank>
+			<xsl:apply-templates select="@*|delay|description|messages|name|style|zoom"/>
+			<channel><xsl:value-of select="channels"/></channel>
+			<references>
+				<xsl:apply-templates select="references/*"/>
+				<xsl:if test="output">
+					<reference>
+						<xsl:variable name="context" select="//rank[output=$output][last()]"/>
+						<xsl:attribute name="id"><xsl:value-of select="translate(generate-id($context), translate(generate-id($context), '0123456789', ''), '')"/></xsl:attribute>
+					</reference>
+				</xsl:if>
+			</references>
+		</rank>		
 	</xsl:template>
+
+  	<xsl:template match="@*|node()">
+		<xsl:copy>
+			<xsl:apply-templates select="@*|node()"/>
+		</xsl:copy>
+	</xsl:template>
+	
  </xsl:stylesheet>
