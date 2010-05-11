@@ -155,8 +155,7 @@ public class CLI implements UI, SessionAware {
 	 */
 	protected void saveOrgan() {
 		try {
-			new DispositionStream()
-					.write(session.getOrgan(), session.getFile());
+			session.save();
 
 			writeMessage("saveConfirm");
 		} catch (Exception ex) {
