@@ -1,0 +1,27 @@
+#!/usr/bin/make -f
+
+build: clean build-stamp binary
+
+build-stamp:
+	touch build-stamp
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	dh_clean
+
+binary:
+	dh_testdir
+	dh_testroot
+	dh_clean -k
+	dh_install
+	dh_installchangelogs
+	dh_installmime
+	dh_icons
+	dh_compress
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
