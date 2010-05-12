@@ -1,2 +1,2 @@
 #!/bin/bash
-rm -rf ~/.java/.userPrefs/jorgan/
+rm -rf /home/*/.java/.userPrefs/jorgan/
