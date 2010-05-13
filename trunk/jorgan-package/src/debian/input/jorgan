@@ -1,2 +1,2 @@
 #!/bin/sh
-java -jar /usr/share/jorgan/jorgan.jar "$@"
+java -jar /usr/lib/jorgan/jorgan.jar "$@"
