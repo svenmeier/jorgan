@@ -7,7 +7,7 @@ Standards-Version: 3.8.4
 Homepage: http://jorgan.sourceforge.net
 
 Package: jorgan
-Architecture: i386
+Architecture: any
 Depends: sun-java6-jre | sun-java7-jre
 Description: jOrgan
 	Java Virtual Organ
