@@ -8,7 +8,7 @@ clean:
 binary:
 	dh_testdir
 	dh_testroot
-	dh_install
+	dh_install -X.svn
 	dh_installchangelogs
 	dh_installmime
 	dh_icons
