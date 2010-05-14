@@ -2,12 +2,14 @@ Source: jorgan
 Section: main/sound
 Priority: optional
 Maintainer: Sven Meier <sven@meiers.net>
-Build-Depends: debhelper (>= 5), sun-java6-jre, sun-java6-jdk
+Build-Depends: debhelper (>= 5), sun-java6-jdk
 Standards-Version: 3.8.4
 Homepage: http://jorgan.sourceforge.net
 
 Package: jorgan
 Architecture: any
 Depends: sun-java6-jre | sun-java7-jre
+Recommends : fluidsynth
+Suggests: qjackctl
 Description: jOrgan
 	Java Virtual Organ
