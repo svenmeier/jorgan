@@ -19,6 +19,7 @@
 package jorgan.gui;
 
 import java.awt.BorderLayout;
+import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -27,6 +28,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -53,7 +55,6 @@ import jorgan.session.SessionAware;
 import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.DebugPanel;
-import jorgan.swing.Desktop;
 import jorgan.swing.MacAdapter;
 import jorgan.swing.StatusBar;
 import spin.Spin;
@@ -537,12 +538,15 @@ public class OrganFrame extends JFrame implements SessionAware {
 	private class WebsiteAction extends BaseAction {
 		private WebsiteAction() {
 			config.get("website").read(this);
-
-			setEnabled(Desktop.isSupported());
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			Desktop.browse("http://jorgan.sourceforge.net");
+			try {
+				Desktop.getDesktop().browse(
+						URI.create("http://jorgan.sourceforge.net"));
+			} catch (Exception e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}
 		}
 	}
 
