@@ -18,3 +18,4 @@ debian/input/icons/* /usr/share/icons
 ../../jorgan-sams/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-soundfont/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-sysex/target/marshal/lib/* /usr/lib/jorgan/lib
+../../jorgan-skins/target/marshal/skins/* /usr/share/jorgan/skins
