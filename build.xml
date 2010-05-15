@@ -14,7 +14,7 @@
     <ant dir="jorgan-midimerger"/>
     <ant dir="jorgan-recorder"/>
     <ant dir="jorgan-sams"/>
-<!-- <ant dir="jorgan-skins"/> -->
+    <ant dir="jorgan-skins"/>
     <ant dir="jorgan-soundfont"/>
     <ant dir="jorgan-sysex"/>
   </target>
