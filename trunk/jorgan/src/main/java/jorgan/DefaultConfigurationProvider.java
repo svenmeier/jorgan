@@ -33,11 +33,21 @@ public class DefaultConfigurationProvider implements ConfigurationProvider {
 	public List<Store> getStores() {
 		ArrayList<Store> stores = new ArrayList<Store>();
 
-		stores.add(new PropertiesStore(App.class, "app.properties"));
+		PropertiesStore properties = new PropertiesStore(App.class,
+				"app.properties");
+		stores.add(properties);
+
+		stores.add(new ResourceBundlesStore("i18n"));
+
 		stores.add(new DefaultingStore(PreferencesStore.user(),
 				new PropertiesStore(DefaultConfigurationProvider.class,
 						"/jorgan/preferences.properties")));
-		stores.add(new ResourceBundlesStore("i18n"));
+
+		String version = (String) properties.getValue("jorgan/Info/version",
+				String.class);
+		stores.add(new DefaultingStore(PreferencesStore.user(version),
+				new PropertiesStore(DefaultConfigurationProvider.class,
+						"/jorgan/version-preferences.properties")));
 
 		return stores;
 	}
