@@ -90,8 +90,11 @@ public class PreferencesStore extends ConvertingStore {
 	 * @return preferences
 	 */
 	public static PreferencesStore user() {
-		return new PreferencesStore(Preferences.userRoot());
+		return user("/");
+	}
 
+	public static PreferencesStore user(String path) {
+		return new PreferencesStore(Preferences.userRoot().node(path));
 	}
 
 	/**
@@ -100,6 +103,10 @@ public class PreferencesStore extends ConvertingStore {
 	 * @return preferences
 	 */
 	public static PreferencesStore system() {
-		return new PreferencesStore(Preferences.systemRoot());
+		return system("/");
+	}
+	
+	public static PreferencesStore system(String path) {
+		return new PreferencesStore(Preferences.userRoot().node(path));
 	}
 }
