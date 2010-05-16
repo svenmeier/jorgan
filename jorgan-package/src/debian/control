@@ -1,5 +1,5 @@
 Source: jorgan
-Section: main/sound
+Section: sound
 Priority: optional
 Maintainer: Sven Meier <sven@meiers.net>
 Build-Depends: debhelper (>= 5), sun-java6-jdk
