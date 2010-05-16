@@ -1,2 +1,2 @@
 #!/bin/sh
-java -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"
+/usr/lib/jvm/java-6-sun/bin/java -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"

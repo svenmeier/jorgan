@@ -1,9 +1,8 @@
 #!/bin/bash
 
-# adjust:
-# - version in src/debian/changelog
-# - architecture in src/debian/control
-sudo rm *.deb
+set -e
+
+sudo rm *.deb || true
 
 ant -buildfile ../build.xml
 
