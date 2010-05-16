@@ -6,9 +6,11 @@ set INNO_SETUP="C:\Programme\Inno Setup 5\ISCC.exe"
 rmdir /S /Q target
 
 ant -buildfile ..\build.xml
+if errorlevel 1 exit /B 1
 
 mkdir target
 
 %LAUNCH4J% launch4j.cfg.xml
+if errorlevel 1 exit /B 1
 
 %INNO_SETUP% jorgan.iss
