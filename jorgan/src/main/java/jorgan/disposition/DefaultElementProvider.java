@@ -35,6 +35,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(Console.class);
 		classes.add(Label.class);
 		classes.add(Keyboard.class);
+		classes.add(Panic.class);
 		classes.add(Coupler.class);
 		classes.add(Stop.class);
 		classes.add(Rank.class);

@@ -181,4 +181,10 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			onReceived(shortMessage);
 		}
 	}
+
+	public void panic() {
+		for (int pitch = 0; pitch < pressed.length; pitch++) {
+			release(pitch);
+		}
+	}
 }

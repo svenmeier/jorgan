@@ -26,7 +26,7 @@ public class Incrementer extends Switch {
 	private int delta = 1;
 
 	public Incrementer() {
-		setDuration(0);
+		setDuration(DURATION_NONE);
 	}
 
 	@Override
