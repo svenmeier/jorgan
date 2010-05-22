@@ -16,24 +16,46 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.disposition;
+package jorgan.play;
+
+import jorgan.disposition.Keyboard;
+import jorgan.disposition.Panic;
+import jorgan.util.Null;
 
 /**
- * An switcher of {@link Console}s.
+ * A player for a {@link Panic}.
  */
-public class ConsoleSwitcher extends Switch {
+public class PanicPlayer extends SwitchPlayer<Panic> {
 
-	public ConsoleSwitcher() {
-		setDuration(DURATION_NONE);
-	}
+	private boolean engaged = false;
 
-	public int getReferenceMax() {
-		return 1;
+	public PanicPlayer(Panic panic) {
+		super(panic);
 	}
 
 	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Console.class.isAssignableFrom(clazz);
+	protected void openImpl() {
+		engaged = false;
+
+		super.openImpl();
 	}
 
+	@Override
+	public void update() {
+		super.update();
+
+		if (isOpen()) {
+			boolean engaged = getElement().isEngaged();
+			if (!Null.safeEquals(this.engaged, engaged)) {
+				if (!engaged) {
+					for (Keyboard keyboard : getElement().getReferenced(
+							Keyboard.class)) {
+						((KeyboardPlayer) getOrganPlay().getPlayer(keyboard))
+								.panic();
+					}
+				}
+				this.engaged = engaged;
+			}
+		}
+	}
 }

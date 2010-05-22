@@ -18,22 +18,14 @@
  */
 package jorgan.disposition;
 
-/**
- * An switcher of {@link Console}s.
- */
-public class ConsoleSwitcher extends Switch {
+public class Panic extends Switch {
 
-	public ConsoleSwitcher() {
+	public Panic() {
 		setDuration(DURATION_NONE);
-	}
-
-	public int getReferenceMax() {
-		return 1;
 	}
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Console.class.isAssignableFrom(clazz);
+		return Keyboard.class.isAssignableFrom(clazz);
 	}
-
 }

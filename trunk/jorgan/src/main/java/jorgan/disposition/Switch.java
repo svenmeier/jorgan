@@ -33,9 +33,13 @@ import jorgan.util.Null;
  */
 public class Switch extends Engageable {
 
+	public static final int DURATION_INFINITE = -1;
+
+	public static final int DURATION_NONE = 0;
+
 	private boolean active = false;
 
-	private int duration = -1;
+	private int duration = DURATION_INFINITE;
 
 	private Shortcut shortcut;
 
