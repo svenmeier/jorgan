@@ -16,46 +16,16 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.disposition;
 
-import jorgan.disposition.Keyboard;
-import jorgan.disposition.Panic;
-import jorgan.util.Null;
+public class PanicSwitch extends Switch {
 
-/**
- * A player for a {@link Panic}.
- */
-public class PanicPlayer extends SwitchPlayer<Panic> {
-
-	private boolean engaged = false;
-
-	public PanicPlayer(Panic panic) {
-		super(panic);
+	public PanicSwitch() {
+		setDuration(DURATION_NONE);
 	}
 
 	@Override
-	protected void openImpl() {
-		engaged = false;
-
-		super.openImpl();
-	}
-
-	@Override
-	public void update() {
-		super.update();
-
-		if (isOpen()) {
-			boolean engaged = getElement().isEngaged();
-			if (!Null.safeEquals(this.engaged, engaged)) {
-				if (!engaged) {
-					for (Keyboard keyboard : getElement().getReferenced(
-							Keyboard.class)) {
-						((KeyboardPlayer) getOrganPlay().getPlayer(keyboard))
-								.panic();
-					}
-				}
-				this.engaged = engaged;
-			}
-		}
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Keyboard.class.isAssignableFrom(clazz);
 	}
 }
