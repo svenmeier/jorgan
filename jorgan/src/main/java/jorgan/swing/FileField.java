@@ -22,8 +22,11 @@ import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -69,6 +72,13 @@ public class FileField extends JPanel {
 
 		textField = createTextField();
 		add(textField, BorderLayout.CENTER);
+
+		addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				textField.requestFocusInWindow();
+			}
+		});
 	}
 
 	protected JTextField createTextField() {
@@ -89,5 +99,10 @@ public class FileField extends JPanel {
 			return null;
 		}
 		return new File(text);
+	}
+
+	@Override
+	public AccessibleContext getAccessibleContext() {
+		return textField.getAccessibleContext();
 	}
 }
