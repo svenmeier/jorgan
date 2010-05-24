@@ -28,13 +28,13 @@ public class Info {
 			Info.class);
 
 	private static Logger logger = Logger.getLogger(Info.class.getName());
-	
+
 	private String version = "";
 
 	public Info() {
 		config.read(this);
 	}
-	
+
 	public String getVersion() {
 		return version;
 	}
@@ -57,6 +57,9 @@ public class Info {
 		appendProperty(buffer, "user.country");
 		appendProperty(buffer, "user.language");
 		appendProperty(buffer, "user.name");
+
+		appendProperty(buffer, "sun.java2d.opengl");
+		appendProperty(buffer, "sun.java2d.translaccel");
 
 		logger.info(buffer.toString());
 	}
