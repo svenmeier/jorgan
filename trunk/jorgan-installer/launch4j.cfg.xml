@@ -18,9 +18,5 @@
     <minVersion>1.6.0</minVersion>
     <maxVersion></maxVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <initialHeapSize>64</initialHeapSize>
-    <maxHeapSize>128</maxHeapSize>
-    <opt>-Dsun.java2d.opengl=true</opt>
-    <opt>-Dsun.java2d.translaccel=true</opt>
   </jre>
 </launch4jConfig>
