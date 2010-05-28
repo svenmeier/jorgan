@@ -28,8 +28,8 @@ import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
-import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
@@ -72,8 +72,7 @@ public class RankPlayer extends Player<Rank> {
 		Channel channel = null;
 		try {
 			for (Sound sound : rank.getReferenced(Sound.class)) {
-				SoundPlayer<?> player = (SoundPlayer<?>) getOrganPlay()
-						.getPlayer(sound);
+				SoundPlayer<?> player = (SoundPlayer<?>) getPlayer(sound);
 
 				// sound might not have player
 				if (player != null) {
@@ -99,8 +98,7 @@ public class RankPlayer extends Player<Rank> {
 
 		for (Element element : rank.getReferenced(Element.class)) {
 			if (element instanceof Filter) {
-				FilterPlayer player = (FilterPlayer) getOrganPlay().getPlayer(
-						element);
+				FilterPlayer player = (FilterPlayer) getPlayer(element);
 
 				channel = player.filter(channel);
 			}
@@ -178,10 +176,10 @@ public class RankPlayer extends Player<Rank> {
 
 		public void init() {
 			engaged();
-			
+
 			channel.init();
 		}
-		
+
 		public void engaged() {
 			for (Engaged engaged : getElement().getMessages(Engaged.class)) {
 				output(engaged, this);
@@ -224,7 +222,7 @@ public class RankPlayer extends Player<Rank> {
 	private class DeadChannel implements Channel {
 		public void init() {
 		}
-		
+
 		public void sendMessage(int command, int data1, int data2) {
 		}
 

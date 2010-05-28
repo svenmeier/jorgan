@@ -129,7 +129,7 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 		}
 
 		for (Element element : getElement().getReferenced(Element.class)) {
-			Player<?> player = getOrganPlay().getPlayer(element);
+			Player<?> player = getPlayer(element);
 			if (player != null) {
 				player.onReceived(message);
 			}

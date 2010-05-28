@@ -93,6 +93,10 @@ public abstract class Player<E extends Element> {
 		return element;
 	}
 
+	protected Player<?> getPlayer(Element element) {
+		return getOrganPlay().getPlayer(element);
+	}
+
 	/**
 	 * Alarm notification.
 	 * 
@@ -244,8 +248,7 @@ public abstract class Player<E extends Element> {
 	protected void onOutput(ShortMessage message, Context context) {
 		for (Console console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
-			ConsolePlayer<?> player = (ConsolePlayer<?>) getOrganPlay()
-					.getPlayer(console);
+			ConsolePlayer<?> player = (ConsolePlayer<?>) getPlayer(console);
 			if (player != null) {
 				player.send(message);
 			}
