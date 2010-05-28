@@ -8,7 +8,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.GenericSound;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyer;
-import jorgan.disposition.PanicSwitch;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
 import jorgan.disposition.Switch;
@@ -27,8 +26,6 @@ public class DefaultPlayerProvider implements PlayerProvider {
 			player = new KeyboardPlayer((Keyboard) element);
 		} else if (element instanceof Keyer) {
 			player = new KeyerPlayer((Keyer) element);
-		} else if (element instanceof PanicSwitch) {
-			player = new PanicSwitchPlayer((PanicSwitch) element);
 		} else if (element instanceof Stop) {
 			player = new StopPlayer((Stop) element);
 		} else if (element instanceof Coupler) {

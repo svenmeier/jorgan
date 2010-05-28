@@ -33,8 +33,8 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
 		Coupler coupler = getElement();
 
 		for (Reference<? extends Element> reference : coupler.getReferences()) {
-			KeyablePlayer<?> keyablePlayer = (KeyablePlayer<?>) getOrganPlay()
-					.getPlayer(reference.getElement());
+			KeyablePlayer<?> keyablePlayer = (KeyablePlayer<?>) getPlayer(reference
+					.getElement());
 
 			keyablePlayer.keyDown(pitch, velocity);
 		}
@@ -45,8 +45,8 @@ public class CouplerPlayer extends KeyablePlayer<Coupler> {
 		Coupler coupler = getElement();
 
 		for (Reference<? extends Element> reference : coupler.getReferences()) {
-			KeyablePlayer<?> keyablePlayer = (KeyablePlayer<?>) getOrganPlay()
-					.getPlayer(reference.getElement());
+			KeyablePlayer<?> keyablePlayer = (KeyablePlayer<?>) getPlayer(reference
+					.getElement());
 
 			keyablePlayer.keyUp(pitch);
 		}

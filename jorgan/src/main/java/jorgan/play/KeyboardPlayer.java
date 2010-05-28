@@ -142,8 +142,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				KeyablePlayer<?> player = (KeyablePlayer<?>) getOrganPlay()
-						.getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>) getPlayer(element);
 				if (player != null) {
 					player.keyDown(pitch, velocity);
 				}
@@ -163,8 +162,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			for (int e = 0; e < keyboard.getReferenceCount(); e++) {
 				Element element = keyboard.getReference(e).getElement();
 
-				KeyablePlayer<?> player = (KeyablePlayer<?>) getOrganPlay()
-						.getPlayer(element);
+				KeyablePlayer<?> player = (KeyablePlayer<?>) getPlayer(element);
 				if (player != null) {
 					player.keyUp(pitch);
 				}

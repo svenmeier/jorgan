@@ -31,14 +31,13 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 		super(stop);
 	}
 
-	
 	@Override
 	protected void onKeyDown(int pitch, int velocity) {
 		Stop stop = getElement();
 
 		for (Reference<? extends Element> reference : stop.getReferences()) {
-			RankPlayer rankPlayer = (RankPlayer) getOrganPlay().getPlayer(
-					reference.getElement());
+			RankPlayer rankPlayer = (RankPlayer) getPlayer(reference
+					.getElement());
 
 			rankPlayer.play(pitch, velocity);
 		}
@@ -49,8 +48,8 @@ public class StopPlayer extends KeyablePlayer<Stop> {
 		Stop stop = getElement();
 
 		for (Reference<? extends Element> reference : stop.getReferences()) {
-			RankPlayer rankPlayer = (RankPlayer) getOrganPlay().getPlayer(
-					reference.getElement());
+			RankPlayer rankPlayer = (RankPlayer) getPlayer(reference
+					.getElement());
 
 			rankPlayer.mute(pitch);
 		}
