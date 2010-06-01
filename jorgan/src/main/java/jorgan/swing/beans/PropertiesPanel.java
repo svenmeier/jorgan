@@ -405,8 +405,8 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 
 	public BeanInfo getBeanInfo(Class<?> beanClass)
 			throws IntrospectionException {
-		return new WriteableBeanInfo(new SortingBeanInfo(Introspector
-				.getBeanInfo(beanClass)));
+		return new PreferredBeanInfo(new WriteableBeanInfo(new SortingBeanInfo(
+				Introspector.getBeanInfo(beanClass))));
 	}
 
 	public PropertyEditor getPropertyEditor(PropertyDescriptor descriptor)

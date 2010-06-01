@@ -48,8 +48,8 @@ public class PropertiesBeanInfo extends SimpleBeanInfo {
 	protected void registerProperties() {
 	}
 
-	protected void add(String name, Class<?> clazz, String displayName,
-			Class<?> editor) {
+	protected PropertyDescriptor add(String name, Class<?> clazz,
+			String displayName, Class<?> editor) {
 		try {
 			PropertyDescriptor descriptor = new PropertyDescriptor(name, clazz);
 
@@ -60,6 +60,8 @@ public class PropertiesBeanInfo extends SimpleBeanInfo {
 			}
 
 			descriptors.add(descriptor);
+
+			return descriptor;
 		} catch (Exception ex) {
 			throw new Error(ex);
 		}

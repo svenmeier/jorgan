@@ -18,6 +18,8 @@
  */
 package jorgan.gui.construct.info;
 
+import java.beans.PropertyDescriptor;
+
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.construct.editor.StringEditor;
@@ -36,6 +38,9 @@ public class ElementBeanInfo extends PropertiesBeanInfo {
 
 	protected void add(String name, Class<? extends Element> clazz,
 			Class<?> editor) {
-		add(name, clazz, Elements.getDisplayName(clazz, name), editor);
+		PropertyDescriptor descriptor = add(name, clazz, Elements
+				.getDisplayName(clazz, name), editor);
+
+		descriptor.setPreferred(true);
 	}
 }
