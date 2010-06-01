@@ -47,10 +47,11 @@ Name: "linuxsampler"; Description: "Linuxsampler"; Types: standard
 Name: "memory"; Description: "Memory"; Types: standard
 Name: "midimerger"; Description: "Midi merger"; Types: standard
 Name: "recorder"; Description: "Recorder"; Types: standard
-Name: "sams"; Description: "SAMs"; Types:
-Name: "skins"; Description: "Skins"; Types: standard
 Name: "soundfont"; Description: "Soundfont"; Types: standard
+Name: "sams"; Description: "SAMs"; Types:
 Name: "sysex"; Description: "Sysex"; Types:
+Name: "tools"; Description: "Tools"; Types:
+Name: "skins"; Description: "Skins"; Types: standard
 
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
@@ -71,6 +72,7 @@ Source: "..\jorgan-sams\target\marshal\*"; DestDir: "{app}"; Components: sams; F
 Source: "..\jorgan-skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-sysex\target\marshal\*"; DestDir: "{app}"; Components: sysex; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-tools\target\marshal\*"; DestDir: "{app}"; Components: sysex; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"
@@ -90,5 +92,4 @@ Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; V
 
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
-
 
