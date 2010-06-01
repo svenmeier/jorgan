@@ -17,5 +17,6 @@
     <ant dir="jorgan-skins"/>
     <ant dir="jorgan-soundfont"/>
     <ant dir="jorgan-sysex"/>
+    <ant dir="jorgan-tools"/>
   </target>
 </project>
