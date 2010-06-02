@@ -19,18 +19,12 @@
 package jorgan.util;
 
 import java.io.File;
-import java.net.JarURLConnection;
 import java.net.URL;
-import java.net.URLDecoder;
 
 /**
  * Collection of utility methods for classes.
  */
 public class ClassUtils {
-
-	private static final String JAR_PROTOCOL = "jar:";
-
-	private static final String FILE_PROTOCOL = "file:";
 
 	/**
 	 * Analyse where the given class was loaded from, i.e.
@@ -44,46 +38,16 @@ public class ClassUtils {
 	 */
 	public static File getDirectory(Class<?> clazz) {
 		try {
-			URL url = getClassURL(clazz);
+			URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
 
-			if (url.toString().startsWith(JAR_PROTOCOL)) {
-				// jar:file:/C:/FooMatic/./lib/foo.jar!/foo/Bar.class
-				JarURLConnection jarCon = (JarURLConnection) url
-						.openConnection();
-
-				// file:/C:/FooMatic/./lib/foo.jar
-				URL jarUrl = jarCon.getJarFileURL();
-
-				// /C:/FooMatic/./lib/foo.jar
-				File jarFile = new File(URLDecoder.decode(jarUrl.getPath(),
-						"UTF-8"));
-
-				// /C:/FooMatic/./lib
-				return jarFile.getParentFile();
-			} else if (url.toString().startsWith(FILE_PROTOCOL)) {
-				String path = url.getPath();
-
-				return new File(path.substring(0, path.length()
-						- getClassResourceName(clazz).length()));
+			File file = new File(url.getPath());
+			if (!file.isDirectory()) {
+				// jar parent directory
+				file = file.getParentFile();
 			}
+			return file;
 		} catch (Exception fallBackToUserDir) {
+			return new File(System.getProperty("user.dir"));
 		}
-
-		return new File(System.getProperty("user.dir"));
-	}
-
-	/**
-	 * Get URL of the given class.
-	 * 
-	 * @param clazz
-	 *            class to get URL for
-	 * @return the URL this class was loaded from
-	 */
-	private static URL getClassURL(Class<?> clazz) {
-		return clazz.getResource(getClassResourceName(clazz));
-	}
-
-	private static String getClassResourceName(Class<?> clazz) {
-		return ("/" + clazz.getName().replace('.', '/') + ".class");
 	}
 }
