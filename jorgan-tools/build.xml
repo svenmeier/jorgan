@@ -41,7 +41,7 @@
       </fileset>
     </copy> 		
 
-	<zip destfile="./target/jOrgan-tools-${util.version}.zip">
+	<zip destfile="./target/jOrgan-tools-${tools.version}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
   </target>
