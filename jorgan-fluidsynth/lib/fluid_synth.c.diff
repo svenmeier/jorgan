@@ -1,0 +1,85 @@
+--- Desktop/old/fluidsynth-1.1.1/src/fluid_synth.c	2009-12-16 03:26:41.000000000 +0100
++++ Desktop/fluid_synth.c	2010-06-01 20:52:19.273824636 +0200
+@@ -57,6 +57,7 @@
+ static int fluid_synth_noteoff_LOCAL(fluid_synth_t* synth, int chan, int key);
+ static int fluid_synth_damp_voices_LOCAL(fluid_synth_t* synth, int chan);
+ static int fluid_synth_cc_LOCAL(fluid_synth_t* synth, int channum, int num);
++static int fluid_synth_program_change_LOCAL(fluid_synth_t* synth, int channum, int prognum);
+ static int fluid_synth_update_device_id (fluid_synth_t *synth, char *name,
+                                          int value);
+ static int fluid_synth_sysex_midi_tuning (fluid_synth_t *synth, const char *data,
+@@ -1375,6 +1376,9 @@
+     FLUID_LOG(FLUID_INFO, "cc\t%d\t%d\t%d", chan, num, val);
+ 
+   fluid_channel_set_cc (synth->channel[chan], num, val);
++  if (num == ALL_CTRL_OFF) {
++    fluid_channel_init_ctrl (synth->channel[chan], 1);
++  }
+ 
+   if (fluid_synth_should_queue (synth))
+     return fluid_synth_queue_midi_event (synth, CONTROL_CHANGE, chan, num, 0);
+@@ -1410,7 +1414,6 @@
+     fluid_synth_all_sounds_off_LOCAL (synth, channum);
+     break;
+   case ALL_CTRL_OFF:
+-    fluid_channel_init_ctrl (chan, 1);
+     fluid_synth_modulate_voices_all_LOCAL (synth, channum);
+     break;
+   case DATA_ENTRY_MSB:
+@@ -2222,28 +2225,35 @@
+  * @param prognum MIDI program number (0-127)
+  * @return FLUID_OK on success, FLUID_FAILED otherwise
+  */
+-/* FIXME - Currently not real-time safe, due to preset allocation and mutex lock,
+- * and may be called from within synthesis context. */
+-
+ /* As of 1.1.1 prognum can be set to 128 to unset the preset.  Not documented
+  * since fluid_synth_unset_program() should be used instead. */
+ int
+ fluid_synth_program_change(fluid_synth_t* synth, int chan, int prognum)
+ {
++  fluid_return_val_if_fail (synth != NULL, FLUID_FAILED);
++  fluid_return_val_if_fail (chan >= 0 && chan < synth->midi_channels, FLUID_FAILED);
++  fluid_return_val_if_fail (prognum >= 0 && prognum <= 127, FLUID_FAILED);
++
++  if (synth->verbose)
++    FLUID_LOG(FLUID_INFO, "prog\t%d\t%d", chan, prognum);
++
++  if (fluid_synth_should_queue (synth))
++    return fluid_synth_queue_midi_event (synth, PROGRAM_CHANGE, chan, prognum, 0);
++  else
++    return fluid_synth_program_change_LOCAL (synth, chan, prognum);
++}
++  
++/* Local synthesis thread variant of fluid_synth_program_change */
++static int
++fluid_synth_program_change_LOCAL(fluid_synth_t* synth, int chan, int prognum)
++{
+   fluid_preset_t* preset = NULL;
+   fluid_channel_t* channel;
+   int subst_bank, subst_prog, banknum;
+ 
+-  fluid_return_val_if_fail (synth != NULL, FLUID_FAILED);
+-  fluid_return_val_if_fail (chan >= 0 && chan < synth->midi_channels, FLUID_FAILED);
+-  fluid_return_val_if_fail (prognum >= 0 && prognum <= 128, FLUID_FAILED);
+-
+   channel = synth->channel[chan];
+   fluid_channel_get_sfont_bank_prog(channel, NULL, &banknum, NULL);
+ 
+-  if (synth->verbose)
+-    FLUID_LOG(FLUID_INFO, "prog\t%d\t%d\t%d", chan, banknum, prognum);
+-
+   /* Special handling of channel 10 (or 9 counting from 0). channel
+    * 10 is the percussion channel.
+    *
+@@ -3312,6 +3322,10 @@
+           fluid_synth_noteoff_LOCAL (synth, event->midi.channel,
+                                      event->midi.param1);
+           break;
++        case PROGRAM_CHANGE:
++          fluid_synth_program_change_LOCAL (synth, event->midi.channel,
++                                     event->midi.param1);
++          break;
+         case CONTROL_CHANGE:
+           fluid_synth_cc_LOCAL (synth, event->midi.channel, event->midi.param1);
+           break;
