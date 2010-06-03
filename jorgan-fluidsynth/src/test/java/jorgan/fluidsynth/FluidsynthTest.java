@@ -107,9 +107,8 @@ public class FluidsynthTest extends TestCase {
 	private void script(Recording recording) throws Exception {
 		int CONTROLLER = 11;
 
-		// Thread.sleep(11);
-		recording.on(192, 0, 0);
 		recording.on(176, 121, 0);
+		recording.on(192, 0, 0);
 		recording.on(176, CONTROLLER, 60);
 		recording.w();
 		recording.on(144, 60, 127);
