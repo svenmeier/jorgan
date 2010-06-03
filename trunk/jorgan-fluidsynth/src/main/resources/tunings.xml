@@ -548,4 +548,24 @@
     <name>Zarlino (-2/7)</name>
     <derivations>12.569,-16.759,4.190,25.138,-4.190,16.758,-12.569,8.379,-20.949,0.000,20.948,-8.380</derivations>
   </tuning>
+  <tuning>
+    <name>1/5 PC Circlulating F-C-G-D-A-E</name>
+    <derivations>8.2,3.1,2.7,7,-2.7,10.9,1.2,5.5,5.1,0,9,-0.8</derivations>
+  </tuning>
+  <tuning>
+    <name>Bach-Lehman</name>
+    <derivations>5.87,3.91,1.96,3.91,-1.96,7.82,1.96,3.91,3.91,0,3.91,0</derivations>
+  </tuning>
+  <tuning>
+    <name>Near Equal</name>
+    <derivations>1.96,0,1.96,0,1.96,0,1.96,0,1.96,0,1.96,0</derivations>
+  </tuning>
+  <tuning>
+    <name>Valotti-Young</name>
+    <derivations>6.17,0.11,1.98,4.02,-2.09,6.1,-1.89,4.08,1.98,0,5.99,-2.01</derivations>
+  </tuning>
+  <tuning>
+    <name>Broadwood's Best (1885)</name>
+    <derivations>5.02,0.98,3.01,2.97,-2.01,3.96,-0.02,5.01,1.98,0,3.97,-1.01</derivations>
+  </tuning>
 </tunings>
