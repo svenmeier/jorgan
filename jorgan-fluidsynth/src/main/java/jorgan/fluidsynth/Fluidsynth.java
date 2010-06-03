@@ -160,13 +160,6 @@ public class Fluidsynth {
 			break;
 		case ShortMessage.CONTROL_CHANGE:
 			controlChange(context, channel, data1, data2);
-			// if (data1 == 121) {
-			// // have to sleep to give reset-all-controllers time
-			// try {
-			// Thread.sleep(20);
-			// } catch (InterruptedException interrupted) {
-			// }
-			// }
 			break;
 		case ShortMessage.PITCH_BEND:
 			pitchBend(context, channel, (data2 * 128) + data1);
