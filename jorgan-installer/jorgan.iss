@@ -72,7 +72,7 @@ Source: "..\jorgan-sams\target\marshal\*"; DestDir: "{app}"; Components: sams; F
 Source: "..\jorgan-skins\target\marshal\*"; DestDir: "{app}"; Components: skins; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-soundfont\target\marshal\*"; DestDir: "{app}"; Components: soundfont; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-sysex\target\marshal\*"; DestDir: "{app}"; Components: sysex; Flags: recursesubdirs createallsubdirs
-Source: "..\jorgan-tools\target\marshal\*"; DestDir: "{app}"; Components: sysex; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-tools\target\marshal\*"; DestDir: "{app}"; Components: tools; Flags: recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"
@@ -92,4 +92,5 @@ Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; V
 
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
+
 
