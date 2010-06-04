@@ -20,6 +20,7 @@ package jorgan.util;
 
 import java.io.File;
 import java.net.URL;
+import java.net.URLDecoder;
 
 /**
  * Collection of utility methods for classes.
@@ -39,8 +40,7 @@ public class ClassUtils {
 	public static File getDirectory(Class<?> clazz) {
 		try {
 			URL url = clazz.getProtectionDomain().getCodeSource().getLocation();
-
-			File file = new File(url.getPath());
+			File file = new File(URLDecoder.decode(url.getPath(), "UTF-8"));
 			if (!file.isDirectory()) {
 				// jar parent directory
 				file = file.getParentFile();
