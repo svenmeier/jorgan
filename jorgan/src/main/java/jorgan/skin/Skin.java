@@ -18,12 +18,12 @@
  */
 package jorgan.skin;
 
-import java.io.IOException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  * A skin.
@@ -35,6 +35,8 @@ public class Skin implements Resolver {
 	private ArrayList<Style> styles = new ArrayList<Style>();
 
 	private transient Resolver resolver;
+
+	private transient Map<String, URL> urls;
 
 	public String getName() {
 		return name;
@@ -49,7 +51,7 @@ public class Skin implements Resolver {
 
 	public List<Style> createStyles() {
 		List<Style> clones = new ArrayList<Style>();
-	
+
 		for (int s = 0; s < styles.size(); s++) {
 			Style style = styles.get(s);
 
@@ -58,12 +60,14 @@ public class Skin implements Resolver {
 
 			clones.add(clone);
 		}
-		
+
 		return clones;
 	}
 
 	public void setResolver(Resolver resolver) {
 		this.resolver = resolver;
+
+		this.urls = new HashMap<String, URL>();
 	}
 
 	public Skin getSkin() {
@@ -98,6 +102,15 @@ public class Skin implements Resolver {
 	}
 
 	public URL resolve(String name) {
+		URL url = urls.get(name);
+		if (url == null) {
+			url = resolveImpl(name);
+			urls.put(name, url);
+		}
+		return url;
+	}
+
+	private URL resolveImpl(String name) {
 		String locale = "_" + Locale.getDefault().toString();
 
 		int suffix = name.lastIndexOf('.');
@@ -110,7 +123,7 @@ public class Skin implements Resolver {
 					+ name.substring(suffix);
 
 			URL url = resolver.resolve(localized);
-			if (probe(url)) {
+			if (url != null) {
 				return url;
 			}
 
@@ -119,17 +132,6 @@ public class Skin implements Resolver {
 			} else {
 				locale = locale.substring(0, locale.lastIndexOf('_'));
 			}
-		}
-	}
-
-	private boolean probe(URL url) {
-		URLConnection connection;
-		try {
-			connection = url.openConnection();
-
-			return connection.getContentLength() > 0;
-		} catch (IOException ex) {
-			return false;
 		}
 	}
 }

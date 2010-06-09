@@ -133,9 +133,13 @@ public class Console extends Displayable implements Input, Output {
 	}
 
 	public int getX(Element element) {
-		LocationReference reference = (LocationReference) getReference(element);
+		if (element == this) {
+			return 0;
+		} else {
+			LocationReference reference = (LocationReference) getReference(element);
 
-		return reference.getX();
+			return reference.getX();
+		}
 	}
 
 	public int getY(Element element) {

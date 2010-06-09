@@ -16,11 +16,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.skin;
+package jorgan.swing;
 
 import java.awt.Font;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,7 +32,19 @@ import java.util.Map;
  */
 public class FontCache {
 
-	private static Map<URL, Font> fonts = new HashMap<URL, Font>();
+	private static Map<String, Reference<Font>> fonts = new HashMap<String, Reference<Font>>();
+
+	private static Font get(String key) {
+		Reference<Font> reference = fonts.get(key);
+		if (reference != null) {
+			return reference.get();
+		}
+		return null;
+	}
+
+	private static void put(String key, Font font) {
+		fonts.put(key, new SoftReference<Font>(font));
+	}
 
 	/**
 	 * Flush all cached fonts.
@@ -39,19 +53,26 @@ public class FontCache {
 		fonts.clear();
 	}
 
-	/**
-	 * Get an image for the given URL.
-	 * 
-	 * @param url
-	 *            url to get image for
-	 * @return image
-	 */
-	public static Font getFont(URL url) {
-		if (url == null) {
-			throw new IllegalArgumentException("url must not be null");
+	public static Font getFont(URL url, int style, float size) {
+		String key = "" + style + ":" + size + ":" + url;
+
+		Font font = get(key);
+		if (font == null) {
+			font = deriveFont(getFont(url), style, size);
+			put(key, font);
 		}
 
-		Font font = fonts.get(url);
+		return font;
+	}
+
+	private static Font deriveFont(Font font, int style, float size) {
+		return font.deriveFont(style, size);
+	}
+
+	private static Font getFont(URL url) {
+		String key = url.toString();
+
+		Font font = get(key);
 		if (font == null) {
 			try {
 				InputStream input = url.openStream();
@@ -66,7 +87,7 @@ public class FontCache {
 			} catch (Exception e) {
 			}
 
-			fonts.put(url, font);
+			put(key, font);
 		}
 
 		return font;

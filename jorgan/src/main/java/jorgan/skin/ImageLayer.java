@@ -21,12 +21,14 @@ package jorgan.skin;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Insets;
+import java.io.IOException;
 import java.net.URL;
 
 import javax.swing.ImageIcon;
 
 import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
+import jorgan.swing.ImageCache;
 
 /**
  * An image layer.
@@ -86,11 +88,15 @@ public class ImageLayer extends Layer {
 
 		URL url = resolve(file);
 		if (url != null) {
-			image = ImageCache.getImage(url);
-		} else {
-			image = new ImageIcon(getClass().getResource("img/missing.gif"))
-					.getImage();
+			try {
+				image = ImageCache.getImage(url, view.getScale());
+				return;
+			} catch (IOException useMissingIcon) {
+			}
 		}
+
+		image = new ImageIcon(getClass().getResource("img/missing.gif"))
+				.getImage();
 	}
 
 	@Override

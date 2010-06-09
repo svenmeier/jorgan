@@ -29,6 +29,7 @@ import java.util.List;
 
 import jorgan.disposition.Displayable;
 import jorgan.gui.console.View;
+import jorgan.swing.FontCache;
 
 /**
  * A text layer.
@@ -37,11 +38,13 @@ public class TextLayer extends Layer {
 
 	private Alignment alignment = Alignment.CENTER;
 
-	private Font font = new Font("Arial", Font.PLAIN, 12);
+	private Font font;
 
 	private Color color = Color.black;
 
 	private boolean antialiased = false;
+
+	private transient Font scaledFont;
 
 	private transient List<Line> lines;
 
@@ -83,7 +86,7 @@ public class TextLayer extends Layer {
 
 	public void setFont(Font font) {
 		if (font == null) {
-			throw new IllegalArgumentException("font of label cannot be null");
+			throw new IllegalArgumentException("font cannot be null");
 		}
 
 		this.font = font;
@@ -113,9 +116,11 @@ public class TextLayer extends Layer {
 		super.setView(view);
 
 		URL url = resolve(font.getName());
-		if (url != null) {
-			font = FontCache.getFont(url).deriveFont(
-					font.getStyle(), font.getSize());
+		if (url == null) {
+			scaledFont = font.deriveFont(font.getSize() * view.getScale());
+		} else {
+			scaledFont = FontCache.getFont(url, font.getStyle(), font.getSize()
+					* view.getScale());
 		}
 
 		String text = "";
@@ -125,7 +130,7 @@ public class TextLayer extends Layer {
 		}
 
 		breakLines(text.toString().trim(), view.getContainer().getHost()
-				.getFontMetrics(font));
+				.getFontMetrics(scaledFont));
 	}
 
 	/**
@@ -154,9 +159,10 @@ public class TextLayer extends Layer {
 				length = lineBreak - start;
 			}
 
-			// width exceeded?
 			if (getWidth() > 0) {
-				while (metrics.charsWidth(chars, start, length) > getWidth()) {
+				int scaledWidth = scale(getWidth());
+				// width exceeded?
+				while (metrics.charsWidth(chars, start, length) > scaledWidth) {
 
 					// seek word break (single whitespace)
 					int wordBreak = text.lastIndexOf(' ', start + length - 1);
@@ -170,7 +176,7 @@ public class TextLayer extends Layer {
 					if (wordBreak <= start) {
 						// decrease length until width fits
 						while (length > 1
-								&& metrics.charsWidth(chars, start, length) > getWidth()) {
+								&& metrics.charsWidth(chars, start, length) > scaledWidth) {
 							length--;
 						}
 					} else {
@@ -182,8 +188,11 @@ public class TextLayer extends Layer {
 
 			Line line = new Line(chars, start, length, metrics);
 			height += line.ascent + line.descent;
-			if (getHeight() > 0 && height > getHeight()) {
-				return;
+			if (getHeight() > 0) {
+				int scaledHeight = scale(getHeight());
+				if (height > scaledHeight) {
+					return;
+				}
 			}
 
 			if (lines.size() > 0) {
@@ -204,7 +213,7 @@ public class TextLayer extends Layer {
 
 	@Override
 	protected void draw(Graphics2D g, int x, int y, int width, int height) {
-		g.setFont(font);
+		g.setFont(scaledFont);
 		g.setColor(color);
 
 		Object wasAntialiased = g

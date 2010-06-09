@@ -31,5 +31,5 @@
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jorgan"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../jorgan-skins&#13;&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#13;&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#13;&#10;-Duser.language=en&#13;&#10;-Dsun.java2d.opengl=true&#13;&#10;-Dsun.java2d.translaccel=true"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../jorgan-skins&#13;&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#13;&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#13;&#10;-Duser.language=en&#13;&#10;-Xms256m&#10;-Xmx256m"/>
 </launchConfiguration>
