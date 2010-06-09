@@ -21,8 +21,10 @@ package jorgan.util;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,16 +35,27 @@ public class PluginUtils {
 	private static final Logger logger = Logger.getLogger(PluginUtils.class
 			.getName());
 
+	private static Map<Class<?>, List<?>> cache = new HashMap<Class<?>, List<?>>();
+
 	/**
 	 * Utility method to get all registered providers.
 	 * 
 	 * @return providers
 	 */
+	@SuppressWarnings("unchecked")
 	public static <P> List<P> lookup(Class<P> clazz) {
-		ArrayList<P> providers = new ArrayList<P>();
+		List<P> providers = (List<P>) cache.get(clazz);
+		if (providers == null) {
+			providers = lookupImpl(clazz);
+			cache.put(clazz, providers);
+		}
+		return providers;
+	}
+
+	private static <P> List<P> lookupImpl(Class<P> clazz) {
+		List<P> providers = new ArrayList<P>();
 
 		Iterator<P> iterator = ServiceRegistry.lookupProviders(clazz);
-
 		while (iterator.hasNext()) {
 			try {
 				P provider = iterator.next();
