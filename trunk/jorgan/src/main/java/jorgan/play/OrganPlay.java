@@ -204,14 +204,14 @@ public abstract class OrganPlay {
 		}
 		open = true;
 
+		clock = new Clock(this);
+
 		Iterator<Player<? extends Element>> toOpen = players.values()
 				.iterator();
 		while (toOpen.hasNext()) {
 			Player<? extends Element> player = toOpen.next();
 			player.open();
 		}
-
-		clock = new Clock(this);
 
 		Iterator<Player<? extends Element>> toUpdate = players.values()
 				.iterator();
@@ -236,8 +236,7 @@ public abstract class OrganPlay {
 			throw new IllegalStateException("not open");
 		}
 
-		clock.destroy();
-		clock = null;
+		clock.stop();
 
 		Iterator<Player<? extends Element>> iterator = players.values()
 				.iterator();

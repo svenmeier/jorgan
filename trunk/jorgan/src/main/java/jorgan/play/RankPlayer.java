@@ -31,9 +31,9 @@ import jorgan.disposition.Rank.NotePlayed;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.play.OrganPlay.Playing;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
-import jorgan.play.sound.DelayedChannel;
 import jorgan.problem.Severity;
 
 /**
@@ -89,6 +89,10 @@ public class RankPlayer extends Player<Rank> {
 			return;
 		}
 
+		if (rank.getDelay() > 0) {
+			channel = new DelayedChannel(channel);
+		}
+
 		if (channel == null) {
 			channel = new DeadChannel();
 
@@ -102,10 +106,6 @@ public class RankPlayer extends Player<Rank> {
 
 				channel = player.filter(channel);
 			}
-		}
-
-		if (rank.getDelay() > 0) {
-			channel = new DelayedChannel(channel, rank.getDelay());
 		}
 
 		this.channel = new ChannelImpl(channel);
@@ -248,6 +248,38 @@ public class RankPlayer extends Player<Rank> {
 
 		public void set(String name, float value) {
 			throw new UnsupportedOperationException();
+		}
+	}
+
+	private class DelayedChannel implements Channel {
+
+		private Channel channel;
+
+		public DelayedChannel(Channel channel) {
+			this.channel = channel;
+		}
+
+		@Override
+		public void init() {
+			this.channel.init();
+		}
+
+		@Override
+		public void release() {
+			this.channel.release();
+		}
+
+		@Override
+		public void sendMessage(final int command, final int data1,
+				final int data2) {
+			Rank rank = getElement();
+
+			getOrganPlay().getClock().alarm(rank, new Playing() {
+				@Override
+				public void play(Player<?> player) {
+					channel.sendMessage(command, data1, data2);
+				}
+			}, System.currentTimeMillis() + rank.getDelay());
 		}
 	}
 }
