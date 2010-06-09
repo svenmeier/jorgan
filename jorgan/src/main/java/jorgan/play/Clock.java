@@ -87,17 +87,31 @@ public class Clock {
 	}
 
 	/**
+	 * @see Player#onAlarm(long)
+	 */
+	public void alarm(final Element element, final long time) {
+		alarm(element, new Playing() {
+			@Override
+			public void play(Player<?> player) {
+				player.onAlarm(time);
+			}
+		}, time);
+	}
+
+	/**
 	 * Alarm for the element at the given time.
 	 */
-	public void alarm(Element element, long time) {
-
-		synchronized (alarms) {
-			alarms.add(new Alarm(element, time));
-			alarms.notifyAll();
+	public void alarm(Element element, Playing playing, long time) {
+		if (thread != null) {
+			// TODO should trigger all pending and new alarm?
+			synchronized (alarms) {
+				alarms.add(new Alarm(element, playing, time));
+				alarms.notifyAll();
+			}
 		}
 	}
 
-	public void destroy() {
+	public void stop() {
 		thread = null;
 
 		synchronized (alarms) {
@@ -106,14 +120,17 @@ public class Clock {
 		}
 	}
 
-	private class Alarm implements Comparable<Alarm>, Playing {
+	private class Alarm implements Comparable<Alarm> {
 
 		private Element element;
 
+		private Playing playing;
+
 		private long time;
 
-		public Alarm(Element element, long time) {
+		public Alarm(Element element, Playing playing, long time) {
 			this.element = element;
+			this.playing = playing;
 			this.time = time;
 		}
 
@@ -122,12 +139,7 @@ public class Clock {
 		}
 
 		public void trigger() {
-			play.play(element, this);
-		}
-
-		@Override
-		public void play(Player<?> player) {
-			player.onAlarm(time);
+			play.play(element, playing);
 		}
 
 		@Override
