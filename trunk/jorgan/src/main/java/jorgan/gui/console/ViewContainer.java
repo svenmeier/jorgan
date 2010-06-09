@@ -37,6 +37,8 @@ public interface ViewContainer {
 	 */
 	public Component getHost();
 
+	public float getScale(View<? extends Displayable> view);
+
 	/**
 	 * Get the style for the given view.
 	 */

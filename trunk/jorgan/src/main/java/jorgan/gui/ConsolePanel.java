@@ -29,7 +29,6 @@ import java.awt.KeyEventPostProcessor;
 import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.RenderingHints;
 import java.awt.Toolkit;
 import java.awt.dnd.DnDConstants;
 import java.awt.dnd.DropTarget;
@@ -41,7 +40,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.geom.AffineTransform;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -102,8 +100,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private static Configuration config = Configuration.getRoot().get(
 			ConsolePanel.class);
 
-	private boolean markXOR = false;
-
 	/**
 	 * The organ of the edited console.
 	 */
@@ -135,8 +131,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private boolean constructing = false;
 
 	private int grid = 1;
-
-	private boolean interpolate = false;
 
 	private Color popupBackgound = new Color(255, 255, 225);
 
@@ -267,10 +261,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		setConstructing(!constructing);
 	}
 
-	public void setMarkXOR(boolean markXOR) {
-		this.markXOR = markXOR;
-	}
-
 	public void dispose() {
 		this.session.getOrgan().removeOrganListener(
 				(OrganListener) Spin.over(eventHandler));
@@ -299,14 +289,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				.removeKeyEventPostProcessor(shortcutHandler);
 
 		super.removeNotify();
-	}
-
-	public boolean getInterpolate() {
-		return interpolate;
-	}
-
-	public void setInterpolate(boolean interpolate) {
-		this.interpolate = interpolate;
 	}
 
 	public int getGrid() {
@@ -355,28 +337,28 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public int getScrollableUnitIncrement(Rectangle visibleRect,
 			int orientation, int direction) {
 
-		int viewPos;
+		int dispositionPos;
 		if (orientation == SwingConstants.VERTICAL) {
-			viewPos = screenToView(visibleRect.y);
+			dispositionPos = screenToDisposition(visibleRect.y);
 		} else {
-			viewPos = screenToView(visibleRect.x);
+			dispositionPos = screenToDisposition(visibleRect.x);
 		}
 
-		int newViewPos;
+		int newDispositionPos;
 		if (direction > 0) {
-			newViewPos = viewPos + grid;
+			newDispositionPos = dispositionPos + grid;
 		} else {
-			newViewPos = viewPos - 1;
+			newDispositionPos = dispositionPos - 1;
 		}
 
 		// snap new view position to grid
-		newViewPos = newViewPos - (newViewPos % grid);
+		newDispositionPos = newDispositionPos - (newDispositionPos % grid);
 
-		int viewIncrement = Math.abs(viewPos - newViewPos);
+		int viewIncrement = Math.abs(dispositionPos - newDispositionPos);
 
 		// Ensure an increment of at least 1, since translation to screen
 		// can make view increment irrelevant.
-		return Math.max(1, viewToScreen(viewIncrement, false));
+		return Math.max(1, dispositionToScreen(viewIncrement));
 	}
 
 	/**
@@ -386,24 +368,40 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 *            element to scroll to
 	 */
 	public void scrollDisplayableToVisible(View<?> view) {
-		int x1 = viewToScreen(view.getX(), false);
-		int y1 = viewToScreen(view.getY(), false);
-		int x2 = viewToScreen(view.getX() + view.getWidth(), true);
-		int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+		int x1 = view.getX();
+		int y1 = view.getY();
+		int x2 = view.getX() + view.getWidth();
+		int y2 = view.getY() + view.getHeight();
 
 		scrollRectToVisible(new Rectangle(x1, y1, x2 - x1, y2 - y1));
 	}
 
-	protected int viewToScreen(int viewPos, boolean roundUp) {
-		if (roundUp) {
-			return Math.round(viewPos * console.getZoom());
-		} else {
-			return (int) (viewPos * console.getZoom());
-		}
+	private int dispositionToScreen(int dispositionPos) {
+		return (int) (dispositionPos * console.getZoom());
 	}
 
-	protected int screenToView(int screenPos) {
+	private int screenToDisposition(int screenPos) {
 		return (int) (screenPos / console.getZoom());
+	}
+
+	@Override
+	public float getScale(View<? extends Displayable> view) {
+		float scale = view.getElement().getZoom();
+		if (scale < 0.5f) {
+			// don't trust element's zoom
+			scale = 0.5f;
+		}
+
+		if (view != consoleView) {
+			float consoleScale = console.getZoom();
+			if (consoleScale < 0.5f) {
+				// don't trust element's zoom
+				consoleScale = 0.5f;
+			}
+			scale = scale * consoleScale;
+		}
+
+		return scale;
 	}
 
 	public Style getStyle(View<? extends Displayable> view) {
@@ -429,8 +427,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		popup.setBody(contents);
 
 		Point location = getLocationOnScreen();
-		location.x += viewToScreen(view.getX(), false);
-		location.y += viewToScreen(view.getY(), false);
+		location.x += view.getX();
+		location.y += view.getY();
 		popup.setLocation(location);
 		popup.setVisible(true);
 	}
@@ -592,14 +590,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			y = Math.max(y, view.getY() + view.getHeight());
 		}
 
-		return new Dimension(viewToScreen(x, true), viewToScreen(y, true));
+		return new Dimension(x, y);
 	}
 
 	private void repaintView(View<? extends Displayable> view) {
-		int x1 = viewToScreen(view.getX(), false);
-		int y1 = viewToScreen(view.getY(), false);
-		int x2 = viewToScreen(view.getX() + view.getWidth(), true);
-		int y2 = viewToScreen(view.getY() + view.getHeight(), true);
+		int x1 = view.getX();
+		int y1 = view.getY();
+		int x2 = view.getX() + view.getWidth();
+		int y2 = view.getY() + view.getHeight();
 
 		repaint(x1, y1, x2 - x1, y2 - y1);
 	}
@@ -630,6 +628,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public void paintComponent(Graphics graphics) {
 		Graphics2D graphics2D = (Graphics2D) graphics;
 
+		// Image createImage = createImage(10, 10);
+
 		Rectangle clip = graphics.getClipBounds();
 		graphics.setColor(getBackground());
 		// graphics.setColor(new Color((int)(Math.random() * 255),
@@ -637,14 +637,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		graphics.fillRect(clip.x, clip.y, clip.width, clip.height);
 
 		if (console != null) {
-			AffineTransform original = graphics2D.getTransform();
-			graphics2D.scale(console.getZoom(), console.getZoom());
-			if (interpolate) {
-				graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-						RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-			}
 			paintViews(graphics2D);
-			graphics2D.setTransform(original);
 		}
 
 		if (constructing) {
@@ -704,6 +697,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 				repaint();
 				revalidate();
+
+				if (constructing) {
+					constructionHandler.updateViewMarkers();
+				}
 			} else if (element instanceof Displayable) {
 				View<? extends Displayable> view = getView((Displayable) element);
 				if (view != null) {
@@ -716,6 +713,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 					}
 
 					repaintView(view);
+				}
+
+				if (constructing) {
+					constructionHandler.updateViewMarkers();
 				}
 			}
 		}
@@ -828,8 +829,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			session.lookup(UndoManager.class).compound();
 
-			pressedView = getView(screenToView(e.getX()),
-					screenToView(e.getY()));
+			pressedView = getView(e.getX(), e.getY());
 			if (pressedView != null) {
 				pressedOrigin = new Point(pressedView.getX(), pressedView
 						.getY());
@@ -858,8 +858,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			View<? extends Displayable> view = getView(screenToView(e.getX()),
-					screenToView(e.getY()));
+			View<? extends Displayable> view = getView(e.getX(), e.getY());
 			if (view == null) {
 				setCursor(Cursor.getDefaultCursor());
 			} else {
@@ -888,30 +887,27 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (dragMarker.contains(viewToScreen(view.getX(), false),
-							viewToScreen(view.getY(), false), viewToScreen(view
-									.getWidth(), false), viewToScreen(view
-									.getHeight(), false))) {
+					if (dragMarker.contains(view.getX(), view.getY(), view
+							.getWidth(), view.getHeight())) {
 						elements.add(view.getElement());
 					}
 				}
 				session.lookup(ElementSelection.class).setSelectedElements(
 						elements);
 			} else {
-				int deltaX = pressedOrigin.x - pressedView.getX();
-				int deltaY = pressedOrigin.y - pressedView.getY();
-
-				deltaX += grid(pressedOrigin.x
-						+ screenToView(mouseTo.x - mouseFrom.x))
-						- pressedOrigin.x;
-				deltaY += grid(pressedOrigin.y
-						+ screenToView(mouseTo.y - mouseFrom.y))
-						- pressedOrigin.y;
+				int deltaX = grid(screenToDisposition(pressedOrigin.x
+						+ mouseTo.x - mouseFrom.x))
+						- screenToDisposition(pressedView.getX());
+				int deltaY = grid(screenToDisposition(pressedOrigin.y
+						+ mouseTo.y - mouseFrom.y))
+						- screenToDisposition(pressedView.getY());
 
 				for (View<? extends Displayable> markedView : selectedViews) {
-					console.setLocation(markedView.getElement(), markedView
-							.getX()
-							+ deltaX, markedView.getY() + deltaY);
+					Displayable element = markedView.getElement();
+					console.setLocation(element,
+							console.getX(element) + deltaX, console
+									.getY(element)
+									+ deltaY);
 				}
 			}
 		}
@@ -977,17 +973,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			viewMarkers.clear();
 
 			for (View<? extends Displayable> view : selectedViews) {
-				viewMarkers.add(createMarker(viewToScreen(view.getX(), false),
-						viewToScreen(view.getY(), false), viewToScreen(view
-								.getX()
-								+ view.getWidth(), true), viewToScreen(view
-								.getY()
-								+ view.getHeight(), true)));
+				viewMarkers.add(createMarker(view.getX(), view.getY(), view
+						.getX()
+						+ view.getWidth(), view.getY() + view.getHeight()));
 			}
 		}
 
 		private Marker createMarker(int x1, int y1, int x2, int y2) {
-			return Marker.create(ConsolePanel.this, markXOR, null,
+			return Marker.create(ConsolePanel.this, false, null,
 					getForeground(), stroke, x1, y1, x2, y2);
 
 		}
@@ -1002,8 +995,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			int x = screenToView(e.getX());
-			int y = screenToView(e.getY());
+			int x = e.getX();
+			int y = e.getY();
 
 			if (!e.isPopupTrigger()) {
 				View<? extends Displayable> view = getView(x, y);
@@ -1019,16 +1012,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
-			View<? extends Displayable> view = getView(screenToView(e.getX()),
-					screenToView(e.getY()));
+			View<? extends Displayable> view = getView(e.getX(), e.getY());
 
 			Cursor cursor = Cursor.getDefaultCursor();
 			String tooltip = null;
 			if (view != null) {
 				tooltip = getTooltip(view.getElement());
 
-				int x = screenToView(e.getX());
-				int y = screenToView(e.getY());
+				int x = e.getX();
+				int y = e.getY();
 
 				if (view.isPressable(x, y)) {
 					cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
@@ -1041,8 +1033,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (view != null) {
-				int x = screenToView(e.getX());
-				int y = screenToView(e.getY());
+				int x = screenToDisposition(e.getX());
+				int y = screenToDisposition(e.getY());
 
 				view.mouseDragged(x, y);
 			}
@@ -1051,8 +1043,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (view != null) {
-				int x = screenToView(e.getX());
-				int y = screenToView(e.getY());
+				int x = screenToDisposition(e.getX());
+				int y = screenToDisposition(e.getY());
 
 				view.mouseReleased(x, y);
 			}
@@ -1101,8 +1093,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				// size
 				revalidate();
 
-				int x = screenToView(dtde.getLocation().x);
-				int y = screenToView(dtde.getLocation().y);
+				int x = screenToDisposition(dtde.getLocation().x);
+				int y = screenToDisposition(dtde.getLocation().y);
 
 				new StackVerticalLayout(x, y, grid).layout(null, views);
 
@@ -1209,8 +1201,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * @return location
 	 */
 	public Point getLocation(View<? extends Displayable> view) {
-		return new Point(console.getX(view.getElement()), console.getY(view
-				.getElement()));
+		Displayable element = view.getElement();
+		return new Point(dispositionToScreen(console.getX(element)),
+				dispositionToScreen(console.getY(view.getElement())));
 	}
 
 	public void setLocation(View<? extends Displayable> view, Point location) {

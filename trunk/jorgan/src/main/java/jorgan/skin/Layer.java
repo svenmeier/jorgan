@@ -75,36 +75,40 @@ public abstract class Layer implements Cloneable {
 		draw(g, rectangle.x, rectangle.y, rectangle.width, rectangle.height);
 	}
 
-	protected Rectangle getUnpaddedBounds(Dimension size) {
-		Rectangle rectangle = new Rectangle(0, 0, getUnpaddedWidth(),
-				getUnpadddedHeight());
+	protected final Rectangle getUnpaddedBounds(Dimension size) {
+		Rectangle rectangle = new Rectangle(0, 0, unpaddedWidth(),
+				unpadddedHeight());
 
 		if (fill == Fill.BOTH || fill == Fill.HORIZONTAL) {
-			rectangle.width = size.width - padding.left - padding.right;
+			rectangle.width = size.width - scale(padding.left + padding.right);
 		}
 		if (fill == Fill.BOTH || fill == Fill.VERTICAL) {
-			rectangle.height = size.height - padding.top - padding.bottom;
+			rectangle.height = size.height
+					- scale(padding.top + padding.bottom);
 		}
 
-		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.LEFT || anchor == Anchor.BOTTOM_LEFT) {
-			rectangle.x = padding.left;
+		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.LEFT
+				|| anchor == Anchor.BOTTOM_LEFT) {
+			rectangle.x = scale(padding.left);
 		} else if (anchor == Anchor.TOP_RIGHT || anchor == Anchor.RIGHT
 				|| anchor == Anchor.BOTTOM_RIGHT) {
-			rectangle.x = size.width - padding.right - rectangle.width;
+			rectangle.x = size.width - scale(padding.right) + rectangle.width;
 		} else {
-			rectangle.x = padding.left
-					+ (size.width - padding.left - padding.right) / 2
+			rectangle.x = scale(padding.left)
+					+ (size.width - scale(padding.left + padding.right)) / 2
 					- rectangle.width / 2;
 		}
 
-		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.TOP || anchor == Anchor.TOP_RIGHT) {
-			rectangle.y = padding.top;
+		if (anchor == Anchor.TOP_LEFT || anchor == Anchor.TOP
+				|| anchor == Anchor.TOP_RIGHT) {
+			rectangle.y = scale(padding.top);
 		} else if (anchor == Anchor.BOTTOM_LEFT || anchor == Anchor.BOTTOM
 				|| anchor == Anchor.BOTTOM_RIGHT) {
-			rectangle.y = size.height - padding.bottom - rectangle.height;
+			rectangle.y = size.height - scale(padding.bottom)
+					- rectangle.height;
 		} else {
-			rectangle.y = padding.top
-					+ (size.height - padding.top - padding.bottom) / 2
+			rectangle.y = scale(padding.top)
+					+ (size.height - scale(padding.top + padding.bottom)) / 2
 					- rectangle.height / 2;
 		}
 
@@ -154,9 +158,14 @@ public abstract class Layer implements Cloneable {
 	}
 
 	public Dimension getSize() {
-		return new Dimension(getUnpaddedWidth() + padding.left + padding.right,
-				getUnpadddedHeight() + padding.top + padding.bottom);
+		return new Dimension(unpaddedWidth()
+				+ scale(padding.left + padding.right), unpadddedHeight()
+				+ scale(padding.top + padding.bottom));
 
+	}
+
+	protected final int scale(int value) {
+		return Math.round(view.getScale() * value);
 	}
 
 	public int getHeight() {
@@ -175,11 +184,11 @@ public abstract class Layer implements Cloneable {
 		this.width = width;
 	}
 
-	protected int getUnpaddedWidth() {
+	private int unpaddedWidth() {
 		if (this.width == 0) {
 			return calcWidth();
 		} else {
-			return this.width;
+			return scale(this.width);
 		}
 	}
 
@@ -193,11 +202,11 @@ public abstract class Layer implements Cloneable {
 		return 0;
 	}
 
-	protected int getUnpadddedHeight() {
+	private int unpadddedHeight() {
 		if (this.width == 0) {
 			return calcHeight();
 		} else {
-			return this.height;
+			return scale(this.height);
 		}
 	}
 
@@ -212,7 +221,7 @@ public abstract class Layer implements Cloneable {
 	}
 
 	public boolean isPressable(int x, int y, Dimension dimension) {
-		ViewBinding binding = getBinding(ViewBinding.class); 
+		ViewBinding binding = getBinding(ViewBinding.class);
 		if (binding != null && binding.isPressable()) {
 			Rectangle rectangle = getUnpaddedBounds(dimension);
 
@@ -245,9 +254,9 @@ public abstract class Layer implements Cloneable {
 	protected <C> C getBinding(Class<C> clazz) {
 		return view.getBinding(binding, clazz);
 	}
-	
-    public static interface ViewBinding {
-    	
-    	public boolean isPressable();
-    }
+
+	public static interface ViewBinding {
+
+		public boolean isPressable();
+	}
 }

@@ -25,6 +25,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 import jorgan.disposition.Console;
 import jorgan.io.SkinStream;
@@ -44,8 +46,6 @@ public abstract class SkinManager {
 			SkinManager.class);
 
 	private static final String SKIN_FILE = "skin.xml";
-
-	private static final String ZIP_SUFFIX = ".zip";
 
 	private Map<String, Skin> skins = new HashMap<String, Skin>();
 
@@ -125,8 +125,9 @@ public abstract class SkinManager {
 
 	private Resolver createSkinZip(File file) {
 
-		if (file.getName().endsWith(ZIP_SUFFIX)) {
+		try {
 			return new SkinZip(file);
+		} catch (IOException e) {
 		}
 		return null;
 	}
@@ -134,7 +135,7 @@ public abstract class SkinManager {
 	/**
 	 * A source of a skin contained in a directory.
 	 */
-	private class SkinDirectory implements Resolver{
+	private class SkinDirectory implements Resolver {
 
 		private File directory;
 
@@ -144,10 +145,14 @@ public abstract class SkinManager {
 
 		public URL resolve(String name) {
 			try {
-				return new File(directory, name).toURI().toURL();
+				File file = new File(directory, name);
+				if (file.exists()) {
+					return file.toURI().toURL();
+				}
 			} catch (MalformedURLException ex) {
-				return null;
 			}
+
+			return null;
 		}
 	}
 
@@ -158,16 +163,23 @@ public abstract class SkinManager {
 
 		private File file;
 
-		private SkinZip(File file) {
+		private ZipFile zipFile;
+
+		private SkinZip(File file) throws IOException {
 			this.file = file;
+
+			this.zipFile = new ZipFile(file);
 		}
 
 		public URL resolve(String name) {
-			try {
-				return new URL("jar:" + file.toURI().toURL() + "!/" + name);
-			} catch (MalformedURLException ex) {
-				return null;
+			ZipEntry entry = zipFile.getEntry(name);
+			if (entry != null) {
+				try {
+					return new URL("jar:" + file.toURI().toURL() + "!/" + name);
+				} catch (MalformedURLException ex) {
+				}
 			}
+			return null;
 		}
 	}
 }

@@ -50,11 +50,6 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private Model grid = getModel(new Property(ConsolePanel.class, "grid"));
 
-	private Model markXOR = getModel(new Property(ConsolePanel.class, "markXOR"));
-
-	private Model interpolate = getModel(new Property(ConsolePanel.class,
-			"interpolate"));
-
 	private Model background = getModel(new Property(ConsolePanel.class,
 			"background"));
 
@@ -80,10 +75,6 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			256, 1));
-
-	private JCheckBox markXORCheckBox = new JCheckBox();
-
-	private JCheckBox interpolateCheckBox = new JCheckBox();
 
 	private ColorSelector backgroundSelector = new ColorSelector();
 
@@ -115,10 +106,6 @@ public class ConsoleCategory extends JOrganCategory {
 
 		column.term(config.get("grid").read(new JLabel()));
 		column.definition(gridSpinner);
-
-		column.definition(config.get("markXOR").read(markXORCheckBox));
-
-		column.definition(config.get("interpolate").read(interpolateCheckBox));
 
 		column.term(config.get("background").read(new JLabel()));
 		column.definition(backgroundSelector);
@@ -165,8 +152,6 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void read() {
 
 		gridSpinner.setValue(grid.getValue());
-		markXORCheckBox.setSelected((Boolean) markXOR.getValue());
-		interpolateCheckBox.setSelected((Boolean) interpolate.getValue());
 		backgroundSelector.setSelectedColor((Color) background.getValue());
 		foregroundSelector.setSelectedColor((Color) foreground.getValue());
 
@@ -187,8 +172,6 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void write() {
 
 		grid.setValue(gridSpinner.getValue());
-		markXOR.setValue(markXORCheckBox.isSelected());
-		interpolate.setValue(interpolateCheckBox.isSelected());
 		background.setValue(backgroundSelector.getSelectedColor());
 		foreground.setValue(foregroundSelector.getSelectedColor());
 

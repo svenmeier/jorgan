@@ -25,7 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.awt.geom.AffineTransform;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -64,7 +63,7 @@ public class View<E extends Displayable> {
 
 	protected Dimension size = new Dimension();
 
-	private float zoom;
+	private float scale;
 
 	protected Point location = new Point();
 
@@ -177,10 +176,9 @@ public class View<E extends Displayable> {
 	 */
 	public boolean contains(int x, int y) {
 
-		return (location.x < x)
-				&& (location.x + Math.round(size.width * zoom) > x)
+		return (location.x < x) && (location.x + Math.round(size.width) > x)
 				&& (location.y < y)
-				&& (location.y + Math.round(size.height * zoom) > y);
+				&& (location.y + Math.round(size.height) > y);
 	}
 
 	/**
@@ -281,6 +279,8 @@ public class View<E extends Displayable> {
 	}
 
 	protected void initStyle() {
+		scale = container.getScale(this);
+
 		style = container.getStyle(this);
 		if (style == null) {
 			style = createDefaultStyle();
@@ -288,12 +288,6 @@ public class View<E extends Displayable> {
 		style.setView(this);
 
 		size = style.getSize();
-
-		zoom = element.getZoom();
-		if (zoom < 0.5f) {
-			// don't trust the element's zoom
-			zoom = 0.5f;
-		}
 	}
 
 	/**
@@ -320,7 +314,7 @@ public class View<E extends Displayable> {
 	 * @return width
 	 */
 	public int getWidth() {
-		return Math.round(size.width * zoom);
+		return Math.round(size.width);
 	}
 
 	/**
@@ -329,7 +323,7 @@ public class View<E extends Displayable> {
 	 * @return height
 	 */
 	public int getHeight() {
-		return Math.round(size.height * zoom);
+		return Math.round(size.height);
 	}
 
 	/**
@@ -339,23 +333,11 @@ public class View<E extends Displayable> {
 	 *            graphics to paint on
 	 */
 	public void paint(Graphics2D g) {
-		if (zoom == 1.0f) {
-			// premature optimization ??
-			g.translate(location.x, location.y);
+		g.translate(location.x, location.y);
 
-			style.draw(g, size);
+		style.draw(g, size);
 
-			g.translate(-location.x, -location.y);
-		} else {
-			AffineTransform transform = g.getTransform();
-
-			g.translate(location.x, location.y);
-			g.scale(zoom, zoom);
-
-			style.draw(g, size);
-
-			g.setTransform(transform);
-		}
+		g.translate(-location.x, -location.y);
 	}
 
 	/**
@@ -369,23 +351,19 @@ public class View<E extends Displayable> {
 	 */
 	public final boolean isPressable(int x, int y) {
 
-		return style.isPressable(Math.round((x - location.x) / zoom), Math
-				.round((y - location.y) / zoom), size);
+		return style.isPressable(x - location.x, y - location.y, size);
 	}
 
 	public final void mousePressed(int x, int y) {
-		style.mousePressed(Math.round((x - location.x) / zoom), Math
-				.round((y - location.y) / zoom), size);
+		style.mousePressed(x - location.x, y - location.y, size);
 	}
 
 	public final void mouseDragged(int x, int y) {
-		style.mouseDragged(Math.round((x - location.x) / zoom), Math
-				.round((y - location.y) / zoom), size);
+		style.mouseDragged(x - location.x, y - location.y, size);
 	}
 
 	public final void mouseReleased(int x, int y) {
-		style.mouseReleased(Math.round((x - location.x) / zoom), Math
-				.round((y - location.y) / zoom), size);
+		style.mouseReleased(x - location.x, y - location.y, size);
 	}
 
 	public void keyPressed(KeyEvent ev) {
@@ -449,5 +427,9 @@ public class View<E extends Displayable> {
 
 	public Style getStyle() {
 		return style;
+	}
+
+	public float getScale() {
+		return scale;
 	}
 }

@@ -23,6 +23,9 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.Shape;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,12 +33,11 @@ import javax.swing.AbstractListModel;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.Icon;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.ToolTipManager;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
@@ -54,7 +56,7 @@ import jorgan.session.OrganSession;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
-import jorgan.swing.PercentSlider;
+import jorgan.swing.BaseAction;
 import spin.Spin;
 import swingx.docking.Docked;
 import bias.Configuration;
@@ -79,7 +81,11 @@ public class SkinDockable extends OrganDockable {
 
 	private Skin skin;
 
-	private PercentSlider slider;
+	private JFormattedTextField textField;
+
+	private ZoomInAction zoomInAction = new ZoomInAction();
+
+	private ZoomOutAction zoomOutAction = new ZoomOutAction();
 
 	private List<View<?>> views = new ArrayList<View<?>>();
 
@@ -90,10 +96,8 @@ public class SkinDockable extends OrganDockable {
 	public SkinDockable() {
 		config.read(this);
 
-		slider = new PercentSlider(Displayable.MIN_ZOOM, 1.0f,
-				Displayable.MAX_ZOOM);
-		slider.setEnabled(false);
-		slider.addChangeListener(eventHandler);
+		textField = new JFormattedTextField(new DecimalFormat("0.00"));
+		textField.addActionListener(eventHandler);
 
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -131,7 +135,11 @@ public class SkinDockable extends OrganDockable {
 
 	@Override
 	protected void addTools(Docked docked) {
-		docked.addTool(slider);
+		docked.addTool(zoomInAction);
+		docked.addTool(textField);
+		textField.setFocusable(true);
+		textField.setRequestFocusEnabled(true);
+		docked.addTool(zoomOutAction);
 	}
 
 	private void update() {
@@ -150,14 +158,14 @@ public class SkinDockable extends OrganDockable {
 		if (console == null) {
 			// make sure model and renderer are re-created, otherwise both might
 			// hold reference to an already closed disposition
-			slider.setValue(1.0f);
-			slider.setEnabled(false);
+			textField.setValue(1.0f);
+			textField.setEnabled(false);
 			list.setModel(new StylesModel());
 			list.setCellRenderer(new StyleRenderer());
 			setContent(null);
 		} else {
-			slider.setValue(displayable.getZoom());
-			slider.setEnabled(true);
+			textField.setValue(displayable.getZoom());
+			textField.setEnabled(true);
 			list.setModel(new StylesModel());
 			list.setCellRenderer(new StyleRenderer());
 			setContent(new JScrollPane(list));
@@ -172,6 +180,9 @@ public class SkinDockable extends OrganDockable {
 				}
 			}
 		}
+
+		zoomInAction.update();
+		zoomOutAction.update();
 
 		updating = false;
 	}
@@ -219,7 +230,7 @@ public class SkinDockable extends OrganDockable {
 	}
 
 	private class EventHandler extends OrganAdapter implements
-			SelectionListener, ChangeListener, ListSelectionListener {
+			SelectionListener, ActionListener, ListSelectionListener {
 		public void selectionChanged() {
 			update();
 		}
@@ -229,16 +240,20 @@ public class SkinDockable extends OrganDockable {
 			if (element == console) {
 				update();
 			} else if (element == displayable) {
+				textField.setValue(displayable.getZoom());
+
 				for (View<?> view : views) {
 					view.update();
 				}
 			}
 		}
 
-		public void stateChanged(ChangeEvent e) {
+		@Override
+		public void actionPerformed(ActionEvent e) {
 			if (!updating) {
 				if (displayable != null) {
-					displayable.setZoom((float) slider.getValue());
+					displayable.setZoom(((Number) textField.getValue())
+							.floatValue());
 				}
 			}
 		}
@@ -295,6 +310,11 @@ public class SkinDockable extends OrganDockable {
 						public Point getLocation(
 								View<? extends Displayable> view) {
 							return new Point(0, 0);
+						}
+
+						@Override
+						public float getScale(View<? extends Displayable> view) {
+							return 1.0f;
 						}
 
 						public Style getStyle(View<? extends Displayable> view) {
@@ -372,6 +392,38 @@ public class SkinDockable extends OrganDockable {
 			g.translate(-x, -y);
 
 			g2D.setClip(clip);
+		}
+	}
+
+	private class ZoomInAction extends BaseAction {
+
+		public ZoomInAction() {
+			config.get("zoomIn").read(this);
+		}
+
+		public void update() {
+			setEnabled(console != null);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			displayable.setZoom(displayable.getZoom() + 0.1f);
+		}
+	}
+
+	private class ZoomOutAction extends BaseAction {
+
+		public ZoomOutAction() {
+			config.get("zoomOut").read(this);
+		}
+
+		public void update() {
+			setEnabled(console != null);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			displayable.setZoom(displayable.getZoom() - 0.1f);
 		}
 	}
 }
