@@ -92,7 +92,7 @@ public abstract class Layer implements Cloneable {
 			rectangle.x = scale(padding.left);
 		} else if (anchor == Anchor.TOP_RIGHT || anchor == Anchor.RIGHT
 				|| anchor == Anchor.BOTTOM_RIGHT) {
-			rectangle.x = size.width - scale(padding.right) + rectangle.width;
+			rectangle.x = size.width - scale(padding.right) - rectangle.width;
 		} else {
 			rectangle.x = scale(padding.left)
 					+ (size.width - scale(padding.left + padding.right)) / 2
