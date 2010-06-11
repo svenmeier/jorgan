@@ -1,3 +1,10 @@
+jorgan (3.10.0-1) stable;
+
+  * Improved graphics performance.
+  * Rewrote delayed Ranks to use playing clock.
+
+ -- Sven Meier <sven@meiers.net>  Sun, 13 Jun 2010 12:12:25 +0200
+
 jorgan (3.9.4-1) stable;
 
   * New extension jorgan-tools.
