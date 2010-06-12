@@ -30,7 +30,7 @@
 
   <target name="dist" depends="clean, compile">
   	<mkdir dir="./target/marshal/lib" />
-  	<jar file="./target/marshal/lib/lan.jar">
+  	<jar file="./target/marshal/lib/tools.jar">
       <fileset dir="./target/classes" />
   	</jar>
 
