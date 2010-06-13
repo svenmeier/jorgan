@@ -43,6 +43,7 @@ import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.UIManager;
 
+import jorgan.Info;
 import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
@@ -71,11 +72,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private static Configuration config = Configuration.getRoot().get(
 			OrganFrame.class);
-
-	/**
-	 * The suffix used for the frame title.
-	 */
-	private static final String TITEL_SUFFIX = "jOrgan";
 
 	/**
 	 * The toolBar of this frame.
@@ -267,12 +263,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 		menuBar.revalidate();
 		menuBar.repaint();
 
+		String title;
 		if (session == null) {
-			setTitle(TITEL_SUFFIX);
+			title = config.get("titleNoSession").read(new MessageBuilder())
+					.build(new Info().getVersion());
 		} else {
-			setTitle(DispositionFileFilter.removeSuffix(session.getFile())
-					+ " - " + TITEL_SUFFIX);
+			title = config.get("titleSession").read(new MessageBuilder())
+					.build(
+							new Info().getVersion(),
+							DispositionFileFilter.removeSuffix(session
+									.getFile()));
 		}
+		setTitle(title);
 	}
 
 	public Changes getChanges() {
