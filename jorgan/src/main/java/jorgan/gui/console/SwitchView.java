@@ -153,7 +153,8 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 				g.drawRect(x, y, width - 1, height - 1);
 
 				if (activated) {
-					g.fillRect(x + 2, y + 2, width - 4, height - 4);
+					g.drawLine(x, y, x + width - 1, y + height - 1);
+					g.drawLine(x + width - 1, y, x, y + height - 1);
 				}
 			}
 		};
