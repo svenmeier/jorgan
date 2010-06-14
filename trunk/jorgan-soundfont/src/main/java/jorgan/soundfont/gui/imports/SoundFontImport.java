@@ -117,7 +117,7 @@ public class SoundFontImport implements Import {
 	private void showMessage(String key, Object... args) {
 		MessageBox box = SoundFontImport.config.get(key).read(
 				new MessageBox(MessageBox.OPTIONS_OK));
-		box.show(panel);
+		box.show(panel, args);
 	}
 
 	/**
