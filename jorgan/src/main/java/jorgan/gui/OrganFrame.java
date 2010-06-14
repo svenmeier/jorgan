@@ -48,9 +48,9 @@ import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
 import jorgan.gui.undo.UndoManager;
-import jorgan.io.DispositionStream;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
+import jorgan.session.History;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import jorgan.session.SessionListener;
@@ -208,7 +208,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		JMenu recentsMenu = new JMenu();
 		config.get("recentsMenu").read(recentsMenu);
-		List<File> recents = new DispositionStream().getRecentFiles();
+		List<File> recents = new History().getRecentFiles();
 		for (int r = 0; r < recents.size(); r++) {
 			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
 		}
@@ -473,7 +473,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 				return;
 			}
 
-			JFileChooser chooser = new JFileChooser(new DispositionStream()
+			JFileChooser chooser = new JFileChooser(new History()
 					.getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {

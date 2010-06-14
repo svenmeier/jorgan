@@ -33,6 +33,7 @@ import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.spi.ElementRegistry;
 import jorgan.io.DispositionStream;
+import jorgan.io.disposition.Backup;
 import jorgan.session.spi.SessionRegistry;
 import jorgan.util.ShutdownHook;
 import bias.Configuration;
@@ -63,6 +64,8 @@ public class OrganSession {
 
 	private boolean sealed = false;
 
+	private int backupCount;
+
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
 
 	private ShutdownHook shutdownHook;
@@ -92,6 +95,8 @@ public class OrganSession {
 		SessionRegistry.init(this);
 
 		config.read(this);
+
+		new History().addRecentFile(file);
 	}
 
 	public void setSealed(boolean sealed) {
@@ -100,6 +105,14 @@ public class OrganSession {
 
 	public boolean isSealed() {
 		return sealed;
+	}
+
+	public int getBackupCount() {
+		return backupCount;
+	}
+
+	public void setBackupCount(int count) {
+		this.backupCount = count;
 	}
 
 	public void setSaveOnShutdown(boolean save) {
@@ -143,9 +156,14 @@ public class OrganSession {
 	}
 
 	public void save() throws IOException {
+		// TODO do this as SessionListener#beforeSave(file);
+		new Backup(file).write(backupCount);
+
 		new DispositionStream().write(organ, file);
 
 		modified = false;
+
+		new History().addRecentFile(file);
 
 		for (SessionListener listener : listeners) {
 			listener.saved(file);

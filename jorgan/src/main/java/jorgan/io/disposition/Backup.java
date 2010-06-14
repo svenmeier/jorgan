@@ -28,9 +28,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A history utility.
+ * A backup utility.
  */
-public class History {
+public class Backup {
 
 	private File file;
 
@@ -38,13 +38,15 @@ public class History {
 
 	private List<Integer> existingNumbers;
 
+	private int size;
+
 	/**
 	 * Create a history for the given file.
 	 * 
 	 * @param file
 	 *            file to create history for
 	 */
-	public History(File file) {
+	public Backup(File file) {
 		this.file = file;
 
 		this.parent = file.getAbsoluteFile().getParentFile();
@@ -52,13 +54,18 @@ public class History {
 		existingNumbers = getExistingNumbers();
 	}
 
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
 	/**
-	 * Move ths file to the history.
-	 * 
-	 * @param max
-	 *            maximum count of histories
+	 * Write this backup.
 	 */
-	public void move(int max) {
+	public void write(int max) {
 
 		if (file.exists()) {
 
@@ -66,8 +73,6 @@ public class History {
 
 			if (max > 0) {
 				addHistory();
-			} else {
-				file.delete();
 			}
 		}
 	}

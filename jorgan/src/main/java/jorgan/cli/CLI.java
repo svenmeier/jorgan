@@ -29,13 +29,13 @@ import java.util.logging.Logger;
 import jorgan.Info;
 import jorgan.UI;
 import jorgan.disposition.Elements;
-import jorgan.io.DispositionStream;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.ProblemListener;
 import jorgan.problem.Severity;
+import jorgan.session.History;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
 import bias.Configuration;
@@ -324,7 +324,7 @@ public class CLI implements UI, SessionAware {
 		}
 
 		public void execute(String param) {
-			List<File> recents = new DispositionStream().getRecentFiles();
+			List<File> recents = new History().getRecentFiles();
 			if (recents.size() == 0) {
 				writeMessage("recentNone");
 				return;
