@@ -23,7 +23,7 @@ import java.util.Collection;
 import jorgan.cli.CLI;
 import jorgan.cli.spi.OptionRegistry;
 import jorgan.gui.GUI;
-import jorgan.io.DispositionStream;
+import jorgan.session.History;
 import jorgan.spi.ConfigurationRegistry;
 import bias.Configuration;
 import bias.Store;
@@ -54,7 +54,7 @@ public class App {
 
 	public void start(File file) {
 		if (file == null && openRecentOnStartup) {
-			file = new DispositionStream().getRecentFile();
+			file = new History().getRecentFile();
 		}
 
 		UI ui;

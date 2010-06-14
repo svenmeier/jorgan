@@ -26,7 +26,8 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import jorgan.io.DispositionStream;
+import jorgan.session.History;
+import jorgan.session.OrganSession;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -34,26 +35,24 @@ import bias.swing.Category;
 import bias.util.Property;
 
 /**
- * {@link DispositionStream} category.
  */
-public class DispositionStreamCategory extends JOrganCategory {
+public class IOCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			DispositionStreamCategory.class);
+			IOCategory.class);
 
-	private Model recentMax = getModel(new Property(DispositionStream.class,
-			"recentMax"));
+	private Model backupCount = getModel(new Property(OrganSession.class,
+			"backupCount"));
 
-	private Model historySize = getModel(new Property(DispositionStream.class,
-			"historySize"));
+	private Model historyMax = getModel(new Property(History.class, "max"));
 
-	private JSpinner recentMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
-			0, 100, 1));
-
-	private JSpinner historySizeSpinner = new JSpinner(new SpinnerNumberModel(
+	private JSpinner backupCountSpinner = new JSpinner(new SpinnerNumberModel(
 			0, 0, 255, 1));
 
-	public DispositionStreamCategory() {
+	private JSpinner historyMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
+			0, 100, 1));
+
+	public IOCategory() {
 		config.read(this);
 	}
 
@@ -64,11 +63,11 @@ public class DispositionStreamCategory extends JOrganCategory {
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 		Column column = builder.column();
 
-		column.term(config.get("recentsSize").read(new JLabel()));
-		column.definition(recentMaxSpinner);
+		column.term(config.get("historyMax").read(new JLabel()));
+		column.definition(historyMaxSpinner);
 
-		column.term(config.get("historySize").read(new JLabel()));
-		column.definition(historySizeSpinner);
+		column.term(config.get("backupCount").read(new JLabel()));
+		column.definition(backupCountSpinner);
 
 		return panel;
 	}
@@ -80,13 +79,13 @@ public class DispositionStreamCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		recentMaxSpinner.setValue(recentMax.getValue());
-		historySizeSpinner.setValue(historySize.getValue());
+		historyMaxSpinner.setValue(historyMax.getValue());
+		backupCountSpinner.setValue(backupCount.getValue());
 	}
 
 	@Override
 	protected void write() {
-		recentMax.setValue(recentMaxSpinner.getValue());
-		historySize.setValue(historySizeSpinner.getValue());
+		historyMax.setValue(historyMaxSpinner.getValue());
+		backupCount.setValue(backupCountSpinner.getValue());
 	}
 }

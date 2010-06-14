@@ -30,17 +30,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FormatException;
-import jorgan.io.disposition.History;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
 import jorgan.io.xstream.BooleanArrayConverter;
@@ -51,7 +46,6 @@ import jorgan.util.IOUtils;
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
 import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
@@ -74,14 +68,6 @@ public class DispositionStream {
 			return new ClassMapper(next);
 		}
 	};
-
-	private int recentMax = 4;
-
-	private List<File> recentFiles = new ArrayList<File>();
-
-	private File recentDirectory;
-
-	private int historySize = 0;
 
 	public DispositionStream() {
 		TreeMarshallingStrategy strategy = new TreeMarshallingStrategy();
@@ -117,21 +103,18 @@ public class DispositionStream {
 	 * @throws Exception
 	 */
 	public Organ read(File file) throws IOException {
-		InputStream input = new FileInputStream(file);
+		InputStream input = new Conversion().convert(new FileInputStream(file));
 
 		try {
-			Organ organ = read(input);
-			addRecentFile(file);
-			return organ;
+			return read(input);
 		} finally {
 			IOUtils.closeQuietly(input);
 		}
 	}
 
 	public Organ read(InputStream in) throws IOException, FormatException {
-		BufferedInputStream converted = convert(in);
-
-		Reader reader = new InputStreamReader(converted, ENCODING);
+		Reader reader = new InputStreamReader(new BufferedInputStream(in),
+				ENCODING);
 
 		try {
 			return (Organ) xstream.fromXML(reader);
@@ -166,13 +149,9 @@ public class DispositionStream {
 			IOUtils.closeQuietly(output);
 		}
 
-		new History(file).move(historySize);
-
-		if (!temp.renameTo(file)) {
+		if (!file.delete() || !temp.renameTo(file)) {
 			throw new IOException("unable to rename");
 		}
-
-		addRecentFile(file);
 	}
 
 	public void write(Organ organ, OutputStream out) throws IOException {
@@ -185,64 +164,6 @@ public class DispositionStream {
 		xstream.toXML(organ, writer);
 	}
 
-	public File getRecentDirectory() {
-		return recentDirectory;
-	}
-
-	public void setRecentDirectory(File recentDirectory) {
-		this.recentDirectory = recentDirectory;
-	}
-
-	public File getRecentFile() {
-		if (recentFiles.size() > 0) {
-			return recentFiles.get(0);
-		}
-		return null;
-	}
-
-	public void setRecentFiles(List<File> recentFiles) {
-		this.recentFiles = recentFiles;
-	}
-
-	public List<File> getRecentFiles() {
-		return recentFiles;
-	}
-
-	public int getRecentMax() {
-		return recentMax;
-	}
-
-	public void setRecentMax(int recentMax) {
-		this.recentMax = recentMax;
-	}
-
-	private void addRecentFile(File file) {
-		try {
-			File canonical = file.getCanonicalFile();
-
-			recentFiles.remove(file);
-			recentFiles.remove(canonical);
-
-			recentFiles.add(0, canonical);
-			if (recentFiles.size() > recentMax) {
-				recentFiles.remove(recentMax);
-			}
-
-			recentDirectory = canonical.getParentFile();
-		} catch (IOException ignore) {
-		}
-
-		config.write(this);
-	}
-
-	public int getHistorySize() {
-		return historySize;
-	}
-
-	public void setHistorySize(int historySize) {
-		this.historySize = historySize;
-	}
-
 	private AbstractXmlDriver createDriver() {
 		return new XppDriver(createReplacer());
 	}
@@ -250,29 +171,5 @@ public class DispositionStream {
 	private XmlFriendlyReplacer createReplacer() {
 		// replaced "$" and "_"
 		return new XmlFriendlyReplacer("-", "_");
-	}
-
-	private static final Logger logger = Logger.getLogger(Conversion.class
-			.getName());
-
-	private BufferedInputStream convert(InputStream in)
-			throws ConversionException, IOException {
-
-		BufferedInputStream buffered = new BufferedInputStream(in);
-
-		String version = Conversion.getVersion(buffered);
-
-		boolean apply = false;
-		for (Conversion conversion : Conversion.list) {
-			if (apply || conversion.isApplicable(version)) {
-				apply = true;
-
-				logger.log(Level.INFO, "applying '" + conversion + "'");
-
-				buffered = new BufferedInputStream(conversion.convert(buffered));
-			}
-		}
-
-		return buffered;
 	}
 }

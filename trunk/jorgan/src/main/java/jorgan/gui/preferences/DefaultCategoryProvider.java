@@ -6,7 +6,7 @@ import java.util.List;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.CLICategory;
 import jorgan.gui.preferences.category.ConsoleCategory;
-import jorgan.gui.preferences.category.DispositionStreamCategory;
+import jorgan.gui.preferences.category.IOCategory;
 import jorgan.gui.preferences.category.GuiCategory;
 import jorgan.gui.preferences.category.MonitorCategory;
 import jorgan.gui.preferences.spi.CategoryProvider;
@@ -23,7 +23,7 @@ public class DefaultCategoryProvider implements CategoryProvider {
 		categories.add(new AppCategory());
 		categories.add(new GuiCategory());
 		categories.add(new ConsoleCategory());
-		categories.add(new DispositionStreamCategory());
+		categories.add(new IOCategory());
 		categories.add(new CLICategory());
 		categories.add(new MonitorCategory());
 

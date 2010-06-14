@@ -18,95 +18,67 @@
  */
 package jorgan.io.disposition;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.regex.Pattern;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.xmlpull.mxp1.MXParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import com.thoughtworks.xstream.converters.ConversionException;
+
 public class Conversion {
 
-	public static Conversion[] list = new Conversion[] {
-			new Conversion("2\\.0-.*", "convert2.0-betaTo2.0.xsl"),
-			new Conversion("2\\.0", "convert2.0To2.1-beta.xsl"),
-			new Conversion("2\\.1-beta.*", "convert2.1-betaTo2.1.xsl"),
-			new Conversion("2\\.1.*", "convert2.1To2.2-beta.xsl"),
-			new Conversion("2\\.2-beta.*", "convert2.2-betaTo2.2.xsl"),
-			new Conversion("2\\.2.*", "convert2.2To2.3-beta.xsl"),
-			new Conversion("2\\.3-beta.*", "convert2.3-betaTo2.3.xsl"),
-			new Conversion("2\\.3.*", "convert2.3To2.4-beta.xsl"),
-			new Conversion("2\\.4-beta.*", "convert2.4-betaTo2.4.xsl"),
-			new Conversion("2\\.4.*", "convert2.4To3.0-beta.xsl"),
-			new Conversion("3\\.0-beta.*", "convert3.0-betaTo3.0.xsl"),
-			new Conversion("3\\.0", "convert3.0To3.1.xsl"),
-			new Conversion("3\\.[1|2.*]", "convert3.1To3.3.xsl"),
-			new Conversion("3\\.[3|4].*", "convert3.3To3.5-beta.xsl"),
-			new Conversion("3\\.5-beta.*", "convert3.5-betaTo3.5.xsl"),
-			new Conversion("3\\.5", "convert3.5To3.5.1.xsl"),
-			new Conversion("3\\.[5|6].*", "convert3.6To3.7.xsl"),
-			new Conversion("3\\.7", "convert3.7To3.8.xsl"),
-			new Conversion("3\\.8.*", "convert3.8To3.9-beta.xsl"),
-			new Conversion("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl") };
+	private static final Logger logger = Logger.getLogger(Conversion.class
+			.getName());
 
-	private Pattern pattern;
+	private static Convert[] list = new Convert[] {
+			new Convert("2\\.0-.*", "convert2.0-betaTo2.0.xsl"),
+			new Convert("2\\.0", "convert2.0To2.1-beta.xsl"),
+			new Convert("2\\.1-beta.*", "convert2.1-betaTo2.1.xsl"),
+			new Convert("2\\.1.*", "convert2.1To2.2-beta.xsl"),
+			new Convert("2\\.2-beta.*", "convert2.2-betaTo2.2.xsl"),
+			new Convert("2\\.2.*", "convert2.2To2.3-beta.xsl"),
+			new Convert("2\\.3-beta.*", "convert2.3-betaTo2.3.xsl"),
+			new Convert("2\\.3.*", "convert2.3To2.4-beta.xsl"),
+			new Convert("2\\.4-beta.*", "convert2.4-betaTo2.4.xsl"),
+			new Convert("2\\.4.*", "convert2.4To3.0-beta.xsl"),
+			new Convert("3\\.0-beta.*", "convert3.0-betaTo3.0.xsl"),
+			new Convert("3\\.0", "convert3.0To3.1.xsl"),
+			new Convert("3\\.[1|2.*]", "convert3.1To3.3.xsl"),
+			new Convert("3\\.[3|4].*", "convert3.3To3.5-beta.xsl"),
+			new Convert("3\\.5-beta.*", "convert3.5-betaTo3.5.xsl"),
+			new Convert("3\\.5", "convert3.5To3.5.1.xsl"),
+			new Convert("3\\.[5|6].*", "convert3.6To3.7.xsl"),
+			new Convert("3\\.7", "convert3.7To3.8.xsl"),
+			new Convert("3\\.8.*", "convert3.8To3.9-beta.xsl"),
+			new Convert("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl") };
 
-	private String xsl;
+	public BufferedInputStream convert(InputStream in)
+			throws ConversionException, IOException {
 
-	public Conversion(String pattern, String xsl) {
-		this.pattern = Pattern.compile(pattern);
-		this.xsl = xsl;
-	}
+		BufferedInputStream buffered = new BufferedInputStream(in);
 
-	public String getPattern() {
-		return this.pattern.toString();
-	}
+		String version = getVersion(buffered);
 
-	public boolean isApplicable(String header) {
-		return pattern.matcher(header).matches();
-	}
+		boolean apply = false;
+		for (Convert convert : list) {
+			if (apply || convert.isApplicable(version)) {
+				apply = true;
 
-	@Override
-	public String toString() {
-		return xsl;
-	}
+				logger.log(Level.INFO, "applying '" + convert + "'");
 
-	public InputStream convert(InputStream in) throws IOException {
-		TransformerFactory factory = TransformerFactory.newInstance();
-		factory.setAttribute("indent-number", new Integer(4));
-
-		Transformer transform;
-		try {
-			transform = factory.newTransformer(new StreamSource(
-					Conversion.class.getResourceAsStream("conversion/" + xsl)));
-
-			transform.setOutputProperty(OutputKeys.INDENT, "yes");
-
-			File temp = File.createTempFile(xsl + ".", ".xml");
-
-			transform.transform(new StreamSource(in), new StreamResult(temp));
-
-			in.close();
-
-			return new FileInputStream(temp);
-		} catch (TransformerException e) {
-			IOException ex = new IOException();
-			ex.initCause(e);
-			throw ex;
+				buffered = new BufferedInputStream(convert.convert(buffered));
+			}
 		}
+
+		return buffered;
 	}
 
-	public static String getVersion(InputStream in) throws IOException {
+	private String getVersion(InputStream in) throws IOException {
 
 		// make sure the parse doesn't step over the mark limit
 		byte[] header = new byte[2048];
