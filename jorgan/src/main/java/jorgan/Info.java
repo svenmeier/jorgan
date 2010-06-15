@@ -58,9 +58,6 @@ public class Info {
 		appendProperty(buffer, "user.language");
 		appendProperty(buffer, "user.name");
 
-		appendProperty(buffer, "sun.java2d.opengl");
-		appendProperty(buffer, "sun.java2d.translaccel");
-
 		logger.info(buffer.toString());
 	}
 
