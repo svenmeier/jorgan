@@ -149,8 +149,12 @@ public class DispositionStream {
 			IOUtils.closeQuietly(output);
 		}
 
-		if (!file.delete() || !temp.renameTo(file)) {
-			throw new IOException("unable to rename");
+		if (file.exists() && !file.delete()) {
+			throw new IOException("unable to delete previous version");
+		}
+
+		if (!temp.renameTo(file)) {
+			throw new IOException("unable to rename new version");
 		}
 	}
 
