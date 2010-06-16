@@ -46,11 +46,7 @@ public class TextLayer extends Layer {
 
 	private transient Font scaledFont;
 
-	private transient List<Line> lines;
-
-	private transient int linesWidth;
-
-	private transient int linesHeight;
+	private transient Lines lines;
 
 	public Font getFont() {
 		return font;
@@ -71,7 +67,7 @@ public class TextLayer extends Layer {
 	 */
 	@Override
 	protected int calcWidth() {
-		return linesWidth;
+		return lines.width;
 	}
 
 	/**
@@ -81,7 +77,7 @@ public class TextLayer extends Layer {
 	 */
 	@Override
 	protected int calcHeight() {
-		return linesHeight;
+		return lines.height;
 	}
 
 	public void setFont(Font font) {
@@ -117,10 +113,10 @@ public class TextLayer extends Layer {
 
 		URL url = resolve(font.getName());
 		if (url == null) {
-			scaledFont = font.deriveFont(font.getSize() * view.getScale());
+			scaledFont = font.deriveFont(scale(font.getSize()));
 		} else {
-			scaledFont = FontCache.getFont(url, font.getStyle(), font.getSize()
-					* view.getScale());
+			scaledFont = FontCache.getFont(url).deriveFont(font.getStyle(),
+					scale(font.getSize()));
 		}
 
 		String text = "";
@@ -129,86 +125,8 @@ public class TextLayer extends Layer {
 			text = binding.getText();
 		}
 
-		breakLines(text.toString().trim(), view.getContainer().getHost()
+		lines = new Lines(text.toString().trim(), view.getContainer().getHost()
 				.getFontMetrics(scaledFont));
-	}
-
-	/**
-	 * Break the text into lines.
-	 */
-	protected void breakLines(String text, FontMetrics metrics) {
-
-		lines = new ArrayList<Line>();
-		linesWidth = 0;
-		linesHeight = 0;
-
-		char[] chars = text.toCharArray();
-		int start = 0;
-		int end = chars.length;
-
-		int height = 0;
-
-		// more characters left?
-		while (start != end) {
-			// take all remaining characters
-			int length = end - start;
-
-			// honour line break (multiple whitespace)
-			int lineBreak = text.indexOf("  ", start);
-			if (lineBreak != -1) {
-				length = lineBreak - start;
-			}
-
-			if (getWidth() > 0) {
-				int scaledWidth = scale(getWidth());
-				// width exceeded?
-				while (metrics.charsWidth(chars, start, length) > scaledWidth) {
-
-					// seek word break (single whitespace)
-					int wordBreak = text.lastIndexOf(' ', start + length - 1);
-					if (length > 1) {
-						// seek intra word break (hyphen)
-						wordBreak = Math.max(wordBreak, text.lastIndexOf('-',
-								start + length - 2) + 1);
-					}
-
-					// wordBreak before start?
-					if (wordBreak <= start) {
-						// decrease length until width fits
-						while (length > 1
-								&& metrics.charsWidth(chars, start, length) > scaledWidth) {
-							length--;
-						}
-					} else {
-						// let wordBreak decide length
-						length = wordBreak - start;
-					}
-				}
-			}
-
-			Line line = new Line(chars, start, length, metrics);
-			height += line.ascent + line.descent;
-			if (getHeight() > 0) {
-				int scaledHeight = scale(getHeight());
-				if (height > scaledHeight) {
-					return;
-				}
-			}
-
-			if (lines.size() > 0) {
-				linesHeight += line.leading;
-			}
-			linesHeight += line.ascent + line.descent;
-			linesWidth = Math.max(linesWidth, line.width);
-			lines.add(line);
-
-			start = start + length;
-
-			// trim leading whitespace
-			while (start < end && chars[start] == ' ') {
-				start++;
-			}
-		}
 	}
 
 	@Override
@@ -225,34 +143,14 @@ public class TextLayer extends Layer {
 
 		if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT
 				|| alignment == Alignment.LEFT) {
-			y += height / 2 - linesHeight / 2;
+			y += height / 2 - lines.height / 2;
 		} else if (alignment == Alignment.BOTTOM
 				|| alignment == Alignment.BOTTOM_RIGHT
 				|| alignment == Alignment.BOTTOM_LEFT) {
-			y += height - linesHeight;
+			y += height - lines.height;
 		}
 
-		for (int l = 0; l < lines.size(); l++) {
-			Line line = lines.get(l);
-
-			if (l > 0) {
-				y += line.leading;
-			}
-
-			int alignedX = x;
-			if (alignment == Alignment.TOP || alignment == Alignment.CENTER
-					|| alignment == Alignment.BOTTOM) {
-				alignedX = x + width / 2 - line.width / 2;
-			} else if (alignment == Alignment.RIGHT
-					|| alignment == Alignment.TOP_RIGHT
-					|| alignment == Alignment.BOTTOM_RIGHT) {
-				alignedX = x + width - line.width;
-			}
-
-			line.draw(g, alignedX, y);
-
-			y += line.ascent + line.descent;
-		}
+		lines.draw(g, x, y, width, height);
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, wasAntialiased);
 	}
@@ -293,5 +191,107 @@ public class TextLayer extends Layer {
 
 	public static interface Binding extends ViewBinding {
 		public String getText();
+	}
+
+	private class Lines {
+
+		private List<Line> lines = new ArrayList<Line>();
+
+		private int width;
+
+		private int height;
+
+		public Lines(String text, FontMetrics metrics) {
+			char[] chars = text.toCharArray();
+			int start = 0;
+			int end = chars.length;
+
+			// more characters left?
+			while (start != end) {
+				// take all remaining characters
+				int length = end - start;
+
+				// honour line break (multiple whitespace)
+				int lineBreak = text.indexOf("  ", start);
+				if (lineBreak != -1) {
+					length = lineBreak - start;
+				}
+
+				if (getWidth() > 0) {
+					int scaledWidth = scale(getWidth());
+					// width exceeded?
+					while (metrics.charsWidth(chars, start, length) > scaledWidth) {
+
+						// seek word break (single whitespace)
+						int wordBreak = text.lastIndexOf(' ', start + length
+								- 1);
+						if (length > 1) {
+							// seek intra word break (hyphen)
+							wordBreak = Math.max(wordBreak, text.lastIndexOf(
+									'-', start + length - 2) + 1);
+						}
+
+						// wordBreak before start?
+						if (wordBreak <= start) {
+							// decrease length until width fits
+							while (length > 1
+									&& metrics.charsWidth(chars, start, length) > scaledWidth) {
+								length--;
+							}
+						} else {
+							// let wordBreak decide length
+							length = wordBreak - start;
+						}
+					}
+				}
+
+				Line line = new Line(chars, start, length, metrics);
+
+				int newHeight = height + line.ascent + line.descent;
+				if (lines.size() > 0) {
+					newHeight += line.leading;
+				}
+				if (getHeight() > 0) {
+					int scaledHeight = scale(getHeight());
+					if (newHeight > scaledHeight) {
+						return;
+					}
+				}
+				height = newHeight;
+				width = Math.max(width, line.width);
+				lines.add(line);
+
+				start = start + length;
+
+				// trim leading whitespace
+				while (start < end && chars[start] == ' ') {
+					start++;
+				}
+			}
+		}
+
+		public void draw(Graphics2D g, int x, int y, int width, int height) {
+			for (int l = 0; l < lines.size(); l++) {
+				Line line = lines.get(l);
+
+				if (l > 0) {
+					y += line.leading;
+				}
+
+				int alignedX = x;
+				if (alignment == Alignment.TOP || alignment == Alignment.CENTER
+						|| alignment == Alignment.BOTTOM) {
+					alignedX = x + width / 2 - line.width / 2;
+				} else if (alignment == Alignment.RIGHT
+						|| alignment == Alignment.TOP_RIGHT
+						|| alignment == Alignment.BOTTOM_RIGHT) {
+					alignedX = x + width - line.width;
+				}
+
+				line.draw(g, alignedX, y);
+
+				y += line.ascent + line.descent;
+			}
+		}
 	}
 }
