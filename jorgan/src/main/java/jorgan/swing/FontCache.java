@@ -53,41 +53,31 @@ public class FontCache {
 		fonts.clear();
 	}
 
-	public static Font getFont(URL url, int style, float size) {
-		String key = "" + style + ":" + size + ":" + url;
+	public static Font getFont(URL url) {
+		String key = url.toString();
 
 		Font font = get(key);
 		if (font == null) {
-			font = deriveFont(getFont(url), style, size);
+			font = readFont(url);
 			put(key, font);
 		}
 
 		return font;
 	}
 
-	private static Font deriveFont(Font font, int style, float size) {
-		return font.deriveFont(style, size);
-	}
-
-	private static Font getFont(URL url) {
-		String key = url.toString();
-
-		Font font = get(key);
-		if (font == null) {
+	private static Font readFont(URL url) {
+		Font font = null;
+		try {
+			InputStream input = url.openStream();
 			try {
-				InputStream input = url.openStream();
+				font = Font.createFont(Font.TRUETYPE_FONT, input);
+			} finally {
 				try {
-					font = Font.createFont(Font.TRUETYPE_FONT, input);
-				} finally {
-					try {
-						input.close();
-					} catch (IOException ignore) {
-					}
+					input.close();
+				} catch (IOException ignore) {
 				}
-			} catch (Exception e) {
 			}
-
-			put(key, font);
+		} catch (Exception e) {
 		}
 
 		return font;
