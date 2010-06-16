@@ -222,7 +222,7 @@ public class SkinDockable extends OrganDockable {
 			skin = session.lookup(SkinManager.class).getSkin(console);
 			if (skin == null) {
 				setStatus(config.get("skinFailed").read(new MessageBuilder())
-						.build());
+						.build(console.getSkin()));
 			}
 		}
 
