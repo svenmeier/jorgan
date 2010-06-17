@@ -165,7 +165,11 @@ public abstract class Layer implements Cloneable {
 	}
 
 	protected final int scale(int value) {
-		return Math.round(view.getScale() * value);
+		return Math.round(value * view.getScale());
+	}
+
+	protected final int unscale(int value) {
+		return Math.round(value / view.getScale());
 	}
 
 	public int getHeight() {

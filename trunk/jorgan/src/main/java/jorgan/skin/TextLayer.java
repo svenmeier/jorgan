@@ -23,6 +23,7 @@ import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,9 +45,7 @@ public class TextLayer extends Layer {
 
 	private boolean antialiased = false;
 
-	private transient Font scaledFont;
-
-	private transient Lines lines;
+	private transient Paragraph paragraph;
 
 	public Font getFont() {
 		return font;
@@ -67,7 +66,7 @@ public class TextLayer extends Layer {
 	 */
 	@Override
 	protected int calcWidth() {
-		return lines.width;
+		return scale(paragraph.width);
 	}
 
 	/**
@@ -77,7 +76,7 @@ public class TextLayer extends Layer {
 	 */
 	@Override
 	protected int calcHeight() {
-		return lines.height;
+		return scale(paragraph.height);
 	}
 
 	public void setFont(Font font) {
@@ -111,29 +110,20 @@ public class TextLayer extends Layer {
 	public void setView(View<? extends Displayable> view) {
 		super.setView(view);
 
-		URL url = resolve(font.getName());
-		if (url == null) {
-			scaledFont = font.deriveFont(scale(font.getSize()));
-		} else {
-			scaledFont = FontCache.getFont(url).deriveFont(font.getStyle(),
-					scale(font.getSize()));
-		}
-
 		String text = "";
 		Binding binding = getBinding(Binding.class);
 		if (binding != null) {
 			text = binding.getText();
 		}
 
-		lines = new Lines(text.toString().trim(), view.getContainer().getHost()
-				.getFontMetrics(scaledFont));
+		paragraph = new Paragraph(text.toString().trim(), this.font);
 	}
 
 	@Override
 	protected void draw(Graphics2D g, int x, int y, int width, int height) {
-		g.setFont(scaledFont);
 		g.setColor(color);
 
+		AffineTransform transform = g.getTransform();
 		Object wasAntialiased = g
 				.getRenderingHint(RenderingHints.KEY_ANTIALIASING);
 		if (antialiased) {
@@ -141,18 +131,12 @@ public class TextLayer extends Layer {
 					RenderingHints.VALUE_ANTIALIAS_ON);
 		}
 
-		if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT
-				|| alignment == Alignment.LEFT) {
-			y += height / 2 - lines.height / 2;
-		} else if (alignment == Alignment.BOTTOM
-				|| alignment == Alignment.BOTTOM_RIGHT
-				|| alignment == Alignment.BOTTOM_LEFT) {
-			y += height - lines.height;
-		}
-
-		lines.draw(g, x, y, width, height);
+		g.translate(x, y);
+		g.scale(view.getScale(), view.getScale());
+		paragraph.draw(g, unscale(width), unscale(height));
 
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, wasAntialiased);
+		g.setTransform(transform);
 	}
 
 	@Override
@@ -162,8 +146,13 @@ public class TextLayer extends Layer {
 		return clone;
 	}
 
-	private class Line {
-		private String text;
+	/**
+	 * A paragraph of text - note that all calculations in this class (and
+	 * {@link Line}) are based on non-scaled values.
+	 */
+	private class Paragraph {
+
+		private List<Line> lines = new ArrayList<Line>();
 
 		private int ascent;
 
@@ -173,35 +162,28 @@ public class TextLayer extends Layer {
 
 		private int width;
 
-		public Line(char[] chars, int start, int length, FontMetrics metrics) {
-			this.text = new String(chars, start, length);
+		private int height;
 
+		private Font font;
+
+		public Paragraph(String text, Font font) {
+			URL url = resolve(font.getName());
+			if (url == null) {
+				this.font = font;
+			} else {
+				this.font = FontCache.getFont(url).deriveFont(font.getStyle(),
+						font.getSize());
+			}
+
+			int maxWidth = getWidth();
+			int maxHeight = getHeight();
+
+			FontMetrics metrics = view.getContainer().getHost().getFontMetrics(
+					this.font);
 			this.ascent = metrics.getAscent();
 			this.descent = metrics.getDescent();
 			this.leading = metrics.getLeading();
 
-			this.width = metrics.charsWidth(chars, start, length);
-		}
-
-		public void draw(Graphics2D g, int x, int y) {
-
-			g.drawString(text, x, y + ascent);
-		}
-	}
-
-	public static interface Binding extends ViewBinding {
-		public String getText();
-	}
-
-	private class Lines {
-
-		private List<Line> lines = new ArrayList<Line>();
-
-		private int width;
-
-		private int height;
-
-		public Lines(String text, FontMetrics metrics) {
 			char[] chars = text.toCharArray();
 			int start = 0;
 			int end = chars.length;
@@ -217,10 +199,9 @@ public class TextLayer extends Layer {
 					length = lineBreak - start;
 				}
 
-				if (getWidth() > 0) {
-					int scaledWidth = scale(getWidth());
+				if (maxWidth > 0) {
 					// width exceeded?
-					while (metrics.charsWidth(chars, start, length) > scaledWidth) {
+					while (metrics.charsWidth(chars, start, length) > maxWidth) {
 
 						// seek word break (single whitespace)
 						int wordBreak = text.lastIndexOf(' ', start + length
@@ -235,7 +216,7 @@ public class TextLayer extends Layer {
 						if (wordBreak <= start) {
 							// decrease length until width fits
 							while (length > 1
-									&& metrics.charsWidth(chars, start, length) > scaledWidth) {
+									&& metrics.charsWidth(chars, start, length) > maxWidth) {
 								length--;
 							}
 						} else {
@@ -245,21 +226,20 @@ public class TextLayer extends Layer {
 					}
 				}
 
-				Line line = new Line(chars, start, length, metrics);
-
-				int newHeight = height + line.ascent + line.descent;
+				int newHeight = height + ascent + descent;
 				if (lines.size() > 0) {
-					newHeight += line.leading;
+					newHeight += leading;
 				}
-				if (getHeight() > 0) {
-					int scaledHeight = scale(getHeight());
-					if (newHeight > scaledHeight) {
+				if (maxHeight > 0) {
+					if (newHeight > maxHeight) {
 						return;
 					}
 				}
-				height = newHeight;
-				width = Math.max(width, line.width);
+
+				Line line = new Line(chars, start, length, metrics);
 				lines.add(line);
+				width = Math.max(width, line.width);
+				height = newHeight;
 
 				start = start + length;
 
@@ -270,28 +250,63 @@ public class TextLayer extends Layer {
 			}
 		}
 
-		public void draw(Graphics2D g, int x, int y, int width, int height) {
+		public void draw(Graphics2D g, int width, int height) {
+			g.setFont(this.font);
+
+			int x = 0;
+			int y = 0;
+
+			if (alignment == Alignment.CENTER || alignment == Alignment.RIGHT
+					|| alignment == Alignment.LEFT) {
+				y += height / 2 - this.height / 2;
+			} else if (alignment == Alignment.BOTTOM
+					|| alignment == Alignment.BOTTOM_RIGHT
+					|| alignment == Alignment.BOTTOM_LEFT) {
+				y += height - this.height;
+			}
+
 			for (int l = 0; l < lines.size(); l++) {
 				Line line = lines.get(l);
 
 				if (l > 0) {
-					y += line.leading;
+					y += leading;
 				}
 
-				int alignedX = x;
+				line.draw(g, x, width, y);
+
+				y += ascent + descent;
+			}
+		}
+
+		private class Line {
+			private String text;
+
+			private int width;
+
+			public Line(char[] chars, int start, int length, FontMetrics metrics) {
+				this.text = new String(chars, start, length);
+
+				this.width = metrics.charsWidth(chars, start, length);
+			}
+
+			public void draw(Graphics2D g, int x, int width, int y) {
+
 				if (alignment == Alignment.TOP || alignment == Alignment.CENTER
 						|| alignment == Alignment.BOTTOM) {
-					alignedX = x + width / 2 - line.width / 2;
+					x = x + width / 2 - this.width / 2;
 				} else if (alignment == Alignment.RIGHT
 						|| alignment == Alignment.TOP_RIGHT
 						|| alignment == Alignment.BOTTOM_RIGHT) {
-					alignedX = x + width - line.width;
+					x = x + width - this.width;
 				}
 
-				line.draw(g, alignedX, y);
-
-				y += line.ascent + line.descent;
+				g.drawString(text, x, y + ascent);
 			}
 		}
 	}
+
+	public static interface Binding extends ViewBinding {
+		public String getText();
+	}
+
 }
