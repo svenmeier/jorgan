@@ -235,6 +235,17 @@ public class OrganFrame extends JFrame implements SessionAware {
 			fileMenu.add(exitAction);
 		}
 
+		JMenu editMenu = new JMenu();
+		config.get("editMenu").read(editMenu);
+		menuBar.add(editMenu);
+
+		if (session != null && !this.session.isSealed()) {
+			for (Action action : ActionRegistry.createToolbarActions(session,
+					this)) {
+				editMenu.add(action);
+			}
+		}
+
 		JMenu viewMenu = new JMenu();
 		config.get("viewMenu").read(viewMenu);
 		menuBar.add(viewMenu);

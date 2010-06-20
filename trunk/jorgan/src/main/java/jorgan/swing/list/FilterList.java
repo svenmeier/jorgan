@@ -34,6 +34,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.KeyStroke;
+import javax.swing.ListCellRenderer;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
@@ -87,15 +88,6 @@ public abstract class FilterList<I> extends JPanel {
 		add(textField, BorderLayout.NORTH);
 		textField.requestFocusInWindow();
 
-		list.setCellRenderer(new DefaultListCellRenderer() {
-			@SuppressWarnings("unchecked")
-			public Component getListCellRendererComponent(JList list,
-					Object value, int index, boolean isSelected,
-					boolean cellHasFocus) {
-				return super.getListCellRendererComponent(list, FilterList.this
-						.toString((I) value), index, isSelected, cellHasFocus);
-			}
-		});
 		ListUtils.addActionListener(list, 1, selectAction);
 		ListUtils.addHoverSelection(list);
 
@@ -109,7 +101,23 @@ public abstract class FilterList<I> extends JPanel {
 		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
 		add(scrollPane, BorderLayout.CENTER);
 
+		list.setCellRenderer(new DefaultListCellRenderer() {
+			@SuppressWarnings("unchecked")
+			public Component getListCellRendererComponent(JList list,
+					Object value, int index, boolean isSelected,
+					boolean cellHasFocus) {
+				return super.getListCellRendererComponent(list, FilterList.this
+						.toString((I) value), index, isSelected, cellHasFocus);
+			}
+		});
+
 		filterChanged();
+	}
+
+	public FilterList(ListCellRenderer renderer) {
+		this();
+
+		list.setCellRenderer(renderer);
 	}
 
 	@Override
@@ -165,7 +173,15 @@ public abstract class FilterList<I> extends JPanel {
 
 	protected abstract void onSelectedItem(I item);
 
-	protected abstract String toString(I item);
+	/**
+	 * Default presentation of items in the list.
+	 * 
+	 * @param item
+	 * @return
+	 */
+	protected String toString(I item) {
+		return item.toString();
+	}
 
 	private class SelectAction extends AbstractAction {
 		@SuppressWarnings("unchecked")
