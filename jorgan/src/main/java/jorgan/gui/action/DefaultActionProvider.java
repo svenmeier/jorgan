@@ -25,6 +25,7 @@ public class DefaultActionProvider implements ActionProvider {
 		actions.add(new ForwardAction(session));
 		actions.add(new UndoAction(session));
 		actions.add(new RedoAction(session));
+		actions.add(new SearchAction(session, frame));
 		return actions;
 	}
 }
