@@ -1043,6 +1043,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				int y = screenToDisposition(e.getY());
 
 				view.mouseDragged(x, y);
+
+				View<? extends Displayable> other = getView(e.getX(), e.getY());
+				if (other != null && other != view) {
+					other.mimic(view);
+				}
 			}
 		}
 
