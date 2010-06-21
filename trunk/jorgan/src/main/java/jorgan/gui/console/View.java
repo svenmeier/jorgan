@@ -432,4 +432,7 @@ public class View<E extends Displayable> {
 	public float getScale() {
 		return scale;
 	}
+
+	public void mimic(View<? extends Displayable> view) {
+	}
 }

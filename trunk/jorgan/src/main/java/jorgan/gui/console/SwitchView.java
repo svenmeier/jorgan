@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 
+import jorgan.disposition.Displayable;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.Switch;
 import jorgan.skin.Anchor;
@@ -182,6 +183,14 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 				g.drawString(shortcut.toString(), getX(), getY() + getHeight());
 			}
+		}
+	}
+
+	@Override
+	public void mimic(View<? extends Displayable> view) {
+		if (view instanceof SwitchView<?>) {
+			SwitchView<?> switchView = (SwitchView<?>) view;
+			this.getElement().setActive(switchView.getElement().isActive());
 		}
 	}
 }
