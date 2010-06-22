@@ -190,7 +190,11 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 	public void mimic(View<? extends Displayable> view) {
 		if (view instanceof SwitchView<?>) {
 			SwitchView<?> switchView = (SwitchView<?>) view;
-			this.getElement().setActive(switchView.getElement().isActive());
+
+			E element = this.getElement();
+			if (element.getDuration() == Switch.DURATION_INFINITE) {
+				element.setActive(switchView.getElement().isActive());
+			}
 		}
 	}
 }
