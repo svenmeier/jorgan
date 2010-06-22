@@ -43,6 +43,10 @@ public class SearchDialog extends StandardDialog {
 	private static Configuration config = Configuration.getRoot().get(
 			SearchDialog.class);
 
+	private OrganSession session;
+
+	private FilterList<Element> list;
+
 	/**
 	 * Constructor.
 	 */
@@ -64,7 +68,9 @@ public class SearchDialog extends StandardDialog {
 	}
 
 	private void init(final OrganSession session) {
-		setBody(new FilterList<Element>(new ElementListCellRenderer()) {
+		this.session = session;
+
+		list = new FilterList<Element>(2, new ElementListCellRenderer()) {
 			@Override
 			protected List<Element> getItems(String filter) {
 				List<Element> elements = new ArrayList<Element>();
@@ -83,16 +89,20 @@ public class SearchDialog extends StandardDialog {
 
 			@Override
 			protected void onSelectedItem(Element item) {
-				session.lookup(ElementSelection.class).setSelectedElement(item);
 				onOK();
 			}
-		});
+		};
+		setBody(list);
+
 		addOKAction();
 		addCancelAction();
 	}
 
 	@Override
 	public void onOK() {
+		session.lookup(ElementSelection.class).setSelectedElement(
+				list.getItem());
+
 		super.onOK();
 	}
 

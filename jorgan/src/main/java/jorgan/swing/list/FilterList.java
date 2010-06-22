@@ -56,6 +56,10 @@ public abstract class FilterList<I> extends JPanel {
 	private JScrollPane scrollPane;
 
 	public FilterList() {
+		this(1);
+	}
+
+	public FilterList(int clickCount) {
 		setLayout(new BorderLayout());
 
 		textField.setColumns(20);
@@ -88,8 +92,10 @@ public abstract class FilterList<I> extends JPanel {
 		add(textField, BorderLayout.NORTH);
 		textField.requestFocusInWindow();
 
-		ListUtils.addActionListener(list, 1, selectAction);
-		ListUtils.addHoverSelection(list);
+		ListUtils.addActionListener(list, clickCount, selectAction);
+		if (clickCount == 1) {
+			ListUtils.addHoverSelection(list);
+		}
 
 		scrollPane = new JScrollPane(list);
 		scrollPane
@@ -115,7 +121,11 @@ public abstract class FilterList<I> extends JPanel {
 	}
 
 	public FilterList(ListCellRenderer renderer) {
-		this();
+		this(1, renderer);
+	}
+
+	public FilterList(int clickCount, ListCellRenderer renderer) {
+		this(clickCount);
 
 		list.setCellRenderer(renderer);
 	}
@@ -154,9 +164,8 @@ public abstract class FilterList<I> extends JPanel {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private void filterChanged() {
-		I item = (I) list.getSelectedValue();
+		I item = getItem();
 
 		items = getItems(textField.getText());
 
@@ -183,12 +192,16 @@ public abstract class FilterList<I> extends JPanel {
 		return item.toString();
 	}
 
+	@SuppressWarnings("unchecked")
+	public I getItem() {
+		return (I) list.getSelectedValue();
+	}
+
 	private class SelectAction extends AbstractAction {
-		@SuppressWarnings("unchecked")
 		public void actionPerformed(ActionEvent e) {
-			Object item = list.getSelectedValue();
+			I item = getItem();
 			if (item != null) {
-				onSelectedItem((I) item);
+				onSelectedItem(item);
 			}
 		}
 	}
