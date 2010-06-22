@@ -1039,8 +1039,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseDragged(MouseEvent e) {
 			if (view != null) {
-				int x = screenToDisposition(e.getX());
-				int y = screenToDisposition(e.getY());
+				int x = e.getX();
+				int y = e.getY();
 
 				view.mouseDragged(x, y);
 
