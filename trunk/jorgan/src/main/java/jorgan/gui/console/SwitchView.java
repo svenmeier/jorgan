@@ -192,7 +192,9 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			SwitchView<?> switchView = (SwitchView<?>) view;
 
 			E element = this.getElement();
-			if (element.getDuration() == Switch.DURATION_INFINITE) {
+			if (element.getDuration() == Switch.DURATION_INFINITE
+					&& switchView.getElement().getDuration() == Switch.DURATION_INFINITE) {
+				// mimic infinite switches only
 				element.setActive(switchView.getElement().isActive());
 			}
 		}
