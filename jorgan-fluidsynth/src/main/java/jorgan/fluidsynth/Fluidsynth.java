@@ -35,6 +35,8 @@ public class Fluidsynth {
 
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
+	private static final int NAME_MAX_LENGTH = 32;
+
 	private ByteBuffer context;
 
 	private String name;
@@ -67,7 +69,7 @@ public class Fluidsynth {
 			int buffers, int bufferSize) throws IllegalStateException,
 			IOException {
 
-		this.name = name;
+		this.name = name.substring(0, Math.min(name.length(), NAME_MAX_LENGTH));
 		this.channels = channels;
 		this.polyphony = polyphony;
 		this.audioDriver = audioDriver;
@@ -75,8 +77,9 @@ public class Fluidsynth {
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		context = init(name, channels, polyphony, sampleRate, audioDriver,
-				audioDevice, buffers, bufferSize);
+		context = init(this.name, this.channels, this.polyphony, sampleRate,
+				this.audioDriver, this.audioDevice, this.buffers,
+				this.bufferSize);
 	}
 
 	public String getAudioDevice() {
