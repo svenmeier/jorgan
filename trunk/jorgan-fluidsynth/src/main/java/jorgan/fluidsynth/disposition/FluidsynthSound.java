@@ -41,6 +41,8 @@ public class FluidsynthSound extends Sound {
 
 	private int sampleRate = 44100;
 
+	private Interpolate interpolate = Interpolate.ORDER_4TH;
+
 	// audio.driver [alsa, oss, jack, dsound, sndman, coreaudio, portaudio]
 	private String audioDriver;
 
@@ -69,6 +71,20 @@ public class FluidsynthSound extends Sound {
 
 	public double getGain() {
 		return gain;
+	}
+
+	public void setInterpolate(Interpolate interpolate) {
+		this.interpolate = interpolate;
+
+		fireChange(new FastPropertyChange("interpolate", false));
+	}
+
+	public Interpolate getInterpolate() {
+		if (interpolate == null) {
+			// backwards compatibiliy for dispositions without interpolate
+			interpolate = Interpolate.ORDER_4TH;
+		}
+		return interpolate;
 	}
 
 	public void setAudioDriver(String audioDriver) {
@@ -362,5 +378,19 @@ public class FluidsynthSound extends Sound {
 				&& getPolyphony() == sound.getPolyphony()
 				&& getChannels() == sound.getChannels()
 				&& Null.safeEquals(getSoundfont(), sound.getSoundfont());
+	}
+
+	public static enum Interpolate {
+		NONE(0), LINEAR(1), ORDER_4TH(4), ORDER_7TH(7);
+
+		private int number;
+
+		private Interpolate(int number) {
+			this.number = number;
+		}
+
+		public int number() {
+			return number;
+		}
 	}
 }

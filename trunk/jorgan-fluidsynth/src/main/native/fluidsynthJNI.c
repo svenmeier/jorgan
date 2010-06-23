@@ -124,6 +124,13 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setGain(JNIEnv* env, jclass jclas
 }
 
 JNIEXPORT
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setInterpolate(JNIEnv* env, jclass jclass, jobject jcontext, jint jinterpolate) {
+	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
+
+	fluid_synth_set_interp_method(context->synth, -1, jinterpolate);
+}
+
+JNIEXPORT
 void JNICALL Java_jorgan_fluidsynth_Fluidsynth_noteOn(JNIEnv* env, jclass jclass, jobject jcontext, jint jchannel, jint jpitch, jint jvelocity) {
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 

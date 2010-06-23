@@ -141,6 +141,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			FluidsynthSound sound = getElement();
 
 			synth.setGain((float) (sound.getGain() * 2));
+			synth.setInterpolate(sound.getInterpolate().number());
 
 			Reverb reverb = sound.getReverb();
 			if (reverb == null) {

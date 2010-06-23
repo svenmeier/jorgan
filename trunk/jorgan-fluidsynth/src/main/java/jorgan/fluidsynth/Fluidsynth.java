@@ -121,6 +121,10 @@ public class Fluidsynth {
 		setGain(context, gain);
 	}
 
+	public void setInterpolate(int number) {
+		setInterpolate(context, number);
+	}
+
 	public void setReverbOn(boolean b) {
 		setReverbOn(context, b);
 	}
@@ -196,6 +200,8 @@ public class Fluidsynth {
 			int program);
 
 	private static native void setGain(ByteBuffer context, float gain);
+
+	private static native void setInterpolate(ByteBuffer context, int number);
 
 	private static native void setReverbOn(ByteBuffer context, boolean b);
 
