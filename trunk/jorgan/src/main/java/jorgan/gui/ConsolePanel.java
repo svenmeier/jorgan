@@ -495,6 +495,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		viewsByDisplayable.remove(element);
 		view.setContainer(null);
 
+		selectedViews.remove(view);
+		if (pressedView == view) {
+			pressedView = null;
+		}
+
 		repaint();
 		revalidate();
 	}
