@@ -70,7 +70,7 @@ public class SearchDialog extends StandardDialog {
 	private void init(final OrganSession session) {
 		this.session = session;
 
-		list = new FilterList<Element>(2, new ElementListCellRenderer()) {
+		list = new FilterList<Element>(false, new ElementListCellRenderer()) {
 			@Override
 			protected List<Element> getItems(String filter) {
 				List<Element> elements = new ArrayList<Element>();

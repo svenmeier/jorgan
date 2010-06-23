@@ -56,14 +56,17 @@ public abstract class FilterList<I> extends JPanel {
 	private JScrollPane scrollPane;
 
 	public FilterList() {
-		this(1);
+		this(true);
 	}
 
-	public FilterList(int clickCount) {
+	public FilterList(boolean light) {
 		setLayout(new BorderLayout());
 
 		textField.setColumns(20);
-		textField.setBorder(new BorderSubstitute(textField));
+		if (light) {
+			textField.setBorder(new BorderSubstitute(textField));
+			textField.setOpaque(false);
+		}
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				filterChanged();
@@ -92,8 +95,8 @@ public abstract class FilterList<I> extends JPanel {
 		add(textField, BorderLayout.NORTH);
 		textField.requestFocusInWindow();
 
-		ListUtils.addActionListener(list, clickCount, selectAction);
-		if (clickCount == 1) {
+		ListUtils.addActionListener(list, light ? 1 : 2, selectAction);
+		if (light) {
 			ListUtils.addHoverSelection(list);
 		}
 
@@ -102,9 +105,12 @@ public abstract class FilterList<I> extends JPanel {
 				.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		scrollPane
 				.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setBorder(new CompoundBorder(new EmptyBorder(10, 0, 0, 0),
-				new RuleBorder(RuleBorder.TOP)));
-		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
+		if (light) {
+			scrollPane.setBorder(new CompoundBorder(
+					new EmptyBorder(10, 0, 0, 0),
+					new RuleBorder(RuleBorder.TOP)));
+			scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
+		}
 		add(scrollPane, BorderLayout.CENTER);
 
 		list.setCellRenderer(new DefaultListCellRenderer() {
@@ -121,11 +127,11 @@ public abstract class FilterList<I> extends JPanel {
 	}
 
 	public FilterList(ListCellRenderer renderer) {
-		this(1, renderer);
+		this(true, renderer);
 	}
 
-	public FilterList(int clickCount, ListCellRenderer renderer) {
-		this(clickCount);
+	public FilterList(boolean light, ListCellRenderer renderer) {
+		this(light);
 
 		list.setCellRenderer(renderer);
 	}
