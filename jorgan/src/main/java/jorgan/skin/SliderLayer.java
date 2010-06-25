@@ -70,30 +70,26 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	}
 
 	@Override
-	public void mousePressed(int x, int y, Dimension size) {
-		mouseDragged(x, y, size);
+	protected void mousePressed(int x, int y, Rectangle bounds) {
+		mouseDragged(x, y, bounds);
 	}
 
 	@Override
-	public void mouseDragged(int x, int y, Dimension size) {
-		Rectangle rectangle = getUnpaddedBounds(size);
-
+	protected void mouseDragged(int x, int y, Rectangle bounds) {
 		float position = 0.0f;
 
 		switch (direction) {
 		case DIRECTION_LEFT_RIGHT:
-			position = (float) (x - rectangle.x) / rectangle.width;
+			position = (float) (x - bounds.x) / bounds.width;
 			break;
 		case DIRECTION_RIGHT_LEFT:
-			position = (float) (rectangle.width - (x - rectangle.x))
-					/ rectangle.width;
+			position = (float) (bounds.width - (x - bounds.x)) / bounds.width;
 			break;
 		case DIRECTION_TOP_BOTTOM:
-			position = (float) (y - rectangle.y) / rectangle.height;
+			position = (float) (y - bounds.y) / bounds.height;
 			break;
 		case DIRECTION_BOTTOM_TOP:
-			position = (float) (rectangle.height - (y - rectangle.y))
-					/ rectangle.height;
+			position = (float) (bounds.height - (y - bounds.y)) / bounds.height;
 			break;
 		}
 
@@ -106,7 +102,7 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 	}
 
 	@Override
-	public void mouseReleased(int x, int y, Dimension size) {
+	protected void mouseReleased(int x, int y, Rectangle bounds) {
 		Binding binding = getBinding(Binding.class);
 		if (binding != null) {
 			binding.released();

@@ -39,6 +39,10 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 	public static final String BINDING_ACTIVE = "active";
 
+	public static final String BINDING_ACTIVATE = "activate";
+
+	public static final String BINDING_DEACTIVATE = "deactivate";
+
 	/**
 	 * Constructor.
 	 * 
@@ -76,6 +80,40 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 				} else {
 					// lock active
 				}
+			};
+		});
+
+		setBinding(BINDING_ACTIVATE, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return true;
+			}
+
+			public boolean isPressed() {
+				return false;
+			}
+
+			public void pressed() {
+				getElement().activate(true);
+			}
+
+			public void released() {
+			};
+		});
+
+		setBinding(BINDING_DEACTIVATE, new ButtonLayer.Binding() {
+			public boolean isPressable() {
+				return true;
+			}
+
+			public boolean isPressed() {
+				return false;
+			}
+
+			public void pressed() {
+				getElement().activate(false);
+			}
+
+			public void released() {
 			};
 		});
 	}
