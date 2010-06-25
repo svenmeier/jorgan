@@ -236,12 +236,33 @@ public abstract class Layer implements Cloneable {
 	}
 
 	public void mousePressed(int x, int y, Dimension size) {
+		Rectangle bounds = getUnpaddedBounds(size);
+		if (bounds.contains(x, y)) {
+			mousePressed(x, y, bounds);
+		}
+	}
+
+	protected void mousePressed(int x, int y, Rectangle bounds) {
 	}
 
 	public void mouseDragged(int x, int y, Dimension size) {
+		Rectangle bounds = getUnpaddedBounds(size);
+		if (bounds.contains(x, y)) {
+			mouseDragged(x, y, bounds);
+		}
+	}
+
+	protected void mouseDragged(int x, int y, Rectangle bounds) {
 	}
 
 	public void mouseReleased(int x, int y, Dimension size) {
+		Rectangle bounds = getUnpaddedBounds(size);
+		if (bounds.contains(x, y)) {
+			mouseReleased(x, y, bounds);
+		}
+	}
+
+	protected void mouseReleased(int x, int y, Rectangle bounds) {
 	}
 
 	protected void released() {
