@@ -81,6 +81,7 @@ import jorgan.problem.Problem;
 import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
+import jorgan.skin.Layer;
 import jorgan.skin.Skin;
 import jorgan.skin.SkinManager;
 import jorgan.skin.Style;
@@ -1007,23 +1008,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 */
 	private class PlayHandler extends MouseHandler {
 
-		private View<? extends Displayable> view;
-
-		@Override
-		public void mousePressed(MouseEvent e) {
-			int x = e.getX();
-			int y = e.getY();
-
-			if (!e.isPopupTrigger()) {
-				View<? extends Displayable> view = getView(x, y);
-				if (view != null && view.isPressable(x, y)) {
-					this.view = view;
-					this.view.mousePressed(x, y);
-				} else {
-					this.view = null;
-				}
-			}
-		}
+		private View<?> view;
+		private Layer layer;
 
 		@Override
 		public void mouseMoved(MouseEvent e) {
@@ -1034,7 +1020,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				int x = e.getX();
 				int y = e.getY();
 
-				if (view.isPressable(x, y)) {
+				if (view.getPressable(x, y) != null) {
 					cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 				}
 			}
@@ -1042,12 +1028,28 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
+		public void mousePressed(MouseEvent e) {
+			int x = e.getX();
+			int y = e.getY();
+
+			if (!e.isPopupTrigger()) {
+				view = getView(x, y);
+				if (view != null) {
+					layer = view.getPressable(x, y);
+					if (layer != null) {
+						view.mousePressed(layer, x, y);
+					}
+				}
+			}
+		}
+
+		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (view != null) {
+			if (layer != null) {
 				int x = e.getX();
 				int y = e.getY();
 
-				view.mouseDragged(x, y);
+				view.mouseDragged(layer, x, y);
 
 				View<? extends Displayable> other = getView(e.getX(), e.getY());
 				if (other != null && other != view) {
@@ -1058,12 +1060,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (view != null) {
+			if (layer != null) {
 				int x = e.getX();
 				int y = e.getY();
 
-				view.mouseReleased(x, y);
+				view.mouseReleased(layer, x, y);
 			}
+			layer = null;
 			view = null;
 		}
 	}

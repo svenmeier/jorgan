@@ -45,18 +45,12 @@ public class ButtonLayer extends CompositeLayer implements Cloneable {
 
 	@Override
 	protected void mousePressed(int x, int y, Rectangle bounds) {
-		Binding binding = getBinding(Binding.class);
-		if (binding != null) {
-			binding.pressed();
-		}
+		getBinding(Binding.class).pressed();
 	}
 
 	@Override
 	protected void mouseReleased(int x, int y, Rectangle bounds) {
-		Binding binding = getBinding(Binding.class);
-		if (binding != null) {
-			binding.released();
-		}
+		getBinding(Binding.class).released();
 	}
 
 	@Override

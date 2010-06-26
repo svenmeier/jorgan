@@ -93,20 +93,14 @@ public class SliderLayer extends CompositeLayer implements Cloneable {
 			break;
 		}
 
-		Binding binding = getBinding(Binding.class);
-		if (binding != null) {
-			position = Math.max(0.0f, position);
-			position = Math.min(1.0f, position);
-			binding.setPosition(position);
-		}
+		position = Math.max(0.0f, position);
+		position = Math.min(1.0f, position);
+		getBinding(Binding.class).setPosition(position);
 	}
 
 	@Override
 	protected void mouseReleased(int x, int y, Rectangle bounds) {
-		Binding binding = getBinding(Binding.class);
-		if (binding != null) {
-			binding.released();
-		}
+		getBinding(Binding.class).released();
 	}
 
 	@Override
