@@ -38,6 +38,7 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
 import jorgan.skin.ButtonLayer;
+import jorgan.skin.Layer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 import jorgan.skin.Layer.ViewBinding;
@@ -349,21 +350,21 @@ public class View<E extends Displayable> {
 	 *            y coordinate
 	 * @return pressable
 	 */
-	public final boolean isPressable(int x, int y) {
+	public final Layer getPressable(int x, int y) {
 
-		return style.isPressable(x - location.x, y - location.y, size);
+		return style.getPressable(x - location.x, y - location.y, size);
 	}
 
-	public final void mousePressed(int x, int y) {
-		style.mousePressed(x - location.x, y - location.y, size);
+	public final void mousePressed(Layer layer, int x, int y) {
+		layer.mousePressed(x - location.x, y - location.y, size);
 	}
 
-	public final void mouseDragged(int x, int y) {
-		style.mouseDragged(x - location.x, y - location.y, size);
+	public final void mouseDragged(Layer layer, int x, int y) {
+		layer.mouseDragged(x - location.x, y - location.y, size);
 	}
 
-	public final void mouseReleased(int x, int y) {
-		style.mouseReleased(x - location.x, y - location.y, size);
+	public final void mouseReleased(Layer layer, int x, int y) {
+		layer.mouseReleased(x - location.x, y - location.y, size);
 	}
 
 	public void keyPressed(KeyEvent ev) {

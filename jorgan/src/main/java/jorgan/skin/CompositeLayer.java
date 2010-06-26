@@ -81,51 +81,22 @@ public class CompositeLayer extends Layer {
 	}
 
 	@Override
-	public boolean isPressable(int x, int y, Dimension dimension) {
-		if (super.isPressable(x, y, dimension)) {
-			return true;
+	public Layer getPressable(int x, int y, Dimension dimension) {
+		Layer pressable = super.getPressable(x, y, dimension);
+		if (pressable != null) {
+			return pressable;
 		}
+
 		for (int l = 0; l < layers.size(); l++) {
 			Layer layer = layers.get(l);
 
-			if (layer.isPressable(x, y, dimension)) {
-				return true;
+			pressable = layer.getPressable(x, y, dimension);
+			if (pressable != null) {
+				return pressable;
 			}
 		}
-		return false;
-	}
 
-	@Override
-	public void mousePressed(int x, int y, Dimension size) {
-		super.mousePressed(x, y, size);
-
-		for (int l = 0; l < layers.size(); l++) {
-			Layer layer = layers.get(l);
-
-			layer.mousePressed(x, y, size);
-		}
-	}
-
-	@Override
-	public void mouseDragged(int x, int y, Dimension size) {
-		super.mouseDragged(x, y, size);
-
-		for (int l = 0; l < layers.size(); l++) {
-			Layer layer = layers.get(l);
-
-			layer.mouseDragged(x, y, size);
-		}
-	}
-
-	@Override
-	public void mouseReleased(int x, int y, Dimension size) {
-		super.mouseReleased(x, y, size);
-
-		for (int l = 0; l < layers.size(); l++) {
-			Layer layer = layers.get(l);
-
-			layer.mouseReleased(x, y, size);
-		}
+		return null;
 	}
 
 	@Override

@@ -224,22 +224,22 @@ public abstract class Layer implements Cloneable {
 		return 0;
 	}
 
-	public boolean isPressable(int x, int y, Dimension dimension) {
+	public Layer getPressable(int x, int y, Dimension dimension) {
 		ViewBinding binding = getBinding(ViewBinding.class);
 		if (binding != null && binding.isPressable()) {
 			Rectangle rectangle = getUnpaddedBounds(dimension);
 
-			return rectangle.contains(x, y);
+			if (rectangle.contains(x, y)) {
+				return this;
+			}
 		}
 
-		return false;
+		return null;
 	}
 
 	public void mousePressed(int x, int y, Dimension size) {
 		Rectangle bounds = getUnpaddedBounds(size);
-		if (bounds.contains(x, y)) {
-			mousePressed(x, y, bounds);
-		}
+		mousePressed(x, y, bounds);
 	}
 
 	protected void mousePressed(int x, int y, Rectangle bounds) {
@@ -247,9 +247,7 @@ public abstract class Layer implements Cloneable {
 
 	public void mouseDragged(int x, int y, Dimension size) {
 		Rectangle bounds = getUnpaddedBounds(size);
-		if (bounds.contains(x, y)) {
-			mouseDragged(x, y, bounds);
-		}
+		mouseDragged(x, y, bounds);
 	}
 
 	protected void mouseDragged(int x, int y, Rectangle bounds) {
@@ -257,9 +255,7 @@ public abstract class Layer implements Cloneable {
 
 	public void mouseReleased(int x, int y, Dimension size) {
 		Rectangle bounds = getUnpaddedBounds(size);
-		if (bounds.contains(x, y)) {
-			mouseReleased(x, y, bounds);
-		}
+		mouseReleased(x, y, bounds);
 	}
 
 	protected void mouseReleased(int x, int y, Rectangle bounds) {
