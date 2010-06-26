@@ -24,6 +24,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,6 +37,7 @@ import javax.sound.midi.ShortMessage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -84,6 +86,8 @@ public class ConsolePanel extends JPanel {
 
 	private JComboBox screenComboBox;
 
+	private JFormattedTextField zoomTextField;
+
 	private JComboBox deviceComboBox;
 
 	private SwitchesModel switchesModel = new SwitchesModel();
@@ -124,6 +128,11 @@ public class ConsolePanel extends JPanel {
 		screenComboBox.setEditable(false);
 		column.definition(screenComboBox).fillHorizontal();
 
+		column.term(config.get("zoom").read(new JLabel()));
+		zoomTextField = new JFormattedTextField(new DecimalFormat("0.00"));
+		zoomTextField.setValue(2.0f);
+		column.definition(zoomTextField);
+
 		column.term(config.get("device").read(new JLabel()));
 		deviceComboBox = new JComboBox();
 		deviceComboBox.setEditable(false);
@@ -147,7 +156,7 @@ public class ConsolePanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setPreferredSize(new Dimension(160, 160));
+		scrollPane.setPreferredSize(new Dimension(128, 32));
 		column.box(scrollPane).growVertical();
 
 		switchesTable = new JTable();
@@ -175,7 +184,7 @@ public class ConsolePanel extends JPanel {
 		JScrollPane scrollPane = new JScrollPane(
 				JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
 				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		scrollPane.setPreferredSize(new Dimension(160, 160));
+		scrollPane.setPreferredSize(new Dimension(128, 32));
 		column.box(scrollPane).growVertical();
 
 		continuousTable = new JTable();
@@ -193,6 +202,10 @@ public class ConsolePanel extends JPanel {
 		this.screenComboBox.setModel(ComboBoxUtils
 				.createModelWithNull(FullScreen.getIDs()));
 		this.screenComboBox.setSelectedItem(console.getScreen());
+
+		this.zoomTextField.setValue(console.getZoom());
+		zoomTextField.getMinimumSize();
+		zoomTextField.getPreferredSize();
 
 		this.deviceComboBox.setModel(ComboBoxUtils
 				.createModelWithNull(DevicePool.instance().getMidiDeviceNames(
@@ -253,6 +266,8 @@ public class ConsolePanel extends JPanel {
 	public void apply() {
 		console.setScreen((String) this.screenComboBox.getSelectedItem());
 		console.setInput(getDeviceName());
+
+		console.setZoom(((Number) this.zoomTextField.getValue()).floatValue());
 
 		for (SwitchRow switchRow : switchRows) {
 			switchRow.apply();
