@@ -1059,8 +1059,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		@Override
 		public void mouseReleased(MouseEvent e) {
 			if (view != null) {
-				int x = screenToDisposition(e.getX());
-				int y = screenToDisposition(e.getY());
+				int x = e.getX();
+				int y = e.getY();
 
 				view.mouseReleased(x, y);
 			}
@@ -1109,8 +1109,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				// size
 				revalidate();
 
-				int x = screenToDisposition(dtde.getLocation().x);
-				int y = screenToDisposition(dtde.getLocation().y);
+				int x = dtde.getLocation().x;
+				int y = dtde.getLocation().y;
 
 				new StackVerticalLayout(x, y, grid).layout(null, views);
 
