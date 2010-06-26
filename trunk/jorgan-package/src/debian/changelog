@@ -2,8 +2,11 @@ jorgan (3.10.0-1) stable;
 
   * Improved graphics performance.
   * Rewrote delayed Ranks to use playing clock.
+  * New Skin bindings activate and deactivate.
+  * Sweep gesture added.
+  * Fluidsynth interpolate support. 
 
- -- Sven Meier <sven@meiers.net>  Sun, 13 Jun 2010 12:12:25 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 27 Jun 2010 12:12:25 +0200
 
 jorgan (3.9.4-1) stable;
 
