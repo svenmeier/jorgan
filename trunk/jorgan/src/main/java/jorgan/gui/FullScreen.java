@@ -19,11 +19,13 @@
 package jorgan.gui;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GraphicsConfiguration;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.KeyEventDispatcher;
 import java.awt.KeyboardFocusManager;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -37,6 +39,7 @@ import javax.swing.JDialog;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
@@ -59,9 +62,9 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			FullScreen.class);
 
 	/**
-	 * The handler of mouse events.
+	 * The handler of events.
 	 */
-	private MouseHandler mouseHandler = new MouseHandler();
+	private EventHandler eventHandler = new EventHandler();
 
 	private JScrollPane scrollPane = new JScrollPane(
 			JScrollPane.VERTICAL_SCROLLBAR_NEVER,
@@ -87,10 +90,11 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		setUndecorated(true);
 
-		scrollPane.setBorder(null);
+		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
 		scrollPane.setOpaque(true);
-		add(scrollPane);
+		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
 		scrollPane.setViewportView(cardPanel);
+		add(scrollPane);
 
 		popup.addSeparator();
 		popup.add(new CloseAction());
@@ -128,8 +132,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		ConsolePanel consolePanel = new ConsolePanel(session, console);
 
-		consolePanel.addMouseListener(mouseHandler);
-		consolePanel.addMouseMotionListener(mouseHandler);
+		consolePanel.addMouseListener(eventHandler);
+		consolePanel.addMouseMotionListener(eventHandler);
 
 		cardPanel.addCard(consolePanel, console);
 
@@ -159,7 +163,7 @@ public class FullScreen extends JDialog implements ConsoleStack {
 	/**
 	 * The handler for mouse events.
 	 */
-	private class MouseHandler extends MouseInputAdapter implements
+	private class EventHandler extends MouseInputAdapter implements
 			ActionListener {
 
 		private Timer timer;
@@ -168,7 +172,7 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		private int deltaY;
 
-		private MouseHandler() {
+		private EventHandler() {
 			timer = new Timer(50, this);
 		}
 
@@ -222,12 +226,15 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			// must change horizontal and vertical value separately
-			// or otherwise scrollpane will not use blitting :(
-			scrollPane.getHorizontalScrollBar().setValue(
-					scrollPane.getHorizontalScrollBar().getValue() + deltaX);
-			scrollPane.getVerticalScrollBar().setValue(
-					scrollPane.getVerticalScrollBar().getValue() + deltaY);
+			Rectangle rect = scrollPane.getViewport().getViewRect();
+			Dimension size = scrollPane.getViewport().getView().getSize();
+
+			int x = Math.min(size.width - rect.width, Math.max(rect.x + deltaX,
+					0));
+			int y = Math.min(size.height - rect.height, Math.max(rect.y
+					+ deltaY, 0));
+
+			scrollPane.getViewport().setViewPosition(new Point(x, y));
 		}
 	}
 
