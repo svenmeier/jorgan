@@ -879,7 +879,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				setToolTipText(null);
 			} else {
 				setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
-				setToolTipText(getTooltip(view.getElement()));
+				setToolTipText(Elements.getDisplayName(view.getElement()));
 			}
 		}
 
@@ -1023,6 +1023,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (view.getPressable(x, y) != null) {
 					cursor = Cursor.getPredefinedCursor(Cursor.HAND_CURSOR);
 				}
+
+				setToolTipText(view.getTooltip());
 			}
 			setCursor(cursor);
 		}
@@ -1228,10 +1230,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	public void setLocation(View<? extends Displayable> view, Point location) {
 		console.setLocation(view.getElement(), screenToDisposition(location.x),
 				screenToDisposition(location.y));
-	}
-
-	private String getTooltip(Displayable element) {
-		return Elements.getDisplayName(element);
 	}
 
 	private void sendTo(final Console other) {

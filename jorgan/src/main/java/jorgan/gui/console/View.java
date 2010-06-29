@@ -42,6 +42,7 @@ import jorgan.skin.Layer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 import jorgan.skin.Layer.ViewBinding;
+import jorgan.skin.TextLayer.Binding;
 import bias.Configuration;
 
 /**
@@ -432,6 +433,14 @@ public class View<E extends Displayable> {
 
 	public float getScale() {
 		return scale;
+	}
+
+	public String getTooltip() {
+		Binding binding = getBinding("tooltip", TextLayer.Binding.class);
+		if (binding != null) {
+			return binding.getText();
+		}
+		return null;
 	}
 
 	public void mimic(View<? extends Displayable> view) {
