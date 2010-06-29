@@ -24,7 +24,6 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,11 +36,12 @@ import javax.sound.midi.ShortMessage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
-import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSpinner;
 import javax.swing.JTable;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -86,7 +86,7 @@ public class ConsolePanel extends JPanel {
 
 	private JComboBox screenComboBox;
 
-	private JFormattedTextField zoomTextField;
+	private JSpinner zoomSpinner;
 
 	private JComboBox deviceComboBox;
 
@@ -129,9 +129,9 @@ public class ConsolePanel extends JPanel {
 		column.definition(screenComboBox).fillHorizontal();
 
 		column.term(config.get("zoom").read(new JLabel()));
-		zoomTextField = new JFormattedTextField(new DecimalFormat("0.00"));
-		zoomTextField.setValue(2.0f);
-		column.definition(zoomTextField);
+		zoomSpinner = new JSpinner(new SpinnerNumberModel(1.0, 0.5, 5.0, 0.1));
+		zoomSpinner.setEditor(new JSpinner.NumberEditor(zoomSpinner, "0.00"));
+		column.definition(zoomSpinner);
 
 		column.term(config.get("device").read(new JLabel()));
 		deviceComboBox = new JComboBox();
@@ -203,9 +203,7 @@ public class ConsolePanel extends JPanel {
 				.createModelWithNull(FullScreen.getIDs()));
 		this.screenComboBox.setSelectedItem(console.getScreen());
 
-		this.zoomTextField.setValue(console.getZoom());
-		zoomTextField.getMinimumSize();
-		zoomTextField.getPreferredSize();
+		this.zoomSpinner.setValue(new Double(console.getZoom()));
 
 		this.deviceComboBox.setModel(ComboBoxUtils
 				.createModelWithNull(DevicePool.instance().getMidiDeviceNames(
@@ -267,7 +265,7 @@ public class ConsolePanel extends JPanel {
 		console.setScreen((String) this.screenComboBox.getSelectedItem());
 		console.setInput(getDeviceName());
 
-		console.setZoom(((Number) this.zoomTextField.getValue()).floatValue());
+		console.setZoom(((Number) this.zoomSpinner.getValue()).floatValue());
 
 		for (SwitchRow switchRow : switchRows) {
 			switchRow.apply();
