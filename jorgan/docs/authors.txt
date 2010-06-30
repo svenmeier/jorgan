@@ -14,6 +14,7 @@ The team behind jOrgan (sorted by last name) :
       . Martin Slavik <martin.slavik@tul.cz> (Czech translation)
 
     User Feedback and Food for Thought :
+      . Marco Francesco <ogiogiogella@gmail.com>
       . Graham Goode <ggoode.sa@gmail.com>
       . Graham Harrison <fg.harrison@virgin.net>
       . Michael Kainberger <exlibris@aon.at>
