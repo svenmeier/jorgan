@@ -22,11 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import javax.sound.midi.MidiEvent;
-import javax.sound.midi.Sequence;
-import javax.sound.midi.Track;
-
-import jorgan.midi.MessageUtils;
 import junit.framework.TestCase;
 
 /**
@@ -59,69 +54,26 @@ public class FluidsynthTest extends TestCase {
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
 
-		Recording recording = new Recording() {
-			@Override
-			public synchronized void w() {
-				try {
-					wait(2000);
-				} catch (InterruptedException interrupted) {
-				}
-			}
+		int CONTROLLER = 11;
 
-			@Override
-			public void on(int cc, int data1, int data2) {
-				synth.send(0, cc, data1, data2);
-			}
-		};
-
-		script(recording);
+		synth.send(0, 176, 121, 0);
+		synth.send(0, 192, 0, 0);
+		synth.send(0, 176, CONTROLLER, 60);
+		w();
+		synth.send(0, 144, 60, 127);
+		w();
+		synth.send(0, 176, CONTROLLER, 60);
+		w();
+		synth.send(0, 128, 60, 0);
+		w();
 
 		synth.destroy();
 	}
 
-	public void testSequence() throws Exception {
-		final Sequence sequence = new Sequence(Sequence.PPQ, 1);
-
-		Recording recording = new Recording() {
-			private Track track = sequence.createTrack();
-
-			private int tick = 0;
-
-			@Override
-			public void w() {
-				tick += 4;
-			}
-
-			@Override
-			public void on(int cc, int data1, int data2) {
-				track.add(new MidiEvent(MessageUtils.newMessage(cc, data1,
-						data2), tick));
-			}
-		};
-
-		script(recording);
-
-		// MidiSystem.write(sequence, 1, new File("test.mid"));
-	}
-
-	private void script(Recording recording) throws Exception {
-		int CONTROLLER = 11;
-
-		recording.on(176, 121, 0);
-		recording.on(192, 0, 0);
-		recording.on(176, CONTROLLER, 60);
-		recording.w();
-		recording.on(144, 60, 127);
-		recording.w();
-		recording.on(176, CONTROLLER, 60);
-		recording.w();
-		recording.on(128, 60, 0);
-		recording.w();
-	}
-
-	private interface Recording {
-		public void w();
-
-		public void on(int cc, int d1, int d2);
+	public synchronized void w() {
+		try {
+			wait(2000);
+		} catch (InterruptedException interrupted) {
+		}
 	}
 }
