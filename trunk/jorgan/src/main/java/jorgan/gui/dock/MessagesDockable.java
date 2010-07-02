@@ -236,7 +236,10 @@ public class MessagesDockable extends OrganDockable {
 						} else {
 							setIcon(interceptIcon);
 						}
-						setText(Elements.getDisplayName(value.getClass()));
+						// might be null from accessibility
+						if (value != null) {
+							setText(Elements.getDisplayName(value.getClass()));
+						}
 					}
 				});
 		table.getColumnModel().getColumn(1).setCellEditor(
