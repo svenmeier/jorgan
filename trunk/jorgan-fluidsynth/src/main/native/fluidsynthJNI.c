@@ -40,6 +40,9 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 
 	context->settings = new_fluid_settings();
 
+	fluid_settings_setint(context->settings, "synth.threadsafe-api", 0);
+	fluid_settings_setint(context->settings, "synth.midi-channels", jchannels);
+
 	fluid_settings_setint(context->settings, "synth.midi-channels", jchannels);
 	fluid_settings_setint(context->settings, "synth.polyphony", jpolyphony);
 	fluid_settings_setnum(context->settings, "synth.sample-rate", jsampleRate);
