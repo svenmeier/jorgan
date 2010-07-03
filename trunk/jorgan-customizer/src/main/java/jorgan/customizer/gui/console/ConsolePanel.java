@@ -856,7 +856,7 @@ public class ConsolePanel extends JPanel {
 			super.getTableCellRendererComponent(table, null, isSelected,
 					hasFocus, row, column);
 
-			if (received.contains(value)) {
+			if (value != null && received.contains(value)) {
 				setBackground(Color.yellow);
 			} else {
 			}
