@@ -236,6 +236,7 @@ public class MessagesDockable extends OrganDockable {
 						} else {
 							setIcon(interceptIcon);
 						}
+
 						// might be null from accessibility
 						if (value != null) {
 							setText(Elements.getDisplayName(value.getClass()));
