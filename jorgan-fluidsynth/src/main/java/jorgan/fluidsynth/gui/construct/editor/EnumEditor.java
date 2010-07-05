@@ -22,7 +22,12 @@ public class EnumEditor extends PropertyEditorSupport {
 
 	@Override
 	public String getAsText() {
-		return ((Interpolate) getValue()).name();
+		Interpolate interpolate = (Interpolate) getValue();
+		if (interpolate == null) {
+			return null;
+		} else {
+			return interpolate.name();
+		}
 	}
 
 	@Override
