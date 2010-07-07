@@ -443,6 +443,7 @@ public class View<E extends Displayable> {
 		return null;
 	}
 
-	public void mimic(View<? extends Displayable> view) {
+	public void sweep(View<?> view) {
+		this.getElement().sweep(view.getElement());
 	}
 }

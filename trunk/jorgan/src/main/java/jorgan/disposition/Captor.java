@@ -20,6 +20,13 @@ package jorgan.disposition;
 
 public class Captor extends Switch {
 
+	/**
+	 * No sweep for captors.
+	 */
+	@Override
+	public void sweep(Displayable displayable) {
+	}
+
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
 		return Combination.class.isAssignableFrom(clazz);

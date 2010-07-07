@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
 
-import jorgan.disposition.Displayable;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.Switch;
 import jorgan.skin.Anchor;
@@ -220,20 +219,6 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 				g.setColor(getShortcutColor());
 
 				g.drawString(shortcut.toString(), getX(), getY() + getHeight());
-			}
-		}
-	}
-
-	@Override
-	public void mimic(View<? extends Displayable> view) {
-		if (view instanceof SwitchView<?>) {
-			SwitchView<?> switchView = (SwitchView<?>) view;
-
-			E element = this.getElement();
-			if (element.getDuration() == Switch.DURATION_INFINITE
-					&& switchView.getElement().getDuration() == Switch.DURATION_INFINITE) {
-				// mimic infinite switches only
-				element.setActive(switchView.getElement().isActive());
 			}
 		}
 	}
