@@ -84,4 +84,8 @@ public abstract class Displayable extends Element {
 			fireChange(new PropertyChange(oldZoom, this.zoom));
 		}
 	}
+
+	public void sweep(Displayable displayable) {
+
+	}
 }

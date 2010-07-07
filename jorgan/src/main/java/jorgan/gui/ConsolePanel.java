@@ -1055,7 +1055,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 				View<? extends Displayable> other = getView(e.getX(), e.getY());
 				if (other != null && other != view) {
-					other.mimic(view);
+					other.sweep(view);
 				}
 			}
 		}

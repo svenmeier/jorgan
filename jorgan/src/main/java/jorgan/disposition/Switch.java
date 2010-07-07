@@ -43,6 +43,22 @@ public class Switch extends Engageable {
 
 	private Shortcut shortcut;
 
+	/**
+	 * Sweep from other {@link Switch}es if both are configured to
+	 * {@link #DURATION_INFINITE}.
+	 */
+	@Override
+	public void sweep(Displayable displayable) {
+		if (displayable instanceof Switch) {
+			Switch other = (Switch) displayable;
+
+			if (other.getDuration() == DURATION_INFINITE
+					&& this.getDuration() == DURATION_INFINITE) {
+				setActive(other.isActive());
+			}
+		}
+	}
+
 	public Shortcut getShortcut() {
 		return shortcut;
 	}
