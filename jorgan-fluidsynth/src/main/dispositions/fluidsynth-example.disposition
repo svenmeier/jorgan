@@ -138,6 +138,7 @@
       <audioBuffers>8</audioBuffers>
       <audioBufferSize>512</audioBufferSize>
       <gain>0.2</gain>
+      <interpolate>ORDER_4TH</interpolate>
       <reverb>
         <room>0.2</room>
         <damping>0.0</damping>
