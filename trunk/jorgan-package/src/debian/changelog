@@ -4,7 +4,8 @@ jorgan (3.10.0-1) stable;
   * Rewrote delayed Ranks to use playing clock.
   * New Skin bindings for activate and deactivate.
   * Sweep gesture added.
-  * Fluidsynth interpolate support. 
+  * Fluidsynth interpolate support.
+  * New element search. 
 
  -- Sven Meier <sven@meiers.net>  Sun, 11 Jul 2010 12:12:25 +0200
 
