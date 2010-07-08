@@ -58,6 +58,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
+import javax.swing.text.JTextComponent;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
@@ -1131,7 +1132,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private class ShortcutHandler implements KeyEventPostProcessor {
 
 		public boolean postProcessKeyEvent(KeyEvent e) {
-			if (constructing) {
+			// don't steal characters from text components
+			if (constructing || e.getSource() instanceof JTextComponent) {
 				return false;
 			}
 
