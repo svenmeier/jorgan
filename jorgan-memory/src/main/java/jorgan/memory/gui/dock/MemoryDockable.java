@@ -328,6 +328,9 @@ public class MemoryDockable extends OrganDockable {
 		@Override
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			storage.setTitle(rowIndex, (String) aValue);
+
+			table.getColumnModel().getSelectionModel().setSelectionInterval(0,
+					0);
 		}
 	}
 }
