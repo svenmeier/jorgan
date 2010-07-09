@@ -21,8 +21,6 @@ package jorgan.swing.table;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.util.EventObject;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JTable;
@@ -49,14 +47,6 @@ public class StringCellEditor extends AbstractCellEditor implements
 				stopCellEditing();
 			}
 		});
-	}
-
-	/**
-	 * Editable via {@link MouseEvent} only.
-	 */
-	@Override
-	public boolean isCellEditable(EventObject e) {
-		return e instanceof MouseEvent;
 	}
 
 	protected JTextField getTextField() {
