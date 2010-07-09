@@ -16,7 +16,7 @@ OutputBaseFilename=jOrgan-{#VERSION}-installer1
 OutputDir=.\target
 DefaultDirName={pf}\jOrgan
 DefaultGroupName=jOrgan
-DisableProgramGroupPage=yes
+DisableProgramGroupPage=no
 LicenseFile=..\jorgan\docs\license.txt
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
@@ -75,7 +75,7 @@ Source: "..\jorgan-sysex\target\marshal\*"; DestDir: "{app}"; Components: sysex;
 Source: "..\jorgan-tools\target\marshal\*"; DestDir: "{app}"; Components: tools; Flags: recursesubdirs createallsubdirs
 
 [Icons]
-Name: "{group}\jOrgan {#VERSION}"; Filename: "{app}\jOrgan.exe"
+Name: "{group}\jOrgan"; Filename: "{app}\jOrgan.exe"
 Name: "{group}\{cm:ProgramOnTheWeb,jOrgan}"; Filename: "http://jorgan.sourceforge.net"
 Name: "{group}\{cm:UninstallProgram,jOrgan}"; Filename: "{uninstallexe}"
 Name: "{commondesktop}\jOrgan"; Filename: "{app}\jOrgan.exe"; Tasks: desktopicon
@@ -92,6 +92,8 @@ Root: HKCR; Subkey: "jOrganDisposition\shell\open\command"; ValueType: string; V
 
 [Run]
 Filename: "{app}\jOrgan.exe"; Description: "{cm:LaunchProgram,jOrgan}"; Flags: nowait postinstall skipifsilent
+
+
 
 
 
