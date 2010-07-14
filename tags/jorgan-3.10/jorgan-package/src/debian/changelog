@@ -1,0 +1,24 @@
+jorgan (3.10.0-1) stable;
+
+  * Improved graphics performance.
+  * Rewrote delayed Ranks to use playing clock.
+  * New Skin bindings for activate and deactivate.
+  * Sweep gesture added.
+  * Fluidsynth interpolate support.
+  * New element search. 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 11 Jul 2010 12:12:25 +0200
+
+jorgan (3.9.4-1) stable;
+
+  * New extension jorgan-tools.
+  * Accessibility improvements.
+
+ -- Sven Meier <sven@meiers.net>  Sat, 5 Jun 2010 14:34:12 +0200
+
+jorgan (3.9.3-1) stable;
+
+  * First packaging as Debian package.
+
+ -- Sven Meier <sven@meiers.net>  Mon, 10 May 2010 16:56:47 +0200
+

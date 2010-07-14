@@ -1,0 +1,22 @@
+<project name="jorgan-all" default="all" basedir=".">
+
+  <target name="all">
+    <ant dir="jorgan"/>
+    <ant dir="jorgan-importer"/>
+    <ant dir="jorgan-customizer"/>
+    <ant dir="jorgan-creative"/>
+    <ant dir="jorgan-executor"/>
+    <ant dir="jorgan-fluidsynth"/>
+    <ant dir="jorgan-keyboard"/>
+    <ant dir="jorgan-lan"/>
+    <ant dir="jorgan-linuxsampler"/>
+    <ant dir="jorgan-memory"/>
+    <ant dir="jorgan-midimerger"/>
+    <ant dir="jorgan-recorder"/>
+    <ant dir="jorgan-sams"/>
+    <ant dir="jorgan-skins"/>
+    <ant dir="jorgan-soundfont"/>
+    <ant dir="jorgan-sysex"/>
+    <ant dir="jorgan-tools"/>
+  </target>
+</project>
