@@ -27,7 +27,6 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.ShortMessage;
-import javax.sound.midi.Transmitter;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -50,7 +49,7 @@ public class MidiMerger extends Loopback {
 	 */
 	private List<MergeInput> inputs = new ArrayList<MergeInput>();
 
-	private List<Receiver> mergers = new ArrayList<Receiver>();
+	private List<Merger> mergers = new ArrayList<Merger>();
 
 	/**
 	 * Create a new midiMerger.
@@ -127,11 +126,6 @@ public class MidiMerger extends Loopback {
 		private MidiDevice device;
 
 		/**
-		 * The transmitter of the input device.
-		 */
-		private Transmitter transmitter;
-
-		/**
 		 * The channel to map message to or <code>-1</code> if no mapping should
 		 * be performed.
 		 */
@@ -154,16 +148,9 @@ public class MidiMerger extends Loopback {
 					Direction.IN);
 			this.device.open();
 
+			this.device.getTransmitter().setReceiver(gate.guard(this));
+
 			this.channel = channel;
-
-			try {
-				transmitter = this.device.getTransmitter();
-				transmitter.setReceiver(gate.guard(this));
-			} catch (MidiUnavailableException ex) {
-				this.device.close();
-
-				throw ex;
-			}
 		}
 
 		@Override
@@ -202,8 +189,6 @@ public class MidiMerger extends Loopback {
 
 		@Override
 		public void close() {
-			transmitter.close();
-
 			device.close();
 		}
 	}
