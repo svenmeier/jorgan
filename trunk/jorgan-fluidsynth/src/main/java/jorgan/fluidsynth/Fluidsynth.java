@@ -55,21 +55,24 @@ public class Fluidsynth {
 
 	private File soundfont;
 
+	private int cores;
+
 	public Fluidsynth() throws IllegalStateException, IOException {
 		this("", 16, null);
 	}
 
 	public Fluidsynth(String name, int channels, String audioDriver)
 			throws IllegalStateException, IOException {
-		this(name, channels, 256, 44100.0f, audioDriver, null, 8, 512);
+		this(name, 1, channels, 256, 44100.0f, audioDriver, null, 8, 512);
 	}
 
-	public Fluidsynth(String name, int channels, int polyphony,
+	public Fluidsynth(String name, int cores, int channels, int polyphony,
 			float sampleRate, String audioDriver, String audioDevice,
 			int buffers, int bufferSize) throws IllegalStateException,
 			IOException {
 
 		this.name = name.substring(0, Math.min(name.length(), NAME_MAX_LENGTH));
+		this.cores = cores;
 		this.channels = channels;
 		this.polyphony = polyphony;
 		this.audioDriver = audioDriver;
@@ -77,8 +80,8 @@ public class Fluidsynth {
 		this.buffers = buffers;
 		this.bufferSize = bufferSize;
 
-		context = init(this.name, this.channels, this.polyphony, sampleRate,
-				this.audioDriver, this.audioDevice, this.buffers,
+		context = init(this.name, this.cores, this.channels, this.polyphony,
+				sampleRate, this.audioDriver, this.audioDevice, this.buffers,
 				this.bufferSize);
 	}
 
@@ -179,7 +182,7 @@ public class Fluidsynth {
 		context = null;
 	}
 
-	private static native ByteBuffer init(String name, int channels,
+	private static native ByteBuffer init(String name, int cores, int channels,
 			int polyphony, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize) throws IOException;
 

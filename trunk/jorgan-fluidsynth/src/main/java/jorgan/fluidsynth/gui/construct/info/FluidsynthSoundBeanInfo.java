@@ -40,6 +40,7 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 		add("channels", FluidsynthSound.class, ChannelsEditor.class);
 		add("polyphony", FluidsynthSound.class, PolyphonyEditor.class);
 		add("sampleRate", FluidsynthSound.class, IntegerEditor.class);
+		add("cores", FluidsynthSound.class, IntegerEditor.class);
 		add("interpolate", FluidsynthSound.class, EnumEditor.class);
 		add("audioDriver", FluidsynthSound.class, AudioDriverEditor.class);
 		add("audioDevice", FluidsynthSound.class, AudioDeviceEditor.class);

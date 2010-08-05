@@ -28,6 +28,7 @@ import jorgan.disposition.event.OrganListener;
 import jorgan.util.Null;
 
 /**
+ * Fluidsynth settings, see http://fluidsynth.sourceforge.net/api.
  */
 public class FluidsynthSound extends Sound {
 
@@ -57,11 +58,40 @@ public class FluidsynthSound extends Sound {
 
 	private double gain = 0.5d;
 
+	// synth.cpu-cores
+	private int cores = 1;
+
 	private Reverb reverb;
 
 	private Chorus chorus;
 
 	private List<Tuning> tunings = new ArrayList<Tuning>();
+
+	public void setCores(int cores) {
+		if (cores < 1) {
+			throw new IllegalArgumentException(
+					"cores must be greater or equal 1");
+		}
+		if (cores > 256) {
+			throw new IllegalArgumentException("cores must be less than 256");
+		}
+
+		if (this.cores != cores) {
+			int oldCores = this.cores;
+
+			this.cores = cores;
+
+			fireChange(new PropertyChange(oldCores, this.cores));
+		}
+	}
+
+	public int getCores() {
+		if (cores == 0) {
+			// backwards compatibiliy for dispositions without cores
+			cores = 1;
+		}
+		return cores;
+	}
 
 	public void setGain(double gain) {
 		this.gain = FluidsynthSound.limit(gain);

@@ -35,13 +35,13 @@ static void destroyContext(JNIEnv* env, Context* context) {
 }
 
 JNIEXPORT
-jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclass, jstring jname, jint jchannels, jint jpolyphony, jfloat jsampleRate, jstring jaudioDriver, jstring jaudioDevice, jint jbuffers, jint jbufferSize) {
+jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclass, jstring jname, jint jcores, jint jchannels, jint jpolyphony, jfloat jsampleRate, jstring jaudioDriver, jstring jaudioDevice, jint jbuffers, jint jbufferSize) {
 	Context* context = createContext();
 
 	context->settings = new_fluid_settings();
 
 	fluid_settings_setint(context->settings, "synth.threadsafe-api", 0);
-	fluid_settings_setint(context->settings, "synth.midi-channels", jchannels);
+	fluid_settings_setint(context->settings, "synth.cpu-cores", jcores);
 
 	fluid_settings_setint(context->settings, "synth.midi-channels", jchannels);
 	fluid_settings_setint(context->settings, "synth.polyphony", jpolyphony);
