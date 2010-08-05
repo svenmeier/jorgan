@@ -117,6 +117,10 @@ public class DevicePool {
 	private static class ProxyDevice extends DeviceWrapper {
 		private boolean open = false;
 
+		private List<Receiver> receivers = new ArrayList<Receiver>();
+
+		private List<Transmitter> transmitters = new ArrayList<Transmitter>();
+
 		private ProxyDevice(MidiDevice device) {
 			super(device);
 		}
@@ -124,6 +128,15 @@ public class DevicePool {
 		@Override
 		public void close() {
 			assertOpen();
+
+			for (Receiver receiver : new ArrayList<Receiver>(receivers)) {
+				receiver.close();
+			}
+
+			for (Transmitter transmitter : new ArrayList<Transmitter>(
+					transmitters)) {
+				transmitter.close();
+			}
 
 			super.close();
 
@@ -147,13 +160,34 @@ public class DevicePool {
 		@Override
 		public Receiver getReceiver() throws MidiUnavailableException {
 			assertOpen();
-			return super.getReceiver();
+
+			ReceiverWrapper receiver = new ReceiverWrapper(super.getReceiver()) {
+				@Override
+				public void close() {
+					super.close();
+
+					receivers.remove(this);
+				}
+			};
+			receivers.add(receiver);
+			return receiver;
 		}
 
 		@Override
 		public Transmitter getTransmitter() throws MidiUnavailableException {
 			assertOpen();
-			return super.getTransmitter();
+
+			TransmitterWrapper transmitter = new TransmitterWrapper(super
+					.getTransmitter()) {
+				@Override
+				public void close() {
+					super.close();
+
+					transmitters.remove(this);
+				}
+			};
+			transmitters.add(transmitter);
+			return transmitter;
 		}
 
 		protected void assertOpen() throws IllegalStateException {

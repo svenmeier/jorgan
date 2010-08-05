@@ -127,8 +127,10 @@ public class Loopback implements MidiDevice {
 
 		try {
 			openImpl();
-		} finally {
-			close();
+		} catch (MidiUnavailableException ex) {
+			closeImpl();
+
+			throw ex;
 		}
 
 		open = true;
