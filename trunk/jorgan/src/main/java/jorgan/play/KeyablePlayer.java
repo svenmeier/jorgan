@@ -96,6 +96,11 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 		Keyable keyable = getElement();
 
+		if (pitch < keyable.getFrom() || pitch > keyable.getTo()) {
+			// out of range
+			return;
+		}
+
 		pitch += keyable.getTranspose();
 
 		if (pitch >= 0 && pitch <= 127) {
@@ -115,6 +120,11 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 		}
 
 		Keyable keyable = getElement();
+
+		if (pitch < keyable.getFrom() || pitch > keyable.getTo()) {
+			// out of range
+			return;
+		}
 
 		pitch += keyable.getTranspose();
 		if (pitch >= 0 && pitch <= 127) {
