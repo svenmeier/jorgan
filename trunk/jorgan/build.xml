@@ -90,9 +90,16 @@
 		</copy>
 
         <mkdir dir="./target/marshal/dispositions" />
-        <copy todir="./target/marshal/dispositions" filtering="true">
-            <fileset dir="./src/main/dispositions" />
-		</copy>
+      	<copy todir="./target/marshal/dispositions" filtering="true">
+          <fileset dir="./src/main/dispositions">
+      		<include name="*.disposition"/>
+          </fileset>
+        </copy> 		
+      	<copy todir="./target/marshal/dispositions">
+          <fileset dir="./src/main/dispositions">
+      		<exclude name="*.disposition"/>
+          </fileset>
+        </copy> 		
 
         <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
     </target>
