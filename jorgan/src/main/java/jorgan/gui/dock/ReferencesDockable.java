@@ -31,6 +31,7 @@ import java.util.List;
 import javax.swing.AbstractButton;
 import javax.swing.AbstractListModel;
 import javax.swing.DefaultListModel;
+import javax.swing.DropMode;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -143,7 +144,62 @@ public class ReferencesDockable extends OrganDockable {
 						element);
 			}
 		});
+		list.setDragEnabled(true);
+		list.setDropMode(DropMode.INSERT);
 		list.setTransferHandler(new TransferHandler() {
+			@Override
+			public int getSourceActions(JComponent c) {
+				return COPY | MOVE;
+			}
+
+			@Override
+			public boolean canImport(TransferSupport support) {
+
+				if (sortByNameButton.isSelected()
+						|| sortByTypeButton.isSelected()) {
+					return false;
+				}
+
+				Item[] items;
+				try {
+					items = (Item[]) ObjectTransferable.getObject(support
+							.getTransferable());
+				} catch (Exception ex) {
+					return false;
+				}
+
+				ReferencesModel model = getReferencesModel();
+
+				return model.canAdd(items);
+			}
+
+			@Override
+			protected Transferable createTransferable(JComponent c) {
+				int[] rows = list.getSelectedIndices();
+
+				Item[] subItems = new Item[rows.length];
+				for (int t = 0; t < subItems.length; t++) {
+					subItems[t] = items.get(rows[t]);
+				}
+
+				return new ObjectTransferable(subItems);
+			}
+
+			@Override
+			protected void exportDone(JComponent source, Transferable t,
+					int action) {
+				try {
+					if (action == MOVE) {
+						Item[] subItems = (Item[]) ObjectTransferable
+								.getObject(t);
+						for (Item item : subItems) {
+							item.getReferrer().removeReference(
+									item.getReference());
+						}
+					}
+				} catch (Exception noExport) {
+				}
+			}
 
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
@@ -156,9 +212,9 @@ public class ReferencesDockable extends OrganDockable {
 					}
 
 					if (action == DnDConstants.ACTION_MOVE) {
-						for (Item reference : subItems) {
-							reference.getReferrer().removeReference(
-									reference.getReference());
+						for (Item item : subItems) {
+							item.getReferrer().removeReference(
+									item.getReference());
 						}
 					}
 
@@ -169,26 +225,32 @@ public class ReferencesDockable extends OrganDockable {
 			}
 
 			@Override
-			public boolean importData(JComponent comp, Transferable t) {
+			public boolean importData(final TransferSupport support) {
 				try {
 					final Item[] items = (Item[]) ObjectTransferable
-							.getObject(t);
-
-					final ReferencesModel model = getReferencesModel();
+							.getObject(support.getTransferable());
 
 					session.lookup(UndoManager.class).compound(new Compound() {
 						@Override
 						public void run() {
+							int index = 0;
+							if (support.isDrop()) {
+								JList.DropLocation location = (JList.DropLocation) support
+										.getDropLocation();
+								index = location.getIndex();
+							}
+
+							ReferencesModel model = getReferencesModel();
 							for (Item item : items) {
 								try {
-									model.add(item);
+									model.add(item, index);
 								} catch (Exception invalidReference) {
 								}
 							}
 						}
 					});
 					return true;
-				} catch (Exception noReferrerReferences) {
+				} catch (Exception noItem) {
 				}
 				return false;
 			}
@@ -366,6 +428,10 @@ public class ReferencesDockable extends OrganDockable {
 			Collections.sort(items, this);
 		}
 
+		public boolean canAdd(Item[] items) {
+			return false;
+		}
+
 		public Element getElement() {
 			return element;
 		}
@@ -393,7 +459,7 @@ public class ReferencesDockable extends OrganDockable {
 			return getElement(items.get(index));
 		}
 
-		public abstract void add(Item item);
+		public abstract void add(Item item, int index);
 
 		public abstract boolean onReferenceChange(Element element,
 				Reference<?> reference);
@@ -407,9 +473,19 @@ public class ReferencesDockable extends OrganDockable {
 			super(element);
 		}
 
+		public boolean canAdd(Item[] items) {
+			for (Item item : items) {
+				if (!getElement()
+						.canReference(item.getReference().getElement())) {
+					return false;
+				}
+			}
+			return true;
+		}
+
 		@Override
-		public void add(Item item) {
-			getElement().addReference(item.getReference().clone());
+		public void add(Item item, int index) {
+			getElement().addReference(item.getReference().clone(), index);
 		}
 
 		@Override
@@ -442,7 +518,7 @@ public class ReferencesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void add(Item item) {
+		public void add(Item item, int index) {
 			item.getReferrer().addReference(
 					item.getReference().clone(getElement()));
 		}

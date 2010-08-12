@@ -144,7 +144,7 @@ public class MessagesDockable extends OrganDockable {
 
 			@Override
 			public boolean canImport(TransferSupport support) {
-				return true;
+				return !sortByTypeButton.isSelected();
 			}
 
 			@Override
