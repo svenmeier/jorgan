@@ -160,6 +160,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <stop id="6">
       <name>Stop 1</name>
@@ -173,6 +175,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
   </elements>
 </organ>

@@ -90,6 +90,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <stop id="10">
       <name>Stop 2</name>
@@ -103,6 +105,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <rank id="6">
       <name>Rank 0</name>
@@ -236,6 +240,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <combination id="4">
       <name>2</name>
@@ -271,6 +277,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <rank id="14">
       <name>Rank 2</name>

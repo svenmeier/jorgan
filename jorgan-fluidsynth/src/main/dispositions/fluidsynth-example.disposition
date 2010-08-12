@@ -99,6 +99,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <keyboard id="5">
       <name>My Keyboard</name>
@@ -168,6 +170,8 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
+      <from>0</from>
+      <to>127</to>
     </stop>
     <label id="7">
       <name></name>

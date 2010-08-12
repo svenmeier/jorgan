@@ -18,7 +18,6 @@
  */
 package jorgan.disposition;
 
-
 /**
  * A keyable.
  * 
@@ -42,7 +41,19 @@ public abstract class Keyable extends Switch {
 
 	private int action = ACTION_STRAIGHT;
 
+	private int from = 0;
+
+	private int to = 127;
+
 	private int transpose = 0;
+
+	public int getFrom() {
+		return from;
+	}
+
+	public int getTo() {
+		return to;
+	}
 
 	public int getTranspose() {
 		return transpose;
@@ -55,7 +66,7 @@ public abstract class Keyable extends Switch {
 	public void setAction(int action) {
 		if (this.action != action) {
 			int oldAction = this.action;
-			
+
 			if (!isValidAction(action)) {
 				throw new IllegalArgumentException("action '" + action + "'");
 			}
@@ -67,10 +78,30 @@ public abstract class Keyable extends Switch {
 
 	protected abstract boolean isValidAction(int action);
 
+	public void setFrom(int from) {
+		if (this.from != from) {
+			int oldFrom = this.from;
+
+			this.from = from;
+
+			fireChange(new PropertyChange(oldFrom, this.from));
+		}
+	}
+
+	public void setTo(int to) {
+		if (this.to != to) {
+			int oldTo = this.to;
+
+			this.to = to;
+
+			fireChange(new PropertyChange(oldTo, this.to));
+		}
+	}
+
 	public void setTranspose(int transpose) {
 		if (this.transpose != transpose) {
 			int oldTranspose = this.transpose;
-			
+
 			this.transpose = transpose;
 
 			fireChange(new PropertyChange(oldTranspose, this.transpose));
