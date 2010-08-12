@@ -327,6 +327,8 @@ public class ElementsDockable extends OrganDockable {
 			elements.add(element);
 
 			list.setModel(new ElementsModel());
+
+			selectionChanged();
 		}
 
 		public void elementRemoved(Element element) {
