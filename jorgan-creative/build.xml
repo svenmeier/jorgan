@@ -1,6 +1,7 @@
 <project name="jOrgan-creative" default="dist" basedir=".">
 
   <property file="./build.properties" />
+  <property file="${jorgan.core.path}/build.properties" />
 
   <target name="clean">
     <delete dir="./target"/>
@@ -151,9 +152,14 @@
   	</jar>
   	
   	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions" filtering="true">
+      <fileset dir="./src/main/dispositions">
+  		<include name="*.disposition"/>
+      </fileset>
+    </copy> 		
   	<copy todir="./target/marshal/dispositions">
       <fileset dir="./src/main/dispositions">
-  		<include name="*"/>
+  		<exclude name="*.disposition"/>
       </fileset>
     </copy> 		
 
