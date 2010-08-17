@@ -204,9 +204,9 @@ public class FluidsynthSound extends Sound {
 			throw new IllegalArgumentException(
 					"polyphony must be greater or equal 16");
 		}
-		if (polyphony > 4096) {
+		if (polyphony > 65535) {
 			throw new IllegalArgumentException(
-					"polyphony must be less or equal 4096");
+					"polyphony must be less or equal 65535");
 		}
 
 		if (this.polyphony != polyphony) {
