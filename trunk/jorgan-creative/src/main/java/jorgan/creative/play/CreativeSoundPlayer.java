@@ -81,7 +81,7 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 				manager = new SoundFontManager(output);
 
 				clone = (CreativeSound) sound.clone();
-			} catch (IOException ex) {
+			} catch (Exception ioExceptionOrUnsatisfiedLink) {
 				addProblem(Severity.ERROR, "output", "outputInvalid", sound
 						.getOutput());
 				return;
@@ -94,7 +94,9 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 			if (sound.getSoundfont() != null) {
 				try {
-					manager.load(sound.getBank(), resolve(sound.getSoundfont()));
+					manager
+							.load(sound.getBank(),
+									resolve(sound.getSoundfont()));
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
 							sound.getSoundfont());
