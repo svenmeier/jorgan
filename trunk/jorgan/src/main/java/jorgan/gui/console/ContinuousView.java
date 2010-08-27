@@ -68,9 +68,9 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 	protected Style createDefaultStyle() {
 		Style style = new Style();
 
+		style.addChild(createPressableLayer());
 		style.addChild(createNameLayer());
 		style.addChild(createNumberLayer());
-		style.addChild(createPressableLayer());
 
 		return style;
 	}
