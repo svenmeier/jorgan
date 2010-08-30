@@ -23,6 +23,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Arrays;
 import java.util.StringTokenizer;
 
 import bias.ConfigurationException;
@@ -71,8 +72,7 @@ public class Property {
 	 * @param value
 	 * @throws Exception
 	 */
-	public final void write(Object object, Object value)
-			 {
+	public final void write(Object object, Object value) {
 
 		if (setter == null) {
 			throw new ConfigurationException("property '" + this
@@ -96,7 +96,7 @@ public class Property {
 	 * @param object
 	 * @throws Exception
 	 */
-	public final Object read(Object object)  {
+	public final Object read(Object object) {
 
 		if (getter == null) {
 			throw new ConfigurationException("property '" + this
@@ -127,7 +127,7 @@ public class Property {
 		return type;
 	}
 
-	protected void init()  {
+	protected void init() {
 
 		Class<?> owningClass = this.owningClass;
 		String name = this.name;
@@ -317,7 +317,8 @@ public class Property {
 
 		private Method method;
 
-		public MethodSet(Class<?> owningClass, String name, Type type) throws Exception {
+		public MethodSet(Class<?> owningClass, String name, Type type)
+				throws Exception {
 			String methodName = "set" + Character.toUpperCase(name.charAt(0))
 					+ name.substring(1);
 
@@ -325,12 +326,11 @@ public class Property {
 			for (Method method : methods) {
 				if (methodName.equals(method.getName())
 						&& method.getParameterTypes().length == 1) {
-					
-					if (type != null && !(method.getGenericParameterTypes()[0] == type)) {
-						continue;
+
+					if (type == null || equalType(method.getGenericParameterTypes()[0], type)) {
+						this.method = method;
+						return;
 					}
-					this.method = method;
-					return;
 				}
 			}
 			throw new NoSuchMethodException();
@@ -342,6 +342,20 @@ public class Property {
 
 		public void set(Object owner, Object value) throws Exception {
 			method.invoke(owner, new Object[] { value });
+		}
+
+		private boolean equalType(Type type1, Type type2) {
+			if (type1 instanceof ParameterizedType
+					&& type2 instanceof ParameterizedType) {
+				ParameterizedType p1 = (ParameterizedType) type1;
+				ParameterizedType p2 = (ParameterizedType) type2;
+
+				return p1.getRawType().equals(p2.getRawType())
+						&& Arrays.equals(p1.getActualTypeArguments(), p2
+								.getActualTypeArguments());
+			} else {
+				return type1.equals(type2);
+			}
 		}
 	}
 

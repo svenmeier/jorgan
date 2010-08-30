@@ -18,6 +18,10 @@
  */
 package bias.util;
 
+import java.io.File;
+import java.util.Collections;
+import java.util.List;
+
 import junit.framework.TestCase;
 
 /**
@@ -28,29 +32,29 @@ public class PropertyTest extends TestCase {
 	public void testMethodProperty() throws Exception {
 		Property property = new Property(MethodProperty.class, "a");
 
-		MethodProperty a = new MethodProperty();
-		assertEquals("a", property.read(a));
-		assertTrue(a.getCalled);
-		property.write(a, "a'");
-		assertTrue(a.setCalled);
+		MethodProperty instance = new MethodProperty();
+		assertEquals("a", property.read(instance));
+		assertTrue(instance.getCalled);
+		property.write(instance, "a'");
+		assertTrue(instance.setCalled);
 	}
 
 	public void testPublicFieldProperty() throws Exception {
 		Property property = new Property(PublicFieldProperty.class, "b");
 
-		PublicFieldProperty b = new PublicFieldProperty();
-		assertEquals("b", property.read(b));
-		property.write(b, "b'");
-		assertEquals("b'", b.b);
+		PublicFieldProperty instance = new PublicFieldProperty();
+		assertEquals("b", property.read(instance));
+		property.write(instance, "b'");
+		assertEquals("b'", instance.b);
 	}
 
 	public void testPrivateFieldProperty() throws Exception {
 		Property property = new Property(PrivateFieldProperty.class, "c");
 
-		PrivateFieldProperty c = new PrivateFieldProperty();
-		assertEquals("c", property.read(c));
-		property.write(c, "c'");
-		assertEquals("c'", c.c);
+		PrivateFieldProperty instance = new PrivateFieldProperty();
+		assertEquals("c", property.read(instance));
+		property.write(instance, "c'");
+		assertEquals("c'", instance.c);
 	}
 
 	@SuppressWarnings("unused")
@@ -67,12 +71,27 @@ public class PropertyTest extends TestCase {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public void testGenericMethodProperty() throws Exception {
+		Property property = new Property(GenericMethodProperty.class, "a");
+
+		GenericMethodProperty instance = new GenericMethodProperty();
+
+		List<File> a = (List<File>) property.read(instance);
+		assertTrue(a.size() == 1);
+		assertTrue(instance.getCalled);
+		property.write(instance, Collections
+				.<File> singletonList(new File("a'")));
+		assertTrue(instance.a.size() == 1);
+		assertTrue(instance.setCalled);
+	}
+
 	public static class MethodProperty {
 		public boolean getCalled;
 		public boolean setCalled;
-		
+
 		private String a = "a";
-		
+
 		public String getA() {
 			getCalled = true;
 			return a;
@@ -81,20 +100,37 @@ public class PropertyTest extends TestCase {
 		public void setA(String a) {
 			setCalled = true;
 			this.a = a;
-		}		
+		}
 	}
-	
+
 	public static class PublicFieldProperty {
 		public String b = "b";
 	}
-	
+
 	public static class PrivateFieldProperty {
 		private String c = "c";
 	}
-	
+
 	public static class InheritedFieldProperty extends PrivateFieldProperty {
 	}
-	
+
 	public static class TestNoProperty {
+	}
+
+	public static class GenericMethodProperty {
+		public boolean getCalled;
+		public boolean setCalled;
+
+		private List<File> a = Collections.<File> singletonList(new File("a"));
+
+		public List<File> getA() {
+			getCalled = true;
+			return a;
+		}
+
+		public void setA(List<File> a) {
+			setCalled = true;
+			this.a = a;
+		}
 	}
 }
