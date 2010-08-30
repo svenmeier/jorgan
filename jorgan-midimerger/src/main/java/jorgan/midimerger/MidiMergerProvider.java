@@ -18,10 +18,20 @@
  */
 package jorgan.midimerger;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
+import jorgan.midimerger.io.MergingStream;
+import jorgan.midimerger.merging.Merging;
+import bias.Configuration;
 
 /**
  * The provider of <code>MidiMerger</code> devices.
@@ -30,33 +40,73 @@ import javax.sound.midi.spi.MidiDeviceProvider;
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 
-	/**
-	 * The device info for this providers device.
-	 */
-	public static final Info INFO = new Info("jOrgan Midi Merger",
-			"jOrgan", "Midi-Merger of jOrgan", "1.0") {};
+	private static final Logger logger = Logger
+			.getLogger(MidiMergerProvider.class.getName());
 
-	/**
-	 * The device.
-	 */
-	private static MidiMerger midiMerger;
+	private static Configuration config = Configuration.getRoot().get(
+			MidiMergerProvider.class);
 
-	@Override
-	public MidiDevice.Info[] getDeviceInfo() {
+	private List<Merging> mergings = new ArrayList<Merging>();
 
-		return new MidiDevice.Info[] { INFO };
+	public MidiMergerProvider() {
+		config.read(this);
+	}
+
+	public void setMergings(List<File> files) {
+		for (File file : files) {
+			try {
+				mergings.add(new MergingStream().read(file));
+			} catch (IOException e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+	}
+
+	public List<File> getMergings() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override
-	public MidiDevice getDevice(MidiDevice.Info info) {
-		if (MidiMergerProvider.INFO == info) {
-			if (midiMerger == null) {
-				midiMerger = new MidiMerger(info);
-			}
-			
-			return midiMerger;
+	public Info[] getDeviceInfo() {
+		Info[] infos = new Info[mergings.size()];
+
+		int i = 0;
+		for (Merging merging : mergings) {
+			infos[i] = new MergingInfo(merging);
+			i++;
 		}
 
+		return infos;
+	}
+
+	@Override
+	public boolean isDeviceSupported(Info info) {
+		return info instanceof MergingInfo;
+	}
+
+	@Override
+	public MidiDevice getDevice(Info info) {
+		if (info instanceof MergingInfo) {
+			MergingInfo mergingInfo = (MergingInfo) info;
+
+			return new MidiMerger(info, mergingInfo.getMerging());
+		}
 		return null;
+	}
+
+	private class MergingInfo extends Info {
+
+		private Merging merging;
+
+		protected MergingInfo(Merging merging) {
+			super("Merger " + merging.getName(), "jOrgan",
+					"Midi-Merger of jOrgan", "1.0");
+
+			this.merging = merging;
+		}
+
+		public Merging getMerging() {
+			return merging;
+		}
 	}
 }
