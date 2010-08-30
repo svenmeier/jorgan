@@ -3,12 +3,13 @@ package jorgan.midimapper;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.spi.ConfigurationProvider;
 import bias.Store;
 import bias.store.DefaultingStore;
 import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
 
-public class MidiMapperConfigurationProvider {
+public class MidiMapperConfigurationProvider implements ConfigurationProvider {
 
 	public List<Store> getStores() {
 		ArrayList<Store> stores = new ArrayList<Store>();

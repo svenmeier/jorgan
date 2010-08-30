@@ -3,9 +3,8 @@ package jorgan.midimapper.mapping;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.MidiMessage;
-
 import jorgan.midi.Direction;
+import jorgan.midi.mpl.ProcessingException;
 
 public class Mapping {
 
@@ -51,9 +50,13 @@ public class Mapping {
 		return mappers;
 	}
 
-	public void map(MidiMessage message, Callback callback) {
+	public void addMapper(Mapper mapper) {
+		this.mappers.add(mapper);
+	}
+
+	public void map(byte[] datas, Callback callback) throws ProcessingException {
 		for (Mapper mapper : mappers) {
-			mapper.match(message, callback);
+			mapper.map(datas, callback);
 		}
 	}
 }

@@ -1,4 +1,4 @@
-#Thu Apr 08 16:25:30 CEST 2010
+#Sun Aug 29 20:30:18 CEST 2010
 eclipse.preferences.version=1
 encoding//src/main/java/jorgan/fluidsynth/disposition/i18n.properties=UTF-8
 encoding//src/main/java/jorgan/fluidsynth/disposition/i18n_de.properties=UTF-8
@@ -9,3 +9,4 @@ encoding//src/main/java/jorgan/fluidsynth/gui/customizer/i18n_de.properties=UTF-
 encoding//src/main/java/jorgan/fluidsynth/gui/dock/i18n.properties=UTF-8
 encoding//src/main/java/jorgan/fluidsynth/gui/dock/i18n_de.properties=UTF-8
 encoding//src/main/java/jorgan/fluidsynth/play/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/midimapper/gui/preferences/i18n.properties=UTF-8
