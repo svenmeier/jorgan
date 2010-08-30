@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jOrgan-bundle" default="dist" basedir=".">
+
+    <property file="./build.properties"/>
+    <property file="${jorgan.core.path}/build.properties"/>
+	
+    <target name="clean" description="Cleanup target directory">
+        <delete dir="./target"/>
+    </target>
+
+    <target name="init">
+        <filter token="jorgan.version" value="${jorgan.version}"/>
+    </target>
+	
+    <target name="dist" description="Set up the distribution" depends="clean, init" >
+        <mkdir dir="./target/marshal" />
+
+        <property name="macapp" value="GenealogyJ.app"/>
+		
+        <mkdir dir="./target/marshal/jOrgan.app/Contents"/>
+        <echo file="./target/marshal/jOrgan.app/Contents/PkgInfo">APPL????</echo>
+        <copy todir="./target/marshal/jOrgan.app/Contents" file="./src/Info.plist">
+            <filterset>
+	      	<filter token="version" value="${jorgan.version}"/>
+            </filterset>
+        </copy>
+
+        <mkdir dir="./target/marshal/jOrgan.app/Contents/MacOS"/>
+        <copy todir="./target/marshal/jOrgan.app/Contents/MacOS" file="src/JavaApplicationStub"/>
+
+        <mkdir dir="./target/marshal/jOrgan.app/Contents/Resources"/>
+        <copy todir="./target/marshal/jOrgan.app/Contents/Resources" file="src/jorgan.icns"/>
+
+        <mkdir dir="./target/marshal/jOrgan.app/Contents/Resources/Java"/>
+        <copy todir="./target/marshal/jOrgan.app/Contents/Resources/Java">
+            <fileset dir="${jorgan.core.path}/target/marshal"/>
+        </copy>
+		
+        <tar destfile="./target/marshal/jorgan-${jorgan.version}.tar.gz" compression="gzip">
+	    <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
+	    <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
+	</tar>
+    </target>
+</project>
