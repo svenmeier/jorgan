@@ -32,55 +32,31 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.Loopback;
 import jorgan.midi.MidiGate;
-import bias.Configuration;
+import jorgan.midimerger.merging.Merger;
+import jorgan.midimerger.merging.Merging;
 
 /**
  * <code>MidiDevice</code> for merging of mutiple other devices.
  */
 public class MidiMerger extends Loopback {
 
-	private static Configuration config = Configuration.getRoot().get(
-			MidiMerger.class);
-
 	private MidiGate gate = new MidiGate();
 
-	/**
-	 * The list of inputs to merge.
-	 */
-	private List<MergeInput> inputs = new ArrayList<MergeInput>();
+	private Merging merging;
 
-	private List<Merger> mergers = new ArrayList<Merger>();
+	private List<MergeReceiver> receivers = new ArrayList<MergeReceiver>();
 
 	/**
 	 * Create a new midiMerger.
 	 * 
 	 * @param info
 	 *            info to use
+	 * @param merging
 	 */
-	public MidiMerger(MidiDevice.Info info) {
+	public MidiMerger(MidiDevice.Info info, Merging merging) {
 		super(info, false, true);
 
-		config.read(this);
-	}
-
-	public List<MergeInput> getInputs() {
-		return inputs;
-	}
-
-	/**
-	 * Set the inputs to merge. <br>
-	 * This change has immediate effect only If this midiMerger is not currently
-	 * open, otherwise it is delayed until the next opening.
-	 * 
-	 * @param inputs
-	 *            the inputs to merge
-	 */
-	public void setInputs(List<MergeInput> inputs) {
-		if (inputs == null) {
-			throw new IllegalArgumentException("inputs must not be null");
-		}
-
-		this.inputs = inputs;
+		this.merging = merging;
 	}
 
 	@Override
@@ -92,12 +68,12 @@ public class MidiMerger extends Loopback {
 
 	@Override
 	protected synchronized void openImpl() throws MidiUnavailableException {
-		if (inputs.isEmpty()) {
+		if (merging.isEmpty()) {
 			throw new MidiUnavailableException();
 		}
 
-		for (MergeInput input : inputs) {
-			mergers.add(new Merger(input.getDevice(), input.getChannel()));
+		for (Merger merger : merging.getMergers()) {
+			receivers.add(new MergeReceiver(merger));
 		}
 	}
 
@@ -110,15 +86,15 @@ public class MidiMerger extends Loopback {
 
 	@Override
 	protected synchronized void closeImpl() {
-		for (Receiver merger : mergers) {
+		for (Receiver merger : receivers) {
 			merger.close();
 		}
-		mergers.clear();
+		receivers.clear();
 
 		super.closeImpl();
 	}
 
-	private class Merger implements Receiver {
+	private class MergeReceiver implements Receiver {
 
 		/**
 		 * The input device to receive messages from.
@@ -131,26 +107,15 @@ public class MidiMerger extends Loopback {
 		 */
 		private int channel;
 
-		/**
-		 * Create a new receiver for the given input.
-		 * 
-		 * @param device
-		 *            name of device to create receiver for
-		 * @param channel
-		 *            channel to map messages to
-		 * @throws MidiUnavailableException
-		 *             if input device is unavailable
-		 */
-		public Merger(String device, int channel)
-				throws MidiUnavailableException {
+		public MergeReceiver(Merger merger) throws MidiUnavailableException {
 
-			this.device = DevicePool.instance().getMidiDevice(device,
-					Direction.IN);
+			this.device = DevicePool.instance().getMidiDevice(
+					merger.getDevice(), Direction.IN);
 			this.device.open();
 
 			this.device.getTransmitter().setReceiver(gate.guard(this));
 
-			this.channel = channel;
+			this.channel = merger.getChannel();
 		}
 
 		@Override

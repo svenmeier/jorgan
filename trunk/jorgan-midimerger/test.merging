@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<merging>
+  <name>Test</name>
+  <mergers>
+    <merger>
+      <device>jOrgan Keyboard</device>
+      <channel>-1</channel>
+    </merger>
+  </mergers>
+</merging>
