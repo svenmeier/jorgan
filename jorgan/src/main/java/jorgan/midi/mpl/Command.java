@@ -19,12 +19,12 @@
 package jorgan.midi.mpl;
 
 public abstract class Command {
-	
+
 	private Command successor;
 
 	protected Command() {
 	}
-	
+
 	protected Command(Command successor) {
 		if (successor != null && successor.getClass() != NoOp.class) {
 			this.successor = successor;
@@ -39,12 +39,12 @@ public abstract class Command {
 		return f;
 	}
 
-	public abstract float processImpl(float value, Context context);
+	protected abstract float processImpl(float value, Context context);
 
 	@SuppressWarnings("unchecked")
 	public <T> T get(Class<T> clazz) {
 		if (clazz.isInstance(this)) {
-			return (T)this;
+			return (T) this;
 		} else {
 			if (successor == null) {
 				return null;
@@ -53,13 +53,13 @@ public abstract class Command {
 			}
 		}
 	}
-	
+
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
 		toString(buffer);
 		return buffer.toString();
 	}
-	
+
 	private void toString(StringBuffer buffer) {
 		buffer.append(typeToString(getClass()));
 		buffer.append(" ");
@@ -70,12 +70,12 @@ public abstract class Command {
 			successor.toString(buffer);
 		}
 	}
-	
-	protected abstract String getArguments();	
+
+	protected abstract String getArguments();
 
 	public static Command create(String terms) throws ProcessingException {
 		terms = terms.trim();
-		
+
 		try {
 			return createCommands(terms.trim());
 		} catch (Exception ex) {
@@ -90,7 +90,7 @@ public abstract class Command {
 			return createCommand(terms.trim());
 		} else {
 			Command successor = createCommands(terms.substring(pipe + 1).trim());
-			
+
 			Command command = createCommand(terms.substring(0, pipe).trim());
 			command.successor = successor;
 
@@ -102,21 +102,23 @@ public abstract class Command {
 		if (term.length() == 0) {
 			return new NoOp();
 		}
-		
+
 		int space = term.indexOf(' ');
 
 		Class<?> type = Command.stringToType(term.substring(0, space).trim());
 		String arguments = term.substring(space + 1).trim();
 
-		return (Command)type.getDeclaredConstructor(new Class<?>[]{String.class}).newInstance(arguments);
+		return (Command) type.getDeclaredConstructor(
+				new Class<?>[] { String.class }).newInstance(arguments);
 	}
-	
+
 	private static Class<?> stringToType(String string)
 			throws ClassNotFoundException {
 		String simpleName = Character.toUpperCase(string.charAt(0))
 				+ string.substring(1);
 
-		return Class.forName(Command.class.getPackage().getName() + "." + simpleName);
+		return Class.forName(Command.class.getPackage().getName() + "."
+				+ simpleName);
 	}
 
 	private static String typeToString(Class<?> type) {
@@ -125,10 +127,10 @@ public abstract class Command {
 		return Character.toLowerCase(simpleName.charAt(0))
 				+ simpleName.substring(1);
 	}
-	
+
 	protected static String toString(float value) {
-		int integer = (int)value;
-		
+		int integer = (int) value;
+
 		if (integer == value) {
 			return Integer.toString(integer);
 		} else {
