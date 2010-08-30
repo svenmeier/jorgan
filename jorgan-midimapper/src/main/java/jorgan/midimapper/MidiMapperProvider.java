@@ -1,26 +1,46 @@
 package jorgan.midimapper;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.midi.Direction;
+import jorgan.midimapper.io.MappingStream;
 import jorgan.midimapper.mapping.Mapping;
+import bias.Configuration;
 
 public class MidiMapperProvider extends MidiDeviceProvider {
 
-	/**
-	 * TODO where to get mappings from?
-	 */
+	private static final Logger logger = Logger
+			.getLogger(MidiMapperProvider.class.getName());
+
+	private static Configuration config = Configuration.getRoot().get(
+			MidiMapperProvider.class);
+
 	private List<Mapping> mappings = new ArrayList<Mapping>();
 
 	public MidiMapperProvider() {
-		mappings.add(new Mapping("Mapped In", Direction.IN, "jOrgan Keyboard"));
-		mappings.add(new Mapping("Mapped Out", Direction.OUT,
-				"Java Sound Synthesizer"));
+		config.read(this);
+	}
+
+	public void setMappings(List<File> files) {
+		for (File file : files) {
+			try {
+				mappings.add(new MappingStream().read(file));
+			} catch (IOException e) {
+				logger.log(Level.WARNING, e.getMessage(), e);
+			}
+		}
+	}
+
+	public List<File> getMappings() {
+		throw new UnsupportedOperationException();
 	}
 
 	@Override

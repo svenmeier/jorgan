@@ -1,5 +1,6 @@
 package jorgan.midimapper;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
@@ -8,7 +9,9 @@ import javax.sound.midi.Receiver;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.Loopback;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.MidiGate;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.midimapper.mapping.Callback;
 import jorgan.midimapper.mapping.Mapping;
 
@@ -69,7 +72,11 @@ public class MidiMapper extends Loopback {
 
 	@Override
 	protected void onLoopIn(MidiMessage message) {
-		mapping.map(message, out);
+		try {
+			mapping.map(message.getMessage(), out);
+		} catch (ProcessingException todo) {
+			todo.printStackTrace();
+		}
 	}
 
 	private class Out implements Callback {
@@ -81,8 +88,12 @@ public class MidiMapper extends Loopback {
 		}
 
 		@Override
-		public void onMapped(MidiMessage message) {
-			receiver.send(message, -1);
+		public void onMapped(byte[] datas) {
+			try {
+				receiver.send(MessageUtils.createMessage(datas), -1);
+			} catch (InvalidMidiDataException todo) {
+				todo.printStackTrace();
+			}
 		}
 	}
 
@@ -94,7 +105,11 @@ public class MidiMapper extends Loopback {
 
 		@Override
 		public void send(MidiMessage message, long timeStamp) {
-			mapping.map(message, this);
+			try {
+				mapping.map(message.getMessage(), this);
+			} catch (ProcessingException todo) {
+				todo.printStackTrace();
+			}
 		}
 
 		@Override
@@ -102,8 +117,12 @@ public class MidiMapper extends Loopback {
 		}
 
 		@Override
-		public void onMapped(MidiMessage message) {
-			loopOut(message);
+		public void onMapped(byte[] datas) {
+			try {
+				loopOut(MessageUtils.createMessage(datas));
+			} catch (InvalidMidiDataException todo) {
+				todo.printStackTrace();
+			}
 		}
 	}
 }
