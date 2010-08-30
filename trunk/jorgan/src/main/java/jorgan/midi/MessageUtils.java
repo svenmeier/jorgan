@@ -24,6 +24,7 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
+import javax.sound.midi.SysexMessage;
 
 /**
  * Utils for messages.
@@ -72,6 +73,16 @@ public class MessageUtils {
 		shortMessage.setMessage(status, data1, data2);
 
 		return shortMessage;
+	}
+
+	public static MidiMessage createMessage(byte[] datas)
+			throws InvalidMidiDataException {
+		if (datas.length == 3) {
+			return createMessage(datas[0], datas[1], datas[2]);
+		}
+
+		return new SysexMessage(datas) {
+		};
 	}
 
 	public static ShortMessage newMessage(int status, int data1, int data2) {
