@@ -16,28 +16,28 @@
     <target name="dist" description="Set up the distribution" depends="clean, init" >
         <mkdir dir="./target/marshal" />
 
-        <property name="macapp" value="GenealogyJ.app"/>
+        <property name="app" value="./target/marshal/jOrgan.app"/>
 		
-        <mkdir dir="./target/marshal/jOrgan.app/Contents"/>
-        <echo file="./target/marshal/jOrgan.app/Contents/PkgInfo">APPL????</echo>
-        <copy todir="./target/marshal/jOrgan.app/Contents" file="./src/Info.plist">
+        <mkdir dir="${app}/Contents"/>
+        <echo file="${app}/Contents/PkgInfo">APPL????</echo>
+        <copy todir="${app}/Contents" file="./src/Info.plist">
             <filterset>
-	      	<filter token="version" value="${jorgan.version}"/>
+	      		<filter token="version" value="${bundle.version}"/>
             </filterset>
         </copy>
 
-        <mkdir dir="./target/marshal/jOrgan.app/Contents/MacOS"/>
-        <copy todir="./target/marshal/jOrgan.app/Contents/MacOS" file="src/JavaApplicationStub"/>
+        <mkdir dir="${app}/Contents/MacOS"/>
+        <copy todir="${app}/Contents/MacOS" file="src/JavaApplicationStub"/>
 
-        <mkdir dir="./target/marshal/jOrgan.app/Contents/Resources"/>
-        <copy todir="./target/marshal/jOrgan.app/Contents/Resources" file="src/jorgan.icns"/>
+        <mkdir dir="${app}/Contents/Resources"/>
+        <copy todir="${app}/Contents/Resources" file="src/jorgan.icns"/>
 
-        <mkdir dir="./target/marshal/jOrgan.app/Contents/Resources/Java"/>
-        <copy todir="./target/marshal/jOrgan.app/Contents/Resources/Java">
+        <mkdir dir="${app}/Contents/Resources/Java"/>
+        <copy todir="${app}/Contents/Resources/Java">
             <fileset dir="${jorgan.core.path}/target/marshal"/>
         </copy>
 		
-        <tar destfile="./target/marshal/jorgan-${jorgan.version}.tar.gz" compression="gzip">
+        <tar destfile="./target/jorgan-${jorgan.version}.tar.gz" compression="gzip">
 	    <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
 	    <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
 	</tar>
