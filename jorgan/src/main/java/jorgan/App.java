@@ -91,7 +91,6 @@ public class App {
 	 *            command line arguments
 	 */
 	public static void main(String[] args) {
-
 		Collection<Option> options = initConfiguration();
 
 		ArgsParser parser = new ArgsParser("java -jar jOrgan.jar",
