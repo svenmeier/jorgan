@@ -19,8 +19,13 @@
 package jorgan.midimapper.gui.preferences;
 
 import java.awt.BorderLayout;
+import java.io.File;
+import java.util.List;
 
+import javax.swing.AbstractListModel;
+import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JList;
 import javax.swing.JPanel;
 
 import jorgan.gui.preferences.category.AppCategory;
@@ -42,6 +47,8 @@ public class MidiMapperCategory extends JOrganCategory {
 	private Model mappings = getModel(new Property(MidiMapperProvider.class,
 			"mappings"));
 
+	private JList list;
+
 	public MidiMapperCategory() {
 		config.read(this);
 	}
@@ -55,14 +62,41 @@ public class MidiMapperCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout());
 
+		list = new JList();
+		panel.add(list, BorderLayout.CENTER);
+
+		JPanel buttonPanel = new JPanel();
+		panel.add(buttonPanel, BorderLayout.EAST);
+
+		buttonPanel.add(config.get("add").read(new JButton()));
+		buttonPanel.add(config.get("remove").read(new JButton()));
+
 		return panel;
 	}
 
 	@Override
 	protected void read() {
+		list.setModel(new MappingsModel());
 	}
 
 	@Override
 	protected void write() {
+	}
+
+	@SuppressWarnings("unchecked")
+	private List<File> getMappings() {
+		return (List<File>) mappings.getValue();
+	}
+
+	private class MappingsModel extends AbstractListModel {
+		@Override
+		public int getSize() {
+			return getMappings().size();
+		}
+
+		@Override
+		public Object getElementAt(int index) {
+			return getMappings().get(index).getPath();
+		}
 	}
 }
