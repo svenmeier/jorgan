@@ -27,15 +27,18 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
+import bias.Configuration;
 
-/**
- * Java Wrapper for a Fluidsynth.
- */
 public class Fluidsynth {
+
+	private static final Configuration config = Configuration.getRoot().get(
+			Fluidsynth.class);
 
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	private static final int NAME_MAX_LENGTH = 32;
+
+	private Overflow overflow = new Overflow();
 
 	private ByteBuffer context;
 
@@ -82,7 +85,8 @@ public class Fluidsynth {
 
 		context = init(this.name, this.cores, this.channels, this.polyphony,
 				sampleRate, this.audioDriver, this.audioDevice, this.buffers,
-				this.bufferSize);
+				this.bufferSize, overflow.age, overflow.percussion,
+				overflow.released, overflow.sustained, overflow.volume);
 	}
 
 	public String getAudioDevice() {
@@ -184,7 +188,9 @@ public class Fluidsynth {
 
 	private static native ByteBuffer init(String name, int cores, int channels,
 			int polyphony, float sampleRate, String audioDriver,
-			String audioDevice, int buffers, int bufferSize) throws IOException;
+			String audioDevice, int buffers, int bufferSize, float overflowAge,
+			float overflowPercussion, float overflowReleased,
+			float overflowSustained, float overflowVolume) throws IOException;
 
 	private static native void destroy(ByteBuffer context);
 
@@ -264,11 +270,24 @@ public class Fluidsynth {
 
 		try {
 			// for Windows we load fluidsynth explicitely from extension
-			System.load(NativeUtils.getLibraryName(file, "libfluidsynth-1"));
+			System.load(NativeUtils.getLibraryName(file, "libfluidsynth"));
 		} catch (UnsatisfiedLinkError error) {
 			// should be on system library path
 		}
 
 		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
+	}
+
+	public class Overflow {
+
+		public float age = 1005.0f;
+		public float percussion = 4005.0f;
+		public float released = -2005.0f;
+		public float sustained = -1005.0f;
+		public float volume = 505.0f;
+
+		public Overflow() {
+			config.get("overflow").read(this);
+		}
 	}
 }

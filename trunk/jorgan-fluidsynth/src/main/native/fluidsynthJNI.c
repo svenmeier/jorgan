@@ -35,13 +35,20 @@ static void destroyContext(JNIEnv* env, Context* context) {
 }
 
 JNIEXPORT
-jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclass, jstring jname, jint jcores, jint jchannels, jint jpolyphony, jfloat jsampleRate, jstring jaudioDriver, jstring jaudioDevice, jint jbuffers, jint jbufferSize) {
+jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclass, jstring jname, jint jcores, jint jchannels, jint jpolyphony, jfloat jsampleRate, jstring jaudioDriver, jstring jaudioDevice, jint jbuffers, jint jbufferSize,
+			jfloat joverflowAge, jfloat joverflowPercussion, jfloat joverflowReleased, jfloat joverflowSustained, jfloat joverflowVolume) {
 			
 	Context* context = createContext();
 
 	context->settings = new_fluid_settings();
 
 	fluid_settings_setint(context->settings, "synth.cpu-cores", jcores);
+
+	fluid_settings_setnum(context->settings, "synth.overflow.age", joverflowAge);
+	fluid_settings_setnum(context->settings, "synth.overflow.percussion", joverflowPercussion);
+	fluid_settings_setnum(context->settings, "synth.overflow.released", joverflowReleased);
+	fluid_settings_setnum(context->settings, "synth.overflow.sustained", joverflowSustained);
+	fluid_settings_setnum(context->settings, "synth.overflow.volume", joverflowVolume);
 
 	fluid_settings_setint(context->settings, "synth.midi-channels", jchannels);
 	fluid_settings_setint(context->settings, "synth.polyphony", jpolyphony);
