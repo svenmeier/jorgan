@@ -18,18 +18,13 @@
  */
 package jorgan.midimerger;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.midimerger.io.MergingStream;
 import jorgan.midimerger.merging.Merging;
 import bias.Configuration;
 
@@ -40,8 +35,7 @@ import bias.Configuration;
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 
-	private static final Logger logger = Logger
-			.getLogger(MidiMergerProvider.class.getName());
+	private static final String PREFIX = "Merger ";
 
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerProvider.class);
@@ -50,20 +44,6 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 
 	public MidiMergerProvider() {
 		config.read(this);
-	}
-
-	public void setMergings(List<File> files) {
-		for (File file : files) {
-			try {
-				mergings.add(new MergingStream().read(file));
-			} catch (IOException e) {
-				logger.log(Level.WARNING, e.getMessage(), e);
-			}
-		}
-	}
-
-	public List<File> getMergings() {
-		throw new UnsupportedOperationException();
 	}
 
 	@Override
@@ -99,7 +79,7 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 		private Merging merging;
 
 		protected MergingInfo(Merging merging) {
-			super("Merger " + merging.getName(), "jOrgan",
+			super(PREFIX + merging.getName(), "jOrgan",
 					"Midi-Merger of jOrgan", "1.0");
 
 			this.merging = merging;
@@ -108,5 +88,9 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 		public Merging getMerging() {
 			return merging;
 		}
+	}
+
+	public static boolean isMerger(String device) {
+		return device.startsWith(PREFIX);
 	}
 }

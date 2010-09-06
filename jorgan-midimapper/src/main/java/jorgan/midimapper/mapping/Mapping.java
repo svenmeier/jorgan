@@ -16,12 +16,6 @@ public class Mapping {
 
 	private List<Mapper> mappers = new ArrayList<Mapper>();
 
-	public Mapping(String name, Direction direction, String device) {
-		this.name = name;
-		this.direction = direction;
-		this.device = device;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
