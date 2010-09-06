@@ -42,6 +42,7 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.construct.CreateElementWizard;
+import jorgan.gui.construct.ElementDescriptionComparator;
 import jorgan.gui.construct.ElementNameComparator;
 import jorgan.gui.construct.ElementTypeComparator;
 import jorgan.gui.selection.ElementSelection;
@@ -84,6 +85,8 @@ public class ElementsDockable extends OrganDockable {
 	private JList list = new JList();
 
 	private JToggleButton sortByNameButton = new JToggleButton();
+
+	private JToggleButton sortByDescriptionButton = new JToggleButton();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
 
@@ -182,6 +185,9 @@ public class ElementsDockable extends OrganDockable {
 		config.get("sortByType").read(sortByTypeButton);
 		sortGroup.add(sortByTypeButton);
 
+		config.get("sortByDescription").read(sortByDescriptionButton);
+		sortGroup.add(sortByDescriptionButton);
+
 		config.get("sortByName").read(sortByNameButton);
 		sortGroup.add(sortByNameButton);
 
@@ -202,6 +208,7 @@ public class ElementsDockable extends OrganDockable {
 		docked.addToolSeparator();
 
 		docked.addTool(sortByTypeButton);
+		docked.addTool(sortByDescriptionButton);
 		docked.addTool(sortByNameButton);
 	}
 
@@ -367,6 +374,10 @@ public class ElementsDockable extends OrganDockable {
 			if (sortByNameButton.isSelected()) {
 				Collections.sort(elements, ComparatorChain.of(
 						new ElementNameComparator(),
+						new ElementTypeComparator()));
+			} else if (sortByDescriptionButton.isSelected()) {
+				Collections.sort(elements, ComparatorChain.of(
+						new ElementDescriptionComparator(),
 						new ElementTypeComparator()));
 			} else {
 				Collections.sort(elements, ComparatorChain.of(

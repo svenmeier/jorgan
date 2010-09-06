@@ -563,6 +563,19 @@ public abstract class Element implements Cloneable {
 		});
 	}
 
+	public String getComment() {
+		String comment = description;
+		int newLine = comment.indexOf('\n');
+		if (newLine != -1) {
+			comment = comment.substring(0, newLine);
+		}
+		int equal = comment.indexOf('=');
+		if (equal != -1) {
+			comment = "";
+		}
+		return comment;
+	}
+
 	protected static String cleanPath(String path) {
 		if (path == null || "".equals(path)) {
 			return null;

@@ -18,23 +18,13 @@
  */
 package jorgan.spi;
 
-import java.io.File;
-
 import jorgan.util.PluginUtils;
 
 public class SetupRegistry {
 
 	public static void setup() {
 		for (SetupProvider provider : PluginUtils.lookup(SetupProvider.class)) {
-			provider.setup(getHome());
+			provider.setup();
 		}
-	}
-
-	public static File getHome() {
-		File home = new File(System.getProperty("user.home"), ".jorgan");
-		if (!home.exists()) {
-			home.mkdirs();
-		}
-		return home;
 	}
 }
