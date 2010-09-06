@@ -19,7 +19,7 @@
 package jorgan.midimerger.gui.preferences;
 
 import java.awt.BorderLayout;
-import java.io.File;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -27,11 +27,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.midimerger.MidiMerger;
 import jorgan.midimerger.MidiMergerProvider;
+import jorgan.midimerger.merging.Merging;
+import jorgan.swing.BaseAction;
+import jorgan.swing.layout.FlowBuilder;
+import jorgan.swing.layout.FlowBuilder.Flow;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -46,7 +51,6 @@ public class MidiMergerCategory extends JOrganCategory {
 
 	private Model mergings = getModel(new Property(MidiMergerProvider.class,
 			"mergings"));
-
 	private JList list;
 
 	public MidiMergerCategory() {
@@ -63,13 +67,15 @@ public class MidiMergerCategory extends JOrganCategory {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		list = new JList();
-		panel.add(list, BorderLayout.CENTER);
+		panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
 		panel.add(buttonPanel, BorderLayout.EAST);
 
-		buttonPanel.add(config.get("add").read(new JButton()));
-		buttonPanel.add(config.get("remove").read(new JButton()));
+		Flow flow = new FlowBuilder(buttonPanel, FlowBuilder.TOP).flow();
+		flow.add(new JButton(new EditAction()));
+		flow.add(new JButton(new AddAction()));
+		flow.add(new JButton(new RemoveAction()));
 
 		return panel;
 	}
@@ -83,20 +89,57 @@ public class MidiMergerCategory extends JOrganCategory {
 	protected void write() {
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<File> getMergings() {
-		return (List<File>) mergings.getValue();
-	}
-
 	private class MergingsModel extends AbstractListModel {
+
+		public MergingsModel() {
+		}
+
 		@Override
 		public int getSize() {
 			return getMergings().size();
 		}
 
+		@SuppressWarnings("unchecked")
+		private List<Merging> getMergings() {
+			return ((List<Merging>) mergings.getValue());
+		}
+
 		@Override
 		public Object getElementAt(int index) {
-			return getMergings().get(index).getPath();
+			return getMergings().get(index).getName();
+		}
+	}
+
+	private class EditAction extends BaseAction {
+		public EditAction() {
+			config.get("edit").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	private class AddAction extends BaseAction {
+		public AddAction() {
+			config.get("add").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	private class RemoveAction extends BaseAction {
+		public RemoveAction() {
+			config.get("remove").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 }

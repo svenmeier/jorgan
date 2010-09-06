@@ -19,7 +19,7 @@
 package jorgan.midimapper.gui.preferences;
 
 import java.awt.BorderLayout;
-import java.io.File;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -27,11 +27,16 @@ import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.midimapper.MidiMapper;
 import jorgan.midimapper.MidiMapperProvider;
+import jorgan.midimapper.mapping.Mapping;
+import jorgan.swing.BaseAction;
+import jorgan.swing.layout.FlowBuilder;
+import jorgan.swing.layout.FlowBuilder.Flow;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -46,7 +51,6 @@ public class MidiMapperCategory extends JOrganCategory {
 
 	private Model mappings = getModel(new Property(MidiMapperProvider.class,
 			"mappings"));
-
 	private JList list;
 
 	public MidiMapperCategory() {
@@ -63,13 +67,15 @@ public class MidiMapperCategory extends JOrganCategory {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		list = new JList();
-		panel.add(list, BorderLayout.CENTER);
+		panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
 		panel.add(buttonPanel, BorderLayout.EAST);
 
-		buttonPanel.add(config.get("add").read(new JButton()));
-		buttonPanel.add(config.get("remove").read(new JButton()));
+		Flow flow = new FlowBuilder(buttonPanel, FlowBuilder.TOP).flow();
+		flow.add(new JButton(new EditAction()));
+		flow.add(new JButton(new AddAction()));
+		flow.add(new JButton(new RemoveAction()));
 
 		return panel;
 	}
@@ -83,20 +89,54 @@ public class MidiMapperCategory extends JOrganCategory {
 	protected void write() {
 	}
 
-	@SuppressWarnings("unchecked")
-	private List<File> getMappings() {
-		return (List<File>) mappings.getValue();
-	}
-
 	private class MappingsModel extends AbstractListModel {
+
 		@Override
 		public int getSize() {
 			return getMappings().size();
 		}
 
+		@SuppressWarnings("unchecked")
+		private List<Mapping> getMappings() {
+			return (List<Mapping>) mappings.getValue();
+		}
+
 		@Override
 		public Object getElementAt(int index) {
-			return getMappings().get(index).getPath();
+			return getMappings().get(index).getName();
+		}
+	}
+
+	private class EditAction extends BaseAction {
+		public EditAction() {
+			config.get("edit").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	private class AddAction extends BaseAction {
+		public AddAction() {
+			config.get("add").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
+		}
+	}
+
+	private class RemoveAction extends BaseAction {
+		public RemoveAction() {
+			config.get("remove").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+
 		}
 	}
 }
