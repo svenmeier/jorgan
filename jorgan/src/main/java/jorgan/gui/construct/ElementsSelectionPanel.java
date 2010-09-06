@@ -75,7 +75,7 @@ public class ElementsSelectionPanel extends JPanel {
 		JPanel panel = new JPanel();
 		add(panel, BorderLayout.SOUTH);
 
-		FlowBuilder builder = new FlowBuilder(panel);
+		FlowBuilder builder = new FlowBuilder(panel, FlowBuilder.RIGHT);
 
 		Flow flow = builder.flow();
 		flow.add(new JButton(allAction));

@@ -16,10 +16,19 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.spi;
+package jorgan.gui.construct;
 
+import java.util.Comparator;
 
-public interface SetupProvider {
+import jorgan.disposition.Element;
 
-	public void setup();
+/**
+ * Comparator of elements.
+ */
+public class ElementDescriptionComparator implements Comparator<Element> {
+
+	public int compare(Element e1, Element e2) {
+
+		return e1.getComment().compareTo(e2.getComment());
+	}
 }

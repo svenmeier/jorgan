@@ -57,16 +57,7 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 	protected String getComment(Object value, int index, boolean isSelected) {
 		Element element = getElement(value);
 
-		String comment = element.getDescription();
-		int newLine = comment.indexOf('\n');
-		if (newLine != -1) {
-			comment = comment.substring(0, newLine);
-		}
-		int equal = comment.indexOf('=');
-		if (equal != -1) {
-			comment = "";
-		}
-		return comment;
+		return element.getComment();
 	}
 
 	protected OrganSession getOrgan() {
@@ -80,7 +71,8 @@ public class ElementListCellRenderer extends CommentedCellRenderer {
 		if (session != null) {
 			if (session.lookup(ElementProblems.class).hasErrors(element)) {
 				return new CompoundIcon(icon, errorIcon);
-			} else if (session.lookup(ElementProblems.class).hasWarnings(element)) {
+			} else if (session.lookup(ElementProblems.class).hasWarnings(
+					element)) {
 				return new CompoundIcon(icon, warningIcon);
 			}
 		}

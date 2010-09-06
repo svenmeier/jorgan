@@ -31,12 +31,12 @@ import jorgan.util.IOUtils;
 public class DefaultSetupProvider implements SetupProvider {
 
 	@Override
-	public void setup(File home) {
-		initLogging(home);
+	public void setup() {
+		initLogging();
 	}
 
-	private void initLogging(File home) {
-		File logging = new File(home, "logging.properties");
+	private void initLogging() {
+		File logging = new File(App.getHome(), "logging.properties");
 		if (!logging.exists()) {
 			InputStream input = getClass().getResourceAsStream(
 					"logging.properties-setup");
