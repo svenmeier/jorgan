@@ -12,7 +12,7 @@ public class Mapping {
 
 	private String device;
 
-	private Direction direction;
+	private Direction direction = Direction.OUT;
 
 	private List<Mapper> mappers = new ArrayList<Mapper>();
 

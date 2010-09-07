@@ -40,11 +40,11 @@ public class RecorderCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			RecorderCategory.class);
 
-	private Model recordCombinationRecalls = getModel(new Property(
+	private Model<Boolean> recordCombinationRecalls = getModel(new Property(
 			ConsoleTracker.class, "recordCombinationRecalls"));
 
-	private Model encodeNames = getModel(new Property(ElementEncoder.class,
-			"name"));
+	private Model<Boolean> encodeNames = getModel(new Property(
+			ElementEncoder.class, "name"));
 
 	private JCheckBox recordCombinationRecallsCheckBox = new JCheckBox();
 
@@ -77,10 +77,10 @@ public class RecorderCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		encodeNamesCheckBox.setSelected((Boolean) encodeNames.getValue());
+		encodeNamesCheckBox.setSelected(encodeNames.getValue());
 
-		recordCombinationRecallsCheckBox
-				.setSelected((Boolean) recordCombinationRecalls.getValue());
+		recordCombinationRecallsCheckBox.setSelected(recordCombinationRecalls
+				.getValue());
 	}
 
 	@Override

@@ -1,7 +1,7 @@
 package jorgan.midimapper;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
@@ -15,10 +15,18 @@ public class MidiMapperProvider extends MidiDeviceProvider {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMapperProvider.class);
 
-	private List<Mapping> mappings = new ArrayList<Mapping>();
+	private Set<Mapping> mappings = new HashSet<Mapping>();
 
 	public MidiMapperProvider() {
 		config.read(this);
+	}
+
+	public void setMappings(Set<Mapping> mappings) {
+		this.mappings = mappings;
+	}
+
+	public Set<Mapping> getMappings() {
+		return mappings;
 	}
 
 	@Override

@@ -48,29 +48,31 @@ public class ConsoleCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ConsoleCategory.class);
 
-	private Model grid = getModel(new Property(ConsolePanel.class, "grid"));
+	private Model<Integer> grid = getModel(new Property(ConsolePanel.class,
+			"grid"));
 
-	private Model background = getModel(new Property(ConsolePanel.class,
+	private Model<Color> background = getModel(new Property(ConsolePanel.class,
 			"background"));
 
-	private Model foreground = getModel(new Property(ConsolePanel.class,
+	private Model<Color> foreground = getModel(new Property(ConsolePanel.class,
 			"foreground"));
 
-	private Model popupBackground = getModel(new Property(ConsolePanel.class,
-			"popupBackground"));
+	private Model<Color> popupBackground = getModel(new Property(
+			ConsolePanel.class, "popupBackground"));
 
-	private Model elementForeground = getModel(new Property(View.class,
+	private Model<Color> elementForeground = getModel(new Property(View.class,
 			"defaultColor"));
 
-	private Model elementFont = getModel(new Property(View.class, "defaultFont"));
+	private Model<Font> elementFont = getModel(new Property(View.class,
+			"defaultFont"));
 
-	private Model showShortcut = getModel(new Property(View.class,
+	private Model<Boolean> showShortcut = getModel(new Property(View.class,
 			"showShortcut"));
 
-	private Model shortcutColor = getModel(new Property(View.class,
+	private Model<Color> shortcutColor = getModel(new Property(View.class,
 			"shortcutColor"));
 
-	private Model shortcutFont = getModel(new Property(View.class,
+	private Model<Font> shortcutFont = getModel(new Property(View.class,
 			"shortcutFont"));
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
@@ -152,26 +154,24 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void read() {
 
 		gridSpinner.setValue(grid.getValue());
-		backgroundSelector.setSelectedColor((Color) background.getValue());
-		foregroundSelector.setSelectedColor((Color) foreground.getValue());
+		backgroundSelector.setSelectedColor(background.getValue());
+		foregroundSelector.setSelectedColor(foreground.getValue());
 
-		popupBackgroundSelector.setSelectedColor((Color) popupBackground
-				.getValue());
+		popupBackgroundSelector.setSelectedColor(popupBackground.getValue());
 
-		elementForegroundSelector.setSelectedColor((Color) elementForeground
-				.getValue());
-		elementFontSelector.setSelectedFont((Font) elementFont.getValue());
+		elementForegroundSelector
+				.setSelectedColor(elementForeground.getValue());
+		elementFontSelector.setSelectedFont(elementFont.getValue());
 
-		shortcutCheckBox.setSelected((Boolean) showShortcut.getValue());
-		shortcutColorSelector
-				.setSelectedColor((Color) shortcutColor.getValue());
-		shortcutFontSelector.setSelectedFont((Font) shortcutFont.getValue());
+		shortcutCheckBox.setSelected(showShortcut.getValue());
+		shortcutColorSelector.setSelectedColor(shortcutColor.getValue());
+		shortcutFontSelector.setSelectedFont(shortcutFont.getValue());
 	}
 
 	@Override
 	protected void write() {
 
-		grid.setValue(gridSpinner.getValue());
+		grid.setValue((Integer) gridSpinner.getValue());
 		background.setValue(backgroundSelector.getSelectedColor());
 		foreground.setValue(foregroundSelector.getSelectedColor());
 

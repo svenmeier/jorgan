@@ -41,16 +41,18 @@ public class MidiMapper extends Loopback {
 
 	@Override
 	protected synchronized void openImpl() throws MidiUnavailableException {
-		if (mapping.getDevice() != null) {
-			device = DevicePool.instance().getMidiDevice(mapping.getDevice(),
-					mapping.getDirection());
-			device.open();
+		if (mapping.getDevice() == null) {
+			throw new MidiUnavailableException();
+		}
 
-			if (mapping.getDirection() == Direction.IN) {
-				new In();
-			} else {
-				out = new Out();
-			}
+		device = DevicePool.instance().getMidiDevice(mapping.getDevice(),
+				mapping.getDirection());
+		device.open();
+
+		if (mapping.getDirection() == Direction.IN) {
+			new In();
+		} else {
+			out = new Out();
 		}
 	}
 

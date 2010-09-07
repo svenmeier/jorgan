@@ -20,7 +20,9 @@ package jorgan.midimapper.gui.preferences;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -28,6 +30,8 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
@@ -37,6 +41,7 @@ import jorgan.midimapper.mapping.Mapping;
 import jorgan.swing.BaseAction;
 import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.FlowBuilder.Flow;
+import jorgan.swing.list.ListUtils;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -49,9 +54,16 @@ public class MidiMapperCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMapperCategory.class);
 
-	private Model mappings = getModel(new Property(MidiMapperProvider.class,
-			"mappings"));
+	private Model<Set<Mapping>> mappings = getModel(new Property(
+			MidiMapperProvider.class, "mappings"));
+
 	private JList list;
+
+	private EditAction editAction = new EditAction();
+
+	private AddAction addAction = new AddAction();
+
+	private RemoveAction removeAction = new RemoveAction();
 
 	public MidiMapperCategory() {
 		config.read(this);
@@ -67,21 +79,34 @@ public class MidiMapperCategory extends JOrganCategory {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		list = new JList();
+		list.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				editAction.update();
+				addAction.update();
+				removeAction.update();
+			}
+		});
+		ListUtils.addActionListener(list, 2, editAction);
 		panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
 		panel.add(buttonPanel, BorderLayout.EAST);
 
 		Flow flow = new FlowBuilder(buttonPanel, FlowBuilder.TOP).flow();
-		flow.add(new JButton(new EditAction()));
-		flow.add(new JButton(new AddAction()));
-		flow.add(new JButton(new RemoveAction()));
+		flow.add(new JButton(editAction));
+		flow.add(new JButton(addAction));
+		flow.add(new JButton(removeAction));
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
+		initModel();
+	}
+
+	private void initModel() {
 		list.setModel(new MappingsModel());
 	}
 
@@ -91,30 +116,40 @@ public class MidiMapperCategory extends JOrganCategory {
 
 	private class MappingsModel extends AbstractListModel {
 
-		@Override
-		public int getSize() {
-			return getMappings().size();
+		private List<Mapping> mappings;
+
+		public MappingsModel() {
+			this.mappings = new ArrayList<Mapping>(
+					MidiMapperCategory.this.mappings.getValue());
 		}
 
-		@SuppressWarnings("unchecked")
-		private List<Mapping> getMappings() {
-			return (List<Mapping>) mappings.getValue();
+		@Override
+		public int getSize() {
+			return mappings.size();
 		}
 
 		@Override
 		public Object getElementAt(int index) {
-			return getMappings().get(index).getName();
+			return mappings.get(index);
 		}
 	}
 
 	private class EditAction extends BaseAction {
 		public EditAction() {
 			config.get("edit").read(this);
+
+			setEnabled(false);
+		}
+
+		public void update() {
+			setEnabled(list.getSelectedValue() != null);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			MappingPanel.showInDialog(list, (Mapping) list.getSelectedValue());
 
+			initModel();
 		}
 	}
 
@@ -123,20 +158,37 @@ public class MidiMapperCategory extends JOrganCategory {
 			config.get("add").read(this);
 		}
 
+		public void update() {
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			Mapping mapping = new Mapping();
 
+			if (MappingPanel.showInDialog(list, mapping)) {
+				mappings.getValue().add(mapping);
+			}
+
+			initModel();
 		}
 	}
 
 	private class RemoveAction extends BaseAction {
 		public RemoveAction() {
 			config.get("remove").read(this);
+
+			setEnabled(false);
+		}
+
+		public void update() {
+			setEnabled(list.getSelectedValue() != null);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			mappings.getValue().remove(list.getSelectedValue());
 
+			initModel();
 		}
 	}
 }

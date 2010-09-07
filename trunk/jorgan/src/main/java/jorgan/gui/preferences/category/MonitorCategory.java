@@ -39,8 +39,8 @@ public class MonitorCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MonitorCategory.class);
 
-	private Model monitorMax = getModel(new Property(MonitorDockable.class,
-			"max"));
+	private Model<Integer> monitorMax = getModel(new Property(
+			MonitorDockable.class, "max"));
 
 	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
 			1, 100000, 50));
@@ -74,6 +74,6 @@ public class MonitorCategory extends JOrganCategory {
 
 	@Override
 	protected void write() {
-		monitorMax.setValue(monitorMaxSpinner.getValue());
+		monitorMax.setValue((Integer) monitorMaxSpinner.getValue());
 	}
 }

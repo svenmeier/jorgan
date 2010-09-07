@@ -42,10 +42,10 @@ public class LanCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			LanCategory.class);
 
-	private Model senderCount = getModel(new Property(LanDeviceProvider.class,
-			"senderCount"));
+	private Model<Integer> senderCount = getModel(new Property(
+			LanDeviceProvider.class, "senderCount"));
 
-	private Model receiverCount = getModel(new Property(
+	private Model<Integer> receiverCount = getModel(new Property(
 			LanDeviceProvider.class, "receiverCount"));
 
 	private JSpinner senderCountSpinner;
@@ -91,7 +91,7 @@ public class LanCategory extends JOrganCategory {
 
 	@Override
 	protected void write() {
-		senderCount.setValue(senderCountSpinner.getValue());
-		receiverCount.setValue(receiverCountSpinner.getValue());
+		senderCount.setValue((Integer) senderCountSpinner.getValue());
+		receiverCount.setValue((Integer) receiverCountSpinner.getValue());
 	}
 }
