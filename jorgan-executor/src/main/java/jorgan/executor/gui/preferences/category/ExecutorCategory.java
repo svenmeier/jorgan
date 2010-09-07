@@ -40,8 +40,8 @@ public class ExecutorCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			ExecutorCategory.class);
 
-	private Model executionsAllowed = getModel(new Property(Executions.class,
-			"allowed"));
+	private Model<Boolean> executionsAllowed = getModel(new Property(
+			Executions.class, "allowed"));
 
 	private JCheckBox executionsAllowedCheckBox = new JCheckBox();
 
@@ -64,16 +64,15 @@ public class ExecutorCategory extends JOrganCategory {
 
 		column.box(config.get("description").read(new MultiLineLabel()));
 
-		column
-				.definition(config.get("allowExecute").read(
-						executionsAllowedCheckBox));
+		column.definition(config.get("allowExecute").read(
+				executionsAllowedCheckBox));
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
-		executionsAllowedCheckBox.setSelected((Boolean) executionsAllowed.getValue());
+		executionsAllowedCheckBox.setSelected(executionsAllowed.getValue());
 	}
 
 	@Override

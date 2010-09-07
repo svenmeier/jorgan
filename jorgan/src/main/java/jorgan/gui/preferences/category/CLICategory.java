@@ -44,10 +44,11 @@ public class CLICategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			CLICategory.class);
 
-	private Model encoding = getModel(new Property(CLI.class, "encoding"));
+	private Model<String> encoding = getModel(new Property(CLI.class,
+			"encoding"));
 
-	private Model useDefaultEncoding = getModel(new Property(CLI.class,
-			"useDefaultEncoding"));
+	private Model<Boolean> useDefaultEncoding = getModel(new Property(
+			CLI.class, "useDefaultEncoding"));
 
 	private JRadioButton encodingDefaultRadioButton = new JRadioButton();
 
@@ -100,8 +101,7 @@ public class CLICategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		encodingDefaultRadioButton.setSelected((Boolean) useDefaultEncoding
-				.getValue());
+		encodingDefaultRadioButton.setSelected(useDefaultEncoding.getValue());
 		encodingComboBox.setEnabled(encodingOtherRadioButton.isSelected());
 		encodingComboBox.setSelectedItem(encoding.getValue());
 	}
@@ -109,6 +109,6 @@ public class CLICategory extends JOrganCategory {
 	@Override
 	protected void write() {
 		useDefaultEncoding.setValue(encodingDefaultRadioButton.isSelected());
-		encoding.setValue(encodingComboBox.getSelectedItem());
+		encoding.setValue((String) encodingComboBox.getSelectedItem());
 	}
 }

@@ -42,8 +42,8 @@ public class CustomizerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			CustomizerCategory.class);
 
-	private Model handleErrors = getModel(new Property(CustomizeAction.class,
-			"handleErrors"));
+	private Model<Integer> handleErrors = getModel(new Property(
+			CustomizeAction.class, "handleErrors"));
 
 	private JRadioButton errorsOfferRadioButton = new JRadioButton();
 
@@ -88,7 +88,7 @@ public class CustomizerCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		switch ((Integer) handleErrors.getValue()) {
+		switch (handleErrors.getValue()) {
 		case CustomizeAction.ERROR_OFFER:
 			errorsOfferRadioButton.setSelected(true);
 			break;

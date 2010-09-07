@@ -20,7 +20,9 @@ package jorgan.midimerger.gui.preferences;
 
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractListModel;
 import javax.swing.JButton;
@@ -28,6 +30,8 @@ import javax.swing.JComponent;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
@@ -37,6 +41,7 @@ import jorgan.midimerger.merging.Merging;
 import jorgan.swing.BaseAction;
 import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.FlowBuilder.Flow;
+import jorgan.swing.list.ListUtils;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -49,9 +54,16 @@ public class MidiMergerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerCategory.class);
 
-	private Model mergings = getModel(new Property(MidiMergerProvider.class,
-			"mergings"));
+	private Model<Set<Merging>> mergings = getModel(new Property(
+			MidiMergerProvider.class, "mergings"));
+
 	private JList list;
+
+	private EditAction editAction = new EditAction();
+
+	private AddAction addAction = new AddAction();
+
+	private RemoveAction removeAction = new RemoveAction();
 
 	public MidiMergerCategory() {
 		config.read(this);
@@ -67,57 +79,77 @@ public class MidiMergerCategory extends JOrganCategory {
 		JPanel panel = new JPanel(new BorderLayout());
 
 		list = new JList();
+		list.addListSelectionListener(new ListSelectionListener() {
+			@Override
+			public void valueChanged(ListSelectionEvent e) {
+				editAction.update();
+				addAction.update();
+				removeAction.update();
+			}
+		});
+		ListUtils.addActionListener(list, 2, editAction);
 		panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
 		JPanel buttonPanel = new JPanel();
 		panel.add(buttonPanel, BorderLayout.EAST);
 
 		Flow flow = new FlowBuilder(buttonPanel, FlowBuilder.TOP).flow();
-		flow.add(new JButton(new EditAction()));
-		flow.add(new JButton(new AddAction()));
-		flow.add(new JButton(new RemoveAction()));
+		flow.add(new JButton(editAction));
+		flow.add(new JButton(addAction));
+		flow.add(new JButton(removeAction));
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
-		list.setModel(new MergingsModel());
+		initModel();
 	}
 
 	@Override
 	protected void write() {
 	}
 
+	private void initModel() {
+		list.setModel(new MergingsModel());
+	}
+
 	private class MergingsModel extends AbstractListModel {
 
+		private List<Merging> mergings;
+
 		public MergingsModel() {
+			mergings = new ArrayList<Merging>(MidiMergerCategory.this.mergings
+					.getValue());
 		}
 
 		@Override
 		public int getSize() {
-			return getMergings().size();
-		}
-
-		@SuppressWarnings("unchecked")
-		private List<Merging> getMergings() {
-			return ((List<Merging>) mergings.getValue());
+			return mergings.size();
 		}
 
 		@Override
 		public Object getElementAt(int index) {
-			return getMergings().get(index).getName();
+			return mergings.get(index);
 		}
 	}
 
 	private class EditAction extends BaseAction {
 		public EditAction() {
 			config.get("edit").read(this);
+
+			setEnabled(false);
+		}
+
+		public void update() {
+			setEnabled(list.getSelectedValue() != null);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			MergingPanel.showInDialog(list, (Merging) list.getSelectedValue());
 
+			initModel();
 		}
 	}
 
@@ -126,20 +158,37 @@ public class MidiMergerCategory extends JOrganCategory {
 			config.get("add").read(this);
 		}
 
+		public void update() {
+		}
+
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			Merging merging = new Merging();
 
+			if (MergingPanel.showInDialog(list, merging)) {
+				mergings.getValue().add(merging);
+			}
+
+			initModel();
 		}
 	}
 
 	private class RemoveAction extends BaseAction {
 		public RemoveAction() {
 			config.get("remove").read(this);
+
+			setEnabled(false);
+		}
+
+		public void update() {
+			setEnabled(list.getSelectedValue() != null);
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
+			mergings.getValue().remove(list.getSelectedValue());
 
+			initModel();
 		}
 	}
 }

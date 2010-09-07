@@ -18,22 +18,28 @@
  */
 package jorgan.midimerger.gui.preferences;
 
-import java.awt.BorderLayout;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.AbstractTableModel;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midimerger.MidiMergerProvider;
 import jorgan.midimerger.merging.Merger;
+import jorgan.midimerger.merging.Merging;
+import jorgan.swing.StandardDialog;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
@@ -52,22 +58,45 @@ public class MergingPanel extends JPanel {
 	 */
 	private Set<Merger> selectedMergers;
 
-	private JTable table = new JTable();
+	private JTextField nameTextField;
 
-	private MergersModel tableModel = new MergersModel();
+	private JTable mergersTable;
 
-	public MergingPanel(List<Merger> mergers) {
+	private Merging merging;
+
+	public MergingPanel(Merging merging) {
 		config.read(this);
 
-		init(mergers);
+		this.merging = merging;
 
-		table.setModel(tableModel);
-		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
-		TableUtils.pleasantLookAndFeel(table);
-		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
-		JScrollPane scrollPane = new JScrollPane(table);
+		DefinitionBuilder builder = new DefinitionBuilder(this);
+
+		Column column = builder.column();
+
+		column.term(config.get("name").read(new JLabel()));
+
+		nameTextField = new JTextField();
+		column.definition(nameTextField).fillHorizontal();
+
+		mergersTable = new JTable();
+		mergersTable.setModel(new MergersModel());
+		mergersTable.setDefaultEditor(Integer.class, new SpinnerCellEditor(0,
+				16, 1));
+		TableUtils.pleasantLookAndFeel(mergersTable);
+		TableUtils.fixColumnWidth(mergersTable, 0, Boolean.TRUE);
+		JScrollPane scrollPane = new JScrollPane(mergersTable);
 		scrollPane.setPreferredSize(new Dimension(0, 0));
-		add(scrollPane, BorderLayout.CENTER);
+		column.box(scrollPane).growVertical();
+
+		read();
+	}
+
+	private void read() {
+		nameTextField.setText(merging.getName());
+	}
+
+	private void write() {
+		merging.setName(nameTextField.getText());
 	}
 
 	public class MergersModel extends AbstractTableModel {
@@ -75,7 +104,20 @@ public class MergingPanel extends JPanel {
 		private String[] columnNames = new String[getColumnCount()];
 
 		public MergersModel() {
-			config.get("table").read(tableModel);
+			config.get("mergers").read(this);
+
+			selectedMergers = new HashSet<Merger>(merging.getMergers());
+
+			allMergers = new ArrayList<Merger>(selectedMergers);
+			String[] devices = DevicePool.instance().getMidiDeviceNames(
+					Direction.IN);
+			for (String device : devices) {
+				if (!MidiMergerProvider.isMerger(device)) {
+					if (!hasMerger(device)) {
+						allMergers.add(new Merger(device, -1));
+					}
+				}
+			}
 		}
 
 		public void setColumnNames(String[] names) {
@@ -166,19 +208,23 @@ public class MergingPanel extends JPanel {
 		return false;
 	}
 
-	private void init(List<Merger> mergers) {
+	public static boolean showInDialog(Component owner, Merging merging) {
+		StandardDialog dialog = StandardDialog.create(owner);
 
-		this.selectedMergers = new HashSet<Merger>(mergers);
+		dialog.addOKAction();
+		dialog.addCancelAction();
 
-		allMergers = new ArrayList<Merger>(mergers);
-		String[] devices = DevicePool.instance().getMidiDeviceNames(
-				Direction.IN);
-		for (String device : devices) {
-			if (!MidiMergerProvider.isMerger(device)) {
-				if (!hasMerger(device)) {
-					allMergers.add(new Merger(device, -1));
-				}
-			}
+		MergingPanel mergingPanel = new MergingPanel(merging);
+		dialog.setBody(mergingPanel);
+		dialog.autoPosition();
+
+		dialog.setVisible(true);
+
+		if (dialog.wasCancelled()) {
+			return false;
+		} else {
+			mergingPanel.write();
+			return true;
 		}
 	}
 }

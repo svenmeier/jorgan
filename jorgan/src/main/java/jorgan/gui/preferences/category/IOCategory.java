@@ -41,10 +41,11 @@ public class IOCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			IOCategory.class);
 
-	private Model backupCount = getModel(new Property(OrganSession.class,
-			"backupCount"));
+	private Model<Integer> backupCount = getModel(new Property(
+			OrganSession.class, "backupCount"));
 
-	private Model historyMax = getModel(new Property(History.class, "max"));
+	private Model<Integer> historyMax = getModel(new Property(History.class,
+			"max"));
 
 	private JSpinner backupCountSpinner = new JSpinner(new SpinnerNumberModel(
 			0, 0, 255, 1));
@@ -85,7 +86,7 @@ public class IOCategory extends JOrganCategory {
 
 	@Override
 	protected void write() {
-		historyMax.setValue(historyMaxSpinner.getValue());
-		backupCount.setValue(backupCountSpinner.getValue());
+		historyMax.setValue((Integer) historyMaxSpinner.getValue());
+		backupCount.setValue((Integer) backupCountSpinner.getValue());
 	}
 }

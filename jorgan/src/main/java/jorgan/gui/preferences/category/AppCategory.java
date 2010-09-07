@@ -37,11 +37,11 @@ public class AppCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			AppCategory.class);
 
-	private Model openRecentOnStartup = getModel(new Property(App.class,
-			"openRecentOnStartup"));
+	private Model<Boolean> openRecentOnStartup = getModel(new Property(
+			App.class, "openRecentOnStartup"));
 
-	private Model saveOnShutdown = getModel(new Property(OrganSession.class,
-			"saveOnShutdown"));
+	private Model<Boolean> saveOnShutdown = getModel(new Property(
+			OrganSession.class, "saveOnShutdown"));
 
 	private JCheckBox openRecentOnStartupCheckBox = new JCheckBox();
 
@@ -70,15 +70,14 @@ public class AppCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		openRecentOnStartupCheckBox.setSelected((Boolean) openRecentOnStartup
-				.getValue());
-		saveOnShutdownCheckBox.setSelected((Boolean) saveOnShutdown.getValue());
+		openRecentOnStartupCheckBox.setSelected(openRecentOnStartup.getValue());
+		saveOnShutdownCheckBox.setSelected(saveOnShutdown.getValue());
 	}
 
 	@Override
 	protected void write() {
 		openRecentOnStartup.setValue(openRecentOnStartupCheckBox.isSelected());
-		
+
 		saveOnShutdown.setValue(saveOnShutdownCheckBox.isSelected());
 	}
 }

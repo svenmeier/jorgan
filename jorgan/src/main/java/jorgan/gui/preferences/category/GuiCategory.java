@@ -45,19 +45,21 @@ public class GuiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			GuiCategory.class);
 
-	private Model lookAndFeel = getModel(new Property(GUI.class, "lookAndFeel"));
+	private Model<GUI.LAF> lookAndFeel = getModel(new Property(GUI.class,
+			"lookAndFeel"));
 
-	private Model showAboutOnStartup = getModel(new Property(GUI.class,
-			"showAboutOnStartup"));
+	private Model<Boolean> showAboutOnStartup = getModel(new Property(
+			GUI.class, "showAboutOnStartup"));
 
 	private JComboBox lookAndFeelComboBox = new JComboBox();
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	private Model fullScreenOnLoad = getModel(new Property(
+	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
 			FullScreenAction.class, "onLoad"));
 
-	private Model changes = getModel(new Property(OrganFrame.class, "changes"));
+	private Model<OrganFrame.Changes> changes = getModel(new Property(
+			OrganFrame.class, "changes"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
@@ -123,12 +125,10 @@ public class GuiCategory extends JOrganCategory {
 	@Override
 	protected void read() {
 		lookAndFeelComboBox.setSelectedItem(lookAndFeel.getValue());
-		showAboutOnStartupCheckBox.setSelected((Boolean) showAboutOnStartup
-				.getValue());
-		fullScreenOnLoadCheckBox.setSelected((Boolean) fullScreenOnLoad
-				.getValue());
+		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
+		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
 
-		switch ((Changes) changes.getValue()) {
+		switch (changes.getValue()) {
 		case DISCARD:
 			changesDiscardRadioButton.setSelected(true);
 			break;
@@ -146,7 +146,7 @@ public class GuiCategory extends JOrganCategory {
 
 	@Override
 	protected void write() {
-		lookAndFeel.setValue(lookAndFeelComboBox.getSelectedItem());
+		lookAndFeel.setValue((GUI.LAF) lookAndFeelComboBox.getSelectedItem());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 
