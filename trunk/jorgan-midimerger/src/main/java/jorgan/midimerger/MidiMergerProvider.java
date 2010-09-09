@@ -18,8 +18,8 @@
  */
 package jorgan.midimerger;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
@@ -40,10 +40,14 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerProvider.class);
 
-	private List<Merging> mergings = new ArrayList<Merging>();
+	private Set<Merging> mergings = new HashSet<Merging>();
 
 	public MidiMergerProvider() {
 		config.read(this);
+	}
+
+	public void setMergings(Set<Merging> mergings) {
+		this.mergings = mergings;
 	}
 
 	@Override
