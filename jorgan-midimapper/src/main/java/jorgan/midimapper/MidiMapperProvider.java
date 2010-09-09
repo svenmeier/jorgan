@@ -27,10 +27,6 @@ public class MidiMapperProvider extends MidiDeviceProvider {
 		this.mappings = mappings;
 	}
 
-	public Set<Mapping> getMappings() {
-		return mappings;
-	}
-
 	@Override
 	public Info[] getDeviceInfo() {
 		Info[] infos = new Info[mappings.size()];
