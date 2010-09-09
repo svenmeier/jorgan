@@ -18,8 +18,8 @@
  */
 package jorgan.midimerger;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
@@ -35,23 +35,15 @@ import bias.Configuration;
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 
-	private static final String PREFIX = "Merger ";
+	private static final String PREFIX = "jOrgan ";
 
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerProvider.class);
 
-	private Set<Merging> mergings = new HashSet<Merging>();
+	private List<Merging> mergings = new ArrayList<Merging>();
 
 	public MidiMergerProvider() {
 		config.read(this);
-	}
-
-	public void setMergings(Set<Merging> mergings) {
-		this.mergings = mergings;
-	}
-
-	public Set<Merging> getMergings() {
-		return mergings;
 	}
 
 	@Override
@@ -98,7 +90,12 @@ public class MidiMergerProvider extends MidiDeviceProvider {
 		}
 	}
 
-	public static boolean isMerger(String device) {
-		return device.startsWith(PREFIX);
+	public boolean isMerger(String device) {
+		for (Merging merging : mergings) {
+			if ((PREFIX + merging.getName()).equals(device)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

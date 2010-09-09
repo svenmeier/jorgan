@@ -30,13 +30,15 @@ public class MidiMergerConfigurationProvider implements ConfigurationProvider {
 
 		private static final String SUFFIX = ".merging";
 
+		private MergingStream stream = new MergingStream();
+
 		private MergingsStore() {
 			super("jorgan/midimerger/MidiMergerProvider/mergings");
 		}
 
 		@Override
-		protected File getFile(Merging mergin) {
-			return new File(App.getHome(), mergin.getName() + SUFFIX);
+		protected File getFile(Merging merging) {
+			return new File(App.getHome(), merging.getName() + SUFFIX);
 		}
 
 		@Override
@@ -51,13 +53,13 @@ public class MidiMergerConfigurationProvider implements ConfigurationProvider {
 
 		@Override
 		protected Object read(InputStream input) throws IOException {
-			return new MergingStream().read(input);
+			return stream.read(input);
 		}
 
 		@Override
 		protected void write(Merging merging, OutputStream output)
 				throws IOException {
-			new MergingStream().write(merging, output);
+			stream.write(merging, output);
 		}
 	}
 }
