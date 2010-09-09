@@ -30,8 +30,6 @@ import bias.Store;
 
 /**
  * Abstract store base class.
- * 
- * @see #createConverter()
  */
 public abstract class AbstractStore implements Store {
 
