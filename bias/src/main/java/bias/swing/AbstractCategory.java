@@ -40,7 +40,7 @@ public abstract class AbstractCategory implements Category {
 
 	private String name;
 
-	private Map<String, Model> models = new HashMap<String, Model>();
+	private Map<String, Model<?>> models = new HashMap<String, Model<?>>();
 
 	protected AbstractCategory(Configuration configuration) {
 		this.configuration = configuration;
@@ -60,7 +60,7 @@ public abstract class AbstractCategory implements Category {
 	public final void apply() {
 		write();
 
-		for (Model model : models.values()) {
+		for (Model<?> model : models.values()) {
 			model.apply();
 		}
 	}
@@ -69,7 +69,7 @@ public abstract class AbstractCategory implements Category {
 	}
 
 	public final void restore() {
-		for (Model model : models.values()) {
+		for (Model<?> model : models.values()) {
 			model.restore();
 		}
 
@@ -80,19 +80,20 @@ public abstract class AbstractCategory implements Category {
 
 	}
 
-	protected Model getModel(Property property) {
+	protected <T> Model<T> getModel(Property property) {
 		return getModel(property.getOwningClass().getName().replace('.', '/'),
 				property);
 	}
 
-	protected Model getModel(String path, Property property) {
+	@SuppressWarnings("unchecked")
+	protected <T> Model<T> getModel(String path, Property property) {
 		String key = path + "/" + property.getName();
 
-		Model model = models.get(key);
+		Model<T> model = (Model<T>)models.get(key);
 		if (model == null) {
 			Store store = configuration.getStore(key);
 			
-			model = new Model(key, property.getType(), store);
+			model = new Model<T>(key, property.getType(), store);
 
 			this.models.put(key, model);
 		}
@@ -104,30 +105,34 @@ public abstract class AbstractCategory implements Category {
 		return null;
 	}
 
-	public static class Model {
+	public static class Model<T> {
 
 		private String key;
 
 		private Type type;
 
-		private Object value;
+		private T value;
 		
 		private Store store;
 
-		public Model(String key, Type type, Store store) {
+		@SuppressWarnings("unchecked")
+		private Model(String key, Type type, Store store) {
 			this.key = key;
 			this.type = type;
 			this.store = store;
 			
-			this.value = store.getValue(key, type);
+			this.value = (T)store.getValue(key, type);
 		}
 
 		private void apply() {
 			store.setValue(key, type, value);
 		}
 
+		@SuppressWarnings("unchecked")
 		private void restore() {
-			value = ((DefaultingStore) store).getDefault(key, type);
+			if (store instanceof DefaultingStore) {
+				value = (T)((DefaultingStore) store).getDefault(key, type);
+			}
 		}
 
 		public String getKey() {
@@ -142,11 +147,11 @@ public abstract class AbstractCategory implements Category {
 			return store;
 		}
 		
-		public Object getValue() {
+		public T getValue() {
 			return value;
 		}
 
-		public void setValue(Object value) {
+		public void setValue(T value) {
 			this.value = value;
 		}
 	}
