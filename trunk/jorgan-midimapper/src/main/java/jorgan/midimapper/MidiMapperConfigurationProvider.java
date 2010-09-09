@@ -30,6 +30,8 @@ public class MidiMapperConfigurationProvider implements ConfigurationProvider {
 
 		private static final String SUFFIX = ".mapping";
 
+		private MappingStream stream = new MappingStream();
+
 		private MappingsStore() {
 			super("jorgan/midimapper/MidiMapperProvider/mappings");
 		}
@@ -51,13 +53,13 @@ public class MidiMapperConfigurationProvider implements ConfigurationProvider {
 
 		@Override
 		protected Object read(InputStream input) throws IOException {
-			return new MappingStream().read(input);
+			return stream.read(input);
 		}
 
 		@Override
 		protected void write(Mapping mapping, OutputStream output)
 				throws IOException {
-			new MappingStream().write(mapping, output);
+			stream.write(mapping, output);
 		}
 	}
 }

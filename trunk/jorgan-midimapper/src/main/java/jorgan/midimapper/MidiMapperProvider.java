@@ -12,6 +12,8 @@ import bias.Configuration;
 
 public class MidiMapperProvider extends MidiDeviceProvider {
 
+	private static final String PREFIX = "jOrgan ";
+
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMapperProvider.class);
 
@@ -62,7 +64,7 @@ public class MidiMapperProvider extends MidiDeviceProvider {
 		private Mapping mapping;
 
 		protected MapperInfo(Mapping mapping) {
-			super("Mapper " + mapping.getName(), "jOrgan",
+			super(PREFIX + mapping.getName(), "jOrgan",
 					"Midi-Mapper of jOrgan", "1.0");
 
 			this.mapping = mapping;
@@ -71,5 +73,14 @@ public class MidiMapperProvider extends MidiDeviceProvider {
 		public Mapping getMapping() {
 			return mapping;
 		}
+	}
+
+	public boolean isMapper(String device) {
+		for (Mapping mapping : mappings) {
+			if ((PREFIX + mapping.getName()).equals(device)) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

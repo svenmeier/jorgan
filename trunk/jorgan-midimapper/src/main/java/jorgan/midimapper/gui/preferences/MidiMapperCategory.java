@@ -42,6 +42,7 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.FlowBuilder.Flow;
 import jorgan.swing.list.ListUtils;
+import jorgan.swing.list.SimpleCellRenderer;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -85,6 +86,12 @@ public class MidiMapperCategory extends JOrganCategory {
 				editAction.update();
 				addAction.update();
 				removeAction.update();
+			}
+		});
+		list.setCellRenderer(new SimpleCellRenderer<Mapping>() {
+			@Override
+			protected Object getDisplayValue(Mapping mapping) {
+				return mapping.getName();
 			}
 		});
 		ListUtils.addActionListener(list, 2, editAction);
@@ -165,9 +172,9 @@ public class MidiMapperCategory extends JOrganCategory {
 		public void actionPerformed(ActionEvent e) {
 			Mapping mapping = new Mapping();
 
-			if (MappingPanel.showInDialog(list, mapping)) {
-				mappings.getValue().add(mapping);
-			}
+			MappingPanel.showInDialog(list, mapping);
+
+			mappings.getValue().add(mapping);
 
 			initModel();
 		}

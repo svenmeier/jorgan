@@ -18,7 +18,16 @@ public class Mapper {
 
 	private List<Message> to = new ArrayList<Message>();
 
+	public Mapper() {
+		from.add(new Message("get status", "get data1", "get data2"));
+		to.add(new Message("set status", "set data1", "set data2"));
+	}
+
 	public void setFrom(List<Message> from) {
+		if (from.isEmpty()) {
+			throw new IllegalArgumentException("must not be empty");
+		}
+
 		this.from.clear();
 		this.from.addAll(from);
 
@@ -26,6 +35,10 @@ public class Mapper {
 	}
 
 	public void setTo(List<Message> to) {
+		if (to.isEmpty()) {
+			throw new IllegalArgumentException("must not be empty");
+		}
+
 		this.to.clear();
 		this.to.addAll(to);
 

@@ -19,17 +19,23 @@
 package jorgan.midimapper.gui.preferences;
 
 import java.awt.Component;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
+import jorgan.midimapper.MidiMapperProvider;
 import jorgan.midimapper.mapping.Mapping;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.StandardDialog;
+import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -42,6 +48,10 @@ public class MappingPanel extends JPanel {
 			MappingPanel.class);
 
 	private JTextField nameTextField;
+
+	private JRadioButton inRadioButton;
+
+	private JRadioButton outRadioButton;
 
 	private JComboBox deviceComboBox;
 
@@ -63,8 +73,21 @@ public class MappingPanel extends JPanel {
 
 		column.term(config.get("device").read(new JLabel()));
 
-		deviceComboBox = new JComboBox(ComboBoxUtils.withNull(DevicePool
-				.instance().getMidiDeviceNames(Direction.IN)));
+		ButtonGroup directionGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				initDevices(inRadioButton.isSelected() ? Direction.IN
+						: Direction.OUT);
+			}
+		};
+		inRadioButton = config.get("directionIn").read(new JRadioButton());
+		directionGroup.add(inRadioButton);
+		column.definition(inRadioButton).fillHorizontal();
+		outRadioButton = config.get("directionOut").read(new JRadioButton());
+		directionGroup.add(outRadioButton);
+		column.definition(outRadioButton).fillHorizontal();
+
+		deviceComboBox = new JComboBox();
 		deviceComboBox.setEditable(false);
 
 		column.definition(deviceComboBox).fillHorizontal();
@@ -74,19 +97,42 @@ public class MappingPanel extends JPanel {
 
 	private void read() {
 		nameTextField.setText(mapping.getName());
+
+		inRadioButton.setSelected(mapping.getDirection() == Direction.IN);
+		outRadioButton.setSelected(mapping.getDirection() == Direction.OUT);
+
+		initDevices(mapping.getDirection());
 		deviceComboBox.setSelectedItem(mapping.getDevice());
+	}
+
+	private void initDevices(Direction direction) {
+		Object selected = deviceComboBox.getSelectedItem();
+
+		MidiMapperProvider provider = new MidiMapperProvider();
+
+		List<String> devices = new ArrayList<String>();
+		for (String device : DevicePool.instance()
+				.getMidiDeviceNames(direction)) {
+			if (!provider.isMapper(device)) {
+				devices.add(device);
+			}
+		}
+		deviceComboBox.setModel(ComboBoxUtils.createModelWithNull(devices));
+
+		deviceComboBox.setSelectedItem(selected);
 	}
 
 	private void write() {
 		mapping.setName(nameTextField.getText());
+		mapping.setDirection(inRadioButton.isSelected() ? Direction.IN
+				: Direction.OUT);
 		mapping.setDevice((String) deviceComboBox.getSelectedItem());
 	}
 
-	public static boolean showInDialog(Component owner, Mapping mapping) {
+	public static void showInDialog(Component owner, Mapping mapping) {
 		StandardDialog dialog = StandardDialog.create(owner);
 
 		dialog.addOKAction();
-		dialog.addCancelAction();
 
 		MappingPanel mappingPanel = new MappingPanel(mapping);
 		dialog.setBody(mappingPanel);
@@ -94,11 +140,6 @@ public class MappingPanel extends JPanel {
 
 		dialog.setVisible(true);
 
-		if (dialog.wasCancelled()) {
-			return false;
-		} else {
-			mappingPanel.write();
-			return true;
-		}
+		mappingPanel.write();
 	}
 }
