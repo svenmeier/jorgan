@@ -16,6 +16,10 @@ public class Mapping {
 
 	private List<Mapper> mappers = new ArrayList<Mapper>();
 
+	public Mapping() {
+		mappers.add(new Mapper());
+	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
