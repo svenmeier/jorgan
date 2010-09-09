@@ -42,6 +42,7 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.FlowBuilder.Flow;
 import jorgan.swing.list.ListUtils;
+import jorgan.swing.list.SimpleCellRenderer;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -87,6 +88,12 @@ public class MidiMergerCategory extends JOrganCategory {
 				removeAction.update();
 			}
 		});
+		list.setCellRenderer(new SimpleCellRenderer<Merging>() {
+			@Override
+			protected Object getDisplayValue(Merging merging) {
+				return merging.getName();
+			}
+		});
 		ListUtils.addActionListener(list, 2, editAction);
 		panel.add(new JScrollPane(list), BorderLayout.CENTER);
 
@@ -106,12 +113,12 @@ public class MidiMergerCategory extends JOrganCategory {
 		initModel();
 	}
 
-	@Override
-	protected void write() {
-	}
-
 	private void initModel() {
 		list.setModel(new MergingsModel());
+	}
+
+	@Override
+	protected void write() {
 	}
 
 	private class MergingsModel extends AbstractListModel {
@@ -119,8 +126,8 @@ public class MidiMergerCategory extends JOrganCategory {
 		private List<Merging> mergings;
 
 		public MergingsModel() {
-			mergings = new ArrayList<Merging>(MidiMergerCategory.this.mergings
-					.getValue());
+			this.mergings = new ArrayList<Merging>(
+					MidiMergerCategory.this.mergings.getValue());
 		}
 
 		@Override
@@ -165,9 +172,9 @@ public class MidiMergerCategory extends JOrganCategory {
 		public void actionPerformed(ActionEvent e) {
 			Merging merging = new Merging();
 
-			if (MergingPanel.showInDialog(list, merging)) {
-				mergings.getValue().add(merging);
-			}
+			MergingPanel.showInDialog(list, merging);
+
+			mergings.getValue().add(merging);
 
 			initModel();
 		}

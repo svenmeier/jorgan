@@ -51,6 +51,8 @@ public class MergingPanel extends JPanel {
 	private static Configuration config = Configuration.getRoot().get(
 			MergingPanel.class);
 
+	private Merging merging;
+
 	private List<Merger> allMergers;
 
 	/**
@@ -60,9 +62,9 @@ public class MergingPanel extends JPanel {
 
 	private JTextField nameTextField;
 
-	private JTable mergersTable;
+	private JTable table = new JTable();
 
-	private Merging merging;
+	private MergersModel tableModel = new MergersModel();
 
 	public MergingPanel(Merging merging) {
 		config.read(this);
@@ -78,14 +80,13 @@ public class MergingPanel extends JPanel {
 		nameTextField = new JTextField();
 		column.definition(nameTextField).fillHorizontal();
 
-		mergersTable = new JTable();
-		mergersTable.setModel(new MergersModel());
-		mergersTable.setDefaultEditor(Integer.class, new SpinnerCellEditor(0,
-				16, 1));
-		TableUtils.pleasantLookAndFeel(mergersTable);
-		TableUtils.fixColumnWidth(mergersTable, 0, Boolean.TRUE);
-		JScrollPane scrollPane = new JScrollPane(mergersTable);
-		scrollPane.setPreferredSize(new Dimension(0, 0));
+		table.setModel(tableModel);
+		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
+		TableUtils.pleasantLookAndFeel(table);
+		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setPreferredSize(new Dimension(320, 160));
+
 		column.box(scrollPane).growVertical();
 
 		read();
@@ -93,10 +94,27 @@ public class MergingPanel extends JPanel {
 
 	private void read() {
 		nameTextField.setText(merging.getName());
+
+		selectedMergers = new HashSet<Merger>(merging.getMergers());
+		allMergers = new ArrayList<Merger>(selectedMergers);
+
+		MidiMergerProvider provider = new MidiMergerProvider();
+
+		String[] devices = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
+		for (String device : devices) {
+			if (!provider.isMerger(device)) {
+				if (!hasMerger(device)) {
+					allMergers.add(new Merger(device, -1));
+				}
+			}
+		}
 	}
 
 	private void write() {
 		merging.setName(nameTextField.getText());
+
+		merging.setMergers(selectedMergers);
 	}
 
 	public class MergersModel extends AbstractTableModel {
@@ -104,20 +122,7 @@ public class MergingPanel extends JPanel {
 		private String[] columnNames = new String[getColumnCount()];
 
 		public MergersModel() {
-			config.get("mergers").read(this);
-
-			selectedMergers = new HashSet<Merger>(merging.getMergers());
-
-			allMergers = new ArrayList<Merger>(selectedMergers);
-			String[] devices = DevicePool.instance().getMidiDeviceNames(
-					Direction.IN);
-			for (String device : devices) {
-				if (!MidiMergerProvider.isMerger(device)) {
-					if (!hasMerger(device)) {
-						allMergers.add(new Merger(device, -1));
-					}
-				}
-			}
+			config.get("table").read(this);
 		}
 
 		public void setColumnNames(String[] names) {
@@ -208,11 +213,10 @@ public class MergingPanel extends JPanel {
 		return false;
 	}
 
-	public static boolean showInDialog(Component owner, Merging merging) {
+	public static void showInDialog(Component owner, Merging merging) {
 		StandardDialog dialog = StandardDialog.create(owner);
 
 		dialog.addOKAction();
-		dialog.addCancelAction();
 
 		MergingPanel mergingPanel = new MergingPanel(merging);
 		dialog.setBody(mergingPanel);
@@ -220,11 +224,6 @@ public class MergingPanel extends JPanel {
 
 		dialog.setVisible(true);
 
-		if (dialog.wasCancelled()) {
-			return false;
-		} else {
-			mergingPanel.write();
-			return true;
-		}
+		mergingPanel.write();
 	}
 }

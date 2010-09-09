@@ -20,6 +20,7 @@ package jorgan.midimerger.merging;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class Merging {
 
@@ -35,6 +36,11 @@ public class Merging {
 		this.name = name;
 	}
 
+	public void setMergers(Set<Merger> mergers) {
+		this.mergers.clear();
+		this.mergers.addAll(mergers);
+	}
+
 	public List<Merger> getMergers() {
 		return mergers;
 	}
@@ -42,4 +48,5 @@ public class Merging {
 	public boolean isEmpty() {
 		return mergers.isEmpty();
 	}
+
 }
