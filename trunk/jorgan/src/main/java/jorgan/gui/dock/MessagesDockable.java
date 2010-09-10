@@ -43,7 +43,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Console;
@@ -65,6 +64,7 @@ import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.NoOp;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
@@ -379,22 +379,11 @@ public class MessagesDockable extends OrganDockable {
 	 * called on the EDT, although a change in the organ might be triggered by a
 	 * change on a MIDI thread.
 	 */
-	public class MessagesModel extends AbstractTableModel implements
+	public class MessagesModel extends BaseTableModel<Message> implements
 			OrganListener {
-
-		private String[] columnNames = new String[4];
 
 		private void update() {
 			fireTableDataChanged();
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
-
-		public void setColumnNames(String[] columnNames) {
-			this.columnNames = columnNames;
 		}
 
 		public int getColumnCount() {
@@ -406,13 +395,17 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		protected boolean isEditable(Message row, int columnIndex) {
 			return columnIndex > 0;
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Message message = messages.get(rowIndex);
+		@Override
+		protected Message getRow(int rowIndex) {
+			return messages.get(rowIndex);
+		}
 
+		@Override
+		protected Object getValue(Message message, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
 				return message;
@@ -428,21 +421,19 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-			Message message = messages.get(rowIndex);
-
+		protected void setValue(Message message, int columnIndex, Object value) {
 			String status = message.getStatus();
 			String data1 = message.getData1();
 			String data2 = message.getData2();
 			switch (columnIndex) {
 			case 1:
-				status = (String) aValue;
+				status = (String) value;
 				break;
 			case 2:
-				data1 = (String) aValue;
+				data1 = (String) value;
 				break;
 			case 3:
-				data2 = (String) aValue;
+				data2 = (String) value;
 				break;
 			}
 

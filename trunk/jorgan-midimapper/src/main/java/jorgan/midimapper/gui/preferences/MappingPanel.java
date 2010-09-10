@@ -19,6 +19,7 @@
 package jorgan.midimapper.gui.preferences;
 
 import java.awt.Component;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,17 +28,21 @@ import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midimapper.MidiMapperProvider;
+import jorgan.midimapper.mapping.Mapper;
 import jorgan.midimapper.mapping.Mapping;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.StandardDialog;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.layout.FlowBuilder.Flow;
 import bias.Configuration;
 
 /**
@@ -47,6 +52,8 @@ public class MappingPanel extends JPanel {
 	private static Configuration config = Configuration.getRoot().get(
 			MappingPanel.class);
 
+	private Mapping mapping;
+
 	private JTextField nameTextField;
 
 	private JRadioButton inRadioButton;
@@ -55,7 +62,7 @@ public class MappingPanel extends JPanel {
 
 	private JComboBox deviceComboBox;
 
-	private Mapping mapping;
+	private JPanel mapperPanels;
 
 	public MappingPanel(Mapping mapping) {
 		config.read(this);
@@ -92,6 +99,13 @@ public class MappingPanel extends JPanel {
 
 		column.definition(deviceComboBox).fillHorizontal();
 
+		mapperPanels = new JPanel();
+		JScrollPane scrollPane = new JScrollPane(mapperPanels,
+				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setPreferredSize(new Dimension(320, 160));
+		column.box(scrollPane).growVertical();
+
 		read();
 	}
 
@@ -103,6 +117,12 @@ public class MappingPanel extends JPanel {
 
 		initDevices(mapping.getDirection());
 		deviceComboBox.setSelectedItem(mapping.getDevice());
+
+		mapperPanels.removeAll();
+		Flow flow = new FlowBuilder(mapperPanels, FlowBuilder.TOP).flow();
+		for (Mapper mapper : mapping.getMappers()) {
+			flow.add(new MapperPanel(mapper));
+		}
 	}
 
 	private void initDevices(Direction direction) {

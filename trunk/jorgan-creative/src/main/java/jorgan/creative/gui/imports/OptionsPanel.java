@@ -33,10 +33,10 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.table.BaseTableModel;
 import bias.Configuration;
 
 /**
@@ -95,20 +95,14 @@ public class OptionsPanel extends JPanel {
 				touchSensitiveCheckBox));
 	}
 
-	public class BanksModel extends AbstractTableModel {
-
-		private String[] columnNames = new String[2];
+	public class BanksModel extends BaseTableModel<Bank> {
 
 		public BanksModel() {
 			config.get("table").read(this);
 		}
 
-		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length "
-						+ columnNames.length);
-			}
-			this.columnNames = columnNames;
+		public int getColumnCount() {
+			return 2;
 		}
 
 		public Class<?> getColumnClass(int columnIndex) {
@@ -117,14 +111,6 @@ public class OptionsPanel extends JPanel {
 			} else {
 				return String.class;
 			}
-		}
-
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
-
-		public int getColumnCount() {
-			return 2;
 		}
 
 		public int getRowCount() {
@@ -136,10 +122,13 @@ public class OptionsPanel extends JPanel {
 			}
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Device device = (Device) comboBox.getSelectedItem();
+		@Override
+		protected Bank getRow(int rowIndex) {
+			return ((Device) comboBox.getSelectedItem()).banks.get(rowIndex);
+		}
 
-			Bank bank = device.banks.get(rowIndex);
+		@Override
+		protected Object getValue(Bank bank, int columnIndex) {
 			if (columnIndex == 0) {
 				return new Integer(bank.number);
 			} else {
@@ -151,7 +140,7 @@ public class OptionsPanel extends JPanel {
 	public Device getSelectedDevice() {
 		return (Device) comboBox.getSelectedItem();
 	}
-	
+
 	public Bank getSelectedBank() {
 		Device device = getSelectedDevice();
 		if (device == null) {

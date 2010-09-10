@@ -33,7 +33,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganListener;
@@ -47,6 +46,7 @@ import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.StringCellEditor;
@@ -308,39 +308,15 @@ public class TuningsDockable extends OrganDockable {
 		}
 	}
 
-	public class TuningsModel extends AbstractTableModel implements
+	public class TuningsModel extends BaseTableModel<Tuning> implements
 			OrganListener {
-
-		private String[] columnNames = new String[14];
 
 		private void update() {
 			fireTableDataChanged();
 		}
 
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
-
-		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException();
-			}
-
-			this.columnNames = columnNames;
-		}
-
 		public int getColumnCount() {
-			return columnNames.length;
-		}
-
-		public int getRowCount() {
-			return tunings.size();
-		}
-
-		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
-			return columnIndex > 0;
+			return 14;
 		}
 
 		@Override
@@ -352,9 +328,22 @@ public class TuningsDockable extends OrganDockable {
 			return super.getColumnClass(columnIndex);
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Tuning tuning = tunings.get(rowIndex);
+		public int getRowCount() {
+			return tunings.size();
+		}
 
+		@Override
+		protected Tuning getRow(int rowIndex) {
+			return tunings.get(rowIndex);
+		}
+
+		@Override
+		protected boolean isEditable(Tuning row, int columnIndex) {
+			return columnIndex > 0;
+		}
+
+		@Override
+		protected Object getValue(Tuning tuning, int columnIndex) {
 			if (columnIndex == 0) {
 				return null;
 			} else if (columnIndex == 1) {
@@ -365,9 +354,7 @@ public class TuningsDockable extends OrganDockable {
 		}
 
 		@Override
-		public void setValueAt(Object value, int rowIndex, int columnIndex) {
-			Tuning tuning = tunings.get(rowIndex);
-
+		protected void setValue(Tuning tuning, int columnIndex, Object value) {
 			String name = tuning.getName();
 			double[] derivations = tuning.getDerivations();
 			if (columnIndex == 1) {

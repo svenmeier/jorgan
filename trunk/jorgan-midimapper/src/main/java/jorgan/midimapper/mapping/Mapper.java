@@ -1,6 +1,7 @@
 package jorgan.midimapper.mapping;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +35,10 @@ public class Mapper {
 		match = 0;
 	}
 
+	public List<Message> getFrom() {
+		return Collections.unmodifiableList(from);
+	}
+
 	public void setTo(List<Message> to) {
 		if (to.isEmpty()) {
 			throw new IllegalArgumentException("must not be empty");
@@ -43,6 +48,10 @@ public class Mapper {
 		this.to.addAll(to);
 
 		match = 0;
+	}
+
+	public List<Message> getTo() {
+		return Collections.unmodifiableList(to);
 	}
 
 	public void map(byte[] datas, Callback callback) throws ProcessingException {

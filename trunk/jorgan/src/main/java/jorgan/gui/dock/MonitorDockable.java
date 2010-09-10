@@ -31,7 +31,6 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableColumn;
 
 import jorgan.midi.MessageUtils;
@@ -39,6 +38,7 @@ import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
@@ -190,35 +190,23 @@ public class MonitorDockable extends OrganDockable {
 		}
 	}
 
-	public class MessagesModel extends AbstractTableModel {
-
-		private String[] columnNames = new String[getColumnCount()];
+	public class MessagesModel extends BaseTableModel<Message> {
 
 		public int getColumnCount() {
 			return 5;
-		}
-
-		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length "
-						+ columnNames.length);
-			}
-			this.columnNames = columnNames;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
 		}
 
 		public int getRowCount() {
 			return messages.size();
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
+		@Override
+		protected Message getRow(int rowIndex) {
+			return messages.get(rowIndex);
+		}
 
-			Message message = messages.get(rowIndex);
-
+		@Override
+		protected Object getValue(Message message, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
 				return message.isInput();

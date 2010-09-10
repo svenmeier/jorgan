@@ -30,7 +30,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.table.AbstractTableModel;
 
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
@@ -40,6 +39,7 @@ import jorgan.midimerger.merging.Merging;
 import jorgan.swing.StandardDialog;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
@@ -86,7 +86,6 @@ public class MergingPanel extends JPanel {
 		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
 		JScrollPane scrollPane = new JScrollPane(table);
 		scrollPane.setPreferredSize(new Dimension(320, 160));
-
 		column.box(scrollPane).growVertical();
 
 		read();
@@ -117,29 +116,14 @@ public class MergingPanel extends JPanel {
 		merging.setMergers(selectedMergers);
 	}
 
-	public class MergersModel extends AbstractTableModel {
-
-		private String[] columnNames = new String[getColumnCount()];
+	public class MergersModel extends BaseTableModel<Merger> {
 
 		public MergersModel() {
-			config.get("table").read(this);
-		}
-
-		public void setColumnNames(String[] names) {
-			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length "
-						+ columnNames.length);
-			}
-			this.columnNames = names;
+			config.get("mergers").read(this);
 		}
 
 		public int getColumnCount() {
 			return 3;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
 		}
 
 		@Override
@@ -159,10 +143,20 @@ public class MergingPanel extends JPanel {
 			return allMergers.size();
 		}
 
-		public Object getValueAt(int row, int column) {
-			Merger merger = allMergers.get(row);
+		@Override
+		protected Merger getRow(int rowIndex) {
+			return allMergers.get(rowIndex);
+		}
 
-			switch (column) {
+		@Override
+		protected boolean isEditable(Merger merger, int columnIndex) {
+			return columnIndex == 0
+					|| (selectedMergers.contains(merger) && columnIndex == 2);
+		}
+
+		@Override
+		protected Object getValue(Merger merger, int columnIndex) {
+			switch (columnIndex) {
 			case 0:
 				return selectedMergers.contains(merger) ? true : false;
 			case 1:
@@ -174,20 +168,10 @@ public class MergingPanel extends JPanel {
 		}
 
 		@Override
-		public boolean isCellEditable(int row, int column) {
-			Merger merger = allMergers.get(row);
-
-			return column == 0
-					|| (selectedMergers.contains(merger) && column == 2);
-		}
-
-		@Override
-		public void setValueAt(Object aValue, int row, int column) {
-			Merger merger = allMergers.get(row);
-
-			switch (column) {
+		protected void setValue(Merger merger, int columnIndex, Object value) {
+			switch (columnIndex) {
 			case 0:
-				if ((Boolean) aValue) {
+				if ((Boolean) value) {
 					selectedMergers.add(merger);
 				} else {
 					merger.setChannel(-1);
@@ -195,12 +179,10 @@ public class MergingPanel extends JPanel {
 				}
 				break;
 			case 2:
-				Integer channel = (Integer) aValue;
+				Integer channel = (Integer) value;
 				merger.setChannel(channel.intValue() - 1);
 				break;
 			}
-
-			this.fireTableRowsUpdated(row, row);
 		}
 	}
 

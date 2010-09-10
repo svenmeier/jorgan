@@ -28,7 +28,7 @@ public class MidiMapperConfigurationProvider implements ConfigurationProvider {
 	private final class MappingsStore extends FileSetStore<Mapping> implements
 			FileFilter {
 
-		private static final String SUFFIX = ".mapping";
+		private static final String SUFFIX = ".mapper";
 
 		private MappingStream stream = new MappingStream();
 

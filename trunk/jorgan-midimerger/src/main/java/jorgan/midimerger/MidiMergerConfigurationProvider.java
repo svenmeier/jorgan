@@ -28,7 +28,7 @@ public class MidiMergerConfigurationProvider implements ConfigurationProvider {
 	private final class MergingsStore extends FileSetStore<Merging> implements
 			FileFilter {
 
-		private static final String SUFFIX = ".merging";
+		private static final String SUFFIX = ".merger";
 
 		private MergingStream stream = new MergingStream();
 

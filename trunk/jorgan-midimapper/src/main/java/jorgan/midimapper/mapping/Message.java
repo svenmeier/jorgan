@@ -32,4 +32,8 @@ public class Message {
 
 		return commands[index].process(data, context);
 	}
+
+	public String getData(int index) {
+		return datas[index];
+	}
 }
