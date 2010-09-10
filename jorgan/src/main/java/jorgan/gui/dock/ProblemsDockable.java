@@ -27,7 +27,6 @@ import javax.swing.ImageIcon;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.table.AbstractTableModel;
 
 import jorgan.disposition.Elements;
 import jorgan.gui.OrganPanel;
@@ -38,6 +37,7 @@ import jorgan.problem.ProblemListener;
 import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
@@ -128,35 +128,24 @@ public class ProblemsDockable extends OrganDockable {
 		tableModel.fireTableDataChanged();
 	}
 
-	public class ProblemsModel extends AbstractTableModel implements
+	public class ProblemsModel extends BaseTableModel<Problem> implements
 			ProblemListener {
-
-		private String[] columnNames = new String[getColumnCount()];
 
 		public int getColumnCount() {
 			return 3;
-		}
-
-		public void setColumnNames(String[] columnNames) {
-			if (columnNames.length != this.columnNames.length) {
-				throw new IllegalArgumentException("length "
-						+ columnNames.length);
-			}
-			this.columnNames = columnNames;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
 		}
 
 		public int getRowCount() {
 			return problems.size();
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			Problem problem = problems.get(rowIndex);
+		@Override
+		protected Problem getRow(int rowIndex) {
+			return problems.get(rowIndex);
+		}
 
+		@Override
+		protected Object getValue(Problem problem, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
 				return problem.getSeverity();

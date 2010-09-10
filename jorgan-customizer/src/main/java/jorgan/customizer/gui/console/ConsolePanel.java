@@ -43,7 +43,6 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Console;
@@ -67,6 +66,7 @@ import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.ActionCellEditor;
+import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -280,21 +280,10 @@ public class ConsolePanel extends JPanel {
 		return (String) deviceComboBox.getSelectedItem();
 	}
 
-	public class SwitchesModel extends AbstractTableModel {
-
-		private String[] columnNames = new String[4];
-
-		public void setColumnNames(String[] columnNames) {
-			this.columnNames = columnNames;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
+	public class SwitchesModel extends BaseTableModel<SwitchRow> {
 
 		public int getColumnCount() {
-			return columnNames.length;
+			return 4;
 		}
 
 		public int getRowCount() {
@@ -302,16 +291,17 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		protected SwitchRow getRow(int rowIndex) {
+			return switchRows.get(rowIndex);
+		}
+
+		@Override
+		protected boolean isEditable(SwitchRow row, int columnIndex) {
 			return getDeviceName() != null && (columnIndex >= 1);
 		}
 
 		@Override
-		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-		}
-
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			SwitchRow switchRow = switchRows.get(rowIndex);
+		protected Object getValue(SwitchRow switchRow, int columnIndex) {
 
 			switch (columnIndex) {
 			case 0:
@@ -328,21 +318,10 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	public class ContinuousModel extends AbstractTableModel {
-
-		private String[] columnNames = new String[2];
-
-		public void setColumnNames(String[] columnNames) {
-			this.columnNames = columnNames;
-		}
-
-		@Override
-		public String getColumnName(int column) {
-			return columnNames[column];
-		}
+	public class ContinuousModel extends BaseTableModel<ContinuousRow> {
 
 		public int getColumnCount() {
-			return columnNames.length;
+			return 2;
 		}
 
 		public int getRowCount() {
@@ -350,13 +329,17 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		public boolean isCellEditable(int rowIndex, int columnIndex) {
+		protected ContinuousRow getRow(int rowIndex) {
+			return continuousRows.get(rowIndex);
+		}
+
+		@Override
+		protected boolean isEditable(ContinuousRow row, int columnIndex) {
 			return getDeviceName() != null && (columnIndex >= 1);
 		}
 
-		public Object getValueAt(int rowIndex, int columnIndex) {
-			ContinuousRow continuousRow = continuousRows.get(rowIndex);
-
+		@Override
+		protected Object getValue(ContinuousRow continuousRow, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
 				return continuousRow.getDisplayName();
