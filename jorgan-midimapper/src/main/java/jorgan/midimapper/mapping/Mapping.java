@@ -18,6 +18,9 @@ public class Mapping {
 
 	public Mapping() {
 		mappers.add(new Mapper());
+		mappers.add(new Mapper());
+		mappers.add(new Mapper());
+		mappers.add(new Mapper());
 	}
 
 	public void setName(String name) {
