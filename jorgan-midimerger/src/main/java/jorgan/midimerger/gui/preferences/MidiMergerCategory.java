@@ -19,30 +19,26 @@
 package jorgan.midimerger.gui.preferences;
 
 import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
+import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
-import javax.swing.AbstractListModel;
-import javax.swing.JButton;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.JTable;
 
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
+import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
+import jorgan.midimerger.MergeInput;
 import jorgan.midimerger.MidiMerger;
 import jorgan.midimerger.MidiMergerProvider;
-import jorgan.midimerger.merging.Merging;
-import jorgan.swing.BaseAction;
-import jorgan.swing.layout.FlowBuilder;
-import jorgan.swing.layout.FlowBuilder.Flow;
-import jorgan.swing.list.ListUtils;
-import jorgan.swing.list.SimpleCellRenderer;
+import jorgan.swing.table.BaseTableModel;
+import jorgan.swing.table.SpinnerCellEditor;
+import jorgan.swing.table.TableUtils;
+import jorgan.swing.text.MultiLineLabel;
 import bias.Configuration;
 import bias.swing.Category;
 import bias.util.Property;
@@ -55,19 +51,30 @@ public class MidiMergerCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MidiMergerCategory.class);
 
-	private Model<Set<Merging>> mergings = getModel(new Property(
-			MidiMergerProvider.class, "mergings"));
+	private Model<List<MergeInput>> inputs = getModel(new Property(
+			MidiMerger.class, "inputs"));
 
-	private JList list;
+	/**
+	 * All available inputs.
+	 */
+	private List<MergeInput> allInputs = new ArrayList<MergeInput>();
 
-	private EditAction editAction = new EditAction();
+	/**
+	 * All currently selected inputs - this is a subset of {@link #allInputs}.
+	 */
+	private List<MergeInput> selectedInputs;
 
-	private AddAction addAction = new AddAction();
+	private JTable table = new JTable();
 
-	private RemoveAction removeAction = new RemoveAction();
+	/**
+	 * The table model for the mergeInputs.
+	 */
+	private InputsModel tableModel = new InputsModel();
 
 	public MidiMergerCategory() {
 		config.read(this);
+
+		config.get("table").read(tableModel);
 	}
 
 	@Override
@@ -79,123 +86,134 @@ public class MidiMergerCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout());
 
-		list = new JList();
-		list.addListSelectionListener(new ListSelectionListener() {
-			@Override
-			public void valueChanged(ListSelectionEvent e) {
-				editAction.update();
-				addAction.update();
-				removeAction.update();
-			}
-		});
-		list.setCellRenderer(new SimpleCellRenderer<Merging>() {
-			@Override
-			protected Object getDisplayValue(Merging merging) {
-				return merging.getName();
-			}
-		});
-		ListUtils.addActionListener(list, 2, editAction);
-		panel.add(new JScrollPane(list), BorderLayout.CENTER);
+		panel.add(config.get("description").read(new MultiLineLabel()),
+				BorderLayout.NORTH);
 
-		JPanel buttonPanel = new JPanel();
-		panel.add(buttonPanel, BorderLayout.EAST);
-
-		Flow flow = new FlowBuilder(buttonPanel, FlowBuilder.TOP).flow();
-		flow.add(new JButton(editAction));
-		flow.add(new JButton(addAction));
-		flow.add(new JButton(removeAction));
+		table.setModel(tableModel);
+		table.setDefaultEditor(Integer.class, new SpinnerCellEditor(0, 16, 1));
+		TableUtils.pleasantLookAndFeel(table);
+		TableUtils.fixColumnWidth(table, 0, Boolean.TRUE);
+		JScrollPane scrollPane = new JScrollPane(table);
+		scrollPane.setPreferredSize(new Dimension(0, 0));
+		panel.add(scrollPane, BorderLayout.CENTER);
 
 		return panel;
 	}
 
-	@Override
-	protected void read() {
-		initModel();
+	/**
+	 * The table model for handling of inputs to the Midi-Merger.
+	 */
+	public class InputsModel extends BaseTableModel<MergeInput> {
+
+		public int getColumnCount() {
+			return 3;
+		}
+
+		@Override
+		public Class<?> getColumnClass(int column) {
+			switch (column) {
+			case 0:
+				return Boolean.class;
+			case 1:
+				return String.class;
+			case 2:
+				return Integer.class;
+			}
+			return null;
+		}
+
+		public int getRowCount() {
+			return allInputs.size();
+		}
+
+		@Override
+		protected MergeInput getRow(int rowIndex) {
+			return allInputs.get(rowIndex);
+		}
+
+		@Override
+		protected Object getValue(MergeInput input, int columnIndex) {
+			switch (columnIndex) {
+			case 0:
+				return selectedInputs.contains(input) ? Boolean.TRUE
+						: Boolean.FALSE;
+			case 1:
+				return input.getDevice();
+			case 2:
+				return new Integer(input.getChannel() + 1);
+			}
+			return null;
+		}
+
+		@Override
+		protected boolean isEditable(MergeInput input, int columnIndex) {
+			return columnIndex == 0
+					|| (selectedInputs.contains(input) && columnIndex == 2);
+		}
+
+		@Override
+		protected void setValue(MergeInput input, int columnIndex, Object value) {
+			switch (columnIndex) {
+			case 0:
+				Boolean selected = (Boolean) value;
+				if (selected.booleanValue()) {
+					if (!selectedInputs.contains(input)) {
+						selectedInputs.add(input);
+					}
+				} else {
+					if (selectedInputs.contains(input)) {
+						input.setChannel(-1);
+						selectedInputs.remove(input);
+					}
+				}
+				break;
+			case 2:
+				Integer channel = (Integer) value;
+				input.setChannel(channel.intValue() - 1);
+				break;
+			}
+		}
 	}
 
-	private void initModel() {
-		list.setModel(new MergingsModel());
+	private int indexOfMergeInput(String device) {
+		for (int i = 0; i < allInputs.size(); i++) {
+			MergeInput input = allInputs.get(i);
+			if (device.equals(input.getDevice())) {
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	@Override
+	protected void read() {
+		// create inputs for all devices (excluding MidiMerger)
+		allInputs = new ArrayList<MergeInput>();
+
+		String[] devices = DevicePool.instance().getMidiDeviceNames(
+				Direction.IN);
+		for (String device : devices) {
+			if (!MidiMergerProvider.INFO.getName().equals(device)) {
+				allInputs.add(new MergeInput(device, -1));
+			}
+		}
+
+		// get all currently selected inputs
+		selectedInputs = inputs.getValue();
+		for (MergeInput selectedInput : selectedInputs) {
+			int index = indexOfMergeInput(selectedInput.getDevice());
+			if (index == -1) {
+				allInputs.add(selectedInput);
+			} else {
+				allInputs.set(index, selectedInput);
+			}
+		}
+
+		tableModel.fireTableDataChanged();
 	}
 
 	@Override
 	protected void write() {
-	}
-
-	private class MergingsModel extends AbstractListModel {
-
-		private List<Merging> mergings;
-
-		public MergingsModel() {
-			this.mergings = new ArrayList<Merging>(
-					MidiMergerCategory.this.mergings.getValue());
-		}
-
-		@Override
-		public int getSize() {
-			return mergings.size();
-		}
-
-		@Override
-		public Object getElementAt(int index) {
-			return mergings.get(index);
-		}
-	}
-
-	private class EditAction extends BaseAction {
-		public EditAction() {
-			config.get("edit").read(this);
-
-			setEnabled(false);
-		}
-
-		public void update() {
-			setEnabled(list.getSelectedValue() != null);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			MergingPanel.showInDialog(list, (Merging) list.getSelectedValue());
-
-			initModel();
-		}
-	}
-
-	private class AddAction extends BaseAction {
-		public AddAction() {
-			config.get("add").read(this);
-		}
-
-		public void update() {
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			Merging merging = new Merging();
-
-			MergingPanel.showInDialog(list, merging);
-
-			mergings.getValue().add(merging);
-
-			initModel();
-		}
-	}
-
-	private class RemoveAction extends BaseAction {
-		public RemoveAction() {
-			config.get("remove").read(this);
-
-			setEnabled(false);
-		}
-
-		public void update() {
-			setEnabled(list.getSelectedValue() != null);
-		}
-
-		@Override
-		public void actionPerformed(ActionEvent e) {
-			mergings.getValue().remove(list.getSelectedValue());
-
-			initModel();
-		}
+		inputs.setValue(selectedInputs);
 	}
 }
