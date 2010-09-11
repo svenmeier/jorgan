@@ -16,15 +16,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midimerger.merging;
+package jorgan.midimerger;
 
-public class Merger {
-
-	private String device;
+public class MergeInput {
 
 	private int channel;
 
-	public Merger(String device, int channel) {
+	private String device;
+
+	/**
+	 * @param channelColonDevice
+	 *            channel and device separated by a colon
+	 * @see #toString()
+	 */
+	public MergeInput(String channelColonDevice) {
+
+		int colon = channelColonDevice.indexOf(':');
+		if (colon == -1) {
+			throw new IllegalArgumentException(
+					"channel and device expected in'" + channelColonDevice);
+		}
+
+		this.channel = Integer.parseInt(channelColonDevice.substring(0, colon));
+		this.device = channelColonDevice.substring(colon + 1);
+	}
+
+	public MergeInput(String device, int channel) {
 		this.device = device;
 		this.channel = channel;
 	}
@@ -39,5 +56,10 @@ public class Merger {
 
 	public void setChannel(int channel) {
 		this.channel = channel;
+	}
+
+	@Override
+	public String toString() {
+		return channel + ":" + device;
 	}
 }

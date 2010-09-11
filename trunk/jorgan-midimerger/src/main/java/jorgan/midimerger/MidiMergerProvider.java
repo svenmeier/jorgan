@@ -18,15 +18,10 @@
  */
 package jorgan.midimerger;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.spi.MidiDeviceProvider;
 
-import jorgan.midimerger.merging.Merging;
-import bias.Configuration;
 
 /**
  * The provider of <code>MidiMerger</code> devices.
@@ -35,71 +30,33 @@ import bias.Configuration;
  */
 public class MidiMergerProvider extends MidiDeviceProvider {
 
-	private static final String PREFIX = "jOrgan ";
+	/**
+	 * The device info for this providers device.
+	 */
+	public static final Info INFO = new Info("jOrgan Midi Merger",
+			"jOrgan", "Midi-Merger of jOrgan", "1.0") {};
 
-	private static Configuration config = Configuration.getRoot().get(
-			MidiMergerProvider.class);
+	/**
+	 * The device.
+	 */
+	private static MidiMerger midiMerger;
 
-	private Set<Merging> mergings = new HashSet<Merging>();
+	@Override
+	public MidiDevice.Info[] getDeviceInfo() {
 
-	public MidiMergerProvider() {
-		config.read(this);
-	}
-
-	public void setMergings(Set<Merging> mergings) {
-		this.mergings = mergings;
+		return new MidiDevice.Info[] { INFO };
 	}
 
 	@Override
-	public Info[] getDeviceInfo() {
-		Info[] infos = new Info[mergings.size()];
-
-		int i = 0;
-		for (Merging merging : mergings) {
-			infos[i] = new MergingInfo(merging);
-			i++;
-		}
-
-		return infos;
-	}
-
-	@Override
-	public boolean isDeviceSupported(Info info) {
-		return info instanceof MergingInfo;
-	}
-
-	@Override
-	public MidiDevice getDevice(Info info) {
-		if (info instanceof MergingInfo) {
-			MergingInfo mergingInfo = (MergingInfo) info;
-
-			return new MidiMerger(info, mergingInfo.getMerging());
-		}
-		return null;
-	}
-
-	private class MergingInfo extends Info {
-
-		private Merging merging;
-
-		protected MergingInfo(Merging merging) {
-			super(PREFIX + merging.getName(), "jOrgan",
-					"Midi-Merger of jOrgan", "1.0");
-
-			this.merging = merging;
-		}
-
-		public Merging getMerging() {
-			return merging;
-		}
-	}
-
-	public boolean isMerger(String device) {
-		for (Merging merging : mergings) {
-			if ((PREFIX + merging.getName()).equals(device)) {
-				return true;
+	public MidiDevice getDevice(MidiDevice.Info info) {
+		if (MidiMergerProvider.INFO == info) {
+			if (midiMerger == null) {
+				midiMerger = new MidiMerger(info);
 			}
+			
+			return midiMerger;
 		}
-		return false;
+
+		return null;
 	}
 }

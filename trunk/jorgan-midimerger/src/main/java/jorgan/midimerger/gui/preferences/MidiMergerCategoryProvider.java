@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.gui.preferences.spi.CategoryProvider;
+
 import bias.swing.Category;
 
 /**
@@ -11,7 +12,6 @@ import bias.swing.Category;
  */
 public class MidiMergerCategoryProvider implements CategoryProvider {
 
-	@Override
 	public List<Category> getCategories() {
 		List<Category> categories = new ArrayList<Category>();
 
