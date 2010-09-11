@@ -18,12 +18,12 @@
  */
 package jorgan.midimapper.gui.preferences;
 
-import java.awt.Dimension;
+import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.List;
 
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EmptyBorder;
 
@@ -46,46 +46,27 @@ public class MapperPanel extends JPanel {
 		setLayout(new GridLayout(0, 2));
 
 		fromTable = new JTable();
-		JScrollPane fromScrollPane = new JScrollPane(fromTable,
-				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
-			@Override
-			public Dimension getPreferredSize() {
-				Dimension size = new Dimension();
-				size.height = fromTable.getPreferredSize().height
-						+ fromTable.getTableHeader().getPreferredSize().height;
-				size.width = 64;
-				return size;
-			}
-		};
 		TableUtils.pleasantLookAndFeel(fromTable);
-		fromScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		add(fromScrollPane);
+		add(createWrapper(fromTable, new Insets(0, 0, 0, 2)));
 
 		toTable = new JTable();
-		JScrollPane toScrollPane = new JScrollPane(toTable,
-				JScrollPane.VERTICAL_SCROLLBAR_NEVER,
-				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER) {
-			@Override
-			public Dimension getPreferredSize() {
-				Dimension size = new Dimension();
-				size.height = toTable.getPreferredSize().height
-						+ toTable.getTableHeader().getPreferredSize().height;
-				size.width = 64;
-				return size;
-			}
-		};
 		TableUtils.pleasantLookAndFeel(toTable);
-		toScrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
-		toScrollPane.setPreferredSize(new Dimension(64, 64));
-		add(toScrollPane);
+		add(createWrapper(toTable, new Insets(0, 2, 0, 0)));
 
 		read();
 	}
 
+	private JPanel createWrapper(JTable table, Insets insets) {
+		JPanel wrapper = new JPanel(new BorderLayout());
+		wrapper.setBorder(new EmptyBorder(insets));
+		wrapper.add(table, BorderLayout.CENTER);
+		wrapper.add(table.getTableHeader(), BorderLayout.NORTH);
+		return wrapper;
+	}
+
 	private void read() {
 		fromTable.setModel(new MessageModel(mapper.getFrom()));
-		toTable.setModel(new MessageModel(mapper.getFrom()));
+		toTable.setModel(new MessageModel(mapper.getTo()));
 	}
 
 	private class MessageModel extends BaseTableModel<Message> {

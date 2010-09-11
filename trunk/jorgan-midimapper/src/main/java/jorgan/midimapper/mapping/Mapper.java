@@ -22,6 +22,8 @@ public class Mapper {
 	public Mapper() {
 		from.add(new Message("get status", "get data1", "get data2"));
 		to.add(new Message("set status", "set data1", "set data2"));
+		to.add(new Message("set status", "set data1", "set data2"));
+		to.add(new Message("set status", "set data1", "set data2"));
 	}
 
 	public void setFrom(List<Message> from) {
@@ -33,6 +35,10 @@ public class Mapper {
 		this.from.addAll(from);
 
 		match = 0;
+	}
+
+	public int getFromLength() {
+		return getLength(from);
 	}
 
 	public List<Message> getFrom() {
@@ -48,6 +54,25 @@ public class Mapper {
 		this.to.addAll(to);
 
 		match = 0;
+	}
+
+	public int getToLength() {
+		return getLength(from);
+	}
+
+	private int getLength(List<Message> messages) {
+		int length = -1;
+
+		for (Message message : messages) {
+			if (length == -1) {
+				length = message.getLength();
+			} else {
+				if (length != message.getLength()) {
+					throw new IllegalStateException("undefined length");
+				}
+			}
+		}
+		return length;
 	}
 
 	public List<Message> getTo() {
@@ -113,7 +138,12 @@ public class Mapper {
 
 		@Override
 		public float get(String name) {
-			return map.get(name);
+			Float temp = map.get(name);
+			if (temp == null) {
+				return Float.NaN;
+			} else {
+				return temp;
+			}
 		}
 
 		@Override
