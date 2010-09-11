@@ -12,7 +12,6 @@
     <ant dir="jorgan-linuxsampler"/>
     <ant dir="jorgan-memory"/>
     <ant dir="jorgan-midimerger"/>
-    <ant dir="jorgan-midimapper"/>
     <ant dir="jorgan-recorder"/>
     <ant dir="jorgan-sams"/>
     <ant dir="jorgan-skins"/>
