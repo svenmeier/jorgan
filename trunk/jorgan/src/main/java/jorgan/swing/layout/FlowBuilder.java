@@ -1,5 +1,6 @@
 package jorgan.swing.layout;
 
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
@@ -64,7 +65,12 @@ public class FlowBuilder {
 			break;
 		}
 
-		this.panel.add(new JPanel(), fillerConstraints);
+		this.panel.add(new JPanel() {
+			@Override
+			public Dimension getPreferredSize() {
+				return new Dimension();
+			}
+		}, fillerConstraints);
 	}
 
 	public Flow flow() {
