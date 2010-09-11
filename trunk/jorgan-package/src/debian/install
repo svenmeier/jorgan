@@ -26,7 +26,5 @@ debian/input/copyright /usr/share/doc/jorgan
 ../../jorgan-sams/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-sams/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-soundfont/target/marshal/lib/* /usr/lib/jorgan/lib
-../../jorgan-sysex/target/marshal/lib/* /usr/lib/jorgan/lib
-../../jorgan-sysex/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-tools/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-skins/target/marshal/skins/* /usr/share/jorgan/skins
