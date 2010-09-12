@@ -48,15 +48,15 @@ public class Conversion {
 			new Convert("2\\.4.*", "convert2.4To3.0-beta.xsl"),
 			new Convert("3\\.0-beta.*", "convert3.0-betaTo3.0.xsl"),
 			new Convert("3\\.0", "convert3.0To3.1.xsl"),
-			new Convert("3\\.[1|2.*]", "convert3.1To3.3.xsl"),
-			new Convert("3\\.[3|4].*", "convert3.3To3.5-beta.xsl"),
+			new Convert("3\\.(1|2.*)", "convert3.1To3.3.xsl"),
+			new Convert("3\\.(3|4).*", "convert3.3To3.5-beta.xsl"),
 			new Convert("3\\.5-beta.*", "convert3.5-betaTo3.5.xsl"),
 			new Convert("3\\.5", "convert3.5To3.5.1.xsl"),
-			new Convert("3\\.[5|6].*", "convert3.6To3.7.xsl"),
+			new Convert("3\\.(5|6).*", "convert3.6To3.7.xsl"),
 			new Convert("3\\.7", "convert3.7To3.8.xsl"),
 			new Convert("3\\.8.*", "convert3.8To3.9-beta.xsl"),
 			new Convert("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl"),
-			new Convert("3\\.[9|10].*", "convert3.10To3.11.xsl") };
+			new Convert("3\\.(9|10).*", "convert3.10To3.11.xsl") };
 
 	public BufferedInputStream convert(InputStream in)
 			throws ConversionException, IOException {
