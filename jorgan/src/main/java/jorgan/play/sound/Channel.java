@@ -18,20 +18,23 @@
  */
 package jorgan.play.sound;
 
+import javax.sound.midi.InvalidMidiDataException;
+
 /**
  * A channel.
  */
 public interface Channel {
 
 	public void init();
-	
+
 	/**
 	 * Send a message.
 	 * 
 	 * @param message
 	 *            message
+	 * @throws InvalidMidiDataException
 	 */
-	public void sendMessage(int command, int data1, int data2);
+	public void sendMessage(byte[] datas) throws InvalidMidiDataException;
 
 	public void release();
 }

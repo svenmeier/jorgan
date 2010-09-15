@@ -18,7 +18,7 @@
  */
 package jorgan.play;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Filter;
@@ -121,9 +121,9 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	@Override
-	protected void onOutput(ShortMessage message, Context context) {
-		channel.sendMessage(message.getCommand(), message.getData1(), message
-				.getData2());
+	protected void onOutput(byte[] datas, Context context)
+			throws InvalidMidiDataException {
+		channel.sendMessage(datas);
 	}
 
 	@Override
@@ -193,8 +193,8 @@ public class RankPlayer extends Player<Rank> {
 			}
 		}
 
-		public void sendMessage(int command, int data1, int data2) {
-			channel.sendMessage(command, data1, data2);
+		public void sendMessage(byte[] datas) throws InvalidMidiDataException {
+			channel.sendMessage(datas);
 		}
 
 		public void release() {
@@ -223,7 +223,7 @@ public class RankPlayer extends Player<Rank> {
 		public void init() {
 		}
 
-		public void sendMessage(int command, int data1, int data2) {
+		public void sendMessage(byte[] datas) {
 		}
 
 		public void release() {
@@ -232,14 +232,14 @@ public class RankPlayer extends Player<Rank> {
 
 	private class RankChannelFilter implements ChannelFilter, Context {
 
-		private Command command;
+		private Command[] commands;
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
-			this.command = Command.create(pattern);
+			this.commands = Command.parse(pattern);
 		}
 
 		public boolean accept(int channel) {
-			return !Float.isNaN(command.process(channel, this));
+			return !Float.isNaN(commands[0].process(channel, this));
 		}
 
 		public float get(String name) {
@@ -270,14 +270,13 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		@Override
-		public void sendMessage(final int command, final int data1,
-				final int data2) {
+		public void sendMessage(final byte[] datas) {
 			Rank rank = getElement();
 
 			getOrganPlay().getClock().alarm(rank, new Playing() {
 				@Override
 				public void play(Player<?> player) {
-					channel.sendMessage(command, data1, data2);
+					channel.sendMessage(datas);
 				}
 			}, System.currentTimeMillis() + rank.getDelay());
 		}

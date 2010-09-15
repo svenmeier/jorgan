@@ -22,7 +22,6 @@ import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 /**
@@ -54,8 +53,8 @@ public abstract class ShortMessageRecorder {
 			private boolean keepRecording = true;
 
 			public void send(MidiMessage message, long when) {
-				if (keepRecording && MessageUtils.isChannelMessage(message)) {
-					keepRecording = messageRecorded((ShortMessage) message);
+				if (keepRecording) {
+					keepRecording = messageRecorded(message);
 				}
 			}
 
@@ -79,5 +78,5 @@ public abstract class ShortMessageRecorder {
 	 *            recorded message
 	 * @return should recording be kept
 	 */
-	public abstract boolean messageRecorded(ShortMessage message);
+	public abstract boolean messageRecorded(MidiMessage message);
 }

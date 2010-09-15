@@ -20,6 +20,8 @@ package jorgan.play;
 
 import java.util.ArrayList;
 
+import javax.sound.midi.InvalidMidiDataException;
+
 import jorgan.disposition.Sound;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
@@ -63,8 +65,8 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		return null;
 	}
 
-	protected abstract boolean send(int channel, int command, int data1,
-			int data2);
+	protected abstract void send(int channel, byte[] datas)
+			throws InvalidMidiDataException;
 
 	/**
 	 * A channel implementation.
@@ -103,9 +105,10 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		 * 
 		 * @param message
 		 *            message
+		 * @throws InvalidMidiDataException
 		 */
-		public void sendMessage(int command, int data1, int data2) {
-			send(channel, command, data1, data2);
+		public void sendMessage(byte[] datas) throws InvalidMidiDataException {
+			send(channel, datas);
 		}
 	}
 }

@@ -43,36 +43,12 @@
         <reference id="8"/>
       </references>
       <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 0</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 20</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 0, set 0</rank-engaged>
+        <rank-engaged>set 192, set 20, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
       <channel></channel>
@@ -115,36 +91,12 @@
         <reference id="8"/>
       </references>
       <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 0</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 0</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 0, set 0</rank-engaged>
+        <rank-engaged>set 192, set 0, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
       <channel></channel>
@@ -287,36 +239,12 @@
         <reference id="8"/>
       </references>
       <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 0</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 21</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 0, set 0</rank-engaged>
+        <rank-engaged>set 192, set 21, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
       <channel></channel>
@@ -332,21 +260,9 @@
         <reference id="9"/>
       </references>
       <messages>
-        <keyboard-pressKey>
-          <status>equal 144</status>
-          <data1>greaterEqual 40 | get pitch</data1>
-          <data2>greater 0| get velocity</data2>
-        </keyboard-pressKey>
-        <keyboard-releaseKey>
-          <status>equal 128</status>
-          <data1>greaterEqual 40 | get pitch</data1>
-          <data2></data2>
-        </keyboard-releaseKey>
-        <keyboard-releaseKey>
-          <status>equal 144</status>
-          <data1>greaterEqual 40 | get pitch</data1>
-          <data2>equal 0 | get velocity</data2>
-        </keyboard-releaseKey>
+        <keyboard-pressKey>equal 144, greaterEqual 40 | get pitch, greater 0| get velocity</keyboard-pressKey>
+        <keyboard-releaseKey>equal 128, greaterEqual 40 | get pitch, </keyboard-releaseKey>
+        <keyboard-releaseKey>equal 144, greaterEqual 40 | get pitch, equal 0 | get velocity</keyboard-releaseKey>
       </messages>
       <input>jOrgan Keyboard</input>
     </keyboard>

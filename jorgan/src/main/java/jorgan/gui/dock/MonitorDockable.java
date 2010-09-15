@@ -244,7 +244,7 @@ public class MonitorDockable extends OrganDockable {
 				this.data1 = shortMessage.getData1();
 				this.data2 = shortMessage.getData2();
 
-				if (MessageUtils.isChannelMessage(shortMessage)) {
+				if (MessageUtils.isChannelStatus(this.status)) {
 					this.channel = shortMessage.getChannel();
 				}
 			}

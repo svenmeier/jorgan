@@ -123,15 +123,15 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 		}
 	}
 
-	protected void receive(MidiMessage message) {
+	protected void receive(MidiMessage midiMessage) {
 		if (getOrganPlay() != null) {
-			getOrganPlay().fireReceived(message);
+			getOrganPlay().fireReceived(midiMessage);
 		}
 
 		for (Element element : getElement().getReferenced(Element.class)) {
 			Player<?> player = getPlayer(element);
 			if (player != null) {
-				player.onReceived(message);
+				player.onReceived(midiMessage);
 			}
 		}
 	}

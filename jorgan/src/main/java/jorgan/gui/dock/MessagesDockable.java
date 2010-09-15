@@ -24,13 +24,14 @@ import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
 import javax.swing.DropMode;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -41,6 +42,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -60,12 +62,13 @@ import jorgan.gui.selection.SelectionListener;
 import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.midi.ShortMessageRecorder;
-import jorgan.midi.mpl.Equal;
-import jorgan.midi.mpl.NoOp;
+import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
-import jorgan.swing.table.StringCellEditor;
+import jorgan.swing.table.FormatterCellEditor;
+import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -243,12 +246,15 @@ public class MessagesDockable extends OrganDockable {
 						}
 					}
 				});
+		table.getColumnModel().getColumn(1).setCellRenderer(
+				new SimpleCellRenderer<Command[]>() {
+					@Override
+					protected Object getDisplayValue(Command[] commands) {
+						return Command.format(commands);
+					}
+				});
 		table.getColumnModel().getColumn(1).setCellEditor(
-				new StringCellEditor());
-		table.getColumnModel().getColumn(2).setCellEditor(
-				new StringCellEditor());
-		table.getColumnModel().getColumn(3).setCellEditor(
-				new StringCellEditor());
+				new FormatterCellEditor(new CommandsFormatter()));
 		TableUtils.pleasantLookAndFeel(table);
 
 		setContent(new JScrollPane(table));
@@ -387,7 +393,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public int getColumnCount() {
-			return 4;
+			return 2;
 		}
 
 		public int getRowCount() {
@@ -410,11 +416,7 @@ public class MessagesDockable extends OrganDockable {
 			case 0:
 				return message;
 			case 1:
-				return message.getStatus();
-			case 2:
-				return message.getData1();
-			case 3:
-				return message.getData2();
+				return message.getCommands();
 			default:
 				throw new IllegalArgumentException("" + columnIndex);
 			}
@@ -422,22 +424,7 @@ public class MessagesDockable extends OrganDockable {
 
 		@Override
 		protected void setValue(Message message, int columnIndex, Object value) {
-			String status = message.getStatus();
-			String data1 = message.getData1();
-			String data2 = message.getData2();
-			switch (columnIndex) {
-			case 1:
-				status = (String) value;
-				break;
-			case 2:
-				data1 = (String) value;
-				break;
-			case 3:
-				data2 = (String) value;
-				break;
-			}
-
-			element.changeMessage(message, status, data1, data2);
+			element.changeMessage(message, (Command[]) value);
 		}
 
 		public void indexedPropertyAdded(Element element, String name,
@@ -561,7 +548,7 @@ public class MessagesDockable extends OrganDockable {
 				ShortMessageRecorder recorder = new ShortMessageRecorder(
 						deviceName) {
 					@Override
-					public boolean messageRecorded(final ShortMessage message) {
+					public boolean messageRecorded(final MidiMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
 								recorded(message);
@@ -580,28 +567,19 @@ public class MessagesDockable extends OrganDockable {
 				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
 				session.lookup(UndoManager.class).compound();
-
-				int index = table.getSelectedRow();
-				if (index != -1) {
-					Message message = messages.get(index);
-
-					element.changeMessage(message, new NoOp().toString(),
-							new NoOp().toString(), new NoOp().toString());
-				}
 			}
 		}
 
-		private void recorded(ShortMessage shortMessage) {
+		private void recorded(MidiMessage midiMessage) {
 			session.lookup(UndoManager.class).compound();
 
 			int index = table.getSelectedRow();
 			if (index != -1) {
 				Message message = messages.get(index);
 
-				element.changeMessage(message, new Equal(shortMessage
-						.getStatus()).toString(), new Equal(shortMessage
-						.getData1()).toString(), new Equal(shortMessage
-						.getData2()).toString());
+				byte[] datas = midiMessage.getMessage();
+
+				element.changeMessage(message, Command.equal(datas));
 			}
 		}
 	}
@@ -626,6 +604,27 @@ public class MessagesDockable extends OrganDockable {
 			}
 
 			return order;
+		}
+	}
+
+	private static class CommandsFormatter extends AbstractFormatter {
+
+		@Override
+		public Object stringToValue(String text) throws ParseException {
+			try {
+				return Command.parse(text);
+			} catch (ProcessingException ex) {
+				throw new ParseException(text, 0);
+			}
+		}
+
+		@Override
+		public String valueToString(Object value) throws ParseException {
+			if (value == null) {
+				return "";
+			}
+
+			return Command.format((Command[]) value);
 		}
 	}
 }

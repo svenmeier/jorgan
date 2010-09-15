@@ -39,30 +39,14 @@ public class MessageUtils {
 
 	public static final int META_END_OF_TRACK = 47;
 
-	/**
-	 * Test if the given message is a channel message.
-	 * 
-	 * @param message
-	 *            message to test
-	 * @return <code>true</cde> if channel message
-	 */
-	public static boolean isChannelMessage(MidiMessage message) {
-		if (message instanceof ShortMessage) {
-			ShortMessage shortMessage = (ShortMessage) message;
+	public static boolean isChannelStatus(int status) {
+		status = status & 0xff;
 
-			int status = shortMessage.getStatus();
-			if (status >= 0x80 && status < 0xF0) {
-				return true;
-			}
+		if (status >= 0x80 && status < 0xF0) {
+			return true;
 		}
 
 		return false;
-	}
-
-	public static ShortMessage createMessage(int channel, int command,
-			int data1, int data2) throws InvalidMidiDataException {
-
-		return createMessage(channel | command, data1, data2);
 	}
 
 	public static ShortMessage createMessage(int status, int data1, int data2)
@@ -89,16 +73,6 @@ public class MessageUtils {
 
 		try {
 			return createMessage(status, data1, data2);
-		} catch (InvalidMidiDataException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
-
-	public static ShortMessage newMessage(int channel, int command, int data1,
-			int data2) {
-
-		try {
-			return createMessage(channel, command, data1, data2);
 		} catch (InvalidMidiDataException e) {
 			throw new IllegalArgumentException(e);
 		}

@@ -34,6 +34,11 @@ public class MessageUtilsTest extends TestCase {
 	private static final byte[] BYTES = new byte[] { -1, 1, 13, 84, 101, 120,
 			116, 45, -61, -74, -61, -92, -61, -68, -61, -97 };
 
+	public void testIsChannelStatus() throws Exception {
+		assertTrue(MessageUtils.isChannelStatus((byte) 176));
+		assertFalse(MessageUtils.isChannelStatus((byte) 255));
+	}
+
 	public void test() throws Exception {
 		assertTrue(Arrays.equals(BYTES, MessageUtils.newMetaMessage(
 				MessageUtils.META_TEXT, STRING).getMessage()));

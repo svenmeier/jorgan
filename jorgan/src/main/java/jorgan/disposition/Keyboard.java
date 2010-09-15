@@ -42,15 +42,14 @@ public class Keyboard extends Element implements Input {
 
 	public Keyboard() {
 		// note on, pitch, velocity
-		addMessage(new PressKey().change(new Equal(144).toString(), new Get(
-				Key.PITCH).toString(), new Greater(0,
-				new Get(PressKey.VELOCITY)).toString()));
+		addMessage(new PressKey().change(new Equal(144), new Get(Key.PITCH),
+				new Greater(0, new Get(PressKey.VELOCITY))));
 		// note on, pitch, -
-		addMessage(new ReleaseKey().change(new Equal(144).toString(), new Get(
-				Key.PITCH).toString(), new Equal(0).toString()));
+		addMessage(new ReleaseKey().change(new Equal(144), new Get(Key.PITCH),
+				new Equal(0)));
 		// note off, pitch, -
-		addMessage(new ReleaseKey().change(new Equal(128).toString(), new Get(
-				Key.PITCH).toString(), new NoOp().toString()));
+		addMessage(new ReleaseKey().change(new Equal(128), new Get(Key.PITCH),
+				new NoOp()));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -78,7 +77,7 @@ public class Keyboard extends Element implements Input {
 		for (Key message : getMessages(Key.class)) {
 			found = true;
 
-			Equal equal = Command.create(message.getStatus()).get(Equal.class);
+			Equal equal = message.getCommand(Message.STATUS).get(Equal.class);
 			if (equal != null) {
 				int status = ((int) equal.getValue());
 				channel = status & 0x0f;
@@ -86,14 +85,14 @@ public class Keyboard extends Element implements Input {
 		}
 
 		if (!found) {
-			throw new ProcessingException("no channel");
+			throw new ProcessingException();
 		}
 		return channel;
 	}
 
 	public void setChannel(int channel) throws ProcessingException {
 		for (Key message : getMessages(Key.class)) {
-			Command command = Command.create(message.getStatus());
+			Command command = message.getCommand(Message.STATUS);
 
 			Equal equal = command.get(Equal.class);
 			if (equal != null) {
@@ -113,14 +112,13 @@ public class Keyboard extends Element implements Input {
 		for (Key message : getMessages(Key.class)) {
 			found = true;
 
-			GreaterEqual greaterEqual = Command.create(message.getData1()).get(
+			GreaterEqual greaterEqual = message.getCommand(Message.DATA1).get(
 					GreaterEqual.class);
 			if (greaterEqual != null) {
 				pitch = Math.max(pitch, ((int) greaterEqual.getValue()));
 			}
 
-			Greater greater = Command.create(message.getData1()).get(
-					Greater.class);
+			Greater greater = message.getCommand(1).get(Greater.class);
 			if (greater != null) {
 				pitch = Math.max(pitch, ((int) greater.getValue()) + 1);
 			}
@@ -139,13 +137,13 @@ public class Keyboard extends Element implements Input {
 		for (Key message : getMessages(Key.class)) {
 			found = true;
 
-			LessEqual lessEqual = Command.create(message.getData1()).get(
+			LessEqual lessEqual = message.getCommand(Message.DATA1).get(
 					LessEqual.class);
 			if (lessEqual != null) {
 				pitch = Math.min(pitch, ((int) lessEqual.getValue()));
 			}
 
-			Less less = Command.create(message.getData1()).get(Less.class);
+			Less less = message.getCommand(Message.DATA1).get(Less.class);
 			if (less != null) {
 				pitch = Math.min(pitch, ((int) less.getValue()) - 1);
 			}
@@ -164,12 +162,12 @@ public class Keyboard extends Element implements Input {
 		for (Key message : getMessages(Key.class)) {
 			found = true;
 
-			Add add = Command.create(message.getData1()).get(Add.class);
+			Add add = message.getCommand(Message.DATA1).get(Add.class);
 			if (add != null) {
 				transpose = ((int) add.getValue());
 			}
 
-			Sub sub = Command.create(message.getData1()).get(Sub.class);
+			Sub sub = message.getCommand(Message.DATA1).get(Sub.class);
 			if (sub != null) {
 				transpose = ((int) sub.getValue()) * -1;
 			}
@@ -185,7 +183,7 @@ public class Keyboard extends Element implements Input {
 			throws ProcessingException {
 
 		Command command = new Get(PressKey.PITCH);
-		
+
 		if (transpose < 0) {
 			command = new Sub(-transpose, command);
 		}

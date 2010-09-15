@@ -22,7 +22,7 @@ import java.util.List;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.Command;
 import jorgan.util.Null;
 
 /**
@@ -143,29 +143,26 @@ public class Switch extends Engageable {
 		return count;
 	}
 
-	public Activate createActivate(int status, int data1, int data2) {
+	public Activate createActivate(byte[] datas) {
 		Activate activate = new Activate();
 
-		activate.change(new Equal(status).toString(), new Equal(data1)
-				.toString(), new Equal(data2).toString());
+		activate.change(Command.equal(datas));
 
 		return activate;
 	}
 
-	public Deactivate createDeactivate(int status, int data1, int data2) {
+	public Deactivate createDeactivate(byte[] datas) {
 		Deactivate deactivate = new Deactivate();
 
-		deactivate.change(new Equal(status).toString(), new Equal(data1)
-				.toString(), new Equal(data2).toString());
+		deactivate.change(Command.equal(datas));
 
 		return deactivate;
 	}
 
-	public Toggle createToggle(int status, int data1, int data2) {
+	public Toggle createToggle(byte[] datas) {
 		Toggle toggle = new Toggle();
 
-		toggle.change(new Equal(status).toString(),
-				new Equal(data1).toString(), new Equal(data2).toString());
+		toggle.change(Command.equal(datas));
 
 		return toggle;
 	}

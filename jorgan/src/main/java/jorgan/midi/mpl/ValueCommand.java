@@ -74,11 +74,11 @@ public abstract class ValueCommand extends Command {
 	@Override
 	protected String getArguments() {
 		if (name == null) {
-			return toString(value);
+			return format(value);
 		} else if (Float.isNaN(value)) {
 			return name;
 		} else {
-			return name + " " + toString(value);
+			return name + " " + format(value);
 		}
 	}
 }

@@ -73,47 +73,45 @@ public abstract class Command {
 
 	protected abstract String getArguments();
 
-	public static Command create(String terms) throws ProcessingException {
-		terms = terms.trim();
-
-		try {
-			return createCommands(terms.trim());
-		} catch (Exception ex) {
-			throw new ProcessingException(terms, ex);
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Command) {
+			return this.toString().equals(obj.toString());
 		}
+
+		return false;
 	}
 
-	private static Command createCommands(String terms) throws Exception {
+	private static Command commands(String terms) throws Exception {
 
 		int pipe = terms.indexOf('|');
 		if (pipe == -1) {
-			return createCommand(terms.trim());
+			return command(terms.trim());
 		} else {
-			Command successor = createCommands(terms.substring(pipe + 1).trim());
+			Command successor = commands(terms.substring(pipe + 1).trim());
 
-			Command command = createCommand(terms.substring(0, pipe).trim());
+			Command command = command(terms.substring(0, pipe).trim());
 			command.successor = successor;
 
 			return command;
 		}
 	}
 
-	private static Command createCommand(String term) throws Exception {
+	private static Command command(String term) throws Exception {
 		if (term.length() == 0) {
 			return new NoOp();
 		}
 
 		int space = term.indexOf(' ');
 
-		Class<?> type = Command.stringToType(term.substring(0, space).trim());
+		Class<?> type = Command.type(term.substring(0, space).trim());
 		String arguments = term.substring(space + 1).trim();
 
 		return (Command) type.getDeclaredConstructor(
 				new Class<?>[] { String.class }).newInstance(arguments);
 	}
 
-	private static Class<?> stringToType(String string)
-			throws ClassNotFoundException {
+	private static Class<?> type(String string) throws ClassNotFoundException {
 		String simpleName = Character.toUpperCase(string.charAt(0))
 				+ string.substring(1);
 
@@ -128,7 +126,7 @@ public abstract class Command {
 				+ simpleName.substring(1);
 	}
 
-	protected static String toString(float value) {
+	protected static String format(float value) {
 		int integer = (int) value;
 
 		if (integer == value) {
@@ -136,5 +134,40 @@ public abstract class Command {
 		} else {
 			return Float.toString(value);
 		}
+	}
+
+	public static Command[] parse(String string) throws ProcessingException {
+		String[] tokens = string.split(",", -1);
+
+		try {
+			Command[] commands = new Command[tokens.length];
+			for (int c = 0; c < commands.length; c++) {
+				commands[c] = commands(tokens[c]);
+			}
+			return commands;
+		} catch (Exception ex) {
+			throw new ProcessingException();
+		}
+	}
+
+	public static String format(Command... commands) {
+		StringBuilder builder = new StringBuilder();
+
+		for (Command command : commands) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(command.toString());
+		}
+
+		return builder.toString();
+	}
+
+	public static Command[] equal(byte[] datas) {
+		Command[] commands = new Command[datas.length];
+		for (int d = 0; d < datas.length; d++) {
+			commands[d] = new Equal(datas[d] & 0xff);
+		}
+		return commands;
 	}
 }

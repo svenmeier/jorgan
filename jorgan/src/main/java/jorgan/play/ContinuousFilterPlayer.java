@@ -21,7 +21,7 @@ package jorgan.play;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.ContinuousFilter;
 import jorgan.disposition.ContinuousFilter.Engaging;
@@ -63,12 +63,12 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 	}
 
 	@Override
-	public void onOutput(ShortMessage message, Context context) {
+	public void onOutput(byte[] datas, Context context)
+			throws InvalidMidiDataException {
 		if (context instanceof ChannelFilter) {
-			((ChannelFilter) context).sendFilteredMessage(message.getCommand(),
-					message.getData1(), message.getData2());
+			((ChannelFilter) context).sendFilteredMessage(datas);
 		} else {
-			super.onOutput(message, context);
+			super.onOutput(datas, context);
 		}
 	}
 
@@ -100,13 +100,13 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			}
 		}
 
-		public void sendMessage(int command, int data1, int data2) {
+		public void sendMessage(byte[] datas) throws InvalidMidiDataException {
 			ContinuousFilter element = getElement();
 
 			boolean intercepted = false;
 
 			for (Intercept message : element.getMessages(Intercept.class)) {
-				if (process(message, command, data1, data2)) {
+				if (process(message, datas)) {
 					intercepted = true;
 				}
 			}
@@ -116,7 +116,7 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 				engaging(value);
 				this.value = value;
 			} else {
-				channel.sendMessage(command, data1, data2);
+				channel.sendMessage(datas);
 			}
 		}
 
@@ -127,8 +127,9 @@ public class ContinuousFilterPlayer extends ContinuousPlayer<ContinuousFilter>
 			}
 		}
 
-		public void sendFilteredMessage(int command, int data1, int data2) {
-			channel.sendMessage(command, data1, data2);
+		public void sendFilteredMessage(byte[] datas)
+				throws InvalidMidiDataException {
+			channel.sendMessage(datas);
 		}
 
 		public void release() {

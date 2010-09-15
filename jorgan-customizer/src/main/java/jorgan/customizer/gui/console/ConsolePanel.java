@@ -31,8 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
@@ -60,7 +60,6 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
 import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -231,7 +230,7 @@ public class ConsolePanel extends JPanel {
 			try {
 				recorder = new ShortMessageRecorder(device) {
 					@Override
-					public boolean messageRecorded(final ShortMessage message) {
+					public boolean messageRecorded(final MidiMessage message) {
 						if (isShowing()) {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
@@ -247,7 +246,7 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private void received(ShortMessage message) {
+	private void received(MidiMessage message) {
 		received.clear();
 
 		for (SwitchRow switchRow : switchRows) {
@@ -369,7 +368,7 @@ public class ConsolePanel extends JPanel {
 				ShortMessageRecorder recorder = new ShortMessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
-					public boolean messageRecorded(ShortMessage message) {
+					public boolean messageRecorded(MidiMessage message) {
 						if (recorded(message)) {
 							return true;
 						} else {
@@ -397,7 +396,7 @@ public class ConsolePanel extends JPanel {
 		protected void beforeRecording() {
 		}
 
-		protected abstract boolean recorded(ShortMessage message);
+		protected abstract boolean recorded(MidiMessage message);
 
 		protected void afterRecording() {
 		}
@@ -410,11 +409,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(ShortMessage message) {
+		protected boolean recorded(MidiMessage message) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newActivate(message.getStatus(), message.getData1(),
-					message.getData2());
+			switchRow.newActivate(message.getMessage());
 
 			return false;
 		}
@@ -434,11 +432,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(ShortMessage message) {
+		protected boolean recorded(MidiMessage message) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newDeactivate(message.getStatus(), message.getData1(),
-					message.getData2());
+			switchRow.newDeactivate(message.getMessage());
 
 			return false;
 		}
@@ -458,11 +455,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(ShortMessage message) {
+		protected boolean recorded(MidiMessage message) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newToggle(message.getStatus(), message.getData1(),
-					message.getData2());
+			switchRow.newToggle(message.getMessage());
 
 			return false;
 		}
@@ -504,7 +500,7 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(ShortMessage message) {
+		protected boolean recorded(MidiMessage message) {
 
 			state.recorded(message);
 
@@ -517,7 +513,7 @@ public class ConsolePanel extends JPanel {
 		}
 
 		private abstract class State {
-			protected abstract void recorded(ShortMessage message);
+			protected abstract void recorded(MidiMessage message);
 
 			protected abstract void afterRecording();
 		}
@@ -525,7 +521,7 @@ public class ConsolePanel extends JPanel {
 		private class Undecided extends State {
 
 			@Override
-			protected void recorded(ShortMessage message) {
+			protected void recorded(MidiMessage message) {
 				if (message.getStatus() != status
 						&& message.getData1() == data1
 						&& message.getData2() == data2) {
@@ -557,19 +553,19 @@ public class ConsolePanel extends JPanel {
 
 		private abstract class Decided extends State {
 			@Override
-			protected void recorded(ShortMessage message) {
+			protected void recorded(MidiMessage message) {
 				int value = getValue(message);
 
 				min = Math.min(min, value);
 				max = Math.max(max, value);
 			}
 
-			protected abstract int getValue(ShortMessage message);
+			protected abstract int getValue(MidiMessage message);
 		}
 
 		private class StatusMinMax extends Decided {
 			@Override
-			protected int getValue(ShortMessage message) {
+			protected int getValue(MidiMessage message) {
 				return message.getStatus();
 			}
 
@@ -584,7 +580,7 @@ public class ConsolePanel extends JPanel {
 
 		private class Data1MinMax extends Decided {
 			@Override
-			protected int getValue(ShortMessage message) {
+			protected int getValue(MidiMessage message) {
 				return message.getData1();
 			}
 
@@ -599,7 +595,7 @@ public class ConsolePanel extends JPanel {
 
 		private class Data2MinMax extends Decided {
 			@Override
-			protected int getValue(ShortMessage message) {
+			protected int getValue(MidiMessage message) {
 				return message.getData2();
 			}
 
@@ -630,22 +626,21 @@ public class ConsolePanel extends JPanel {
 			map.put(name, value);
 		}
 
-		public boolean process(Message message, int status, int data1, int data2) {
-			try {
-				float fStatus = message.processStatus(status, this);
-				if (Float.isNaN(fStatus)) {
-					return false;
-				}
-				float fData1 = message.processData1(data1, this);
-				if (Float.isNaN(fData1)) {
-					return false;
-				}
-				float fData2 = message.processData2(data2, this);
-				if (Float.isNaN(fData2)) {
-					return false;
-				}
-			} catch (ProcessingException ex) {
+		public boolean process(Message message, byte[] datas) {
+			if (message.getLength() != datas.length) {
 				return false;
+			}
+
+			for (int d = 0; d < datas.length; d++) {
+				float processed = message.process(datas[d] & 0xff, this, d);
+				if (Float.isNaN(processed)) {
+					return false;
+				}
+				int rounded = Math.round(processed);
+				if (rounded < 0 || rounded > 255) {
+					return false;
+				}
+				datas[d] = (byte) rounded;
 			}
 			return true;
 		}
@@ -687,22 +682,22 @@ public class ConsolePanel extends JPanel {
 			return Elements.getDisplayName(aSwitch);
 		}
 
-		public void newActivate(int status, int data1, int data2) {
+		public void newActivate(byte[] datas) {
 			changed = true;
 
-			activate = aSwitch.createActivate(status, data1, data2);
+			activate = aSwitch.createActivate(datas);
 		}
 
-		public void newDeactivate(int status, int data1, int data2) {
+		public void newDeactivate(byte[] datas) {
 			changed = true;
 
-			deactivate = aSwitch.createDeactivate(status, data1, data2);
+			deactivate = aSwitch.createDeactivate(datas);
 		}
 
-		public void newToggle(int status, int data1, int data2) {
+		public void newToggle(byte[] datas) {
 			changed = true;
 
-			toggle = aSwitch.createToggle(status, data1, data2);
+			toggle = aSwitch.createToggle(datas);
 		}
 
 		public void clearActivate() {
@@ -723,16 +718,14 @@ public class ConsolePanel extends JPanel {
 			toggle = null;
 		}
 
-		public void received(ShortMessage message) {
+		public void received(MidiMessage message) {
 			if (activate != null
-					&& context.process(activate, message.getStatus(), message
-							.getData1(), message.getData2())) {
+					&& context.process(activate, message.getMessage())) {
 				received.add(activate);
 			}
 
 			if (deactivate != null
-					&& context.process(deactivate, message.getStatus(), message
-							.getData1(), message.getData2())) {
+					&& context.process(deactivate, message.getMessage())) {
 				received.add(deactivate);
 			}
 		}
@@ -802,10 +795,8 @@ public class ConsolePanel extends JPanel {
 			change = null;
 		}
 
-		public void received(ShortMessage message) {
-			if (change != null
-					&& context.process(change, message.getStatus(), message
-							.getData1(), message.getData2())) {
+		public void received(MidiMessage message) {
+			if (change != null && context.process(change, message.getMessage())) {
 				received.add(change);
 			}
 		}
