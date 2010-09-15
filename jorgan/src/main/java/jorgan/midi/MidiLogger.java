@@ -52,7 +52,7 @@ public class MidiLogger extends Loopback {
 			if (string.length() > 0) {
 				string.append(", ");
 			}
-			string.append(((int) b) & 0xff);
+			string.append(b & 0xff);
 		}
 
 		return string.toString();
