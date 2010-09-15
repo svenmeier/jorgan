@@ -102,11 +102,8 @@ public class Rank extends Engageable {
 	 */
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			try {
-				if (new Set(192).equals(engaged.getCommand(Message.STATUS))) {
-					return engaged;
-				}
-			} catch (ProcessingException notProcessable) {
+			if (new Set(192).equals(engaged.getCommand(Message.STATUS))) {
+				return engaged;
 			}
 		}
 		return null;
@@ -120,12 +117,9 @@ public class Rank extends Engageable {
 	 */
 	private Engaged getBankSelect() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			try {
-				if (new Set(176).equals(engaged.getCommand(Message.STATUS))
-						&& new Set(0).equals(engaged.getCommand(Message.DATA1))) {
-					return engaged;
-				}
-			} catch (ProcessingException notProcessable) {
+			if (new Set(176).equals(engaged.getCommand(Message.STATUS))
+					&& new Set(0).equals(engaged.getCommand(Message.DATA1))) {
+				return engaged;
 			}
 		}
 		return null;
