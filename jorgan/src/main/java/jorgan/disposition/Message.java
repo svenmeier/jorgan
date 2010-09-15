@@ -12,8 +12,8 @@ import jorgan.midi.mpl.NoOp;
 public abstract class Message implements Cloneable {
 
 	public static final int STATUS = 0;
-	public static final int DATA1 = 0;
-	public static final int DATA2 = 0;
+	public static final int DATA1 = 1;
+	public static final int DATA2 = 2;
 
 	private Command[] commands = new Command[] { new NoOp() };
 

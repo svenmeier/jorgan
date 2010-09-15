@@ -276,7 +276,10 @@ public class RankPlayer extends Player<Rank> {
 			getOrganPlay().getClock().alarm(rank, new Playing() {
 				@Override
 				public void play(Player<?> player) {
-					channel.sendMessage(datas);
+					try {
+						channel.sendMessage(datas);
+					} catch (InvalidMidiDataException nothingWeCanDoAboutIt) {
+					}
 				}
 			}, System.currentTimeMillis() + rank.getDelay());
 		}
