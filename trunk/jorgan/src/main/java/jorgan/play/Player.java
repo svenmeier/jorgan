@@ -34,7 +34,6 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
 import bias.Configuration;
@@ -195,18 +194,27 @@ public abstract class Player<E extends Element> {
 	public void update() {
 	}
 
-	public final void onReceived(MidiMessage message) {
-		if (MessageUtils.isChannelMessage(message)) {
-			ShortMessage shortMessage = (ShortMessage) message;
+	public final void onReceived(MidiMessage midiMessage) {
+		for (InputMessage message : element.getMessages(InputMessage.class)) {
+			byte[] datas;
+			if (midiMessage instanceof ShortMessage) {
+				// small optimization for short messages
+				ShortMessage shortMessage = (ShortMessage) midiMessage;
 
-			for (InputMessage inputMessage : element
-					.getMessages(InputMessage.class)) {
-				if (inputContext.process(inputMessage,
-						shortMessage.getStatus(), shortMessage.getData1(),
-						shortMessage.getData2())) {
+				datas = defaultDatas;
+				datas[0] = (byte) shortMessage.getStatus();
+				datas[1] = (byte) shortMessage.getData1();
+				datas[2] = (byte) shortMessage.getData2();
+			} else {
+				datas = midiMessage.getMessage();
+			}
 
-					onInput(inputMessage, inputContext);
+			try {
+				if (inputContext.process(message, datas)) {
+					onInput(message, inputContext);
 				}
+			} catch (InvalidMidiDataException e) {
+				onInvalidMidiData(message, datas);
 			}
 		}
 	}
@@ -223,34 +231,50 @@ public abstract class Player<E extends Element> {
 
 	}
 
-	protected final void output(OutputMessage message, PlayerContext context) {
-		if (context.process(message, 0, 0, 0)) {
-			ShortMessage shortMessage;
-			try {
-				shortMessage = MessageUtils.createMessage(context.getStatus(),
-						context.getData1(), context.getData2());
-			} catch (InvalidMidiDataException ex) {
-				addProblem(Severity.ERROR, message, "messageInvalid", context
-						.getStatus(), context.getData1(), context.getData2());
-				return;
-			}
+	private byte[] defaultDatas = new byte[3];
 
-			onOutput(shortMessage, context);
+	protected final void output(OutputMessage message, PlayerContext context) {
+		byte[] datas;
+		if (message.getLength() == 3) {
+			// small optimization for short messages
+			datas = defaultDatas;
+			datas[0] = 0;
+			datas[1] = 0;
+			datas[2] = 0;
+		} else {
+			datas = new byte[message.getLength()];
 		}
+
+		try {
+			if (context.process(message, datas)) {
+				onOutput(datas, context);
+			}
+		} catch (InvalidMidiDataException e) {
+			onInvalidMidiData(message, datas);
+		}
+	}
+
+	private void onInvalidMidiData(Message message, byte[] datas) {
+		addProblem(Severity.ERROR, message, "messageInvalid", datas);
 	}
 
 	/**
 	 * Handle message output - default implementation lets referring
 	 * {@link Console}s send the message.
 	 * 
+	 * @throws InvalidMidiDataException
+	 * 
 	 * @see ConsolePlayer#send(javax.sound.midi.MidiMessage)
 	 */
-	protected void onOutput(ShortMessage message, Context context) {
+	protected void onOutput(byte[] datas, Context context)
+			throws InvalidMidiDataException {
+		MidiMessage midiMessage = MessageUtils.createMessage(datas);
+
 		for (Console console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
 			ConsolePlayer<?> player = (ConsolePlayer<?>) getPlayer(console);
 			if (player != null) {
-				player.send(message);
+				player.send(midiMessage);
 			}
 		}
 	}
@@ -258,12 +282,6 @@ public abstract class Player<E extends Element> {
 	protected class PlayerContext implements Context {
 
 		private Map<String, Float> map = new HashMap<String, Float>();
-
-		private int status;
-
-		private int data1;
-
-		private int data2;
 
 		public float get(String name) {
 			Float temp = map.get(name);
@@ -282,39 +300,27 @@ public abstract class Player<E extends Element> {
 			map.clear();
 		}
 
-		public int getStatus() {
-			return status;
-		}
-
-		public int getData1() {
-			return data1;
-		}
-
-		public int getData2() {
-			return data2;
-		}
-
-		public boolean process(Message message, int status, int data1, int data2) {
-			try {
-				float fStatus = message.processStatus(status, this);
-				if (Float.isNaN(fStatus)) {
-					return false;
-				}
-				float fData1 = message.processData1(data1, this);
-				if (Float.isNaN(fData1)) {
-					return false;
-				}
-				float fData2 = message.processData2(data2, this);
-				if (Float.isNaN(fData2)) {
-					return false;
-				}
-				this.status = Math.round(fStatus);
-				this.data1 = Math.round(fData1);
-				this.data2 = Math.round(fData2);
-			} catch (ProcessingException ex) {
-				addProblem(Severity.ERROR, message, "messageIllegal", ex
-						.getPattern());
+		public boolean process(Message message, byte[] datas)
+				throws InvalidMidiDataException {
+			if (message.getLength() != datas.length) {
 				return false;
+			}
+
+			boolean valid = true;
+			for (int d = 0; d < datas.length; d++) {
+				float processed = message.process(datas[d] & 0xff, this, d);
+				if (Float.isNaN(processed)) {
+					return false;
+				}
+				int rounded = Math.round(processed);
+				if (rounded < 0 || rounded > 255) {
+					valid = false;
+				}
+				datas[d] = (byte) rounded;
+			}
+
+			if (!valid) {
+				throw new InvalidMidiDataException();
 			}
 			return true;
 		}

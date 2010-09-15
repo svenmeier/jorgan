@@ -21,7 +21,6 @@ package jorgan.play;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
@@ -29,7 +28,6 @@ import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
-import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.problem.Severity;
 
@@ -170,14 +168,12 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	protected void receive(MidiMessage message) {
-		if (MessageUtils.isChannelMessage(message)) {
-			ShortMessage shortMessage = (ShortMessage) message;
-
-			getOrganPlay().fireReceived(shortMessage);
-
-			onReceived(shortMessage);
+	protected void receive(MidiMessage midiMessage) {
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireReceived(midiMessage);
 		}
+
+		onReceived(midiMessage);
 	}
 
 	public void panic() {

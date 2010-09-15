@@ -54,6 +54,6 @@ public abstract class Condition extends Command {
 	
 	@Override
 	protected String getArguments() {
-		return toString(value);
+		return format(value);
 	}
 }

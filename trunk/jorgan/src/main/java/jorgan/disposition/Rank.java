@@ -22,6 +22,7 @@ import java.util.List;
 
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.NoOp;
+import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Set;
 import jorgan.util.Null;
 
@@ -36,8 +37,7 @@ public class Rank extends Engageable {
 
 	public Rank() {
 		// control change, reset all, -
-		addMessage(new Engaged().change(new Set(176), new Set(121),
-				new NoOp()));
+		addMessage(new Engaged().change(new Set(176), new Set(121), new NoOp()));
 		// control change, bank select, 0
 		addMessage(new Engaged().change(new Set(176), new Set(0), new Set(0)));
 		// program change, 0, -
@@ -65,8 +65,8 @@ public class Rank extends Engageable {
 			engaged = new Engaged();
 			addMessage(engaged);
 		}
-		// program change, 0, -
-		engaged.change("set 192", "set " + program, "");
+		// program change, program, -
+		engaged.change(new Set(192), new Set("program"), new NoOp());
 	}
 
 	/**
@@ -93,16 +93,20 @@ public class Rank extends Engageable {
 		}
 		notePlayed.change(new Set(144), new Set("pitch"), new Set(velocity));
 	}
-	
+
 	/**
 	 * Get the {@link Engaged} message sending a midi program change.
 	 * 
 	 * @return program change message
+	 * @throws ProcessingException
 	 */
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if ("set 192".equals(engaged.getStatus())) {
-				return engaged;
+			try {
+				if (new Set(192).equals(engaged.getCommand(Message.STATUS))) {
+					return engaged;
+				}
+			} catch (ProcessingException notProcessable) {
 			}
 		}
 		return null;
@@ -112,12 +116,16 @@ public class Rank extends Engageable {
 	 * Get the {@link Engaged} message sending a midi bank select.
 	 * 
 	 * @return bank select message
+	 * @throws ProcessingException
 	 */
 	private Engaged getBankSelect() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if ("set 176".equals(engaged.getStatus())
-					&& "set 0".equals(engaged.getData1())) {
-				return engaged;
+			try {
+				if (new Set(176).equals(engaged.getCommand(Message.STATUS))
+						&& new Set(0).equals(engaged.getCommand(Message.DATA1))) {
+					return engaged;
+				}
+			} catch (ProcessingException notProcessable) {
 			}
 		}
 		return null;

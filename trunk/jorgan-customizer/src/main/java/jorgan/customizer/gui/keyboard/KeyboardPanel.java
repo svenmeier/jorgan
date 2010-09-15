@@ -23,6 +23,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.ShortMessage;
 import javax.swing.JButton;
@@ -34,6 +35,7 @@ import javax.swing.SpinnerNumberModel;
 
 import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
+import jorgan.disposition.Message;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
@@ -186,15 +188,22 @@ public class KeyboardPanel extends JPanel {
 				ShortMessageRecorder recorder = new ShortMessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
-					public boolean messageRecorded(ShortMessage message) {
-						if (isValid(message.getCommand())) {
+					public boolean messageRecorded(MidiMessage message) {
+						byte[] datas = message.getMessage();
+
+						int command = datas[Message.STATUS] & 0xf0;
+						if (command == ShortMessage.NOTE_ON
+								|| command == ShortMessage.NOTE_OFF
+								|| command == ShortMessage.POLY_PRESSURE) {
+
 							if (channel == -1) {
-								channel = message.getChannel();
+								channel = command & 0x0f;
 							}
 
-							if (message.getChannel() == channel) {
-								from = Math.min(from, message.getData1());
-								to = Math.max(to, message.getData1());
+							if ((command & 0x0f) == channel) {
+								from = Math.min(from,
+										datas[Message.DATA1] & 0xff);
+								to = Math.max(to, datas[Message.DATA1] & 0xff);
 							}
 						}
 
@@ -213,12 +222,6 @@ public class KeyboardPanel extends JPanel {
 				}
 			} catch (MidiUnavailableException cannotRecord) {
 			}
-		}
-
-		private boolean isValid(int command) {
-			return command == ShortMessage.NOTE_ON
-					|| command == ShortMessage.NOTE_OFF
-					|| command == ShortMessage.POLY_PRESSURE;
 		}
 	}
 }

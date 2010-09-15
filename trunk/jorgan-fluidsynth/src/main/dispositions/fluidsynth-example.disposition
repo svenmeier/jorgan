@@ -9,36 +9,12 @@
         <reference id="9"/>
       </references>
       <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 32</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 1</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 32, set 0</rank-engaged>
+        <rank-engaged>set 192, set 1, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
       <channel></channel>
@@ -52,36 +28,12 @@
         <reference id="9"/>
       </references>
       <messages>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 121</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 176</status>
-          <data1>set 32</data1>
-          <data2>set 0</data2>
-        </rank-engaged>
-        <rank-engaged>
-          <status>set 192</status>
-          <data1>set 0</data1>
-          <data2></data2>
-        </rank-engaged>
-        <rank-disengaged>
-          <status>set 176</status>
-          <data1>set 123</data1>
-          <data2></data2>
-        </rank-disengaged>
-        <rank-notePlayed>
-          <status>set 144</status>
-          <data1>set pitch</data1>
-          <data2>set velocity</data2>
-        </rank-notePlayed>
-        <rank-noteMuted>
-          <status>set 128</status>
-          <data1>set pitch</data1>
-          <data2></data2>
-        </rank-noteMuted>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 32, set 0</rank-engaged>
+        <rank-engaged>set 192, set 0, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
       <channel></channel>
@@ -95,12 +47,12 @@
       </references>
       <messages/>
       <zoom>1.0</zoom>
-      <active>false</active>
+      <active>true</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>0</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>0</transpose>
     </stop>
     <keyboard id="5">
       <name>My Keyboard</name>
@@ -110,21 +62,9 @@
         <reference id="6"/>
       </references>
       <messages>
-        <keyboard-pressKey>
-          <status>equal 144</status>
-          <data1>get pitch</data1>
-          <data2>greater 0| get velocity</data2>
-        </keyboard-pressKey>
-        <keyboard-releaseKey>
-          <status>equal 128</status>
-          <data1>get pitch</data1>
-          <data2></data2>
-        </keyboard-releaseKey>
-        <keyboard-releaseKey>
-          <status>equal 144</status>
-          <data1>get pitch</data1>
-          <data2>equal 0 | get velocity</data2>
-        </keyboard-releaseKey>
+        <keyboard-pressKey>equal 144, get pitch, greater 0| get velocity</keyboard-pressKey>
+        <keyboard-releaseKey>equal 128, get pitch, </keyboard-releaseKey>
+        <keyboard-releaseKey>equal 144, get pitch, equal 0 | get velocity</keyboard-releaseKey>
       </messages>
       <input>jOrgan Keyboard</input>
     </keyboard>
@@ -137,10 +77,11 @@
       <channels>32</channels>
       <polyphony>256</polyphony>
       <sampleRate>44100</sampleRate>
+      <interpolate>ORDER_4TH</interpolate>
       <audioBuffers>8</audioBuffers>
       <audioBufferSize>512</audioBufferSize>
       <gain>0.2</gain>
-      <interpolate>ORDER_4TH</interpolate>
+      <cores>1</cores>
       <reverb>
         <room>0.2</room>
         <damping>0.0</damping>
@@ -169,9 +110,9 @@
       <active>false</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>-12</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>-12</transpose>
     </stop>
     <label id="7">
       <name></name>
@@ -217,36 +158,12 @@
       <description></description>
       <references/>
       <messages>
-        <switchFilter-disengaged>
-          <status>set 176</status>
-          <data1>set 101</data1>
-          <data2>set 0</data2>
-        </switchFilter-disengaged>
-        <switchFilter-disengaged>
-          <status>set 176</status>
-          <data1>set 100</data1>
-          <data2>set 3</data2>
-        </switchFilter-disengaged>
-        <switchFilter-disengaged>
-          <status>set 176</status>
-          <data1>set 6</data1>
-          <data2>set 0</data2>
-        </switchFilter-disengaged>
-        <switchFilter-engaged>
-          <status>set 176</status>
-          <data1>set 101</data1>
-          <data2>set 0</data2>
-        </switchFilter-engaged>
-        <switchFilter-engaged>
-          <status>set 176</status>
-          <data1>set 100</data1>
-          <data2>set 3</data2>
-        </switchFilter-engaged>
-        <switchFilter-engaged>
-          <status>set 176</status>
-          <data1>set 6</data1>
-          <data2>set 1</data2>
-        </switchFilter-engaged>
+        <switchFilter-disengaged>set 176, set 101, set 0</switchFilter-disengaged>
+        <switchFilter-disengaged>set 176, set 100, set 3</switchFilter-disengaged>
+        <switchFilter-disengaged>set 176, set 6, set 0</switchFilter-disengaged>
+        <switchFilter-engaged>set 176, set 101, set 0</switchFilter-engaged>
+        <switchFilter-engaged>set 176, set 100, set 3</switchFilter-engaged>
+        <switchFilter-engaged>set 176, set 6, set 1</switchFilter-engaged>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>

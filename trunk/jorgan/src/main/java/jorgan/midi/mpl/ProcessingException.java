@@ -20,15 +20,6 @@ package jorgan.midi.mpl;
 
 public class ProcessingException extends Exception {
 
-	public ProcessingException(String pattern) {
-		super(pattern);
-	}
-
-	public ProcessingException(String pattern, Exception cause) {
-		super(pattern, cause);
-	}
-
-	public String getPattern() {
-		return getMessage();
+	public ProcessingException() {
 	}
 }

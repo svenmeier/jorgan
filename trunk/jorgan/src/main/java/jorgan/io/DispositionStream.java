@@ -36,6 +36,7 @@ import jorgan.disposition.Organ;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FormatException;
+import jorgan.io.disposition.MessageConverter;
 import jorgan.io.disposition.OrganConverter;
 import jorgan.io.disposition.ReferenceConverter;
 import jorgan.io.xstream.BooleanArrayConverter;
@@ -84,6 +85,9 @@ public class DispositionStream {
 
 		// reference -> element relationship
 		xstream.registerConverter(new ReferenceConverter(xstream));
+
+		// message commands
+		xstream.registerConverter(new MessageConverter(xstream));
 
 		// primitives
 		xstream.registerConverter(new BooleanArrayConverter());

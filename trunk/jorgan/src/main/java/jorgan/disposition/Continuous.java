@@ -105,8 +105,8 @@ public class Continuous extends Displayable {
 			int data1, int data2) {
 		Change change = new Change();
 
-		change.change(newMinMaxGet(statusMin, statusMax).toString(), new Equal(
-				data1).toString(), new Equal(data2).toString());
+		change.change(newMinMaxGet(statusMin, statusMax), new Equal(data1),
+				new Equal(data2));
 
 		return change;
 	}
@@ -115,8 +115,8 @@ public class Continuous extends Displayable {
 			int data2) {
 		Change change = new Change();
 
-		change.change(new Equal(status).toString(), newMinMaxGet(data1Min,
-				data1Max).toString(), new Equal(data2).toString());
+		change.change(new Equal(status), newMinMaxGet(data1Min, data1Max),
+				new Equal(data2));
 
 		return change;
 	}
@@ -125,9 +125,8 @@ public class Continuous extends Displayable {
 			int data2Max) {
 		Change change = new Change();
 
-		change.change(new Equal(status).toString(),
-				new Equal(data1).toString(), newMinMaxGet(data2Min, data2Max)
-						.toString());
+		change.change(new Equal(status), new Equal(data1), newMinMaxGet(
+				data2Min, data2Max));
 
 		return change;
 	}

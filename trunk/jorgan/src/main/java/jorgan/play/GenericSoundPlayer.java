@@ -18,10 +18,10 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.GenericSound;
 import jorgan.midi.MessageUtils;
@@ -75,7 +75,7 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		}
 	}
 
-	protected boolean send(MidiMessage message) {
+	private boolean send(MidiMessage message) {
 		if (receiver == null) {
 			return false;
 		}
@@ -90,9 +90,22 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	}
 
 	@Override
-	protected boolean send(int channel, int command, int data1, int data2) {
-		ShortMessage message = MessageUtils.newMessage(channel, command, data1,
-				data2);
-		return send(message);
+	protected void send(int channel, byte[] datas)
+			throws InvalidMidiDataException {
+
+		if (datas.length != 3 || !MessageUtils.isChannelStatus(datas[0])) {
+			throw new InvalidMidiDataException("short messages supported only");
+		}
+
+		int status = datas[0] & 0xff;
+		int data1 = datas[1] & 0xff;
+		int data2 = datas[2] & 0xff;
+
+		MidiMessage message = MessageUtils.createMessage(status, data1, data2);
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireSent(message);
+		}
+
+		send(message);
 	}
 }
