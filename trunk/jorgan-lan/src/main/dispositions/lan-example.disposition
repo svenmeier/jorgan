@@ -39,26 +39,10 @@
       <description></description>
       <references/>
       <messages>
-        <switch-activate>
-          <status>equal 144</status>
-          <data1>equal 60</data1>
-          <data2></data2>
-        </switch-activate>
-        <switch-activated>
-          <status>set 144</status>
-          <data1>set 60</data1>
-          <data2>set 100</data2>
-        </switch-activated>
-        <switch-deactivate>
-          <status>equal 128</status>
-          <data1>equal 60</data1>
-          <data2></data2>
-        </switch-deactivate>
-        <switch-deactivated>
-          <status>set 128</status>
-          <data1>set 60</data1>
-          <data2>set 0</data2>
-        </switch-deactivated>
+        <switch-activate>equal 144, equal 60, </switch-activate>
+        <switch-activated>set 144, set 60, set 100</switch-activated>
+        <switch-deactivate>equal 128, equal 60, </switch-deactivate>
+        <switch-deactivated>set 128, set 60, set 0</switch-deactivated>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
@@ -69,16 +53,8 @@
       <description></description>
       <references/>
       <messages>
-        <continuous-change>
-          <status>equal 176</status>
-          <data1>equal 7</data1>
-          <data2>div 127 | get value</data2>
-        </continuous-change>
-        <continuous-changed>
-          <status>set 176</status>
-          <data1>set 7</data1>
-          <data2>set value | mult 127</data2>
-        </continuous-changed>
+        <continuous-change>equal 176, equal 7, div 127 | get value</continuous-change>
+        <continuous-changed>set 176, set 7, set value | mult 127</continuous-changed>
       </messages>
       <zoom>1.0</zoom>
       <duration>-1</duration>

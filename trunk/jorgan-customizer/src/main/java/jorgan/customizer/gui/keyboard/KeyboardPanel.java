@@ -139,20 +139,14 @@ public class KeyboardPanel extends JPanel {
 	public void apply() {
 		keyboard.setInput((String) deviceComboBox.getSelectedItem());
 
-		try {
-			if (channelSpinner.isEnabled()) {
-				keyboard.setChannel(((Integer) channelSpinner.getValue()) - 1);
-			}
-		} catch (ProcessingException ignore) {
+		if (channelSpinner.isEnabled()) {
+			keyboard.setChannel(((Integer) channelSpinner.getValue()) - 1);
 		}
 
-		try {
-			if (fromSpinner.isEnabled()) {
-				keyboard.setPitch((Integer) fromSpinner.getValue(),
-						(Integer) toSpinner.getValue(),
-						(Integer) transposeSpinner.getValue());
-			}
-		} catch (ProcessingException ignore) {
+		if (fromSpinner.isEnabled()) {
+			keyboard.setPitch((Integer) fromSpinner.getValue(),
+					(Integer) toSpinner.getValue(), (Integer) transposeSpinner
+							.getValue());
 		}
 	}
 

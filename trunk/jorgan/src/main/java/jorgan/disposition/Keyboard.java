@@ -90,7 +90,7 @@ public class Keyboard extends Element implements Input {
 		return channel;
 	}
 
-	public void setChannel(int channel) throws ProcessingException {
+	public void setChannel(int channel) {
 		for (Key message : getMessages(Key.class)) {
 			Command command = message.getCommand(Message.STATUS);
 
@@ -99,8 +99,10 @@ public class Keyboard extends Element implements Input {
 				command = new Equal((((int) equal.getValue()) & 0xfffffff0)
 						+ channel);
 
-				changeMessage(message, command.toString(), message.getData1(),
-						message.getData2());
+				Command[] commands = message.getCommands();
+				commands[Message.STATUS] = command;
+
+				changeMessage(message, commands);
 			}
 		}
 	}
@@ -125,7 +127,7 @@ public class Keyboard extends Element implements Input {
 		}
 
 		if (!found) {
-			throw new ProcessingException("");
+			throw new ProcessingException();
 		}
 		return pitch;
 	}
@@ -150,7 +152,7 @@ public class Keyboard extends Element implements Input {
 		}
 
 		if (!found) {
-			throw new ProcessingException("");
+			throw new ProcessingException();
 		}
 		return pitch;
 	}
@@ -174,13 +176,12 @@ public class Keyboard extends Element implements Input {
 		}
 
 		if (!found) {
-			throw new ProcessingException("");
+			throw new ProcessingException();
 		}
 		return transpose;
 	}
 
-	public void setPitch(int from, int to, int transpose)
-			throws ProcessingException {
+	public void setPitch(int from, int to, int transpose) {
 
 		Command command = new Get(PressKey.PITCH);
 
@@ -198,8 +199,11 @@ public class Keyboard extends Element implements Input {
 		}
 
 		for (Key message : getMessages(Key.class)) {
-			changeMessage(message, message.getStatus(), command.toString(),
-					message.getData2());
+			Command[] commands = message.getCommands();
+			if (commands.length > Message.DATA1) {
+				commands[Message.DATA1] = command;
+				changeMessage(message, commands);
+			}
 		}
 	}
 
