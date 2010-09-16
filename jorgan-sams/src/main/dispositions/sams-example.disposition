@@ -6,16 +6,8 @@
       <description></description>
       <references/>
       <messages>
-        <switch-activated>
-          <status>set 144</status>
-          <data1>set 60</data1>
-          <data2>set 127</data2>
-        </switch-activated>
-        <switch-deactivated>
-          <status>set 128</status>
-          <data1>set 60 </data1>
-          <data2>set 127</data2>
-        </switch-deactivated>
+        <switch-activated>set 144, set 60, set 127</switch-activated>
+        <switch-deactivated>set 128, set 60, set 127</switch-deactivated>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
@@ -82,16 +74,8 @@
       <description></description>
       <references/>
       <messages>
-        <switch-activated>
-          <status>set 144</status>
-          <data1>set 61</data1>
-          <data2>set 127</data2>
-        </switch-activated>
-        <switch-deactivated>
-          <status>set 128</status>
-          <data1>set 61</data1>
-          <data2>set 127</data2>
-        </switch-deactivated>
+        <switch-activated>set 144, set 61, set 127</switch-activated>
+        <switch-deactivated>set 128, set 61, set 127</switch-deactivated>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
@@ -102,16 +86,8 @@
       <description></description>
       <references/>
       <messages>
-        <switch-activated>
-          <status>set 144</status>
-          <data1>set 62</data1>
-          <data2>set 127</data2>
-        </switch-activated>
-        <switch-deactivated>
-          <status>set 128</status>
-          <data1>set 62</data1>
-          <data2>set 127</data2>
-        </switch-deactivated>
+        <switch-activated>set 144, set 62, set 127</switch-activated>
+        <switch-deactivated>set 128, set 62, set 127</switch-deactivated>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
