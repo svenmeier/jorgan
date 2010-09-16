@@ -59,7 +59,12 @@ import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.Div;
+import jorgan.midi.mpl.Get;
+import jorgan.midi.mpl.GreaterEqual;
+import jorgan.midi.mpl.LessEqual;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -473,13 +478,9 @@ public class ConsolePanel extends JPanel {
 
 	private class ChangeAction extends RecordAction {
 
-		private State state;
+		private byte[] datas;
 
-		private int status;
-
-		private int data1;
-
-		private int data2;
+		private int index;
 
 		private int min;
 
@@ -491,120 +492,64 @@ public class ConsolePanel extends JPanel {
 
 		@Override
 		protected void beforeRecording() {
-			state = new Undecided();
-			status = -1;
-			data1 = -1;
-			data2 = -1;
+			datas = null;
+			index = -1;
 			min = 127;
 			max = 0;
 		}
 
 		@Override
 		protected boolean recorded(MidiMessage message) {
+			byte[] newDatas = message.getMessage();
 
-			state.recorded(message);
+			if (datas != null) {
+				if (datas.length != newDatas.length) {
+					// incompatible
+					return true;
+				}
+
+				if (index == -1) {
+					int newIndex = -1;
+
+					for (int d = 0; d < datas.length; d++) {
+						if (datas[d] != newDatas[d]) {
+							if (newIndex != -1) {
+								// incompatible
+								return true;
+							}
+							newIndex = d;
+						}
+					}
+
+					index = newIndex;
+				} else {
+					for (int d = 0; d < datas.length; d++) {
+						if (datas[d] != newDatas[d]) {
+							if (index != d) {
+								// incompatible
+								return true;
+							}
+						}
+					}
+					min = Math.min(min, newDatas[index] & 0xff);
+					max = Math.max(max, newDatas[index] & 0xff);
+				}
+			}
+
+			datas = newDatas;
 
 			return true;
 		}
 
 		@Override
 		protected void afterRecording() {
-			state.afterRecording();
-		}
+			ContinuousRow continuousRow = continuousRows.get(continuousTable
+					.getEditingRow());
 
-		private abstract class State {
-			protected abstract void recorded(MidiMessage message);
-
-			protected abstract void afterRecording();
-		}
-
-		private class Undecided extends State {
-
-			@Override
-			protected void recorded(MidiMessage message) {
-				if (message.getStatus() != status
-						&& message.getData1() == data1
-						&& message.getData2() == data2) {
-					state = new StatusMinMax();
-				}
-				if (message.getStatus() == status
-						&& message.getData1() != data1
-						&& message.getData2() == data2) {
-					state = new Data1MinMax();
-				}
-				if (message.getStatus() == status
-						&& message.getData1() == data1
-						&& message.getData2() != data2) {
-					state = new Data2MinMax();
-				}
-				status = message.getStatus();
-				data1 = message.getData1();
-				data2 = message.getData2();
-			}
-
-			@Override
-			protected void afterRecording() {
-				ContinuousRow continuousRow = continuousRows
-						.get(continuousTable.getEditingRow());
-
+			if (index == -1) {
 				continuousRow.clearChange();
-			}
-		}
-
-		private abstract class Decided extends State {
-			@Override
-			protected void recorded(MidiMessage message) {
-				int value = getValue(message);
-
-				min = Math.min(min, value);
-				max = Math.max(max, value);
-			}
-
-			protected abstract int getValue(MidiMessage message);
-		}
-
-		private class StatusMinMax extends Decided {
-			@Override
-			protected int getValue(MidiMessage message) {
-				return message.getStatus();
-			}
-
-			@Override
-			protected void afterRecording() {
-				ContinuousRow continuousRow = continuousRows
-						.get(continuousTable.getEditingRow());
-
-				continuousRow.newChangeWithStatus(min, max, data1, data2);
-			}
-		}
-
-		private class Data1MinMax extends Decided {
-			@Override
-			protected int getValue(MidiMessage message) {
-				return message.getData1();
-			}
-
-			@Override
-			protected void afterRecording() {
-				ContinuousRow continuousRow = continuousRows
-						.get(continuousTable.getEditingRow());
-
-				continuousRow.newChangeWithData1(status, min, max, data2);
-			}
-		}
-
-		private class Data2MinMax extends Decided {
-			@Override
-			protected int getValue(MidiMessage message) {
-				return message.getData2();
-			}
-
-			@Override
-			protected void afterRecording() {
-				ContinuousRow continuousRow = continuousRows
-						.get(continuousTable.getEditingRow());
-
-				continuousRow.newChangeWithData2(status, data1, min, max);
+			} else {
+				continuousRow.newChange(datas, index, min, max);
 			}
 		}
 	}
@@ -685,19 +630,19 @@ public class ConsolePanel extends JPanel {
 		public void newActivate(byte[] datas) {
 			changed = true;
 
-			activate = aSwitch.createActivate(datas);
+			activate = aSwitch.createActivate(Command.equal(datas));
 		}
 
 		public void newDeactivate(byte[] datas) {
 			changed = true;
 
-			deactivate = aSwitch.createDeactivate(datas);
+			deactivate = aSwitch.createDeactivate(Command.equal(datas));
 		}
 
 		public void newToggle(byte[] datas) {
 			changed = true;
 
-			toggle = aSwitch.createToggle(datas);
+			toggle = aSwitch.createToggle(Command.equal(datas));
 		}
 
 		public void clearActivate() {
@@ -771,22 +716,13 @@ public class ConsolePanel extends JPanel {
 			return Elements.getDisplayName(aContinuous);
 		}
 
-		public void newChangeWithStatus(int min, int max, int data1, int data2) {
+		public void newChange(byte[] datas, int index, int min, int max) {
 			changed = true;
 
-			change = aContinuous.createChangeWithStatus(min, max, data1, data2);
-		}
-
-		public void newChangeWithData1(int status, int min, int max, int data2) {
-			changed = true;
-
-			change = aContinuous.createChangeWithData1(status, min, max, data2);
-		}
-
-		public void newChangeWithData2(int status, int data1, int min, int max) {
-			changed = true;
-
-			change = aContinuous.createChangeWithData2(status, data1, min, max);
+			Command[] commands = Command.equal(datas);
+			commands[index] = new GreaterEqual(min, new LessEqual(max, new Div(
+					127, new Get("value"))));
+			change = aContinuous.createChange(commands);
 		}
 
 		public void clearChange() {
