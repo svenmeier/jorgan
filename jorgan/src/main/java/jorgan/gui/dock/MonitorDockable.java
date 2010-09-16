@@ -235,6 +235,8 @@ public class MonitorDockable extends OrganDockable {
 
 		private int data2 = -1;
 
+		private int length;
+
 		public Message(boolean input, MidiMessage message) {
 			this.input = input;
 
@@ -248,6 +250,7 @@ public class MonitorDockable extends OrganDockable {
 					this.channel = shortMessage.getChannel();
 				}
 			}
+			this.length = message.getLength();
 		}
 
 		public boolean isInput() {
@@ -285,7 +288,7 @@ public class MonitorDockable extends OrganDockable {
 					config.get("" + status).read(builder);
 				}
 			}
-			return builder.build(status, data1, data2);
+			return builder.build(status, data1, data2, length);
 		}
 
 		public Color getColor() {
