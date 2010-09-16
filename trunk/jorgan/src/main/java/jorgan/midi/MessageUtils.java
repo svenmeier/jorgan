@@ -26,6 +26,8 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.SysexMessage;
 
+import jorgan.disposition.Message;
+
 /**
  * Utils for messages.
  */
@@ -69,6 +71,18 @@ public class MessageUtils {
 			throws InvalidMidiDataException {
 		if (datas.length == 3) {
 			return createMessage(datas[0], datas[1], datas[2]);
+		}
+
+		int status = datas[Message.STATUS] & 0xff;
+		if (status != 0xF0) {
+			throw new InvalidMidiDataException("Invalid sysex status 0x"
+					+ Integer.toHexString(status));
+		}
+
+		int end = datas[datas.length - 1] & 0xff;
+		if (end != 0xF7) {
+			throw new InvalidMidiDataException("Invalid sysex end 0x"
+					+ Integer.toHexString(end));
 		}
 
 		return new SysexMessage(datas) {

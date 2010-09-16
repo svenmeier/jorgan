@@ -45,8 +45,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		GenericSound sound = getElement();
 
 		if (sound.getOutput() == null) {
-			addProblem(Severity.WARNING, "output", "noDevice", sound
-					.getOutput());
+			addProblem(Severity.WARNING, "output", "noDevice",
+					sound.getOutput());
 		} else {
 			removeProblem(Severity.WARNING, "output");
 		}
@@ -61,8 +61,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 			try {
 				receiver = getOrganPlay().createReceiver(sound.getOutput());
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "output", "deviceUnavailable", sound
-						.getOutput());
+				addProblem(Severity.ERROR, "output", "deviceUnavailable",
+						sound.getOutput());
 			}
 		}
 	}
@@ -78,10 +78,6 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	private boolean send(MidiMessage message) {
 		if (receiver == null) {
 			return false;
-		}
-
-		if (getOrganPlay() != null) {
-			getOrganPlay().fireSent(message);
 		}
 
 		receiver.send(message, -1);
