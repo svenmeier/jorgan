@@ -143,26 +143,26 @@ public class Switch extends Engageable {
 		return count;
 	}
 
-	public Activate createActivate(byte[] datas) {
+	public Activate createActivate(Command[] commands) {
 		Activate activate = new Activate();
 
-		activate.change(Command.equal(datas));
+		activate.change(commands);
 
 		return activate;
 	}
 
-	public Deactivate createDeactivate(byte[] datas) {
+	public Deactivate createDeactivate(Command[] commands) {
 		Deactivate deactivate = new Deactivate();
 
-		deactivate.change(Command.equal(datas));
+		deactivate.change(commands);
 
 		return deactivate;
 	}
 
-	public Toggle createToggle(byte[] datas) {
+	public Toggle createToggle(Command[] commands) {
 		Toggle toggle = new Toggle();
 
-		toggle.change(Command.equal(datas));
+		toggle.change(commands);
 
 		return toggle;
 	}

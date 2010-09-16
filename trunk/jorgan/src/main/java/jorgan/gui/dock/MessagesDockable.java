@@ -538,6 +538,8 @@ public class MessagesDockable extends OrganDockable {
 				}
 			}
 
+			TableUtils.stopEdit(table);
+
 			if (console != null) {
 				record(console.getInput());
 			}
@@ -612,7 +614,8 @@ public class MessagesDockable extends OrganDockable {
 		@Override
 		public Object stringToValue(String text) throws ParseException {
 			try {
-				return Command.parse(text);
+				Command[] commands = Command.parse(text);
+				return commands;
 			} catch (ProcessingException ex) {
 				throw new ParseException(text, 0);
 			}

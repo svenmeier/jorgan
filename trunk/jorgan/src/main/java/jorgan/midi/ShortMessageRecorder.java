@@ -53,6 +53,10 @@ public abstract class ShortMessageRecorder {
 			private boolean keepRecording = true;
 
 			public void send(MidiMessage message, long when) {
+				if (MessageUtils.isActiveSensingStatus(message.getStatus())) {
+					return;
+				}
+
 				if (keepRecording) {
 					keepRecording = messageRecorded(message);
 				}

@@ -146,7 +146,7 @@ public abstract class Command {
 			}
 			return commands;
 		} catch (Exception ex) {
-			throw new ProcessingException();
+			throw new ProcessingException(string);
 		}
 	}
 

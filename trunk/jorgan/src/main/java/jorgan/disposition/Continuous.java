@@ -23,12 +23,6 @@ import java.util.List;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.Command;
-import jorgan.midi.mpl.Div;
-import jorgan.midi.mpl.Equal;
-import jorgan.midi.mpl.Get;
-import jorgan.midi.mpl.GreaterEqual;
-import jorgan.midi.mpl.LessEqual;
-import jorgan.midi.mpl.Sub;
 
 /**
  * A continuous element.
@@ -101,43 +95,12 @@ public class Continuous extends Displayable {
 		}
 	}
 
-	public Change createChangeWithStatus(int statusMin, int statusMax,
-			int data1, int data2) {
+	public Change createChange(Command[] commands) {
 		Change change = new Change();
 
-		change.change(newMinMaxGet(statusMin, statusMax), new Equal(data1),
-				new Equal(data2));
+		change.change(commands);
 
 		return change;
-	}
-
-	public Change createChangeWithData1(int status, int data1Min, int data1Max,
-			int data2) {
-		Change change = new Change();
-
-		change.change(new Equal(status), newMinMaxGet(data1Min, data1Max),
-				new Equal(data2));
-
-		return change;
-	}
-
-	public Change createChangeWithData2(int status, int data1, int data2Min,
-			int data2Max) {
-		Change change = new Change();
-
-		change.change(new Equal(status), new Equal(data1), newMinMaxGet(
-				data2Min, data2Max));
-
-		return change;
-	}
-
-	private Command newMinMaxGet(int min, int max) {
-		if (min > max) {
-			throw new IllegalArgumentException("min must be smaller than max");
-		}
-
-		return new GreaterEqual(min, new LessEqual(max, new Sub(min, new Div(
-				max - min, new Get(Change.VALUE)))));
 	}
 
 	@Override

@@ -21,6 +21,7 @@ package jorgan.swing.table;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.text.ParseException;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JFormattedTextField;
@@ -57,6 +58,11 @@ public class FormatterCellEditor extends AbstractCellEditor implements
 	}
 
 	public Object getCellEditorValue() {
+		try {
+			textField.commitEdit();
+		} catch (ParseException notValid) {
+		}
+
 		return textField.getValue();
 	}
 }
