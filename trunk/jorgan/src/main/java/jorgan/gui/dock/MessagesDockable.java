@@ -61,7 +61,7 @@ import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
 import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
-import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.session.OrganSession;
@@ -547,7 +547,7 @@ public class MessagesDockable extends OrganDockable {
 
 		private void record(String deviceName) {
 			try {
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
+				MessageRecorder recorder = new MessageRecorder(
 						deviceName) {
 					@Override
 					public boolean messageRecorded(final MidiMessage message) {

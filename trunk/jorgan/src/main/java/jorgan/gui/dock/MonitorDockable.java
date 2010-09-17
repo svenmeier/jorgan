@@ -209,15 +209,15 @@ public class MonitorDockable extends OrganDockable {
 		protected Object getValue(Message message, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
-				return message.isInput();
+				return message.input;
 			case 1:
-				return message.getChannel();
+				return message.channel;
 			case 2:
-				return message.getStatus();
+				return message.status;
 			case 3:
-				return message.getData1();
+				return message.data1;
 			case 4:
-				return message.getData2();
+				return message.data2;
 			}
 			return null;
 		}
@@ -225,61 +225,54 @@ public class MonitorDockable extends OrganDockable {
 
 	private class Message {
 
-		private boolean input;
+		public final boolean input;
 
-		private int channel = -1;
+		public final String channel;
 
-		private int status;
+		public final String status;
 
-		private int data1 = -1;
+		public final String data1;
 
-		private int data2 = -1;
+		public final String data2;
 
-		private int length;
+		public final int length;
+
+		private final String description;
+
+		private Color color;
 
 		public Message(boolean input, MidiMessage message) {
 			this.input = input;
 
-			this.status = message.getStatus();
+			int status = message.getStatus();
+
 			if (message instanceof ShortMessage) {
 				ShortMessage shortMessage = (ShortMessage) message;
-				this.data1 = shortMessage.getData1();
-				this.data2 = shortMessage.getData2();
 
-				if (MessageUtils.isChannelStatus(this.status)) {
-					this.channel = shortMessage.getChannel();
+				if (MessageUtils.isChannelStatus(status)) {
+					this.status = String.valueOf(status & 0xf0);
+					this.channel = String.valueOf(shortMessage.getChannel());
+				} else {
+					this.status = String.valueOf(status);
+					this.channel = "-";
 				}
+
+				this.data1 = String.valueOf(shortMessage.getData1());
+				this.data2 = String.valueOf(shortMessage.getData2());
+			} else {
+				this.status = String.valueOf(status);
+				this.data1 = "-";
+				this.data2 = "-";
+				this.channel = "-";
 			}
 			this.length = message.getLength();
+
+			this.description = buildDescription();
+			this.color = buildColor(status);
 		}
 
-		public boolean isInput() {
-			return input;
-		}
-
-		public int getChannel() {
-			return channel;
-		}
-
-		public int getStatus() {
-			return status;
-		}
-
-		public int getData1() {
-			return data1;
-		}
-
-		public int getData2() {
-			return data2;
-		}
-
-		public String getDescription() {
+		private String buildDescription() {
 			MessageBuilder builder = new MessageBuilder();
-
-			int status = this.status;
-			if (channel != -1) {
-				status -= channel;
-			}
 
 			config.get(status + ">" + data1 + ">" + data2).read(builder);
 			if (!builder.hasPattern()) {
@@ -291,7 +284,7 @@ public class MonitorDockable extends OrganDockable {
 			return builder.build(status, data1, data2, length);
 		}
 
-		public Color getColor() {
+		public Color buildColor(int status) {
 			if (status >= 0x80 && status < 0xf0) {
 				return colors[(status - 0x80) >> 4];
 			} else {
@@ -324,7 +317,7 @@ public class MonitorDockable extends OrganDockable {
 				message = messages.get(row);
 
 				if (!isSelected) {
-					setBackground(message.getColor());
+					setBackground(message.color);
 				}
 			} else {
 				message = null;
@@ -353,7 +346,7 @@ public class MonitorDockable extends OrganDockable {
 		@Override
 		public String getToolTipText() {
 			if (message != null) {
-				return message.getDescription();
+				return message.description;
 			}
 			return null;
 		}
