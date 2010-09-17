@@ -69,7 +69,7 @@ public class MessageUtils {
 
 	public static MidiMessage createMessage(byte[] datas)
 			throws InvalidMidiDataException {
-		if (datas.length == 3) {
+		if (datas.length <= 3) {
 			return createMessage(datas[0], datas[1], datas[2]);
 		}
 

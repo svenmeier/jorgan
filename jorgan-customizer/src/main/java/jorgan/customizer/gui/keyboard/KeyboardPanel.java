@@ -38,7 +38,7 @@ import jorgan.disposition.Keyboard;
 import jorgan.disposition.Message;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
-import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
@@ -179,7 +179,7 @@ public class KeyboardPanel extends JPanel {
 			to = 0;
 
 			try {
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
+				MessageRecorder recorder = new MessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
 					public boolean messageRecorded(MidiMessage message) {

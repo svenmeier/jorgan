@@ -25,9 +25,9 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
 /**
- * Recorder of {@link javax.sound.midi.ShortMessage}s.
+ * Recorder of {@link javax.sound.midi.MidiMessage}s.
  */
-public abstract class ShortMessageRecorder {
+public abstract class MessageRecorder {
 
 	private MidiDevice device;
 
@@ -41,8 +41,7 @@ public abstract class ShortMessageRecorder {
 	 * @throws MidiUnavailableException
 	 *             if device is unavailable
 	 */
-	public ShortMessageRecorder(String deviceName)
-			throws MidiUnavailableException {
+	public MessageRecorder(String deviceName) throws MidiUnavailableException {
 
 		device = DevicePool.instance().getMidiDevice(deviceName, Direction.IN);
 

@@ -58,7 +58,7 @@ import jorgan.gui.FullScreen;
 import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
-import jorgan.midi.ShortMessageRecorder;
+import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.Div;
@@ -114,7 +114,7 @@ public class ConsolePanel extends JPanel {
 
 	private JTable continuousTable;
 
-	private ShortMessageRecorder recorder;
+	private MessageRecorder recorder;
 
 	private TestContext context = new TestContext();
 
@@ -233,7 +233,7 @@ public class ConsolePanel extends JPanel {
 
 		if (device != null) {
 			try {
-				recorder = new ShortMessageRecorder(device) {
+				recorder = new MessageRecorder(device) {
 					@Override
 					public boolean messageRecorded(final MidiMessage message) {
 						if (isShowing()) {
@@ -370,7 +370,7 @@ public class ConsolePanel extends JPanel {
 			try {
 				beforeRecording();
 
-				ShortMessageRecorder recorder = new ShortMessageRecorder(
+				MessageRecorder recorder = new MessageRecorder(
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
 					public boolean messageRecorded(MidiMessage message) {
