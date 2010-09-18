@@ -29,6 +29,7 @@ import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.CommandFormat;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.OrganPlay.Playing;
@@ -235,7 +236,7 @@ public class RankPlayer extends Player<Rank> {
 		private Command[] commands;
 
 		public RankChannelFilter(String pattern) throws ProcessingException {
-			this.commands = Command.parse(pattern);
+			this.commands = new CommandFormat().parse(pattern);
 		}
 
 		public boolean accept(int channel) {

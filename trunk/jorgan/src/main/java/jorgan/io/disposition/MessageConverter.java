@@ -20,7 +20,7 @@ package jorgan.io.disposition;
 
 import jorgan.disposition.Message;
 import jorgan.disposition.Organ;
-import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.CommandFormat;
 import jorgan.midi.mpl.ProcessingException;
 
 import com.thoughtworks.xstream.XStream;
@@ -50,7 +50,7 @@ public class MessageConverter implements Converter {
 
 		Message message = (Message) value;
 
-		writer.setValue(Command.format(message.getCommands()));
+		writer.setValue(new CommandFormat().format(message.getCommands()));
 	}
 
 	/**
@@ -72,7 +72,7 @@ public class MessageConverter implements Converter {
 		String string = reader.getValue();
 
 		try {
-			message.change(Command.parse(string));
+			message.change(new CommandFormat().parse(string));
 		} catch (ProcessingException ex) {
 			throw new ConversionException(ex);
 		}
