@@ -20,7 +20,7 @@ package jorgan.midi.mpl;
 
 public abstract class Command {
 
-	private Command successor;
+	Command successor;
 
 	protected Command() {
 	}
@@ -71,62 +71,14 @@ public abstract class Command {
 		}
 	}
 
-	protected abstract String getArguments();
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Command) {
-			return this.toString().equals(obj.toString());
-		}
-
-		return false;
-	}
-
-	private static Command commands(String terms) throws Exception {
-
-		int pipe = terms.indexOf('|');
-		if (pipe == -1) {
-			return command(terms.trim());
-		} else {
-			Command successor = commands(terms.substring(pipe + 1).trim());
-
-			Command command = command(terms.substring(0, pipe).trim());
-			command.successor = successor;
-
-			return command;
-		}
-	}
-
-	private static Command command(String term) throws Exception {
-		if (term.length() == 0) {
-			return new NoOp();
-		}
-
-		int space = term.indexOf(' ');
-
-		Class<?> type = Command.type(term.substring(0, space).trim());
-		String arguments = term.substring(space + 1).trim();
-
-		return (Command) type.getDeclaredConstructor(
-				new Class<?>[] { String.class }).newInstance(arguments);
-	}
-
-	private static Class<?> type(String string) throws ClassNotFoundException {
-		String simpleName = Character.toUpperCase(string.charAt(0))
-				+ string.substring(1);
-
-		return Class.forName(Command.class.getPackage().getName() + "."
-				+ simpleName);
-	}
-
-	private static String typeToString(Class<?> type) {
+	private String typeToString(Class<?> type) {
 		String simpleName = type.getSimpleName();
 
 		return Character.toLowerCase(simpleName.charAt(0))
 				+ simpleName.substring(1);
 	}
 
-	protected static String format(float value) {
+	protected String valueToString(float value) {
 		int integer = (int) value;
 
 		if (integer == value) {
@@ -136,31 +88,15 @@ public abstract class Command {
 		}
 	}
 
-	public static Command[] parse(String string) throws ProcessingException {
-		String[] tokens = string.split(",", -1);
+	protected abstract String getArguments();
 
-		try {
-			Command[] commands = new Command[tokens.length];
-			for (int c = 0; c < commands.length; c++) {
-				commands[c] = commands(tokens[c]);
-			}
-			return commands;
-		} catch (Exception ex) {
-			throw new ProcessingException(string);
-		}
-	}
-
-	public static String format(Command... commands) {
-		StringBuilder builder = new StringBuilder();
-
-		for (Command command : commands) {
-			if (builder.length() > 0) {
-				builder.append(", ");
-			}
-			builder.append(command.toString());
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Command) {
+			return this.toString().equals(obj.toString());
 		}
 
-		return builder.toString();
+		return false;
 	}
 
 	public static Command[] equal(byte[] datas) {

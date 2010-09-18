@@ -63,6 +63,7 @@ import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.CommandFormat;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
@@ -250,7 +251,7 @@ public class MessagesDockable extends OrganDockable {
 				new SimpleCellRenderer<Command[]>() {
 					@Override
 					protected Object getDisplayValue(Command[] commands) {
-						return Command.format(commands);
+						return new CommandFormat().format(commands);
 					}
 				});
 		table.getColumnModel().getColumn(1).setCellEditor(
@@ -547,8 +548,7 @@ public class MessagesDockable extends OrganDockable {
 
 		private void record(String deviceName) {
 			try {
-				MessageRecorder recorder = new MessageRecorder(
-						deviceName) {
+				MessageRecorder recorder = new MessageRecorder(deviceName) {
 					@Override
 					public boolean messageRecorded(final MidiMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
@@ -614,7 +614,7 @@ public class MessagesDockable extends OrganDockable {
 		@Override
 		public Object stringToValue(String text) throws ParseException {
 			try {
-				Command[] commands = Command.parse(text);
+				Command[] commands = new CommandFormat().parse(text);
 				return commands;
 			} catch (ProcessingException ex) {
 				throw new ParseException(text, 0);
@@ -627,7 +627,7 @@ public class MessagesDockable extends OrganDockable {
 				return "";
 			}
 
-			return Command.format((Command[]) value);
+			return new CommandFormat().format((Command[]) value);
 		}
 	}
 }
