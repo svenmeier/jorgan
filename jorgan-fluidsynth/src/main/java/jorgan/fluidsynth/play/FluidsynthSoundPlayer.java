@@ -21,7 +21,6 @@ package jorgan.fluidsynth.play;
 import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.MidiMessage;
 
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.Chorus;
@@ -87,17 +86,18 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			throw new InvalidMidiDataException("short messages supported only");
 		}
 
-		int status = datas[0] & 0xff;
+		int command = datas[0] & 0xf0;
 		int data1 = datas[1] & 0xff;
 		int data2 = datas[2] & 0xff;
 
-		MidiMessage message = MessageUtils.createMessage(status | channel,
-				data1, data2);
 		if (getOrganPlay() != null) {
-			getOrganPlay().fireSent(message);
+			getOrganPlay()
+					.fireSent(
+							MessageUtils.createMessage(command | channel,
+									data1, data2));
 		}
 
-		synth.send(channel, status, data1, data2);
+		synth.send(channel, command, data1, data2);
 	}
 
 	private void createSynth() {
