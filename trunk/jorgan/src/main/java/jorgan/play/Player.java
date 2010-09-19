@@ -20,7 +20,6 @@ package jorgan.play;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,8 +29,8 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Message;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
@@ -256,8 +255,16 @@ public abstract class Player<E extends Element> {
 	}
 
 	private void onInvalidMidiData(Message message, byte[] datas) {
-		addProblem(Severity.ERROR, message, "messageInvalid",
-				Arrays.toString(datas));
+		StringBuilder builder = new StringBuilder();
+		for (byte data : datas) {
+			if (builder.length() > 0) {
+				builder.append(", ");
+			}
+			builder.append(data & 0xff);
+		}
+
+		addProblem(Severity.ERROR, message, "messageInvalid", builder
+				.toString());
 	}
 
 	/**
