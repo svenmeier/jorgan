@@ -182,17 +182,16 @@ public class Keyboard extends Element implements Input {
 
 		List<Command> commands = new ArrayList<Command>();
 
-		if (transpose < 0) {
-			commands.add(new Sub(-transpose));
-		}
-		if (transpose > 0) {
-			commands.add(new Add(transpose));
-		}
 		if (to < 127) {
 			commands.add(new LessEqual(to));
 		}
 		if (from > 0) {
 			commands.add(new GreaterEqual(from));
+		}
+		if (transpose < 0) {
+			commands.add(new Sub(-transpose));
+		} else if (transpose > 0) {
+			commands.add(new Add(transpose));
 		}
 
 		commands.add(new Get(PressKey.PITCH));
