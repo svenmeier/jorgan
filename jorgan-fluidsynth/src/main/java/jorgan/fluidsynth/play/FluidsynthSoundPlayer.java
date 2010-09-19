@@ -91,7 +91,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		int data1 = datas[1] & 0xff;
 		int data2 = datas[2] & 0xff;
 
-		MidiMessage message = MessageUtils.createMessage(status, data1, data2);
+		MidiMessage message = MessageUtils.createMessage(status | channel,
+				data1, data2);
 		if (getOrganPlay() != null) {
 			getOrganPlay().fireSent(message);
 		}

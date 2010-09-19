@@ -22,7 +22,6 @@ import java.util.List;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.midi.mpl.Command;
 
 /**
  * A continuous element.
@@ -93,14 +92,6 @@ public class Continuous extends Displayable {
 
 			fireChange(new PropertyChange(oldThreshold, threshold));
 		}
-	}
-
-	public Change createChange(Command[] commands) {
-		Change change = new Change();
-
-		change.change(commands);
-
-		return change;
 	}
 
 	@Override

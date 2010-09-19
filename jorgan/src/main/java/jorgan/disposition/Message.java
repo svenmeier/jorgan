@@ -3,11 +3,10 @@
  */
 package jorgan.disposition;
 
-import java.util.Arrays;
-
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.NoOp;
+import jorgan.midi.mpl.Tuple;
 
 public abstract class Message implements Cloneable {
 
@@ -15,32 +14,35 @@ public abstract class Message implements Cloneable {
 	public static final int DATA1 = 1;
 	public static final int DATA2 = 2;
 
-	private Command[] commands = new Command[] { new NoOp() };
+	private Tuple tuple = new Tuple(new NoOp());
 
-	public Message change(Command... commands) {
-		this.commands = Arrays.copyOf(commands, commands.length);
+	public Message change(Tuple tuple) {
+		this.tuple = tuple;
 
 		return this;
 	}
 
-	public Command[] getCommands() {
-		return Arrays.copyOf(commands, commands.length);
+	public Message change(Command... commands) {
+		this.tuple = new Tuple(commands);
+
+		return this;
+	}
+
+	public Command get(int index) {
+		return tuple.get(index);
+	}
+
+	public Tuple getTuple() {
+		return tuple;
 	}
 
 	public int getLength() {
-		return commands.length;
-	}
-
-	public Command getCommand(int index) {
-		if (index >= commands.length) {
-			throw new IllegalArgumentException();
-		}
-		return commands[index];
+		return tuple.getLength();
 	}
 
 	public float process(float value, Context context, int index) {
 
-		return getCommand(index).process(value, context);
+		return tuple.get(index).process(value, context);
 	}
 
 	/**

@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class ValueCommand extends Command {
+public abstract class ValueCommand extends AbstractCommand {
 
 	private String name;
 
@@ -38,28 +38,20 @@ public abstract class ValueCommand extends Command {
 			value = Float.parseFloat(arguments.substring(space + 1));
 		}
 	}
-	
+
 	protected ValueCommand(String name, float value) {
 		this.name = name;
 		this.value = value;
 	}
 
-	protected ValueCommand(String name, float value, Command successor) {
-		super(successor);
-		
-		this.name = name;
-		this.value = value;
-	}
-
-
 	public String getName() {
 		return name;
 	}
-	
+
 	public float getValue() {
 		return value;
 	}
-	
+
 	protected float getValue(Context context) {
 		float value = Float.NaN;
 		if (name != null) {

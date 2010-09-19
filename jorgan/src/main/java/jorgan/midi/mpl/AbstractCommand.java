@@ -18,22 +18,43 @@
  */
 package jorgan.midi.mpl;
 
-public class Set extends ValueCommand {
+public abstract class AbstractCommand extends Command {
 
-	public Set(String arguments) {
-		super(arguments);
+	protected AbstractCommand() {
 	}
 
-	public Set(String name, float value) {
-		super(name, value);
+	public abstract float process(float value, Context context);
+
+	protected String valueToString(float value) {
+		int integer = (int) value;
+
+		if (integer == value) {
+			return Integer.toString(integer);
+		} else {
+			return Float.toString(value);
+		}
 	}
 
-	public Set(float value) {
-		super(null, value);
-	}
+	protected abstract String getArguments();
 
 	@Override
-	public float process(float value, Context context) {
-		return getValue(context);
+	public boolean equals(Object obj) {
+		if (obj instanceof AbstractCommand) {
+			return this.toString().equals(obj.toString());
+		}
+
+		return false;
+	}
+
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+
+		String simpleName = getClass().getSimpleName();
+		buffer.append(Character.toLowerCase(simpleName.charAt(0))
+				+ simpleName.substring(1));
+
+		buffer.append(" ");
+		buffer.append(getArguments());
+		return buffer.toString();
 	}
 }

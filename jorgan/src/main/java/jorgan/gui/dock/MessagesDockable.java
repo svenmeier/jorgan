@@ -62,9 +62,8 @@ import jorgan.gui.selection.SelectionListener;
 import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.midi.MessageRecorder;
-import jorgan.midi.mpl.Command;
-import jorgan.midi.mpl.CommandFormat;
 import jorgan.midi.mpl.ProcessingException;
+import jorgan.midi.mpl.Tuple;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
@@ -248,10 +247,10 @@ public class MessagesDockable extends OrganDockable {
 					}
 				});
 		table.getColumnModel().getColumn(1).setCellRenderer(
-				new SimpleCellRenderer<Command[]>() {
+				new SimpleCellRenderer<Tuple>() {
 					@Override
-					protected Object getDisplayValue(Command[] commands) {
-						return new CommandFormat().format(commands);
+					protected Object getDisplayValue(Tuple tuple) {
+						return tuple.toString();
 					}
 				});
 		table.getColumnModel().getColumn(1).setCellEditor(
@@ -417,7 +416,7 @@ public class MessagesDockable extends OrganDockable {
 			case 0:
 				return message;
 			case 1:
-				return message.getCommands();
+				return message.getTuple();
 			default:
 				throw new IllegalArgumentException("" + columnIndex);
 			}
@@ -425,7 +424,7 @@ public class MessagesDockable extends OrganDockable {
 
 		@Override
 		protected void setValue(Message message, int columnIndex, Object value) {
-			element.changeMessage(message, (Command[]) value);
+			element.changeMessage(message, (Tuple) value);
 		}
 
 		public void indexedPropertyAdded(Element element, String name,
@@ -488,7 +487,7 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			table.removeEditor();
+			TableUtils.stopEdit(table);
 
 			session.lookup(UndoManager.class).compound(this);
 		}
@@ -511,8 +510,7 @@ public class MessagesDockable extends OrganDockable {
 
 	private class RecordAction extends BaseAction {
 
-		private MessageBox messageBox = new MessageBox(
-				MessageBox.OPTIONS_OK_CANCEL);
+		private MessageBox messageBox = new MessageBox(MessageBox.OPTIONS_OK);
 
 		private RecordAction() {
 			config.get("record").read(this);
@@ -539,7 +537,9 @@ public class MessagesDockable extends OrganDockable {
 				}
 			}
 
+			int row = table.getSelectedRow();
 			TableUtils.stopEdit(table);
+			table.getSelectionModel().setSelectionInterval(row, row);
 
 			if (console != null) {
 				record(console.getInput());
@@ -562,9 +562,7 @@ public class MessagesDockable extends OrganDockable {
 					}
 				};
 
-				if (messageBox.show(table) == MessageBox.OPTION_OK) {
-
-				}
+				messageBox.show(table);
 
 				recorder.close();
 			} catch (MidiUnavailableException cannotRecord) {
@@ -581,7 +579,7 @@ public class MessagesDockable extends OrganDockable {
 
 				byte[] datas = midiMessage.getMessage();
 
-				element.changeMessage(message, Command.equal(datas));
+				element.changeMessage(message, Tuple.equal(datas));
 			}
 		}
 	}
@@ -614,8 +612,7 @@ public class MessagesDockable extends OrganDockable {
 		@Override
 		public Object stringToValue(String text) throws ParseException {
 			try {
-				Command[] commands = new CommandFormat().parse(text);
-				return commands;
+				return Tuple.fromString(text);
 			} catch (ProcessingException ex) {
 				throw new ParseException(text, 0);
 			}
@@ -627,7 +624,7 @@ public class MessagesDockable extends OrganDockable {
 				return "";
 			}
 
-			return new CommandFormat().format((Command[]) value);
+			return ((Tuple) value).toString();
 		}
 	}
 }

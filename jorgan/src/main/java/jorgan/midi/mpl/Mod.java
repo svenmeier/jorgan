@@ -18,19 +18,18 @@
  */
 package jorgan.midi.mpl;
 
-
 public class Mod extends ValueCommand {
 
 	protected Mod(String arguments) {
 		super(arguments);
 	}
 
-	public Mod(String name, float value) {
-		super(name, value);
+	public Mod(float value) {
+		super(null, value);
 	}
-	
+
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value % getValue(context);
 	}
 }

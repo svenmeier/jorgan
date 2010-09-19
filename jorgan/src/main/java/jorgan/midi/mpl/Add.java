@@ -23,17 +23,17 @@ public class Add extends ValueCommand {
 	protected Add(String arguments) {
 		super(arguments);
 	}
-	
+
 	public Add(String name, float value) {
 		super(name, value);
 	}
 
-	public Add(float value, Command successor) {
-		super(null, value, successor);
+	public Add(float value) {
+		super(null, value);
 	}
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value + getValue(context);
 	}
 }

@@ -16,24 +16,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.midi.mpl;
+package jorgan.gui.construct.editor;
 
-public class Set extends ValueCommand {
+import java.beans.PropertyEditorSupport;
 
-	public Set(String arguments) {
-		super(arguments);
-	}
+import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.ProcessingException;
 
-	public Set(String name, float value) {
-		super(name, value);
-	}
+/**
+ * PropertyEditor for a string property.
+ */
+public class CommandEditor extends PropertyEditorSupport {
 
-	public Set(float value) {
-		super(null, value);
+	@Override
+	public String getAsText() {
+
+		Command command = (Command) getValue();
+
+		if (command == null) {
+			return "";
+		} else {
+			return command.toString();
+		}
 	}
 
 	@Override
-	public float process(float value, Context context) {
-		return getValue(context);
+	public void setAsText(String text) throws IllegalArgumentException {
+		try {
+			setValue(Command.fromString(text));
+		} catch (ProcessingException e) {
+			throw new IllegalArgumentException(e);
+		}
 	}
 }

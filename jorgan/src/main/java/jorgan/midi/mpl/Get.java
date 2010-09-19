@@ -18,8 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-
-public class Get extends Command {
+public class Get extends AbstractCommand {
 
 	private String name;
 
@@ -28,7 +27,7 @@ public class Get extends Command {
 	}
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		context.set(name, value);
 		return value;
 	}

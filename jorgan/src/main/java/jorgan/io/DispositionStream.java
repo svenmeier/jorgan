@@ -33,6 +33,7 @@ import java.io.Writer;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
+import jorgan.io.disposition.CommandConverter;
 import jorgan.io.disposition.ClassMapper;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FormatException;
@@ -86,7 +87,8 @@ public class DispositionStream {
 		// reference -> element relationship
 		xstream.registerConverter(new ReferenceConverter(xstream));
 
-		// message commands
+		// MPL
+		xstream.registerConverter(new CommandConverter(xstream));
 		xstream.registerConverter(new MessageConverter(xstream));
 
 		// primitives

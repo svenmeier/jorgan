@@ -28,12 +28,12 @@ public class Div extends ValueCommand {
 		super(name, value);
 	}
 
-	public Div(float value, Command successor) {
-		super(null, value, successor);
+	public Div(float value) {
+		super(null, value);
 	}
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value / getValue(context);
 	}
 }

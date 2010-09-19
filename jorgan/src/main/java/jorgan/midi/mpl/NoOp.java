@@ -21,17 +21,12 @@ package jorgan.midi.mpl;
 public class NoOp extends Command {
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value;
 	}
 
 	@Override
 	public String toString() {
-		return "";
-	}
-	
-	@Override
-	protected String getArguments() {
 		return "";
 	}
 }

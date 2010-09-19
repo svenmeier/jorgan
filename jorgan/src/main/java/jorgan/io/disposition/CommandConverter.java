@@ -18,10 +18,7 @@
  */
 package jorgan.io.disposition;
 
-import jorgan.disposition.Message;
-import jorgan.disposition.Organ;
-import jorgan.midi.mpl.ProcessingException;
-import jorgan.midi.mpl.Tuple;
+import jorgan.midi.mpl.Command;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -32,51 +29,34 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Converter for {@link Message}s.
+ * Converter for {@link Commands}s.
  */
-public class MessageConverter implements Converter {
+public class CommandConverter implements Converter {
 
-	public MessageConverter(XStream xstream) {
+	public CommandConverter(XStream xstream) {
 		xstream.registerConverter(this);
 	}
 
 	@SuppressWarnings("unchecked")
 	public boolean canConvert(Class clazz) {
-		return Message.class.isAssignableFrom(clazz);
+		return Command.class.isAssignableFrom(clazz);
 	}
 
 	public void marshal(Object value, HierarchicalStreamWriter writer,
 			MarshallingContext context) {
 
-		Message message = (Message) value;
+		Command command = (Command) value;
 
-		writer.setValue(message.getTuple().toString());
+		writer.setValue(command.toString());
 	}
 
-	/**
-	 * @see #initElementsOrgan(Organ)
-	 */
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		Class<?> type = context.getRequiredType();
-
-		Message message;
-
 		try {
-			message = (Message) type.newInstance();
+			return Command.fromString(reader.getValue());
 		} catch (Exception ex) {
 			throw new ConversionException(ex);
 		}
-
-		String string = reader.getValue();
-
-		try {
-			message.change(Tuple.fromString(string));
-		} catch (ProcessingException ex) {
-			throw new ConversionException(ex);
-		}
-
-		return message;
 	}
 }

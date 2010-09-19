@@ -18,7 +18,7 @@
  */
 package jorgan.midi.mpl;
 
-public abstract class Condition extends Command {
+public abstract class Condition extends AbstractCommand {
 
 	private float value;
 
@@ -26,23 +26,17 @@ public abstract class Condition extends Command {
 
 		this.value = Float.parseFloat(arguments);
 	}
-	
-	protected Condition(float value) {
-		this.value = value;
-	}
 
-	public Condition(float value, Command successor) {
-		super(successor);
-		
+	protected Condition(float value) {
 		this.value = value;
 	}
 
 	public float getValue() {
 		return value;
-	}	
-	
+	}
+
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		if (isTrue(this.value, value)) {
 			return value;
 		} else {
@@ -51,7 +45,7 @@ public abstract class Condition extends Command {
 	}
 
 	protected abstract boolean isTrue(float condition, float value);
-	
+
 	@Override
 	protected String getArguments() {
 		return valueToString(value);
