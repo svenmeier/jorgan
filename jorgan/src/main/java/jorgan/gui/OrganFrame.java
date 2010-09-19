@@ -21,8 +21,6 @@ package jorgan.gui;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -34,6 +32,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.Action;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -112,7 +111,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private AboutAction aboutAction = new AboutAction();
 
-	private JToggleButton constructButton = new JToggleButton();
+	private ConstructAction constructAction = new ConstructAction();
 
 	private EventHandler handler = new EventHandler();
 
@@ -152,15 +151,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 			MacAdapter.getInstance().setAboutListener(aboutAction);
 		}
 
-		config.get("construct").read(constructButton);
-		constructButton.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				if (session != null) {
-					session.setConstructing(constructButton.isSelected());
-				}
-			};
-		});
-
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		buildMenu();
@@ -180,7 +170,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		if (session != null && !this.session.isSealed()) {
 			toolBar.addSeparator();
-			toolBar.add(constructButton);
+			JToggleButton toggle = new JToggleButton(constructAction);
+			toggle.setText(null);
+			toolBar.add(toggle);
 
 			List<Action> actions = ActionRegistry.createToolbarActions(session,
 					this);
@@ -239,6 +231,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 			JMenu editMenu = new JMenu();
 			config.get("editMenu").read(editMenu);
 			menuBar.add(editMenu);
+
+			editMenu.add(new JCheckBoxMenuItem(constructAction));
+
+			editMenu.addSeparator();
 
 			for (Action action : ActionRegistry.createToolbarActions(session,
 					this)) {
@@ -325,7 +321,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			this.session.addListener((SessionListener) Spin.over(handler));
 		}
 
-		constructButton.setSelected(this.session != null
+		constructAction.setSelected(this.session != null
 				&& this.session.isConstructing());
 
 		saveAction.onSession();
@@ -589,9 +585,24 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 	}
 
+	private class ConstructAction extends BaseAction {
+		public ConstructAction() {
+			config.get("construct").read(this);
+
+			setSelected(false);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			if (session != null) {
+				session.setConstructing(isSelected());
+			}
+		}
+	}
+
 	private class EventHandler implements SessionListener {
 		public void constructingChanged(boolean constructing) {
-			constructButton.setSelected(constructing);
+			constructAction.setSelected(constructing);
 		}
 
 		public void modified() {
