@@ -49,21 +49,29 @@ public abstract class BaseAction extends AbstractAction {
 	public Icon getSmallIcon() {
 		return (Icon) getValue(Action.SMALL_ICON);
 	}
-	
+
 	public void setAccelerator(KeyStroke keyStroke) {
 		putValue(ACCELERATOR_KEY, keyStroke);
 	}
-	
+
 	public KeyStroke getAccelerator() {
-		return (KeyStroke)getValue(ACCELERATOR_KEY);
+		return (KeyStroke) getValue(ACCELERATOR_KEY);
 	}
-	
+
 	public void setMnemonic(Integer key) {
 		putValue(MNEMONIC_KEY, key);
 	}
-	
+
 	public Integer getMnemonic() {
-		return (Integer)getValue(MNEMONIC_KEY);
+		return (Integer) getValue(MNEMONIC_KEY);
+	}
+
+	public void setSelected(boolean selected) {
+		putValue(SELECTED_KEY, selected);
+	}
+
+	public boolean isSelected() {
+		return (Boolean) getValue(SELECTED_KEY);
 	}
 
 	protected void register(JComponent component) {
