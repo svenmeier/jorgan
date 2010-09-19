@@ -27,10 +27,6 @@ public class GreaterEqual extends Condition {
 	public GreaterEqual(float value) {
 		super(value);
 	}
-	
-	public GreaterEqual(float value, Command successor) {
-		super(value, successor);
-	}
 
 	@Override
 	protected boolean isTrue(float condition, float value) {

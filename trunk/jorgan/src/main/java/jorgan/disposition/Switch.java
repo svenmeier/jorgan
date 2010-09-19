@@ -22,7 +22,6 @@ import java.util.List;
 
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.midi.mpl.Command;
 import jorgan.util.Null;
 
 /**
@@ -141,30 +140,6 @@ public class Switch extends Engageable {
 			count++;
 		}
 		return count;
-	}
-
-	public Activate createActivate(Command[] commands) {
-		Activate activate = new Activate();
-
-		activate.change(commands);
-
-		return activate;
-	}
-
-	public Deactivate createDeactivate(Command[] commands) {
-		Deactivate deactivate = new Deactivate();
-
-		deactivate.change(commands);
-
-		return deactivate;
-	}
-
-	public Toggle createToggle(Command[] commands) {
-		Toggle toggle = new Toggle();
-
-		toggle.change(commands);
-
-		return toggle;
 	}
 
 	@Override

@@ -18,12 +18,14 @@
  */
 package jorgan.midi.mpl;
 
-
-
 public class Mult extends ValueCommand {
 
 	protected Mult(String arguments) {
 		super(arguments);
+	}
+
+	public Mult(float value) {
+		super(null, value);
 	}
 
 	public Mult(String name, float value) {
@@ -31,7 +33,7 @@ public class Mult extends ValueCommand {
 	}
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value * getValue(context);
 	}
 }

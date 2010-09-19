@@ -27,7 +27,7 @@ import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.UndoableChange;
-import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Tuple;
 import jorgan.util.Null;
 
 /**
@@ -510,14 +510,14 @@ public abstract class Element implements Cloneable {
 		return messages;
 	}
 
-	public void changeMessage(final Message message, final Command[] commands) {
+	public void changeMessage(final Message message, final Tuple tuple) {
 		if (!this.messages.contains(message)) {
 			throw new IllegalArgumentException("unkown message");
 		}
 
-		final Command[] oldCommands = message.getCommands();
+		final Tuple oldTuple = message.getTuple();
 
-		message.change(commands);
+		message.change(tuple);
 
 		fireChange(new AbstractChange() {
 			public void notify(OrganListener listener) {
@@ -525,11 +525,11 @@ public abstract class Element implements Cloneable {
 			}
 
 			public void undo() {
-				changeMessage(message, oldCommands);
+				changeMessage(message, oldTuple);
 			}
 
 			public void redo() {
-				changeMessage(message, commands);
+				changeMessage(message, tuple);
 			}
 		});
 	}

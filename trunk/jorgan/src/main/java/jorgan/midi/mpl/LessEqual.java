@@ -18,8 +18,6 @@
  */
 package jorgan.midi.mpl;
 
-
-
 public class LessEqual extends Condition {
 
 	protected LessEqual(String arguments) throws Exception {
@@ -29,11 +27,7 @@ public class LessEqual extends Condition {
 	public LessEqual(float value) {
 		super(value);
 	}
-	
-	public LessEqual(float value, Command successor) {
-		super(value, successor);
-	}
-	
+
 	@Override
 	protected boolean isTrue(float condition, float value) {
 		return value <= condition;

@@ -18,8 +18,6 @@
  */
 package jorgan.midi.mpl;
 
-
-
 public class Sub extends ValueCommand {
 
 	protected Sub(String arguments) {
@@ -30,12 +28,12 @@ public class Sub extends ValueCommand {
 		super(name, value);
 	}
 
-	public Sub(float value, Command successor) {
-		super(null, value, successor);
+	public Sub(float value) {
+		super(null, value);
 	}
 
 	@Override
-	public float processImpl(float value, Context context) {
+	public float process(float value, Context context) {
 		return value - getValue(context);
 	}
 }

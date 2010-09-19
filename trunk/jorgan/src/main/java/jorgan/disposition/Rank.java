@@ -21,6 +21,7 @@ package jorgan.disposition;
 import java.util.List;
 
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.NoOp;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Set;
@@ -31,7 +32,7 @@ import jorgan.util.Null;
  */
 public class Rank extends Engageable {
 
-	private String channel = "";
+	private Command channel = new NoOp();
 
 	private int delay = 0;
 
@@ -102,7 +103,7 @@ public class Rank extends Engageable {
 	 */
 	private Engaged getProgramChange() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if (new Set(192).equals(engaged.getCommand(Message.STATUS))) {
+			if (new Set(192).equals(engaged.get(Message.STATUS))) {
 				return engaged;
 			}
 		}
@@ -117,8 +118,8 @@ public class Rank extends Engageable {
 	 */
 	private Engaged getBankSelect() {
 		for (Engaged engaged : getMessages(Engaged.class)) {
-			if (new Set(176).equals(engaged.getCommand(Message.STATUS))
-					&& new Set(0).equals(engaged.getCommand(Message.DATA1))) {
+			if (new Set(176).equals(engaged.get(Message.STATUS))
+					&& new Set(0).equals(engaged.get(Message.DATA1))) {
 				return engaged;
 			}
 		}
@@ -160,17 +161,17 @@ public class Rank extends Engageable {
 		}
 	}
 
-	public String getChannel() {
+	public Command getChannel() {
 		return channel;
 	}
 
-	public void setChannel(String channel) {
+	public void setChannel(Command channel) {
 		if (channel == null) {
 			throw new IllegalArgumentException("channel must not be null");
 		}
 
 		if (!Null.safeEquals(this.channel, channel)) {
-			String oldChannel = this.channel;
+			Command oldChannel = this.channel;
 
 			this.channel = channel;
 

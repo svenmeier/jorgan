@@ -59,12 +59,13 @@ import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
-import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Chain;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.Div;
 import jorgan.midi.mpl.Get;
 import jorgan.midi.mpl.GreaterEqual;
 import jorgan.midi.mpl.LessEqual;
+import jorgan.midi.mpl.Tuple;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -597,11 +598,11 @@ public class ConsolePanel extends JPanel {
 
 		private Switch aSwitch;
 
-		private Activate activate;
+		private Message activate;
 
-		private Deactivate deactivate;
+		private Message deactivate;
 
-		private Toggle toggle;
+		private Message toggle;
 
 		public SwitchRow(Switch aSwitch) {
 			this.aSwitch = aSwitch;
@@ -630,19 +631,19 @@ public class ConsolePanel extends JPanel {
 		public void newActivate(byte[] datas) {
 			changed = true;
 
-			activate = aSwitch.createActivate(Command.equal(datas));
+			activate = new Switch.Activate().change(Tuple.equal(datas));
 		}
 
 		public void newDeactivate(byte[] datas) {
 			changed = true;
 
-			deactivate = aSwitch.createDeactivate(Command.equal(datas));
+			deactivate = new Switch.Deactivate().change(Tuple.equal(datas));
 		}
 
 		public void newToggle(byte[] datas) {
 			changed = true;
 
-			toggle = aSwitch.createToggle(Command.equal(datas));
+			toggle = new Switch.Toggle().change(Tuple.equal(datas));
 		}
 
 		public void clearActivate() {
@@ -701,7 +702,7 @@ public class ConsolePanel extends JPanel {
 
 		private Continuous aContinuous;
 
-		private Change change;
+		private Message change;
 
 		public ContinuousRow(Continuous aContinuous) {
 			this.aContinuous = aContinuous;
@@ -719,10 +720,10 @@ public class ConsolePanel extends JPanel {
 		public void newChange(byte[] datas, int index, int min, int max) {
 			changed = true;
 
-			Command[] commands = Command.equal(datas);
-			commands[index] = new GreaterEqual(min, new LessEqual(max, new Div(
-					127, new Get("value"))));
-			change = aContinuous.createChange(commands);
+			change = new Continuous.Change().change(Tuple.equal(datas).set(
+					index,
+					new Chain(new GreaterEqual(min), new LessEqual(max),
+							new Div(127), new Get("value"))));
 		}
 
 		public void clearChange() {

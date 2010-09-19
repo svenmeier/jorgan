@@ -20,90 +20,48 @@ package jorgan.midi.mpl;
 
 public abstract class Command {
 
-	Command successor;
+	public abstract float process(float value, Context context);
 
-	protected Command() {
-	}
+	public static Command fromString(String string) throws ProcessingException {
+		if (string.indexOf("|") != -1) {
+			return Chain.fromString(string);
+		}
 
-	protected Command(Command successor) {
-		if (successor != null && successor.getClass() != NoOp.class) {
-			this.successor = successor;
+		string = string.trim();
+
+		if (string.length() == 0) {
+			return new NoOp();
+		}
+
+		int space = string.indexOf(' ');
+
+		String simpleName = Character.toUpperCase(string.charAt(0))
+				+ string.substring(1, space);
+
+		try {
+			Class<?> type = Class.forName(AbstractCommand.class.getPackage()
+					.getName()
+					+ "." + simpleName);
+
+			String arguments = string.substring(space + 1).trim();
+
+			return (AbstractCommand) type.getDeclaredConstructor(
+					new Class<?>[] { String.class }).newInstance(arguments);
+		} catch (Exception ex) {
+			throw new ProcessingException(ex);
 		}
 	}
-
-	public final float process(float value, Context context) {
-		float f = processImpl(value, context);
-		if (!Float.isNaN(f) && successor != null) {
-			f = successor.process(f, context);
-		}
-		return f;
-	}
-
-	protected abstract float processImpl(float value, Context context);
 
 	@SuppressWarnings("unchecked")
-	public <T> T get(Class<T> clazz) {
-		if (clazz.isInstance(this)) {
-			return (T) this;
-		} else {
-			if (successor == null) {
-				return null;
-			} else {
-				return successor.get(clazz);
-			}
-		}
-	}
-
-	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		toString(buffer);
-		return buffer.toString();
-	}
-
-	private void toString(StringBuffer buffer) {
-		buffer.append(typeToString(getClass()));
-		buffer.append(" ");
-		buffer.append(getArguments());
-
-		if (successor != null) {
-			buffer.append(" | ");
-			successor.toString(buffer);
-		}
-	}
-
-	private String typeToString(Class<?> type) {
-		String simpleName = type.getSimpleName();
-
-		return Character.toLowerCase(simpleName.charAt(0))
-				+ simpleName.substring(1);
-	}
-
-	protected String valueToString(float value) {
-		int integer = (int) value;
-
-		if (integer == value) {
-			return Integer.toString(integer);
-		} else {
-			return Float.toString(value);
-		}
-	}
-
-	protected abstract String getArguments();
-
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Command) {
-			return this.toString().equals(obj.toString());
+	public static <T> T get(Command command, Class<T> type) {
+		if (type.isInstance(command)) {
+			return (T) command;
 		}
 
-		return false;
-	}
-
-	public static Command[] equal(byte[] datas) {
-		Command[] commands = new Command[datas.length];
-		for (int d = 0; d < datas.length; d++) {
-			commands[d] = new Equal(datas[d] & 0xff);
+		if (command instanceof Chain) {
+			return ((Chain) command).get(type);
 		}
-		return commands;
+
+		return null;
 	}
 }
