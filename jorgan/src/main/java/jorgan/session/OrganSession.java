@@ -71,12 +71,16 @@ public class OrganSession {
 	private ShutdownHook shutdownHook;
 
 	public OrganSession(File file) throws IOException {
-		this.file = file;
+		if (file == null) {
+			throw new IllegalArgumentException("file must not be null");
+		}
+		this.file = file.getAbsoluteFile();
 
 		if (file.exists()) {
 			organ = new DispositionStream().read(file);
 		} else {
 			organ = createOrgan();
+			markModified();
 		}
 
 		organ.addOrganObserver(new OrganObserver() {

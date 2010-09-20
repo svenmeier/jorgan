@@ -97,6 +97,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private DebugAction debugAction = new DebugAction();
 
+	private NewAction newAction = new NewAction();
+
 	private OpenAction openAction = new OpenAction();
 
 	private SaveAction saveAction = new SaveAction();
@@ -196,6 +198,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		JMenu fileMenu = new JMenu();
 		config.get("fileMenu").read(fileMenu);
 		menuBar.add(fileMenu);
+		fileMenu.add(newAction);
 		fileMenu.add(openAction);
 
 		JMenu recentsMenu = new JMenu();
@@ -486,7 +489,39 @@ public class OrganFrame extends JFrame implements SessionAware {
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
 				if (!file.exists()) {
-					file = DispositionFileFilter.addSuffix(file);
+					showBoxMessage("openNotExists", MessageBox.OPTIONS_OK, file
+							.getName());
+					return;
+				}
+				openOrgan(file);
+			}
+		}
+	}
+
+	/**
+	 * The action that creates an organ.
+	 */
+	private class NewAction extends BaseAction {
+		private NewAction() {
+			config.get("new").read(this);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			if (!closeOrgan()) {
+				return;
+			}
+
+			JFileChooser chooser = new JFileChooser(new History()
+					.getRecentDirectory());
+			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
+			config.get("new/chooser").read(chooser);
+			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+				File file = DispositionFileFilter.addSuffix(chooser
+						.getSelectedFile());
+				if (file.exists()) {
+					showBoxMessage("newExists", MessageBox.OPTIONS_OK, file
+							.getName());
+					return;
 				}
 				openOrgan(file);
 			}
