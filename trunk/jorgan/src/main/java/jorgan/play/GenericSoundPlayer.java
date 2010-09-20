@@ -96,14 +96,13 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 			throw new InvalidMidiDataException("short messages supported only");
 		}
 
-		int status = datas[0] & 0xff | channel;
+		int command = datas[0] & 0xf0;
 		int data1 = datas[1] & 0xff;
 		int data2 = datas[2] & 0xff;
 
-		MidiMessage message = MessageUtils.createMessage(status, data1, data2);
-		if (getOrganPlay() != null) {
-			getOrganPlay().fireSent(message);
-		}
+		MidiMessage message = MessageUtils.createMessage(command | channel,
+				data1, data2);
+		fireSent(message);
 
 		send(message);
 	}

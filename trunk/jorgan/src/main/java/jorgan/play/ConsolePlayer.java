@@ -114,19 +114,14 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	 */
 	public void send(MidiMessage message) {
 		if (receiver != null) {
-			if (getOrganPlay() != null) {
-				getOrganPlay().fireSent(message);
-
-			}
+			fireSent(message);
 
 			receiver.send(message, -1);
 		}
 	}
 
 	protected void receive(MidiMessage midiMessage) {
-		if (getOrganPlay() != null) {
-			getOrganPlay().fireReceived(midiMessage);
-		}
+		fireReceived(midiMessage);
 
 		for (Element element : getElement().getReferenced(Element.class)) {
 			Player<?> player = getPlayer(element);
