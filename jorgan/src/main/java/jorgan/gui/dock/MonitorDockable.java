@@ -33,6 +33,7 @@ import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
 import javax.swing.table.TableColumn;
 
+import jorgan.disposition.Element;
 import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
@@ -156,14 +157,14 @@ public class MonitorDockable extends OrganDockable {
 	private class InternalListener implements PlayListener {
 
 		@Override
-		public void received(MidiMessage message) {
+		public void received(Element element, MidiMessage message) {
 			if (inputButton.isSelected()) {
 				add(true, message);
 			}
 		}
 
 		@Override
-		public void sent(MidiMessage message) {
+		public void sent(Element element, MidiMessage message) {
 			if (outputButton.isSelected()) {
 				add(false, message);
 			}

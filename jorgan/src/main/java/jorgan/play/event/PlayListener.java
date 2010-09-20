@@ -20,12 +20,14 @@ package jorgan.play.event;
 
 import javax.sound.midi.MidiMessage;
 
+import jorgan.disposition.Element;
+
 /**
  * A listener to events of a player.
  */
 public interface PlayListener {
 
-	public void received(MidiMessage message);
+	public void received(Element element, MidiMessage message);
 
-	public void sent(MidiMessage message);
+	public void sent(Element element, MidiMessage message);
 }
