@@ -170,7 +170,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	protected void receive(MidiMessage midiMessage) {
 		if (getOrganPlay() != null) {
-			getOrganPlay().fireReceived(midiMessage);
+			getOrganPlay().fireReceived(this.getElement(), midiMessage);
 		}
 
 		onReceived(midiMessage);

@@ -288,6 +288,18 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
+	protected void fireSent(MidiMessage message) {
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireSent(this.getElement(), message);
+		}
+	}
+
+	protected void fireReceived(MidiMessage midiMessage) {
+		if (getOrganPlay() != null) {
+			getOrganPlay().fireReceived(this.getElement(), midiMessage);
+		}
+	}
+
 	protected class PlayerContext implements Context {
 
 		private Map<String, Float> map = new HashMap<String, Float>();

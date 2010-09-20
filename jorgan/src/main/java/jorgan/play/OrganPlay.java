@@ -166,20 +166,20 @@ public abstract class OrganPlay {
 		}
 	}
 
-	protected void fireReceived(MidiMessage message) {
+	protected void fireReceived(Element element, MidiMessage message) {
 		if (playListeners != null) {
 			for (int l = 0; l < playListeners.size(); l++) {
 				PlayListener listener = playListeners.get(l);
-				listener.received(message);
+				listener.received(element, message);
 			}
 		}
 	}
 
-	public void fireSent(MidiMessage message) {
+	public void fireSent(Element element, MidiMessage message) {
 		if (playListeners != null) {
 			for (int l = 0; l < playListeners.size(); l++) {
 				PlayListener listener = playListeners.get(l);
-				listener.sent(message);
+				listener.sent(element, message);
 			}
 		}
 	}

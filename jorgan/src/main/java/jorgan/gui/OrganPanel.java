@@ -375,12 +375,12 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			ProblemListener, SelectionListener, SessionListener {
 
 		@Override
-		public void received(MidiMessage message) {
+		public void received(Element element, MidiMessage message) {
 			messagesMonitor.input();
 		}
 
 		@Override
-		public void sent(MidiMessage message) {
+		public void sent(Element element, MidiMessage message) {
 			messagesMonitor.output();
 		}
 
