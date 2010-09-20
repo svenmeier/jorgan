@@ -509,21 +509,7 @@ public class ConsolePanel extends JPanel {
 					return true;
 				}
 
-				if (index == -1) {
-					int newIndex = -1;
-
-					for (int d = 0; d < datas.length; d++) {
-						if (datas[d] != newDatas[d]) {
-							if (newIndex != -1) {
-								// incompatible
-								return true;
-							}
-							newIndex = d;
-						}
-					}
-
-					index = newIndex;
-				} else {
+				if (isDecided()) {
 					for (int d = 0; d < datas.length; d++) {
 						if (datas[d] != newDatas[d]) {
 							if (index != d) {
@@ -532,9 +518,24 @@ public class ConsolePanel extends JPanel {
 							}
 						}
 					}
-					min = Math.min(min, newDatas[index] & 0xff);
-					max = Math.max(max, newDatas[index] & 0xff);
+				} else {
+					int newIndex = -1;
+
+					for (int d = 0; d < datas.length; d++) {
+						if (datas[d] != newDatas[d]) {
+							if (newIndex != -1) {
+								// inconclusive
+								return true;
+							}
+							newIndex = d;
+						}
+					}
+
+					index = newIndex;
 				}
+
+				min = Math.min(min, newDatas[index] & 0xff);
+				max = Math.max(max, newDatas[index] & 0xff);
 			}
 
 			datas = newDatas;
@@ -542,12 +543,16 @@ public class ConsolePanel extends JPanel {
 			return true;
 		}
 
+		private boolean isDecided() {
+			return index != -1;
+		}
+
 		@Override
 		protected void afterRecording() {
 			ContinuousRow continuousRow = continuousRows.get(continuousTable
 					.getEditingRow());
 
-			if (index == -1) {
+			if (isDecided()) {
 				continuousRow.clearChange();
 			} else {
 				continuousRow.newChange(datas, index, min, max);
