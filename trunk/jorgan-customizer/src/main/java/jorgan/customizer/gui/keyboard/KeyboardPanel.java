@@ -39,6 +39,7 @@ import jorgan.disposition.Message;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
@@ -185,19 +186,24 @@ public class KeyboardPanel extends JPanel {
 					public boolean messageRecorded(MidiMessage message) {
 						byte[] datas = message.getMessage();
 
-						int command = datas[Message.STATUS] & 0xf0;
-						if (command == ShortMessage.NOTE_ON
-								|| command == ShortMessage.NOTE_OFF
-								|| command == ShortMessage.POLY_PRESSURE) {
+						int status = datas[Message.STATUS] & 0xff;
+						if (MessageUtils.isChannelStatus(status)) {
+							int command = status & 0xf0;
+							int channel = status & 0x0f;
+							if (command == ShortMessage.NOTE_ON
+									|| command == ShortMessage.NOTE_OFF
+									|| command == ShortMessage.POLY_PRESSURE) {
 
-							if (channel == -1) {
-								channel = command & 0x0f;
-							}
+								if (RecordAction.this.channel == -1) {
+									RecordAction.this.channel = channel;
+								}
 
-							if ((command & 0x0f) == channel) {
-								from = Math.min(from,
-										datas[Message.DATA1] & 0xff);
-								to = Math.max(to, datas[Message.DATA1] & 0xff);
+								if (channel == RecordAction.this.channel) {
+									from = Math.min(from,
+											datas[Message.DATA1] & 0xff);
+									to = Math.max(to,
+											datas[Message.DATA1] & 0xff);
+								}
 							}
 						}
 
