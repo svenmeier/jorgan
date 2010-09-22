@@ -79,6 +79,8 @@ public class OrganSession {
 		if (file.exists()) {
 			organ = new DispositionStream().read(file);
 		} else {
+			file.createNewFile();
+
 			organ = createOrgan();
 			markModified();
 		}
