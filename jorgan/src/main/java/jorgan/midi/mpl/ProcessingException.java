@@ -28,7 +28,10 @@ public class ProcessingException extends Exception {
 	}
 
 	public ProcessingException(Exception ex) {
-
 		super(ex);
+	}
+
+	public ProcessingException(String string, Exception ex) {
+		super(string, ex);
 	}
 }
