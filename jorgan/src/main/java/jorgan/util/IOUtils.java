@@ -1,6 +1,8 @@
 package jorgan.util;
 
 import java.io.Closeable;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,5 +32,10 @@ public class IOUtils {
 			count += n;
 		}
 		return count;
+	}
+
+	public static void touch(File file) throws IOException {
+		OutputStream out = new FileOutputStream(file);
+		IOUtils.closeQuietly(out);
 	}
 }
