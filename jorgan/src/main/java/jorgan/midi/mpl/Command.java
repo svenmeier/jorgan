@@ -33,12 +33,12 @@ public abstract class Command {
 			return new NoOp();
 		}
 
-		int space = string.indexOf(' ');
-
-		String simpleName = Character.toUpperCase(string.charAt(0))
-				+ string.substring(1, space);
-
 		try {
+			int space = string.indexOf(' ');
+
+			String simpleName = Character.toUpperCase(string.charAt(0))
+					+ string.substring(1, space);
+
 			Class<?> type = Class.forName(AbstractCommand.class.getPackage()
 					.getName()
 					+ "." + simpleName);
@@ -48,7 +48,7 @@ public abstract class Command {
 			return (AbstractCommand) type.getDeclaredConstructor(
 					new Class<?>[] { String.class }).newInstance(arguments);
 		} catch (Exception ex) {
-			throw new ProcessingException(ex);
+			throw new ProcessingException(string, ex);
 		}
 	}
 
