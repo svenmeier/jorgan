@@ -33,8 +33,8 @@ import java.io.Writer;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
-import jorgan.io.disposition.CommandConverter;
 import jorgan.io.disposition.ClassMapper;
+import jorgan.io.disposition.CommandConverter;
 import jorgan.io.disposition.Conversion;
 import jorgan.io.disposition.FormatException;
 import jorgan.io.disposition.MessageConverter;
@@ -48,6 +48,7 @@ import jorgan.util.IOUtils;
 import bias.Configuration;
 
 import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
 import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
 import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
@@ -131,16 +132,19 @@ public class DispositionStream {
 
 	private FormatException findFormatException(Throwable ex)
 			throws FormatException {
+		if (ex instanceof ConversionException) {
+			// skip conversion wrapper exception
+			Throwable cause = ex.getCause();
+			if (cause != null) {
+				return findFormatException(cause);
+			}
+		}
+
 		if (ex instanceof FormatException) {
 			return (FormatException) ex;
 		}
 
-		Throwable cause = ex.getCause();
-		if (cause == null || cause == ex) {
-			return new FormatException(ex);
-		}
-
-		return findFormatException(cause);
+		return new FormatException(ex);
 	}
 
 	public void write(Organ organ, File file) throws IOException {
