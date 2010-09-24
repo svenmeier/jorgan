@@ -1,6 +1,7 @@
 jorgan (3.11.0-1) stable;
 
   * New properties 'from' and 'to' for Keyables
+  * Arbitrary messages length
   * Fluidsynth 1.1.2
 
  -- Sven Meier <sven@meiers.net>  Sun, 12 Sep 2010 22:01:20 +0200
