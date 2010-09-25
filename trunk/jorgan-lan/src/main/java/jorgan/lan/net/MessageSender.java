@@ -23,7 +23,7 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.MulticastSocket;
 
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.MidiMessage;
 
 public class MessageSender {
 
@@ -53,7 +53,7 @@ public class MessageSender {
 		}
 	}
 
-	public void send(ShortMessage message) throws IOException {
+	public void send(MidiMessage message) throws IOException {
 		if (socket == null) {
 			throw new IllegalStateException("not open");
 		}

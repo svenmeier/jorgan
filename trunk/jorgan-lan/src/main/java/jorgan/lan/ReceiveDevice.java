@@ -19,8 +19,8 @@
 package jorgan.lan;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
 
 import jorgan.lan.net.MessageReceiver;
 import jorgan.midi.Loopback;
@@ -45,7 +45,7 @@ public class ReceiveDevice extends Loopback {
 		try {
 			receiver = new MessageReceiver(IpMidi.GROUP, IpMidi.port(index)) {
 				@Override
-				protected void onReceived(ShortMessage message) {
+				protected void onReceived(MidiMessage message) {
 					loopOut(message);
 				}
 			};

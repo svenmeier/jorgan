@@ -79,13 +79,11 @@ public class SendDevice extends Loopback {
 
 	@Override
 	protected void onLoopIn(MidiMessage message) {
-		if (message instanceof ShortMessage) {
-			try {
-				sender.send((ShortMessage) message);
-			} catch (IOException e) {
-				// nothing we can do about it, receivers are expected to work
-				// flawlessly, #probe() must have worked
-			}
+		try {
+			sender.send(message);
+		} catch (IOException e) {
+			// nothing we can do about it, receivers are expected to work
+			// flawlessly, #probe() must have worked
 		}
 	}
 }
