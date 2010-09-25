@@ -264,11 +264,10 @@ public class Organ {
 	 *            element to get candidates for
 	 * @return candidates
 	 */
-	@SuppressWarnings("unchecked")
 	public Set<Element> getReferenceToCandidates(Element element) {
 
 		Set<Element> candidates = new TreeSet<Element>(ComparatorChain.of(
-				new ElementNameComparator(), new IdentityComparator()));
+				new ElementNameComparator(), new IdentityComparator<Element>()));
 
 		for (Element candidate : elements) {
 			if (element.canReference(candidate)) {
@@ -286,11 +285,10 @@ public class Organ {
 	 *            element to find candidates for
 	 * @return candidates, never null
 	 */
-	@SuppressWarnings("unchecked")
 	public Set<Element> getReferencedFromCandidates(Element element) {
 
 		Set<Element> candidates = new TreeSet<Element>(ComparatorChain.of(
-				new ElementNameComparator(), new IdentityComparator()));
+				new ElementNameComparator(), new IdentityComparator<Element>()));
 
 		for (Element candidate : elements) {
 			if (candidate.canReference(element)) {
@@ -311,7 +309,7 @@ public class Organ {
 	@SuppressWarnings("unchecked")
 	public <E extends Element> Set<E> getElements(Class<E> clazz) {
 		Set<E> set = new TreeSet<E>(ComparatorChain.of(
-				new ElementNameComparator(), new IdentityComparator()));
+				new ElementNameComparator(), new IdentityComparator<Element>()));
 
 		for (Element element : this.elements) {
 			if (clazz.isInstance(element)) {

@@ -235,7 +235,7 @@ public abstract class Element implements Cloneable {
 	public <E extends Element> List<E> getReferenced(Class<E> clazz) {
 		List<E> filter = new ArrayList<E>();
 
-		for (Reference reference : this.references) {
+		for (Reference<?> reference : this.references) {
 			if (clazz.isInstance(reference.getElement())) {
 				filter.add((E) reference.getElement());
 			}
@@ -255,10 +255,10 @@ public abstract class Element implements Cloneable {
 	}
 
 	@SuppressWarnings("unchecked")
-	public <R extends Reference> List<R> getReferences(Class<R> clazz) {
+	public <R extends Reference<?>> List<R> getReferences(Class<R> clazz) {
 		List<R> filter = new ArrayList<R>();
 
-		for (Reference reference : this.references) {
+		for (Reference<?> reference : this.references) {
 			if (clazz.isInstance(reference)) {
 				filter.add((R) reference);
 			}
