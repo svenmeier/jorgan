@@ -25,7 +25,9 @@ import java.net.InetAddress;
 import java.net.MulticastSocket;
 
 import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.ShortMessage;
+import javax.sound.midi.MidiMessage;
+
+import jorgan.midi.MessageUtils;
 
 public class MessageReceiver {
 
@@ -37,7 +39,7 @@ public class MessageReceiver {
 
 	private Thread thread;
 
-	private byte[] bytes = new byte[3];
+	private byte[] bytes = new byte[256];
 
 	public MessageReceiver(InetAddress group, int port) throws IOException {
 		this.port = port;
@@ -79,15 +81,12 @@ public class MessageReceiver {
 	}
 
 	private void receive(DatagramSocket socket) throws IOException {
-		bytes[0] = 0;
-		bytes[1] = 0;
-		bytes[2] = 0;
-		DatagramPacket packet = new DatagramPacket(bytes, 0, 3);
+		DatagramPacket packet = new DatagramPacket(bytes, 0, bytes.length);
 		socket.receive(packet);
 
-		ShortMessage message = new ShortMessage();
+		MidiMessage message;
 		try {
-			message.setMessage(bytes[0], bytes[1], bytes[2]);
+			message = MessageUtils.createMessage(bytes, packet.getLength());
 		} catch (InvalidMidiDataException ex) {
 			onWarning(ex);
 			return;
@@ -102,6 +101,6 @@ public class MessageReceiver {
 	protected void onWarning(InvalidMidiDataException ex) {
 	}
 
-	protected void onReceived(ShortMessage message) {
+	protected void onReceived(MidiMessage message) {
 	}
 }
