@@ -30,7 +30,7 @@ public class BooleanArrayConverter implements Converter {
 
 	private Class<?> clazz = new boolean[0].getClass();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return this.clazz == clazz;
 	}
@@ -53,8 +53,7 @@ public class BooleanArrayConverter implements Converter {
 	public Object unmarshal(HierarchicalStreamReader reader,
 			UnmarshallingContext context) {
 
-		StringTokenizer tokens = new StringTokenizer(reader.getValue(),
-				",");
+		StringTokenizer tokens = new StringTokenizer(reader.getValue(), ",");
 		boolean[] bs = new boolean[tokens.countTokens()];
 		for (int b = 0; b < bs.length; b++) {
 			String token = tokens.nextToken().trim();

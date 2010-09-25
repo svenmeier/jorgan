@@ -30,8 +30,8 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 /**
- * Converter for {@link Organ}s that adds version information an marshalling
- * and sets parent reference on unmarshalling.
+ * Converter for {@link Organ}s that adds version information an marshalling and
+ * sets parent reference on unmarshalling.
  * 
  * @see #marshallVersion(HierarchicalStreamWriter)
  * @see #initElementsOrgan(Organ)
@@ -49,7 +49,7 @@ public class OrganConverter implements Converter {
 				Object.class);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return Organ.class.isAssignableFrom(clazz);
 	}

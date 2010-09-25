@@ -33,7 +33,7 @@ public class ClassMapper extends MapperWrapper {
 		super(wrapped);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public String serializedClass(Class type) {
 		String name = type.getName();
 
@@ -44,12 +44,12 @@ public class ClassMapper extends MapperWrapper {
 			if (group != null) {
 				buffer.append(group);
 			}
-			
+
 			int index = matcher.end();
 			while (true) {
 				buffer.append(Character.toLowerCase(name.charAt(index)));
 				index++;
-				
+
 				int next = name.indexOf("$", index);
 				if (next == -1) {
 					buffer.append(name.substring(index, name.length()));
@@ -67,10 +67,10 @@ public class ClassMapper extends MapperWrapper {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public Class realClass(String name) {
 		RuntimeException exception;
-		
+
 		try {
 			return super.realClass(name);
 		} catch (RuntimeException ex) {
@@ -78,7 +78,7 @@ public class ClassMapper extends MapperWrapper {
 		}
 
 		String extension = null;
-		
+
 		StringBuffer buffer = new StringBuffer("jorgan.");
 
 		int index = name.indexOf('.');
@@ -95,7 +95,7 @@ public class ClassMapper extends MapperWrapper {
 		while (true) {
 			buffer.append(Character.toUpperCase(name.charAt(index)));
 			index++;
-			
+
 			int next = name.indexOf("$", index);
 			if (next == -1) {
 				buffer.append(name.substring(index, name.length()));

@@ -30,7 +30,7 @@ public class FloatArrayConverter implements Converter {
 
 	private Class<?> clazz = new float[0].getClass();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return this.clazz == clazz;
 	}

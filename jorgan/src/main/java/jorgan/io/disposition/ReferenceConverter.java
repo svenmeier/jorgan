@@ -62,7 +62,7 @@ public class ReferenceConverter implements Converter {
 				Object.class);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return Reference.class.isAssignableFrom(clazz);
 	}
