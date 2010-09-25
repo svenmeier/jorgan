@@ -37,7 +37,7 @@ public class CommandConverter implements Converter {
 		xstream.registerConverter(this);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return Command.class.isAssignableFrom(clazz);
 	}

@@ -28,7 +28,7 @@ import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 
 public class ColorConverter implements Converter {
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return clazz.equals(Color.class);
 	}
@@ -72,7 +72,7 @@ public class ColorConverter implements Converter {
 			reader.moveUp();
 		} else {
 			value = value.trim();
-			
+
 			red = Integer.parseInt(value.substring(0, 2), 16);
 			green = Integer.parseInt(value.substring(2, 4), 16);
 			blue = Integer.parseInt(value.substring(4, 6), 16);

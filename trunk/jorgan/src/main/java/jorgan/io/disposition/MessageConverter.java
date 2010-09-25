@@ -40,7 +40,7 @@ public class MessageConverter implements Converter {
 		xstream.registerConverter(this);
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return Message.class.isAssignableFrom(clazz);
 	}

@@ -30,7 +30,7 @@ public class DoubleArrayConverter implements Converter {
 
 	private Class<?> clazz = new double[0].getClass();
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings("rawtypes")
 	public boolean canConvert(Class clazz) {
 		return this.clazz == clazz;
 	}
