@@ -69,11 +69,17 @@ public class MessageUtils {
 
 	public static MidiMessage createMessage(byte[] datas)
 			throws InvalidMidiDataException {
-		if (datas.length <= 3) {
-			return createMessage(datas[0], datas[1], datas[2]);
+		return createMessage(datas, datas.length);
+	}
+
+	public static MidiMessage createMessage(byte[] datas, int length)
+			throws InvalidMidiDataException {
+		if (length <= 3) {
+			return createMessage(datas[0] & 0xff, datas[1] & 0xff,
+					datas[2] & 0xff);
 		}
 
-		int status = datas[Message.STATUS] & 0xff;
+		int status = datas[0] & 0xff;
 		if (status != 0xF0) {
 			throw new InvalidMidiDataException("Invalid sysex status 0x"
 					+ Integer.toHexString(status));
@@ -84,9 +90,10 @@ public class MessageUtils {
 			throw new InvalidMidiDataException("Invalid sysex end 0x"
 					+ Integer.toHexString(end));
 		}
-
-		return new SysexMessage(datas) {
-		};
+		
+		SysexMessage sysexMessage = new SysexMessage();
+		sysexMessage.setMessage(datas, length);
+		return sysexMessage;
 	}
 
 	public static ShortMessage newMessage(int status, int data1, int data2) {
