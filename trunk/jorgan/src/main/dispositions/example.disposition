@@ -260,9 +260,9 @@
         <reference id="9"/>
       </references>
       <messages>
-        <keyboard-pressKey>equal 144, greaterEqual 40 | get pitch, greater 0| get velocity</keyboard-pressKey>
-        <keyboard-releaseKey>equal 128, greaterEqual 40 | get pitch, </keyboard-releaseKey>
-        <keyboard-releaseKey>equal 144, greaterEqual 40 | get pitch, equal 0 | get velocity</keyboard-releaseKey>
+        <keyboard-pressKey>equal 144, get pitch, greater 0 | get velocity</keyboard-pressKey>
+        <keyboard-releaseKey>equal 144, get pitch, equal 0</keyboard-releaseKey>
+        <keyboard-releaseKey>equal 128, get pitch, </keyboard-releaseKey>
       </messages>
       <input>jOrgan Keyboard</input>
     </keyboard>

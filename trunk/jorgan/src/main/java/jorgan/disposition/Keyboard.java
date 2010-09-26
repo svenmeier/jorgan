@@ -46,7 +46,7 @@ public class Keyboard extends Element implements Input {
 	public Keyboard() {
 		// note on, pitch, velocity
 		addMessage(new PressKey().change(new Equal(144), new Get(Key.PITCH),
-				new Greater(0), new Get(PressKey.VELOCITY)));
+				new Chain(new Greater(0), new Get(PressKey.VELOCITY))));
 		// note on, pitch, -
 		addMessage(new ReleaseKey().change(new Equal(144), new Get(Key.PITCH),
 				new Equal(0)));
