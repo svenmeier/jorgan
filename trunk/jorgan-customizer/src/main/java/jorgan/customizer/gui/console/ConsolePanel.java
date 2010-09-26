@@ -60,11 +60,13 @@ import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.Chain;
+import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.Div;
 import jorgan.midi.mpl.Get;
 import jorgan.midi.mpl.GreaterEqual;
 import jorgan.midi.mpl.LessEqual;
+import jorgan.midi.mpl.Sub;
 import jorgan.midi.mpl.Tuple;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
@@ -553,9 +555,9 @@ public class ConsolePanel extends JPanel {
 					.getEditingRow());
 
 			if (isDecided()) {
-				continuousRow.clearChange();
-			} else {
 				continuousRow.newChange(datas, index, min, max);
+			} else {
+				continuousRow.clearChange();
 			}
 		}
 	}
@@ -725,10 +727,21 @@ public class ConsolePanel extends JPanel {
 		public void newChange(byte[] datas, int index, int min, int max) {
 			changed = true;
 
+			List<Command> commands = new ArrayList<Command>();
+			if (min > 0) {
+				commands.add(new GreaterEqual(min));
+			}
+			if (max < 127) {
+				commands.add(new LessEqual(max));
+			}
+			if (min > 0) {
+				commands.add(new Sub(min));
+			}
+			commands.add(new Div(max - min));
+			commands.add(new Get("value"));
+
 			change = new Continuous.Change().change(Tuple.equal(datas).set(
-					index,
-					new Chain(new GreaterEqual(min), new LessEqual(max),
-							new Div(127), new Get("value"))));
+					index, new Chain(commands)));
 		}
 
 		public void clearChange() {
