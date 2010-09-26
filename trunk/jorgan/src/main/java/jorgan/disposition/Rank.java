@@ -67,7 +67,7 @@ public class Rank extends Engageable {
 			addMessage(engaged);
 		}
 		// program change, program, -
-		engaged.change(new Set(192), new Set("program"), new NoOp());
+		engaged.change(new Set(192), new Set(program), new NoOp());
 	}
 
 	/**
