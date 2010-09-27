@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="3.11">
   <elements>
     <switch id="1202">
       <name></name>
@@ -56,7 +56,14 @@
           <y>60</y>
         </console-locationReference>
       </references>
-      <messages/>
+      <messages>
+        <sams.samsConsole-onMagnetOn>set 144, set tab, set 127</sams.samsConsole-onMagnetOn>
+        <sams.samsConsole-onMagnetOff>set 144, set tab, set 0</sams.samsConsole-onMagnetOff>
+        <sams.samsConsole-offMagnetOn>set 128, set tab, set 127</sams.samsConsole-offMagnetOn>
+        <sams.samsConsole-offMagnetOff>set 128, set tab, set 0</sams.samsConsole-offMagnetOff>
+        <sams.samsConsole-tabOn>equal 144, get tab, equal 127</sams.samsConsole-tabOn>
+        <sams.samsConsole-tabOff>equal 128, get tab, equal 127</sams.samsConsole-tabOff>
+      </messages>
       <zoom>1.0</zoom>
       <input>jOrgan Midi Logger</input>
       <output>jOrgan Midi Logger</output>

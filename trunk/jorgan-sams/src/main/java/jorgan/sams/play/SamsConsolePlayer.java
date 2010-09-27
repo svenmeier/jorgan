@@ -19,16 +19,32 @@
 package jorgan.sams.play;
 
 import java.util.Arrays;
+import java.util.List;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.Input.InputMessage;
+import jorgan.midi.MessageUtils;
+import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
+import jorgan.play.PlayerContext;
 import jorgan.sams.disposition.SamsConsole;
+import jorgan.sams.disposition.SamsConsole.MagnetMessage;
+import jorgan.sams.disposition.SamsConsole.OffMagnetOff;
+import jorgan.sams.disposition.SamsConsole.OffMagnetOn;
+import jorgan.sams.disposition.SamsConsole.OnMagnetOff;
+import jorgan.sams.disposition.SamsConsole.OnMagnetOn;
+import jorgan.sams.disposition.SamsConsole.TabMessage;
+import jorgan.sams.disposition.SamsConsole.TabOff;
+import jorgan.sams.disposition.SamsConsole.TabOn;
 
 /**
  */
 public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
+
+	private PlayerContext context = new PlayerContext();
 
 	private Tab[] tabs = new Tab[128];
 
@@ -62,8 +78,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 	@Override
 	public void send(MidiMessage message) {
 		if (message instanceof ShortMessage) {
-			getElement().getEncoding().decodeChangeTab(Arrays.asList(tabs),
-					(ShortMessage) message);
+			decodeChangeTab(Arrays.asList(tabs), (ShortMessage) message);
 		}
 	}
 
@@ -72,12 +87,34 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 	 */
 	@Override
 	protected void receive(MidiMessage message) {
-		if (message instanceof ShortMessage) {
-			ShortMessage shortMessage = (ShortMessage) message;
+		onReceived(message);
+	}
 
-			getElement().getEncoding().decodeTabChanged(Arrays.asList(tabs),
-					shortMessage);
+	@Override
+	protected void onInput(InputMessage message, Context context) {
+		int tab = (int) context.get(TabMessage.TAB);
+
+		if (tab >= 0 && tab < tabs.length) {
+			if (message instanceof TabOn) {
+				tabs[tab].onChanged(true);
+			} else if (message instanceof TabOff) {
+				tabs[tab].onChanged(false);
+			}
 		}
+	}
+
+	private void output(Class<? extends MagnetMessage> type, int tab) {
+		context.set(MagnetMessage.TAB, tab);
+
+		for (MagnetMessage message : getElement().getMessages(type)) {
+			output(message, context);
+		}
+	}
+
+	protected void onOutput(byte[] datas, Context context)
+			throws InvalidMidiDataException {
+		// let super implementation send the message
+		super.send(MessageUtils.createMessage(datas));
 	}
 
 	public class Tab {
@@ -113,15 +150,11 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		}
 
 		public void onChanged(boolean on) {
-			if (on) {
-				SamsConsolePlayer.super.receive(getElement().getEncoding()
-						.encodeTabChanged(index, on));
+			SamsConsolePlayer.super.receive(encodeTabChanged(index, on));
 
+			if (on) {
 				onMagnet.off();
 			} else {
-				SamsConsolePlayer.super.receive(getElement().getEncoding()
-						.encodeTabChanged(index, on));
-
 				offMagnet.off();
 			}
 		}
@@ -138,15 +171,11 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 					offTime = System.currentTimeMillis()
 							+ getElement().getDuration();
 
-					ShortMessage message;
 					if (onMagnet == this) {
-						message = getElement().getEncoding().encodeOnMagnet(
-								index, true);
+						output(OnMagnetOn.class, index);
 					} else {
-						message = getElement().getEncoding().encodeOffMagnet(
-								index, true);
+						output(OffMagnetOn.class, index);
 					}
-					SamsConsolePlayer.super.send(message);
 
 					getOrganPlay().getClock().alarm(getElement(), offTime);
 				}
@@ -156,15 +185,11 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 				if (isOn()) {
 					offTime = Long.MAX_VALUE;
 
-					ShortMessage message;
 					if (onMagnet == this) {
-						message = getElement().getEncoding().encodeOnMagnet(
-								index, false);
+						output(OnMagnetOff.class, index);
 					} else {
-						message = getElement().getEncoding().encodeOffMagnet(
-								index, false);
+						output(OffMagnetOff.class, index);
 					}
-					SamsConsolePlayer.super.send(message);
 				}
 			}
 
@@ -176,5 +201,21 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 				}
 			}
 		}
+
+	}
+
+	private void decodeChangeTab(List<Tab> tabs, ShortMessage message) {
+		int index = message.getData1();
+
+		if (message.getCommand() == ShortMessage.NOTE_ON) {
+			tabs.get(index).change(true);
+		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
+			tabs.get(index).change(false);
+		}
+	}
+
+	private ShortMessage encodeTabChanged(int index, boolean on) {
+		return MessageUtils.newMessage(on ? ShortMessage.NOTE_ON
+				: ShortMessage.NOTE_OFF, index, 127);
 	}
 }
