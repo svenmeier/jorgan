@@ -20,8 +20,6 @@ package jorgan.play;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
@@ -299,51 +297,4 @@ public abstract class Player<E extends Element> {
 			getOrganPlay().fireReceived(this.getElement(), midiMessage);
 		}
 	}
-
-	protected class PlayerContext implements Context {
-
-		private Map<String, Float> map = new HashMap<String, Float>();
-
-		public float get(String name) {
-			Float temp = map.get(name);
-			if (temp == null) {
-				return Float.NaN;
-			} else {
-				return temp;
-			}
-		}
-
-		public void set(String name, float value) {
-			map.put(name, value);
-		}
-
-		public void clear() {
-			map.clear();
-		}
-
-		public boolean process(Message message, byte[] datas)
-				throws InvalidMidiDataException {
-			if (message.getLength() != datas.length) {
-				return false;
-			}
-
-			boolean valid = true;
-			for (int d = 0; d < datas.length; d++) {
-				float processed = message.process(datas[d] & 0xff, this, d);
-				if (Float.isNaN(processed)) {
-					return false;
-				}
-				int rounded = Math.round(processed);
-				if (rounded < 0 || rounded > 255) {
-					valid = false;
-				}
-				datas[d] = (byte) rounded;
-			}
-
-			if (!valid) {
-				throw new InvalidMidiDataException();
-			}
-			return true;
-		}
-	};
 }
