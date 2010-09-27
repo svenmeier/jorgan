@@ -529,7 +529,9 @@ public class MessagesDockable extends OrganDockable {
 		public void actionPerformed(ActionEvent ev) {
 			Console console = null;
 
-			if (element instanceof Displayable) {
+			if (element instanceof Console) {
+				console = (Console) element;
+			} else if (element instanceof Displayable) {
 				for (Console referrer : session.getOrgan().getReferrer(element,
 						Console.class)) {
 					console = referrer;
