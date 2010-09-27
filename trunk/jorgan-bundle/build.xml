@@ -13,7 +13,11 @@
         <filter token="jorgan.version" value="${jorgan.version}"/>
     </target>
 	
-    <target name="dist" description="Set up the distribution" depends="clean, init" >
+    <target name="parent">
+    	<ant antfile="../build.xml" inheritall="no"/>
+    </target>
+	
+    <target name="dist" description="Set up the distribution" depends="clean, init, parent" >
         <mkdir dir="./target/marshal" />
 
         <property name="app" value="./target/marshal/jOrgan.app"/>
@@ -35,6 +39,19 @@
         <mkdir dir="${app}/Contents/Resources/Java"/>
         <copy todir="${app}/Contents/Resources/Java">
             <fileset dir="${jorgan.core.path}/target/marshal"/>
+            <fileset dir="${jorgan.customizer.path}/target/marshal"/>
+            <fileset dir="${jorgan.executor.path}/target/marshal"/>
+            <fileset dir="${jorgan.fluidsynth.path}/target/marshal"/>
+            <fileset dir="${jorgan.keyboard.path}/target/marshal"/>
+            <fileset dir="${jorgan.importer.path}/target/marshal"/>
+            <fileset dir="${jorgan.lan.path}/target/marshal"/>
+            <fileset dir="${jorgan.linuxsampler.path}/target/marshal"/>
+            <fileset dir="${jorgan.memory.path}/target/marshal"/>
+            <fileset dir="${jorgan.midimerger.path}/target/marshal"/>
+            <fileset dir="${jorgan.recorder.path}/target/marshal"/>
+            <fileset dir="${jorgan.sams.path}/target/marshal"/>
+            <fileset dir="${jorgan.soundfont.path}/target/marshal"/>
+            <fileset dir="${jorgan.tools.path}/target/marshal"/>
         </copy>
 		
         <tar destfile="./target/jorgan-${jorgan.version}.tar.gz" compression="gzip">
