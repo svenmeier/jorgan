@@ -67,11 +67,7 @@ public class Clock {
 				}
 			}
 
-			// trigger past alarms outside of synchronized block to prevent
-			// deadlock
-			for (Alarm past : pasts) {
-				past.trigger();
-			}
+			trigger(pasts);
 
 			synchronized (alarms) {
 				try {
@@ -83,6 +79,15 @@ public class Clock {
 				} catch (InterruptedException interrupted) {
 				}
 			}
+		}
+	}
+
+	/**
+	 * Trigger past alarms outside of synchronized block to prevent deadlocks
+	 */
+	private void trigger(List<Alarm> alarms) {
+		for (Alarm past : alarms) {
+			past.trigger();
 		}
 	}
 
@@ -103,7 +108,6 @@ public class Clock {
 	 */
 	public void alarm(Element element, Playing playing, long time) {
 		if (thread != null) {
-			// TODO should trigger all pending and new alarm?
 			synchronized (alarms) {
 				alarms.add(new Alarm(element, playing, time));
 				alarms.notifyAll();
@@ -144,6 +148,7 @@ public class Clock {
 
 		@Override
 		public int compareTo(Alarm alarm) {
+			// must never be equal, i.e. 0
 			return (this.time < alarm.time) ? -1 : 1;
 		}
 	}
