@@ -18,13 +18,35 @@
  */
 package jorgan.sams.disposition;
 
+import java.util.List;
+
 import jorgan.disposition.Console;
+import jorgan.disposition.Message;
+import jorgan.midi.mpl.Equal;
+import jorgan.midi.mpl.Get;
+import jorgan.midi.mpl.Set;
 
 /**
  */
 public class SamsConsole extends Console {
 
 	private long duration;
+
+	public SamsConsole() {
+		addMessage(new OnMagnetOn().change(new Set(144),
+				new Set(OnMagnetOn.TAB), new Set(127)));
+		addMessage(new OnMagnetOff().change(new Set(144), new Set(
+				OnMagnetOff.TAB), new Set(0)));
+		addMessage(new OffMagnetOn().change(new Set(128), new Set(
+				OffMagnetOn.TAB), new Set(127)));
+		addMessage(new OffMagnetOff().change(new Set(128), new Set(
+				OffMagnetOff.TAB), new Set(0)));
+
+		addMessage(new TabOn().change(new Equal(144), new Get(TabOn.TAB),
+				new Equal(127)));
+		addMessage(new TabOff().change(new Equal(128), new Get(TabOff.TAB),
+				new Equal(127)));
+	}
 
 	public void setDuration(long duration) {
 		if (duration < 0) {
@@ -44,7 +66,42 @@ public class SamsConsole extends Console {
 		return duration;
 	}
 
-	public Encoding getEncoding() {
-		return new NoteOnOffEncoding();
+	public List<Class<? extends Message>> getMessageClasses() {
+		List<Class<? extends Message>> classes = super.getMessageClasses();
+
+		classes.add(OnMagnetOn.class);
+		classes.add(OnMagnetOff.class);
+		classes.add(OffMagnetOn.class);
+		classes.add(OffMagnetOff.class);
+		classes.add(TabOn.class);
+		classes.add(TabOff.class);
+
+		return classes;
+	}
+
+	public static class MagnetMessage extends OutputMessage {
+		public static final String TAB = "tab";
+	}
+
+	public static class OnMagnetOn extends MagnetMessage {
+	}
+
+	public static class OnMagnetOff extends MagnetMessage {
+	}
+
+	public static class OffMagnetOn extends MagnetMessage {
+	}
+
+	public static class OffMagnetOff extends MagnetMessage {
+	}
+
+	public static class TabMessage extends InputMessage {
+		public static final String TAB = "tab";
+	}
+
+	public static class TabOn extends TabMessage {
+	}
+
+	public static class TabOff extends TabMessage {
 	}
 }
