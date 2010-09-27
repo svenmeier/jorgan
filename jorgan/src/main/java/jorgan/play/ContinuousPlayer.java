@@ -78,7 +78,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		Continuous continuous = getElement();
 		outputContext.set(Changed.VALUE, continuous.getValue());
 
-		for (Changed message : getElement().getMessages(Changed.class)) {
+		for (Changed message : continuous.getMessages(Changed.class)) {
 			output(message, outputContext);
 		}
 
