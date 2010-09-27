@@ -89,19 +89,22 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 	protected void send(int channel, byte[] datas)
 			throws InvalidMidiDataException {
 
-		if (channel < 0 || channel > 15) {
-			throw new InvalidMidiDataException("16 channels supported only");
-		}
-		if (datas.length != 3 || !MessageUtils.isChannelStatus(datas[0])) {
-			throw new InvalidMidiDataException("short messages supported only");
+		MidiMessage message;
+		if (datas.length == 3 && MessageUtils.isChannelStatus(datas[0])) {
+			if (channel < 0 || channel > 15) {
+				throw new InvalidMidiDataException("16 channels supported only");
+			}
+
+			int command = datas[0] & 0xf0;
+			int data1 = datas[1] & 0xff;
+			int data2 = datas[2] & 0xff;
+
+			message = MessageUtils.createMessage(command | channel, data1,
+					data2);
+		} else {
+			message = MessageUtils.createMessage(datas);
 		}
 
-		int command = datas[0] & 0xf0;
-		int data1 = datas[1] & 0xff;
-		int data2 = datas[2] & 0xff;
-
-		MidiMessage message = MessageUtils.createMessage(command | channel,
-				data1, data2);
 		fireSent(message);
 
 		send(message);
