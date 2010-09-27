@@ -738,7 +738,7 @@ public class ConsolePanel extends JPanel {
 				commands.add(new Sub(min));
 			}
 			commands.add(new Div(max - min));
-			commands.add(new Get("value"));
+			commands.add(new Get(Change.VALUE));
 
 			change = new Continuous.Change().change(Tuple.equal(datas).set(
 					index, new Chain(commands)));
