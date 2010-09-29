@@ -31,9 +31,9 @@ import jorgan.problem.Severity;
 import jorgan.sams.disposition.SamsConsole;
 import jorgan.sams.disposition.SamsConsole.TabMessage;
 import jorgan.sams.disposition.SamsConsole.TabTurningOff;
-import jorgan.sams.disposition.SamsConsole.TabCancelOff;
+import jorgan.sams.disposition.SamsConsole.CancelTabOff;
 import jorgan.sams.disposition.SamsConsole.TabTurningOn;
-import jorgan.sams.disposition.SamsConsole.TabCancelOn;
+import jorgan.sams.disposition.SamsConsole.CancelTabOn;
 import jorgan.sams.disposition.SamsConsole.TabTurnedOff;
 import jorgan.sams.disposition.SamsConsole.TabTurnedOn;
 
@@ -211,9 +211,9 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 					offTime = Long.MAX_VALUE;
 
 					if (onMagnet == this) {
-						output(TabCancelOn.class, index);
+						output(CancelTabOn.class, index);
 					} else {
-						output(TabCancelOff.class, index);
+						output(CancelTabOff.class, index);
 					}
 				}
 			}
