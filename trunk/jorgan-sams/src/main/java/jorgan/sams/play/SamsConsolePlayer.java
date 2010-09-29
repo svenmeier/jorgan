@@ -18,35 +18,35 @@
  */
 package jorgan.sams.play;
 
-import java.util.Arrays;
-import java.util.List;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 
+import jorgan.disposition.InterceptMessage;
+import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
-import jorgan.midi.MessageUtils;
+import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
-import jorgan.play.PlayerContext;
+import jorgan.problem.Severity;
 import jorgan.sams.disposition.SamsConsole;
-import jorgan.sams.disposition.SamsConsole.MagnetMessage;
-import jorgan.sams.disposition.SamsConsole.OffMagnetOff;
-import jorgan.sams.disposition.SamsConsole.OffMagnetOn;
-import jorgan.sams.disposition.SamsConsole.OnMagnetOff;
-import jorgan.sams.disposition.SamsConsole.OnMagnetOn;
 import jorgan.sams.disposition.SamsConsole.TabMessage;
-import jorgan.sams.disposition.SamsConsole.TabOff;
-import jorgan.sams.disposition.SamsConsole.TabOn;
+import jorgan.sams.disposition.SamsConsole.TabTurningOff;
+import jorgan.sams.disposition.SamsConsole.TabCancelOff;
+import jorgan.sams.disposition.SamsConsole.TabTurningOn;
+import jorgan.sams.disposition.SamsConsole.TabCancelOn;
+import jorgan.sams.disposition.SamsConsole.TabTurnedOff;
+import jorgan.sams.disposition.SamsConsole.TabTurnedOn;
 
 /**
+ * Player for a {@link SamsConsole}.
  */
 public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
-	private PlayerContext context = new PlayerContext();
+	private static final int TAB_COUNT = 128;
 
-	private Tab[] tabs = new Tab[128];
+	private PlayerContext interceptContext = new PlayerContext();
+
+	private Tab[] tabs = new Tab[TAB_COUNT];
 
 	public SamsConsolePlayer(SamsConsole console) {
 		super(console);
@@ -72,49 +72,82 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		}
 	}
 
+	private Tab getTab(Message message, int index) {
+		if (index < 0 || index >= tabs.length) {
+			addProblem(Severity.ERROR, message, "tabInvalid", index);
+			return null;
+		}
+		return tabs[index];
+	}
+
 	/**
-	 * Overriden to let encoding decode change of tab.
+	 * Overriden to intercept.
+	 * 
+	 * @throws InvalidMidiDataException
 	 */
 	@Override
-	public void send(MidiMessage message) {
-		if (message instanceof ShortMessage) {
-			decodeChangeTab(Arrays.asList(tabs), (ShortMessage) message);
+	public void send(byte[] datas) throws InvalidMidiDataException {
+		for (OutputMessage message : getElement().getMessages(
+				OutputMessage.class)) {
+			if (message instanceof InterceptMessage) {
+				if (interceptContext.process(message, datas)) {
+					if (message instanceof TabTurningOn) {
+						Tab tab = getTab(message, (int) interceptContext
+								.get(TabTurningOn.TAB));
+						if (tab != null) {
+							tab.turnOn();
+						}
+					} else if (message instanceof TabTurningOff) {
+						Tab tab = getTab(message, (int) interceptContext
+								.get(TabTurningOff.TAB));
+						if (tab != null) {
+							tab.turnOff();
+						}
+					}
+				}
+			}
 		}
+
+		super.send(datas);
 	}
 
 	/**
 	 * Overriden to let encoding decode tab changes.
 	 */
 	@Override
-	protected void receive(MidiMessage message) {
-		onReceived(message);
+	protected void receive(MidiMessage midiMessage) {
+		super.receive(midiMessage);
+
+		onReceived(midiMessage);
 	}
 
 	@Override
 	protected void onInput(InputMessage message, Context context) {
-		int tab = (int) context.get(TabMessage.TAB);
-
-		if (tab >= 0 && tab < tabs.length) {
-			if (message instanceof TabOn) {
-				tabs[tab].onChanged(true);
-			} else if (message instanceof TabOff) {
-				tabs[tab].onChanged(false);
+		if (message instanceof TabTurnedOn) {
+			Tab tab = getTab(message, (int) context.get(TabMessage.TAB));
+			if (tab != null) {
+				tab.onTurnedOn();
+			}
+		} else if (message instanceof TabTurnedOff) {
+			Tab tab = getTab(message, (int) context.get(TabMessage.TAB));
+			if (tab != null) {
+				tab.onTurnedOff();
 			}
 		}
 	}
 
-	private void output(Class<? extends MagnetMessage> type, int tab) {
-		context.set(MagnetMessage.TAB, tab);
+	private void output(Class<? extends OutputMessage> type, int tab) {
+		for (OutputMessage message : getElement().getMessages(type)) {
+			interceptContext.set(TabMessage.TAB, tab);
 
-		for (MagnetMessage message : getElement().getMessages(type)) {
-			output(message, context);
+			output(message, interceptContext);
 		}
 	}
 
 	protected void onOutput(byte[] datas, Context context)
 			throws InvalidMidiDataException {
-		// let super implementation send the message
-		super.send(MessageUtils.createMessage(datas));
+		// let super implementation send
+		super.send(datas);
 	}
 
 	public class Tab {
@@ -139,24 +172,22 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 			offMagnet.checkDuration(time);
 		}
 
-		public void change(boolean on) {
-			if (on) {
-				offMagnet.off();
-				onMagnet.on();
-			} else {
-				onMagnet.off();
-				offMagnet.on();
-			}
+		public void turnOn() {
+			offMagnet.off();
+			onMagnet.on();
 		}
 
-		public void onChanged(boolean on) {
-			SamsConsolePlayer.super.receive(encodeTabChanged(index, on));
+		public void turnOff() {
+			onMagnet.off();
+			offMagnet.on();
+		}
 
-			if (on) {
-				onMagnet.off();
-			} else {
-				offMagnet.off();
-			}
+		public void onTurnedOn() {
+			onMagnet.off();
+		}
+
+		public void onTurnedOff() {
+			offMagnet.off();
 		}
 
 		private class Magnet {
@@ -171,12 +202,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 					offTime = System.currentTimeMillis()
 							+ getElement().getDuration();
 
-					if (onMagnet == this) {
-						output(OnMagnetOn.class, index);
-					} else {
-						output(OffMagnetOn.class, index);
-					}
-
 					getOrganPlay().getClock().alarm(getElement(), offTime);
 				}
 			}
@@ -186,9 +211,9 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 					offTime = Long.MAX_VALUE;
 
 					if (onMagnet == this) {
-						output(OnMagnetOff.class, index);
+						output(TabCancelOn.class, index);
 					} else {
-						output(OffMagnetOff.class, index);
+						output(TabCancelOff.class, index);
 					}
 				}
 			}
@@ -202,20 +227,5 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 			}
 		}
 
-	}
-
-	private void decodeChangeTab(List<Tab> tabs, ShortMessage message) {
-		int index = message.getData1();
-
-		if (message.getCommand() == ShortMessage.NOTE_ON) {
-			tabs.get(index).change(true);
-		} else if (message.getCommand() == ShortMessage.NOTE_OFF) {
-			tabs.get(index).change(false);
-		}
-	}
-
-	private ShortMessage encodeTabChanged(int index, boolean on) {
-		return MessageUtils.newMessage(on ? ShortMessage.NOTE_ON
-				: ShortMessage.NOTE_OFF, index, 127);
 	}
 }
