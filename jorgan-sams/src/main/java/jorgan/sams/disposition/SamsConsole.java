@@ -21,6 +21,7 @@ package jorgan.sams.disposition;
 import java.util.List;
 
 import jorgan.disposition.Console;
+import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
 import jorgan.midi.mpl.Equal;
 import jorgan.midi.mpl.Get;
@@ -33,19 +34,19 @@ public class SamsConsole extends Console {
 	private long duration;
 
 	public SamsConsole() {
-		addMessage(new OnMagnetOn().change(new Set(144),
-				new Set(OnMagnetOn.TAB), new Set(127)));
-		addMessage(new OnMagnetOff().change(new Set(144), new Set(
-				OnMagnetOff.TAB), new Set(0)));
-		addMessage(new OffMagnetOn().change(new Set(128), new Set(
-				OffMagnetOn.TAB), new Set(127)));
-		addMessage(new OffMagnetOff().change(new Set(128), new Set(
-				OffMagnetOff.TAB), new Set(0)));
+		addMessage(new TabTurningOn().change(new Equal(144),
+				new Get(TabTurningOn.TAB), new Equal(127)));
+		addMessage(new TabCancelOn().change(new Set(144), new Set(
+				TabCancelOn.TAB), new Set(0)));
+		addMessage(new TabTurningOff().change(new Equal(128), new Get(
+				TabTurningOff.TAB), new Equal(127)));
+		addMessage(new TabCancelOff().change(new Set(128), new Set(
+				TabCancelOff.TAB), new Set(0)));
 
-		addMessage(new TabOn().change(new Equal(144), new Get(TabOn.TAB),
-				new Equal(127)));
-		addMessage(new TabOff().change(new Equal(128), new Get(TabOff.TAB),
-				new Equal(127)));
+		addMessage(new TabTurnedOn().change(new Equal(144), new Get(
+				TabTurnedOn.TAB), new Equal(127)));
+		addMessage(new TabTurnedOff().change(new Equal(128), new Get(
+				TabTurnedOff.TAB), new Equal(127)));
 	}
 
 	public void setDuration(long duration) {
@@ -69,39 +70,41 @@ public class SamsConsole extends Console {
 	public List<Class<? extends Message>> getMessageClasses() {
 		List<Class<? extends Message>> classes = super.getMessageClasses();
 
-		classes.add(OnMagnetOn.class);
-		classes.add(OnMagnetOff.class);
-		classes.add(OffMagnetOn.class);
-		classes.add(OffMagnetOff.class);
-		classes.add(TabOn.class);
-		classes.add(TabOff.class);
+		classes.add(TabTurningOn.class);
+		classes.add(TabCancelOn.class);
+		classes.add(TabTurningOff.class);
+		classes.add(TabCancelOff.class);
+		classes.add(TabTurnedOn.class);
+		classes.add(TabTurnedOff.class);
 
 		return classes;
 	}
 
-	public static class MagnetMessage extends OutputMessage {
+	public static interface TabMessage {
 		public static final String TAB = "tab";
 	}
 
-	public static class OnMagnetOn extends MagnetMessage {
+	public static class TabTurningOn extends OutputMessage implements TabMessage,
+			InterceptMessage {
 	}
 
-	public static class OnMagnetOff extends MagnetMessage {
+	public static class TabCancelOn extends OutputMessage implements
+			TabMessage {
 	}
 
-	public static class OffMagnetOn extends MagnetMessage {
+	public static class TabTurningOff extends OutputMessage implements TabMessage,
+			InterceptMessage {
 	}
 
-	public static class OffMagnetOff extends MagnetMessage {
+	public static class TabCancelOff extends OutputMessage implements
+			TabMessage {
 	}
 
-	public static class TabMessage extends InputMessage {
-		public static final String TAB = "tab";
+	public static class TabTurnedOn extends InputMessage implements TabMessage,
+			InterceptMessage {
 	}
 
-	public static class TabOn extends TabMessage {
-	}
-
-	public static class TabOff extends TabMessage {
+	public static class TabTurnedOff extends InputMessage implements
+			TabMessage, InterceptMessage {
 	}
 }

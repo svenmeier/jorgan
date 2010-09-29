@@ -57,12 +57,12 @@
         </console-locationReference>
       </references>
       <messages>
-        <sams.samsConsole-onMagnetOn>set 144, set tab, set 127</sams.samsConsole-onMagnetOn>
-        <sams.samsConsole-onMagnetOff>set 144, set tab, set 0</sams.samsConsole-onMagnetOff>
-        <sams.samsConsole-offMagnetOn>set 128, set tab, set 127</sams.samsConsole-offMagnetOn>
-        <sams.samsConsole-offMagnetOff>set 128, set tab, set 0</sams.samsConsole-offMagnetOff>
-        <sams.samsConsole-tabOn>equal 144, get tab, equal 127</sams.samsConsole-tabOn>
-        <sams.samsConsole-tabOff>equal 128, get tab, equal 127</sams.samsConsole-tabOff>
+        <sams.samsConsole-tabTurningOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurningOn>
+        <sams.samsConsole-tabCancelOn>set 144, set tab, set 0</sams.samsConsole-tabCancelOn>
+        <sams.samsConsole-tabTurningOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurningOff>
+        <sams.samsConsole-tabCancelOff>set 128, set tab, set 0</sams.samsConsole-tabCancelOff>
+        <sams.samsConsole-tabTurnedOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurnedOn>
+        <sams.samsConsole-tabTurnedOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurnedOff>
       </messages>
       <zoom>1.0</zoom>
       <input>jOrgan Midi Logger</input>
