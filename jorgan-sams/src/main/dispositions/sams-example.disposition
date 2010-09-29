@@ -58,9 +58,9 @@
       </references>
       <messages>
         <sams.samsConsole-tabTurningOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurningOn>
-        <sams.samsConsole-tabCancelOn>set 144, set tab, set 0</sams.samsConsole-tabCancelOn>
+        <sams.samsConsole-cancelTabOn>set 144, set tab, set 0</sams.samsConsole-cancelTabOn>
         <sams.samsConsole-tabTurningOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurningOff>
-        <sams.samsConsole-tabCancelOff>set 128, set tab, set 0</sams.samsConsole-tabCancelOff>
+        <sams.samsConsole-cancelTabOff>set 128, set tab, set 0</sams.samsConsole-cancelTabOff>
         <sams.samsConsole-tabTurnedOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurnedOn>
         <sams.samsConsole-tabTurnedOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurnedOff>
       </messages>

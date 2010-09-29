@@ -36,12 +36,12 @@ public class SamsConsole extends Console {
 	public SamsConsole() {
 		addMessage(new TabTurningOn().change(new Equal(144),
 				new Get(TabTurningOn.TAB), new Equal(127)));
-		addMessage(new TabCancelOn().change(new Set(144), new Set(
-				TabCancelOn.TAB), new Set(0)));
+		addMessage(new CancelTabOn().change(new Set(144), new Set(
+				CancelTabOn.TAB), new Set(0)));
 		addMessage(new TabTurningOff().change(new Equal(128), new Get(
 				TabTurningOff.TAB), new Equal(127)));
-		addMessage(new TabCancelOff().change(new Set(128), new Set(
-				TabCancelOff.TAB), new Set(0)));
+		addMessage(new CancelTabOff().change(new Set(128), new Set(
+				CancelTabOff.TAB), new Set(0)));
 
 		addMessage(new TabTurnedOn().change(new Equal(144), new Get(
 				TabTurnedOn.TAB), new Equal(127)));
@@ -71,9 +71,9 @@ public class SamsConsole extends Console {
 		List<Class<? extends Message>> classes = super.getMessageClasses();
 
 		classes.add(TabTurningOn.class);
-		classes.add(TabCancelOn.class);
+		classes.add(CancelTabOn.class);
 		classes.add(TabTurningOff.class);
-		classes.add(TabCancelOff.class);
+		classes.add(CancelTabOff.class);
 		classes.add(TabTurnedOn.class);
 		classes.add(TabTurnedOff.class);
 
@@ -88,7 +88,7 @@ public class SamsConsole extends Console {
 			InterceptMessage {
 	}
 
-	public static class TabCancelOn extends OutputMessage implements
+	public static class CancelTabOn extends OutputMessage implements
 			TabMessage {
 	}
 
@@ -96,7 +96,7 @@ public class SamsConsole extends Console {
 			InterceptMessage {
 	}
 
-	public static class TabCancelOff extends OutputMessage implements
+	public static class CancelTabOff extends OutputMessage implements
 			TabMessage {
 	}
 
