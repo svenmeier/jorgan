@@ -16,9 +16,26 @@
 	<xsl:template match="stop|coupler">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()"/>
-			<from>0</from>
-			<to>127</to>
+			<xsl:if test="not(from)">
+				<from>0</from>
+				<to>127</to>
+			</xsl:if>
 		</xsl:copy>
+	</xsl:template>
+
+	<xsl:template match="filter-intercept">
+		<xsl:choose>
+			<xsl:when test="../../active">
+				<switchFilter-intercept>
+					<xsl:apply-templates select="@*|node()"/>
+				</switchFilter-intercept>
+			</xsl:when>
+			<xsl:otherwise>
+				<continuousFilter-intercept>
+					<xsl:apply-templates select="@*|node()"/>
+				</continuousFilter-intercept>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
   	<xsl:template match="@*|node()">

@@ -140,7 +140,7 @@ public class Rank extends Engageable {
 
 	@Override
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Filter.class.isAssignableFrom(clazz)
+		return SoundFilter.class.isAssignableFrom(clazz)
 				|| Sound.class.isAssignableFrom(clazz);
 	}
 

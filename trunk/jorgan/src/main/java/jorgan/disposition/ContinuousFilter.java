@@ -25,7 +25,7 @@ import jorgan.disposition.Output.OutputMessage;
 /**
  * A continuous filter.
  */
-public class ContinuousFilter extends Continuous implements Filter {
+public class ContinuousFilter extends Continuous implements SoundFilter {
 
 	@Override
 	public List<Class<? extends Message>> getMessageClasses() {
@@ -35,6 +35,12 @@ public class ContinuousFilter extends Continuous implements Filter {
 		classes.add(Engaging.class);
 
 		return classes;
+	}
+
+	public static class Intercept extends OutputMessage implements
+			InterceptMessage {
+
+		public static final String VALUE = "value";
 	}
 
 	public static class Engaging extends OutputMessage {

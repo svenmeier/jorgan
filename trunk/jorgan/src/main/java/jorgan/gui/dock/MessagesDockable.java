@@ -33,8 +33,6 @@ import java.util.List;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.DropMode;
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -45,17 +43,14 @@ import javax.swing.TransferHandler;
 import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.OrganPanel;
 import jorgan.gui.construct.CreateMessageWizard;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
@@ -83,15 +78,6 @@ public class MessagesDockable extends OrganDockable {
 
 	private static Configuration config = Configuration.getRoot().get(
 			MessagesDockable.class);
-
-	private static final Icon inputIcon = new ImageIcon(OrganPanel.class
-			.getResource("img/input.gif"));
-
-	private static final Icon interceptIcon = new ImageIcon(OrganPanel.class
-			.getResource("img/intercept.gif"));
-
-	private static final Icon outputIcon = new ImageIcon(OrganPanel.class
-			.getResource("img/output.gif"));
 
 	/**
 	 * The edited organ.
@@ -229,23 +215,7 @@ public class MessagesDockable extends OrganDockable {
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
 		table.getColumnModel().getColumn(0).setCellRenderer(
-				new DefaultTableCellRenderer() {
-					@Override
-					protected void setValue(Object value) {
-						if (value instanceof InputMessage) {
-							setIcon(inputIcon);
-						} else if (value instanceof OutputMessage) {
-							setIcon(outputIcon);
-						} else {
-							setIcon(interceptIcon);
-						}
-
-						// might be null from accessibility
-						if (value != null) {
-							setText(Elements.getDisplayName(value.getClass()));
-						}
-					}
-				});
+				new MessageTypeCellRenderer());
 		table.getColumnModel().getColumn(1).setCellRenderer(
 				new SimpleCellRenderer<Tuple>() {
 					@Override

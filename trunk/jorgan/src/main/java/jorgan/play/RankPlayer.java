@@ -21,7 +21,7 @@ package jorgan.play;
 import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Filter;
+import jorgan.disposition.SoundFilter;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Sound;
 import jorgan.disposition.Rank.Disengaged;
@@ -101,7 +101,7 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		for (Element element : rank.getReferenced(Element.class)) {
-			if (element instanceof Filter) {
+			if (element instanceof SoundFilter) {
 				FilterPlayer player = (FilterPlayer) getPlayer(element);
 
 				channel = player.filter(channel);
@@ -202,18 +202,18 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		private void played(int pitch, int velocity) {
-			set(NotePlayed.PITCH, pitch);
-			set(NotePlayed.VELOCITY, velocity);
 			for (NotePlayed notePlayed : getElement().getMessages(
 					NotePlayed.class)) {
+				set(NotePlayed.PITCH, pitch);
+				set(NotePlayed.VELOCITY, velocity);
 				output(notePlayed, this);
 			}
 		}
 
 		private void muted(int pitch) {
-			set(NoteMuted.PITCH, pitch);
 			for (NoteMuted noteMuted : getElement()
 					.getMessages(NoteMuted.class)) {
+				set(NoteMuted.PITCH, pitch);
 				output(noteMuted, this);
 			}
 		}

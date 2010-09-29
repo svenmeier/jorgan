@@ -27,14 +27,15 @@ import jorgan.util.Null;
 public class Problem {
 
 	private Severity severity;
-	
+
 	private Element element;
 
 	private Object location;
 
 	private String message;
 
-	public Problem(Severity severity, Element element, Object location, String message) {
+	public Problem(Severity severity, Element element, Object location,
+			String message) {
 		this.severity = severity;
 		this.element = element;
 		this.location = location;
@@ -44,7 +45,7 @@ public class Problem {
 	public Severity getSeverity() {
 		return severity;
 	}
-	
+
 	public Object getLocation() {
 		return location;
 	}
@@ -61,14 +62,14 @@ public class Problem {
 
 		Problem problem = (Problem) object;
 
-		if (!(this.severity == problem.severity)) {
+		if (this.severity != problem.severity) {
 			return false;
 		}
 
-		if (!(this.element == problem.element)) {
+		if (this.element != problem.element) {
 			return false;
 		}
-		
+
 		if (!Null.safeEquals(this.location, problem.location)) {
 			return false;
 		}

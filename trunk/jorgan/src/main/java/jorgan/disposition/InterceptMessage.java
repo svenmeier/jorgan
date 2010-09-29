@@ -18,8 +18,5 @@
  */
 package jorgan.disposition;
 
-public interface Filter {
-
-	public static class Intercept extends Message {
-	}
+public interface InterceptMessage {
 }

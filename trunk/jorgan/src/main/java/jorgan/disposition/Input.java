@@ -24,9 +24,9 @@ package jorgan.disposition;
 public interface Input {
 
 	public void setInput(String input);
-	
+
 	public String getInput();
-	
+
 	public static abstract class InputMessage extends Message {
 	}
 }
