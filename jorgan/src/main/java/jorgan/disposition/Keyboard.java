@@ -45,14 +45,15 @@ public class Keyboard extends Element implements Input {
 
 	public Keyboard() {
 		// note on, pitch, velocity
-		addMessage(new PressKey().change(new Equal(144), new Get(Key.PITCH),
-				new Chain(new Greater(0), new Get(PressKey.VELOCITY))));
+		addMessage(new PressKey().change(new Equal(144),
+				new Get(PressKey.PITCH), new Chain(new Greater(0), new Get(
+						PressKey.VELOCITY))));
 		// note on, pitch, -
-		addMessage(new ReleaseKey().change(new Equal(144), new Get(Key.PITCH),
-				new Equal(0)));
+		addMessage(new ReleaseKey().change(new Equal(144), new Get(
+				ReleaseKey.PITCH), new Equal(0)));
 		// note off, pitch, -
-		addMessage(new ReleaseKey().change(new Equal(128), new Get(Key.PITCH),
-				new NoOp()));
+		addMessage(new ReleaseKey().change(new Equal(128), new Get(
+				ReleaseKey.PITCH), new NoOp()));
 	}
 
 	protected boolean canReference(Class<? extends Element> clazz) {
@@ -76,7 +77,7 @@ public class Keyboard extends Element implements Input {
 	public int getChannel() throws ProcessingException {
 		int channel = -1;
 
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			Equal equal = Command.get(message.get(Message.STATUS), Equal.class);
 			if (equal != null) {
 				channel = ((int) equal.getValue()) & 0x0f;
@@ -90,7 +91,7 @@ public class Keyboard extends Element implements Input {
 	}
 
 	public void setChannel(int channel) {
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			Tuple tuple = message.getTuple();
 
 			Equal equal = Command.get(tuple.get(Message.STATUS), Equal.class);
@@ -107,7 +108,7 @@ public class Keyboard extends Element implements Input {
 		int pitch = 0;
 		boolean found = false;
 
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
 			GreaterEqual greaterEqual = Command.get(message.get(Message.DATA1),
@@ -133,7 +134,7 @@ public class Keyboard extends Element implements Input {
 		int pitch = 127;
 		boolean found = false;
 
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
 			LessEqual lessEqual = Command.get(message.get(Message.DATA1),
@@ -158,7 +159,7 @@ public class Keyboard extends Element implements Input {
 		int transpose = 0;
 		boolean found = false;
 
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
 			Add add = Command.get(message.get(Message.DATA1), Add.class);
@@ -194,9 +195,9 @@ public class Keyboard extends Element implements Input {
 			commands.add(new Add(transpose));
 		}
 
-		commands.add(new Get(PressKey.PITCH));
+		commands.add(new Get(KeyMessage.PITCH));
 
-		for (Key message : getMessages(Key.class)) {
+		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			if (message.getLength() > Message.DATA1) {
 				changeMessage(message, message.getTuple().set(Message.DATA1,
 						new Chain(commands)));
@@ -214,17 +215,16 @@ public class Keyboard extends Element implements Input {
 		return classes;
 	}
 
-	private static class Key extends InputMessage {
+	private static abstract class KeyMessage extends InputMessage {
 
 		public static final String PITCH = "pitch";
-
 	}
 
-	public static class PressKey extends Key {
+	public static class PressKey extends KeyMessage {
 
 		public static final String VELOCITY = "velocity";
 	}
 
-	public static class ReleaseKey extends Key {
+	public static class ReleaseKey extends KeyMessage {
 	}
 }

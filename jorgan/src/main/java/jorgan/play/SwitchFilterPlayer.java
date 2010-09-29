@@ -24,9 +24,9 @@ import java.util.List;
 import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.SwitchFilter;
-import jorgan.disposition.Filter.Intercept;
 import jorgan.disposition.SwitchFilter.Disengaged;
 import jorgan.disposition.SwitchFilter.Engaged;
+import jorgan.disposition.SwitchFilter.Intercept;
 import jorgan.midi.mpl.Context;
 import jorgan.play.sound.Channel;
 import jorgan.util.Null;

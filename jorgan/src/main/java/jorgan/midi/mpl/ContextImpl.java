@@ -16,18 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.midi.mpl;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.sound.midi.InvalidMidiDataException;
-
-import jorgan.disposition.Message;
-import jorgan.midi.mpl.Context;
-
-public class PlayerContext implements Context {
-
+/**
+ * A context implementation.
+ */
+public class ContextImpl implements Context {
 	private Map<String, Float> map = new HashMap<String, Float>();
 
 	public float get(String name) {
@@ -45,30 +42,5 @@ public class PlayerContext implements Context {
 
 	public void clear() {
 		map.clear();
-	}
-
-	public boolean process(Message message, byte[] datas)
-			throws InvalidMidiDataException {
-		if (message.getLength() != datas.length) {
-			return false;
-		}
-
-		boolean valid = true;
-		for (int d = 0; d < datas.length; d++) {
-			float processed = message.process(datas[d] & 0xff, this, d);
-			if (Float.isNaN(processed)) {
-				return false;
-			}
-			int rounded = Math.round(processed);
-			if (rounded < 0 || rounded > 255) {
-				valid = false;
-			}
-			datas[d] = (byte) rounded;
-		}
-
-		if (!valid) {
-			throw new InvalidMidiDataException();
-		}
-		return true;
 	}
 }

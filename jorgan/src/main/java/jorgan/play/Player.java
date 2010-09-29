@@ -30,8 +30,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.ContextImpl;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
 import bias.Configuration;
@@ -275,13 +275,12 @@ public abstract class Player<E extends Element> {
 	 */
 	protected void onOutput(byte[] datas, Context context)
 			throws InvalidMidiDataException {
-		MidiMessage midiMessage = MessageUtils.createMessage(datas);
 
 		for (Console console : organPlay.getOrgan().getReferrer(element,
 				Console.class)) {
 			ConsolePlayer<?> player = (ConsolePlayer<?>) getPlayer(console);
 			if (player != null) {
-				player.send(midiMessage);
+				player.send(datas);
 			}
 		}
 	}
@@ -295,6 +294,34 @@ public abstract class Player<E extends Element> {
 	protected void fireReceived(MidiMessage midiMessage) {
 		if (getOrganPlay() != null) {
 			getOrganPlay().fireReceived(this.getElement(), midiMessage);
+		}
+	}
+
+	public class PlayerContext extends ContextImpl {
+
+		public boolean process(Message message, byte[] datas)
+				throws InvalidMidiDataException {
+			if (message.getLength() != datas.length) {
+				return false;
+			}
+
+			boolean valid = true;
+			for (int d = 0; d < datas.length; d++) {
+				float processed = message.process(datas[d] & 0xff, this, d);
+				if (Float.isNaN(processed)) {
+					return false;
+				}
+				int rounded = Math.round(processed);
+				if (rounded < 0 || rounded > 255) {
+					valid = false;
+				}
+				datas[d] = (byte) rounded;
+			}
+
+			if (!valid) {
+				throw new InvalidMidiDataException();
+			}
+			return true;
 		}
 	}
 }

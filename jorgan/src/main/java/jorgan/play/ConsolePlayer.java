@@ -18,6 +18,7 @@
  */
 package jorgan.play;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -25,6 +26,7 @@ import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
+import jorgan.midi.MessageUtils;
 import jorgan.problem.Severity;
 
 /**
@@ -111,12 +113,16 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	/**
 	 * Send a message - may be called by all players handling referenced
 	 * elements.
+	 * 
+	 * @throws InvalidMidiDataException
 	 */
-	public void send(MidiMessage message) {
+	public void send(byte[] datas) throws InvalidMidiDataException {
 		if (receiver != null) {
-			fireSent(message);
+			MidiMessage midiMessage = MessageUtils.createMessage(datas);
 
-			receiver.send(message, -1);
+			fireSent(midiMessage);
+
+			receiver.send(midiMessage, -1);
 		}
 	}
 

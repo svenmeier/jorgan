@@ -18,33 +18,5 @@
  */
 package jorgan.disposition;
 
-import java.util.List;
-
-import jorgan.disposition.Output.OutputMessage;
-
-/**
- * An switchable filter.
- */
-public class SwitchFilter extends Switch implements SoundFilter {
-
-	@Override
-	public List<Class<? extends Message>> getMessageClasses() {
-		List<Class<? extends Message>> classes = super.getMessageClasses();
-
-		classes.add(Intercept.class);
-		classes.add(Engaged.class);
-		classes.add(Disengaged.class);
-
-		return classes;
-	}
-
-	public static class Intercept extends OutputMessage implements
-			InterceptMessage {
-	}
-
-	public static class Engaged extends OutputMessage {
-	}
-
-	public static class Disengaged extends OutputMessage {
-	}
+public interface SoundFilter {
 }
