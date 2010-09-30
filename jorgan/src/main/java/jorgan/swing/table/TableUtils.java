@@ -29,7 +29,7 @@ import javax.swing.CellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
-import javax.swing.table.TableCellEditor;
+import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**
@@ -49,19 +49,21 @@ public class TableUtils {
 	 */
 	public static void fixColumnWidth(JTable table, int column, Object prototype) {
 
-		TableCellEditor editor = table.getCellEditor(0, column);
+		column = table.convertColumnIndexToView(column);
 
-		Component component = editor.getTableCellEditorComponent(table,
-				prototype, false, 0, column);
+		TableCellRenderer renderer = table.getCellRenderer(0, column);
 
-		int width = component.getPreferredSize().width;
+		Component component = renderer.getTableCellRendererComponent(table,
+				prototype, false, false, 0, column);
 
-		width += table.getIntercellSpacing().width;
+		int width = component.getPreferredSize().width
+				+ table.getIntercellSpacing().width;
 
 		TableColumn tableColumn = table.getColumnModel().getColumn(column);
 		tableColumn.setMinWidth(width);
 		tableColumn.setPreferredWidth(width);
 		tableColumn.setMaxWidth(width);
+		tableColumn.setResizable(false);
 	}
 
 	/**
