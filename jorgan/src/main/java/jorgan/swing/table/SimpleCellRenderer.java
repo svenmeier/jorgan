@@ -13,9 +13,13 @@ public abstract class SimpleCellRenderer<T> extends DefaultTableCellRenderer {
 	@Override
 	public Component getTableCellRendererComponent(JTable table, Object value,
 			boolean isSelected, boolean hasFocus, int row, int column) {
-		return super.getTableCellRendererComponent(table,
-				getDisplayValue((T) value), isSelected, hasFocus, row, column);
+		Component component = super.getTableCellRendererComponent(table, null,
+				isSelected, hasFocus, row, column);
+
+		init((T) value);
+
+		return component;
 	}
 
-	protected abstract Object getDisplayValue(T value);
+	protected abstract void init(T value);
 }
