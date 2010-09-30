@@ -51,6 +51,7 @@ import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.MessageTableCellRenderer;
 import jorgan.gui.construct.CreateMessageWizard;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
@@ -63,7 +64,6 @@ import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.FormatterCellEditor;
-import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -215,14 +215,7 @@ public class MessagesDockable extends OrganDockable {
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
 		table.getColumnModel().getColumn(0).setCellRenderer(
-				new MessageTypeCellRenderer());
-		table.getColumnModel().getColumn(1).setCellRenderer(
-				new SimpleCellRenderer<Tuple>() {
-					@Override
-					protected Object getDisplayValue(Tuple tuple) {
-						return tuple.toString();
-					}
-				});
+				new MessageTableCellRenderer());
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new FormatterCellEditor(new CommandsFormatter()));
 		TableUtils.pleasantLookAndFeel(table);

@@ -38,7 +38,7 @@ import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
-import jorgan.swing.table.IconTableCellRenderer;
+import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import bias.Configuration;
@@ -83,19 +83,21 @@ public class ProblemsDockable extends OrganDockable {
 
 		config.get("table").read(tableModel);
 		table.setModel(tableModel);
+		table.getColumnModel().getColumn(0).setCellRenderer(
+				new SimpleCellRenderer<Severity>() {
+					@Override
+					protected void init(Severity severity) {
+						if (severity == Severity.WARNING) {
+							setIcon(warningIcon);
+						} else {
+							setIcon(errorIcon);
+						}
+					}
+				});
+		TableUtils.fixColumnWidth(table, 0, Severity.ERROR);
 		TableUtils.addActionListener(table, gotoAction);
 		TableUtils.addPopup(table, popup);
 		TableUtils.pleasantLookAndFeel(table);
-		new IconTableCellRenderer() {
-			@Override
-			protected Icon getIcon(Object value) {
-				if (value == Severity.WARNING) {
-					return warningIcon;
-				} else {
-					return errorIcon;
-				}
-			}
-		}.configureTableColumn(table, 0);
 		setContent(new JScrollPane(table));
 
 		popup.add(gotoAction);

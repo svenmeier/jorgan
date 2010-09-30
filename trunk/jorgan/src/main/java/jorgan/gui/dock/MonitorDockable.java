@@ -19,18 +19,19 @@
 package jorgan.gui.dock;
 
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
-import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import jorgan.disposition.Element;
@@ -40,7 +41,6 @@ import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
-import jorgan.swing.table.IconTableCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import swingx.docking.Docked;
@@ -103,12 +103,13 @@ public class MonitorDockable extends OrganDockable {
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
 
-		new MessageCellRenderer(true).configureTableColumn(table, 0);
-		for (int c = 1; c < table.getColumnCount(); c++) {
+		for (int c = 0; c < table.getColumnCount(); c++) {
 			TableColumn column = table.getColumnModel().getColumn(c);
 
-			column.setCellRenderer(new MessageCellRenderer(false));
+			column.setCellRenderer(new MessageCellRenderer());
 		}
+		TableUtils.fixColumnWidth(table, 0, new Message(false,
+				new ShortMessage()));
 	}
 
 	@Override
@@ -208,19 +209,7 @@ public class MonitorDockable extends OrganDockable {
 
 		@Override
 		protected Object getValue(Message message, int columnIndex) {
-			switch (columnIndex) {
-			case 0:
-				return message.input;
-			case 1:
-				return message.channel;
-			case 2:
-				return message.status;
-			case 3:
-				return message.data1;
-			case 4:
-				return message.data2;
-			}
-			return null;
+			return message;
 		}
 	}
 
@@ -294,54 +283,51 @@ public class MonitorDockable extends OrganDockable {
 		}
 	}
 
-	private class MessageCellRenderer extends IconTableCellRenderer {
-
-		private boolean showIcon;
+	private class MessageCellRenderer extends DefaultTableCellRenderer {
 
 		private transient Message message;
 
-		public MessageCellRenderer(boolean showIcon) {
+		public MessageCellRenderer() {
 			setHorizontalAlignment(SwingConstants.RIGHT);
-
-			this.showIcon = showIcon;
 		}
 
 		@Override
-		public MessageCellRenderer getTableCellRendererComponent(JTable table,
+		public Component getTableCellRendererComponent(JTable table,
 				Object value, boolean isSelected, boolean hasFocus, int row,
 				int column) {
 
-			super.getTableCellRendererComponent(table, value, isSelected,
+			super.getTableCellRendererComponent(table, null, isSelected,
 					hasFocus, row, column);
 
-			if (row < messages.size()) {
-				message = messages.get(row);
+			this.message = (Message) value;
 
-				if (!isSelected) {
-					setBackground(message.color);
+			if (!isSelected) {
+				setBackground(message.color);
+			}
+
+			switch (column) {
+			case 0:
+				if (message.input) {
+					setIcon(inputButton.getIcon());
+				} else {
+					setIcon(outputButton.getIcon());
 				}
-			} else {
-				message = null;
+				break;
+			case 1:
+				setText(message.channel);
+				break;
+			case 2:
+				setText(message.status);
+				break;
+			case 3:
+				setText(message.data1);
+				break;
+			case 4:
+				setText(message.data2);
+				break;
 			}
 
 			return this;
-		}
-
-		@Override
-		protected Icon getIcon(Object input) {
-			if (Boolean.TRUE.equals(input)) {
-				return inputButton.getIcon();
-			} else {
-				return outputButton.getIcon();
-			}
-		}
-
-		protected void setValue(Object value) {
-			if (showIcon) {
-				super.setValue(value);
-			} else {
-				setText((value == null) ? "" : value.toString());
-			}
 		}
 
 		@Override
