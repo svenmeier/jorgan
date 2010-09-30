@@ -34,6 +34,7 @@ import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
+import jorgan.gui.MessageTypeListCellRenderer;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -60,6 +61,7 @@ public class MessageCreationPanel extends JPanel {
 
 		column.term(config.get("type").read(new JLabel()));
 
+		typeList.setCellRenderer(new MessageTypeListCellRenderer());
 		typeList
 				.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
 		typeList.addListSelectionListener(new ListSelectionListener() {
@@ -108,7 +110,7 @@ public class MessageCreationPanel extends JPanel {
 		}
 
 		public Object getElementAt(int index) {
-			return Elements.getDisplayName(messageClasses.get(index));
+			return messageClasses.get(index);
 		}
 	}
 

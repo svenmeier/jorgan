@@ -47,7 +47,7 @@ import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
-import jorgan.swing.table.IconTableCellRenderer;
+import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.SpinnerCellEditor;
 import jorgan.swing.table.StringCellEditor;
 import jorgan.swing.table.TableUtils;
@@ -183,7 +183,14 @@ public class TuningsDockable extends OrganDockable {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		new IconTableCellRenderer(getIcon()).configureTableColumn(table, 0);
+		table.getColumnModel().getColumn(0).setCellRenderer(
+				new SimpleCellRenderer<Tuning>() {
+					@Override
+					protected void init(Tuning value) {
+						setIcon(TuningsDockable.this.getIcon());
+					}
+				});
+		TableUtils.fixColumnWidth(table, 0, null);
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new StringCellEditor());
 		for (int p = 0; p < Tuning.COUNT; p++) {

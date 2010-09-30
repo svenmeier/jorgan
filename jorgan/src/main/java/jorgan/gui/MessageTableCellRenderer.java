@@ -16,51 +16,50 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.dock;
+package jorgan.gui;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.table.DefaultTableCellRenderer;
 
 import jorgan.disposition.Elements;
 import jorgan.disposition.InterceptMessage;
+import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
-import jorgan.gui.OrganPanel;
 import jorgan.swing.CompoundIcon;
+import jorgan.swing.table.SimpleCellRenderer;
 
-public class MessageTypeCellRenderer extends DefaultTableCellRenderer {
+public class MessageTableCellRenderer extends SimpleCellRenderer<Message> {
 
 	private static final Icon inputIcon = new ImageIcon(
-			MessageTypeCellRenderer.class
+			MessageTableCellRenderer.class
 					.getResource("/jorgan/gui/img/input.gif"));
 
 	private static final Icon outputIcon = new ImageIcon(
-			MessageTypeCellRenderer.class
+			MessageTableCellRenderer.class
 					.getResource("/jorgan/gui/img/output.gif"));
 
 	private static final Icon interceptIcon = new ImageIcon(OrganPanel.class
 			.getResource("/jorgan/gui/img/intercept.gif"));
 
-	@Override
-	protected void setValue(Object value) {
+	protected void init(Message message) {
 		Icon icon;
-		if (value instanceof InputMessage) {
+		if (message instanceof InputMessage) {
 			icon = inputIcon;
-		} else if (value instanceof OutputMessage) {
+		} else if (message instanceof OutputMessage) {
 			icon = outputIcon;
 		} else {
 			throw new IllegalArgumentException();
 		}
 
-		if (value instanceof InterceptMessage) {
+		if (message instanceof InterceptMessage) {
 			icon = new CompoundIcon(icon, interceptIcon);
 		}
 		setIcon(icon);
 
 		// might be null from accessibility
-		if (value != null) {
-			setText(Elements.getDisplayName(value.getClass()));
+		if (message != null) {
+			setText(Elements.getDisplayName(message.getClass()));
 		}
 	}
 }
