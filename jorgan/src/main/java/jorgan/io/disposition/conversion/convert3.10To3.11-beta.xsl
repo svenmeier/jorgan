@@ -23,19 +23,19 @@
 		</xsl:copy>
 	</xsl:template>
 
-	<xsl:template match="filter-intercept">
-		<xsl:choose>
-			<xsl:when test="../../active">
-				<switchFilter-intercept>
-					<xsl:apply-templates select="@*|node()"/>
-				</switchFilter-intercept>
-			</xsl:when>
-			<xsl:otherwise>
-				<continuousFilter-intercept>
-					<xsl:apply-templates select="@*|node()"/>
-				</continuousFilter-intercept>
-			</xsl:otherwise>
-		</xsl:choose>
+	<xsl:template match="messages">
+		<xsl:copy>
+			<xsl:for-each select="*">
+				<xsl:choose>
+					<xsl:when test="status">
+						<xsl:copy><xsl:value-of select="status" />, <xsl:value-of select="data1" />, <xsl:value-of select="data2" /></xsl:copy>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:copy><xsl:value-of select="." /></xsl:copy>
+					</xsl:otherwise>
+				</xsl:choose>
+			</xsl:for-each>
+		</xsl:copy>
 	</xsl:template>
 
   	<xsl:template match="@*|node()">
