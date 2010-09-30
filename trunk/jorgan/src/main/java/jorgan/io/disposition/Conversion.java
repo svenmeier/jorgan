@@ -56,7 +56,7 @@ public class Conversion {
 			new Convert("3\\.7", "convert3.7To3.8.xsl"),
 			new Convert("3\\.8.*", "convert3.8To3.9-beta.xsl"),
 			new Convert("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl"),
-			new Convert("3\\.(9|10).*", "convert3.10To3.11-beta.xsl"),
+			new Convert("3\\.(9|10|11-beta).*", "convert3.10To3.11-beta.xsl"),
 			new Convert("3\\.11-beta.*", "convert3.11-betaTo3.11.xsl") };
 
 	public BufferedInputStream convert(InputStream in)
