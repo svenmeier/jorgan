@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="development">
   <elements>
     <rank id="1">
       <name>Rank 1</name>
@@ -62,7 +62,7 @@
         <reference id="6"/>
       </references>
       <messages>
-        <keyboard-pressKey>equal 144, get pitch, greater 0| get velocity</keyboard-pressKey>
+        <keyboard-pressKey>equal 144, get pitch, greater 0 | get velocity</keyboard-pressKey>
         <keyboard-releaseKey>equal 128, get pitch, </keyboard-releaseKey>
         <keyboard-releaseKey>equal 144, get pitch, equal 0 | get velocity</keyboard-releaseKey>
       </messages>
