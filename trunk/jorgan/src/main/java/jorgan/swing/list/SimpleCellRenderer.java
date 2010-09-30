@@ -13,9 +13,13 @@ public abstract class SimpleCellRenderer<T> extends DefaultListCellRenderer {
 	@Override
 	public Component getListCellRendererComponent(JList list, Object value,
 			int index, boolean isSelected, boolean cellHasFocus) {
-		return super.getListCellRendererComponent(list,
-				getDisplayValue((T) value), index, isSelected, cellHasFocus);
+		Component component = super.getListCellRendererComponent(list, null,
+				index, isSelected, cellHasFocus);
+
+		init((T) value);
+
+		return component;
 	}
 
-	protected abstract Object getDisplayValue(T value);
+	protected abstract void init(T value);
 }
