@@ -111,16 +111,18 @@ public class Keyboard extends Element implements Input {
 		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
-			GreaterEqual greaterEqual = Command.get(message.get(Message.DATA1),
-					GreaterEqual.class);
-			if (greaterEqual != null) {
-				pitch = Math.max(pitch, ((int) greaterEqual.getValue()));
-			}
+			if (message.getLength() > Message.DATA1) {
+				GreaterEqual greaterEqual = Command.get(
+						message.get(Message.DATA1), GreaterEqual.class);
+				if (greaterEqual != null) {
+					pitch = Math.max(pitch, ((int) greaterEqual.getValue()));
+				}
 
-			Greater greater = Command.get(message.get(Message.DATA1),
-					Greater.class);
-			if (greater != null) {
-				pitch = Math.max(pitch, ((int) greater.getValue()) + 1);
+				Greater greater = Command.get(message.get(Message.DATA1),
+						Greater.class);
+				if (greater != null) {
+					pitch = Math.max(pitch, ((int) greater.getValue()) + 1);
+				}
 			}
 		}
 
@@ -137,15 +139,17 @@ public class Keyboard extends Element implements Input {
 		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
-			LessEqual lessEqual = Command.get(message.get(Message.DATA1),
-					LessEqual.class);
-			if (lessEqual != null) {
-				pitch = Math.min(pitch, ((int) lessEqual.getValue()));
-			}
+			if (message.getLength() > Message.DATA1) {
+				LessEqual lessEqual = Command.get(message.get(Message.DATA1),
+						LessEqual.class);
+				if (lessEqual != null) {
+					pitch = Math.min(pitch, ((int) lessEqual.getValue()));
+				}
 
-			Less less = Command.get(message.get(Message.DATA1), Less.class);
-			if (less != null) {
-				pitch = Math.min(pitch, ((int) less.getValue()) - 1);
+				Less less = Command.get(message.get(Message.DATA1), Less.class);
+				if (less != null) {
+					pitch = Math.min(pitch, ((int) less.getValue()) - 1);
+				}
 			}
 		}
 
@@ -162,14 +166,16 @@ public class Keyboard extends Element implements Input {
 		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			found = true;
 
-			Add add = Command.get(message.get(Message.DATA1), Add.class);
-			if (add != null) {
-				transpose = ((int) add.getValue());
-			}
+			if (message.getLength() > Message.DATA1) {
+				Add add = Command.get(message.get(Message.DATA1), Add.class);
+				if (add != null) {
+					transpose = ((int) add.getValue());
+				}
 
-			Sub sub = Command.get(message.get(Message.DATA1), Sub.class);
-			if (sub != null) {
-				transpose = ((int) sub.getValue()) * -1;
+				Sub sub = Command.get(message.get(Message.DATA1), Sub.class);
+				if (sub != null) {
+					transpose = ((int) sub.getValue()) * -1;
+				}
 			}
 		}
 
@@ -199,8 +205,10 @@ public class Keyboard extends Element implements Input {
 
 		for (KeyMessage message : getMessages(KeyMessage.class)) {
 			if (message.getLength() > Message.DATA1) {
-				changeMessage(message, message.getTuple().set(Message.DATA1,
-						new Chain(commands)));
+				changeMessage(
+						message,
+						message.getTuple().set(Message.DATA1,
+								new Chain(commands)));
 			}
 		}
 	}
