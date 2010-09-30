@@ -36,9 +36,7 @@
 
   	<mkdir dir="./target/marshal/dispositions" />
   	<copy todir="./target/marshal/dispositions">
-      <fileset dir="./src/main/dispositions">
-  		<include name="*"/>
-      </fileset>
+      <fileset dir="./src/main/dispositions" />
     </copy> 		
 
 	<zip destfile="./target/jOrgan-lan-${lan.version}.zip">

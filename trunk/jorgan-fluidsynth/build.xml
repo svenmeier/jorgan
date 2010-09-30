@@ -131,15 +131,8 @@
   	</jar>
 
   	<mkdir dir="./target/marshal/dispositions" />
-  	<copy todir="./target/marshal/dispositions" filtering="true">
-      <fileset dir="./src/main/dispositions">
-  		<include name="*.disposition"/>
-      </fileset>
-    </copy> 		
   	<copy todir="./target/marshal/dispositions">
-      <fileset dir="./src/main/dispositions">
-  		<exclude name="*.disposition"/>
-      </fileset>
+      <fileset dir="./src/main/dispositions" />
     </copy> 		
 
     <fail unless="package"/>
