@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="development">
   <elements>
     <combination id="3">
       <name>1</name>
@@ -41,6 +41,7 @@
       <description></description>
       <references>
         <reference id="8"/>
+        <reference id="1209"/>
       </references>
       <messages>
         <rank-engaged>set 176, set 121, </rank-engaged>
@@ -65,9 +66,9 @@
       <active>false</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>0</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>0</transpose>
     </stop>
     <stop id="10">
       <name>Stop 2</name>
@@ -80,15 +81,16 @@
       <active>false</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>0</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>0</transpose>
     </stop>
     <rank id="6">
       <name>Rank 0</name>
       <description></description>
       <references>
         <reference id="8"/>
+        <reference id="1209"/>
       </references>
       <messages>
         <rank-engaged>set 176, set 121, </rank-engaged>
@@ -176,6 +178,10 @@
           <x>360</x>
           <y>180</y>
         </console-locationReference>
+        <console-locationReference id="1209">
+          <x>80</x>
+          <y>140</y>
+        </console-locationReference>
       </references>
       <messages/>
       <zoom>1.0</zoom>
@@ -191,9 +197,9 @@
       <active>false</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>0</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>0</transpose>
     </stop>
     <combination id="4">
       <name>2</name>
@@ -228,15 +234,16 @@
       <active>false</active>
       <duration>-1</duration>
       <action>0</action>
-      <transpose>-12</transpose>
       <from>0</from>
       <to>127</to>
+      <transpose>-12</transpose>
     </stop>
     <rank id="14">
       <name>Rank 2</name>
       <description></description>
       <references>
         <reference id="8"/>
+        <reference id="1209"/>
       </references>
       <messages>
         <rank-engaged>set 176, set 121, </rank-engaged>
@@ -313,5 +320,18 @@
       <messages/>
       <zoom>1.0</zoom>
     </label>
+    <continuousFilter id="1209">
+      <name>Volume</name>
+      <description></description>
+      <references/>
+      <messages>
+        <continuousFilter-intercept>equal 176, equal 7, get volume</continuousFilter-intercept>
+        <continuousFilter-engaging>set 176, set 7, set volume 127 | div 2 | mult value | add 63</continuousFilter-engaging>
+      </messages>
+      <zoom>1.0</zoom>
+      <duration>-1</duration>
+      <threshold>0.05</threshold>
+      <value>1.0</value>
+    </continuousFilter>
   </elements>
 </organ>
