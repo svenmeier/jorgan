@@ -134,4 +134,24 @@ public class MessageUtils {
 			throw new Error(e);
 		}
 	}
+
+	private static byte[] defaultDatas = new byte[3];
+
+	public static byte[] getDatas(MidiMessage midiMessage) {
+		byte[] datas;
+
+		if (midiMessage instanceof ShortMessage) {
+			// small optimization for short messages
+			ShortMessage shortMessage = (ShortMessage) midiMessage;
+
+			datas = defaultDatas;
+			datas[0] = (byte) shortMessage.getStatus();
+			datas[1] = (byte) shortMessage.getData1();
+			datas[2] = (byte) shortMessage.getData2();
+		} else {
+			datas = midiMessage.getMessage();
+		}
+
+		return datas;
+	}
 }

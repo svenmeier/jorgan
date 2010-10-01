@@ -25,17 +25,18 @@ import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
 import jorgan.problem.Severity;
 import jorgan.sams.disposition.SamsConsole;
-import jorgan.sams.disposition.SamsConsole.TabMessage;
-import jorgan.sams.disposition.SamsConsole.TabTurningOff;
 import jorgan.sams.disposition.SamsConsole.CancelTabOff;
-import jorgan.sams.disposition.SamsConsole.TabTurningOn;
 import jorgan.sams.disposition.SamsConsole.CancelTabOn;
+import jorgan.sams.disposition.SamsConsole.TabMessage;
 import jorgan.sams.disposition.SamsConsole.TabTurnedOff;
 import jorgan.sams.disposition.SamsConsole.TabTurnedOn;
+import jorgan.sams.disposition.SamsConsole.TabTurningOff;
+import jorgan.sams.disposition.SamsConsole.TabTurningOn;
 
 /**
  * Player for a {@link SamsConsole}.
@@ -90,7 +91,7 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		for (OutputMessage message : getElement().getMessages(
 				OutputMessage.class)) {
 			if (message instanceof InterceptMessage) {
-				if (interceptContext.process(message, datas)) {
+				if (interceptContext.process(message, datas, false)) {
 					if (message instanceof TabTurningOn) {
 						Tab tab = getTab(message, (int) interceptContext
 								.get(TabTurningOn.TAB));
@@ -112,13 +113,13 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 	}
 
 	/**
-	 * Overriden to let encoding decode tab changes.
+	 * Overriden to intercept.
 	 */
 	@Override
 	protected void receive(MidiMessage midiMessage) {
 		super.receive(midiMessage);
 
-		onReceived(midiMessage);
+		onReceived(MessageUtils.getDatas(midiMessage));
 	}
 
 	@Override
