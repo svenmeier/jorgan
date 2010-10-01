@@ -18,6 +18,9 @@
  */
 package jorgan.swing.tree;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JTree;
 import javax.swing.tree.TreePath;
 
@@ -31,40 +34,41 @@ public class TreeUtils {
 	 * 
 	 * @param tree
 	 */
-	public static void expand(JTree tree) {
-		expand(tree, Integer.MAX_VALUE);
+	public static <T> void expand(JTree tree, T t) {
+		TreePath path = getPath(tree, t);
+
+		tree.expandPath(path);
 	}
 
-	/**
-	 * Expand all nodes of given level.
-	 * 
-	 * @param tree
-	 * @param levels
-	 */
-	public static void expand(JTree tree, int levels) {
-		if (levels > 0) {
-			expand(tree, new TreePath(tree.getModel().getRoot()), levels);
-		}
+	@SuppressWarnings("unchecked")
+	private static <T> TreePath getPath(JTree tree, T node) {
+		return new TreePath(((SimpleTreeModel<T>) tree.getModel())
+				.getPath(node));
 	}
 
-	/**
-	 * Expand all children of the given path of given level.
-	 * 
-	 * @param tree
-	 * @param path
-	 * @param levels
-	 */
-	public static void expand(JTree tree, TreePath path, int levels) {
-		if (levels > 0) {
-			tree.expandPath(path);
+	@SuppressWarnings("unchecked")
+	public static <T> List<T> getSelection(JTree tree) {
+		List<T> selection = new ArrayList<T>();
 
-			Object parent = path.getLastPathComponent();
-			for (int c = 0; c < tree.getModel().getChildCount(parent); c++) {
-				Object child = tree.getModel().getChild(parent, c);
-				if (!tree.getModel().isLeaf(child)) {
-					expand(tree, path.pathByAddingChild(child), levels - 1);
-				}
+		TreePath[] paths = tree.getSelectionPaths();
+		if (paths != null) {
+			for (TreePath path : paths) {
+				selection.add((T) path.getLastPathComponent());
 			}
 		}
+
+		return selection;
+	}
+
+	public static <T> void addSelection(JTree tree, T t) {
+		TreePath path = getPath(tree, t);
+
+		tree.addSelectionPath(path);
+	}
+
+	public static <T> void scrollPathToVisible(JTree tree, T t) {
+		TreePath path = getPath(tree, t);
+
+		tree.scrollPathToVisible(path);
 	}
 }

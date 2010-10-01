@@ -25,5 +25,6 @@ public abstract class SimpleCellRenderer<T> extends DefaultListCellRenderer {
 		init(value);
 	}
 
-	protected abstract void init(T value);
+	protected void init(T value) {
+	}
 }
