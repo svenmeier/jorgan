@@ -28,6 +28,7 @@ import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.problem.Severity;
 
@@ -173,7 +174,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 			getOrganPlay().fireReceived(this.getElement(), midiMessage);
 		}
 
-		onReceived(midiMessage);
+		onReceived(MessageUtils.getDatas(midiMessage));
 	}
 
 	public void panic() {

@@ -129,10 +129,12 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	protected void receive(MidiMessage midiMessage) {
 		fireReceived(midiMessage);
 
+		byte[] datas = MessageUtils.getDatas(midiMessage);
+
 		for (Element element : getElement().getReferenced(Element.class)) {
 			Player<?> player = getPlayer(element);
 			if (player != null) {
-				player.onReceived(midiMessage);
+				player.onReceived(datas);
 			}
 		}
 	}

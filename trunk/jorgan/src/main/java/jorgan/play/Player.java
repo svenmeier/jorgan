@@ -23,7 +23,6 @@ import java.io.IOException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
-import javax.sound.midi.ShortMessage;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Element;
@@ -192,23 +191,10 @@ public abstract class Player<E extends Element> {
 	public void update() {
 	}
 
-	public final void onReceived(MidiMessage midiMessage) {
+	protected final void onReceived(byte[] datas) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
-			byte[] datas;
-			if (midiMessage instanceof ShortMessage) {
-				// small optimization for short messages
-				ShortMessage shortMessage = (ShortMessage) midiMessage;
-
-				datas = defaultDatas;
-				datas[0] = (byte) shortMessage.getStatus();
-				datas[1] = (byte) shortMessage.getData1();
-				datas[2] = (byte) shortMessage.getData2();
-			} else {
-				datas = midiMessage.getMessage();
-			}
-
 			try {
-				if (inputContext.process(message, datas)) {
+				if (inputContext.process(message, datas, false)) {
 					onInput(message, inputContext);
 				}
 			} catch (InvalidMidiDataException e) {
@@ -244,7 +230,7 @@ public abstract class Player<E extends Element> {
 		}
 
 		try {
-			if (context.process(message, datas)) {
+			if (context.process(message, datas, true)) {
 				onOutput(datas, context);
 			}
 		} catch (InvalidMidiDataException e) {
@@ -271,7 +257,7 @@ public abstract class Player<E extends Element> {
 	 * 
 	 * @throws InvalidMidiDataException
 	 * 
-	 * @see ConsolePlayer#send(javax.sound.midi.MidiMessage)
+	 * @see {@link ConsolePlayer#send(byte[])}
 	 */
 	protected void onOutput(byte[] datas, Context context)
 			throws InvalidMidiDataException {
@@ -299,7 +285,7 @@ public abstract class Player<E extends Element> {
 
 	public class PlayerContext extends ContextImpl {
 
-		public boolean process(Message message, byte[] datas)
+		public boolean process(Message message, byte[] datas, boolean write)
 				throws InvalidMidiDataException {
 			if (message.getLength() != datas.length) {
 				return false;
@@ -311,11 +297,13 @@ public abstract class Player<E extends Element> {
 				if (Float.isNaN(processed)) {
 					return false;
 				}
-				int rounded = Math.round(processed);
-				if (rounded < 0 || rounded > 255) {
-					valid = false;
+				if (write) {
+					int toWrite = Math.round(processed);
+					if (toWrite < 0 || toWrite > 255) {
+						valid = false;
+					}
+					datas[d] = (byte) toWrite;
 				}
-				datas[d] = (byte) rounded;
 			}
 
 			if (!valid) {
