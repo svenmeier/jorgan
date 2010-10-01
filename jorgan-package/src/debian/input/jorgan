@@ -1,2 +1,10 @@
 #!/bin/sh
-/usr/lib/jvm/java-6-sun/bin/java -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"
+
+SUN_JAVA="/usr/lib/jvm/java-6-sun/bin/java" 
+if [ -f $SUN_JAVA ] ; then
+    JAVA=$SUN_JAVA
+else
+    JAVA="/usr/bin/java"
+fi
+
+$JAVA -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"
