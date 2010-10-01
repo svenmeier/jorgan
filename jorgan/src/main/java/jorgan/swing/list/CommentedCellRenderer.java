@@ -46,7 +46,7 @@ public class CommentedCellRenderer extends JPanel implements ListCellRenderer {
 		this.renderer = renderer;
 
 		commentRenderer.setHorizontalAlignment(JLabel.TRAILING);
-		commentRenderer.setBorder(new EmptyBorder(0, 0, 0, 0));
+		commentRenderer.setBorder(EMPTY_BORDER);
 		add(commentRenderer, BorderLayout.CENTER);
 	}
 
@@ -76,11 +76,8 @@ public class CommentedCellRenderer extends JPanel implements ListCellRenderer {
 				.getListCellRendererComponent(list, value, index, isSelected,
 						cellHasFocus);
 
-		setRendererComponent(component);
-
-		setBorder(component.getBorder());
 		setBackground(component.getBackground());
-		component.setBorder(EMPTY_BORDER);
+		setRendererComponent(component);
 
 		commentRenderer.setText(getComment(value, index, isSelected));
 		commentRenderer.setForeground(average(component.getForeground(),
