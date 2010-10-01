@@ -19,7 +19,6 @@
 package jorgan.gui.dock;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +30,6 @@ import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
-import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableColumn;
 
 import jorgan.disposition.Element;
@@ -41,6 +39,7 @@ import jorgan.play.event.PlayListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.table.BaseTableModel;
+import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.TableUtils;
 import spin.Spin;
 import swingx.docking.Docked;
@@ -283,7 +282,7 @@ public class MonitorDockable extends OrganDockable {
 		}
 	}
 
-	private class MessageCellRenderer extends DefaultTableCellRenderer {
+	private class MessageCellRenderer extends SimpleCellRenderer<Message> {
 
 		private transient Message message;
 
@@ -292,14 +291,10 @@ public class MonitorDockable extends OrganDockable {
 		}
 
 		@Override
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
+		protected void init(Message message, boolean isSelected,
+				boolean hasFocus, int row, int column) {
 
-			super.getTableCellRendererComponent(table, null, isSelected,
-					hasFocus, row, column);
-
-			this.message = (Message) value;
+			this.message = message;
 
 			if (!isSelected) {
 				setBackground(message.color);
@@ -326,8 +321,6 @@ public class MonitorDockable extends OrganDockable {
 				setText(message.data2);
 				break;
 			}
-
-			return this;
 		}
 
 		@Override
