@@ -3,6 +3,7 @@ package jorgan.gui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,14 +64,10 @@ public class ElementTreeModel extends BaseTreeModel<Element> {
 	}
 
 	@Override
-	protected Element getParent(Element element) {
-		Set<Group> referrer = organ.getReferrer(element, Group.class);
+	protected Set<Element> getParents(Element element) {
+		Set<Group> groups = organ.getReferrer(element, Group.class);
 
-		if (referrer.isEmpty()) {
-			return null;
-		} else {
-			return referrer.iterator().next();
-		}
+		return new HashSet<Element>(groups);
 	}
 
 	@Override

@@ -35,9 +35,9 @@ public class TreeUtils {
 	 * @param tree
 	 */
 	public static <T> void expand(JTree tree, T t) {
-		TreePath path = getModel(tree).getPath(t);
-
-		tree.expandPath(path);
+		for (TreePath path : getModel(tree).getPaths(t)) {
+			tree.expandPath(path);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -55,9 +55,9 @@ public class TreeUtils {
 	}
 
 	public static <T> void addSelection(JTree tree, T t) {
-		TreePath path = getModel(tree).getPath(t);
-
-		tree.addSelectionPath(path);
+		for (TreePath path : getModel(tree).getPaths(t)) {
+			tree.addSelectionPath(path);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -70,14 +70,20 @@ public class TreeUtils {
 
 		List<TreePath> paths = new ArrayList<TreePath>();
 		for (T t : selection) {
-			paths.add(model.getPath(t));
+			paths.addAll(model.getPaths(t));
 		}
 		tree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
 	}
 
 	public static <T> void scrollPathToVisible(JTree tree, T t) {
-		TreePath path = getModel(tree).getPath(t);
+		for (TreePath path : getModel(tree).getPaths(t)) {
+			tree.scrollPathToVisible(path);
+		}
+	}
 
-		tree.scrollPathToVisible(path);
+	public static void collapseAll(JTree tree) {
+		for (int row = tree.getRowCount() - 1; row >= 0; row--) {
+			tree.collapseRow(row);
+		}
 	}
 }

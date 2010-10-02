@@ -20,11 +20,14 @@ package jorgan.swing.tree;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.event.TreeModelEvent;
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreePath;
+
+import jorgan.util.ArrayUtils;
 
 /**
  * Abstract base class for custom tree models.
@@ -97,7 +100,7 @@ public abstract class BaseTreeModel<T> implements TreeModel {
 
 	protected abstract List<T> getChildren(T parent);
 
-	protected abstract T getParent(T node);
+	protected abstract Set<T> getParents(T node);
 
 	/**
 	 * Default convenience implementation does nothing.
@@ -112,23 +115,27 @@ public abstract class BaseTreeModel<T> implements TreeModel {
 	}
 
 	public final void fireNodeChanged(T node) {
-		Object parent = getParent(node);
-		if (parent == null) {
-			int index = getRoots().indexOf(node);
+		for (T parent : getParents(node)) {
+			if (parent == null) {
+				int index = getRoots().indexOf(node);
 
-			notifyNodesChanged(new TreeModelEvent(this, new TreePath(ROOT),
-					new int[] { index }, new Object[] { node }));
-		} else {
-			int index = getChildren(getParent(node)).indexOf(node);
+				notifyNodesChanged(new TreeModelEvent(this, new TreePath(ROOT),
+						new int[] { index }, new Object[] { node }));
+			} else {
+				int index = getChildren(parent).indexOf(node);
 
-			notifyNodesChanged(new TreeModelEvent(this,
-					getPath(getParent(node)), new int[] { index },
-					new Object[] { node }));
+				for (TreePath path : getPaths(parent)) {
+					notifyNodesChanged(new TreeModelEvent(this, path,
+							new int[] { index }, new Object[] { node }));
+				}
+			}
 		}
 	}
 
 	public final void fireChildrenChanged(T node) {
-		notifyStructureChanged(new TreeModelEvent(this, getPath(node)));
+		for (TreePath path : getPaths(node)) {
+			notifyStructureChanged(new TreeModelEvent(this, path));
+		}
 	}
 
 	private void notifyNodesChanged(TreeModelEvent event) {
@@ -143,20 +150,26 @@ public abstract class BaseTreeModel<T> implements TreeModel {
 		}
 	}
 
-	public TreePath getPath(T node) {
-		return new TreePath(getPathToRoot(node, new ArrayList<Object>())
-				.toArray());
-	}
+	@SuppressWarnings("unchecked")
+	public List<TreePath> getPaths(T node) {
+		List<TreePath> finished = new ArrayList<TreePath>();
+		List<Object[]> todo = new ArrayList<Object[]>();
 
-	private List<Object> getPathToRoot(T node, List<Object> path) {
-		path.add(0, node);
+		todo.add(new Object[] { node });
 
-		T parent = getParent(node);
-		if (parent == null) {
-			path.add(0, ROOT);
-			return path;
+		while (!todo.isEmpty()) {
+			Object[] path = todo.remove(0);
+
+			Set<T> parents = getParents((T) path[0]);
+			if (parents.isEmpty()) {
+				finished.add(new TreePath(ArrayUtils.prepend(ROOT, path)));
+			} else {
+				for (T parent : parents) {
+					todo.add(ArrayUtils.prepend(parent, path));
+				}
+			}
 		}
 
-		return getPathToRoot(parent, path);
+		return finished;
 	}
 }

@@ -86,6 +86,8 @@ public class ElementsDockable extends OrganDockable {
 
 	private AddAction addAction = new AddAction();
 
+	private CollapseAction collapseAction = new CollapseAction();
+
 	private JToggleButton sortByNameButton = new JToggleButton();
 
 	private JToggleButton sortByTypeButton = new JToggleButton();
@@ -193,6 +195,9 @@ public class ElementsDockable extends OrganDockable {
 	@Override
 	protected void addTools(Docked docked) {
 
+		docked.addTool(collapseAction);
+
+		docked.addToolSeparator();
 		docked.addTool(addAction);
 		docked.addTool(new RemoveAction());
 
@@ -383,6 +388,17 @@ public class ElementsDockable extends OrganDockable {
 			if (session != null) {
 				CreateElementWizard.showInDialog(tree, session);
 			}
+		}
+	}
+
+	private class CollapseAction extends BaseAction {
+
+		private CollapseAction() {
+			config.get("collapse").read(this);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			TreeUtils.collapseAll(tree);
 		}
 	}
 
