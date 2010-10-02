@@ -16,19 +16,15 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.gui.construct;
-
-import java.util.Comparator;
-
-import jorgan.disposition.Element;
+package jorgan.disposition;
 
 /**
- * Comparator of elements.
+ * A group of elements.
  */
-public class ElementDescriptionComparator implements Comparator<Element> {
+public class Group extends Element {
 
-	public int compare(Element e1, Element e2) {
-
-		return e1.getComment().compareTo(e2.getComment());
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Group.class != clazz;
 	}
 }
