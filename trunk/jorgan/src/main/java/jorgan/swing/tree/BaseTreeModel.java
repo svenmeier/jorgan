@@ -29,7 +29,7 @@ import javax.swing.tree.TreePath;
 /**
  * Abstract base class for custom tree models.
  */
-public abstract class SimpleTreeModel<T> implements TreeModel {
+public abstract class BaseTreeModel<T> implements TreeModel {
 
 	public static final Object ROOT = new Object();
 
@@ -43,10 +43,9 @@ public abstract class SimpleTreeModel<T> implements TreeModel {
 		listeners.remove(l);
 	}
 
-	/**
-	 * Default convenience implementation does nothing.
-	 */
-	public void valueForPathChanged(TreePath path, Object newValue) {
+	@SuppressWarnings("unchecked")
+	public final void valueForPathChanged(TreePath path, Object newValue) {
+		setValue((T) path.getLastPathComponent(), newValue);
 	}
 
 	@Override
@@ -100,10 +99,16 @@ public abstract class SimpleTreeModel<T> implements TreeModel {
 
 	protected abstract T getParent(T node);
 
+	/**
+	 * Default convenience implementation does nothing.
+	 */
+	protected void setValue(T node, Object newValue) {
+	}
+
 	public final void fireRootsChanged() {
 		TreePath path = new TreePath(ROOT);
 
-		notifyStructure(new TreeModelEvent(this, path));
+		notifyStructureChanged(new TreeModelEvent(this, path));
 	}
 
 	public final void fireNodeChanged(T node) {
@@ -111,36 +116,40 @@ public abstract class SimpleTreeModel<T> implements TreeModel {
 		if (parent == null) {
 			int index = getRoots().indexOf(node);
 
-			notifyNode(new TreeModelEvent(this, new TreePath(ROOT),
+			notifyNodesChanged(new TreeModelEvent(this, new TreePath(ROOT),
 					new int[] { index }, new Object[] { node }));
 		} else {
 			int index = getChildren(getParent(node)).indexOf(node);
 
-			notifyNode(new TreeModelEvent(this, getPath(getParent(node)),
-					new int[] { index }, new Object[] { node }));
+			notifyNodesChanged(new TreeModelEvent(this,
+					getPath(getParent(node)), new int[] { index },
+					new Object[] { node }));
 		}
-
-		notifyStructure(new TreeModelEvent(this, getPath(node)));
 	}
 
-	private void notifyNode(TreeModelEvent event) {
+	public final void fireChildrenChanged(T node) {
+		notifyStructureChanged(new TreeModelEvent(this, getPath(node)));
+	}
+
+	private void notifyNodesChanged(TreeModelEvent event) {
 		for (TreeModelListener listener : listeners) {
 			listener.treeNodesChanged(event);
 		}
 	}
 
-	private void notifyStructure(TreeModelEvent event) {
+	private void notifyStructureChanged(TreeModelEvent event) {
 		for (TreeModelListener listener : listeners) {
 			listener.treeStructureChanged(event);
 		}
 	}
 
 	public TreePath getPath(T node) {
-		return new TreePath(getPathToRoot(node, new ArrayList<Object>()));
+		return new TreePath(getPathToRoot(node, new ArrayList<Object>())
+				.toArray());
 	}
 
 	private List<Object> getPathToRoot(T node, List<Object> path) {
-		path.add(node);
+		path.add(0, node);
 
 		T parent = getParent(node);
 		if (parent == null) {

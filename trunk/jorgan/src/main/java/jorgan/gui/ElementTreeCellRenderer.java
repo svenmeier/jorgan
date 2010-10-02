@@ -17,12 +17,12 @@ import jorgan.gui.dock.ElementsDockable;
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.swing.CompoundIcon;
-import jorgan.swing.list.SimpleCellRenderer;
+import jorgan.swing.tree.SimpleCellRenderer;
 
 /**
  * A cell renderer for {@link Element}s.
  */
-public class ElementListCellRenderer extends SimpleCellRenderer<Element> {
+public class ElementTreeCellRenderer extends SimpleCellRenderer<Element> {
 
 	private static Pattern repeatedWhitespace = Pattern.compile(" +");
 
@@ -42,7 +42,7 @@ public class ElementListCellRenderer extends SimpleCellRenderer<Element> {
 	/**
 	 * Constructor.
 	 */
-	public ElementListCellRenderer() {
+	public ElementTreeCellRenderer() {
 	}
 
 	protected OrganSession getOrgan() {

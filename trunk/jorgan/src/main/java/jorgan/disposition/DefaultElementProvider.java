@@ -51,6 +51,7 @@ public class DefaultElementProvider implements ElementProvider {
 		classes.add(GenericSound.class);
 		classes.add(ConsoleSwitcher.class);
 		classes.add(Synchronizer.class);
+		classes.add(Group.class);
 
 		elementClasses = classes;
 	}

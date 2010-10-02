@@ -23,26 +23,25 @@ import java.awt.datatransfer.Transferable;
 import java.awt.dnd.DnDConstants;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractButton;
-import javax.swing.AbstractListModel;
 import javax.swing.JComponent;
-import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
+import javax.swing.JTree;
 import javax.swing.TransferHandler;
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Group;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.ElementListCellRenderer;
+import jorgan.gui.ElementTreeCellRenderer;
+import jorgan.gui.ElementTreeModel;
 import jorgan.gui.construct.CreateElementWizard;
-import jorgan.gui.construct.ElementDescriptionComparator;
 import jorgan.gui.construct.ElementNameComparator;
 import jorgan.gui.construct.ElementTypeComparator;
 import jorgan.gui.selection.ElementSelection;
@@ -55,8 +54,7 @@ import jorgan.problem.ProblemListener;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
-import jorgan.util.ComparatorChain;
-import jorgan.util.Generics;
+import jorgan.swing.tree.TreeUtils;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
@@ -82,17 +80,15 @@ public class ElementsDockable extends OrganDockable {
 	 */
 	private SelectionHandler selectionHandler = new SelectionHandler();
 
-	private JList list = new JList();
+	private JTree tree = new JTree();
+
+	private ElementTreeModel model = new ElementTreeModel();
+
+	private AddAction addAction = new AddAction();
 
 	private JToggleButton sortByNameButton = new JToggleButton();
 
-	private JToggleButton sortByDescriptionButton = new JToggleButton();
-
 	private JToggleButton sortByTypeButton = new JToggleButton();
-
-	private List<Element> elements = new ArrayList<Element>();
-
-	private AddAction addAction = new AddAction();
 
 	/**
 	 * Create a tree panel.
@@ -101,17 +97,18 @@ public class ElementsDockable extends OrganDockable {
 
 		config.read(this);
 
-		list.setModel(new ElementsModel());
-		list.setCellRenderer(new ElementListCellRenderer() {
+		tree.setModel(model);
+		tree.setRootVisible(false);
+		tree.setCellRenderer(new ElementTreeCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
 				return session;
 			}
 		});
-		list.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
-		list.addListSelectionListener(selectionHandler);
-		list.setDragEnabled(true);
-		list.setTransferHandler(new TransferHandler() {
+		tree.setExpandsSelectedPaths(true);
+		tree.addTreeSelectionListener(selectionHandler);
+		tree.setDragEnabled(true);
+		tree.setTransferHandler(new TransferHandler() {
 
 			@Override
 			public int getSourceActions(JComponent c) {
@@ -121,26 +118,23 @@ public class ElementsDockable extends OrganDockable {
 
 			@Override
 			protected Transferable createTransferable(JComponent c) {
-				return new ObjectTransferable(list.getSelectedValues());
+				return new ObjectTransferable(TreeUtils.getSelection(tree)
+						.toArray());
 			}
 
 			@Override
 			public void exportToClipboard(JComponent comp, Clipboard clip,
 					int action) throws IllegalStateException {
-				int[] indices = list.getSelectedIndices();
-				if (indices.length > 0) {
-					Element[] subElements = new Element[indices.length];
-					for (int e = 0; e < subElements.length; e++) {
-						subElements[e] = elements.get(indices[e]);
-					}
 
-					for (Element element : subElements) {
+				List<Element> selection = TreeUtils.getSelection(tree);
+				if (!selection.isEmpty()) {
+					for (Element element : selection) {
 						if (action == DnDConstants.ACTION_MOVE) {
 							session.getOrgan().removeElement(element);
 						}
 					}
 
-					transferable = new ObjectTransferable(subElements);
+					transferable = new ObjectTransferable(selection.toArray());
 					clip.setContents(transferable, null);
 				}
 			}
@@ -174,19 +168,16 @@ public class ElementsDockable extends OrganDockable {
 				}
 			}
 		});
-		setContent(new JScrollPane(list));
+		setContent(new JScrollPane(tree));
 
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				setSession(session);
+				initModel();
 			}
 		};
 		config.get("sortByType").read(sortByTypeButton);
 		sortGroup.add(sortByTypeButton);
-
-		config.get("sortByDescription").read(sortByDescriptionButton);
-		sortGroup.add(sortByDescriptionButton);
 
 		config.get("sortByName").read(sortByNameButton);
 		sortGroup.add(sortByNameButton);
@@ -208,7 +199,6 @@ public class ElementsDockable extends OrganDockable {
 		docked.addToolSeparator();
 
 		docked.addTool(sortByTypeButton);
-		docked.addTool(sortByDescriptionButton);
 		docked.addTool(sortByNameButton);
 	}
 
@@ -237,8 +227,7 @@ public class ElementsDockable extends OrganDockable {
 			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 
-			elements = new ArrayList<Element>();
-			list.setModel(new ElementsModel());
+			initModel();
 		}
 
 		this.session = session;
@@ -251,9 +240,7 @@ public class ElementsDockable extends OrganDockable {
 			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 
-			elements = new ArrayList<Element>(this.session.getOrgan()
-					.getElements());
-			list.setModel(new ElementsModel());
+			initModel();
 
 			selectionHandler.selectionChanged();
 		}
@@ -270,7 +257,7 @@ public class ElementsDockable extends OrganDockable {
 	 * The handler of selections.
 	 */
 	private class SelectionHandler extends OrganAdapter implements
-			SelectionListener, ListSelectionListener, ProblemListener {
+			SelectionListener, TreeSelectionListener, ProblemListener {
 
 		private boolean updatingSelection = false;
 
@@ -278,21 +265,17 @@ public class ElementsDockable extends OrganDockable {
 			if (!updatingSelection) {
 				updatingSelection = true;
 
-				list.clearSelection();
+				tree.clearSelection();
 
 				List<Element> selectedElements = session.lookup(
 						ElementSelection.class).getSelectedElements();
 				for (int e = 0; e < selectedElements.size(); e++) {
 					Element element = selectedElements.get(e);
 
-					int index = elements.indexOf(element);
-					if (index != -1) {
-						list.addSelectionInterval(index, index);
+					TreeUtils.addSelection(tree, element);
 
-						if (e == 0) {
-							list.scrollRectToVisible(list.getCellBounds(index,
-									index));
-						}
+					if (e == 0) {
+						TreeUtils.scrollPathToVisible(tree, element);
 					}
 				}
 
@@ -300,18 +283,19 @@ public class ElementsDockable extends OrganDockable {
 			}
 		}
 
-		public void valueChanged(ListSelectionEvent e) {
-			if (!e.getValueIsAdjusting() && !updatingSelection) {
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			if (!updatingSelection) {
 				updatingSelection = true;
 
-				Object[] values = list.getSelectedValues();
+				List<Element> selection = TreeUtils.getSelection(tree);
 
-				if (values.length == 1) {
+				if (selection.size() == 1) {
 					session.lookup(ElementSelection.class).setSelectedElement(
-							(Element) values[0]);
-				} else if (!elements.isEmpty()) {
+							selection.get(0));
+				} else if (!selection.isEmpty()) {
 					session.lookup(ElementSelection.class).setSelectedElements(
-							Generics.asList(values, Element.class));
+							selection);
 				}
 
 				updatingSelection = false;
@@ -319,71 +303,67 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		public void problemAdded(Problem problem) {
-			((ElementsModel) list.getModel()).update(problem.getElement());
+			model.fireNodeChanged(problem.getElement());
 		}
 
 		public void problemRemoved(Problem problem) {
-			((ElementsModel) list.getModel()).update(problem.getElement());
+			model.fireNodeChanged(problem.getElement());
 		}
 
 		public void propertyChanged(Element element, String name) {
-			((ElementsModel) list.getModel()).update(element);
+			if ("name".equals(name)) {
+				initModel();
+			}
+		}
+
+		@Override
+		public void indexedPropertyAdded(Element element, String name,
+				Object value) {
+			if (element instanceof Group) {
+				initModel();
+
+				TreeUtils.expand(tree, element);
+			}
+		}
+
+		@Override
+		public void indexedPropertyRemoved(Element element, String name,
+				Object value) {
+			if (element instanceof Group) {
+				initModel();
+
+				TreeUtils.expand(tree, element);
+			}
 		}
 
 		public void elementAdded(Element element) {
-			elements.add(element);
-
-			list.setModel(new ElementsModel());
+			initModel();
 
 			selectionChanged();
 		}
 
 		public void elementRemoved(Element element) {
-			elements.remove(element);
-
-			list.setModel(new ElementsModel());
+			initModel();
 		}
 	}
 
-	/**
-	 * Note that <em>Spin</em> ensures that the organListener methods are called
-	 * on the EDT, although a change in the organ might be triggered by a change
-	 * on a MIDI thread.
-	 */
-	private class ElementsModel extends AbstractListModel {
+	private void initModel() {
+		if (this.session == null) {
+			model.clearElements();
+		} else {
+			List<Element> selection = TreeUtils.getSelection(tree);
 
-		public ElementsModel() {
-			sort();
-		}
-
-		public void update(Element element) {
-			int index = elements.indexOf(element);
-
-			fireContentsChanged(this, index, index);
-		}
-
-		public Object getElementAt(int index) {
-			return elements.get(index);
-		}
-
-		public int getSize() {
-			return elements.size();
-		}
-
-		private void sort() {
+			Comparator<Element> comparator;
 			if (sortByNameButton.isSelected()) {
-				Collections.sort(elements, ComparatorChain.of(
-						new ElementNameComparator(),
-						new ElementTypeComparator()));
-			} else if (sortByDescriptionButton.isSelected()) {
-				Collections.sort(elements, ComparatorChain.of(
-						new ElementDescriptionComparator(),
-						new ElementTypeComparator()));
+				comparator = new ElementNameComparator();
 			} else {
-				Collections.sort(elements, ComparatorChain.of(
-						new ElementTypeComparator(),
-						new ElementNameComparator()));
+				comparator = new ElementTypeComparator();
 			}
+
+			model.setElements(session.getOrgan(), session.getOrgan()
+					.getElements(), comparator);
+
+			TreeUtils.setSelection(tree, selection);
 		}
 	}
 
@@ -401,20 +381,20 @@ public class ElementsDockable extends OrganDockable {
 
 		public void actionPerformed(ActionEvent ev) {
 			if (session != null) {
-				CreateElementWizard.showInDialog(list, session);
+				CreateElementWizard.showInDialog(tree, session);
 			}
 		}
 	}
 
 	private class DuplicateAction extends BaseAction implements
-			ListSelectionListener, Compound {
+			TreeSelectionListener, Compound {
 
 		private DuplicateAction() {
 			config.get("duplicate").read(this);
 
-			list.addListSelectionListener(this);
+			tree.addTreeSelectionListener(this);
 
-			register(list);
+			register(tree);
 			valueChanged(null);
 		}
 
@@ -424,8 +404,9 @@ public class ElementsDockable extends OrganDockable {
 			}
 		}
 
-		public void valueChanged(ListSelectionEvent e) {
-			setEnabled(list.getSelectedIndex() != -1);
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			setEnabled(tree.getSelectionCount() > 0);
 		}
 
 		public void run() {
@@ -441,12 +422,12 @@ public class ElementsDockable extends OrganDockable {
 	}
 
 	private class RemoveAction extends BaseAction implements
-			ListSelectionListener, Compound {
+			TreeSelectionListener, Compound {
 
 		private RemoveAction() {
 			config.get("remove").read(this);
 
-			list.addListSelectionListener(this);
+			tree.addTreeSelectionListener(this);
 			valueChanged(null);
 		}
 
@@ -454,8 +435,9 @@ public class ElementsDockable extends OrganDockable {
 			session.lookup(UndoManager.class).compound(this);
 		}
 
-		public void valueChanged(ListSelectionEvent e) {
-			setEnabled(list.getSelectedIndex() != -1);
+		@Override
+		public void valueChanged(TreeSelectionEvent e) {
+			setEnabled(tree.getSelectionCount() > 0);
 		}
 
 		public void run() {
