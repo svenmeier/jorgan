@@ -86,14 +86,16 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			throw new InvalidMidiDataException("short messages supported only");
 		}
 
-		int command = datas[0] & 0xf0;
-		int data1 = datas[1] & 0xff;
-		int data2 = datas[2] & 0xff;
+		if (synth != null) {
+			int command = datas[0] & 0xf0;
+			int data1 = datas[1] & 0xff;
+			int data2 = datas[2] & 0xff;
 
-		fireSent(MessageUtils.createMessage(command | (channel & 0x0f), data1,
-				data2));
+			fireSent(MessageUtils.createMessage(command | (channel & 0x0f),
+					data1, data2));
 
-		synth.send(channel, command, data1, data2);
+			synth.send(channel, command, data1, data2);
+		}
 	}
 
 	private void createSynth() {
