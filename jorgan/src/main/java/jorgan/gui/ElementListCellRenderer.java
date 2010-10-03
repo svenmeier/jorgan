@@ -13,6 +13,8 @@ import javax.swing.ImageIcon;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
+import jorgan.disposition.Group;
+import jorgan.disposition.Organ;
 import jorgan.gui.dock.ElementsDockable;
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
@@ -61,13 +63,23 @@ public class ElementListCellRenderer extends SimpleCellRenderer<Element> {
 					element)) {
 				icon = new CompoundIcon(icon, warningIcon);
 			}
-		}
 
+		}
 		setIcon(icon);
-		setText(noRepeatedWhitespace(Elements.getDisplayName(element)));
+
+		String text = getName(element);
+		Organ organ = element.getOrgan();
+		if (organ != null) {
+			for (Group group : organ.getReferrer(element, Group.class)) {
+				text = text + " - " + getName(group);
+			}
+		}
+		setText(text);
 	}
 
-	private static String noRepeatedWhitespace(String string) {
-		return repeatedWhitespace.matcher(string).replaceAll(" ");
+	private String getName(Element element) {
+		String name = Elements.getDisplayName(element);
+
+		return repeatedWhitespace.matcher(name).replaceAll(" ");
 	}
 }
