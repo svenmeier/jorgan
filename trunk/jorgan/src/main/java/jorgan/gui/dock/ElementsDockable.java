@@ -55,6 +55,7 @@ import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.tree.TreeUtils;
+import jorgan.util.ComparatorChain;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
@@ -361,9 +362,11 @@ public class ElementsDockable extends OrganDockable {
 
 			Comparator<Element> comparator;
 			if (sortByNameButton.isSelected()) {
-				comparator = new ElementNameComparator();
+				comparator = ComparatorChain.of(new ElementNameComparator(),
+						new ElementTypeComparator());
 			} else {
-				comparator = new ElementTypeComparator();
+				comparator = ComparatorChain.of(new ElementTypeComparator(),
+						new ElementNameComparator());
 			}
 
 			model.setElements(session.getOrgan(), session.getOrgan()
