@@ -55,6 +55,7 @@ import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.tree.TreeUtils;
+import jorgan.swing.tree.TreeUtils.Expansion;
 import jorgan.util.ComparatorChain;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -177,7 +178,11 @@ public class ElementsDockable extends OrganDockable {
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				initModel();
+				Expansion<Element> expansion = TreeUtils.expansion(tree);
+
+				initTree();
+
+				expansion.recall();
 			}
 		};
 		config.get("sortByType").read(sortByTypeButton);
@@ -234,7 +239,7 @@ public class ElementsDockable extends OrganDockable {
 			this.session.lookup(ElementSelection.class).removeListener(
 					selectionHandler);
 
-			initModel();
+			initTree();
 		}
 
 		this.session = session;
@@ -247,9 +252,7 @@ public class ElementsDockable extends OrganDockable {
 			this.session.lookup(ElementSelection.class).addListener(
 					selectionHandler);
 
-			initModel();
-
-			selectionHandler.selectionChanged();
+			initTree();
 		}
 
 		addAction.newSession();
@@ -274,15 +277,15 @@ public class ElementsDockable extends OrganDockable {
 
 				tree.clearSelection();
 
-				List<Element> selectedElements = session.lookup(
-						ElementSelection.class).getSelectedElements();
-				for (int e = 0; e < selectedElements.size(); e++) {
-					Element element = selectedElements.get(e);
+				boolean scrolled = false;
+				for (Element selected : session.lookup(ElementSelection.class)
+						.getSelectedElements()) {
 
-					TreeUtils.addSelection(tree, element);
+					TreeUtils.addSelection(tree, selected);
 
-					if (e == 0) {
-						TreeUtils.scrollPathToVisible(tree, element);
+					if (!scrolled) {
+						scrolled = true;
+						TreeUtils.scrollPathToVisible(tree, selected);
 					}
 				}
 
@@ -319,7 +322,7 @@ public class ElementsDockable extends OrganDockable {
 
 		public void propertyChanged(Element element, String name) {
 			if ("name".equals(name)) {
-				initModel();
+				initTree();
 			}
 		}
 
@@ -327,7 +330,7 @@ public class ElementsDockable extends OrganDockable {
 		public void indexedPropertyAdded(Element element, String name,
 				Object value) {
 			if (element instanceof Group) {
-				initModel();
+				initTree();
 
 				TreeUtils.expand(tree, element);
 			}
@@ -337,29 +340,27 @@ public class ElementsDockable extends OrganDockable {
 		public void indexedPropertyRemoved(Element element, String name,
 				Object value) {
 			if (element instanceof Group) {
-				initModel();
+				initTree();
 
 				TreeUtils.expand(tree, element);
 			}
 		}
 
 		public void elementAdded(Element element) {
-			initModel();
+			initTree();
 
 			selectionChanged();
 		}
 
 		public void elementRemoved(Element element) {
-			initModel();
+			initTree();
 		}
 	}
 
-	private void initModel() {
+	private void initTree() {
 		if (this.session == null) {
 			model.clearElements();
 		} else {
-			List<Element> selection = TreeUtils.getSelection(tree);
-
 			Comparator<Element> comparator;
 			if (sortByNameButton.isSelected()) {
 				comparator = ComparatorChain.of(new ElementNameComparator(),
@@ -372,7 +373,7 @@ public class ElementsDockable extends OrganDockable {
 			model.setElements(session.getOrgan(), session.getOrgan()
 					.getElements(), comparator);
 
-			TreeUtils.setSelection(tree, selection);
+			selectionHandler.selectionChanged();
 		}
 	}
 
