@@ -101,6 +101,7 @@ public class ElementsDockable extends OrganDockable {
 
 		tree.setModel(model);
 		tree.setRootVisible(false);
+		tree.setShowsRootHandles(true);
 		tree.setCellRenderer(new ElementTreeCellRenderer() {
 			@Override
 			protected OrganSession getOrgan() {
