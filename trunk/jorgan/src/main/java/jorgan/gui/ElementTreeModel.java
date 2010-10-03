@@ -3,8 +3,10 @@ package jorgan.gui;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import jorgan.disposition.Element;
@@ -18,6 +20,8 @@ public class ElementTreeModel extends BaseTreeModel<Element> {
 
 	private List<Element> roots = new ArrayList<Element>();
 
+	private Map<Group, List<Element>> grouped = new HashMap<Group, List<Element>>();
+
 	private Comparator<Element> comparator;
 
 	public ElementTreeModel() {
@@ -26,7 +30,9 @@ public class ElementTreeModel extends BaseTreeModel<Element> {
 	public void clearElements() {
 		organ = null;
 
-		roots = Collections.emptyList();
+		roots.clear();
+
+		grouped.clear();
 	}
 
 	public void setElements(Organ organ, Set<Element> elements,
@@ -35,30 +41,35 @@ public class ElementTreeModel extends BaseTreeModel<Element> {
 		this.comparator = comparator;
 
 		roots.clear();
-
 		for (Element element : elements) {
 			Set<Group> referrer = organ.getReferrer(element, Group.class);
 			if (referrer.isEmpty()) {
 				roots.add(element);
 			}
 		}
+		Collections.sort(roots, comparator);
+
+		grouped.clear();
 
 		fireRootsChanged();
 	}
 
 	@Override
 	protected List<Element> getRoots() {
-		Collections.sort(roots, comparator);
-
 		return roots;
 	}
 
 	@Override
 	protected List<Element> getChildren(Element element) {
 		if (element instanceof Group) {
-			List<Element> referenced = element.getReferenced(Element.class);
-			Collections.sort(referenced, comparator);
-			return referenced;
+			Group group = (Group) element;
+			List<Element> grouped = this.grouped.get(group);
+			if (grouped == null) {
+				grouped = group.getReferenced(Element.class);
+				Collections.sort(grouped, comparator);
+				this.grouped.put(group, grouped);
+			}
+			return grouped;
 		}
 		return Collections.emptyList();
 	}
