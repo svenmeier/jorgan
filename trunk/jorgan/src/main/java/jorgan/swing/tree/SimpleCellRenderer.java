@@ -15,7 +15,7 @@ public abstract class SimpleCellRenderer<T> extends DefaultTreeCellRenderer {
 			boolean isSelected, boolean isExpanded, boolean isLeaf, int row,
 			boolean hasFocus) {
 
-		super.getTreeCellRendererComponent(tree, null, selected, isExpanded,
+		super.getTreeCellRendererComponent(tree, null, isSelected, isExpanded,
 				isLeaf, row, hasFocus);
 
 		if (value != BaseTreeModel.ROOT) {
