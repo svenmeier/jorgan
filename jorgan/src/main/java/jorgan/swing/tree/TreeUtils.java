@@ -19,6 +19,7 @@
 package jorgan.swing.tree;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import javax.swing.JTree;
@@ -84,6 +85,80 @@ public class TreeUtils {
 	public static void collapseAll(JTree tree) {
 		for (int row = tree.getRowCount() - 1; row >= 0; row--) {
 			tree.collapseRow(row);
+		}
+	}
+
+	public static <T> Selection<T> selection(JTree tree) {
+		return new Selection<T>(tree);
+	}
+
+	public static <T> Expansion<T> expansion(JTree tree) {
+		return new Expansion<T>(tree);
+	}
+
+	public static class Selection<T> {
+
+		private JTree tree;
+
+		private List<T> selected = new ArrayList<T>();
+
+		@SuppressWarnings("unchecked")
+		public Selection(JTree tree) {
+			this.tree = tree;
+
+			TreePath[] paths = tree.getSelectionPaths();
+			if (paths != null) {
+				for (TreePath path : paths) {
+					selected.add((T) path.getLastPathComponent());
+				}
+			}
+		}
+
+		public void recall() {
+			BaseTreeModel<T> model = getModel(tree);
+
+			boolean scrolled = false;
+			for (T node : selected) {
+				for (TreePath path : model.getPaths(node)) {
+					tree.addSelectionPath(path);
+
+					if (!scrolled) {
+						scrolled = true;
+						tree.scrollPathToVisible(path);
+					}
+				}
+			}
+		}
+	}
+
+	public static class Expansion<T> {
+
+		private JTree tree;
+
+		private List<T> expanded = new ArrayList<T>();
+
+		@SuppressWarnings("unchecked")
+		public Expansion(JTree tree) {
+			this.tree = tree;
+
+			Enumeration<TreePath> paths = tree
+					.getExpandedDescendants(new TreePath(BaseTreeModel.ROOT));
+			while (paths.hasMoreElements()) {
+				TreePath path = paths.nextElement();
+				if (path.getPathCount() > 1) {
+					expanded.add((T) path.getLastPathComponent());
+				}
+			}
+		}
+
+		public void recall() {
+			BaseTreeModel<T> model = getModel(tree);
+
+			for (T node : expanded) {
+				for (TreePath path : model.getPaths(node)) {
+					tree.expandPath(path);
+				}
+			}
 		}
 	}
 }
