@@ -55,7 +55,7 @@ import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.tree.TreeUtils;
-import jorgan.swing.tree.TreeUtils.Expansion;
+import jorgan.swing.tree.TreeUtils.Capture;
 import jorgan.util.ComparatorChain;
 import spin.Spin;
 import swingx.dnd.ObjectTransferable;
@@ -178,11 +178,11 @@ public class ElementsDockable extends OrganDockable {
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				Expansion<Element> expansion = TreeUtils.expansion(tree);
+				Capture<Element> capture = TreeUtils.expansion(tree);
 
 				initTree();
 
-				expansion.recall();
+				capture.recall();
 			}
 		};
 		config.get("sortByType").read(sortByTypeButton);
