@@ -147,15 +147,15 @@ public class ElementsDockable extends OrganDockable {
 			@Override
 			public boolean importData(JComponent comp, Transferable t) {
 				try {
-					final Element[] subElements = (Element[]) ObjectTransferable
+					final Object[] subElements = (Object[]) ObjectTransferable
 							.getObject(t);
 
 					session.lookup(UndoManager.class).compound(new Compound() {
 						public void run() {
 							List<Element> added = new ArrayList<Element>();
 
-							for (Element element : subElements) {
-								Element clone = element.clone();
+							for (Object element : subElements) {
+								Element clone = ((Element) element).clone();
 
 								session.getOrgan().addElement(clone);
 
