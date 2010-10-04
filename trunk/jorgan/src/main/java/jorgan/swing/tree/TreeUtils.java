@@ -31,16 +31,23 @@ import javax.swing.tree.TreePath;
 public class TreeUtils {
 
 	/**
-	 * Expand all nodes.
+	 * Expand a node.
 	 * 
 	 * @param tree
+	 * 
+	 * @see #getModel(JTree)
 	 */
-	public static <T> void expand(JTree tree, T t) {
-		for (TreePath path : getModel(tree).getPaths(t)) {
+	public static <T> void expand(JTree tree, T node) {
+		for (TreePath path : getModel(tree).getPaths(node)) {
 			tree.expandPath(path);
 		}
 	}
 
+	/**
+	 * Get the selected nodes.
+	 * 
+	 * @see #getModel(JTree)
+	 */
 	@SuppressWarnings("unchecked")
 	public static <T> List<T> getSelection(JTree tree) {
 		List<T> selection = new ArrayList<T>();
@@ -55,48 +62,101 @@ public class TreeUtils {
 		return selection;
 	}
 
-	public static <T> void addSelection(JTree tree, T t) {
-		for (TreePath path : getModel(tree).getPaths(t)) {
+	/**
+	 * Add a node to the selection.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> void addSelection(JTree tree, T node) {
+		for (TreePath path : getModel(tree).getPaths(node)) {
 			tree.addSelectionPath(path);
 		}
 	}
 
+	/**
+	 * Get the {@link BaseTreeModel} of the given tree.
+	 */
 	@SuppressWarnings("unchecked")
-	private static <T> BaseTreeModel<T> getModel(JTree tree) {
+	public static <T> BaseTreeModel<T> getModel(JTree tree) {
 		return (BaseTreeModel<T>) tree.getModel();
 	}
 
-	public static <T> void setSelection(JTree tree, List<T> selection) {
+	/**
+	 * Set the selected nodes.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> void setSelection(JTree tree, List<T> nodes) {
 		BaseTreeModel<T> model = getModel(tree);
 
 		List<TreePath> paths = new ArrayList<TreePath>();
-		for (T t : selection) {
-			paths.addAll(model.getPaths(t));
+		for (T node : nodes) {
+			paths.addAll(model.getPaths(node));
 		}
 		tree.setSelectionPaths(paths.toArray(new TreePath[paths.size()]));
 	}
 
-	public static <T> void scrollPathToVisible(JTree tree, T t) {
-		for (TreePath path : getModel(tree).getPaths(t)) {
+	/**
+	 * Scroll node to visible.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> void scrollPathToVisible(JTree tree, T node) {
+		for (TreePath path : getModel(tree).getPaths(node)) {
 			tree.scrollPathToVisible(path);
 		}
 	}
 
+	/**
+	 * Collapse all nodes.
+	 */
 	public static void collapseAll(JTree tree) {
 		for (int row = tree.getRowCount() - 1; row >= 0; row--) {
 			tree.collapseRow(row);
 		}
 	}
 
-	public static <T> Selection<T> selection(JTree tree) {
+	/**
+	 * Capture the current selection.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> Capture<T> selection(JTree tree) {
 		return new Selection<T>(tree);
 	}
 
-	public static <T> Expansion<T> expansion(JTree tree) {
+	/**
+	 * Capture the current expansion.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> Capture<T> expansion(JTree tree) {
 		return new Expansion<T>(tree);
 	}
 
-	public static class Selection<T> {
+	/**
+	 * Capture the current expansion and selection.
+	 * 
+	 * @see #getModel(JTree)
+	 */
+	public static <T> Capture<T> expansionAndSelection(final JTree tree) {
+		return new Capture<T>() {
+			private Capture<T> expansion = expansion(tree);
+			private Capture<T> selection = selection(tree);
+
+			@Override
+			public void recall() {
+				expansion.recall();
+				selection.recall();
+			}
+		};
+	}
+
+	public static interface Capture<T> {
+		public void recall();
+	}
+
+	private static class Selection<T> implements Capture<T> {
 
 		private JTree tree;
 
@@ -131,7 +191,7 @@ public class TreeUtils {
 		}
 	}
 
-	public static class Expansion<T> {
+	private static class Expansion<T> implements Capture<T> {
 
 		private JTree tree;
 
