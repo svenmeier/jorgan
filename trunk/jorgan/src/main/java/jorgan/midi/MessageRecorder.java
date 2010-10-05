@@ -52,7 +52,9 @@ public abstract class MessageRecorder {
 			private boolean keepRecording = true;
 
 			public void send(MidiMessage message, long when) {
-				if (MessageUtils.isActiveSensingStatus(message.getStatus())) {
+				int status = message.getStatus() & 0xff;
+				if (status > 0xf0) {
+					// ignore everything greater System exclusive
 					return;
 				}
 
