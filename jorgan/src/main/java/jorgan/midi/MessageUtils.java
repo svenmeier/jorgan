@@ -49,12 +49,6 @@ public class MessageUtils {
 		return false;
 	}
 
-	public static boolean isActiveSensingStatus(int status) {
-		status = status & 0xff;
-
-		return status == 0xfe;
-	}
-
 	public static ShortMessage createMessage(int status, int data1, int data2)
 			throws InvalidMidiDataException {
 
