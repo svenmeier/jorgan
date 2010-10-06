@@ -533,6 +533,10 @@ public class ConsolePanel extends JPanel {
 						}
 					}
 
+					if (newIndex == -1) {
+						// no index (i.e. identical message)
+						return true;
+					}
 					index = newIndex;
 				}
 
