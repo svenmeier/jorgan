@@ -1,8 +1,9 @@
-#Thu May 07 22:00:24 GMT+02:00 2009
-encoding//src/main/java/jorgan/importer/gui/i18n_ru.properties=UTF-8
+#Thu Oct 07 11:54:10 CEST 2010
+eclipse.preferences.version=1
+encoding//src/main/java/jorgan/importer/gui/action/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/importer/gui/i18n.properties=UTF-8
 encoding//src/main/java/jorgan/importer/gui/i18n_cs.properties=UTF-8
 encoding//src/main/java/jorgan/importer/gui/i18n_de.properties=UTF-8
-eclipse.preferences.version=1
-encoding//src/main/java/jorgan/importer/gui/i18n_no.properties=UTF-8
 encoding//src/main/java/jorgan/importer/gui/i18n_it.properties=UTF-8
-encoding//src/main/java/jorgan/importer/gui/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/importer/gui/i18n_no.properties=UTF-8
+encoding//src/main/java/jorgan/importer/gui/i18n_ru.properties=UTF-8

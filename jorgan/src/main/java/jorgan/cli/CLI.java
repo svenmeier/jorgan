@@ -198,7 +198,7 @@ public class CLI implements UI, SessionAware {
 
 		public void execute(String param) {
 			if (param == null) {
-				writeMessage("openParameter");
+				writeMessage("noParameter");
 				return;
 			}
 			openOrgan(new File(param));
@@ -216,7 +216,7 @@ public class CLI implements UI, SessionAware {
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("closeParameter");
+				writeMessage("noParameter");
 				return;
 			}
 			if (session == null) {
@@ -240,7 +240,7 @@ public class CLI implements UI, SessionAware {
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("saveParameter");
+				writeMessage("noParameter");
 				return;
 			}
 			if (session == null) {
@@ -365,7 +365,7 @@ public class CLI implements UI, SessionAware {
 
 		public void execute(String param) {
 			if (param != null) {
-				writeMessage("exitParameter");
+				writeMessage("noParameter");
 				return;
 			}
 

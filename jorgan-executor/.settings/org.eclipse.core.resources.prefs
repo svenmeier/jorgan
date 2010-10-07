@@ -1,5 +1,7 @@
-#Tue Jun 30 17:46:11 CEST 2009
+#Thu Oct 07 11:47:47 CEST 2010
 eclipse.preferences.version=1
+encoding//src/main/java/jorgan/executor/disposition/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/executor/gui/preferences/category/i18n_de.properties=UTF-8
 encoding//src/main/java/jorgan/recorder/disposition/i18n.properties=UTF-8
 encoding//src/main/java/jorgan/recorder/gui/dock/i18n.properties=UTF-8
 encoding//src/main/java/jorgan/recorder/gui/dock/i18n_de.properties=UTF-8
