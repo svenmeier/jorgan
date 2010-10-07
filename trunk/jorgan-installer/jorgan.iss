@@ -48,8 +48,8 @@ Name: "memory"; Description: "Memory"; Types: standard
 Name: "midimerger"; Description: "Midi merger"; Types: standard
 Name: "recorder"; Description: "Recorder"; Types: standard
 Name: "soundfont"; Description: "Soundfont"; Types: standard
-Name: "sams"; Description: "SAMs"; Types:
-Name: "tools"; Description: "Tools"; Types:
+Name: "sams"; Description: "SAMs"; Types: standard
+Name: "tools"; Description: "Tools"; Types: standard
 Name: "skins"; Description: "Skins"; Types: standard
 
 [Files]
