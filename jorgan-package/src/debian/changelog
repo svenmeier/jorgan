@@ -1,4 +1,4 @@
-jorgan (3.11.0-beta9) stable;
+jorgan (3.11.0-beta10) stable;
 
   * New properties 'from' and 'to' for Keyables
   * Arbitrary messages length
@@ -6,7 +6,7 @@ jorgan (3.11.0-beta9) stable;
   * Fluidsynth 1.1.2
   * jorgan-sams now configurable with messages
 
- -- Sven Meier <sven@meiers.net>  Sun, 12 Sep 2010 22:01:20 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 07 OKt 2010 21:01:20 +0200
 
 jorgan (3.10.0-1) stable;
 
