@@ -1,13 +1,20 @@
 package jorgan.swing;
 
+import java.awt.Component;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ComboBoxModel;
 import javax.swing.DefaultComboBoxModel;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
 
 public class ComboBoxUtils {
+
+	private static Border EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
 
 	public static <T> ComboBoxModel createModelWithNull(List<T> items) {
 		Vector<Object> vector = new Vector<Object>();
@@ -31,5 +38,14 @@ public class ComboBoxUtils {
 		copy[0] = null;
 
 		return copy;
+	}
+
+	public static void beautify(JComboBox comboBox) {
+		comboBox.setBorder(EMPTY_BORDER);
+
+		Component component = comboBox.getEditor().getEditorComponent();
+		if (component instanceof JComponent) {
+			((JComponent) component).setBorder(EMPTY_BORDER);
+		}
 	}
 }

@@ -12,6 +12,8 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.TableCellEditor;
 
+import jorgan.swing.ComboBoxUtils;
+
 public abstract class PropertyCellEditor extends AbstractCellEditor implements
 		TableCellEditor {
 
@@ -30,8 +32,8 @@ public abstract class PropertyCellEditor extends AbstractCellEditor implements
 			}
 		});
 
-		comboBox.setEditable(false);
-		comboBox.setBorder(null);
+		comboBox.setEditable(true);
+		ComboBoxUtils.beautify(comboBox);
 		comboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent ev) {
 				stopCellEditing();
