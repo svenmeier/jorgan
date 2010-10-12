@@ -113,7 +113,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		} catch (IllegalStateException e) {
 			addProblem(Severity.ERROR, "audioDriver", "create");
 			return;
-		} catch (IOException e) {
+		} catch (Throwable ioExceptionOrUnsatisfiedLink) {
 			addProblem(Severity.ERROR, "audioDriver", "create");
 			return;
 		}
