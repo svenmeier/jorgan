@@ -1,3 +1,0 @@
-#!/bin/sh
-
-java -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"
