@@ -47,44 +47,45 @@ public class CreativeImport implements Import {
 
 	private OptionsPanel panel;
 
-	private List<Device> devices = new ArrayList<Device>();
-
 	private String name;
 
 	private String description;
 
 	public CreativeImport() {
 		config.read(this);
-
-		for (String deviceName : DevicePool.instance().getMidiDeviceNames(
-				Direction.OUT)) {
-			SoundFontManager manager;
-			try {
-				manager = new SoundFontManager(deviceName);
-			} catch (IOException noCreativeDevice) {
-				continue;
-			}
-
-			Device device = new Device(deviceName);
-			devices.add(device);
-
-			for (int b = 0; b < 127; b++) {
-				try {
-					if (manager.isLoaded(b)) {
-						device.banks.add(new Bank(b, manager.getDescriptor(b)));
-					}
-				} catch (IllegalArgumentException ex) {
-					// bank is illegal??
-				}
-			}
-
-			manager.destroy();
-		}
 	}
 
 	public JPanel getOptionsPanel() {
 		if (panel == null) {
-			panel = new OptionsPanel(devices.toArray(new Device[0]));
+			List<Device> devices = new ArrayList<Device>();
+
+			for (String deviceName : DevicePool.instance().getMidiDeviceNames(
+					Direction.OUT)) {
+				SoundFontManager manager;
+				try {
+					manager = new SoundFontManager(deviceName);
+				} catch (IOException noCreativeDevice) {
+					continue;
+				}
+
+				Device device = new Device(deviceName);
+				devices.add(device);
+
+				for (int b = 0; b < 127; b++) {
+					try {
+						if (manager.isLoaded(b)) {
+							device.banks.add(new Bank(b, manager
+									.getDescriptor(b)));
+						}
+					} catch (IllegalArgumentException ex) {
+						// bank is illegal??
+					}
+				}
+
+				manager.destroy();
+			}
+
+			panel = new OptionsPanel(devices);
 		}
 		return panel;
 	}
