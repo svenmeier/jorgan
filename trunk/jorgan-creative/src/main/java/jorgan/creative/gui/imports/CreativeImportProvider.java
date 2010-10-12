@@ -21,19 +21,20 @@ package jorgan.creative.gui.imports;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.creative.SoundFontManager;
 import jorgan.importer.gui.Import;
 import jorgan.importer.gui.spi.ImportProvider;
 
 /**
- * A provider that of {@link Import}s from Creative soundcards.
+ * A provider of {@link Import}s from Creative soundcards.
  * 
  * @see jorgan.creative.SoundFontManager
  */
 public class CreativeImportProvider implements ImportProvider {
 
 	public CreativeImportProvider() {
-		// trigger loading of native library to fail early
-		new CreativeImport();
+		// trigger native failure
+		SoundFontManager.class.getClass();
 	}
 
 	public List<Import> getImports() {
