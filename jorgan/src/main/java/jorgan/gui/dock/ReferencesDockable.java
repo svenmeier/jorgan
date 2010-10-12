@@ -233,12 +233,7 @@ public class ReferencesDockable extends OrganDockable {
 					session.lookup(UndoManager.class).compound(new Compound() {
 						@Override
 						public void run() {
-							int index = 0;
-							if (support.isDrop()) {
-								JList.DropLocation location = (JList.DropLocation) support
-										.getDropLocation();
-								index = location.getIndex();
-							}
+							int index = ListUtils.importIndex(list, support);
 
 							ReferencesModel model = getReferencesModel();
 							for (Item item : items) {

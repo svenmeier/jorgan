@@ -29,6 +29,7 @@ import javax.swing.CellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.TransferHandler.TransferSupport;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -161,5 +162,26 @@ public class TableUtils {
 			editor.cancelCellEditing();
 		}
 		table.setCellEditor(null);
+	}
+
+	public static int importIndex(JTable table, TransferSupport transferSupport) {
+		int index = -1;
+
+		int[] rows = table.getSelectedRows();
+		for (int row : rows) {
+			index = Math.max(index, row + 1);
+		}
+
+		if (transferSupport.isDrop()) {
+			JTable.DropLocation location = (JTable.DropLocation) transferSupport
+					.getDropLocation();
+			index = location.getRow();
+		}
+
+		if (index == -1) {
+			index = table.getRowCount();
+		}
+
+		return index;
 	}
 }
