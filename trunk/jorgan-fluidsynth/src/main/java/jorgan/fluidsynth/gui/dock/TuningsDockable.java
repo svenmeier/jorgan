@@ -162,12 +162,8 @@ public class TuningsDockable extends OrganDockable {
 					session.lookup(UndoManager.class).compound(new Compound() {
 						@Override
 						public void run() {
-							int index = sound.getTuningCount();
-							if (support.isDrop()) {
-								JTable.DropLocation location = (JTable.DropLocation) support
-										.getDropLocation();
-								index = location.getRow();
-							}
+							int index = TableUtils.importIndex(table, support);
+
 							for (Tuning tuning : subTunings) {
 								sound.addTuning(tuning.clone(), index);
 								index++;

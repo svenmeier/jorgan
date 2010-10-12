@@ -194,12 +194,7 @@ public class MessagesDockable extends OrganDockable {
 					session.lookup(UndoManager.class).compound(new Compound() {
 						@Override
 						public void run() {
-							int index = element.getMessageCount();
-							if (support.isDrop()) {
-								JTable.DropLocation location = (JTable.DropLocation) support
-										.getDropLocation();
-								index = location.getRow();
-							}
+							int index = TableUtils.importIndex(table, support);
 
 							for (Message message : subMessages) {
 								element.addMessage(message.clone(), index);

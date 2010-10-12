@@ -29,6 +29,7 @@ import javax.swing.Action;
 import javax.swing.JList;
 import javax.swing.JPopupMenu;
 import javax.swing.KeyStroke;
+import javax.swing.TransferHandler.TransferSupport;
 
 /**
  * Utility method for lists.
@@ -62,7 +63,7 @@ public class ListUtils {
 		if (listener instanceof Action) {
 			list.getInputMap().put(
 					KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), listener);
-			list.getActionMap().put(listener, (Action)listener);
+			list.getActionMap().put(listener, (Action) listener);
 		}
 	}
 
@@ -97,7 +98,7 @@ public class ListUtils {
 			}
 		});
 	}
-	
+
 	public static void addHoverSelection(final JList list) {
 		list.addMouseMotionListener(new MouseMotionAdapter() {
 			@Override
@@ -108,5 +109,26 @@ public class ListUtils {
 				}
 			}
 		});
+	}
+
+	public static int importIndex(JList list, TransferSupport transferSupport) {
+		int index = -1;
+
+		int[] rows = list.getSelectedIndices();
+		for (int row : rows) {
+			index = Math.max(index, row + 1);
+		}
+
+		if (transferSupport.isDrop()) {
+			JList.DropLocation location = (JList.DropLocation) transferSupport
+					.getDropLocation();
+			index = location.getIndex();
+		}
+
+		if (index == -1) {
+			index = list.getModel().getSize();
+		}
+
+		return index;
 	}
 }
