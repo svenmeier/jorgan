@@ -10,14 +10,16 @@ public class AudioDriverEditor extends PropertyEditorSupport {
 	private static String[] tags = new String[1];
 
 	static {
-		List<String> drivers = Fluidsynth.getAudioDrivers();
-		
-		tags = new String[drivers.size() + 1];
-		int i = 1; 
-		for (String driver : drivers) {
-			tags[i] = driver;
-			i++;
-		}			
+		try {
+			List<String> drivers = Fluidsynth.getAudioDrivers();
+			tags = new String[drivers.size() + 1];
+			int i = 1;
+			for (String driver : drivers) {
+				tags[i] = driver;
+				i++;
+			}
+		} catch (NoClassDefFoundError error) {
+		}
 	}
 
 	@Override
