@@ -32,15 +32,16 @@ import jorgan.importer.gui.spi.ImportProvider;
  */
 public class CreativeImportProvider implements ImportProvider {
 
-	public CreativeImportProvider() {
-		// trigger native failure
-		SoundFontManager.class.getClass();
-	}
-
 	public List<Import> getImports() {
 		List<Import> imports = new ArrayList<Import>();
 
-		imports.add(new CreativeImport());
+		try {
+			// trigger creative failure early
+			SoundFontManager.test();
+
+			imports.add(new CreativeImport());
+		} catch (Error creativeError) {
+		}
 
 		return imports;
 	}

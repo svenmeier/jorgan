@@ -81,8 +81,12 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 				manager = new SoundFontManager(output);
 
 				clone = (CreativeSound) sound.clone();
-			} catch (Throwable ioExceptionOrUnsatisfiedLink) {
+			} catch (IOException ex) {
 				addProblem(Severity.ERROR, "output", "outputInvalid",
+						sound.getOutput());
+				return;
+			} catch (Error creativeFailure) {
+				addProblem(Severity.ERROR, "output", "creativeFailure",
 						sound.getOutput());
 				return;
 			}
