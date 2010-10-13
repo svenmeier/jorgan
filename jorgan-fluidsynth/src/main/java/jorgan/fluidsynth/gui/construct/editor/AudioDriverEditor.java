@@ -18,7 +18,7 @@ public class AudioDriverEditor extends PropertyEditorSupport {
 				tags[i] = driver;
 				i++;
 			}
-		} catch (NoClassDefFoundError error) {
+		} catch (Error fluidsynthFailure) {
 		}
 	}
 

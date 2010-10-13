@@ -40,7 +40,7 @@ public class AudioDeviceEditor extends PropertyEditorSupport implements
 					tags[i] = device;
 					i++;
 				}
-			} catch (NoClassDefFoundError error) {
+			} catch (Error fluidsynthFailure) {
 			}
 		}
 
