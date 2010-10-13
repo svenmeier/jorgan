@@ -71,8 +71,7 @@ public class Fluidsynth {
 
 	public Fluidsynth(String name, int cores, int channels, int polyphony,
 			float sampleRate, String audioDriver, String audioDevice,
-			int buffers, int bufferSize) throws IllegalStateException,
-			IOException {
+			int buffers, int bufferSize) throws IOException {
 
 		this.name = name.substring(0, Math.min(name.length(), NAME_MAX_LENGTH));
 		this.cores = cores;
