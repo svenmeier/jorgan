@@ -67,11 +67,11 @@
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
-      <arg value="-I./lib/win32/include" />
+      <arg value="-I./lib/win/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-Wl,--kill-at" />
-      <arg value="-Wl,-L./lib/win32" />
+      <arg value="-Wl,-L./lib/win/${os.arch}" />
       <arg value="-Wl,-llibfluidsynth" />
       <arg value="-shared" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
