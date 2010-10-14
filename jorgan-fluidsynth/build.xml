@@ -81,7 +81,7 @@
     </exec>
   	
   	<copy todir="./target/native">
-  		<fileset dir="./lib/win32" includes="*.dll"/>
+  		<fileset dir="./lib/win/${os.arch}" includes="*.dll"/>
   	</copy>
   	
   	<property name="package" value="win-${os.arch}"/>
