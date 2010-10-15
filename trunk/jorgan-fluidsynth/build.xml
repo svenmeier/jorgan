@@ -2,6 +2,7 @@
 
   <property file="./build.properties" />
   <property file="${jorgan.core.path}/build.properties" />
+  <property file="${jorgan.jni.path}/build.properties" />
 	
   <target name="clean">
     <delete dir="./target"/>
