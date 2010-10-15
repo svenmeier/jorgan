@@ -178,11 +178,7 @@ public class ElementsDockable extends OrganDockable {
 		ButtonGroup sortGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				Capture<Element> capture = TreeUtils.expansion(tree);
-
 				initTree();
-
-				capture.recall();
 			}
 		};
 		config.get("sortByType").read(sortByTypeButton);
@@ -243,6 +239,8 @@ public class ElementsDockable extends OrganDockable {
 		}
 
 		this.session = session;
+
+		TreeUtils.collapseAll(tree);
 
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
@@ -361,6 +359,8 @@ public class ElementsDockable extends OrganDockable {
 		if (this.session == null) {
 			model.clearElements();
 		} else {
+			Capture<Element> capture = TreeUtils.expansion(tree);
+
 			Comparator<Element> comparator;
 			if (sortByNameButton.isSelected()) {
 				comparator = ComparatorChain.of(new ElementNameComparator(),
@@ -374,6 +374,8 @@ public class ElementsDockable extends OrganDockable {
 					.getElements(), comparator);
 
 			selectionHandler.selectionChanged();
+
+			capture.restore();
 		}
 	}
 
