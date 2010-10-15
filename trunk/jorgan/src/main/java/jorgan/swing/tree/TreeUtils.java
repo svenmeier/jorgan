@@ -145,15 +145,15 @@ public class TreeUtils {
 			private Capture<T> selection = selection(tree);
 
 			@Override
-			public void recall() {
-				expansion.recall();
-				selection.recall();
+			public void restore() {
+				expansion.restore();
+				selection.restore();
 			}
 		};
 	}
 
 	public static interface Capture<T> {
-		public void recall();
+		public void restore();
 	}
 
 	private static class Selection<T> implements Capture<T> {
@@ -174,7 +174,7 @@ public class TreeUtils {
 			}
 		}
 
-		public void recall() {
+		public void restore() {
 			BaseTreeModel<T> model = getModel(tree);
 
 			boolean scrolled = false;
@@ -211,7 +211,7 @@ public class TreeUtils {
 			}
 		}
 
-		public void recall() {
+		public void restore() {
 			BaseTreeModel<T> model = getModel(tree);
 
 			for (T node : expanded) {
