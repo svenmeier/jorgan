@@ -84,7 +84,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 		}
 
 		int duration = continuous.getDuration();
-		if (duration > 0) {
+		if (duration > Continuous.DURATION_NONE) {
 			alarmTime = System.currentTimeMillis() + duration;
 
 			getOrganPlay().getClock().alarm(continuous, alarmTime);

@@ -66,7 +66,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			}
 
 			public void pressed() {
-				if (getElement().getDuration() == 0) {
+				if (getElement().getDuration() == Switch.DURATION_NONE) {
 					getElement().setActive(true);
 				} else {
 					getElement().toggle();
@@ -74,7 +74,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			}
 
 			public void released() {
-				if (getElement().getDuration() == 0) {
+				if (getElement().getDuration() == Switch.DURATION_NONE) {
 					getElement().setActive(false);
 				} else {
 					// lock active
@@ -124,7 +124,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
-			if (element.getDuration() == 0) {
+			if (element.getDuration() == Switch.DURATION_NONE) {
 				// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys
 				// cannot be used for non-locking elements :(
 				element.setActive(true);
@@ -139,10 +139,10 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
-			if (element.getDuration() == 0) {
+			if (element.getDuration() == Switch.DURATION_NONE) {
 				element.setActive(false);
 			} else {
-				element.setActive(!element.isActive());
+				element.toggle();
 			}
 		}
 	}

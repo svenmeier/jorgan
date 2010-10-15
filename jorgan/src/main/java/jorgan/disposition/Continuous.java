@@ -28,7 +28,11 @@ import jorgan.disposition.Output.OutputMessage;
  */
 public class Continuous extends Displayable {
 
-	private int duration = -1;
+	public static final int DURATION_INFINITE = -1;
+
+	public static final int DURATION_NONE = 0;
+
+	private int duration = DURATION_INFINITE;
 
 	private float threshold = 0.05f;
 

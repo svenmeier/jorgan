@@ -84,7 +84,7 @@ public class Switch extends Engageable {
 	public void activate(boolean active) {
 		if (active) {
 			setActive(true);
-			if (duration == 0) {
+			if (duration == DURATION_NONE) {
 				setActive(false);
 			}
 		} else {

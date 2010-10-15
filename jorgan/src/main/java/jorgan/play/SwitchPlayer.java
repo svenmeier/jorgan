@@ -98,7 +98,7 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		}
 
 		int duration = element.getDuration();
-		if (duration > 0) {
+		if (duration > Switch.DURATION_NONE) {
 			alarmTime = System.currentTimeMillis() + duration;
 
 			getOrganPlay().getClock().alarm(element, alarmTime);
