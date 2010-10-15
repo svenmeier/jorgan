@@ -26,7 +26,7 @@ import jorgan.recorder.Performance;
 public abstract class RecorderSwitch extends Switch {
 
 	public RecorderSwitch() {
-		setDuration(0);
+		setDuration(DURATION_NONE);
 	}
 
 	public abstract void perform(Performance performance);

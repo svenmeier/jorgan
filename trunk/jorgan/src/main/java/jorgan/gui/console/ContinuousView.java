@@ -124,7 +124,7 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		}
 
 		public void released() {
-			if (getElement().getDuration() == 0) {
+			if (getElement().getDuration() == Continuous.DURATION_NONE) {
 				getElement().setValue(0);
 			}
 		}
