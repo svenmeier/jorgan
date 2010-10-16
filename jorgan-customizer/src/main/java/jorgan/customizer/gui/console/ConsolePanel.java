@@ -19,7 +19,6 @@
 package jorgan.customizer.gui.console;
 
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
@@ -43,7 +42,7 @@ import javax.swing.JSpinner;
 import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.SwingUtilities;
-import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.ToolTipManager;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Continuous;
@@ -74,6 +73,7 @@ import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.ActionCellEditor;
 import jorgan.swing.table.BaseTableModel;
+import jorgan.swing.table.SimpleCellRenderer;
 import jorgan.swing.table.TableUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -169,6 +169,7 @@ public class ConsolePanel extends JPanel {
 		switchesTable = new JTable();
 		config.get("switchesTable").read(switchesModel);
 		switchesTable.setModel(switchesModel);
+		ToolTipManager.sharedInstance().registerComponent(switchesTable);
 		TableUtils.pleasantLookAndFeel(switchesTable);
 		switchesTable.getColumnModel().getColumn(1).setCellRenderer(
 				new HighlightCellRenderer());
@@ -197,6 +198,7 @@ public class ConsolePanel extends JPanel {
 		continuousTable = new JTable();
 		config.get("continuousTable").read(continuousModel);
 		continuousTable.setModel(continuousModel);
+		ToolTipManager.sharedInstance().registerComponent(continuousTable);
 		continuousTable.getColumnModel().getColumn(1).setCellRenderer(
 				new HighlightCellRenderer());
 		continuousTable.getColumnModel().getColumn(1).setCellEditor(
@@ -770,37 +772,27 @@ public class ConsolePanel extends JPanel {
 		}
 	}
 
-	private class HighlightCellRenderer extends DefaultTableCellRenderer {
-
-		private Color defaultBackground;
+	private class HighlightCellRenderer extends SimpleCellRenderer<Message> {
 
 		public HighlightCellRenderer() {
-			this.defaultBackground = getBackground();
 			setHorizontalAlignment(CENTER);
 		}
 
 		@Override
-		public Component getTableCellRendererComponent(JTable table,
-				Object value, boolean isSelected, boolean hasFocus, int row,
-				int column) {
-
-			setBackground(defaultBackground);
-
-			super.getTableCellRendererComponent(table, null, isSelected,
-					hasFocus, row, column);
-
+		protected void init(Message value) {
 			if (value != null && received.contains(value)) {
 				setBackground(Color.yellow);
-			} else {
 			}
 
 			if (value != null) {
 				setIcon(inputIcon);
+
+				setToolTipText(value.getTuple().toString());
 			} else {
 				setIcon(null);
-			}
 
-			return this;
+				setToolTipText(null);
+			}
 		}
 	}
 }
