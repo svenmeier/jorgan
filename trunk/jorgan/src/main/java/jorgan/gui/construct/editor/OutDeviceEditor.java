@@ -32,12 +32,14 @@ public class OutDeviceEditor extends PropertyEditorSupport {
 	private String[] tags;
 
 	public OutDeviceEditor() {
-		tags = ComboBoxUtils.withNull(DevicePool.instance().getMidiDeviceNames(
-				Direction.OUT));
 	}
 
 	@Override
 	public String[] getTags() {
+		if (tags == null) {
+			tags = ComboBoxUtils.withNull(DevicePool.instance()
+					.getMidiDeviceNames(Direction.OUT));
+		}
 		return tags;
 	}
 
