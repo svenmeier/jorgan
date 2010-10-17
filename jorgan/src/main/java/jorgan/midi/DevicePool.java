@@ -26,6 +26,7 @@ import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
+import javax.sound.midi.MidiDevice.Info;
 
 /**
  * Helper for lookup of devices.
@@ -50,10 +51,10 @@ public class DevicePool {
 	public synchronized MidiDevice getMidiDevice(String name,
 			Direction direction) throws MidiUnavailableException {
 
-		refreshDevices();
+		refreshDevice(name);
 
 		PooledDevice pooledDevice = getDevice(name, direction);
-		if (pooledDevice == null || !pooledDevice.supports(direction)) {
+		if (pooledDevice == null) {
 			throw new MidiUnavailableException(name);
 		}
 
@@ -62,7 +63,7 @@ public class DevicePool {
 
 	private PooledDevice getDevice(String name, Direction direction) {
 		for (PooledDevice device : devices) {
-			if (device.name().equals(name) && device.supports(direction)) {
+			if (device.name.equals(name) && device.direction == direction) {
 				return device;
 			}
 		}
@@ -70,32 +71,89 @@ public class DevicePool {
 	}
 
 	/**
-	 * Refresh the pool of devices.
+	 * Refresh pooled devices for the given name.
 	 */
-	private void refreshDevices() {
+	private void refreshDevice(String name) {
 
-		List<PooledDevice> oldDevices = devices;
-		devices = new ArrayList<PooledDevice>();
+		List<PooledDevice> newDevices = new ArrayList<PooledDevice>();
 
-		devices: for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
-			try {
-				PooledDevice device = new PooledDevice(info);
-				if (!devices.contains(device)) {
-					for (PooledDevice oldDevice : oldDevices) {
-						if (oldDevice.equals(device)) {
-							devices.add(oldDevice);
-							continue devices;
-						}
-					}
-					devices.add(device);
+		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
+			if (name.equals(info.getName())) {
+				PooledDevice oldIn = getDevice(name, Direction.IN);
+				if (oldIn != null) {
+					newDevices.add(oldIn);
 				}
-			} catch (MidiUnavailableException skip) {
+
+				PooledDevice oldOut = getDevice(name, Direction.OUT);
+				if (oldOut != null) {
+					newDevices.add(oldOut);
+				}
+
+				if (oldIn == null && oldOut == null) {
+					// seeing info for the first time
+
+					try {
+						MidiDevice device = MidiSystem.getMidiDevice(info);
+						if (device.getMaxReceivers() != 0) {
+							newDevices.add(new PooledDevice(name,
+									Direction.OUT, device));
+						}
+						if (device.getMaxTransmitters() != 0) {
+							newDevices.add(new PooledDevice(name, Direction.IN,
+									device));
+						}
+					} catch (MidiUnavailableException skip) {
+					}
+				}
 			}
 		}
+
+		this.devices.addAll(newDevices);
 	}
 
 	/**
-	 * Get the name of all devices that support midi-out or midi-in.
+	 * Refresh all pooled devices.
+	 */
+	private void refreshDevices() {
+
+		List<PooledDevice> newDevices = new ArrayList<PooledDevice>();
+
+		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
+			String name = info.getName();
+
+			PooledDevice oldIn = getDevice(name, Direction.IN);
+			if (oldIn != null) {
+				newDevices.add(oldIn);
+			}
+
+			PooledDevice oldOut = getDevice(name, Direction.OUT);
+			if (oldOut != null) {
+				newDevices.add(oldOut);
+			}
+
+			if (oldIn == null && oldOut == null) {
+				// seeing info for the first time
+
+				try {
+					MidiDevice device = MidiSystem.getMidiDevice(info);
+					if (device.getMaxReceivers() != 0) {
+						newDevices.add(new PooledDevice(name, Direction.OUT,
+								device));
+					}
+					if (device.getMaxTransmitters() != 0) {
+						newDevices.add(new PooledDevice(name, Direction.IN,
+								device));
+					}
+				} catch (MidiUnavailableException skip) {
+				}
+			}
+		}
+
+		this.devices = newDevices;
+	}
+
+	/**
+	 * Get the name of all devices that support the given {@link Direction}.
 	 * 
 	 * @param direction
 	 *            direction of midi, {@link IN} or {@link OUT}
@@ -106,7 +164,7 @@ public class DevicePool {
 
 		List<String> names = new ArrayList<String>();
 		for (PooledDevice device : devices) {
-			if (device.supports(direction)) {
+			if (device.direction == direction) {
 				names.add(device.name);
 			}
 		}
@@ -204,44 +262,23 @@ public class DevicePool {
 	}
 
 	/**
-	 * A pooled device.
+	 * A pooled device for the name of a group of {@link Info}s and a
+	 * {@link Direction}.
 	 */
 	private static class PooledDevice extends DeviceWrapper {
 
+		public final String name;
+
+		public final Direction direction;
+
 		private int openCount;
 
-		private boolean out;
+		public PooledDevice(String name, Direction direction, MidiDevice device)
+				throws MidiUnavailableException {
+			super(device);
 
-		private boolean in;
-
-		private String name;
-
-		public PooledDevice(Info info) throws MidiUnavailableException {
-			super(MidiSystem.getMidiDevice(info));
-
-			this.name = info.getName();
-
-			this.out = getMaxReceivers() != 0;
-			this.in = getMaxTransmitters() != 0;
-		}
-
-		public boolean equals(Object object) {
-			if (!(object instanceof PooledDevice)) {
-				return false;
-			}
-
-			PooledDevice device = (PooledDevice) object;
-			return this.name.equals(device.name) && this.out == device.out
-					&& this.in == device.in;
-		}
-
-		public String name() {
-			return name;
-		}
-
-		public boolean supports(Direction direction) {
-			return this.out && direction == Direction.OUT || this.in
-					&& direction == Direction.IN;
+			this.name = name;
+			this.direction = direction;
 		}
 
 		@Override
