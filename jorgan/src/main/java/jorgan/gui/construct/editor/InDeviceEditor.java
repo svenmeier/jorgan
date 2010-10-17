@@ -32,12 +32,15 @@ public class InDeviceEditor extends PropertyEditorSupport {
 	private String[] tags;
 
 	public InDeviceEditor() {
-		tags = ComboBoxUtils.withNull(DevicePool.instance().getMidiDeviceNames(
-				Direction.IN));
 	}
 
 	@Override
 	public String[] getTags() {
+
+		if (tags == null) {
+			tags = ComboBoxUtils.withNull(DevicePool.instance()
+					.getMidiDeviceNames(Direction.IN));
+		}
 
 		return tags;
 	}
