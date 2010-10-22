@@ -22,8 +22,10 @@ import javax.swing.JComponent;
 
 import jorgan.customizer.gui.Customizer;
 import jorgan.disposition.Console;
+import jorgan.disposition.Elements;
 import jorgan.session.OrganSession;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Customizer of a {@link Console}.
@@ -38,7 +40,8 @@ public class ConsoleCustomizer implements Customizer {
 	private ConsolePanel panel;
 
 	public ConsoleCustomizer(OrganSession session, Console console) {
-		config.read(this);
+		description = config.get("description").read(new MessageBuilder())
+				.build(Elements.getDisplayName(console));
 
 		panel = new ConsolePanel(console);
 	}
