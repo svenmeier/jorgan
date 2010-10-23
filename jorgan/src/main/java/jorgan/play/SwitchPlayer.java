@@ -54,13 +54,14 @@ public class SwitchPlayer<E extends Switch> extends Player<E> {
 		Switch element = getElement();
 
 		if (message instanceof Activate) {
-			element.setActive(true);
+			element.activate();
 		} else if (message instanceof Deactivate) {
-			element.setActive(false);
+			element.deactivate();
 		} else if (message instanceof Toggle) {
-			element.toggle();
+			element.setActive(!element.isActive());
 		} else if (message instanceof Initiate) {
-			element.initiate();
+			element.setActive(true);
+			element.setActive(false);
 		} else {
 			super.onInput(message, context);
 		}

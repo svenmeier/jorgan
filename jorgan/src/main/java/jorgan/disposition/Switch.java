@@ -32,6 +32,8 @@ import jorgan.util.Null;
  */
 public class Switch extends Engageable {
 
+	public static final int DURATION_IRREVERSIBLE = -2;
+
 	public static final int DURATION_INFINITE = -1;
 
 	public static final int DURATION_NONE = 0;
@@ -72,22 +74,20 @@ public class Switch extends Engageable {
 		}
 	}
 
-	public void toggle() {
-		setActive(!isActive());
-	}
+	public void activate() {
+		if (this.active) {
+			setActive(false);
+		}
 
-	public void initiate() {
 		setActive(true);
-		setActive(false);
+
+		if (duration == DURATION_NONE) {
+			setActive(false);
+		}
 	}
 
-	public void activate(boolean active) {
-		if (active) {
-			setActive(true);
-			if (duration == DURATION_NONE) {
-				setActive(false);
-			}
-		} else {
+	public void deactivate() {
+		if (duration != DURATION_IRREVERSIBLE) {
 			setActive(false);
 		}
 	}
@@ -121,8 +121,8 @@ public class Switch extends Engageable {
 	}
 
 	public void setDuration(int duration) {
-		if (duration < -1) {
-			duration = -1;
+		if (duration < DURATION_IRREVERSIBLE) {
+			duration = DURATION_IRREVERSIBLE;
 		}
 
 		if (this.duration != duration) {
