@@ -1,3 +1,11 @@
+jorgan (3.11..1-beta1) beta;
+
+  * New duration IRREVERSIBLE
+  * keep element groups expanded on change
+  * better performance for Midi devices on OpenJDK 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 24 Oct 2010 21:53:00 +0200
+
 jorgan (3.11.0) stable;
 
   * New properties 'from' and 'to' for Keyables
