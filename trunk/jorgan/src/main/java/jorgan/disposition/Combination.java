@@ -18,7 +18,7 @@
  */
 package jorgan.disposition;
 
-public class Combination extends Switch implements Observer {
+public class Combination extends Switch {
 
 	private transient boolean recalling;
 
@@ -87,33 +87,12 @@ public class Combination extends Switch implements Observer {
 
 	private void capture(Captor captor) {
 
-		captor.activate(false);
+		captor.setActive(false);
 
 		for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
 			reference.capture();
 
 			fireChange(new FastReferenceChange(reference));
-		}
-	}
-
-	@Override
-	public void changed(Element element) {
-		if (recalling) {
-			return;
-		}
-
-		if (!references(element)) {
-			throw new IllegalArgumentException("does not reference '" + element
-					+ "'");
-		}
-
-		if (isActive()) {
-			for (AbstractReference<?> reference : getReferences(AbstractReference.class)) {
-				if (!reference.matches()) {
-					activate(false);
-					break;
-				}
-			}
 		}
 	}
 
@@ -168,7 +147,11 @@ public class Combination extends Switch implements Observer {
 
 		@Override
 		public void recall() {
-			getElement().activate(active);
+			if (active) {
+				getElement().setActive(true);
+			} else {
+				getElement().setActive(false);
+			}
 		}
 
 		@Override

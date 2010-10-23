@@ -43,8 +43,8 @@ public class Continuous extends Displayable {
 	}
 
 	public void setDuration(int duration) {
-		if (duration < -1) {
-			duration = -1;
+		if (duration < DURATION_INFINITE) {
+			duration = DURATION_INFINITE;
 		}
 
 		if (this.duration != duration) {

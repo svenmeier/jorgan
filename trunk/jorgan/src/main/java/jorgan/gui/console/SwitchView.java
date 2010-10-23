@@ -67,17 +67,23 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 			public void pressed() {
 				if (getElement().getDuration() == Switch.DURATION_NONE) {
+					// keep activate until #released()
 					getElement().setActive(true);
+				} else if (getElement().getDuration() == Switch.DURATION_IRREVERSIBLE) {
+					// special handling - re-activate
+					getElement().activate();
 				} else {
-					getElement().toggle();
+					if (getElement().isActive()) {
+						getElement().deactivate();
+					} else {
+						getElement().activate();
+					}
 				}
 			}
 
 			public void released() {
 				if (getElement().getDuration() == Switch.DURATION_NONE) {
 					getElement().setActive(false);
-				} else {
-					// lock active
 				}
 			};
 		});
@@ -92,7 +98,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			}
 
 			public void pressed() {
-				getElement().activate(true);
+				getElement().activate();
 			}
 
 			public void released() {
@@ -109,7 +115,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			}
 
 			public void pressed() {
-				getElement().activate(false);
+				getElement().deactivate();
 			}
 
 			public void released() {
@@ -125,8 +131,8 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
 			if (element.getDuration() == Switch.DURATION_NONE) {
-				// umlauts do not trigger KeyEvent.KEY_PRESSED, so these keys
-				// cannot be used for non-locking elements :(
+				// note: umlauts do not trigger KeyEvent.KEY_PRESSED, so these
+				// keys cannot be used for non-locking elements :(
 				element.setActive(true);
 			}
 		}
@@ -141,8 +147,15 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 		if (shortcut != null && shortcut.match(ev)) {
 			if (element.getDuration() == Switch.DURATION_NONE) {
 				element.setActive(false);
+			} else if (getElement().getDuration() == Switch.DURATION_IRREVERSIBLE) {
+				// special handling - re-activate
+				getElement().activate();
 			} else {
-				element.toggle();
+				if (getElement().isActive()) {
+					getElement().deactivate();
+				} else {
+					getElement().activate();
+				}
 			}
 		}
 	}

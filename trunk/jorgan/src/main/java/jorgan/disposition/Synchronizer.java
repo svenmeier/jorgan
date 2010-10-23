@@ -90,13 +90,13 @@ public class Synchronizer extends Switch implements Observer {
 		ACTIVATE {
 			@Override
 			public void perform(Switch element) {
-				element.activate(true);
+				element.setActive(true);
 			}
 		},
 		DEACTIVATE {
 			@Override
 			public void perform(Switch element) {
-				element.activate(false);
+				element.setActive(false);
 			}
 		};
 
