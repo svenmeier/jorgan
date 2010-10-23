@@ -69,7 +69,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 				if (getElement().getDuration() == Switch.DURATION_NONE) {
 					// keep activate until #released()
 					getElement().setActive(true);
-				} else if (getElement().getDuration() == Switch.DURATION_IRREVERSIBLE) {
+				} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
 					// special handling - re-activate
 					getElement().activate();
 				} else {
@@ -147,7 +147,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 		if (shortcut != null && shortcut.match(ev)) {
 			if (element.getDuration() == Switch.DURATION_NONE) {
 				element.setActive(false);
-			} else if (getElement().getDuration() == Switch.DURATION_IRREVERSIBLE) {
+			} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
 				// special handling - re-activate
 				getElement().activate();
 			} else {
