@@ -32,29 +32,29 @@ import jorgan.util.Null;
  */
 public class Switch extends Engageable {
 
-	public static final int DURATION_IRREVERSIBLE = -2;
+	public static final int DURATION_INFINITE = -2;
 
-	public static final int DURATION_INFINITE = -1;
+	public static final int DURATION_UNTIL_DEACTIVATED = -1;
 
 	public static final int DURATION_NONE = 0;
 
 	private boolean active = false;
 
-	private int duration = DURATION_INFINITE;
+	private int duration = DURATION_UNTIL_DEACTIVATED;
 
 	private Shortcut shortcut;
 
 	/**
 	 * Sweep from other {@link Switch}es if both are configured to
-	 * {@link #DURATION_INFINITE}.
+	 * {@link #DURATION_UNTIL_DEACTIVATED}.
 	 */
 	@Override
 	public void sweep(Displayable displayable) {
 		if (displayable instanceof Switch) {
 			Switch other = (Switch) displayable;
 
-			if (other.getDuration() == DURATION_INFINITE
-					&& this.getDuration() == DURATION_INFINITE) {
+			if (other.getDuration() == DURATION_UNTIL_DEACTIVATED
+					&& this.getDuration() == DURATION_UNTIL_DEACTIVATED) {
 				setActive(other.isActive());
 			}
 		}
@@ -87,7 +87,7 @@ public class Switch extends Engageable {
 	}
 
 	public void deactivate() {
-		if (duration != DURATION_IRREVERSIBLE) {
+		if (duration != DURATION_INFINITE) {
 			setActive(false);
 		}
 	}
@@ -121,8 +121,8 @@ public class Switch extends Engageable {
 	}
 
 	public void setDuration(int duration) {
-		if (duration < DURATION_IRREVERSIBLE) {
-			duration = DURATION_IRREVERSIBLE;
+		if (duration < DURATION_INFINITE) {
+			duration = DURATION_INFINITE;
 		}
 
 		if (this.duration != duration) {
