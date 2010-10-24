@@ -70,9 +70,10 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 					// keep activate until #released()
 					getElement().setActive(true);
 				} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
-					// special handling - re-activate
+					// re-activate
 					getElement().activate();
 				} else {
+					// toggle
 					if (getElement().isActive()) {
 						getElement().deactivate();
 					} else {
