@@ -58,6 +58,7 @@ import jorgan.gui.selection.SelectionListener;
 import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
 import jorgan.midi.MessageRecorder;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Tuple;
 import jorgan.session.OrganSession;
@@ -513,7 +514,7 @@ public class MessagesDockable extends OrganDockable {
 					public boolean messageRecorded(final MidiMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
 							public void run() {
-								recorded(message);
+								recorded(MessageUtils.getDatas(message));
 
 								messageBox.hide();
 							}
@@ -530,14 +531,12 @@ public class MessagesDockable extends OrganDockable {
 			}
 		}
 
-		private void recorded(MidiMessage midiMessage) {
+		private void recorded(byte[] datas) {
 			session.lookup(UndoManager.class).compound();
 
 			int index = table.getSelectedRow();
 			if (index != -1) {
 				Message message = messages.get(index);
-
-				byte[] datas = midiMessage.getMessage();
 
 				element.changeMessage(message, Tuple.equal(datas));
 			}

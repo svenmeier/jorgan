@@ -24,6 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -58,6 +59,7 @@ import jorgan.gui.OrganPanel;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
+import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Chain;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
@@ -259,13 +261,15 @@ public class ConsolePanel extends JPanel {
 	private void received(MidiMessage message) {
 		received.clear();
 
+		byte[] datas = MessageUtils.getDatas(message);
+
 		for (SwitchRow switchRow : switchRows) {
-			switchRow.received(message);
+			switchRow.received(datas);
 		}
 		switchesTable.repaint();
 
 		for (ContinuousRow continuousRow : continuousRows) {
-			continuousRow.received(message);
+			continuousRow.received(datas);
 		}
 		continuousTable.repaint();
 	}
@@ -379,7 +383,7 @@ public class ConsolePanel extends JPanel {
 						(String) deviceComboBox.getSelectedItem()) {
 					@Override
 					public boolean messageRecorded(MidiMessage message) {
-						if (recorded(message)) {
+						if (recorded(MessageUtils.getDatas(message))) {
 							return true;
 						} else {
 							SwingUtilities.invokeLater(new Runnable() {
@@ -406,7 +410,7 @@ public class ConsolePanel extends JPanel {
 		protected void beforeRecording() {
 		}
 
-		protected abstract boolean recorded(MidiMessage message);
+		protected abstract boolean recorded(byte[] datas);
 
 		protected void afterRecording() {
 		}
@@ -419,10 +423,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(MidiMessage message) {
+		protected boolean recorded(byte[] datas) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newActivate(message.getMessage());
+			switchRow.newActivate(datas);
 
 			return false;
 		}
@@ -442,10 +446,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(MidiMessage message) {
+		protected boolean recorded(byte[] datas) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newDeactivate(message.getMessage());
+			switchRow.newDeactivate(datas);
 
 			return false;
 		}
@@ -465,10 +469,10 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(MidiMessage message) {
+		protected boolean recorded(byte[] datas) {
 			SwitchRow switchRow = switchRows.get(switchesTable.getEditingRow());
 
-			switchRow.newToggle(message.getMessage());
+			switchRow.newToggle(datas);
 
 			return false;
 		}
@@ -504,8 +508,7 @@ public class ConsolePanel extends JPanel {
 		}
 
 		@Override
-		protected boolean recorded(MidiMessage message) {
-			byte[] newDatas = message.getMessage();
+		protected boolean recorded(byte[] newDatas) {
 
 			if (datas != null) {
 				if (datas.length != newDatas.length) {
@@ -546,7 +549,7 @@ public class ConsolePanel extends JPanel {
 				max = Math.max(max, newDatas[index] & 0xff);
 			}
 
-			datas = newDatas;
+			datas = Arrays.copyOf(newDatas, newDatas.length);
 
 			return true;
 		}
@@ -599,7 +602,6 @@ public class ConsolePanel extends JPanel {
 				if (rounded < 0 || rounded > 255) {
 					return false;
 				}
-				datas[d] = (byte) rounded;
 			}
 			return true;
 		}
@@ -677,14 +679,12 @@ public class ConsolePanel extends JPanel {
 			toggle = null;
 		}
 
-		public void received(MidiMessage message) {
-			if (activate != null
-					&& context.process(activate, message.getMessage())) {
+		public void received(byte[] datas) {
+			if (activate != null && context.process(activate, datas)) {
 				received.add(activate);
 			}
 
-			if (deactivate != null
-					&& context.process(deactivate, message.getMessage())) {
+			if (deactivate != null && context.process(deactivate, datas)) {
 				received.add(deactivate);
 			}
 		}
@@ -756,8 +756,8 @@ public class ConsolePanel extends JPanel {
 			change = null;
 		}
 
-		public void received(MidiMessage message) {
-			if (change != null && context.process(change, message.getMessage())) {
+		public void received(byte[] datas) {
+			if (change != null && context.process(change, datas)) {
 				received.add(change);
 			}
 		}
@@ -774,14 +774,20 @@ public class ConsolePanel extends JPanel {
 
 	private class HighlightCellRenderer extends SimpleCellRenderer<Message> {
 
+		private Color defaultBackground;
+
 		public HighlightCellRenderer() {
 			setHorizontalAlignment(CENTER);
+
+			defaultBackground = getBackground();
 		}
 
 		@Override
 		protected void init(Message value) {
 			if (value != null && received.contains(value)) {
 				setBackground(Color.yellow);
+			} else {
+				setBackground(defaultBackground);
 			}
 
 			if (value != null) {
