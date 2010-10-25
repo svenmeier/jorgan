@@ -77,6 +77,14 @@ public class Continuous extends Displayable {
 		}
 	}
 
+	public void change(float value) {
+		setValue(value);
+
+		if (duration == DURATION_NONE) {
+			setValue(0f);
+		}
+	}
+
 	protected void onValueChanged(float oldValue, float newValue) {
 	}
 

@@ -58,7 +58,7 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 			if (Math.abs(continuous.getValue() - value) > continuous
 					.getThreshold()) {
-				continuous.setValue(value);
+				continuous.change(value);
 			}
 		} else {
 			super.onInput(message, context);

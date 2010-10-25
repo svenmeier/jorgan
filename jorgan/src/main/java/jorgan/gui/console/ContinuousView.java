@@ -120,11 +120,17 @@ public class ContinuousView<E extends Continuous> extends View<E> {
 		}
 
 		public void setPosition(float position) {
-			getElement().setValue(position);
+			if (getElement().getDuration() == Continuous.DURATION_NONE) {
+				// keep value until #released()
+				getElement().setValue(position);
+			} else {
+				getElement().change(position);
+			}
 		}
 
 		public void released() {
 			if (getElement().getDuration() == Continuous.DURATION_NONE) {
+				// has kept value in #pressed()
 				getElement().setValue(0);
 			}
 		}

@@ -68,6 +68,10 @@ public class Tuple {
 		return false;
 	}
 
+	/**
+	 * Convenience factory method to create a {@link Tuple} of {@link Equal}
+	 * commands matching the given datas.
+	 */
 	public static Tuple equal(byte[] datas) {
 		Command[] commands = new Command[datas.length];
 		for (int d = 0; d < datas.length; d++) {
