@@ -26,6 +26,13 @@ public abstract class SimpleCellRenderer<T> extends DefaultTableCellRenderer {
 		return this;
 	}
 
+	/**
+	 * Does nothing, override {@link #init(Object)} instead.
+	 */
+	@Override
+	protected final void setValue(Object value) {
+	}
+
 	protected void init(T value, boolean isSelected, boolean hasFocus, int row,
 			int column) {
 		init(value);
