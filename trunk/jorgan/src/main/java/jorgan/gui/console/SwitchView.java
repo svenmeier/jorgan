@@ -70,10 +70,9 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 					// keep activate until #released()
 					getElement().setActive(true);
 				} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
-					// re-activate
+					// always activate
 					getElement().activate();
 				} else {
-					// toggle
 					if (getElement().isActive()) {
 						getElement().deactivate();
 					} else {
@@ -84,6 +83,7 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 			public void released() {
 				if (getElement().getDuration() == Switch.DURATION_NONE) {
+					// was kept activate in #pressed()
 					getElement().setActive(false);
 				}
 			};
@@ -131,9 +131,10 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
+			// note: umlauts do not trigger KeyEvent.KEY_PRESSED :(
+
 			if (element.getDuration() == Switch.DURATION_NONE) {
-				// note: umlauts do not trigger KeyEvent.KEY_PRESSED, so these
-				// keys cannot be used for non-locking elements :(
+				// keep activate until #keyReleased()
 				element.setActive(true);
 			}
 		}
@@ -147,9 +148,10 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
 			if (element.getDuration() == Switch.DURATION_NONE) {
+				// was kept activate in #keyPressed()
 				element.setActive(false);
 			} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
-				// special handling - re-activate
+				// always activate
 				getElement().activate();
 			} else {
 				if (getElement().isActive()) {
