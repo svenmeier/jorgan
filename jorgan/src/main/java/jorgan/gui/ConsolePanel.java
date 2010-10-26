@@ -142,11 +142,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private View<? extends Displayable> pressedView;
 
 	/**
-	 * The currently selected views.
-	 */
-	private List<View<? extends Displayable>> selectedViews = new ArrayList<View<? extends Displayable>>();
-
-	/**
 	 * The listener to organ changes.
 	 */
 	private EventHandler eventHandler = new EventHandler();
@@ -497,7 +492,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		viewsByDisplayable.remove(element);
 		view.setContainer(null);
 
-		selectedViews.remove(view);
 		if (pressedView == view) {
 			pressedView = null;
 		}
@@ -518,9 +512,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	protected void showMenu(int x, int y) {
 
 		if (pressedView != null) {
-			alignMenu.setEnabled(selectedViews.size() > 1);
-
-			spreadMenu.setEnabled(selectedViews.size() > 2);
+			int count = session.lookup(ElementSelection.class)
+					.getSelectionCount();
+			alignMenu.setEnabled(count > 1);
+			spreadMenu.setEnabled(count > 2);
 
 			sendMenu.removeAll();
 			sendMenu.setEnabled(false);
@@ -555,10 +550,14 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * @return element
 	 */
 	protected View<? extends Displayable> getView(int x, int y) {
-		// prefer already marked
-		for (View<? extends Displayable> view : selectedViews) {
-			if (view.contains(x, y)) {
-				return view;
+		// prefer selected
+		for (Element element : session.lookup(ElementSelection.class)
+				.getSelectedElements()) {
+			if (element instanceof Displayable) {
+				View<? extends Displayable> view = getView((Displayable) element);
+				if (view != null && view.contains(x, y)) {
+					return view;
+				}
 			}
 		}
 
@@ -700,7 +699,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				revalidate();
 
 				if (constructing) {
-					constructionHandler.updateViewMarkers();
+					constructionHandler.updateSelection();
 				}
 			} else if (element instanceof Displayable) {
 				View<? extends Displayable> view = getView((Displayable) element);
@@ -717,7 +716,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 
 				if (constructing) {
-					constructionHandler.updateViewMarkers();
+					constructionHandler.updateSelection();
 				}
 			}
 		}
@@ -733,7 +732,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (view != null) {
 					view.update();
 
-					constructionHandler.updateViewMarkers();
+					constructionHandler.updateSelection();
 				}
 			}
 		}
@@ -747,6 +746,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (reference.getElement() instanceof Displayable) {
 					createView((Displayable) reference.getElement());
 				}
+
+				constructionHandler.updateSelection();
 			}
 		}
 
@@ -759,6 +760,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (reference.getElement() instanceof Displayable) {
 					dropView((Displayable) reference.getElement());
 				}
+
+				constructionHandler.updateSelection();
 			}
 		}
 
@@ -777,23 +780,18 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		public void selectionChanged() {
 
-			selectedViews.clear();
-			for (Element element : session.lookup(ElementSelection.class)
-					.getSelectedElements()) {
-				if (element instanceof Displayable) {
-					View<? extends Displayable> view = getView((Displayable) element);
-					if (view != null) {
-						selectedViews.add(view);
-					}
+			Element element = session.lookup(ElementSelection.class)
+					.getSelectedElement();
+
+			if (constructing && element instanceof Displayable) {
+				View<? extends Displayable> view = getView((Displayable) element);
+				if (view != null) {
+					scrollDisplayableToVisible(view);
 				}
 			}
 
-			if (constructing && selectedViews.size() == 1) {
-				scrollDisplayableToVisible(selectedViews.get(0));
-			}
-
 			if (constructing) {
-				constructionHandler.updateViewMarkers();
+				constructionHandler.updateSelection();
 			}
 		}
 	}
@@ -827,11 +825,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		private Marker dragMarker;
 
-		private List<Marker> viewMarkers = new ArrayList<Marker>();
+		private List<Marker> selectionMarkers = new ArrayList<Marker>();
 
-		private final BasicStroke stroke = new BasicStroke(0.0f,
+		private final BasicStroke stroke = new BasicStroke(2.0f,
 				BasicStroke.CAP_SQUARE, BasicStroke.JOIN_MITER, 1.0f,
-				new float[] { 4.0f, 4.0f }, 0.0f);
+				new float[] { 4.0f, 3.0f }, 0.0f);
 
 		private boolean isMultiSelect(MouseEvent ev) {
 			return (ev.getModifiers() & Toolkit.getDefaultToolkit()
@@ -844,26 +842,26 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			session.lookup(UndoManager.class).compound();
 
+			ElementSelection selection = session.lookup(ElementSelection.class);
+
 			pressedView = getView(e.getX(), e.getY());
 			if (pressedView != null) {
 				pressedOrigin = new Point(pressedView.getX(), pressedView
 						.getY());
-				pressedWasSelected = selectedViews.contains(pressedView);
+				pressedWasSelected = selection.isSelected(pressedView
+						.getElement());
 			}
 
 			if (isMultiSelect(e)) {
 				if (pressedView != null) {
-					session.lookup(ElementSelection.class).addSelectedElement(
-							pressedView.getElement());
+					selection.addSelectedElement(pressedView.getElement());
 				}
 			} else {
 				if (pressedView == null) {
-					session.lookup(ElementSelection.class).setSelectedElement(
-							null);
+					selection.clear();
 				} else {
-					if (!selectedViews.contains(pressedView)) {
-						session.lookup(ElementSelection.class)
-								.setSelectedElement(pressedView.getElement());
+					if (!selection.isSelected(pressedView.getElement())) {
+						selection.setSelectedElement(pressedView.getElement());
 					}
 				}
 			}
@@ -888,6 +886,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		public void mouseDragged(MouseEvent e) {
 			mouseTo = e.getPoint();
 
+			ElementSelection selection = session.lookup(ElementSelection.class);
+
 			if (pressedView == null) {
 				if (getCursor().getType() == Cursor.DEFAULT_CURSOR) {
 					setCursor(Cursor
@@ -910,8 +910,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						elements.add(view.getElement());
 					}
 				}
-				session.lookup(ElementSelection.class).setSelectedElements(
-						elements);
+				selection.setSelectedElements(elements);
 			} else {
 				int deltaX = grid(screenToDisposition(pressedOrigin.x
 						+ mouseTo.x - mouseFrom.x))
@@ -920,12 +919,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 						+ mouseTo.y - mouseFrom.y))
 						- screenToDisposition(pressedView.getY());
 
-				for (View<? extends Displayable> markedView : selectedViews) {
-					Displayable element = markedView.getElement();
-					console.setLocation(element,
-							console.getX(element) + deltaX, console
-									.getY(element)
-									+ deltaY);
+				for (Element element : selection.getSelectedElements()) {
+					if (console.references(element)) {
+						console.setLocation(element, console.getX(element)
+								+ deltaX, console.getY(element) + deltaY);
+					}
 				}
 			}
 		}
@@ -979,28 +977,35 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				dragMarker.paint(g);
 			}
 
-			for (Marker marker : viewMarkers) {
+			for (Marker marker : selectionMarkers) {
 				marker.paint(g);
 			}
 		}
 
-		public void updateViewMarkers() {
-			for (Marker marker : viewMarkers) {
+		public void updateSelection() {
+			for (Marker marker : selectionMarkers) {
 				marker.release();
 			}
-			viewMarkers.clear();
+			selectionMarkers.clear();
 
-			for (View<? extends Displayable> view : selectedViews) {
-				viewMarkers.add(createMarker(view.getX(), view.getY(), view
-						.getX()
-						+ view.getWidth(), view.getY() + view.getHeight()));
+			ElementSelection selection = session.lookup(ElementSelection.class);
+
+			for (Element element : selection.getSelectedElements()) {
+				if (element instanceof Displayable) {
+					View<? extends Displayable> view = getView((Displayable) element);
+					if (view != null) {
+						selectionMarkers.add(createMarker(view.getX(), view
+								.getY(), view.getX() + view.getWidth(), view
+								.getY()
+								+ view.getHeight()));
+					}
+				}
 			}
 		}
 
 		private Marker createMarker(int x1, int y1, int x2, int y2) {
 			return Marker.create(ConsolePanel.this, false, null,
 					getForeground(), stroke, x1, y1, x2, y2);
-
 		}
 	}
 
@@ -1166,8 +1171,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (View<? extends Displayable> view : selectedViews) {
-				console.toFront(view.getElement());
+			ElementSelection selection = session.lookup(ElementSelection.class);
+			for (Element element : selection.getSelectedElements()) {
+				if (console.references(element)) {
+					console.toFront(element);
+				}
 			}
 		}
 	}
@@ -1178,8 +1186,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (View<? extends Displayable> view : selectedViews) {
-				console.toBack(view.getElement());
+			ElementSelection selection = session.lookup(ElementSelection.class);
+			for (Element element : selection.getSelectedElements()) {
+				if (console.references(element)) {
+					console.toBack(element);
+				}
 			}
 		}
 	}
@@ -1190,9 +1201,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			for (View<? extends Displayable> view : new ArrayList<View<? extends Displayable>>(
-					selectedViews)) {
-				console.unreference(view.getElement());
+			ElementSelection selection = session.lookup(ElementSelection.class);
+			for (Element element : selection.getSelectedElements()) {
+				if (console.references(element)) {
+					console.unreference(element);
+				}
 			}
 		}
 	}
@@ -1212,7 +1225,16 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			layout.layout(pressedView, selectedViews);
+			List<View<? extends Displayable>> views = new ArrayList<View<? extends Displayable>>();
+
+			ElementSelection selection = session.lookup(ElementSelection.class);
+			for (Element element : selection.getSelectedElements()) {
+				if (console.references(element)) {
+					views.add(getView((Displayable) element));
+				}
+			}
+
+			layout.layout(pressedView, views);
 		}
 	}
 
@@ -1245,7 +1267,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 					console.removeReference(reference);
 
-					other.addReference(reference);
+					if (!other.references(element)) {
+						other.addReference(reference);
+					}
 				}
 			}
 		});
