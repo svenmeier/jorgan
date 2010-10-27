@@ -293,6 +293,10 @@ public class ElementsDockable extends OrganDockable {
 
 		@Override
 		public void valueChanged(TreeSelectionEvent e) {
+			if (session == null) {
+				return;
+			}
+
 			if (!updatingSelection) {
 				updatingSelection = true;
 
