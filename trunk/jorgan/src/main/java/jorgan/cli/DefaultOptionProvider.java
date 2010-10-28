@@ -10,10 +10,5 @@ public class DefaultOptionProvider implements OptionProvider {
 		Option headless = store.addSwitch("jorgan/App/headless", 'l');
 		headless.setLongName("headless");
 		headless.setDescription("start without a graphical UI");
-
-		Option noConstruct = store.addSwitch(
-				"jorgan/session/OrganSession/sealed", 's');
-		noConstruct.setLongName("sealed");
-		noConstruct.setDescription("sealed");
 	}
 }

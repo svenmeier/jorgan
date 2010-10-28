@@ -170,7 +170,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		toolBar.add(openAction);
 		toolBar.add(saveAction);
 
-		if (session != null && !this.session.isSealed()) {
+		if (session != null) {
 			toolBar.addSeparator();
 			JToggleButton toggle = new JToggleButton(constructAction);
 			toggle.setText(null);
@@ -230,7 +230,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 			fileMenu.add(exitAction);
 		}
 
-		if (session != null && !this.session.isSealed()) {
+		if (session != null) {
 			JMenu editMenu = new JMenu();
 			config.get("editMenu").read(editMenu);
 			menuBar.add(editMenu);
