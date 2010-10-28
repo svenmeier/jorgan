@@ -46,6 +46,8 @@ import jorgan.play.event.PlayListener;
 import jorgan.play.spi.PlayerRegistry;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
+import jorgan.time.Clock;
+import jorgan.time.WakeUp;
 
 /**
  * A play of an organ.
@@ -53,8 +55,6 @@ import jorgan.problem.Problem;
 public abstract class OrganPlay {
 
 	private final MidiGate gate = new MidiGate();
-
-	private Clock clock;
 
 	private boolean open;
 
@@ -78,9 +78,11 @@ public abstract class OrganPlay {
 	 */
 	private List<KeyListener> keyListeners = new ArrayList<KeyListener>();
 
+	private Organ organ;
+
 	private ElementProblems problems = new ElementProblems();
 
-	private Organ organ;
+	private Clock clock;
 
 	/**
 	 * Creates a new organ player.
@@ -88,9 +90,10 @@ public abstract class OrganPlay {
 	 * @param organ
 	 *            the organ to play
 	 */
-	public OrganPlay(Organ organ, ElementProblems problems) {
+	public OrganPlay(Organ organ, ElementProblems problems, Clock clock) {
 		this.organ = organ;
 		this.problems = problems;
+		this.clock = clock;
 
 		organ.addOrganListener(eventHandler);
 
@@ -188,10 +191,6 @@ public abstract class OrganPlay {
 		return players.get(element);
 	}
 
-	public Clock getClock() {
-		return clock;
-	}
-
 	public void open() {
 		openImpl();
 
@@ -203,8 +202,6 @@ public abstract class OrganPlay {
 			throw new IllegalStateException("already open");
 		}
 		open = true;
-
-		clock = new Clock(this);
 
 		Iterator<Player<? extends Element>> toOpen = players.values()
 				.iterator();
@@ -235,8 +232,6 @@ public abstract class OrganPlay {
 		if (!open) {
 			throw new IllegalStateException("not open");
 		}
-
-		clock.stop();
 
 		Iterator<Player<? extends Element>> iterator = players.values()
 				.iterator();
@@ -381,4 +376,17 @@ public abstract class OrganPlay {
 		public void play(Player<?> player);
 	}
 
+	public void alarm(final Element element, final Playing playing, long time) {
+		clock.alarm(new WakeUp() {
+			@Override
+			public boolean replaces(WakeUp wakeUp) {
+				return false;
+			}
+
+			@Override
+			public void trigger(long time) {
+				play(element, playing);
+			}
+		}, time);
+	}
 }

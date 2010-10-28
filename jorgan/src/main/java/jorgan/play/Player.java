@@ -94,15 +94,6 @@ public abstract class Player<E extends Element> {
 	}
 
 	/**
-	 * Alarm notification.
-	 * 
-	 * @see OrganPlay#getClock()
-	 * @see Clock#alarm(Element, long)
-	 */
-	public void onAlarm(long time) {
-	}
-
-	/**
 	 * Test is this player is open.
 	 * 
 	 * @return <code>true</code> if this player is open

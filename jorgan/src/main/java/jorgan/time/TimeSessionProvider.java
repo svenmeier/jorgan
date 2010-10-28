@@ -16,48 +16,32 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.time;
 
 import java.io.File;
-import java.io.IOException;
 
-import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
-import jorgan.time.Clock;
 
-public class OrganPlaySessionProvider implements SessionProvider {
+public class TimeSessionProvider implements SessionProvider {
 
 	/**
-	 * {@link OrganPlay} is required.
+	 * {@link Clock} is required.
 	 */
 	public void init(OrganSession session) {
-		session.lookup(OrganPlay.class);
+		session.lookup(Clock.class);
 	}
 
 	public Object create(final OrganSession session, Class<?> clazz) {
-		if (clazz == OrganPlay.class) {
-			ElementProblems elementProblems = session
-					.lookup(ElementProblems.class);
-			Clock clock = session.lookup(Clock.class);
-			final OrganPlay play = new OrganPlay(session.getOrgan(),
-					elementProblems, clock) {
-				@Override
-				public File resolve(String name) throws IOException {
-					return session.resolve(name);
-				}
-			};
+		if (clazz == Clock.class) {
+			final Clock clock = new Clock(session.getOrgan());
 			session.addListener(new SessionListener() {
 				public void constructingChanged(boolean constructing) {
 					if (constructing) {
-						if (play.isOpen()) {
-							play.close();
-						}
+						clock.stop();
 					} else {
-						if (!play.isOpen()) {
-							play.open();
-						}
+						clock.start();
 					}
 				}
 
@@ -68,15 +52,15 @@ public class OrganPlaySessionProvider implements SessionProvider {
 				}
 
 				public void destroyed() {
-					play.destroy();
+					clock.stop();
 				}
 			});
 
 			if (!session.isConstructing()) {
-				play.open();
+				clock.start();
 			}
 
-			return play;
+			return clock;
 		}
 		return null;
 	}

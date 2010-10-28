@@ -18,12 +18,14 @@
  */
 package jorgan.play;
 
+import java.util.Arrays;
+
 import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.SoundFilter;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Sound;
+import jorgan.disposition.SoundFilter;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
@@ -270,14 +272,15 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		@Override
-		public void sendMessage(final byte[] datas) {
+		public void sendMessage(byte[] datas) {
 			Rank rank = getElement();
 
-			getOrganPlay().getClock().alarm(rank, new Playing() {
+			final byte[] copy = Arrays.copyOf(datas, datas.length);
+			getOrganPlay().alarm(rank, new Playing() {
 				@Override
 				public void play(Player<?> player) {
 					try {
-						channel.sendMessage(datas);
+						channel.sendMessage(copy);
 					} catch (InvalidMidiDataException nothingWeCanDoAboutIt) {
 					}
 				}
