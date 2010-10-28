@@ -62,8 +62,6 @@ public class OrganSession {
 
 	private boolean constructing = false;
 
-	private boolean sealed = false;
-
 	private int backupCount;
 
 	private Map<Class<? extends Object>, Object> ts = new HashMap<Class<? extends Object>, Object>();
@@ -103,14 +101,6 @@ public class OrganSession {
 		config.read(this);
 
 		new History().addRecentFile(file);
-	}
-
-	public void setSealed(boolean sealed) {
-		this.sealed = sealed;
-	}
-
-	public boolean isSealed() {
-		return sealed;
 	}
 
 	public int getBackupCount() {
@@ -185,10 +175,6 @@ public class OrganSession {
 	}
 
 	public void setConstructing(boolean constructing) {
-		if (sealed && constructing) {
-			return;
-		}
-
 		if (constructing != this.constructing) {
 			this.constructing = constructing;
 
