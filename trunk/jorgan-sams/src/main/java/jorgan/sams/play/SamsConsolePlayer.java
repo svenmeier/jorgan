@@ -28,6 +28,8 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
+import jorgan.play.Player;
+import jorgan.play.OrganPlay.Playing;
 import jorgan.problem.Severity;
 import jorgan.sams.disposition.SamsConsole;
 import jorgan.sams.disposition.SamsConsole.CancelTabOff;
@@ -64,13 +66,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		}
 
 		super.closeImpl();
-	}
-
-	@Override
-	public void onAlarm(long now) {
-		for (Tab tab : tabs) {
-			tab.checkDuration(now);
-		}
 	}
 
 	private Tab getTab(Message message, int index) {
@@ -168,11 +163,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 			onMagnet.off();
 		}
 
-		public void checkDuration(long time) {
-			onMagnet.checkDuration(time);
-			offMagnet.checkDuration(time);
-		}
-
 		public void turnOn() {
 			offMagnet.off();
 			onMagnet.on();
@@ -200,10 +190,18 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
 			public void on() {
 				if (!isOn()) {
-					offTime = System.currentTimeMillis()
+					final long triggerTime = System.currentTimeMillis()
 							+ getElement().getDuration();
+					this.offTime = triggerTime;
 
-					getOrganPlay().getClock().alarm(getElement(), offTime);
+					getOrganPlay().alarm(getElement(), new Playing() {
+						@Override
+						public void play(Player<?> player) {
+							if (offTime == triggerTime) {
+								off();
+							}
+						}
+					}, triggerTime);
 				}
 			}
 
@@ -215,14 +213,6 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 						output(CancelTabOn.class, index);
 					} else {
 						output(CancelTabOff.class, index);
-					}
-				}
-			}
-
-			public void checkDuration(long time) {
-				if (isOn()) {
-					if (offTime <= time) {
-						off();
 					}
 				}
 			}

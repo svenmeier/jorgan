@@ -32,17 +32,8 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 
 	private PlayerContext outputContext = new PlayerContext();
 
-	private Long alarmTime;
-
 	public ContinuousPlayer(E continuous) {
 		super(continuous);
-	}
-
-	@Override
-	public void onAlarm(long time) {
-		if (alarmTime != null && alarmTime == time) {
-			getElement().setValue(0.0f);
-		}
 	}
 
 	@Override
@@ -81,15 +72,6 @@ public class ContinuousPlayer<E extends Continuous> extends Player<E> {
 			outputContext.set(Changed.VALUE, continuous.getValue());
 
 			output(message, outputContext);
-		}
-
-		int duration = continuous.getDuration();
-		if (duration > Continuous.DURATION_NONE) {
-			alarmTime = System.currentTimeMillis() + duration;
-
-			getOrganPlay().getClock().alarm(continuous, alarmTime);
-		} else {
-			alarmTime = null;
 		}
 	}
 }

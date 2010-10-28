@@ -16,28 +16,55 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.play;
+package jorgan.time;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
 
-import jorgan.disposition.Element;
-import jorgan.play.OrganPlay.Playing;
+import jorgan.disposition.Organ;
+import jorgan.time.spi.TimerRegistry;
 
 /**
  */
 public class Clock {
 
-	private OrganPlay play;
-
 	private Thread thread;
+
+	private List<Timer> timers;
 
 	private TreeSet<Alarm> alarms = new TreeSet<Alarm>();
 
-	public Clock(OrganPlay play) {
-		this.play = play;
+	public Clock(Organ organ) {
+		timers = TimerRegistry.getTimers(organ, this);
+	}
+
+	/**
+	 * Alarm for the element at the given time.
+	 */
+	public void alarm(WakeUp wakeUp, long time) {
+		if (thread != null) {
+			synchronized (alarms) {
+				System.out.println(alarms.size());
+				Iterator<Alarm> iterator = alarms.iterator();
+				while (iterator.hasNext()) {
+					Alarm alarm = iterator.next();
+					if (wakeUp.replaces(alarm.wakeUp)) {
+						iterator.remove();
+					}
+				}
+				alarms.add(new Alarm(wakeUp, time));
+				alarms.notifyAll();
+			}
+		}
+	}
+
+	public void start() {
+		if (thread != null) {
+			// already running
+			return;
+		}
 
 		thread = new Thread(new Runnable() {
 			@Override
@@ -46,9 +73,13 @@ public class Clock {
 			}
 		}, "jOrgan Clock");
 		thread.start();
+
+		for (Timer timer : timers) {
+			timer.start();
+		}
 	}
 
-	private synchronized void run() {
+	private void run() {
 		while (thread == Thread.currentThread()) {
 			long now = System.currentTimeMillis();
 
@@ -82,37 +113,8 @@ public class Clock {
 		}
 	}
 
-	/**
-	 * Trigger past alarms outside of synchronized block to prevent deadlocks
-	 */
-	private void trigger(List<Alarm> alarms) {
-		for (Alarm past : alarms) {
-			past.trigger();
-		}
-	}
-
-	/**
-	 * @see Player#onAlarm(long)
-	 */
-	public void alarm(final Element element, final long time) {
-		alarm(element, new Playing() {
-			@Override
-			public void play(Player<?> player) {
-				player.onAlarm(time);
-			}
-		}, time);
-	}
-
-	/**
-	 * Alarm for the element at the given time.
-	 */
-	public void alarm(Element element, Playing playing, long time) {
-		if (thread != null) {
-			synchronized (alarms) {
-				alarms.add(new Alarm(element, playing, time));
-				alarms.notifyAll();
-			}
-		}
+	public boolean isRunning() {
+		return thread != null;
 	}
 
 	public void stop() {
@@ -124,17 +126,23 @@ public class Clock {
 		}
 	}
 
+	/**
+	 * Trigger past alarms outside of synchronized block to prevent deadlocks
+	 */
+	private void trigger(List<Alarm> alarms) {
+		for (Alarm past : alarms) {
+			past.trigger();
+		}
+	}
+
 	private class Alarm implements Comparable<Alarm> {
 
-		private Element element;
-
-		private Playing playing;
+		private WakeUp wakeUp;
 
 		private long time;
 
-		public Alarm(Element element, Playing playing, long time) {
-			this.element = element;
-			this.playing = playing;
+		public Alarm(WakeUp wakeUp, long time) {
+			this.wakeUp = wakeUp;
 			this.time = time;
 		}
 
@@ -143,7 +151,7 @@ public class Clock {
 		}
 
 		public void trigger() {
-			play.play(element, playing);
+			wakeUp.trigger(time);
 		}
 
 		@Override
