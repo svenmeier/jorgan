@@ -62,6 +62,24 @@ public class DevicePool {
 	}
 
 	/**
+	 * Get the name of all devices that support the given {@link Direction}.
+	 * 
+	 * @param direction
+	 *            direction of midi, {@link IN} or {@link OUT}
+	 * @return list of device names
+	 */
+	public synchronized String[] getMidiDeviceNames(Direction direction) {
+		refreshDevices();
+
+		List<String> names = new ArrayList<String>();
+		for (PooledDevice device : devices.filter(direction)) {
+			names.add(device.name);
+		}
+
+		return names.toArray(new String[names.size()]);
+	}
+
+	/**
 	 * Refresh all pooled devices.
 	 */
 	private void refreshDevices() {
@@ -82,8 +100,7 @@ public class DevicePool {
 						this.devices.add(old);
 					} else {
 						if (analyser.supports(Direction.IN)) {
-							this.devices.add(new PooledDevice(name,
-									Direction.IN, analyser.getDevice()));
+							this.devices.add(analyser.pooledDevice());
 						}
 					}
 				}
@@ -94,32 +111,13 @@ public class DevicePool {
 						this.devices.add(old);
 					} else {
 						if (analyser.supports(Direction.OUT)) {
-							this.devices.add(new PooledDevice(name,
-									Direction.OUT, analyser.getDevice()));
+							this.devices.add(analyser.pooledDevice());
 						}
 					}
 				}
 			} catch (MidiUnavailableException skip) {
 			}
 		}
-	}
-
-	/**
-	 * Get the name of all devices that support the given {@link Direction}.
-	 * 
-	 * @param direction
-	 *            direction of midi, {@link IN} or {@link OUT}
-	 * @return list of device names
-	 */
-	public synchronized String[] getMidiDeviceNames(Direction direction) {
-		refreshDevices();
-
-		List<String> names = new ArrayList<String>();
-		for (PooledDevice device : devices.filter(direction)) {
-			names.add(device.name);
-		}
-
-		return names.toArray(new String[names.size()]);
 	}
 
 	private static class ProxyDevice extends DeviceWrapper {
@@ -219,16 +217,27 @@ public class DevicePool {
 
 		public final String name;
 
-		public final Direction direction;
+		public final boolean in;
+
+		public final boolean out;
 
 		private int openCount;
 
-		public PooledDevice(String name, Direction direction, MidiDevice device)
-				throws MidiUnavailableException {
+		public PooledDevice(String name, boolean in, boolean out,
+				MidiDevice device) throws MidiUnavailableException {
 			super(device);
 
 			this.name = name;
-			this.direction = direction;
+			this.in = in;
+			this.out = out;
+		}
+
+		public boolean supports(Direction direction) {
+			if (direction == Direction.IN) {
+				return in;
+			} else {
+				return out;
+			}
 		}
 
 		@Override
@@ -263,7 +272,7 @@ public class DevicePool {
 
 		public PooledDevice get(String name, Direction direction) {
 			for (PooledDevice device : devices) {
-				if (device.name.equals(name) && device.direction == direction) {
+				if (device.name.equals(name) && device.supports(direction)) {
 					return device;
 				}
 			}
@@ -273,7 +282,7 @@ public class DevicePool {
 		public List<PooledDevice> filter(Direction direction) {
 			List<PooledDevice> filtered = new ArrayList<PooledDevice>();
 			for (PooledDevice device : devices) {
-				if (device.direction == direction) {
+				if (device.supports(direction)) {
 					filtered.add(device);
 				}
 			}
@@ -287,6 +296,8 @@ public class DevicePool {
 
 		private MidiDevice device;
 
+		private PooledDevice pooledDevice;
+
 		public DeviceAnalyser(Info info) {
 			this.info = info;
 		}
@@ -294,18 +305,27 @@ public class DevicePool {
 		public boolean supports(Direction direction)
 				throws MidiUnavailableException {
 			if (direction == Direction.IN) {
-				return getDevice().getMaxTransmitters() != 0;
+				return device().getMaxTransmitters() != 0;
 			} else {
-				return getDevice().getMaxReceivers() != 0;
+				return device().getMaxReceivers() != 0;
 			}
 		}
 
-		public MidiDevice getDevice() throws MidiUnavailableException {
+		private MidiDevice device() throws MidiUnavailableException {
 			if (this.device == null) {
 				this.device = MidiSystem.getMidiDevice(info);
 			}
 
 			return device;
+		}
+
+		public PooledDevice pooledDevice() throws MidiUnavailableException {
+			if (this.pooledDevice == null) {
+				this.pooledDevice = new PooledDevice(this.info.getName(),
+						supports(Direction.IN), supports(Direction.OUT),
+						device());
+			}
+			return this.pooledDevice;
 		}
 	}
 }
