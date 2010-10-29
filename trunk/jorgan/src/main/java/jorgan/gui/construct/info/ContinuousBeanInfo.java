@@ -19,7 +19,7 @@
 package jorgan.gui.construct.info;
 
 import jorgan.disposition.Continuous;
-import jorgan.gui.construct.editor.DurationEditor;
+import jorgan.gui.construct.editor.ContinuousDurationEditor;
 import jorgan.gui.construct.editor.ValueEditor;
 
 /**
@@ -33,6 +33,6 @@ public class ContinuousBeanInfo extends ElementBeanInfo {
 
 		add("value", Continuous.class, ValueEditor.class);
 		add("threshold", Continuous.class, ValueEditor.class);
-		add("duration", Continuous.class, DurationEditor.class);
+		add("duration", Continuous.class, ContinuousDurationEditor.class);
 	}
 }

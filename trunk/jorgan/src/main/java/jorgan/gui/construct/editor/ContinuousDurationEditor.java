@@ -25,17 +25,17 @@ import bias.Configuration;
 /**
  * Property editor for a boolean property.
  */
-public class DurationEditor extends PropertyEditorSupport {
+public class ContinuousDurationEditor extends PropertyEditorSupport {
 
 	private static Configuration config = Configuration.getRoot().get(
-			DurationEditor.class);
+			ContinuousDurationEditor.class);
 
-	private String[] tags = { "-2", "-1", "0" };
+	private String[] tags = { "-1", "0" };
 
 	/**
 	 * Constructor.
 	 */
-	public DurationEditor() {
+	public ContinuousDurationEditor() {
 		config.read(this);
 	}
 
@@ -61,7 +61,7 @@ public class DurationEditor extends PropertyEditorSupport {
 		}
 
 		if (value <= 0) {
-			return tags[value + 2];
+			return tags[value + 1];
 		}
 
 		return Integer.toString(value);
@@ -72,7 +72,7 @@ public class DurationEditor extends PropertyEditorSupport {
 
 		for (int i = 0; i < tags.length; i++) {
 			if (string.equals(tags[i])) {
-				setValue(i - 2);
+				setValue(i - 1);
 				return;
 			}
 		}
