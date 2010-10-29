@@ -20,7 +20,7 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Switch;
 import jorgan.gui.construct.editor.BooleanEditor;
-import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.editor.DurationEditor;
 import jorgan.gui.construct.editor.ShortcutEditor;
 
 /**
@@ -34,6 +34,6 @@ public class SwitchBeanInfo extends ElementBeanInfo {
 
 		add("shortcut", Switch.class, ShortcutEditor.class);
 		add("active", Switch.class, BooleanEditor.class);
-		add("duration", Switch.class, IntegerEditor.class);
+		add("duration", Switch.class, DurationEditor.class);
 	}
 }
