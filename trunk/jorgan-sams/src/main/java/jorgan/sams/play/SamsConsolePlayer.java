@@ -28,8 +28,6 @@ import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
 import jorgan.play.ConsolePlayer;
-import jorgan.play.Player;
-import jorgan.play.OrganPlay.Playing;
 import jorgan.problem.Severity;
 import jorgan.sams.disposition.SamsConsole;
 import jorgan.sams.disposition.SamsConsole.CancelTabOff;
@@ -39,6 +37,7 @@ import jorgan.sams.disposition.SamsConsole.TabTurnedOff;
 import jorgan.sams.disposition.SamsConsole.TabTurnedOn;
 import jorgan.sams.disposition.SamsConsole.TabTurningOff;
 import jorgan.sams.disposition.SamsConsole.TabTurningOn;
+import jorgan.time.WakeUp;
 
 /**
  * Player for a {@link SamsConsole}.
@@ -182,32 +181,21 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 		}
 
 		private class Magnet {
-			private long offTime = Long.MAX_VALUE;
-
-			private boolean isOn() {
-				return offTime < Long.MAX_VALUE;
-			}
+			private boolean on = false;
 
 			public void on() {
-				if (!isOn()) {
-					final long triggerTime = System.currentTimeMillis()
-							+ getElement().getDuration();
-					this.offTime = triggerTime;
+				if (!this.on) {
+					this.on = true;
 
-					getOrganPlay().alarm(getElement(), new Playing() {
-						@Override
-						public void play(Player<?> player) {
-							if (offTime == triggerTime) {
-								off();
-							}
-						}
-					}, triggerTime);
+					long duration = getElement().getDuration();
+
+					getOrganPlay().alarm(new CancelWakeUp(this), duration);
 				}
 			}
 
 			public void off() {
-				if (isOn()) {
-					offTime = Long.MAX_VALUE;
+				if (this.on) {
+					this.on = false;
 
 					if (onMagnet == this) {
 						output(CancelTabOn.class, index);
@@ -218,5 +206,26 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 			}
 		}
 
+		private class CancelWakeUp implements WakeUp {
+
+			private Magnet magnet;
+
+			public CancelWakeUp(Magnet magnet) {
+				this.magnet = magnet;
+			}
+
+			@Override
+			public boolean replaces(WakeUp wakeUp) {
+				if (wakeUp instanceof CancelWakeUp) {
+					return ((CancelWakeUp) wakeUp).magnet == this.magnet;
+				}
+				return false;
+			}
+
+			@Override
+			public void trigger() {
+				magnet.off();
+			}
+		}
 	}
 }

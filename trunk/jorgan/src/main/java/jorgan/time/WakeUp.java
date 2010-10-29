@@ -4,7 +4,7 @@
 package jorgan.time;
 
 public interface WakeUp {
-	public void trigger(long time);
+	public void trigger();
 
 	public boolean replaces(WakeUp wakeUp);
 }

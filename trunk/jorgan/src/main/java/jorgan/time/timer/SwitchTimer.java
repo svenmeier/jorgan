@@ -43,7 +43,7 @@ public class SwitchTimer implements Timer {
 			@Override
 			public void propertyChanged(Element element, String name) {
 				if (element instanceof Switch && "active".equals(name)) {
-					duration((Switch) element);
+					checkDurationExpired((Switch) element);
 				}
 			}
 		});
@@ -51,16 +51,18 @@ public class SwitchTimer implements Timer {
 
 	public void start() {
 		for (Switch element : organ.getElements(Switch.class)) {
-			duration(element);
+			checkDurationExpired(element);
 		}
 	}
 
-	private void duration(final Switch element) {
+	@Override
+	public void stop() {
+	}
+
+	private void checkDurationExpired(final Switch element) {
 		int duration = element.getDuration();
 		if (element.isActive() && duration > Switch.DURATION_NONE) {
-			final long time = System.currentTimeMillis() + duration;
-
-			clock.alarm(new DurationExpired(element), time);
+			clock.alarm(new DurationExpired(element), duration);
 		}
 	}
 
@@ -81,7 +83,7 @@ public class SwitchTimer implements Timer {
 		}
 
 		@Override
-		public void trigger(long time) {
+		public void trigger() {
 			element.setActive(false);
 		}
 	}

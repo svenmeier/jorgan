@@ -376,17 +376,36 @@ public abstract class OrganPlay {
 		public void play(Player<?> player);
 	}
 
-	public void alarm(final Element element, final Playing playing, long time) {
-		clock.alarm(new WakeUp() {
-			@Override
-			public boolean replaces(WakeUp wakeUp) {
-				return false;
-			}
+	public void alarm(final WakeUp wakeUp, long delta) {
+		clock.alarm(new WakeUpWrapper(wakeUp), delta);
+	}
 
-			@Override
-			public void trigger(long time) {
-				play(element, playing);
+	/**
+	 * A wrapper for {@link WakeUp}s to be triggered synchronized to this
+	 * {@link OrganPlay}.
+	 * 
+	 * @see OrganPlay#alarm(WakeUp, long)
+	 */
+	private final class WakeUpWrapper implements WakeUp {
+		private final WakeUp wakeUp;
+
+		private WakeUpWrapper(WakeUp wakeUp) {
+			this.wakeUp = wakeUp;
+		}
+
+		@Override
+		public boolean replaces(WakeUp wakeUp) {
+			if (wakeUp instanceof WakeUpWrapper) {
+				return this.wakeUp.replaces(((WakeUpWrapper) wakeUp).wakeUp);
 			}
-		}, time);
+			return false;
+		}
+
+		@Override
+		public void trigger() {
+			synchronized (OrganPlay.this) {
+				wakeUp.trigger();
+			}
+		}
 	}
 }

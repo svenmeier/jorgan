@@ -18,10 +18,18 @@
  */
 package jorgan.time;
 
-
 /**
+ * A timer of a {@link Clock}
  */
 public interface Timer {
 
+	/**
+	 * Called when the containing {@link Clock} starts.
+	 */
 	public void start();
+
+	/**
+	 * Called when the containing {@link Clock} stops.
+	 */
+	public void stop();
 }

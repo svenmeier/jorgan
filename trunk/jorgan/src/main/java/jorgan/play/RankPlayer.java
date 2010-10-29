@@ -33,10 +33,10 @@ import jorgan.disposition.Rank.NotePlayed;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
-import jorgan.play.OrganPlay.Playing;
 import jorgan.play.sound.Channel;
 import jorgan.play.sound.ChannelFilter;
 import jorgan.problem.Severity;
+import jorgan.time.WakeUp;
 
 /**
  * A player of a {@link jorgan.disposition.Rank}.
@@ -275,16 +275,24 @@ public class RankPlayer extends Player<Rank> {
 		public void sendMessage(byte[] datas) {
 			Rank rank = getElement();
 
+			int delay = rank.getDelay();
 			final byte[] copy = Arrays.copyOf(datas, datas.length);
-			getOrganPlay().alarm(rank, new Playing() {
+
+			getOrganPlay().alarm(new WakeUp() {
+
 				@Override
-				public void play(Player<?> player) {
+				public boolean replaces(WakeUp wakeUp) {
+					return false;
+				}
+
+				@Override
+				public void trigger() {
 					try {
 						channel.sendMessage(copy);
 					} catch (InvalidMidiDataException nothingWeCanDoAboutIt) {
 					}
 				}
-			}, System.currentTimeMillis() + rank.getDelay());
+			}, delay);
 		}
 	}
 }

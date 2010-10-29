@@ -43,10 +43,9 @@ public class Clock {
 	/**
 	 * Alarm for the element at the given time.
 	 */
-	public void alarm(WakeUp wakeUp, long time) {
+	public void alarm(WakeUp wakeUp, long delta) {
 		if (thread != null) {
 			synchronized (alarms) {
-				System.out.println(alarms.size());
 				Iterator<Alarm> iterator = alarms.iterator();
 				while (iterator.hasNext()) {
 					Alarm alarm = iterator.next();
@@ -54,7 +53,9 @@ public class Clock {
 						iterator.remove();
 					}
 				}
-				alarms.add(new Alarm(wakeUp, time));
+				alarms
+						.add(new Alarm(wakeUp, System.currentTimeMillis()
+								+ delta));
 				alarms.notifyAll();
 			}
 		}
@@ -118,6 +119,10 @@ public class Clock {
 	}
 
 	public void stop() {
+		for (Timer timer : timers) {
+			timer.stop();
+		}
+
 		thread = null;
 
 		synchronized (alarms) {
@@ -151,7 +156,7 @@ public class Clock {
 		}
 
 		public void trigger() {
-			wakeUp.trigger(time);
+			wakeUp.trigger();
 		}
 
 		@Override
