@@ -43,7 +43,7 @@ public class ContinuousTimer implements Timer {
 			@Override
 			public void propertyChanged(Element element, String name) {
 				if (element instanceof Continuous && "value".equals(name)) {
-					duration((Continuous) element);
+					checkDurationExpired((Continuous) element);
 				}
 			}
 		});
@@ -51,16 +51,18 @@ public class ContinuousTimer implements Timer {
 
 	public void start() {
 		for (Continuous element : organ.getElements(Continuous.class)) {
-			duration(element);
+			checkDurationExpired(element);
 		}
 	}
 
-	private void duration(final Continuous element) {
+	@Override
+	public void stop() {
+	}
+
+	private void checkDurationExpired(final Continuous element) {
 		int duration = element.getDuration();
 		if (element.getValue() > 0f && duration > Continuous.DURATION_NONE) {
-			final long time = System.currentTimeMillis() + duration;
-
-			clock.alarm(new DurationExpired(element), time);
+			clock.alarm(new DurationExpired(element), duration);
 		}
 	}
 
@@ -81,7 +83,7 @@ public class ContinuousTimer implements Timer {
 		}
 
 		@Override
-		public void trigger(long triggerTime) {
+		public void trigger() {
 			element.setValue(0f);
 		}
 	}
