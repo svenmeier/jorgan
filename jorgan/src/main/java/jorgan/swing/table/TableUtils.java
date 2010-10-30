@@ -149,19 +149,23 @@ public class TableUtils {
 	}
 
 	public static void stopEdit(JTable table) {
-		CellEditor editor = table.getCellEditor();
-		if (editor != null) {
-			editor.stopCellEditing();
+		if (table.isEditing()) {
+			CellEditor editor = table.getCellEditor();
+			if (editor != null) {
+				editor.stopCellEditing();
+			}
+			table.setCellEditor(null);
 		}
-		table.setCellEditor(null);
 	}
 
 	public static void cancelEdit(JTable table) {
-		CellEditor editor = table.getCellEditor();
-		if (editor != null) {
-			editor.cancelCellEditing();
+		if (table.isEditing()) {
+			CellEditor editor = table.getCellEditor();
+			if (editor != null) {
+				editor.cancelCellEditing();
+			}
+			table.setCellEditor(null);
 		}
-		table.setCellEditor(null);
 	}
 
 	public static int importIndex(JTable table, TransferSupport transferSupport) {
