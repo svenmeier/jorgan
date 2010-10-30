@@ -42,7 +42,7 @@ public class BooleanEditor extends PropertyEditorSupport {
 	public void setTags(String[] tags) {
 		this.tags = tags;
 	}
-	
+
 	@Override
 	public String[] getTags() {
 		return tags;
@@ -68,8 +68,10 @@ public class BooleanEditor extends PropertyEditorSupport {
 
 		if (tags[0].equals(string)) {
 			setValue(Boolean.TRUE);
-		} else {
+		} else if (tags[1].equals(string)) {
 			setValue(Boolean.FALSE);
+		} else {
+			throw new IllegalArgumentException(string);
 		}
 	}
 }
