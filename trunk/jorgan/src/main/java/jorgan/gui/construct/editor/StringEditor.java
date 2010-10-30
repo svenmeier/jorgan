@@ -25,20 +25,20 @@ import java.beans.PropertyEditorSupport;
  */
 public class StringEditor extends PropertyEditorSupport {
 
-  @Override
-public String getAsText() {
+	@Override
+	public String getAsText() {
 
-    String string = (String)getValue();
+		String string = (String) getValue();
 
-    if (string == null) {
-      return "";
-    } else {
-      return string;
-    }
-  }
+		if (string == null) {
+			return "";
+		} else {
+			return string;
+		}
+	}
 
-  @Override
-public void setAsText(String text) throws IllegalArgumentException {
-    setValue(text);
-  }
+	@Override
+	public void setAsText(String text) throws IllegalArgumentException {
+		setValue(text);
+	}
 }
