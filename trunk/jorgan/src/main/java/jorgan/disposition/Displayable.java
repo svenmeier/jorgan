@@ -18,8 +18,19 @@
  */
 package jorgan.disposition;
 
+import jorgan.disposition.Console.LocationReference;
 import jorgan.util.Null;
 
+/**
+ * TODO move properties into {@link LocationReference}.
+ * 
+ * <ul>
+ * <li>move all properties into {@link LocationReference}</li>
+ * <li>{@link Console} does not extend {@link Displayable}</li>
+ * <li>{@link Console} has its special zoom property</li>
+ * <li>create new element {@link Background}</li>
+ * </ul>
+ */
 public abstract class Displayable extends Element {
 
 	/**
