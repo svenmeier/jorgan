@@ -1,4 +1,4 @@
-jorgan (3.11.1-beta3) beta;
+jorgan (3.11.1) beta;
 
   * New duration IRREVERSIBLE
   * keep element groups expanded on change
