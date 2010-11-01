@@ -1,0 +1,10 @@
+#Thu Oct 07 18:28:31 CEST 2010
+eclipse.preferences.version=1
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n.properties=UTF-8
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n_cs.properties=UTF-8
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n_it.properties=UTF-8
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n_no.properties=UTF-8
+encoding//src/main/java/jorgan/midimerger/gui/preferences/i18n_ru.properties=UTF-8
+encoding//src/main/java/jorgan/sams/disposition/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/sams/play/i18n_de.properties=UTF-8

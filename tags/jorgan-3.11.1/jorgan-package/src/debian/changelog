@@ -1,0 +1,42 @@
+jorgan (3.11.1) beta;
+
+  * New duration IRREVERSIBLE
+  * keep element groups expanded on change
+  * better performance for Midi devices on OpenJDK 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 24 Oct 2010 21:53:00 +0200
+
+jorgan (3.11.0) stable;
+
+  * New properties 'from' and 'to' for Keyables
+  * Arbitrary messages length
+  * new Group element
+  * Fluidsynth 1.1.2
+  * jorgan-sams now configurable with messages
+
+ -- Sven Meier <sven@meiers.net>  Sat, 09 Oct 2010 21:01:20 +0200
+
+jorgan (3.10.0-1) stable;
+
+  * Improved graphics performance.
+  * Rewrote delayed Ranks to use playing clock.
+  * New Skin bindings for activate and deactivate.
+  * Sweep gesture added.
+  * Fluidsynth interpolate support.
+  * New element search. 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 11 Jul 2010 12:12:25 +0200
+
+jorgan (3.9.4-1) stable;
+
+  * New extension jorgan-tools.
+  * Accessibility improvements.
+
+ -- Sven Meier <sven@meiers.net>  Sat, 5 Jun 2010 14:34:12 +0200
+
+jorgan (3.9.3-1) stable;
+
+  * First packaging as Debian package.
+
+ -- Sven Meier <sven@meiers.net>  Mon, 10 May 2010 16:56:47 +0200
+
