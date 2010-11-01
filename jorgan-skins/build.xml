@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="jorgan-skins" default="dist" basedir=".">
+
+    <property file="./build.properties"/>
+
+    <target name="clean" description="Clean directories">
+        <delete dir="./target"/>
+    </target>
+
+    <target name="dist" description="Set up the distribution" depends="clean">
+        <ant antfile="../build.xml" dir="classic" target="_dist"/>
+        <ant antfile="../build.xml" dir="hammond" target="_dist"/>
+        <ant antfile="../build.xml" dir="modern"  target="_dist"/>
+        <ant antfile="../build.xml" dir="theatre" target="_dist"/>
+    </target>
+
+    <target name="_dist">
+        <mkdir dir="../target/marshal" />
+
+        <mkdir dir="../target/marshal/skins" />
+        <zip destfile="../target/marshal/skins/${skin.name}.zip">
+            <fileset dir=".">
+                <include name="*"/>
+            </fileset>
+        </zip>
+        <zip destfile="../target/skin-${skin.name}-${skin.version}.zip">
+            <fileset dir="../target/marshal">
+                <include name="**/${skin.name}.zip"/>
+            </fileset>
+        </zip>
+    </target>
+</project>
