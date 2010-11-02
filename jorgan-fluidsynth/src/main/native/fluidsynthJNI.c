@@ -74,19 +74,18 @@ jobject JNICALL Java_jorgan_fluidsynth_Fluidsynth_init(JNIEnv* env, jclass jclas
 			(*env)->ReleaseStringUTFChars(env, jaudioDevice, audioDevice);
 		}
 
+		if (strcmp(audioDriver, "jack") == 0) {
+			fluid_settings_setint(context->settings, "audio.jack.autoconnect", 1);
+			const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
+			fluid_settings_setstr(context->settings, "audio.jack.id", (char*)name);
+			(*env)->ReleaseStringUTFChars(env, jname, name);
+		}
+
 		(*env)->ReleaseStringUTFChars(env, jaudioDriver, audioDriver);
 	}
 
 	fluid_settings_setint(context->settings, "audio.periods", jbuffers);
 	fluid_settings_setint(context->settings, "audio.period-size", jbufferSize);
-
-	// JACK specialities
-	{
-		fluid_settings_setint(context->settings, "audio.jack.autoconnect", 1);
-		const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
-		fluid_settings_setstr(context->settings, "audio.jack.id", (char*)name);
-		(*env)->ReleaseStringUTFChars(env, jname, name);
-	}
 
 	context->synth = new_fluid_synth(context->settings);
 	if (context->synth == NULL) {
