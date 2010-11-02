@@ -48,8 +48,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		FluidsynthSound sound = getElement();
 
 		if (sound.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", "noSoundfont",
-					sound.getSoundfont());
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
+					.getSoundfont());
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
@@ -104,10 +104,10 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		removeProblem(Severity.ERROR, "audioDriver");
 		try {
 			synth = new Fluidsynth(name(sound.getName()), sound.getCores(),
-					sound.getChannels(), sound.getPolyphony(),
-					sound.getSampleRate(), sound.getAudioDriver(),
-					sound.getAudioDevice(), sound.getAudioBuffers(),
-					sound.getAudioBufferSize());
+					sound.getChannels(), sound.getPolyphony(), sound
+							.getSampleRate(), sound.getAudioDriver(), sound
+							.getAudioDevice(), sound.getAudioBuffers(), sound
+							.getAudioBufferSize());
 
 			clone = (FluidsynthSound) sound.clone();
 		} catch (IOException e) {
@@ -123,8 +123,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			try {
 				synth.soundFontLoad(resolve(sound.getSoundfont()));
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
-						sound.getSoundfont());
+				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
+						.getSoundfont());
 			}
 		}
 	}
@@ -152,8 +152,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 				synth.setReverbOn(false);
 			} else {
 				synth.setReverbOn(true);
-				synth.setReverb(reverb.getRoom(), reverb.getDamping(),
-						reverb.getWidth(), reverb.getLevel());
+				synth.setReverb(reverb.getRoom(), reverb.getDamping(), reverb
+						.getWidth(), reverb.getLevel());
 			}
 
 			Chorus chorus = sound.getChorus();
@@ -162,22 +162,36 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			} else {
 				synth.setChorusOn(true);
 				synth.setChorus((int) (chorus.getNr() * 100),
-						chorus.getLevel() * 10, chorus.getSpeed() * 5,
-						chorus.getDepth() * 10, chorus.getType().ordinal());
+						chorus.getLevel() * 10, chorus.getSpeed() * 5, chorus
+								.getDepth() * 10, chorus.getType().ordinal());
 			}
 
 			int tuningProgram = 0;
 			for (Tuning tuning : sound.getTunings()) {
-				synth.setTuning(0, tuningProgram, tuning.getName(),
-						tuning.getDerivations());
+				synth.setTuning(0, tuningProgram, tuning.getName(), tuning
+						.getDerivations());
 				tuningProgram++;
 			}
 		}
 	}
 
+	/**
+	 * FIXME in the following situation this method will block infinitely:
+	 * <ul>
+	 * <li>Jack is running</li>
+	 * <li>a disposition with audioDriver 'jack' is opened</li>
+	 * <li>the disposition is closed, destroying the synth</li>
+	 * <li>a disposition with audioDriver 'alsa' is opened</li>
+	 * <li>the disposition is closed, destroying the synth never returns!</li>
+	 * </ul>
+	 * Under certain circumstances (the audioDriver is edited instead of loading
+	 * a different disposition) the system might lock-up completely.
+	 */
 	private void destroySynth() {
 		if (synth != null) {
+			System.out.println(">>> destroy " + synth.getAudioDriver() + "{");
 			synth.destroy();
+			System.out.println(">>> }");
 			synth = null;
 
 			clone = null;
