@@ -179,19 +179,16 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 	 * FIXME in the following situation this method will block infinitely:
 	 * <ul>
 	 * <li>Jack is running</li>
-	 * <li>a disposition with audioDriver 'jack' is opened</li>
-	 * <li>the disposition is closed, destroying the synth</li>
 	 * <li>a disposition with audioDriver 'alsa' is opened</li>
+	 * <li>fluidsynth's audio thread blocks on writing to pcm</li>
 	 * <li>the disposition is closed, destroying the synth never returns!</li>
 	 * </ul>
 	 * Under certain circumstances (the audioDriver is edited instead of loading
-	 * a different disposition) the system might lock-up completely.
+	 * a disposition) the system might lock-up completely.
 	 */
 	private void destroySynth() {
 		if (synth != null) {
-			System.out.println(">>> destroy " + synth.getAudioDriver() + "{");
 			synth.destroy();
-			System.out.println(">>> }");
 			synth = null;
 
 			clone = null;
