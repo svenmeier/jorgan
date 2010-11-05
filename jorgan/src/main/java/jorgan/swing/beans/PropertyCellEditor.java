@@ -75,7 +75,11 @@ public abstract class PropertyCellEditor extends AbstractCellEditor implements
 					editor.setAsText(textField.getText());
 				} else {
 					// note: comboBox#getSelectedItem() might not be up-to-date
-					editor.setAsText((String) comboBox.getEditor().getItem());
+					String item = (String) comboBox.getEditor().getItem();
+					if (item != null && item.trim().length() == 0) {
+						item = null;
+					}
+					editor.setAsText(item);
 				}
 			} catch (IllegalArgumentException ignore) {
 			}
