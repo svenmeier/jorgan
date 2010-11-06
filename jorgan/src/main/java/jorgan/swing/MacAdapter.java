@@ -19,13 +19,10 @@ public abstract class MacAdapter {
 	private static MacAdapter adapter;
 
 	/**
-	 * Install the adapter for Max OS X with the given program name. <br>
-	 * <strong>Invoke this method before any other method on this object.</strong>
-	 * 
-	 * @param name
-	 *            name of program
+	 * Install the adapter for Max OS X. <strong>Invoke this method before any
+	 * other method on this object.</strong>
 	 */
-	public abstract void install(String name);
+	public abstract void install();
 
 	/**
 	 * Is the adapter installed.
@@ -60,7 +57,7 @@ public abstract class MacAdapter {
 
 	private static class Dummy extends MacAdapter {
 		@Override
-		public void install(String name) {
+		public void install() {
 		}
 
 		@Override
@@ -92,12 +89,7 @@ public abstract class MacAdapter {
 		private Application application;
 
 		@Override
-		public void install(String name) {
-			
-			System.setProperty("apple.awt.showGrowBox", "false");
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty(
-					"com.apple.mrj.application.apple.menu.about.name", name);
+		public void install() {
 
 			try {
 				application = new Application();

@@ -37,6 +37,10 @@
 		<dict>
 			<key>apple.laf.useScreenMenuBar</key>
 			<string>true</string>
+			<key>apple.awt.showGrowBox</key>
+			<string>true</string>
+			<key>com.apple.macos.smallTabs</key>
+			<string>true</string>
 		</dict>
 	</dict>
 </dict>
