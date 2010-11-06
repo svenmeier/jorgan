@@ -13,11 +13,7 @@
         <filter token="jorgan.version" value="${jorgan.version}"/>
     </target>
 	
-    <target name="parent">
-    	<ant antfile="../build.xml" inheritall="no"/>
-    </target>
-	
-    <target name="dist" description="Set up the distribution" depends="clean, init, parent" >
+    <target name="dist" description="Set up the distribution" depends="clean, init" >
         <mkdir dir="./target/marshal" />
 
         <property name="app" value="./target/marshal/jOrgan.app"/>
@@ -39,6 +35,7 @@
         <mkdir dir="${app}/Contents/Resources/Java"/>
         <copy todir="${app}/Contents/Resources/Java">
             <fileset dir="${jorgan.core.path}/target/marshal"/>
+        	<!--
             <fileset dir="${jorgan.customizer.path}/target/marshal"/>
             <fileset dir="${jorgan.executor.path}/target/marshal"/>
             <fileset dir="${jorgan.fluidsynth.path}/target/marshal"/>
@@ -51,12 +48,12 @@
             <fileset dir="${jorgan.recorder.path}/target/marshal"/>
             <fileset dir="${jorgan.sams.path}/target/marshal"/>
             <fileset dir="${jorgan.soundfont.path}/target/marshal"/>
-            <fileset dir="${jorgan.tools.path}/target/marshal"/>
+            <fileset dir="${jorgan.tools.path}/target/marshal"/>-->
         </copy>
 		
-        <tar destfile="./target/jorgan-${jorgan.version}.tar.gz" compression="gzip">
-	    <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
-	    <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
-	</tar>
+        <tar destfile="./target/jorgan-${jorgan.version}-bundle.tar.gz" compression="gzip">
+          <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
+          <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
+        </tar>
     </target>
 </project>

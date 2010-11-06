@@ -66,7 +66,7 @@ public class GUI implements UI {
 	 */
 	public void display(final File file) {
 
-		MacAdapter.getInstance().install("jOrgan");
+		MacAdapter.getInstance().install();
 
 		invokeOnSwing(new ExceptionContext());
 
