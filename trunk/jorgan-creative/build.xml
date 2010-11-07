@@ -31,7 +31,7 @@
     </copy>
   </target>
 
-  <target name="native" depends="native-unix, native-windows">
+  <target name="native" depends="native-unix, native-windows, native-mac">
   </target>
 
   <target name="native-common" depends="compile">
@@ -44,8 +44,18 @@
    	<condition property="isWindows">
       <os family="windows"/>
   	</condition>
+    
   	<condition property="isUnix">
-      <os family="unix"/>
+  	  <and>
+        <os family="unix"/>
+  	    <not>
+  	      <os family="mac"/>
+  	    </not>
+  	  </and>
+  	</condition>
+    
+  	<condition property="isMac">
+      <os family="mac"/>
   	</condition>
   </target>
 
@@ -139,6 +149,10 @@
   	<property name="package" value="unix-${os.arch}"/>
   </target>
 
+  <target name="native-mac" depends="native-common" if="isMac">
+  	<property name="package" value="unsupported"/>
+  </target>
+  
   <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
 

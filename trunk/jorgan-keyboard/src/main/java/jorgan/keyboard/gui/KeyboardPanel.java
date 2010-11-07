@@ -1,6 +1,5 @@
 package jorgan.keyboard.gui;
 
-
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -22,7 +21,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.swing.button.ButtonGroup;
-
 import bias.Configuration;
 
 /**
@@ -304,7 +302,7 @@ public class KeyboardPanel extends JComponent {
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (e.isControlDown() && !wasPressed) {
+			if (e.isShiftDown() && !wasPressed) {
 				key = null;
 			} else {
 				setKey(null, 0);
@@ -382,7 +380,7 @@ public class KeyboardPanel extends JComponent {
 		ButtonGroup channelGroup = new ButtonGroup() {
 			@Override
 			protected void onSelected(AbstractButton button) {
-				setChannel((Integer)button.getClientProperty(this));
+				setChannel((Integer) button.getClientProperty(this));
 			}
 		};
 		for (int c = 0; c < 16; c++) {
