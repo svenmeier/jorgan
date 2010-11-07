@@ -266,7 +266,6 @@ public class Fluidsynth {
 		} catch (UnsatisfiedLinkError error) {
 			// should be on system library path
 		}
-
 		try {
 			// for Windows we load fluidsynth explicitely from extension
 			System.load(NativeUtils.getLibraryName(file, "libfluidsynth"));

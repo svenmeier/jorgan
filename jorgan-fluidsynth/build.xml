@@ -35,7 +35,7 @@
     </copy>
   </target>
 
-  <target name="native" depends="native-unix, native-windows">
+  <target name="native" depends="native-unix, native-windows, native-mac">
   </target>
 
   <target name="native-common" depends="compile">
@@ -48,21 +48,23 @@
    	<condition property="isWindows">
       <os family="windows"/>
   	</condition>
+    
   	<condition property="isUnix">
-      <os family="unix"/>
+  	  <and>
+        <os family="unix"/>
+  	    <not>
+  	      <os family="mac"/>
+  	    </not>
+  	  </and>
+  	</condition>
+    
+  	<condition property="isMac">
+      <os family="mac"/>
   	</condition>
   </target>
 	
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
-
-    <fail message="win.jdk not found">
-      <condition>
-        <resourcecount count="0">
-          <fileset dir="${win.jdk}" includes="*" />
-        </resourcecount>
-      </condition>
-    </fail>
 
     <exec failonerror="true" executable="${win.cc}">
       <arg value="-I${win.jdk}/include" />
@@ -91,14 +93,6 @@
   <target name="native-unix" depends="native-common" if="isUnix">
     <mkdir dir="./target/native" />
 
-    <fail message="unix.jdk not found">
-      <condition>
-        <resourcecount count="0">
-          <fileset dir="${unix.jdk}" includes="*" />
-        </resourcecount>
-      </condition>
-    </fail>
-
   	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-std=c99" />
@@ -119,12 +113,32 @@
   	<property name="package" value="unix-${os.arch}"/>
   </target>
 
+  <target name="native-mac" depends="native-common" if="isMac">
+    <mkdir dir="./target/native" />
+
+    <exec failonerror="true" executable="${mac.cc}">
+      <arg value="-dynamiclib" />
+      <arg value="-std=c99" />
+      <arg value="-I${mac.jdk}/Headers" />
+      <arg value="-I${jorgan.jni.path}/src/main/native" />
+      <arg value="-I./target/native" />
+      <arg value="-Wl,-lfluidsynth" />
+      <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
+      <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg line="-o ./target/native/libfluidsynthJNI.jnilib" />
+    </exec>
+  	
+  	<property name="package" value="mac-${os.arch}"/>
+  </target>
+
   <target name="dist" depends="clean, compile, native">
   	<mkdir dir="./target/marshal/lib" />
   	<copy todir="./target/marshal/lib">
       <fileset dir="./target/native">
   		<include name="*.dll"/>
         <include name="*.so"/>
+        <include name="*.jnilib"/>
       </fileset>
     </copy> 		
   	<jar file="./target/marshal/lib/fluidsynth.jar">
