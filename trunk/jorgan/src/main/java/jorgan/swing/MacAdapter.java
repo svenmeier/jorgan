@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jorgan.util.NativeUtils;
+
 import com.apple.eawt.Application;
 import com.apple.eawt.ApplicationEvent;
 import com.apple.eawt.ApplicationListener;
@@ -186,7 +188,7 @@ public abstract class MacAdapter {
 	 * @return <code>true</code> if running on a Mac
 	 */
 	public static boolean isMac() {
-		return (System.getProperty("os.name").toLowerCase().indexOf("mac") != -1);
+		return NativeUtils.isMac();
 	}
 
 	/**

@@ -125,7 +125,7 @@ public class SoundFontManager {
 			file = new File(path);
 		}
 
-		System.load(NativeUtils.getLibraryName(file, "creativeJNI"));
+		System.load(NativeUtils.mapLibraryName(file, "creativeJNI"));
 	}
 
 	/**
