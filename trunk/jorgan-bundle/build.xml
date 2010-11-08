@@ -50,9 +50,9 @@
             <fileset dir="${jorgan.tools.path}/target/marshal"/>
         </copy>
 		
-        <tar destfile="./target/jorgan-${jorgan.version}-bundle.tar.gz" compression="gzip">
+        <zip destfile="./target/jorgan-${jorgan.version}-bundle.zip">
           <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
           <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
-        </tar>
+        </zip>
     </target>
 </project>
