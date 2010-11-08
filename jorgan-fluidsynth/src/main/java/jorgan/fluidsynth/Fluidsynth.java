@@ -259,21 +259,35 @@ public class Fluidsynth {
 			file = new File(path);
 		}
 
-		try {
+		if (NativeUtils.isWindows()) {
 			// for Windows we load depedents explicitely from extension
-			System.load(NativeUtils.getLibraryName(file, "libglib-2.0-0"));
-			System.load(NativeUtils.getLibraryName(file, "libgthread-2.0-0"));
-		} catch (UnsatisfiedLinkError error) {
-			// should be on system library path
-		}
-		try {
-			// for Windows we load fluidsynth explicitely from extension
-			System.load(NativeUtils.getLibraryName(file, "libfluidsynth"));
-		} catch (UnsatisfiedLinkError error) {
-			// should be on system library path
+			try {
+				System.load(NativeUtils.getLibraryName(file,
+						"libglib-2.0-0.dll"));
+				System.load(NativeUtils.getLibraryName(file,
+						"libgthread-2.0-0.dll"));
+				System.load(NativeUtils.getLibraryName(file,
+						"libfluidsynth.dll"));
+			} catch (UnsatisfiedLinkError error) {
+				// should be on system library path
+			}
 		}
 
-		System.load(NativeUtils.getLibraryName(file, "fluidsynthJNI"));
+		if (NativeUtils.isMac()) {
+			// for Mac we load depedents explicitely from extension
+			try {
+				System.load(NativeUtils.getLibraryName(file,
+						"libglib-2.0.0.dylib"));
+				System.load(NativeUtils.getLibraryName(file,
+						"libgthread-2.0.0.dylib"));
+				System.load(NativeUtils.getLibraryName(file,
+						"libfluidsynth.1.4.1.dylib"));
+			} catch (UnsatisfiedLinkError error) {
+				// should be on system library path
+			}
+		}
+
+		System.load(NativeUtils.mapLibraryName(file, "fluidsynthJNI"));
 	}
 
 	public class Overflow {

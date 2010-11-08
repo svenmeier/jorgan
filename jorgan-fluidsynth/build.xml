@@ -129,6 +129,10 @@
       <arg line="-o ./target/native/libfluidsynthJNI.jnilib" />
     </exec>
   	
+  	<copy todir="./target/native">
+  		<fileset dir="./lib/mac" includes="*.dylib"/>
+  	</copy>
+  	
   	<property name="package" value="mac-${os.arch}"/>
   </target>
 
@@ -139,6 +143,7 @@
   		<include name="*.dll"/>
         <include name="*.so"/>
         <include name="*.jnilib"/>
+        <include name="*.dylib"/>
       </fileset>
     </copy> 		
   	<jar file="./target/marshal/lib/fluidsynth.jar">

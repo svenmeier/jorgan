@@ -38,7 +38,7 @@ public class NativeUtils {
 	 * @param name
 	 *            name of library
 	 */
-	public static String getLibraryName(File path, String name) {
+	public static String mapLibraryName(File path, String name) {
 		String library;
 		try {
 			library = new File(path, System.mapLibraryName(name))
@@ -47,5 +47,23 @@ public class NativeUtils {
 			throw new Error(e.getMessage());
 		}
 		return library;
+	}
+
+	public static String getLibraryName(File path, String name) {
+		String library;
+		try {
+			library = new File(path, name).getCanonicalPath();
+		} catch (IOException e) {
+			throw new Error(e.getMessage());
+		}
+		return library;
+	}
+
+	public static boolean isWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win");
+	}
+
+	public static boolean isMac() {
+		return System.getProperty("os.name").toLowerCase().contains("mac");
 	}
 }
