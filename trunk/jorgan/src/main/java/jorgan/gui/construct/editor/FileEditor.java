@@ -22,18 +22,19 @@ import java.awt.Component;
 import java.io.File;
 
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
-import jorgan.swing.FileField;
+import jorgan.swing.FileSelector;
 
 /**
  * PropertyEditor for a file property.
  */
 public class FileEditor extends CustomEditor {
 
-	private FileField field = new FileField() {
+	private FileSelector field = new FileSelector() {
 		protected JTextField createTextField() {
 			JTextField textField = new JTextField();
-			textField.setBorder(null);
+			textField.setBorder(new EmptyBorder(0, 0, 0, 0));
 			return textField;
 		}
 	};
@@ -42,9 +43,9 @@ public class FileEditor extends CustomEditor {
 	public Component getCustomEditor(Object value) {
 
 		if (value == null) {
-			field.setFile(null);
+			field.setSelectedFile(null);
 		} else {
-			field.setFile(new File((String) value));
+			field.setSelectedFile(new File((String) value));
 		}
 
 		return field;
@@ -53,7 +54,7 @@ public class FileEditor extends CustomEditor {
 	@Override
 	protected Object getEditedValue() {
 
-		File file = field.getFile();
+		File file = field.getSelectedFile();
 		if (file == null) {
 			return null;
 		} else {
