@@ -29,8 +29,7 @@ public class OptionsPanel extends JPanel {
 
 	private JCheckBox touchSensitiveCheckBox = new JCheckBox();
 
-	private JSpinner bankSpinner = new JSpinner(new SpinnerNumberModel(0, 0,
-			128, 1));
+	private JSpinner bankSpinner;
 
 	/**
 	 * Constructor.
@@ -49,11 +48,13 @@ public class OptionsPanel extends JPanel {
 		column.definition(fileSelector).fillHorizontal();
 
 		column.term(config.get("bank").read(new JLabel()));
+		bankSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 128, 1));
 		column.definition(bankSpinner);
 
 		column.definition(config.get("stops").read(stopsCheckBox));
-		
-		column.definition(config.get("touchSensitive").read(touchSensitiveCheckBox));
+
+		column.definition(config.get("touchSensitive").read(
+				touchSensitiveCheckBox));
 	}
 
 	public File getSelectedFile() {
@@ -63,7 +64,7 @@ public class OptionsPanel extends JPanel {
 	public boolean getCreateStops() {
 		return stopsCheckBox.isSelected();
 	}
-	
+
 	public boolean getTouchSensitive() {
 		return touchSensitiveCheckBox.isSelected();
 	}
