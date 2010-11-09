@@ -67,10 +67,6 @@ public class CustomizeWizard extends BasicWizard {
 
 		CustomizerPage page = new CustomizerPage(customizer);
 		addPage(page);
-
-		if (getCurrentPage() == null) {
-			setCurrentPage(page);
-		}
 	}
 
 	private class CustomizerPage extends AbstractPage {
