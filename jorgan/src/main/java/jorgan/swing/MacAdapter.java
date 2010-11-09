@@ -5,6 +5,8 @@ import java.awt.event.ActionListener;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.swing.JButton;
+
 import jorgan.util.NativeUtils;
 
 import com.apple.eawt.Application;
@@ -211,5 +213,9 @@ public abstract class MacAdapter {
 			}
 		}
 		return adapter;
+	}
+
+	public static void typeToolbar(JButton button) {
+		button.putClientProperty("JButton.buttonType", "toolbar");
 	}
 }

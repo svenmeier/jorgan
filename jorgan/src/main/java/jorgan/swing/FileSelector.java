@@ -22,10 +22,13 @@ import java.awt.BorderLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusAdapter;
+import java.awt.event.FocusEvent;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.accessibility.AccessibleContext;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
@@ -41,29 +44,14 @@ import javax.swing.filechooser.FileFilter;
  */
 public class FileSelector extends JPanel {
 
-	/**
-	 * The textField used to edit the selected file.
-	 */
-	private JTextField textField = new JTextField();
+	private JTextField textField;
 
-	/**
-	 * The button used to edit the selected file.
-	 */
-	private JButton button = new JButton("...");
+	private JButton button;
 
-	/**
-	 * The fileChooser to use for file selection.
-	 */
 	private JFileChooser chooser;
 
-	/**
-	 * The listeners to changes.
-	 */
 	private List<ChangeListener> listeners = new ArrayList<ChangeListener>();
 
-	/**
-	 * The filter for file selection.
-	 */
 	private FileFilter filter;
 
 	/**
@@ -72,6 +60,18 @@ public class FileSelector extends JPanel {
 	public FileSelector() {
 		super(new BorderLayout());
 
+		button = new JButton("...");
+		MacAdapter.typeToolbar(button);
+		button.setFocusable(false);
+		button.setMargin(new Insets(0, 0, 0, 0));
+		button.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent ev) {
+				showFileChooser();
+			}
+		});
+		add(button, BorderLayout.EAST);
+
+		textField = createTextField();
 		textField.getDocument().addDocumentListener(new DocumentListener() {
 			public void changedUpdate(DocumentEvent e) {
 				fireStateChanged();
@@ -87,13 +87,16 @@ public class FileSelector extends JPanel {
 		});
 		add(textField, BorderLayout.CENTER);
 
-		button.setMargin(new Insets(0, 0, 0, 0));
-		button.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent ev) {
-				showFileChooser();
+		addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				textField.requestFocusInWindow();
 			}
 		});
-		add(button, BorderLayout.EAST);
+	}
+
+	protected JTextField createTextField() {
+		return new JTextField();
 	}
 
 	@Override
@@ -125,6 +128,9 @@ public class FileSelector extends JPanel {
 	private void showFileChooser() {
 		if (chooser == null) {
 			chooser = new JFileChooser();
+			chooser.setDialogType(JFileChooser.OPEN_DIALOG);
+			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setMultiSelectionEnabled(false);
 		}
 		chooser.setSelectedFile(getSelectedFile());
 		chooser.setFileFilter(filter);
@@ -160,10 +166,16 @@ public class FileSelector extends JPanel {
 	 * @return the selected file
 	 */
 	public File getSelectedFile() {
-		if ("".equals(textField.getText())) {
+		String text = textField.getText();
+		if ("".equals(text)) {
 			return null;
 		} else {
-			return new File(textField.getText());
+			return new File(text);
 		}
+	}
+
+	@Override
+	public AccessibleContext getAccessibleContext() {
+		return textField.getAccessibleContext();
 	}
 }

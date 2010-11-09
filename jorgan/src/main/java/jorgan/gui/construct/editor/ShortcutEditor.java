@@ -32,6 +32,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import jorgan.disposition.Shortcut;
+import jorgan.swing.MacAdapter;
 
 /**
  * PropertyEditor for a shortcut property.
@@ -39,14 +40,15 @@ import jorgan.disposition.Shortcut;
 public class ShortcutEditor extends CustomEditor implements ActionListener {
 
 	private JPanel panel = new JPanel();
-	
+
 	private JButton button = new JButton("\u2190");
-		
+
 	private ShortcutField shortcutField = new ShortcutField();
 
 	public ShortcutEditor() {
 		panel.setLayout(new BorderLayout());
 
+		MacAdapter.typeToolbar(button);
 		button.setFocusable(false);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.addActionListener(this);
@@ -55,7 +57,7 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 		shortcutField.setBorder(null);
 		panel.add(shortcutField, BorderLayout.CENTER);
 	}
-	
+
 	@Override
 	public String format(Object value) {
 
@@ -84,26 +86,26 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		shortcutField.setShortcut(null);
 	}
-	
+
 	private class ShortcutField extends JTextField {
 
 		private Shortcut shortcut;
 
 		private KeyEventPostProcessor processor = new KeyEventPostProcessor() {
 			public boolean postProcessKeyEvent(KeyEvent e) {
-		        
+
 				if (e.getID() == KeyEvent.KEY_RELEASED) {
 					Shortcut shortcut = Shortcut.createShortCut(e);
 					if (shortcut != null) {
 						setShortcut(shortcut);
 						return true;
-					}			
+					}
 				}
 
 				return false;
 			}
 		};
-		
+
 		private ShortcutField() {
 			setBorder(null);
 			setEnabled(false);

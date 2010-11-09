@@ -31,6 +31,8 @@ public class BasicWizard implements Wizard {
 
 	protected Page current = null;
 
+	private boolean ignoreChangesWhileNotifyingListeners;
+
 	/**
 	 * Add a page.
 	 * 
@@ -159,10 +161,16 @@ public class BasicWizard implements Wizard {
 	}
 
 	private void fireWizardChanged() {
-		for (int l = 0; l < listeners.size(); l++) {
-			WizardListener listener = listeners.get(l);
+		if (!ignoreChangesWhileNotifyingListeners) {
+			ignoreChangesWhileNotifyingListeners = true;
 
-			listener.wizardChanged();
+			for (int l = 0; l < listeners.size(); l++) {
+				WizardListener listener = listeners.get(l);
+
+				listener.wizardChanged();
+			}
+
+			ignoreChangesWhileNotifyingListeners = false;
 		}
 	}
 
