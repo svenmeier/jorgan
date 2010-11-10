@@ -2,7 +2,7 @@ debian/input/jorgan /usr/bin
 debian/input/jorgan.desktop /usr/share/applications
 debian/input/icons/* /usr/share/icons
 debian/input/copyright /usr/share/doc/jorgan
-../../jorgan/docs/authors.txt /usr/share/doc/jorgan
+../../jorgan/docs/* /usr/share/doc/jorgan
 ../../jorgan/target/marshal/jorgan.jar /usr/lib/jorgan
 ../../jorgan/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan/target/marshal/dispositions/* /usr/share/jorgan/dispositions
