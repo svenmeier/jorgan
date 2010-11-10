@@ -70,7 +70,7 @@
       <arg value="-I${win.jdk}/include" />
       <arg value="-I${win.jdk}/include/win32" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
-      <arg value="-I./lib/win/include" />
+      <arg value="-I./lib/include" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-Wl,--kill-at" />
@@ -121,7 +121,9 @@
       <arg value="-std=c99" />
       <arg value="-I${mac.jdk}/Headers" />
       <arg value="-I${jorgan.jni.path}/src/main/native" />
+      <arg value="-I./lib/include" />
       <arg value="-I./target/native" />
+      <arg value="-Wl,-L./lib/mac" />
       <arg value="-Wl,-lfluidsynth" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
