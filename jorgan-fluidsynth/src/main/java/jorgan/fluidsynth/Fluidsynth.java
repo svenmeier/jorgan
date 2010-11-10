@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
 
@@ -30,6 +32,9 @@ import jorgan.util.NativeUtils;
 import bias.Configuration;
 
 public class Fluidsynth {
+
+	private static final Logger logger = Logger.getLogger(Fluidsynth.class
+			.getName());
 
 	private static final Configuration config = Configuration.getRoot().get(
 			Fluidsynth.class);
@@ -274,20 +279,20 @@ public class Fluidsynth {
 		}
 
 		if (NativeUtils.isMac()) {
-			// for Mac we load depedents explicitely from extension
-			try {
-				System.load(NativeUtils.getLibraryName(file,
-						"libglib-2.0.0.dylib"));
-				System.load(NativeUtils.getLibraryName(file,
-						"libgthread-2.0.0.dylib"));
-				System.load(NativeUtils.getLibraryName(file,
-						"libfluidsynth.1.4.1.dylib"));
-			} catch (UnsatisfiedLinkError error) {
-				// should be on system library path
-			}
+			// libraries on mac include their install name (see "otool -L") thus
+			// we cannot load the dependecies explicitely.
+			// However the bundled libraries are already tweaked to be resolved
+			// relatively to their loaders location "@loader_path/lib...dylib/"
+			// (see "install_name_tool [-id|-change]").
 		}
 
-		System.load(NativeUtils.mapLibraryName(file, "fluidsynthJNI"));
+		try {
+			System.load(NativeUtils.mapLibraryName(file, "fluidsynthJNI"));
+		} catch (UnsatisfiedLinkError ex) {
+			logger.log(Level.INFO, "fluidsynth failure", ex);
+
+			throw ex;
+		}
 	}
 
 	public class Overflow {

@@ -21,6 +21,8 @@ package jorgan.creative;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
@@ -31,6 +33,9 @@ import jorgan.util.NativeUtils;
 public class SoundFontManager {
 
 	public static final String JORGAN_CREATIVE_LIBRARY_PATH = "jorgan.creative.library.path";
+
+	private static final Logger logger = Logger
+			.getLogger(SoundFontManager.class.getName());
 
 	private String deviceName;
 
@@ -125,7 +130,13 @@ public class SoundFontManager {
 			file = new File(path);
 		}
 
-		System.load(NativeUtils.mapLibraryName(file, "creativeJNI"));
+		try {
+			System.load(NativeUtils.mapLibraryName(file, "creativeJNI"));
+		} catch (UnsatisfiedLinkError ex) {
+			logger.log(Level.INFO, "creative failure", ex);
+
+			throw ex;
+		}
 	}
 
 	/**

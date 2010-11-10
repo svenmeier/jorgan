@@ -14,9 +14,9 @@
     </target>
 	
     <target name="dist" description="Set up the distribution" depends="clean, init" >
-        <mkdir dir="./target/marshal" />
+        <mkdir dir="./target/jOrgan" />
 
-        <property name="app" value="./target/marshal/jOrgan.app"/>
+        <property name="app" value="./target/jOrgan/jOrgan.app"/>
 		
         <mkdir dir="${app}/Contents"/>
         <echo file="${app}/Contents/PkgInfo">APPL????</echo>
@@ -49,10 +49,5 @@
             <fileset dir="${jorgan.soundfont.path}/target/marshal"/>
             <fileset dir="${jorgan.tools.path}/target/marshal"/>
         </copy>
-		
-        <zip destfile="./target/jorgan-${jorgan.version}-bundle.zip">
-          <zipfileset dir="./target/marshal" includes="**/JavaApplicationStub" filemode="755"/>
-          <zipfileset dir="./target/marshal" excludes="**/JavaApplicationStub"/>
-        </zip>
     </target>
 </project>
