@@ -6,8 +6,10 @@ ant -buildfile ../build.xml
 
 ant -buildfile build.xml
 
-chmod a+x ./target/jOrgan/jOrgan.app/Contents/MacOS/JavaApplicationStub
+IMAGE=`ls target`
 
-hdiutil create -srcfolder ./target/jOrgan ./target/jOrgan.dmg
+chmod a+x ./target/${IMAGE}/jOrgan.app/Contents/MacOS/JavaApplicationStub
 
-hdiutil internet-enable -yes ./target/jOrgan.dmg
+hdiutil create -srcfolder ./target/${IMAGE} ./target/${IMAGE}.dmg
+
+hdiutil internet-enable -yes ./target/${IMAGE}.dmg
