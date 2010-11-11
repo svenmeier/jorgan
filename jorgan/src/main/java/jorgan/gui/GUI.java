@@ -23,10 +23,6 @@ import bias.swing.MessageBox;
  */
 public class GUI implements UI {
 
-	public static enum LAF {
-		DEFAULT, SYSTEM, CROSS_PLATFORM
-	}
-
 	private static Logger log = Logger.getLogger(GUI.class.getName());
 
 	private static Configuration config = Configuration.getRoot()
@@ -100,20 +96,8 @@ public class GUI implements UI {
 
 	private class SwingContext implements Runnable {
 		public void run() {
-			String plaf = null;
+			String plaf = lookAndFeel.getClassName();
 			try {
-				switch (lookAndFeel) {
-				case DEFAULT:
-					// nothing to do
-					break;
-				case SYSTEM:
-					plaf = UIManager.getSystemLookAndFeelClassName();
-					break;
-				case CROSS_PLATFORM:
-					plaf = UIManager.getCrossPlatformLookAndFeelClassName();
-					break;
-				}
-
 				if (plaf != null) {
 					log.log(Level.INFO, "setting plaf '" + plaf + "'");
 					UIManager.setLookAndFeel(plaf);
