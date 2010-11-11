@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import javax.swing.JLabel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.EmptyBorder;
 
 /**
  * A textArea used as a lable with multiple lines.
@@ -60,6 +61,7 @@ public class MultiLineLabel extends JTextArea {
 		setEditable(false);
 		setBackground(new JLabel().getBackground());
 		setMinimumSize(new Dimension(0, 0));
+		setBorder(new EmptyBorder(4, 4, 4, 4));
 	}
 
 	@Override

@@ -27,6 +27,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
 import jorgan.gui.GUI;
+import jorgan.gui.LAF;
 import jorgan.gui.OrganFrame;
 import jorgan.gui.OrganFrame.Changes;
 import jorgan.gui.action.FullScreenAction;
@@ -45,7 +46,7 @@ public class GuiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			GuiCategory.class);
 
-	private Model<GUI.LAF> lookAndFeel = getModel(new Property(GUI.class,
+	private Model<LAF> lookAndFeel = getModel(new Property(GUI.class,
 			"lookAndFeel"));
 
 	private Model<Boolean> showAboutOnStartup = getModel(new Property(
@@ -85,7 +86,7 @@ public class GuiCategory extends JOrganCategory {
 
 		column.term(config.get("lookAndFeel").read(new JLabel()));
 		lookAndFeelComboBox
-				.setModel(new DefaultComboBoxModel(GUI.LAF.values()));
+				.setModel(new DefaultComboBoxModel(LAF.values()));
 		column.definition(lookAndFeelComboBox);
 
 		column.definition(config.get("showAboutOnStartup").read(
@@ -146,7 +147,7 @@ public class GuiCategory extends JOrganCategory {
 
 	@Override
 	protected void write() {
-		lookAndFeel.setValue((GUI.LAF) lookAndFeelComboBox.getSelectedItem());
+		lookAndFeel.setValue((LAF) lookAndFeelComboBox.getSelectedItem());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 
