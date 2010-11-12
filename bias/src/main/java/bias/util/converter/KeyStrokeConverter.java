@@ -18,6 +18,8 @@
  */
 package bias.util.converter;
 
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.lang.reflect.Type;
 
 import javax.swing.KeyStroke;
@@ -27,6 +29,17 @@ import javax.swing.KeyStroke;
  */
 public class KeyStrokeConverter implements Converter {
 
+	private static String shortcutReplacement;
+	{
+		int shortcutKeyMask = Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask();
+
+		String stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, shortcutKeyMask).toString();
+		int space = stroke.indexOf(' ');
+		
+		shortcutReplacement = stroke.substring(0, space);
+	}
+	
+	
 	public String toString(Object object, Type type) {
 		KeyStroke keyStroke = (KeyStroke) object;
 
@@ -34,6 +47,9 @@ public class KeyStrokeConverter implements Converter {
 	}
 
 	public Object fromString(String string, Type type) {
+		
+		string = string.replace("shortcut", shortcutReplacement);
+		
 		return KeyStroke.getKeyStroke(string);
 	}
 }
