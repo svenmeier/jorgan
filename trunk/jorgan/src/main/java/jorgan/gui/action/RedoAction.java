@@ -58,7 +58,7 @@ public class RedoAction extends BaseAction {
 
 	private void update() {
 		setEnabled(session.isConstructing()
-				&& this.session.lookup(UndoManager.class).canUndo());
+				&& this.session.lookup(UndoManager.class).canRedo());
 	}
 
 	public void actionPerformed(ActionEvent ev) {

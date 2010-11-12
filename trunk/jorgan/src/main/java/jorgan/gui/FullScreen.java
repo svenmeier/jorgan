@@ -38,6 +38,7 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JDialog;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
@@ -50,6 +51,7 @@ import jorgan.gui.ConsolePanel.ConsoleStack;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
+import jorgan.swing.MacAdapter;
 import jorgan.swing.button.ButtonGroup;
 import bias.Configuration;
 
@@ -57,6 +59,16 @@ import bias.Configuration;
  * A window shown <em>full screen</em>.
  */
 public class FullScreen extends JDialog implements ConsoleStack {
+
+	public static final KeyStroke KEY_STROKE;
+	static {
+		if (MacAdapter.isMac()) {
+			KEY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_F,
+					KeyEvent.META_MASK | KeyEvent.SHIFT_MASK);
+		} else {
+			KEY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_F11, 0);
+		}
+	}
 
 	private static Configuration config = Configuration.getRoot().get(
 			FullScreen.class);
@@ -137,8 +149,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		cardPanel.addCard(consolePanel, console);
 
-		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
-				.getDisplayName(console));
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(
+				Elements.getDisplayName(console));
 		menuItems.put(console, check);
 		check.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent event) {
@@ -229,10 +241,10 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			Rectangle rect = scrollPane.getViewport().getViewRect();
 			Dimension size = scrollPane.getViewport().getView().getSize();
 
-			int x = Math.min(size.width - rect.width, Math.max(rect.x + deltaX,
-					0));
-			int y = Math.min(size.height - rect.height, Math.max(rect.y
-					+ deltaY, 0));
+			int x = Math.min(size.width - rect.width,
+					Math.max(rect.x + deltaX, 0));
+			int y = Math.min(size.height - rect.height,
+					Math.max(rect.y + deltaY, 0));
 
 			scrollPane.getViewport().setViewPosition(new Point(x, y));
 		}
@@ -255,10 +267,12 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 	private KeyEventDispatcher processor = new KeyEventDispatcher() {
 		public boolean dispatchKeyEvent(KeyEvent e) {
-			if (e.getID() == KeyEvent.KEY_PRESSED
-					&& e.getKeyCode() == KeyEvent.VK_F11) {
-				leave();
-				return true;
+			if (e.getID() == KeyEvent.KEY_PRESSED) {
+				if (e.getKeyCode() == KEY_STROKE.getKeyCode()
+						&& e.getModifiers() == (KEY_STROKE.getModifiers() & 0xf)) {
+					leave();
+					return true;
+				}
 			}
 
 			return false;
