@@ -25,9 +25,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
 import java.awt.event.KeyEvent;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,9 +36,9 @@ import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
 import jorgan.skin.ButtonLayer;
 import jorgan.skin.Layer;
+import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
-import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.TextLayer.Binding;
 import bias.Configuration;
 
@@ -214,36 +211,18 @@ public class View<E extends Displayable> {
 			}
 		});
 
-		String description = getElement().getDescription();
-		BufferedReader reader = new BufferedReader(
-				new StringReader(description));
-		while (true) {
-			try {
-				String line = reader.readLine();
-				if (line == null) {
-					break;
+		Map<String, String> texts = getElement().getTexts();
+		for (String key : texts.keySet()) {
+			final String text = texts.get(key);
+			setBinding(key, new TextLayer.Binding() {
+				public boolean isPressable() {
+					return false;
 				}
 
-				int equalSign = line.indexOf("=");
-				if (equalSign != -1) {
-					final String name = line.substring(0, equalSign).trim();
-					final String text = line.substring(equalSign + 1).trim();
-
-					if (name.length() > 0) {
-						setBinding(name, new TextLayer.Binding() {
-							public boolean isPressable() {
-								return false;
-							}
-
-							public String getText() {
-								return text;
-							}
-						});
-					}
+				public String getText() {
+					return text;
 				}
-			} catch (IOException unexpected) {
-				throw new Error(unexpected);
-			}
+			});
 		}
 
 		setBinding(BINDING_POPUP, new ButtonLayer.Binding() {
