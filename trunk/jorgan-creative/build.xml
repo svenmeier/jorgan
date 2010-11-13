@@ -107,7 +107,7 @@
       </condition>
     </fail>
 
-  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev'" />  	
+  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev' (configured!)" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
