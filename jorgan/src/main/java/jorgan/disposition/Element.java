@@ -18,10 +18,15 @@
  */
 package jorgan.disposition;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
@@ -559,6 +564,35 @@ public abstract class Element implements Cloneable {
 				moveReference(reference, index);
 			}
 		});
+	}
+
+	public Map<String, String> getTexts() {
+		Map<String, String> texts = new HashMap<String, String>();
+
+		BufferedReader reader = new BufferedReader(
+				new StringReader(description));
+		while (true) {
+			try {
+				String line = reader.readLine();
+				if (line == null) {
+					break;
+				}
+
+				int equalSign = line.indexOf("=");
+				if (equalSign != -1) {
+					final String name = line.substring(0, equalSign).trim();
+					final String text = line.substring(equalSign + 1).trim();
+
+					if (name.length() > 0) {
+						texts.put(name, text);
+					}
+				}
+			} catch (IOException unexpected) {
+				throw new Error(unexpected);
+			}
+		}
+
+		return texts;
 	}
 
 	protected static String cleanPath(String path) {

@@ -18,6 +18,10 @@
  */
 package jorgan.gui.console;
 
+import java.util.Map;
+
+import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.IndexedContinuous;
 import jorgan.disposition.Regulator;
 
@@ -46,6 +50,13 @@ public class RegulatorView extends IndexedContinuousView<Regulator> {
 	}
 
 	protected String getTitle(int index) {
-		return getElement().getReference(index).getElement().getName();
+		Element referrenced = getElement().getReference(index).getElement();
+
+		Map<String, String> texts = referrenced.getTexts();
+		String name = texts.get(BINDING_NAME);
+		if (name == null) {
+			name = Elements.getDisplayName(referrenced);
+		}
+		return name;
 	}
 }
