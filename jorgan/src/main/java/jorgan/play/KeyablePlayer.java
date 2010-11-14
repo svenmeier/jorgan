@@ -96,6 +96,10 @@ public abstract class KeyablePlayer<E extends Keyable> extends SwitchPlayer<E> {
 
 		Keyable keyable = getElement();
 
+		if (keyable.getVelocity() != Keyable.VELOCITY_UNMODIFIED) {
+			velocity = keyable.getVelocity();
+		}
+
 		if (pitch < keyable.getFrom() || pitch > keyable.getTo()) {
 			// out of range
 			return;
