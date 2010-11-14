@@ -1,6 +1,15 @@
-jorgan (3.11.1) beta;
+jorgan (3.12-beta2) beta;
 
-  * New duration IRREVERSIBLE
+  * New duration velocity for coupler and stop
+  * corrected Mac shortcut keys
+  * corrected undo/redo actions
+  * use name from description for regulator's title 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 24 Oct 2010 21:53:00 +0200
+
+jorgan (3.11.1) stable;
+
+  * Changed switch duration NONE, UNTIL_DEACTIVATED, UNFINITE
   * keep element groups expanded on change
   * better performance for Midi devices on OpenJDK 
 

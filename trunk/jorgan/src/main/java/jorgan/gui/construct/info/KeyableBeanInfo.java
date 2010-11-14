@@ -22,6 +22,7 @@ import jorgan.disposition.Keyable;
 import jorgan.gui.construct.editor.ActionEditor;
 import jorgan.gui.construct.editor.DataEditor;
 import jorgan.gui.construct.editor.TransposeEditor;
+import jorgan.gui.construct.editor.VelocityEditor;
 
 /**
  * BeanInfo for {@link jorgan.disposition.Keyable}.
@@ -36,5 +37,6 @@ public class KeyableBeanInfo extends SwitchBeanInfo {
 		add("from", Keyable.class, DataEditor.class);
 		add("to", Keyable.class, DataEditor.class);
 		add("transpose", Keyable.class, TransposeEditor.class);
+		add("velocity", Keyable.class, VelocityEditor.class);
 	}
 }

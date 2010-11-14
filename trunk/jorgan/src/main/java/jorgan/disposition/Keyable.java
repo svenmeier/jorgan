@@ -25,6 +25,8 @@ package jorgan.disposition;
  */
 public abstract class Keyable extends Switch {
 
+	public static final int VELOCITY_UNMODIFIED = 0;
+
 	public static final int ACTION_STRAIGHT = 0;
 
 	public static final int ACTION_PITCH_CONSTANT = 1;
@@ -46,6 +48,12 @@ public abstract class Keyable extends Switch {
 	private int to = 127;
 
 	private int transpose = 0;
+
+	private int velocity = 0;
+
+	public int getVelocity() {
+		return velocity;
+	}
 
 	public int getFrom() {
 		return from;
@@ -78,7 +86,25 @@ public abstract class Keyable extends Switch {
 
 	protected abstract boolean isValidAction(int action);
 
+	public void setVelocity(int velocity) {
+		if (velocity < VELOCITY_UNMODIFIED || velocity > 127) {
+			throw new IllegalArgumentException();
+		}
+
+		if (this.velocity != velocity) {
+			int oldVelocity = this.velocity;
+
+			this.velocity = velocity;
+
+			fireChange(new PropertyChange(oldVelocity, this.velocity));
+		}
+	}
+
 	public void setFrom(int from) {
+		if (from < 0 || from > 127) {
+			throw new IllegalArgumentException();
+		}
+
 		if (this.from != from) {
 			int oldFrom = this.from;
 
@@ -89,6 +115,10 @@ public abstract class Keyable extends Switch {
 	}
 
 	public void setTo(int to) {
+		if (to < 0 || to > 127) {
+			throw new IllegalArgumentException();
+		}
+
 		if (this.to != to) {
 			int oldTo = this.to;
 
