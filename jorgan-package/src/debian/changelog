@@ -1,6 +1,6 @@
 jorgan (3.12-beta2) beta;
 
-  * New duration velocity for coupler and stop
+  * new velocity property for coupler and stop
   * corrected Mac shortcut keys
   * corrected undo/redo actions
   * use name from description for regulator's title 
