@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 
 import jorgan.util.NativeUtils;
 
@@ -217,5 +218,10 @@ public abstract class MacAdapter {
 
 	public static void typeToolbar(JButton button) {
 		button.putClientProperty("JButton.buttonType", "toolbar");
+	}
+
+	public static void modified(JFrame frame, boolean modified) {
+		frame.getRootPane().putClientProperty("Window.documentModified",
+				Boolean.valueOf(modified));
 	}
 }
