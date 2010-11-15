@@ -100,6 +100,7 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>0</transpose>
+      <velocity>0</velocity>
       <from>0</from>
       <to>127</to>
     </stop>
@@ -115,6 +116,7 @@
       <duration>-1</duration>
       <action>0</action>
       <transpose>-12</transpose>
+      <velocity>0</velocity>
       <from>0</from>
       <to>127</to>
     </stop>
