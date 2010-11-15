@@ -69,6 +69,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>0</transpose>
+      <velocity>0</velocity>
     </stop>
     <stop id="10">
       <name>Stop 2</name>
@@ -84,6 +85,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>0</transpose>
+      <velocity>0</velocity>
     </stop>
     <rank id="6">
       <name>Rank 0</name>
@@ -200,6 +202,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>0</transpose>
+      <velocity>0</velocity>
     </stop>
     <combination id="4">
       <name>2</name>
@@ -237,6 +240,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>-12</transpose>
+      <velocity>0</velocity>
     </stop>
     <rank id="14">
       <name>Rank 2</name>

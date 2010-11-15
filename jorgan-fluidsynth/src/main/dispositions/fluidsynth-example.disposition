@@ -53,6 +53,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>0</transpose>
+      <velocity>0</velocity>
     </stop>
     <keyboard id="5">
       <name>My Keyboard</name>
@@ -113,6 +114,7 @@
       <from>0</from>
       <to>127</to>
       <transpose>-12</transpose>
+      <velocity>0</velocity>
     </stop>
     <label id="7">
       <name></name>
