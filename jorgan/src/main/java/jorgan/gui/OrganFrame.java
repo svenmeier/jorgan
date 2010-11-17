@@ -516,7 +516,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 					new History().getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			config.get("new/chooser").read(chooser);
-			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+			if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				File file = DispositionFileFilter.addSuffix(chooser
 						.getSelectedFile());
 				if (file.exists()) {
