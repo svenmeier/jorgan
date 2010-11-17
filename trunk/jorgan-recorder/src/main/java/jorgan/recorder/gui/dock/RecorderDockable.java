@@ -176,8 +176,8 @@ public class RecorderDockable extends OrganDockable {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options)).show(
-				getContent().getTopLevelAncestor(), args);
+		return config.get(key).read(new MessageBox(options))
+				.show(getContent().getTopLevelAncestor(), args);
 	}
 
 	private boolean canEject() {
@@ -239,7 +239,8 @@ public class RecorderDockable extends OrganDockable {
 			JFileChooser chooser = new JFileChooser(session.getFile());
 			config.get("eject/chooser").read(chooser);
 			chooser.setFileFilter(new MidiFileFilter());
-			if (chooser.showOpenDialog(getContent()) == JFileChooser.APPROVE_OPTION) {
+			if (chooser
+					.showDialog(getContent(), chooser.getApproveButtonText()) == JFileChooser.APPROVE_OPTION) {
 				file = chooser.getSelectedFile();
 				if (!file.exists()) {
 					file = MidiFileFilter.addSuffix(file);
