@@ -8,7 +8,7 @@ Homepage: http://jorgan.sourceforge.net
 
 Package: jorgan
 Architecture: any
-Depends: default-jre libfluidsynth1
+Depends: default-jre,libfluidsynth1
 Recommends : qjackctl
 Description: jOrgan
 	Java Virtual Organ
