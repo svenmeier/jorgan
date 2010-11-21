@@ -4,4 +4,5 @@
 if ! grep -q snd-virmidi /etc/modules;
   then
     echo "snd-virmidi" >> /etc/modules
+    modprobe snd-virmidi
 fi
