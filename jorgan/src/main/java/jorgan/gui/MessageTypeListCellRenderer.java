@@ -22,9 +22,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import jorgan.disposition.Elements;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.swing.CompoundIcon;
 import jorgan.swing.list.SimpleCellRenderer;
 
@@ -39,26 +39,28 @@ public class MessageTypeListCellRenderer extends
 			MessageTypeListCellRenderer.class
 					.getResource("/jorgan/gui/img/output.gif"));
 
-	private static final Icon interceptIcon = new ImageIcon(OrganPanel.class
-			.getResource("/jorgan/gui/img/intercept.gif"));
+	private static final Icon interceptIcon = new ImageIcon(
+			OrganPanel.class.getResource("/jorgan/gui/img/intercept.gif"));
 
 	@Override
 	protected void init(Class<? extends Message> type) {
 		// might be null from accessibility
-		if (type != null) {
-			Icon icon;
-			if (InputMessage.class.isAssignableFrom(type)) {
-				icon = inputIcon;
-			} else {
-				icon = outputIcon;
-			}
-
-			if (InterceptMessage.class.isAssignableFrom(type)) {
-				icon = new CompoundIcon(icon, interceptIcon);
-			}
-			setIcon(icon);
-
-			setText(Elements.getDisplayName(type));
+		if (type == null) {
+			return;
 		}
+
+		Icon icon;
+		if (InputMessage.class.isAssignableFrom(type)) {
+			icon = inputIcon;
+		} else {
+			icon = outputIcon;
+		}
+
+		if (InterceptMessage.class.isAssignableFrom(type)) {
+			icon = new CompoundIcon(icon, interceptIcon);
+		}
+		setIcon(icon);
+
+		setText(Elements.getDisplayName(type));
 	}
 }
