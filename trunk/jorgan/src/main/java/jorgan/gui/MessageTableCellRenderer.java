@@ -22,9 +22,9 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 import jorgan.disposition.Elements;
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.swing.CompoundIcon;
 import jorgan.swing.table.SimpleCellRenderer;
@@ -39,10 +39,15 @@ public class MessageTableCellRenderer extends SimpleCellRenderer<Message> {
 			MessageTableCellRenderer.class
 					.getResource("/jorgan/gui/img/output.gif"));
 
-	private static final Icon interceptIcon = new ImageIcon(OrganPanel.class
-			.getResource("/jorgan/gui/img/intercept.gif"));
+	private static final Icon interceptIcon = new ImageIcon(
+			OrganPanel.class.getResource("/jorgan/gui/img/intercept.gif"));
 
 	protected void init(Message message) {
+		// might be null from accessibility
+		if (message == null) {
+			return;
+		}
+
 		Icon icon;
 		if (message instanceof InputMessage) {
 			icon = inputIcon;
