@@ -96,7 +96,7 @@ public class EffectsDockable extends OrganDockable {
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == panel.getSound()) {
+			if (panel != null && element == panel.getSound()) {
 				panel.read();
 			}
 		}
