@@ -8,14 +8,14 @@ import jorgan.disposition.event.UndoableChange;
 
 public class Screen extends Element {
 
-	public void setWidget(Displayable element, Widget widget) {
-		final WidgetReference reference = (WidgetReference) getReference(element);
+	public void setStyle(Displayable element, String style) {
+		final LocationReference reference = (LocationReference) getReference(element);
 
-		final Widget oldWidget = reference.getWidget();
+		final String oldStyle = reference.getStyle();
 
-		reference.setWidget(widget);
+		reference.setStyle(style);
 
-		fireChange(new WidgetChange(reference, oldWidget, widget));
+		fireChange(new LocationChange(reference, oldStyle, style));
 	}
 
 	@Override
@@ -26,51 +26,51 @@ public class Screen extends Element {
 	@Override
 	protected Reference<? extends Element> createReference(Element element) {
 		if (element instanceof Displayable) {
-			return new WidgetReference((Displayable) element);
+			return new LocationReference((Displayable) element);
 		} else {
 			return super.createReference(element);
 		}
 	}
 
-	public static class WidgetReference extends Reference<Displayable> {
+	public static class LocationReference extends Reference<Displayable> {
 
-		private Widget widget;
+		private String style;
 
-		public WidgetReference(Displayable element) {
+		public LocationReference(Displayable element) {
 			super(element);
 		}
 
-		public void setWidget(Widget widget) {
-			this.widget = widget;
+		public void setStyle(String style) {
+			this.style = style;
 		}
 
-		public Widget getWidget() {
-			return widget;
+		public String getStyle() {
+			return style;
 		}
 
 		@Override
-		public WidgetReference clone(Element element) {
-			WidgetReference clone = (WidgetReference) super.clone(element);
+		public LocationReference clone(Element element) {
+			LocationReference clone = (LocationReference) super.clone(element);
 
 			return clone;
 		}
 	}
 
-	private class WidgetChange implements UndoableChange {
+	private class LocationChange implements UndoableChange {
 
-		private WidgetReference reference;
+		private LocationReference reference;
 
-		private Widget oldWidget;
+		private String oldStyle;
 
-		private Widget newWidget;
+		private String newStyle;
 
-		public WidgetChange(WidgetReference reference, Widget oldWidget,
-				Widget newWidget) {
+		public LocationChange(LocationReference reference, String oldStyle,
+				String newStyle) {
 			this.reference = reference;
 
-			this.oldWidget = oldWidget;
+			this.oldStyle = oldStyle;
 
-			this.newWidget = newWidget;
+			this.newStyle = newStyle;
 		}
 
 		public void notify(OrganListener listener) {
@@ -78,18 +78,18 @@ public class Screen extends Element {
 		}
 
 		public void undo() {
-			setWidget(reference.getElement(), oldWidget);
+			setStyle(reference.getElement(), oldStyle);
 		}
 
 		public void redo() {
-			setWidget(reference.getElement(), newWidget);
+			setStyle(reference.getElement(), newStyle);
 		}
 
 		public boolean replaces(UndoableChange change) {
-			if (change instanceof WidgetChange) {
-				WidgetChange other = (WidgetChange) change;
+			if (change instanceof LocationChange) {
+				LocationChange other = (LocationChange) change;
 				if (this.reference == other.reference) {
-					this.newWidget = other.newWidget;
+					this.newStyle = other.newStyle;
 
 					return true;
 				}
