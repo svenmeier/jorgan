@@ -1262,13 +1262,15 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			public void run() {
 				for (Element element : session.lookup(ElementSelection.class)
 						.getSelectedElements()) {
-					Reference<? extends Element> reference = console
-							.getReference(element);
+					if (console.references(element)) {
+						Reference<? extends Element> reference = console
+								.getReference(element);
 
-					console.removeReference(reference);
+						console.removeReference(reference);
 
-					if (!other.references(element)) {
-						other.addReference(reference);
+						if (!other.references(element)) {
+							other.addReference(reference);
+						}
 					}
 				}
 			}
