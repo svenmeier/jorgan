@@ -19,8 +19,6 @@
 package jorgan.gui.console;
 
 import java.awt.Insets;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +30,7 @@ import jorgan.skin.Fill;
 import jorgan.skin.Layer;
 import jorgan.skin.TextLayer;
 import jorgan.swing.list.FilterList;
+import jorgan.text.PadFormat;
 
 /**
  * A view that shows an {@link IndexedContinuous}.
@@ -44,8 +43,6 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous>
 	 * {@link TextLayer}s.
 	 */
 	public static final String BINDING_INDEX = "index";
-
-	private NumberFormat indexFormat = new DecimalFormat("000");
 
 	/**
 	 * Constructor.
@@ -71,12 +68,18 @@ public abstract class IndexedContinuousView<E extends IndexedContinuous>
 		super.initBindings();
 
 		setBinding(BINDING_INDEX, new TextLayer.Binding() {
+			private PadFormat format;
+			{
+				format = new PadFormat(Integer.toString(getElement().getSize())
+						.length(), '0');
+			}
+
 			public boolean isPressable() {
 				return false;
 			}
 
 			public String getText() {
-				return indexFormat.format(getElement().getIndex() + 1);
+				return format.format(getElement().getIndex() + 1);
 			}
 		});
 
