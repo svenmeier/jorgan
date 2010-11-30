@@ -522,8 +522,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			for (final Console other : session.getOrgan().getElements(
 					Console.class)) {
 				if (other != console) {
-					JMenuItem consoleItem = new JMenuItem(Elements
-							.getDisplayName(other));
+					JMenuItem consoleItem = new JMenuItem(
+							Elements.getDisplayName(other));
 					consoleItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -846,8 +846,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			pressedView = getView(e.getX(), e.getY());
 			if (pressedView != null) {
-				pressedOrigin = new Point(pressedView.getX(), pressedView
-						.getY());
+				pressedOrigin = new Point(pressedView.getX(),
+						pressedView.getY());
 				pressedWasSelected = selection.isSelected(pressedView
 						.getElement());
 			}
@@ -884,6 +884,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
+			if (mouseFrom == null) {
+				return;
+			}
+
 			mouseTo = e.getPoint();
 
 			ElementSelection selection = session.lookup(ElementSelection.class);
@@ -905,8 +909,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (dragMarker.contains(view.getX(), view.getY(), view
-							.getWidth(), view.getHeight())) {
+					if (dragMarker.contains(view.getX(), view.getY(),
+							view.getWidth(), view.getHeight())) {
 						elements.add(view.getElement());
 					}
 				}
@@ -955,8 +959,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			if (pressedView != null) {
 				if (isMultiSelect(e)) {
 					if (pressedWasSelected) {
-						session
-								.lookup(ElementSelection.class)
+						session.lookup(ElementSelection.class)
 								.removeSelectedElement(pressedView.getElement());
 					}
 				} else {
@@ -994,10 +997,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
-						selectionMarkers.add(createMarker(view.getX(), view
-								.getY(), view.getX() + view.getWidth(), view
-								.getY()
-								+ view.getHeight()));
+						selectionMarkers.add(createMarker(view.getX(),
+								view.getY(), view.getX() + view.getWidth(),
+								view.getY() + view.getHeight()));
 					}
 				}
 			}
