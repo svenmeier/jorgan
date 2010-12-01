@@ -68,6 +68,7 @@ import jorgan.disposition.Reference;
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
+import jorgan.gui.console.ConsoleStack;
 import jorgan.gui.console.View;
 import jorgan.gui.console.ViewContainer;
 import jorgan.gui.console.spi.ViewRegistry;
@@ -213,7 +214,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		// must report to be opaque so containing scrollPane can use blitting
 		setOpaque(true);
 
-		// must be focusable to be used in fullScreen
 		setFocusable(true);
 
 		ToolTipManager.sharedInstance().registerComponent(this);
@@ -256,6 +256,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		constructing = !this.session.isConstructing();
 		setConstructing(!constructing);
+
+		new MoveUp();
+		new MoveDown();
+		new MoveLeft();
+		new MoveRight();
 	}
 
 	public void dispose() {
@@ -522,8 +527,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			for (final Console other : session.getOrgan().getElements(
 					Console.class)) {
 				if (other != console) {
-					JMenuItem consoleItem = new JMenuItem(
-							Elements.getDisplayName(other));
+					JMenuItem consoleItem = new JMenuItem(Elements
+							.getDisplayName(other));
 					consoleItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -838,6 +843,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			requestFocus();
+
 			mouseFrom = e.getPoint();
 
 			session.lookup(UndoManager.class).compound();
@@ -846,8 +853,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			pressedView = getView(e.getX(), e.getY());
 			if (pressedView != null) {
-				pressedOrigin = new Point(pressedView.getX(),
-						pressedView.getY());
+				pressedOrigin = new Point(pressedView.getX(), pressedView
+						.getY());
 				pressedWasSelected = selection.isSelected(pressedView
 						.getElement());
 			}
@@ -909,8 +916,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (dragMarker.contains(view.getX(), view.getY(),
-							view.getWidth(), view.getHeight())) {
+					if (dragMarker.contains(view.getX(), view.getY(), view
+							.getWidth(), view.getHeight())) {
 						elements.add(view.getElement());
 					}
 				}
@@ -959,7 +966,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			if (pressedView != null) {
 				if (isMultiSelect(e)) {
 					if (pressedWasSelected) {
-						session.lookup(ElementSelection.class)
+						session
+								.lookup(ElementSelection.class)
 								.removeSelectedElement(pressedView.getElement());
 					}
 				} else {
@@ -997,9 +1005,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
-						selectionMarkers.add(createMarker(view.getX(),
-								view.getY(), view.getX() + view.getWidth(),
-								view.getY() + view.getHeight()));
+						selectionMarkers.add(createMarker(view.getX(), view
+								.getY(), view.getX() + view.getWidth(), view
+								.getY()
+								+ view.getHeight()));
 					}
 				}
 			}
@@ -1312,7 +1321,55 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 	}
 
-	public static interface ConsoleStack {
-		public void toFront(Console console);
+	private abstract class MoveAction extends BaseAction {
+		public MoveAction() {
+			config.get(getClass().getSimpleName().toLowerCase()).read(this);
+
+			registerAccelerator(ConsolePanel.this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			ElementSelection selection = session.lookup(ElementSelection.class);
+			for (Element element : selection.getSelectedElements()) {
+				if (console.references(element)) {
+					move(element);
+				}
+			}
+		}
+
+		protected abstract void move(Element element);
+	}
+
+	private class MoveUp extends MoveAction {
+		@Override
+		protected void move(Element element) {
+			console.setLocation(element, console.getX(element), console
+					.getY(element) - 1);
+		}
+	}
+
+	private class MoveDown extends MoveAction {
+		@Override
+		protected void move(Element element) {
+			console.setLocation(element, console.getX(element), console
+					.getY(element) + 1);
+		}
+	}
+
+	private class MoveLeft extends MoveAction {
+		@Override
+		protected void move(Element element) {
+			console.setLocation(element, console.getX(element) - 1, console
+					.getY(element));
+		}
+	}
+
+	private class MoveRight extends MoveAction {
+		@Override
+		protected void move(Element element) {
+			console.setLocation(element, console.getX(element) + 1, console
+					.getY(element));
+		}
 	}
 }
