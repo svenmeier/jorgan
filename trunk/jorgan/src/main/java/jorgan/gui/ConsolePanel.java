@@ -1323,7 +1323,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private abstract class MoveAction extends BaseAction {
 		public MoveAction() {
-			config.get(getClass().getSimpleName().toLowerCase()).read(this);
+			String name = getClass().getSimpleName();
+			config.get(
+					Character.toLowerCase(name.charAt(0)) + name.substring(1))
+					.read(this);
 
 			registerAccelerator(ConsolePanel.this);
 		}
