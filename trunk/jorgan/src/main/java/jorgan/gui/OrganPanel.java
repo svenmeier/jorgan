@@ -42,7 +42,7 @@ import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.ConsolePanel.ConsoleStack;
+import jorgan.gui.console.ConsoleStack;
 import jorgan.gui.dock.BordererDockingPane;
 import jorgan.gui.dock.ConsoleDockable;
 import jorgan.gui.dock.OrganDockable;

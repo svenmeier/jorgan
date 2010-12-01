@@ -74,7 +74,7 @@ public abstract class BaseAction extends AbstractAction {
 		return (Boolean) getValue(SELECTED_KEY);
 	}
 
-	protected void register(JComponent component) {
+	protected void registerAccelerator(JComponent component) {
 		component.getInputMap().put(getAccelerator(), this);
 		component.getActionMap().put(this, this);
 	}

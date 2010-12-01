@@ -416,12 +416,12 @@ public class ElementsDockable extends OrganDockable {
 	private class DuplicateAction extends BaseAction implements
 			TreeSelectionListener, Compound {
 
-		private DuplicateAction() {
+		public DuplicateAction() {
 			config.get("duplicate").read(this);
 
 			tree.addTreeSelectionListener(this);
 
-			register(tree);
+			registerAccelerator(tree);
 			valueChanged(null);
 		}
 

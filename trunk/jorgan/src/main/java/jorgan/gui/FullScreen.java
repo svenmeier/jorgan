@@ -47,7 +47,7 @@ import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
-import jorgan.gui.ConsolePanel.ConsoleStack;
+import jorgan.gui.console.ConsoleStack;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
