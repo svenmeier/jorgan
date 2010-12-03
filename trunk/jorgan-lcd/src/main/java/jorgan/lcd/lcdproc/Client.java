@@ -1,4 +1,4 @@
-package jorgan.lcd;
+package jorgan.lcd.lcdproc;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,7 +11,10 @@ import java.net.SocketAddress;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 
-public class LCDProc {
+/**
+ * A client of {@link http://lcdproc.sourceforge.net}.
+ */
+public class Client {
 
 	private static final String DEFAULT_HOST = "localhost";
 
@@ -33,12 +36,15 @@ public class LCDProc {
 
 	private int cellHeight;
 
-	public LCDProc() throws SocketTimeoutException, UnknownHostException,
+	public Client() throws SocketTimeoutException, UnknownHostException,
 			IOException {
 		this(DEFAULT_HOST, DEFAULT_PORT);
 	}
 
-	public LCDProc(String host, int port) throws UnknownHostException,
+	/**
+	 * Create a client to <code>LCDd</code>.
+	 */
+	public Client(String host, int port) throws UnknownHostException,
 			SocketTimeoutException, IOException {
 
 		SocketAddress address = new InetSocketAddress(host, port);
@@ -49,28 +55,22 @@ public class LCDProc {
 
 		try {
 			writer = new OutputStreamWriter(socket.getOutputStream());
-		} catch (IOException e) {
-			socket.close();
 
-			throw e;
-		}
-
-		try {
 			reader = new BufferedReader(new InputStreamReader(socket
 					.getInputStream()));
+
+			// response = "connect LCDproc 0.5dev protocol 0.3 lcd wid 20 hgt 4
+			// cellwid 5 cellhgt 8"
+			String response = sendImpl("hello");
+			width = parse(response, "wid");
+			height = parse(response, "hgt");
+			cellWidth = parse(response, "cellwid");
+			cellHeight = parse(response, "cellhgt");
 		} catch (IOException e) {
 			socket.close();
 
 			throw e;
 		}
-
-		// connect LCDproc 0.5dev protocol 0.3 lcd wid 20 hgt 4 cellwid 5
-		// cellhgt 8
-		String response = sendImpl("hello");
-		width = parse(response, "wid");
-		height = parse(response, "hgt");
-		cellWidth = parse(response, "cellwid");
-		cellHeight = parse(response, "cellhgt");
 	}
 
 	public int getWidth() {
@@ -102,7 +102,7 @@ public class LCDProc {
 			}
 			return Integer.parseInt(response.substring(start, end));
 		} catch (Exception e) {
-			throw new IOException("unknown key '" + key + "'");
+			throw new IOException("invalid key '" + key + "'");
 		}
 	}
 
@@ -138,9 +138,12 @@ public class LCDProc {
 		return new Screen();
 	}
 
-	public class Screen {
+	private class Component {
 
-		private int id = id();
+		protected final int id = id();
+	}
+
+	public class Screen extends Component {
 
 		private Screen() throws IOException {
 			sendImpl("screen_add %d", this.id);
@@ -150,18 +153,19 @@ public class LCDProc {
 			return new StringWidget(x, y);
 		}
 
-		public BarWidget addBar(int x, int y, int size, boolean horizontal)
-				throws IOException {
-			return new BarWidget(x, y, size, horizontal);
+		public HBarWidget addHBar(int x, int y, int size) throws IOException {
+			return new HBarWidget(x, y, size);
+		}
+
+		public VBarWidget addVBar(int x, int y, int size) throws IOException {
+			return new VBarWidget(x, y, size);
 		}
 
 		public NumWidget addNum(int x) throws IOException {
 			return new NumWidget(x);
 		}
 
-		public class StringWidget {
-
-			private int id = id();
+		public class StringWidget extends Component {
 
 			private int x;
 
@@ -180,9 +184,7 @@ public class LCDProc {
 			}
 		}
 
-		public class NumWidget {
-
-			private int id = id();
+		public class NumWidget extends Component {
 
 			private int x;
 
@@ -198,31 +200,50 @@ public class LCDProc {
 			}
 		}
 
-		public class BarWidget {
-
-			private int id = id();
+		public class HBarWidget extends Component {
 
 			private int x;
 
 			private int y;
 
-			private int pixels;
+			private int size;
 
-			private BarWidget(int x, int y, int size, boolean horizontal)
-					throws IOException {
-				if (horizontal) {
-					sendImpl("widget_add %d %d hbar", Screen.this.id, this.id);
-					pixels = size * cellWidth;
-				} else {
-					sendImpl("widget_add %d %d vbar", Screen.this.id, this.id);
-					pixels = size * cellHeight;
-				}
+			private HBarWidget(int x, int y, int size) throws IOException {
+				sendImpl("widget_add %d %d hbar", Screen.this.id, this.id);
 
 				this.x = x;
 				this.y = y;
+				this.size = size;
 			}
 
 			public void value(double length) throws IOException {
+				int pixels = size * cellWidth;
+
+				sendImpl("widget_set %d %d %d %d %d", Screen.this.id, this.id,
+						x, y, Math.round(pixels * length));
+			}
+		}
+
+		public class VBarWidget extends Component {
+
+			private int x;
+
+			private int y;
+
+			private int size;
+
+			private VBarWidget(int x, int y, int size) throws IOException {
+
+				sendImpl("widget_add %d %d vbar", Screen.this.id, this.id);
+
+				this.x = x;
+				this.y = y;
+				this.size = size;
+			}
+
+			public void value(double length) throws IOException {
+				int pixels = size * cellHeight;
+
 				sendImpl("widget_set %d %d %d %d %d", Screen.this.id, this.id,
 						x, y, Math.round(pixels * length));
 			}
