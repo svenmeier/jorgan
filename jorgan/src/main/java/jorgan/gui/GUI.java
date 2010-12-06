@@ -150,6 +150,7 @@ public class GUI implements UI {
 			frame = new OrganFrame();
 			frame.addWindowListener(this);
 			frame.setVisible(true);
+			frame.requestFocus();
 		}
 
 		@Override
