@@ -36,7 +36,7 @@ public final class IpMidi {
 
 	private static InetAddress inetAddress(String name) {
 		try {
-			return InetAddress.getByName("225.0.0.37");
+			return InetAddress.getByName(name);
 		} catch (UnknownHostException e) {
 			throw new Error(e);
 		}

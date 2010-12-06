@@ -56,26 +56,25 @@ public class MessageReceiver {
 
 		thread = new Thread(new Runnable() {
 			public void run() {
-				DatagramSocket socket = MessageReceiver.this.socket;
-				while (socket != null) {
+				while (thread != null) {
 					try {
 						receive(socket);
 					} catch (IOException ex) {
-						if (MessageReceiver.this.socket != null) {
+						if (thread != null) {
 							onError(ex);
 						}
 						break;
 					}
 				}
 			}
-		});
+		}, "LAN receiver");
 		thread.start();
 	}
 
 	public void close() {
-		if (socket != null) {
-			DatagramSocket socket = this.socket;
-			this.socket = null;
+		if (thread != null) {
+			thread = null;
+
 			socket.close();
 		}
 	}
