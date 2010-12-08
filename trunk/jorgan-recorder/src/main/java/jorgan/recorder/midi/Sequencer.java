@@ -18,6 +18,9 @@
  */
 package jorgan.recorder.midi;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.Sequence;
@@ -25,11 +28,13 @@ import javax.sound.midi.Track;
 
 import jorgan.util.AbstractIterator;
 
-public class MessageRecorder {
+public class Sequencer {
 
 	public static final long SECOND = 1000;
 
 	public static final long MINUTE = 60 * SECOND;
+
+	private SequencerListener listener;
 
 	private Sequence sequence;
 
@@ -39,13 +44,33 @@ public class MessageRecorder {
 
 	private State state;
 
-	public MessageRecorder(Sequence sequence) {
+	public Sequencer(Sequence sequence) {
+		this(sequence, new SequencerListener() {
+			@Override
+			public void onStarting() {
+			}
 
+			@Override
+			public void onEvent(int track, MidiMessage message) {
+			}
+
+			@Override
+			public void onStopping() {
+			}
+
+			@Override
+			public void onLast() {
+			}
+		});
+	}
+
+	public Sequencer(Sequence sequence, SequencerListener listener) {
 		this.sequence = sequence;
+		this.listener = listener;
 
 		tracks = sequence.getTracks();
 		currentTick = 0;
-		
+
 		new Stopped();
 	}
 
@@ -74,9 +99,11 @@ public class MessageRecorder {
 	}
 
 	private void setTick(long tick) {
-		stop();
+		synchronized (sequence) {
+			stop();
 
-		this.currentTick = Math.min(tick, getTotalTicks() + 1);
+			this.currentTick = Math.min(tick, getTotalTicks() + 1);
+		}
 	}
 
 	private long getCurrentTick() {
@@ -96,13 +123,15 @@ public class MessageRecorder {
 	}
 
 	public boolean isLast() {
-		return currentTick == sequence.getTickLength() + 1; 
+		return currentTick == sequence.getTickLength() + 1;
 	}
-	
-	public void start() {
-		stop();
 
-		new Running();
+	public void start() {
+		synchronized (sequence) {
+			stop();
+
+			new Running();
+		}
 	}
 
 	public boolean isRunning() {
@@ -114,16 +143,16 @@ public class MessageRecorder {
 	}
 
 	public void stop() {
-		if (state != null) {
+		synchronized (sequence) {
 			if (state instanceof Stopped) {
 				// already stopped
 				return;
 			}
 
 			state.stopping();
-		}
 
-		new Stopped();
+			new Stopped();
+		}
 	}
 
 	/**
@@ -148,19 +177,9 @@ public class MessageRecorder {
 			throw new IllegalArgumentException("endOfTrack is invalid");
 		}
 
-		state.record(track, message);
-	}
-
-	protected void onPlayed(int track, MidiMessage message) {
-	}
-
-	protected void onLast() {
-	}
-
-	protected void onStarting() {
-	}
-
-	protected void onStopping() {
+		synchronized (sequence) {
+			state.record(track, message);
+		}
 	}
 
 	public long millisToTick(long millis) {
@@ -183,10 +202,6 @@ public class MessageRecorder {
 
 		return Math.round(((double) tick) * 1000 / division
 				/ sequence.getResolution());
-	}
-
-	public Iterable<MidiEvent> events(final int track) {
-		return events(track, 0, Long.MAX_VALUE);
 	}
 
 	public Iterable<MidiEvent> eventsAtTick(final int track, final long tick) {
@@ -213,33 +228,36 @@ public class MessageRecorder {
 	private Iterable<MidiEvent> events(final int track, final long fromTick,
 			final long toTick) {
 
-		return new AbstractIterator<MidiEvent>() {
-			private int index = SequenceUtils.getIndex(tracks[track], fromTick) - 1;
+		synchronized (sequence) {
+			return new AbstractIterator<MidiEvent>() {
+				private int index = SequenceUtils.getIndex(tracks[track],
+						fromTick) - 1;
 
-			public boolean hasNext() {
-				if (index == tracks[track].size() - 1) {
-					return false;
+				public boolean hasNext() {
+					if (index == tracks[track].size() - 1) {
+						return false;
+					}
+
+					MidiEvent event = tracks[track].get(index + 1);
+					return !SequenceUtils.isEndOfTrack(event.getMessage())
+							&& event.getTick() < toTick;
 				}
 
-				MidiEvent event = tracks[track].get(index + 1);
-				return !SequenceUtils.isEndOfTrack(event.getMessage())
-						&& event.getTick() < toTick;
-			}
+				public MidiEvent next() {
+					index++;
 
-			public MidiEvent next() {
-				index++;
+					MidiEvent event = tracks[track].get(index);
 
-				MidiEvent event = tracks[track].get(index);
+					return event;
+				}
 
-				return event;
-			}
-
-			@Override
-			public void remove() {
-				tracks[track].remove(tracks[track].get(index));
-				index--;
-			}
-		};
+				@Override
+				public void remove() {
+					tracks[track].remove(tracks[track].get(index));
+					index--;
+				}
+			};
+		}
 	}
 
 	private abstract class State {
@@ -254,7 +272,7 @@ public class MessageRecorder {
 		public abstract long totalTicks();
 
 		public void stopping() {
-			onStopping();
+			listener.onStopping();
 		}
 	}
 
@@ -294,9 +312,9 @@ public class MessageRecorder {
 			}
 
 			startMillis = System.currentTimeMillis();
-			thread = new Thread(this);
+			thread = new Thread(this, "Sequencer");
 
-			onStarting();
+			listener.onStarting();
 
 			thread.start();
 		}
@@ -315,50 +333,62 @@ public class MessageRecorder {
 			return Math.max(sequence.getTickLength(), currentTick());
 		}
 
-		public synchronized void run() {
+		public void run() {
 			while (thread != null) {
-				playCurrentEvents();
-				
-				try {
-					MidiEvent event = nextEvent();
-					if (event == null) {
-						onLast();
-						wait();
-					} else {
-						long sleepMillis = startMillis
-								+ tickToMillis(event.getTick() - initialTick)
-								- System.currentTimeMillis();
-						if (sleepMillis > 0) {
-							wait(sleepMillis);
-						}	
+				past();
+
+				synchronized (sequence) {
+					try {
+						MidiEvent event = nextEvent();
+						if (event == null) {
+							listener.onLast();
+							sequence.wait();
+						} else {
+							long sleepMillis = startMillis
+									+ tickToMillis(event.getTick()
+											- initialTick)
+									- System.currentTimeMillis();
+							if (sleepMillis > 0) {
+								sequence.wait(sleepMillis);
+							}
+						}
+					} catch (InterruptedException interrupted) {
 					}
-				} catch (InterruptedException interrupted) {
 				}
 			}
 		}
 
-		private void playCurrentEvents() {
-			currentTick = currentTick();
+		private void past() {
+			synchronized (sequence) {
+				currentTick = currentTick();
+			}
+
 			for (int track = 0; track < tracks.length; track++) {
-				playEvents(track);
+				past(track);
 			}
 		}
 
-		private void playEvents(int track) {
-			while (indices[track] < tracks[track].size()) {
-				MidiEvent event = tracks[track].get(indices[track]);
+		private void past(int track) {
+			List<MidiEvent> events = new ArrayList<MidiEvent>();
 
-				if (SequenceUtils.isEndOfTrack(event.getMessage())) {
-					break;
-				}
-				
-				if (event.getTick() > currentTick) {
-					break;
-				}
+			synchronized (sequence) {
+				while (indices[track] < tracks[track].size()) {
+					MidiEvent event = tracks[track].get(indices[track]);
 
-				onPlayed(track, event.getMessage());
-				indices[track]++;
+					if (SequenceUtils.isEndOfTrack(event.getMessage())) {
+						break;
+					}
+
+					if (event.getTick() > currentTick) {
+						break;
+					}
+
+					events.add(event);
+					indices[track]++;
+				}
 			}
+
+			notifyEvents(track, events);
 		}
 
 		private MidiEvent nextEvent() {
@@ -380,27 +410,33 @@ public class MessageRecorder {
 		}
 
 		@Override
-		public synchronized void record(int track, MidiMessage message) {
-			playCurrentEvents();
+		public void record(int track, MidiMessage message) {
+			past();
 
 			tracks[track].add(new MidiEvent(message, currentTick));
 			indices[track]++;
 		}
 
 		@Override
-		public synchronized void stopping() {
-			playCurrentEvents();
+		public void stopping() {
+			past();
 
 			// stop possible waiting thread (could be current)
 			thread.interrupt();
 			thread = null;
-			
+
 			super.stopping();
 
 			SequenceUtils.shrink(sequence);
-			
+
 			// step behind last tick
 			currentTick = Math.min(currentTick, sequence.getTickLength()) + 1;
+		}
+	}
+
+	private void notifyEvents(int track, List<MidiEvent> events) {
+		for (MidiEvent event : events) {
+			listener.onEvent(track, event.getMessage());
 		}
 	}
 }

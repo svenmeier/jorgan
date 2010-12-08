@@ -35,7 +35,7 @@ import jorgan.play.Player;
 import jorgan.play.OrganPlay.Playing;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.Performance;
-import jorgan.recorder.midi.MessageRecorder;
+import jorgan.recorder.midi.Sequencer;
 
 public class KeyboardTracker extends AbstractTracker {
 
@@ -109,7 +109,7 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	/**
-	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all
+	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all
 	 * currently pressed keys.
 	 */
 	public void onRecordStarting() {
@@ -121,7 +121,7 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	/**
-	 * {@link MessageRecorder#record(int, MidiMessage) NOTE_OFF for all
+	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all
 	 * currently pressed keys.
 	 */
 	public void onRecordStopping() {

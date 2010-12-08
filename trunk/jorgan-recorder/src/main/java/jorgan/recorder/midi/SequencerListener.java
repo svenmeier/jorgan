@@ -16,41 +16,17 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.recorder;
+package jorgan.recorder.midi;
 
 import javax.sound.midi.MidiMessage;
 
-import jorgan.disposition.Element;
-import jorgan.recorder.midi.Sequencer;
+public interface SequencerListener {
 
-/**
- * A tracker of a {@link Sequencer}'s track.
- */
-public interface Tracker {
+	void onStarting();
 
-	public int getTrack();
+	void onEvent(int track, MidiMessage message);
 
-	public Element getElement();
+	void onLast();
 
-	public void setRecordEnabled(boolean recording);
-
-	public boolean isRecordEnabled();
-
-	public void setPlayEnabled(boolean playing);
-
-	public boolean isPlayEnabled();
-
-	public void attach(Performance performance);
-	
-	public void detach();
-
-	public void onPlayStarting();
-
-	public void onRecordStarting();
-
-	public void onPlayStopping();
-
-	public void onRecordStopping();
-
-	public void onPlayed(MidiMessage message);
+	void onStopping();
 }

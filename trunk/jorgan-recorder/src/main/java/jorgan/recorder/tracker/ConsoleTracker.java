@@ -32,7 +32,7 @@ import jorgan.disposition.event.OrganAdapter;
 import jorgan.midi.MessageUtils;
 import jorgan.recorder.Performance;
 import jorgan.recorder.disposition.RecorderSwitch;
-import jorgan.recorder.midi.MessageRecorder;
+import jorgan.recorder.midi.Sequencer;
 import bias.Configuration;
 
 /**
@@ -235,7 +235,7 @@ public class ConsoleTracker extends AbstractTracker {
 
 	/**
 	 * Get the value for the given {@link Continuous} in the
-	 * {@link MessageRecorder} or <code>null</code> if not known.
+	 * {@link Sequencer} or <code>null</code> if not known.
 	 */
 	private Float readSequenceValue(Continuous continuous) {
 		Float value = null;
@@ -264,7 +264,7 @@ public class ConsoleTracker extends AbstractTracker {
 
 	/**
 	 * Get the active state for the given {@link Switch} in the
-	 * {@link MessageRecorder} or <code>null</code> if not known.
+	 * {@link Sequencer} or <code>null</code> if not known.
 	 */
 	private Boolean readSequenceActive(Switch aSwitch) {
 		Boolean active = null;
