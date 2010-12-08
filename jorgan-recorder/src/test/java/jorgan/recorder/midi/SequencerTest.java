@@ -25,31 +25,36 @@ import javax.sound.midi.ShortMessage;
 
 import junit.framework.TestCase;
 
-public class RecorderTest extends TestCase {
+/**
+ * Test for {@link Sequencer}.
+ */
+public class SequencerTest extends TestCase {
 
 	public void test() throws Exception {
-		MessageRecorder recorder = new MessageRecorder(new Sequence(Sequence.PPQ, 50, 1)) {
-			protected void onPlayed(int track, MidiMessage message) {
-				trace("played ", track, message);
-			}
+		Sequencer recorder = new Sequencer(new Sequence(Sequence.PPQ, 50, 1),
+				new SequencerListener() {
+					@Override
+					public void onEvent(int track, MidiMessage message) {
+						trace("played ", track, message);
+					}
 
-			@Override
-			protected void onStarting() {
-				System.out.println("Starting");
-			}
+					@Override
+					public void onStarting() {
+						System.out.println("Starting");
+					}
 
-			@Override
-			protected void onStopping() {
-				System.out.println("Stopping");
-			}
+					@Override
+					public void onStopping() {
+						System.out.println("Stopping");
+					}
 
-			@Override
-			protected void onLast() {
-				synchronized (RecorderTest.this) {
-					RecorderTest.this.notify();
-				}
-			}
-		};
+					@Override
+					public void onLast() {
+						synchronized (SequencerTest.this) {
+							SequencerTest.this.notify();
+						}
+					}
+				});
 
 		recorder.start();
 
@@ -88,7 +93,7 @@ public class RecorderTest extends TestCase {
 		}
 	}
 
-	private void keyPressed(MessageRecorder recorder, int pitch, int velocity) {
+	private void keyPressed(Sequencer recorder, int pitch, int velocity) {
 		ShortMessage message = new ShortMessage();
 		try {
 			message.setMessage(144, pitch, velocity);
@@ -98,7 +103,7 @@ public class RecorderTest extends TestCase {
 		recorder.record(0, message);
 	}
 
-	private void keyReleased(MessageRecorder recorder, int pitch) {
+	private void keyReleased(Sequencer recorder, int pitch) {
 		ShortMessage message = new ShortMessage();
 		try {
 			message.setMessage(128, pitch, 0);

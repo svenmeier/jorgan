@@ -27,7 +27,7 @@ import javax.sound.midi.MidiEvent;
 import javax.swing.JComponent;
 
 import jorgan.recorder.Performance;
-import jorgan.recorder.midi.MessageRecorder;
+import jorgan.recorder.midi.Sequencer;
 
 public class TrackGraph extends JComponent {
 
@@ -52,7 +52,7 @@ public class TrackGraph extends JComponent {
 		int height = HEIGHT;
 
 		int width = Math.round(SECOND_WIDTH * performance.getTotalTime()
-				/ MessageRecorder.SECOND);
+				/ Sequencer.SECOND);
 
 		return new Dimension(Math.max(2, width), height);
 	}
@@ -136,7 +136,7 @@ public class TrackGraph extends JComponent {
 		g.drawLine(0, height - 1, getWidth() - 1, height - 1);
 		g.drawLine(getWidth() - 1, 0, getWidth() - 1, getHeight() - 1);
 
-		long delta = 10 * MessageRecorder.SECOND;
+		long delta = 10 * Sequencer.SECOND;
 		long total = performance.getTotalTime();
 		long millis = xToMillis(bounds.x) / delta * delta;
 		while (millis < total) {
@@ -144,9 +144,9 @@ public class TrackGraph extends JComponent {
 			int tempHeight;
 			if (millis == 0) {
 				tempHeight = height * 4 / 4;
-			} else if (millis % (60 * MessageRecorder.SECOND) == 0) {
+			} else if (millis % (60 * Sequencer.SECOND) == 0) {
 				tempHeight = height * 3 / 4;
-			} else if (millis % (30 * MessageRecorder.SECOND) == 0) {
+			} else if (millis % (30 * Sequencer.SECOND) == 0) {
 				tempHeight = height * 2 / 4;
 			} else {
 				tempHeight = height * 1 / 4;
