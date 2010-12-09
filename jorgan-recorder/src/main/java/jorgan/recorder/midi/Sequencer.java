@@ -320,12 +320,8 @@ public class Sequencer {
 		}
 
 		public long currentTick() {
-			if (thread == null) {
-				return currentTick;
-			} else {
-				return initialTick
-						+ millisToTick(System.currentTimeMillis() - startMillis);
-			}
+			return initialTick
+					+ millisToTick(System.currentTimeMillis() - startMillis);
 		}
 
 		@Override
@@ -334,16 +330,20 @@ public class Sequencer {
 		}
 
 		public void run() {
-			while (thread != null) {
+			while (true) {
 				past();
 
 				synchronized (sequence) {
-					try {
-						MidiEvent event = nextEvent();
-						if (event == null) {
-							listener.onLast();
-							sequence.wait();
-						} else {
+					if (thread != Thread.currentThread()) {
+						break;
+					}
+
+					MidiEvent event = nextEvent();
+					if (event == null) {
+						listener.onLast();
+						break;
+					} else {
+						try {
 							long sleepMillis = startMillis
 									+ tickToMillis(event.getTick()
 											- initialTick)
@@ -351,8 +351,8 @@ public class Sequencer {
 							if (sleepMillis > 0) {
 								sequence.wait(sleepMillis);
 							}
+						} catch (InterruptedException interrupted) {
 						}
-					} catch (InterruptedException interrupted) {
 					}
 				}
 			}
