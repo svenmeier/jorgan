@@ -81,7 +81,7 @@ public class Clock {
 	}
 
 	private void run() {
-		while (thread == Thread.currentThread()) {
+		while (true) {
 			long now = System.currentTimeMillis();
 
 			List<Alarm> pasts = new ArrayList<Alarm>();
@@ -102,6 +102,10 @@ public class Clock {
 			trigger(pasts);
 
 			synchronized (alarms) {
+				if (thread != Thread.currentThread()) {
+					break;
+				}
+
 				try {
 					if (alarms.isEmpty()) {
 						alarms.wait();
@@ -123,11 +127,11 @@ public class Clock {
 			timer.stop();
 		}
 
-		thread = null;
-
 		synchronized (alarms) {
 			alarms.clear();
-			alarms.notifyAll();
+
+			thread.interrupt();
+			thread = null;
 		}
 	}
 
