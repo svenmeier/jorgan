@@ -13,7 +13,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import jorgan.UI;
-import jorgan.swing.MacAdapter;
 import spin.over.SpinOverEvaluator;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -61,8 +60,6 @@ public class GUI implements UI {
 	 *            optional file that contains an organ
 	 */
 	public void display(final File file) {
-
-		MacAdapter.getInstance().install();
 
 		invokeOnSwing(new ExceptionContext());
 
