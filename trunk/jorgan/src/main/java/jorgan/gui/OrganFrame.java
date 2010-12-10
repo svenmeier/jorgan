@@ -21,6 +21,7 @@ package jorgan.gui;
 import java.awt.BorderLayout;
 import java.awt.Desktop;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -151,6 +152,16 @@ public class OrganFrame extends JFrame implements SessionAware {
 			MacAdapter.getInstance()
 					.setPreferencesListener(configurationAction);
 			MacAdapter.getInstance().setAboutListener(aboutAction);
+			MacAdapter.getInstance().setFileListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ev) {
+					if (!closeOrgan()) {
+						return;
+					}
+
+					openOrgan(new File(ev.getActionCommand()));
+				}
+			});
 		}
 
 		JMenuBar menuBar = new JMenuBar();
@@ -344,7 +355,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 *            file to open organ from
 	 */
 	public void openOrgan(File file) {
-		closeOrgan();
+		setSession(null);
 
 		OrganSession session;
 		try {

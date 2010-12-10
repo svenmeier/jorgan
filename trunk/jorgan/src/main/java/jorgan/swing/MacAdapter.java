@@ -24,12 +24,6 @@ public abstract class MacAdapter {
 	private static MacAdapter adapter;
 
 	/**
-	 * Install the adapter for Max OS X. <strong>Invoke this method before any
-	 * other method on this object.</strong>
-	 */
-	public abstract void install();
-
-	/**
 	 * Is the adapter installed.
 	 * 
 	 * @return <code>true</code> if installed
@@ -60,10 +54,15 @@ public abstract class MacAdapter {
 	 */
 	public abstract void setQuitListener(ActionListener listener);
 
+	/**
+	 * Set the listener for files.
+	 * 
+	 * @param listener
+	 *            the listener
+	 */
+	public abstract void setFileListener(ActionListener listener);
+
 	private static class Dummy extends MacAdapter {
-		@Override
-		public void install() {
-		}
 
 		@Override
 		public boolean isInstalled() {
@@ -81,6 +80,10 @@ public abstract class MacAdapter {
 		@Override
 		public void setQuitListener(ActionListener listener) {
 		}
+
+		@Override
+		public void setFileListener(ActionListener listener) {
+		}
 	}
 
 	private static class Real extends MacAdapter {
@@ -91,61 +94,54 @@ public abstract class MacAdapter {
 
 		private ActionListener quitAction;
 
+		private ActionListener fileAction;
+
 		private Application application;
 
-		@Override
-		public void install() {
+		public Real() {
+			application = new Application();
+			application.addApplicationListener(new ApplicationListener() {
+				public void handlePreferences(ApplicationEvent ev) {
+					perform(preferencesAction, "preferences");
+					ev.setHandled(true);
+				}
 
-			try {
-				application = new Application();
-				application.addApplicationListener(new ApplicationListener() {
-					public void handlePreferences(ApplicationEvent ev) {
-						perform(preferencesAction);
+				public void handleAbout(ApplicationEvent ev) {
+					perform(aboutAction, "about");
+					ev.setHandled(true);
+				}
+
+				public void handleQuit(ApplicationEvent ev) {
+					perform(quitAction, "quit");
+					ev.setHandled(false);
+				}
+
+				public void handleOpenApplication(ApplicationEvent ev) {
+				}
+
+				public void handleOpenFile(ApplicationEvent ev) {
+					String filename = ev.getFilename();
+					if (filename != null) {
+						perform(fileAction, filename);
 						ev.setHandled(true);
 					}
+				}
 
-					public void handleAbout(ApplicationEvent ev) {
-						perform(aboutAction);
-						ev.setHandled(true);
-					}
+				public void handlePrintFile(ApplicationEvent ev) {
+				}
 
-					public void handleQuit(ApplicationEvent ev) {
-						perform(quitAction);
-						ev.setHandled(false);
-					}
-
-					public void handleOpenApplication(ApplicationEvent ev) {
-					}
-
-					public void handleOpenFile(ApplicationEvent ev) {
-					}
-
-					public void handlePrintFile(ApplicationEvent ev) {
-					}
-
-					public void handleReOpenApplication(ApplicationEvent ev) {
-					};
-				});
-			} catch (Throwable throwable) {
-				unexpected(throwable);
-			}
+				public void handleReOpenApplication(ApplicationEvent ev) {
+				};
+			});
 		}
 
 		@Override
 		public boolean isInstalled() {
-			return application != null;
-		}
-
-		private void checkInstalled() {
-			if (application == null) {
-				throw new Error("not installed");
-			}
+			return true;
 		}
 
 		@Override
 		public void setPreferencesListener(ActionListener action) {
-			checkInstalled();
-
 			this.preferencesAction = action;
 
 			try {
@@ -157,8 +153,6 @@ public abstract class MacAdapter {
 
 		@Override
 		public void setAboutListener(ActionListener action) {
-			checkInstalled();
-
 			this.aboutAction = action;
 
 			try {
@@ -170,14 +164,17 @@ public abstract class MacAdapter {
 
 		@Override
 		public void setQuitListener(ActionListener action) {
-			checkInstalled();
-
 			this.quitAction = action;
 		}
 
-		private void perform(ActionListener action) {
+		@Override
+		public void setFileListener(ActionListener action) {
+			this.fileAction = action;
+		}
+
+		private void perform(ActionListener action, String command) {
 			action.actionPerformed(new ActionEvent(this,
-					ActionEvent.ACTION_PERFORMED, "mac"));
+					ActionEvent.ACTION_PERFORMED, command));
 		}
 	}
 
@@ -223,5 +220,6 @@ public abstract class MacAdapter {
 	public static void modified(JFrame frame, boolean modified) {
 		frame.getRootPane().putClientProperty("Window.documentModified",
 				Boolean.valueOf(modified));
+
 	}
 }
