@@ -43,5 +43,20 @@
 			<string>true</string>
 		</dict>
 	</dict>
+	<key>CFBundleDocumentTypes</key>
+	<array>
+    	<dict>
+        	<key>CFBundleTypeExtensions</key>
+        	<array>
+            	<string>disposition</string>
+        	</array>
+        	<key>CFBundleTypeName</key>
+        	<string>jOrgan disposition</string>
+        	<key>CFBundleTypeIconFile</key>
+        	<string>jorgan.icns</string>
+        	<key>CFBundleTypeRole</key>
+        	<string>Viewer</string>
+    	</dict>
+	</array>
 </dict>
 </plist>
