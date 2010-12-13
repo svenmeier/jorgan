@@ -57,6 +57,7 @@ Name: "skins"; Description: "Skins"; Types: standard
 [Files]
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
 Source: ".\src\jOrgan.l4j.ini"; DestDir: "{app}"; Components: core
+Source: "..\jorgan-bootstrap\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs

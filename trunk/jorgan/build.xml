@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project name="jOrgan-core" default="dist" basedir=".">
+<project name="jorgan" default="dist" basedir=".">
 
     <property file="./build.properties"/>
 	
@@ -56,18 +55,6 @@
 	
     <target name="dist" description="Set up the distribution" depends="clean, init, build" >
         <mkdir dir="./target/marshal" />
-
-       	<jar destfile="./target/marshal/jorgan.jar">
-            <fileset dir="./target/classes">
-                <include name="jorgan/util/Bootstrap.class"/>
-                <include name="jorgan/util/ClassUtils.class"/>
-            </fileset>
-            <manifest>
-                <attribute name="Main-class" value="jorgan.util.Bootstrap" />
-                <attribute name="Bootstrap-classpath" value="lib" />
-                <attribute name="Bootstrap-class" value="jorgan.Setup" />
-            </manifest>
-        </jar>
 
         <mkdir dir="./target/marshal/lib" />
     	<jar destfile="./target/marshal/lib/core.jar">

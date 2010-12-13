@@ -1,4 +1,4 @@
-<project name="jOrgan-midimerger" default="dist" basedir=".">
+<project name="jorgan-midimerger" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

@@ -1,4 +1,4 @@
-<project name="jOrgan-lan" default="dist" basedir=".">
+<project name="jorgan-lan" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

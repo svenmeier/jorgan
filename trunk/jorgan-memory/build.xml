@@ -1,4 +1,4 @@
-<project name="jOrgan-memory" default="dist" basedir=".">
+<project name="jorgan-memory" default="dist" basedir=".">
 
   <property file="./build.properties" />
   <property file="${jorgan.core.path}/build.properties" />

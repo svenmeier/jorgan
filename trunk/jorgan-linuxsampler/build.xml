@@ -1,4 +1,4 @@
-<project name="jOrgan-linuxsampler" default="dist" basedir=".">
+<project name="jorgan-linuxsampler" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

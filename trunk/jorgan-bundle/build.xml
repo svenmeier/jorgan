@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<project name="jOrgan-bundle" default="dist" basedir=".">
+<project name="jorgan-bundle" default="dist" basedir=".">
 
     <property file="./build.properties"/>
     <property file="${jorgan.core.path}/build.properties"/>
@@ -28,7 +27,7 @@
     
         <mkdir dir="${image}/jOrgan.app/Contents/Resources/Java"/>
         <copy todir="${image}/jOrgan.app/Contents/Resources/Java">
-            <fileset dir="${jorgan.core.path}/target/marshal" includes="jorgan.jar" />
+            <fileset dir="${jorgan.bootstrap.path}/target/marshal" includes="jorgan.jar" />
             <fileset dir="${jorgan.core.path}/target/marshal" includes="lib/**" /> 
             <fileset dir="${jorgan.customizer.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.executor.path}/target/marshal" includes="lib/**" />
