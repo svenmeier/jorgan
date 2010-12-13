@@ -40,6 +40,6 @@
 			</manifest>
 		</jar>
 
-		<zip basedir="./target/marshal" destfile="./target/jOrgan-bootstrap-${bootstrap.version}.zip" />
+		<zip basedir="./target/marshal" destfile="./target/jOrgan-bootstrap-${jorgan.version}.zip" />
 	</target>
 </project>
