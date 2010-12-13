@@ -1,4 +1,4 @@
-<project name="jOrgan-lcd" default="dist" basedir=".">
+<project name="jorgan-lcd" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

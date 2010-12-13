@@ -1,4 +1,4 @@
-<project name="jOrgan-keyboard" default="dist" basedir=".">
+<project name="jorgan-keyboard" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

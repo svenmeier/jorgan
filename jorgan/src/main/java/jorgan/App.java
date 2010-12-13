@@ -119,12 +119,4 @@ public class App {
 
 		System.exit(0);
 	}
-
-	public static File getHome() {
-		File home = new File(System.getProperty("user.home"), ".jorgan");
-		if (!home.exists()) {
-			home.mkdirs();
-		}
-		return home;
-	}
 }

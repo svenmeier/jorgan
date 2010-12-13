@@ -1,4 +1,4 @@
-<project name="jOrgan-graph" default="dist" basedir=".">
+<project name="jorgan-graph" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

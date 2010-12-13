@@ -2,6 +2,7 @@
 
   <target name="all">
     <ant dir="jorgan"/>
+    <ant dir="jorgan-bootstrap"/>
     <ant dir="jorgan-importer"/>
     <ant dir="jorgan-customizer"/>
     <ant dir="jorgan-creative"/>

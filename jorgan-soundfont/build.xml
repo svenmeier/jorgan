@@ -1,4 +1,4 @@
-<project name="jOrgan-soundfont" default="dist" basedir=".">
+<project name="jorgan-soundfont" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

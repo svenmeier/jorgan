@@ -1,4 +1,4 @@
-<project name="jOrgan-creative" default="dist" basedir=".">
+<project name="jorgan-creative" default="dist" basedir=".">
 
   <property file="./build.properties" />
   <property file="${jorgan.core.path}/build.properties" />

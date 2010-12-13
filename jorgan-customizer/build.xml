@@ -1,4 +1,4 @@
-<project name="jOrgan-customizer" default="dist" basedir=".">
+<project name="jorgan-customizer" default="dist" basedir=".">
 
   <property file="./build.properties" />
 

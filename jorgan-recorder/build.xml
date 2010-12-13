@@ -1,4 +1,4 @@
-<project name="jOrgan-recorder" default="dist" basedir=".">
+<project name="jorgan-recorder" default="dist" basedir=".">
 
   <property file="./build.properties" />
   <property file="${jorgan.core.path}/build.properties" />

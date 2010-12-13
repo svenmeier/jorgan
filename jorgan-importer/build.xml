@@ -1,4 +1,4 @@
-<project name="jOrgan-importer" default="dist" basedir=".">
+<project name="jorgan-importer" default="dist" basedir=".">
 
   <property file="./build.properties" />
 
