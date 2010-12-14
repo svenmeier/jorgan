@@ -1,4 +1,4 @@
-package jorgan;
+package jorgan.init;
 
 /*
  * jOrgan - Java Virtual Organ
@@ -19,41 +19,16 @@ package jorgan;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import jorgan.init.Classpath;
-import jorgan.init.ExceptionHandler;
-import jorgan.init.Logging;
-import jorgan.init.Main;
+import java.lang.reflect.Method;
 
 /**
- * Bootstrapping for {@link App}.
  */
-public class Bootstrap {
+public class Main {
 
-	private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
-
-	private String[] args;
-
-	private Bootstrap(String[] args) {
-		this.args = args;
-	}
-
-	public void start() {
-		try {
-			new Logging();
-			new ExceptionHandler(logger);
-			new Classpath();
-			new Main("jorgan.App", args);
-		} catch (Throwable t) {
-			logger.log(Level.SEVERE, "bootstrapping failed", t);
-		}
-	}
-
-	public static void main(final String[] args) {
-
-		Bootstrap bootstrap = new Bootstrap(args);
-		bootstrap.start();
+	public Main(String clazz, String[] args) throws Exception {
+		Method method = Thread.currentThread().getContextClassLoader()
+				.loadClass(clazz).getMethod("main",
+						new Class[] { String[].class });
+		method.invoke(null, new Object[] { args });
 	}
 }
