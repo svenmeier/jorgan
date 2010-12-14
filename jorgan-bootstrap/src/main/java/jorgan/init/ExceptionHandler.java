@@ -1,4 +1,4 @@
-package jorgan;
+package jorgan.init;
 
 /*
  * jOrgan - Java Virtual Organ
@@ -19,41 +19,27 @@ package jorgan;
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.init.Classpath;
-import jorgan.init.ExceptionHandler;
-import jorgan.init.Logging;
-import jorgan.init.Main;
-
 /**
- * Bootstrapping for {@link App}.
  */
-public class Bootstrap {
+public class ExceptionHandler implements UncaughtExceptionHandler {
 
-	private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
+	private Logger logger;
 
-	private String[] args;
-
-	private Bootstrap(String[] args) {
-		this.args = args;
+	public ExceptionHandler(Logger logger) {
+		this.logger = logger;
+		
+		Thread.currentThread().setUncaughtExceptionHandler(this);
 	}
 
-	public void start() {
-		try {
-			new Logging();
-			new ExceptionHandler(logger);
-			new Classpath();
-			new Main("jorgan.App", args);
-		} catch (Throwable t) {
-			logger.log(Level.SEVERE, "bootstrapping failed", t);
+	@Override
+	public void uncaughtException(Thread t, Throwable e) {
+		if (e instanceof ThreadDeath) {
+			return;
 		}
-	}
-
-	public static void main(final String[] args) {
-
-		Bootstrap bootstrap = new Bootstrap(args);
-		bootstrap.start();
+		logger.log(Level.WARNING, "uncaught exception", e);
 	}
 }
