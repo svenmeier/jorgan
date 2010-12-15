@@ -22,10 +22,10 @@ package jorgan;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.init.Classpath;
-import jorgan.init.ExceptionHandler;
-import jorgan.init.Logging;
-import jorgan.init.Main;
+import jorgan.bootstrap.Classpath;
+import jorgan.bootstrap.Exceptions;
+import jorgan.bootstrap.Logging;
+import jorgan.bootstrap.Main;
 
 /**
  * Bootstrapping for {@link App}.
@@ -34,17 +34,11 @@ public class Bootstrap {
 
 	private static Logger logger = Logger.getLogger(Bootstrap.class.getName());
 
-	private String[] args;
-
-	private Bootstrap(String[] args) {
-		this.args = args;
-	}
-
-	public void start() {
+	public void start(final String[] args) {
 		try {
 			new Logging();
-			new ExceptionHandler(logger);
-			new Classpath();
+			new Exceptions(logger);
+			new Classpath("lib");
 			new Main("jorgan.App", args);
 		} catch (Throwable t) {
 			logger.log(Level.SEVERE, "bootstrapping failed", t);
@@ -53,7 +47,7 @@ public class Bootstrap {
 
 	public static void main(final String[] args) {
 
-		Bootstrap bootstrap = new Bootstrap(args);
-		bootstrap.start();
+		Bootstrap bootstrap = new Bootstrap();
+		bootstrap.start(args);
 	}
 }
