@@ -1,4 +1,4 @@
-package jorgan.init;
+package jorgan.bootstrap;
 
 /*
  * jOrgan - Java Virtual Organ
@@ -25,14 +25,14 @@ import java.util.logging.Logger;
 
 /**
  */
-public class ExceptionHandler implements UncaughtExceptionHandler {
+public class Exceptions implements UncaughtExceptionHandler {
 
 	private Logger logger;
 
-	public ExceptionHandler(Logger logger) {
+	public Exceptions(Logger logger) {
 		this.logger = logger;
 		
-		Thread.currentThread().setUncaughtExceptionHandler(this);
+		Thread.setDefaultUncaughtExceptionHandler(this);
 	}
 
 	@Override
