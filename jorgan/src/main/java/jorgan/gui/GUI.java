@@ -27,7 +27,7 @@ public class GUI implements UI {
 	private static Configuration config = Configuration.getRoot()
 			.get(GUI.class);
 
-	private static OrganFrame frame;
+	private OrganFrame frame;
 
 	private boolean showAboutOnStartup = true;
 
@@ -112,8 +112,7 @@ public class GUI implements UI {
 		}
 	}
 
-	public static class ExceptionContext implements Runnable,
-			UncaughtExceptionHandler {
+	public class ExceptionContext implements Runnable, UncaughtExceptionHandler {
 
 		public void run() {
 			Thread.currentThread().setUncaughtExceptionHandler(this);
@@ -141,7 +140,7 @@ public class GUI implements UI {
 		}
 	}
 
-	private static class FrameContext extends WindowAdapter implements Runnable {
+	private class FrameContext extends WindowAdapter implements Runnable {
 
 		public void run() {
 			frame = new OrganFrame();
