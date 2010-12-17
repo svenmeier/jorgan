@@ -1,14 +1,15 @@
-jorgan (3.12-beta5) beta;
+jorgan (3.12-beta6) beta;
 
   * new velocity property for coupler and stop
   * corrected Mac shortcut keys
+  * Mac file association
   * corrected undo/redo actions
   * use name from description for regulator's title 
   * edit fluidsynth effects separately for each sound element 
   * fixed recorder deadlock
   * move elements on console via cursor keys
 
- -- Sven Meier <sven@meiers.net>  Sun, 24 Oct 2010 21:53:00 +0200
+ -- Sven Meier <sven@meiers.net>  Fri, 17 Dec 2010 20:01:00 +0200
 
 jorgan (3.11.1) stable;
 
