@@ -118,11 +118,12 @@ public class Clock {
 		}
 	}
 
-	public boolean isRunning() {
-		return thread != null;
-	}
-
 	public void stop() {
+		if (thread == null) {
+			// already stopped
+			return;
+		}
+
 		for (Timer timer : timers) {
 			timer.stop();
 		}
