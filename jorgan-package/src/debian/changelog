@@ -1,4 +1,4 @@
-jorgan (3.12-beta6) beta;
+jorgan (3.12) stable;
 
   * new velocity property for coupler and stop
   * corrected Mac shortcut keys
