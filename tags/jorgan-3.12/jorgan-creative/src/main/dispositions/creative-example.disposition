@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="development">
+  <elements>
+    <console id="5">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="3">
+          <x>140</x>
+          <y>90</y>
+        </console-locationReference>
+        <console-locationReference id="6">
+          <x>280</x>
+          <y>90</y>
+        </console-locationReference>
+        <console-locationReference id="7">
+          <x>50</x>
+          <y>40</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <screen>:0.0</screen>
+    </console>
+    <keyboard id="8">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="3"/>
+        <reference id="6"/>
+      </references>
+      <messages>
+        <keyboard-pressKey>equal 144, get pitch, greater 0| get velocity</keyboard-pressKey>
+        <keyboard-releaseKey>equal 128, get pitch, </keyboard-releaseKey>
+        <keyboard-releaseKey>equal 144, get pitch, equal 0 | get velocity</keyboard-releaseKey>
+      </messages>
+      <input>jOrgan Keyboard</input>
+    </keyboard>
+    <creative.creativeSound id="2">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <output>SB Live! Synth A [BC00]</output>
+      <soundfont>creative-example.SF2</soundfont>
+      <bank>25</bank>
+    </creative.creativeSound>
+    <rank id="1">
+      <name>Rank 1</name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 0, set 25</rank-engaged>
+        <rank-engaged>set 192, set 1, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <rank id="4">
+      <name>Rank 0</name>
+      <description></description>
+      <references>
+        <reference id="2"/>
+      </references>
+      <messages>
+        <rank-engaged>set 176, set 121, </rank-engaged>
+        <rank-engaged>set 176, set 0, set 25</rank-engaged>
+        <rank-engaged>set 192, set 0, </rank-engaged>
+        <rank-disengaged>set 176, set 123, </rank-disengaged>
+        <rank-notePlayed>set 144, set pitch, set velocity</rank-notePlayed>
+        <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
+      </messages>
+      <zoom>1.0</zoom>
+      <channel></channel>
+      <delay>0</delay>
+    </rank>
+    <label id="7">
+      <name>Instructions</name>
+      <description>name=Use the Customizer to adjust the output of the Creative Sound element.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <stop id="3">
+      <name>Stop 0</name>
+      <description></description>
+      <references>
+        <reference id="4"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+      <action>0</action>
+      <transpose>0</transpose>
+      <velocity>0</velocity>
+      <from>0</from>
+      <to>127</to>
+    </stop>
+    <stop id="6">
+      <name>Stop 1</name>
+      <description></description>
+      <references>
+        <reference id="1"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+      <action>0</action>
+      <transpose>-12</transpose>
+      <velocity>0</velocity>
+      <from>0</from>
+      <to>127</to>
+    </stop>
+  </elements>
+</organ>

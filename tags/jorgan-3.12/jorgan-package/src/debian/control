@@ -1,0 +1,14 @@
+Source: jorgan
+Section: sound
+Priority: optional
+Maintainer: Sven Meier <sven@meiers.net>
+Build-Depends: debhelper (>= 5), sun-java6-jdk
+Standards-Version: 3.8.4
+Homepage: http://jorgan.sourceforge.net
+
+Package: jorgan
+Architecture: any
+Depends: default-jre,libfluidsynth1
+Recommends : qjackctl
+Description: jOrgan
+	Java Virtual Organ
