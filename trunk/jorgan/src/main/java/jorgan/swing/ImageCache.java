@@ -94,8 +94,8 @@ public class ImageCache {
 	}
 
 	private static BufferedImage deriveImage(BufferedImage image, float scale) {
-		int scaledWidth = (int) (image.getWidth() * scale);
-		int scaledHeight = (int) (image.getHeight() * scale);
+		int scaledWidth = Math.max(1, Math.round(image.getWidth() * scale));
+		int scaledHeight = Math.max(1, Math.round(image.getHeight() * scale));
 
 		BufferedImage scaled = createImage(scaledWidth, scaledHeight);
 
