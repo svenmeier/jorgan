@@ -33,6 +33,10 @@
   	<mkdir dir="./target/marshal/lib" />
 
   	<jar file="./target/marshal/lib/recorder.jar">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Built-Version" value="${recorder.version}"/>
+      </manifest>
       <fileset dir="./target/classes" />
   	</jar>
 
