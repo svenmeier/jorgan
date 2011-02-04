@@ -164,7 +164,7 @@ public class ConsoleTracker extends AbstractTracker {
 		builder.append(" ");
 		builder.append(encode(continuous));
 
-		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
+		return MessageUtils.createMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
 	}
 
@@ -180,7 +180,7 @@ public class ConsoleTracker extends AbstractTracker {
 		builder.append(" ");
 		builder.append(encode(aSwitch));
 
-		return MessageUtils.newMetaMessage(MessageUtils.META_TEXT, builder
+		return MessageUtils.createMetaMessage(MessageUtils.META_TEXT, builder
 				.toString());
 	}
 
@@ -234,8 +234,8 @@ public class ConsoleTracker extends AbstractTracker {
 	}
 
 	/**
-	 * Get the value for the given {@link Continuous} in the
-	 * {@link Sequencer} or <code>null</code> if not known.
+	 * Get the value for the given {@link Continuous} in the {@link Sequencer}
+	 * or <code>null</code> if not known.
 	 */
 	private Float readSequenceValue(Continuous continuous) {
 		Float value = null;

@@ -633,18 +633,21 @@ public abstract class Performance {
 		if (tracker.getElement() != null) {
 			sequencer.setTime(0);
 
-			sequencer.record(tracker.getTrack(), MessageUtils.newMetaMessage(
-					MessageUtils.META_TRACK_NAME, encoder.encode(tracker
-							.getElement())));
+			sequencer.record(tracker.getTrack(), MessageUtils
+					.createMetaMessage(MessageUtils.META_TRACK_NAME, encoder
+							.encode(tracker.getElement())));
 
 			if (tracker.isPlayEnabled()) {
-				sequencer.record(tracker.getTrack(), MessageUtils
-						.newMetaMessage(MessageUtils.META_CUE_POINT, "play"));
+				sequencer
+						.record(tracker.getTrack(), MessageUtils
+								.createMetaMessage(MessageUtils.META_CUE_POINT,
+										"play"));
 			}
 
 			if (tracker.isRecordEnabled()) {
 				sequencer.record(tracker.getTrack(), MessageUtils
-						.newMetaMessage(MessageUtils.META_CUE_POINT, "record"));
+						.createMetaMessage(MessageUtils.META_CUE_POINT,
+								"record"));
 			}
 		}
 	}
