@@ -20,6 +20,7 @@ package jorgan.midi;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiSystem;
@@ -32,6 +33,9 @@ import javax.sound.midi.MidiDevice.Info;
  * Helper for lookup of devices.
  */
 public class DevicePool {
+
+	private static final Logger log = Logger.getLogger(DevicePool.class
+			.getName());
 
 	private static final DevicePool instance = new DevicePool();
 
@@ -90,32 +94,12 @@ public class DevicePool {
 
 		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
 			try {
-				String name = info.getName();
-
 				DeviceAnalyser analyser = new DeviceAnalyser(info);
 
-				if (this.devices.get(name, Direction.IN) == null) {
-					PooledDevice old = oldDevices.get(name, Direction.IN);
-					if (old != null) {
-						this.devices.add(old);
-					} else {
-						if (analyser.supports(Direction.IN)) {
-							this.devices.add(analyser.pooledDevice());
-						}
-					}
-				}
-
-				if (devices.get(name, Direction.OUT) == null) {
-					PooledDevice old = oldDevices.get(name, Direction.OUT);
-					if (old != null) {
-						this.devices.add(old);
-					} else {
-						if (analyser.supports(Direction.OUT)) {
-							this.devices.add(analyser.pooledDevice());
-						}
-					}
-				}
-			} catch (MidiUnavailableException skip) {
+				analyser.extract(this.devices, oldDevices, Direction.IN);
+				analyser.extract(this.devices, oldDevices, Direction.OUT);
+			} catch (MidiUnavailableException ex) {
+				log.info("failed device '" + info.getName() + "'");
 			}
 		}
 	}
@@ -302,7 +286,21 @@ public class DevicePool {
 			this.info = info;
 		}
 
-		public boolean supports(Direction direction)
+		public void extract(DeviceMap newDevices, DeviceMap oldDevices,
+				Direction direction) throws MidiUnavailableException {
+			if (newDevices.get(info.getName(), direction) == null) {
+				PooledDevice old = oldDevices.get(info.getName(), direction);
+				if (old != null) {
+					newDevices.add(old);
+				} else {
+					if (supports(direction)) {
+						newDevices.add(pooledDevice());
+					}
+				}
+			}
+		}
+
+		private boolean supports(Direction direction)
 				throws MidiUnavailableException {
 			if (direction == Direction.IN) {
 				return device().getMaxTransmitters() != 0;
@@ -319,7 +317,7 @@ public class DevicePool {
 			return device;
 		}
 
-		public PooledDevice pooledDevice() throws MidiUnavailableException {
+		private PooledDevice pooledDevice() throws MidiUnavailableException {
 			if (this.pooledDevice == null) {
 				this.pooledDevice = new PooledDevice(this.info.getName(),
 						supports(Direction.IN), supports(Direction.OUT),
