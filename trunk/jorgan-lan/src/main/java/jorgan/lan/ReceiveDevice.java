@@ -18,6 +18,9 @@
  */
 package jorgan.lan;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.sound.midi.MidiDevice;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
@@ -29,6 +32,8 @@ import jorgan.midi.Loopback;
  * A remote {@link MidiDevice} over LAN.
  */
 public class ReceiveDevice extends Loopback {
+
+	private Logger log = Logger.getLogger(MessageReceiver.class.getName());
 
 	private int index;
 
@@ -47,6 +52,11 @@ public class ReceiveDevice extends Loopback {
 				@Override
 				protected void onReceived(MidiMessage message) {
 					loopOut(message);
+				}
+
+				@Override
+				protected void onException(Exception ex) {
+					log.log(Level.WARNING, "exception receiving message", ex);
 				}
 			};
 		} catch (Exception ex) {
