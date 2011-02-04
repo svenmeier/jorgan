@@ -18,8 +18,6 @@
  */
 package jorgan.midi;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiMessage;
@@ -66,66 +64,45 @@ public class MessageUtils {
 
 	public static MidiMessage createMessage(byte[] datas, int length)
 			throws InvalidMidiDataException {
-		if (length <= 3) {
-			return createMessage(datas[0] & 0xff, datas[1] & 0xff,
-					datas[2] & 0xff);
-		}
 
 		int status = datas[0] & 0xff;
-		if (status != 0xF0) {
-			throw new InvalidMidiDataException("Invalid sysex status 0x"
-					+ Integer.toHexString(status));
-		}
+		if (status == SysexMessage.SYSTEM_EXCLUSIVE) {
+			return createSysexMessage(datas, length);
+		} else {
+			int data1 = length > 1 ? (datas[1] & 0xff) : 0;
+			int data2 = length > 2 ? (datas[2] & 0xff) : 0;
 
-		int end = datas[datas.length - 1] & 0xff;
-		if (end != 0xF7) {
-			throw new InvalidMidiDataException("Invalid sysex end 0x"
-					+ Integer.toHexString(end));
+			return createMessage(status, data1, data2);
 		}
+	}
 
+	private static MidiMessage createSysexMessage(byte[] datas, int length)
+			throws InvalidMidiDataException {
 		SysexMessage sysexMessage = new SysexMessage();
 		sysexMessage.setMessage(datas, length);
 		return sysexMessage;
 	}
 
-	public static ShortMessage newMessage(int status, int data1, int data2) {
+	public static MetaMessage createMetaMessage(int type, String text) {
 
-		try {
-			return createMessage(status, data1, data2);
-		} catch (InvalidMidiDataException e) {
-			throw new IllegalArgumentException(e);
-		}
-	}
-
-	public static MetaMessage newMetaMessage(int type, byte[] data) {
 		MetaMessage message = new MetaMessage();
 
 		try {
-			message.setMessage(type, data, data.length);
-		} catch (InvalidMidiDataException e) {
-			throw new IllegalArgumentException(e);
+			byte[] bytes = text.getBytes("UTF-8");
+			message.setMessage(type, bytes, bytes.length);
+		} catch (Exception ex) {
+			throw new RuntimeException(ex);
 		}
 
 		return message;
-	}
-
-	public static MetaMessage newMetaMessage(int type, String characters) {
-		byte[] bytes;
-
-		try {
-			bytes = characters.getBytes("UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new Error(e);
-		}
-		return newMetaMessage(type, bytes);
 	}
 
 	public static String getText(MetaMessage message) {
 		byte[] bytes = message.getData();
 		try {
 			return new String(bytes, "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			throw new Error(e);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 

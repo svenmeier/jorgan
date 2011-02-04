@@ -39,8 +39,8 @@ public class MessageUtilsTest extends TestCase {
 		assertFalse(MessageUtils.isChannelStatus((byte) 255));
 	}
 
-	public void test() throws Exception {
-		assertTrue(Arrays.equals(BYTES, MessageUtils.newMetaMessage(
+	public void testMeta() throws Exception {
+		assertTrue(Arrays.equals(BYTES, MessageUtils.createMetaMessage(
 				MessageUtils.META_TEXT, STRING).getMessage()));
 
 		MetaMessage message = new MetaMessage(BYTES) {

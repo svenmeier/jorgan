@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
@@ -109,8 +110,8 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	/**
-	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all
-	 * currently pressed keys.
+	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all currently
+	 * pressed keys.
 	 */
 	public void onRecordStarting() {
 		super.onRecordStarting();
@@ -121,8 +122,8 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	/**
-	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all
-	 * currently pressed keys.
+	 * {@link Sequencer#record(int, MidiMessage) NOTE_OFF for all currently
+	 * pressed keys.
 	 */
 	public void onRecordStopping() {
 		super.onRecordStopping();
@@ -133,11 +134,20 @@ public class KeyboardTracker extends AbstractTracker {
 	}
 
 	private ShortMessage createMessage(int pitch) {
-		return MessageUtils.newMessage(ShortMessage.NOTE_OFF, pitch, 0);
+		try {
+			return MessageUtils.createMessage(ShortMessage.NOTE_OFF, pitch, 0);
+		} catch (InvalidMidiDataException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	private ShortMessage createMessage(int pitch, int velocity) {
-		return MessageUtils.newMessage(ShortMessage.NOTE_ON, pitch, velocity);
+		try {
+			return MessageUtils.createMessage(ShortMessage.NOTE_ON, pitch,
+					velocity);
+		} catch (InvalidMidiDataException ex) {
+			throw new RuntimeException(ex);
+		}
 	}
 
 	/**
