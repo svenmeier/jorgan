@@ -31,6 +31,10 @@
   <target name="dist" depends="clean, compile">
   	<mkdir dir="./target/marshal/lib" />
   	<jar file="./target/marshal/lib/tools.jar">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Built-Version" value="${tools.version}"/>
+      </manifest>
       <fileset dir="./target/classes" />
   	</jar>
 

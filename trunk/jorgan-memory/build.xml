@@ -33,11 +33,11 @@
   	<mkdir dir="./target/marshal/lib" />
 
   	<jar file="./target/marshal/lib/memory.jar">
-      <fileset dir="./target/classes" />
       <manifest>
-        <attribute name="Main-class" value="jorgan.memory.util.Extract" />
-        <attribute name="Class-Path" value="core.jar xpp3_min-1.1.4c.jar" />
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Built-Version" value="${memory.version}"/>
       </manifest>
+      <fileset dir="./target/classes" />
   	</jar>
 
   	<mkdir dir="./target/marshal/dispositions" />

@@ -30,6 +30,10 @@
 		<mkdir dir="./target/marshal" />
 
 		<jar destfile="./target/marshal/jorgan.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Version" value="${bootstrap.version}"/>
+			</manifest>
 			<fileset dir="./target/classes" />
 			<fileset dir="${jorgan.core.path}/target/classes">
 				<include name="jorgan/util/ClassUtils.class" />
