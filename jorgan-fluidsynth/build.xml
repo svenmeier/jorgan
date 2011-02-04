@@ -149,6 +149,10 @@
       </fileset>
     </copy> 		
   	<jar file="./target/marshal/lib/fluidsynth.jar">
+      <manifest>
+        <attribute name="Built-By" value="${user.name}"/>
+        <attribute name="Built-Version" value="${fluidsynth.version}"/>
+      </manifest>
       <fileset dir="./target/classes" />
   	</jar>
 
