@@ -58,6 +58,10 @@
 
         <mkdir dir="./target/marshal/lib" />
     	<jar destfile="./target/marshal/lib/core.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Version" value="${jorgan.version}"/>
+			</manifest>
             <fileset dir="./target/classes">
                 <include name="**/*"/>
             </fileset>
