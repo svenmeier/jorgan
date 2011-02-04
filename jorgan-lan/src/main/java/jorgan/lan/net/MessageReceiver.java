@@ -61,7 +61,7 @@ public class MessageReceiver {
 						receive(socket);
 					} catch (IOException ex) {
 						if (thread != null) {
-							onError(ex);
+							onException(ex);
 						}
 						break;
 					}
@@ -69,6 +69,9 @@ public class MessageReceiver {
 			}
 		}, "LAN receiver");
 		thread.start();
+	}
+
+	protected void onException(Exception ex) {
 	}
 
 	public void close() {
@@ -87,17 +90,11 @@ public class MessageReceiver {
 		try {
 			message = MessageUtils.createMessage(bytes, packet.getLength());
 		} catch (InvalidMidiDataException ex) {
-			onWarning(ex);
+			onException(ex);
 			return;
 		}
 
 		onReceived(message);
-	}
-
-	protected void onError(IOException ex) {
-	}
-
-	protected void onWarning(InvalidMidiDataException ex) {
 	}
 
 	protected void onReceived(MidiMessage message) {

@@ -19,6 +19,8 @@
 package jorgan.lan;
 
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiDevice;
@@ -33,6 +35,8 @@ import jorgan.midi.Loopback;
  * A remote {@link MidiDevice} over LAN.
  */
 public class SendDevice extends Loopback {
+
+	private Logger log = Logger.getLogger(SendDevice.class.getName());
 
 	private int index;
 
@@ -81,9 +85,8 @@ public class SendDevice extends Loopback {
 	protected void onLoopIn(MidiMessage message) {
 		try {
 			sender.send(message);
-		} catch (IOException e) {
-			// nothing we can do about it, receivers are expected to work
-			// flawlessly, #probe() must have worked
+		} catch (IOException ex) {
+			log.log(Level.WARNING, "exception sending message", ex);
 		}
 	}
 }

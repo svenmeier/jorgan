@@ -18,9 +18,6 @@
  */
 package jorgan.lan.net;
 
-import java.io.IOException;
-
-import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 
 import jorgan.lan.IpMidi;
@@ -31,11 +28,9 @@ import junit.framework.TestCase;
  */
 public class MessageReceiverTest extends TestCase {
 
-	private boolean hasWarning;
+	private boolean exception;
 
-	private boolean hasError;
-
-	private boolean hasReceived;
+	private boolean received;
 
 	public void test() throws Exception {
 
@@ -44,17 +39,12 @@ public class MessageReceiverTest extends TestCase {
 
 			@Override
 			protected void onReceived(MidiMessage message) {
-				hasReceived = true;
+				received = true;
 			}
 
 			@Override
-			protected void onWarning(InvalidMidiDataException ex) {
-				hasWarning = true;
-			}
-
-			@Override
-			protected void onError(IOException ex) {
-				hasError = true;
+			protected void onException(Exception ex) {
+				exception = true;
 			}
 		};
 
@@ -64,8 +54,7 @@ public class MessageReceiverTest extends TestCase {
 
 		Thread.sleep(500);
 
-		assertFalse(hasReceived);
-		assertFalse(hasWarning);
-		assertFalse(hasError);
+		assertFalse(received);
+		assertFalse(exception);
 	}
 }
