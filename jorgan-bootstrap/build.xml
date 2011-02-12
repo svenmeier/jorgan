@@ -31,6 +31,7 @@
 
 		<jar destfile="./target/marshal/jorgan.jar">
 			<manifest>
+				<attribute name="Main-class" value="jorgan.Bootstrap" />
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Version" value="${bootstrap.version}"/>
 			</manifest>
@@ -39,11 +40,8 @@
 				<include name="jorgan/util/ClassUtils.class" />
 				<include name="jorgan/util/IOUtils.class" />
 			</fileset>
-			<manifest>
-				<attribute name="Main-class" value="jorgan.Bootstrap" />
-			</manifest>
 		</jar>
 
-		<zip basedir="./target/marshal" destfile="./target/jOrgan-bootstrap-${jorgan.version}.zip" />
+		<zip basedir="./target/marshal" destfile="./target/jOrgan-bootstrap-${bootstrap.version}.zip" />
 	</target>
 </project>
