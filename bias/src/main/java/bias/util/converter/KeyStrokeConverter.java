@@ -25,21 +25,32 @@ import java.lang.reflect.Type;
 import javax.swing.KeyStroke;
 
 /**
- * Converter for {@link KeyStroke}s.
+ * Converter for {@link KeyStroke}s. <br>
+ * Supports a custom <code>shortcut</code> modifier, which is replaced with the
+ * system's menu shortcut key.
+ * 
+ * @see Toolkit#getMenuShortcutKeyMask()
  */
 public class KeyStrokeConverter implements Converter {
 
 	private static String shortcutReplacement;
-	{
-		int shortcutKeyMask = Toolkit.getDefaultToolkit ().getMenuShortcutKeyMask();
 
-		String stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE, shortcutKeyMask).toString();
-		int space = stroke.indexOf(' ');
-		
-		shortcutReplacement = stroke.substring(0, space);
+	/**
+	 * Do lazily as AWT might be headless and this converter never used.
+	 */
+	private static void init() {
+		if (shortcutReplacement == null) {
+			int shortcutKeyMask = Toolkit.getDefaultToolkit()
+					.getMenuShortcutKeyMask();
+
+			String stroke = KeyStroke.getKeyStroke(KeyEvent.VK_SPACE,
+					shortcutKeyMask).toString();
+			int space = stroke.indexOf(' ');
+
+			shortcutReplacement = stroke.substring(0, space);
+		}
 	}
-	
-	
+
 	public String toString(Object object, Type type) {
 		KeyStroke keyStroke = (KeyStroke) object;
 
@@ -47,9 +58,10 @@ public class KeyStrokeConverter implements Converter {
 	}
 
 	public Object fromString(String string, Type type) {
-		
+		init();
+
 		string = string.replace("shortcut", shortcutReplacement);
-		
+
 		return KeyStroke.getKeyStroke(string);
 	}
 }
