@@ -1,9 +1,10 @@
-jorgan (3.12.1-beta1) beta;
+jorgan (3.12.1) beta;
 
   * activate Midi message no longer deactivates switch (reverted to old behavior)
   * corrected LAN input for non-3 bytes Midi messages
+  * prevent access to AWT in configuration if not needed in headless mode
 
- -- Sven Meier <sven@meiers.net>  Sun, 6 Feb 2011 19:48:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 13 Feb 2011 19:48:00 +0200
 
 jorgan (3.12) stable;
 
