@@ -21,6 +21,7 @@ package jorgan.cli;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.Thread.UncaughtExceptionHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -46,7 +47,7 @@ import bias.util.MessageBuilder;
  */
 public class CLI implements UI, SessionAware {
 
-	private static final Logger logger = Logger.getLogger(CLI.class.getName());
+	private static final Logger log = Logger.getLogger(CLI.class.getName());
 
 	private static Configuration config = Configuration.getRoot()
 			.get(CLI.class);
@@ -78,6 +79,8 @@ public class CLI implements UI, SessionAware {
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
 		config.get("interpreter").read(interpreter);
+
+		Thread.setDefaultUncaughtExceptionHandler(new Abort());
 	}
 
 	/**
@@ -122,7 +125,7 @@ public class CLI implements UI, SessionAware {
 					.getExtension());
 			return;
 		} catch (FormatException ex) {
-			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
+			log.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
 			writeMessage("openFormatException", file.getName());
 			return;
@@ -498,5 +501,16 @@ public class CLI implements UI, SessionAware {
 
 	public void setUseDefaultEncoding(boolean useDefaultEncoding) {
 		this.useDefaultEncoding = useDefaultEncoding;
+	}
+
+	private class Abort implements UncaughtExceptionHandler {
+		@Override
+		public void uncaughtException(Thread thread, Throwable throwable) {
+			log.log(Level.SEVERE, "unexpected", throwable);
+
+			writeMessage("abort");
+
+			System.exit(1);
+		}
 	}
 }

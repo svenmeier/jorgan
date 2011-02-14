@@ -61,37 +61,31 @@ public class GUI implements UI {
 	 */
 	public void display(final File file) {
 
-		invokeOnSwing(new ExceptionContext());
+		new ExceptionInit();
 
-		invokeOnSwing(new SwingContext());
+		new SwingInit();
 
 		if (showAboutOnStartup) {
 			AboutPanel.showSplash();
 		}
 
-		FrameContext frameContext = new FrameContext();
-		invokeOnSwing(frameContext);
+		FrameInit frameInit = new FrameInit();
 
 		AboutPanel.hideSplash();
 
 		if (file != null) {
-			invokeOnSwing(new FileContext(frame, file));
+			new FileInit(frame, file);
 		}
 
-		frameContext.waitAndDispose();
+		frameInit.waitAndDispose();
 	}
 
-	private void invokeOnSwing(Runnable runnable) {
-		try {
-			SwingUtilities.invokeAndWait(runnable);
-		} catch (InterruptedException e) {
-			throw new Error(e);
-		} catch (InvocationTargetException e) {
-			throw new Error(e);
+	private class SwingInit implements Runnable {
+
+		public SwingInit() {
+			invokeOnSwing(this);
 		}
-	}
 
-	private class SwingContext implements Runnable {
 		public void run() {
 			String plaf = lookAndFeel.getClassName();
 			try {
@@ -112,21 +106,17 @@ public class GUI implements UI {
 		}
 	}
 
-	public class ExceptionContext implements Runnable, UncaughtExceptionHandler {
+	public class ExceptionInit implements Runnable, UncaughtExceptionHandler {
 
-		public void run() {
-			Thread.currentThread().setUncaughtExceptionHandler(this);
+		public ExceptionInit() {
+			Thread.setDefaultUncaughtExceptionHandler(this);
 
+			// see #handle(Throwable)
 			System.setProperty("sun.awt.exception.handler", getClass()
 					.getName());
 		}
 
-		/**
-		 * http://bugs.sun.com/view_bug.do?bug_id=4499199
-		 */
-		public void handle(Throwable throwable) {
-			log.log(Level.SEVERE, throwable.getMessage(), throwable);
-
+		public void run() {
 			MessageBox box = config.get("exception").read(
 					new MessageBox(MessageBox.OPTIONS_OK_CANCEL));
 			if (box.show(frame) == MessageBox.OPTION_OK) {
@@ -134,13 +124,28 @@ public class GUI implements UI {
 			}
 		}
 
+		/**
+		 * http://bugs.sun.com/view_bug.do?bug_id=4499199
+		 */
+		public void handle(Throwable throwable) {
+			log.log(Level.SEVERE, "unexpected", throwable);
+
+			run();
+		}
+
 		public void uncaughtException(final Thread thread,
 				final Throwable throwable) {
-			handle(throwable);
+			log.log(Level.SEVERE, "unexpected", throwable);
+
+			invokeOnSwing(this);
 		}
 	}
 
-	private class FrameContext extends WindowAdapter implements Runnable {
+	private class FrameInit extends WindowAdapter implements Runnable {
+
+		public FrameInit() {
+			invokeOnSwing(this);
+		}
 
 		public void run() {
 			frame = new OrganFrame();
@@ -167,19 +172,31 @@ public class GUI implements UI {
 		}
 	}
 
-	private static class FileContext implements Runnable {
+	private static class FileInit implements Runnable {
 
 		private OrganFrame frame;
 
 		private File file;
 
-		public FileContext(OrganFrame frame, File file) {
+		public FileInit(OrganFrame frame, File file) {
 			this.frame = frame;
 			this.file = file;
+
+			invokeOnSwing(this);
 		}
 
 		public void run() {
 			frame.openOrgan(file);
+		}
+	}
+
+	private static void invokeOnSwing(Runnable runnable) {
+		try {
+			SwingUtilities.invokeAndWait(runnable);
+		} catch (InterruptedException e) {
+			throw new Error(e);
+		} catch (InvocationTargetException e) {
+			throw new Error(e);
 		}
 	}
 }
