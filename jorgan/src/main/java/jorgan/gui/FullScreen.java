@@ -29,6 +29,8 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.HashMap;
@@ -41,8 +43,6 @@ import javax.swing.JScrollPane;
 import javax.swing.KeyStroke;
 import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.event.MouseInputAdapter;
 
 import jorgan.disposition.Console;
@@ -108,8 +108,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		scrollPane.setViewportView(cardPanel);
 		add(scrollPane);
 
-		popup.addSeparator();
 		popup.add(new CloseAction());
+		popup.addSeparator();
 
 		this.session = session;
 
@@ -149,18 +149,19 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		cardPanel.addCard(consolePanel, console);
 
-		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(
-				Elements.getDisplayName(console));
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
+				.getDisplayName(console));
 		menuItems.put(console, check);
-		check.addChangeListener(new ChangeListener() {
-			public void stateChanged(ChangeEvent event) {
+		check.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
 				if (check.isSelected()) {
 					toFront(console);
 				}
 			}
 		});
 		group.add(check);
-		popup.add(check, 0);
+		popup.add(check);
 	}
 
 	public void toFront(Console console) {
@@ -241,10 +242,10 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			Rectangle rect = scrollPane.getViewport().getViewRect();
 			Dimension size = scrollPane.getViewport().getView().getSize();
 
-			int x = Math.min(size.width - rect.width,
-					Math.max(rect.x + deltaX, 0));
-			int y = Math.min(size.height - rect.height,
-					Math.max(rect.y + deltaY, 0));
+			int x = Math.min(size.width - rect.width, Math.max(rect.x + deltaX,
+					0));
+			int y = Math.min(size.height - rect.height, Math.max(rect.y
+					+ deltaY, 0));
 
 			scrollPane.getViewport().setViewPosition(new Point(x, y));
 		}

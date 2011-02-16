@@ -166,18 +166,20 @@ public class CardPanel extends JPanel {
 		public void addLayoutComponent(Component comp, Object constraint) {
 			cards.put(constraint, comp);
 
-			if (current != null) {
-				current.setVisible(false);
+			if (current == null) {
+				current = comp;
+				current.setVisible(true);
+			} else {
+				comp.setVisible(false);
 			}
-			current = comp;
-			comp.setVisible(true);
 		}
 
 		/**
 		 * @see LayoutManager
 		 */
 		public void removeLayoutComponent(Component comp) {
-			Iterator<Entry<Object, Component>> entries = cards.entrySet().iterator();
+			Iterator<Entry<Object, Component>> entries = cards.entrySet()
+					.iterator();
 			while (entries.hasNext()) {
 				Entry<Object, Component> entry = entries.next();
 				if (entry.getValue() == comp) {
