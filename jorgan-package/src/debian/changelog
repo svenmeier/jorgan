@@ -1,4 +1,10 @@
-jorgan (3.12.1) beta;
+jorgan (3.12.2) stable;
+
+  * corrected console stacking in full screen
+
+ -- Sven Meier <sven@meiers.net>  Sun, 19 Feb 2011 13:16:00 +0200
+
+jorgan (3.12.1) stable;
 
   * activate Midi message no longer deactivates switch (reverted to old behavior)
   * corrected LAN input for non-3 bytes Midi messages
