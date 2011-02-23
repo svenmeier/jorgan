@@ -14,7 +14,7 @@
 	<target name="build" depends="init" description="Build the source" >
 		<mkdir dir="./target/classes"/>
 
-		<javac debug="true" source="1.5" target="1.5" destdir="./target/classes" srcdir="./src/main/java">
+		<javac debug="true" source="1.6" target="1.6" destdir="./target/classes" srcdir="./src/main/java">
 			<compilerarg value="-Xlint:all,-serial"/>
 			<classpath path="${jorgan.core.path}/target/classes" />
 		</javac>
