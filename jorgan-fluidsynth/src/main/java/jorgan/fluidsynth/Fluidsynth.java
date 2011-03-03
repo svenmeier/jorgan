@@ -274,7 +274,7 @@ public class Fluidsynth {
 				System.load(NativeUtils.getLibraryName(file,
 						"libfluidsynth.dll"));
 			} catch (UnsatisfiedLinkError error) {
-				// should be on system library path
+				logger.log(Level.INFO, "dependencies not provided", error);
 			}
 		}
 
