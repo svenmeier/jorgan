@@ -265,8 +265,9 @@ public class Fluidsynth {
 		}
 
 		if (NativeUtils.isWindows()) {
-			// for Windows we load depedents explicitely from extension
+			// for Windows we load dependencies explicitely from extension
 			try {
+				System.load(NativeUtils.getLibraryName(file, "libintl-8.dll"));
 				System.load(NativeUtils.getLibraryName(file,
 						"libglib-2.0-0.dll"));
 				System.load(NativeUtils.getLibraryName(file,
