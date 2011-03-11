@@ -132,7 +132,11 @@ public class FileSelector extends JPanel {
 			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 			chooser.setMultiSelectionEnabled(false);
 		}
-		chooser.setSelectedFile(getSelectedFile());
+		File file = getSelectedFile();
+		if (file != null) {
+			file = file.getAbsoluteFile();
+		}
+		chooser.setSelectedFile(file);
 		chooser.setFileFilter(filter);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
 			textField.setText(chooser.getSelectedFile().getAbsolutePath());
@@ -156,7 +160,7 @@ public class FileSelector extends JPanel {
 		if (file == null) {
 			textField.setText("");
 		} else {
-			textField.setText(file.getAbsolutePath());
+			textField.setText(file.getPath());
 		}
 	}
 
