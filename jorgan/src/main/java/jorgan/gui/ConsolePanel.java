@@ -842,6 +842,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		}
 
 		@Override
+		public void install() {
+			super.install();
+
+			updateSelection();
+		}
+
+		@Override
 		public void mousePressed(MouseEvent e) {
 			requestFocus();
 
