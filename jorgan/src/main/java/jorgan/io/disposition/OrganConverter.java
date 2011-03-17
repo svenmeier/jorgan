@@ -18,7 +18,6 @@
  */
 package jorgan.io.disposition;
 
-import jorgan.Info;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 
@@ -43,6 +42,7 @@ public class OrganConverter implements Converter {
 	public OrganConverter(XStream xstream) {
 		xstream.registerConverter(this);
 
+		xstream.useAttributeFor(Organ.class, "version");
 		xstream.omitField(Element.class, "organ");
 
 		nested = xstream.getConverterLookup().lookupConverterForType(
@@ -61,19 +61,7 @@ public class OrganConverter implements Converter {
 			MarshallingContext context) {
 		Organ organ = (Organ) value;
 
-		marshallVersion(writer);
-
 		nested.marshal(organ, writer, context);
-	}
-
-	/**
-	 * Write version information to the organ element.
-	 * 
-	 * @param writer
-	 *            writer
-	 */
-	protected void marshallVersion(HierarchicalStreamWriter writer) {
-		writer.addAttribute("version", new Info().getVersion());
 	}
 
 	/**

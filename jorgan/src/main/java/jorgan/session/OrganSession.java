@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import jorgan.Info;
 import jorgan.disposition.Organ;
 import jorgan.disposition.Element.FastPropertyChange;
 import jorgan.disposition.event.Change;
@@ -155,6 +156,8 @@ public class OrganSession {
 		// TODO do this as SessionListener#beforeSave(file);
 		new Backup(file).write(backupCount);
 
+		organ.setVersion(new Info().getVersion());
+
 		new DispositionStream().write(organ, file);
 
 		modified = false;
@@ -239,6 +242,7 @@ public class OrganSession {
 
 	private Organ createOrgan() {
 		Organ organ = new Organ();
+		organ.setVersion(new Info().getVersion());
 
 		ElementRegistry.init(organ);
 

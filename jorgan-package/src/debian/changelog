@@ -1,7 +1,8 @@
 jorgan (3.12.3) stable;
 
   * keep elements selected when switching to full screen
-  * keep relative paths when starting the file property editor 
+  * keep relative paths when starting the file property editor
+  * warn about version mismatch
 
  -- Sven Meier <sven@meiers.net>  ???
 

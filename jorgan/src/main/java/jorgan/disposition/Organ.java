@@ -49,7 +49,21 @@ public class Organ {
 	 */
 	private transient List<OrganObserver> observers;
 
+	private String version = "";
+
 	private List<Element> elements = new ArrayList<Element>();
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		if (version == null) {
+			throw new IllegalArgumentException("version must not be null");
+		}
+
+		this.version = version;
+	}
 
 	/**
 	 * Add a listener to this organ.
