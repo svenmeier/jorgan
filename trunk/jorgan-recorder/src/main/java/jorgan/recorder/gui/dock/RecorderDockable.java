@@ -176,24 +176,20 @@ public class RecorderDockable extends OrganDockable {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options))
-				.show(getContent().getTopLevelAncestor(), args);
+		return config.get(key).read(new MessageBox(options)).show(
+				getContent().getTopLevelAncestor(), args);
 	}
 
 	private boolean canEject() {
-		if (performance.isLoaded() && performance.isModified()) {
-			int option = showBoxMessage("eject/confirm",
-					MessageBox.OPTIONS_YES_NO_CANCEL);
-			if (option == MessageBox.OPTION_CANCEL) {
-				return false;
-			} else if (option == MessageBox.OPTION_YES) {
-				if (!save()) {
-					return false;
-				}
-			}
+		int option = showBoxMessage("eject/confirm",
+				MessageBox.OPTIONS_YES_NO_CANCEL);
+		if (option == MessageBox.OPTION_YES) {
+			return save();
+		} else if (option == MessageBox.OPTION_NO) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private boolean save() {
@@ -231,7 +227,8 @@ public class RecorderDockable extends OrganDockable {
 		public void actionPerformed(ActionEvent e) {
 			performance.stop();
 
-			if (!canEject()) {
+			if (performance.isLoaded() && performance.isModified()
+					&& !canEject()) {
 				return;
 			}
 

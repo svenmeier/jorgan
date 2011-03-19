@@ -83,8 +83,8 @@ public class MemoryDockable extends OrganDockable {
 		DefaultTableCellRenderer renderer = new DefaultTableCellRenderer();
 		renderer.setHorizontalAlignment(DefaultTableCellRenderer.RIGHT);
 		table.getColumnModel().getColumn(0).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(1)
-				.setCellEditor(new StringCellEditor());
+		table.getColumnModel().getColumn(1).setCellEditor(
+				new StringCellEditor());
 		TableUtils.fixColumnWidth(table, 0, "888");
 		TableUtils.hideHeader(table);
 		TableUtils.pleasantLookAndFeel(table);
@@ -157,19 +157,15 @@ public class MemoryDockable extends OrganDockable {
 	}
 
 	private boolean canEject() {
-		if (storage.isLoaded() && storage.isModified()) {
-			int option = showBoxMessage("eject/confirm",
-					MessageBox.OPTIONS_YES_NO_CANCEL);
-			if (option == MessageBox.OPTION_CANCEL) {
-				return false;
-			} else if (option == MessageBox.OPTION_YES) {
-				if (!save()) {
-					return false;
-				}
-			}
+		int option = showBoxMessage("eject/confirm",
+				MessageBox.OPTIONS_YES_NO_CANCEL);
+		if (option == MessageBox.OPTION_YES) {
+			return save();
+		} else if (option == MessageBox.OPTION_NO) {
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	private boolean save() {
@@ -188,8 +184,8 @@ public class MemoryDockable extends OrganDockable {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options))
-				.show(getContent().getTopLevelAncestor(), args);
+		return config.get(key).read(new MessageBox(options)).show(
+				getContent().getTopLevelAncestor(), args);
 	}
 
 	private class EventHandler implements StorageListener,
@@ -279,7 +275,7 @@ public class MemoryDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			if (!canEject()) {
+			if (storage.isLoaded() && storage.isModified() && !canEject()) {
 				return;
 			}
 
@@ -287,8 +283,8 @@ public class MemoryDockable extends OrganDockable {
 			JFileChooser chooser = new JFileChooser(session.getFile());
 			config.get("eject/chooser").read(chooser);
 			chooser.setFileFilter(new MemoryFileFilter());
-			if (chooser.showDialog(getContent().getTopLevelAncestor(),
-					chooser.getApproveButtonText()) == JFileChooser.APPROVE_OPTION) {
+			if (chooser.showDialog(getContent().getTopLevelAncestor(), chooser
+					.getApproveButtonText()) == JFileChooser.APPROVE_OPTION) {
 				file = chooser.getSelectedFile();
 				if (!file.exists()) {
 					file = MemoryFileFilter.addSuffix(file);
@@ -330,8 +326,8 @@ public class MemoryDockable extends OrganDockable {
 		public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
 			storage.setTitle(rowIndex, (String) aValue);
 
-			table.getColumnModel().getSelectionModel()
-					.setSelectionInterval(0, 0);
+			table.getColumnModel().getSelectionModel().setSelectionInterval(0,
+					0);
 		}
 	}
 }

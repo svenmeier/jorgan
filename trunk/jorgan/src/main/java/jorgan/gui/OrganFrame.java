@@ -377,7 +377,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 		String version = session.getOrgan().getVersion();
 		if (!version.equals(new Info().getVersion())) {
-			showBoxMessage("openConversion", MessageBox.OPTIONS_OK, version);
+			int option = showBoxMessage("openConversion",
+					MessageBox.OPTIONS_OK_CANCEL, version);
+			if (option != MessageBox.OPTION_OK) {
+				session.destroy();
+				return;
+			}
 		}
 
 		setSession(session);
@@ -690,13 +695,13 @@ public class OrganFrame extends JFrame implements SessionAware {
 			public boolean onClose(OrganFrame frame, OrganSession session) {
 				int option = frame.showBoxMessage("closeOrganConfirmChanges",
 						MessageBox.OPTIONS_YES_NO_CANCEL);
-				if (option == MessageBox.OPTION_CANCEL) {
-					return false;
+				if (option == MessageBox.OPTION_YES) {
+					return frame.saveOrgan();
 				} else if (option == MessageBox.OPTION_NO) {
 					return true;
 				}
 
-				return frame.saveOrgan();
+				return false;
 			}
 		},
 		SAVE {
