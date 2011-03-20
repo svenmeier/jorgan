@@ -27,6 +27,8 @@ import jorgan.util.Null;
  */
 public class Console extends Displayable implements Input, Output {
 
+	public static final String INTERNAL = "-";
+
 	private String skin;
 
 	private String screen;

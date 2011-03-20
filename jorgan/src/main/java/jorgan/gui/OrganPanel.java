@@ -245,12 +245,12 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 	}
 
-	protected ConsoleDockable addConsoleDockable(Console console) {
-		ConsoleDockable dockable = new ConsoleDockable(console);
-		dockable.setSession(session);
-		consoleDocking.putDockable(console, dockable);
-
-		return dockable;
+	protected void addConsoleDockable(Console console) {
+		if (!Console.INTERNAL.equals(console.getScreen())) {
+			ConsoleDockable dockable = new ConsoleDockable(console);
+			dockable.setSession(session);
+			consoleDocking.putDockable(console, dockable);
+		}
 	}
 
 	protected void removeConsoleDockable(Console console) {
@@ -362,7 +362,7 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	public void toFront(Console console) {
 		Dockable dockable = consoleDocking.getDockable(console);
 		if (dockable == null) {
-			dockable = addConsoleDockable(console);
+			addConsoleDockable(console);
 		} else {
 			consoleDocking.putDockable(console, dockable);
 		}
