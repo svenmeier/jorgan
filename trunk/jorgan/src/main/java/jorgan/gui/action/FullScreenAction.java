@@ -132,7 +132,7 @@ public class FullScreenAction extends BaseAction {
 	private void enterFullScreen() {
 		for (Console console : session.getOrgan().getElements(Console.class)) {
 			String screen = console.getScreen();
-			if (screen == null) {
+			if (screen == null || Console.INTERNAL.equals(screen)) {
 				continue;
 			}
 

@@ -314,10 +314,12 @@ public class FullScreen extends JDialog implements ConsoleStack {
 				.getLocalGraphicsEnvironment();
 		GraphicsDevice[] devices = environment.getScreenDevices();
 
-		String[] ids = new String[devices.length];
+		String[] ids = new String[devices.length + 1];
 		for (int d = 0; d < devices.length; d++) {
 			ids[d] = devices[d].getIDstring();
 		}
+		ids[ids.length - 1] = Console.INTERNAL;
+
 		return ids;
 	}
 }
