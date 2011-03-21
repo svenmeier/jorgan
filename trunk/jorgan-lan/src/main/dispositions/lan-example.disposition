@@ -31,9 +31,18 @@
       </references>
       <messages/>
       <zoom>1.0</zoom>
+    </console>
+    <controller id="12">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="9" />
+        <reference id="10" />
+      </references>
+      <messages/>
       <input>jOrgan LAN 1</input>
       <output>jOrgan LAN 1</output>
-    </console>
+    </controller>
     <switch id="9">
       <name></name>
       <description></description>

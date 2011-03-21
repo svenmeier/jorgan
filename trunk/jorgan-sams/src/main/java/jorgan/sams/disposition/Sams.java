@@ -20,7 +20,7 @@ package jorgan.sams.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Console;
+import jorgan.disposition.Controller;
 import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
 import jorgan.midi.mpl.Equal;
@@ -29,13 +29,13 @@ import jorgan.midi.mpl.Set;
 
 /**
  */
-public class SamsConsole extends Console {
+public class Sams extends Controller {
 
 	private long duration;
 
-	public SamsConsole() {
-		addMessage(new TabTurningOn().change(new Equal(144),
-				new Get(TabTurningOn.TAB), new Equal(127)));
+	public Sams() {
+		addMessage(new TabTurningOn().change(new Equal(144), new Get(
+				TabTurningOn.TAB), new Equal(127)));
 		addMessage(new CancelTabOn().change(new Set(144), new Set(
 				CancelTabOn.TAB), new Set(0)));
 		addMessage(new TabTurningOff().change(new Equal(128), new Get(
@@ -84,16 +84,15 @@ public class SamsConsole extends Console {
 		public static final String TAB = "tab";
 	}
 
-	public static class TabTurningOn extends OutputMessage implements TabMessage,
-			InterceptMessage {
+	public static class TabTurningOn extends OutputMessage implements
+			TabMessage, InterceptMessage {
 	}
 
-	public static class CancelTabOn extends OutputMessage implements
-			TabMessage {
+	public static class CancelTabOn extends OutputMessage implements TabMessage {
 	}
 
-	public static class TabTurningOff extends OutputMessage implements TabMessage,
-			InterceptMessage {
+	public static class TabTurningOff extends OutputMessage implements
+			TabMessage, InterceptMessage {
 	}
 
 	public static class CancelTabOff extends OutputMessage implements

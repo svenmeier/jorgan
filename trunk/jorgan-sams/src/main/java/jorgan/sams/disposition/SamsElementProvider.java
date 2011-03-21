@@ -44,7 +44,7 @@ public class SamsElementProvider implements ElementProvider {
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		classes.add(SamsConsole.class);
+		classes.add(Sams.class);
 
 		return classes;
 	}

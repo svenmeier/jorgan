@@ -44,7 +44,7 @@ import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.disposition.Console;
+import jorgan.disposition.Controller;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Message;
@@ -486,14 +486,14 @@ public class MessagesDockable extends OrganDockable {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			Console console = null;
+			Controller controller = null;
 
-			if (element instanceof Console) {
-				console = (Console) element;
+			if (element instanceof Controller) {
+				controller = (Controller) element;
 			} else if (element instanceof Displayable) {
-				for (Console referrer : session.getOrgan().getReferrer(element,
-						Console.class)) {
-					console = referrer;
+				for (Controller referrer : session.getOrgan().getReferrer(
+						element, Controller.class)) {
+					controller = referrer;
 					break;
 				}
 			}
@@ -502,8 +502,8 @@ public class MessagesDockable extends OrganDockable {
 			TableUtils.stopEdit(table);
 			table.getSelectionModel().setSelectionInterval(row, row);
 
-			if (console != null) {
-				record(console.getInput());
+			if (controller != null) {
+				record(controller.getInput());
 			}
 		}
 

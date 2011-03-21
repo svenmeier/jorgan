@@ -25,49 +25,14 @@ import jorgan.util.Null;
 /**
  * A console.
  */
-public class Console extends Displayable implements Input, Output {
-
-	public static final String INTERNAL = "-";
+public class Console extends Displayable {
 
 	private String skin;
 
 	private String screen;
 
-	private String input;
-
-	private String output;
-
-	public void setInput(String input) {
-		if (!Null.safeEquals(this.input, input)) {
-			String oldInput = this.input;
-
-			this.input = input;
-
-			fireChange(new PropertyChange(oldInput, this.input));
-		}
-	}
-
-	public String getInput() {
-		return input;
-	}
-
-	public void setOutput(String output) {
-		if (!Null.safeEquals(this.output, output)) {
-			String oldOutput = this.output;
-
-			this.output = output;
-
-			fireChange(new PropertyChange(oldOutput, this.output));
-		}
-	}
-
-	public String getOutput() {
-		return output;
-	}
-
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Displayable.class.isAssignableFrom(clazz)
-				&& !(Console.class == clazz);
+		return Displayable.class.isAssignableFrom(clazz);
 	}
 
 	@Override

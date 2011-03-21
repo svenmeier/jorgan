@@ -16,21 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sams.gui.construct.info;
+package jorgan.customizer.gui.expression;
 
-import jorgan.gui.construct.editor.LongEditor;
-import jorgan.gui.construct.info.ConsoleBeanInfo;
-import jorgan.sams.disposition.SamsConsole;
+import javax.swing.JPanel;
+
+import jorgan.disposition.Continuous;
+import jorgan.disposition.Controller;
 
 /**
- * BeanInfo for {@link SamsConsole}.
+ * A panel for a single {@link Continuous} element on a {@link host}.
  */
-public class SamsConsoleBeanInfo extends ConsoleBeanInfo {
+public class ExpressionPanel extends JPanel {
 
-	@Override
-	protected void registerProperties() {
-		super.registerProperties();
+	private Controller controller;
 
-		add("duration", SamsConsole.class, LongEditor.class);
+	private Continuous continuous;
+
+	public ExpressionPanel(Controller controller, Continuous continuous) {
+		if (controller == null) {
+			throw new IllegalArgumentException("controller must not be null");
+		}
+		if (continuous == null) {
+			throw new IllegalArgumentException("continuous must not be null");
+		}
+
+		this.controller = controller;
+		this.continuous = continuous;
+	}
+
+	public void apply() {
+
 	}
 }
