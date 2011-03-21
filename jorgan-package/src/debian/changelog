@@ -1,11 +1,11 @@
-jorgan (3.12.3) beta;
+jorgan (3.13-beta1) beta;
 
   * keep elements selected when switching to full screen
   * keep relative paths when starting the file property editor
   * warn about version mismatch
-  * split new element "Host" from console
+  * split new element "Controller" from console
 
- -- Sven Meier <sven@meiers.net>  ???
+ -- Sven Meier <sven@meiers.net>  Tue, 22 Mar 2011 22:34:00 +0200
 
 jorgan (3.12.2) stable;
 
