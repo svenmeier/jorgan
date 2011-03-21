@@ -376,7 +376,7 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		String version = session.getOrgan().getVersion();
-		if (!version.equals(new Info().getVersion())) {
+		if (!"".equals(version) && !version.equals(new Info().getVersion())) {
 			int option = showBoxMessage("openConversion",
 					MessageBox.OPTIONS_OK_CANCEL, version);
 			if (option != MessageBox.OPTION_OK) {
