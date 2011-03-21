@@ -21,11 +21,13 @@ package jorgan.customizer.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.customizer.gui.console.ConsoleCustomizer;
+import jorgan.customizer.gui.console.ConsolesCustomizer;
+import jorgan.customizer.gui.controller.ControllerCustomizer;
+import jorgan.customizer.gui.expression.ExpressionCustomizer;
 import jorgan.customizer.gui.keyboard.KeyboardsCustomizer;
 import jorgan.customizer.gui.sound.GenericSoundsCustomizer;
 import jorgan.customizer.gui.spi.CustomizerProvider;
-import jorgan.disposition.Console;
+import jorgan.disposition.Controller;
 import jorgan.session.OrganSession;
 
 /**
@@ -46,9 +48,15 @@ public class DefaultCustomizerProvider implements CustomizerProvider {
 		if (GenericSoundsCustomizer.customizes(session)) {
 			customizers.add(new GenericSoundsCustomizer(session));
 		}
-		for (Console console : session.getOrgan().getElements(Console.class)) {
-			if (ConsoleCustomizer.customizes(session, console)) {
-				customizers.add(new ConsoleCustomizer(session, console));
+		if (ConsolesCustomizer.customizes(session)) {
+			customizers.add(new ConsolesCustomizer(session));
+		}
+		for (Controller controller : session.getOrgan().getElements(
+				Controller.class)) {
+			if (ExpressionCustomizer.customizes(session, controller)) {
+				customizers.add(new ExpressionCustomizer(session, controller));
+			} else if (ControllerCustomizer.customizes(session, controller)) {
+				customizers.add(new ControllerCustomizer(session, controller));
 			}
 		}
 

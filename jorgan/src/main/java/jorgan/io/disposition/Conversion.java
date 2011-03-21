@@ -57,7 +57,8 @@ public class Conversion {
 			new Convert("3\\.8.*", "convert3.8To3.9-beta.xsl"),
 			new Convert("3\\.9-beta.*", "convert3.9-betaTo3.9.xsl"),
 			new Convert("3\\.(9|10|11-beta).*", "convert3.10To3.11-beta.xsl"),
-			new Convert("3\\.11-beta.*", "convert3.11-betaTo3.11.xsl") };
+			new Convert("3\\.11-beta.*", "convert3.11-betaTo3.11.xsl"),
+			new Convert("3\\.(11|12).*", "convert3.11To3.13.xsl") };
 
 	public BufferedInputStream convert(InputStream in)
 			throws ConversionException, IOException {

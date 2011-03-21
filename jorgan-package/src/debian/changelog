@@ -1,8 +1,9 @@
-jorgan (3.12.3) stable;
+jorgan (3.12.3) beta;
 
   * keep elements selected when switching to full screen
   * keep relative paths when starting the file property editor
   * warn about version mismatch
+  * split new element "Host" from console
 
  -- Sven Meier <sven@meiers.net>  ???
 

@@ -18,32 +18,50 @@
  */
 package jorgan.customizer.gui.console;
 
+import java.awt.GridLayout;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JComponent;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.border.EmptyBorder;
 
 import jorgan.customizer.gui.Customizer;
 import jorgan.disposition.Console;
-import jorgan.disposition.Elements;
 import jorgan.session.OrganSession;
 import bias.Configuration;
-import bias.util.MessageBuilder;
 
 /**
- * Customizer of a {@link Console}.
+ * Customizer of {@link Console}s.
  */
-public class ConsoleCustomizer implements Customizer {
+public class ConsolesCustomizer implements Customizer {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ConsoleCustomizer.class);
+			ConsolesCustomizer.class);
 
 	private String description;
 
-	private ConsolePanel panel;
+	private JScrollPane scrollPane;
 
-	public ConsoleCustomizer(OrganSession session, Console console) {
-		description = config.get("description").read(new MessageBuilder())
-				.build(Elements.getDisplayName(console));
+	private List<ConsolePanel> panels = new ArrayList<ConsolePanel>();
 
-		panel = new ConsolePanel(console);
+	public ConsolesCustomizer(OrganSession session) {
+		config.read(this);
+
+		scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setBorder(new EmptyBorder(0, 0, 0, 0));
+		scrollPane.setViewportBorder(new EmptyBorder(0, 0, 0, 0));
+
+		JPanel grid = new JPanel(new GridLayout(0, 1));
+		scrollPane.setViewportView(grid);
+
+		for (Console console : session.getOrgan().getElements(Console.class)) {
+			ConsolePanel panel = new ConsolePanel(console);
+			panels.add(panel);
+			grid.add(panel);
+		}
 	}
 
 	public String getDescription() {
@@ -55,14 +73,16 @@ public class ConsoleCustomizer implements Customizer {
 	}
 
 	public JComponent getComponent() {
-		return panel;
+		return scrollPane;
 	}
 
 	public void apply() {
-		panel.apply();
+		for (ConsolePanel panel : panels) {
+			panel.apply();
+		}
 	}
 
-	public static boolean customizes(OrganSession session, Console console) {
-		return console.getReferenceCount() > 0;
+	public static boolean customizes(OrganSession session) {
+		return session.getOrgan().getElements(Console.class).size() > 0;
 	}
 }

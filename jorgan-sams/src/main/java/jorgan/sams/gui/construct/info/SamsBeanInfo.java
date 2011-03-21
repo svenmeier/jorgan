@@ -16,19 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.sams.play;
+package jorgan.sams.gui.construct.info;
 
-import jorgan.disposition.Element;
-import jorgan.play.Player;
-import jorgan.play.spi.PlayerProvider;
+import jorgan.gui.construct.editor.LongEditor;
+import jorgan.gui.construct.info.ConsoleBeanInfo;
 import jorgan.sams.disposition.Sams;
 
-public class SamsPlayerProvider implements PlayerProvider {
+/**
+ * BeanInfo for {@link Sams}.
+ */
+public class SamsBeanInfo extends ConsoleBeanInfo {
 
-	public Player<?> createPlayer(Element element) {
-		if (element instanceof Sams) {
-			return new SamsPlayer((Sams) element);
-		}
-		return null;
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
+
+		add("duration", Sams.class, LongEditor.class);
 	}
 }

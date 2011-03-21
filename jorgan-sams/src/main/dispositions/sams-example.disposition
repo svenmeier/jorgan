@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="development">
+<organ version="@jorgan.version@">
   <elements>
     <switch id="1202">
       <name></name>
@@ -27,7 +27,7 @@
       <messages/>
       <zoom>1.0</zoom>
     </label>
-    <sams.samsConsole id="1205">
+    <console id="1205">
       <name></name>
       <description></description>
       <references>
@@ -52,18 +52,28 @@
           <y>60</y>
         </console-locationReference>
       </references>
-      <messages>
-        <sams.samsConsole-tabTurningOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurningOn>
-        <sams.samsConsole-cancelTabOn>set 144, set tab, set 0</sams.samsConsole-cancelTabOn>
-        <sams.samsConsole-tabTurningOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurningOff>
-        <sams.samsConsole-cancelTabOff>set 128, set tab, set 0</sams.samsConsole-cancelTabOff>
-        <sams.samsConsole-tabTurnedOn>equal 144, get tab, equal 127</sams.samsConsole-tabTurnedOn>
-        <sams.samsConsole-tabTurnedOff>equal 128, get tab, equal 127</sams.samsConsole-tabTurnedOff>
-      </messages>
+      <messages/>
       <zoom>1.0</zoom>
+    </console>
+    <sams.sams id="1206">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="1202"/>
+        <reference id="1207"/>
+        <reference id="1208"/>
+      </references>
+      <messages>
+        <sams.sams-tabTurningOn>equal 144, get tab, equal 127</sams.sams-tabTurningOn>
+        <sams.sams-cancelTabOn>set 144, set tab, set 0</sams.sams-cancelTabOn>
+        <sams.sams-tabTurningOff>equal 128, get tab, equal 127</sams.sams-tabTurningOff>
+        <sams.sams-cancelTabOff>set 128, set tab, set 0</sams.sams-cancelTabOff>
+        <sams.sams-tabTurnedOn>equal 144, get tab, equal 127</sams.sams-tabTurnedOn>
+        <sams.sams-tabTurnedOff>equal 128, get tab, equal 127</sams.sams-tabTurnedOff>
+      </messages>
       <output>jOrgan Midi Logger</output>
       <duration>500</duration>
-    </sams.samsConsole>
+    </sams.sams>
     <switch id="1207">
       <name></name>
       <description></description>

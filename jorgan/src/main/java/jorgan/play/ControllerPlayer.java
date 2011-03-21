@@ -24,21 +24,21 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
-import jorgan.disposition.Console;
+import jorgan.disposition.Controller;
 import jorgan.disposition.Element;
 import jorgan.midi.MessageUtils;
 import jorgan.problem.Severity;
 
 /**
- * A player of an console.
+ * A player of an {@link Controller}.
  */
-public class ConsolePlayer<E extends Console> extends Player<E> {
+public class ControllerPlayer<E extends Controller> extends Player<E> {
 
 	private Transmitter transmitter;
 
 	private Receiver receiver;
 
-	public ConsolePlayer(E console) {
+	public ControllerPlayer(E console) {
 		super(console);
 	}
 
@@ -46,17 +46,17 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 	public void update() {
 		super.update();
 
-		Console console = getElement();
+		Controller controller = getElement();
 
-		if (console.getOutput() == null) {
-			addProblem(Severity.WARNING, "output", "noDevice", console
+		if (controller.getOutput() == null) {
+			addProblem(Severity.WARNING, "output", "noDevice", controller
 					.getOutput());
 		} else {
 			removeProblem(Severity.WARNING, "output");
 		}
 
-		if (console.getInput() == null) {
-			addProblem(Severity.WARNING, "input", "noDevice", console
+		if (controller.getInput() == null) {
+			addProblem(Severity.WARNING, "input", "noDevice", controller
 					.getInput());
 		} else {
 			removeProblem(Severity.WARNING, "input");
@@ -65,13 +65,13 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 
 	@Override
 	protected void openImpl() {
-		Console console = getElement();
+		Controller controller = getElement();
 
 		removeProblem(Severity.ERROR, "input");
-		if (console.getInput() != null) {
+		if (controller.getInput() != null) {
 			try {
 				transmitter = getOrganPlay().createTransmitter(
-						console.getInput());
+						controller.getInput());
 				transmitter.setReceiver(new Receiver() {
 					public void close() {
 					}
@@ -82,17 +82,18 @@ public class ConsolePlayer<E extends Console> extends Player<E> {
 				});
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "input", "deviceUnavailable",
-						console.getInput());
+						controller.getInput());
 			}
 		}
 
 		removeProblem(Severity.ERROR, "output");
-		if (console.getOutput() != null) {
+		if (controller.getOutput() != null) {
 			try {
-				receiver = getOrganPlay().createReceiver(console.getOutput());
+				receiver = getOrganPlay()
+						.createReceiver(controller.getOutput());
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "output", "deviceUnavailable",
-						console.getOutput());
+						controller.getOutput());
 			}
 		}
 	}

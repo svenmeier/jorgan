@@ -20,12 +20,10 @@ package jorgan.gui.construct.info;
 
 import jorgan.disposition.Console;
 import jorgan.gui.construct.editor.FileEditor;
-import jorgan.gui.construct.editor.InDeviceEditor;
-import jorgan.gui.construct.editor.OutDeviceEditor;
 import jorgan.gui.construct.editor.ScreenEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Organ}.
+ * BeanInfo for {@link jorgan.disposition.Console}.
  */
 public class ConsoleBeanInfo extends ElementBeanInfo {
 
@@ -35,7 +33,5 @@ public class ConsoleBeanInfo extends ElementBeanInfo {
 
 		add("skin", Console.class, FileEditor.class);
 		add("screen", Console.class, ScreenEditor.class);
-		add("input", Console.class, InDeviceEditor.class);
-		add("output", Console.class, OutDeviceEditor.class);
 	}
 }

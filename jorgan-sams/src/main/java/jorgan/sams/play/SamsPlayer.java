@@ -27,22 +27,22 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
-import jorgan.play.ConsolePlayer;
+import jorgan.play.ControllerPlayer;
 import jorgan.problem.Severity;
-import jorgan.sams.disposition.SamsConsole;
-import jorgan.sams.disposition.SamsConsole.CancelTabOff;
-import jorgan.sams.disposition.SamsConsole.CancelTabOn;
-import jorgan.sams.disposition.SamsConsole.TabMessage;
-import jorgan.sams.disposition.SamsConsole.TabTurnedOff;
-import jorgan.sams.disposition.SamsConsole.TabTurnedOn;
-import jorgan.sams.disposition.SamsConsole.TabTurningOff;
-import jorgan.sams.disposition.SamsConsole.TabTurningOn;
+import jorgan.sams.disposition.Sams;
+import jorgan.sams.disposition.Sams.CancelTabOff;
+import jorgan.sams.disposition.Sams.CancelTabOn;
+import jorgan.sams.disposition.Sams.TabMessage;
+import jorgan.sams.disposition.Sams.TabTurnedOff;
+import jorgan.sams.disposition.Sams.TabTurnedOn;
+import jorgan.sams.disposition.Sams.TabTurningOff;
+import jorgan.sams.disposition.Sams.TabTurningOn;
 import jorgan.time.WakeUp;
 
 /**
- * Player for a {@link SamsConsole}.
+ * Player for a {@link Sams}.
  */
-public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
+public class SamsPlayer extends ControllerPlayer<Sams> {
 
 	private static final int TAB_COUNT = 128;
 
@@ -50,8 +50,8 @@ public class SamsConsolePlayer extends ConsolePlayer<SamsConsole> {
 
 	private Tab[] tabs = new Tab[TAB_COUNT];
 
-	public SamsConsolePlayer(SamsConsole console) {
-		super(console);
+	public SamsPlayer(Sams sams) {
+		super(sams);
 
 		for (int t = 0; t < tabs.length; t++) {
 			tabs[t] = new Tab(t);
