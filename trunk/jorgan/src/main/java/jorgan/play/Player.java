@@ -24,7 +24,7 @@ import java.io.IOException;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.disposition.Element;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
@@ -244,18 +244,18 @@ public abstract class Player<E extends Element> {
 
 	/**
 	 * Handle message output - default implementation lets referring
-	 * {@link Controller}s send the message.
+	 * {@link Connector}s send the message.
 	 * 
 	 * @throws InvalidMidiDataException
 	 * 
-	 * @see {@link ControllerPlayer#send(byte[])}
+	 * @see {@link ConnectorPlayer#send(byte[])}
 	 */
 	protected void onOutput(byte[] datas, Context context)
 			throws InvalidMidiDataException {
 
-		for (Controller controller : organPlay.getOrgan().getReferrer(element,
-				Controller.class)) {
-			ControllerPlayer<?> player = (ControllerPlayer<?>) getPlayer(controller);
+		for (Connector connector : organPlay.getOrgan().getReferrer(element,
+				Connector.class)) {
+			ConnectorPlayer<?> player = (ConnectorPlayer<?>) getPlayer(connector);
 			if (player != null) {
 				player.send(datas);
 			}

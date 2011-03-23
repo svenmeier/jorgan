@@ -6,7 +6,7 @@
 			<xsl:apply-templates select="@*|name|description|skin|screen|style|zoom|references"/>
 			<messages></messages>
 		</console>
-		<controller>
+		<connector>
 			<xsl:attribute name="id"><xsl:value-of select="translate(generate-id(.), translate(generate-id(.), '0123456789', ''), '')"/></xsl:attribute>						
 			<xsl:apply-templates select="name|description|input|output"/>
 			<references>
@@ -17,7 +17,7 @@
 				</xsl:for-each>
 			</references>
 			<messages></messages>
-		</controller>
+		</connector>
 	</xsl:template>
 
 	<xsl:template match="sams.samsConsole">

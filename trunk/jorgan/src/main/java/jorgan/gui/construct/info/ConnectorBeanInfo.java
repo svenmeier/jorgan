@@ -18,20 +18,20 @@
  */
 package jorgan.gui.construct.info;
 
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.gui.construct.editor.InDeviceEditor;
 import jorgan.gui.construct.editor.OutDeviceEditor;
 
 /**
- * BeanInfo for {@link jorgan.disposition.Controller}.
+ * BeanInfo for {@link jorgan.disposition.Connector}.
  */
-public class ControllerBeanInfo extends ElementBeanInfo {
+public class ConnectorBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("input", Controller.class, InDeviceEditor.class);
-		add("output", Controller.class, OutDeviceEditor.class);
+		add("input", Connector.class, InDeviceEditor.class);
+		add("output", Connector.class, OutDeviceEditor.class);
 	}
 }

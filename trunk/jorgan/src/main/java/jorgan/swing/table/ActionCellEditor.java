@@ -42,7 +42,7 @@ public class ActionCellEditor extends AbstractCellEditor implements
 			@Override
 			protected void fireActionPerformed(ActionEvent event) {
 				super.fireActionPerformed(event);
-				
+
 				fireEditingStopped();
 			}
 		};
