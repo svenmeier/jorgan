@@ -24,39 +24,39 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.disposition.Element;
 import jorgan.midi.MessageUtils;
 import jorgan.problem.Severity;
 
 /**
- * A player of an {@link Controller}.
+ * A player of an {@link Connector}.
  */
-public class ControllerPlayer<E extends Controller> extends Player<E> {
+public class ConnectorPlayer<E extends Connector> extends Player<E> {
 
 	private Transmitter transmitter;
 
 	private Receiver receiver;
 
-	public ControllerPlayer(E console) {
-		super(console);
+	public ConnectorPlayer(E connector) {
+		super(connector);
 	}
 
 	@Override
 	public void update() {
 		super.update();
 
-		Controller controller = getElement();
+		Connector connector = getElement();
 
-		if (controller.getOutput() == null) {
-			addProblem(Severity.WARNING, "output", "noDevice", controller
+		if (connector.getOutput() == null) {
+			addProblem(Severity.WARNING, "output", "noDevice", connector
 					.getOutput());
 		} else {
 			removeProblem(Severity.WARNING, "output");
 		}
 
-		if (controller.getInput() == null) {
-			addProblem(Severity.WARNING, "input", "noDevice", controller
+		if (connector.getInput() == null) {
+			addProblem(Severity.WARNING, "input", "noDevice", connector
 					.getInput());
 		} else {
 			removeProblem(Severity.WARNING, "input");
@@ -65,13 +65,13 @@ public class ControllerPlayer<E extends Controller> extends Player<E> {
 
 	@Override
 	protected void openImpl() {
-		Controller controller = getElement();
+		Connector connector = getElement();
 
 		removeProblem(Severity.ERROR, "input");
-		if (controller.getInput() != null) {
+		if (connector.getInput() != null) {
 			try {
 				transmitter = getOrganPlay().createTransmitter(
-						controller.getInput());
+						connector.getInput());
 				transmitter.setReceiver(new Receiver() {
 					public void close() {
 					}
@@ -82,18 +82,17 @@ public class ControllerPlayer<E extends Controller> extends Player<E> {
 				});
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "input", "deviceUnavailable",
-						controller.getInput());
+						connector.getInput());
 			}
 		}
 
 		removeProblem(Severity.ERROR, "output");
-		if (controller.getOutput() != null) {
+		if (connector.getOutput() != null) {
 			try {
-				receiver = getOrganPlay()
-						.createReceiver(controller.getOutput());
+				receiver = getOrganPlay().createReceiver(connector.getOutput());
 			} catch (MidiUnavailableException ex) {
 				addProblem(Severity.ERROR, "output", "deviceUnavailable",
-						controller.getOutput());
+						connector.getOutput());
 			}
 		}
 	}

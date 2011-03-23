@@ -2,7 +2,7 @@ package jorgan.play;
 
 import jorgan.disposition.Continuous;
 import jorgan.disposition.ContinuousFilter;
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.disposition.Coupler;
 import jorgan.disposition.Element;
 import jorgan.disposition.GenericSound;
@@ -20,8 +20,8 @@ public class DefaultPlayerProvider implements PlayerProvider {
 		Player<? extends Element> player = null;
 
 		// specific players first
-		if (element instanceof Controller) {
-			player = new ControllerPlayer<Controller>((Controller) element);
+		if (element instanceof Connector) {
+			player = new ConnectorPlayer<Connector>((Connector) element);
 		} else if (element instanceof Keyboard) {
 			player = new KeyboardPlayer((Keyboard) element);
 		} else if (element instanceof Keyer) {

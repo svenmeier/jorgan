@@ -34,7 +34,7 @@ public class DefaultElementProvider implements ElementProvider {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 		classes.add(Console.class);
 		classes.add(Label.class);
-		classes.add(Controller.class);
+		classes.add(Connector.class);
 		classes.add(Keyboard.class);
 		classes.add(Coupler.class);
 		classes.add(Stop.class);

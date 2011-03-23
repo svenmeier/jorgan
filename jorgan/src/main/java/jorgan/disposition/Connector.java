@@ -21,9 +21,9 @@ package jorgan.disposition;
 import jorgan.util.Null;
 
 /**
- * A controller.
+ * A connector.
  */
-public class Controller extends Element implements Input, Output {
+public class Connector extends Element implements Input, Output {
 
 	private String input;
 
