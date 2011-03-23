@@ -27,7 +27,7 @@ import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
-import jorgan.play.ControllerPlayer;
+import jorgan.play.ConnectorPlayer;
 import jorgan.problem.Severity;
 import jorgan.sams.disposition.Sams;
 import jorgan.sams.disposition.Sams.CancelTabOff;
@@ -42,7 +42,7 @@ import jorgan.time.WakeUp;
 /**
  * Player for a {@link Sams}.
  */
-public class SamsPlayer extends ControllerPlayer<Sams> {
+public class SamsPlayer extends ConnectorPlayer<Sams> {
 
 	private static final int TAB_COUNT = 128;
 

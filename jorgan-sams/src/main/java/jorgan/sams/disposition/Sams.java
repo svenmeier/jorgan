@@ -20,7 +20,7 @@ package jorgan.sams.disposition;
 
 import java.util.List;
 
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
 import jorgan.midi.mpl.Equal;
@@ -29,7 +29,7 @@ import jorgan.midi.mpl.Set;
 
 /**
  */
-public class Sams extends Controller {
+public class Sams extends Connector {
 
 	private long duration;
 

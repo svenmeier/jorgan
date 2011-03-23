@@ -32,7 +32,7 @@
       <messages/>
       <zoom>1.0</zoom>
     </console>
-    <controller id="12">
+    <connector id="12">
       <name></name>
       <description></description>
       <references>
@@ -42,7 +42,7 @@
       <messages/>
       <input>jOrgan LAN 1</input>
       <output>jOrgan LAN 1</output>
-    </controller>
+    </connector>
     <switch id="9">
       <name></name>
       <description></description>
