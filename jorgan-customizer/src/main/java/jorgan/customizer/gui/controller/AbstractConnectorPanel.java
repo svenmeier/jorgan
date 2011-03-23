@@ -16,35 +16,11 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.customizer.gui.expression;
+package jorgan.customizer.gui.controller;
 
 import javax.swing.JPanel;
 
-import jorgan.disposition.Continuous;
-import jorgan.disposition.Controller;
+public abstract class AbstractConnectorPanel extends JPanel {
 
-/**
- * A panel for a single {@link Continuous} element on a {@link host}.
- */
-public class ExpressionPanel extends JPanel {
-
-	private Controller controller;
-
-	private Continuous continuous;
-
-	public ExpressionPanel(Controller controller, Continuous continuous) {
-		if (controller == null) {
-			throw new IllegalArgumentException("controller must not be null");
-		}
-		if (continuous == null) {
-			throw new IllegalArgumentException("continuous must not be null");
-		}
-
-		this.controller = controller;
-		this.continuous = continuous;
-	}
-
-	public void apply() {
-
-	}
+	public abstract void apply();
 }
