@@ -19,13 +19,13 @@
 package jorgan.sams.gui.construct.info;
 
 import jorgan.gui.construct.editor.LongEditor;
-import jorgan.gui.construct.info.ControllerBeanInfo;
+import jorgan.gui.construct.info.ConnectorBeanInfo;
 import jorgan.sams.disposition.Sams;
 
 /**
  * BeanInfo for {@link Sams}.
  */
-public class SamsBeanInfo extends ControllerBeanInfo {
+public class SamsBeanInfo extends ConnectorBeanInfo {
 
 	@Override
 	protected void registerProperties() {
