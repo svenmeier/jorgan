@@ -22,12 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.customizer.gui.console.ConsolesCustomizer;
-import jorgan.customizer.gui.controller.ControllerCustomizer;
-import jorgan.customizer.gui.expression.ExpressionCustomizer;
+import jorgan.customizer.gui.controller.ConnectorCustomizer;
 import jorgan.customizer.gui.keyboard.KeyboardsCustomizer;
 import jorgan.customizer.gui.sound.GenericSoundsCustomizer;
 import jorgan.customizer.gui.spi.CustomizerProvider;
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
 import jorgan.session.OrganSession;
 
 /**
@@ -51,12 +50,10 @@ public class DefaultCustomizerProvider implements CustomizerProvider {
 		if (ConsolesCustomizer.customizes(session)) {
 			customizers.add(new ConsolesCustomizer(session));
 		}
-		for (Controller controller : session.getOrgan().getElements(
-				Controller.class)) {
-			if (ExpressionCustomizer.customizes(session, controller)) {
-				customizers.add(new ExpressionCustomizer(session, controller));
-			} else if (ControllerCustomizer.customizes(session, controller)) {
-				customizers.add(new ControllerCustomizer(session, controller));
+		for (Connector connector : session.getOrgan().getElements(
+				Connector.class)) {
+			if (ConnectorCustomizer.customizes(session, connector)) {
+				customizers.add(new ConnectorCustomizer(session, connector));
 			}
 		}
 

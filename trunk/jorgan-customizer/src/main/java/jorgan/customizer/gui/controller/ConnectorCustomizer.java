@@ -18,32 +18,46 @@
  */
 package jorgan.customizer.gui.controller;
 
+import java.util.List;
+
 import javax.swing.JComponent;
 
 import jorgan.customizer.gui.Customizer;
-import jorgan.disposition.Controller;
+import jorgan.disposition.Connector;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
 /**
- * Customizer of a {@link Controller}.
+ * Customizer of a {@link Connector}.
  */
-public class ControllerCustomizer implements Customizer {
+public class ConnectorCustomizer implements Customizer {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ControllerCustomizer.class);
+			ConnectorCustomizer.class);
 
 	private String description;
 
-	private ControllerPanel panel;
+	private AbstractConnectorPanel panel;
 
-	public ControllerCustomizer(OrganSession session, Controller controller) {
+	public ConnectorCustomizer(OrganSession session, Connector connector) {
 		description = config.get("description").read(new MessageBuilder())
-				.build(Elements.getDisplayName(controller));
+				.build(Elements.getDisplayName(connector));
 
-		panel = new ControllerPanel(controller);
+		panel = createPanel(connector);
+	}
+
+	private AbstractConnectorPanel createPanel(Connector connector) {
+		if (connector.getReferenceCount() == 1) {
+			List<Continuous> referenced = connector
+					.getReferenced(Continuous.class);
+			if (referenced.size() == 1) {
+				return new SingleConnectorPanel(connector, referenced.get(0));
+			}
+		}
+		return new ConnectorPanel(connector);
 	}
 
 	public String getDescription() {
@@ -62,7 +76,7 @@ public class ControllerCustomizer implements Customizer {
 		panel.apply();
 	}
 
-	public static boolean customizes(OrganSession session, Controller controller) {
-		return controller.getReferenceCount() > 0;
+	public static boolean customizes(OrganSession session, Connector connector) {
+		return connector.getReferenceCount() > 0;
 	}
 }

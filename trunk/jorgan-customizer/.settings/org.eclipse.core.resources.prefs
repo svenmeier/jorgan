@@ -1,9 +1,11 @@
-#Tue Apr 06 16:12:22 CEST 2010
+#Tue Mar 22 06:09:59 CET 2011
 eclipse.preferences.version=1
 encoding//src/main/java/jorgan/customizer/gui/action/i18n_cs.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/action/i18n_de.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/console/i18n_cs.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/console/i18n_de.properties=UTF-8
+encoding//src/main/java/jorgan/customizer/gui/controller/i18n_cs.properties=UTF-8
+encoding//src/main/java/jorgan/customizer/gui/controller/i18n_de.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/i18n_cs.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/i18n_de.properties=UTF-8
 encoding//src/main/java/jorgan/customizer/gui/keyboard/i18n_cs.properties=UTF-8
