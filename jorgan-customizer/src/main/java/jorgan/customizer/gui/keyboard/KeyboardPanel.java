@@ -25,7 +25,6 @@ import java.awt.event.ItemListener;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.sound.midi.ShortMessage;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -33,13 +32,12 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import jorgan.customizer.builder.NotesBuilder;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
-import jorgan.disposition.Message;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
-import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
@@ -156,12 +154,6 @@ public class KeyboardPanel extends JPanel {
 		private MessageBox messageBox = new MessageBox(
 				MessageBox.OPTIONS_OK_CANCEL);
 
-		private int channel;
-
-		private int from;
-
-		private int to;
-
 		public RecordAction() {
 			config.get("record").read(this);
 
@@ -175,9 +167,8 @@ public class KeyboardPanel extends JPanel {
 		}
 
 		public void actionPerformed(ActionEvent e) {
-			channel = -1;
-			from = Integer.MAX_VALUE;
-			to = 0;
+
+			final NotesBuilder builder = new NotesBuilder();
 
 			try {
 				MessageRecorder recorder = new MessageRecorder(
@@ -186,27 +177,7 @@ public class KeyboardPanel extends JPanel {
 					public boolean messageRecorded(MidiMessage message) {
 						byte[] datas = message.getMessage();
 
-						int status = datas[Message.STATUS] & 0xff;
-						if (MessageUtils.isChannelStatus(status)) {
-							int command = status & 0xf0;
-							int channel = status & 0x0f;
-							if (command == ShortMessage.NOTE_ON
-									|| command == ShortMessage.NOTE_OFF
-									|| command == ShortMessage.POLY_PRESSURE) {
-
-								if (RecordAction.this.channel == -1) {
-									RecordAction.this.channel = channel;
-								}
-
-								if (channel == RecordAction.this.channel) {
-									from = Math.min(from,
-											datas[Message.DATA1] & 0xff);
-									to = Math.max(to,
-											datas[Message.DATA1] & 0xff);
-								}
-							}
-						}
-
+						builder.analyse(datas);
 						return true;
 					}
 				};
@@ -215,10 +186,11 @@ public class KeyboardPanel extends JPanel {
 
 				recorder.close();
 
-				if (result == MessageBox.OPTION_OK && channel != -1) {
-					channelSpinner.setValue(channel + 1);
-					fromSpinner.setValue(from);
-					toSpinner.setValue(to);
+				if (result == MessageBox.OPTION_OK
+						&& builder.getChannel() != -1) {
+					channelSpinner.setValue(builder.getChannel() + 1);
+					fromSpinner.setValue(builder.getFrom());
+					toSpinner.setValue(builder.getTo());
 				}
 			} catch (MidiUnavailableException cannotRecord) {
 			}

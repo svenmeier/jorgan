@@ -168,7 +168,7 @@ public abstract class ContinuousPanel extends AbstractConnectorPanel {
 			Row row = rows.get(table.getEditingRow());
 
 			try {
-				final TupleBuilder builder = row.newTupleBuilder();
+				final TupleBuilder builder = new ContinuousBuilder();
 
 				MessageRecorder recorder = new MessageRecorder(getDeviceName()) {
 					@Override
@@ -253,10 +253,6 @@ public abstract class ContinuousPanel extends AbstractConnectorPanel {
 
 		public String getDisplayName() {
 			return Elements.getDisplayName(aContinuous);
-		}
-
-		public TupleBuilder newTupleBuilder() {
-			return new ContinuousBuilder();
 		}
 
 		public void setTuple(Tuple tuple) {
