@@ -179,7 +179,7 @@ public abstract class SwitchesPanel extends JPanel {
 			int index = table.getEditingColumn();
 
 			try {
-				final TupleBuilder builder = row.newTupleBuilder();
+				final TupleBuilder builder = new MomentaryBuilder();
 
 				MessageRecorder recorder = new MessageRecorder(getDeviceName()) {
 					@Override
@@ -279,10 +279,6 @@ public abstract class SwitchesPanel extends JPanel {
 
 		public String getDisplayName() {
 			return Elements.getDisplayName(aSwitch);
-		}
-
-		public TupleBuilder newTupleBuilder() {
-			return new MomentaryBuilder();
 		}
 
 		public void setTuple(int index, Tuple tuple) {
