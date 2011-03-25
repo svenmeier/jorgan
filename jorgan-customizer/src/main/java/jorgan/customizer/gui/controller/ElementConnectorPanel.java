@@ -18,6 +18,7 @@
  */
 package jorgan.customizer.gui.controller;
 
+import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
@@ -27,11 +28,13 @@ import javax.sound.midi.MidiUnavailableException;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 
 import jorgan.customizer.builder.ContinuousBuilder;
 import jorgan.customizer.builder.TupleBuilder;
 import jorgan.disposition.Connector;
 import jorgan.disposition.Continuous;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.disposition.Continuous.Change;
 import jorgan.midi.DevicePool;
@@ -41,6 +44,7 @@ import jorgan.midi.MessageUtils;
 import jorgan.swing.BaseAction;
 import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
 import bias.swing.MessageBox;
@@ -48,10 +52,10 @@ import bias.swing.MessageBox;
 /**
  * A panel for a single {@link Continuous} element on a {@link Connector}.
  */
-public class SingleConnectorPanel extends AbstractConnectorPanel {
+public class ElementConnectorPanel extends AbstractConnectorPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
-			SingleConnectorPanel.class);
+			ElementConnectorPanel.class);
 
 	private JComboBox deviceComboBox;
 
@@ -63,11 +67,19 @@ public class SingleConnectorPanel extends AbstractConnectorPanel {
 
 	private Message message;
 
-	public SingleConnectorPanel(Connector connector, Continuous continuous) {
+	public ElementConnectorPanel(Connector connector, Continuous continuous) {
 		this.connector = connector;
 		this.continuous = continuous;
 
-		DefinitionBuilder builder = new DefinitionBuilder(this);
+		setLayout(new BorderLayout());
+
+		add(new Group(new JLabel(Elements.getDisplayName(continuous))),
+				BorderLayout.NORTH);
+
+		JPanel definitions = new JPanel();
+		add(definitions, BorderLayout.CENTER);
+
+		DefinitionBuilder builder = new DefinitionBuilder(definitions);
 
 		Column column = builder.column();
 
@@ -130,7 +142,7 @@ public class SingleConnectorPanel extends AbstractConnectorPanel {
 					}
 				};
 
-				int result = messageBox.show(SingleConnectorPanel.this);
+				int result = messageBox.show(ElementConnectorPanel.this);
 
 				recorder.close();
 

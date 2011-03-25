@@ -18,13 +18,10 @@
  */
 package jorgan.customizer.gui.controller;
 
-import java.util.List;
-
 import javax.swing.JComponent;
 
 import jorgan.customizer.gui.Customizer;
 import jorgan.disposition.Connector;
-import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
 import jorgan.session.OrganSession;
 import bias.Configuration;
@@ -40,24 +37,13 @@ public class ConnectorCustomizer implements Customizer {
 
 	private String description;
 
-	private AbstractConnectorPanel panel;
+	private ConnectorPanel panel;
 
 	public ConnectorCustomizer(OrganSession session, Connector connector) {
 		description = config.get("description").read(new MessageBuilder())
 				.build(Elements.getDisplayName(connector));
 
-		panel = createPanel(connector);
-	}
-
-	private AbstractConnectorPanel createPanel(Connector connector) {
-		if (connector.getReferenceCount() == 1) {
-			List<Continuous> referenced = connector
-					.getReferenced(Continuous.class);
-			if (referenced.size() == 1) {
-				return new SingleConnectorPanel(connector, referenced.get(0));
-			}
-		}
-		return new ConnectorPanel(connector);
+		panel = new ConnectorPanel(connector);
 	}
 
 	public String getDescription() {
@@ -77,6 +63,6 @@ public class ConnectorCustomizer implements Customizer {
 	}
 
 	public static boolean customizes(OrganSession session, Connector connector) {
-		return connector.getReferenceCount() > 0;
+		return connector.getReferenceCount() > 1;
 	}
 }
