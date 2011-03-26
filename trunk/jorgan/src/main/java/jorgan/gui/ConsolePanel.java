@@ -204,8 +204,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 		this.session = session;
 		this.session.getOrgan().addOrganListener(
 				(OrganListener) Spin.over(eventHandler));
-		this.session.lookup(ElementSelection.class).addListener(eventHandler);
 		this.session.addListener((SessionListener) Spin.over(eventHandler));
+		this.session.lookup(ElementSelection.class).addListener(eventHandler);
 
 		this.console = console;
 
@@ -264,11 +264,11 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	}
 
 	public void dispose() {
-		this.session.getOrgan().removeOrganListener(
-				(OrganListener) Spin.over(eventHandler));
 		this.session.lookup(ElementSelection.class)
 				.removeListener(eventHandler);
-		this.session.removeListener(eventHandler);
+		this.session.getOrgan().removeOrganListener(
+				(OrganListener) Spin.over(eventHandler));
+		this.session.removeListener((SessionListener) Spin.over(eventHandler));
 		this.session = null;
 
 		if (this.popup != null) {

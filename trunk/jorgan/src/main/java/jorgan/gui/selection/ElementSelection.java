@@ -290,14 +290,17 @@ public class ElementSelection {
 	 *            listener to remove
 	 */
 	public void removeListener(SelectionListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	/**
 	 * Fire a change to all registered change listeners.
 	 */
 	protected void fireStateChanged() {
-		for (SelectionListener listener : new ArrayList<SelectionListener>(listeners)) {
+		for (SelectionListener listener : new ArrayList<SelectionListener>(
+				listeners)) {
 			listener.selectionChanged();
 		}
 	}

@@ -38,12 +38,14 @@ public abstract class BaseTreeModel<T> implements TreeModel {
 
 	private List<TreeModelListener> listeners = new ArrayList<TreeModelListener>();
 
-	public void addTreeModelListener(TreeModelListener l) {
-		listeners.add(l);
+	public void addTreeModelListener(TreeModelListener listener) {
+		listeners.add(listener);
 	}
 
-	public void removeTreeModelListener(TreeModelListener l) {
-		listeners.remove(l);
+	public void removeTreeModelListener(TreeModelListener listener) {
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	@SuppressWarnings("unchecked")

@@ -79,7 +79,8 @@ public abstract class Storage {
 			}
 
 			@Override
-			public void indexedPropertyAdded(Element element, String name, Object value) {
+			public void indexedPropertyAdded(Element element, String name,
+					Object value) {
 				if (Element.REFERENCE.equals(name)) {
 					Reference<?> reference = (Reference<?>) value;
 					if (element instanceof Combination) {
@@ -124,7 +125,9 @@ public abstract class Storage {
 	}
 
 	public void removeListener(StorageListener listener) {
-		this.listeners.remove(listener);
+		if (!this.listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public void addListener(StorageListener listener) {

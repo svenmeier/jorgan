@@ -142,7 +142,9 @@ public class ElementProblems {
 	}
 
 	public void removeListener(ProblemListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public void removeProblems(Element element) {

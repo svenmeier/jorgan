@@ -122,7 +122,9 @@ public class FileSelector extends JPanel {
 	 *            the listener to remove
 	 */
 	public void removeChangeListener(ChangeListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	private void showFileChooser() {

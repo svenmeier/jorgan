@@ -157,7 +157,9 @@ public class BasicWizard implements Wizard {
 	}
 
 	public void removeWizardListener(WizardListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	private void fireWizardChanged() {
