@@ -65,8 +65,7 @@ public class MultiLineLabel extends JTextArea {
 	}
 
 	/**
-	 * No preferred width, height restricted to twice height for configured
-	 * rows.
+	 * No preferred width, height restricted to twice of the configured height.
 	 * 
 	 * @see #getRows()
 	 * @see #getRowHeight()
