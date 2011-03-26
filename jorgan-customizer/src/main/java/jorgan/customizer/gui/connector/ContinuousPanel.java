@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.customizer.gui.controller;
+package jorgan.customizer.gui.connector;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
@@ -30,20 +30,18 @@ import java.util.Set;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
-import jorgan.customizer.builder.MomentaryBuilder;
+import jorgan.customizer.builder.ContinuousBuilder;
 import jorgan.customizer.builder.TupleBuilder;
+import jorgan.disposition.Connector;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
-import jorgan.disposition.Switch;
-import jorgan.disposition.Switch.Activate;
-import jorgan.disposition.Switch.Deactivate;
-import jorgan.disposition.Switch.Toggle;
+import jorgan.disposition.Continuous.Change;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
@@ -55,12 +53,15 @@ import jorgan.swing.table.TableUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
-public abstract class SwitchesPanel extends JPanel {
+/**
+ * A panel for a {@link Connector}.
+ */
+public abstract class ContinuousPanel extends AbstractConnectorPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
-			SwitchesPanel.class);
+			ContinuousPanel.class);
 
-	private SwitchesModel model = new SwitchesModel();
+	private ContinuousModel model = new ContinuousModel();
 
 	private List<Row> rows = new ArrayList<Row>();
 
@@ -72,7 +73,7 @@ public abstract class SwitchesPanel extends JPanel {
 
 	private Set<Message> received = new HashSet<Message>();
 
-	public SwitchesPanel(List<Switch> switches) {
+	public ContinuousPanel(List<Continuous> continuous) {
 		setLayout(new BorderLayout());
 
 		JScrollPane scrollPane = new JScrollPane(
@@ -85,26 +86,20 @@ public abstract class SwitchesPanel extends JPanel {
 		config.get("table").read(model);
 		table.setModel(model);
 		ToolTipManager.sharedInstance().registerComponent(table);
-		TableUtils.pleasantLookAndFeel(table);
 		MessageCellRenderer renderer = new MessageCellRenderer() {
 			@Override
-			protected boolean isHighlighted(Message message) {
-				return received.contains(message);
+			protected boolean isHighlighted(Message value) {
+				return received.contains(value);
 			}
 		};
 		table.getColumnModel().getColumn(1).setCellRenderer(renderer);
 		table.getColumnModel().getColumn(1).setCellEditor(
 				new ActionCellEditor(recordAction));
-		table.getColumnModel().getColumn(2).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(2).setCellEditor(
-				new ActionCellEditor(recordAction));
-		table.getColumnModel().getColumn(3).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(3).setCellEditor(
-				new ActionCellEditor(recordAction));
+		TableUtils.pleasantLookAndFeel(table);
 		scrollPane.setViewportView(table);
 
-		for (Switch aSwitch : switches) {
-			rows.add(new Row(aSwitch));
+		for (Continuous aContinuous : continuous) {
+			rows.add(new Row(aContinuous));
 		}
 	}
 
@@ -120,15 +115,15 @@ public abstract class SwitchesPanel extends JPanel {
 	}
 
 	public void apply() {
-		for (Row switchRow : rows) {
-			switchRow.apply();
+		for (Row row : rows) {
+			row.apply();
 		}
 	}
 
-	public class SwitchesModel extends BaseTableModel<Row> {
+	public class ContinuousModel extends BaseTableModel<Row> {
 
 		public int getColumnCount() {
-			return 4;
+			return 2;
 		}
 
 		public int getRowCount() {
@@ -146,17 +141,12 @@ public abstract class SwitchesPanel extends JPanel {
 		}
 
 		@Override
-		protected Object getValue(Row switchRow, int columnIndex) {
-
+		protected Object getValue(Row continuousRow, int columnIndex) {
 			switch (columnIndex) {
 			case 0:
-				return switchRow.getDisplayName();
+				return continuousRow.getDisplayName();
 			case 1:
-				return switchRow.activate;
-			case 2:
-				return switchRow.deactivate;
-			case 3:
-				return switchRow.toggle;
+				return continuousRow.change;
 			}
 
 			throw new Error();
@@ -176,10 +166,9 @@ public abstract class SwitchesPanel extends JPanel {
 
 		public void actionPerformed(ActionEvent e) {
 			Row row = rows.get(table.getEditingRow());
-			int index = table.getEditingColumn();
 
 			try {
-				final TupleBuilder builder = new MomentaryBuilder();
+				final TupleBuilder builder = new ContinuousBuilder();
 
 				MessageRecorder recorder = new MessageRecorder(getDeviceName()) {
 					@Override
@@ -197,12 +186,12 @@ public abstract class SwitchesPanel extends JPanel {
 					}
 				};
 
-				int result = messageBox.show(SwitchesPanel.this);
+				int result = messageBox.show(ContinuousPanel.this);
 
 				recorder.close();
 
 				if (result != MessageBox.OPTION_CANCEL) {
-					row.setTuple(index, builder.decide());
+					row.setTuple(builder.decide());
 				}
 			} catch (MidiUnavailableException cannotRecord) {
 			}
@@ -249,91 +238,44 @@ public abstract class SwitchesPanel extends JPanel {
 
 		private boolean changed = false;
 
-		private Switch aSwitch;
+		private Continuous aContinuous;
 
-		private Message activate;
+		private Message change;
 
-		private Message deactivate;
+		public Row(Continuous aContinuous) {
+			this.aContinuous = aContinuous;
 
-		private Message toggle;
-
-		public Row(Switch aSwitch) {
-			this.aSwitch = aSwitch;
-
-			List<Activate> activates = aSwitch.getMessages(Activate.class);
-			if (!activates.isEmpty()) {
-				activate = activates.get(0);
-			}
-
-			List<Deactivate> deactivates = aSwitch
-					.getMessages(Deactivate.class);
-			if (!deactivates.isEmpty()) {
-				deactivate = deactivates.get(0);
-			}
-
-			List<Toggle> toggles = aSwitch.getMessages(Toggle.class);
-			if (!toggles.isEmpty()) {
-				toggle = toggles.get(0);
+			List<Change> changes = aContinuous.getMessages(Change.class);
+			if (!changes.isEmpty()) {
+				change = changes.get(0);
 			}
 		}
 
 		public String getDisplayName() {
-			return Elements.getDisplayName(aSwitch);
+			return Elements.getDisplayName(aContinuous);
 		}
 
-		public void setTuple(int index, Tuple tuple) {
-			switch (index) {
-			case 1:
-				if (tuple == null) {
-					activate = null;
-				} else {
-					activate = new Switch.Activate().change(tuple);
-				}
-				break;
-			case 2:
-				if (tuple == null) {
-					deactivate = null;
-				} else {
-					deactivate = new Switch.Deactivate().change(tuple);
-				}
-				break;
-			case 3:
-				if (tuple == null) {
-					toggle = null;
-				} else {
-					toggle = new Switch.Toggle().change(tuple);
-				}
-				break;
+		public void setTuple(Tuple tuple) {
+			if (tuple == null) {
+				change = null;
+			} else {
+				change = new Continuous.Change().change(tuple);
 			}
 
 			changed = true;
 		}
 
 		public void received(byte[] datas) {
-			if (activate != null && context.process(activate, datas)) {
-				received.add(activate);
-			}
-
-			if (deactivate != null && context.process(deactivate, datas)) {
-				received.add(deactivate);
+			if (change != null && context.process(change, datas)) {
+				received.add(change);
 			}
 		}
 
 		public void apply() {
 			if (changed) {
-				aSwitch.removeMessages(Activate.class);
-				if (activate != null) {
-					aSwitch.addMessage(activate);
-				}
-
-				aSwitch.removeMessages(Deactivate.class);
-				if (deactivate != null) {
-					aSwitch.addMessage(deactivate);
-				}
-
-				aSwitch.removeMessages(Toggle.class);
-				if (toggle != null) {
-					aSwitch.addMessage(toggle);
+				aContinuous.removeMessages(Change.class);
+				if (change != null) {
+					aContinuous.addMessage(change);
 				}
 			}
 		}

@@ -1,4 +1,4 @@
-package jorgan.customizer.gui.controller;
+package jorgan.customizer.gui.connector;
 
 import java.awt.Color;
 

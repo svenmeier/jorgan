@@ -21,9 +21,9 @@ package jorgan.customizer.gui;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.customizer.gui.connector.ConnectorCustomizer;
+import jorgan.customizer.gui.connector.ConnectorsCustomizer;
 import jorgan.customizer.gui.console.ConsolesCustomizer;
-import jorgan.customizer.gui.controller.ConnectorCustomizer;
-import jorgan.customizer.gui.controller.ConnectorsCustomizer;
 import jorgan.customizer.gui.keyboard.KeyboardsCustomizer;
 import jorgan.customizer.gui.sound.GenericSoundsCustomizer;
 import jorgan.customizer.gui.spi.CustomizerProvider;
