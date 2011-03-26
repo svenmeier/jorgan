@@ -64,10 +64,18 @@ public class MultiLineLabel extends JTextArea {
 		setBorder(new EmptyBorder(4, 4, 4, 4));
 	}
 
+	/**
+	 * No preferred width, height restricted to twice height for configured
+	 * rows.
+	 * 
+	 * @see #getRows()
+	 * @see #getRowHeight()
+	 */
 	@Override
 	public Dimension getPreferredSize() {
 		Dimension dim = super.getPreferredSize();
 
-		return new Dimension(0, dim.height);
+		return new Dimension(0, Math.min(dim.height, getRowHeight() * getRows()
+				* 2));
 	}
 }
