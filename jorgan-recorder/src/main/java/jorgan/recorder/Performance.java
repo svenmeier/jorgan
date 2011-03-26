@@ -104,7 +104,9 @@ public abstract class Performance {
 	}
 
 	public void removeListener(PerformanceListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public OrganPlay getPlay() {

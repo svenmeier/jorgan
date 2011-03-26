@@ -9,7 +9,6 @@ import jorgan.gui.selection.SelectionListener;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
-import spin.Spin;
 import bias.Configuration;
 
 /**
@@ -44,12 +43,12 @@ public class BackAction extends BaseAction {
 			}
 		});
 		session.lookup(ElementSelection.class).addListener(
-				(SelectionListener) Spin.over(new SelectionListener() {
+				new SelectionListener() {
 					@Override
 					public void selectionChanged() {
 						update();
 					}
-				}));
+				});
 
 		config.read(this);
 

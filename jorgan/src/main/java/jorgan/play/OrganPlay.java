@@ -140,7 +140,9 @@ public abstract class OrganPlay {
 	}
 
 	public void removePlayerListener(PlayListener listener) {
-		playListeners.remove(listener);
+		if (!playListeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public void addKeyListener(KeyListener listener) {
@@ -148,7 +150,9 @@ public abstract class OrganPlay {
 	}
 
 	public void removeKeyListener(KeyListener listener) {
-		keyListeners.remove(listener);
+		if (!keyListeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	protected void fireKeyPressed(Keyboard keyboard, int pitch, int velocity) {

@@ -89,7 +89,10 @@ public class Organ {
 		if (listeners == null) {
 			listeners = new ArrayList<OrganListener>();
 		}
-		listeners.remove(listener);
+
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	/**

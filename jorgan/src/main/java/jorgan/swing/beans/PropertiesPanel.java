@@ -128,7 +128,9 @@ public class PropertiesPanel extends JPanel implements Scrollable {
 	 *            the listener to remove
 	 */
 	public void removeChangeListener(ChangeListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	protected void fireChanged() {

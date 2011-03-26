@@ -59,7 +59,9 @@ public class UndoManager {
 	}
 
 	public void removeListener(UndoListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	private void add(UndoableChange change) {

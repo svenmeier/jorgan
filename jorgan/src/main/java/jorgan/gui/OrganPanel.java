@@ -191,7 +191,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 					(ProblemListener) Spin.over(eventsListener));
 			this.session.lookup(ElementSelection.class).removeListener(
 					eventsListener);
-			this.session.removeListener(eventsListener);
+			this.session.removeListener((SessionListener) Spin
+					.over(eventsListener));
 
 			for (Object key : docking.getDockableKeys()) {
 				Dockable dockable = docking.getDockable(key);

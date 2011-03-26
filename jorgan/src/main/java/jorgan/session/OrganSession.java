@@ -192,7 +192,9 @@ public class OrganSession {
 	}
 
 	public void removeListener(SessionListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public Organ getOrgan() {

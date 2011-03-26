@@ -46,7 +46,9 @@ public abstract class AbstractStore implements Store {
 	}
 
 	public void removeListener(StoreListener listener) {
-		listeners.remove(listener);
+		if (!listeners.remove(listener)) {
+			throw new IllegalArgumentException("unknown listener");
+		}
 	}
 
 	public boolean isReadOnly() {
