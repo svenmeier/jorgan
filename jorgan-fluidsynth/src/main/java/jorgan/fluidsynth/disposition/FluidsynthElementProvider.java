@@ -21,24 +21,21 @@ package jorgan.fluidsynth.disposition;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.disposition.Console;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.disposition.spi.ElementProvider;
 
-/**
- * TODO add continuous elements to control {@link Chorus} and {@link Reverb} on
- * {@link Console}.
- */
 public class FluidsynthElementProvider implements ElementProvider {
 
 	public void init(Organ organ) {
 	}
-	
+
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
 		classes.add(FluidsynthSound.class);
+		classes.add(Reverb.class);
+		classes.add(Chorus.class);
 
 		return classes;
 	}

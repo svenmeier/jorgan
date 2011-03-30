@@ -19,15 +19,21 @@
 package jorgan.fluidsynth.play;
 
 import jorgan.disposition.Element;
+import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
+import jorgan.fluidsynth.disposition.Reverb;
 import jorgan.play.Player;
 import jorgan.play.spi.PlayerProvider;
 
 public class FluidsynthPlayerProvider implements PlayerProvider {
 
-	public Player<FluidsynthSound> createPlayer(Element element) {
+	public Player<?> createPlayer(Element element) {
 		if (element instanceof FluidsynthSound) {
 			return new FluidsynthSoundPlayer((FluidsynthSound) element);
+		} else if (element instanceof Reverb) {
+			return new ReverbPlayer((Reverb) element);
+		} else if (element instanceof Chorus) {
+			return new ChorusPlayer((Chorus) element);
 		}
 		return null;
 	}

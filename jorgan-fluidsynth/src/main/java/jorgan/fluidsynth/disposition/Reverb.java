@@ -18,45 +18,24 @@
  */
 package jorgan.fluidsynth.disposition;
 
-public class Reverb {
+public class Reverb extends Effect {
 
-	private double room = 0.2d;
+	private Parameter parameter = Parameter.ROOM;
 
-	private double damping = 0.0d;
-
-	private double width = 0.5d;
-
-	private double level = 1.0d;
-
-	public double getDamping() {
-		return damping;
+	public Parameter getParameter() {
+		return parameter;
 	}
 
-	public double getLevel() {
-		return level;
+	public void setParameter(Parameter parameter) {
+		if (this.parameter != parameter) {
+			Parameter oldParameter = this.parameter;
+			this.parameter = parameter;
+
+			fireChange(new PropertyChange(oldParameter, parameter));
+		}
 	}
 
-	public double getRoom() {
-		return room;
-	}
-
-	public double getWidth() {
-		return width;
-	}
-
-	public void setDamping(double damping) {
-		this.damping = FluidsynthSound.limit(damping);
-	}
-
-	public void setLevel(double level) {
-		this.level = FluidsynthSound.limit(level);
-	}
-
-	public void setRoom(double room) {
-		this.room = FluidsynthSound.limit(room);
-	}
-
-	public void setWidth(double width) {
-		this.width = FluidsynthSound.limit(width);
+	public static enum Parameter {
+		ROOM, DAMPING, WIDTH, LEVEL;
 	}
 }

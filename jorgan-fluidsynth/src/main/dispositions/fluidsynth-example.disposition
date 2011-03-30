@@ -72,23 +72,19 @@
     <fluidsynth.fluidsynthSound id="2">
       <name></name>
       <description></description>
-      <references/>
+      <references>
+      </references>
       <messages/>
       <soundfont>fluidsynth-example.SF2</soundfont>
       <channels>32</channels>
       <polyphony>256</polyphony>
       <sampleRate>44100</sampleRate>
       <interpolate>ORDER_4TH</interpolate>
+      <audioDriver>pulseaudio</audioDriver>
       <audioBuffers>8</audioBuffers>
       <audioBufferSize>512</audioBufferSize>
       <gain>0.2</gain>
       <cores>1</cores>
-      <reverb>
-        <room>0.2</room>
-        <damping>0.0</damping>
-        <width>0.5</width>
-        <level>1.0</level>
-      </reverb>
       <tunings>
         <fluidsynth.tuning>
           <name>Equal</name>

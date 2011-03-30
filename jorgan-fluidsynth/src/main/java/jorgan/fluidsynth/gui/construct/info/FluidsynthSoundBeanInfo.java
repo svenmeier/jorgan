@@ -22,10 +22,11 @@ import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.gui.construct.editor.AudioDeviceEditor;
 import jorgan.fluidsynth.gui.construct.editor.AudioDriverEditor;
 import jorgan.fluidsynth.gui.construct.editor.ChannelsEditor;
-import jorgan.fluidsynth.gui.construct.editor.EnumEditor;
+import jorgan.fluidsynth.gui.construct.editor.InterpolateEditor;
 import jorgan.fluidsynth.gui.construct.editor.PolyphonyEditor;
 import jorgan.gui.construct.editor.FileEditor;
 import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.editor.ValueEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
 
 /**
@@ -41,11 +42,12 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 		add("polyphony", FluidsynthSound.class, PolyphonyEditor.class);
 		add("sampleRate", FluidsynthSound.class, IntegerEditor.class);
 		add("cores", FluidsynthSound.class, IntegerEditor.class);
-		add("interpolate", FluidsynthSound.class, EnumEditor.class);
+		add("interpolate", FluidsynthSound.class, InterpolateEditor.class);
 		add("audioDriver", FluidsynthSound.class, AudioDriverEditor.class);
 		add("audioDevice", FluidsynthSound.class, AudioDeviceEditor.class);
 		add("audioBuffers", FluidsynthSound.class, IntegerEditor.class);
 		add("audioBufferSize", FluidsynthSound.class, IntegerEditor.class);
 		add("soundfont", FluidsynthSound.class, FileEditor.class);
+		add("gain", FluidsynthSound.class, ValueEditor.class);
 	}
 }

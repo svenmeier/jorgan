@@ -18,59 +18,24 @@
  */
 package jorgan.fluidsynth.disposition;
 
-public class Chorus {
-	
-	private double nr = 3.0d / 100;
+public class Chorus extends Effect {
 
-	private double level = 0.2d / 10;
+	private Parameter parameter = Parameter.LEVEL;
 
-	private double speed = 0.3 / 5;
-
-	private double depth = 0.8d / 10;
-
-	private Type type = Type.SINE;
-
-	public double getDepth() {
-		return depth;
+	public Parameter getParameter() {
+		return parameter;
 	}
 
-	public double getLevel() {
-		return level;
+	public void setParameter(Parameter parameter) {
+		if (this.parameter != parameter) {
+			Parameter oldParameter = this.parameter;
+			this.parameter = parameter;
+
+			fireChange(new PropertyChange(oldParameter, parameter));
+		}
 	}
 
-	public double getNr() {
-		return nr;
-	}
-
-	public double getSpeed() {
-		return speed;
-	}
-
-	public Type getType() {
-		return type;
-	}
-
-	public void setDepth(double depth) {
-		this.depth = FluidsynthSound.limit(depth);
-	}
-
-	public void setLevel(double level) {
-		this.level = FluidsynthSound.limit(level);
-	}
-
-	public void setNr(double nr) {
-		this.nr = FluidsynthSound.limit(nr);
-	}
-
-	public void setSpeed(double speed) {
-		this.speed = FluidsynthSound.limit(speed);
-	}
-
-	public void setType(Type type) {
-		this.type = type;
-	}
-
-	public static enum Type {
-		SINE, TRIANGLE;
+	public static enum Parameter {
+		NR, LEVEL, SPEED, DEPTH;
 	}
 }
