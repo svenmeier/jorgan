@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import jorgan.disposition.Element;
 import jorgan.disposition.Sound;
 import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.OrganListener;
@@ -56,16 +57,17 @@ public class FluidsynthSound extends Sound {
 	// audio.period-size [64-8192]
 	private int audioBufferSize = 512;
 
-	private double gain = 0.5d;
+	private float gain = 0.5f;
 
 	// synth.cpu-cores
 	private int cores = 1;
 
-	private Reverb reverb;
-
-	private Chorus chorus;
-
 	private List<Tuning> tunings = new ArrayList<Tuning>();
+
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Effect.class.isAssignableFrom(clazz);
+	}
 
 	public void setCores(int cores) {
 		if (cores < 1) {
@@ -86,34 +88,41 @@ public class FluidsynthSound extends Sound {
 	}
 
 	public int getCores() {
-		if (cores == 0) {
-			// backwards compatibiliy for dispositions without cores
-			cores = 1;
-		}
 		return cores;
 	}
 
-	public void setGain(double gain) {
-		this.gain = FluidsynthSound.limit(gain);
+	public void setGain(float gain) {
+		if (gain > 1.0f) {
+			gain = 1.0f;
+		}
+		if (gain < 0.0f) {
+			gain = 0.0f;
+		}
 
-		fireChange(new FastPropertyChange("gain", false));
+		if (this.gain != gain) {
+			float oldGain = this.gain;
+
+			this.gain = gain;
+
+			fireChange(new PropertyChange(oldGain, gain));
+		}
 	}
 
-	public double getGain() {
+	public float getGain() {
 		return gain;
 	}
 
 	public void setInterpolate(Interpolate interpolate) {
-		this.interpolate = interpolate;
+		if (this.interpolate != interpolate) {
+			Interpolate oldInterpolate = this.interpolate;
 
-		fireChange(new FastPropertyChange("interpolate", false));
+			this.interpolate = interpolate;
+
+			fireChange(new PropertyChange(oldInterpolate, interpolate));
+		}
 	}
 
 	public Interpolate getInterpolate() {
-		if (interpolate == null) {
-			// backwards compatibiliy for dispositions without interpolate
-			interpolate = Interpolate.ORDER_4TH;
-		}
 		return interpolate;
 	}
 
@@ -192,10 +201,6 @@ public class FluidsynthSound extends Sound {
 	}
 
 	public int getPolyphony() {
-		if (polyphony == 0) {
-			// backwards compatibiliy for dispositions without polyphony
-			polyphony = 256;
-		}
 		return polyphony;
 	}
 
@@ -216,26 +221,6 @@ public class FluidsynthSound extends Sound {
 
 			fireChange(new PropertyChange(oldPolyphony, this.polyphony));
 		}
-	}
-
-	public Chorus getChorus() {
-		return chorus;
-	}
-
-	public void setChorus(Chorus chorus) {
-		this.chorus = chorus;
-
-		fireChange(new FastPropertyChange("chorus", false));
-	}
-
-	public Reverb getReverb() {
-		return reverb;
-	}
-
-	public void setReverb(Reverb reverb) {
-		this.reverb = reverb;
-
-		fireChange(new FastPropertyChange("reverb", false));
 	}
 
 	public int getTuningCount() {
@@ -323,17 +308,6 @@ public class FluidsynthSound extends Sound {
 		});
 	}
 
-	static double limit(double value) {
-		if (value > 1.0d) {
-			value = 1.0d;
-		}
-		if (value < 0.0d) {
-			value = 0.0d;
-		}
-
-		return value;
-	}
-
 	public int getAudioBuffers() {
 		return audioBuffers;
 	}
@@ -407,7 +381,9 @@ public class FluidsynthSound extends Sound {
 				&& getSampleRate() == sound.getSampleRate()
 				&& getPolyphony() == sound.getPolyphony()
 				&& getChannels() == sound.getChannels()
-				&& Null.safeEquals(getSoundfont(), sound.getSoundfont());
+				&& Null.safeEquals(getSoundfont(), sound.getSoundfont())
+				&& getGain() == sound.getGain()
+				&& getInterpolate() == sound.getInterpolate();
 	}
 
 	public static enum Interpolate {

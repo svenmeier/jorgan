@@ -16,22 +16,9 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.gui.dock;
+package jorgan.fluidsynth.disposition;
 
-import java.util.ArrayList;
-import java.util.List;
+import jorgan.disposition.Continuous;
 
-import jorgan.gui.dock.OrganDockable;
-import jorgan.gui.dock.spi.DockableProvider;
-
-public class FluidsynthDockableProvider implements DockableProvider {
-
-	public List<OrganDockable> getDockables() {
-		ArrayList<OrganDockable> dockables = new ArrayList<OrganDockable>();
-
-		dockables.add(new TuningsDockable());
-
-		return dockables;
-	}
-
+public abstract class Effect extends Continuous {
 }

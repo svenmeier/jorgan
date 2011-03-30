@@ -16,22 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.gui.dock;
+package jorgan.fluidsynth.gui.construct.info;
 
-import java.util.ArrayList;
-import java.util.List;
+import jorgan.fluidsynth.disposition.Reverb;
+import jorgan.fluidsynth.gui.construct.editor.ReverbEditor;
+import jorgan.gui.construct.info.ContinuousBeanInfo;
 
-import jorgan.gui.dock.OrganDockable;
-import jorgan.gui.dock.spi.DockableProvider;
+/**
+ * BeanInfo for {@link Reverb}.
+ */
+public class ReverbBeanInfo extends ContinuousBeanInfo {
 
-public class FluidsynthDockableProvider implements DockableProvider {
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public List<OrganDockable> getDockables() {
-		ArrayList<OrganDockable> dockables = new ArrayList<OrganDockable>();
-
-		dockables.add(new TuningsDockable());
-
-		return dockables;
+		add("parameter", Reverb.class, ReverbEditor.class);
 	}
-
 }

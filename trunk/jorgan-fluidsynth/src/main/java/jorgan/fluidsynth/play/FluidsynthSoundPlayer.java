@@ -63,7 +63,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			}
 		}
 
-		configureSynth();
+		configureTunings();
+		configureReverb();
+		configureChorus();
 	}
 
 	@Override
@@ -127,6 +129,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 						.getSoundfont());
 			}
 		}
+
+		synth.setGain(sound.getGain() * 10.0f);
+		synth.setInterpolate(sound.getInterpolate().number());
 	}
 
 	private String name(String name) {
@@ -140,37 +145,94 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		return buffer.toString();
 	}
 
-	private void configureSynth() {
+	public void configureTunings() {
 		if (synth != null) {
 			FluidsynthSound sound = getElement();
-
-			synth.setGain((float) (sound.getGain() * 2));
-			synth.setInterpolate(sound.getInterpolate().number());
-
-			Reverb reverb = sound.getReverb();
-			if (reverb == null) {
-				synth.setReverbOn(false);
-			} else {
-				synth.setReverbOn(true);
-				synth.setReverb(reverb.getRoom(), reverb.getDamping(), reverb
-						.getWidth(), reverb.getLevel());
-			}
-
-			Chorus chorus = sound.getChorus();
-			if (chorus == null) {
-				synth.setChorusOn(false);
-			} else {
-				synth.setChorusOn(true);
-				synth.setChorus((int) (chorus.getNr() * 100),
-						chorus.getLevel() * 10, chorus.getSpeed() * 5, chorus
-								.getDepth() * 10, chorus.getType().ordinal());
-			}
-
 			int tuningProgram = 0;
 			for (Tuning tuning : sound.getTunings()) {
 				synth.setTuning(0, tuningProgram, tuning.getName(), tuning
 						.getDerivations());
 				tuningProgram++;
+			}
+		}
+	}
+
+	public void configureReverb() {
+		if (synth != null) {
+			FluidsynthSound sound = getElement();
+
+			boolean on = false;
+			double room = 0.2d; // 0.0 - 1.2
+			double damping = 0.0d; // 0.0 - 1.0
+			double width = 0.5d; // 0.0 - 100.0
+			double level = 0.9d; // 0.0 - 1.0
+
+			for (Reverb reverb : sound.getReferenced(Reverb.class)) {
+				on = true;
+
+				switch (reverb.getParameter()) {
+				case ROOM:
+					room = reverb.getValue() * 1.2d;
+					break;
+				case DAMPING:
+					damping = reverb.getValue() * 1.0d;
+					break;
+				case WIDTH:
+					width = reverb.getValue() * 100d;
+					break;
+				case LEVEL:
+					level = reverb.getValue() * 1.0d;
+					break;
+				}
+			}
+
+			if (on) {
+				synth.setReverbOn(true);
+				synth.setReverb(room, damping, width, level);
+				System.out.println(String.format("reverb %s,%s,%s,%s", room,
+						damping, width, level));
+			} else {
+				synth.setReverbOn(false);
+			}
+		}
+	}
+
+	public void configureChorus() {
+		if (synth != null) {
+			FluidsynthSound sound = getElement();
+
+			boolean on = false;
+			int nr = 3; // 0 - 99
+			double level = 2.0d; // 0.0 - 1.0
+			double speed = 0.30d; // 0.30 - 5.0
+			double depth = 8.0d; // 0.0 - 21.0
+
+			for (Chorus chorus : sound.getReferenced(Chorus.class)) {
+				on = true;
+
+				switch (chorus.getParameter()) {
+				case NR:
+					nr = Math.round(chorus.getValue() * 99);
+					break;
+				case LEVEL:
+					level = chorus.getValue() * 1.0d;
+					break;
+				case SPEED:
+					speed = 0.30d + (chorus.getValue() * (5.0d - 0.30d));
+					break;
+				case DEPTH:
+					depth = chorus.getValue() * 21.0d;
+					break;
+				}
+			}
+
+			if (on) {
+				synth.setChorusOn(true);
+				synth.setChorus(nr, level, speed, depth, 0);
+				System.out.println(String.format("chorus %s,%s,%s,%s", nr,
+						level, speed, depth));
+			} else {
+				synth.setChorusOn(false);
 			}
 		}
 	}

@@ -16,22 +16,30 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.fluidsynth.gui.dock;
+package jorgan.fluidsynth.play;
 
-import java.util.ArrayList;
-import java.util.List;
+import jorgan.fluidsynth.disposition.Chorus;
+import jorgan.fluidsynth.disposition.FluidsynthSound;
+import jorgan.play.Player;
 
-import jorgan.gui.dock.OrganDockable;
-import jorgan.gui.dock.spi.DockableProvider;
+/**
+ * A player for a {@link FluidsynthSound}.
+ */
+public class ChorusPlayer extends Player<Chorus> {
 
-public class FluidsynthDockableProvider implements DockableProvider {
-
-	public List<OrganDockable> getDockables() {
-		ArrayList<OrganDockable> dockables = new ArrayList<OrganDockable>();
-
-		dockables.add(new TuningsDockable());
-
-		return dockables;
+	public ChorusPlayer(Chorus element) {
+		super(element);
 	}
 
+	public void update() {
+		Chorus chorus = getElement();
+
+		for (FluidsynthSound sound : chorus.getOrgan().getReferrer(chorus,
+				FluidsynthSound.class)) {
+			FluidsynthSoundPlayer player = (FluidsynthSoundPlayer) getPlayer(sound);
+			if (player != null) {
+				player.configureChorus();
+			}
+		}
+	}
 }
