@@ -20,7 +20,7 @@ package jorgan.fluidsynth.disposition;
 
 public class Chorus extends Effect {
 
-	private Parameter parameter = Parameter.LEVEL;
+	private Parameter parameter = Parameter.NR;
 
 	public Parameter getParameter() {
 		return parameter;
