@@ -18,13 +18,13 @@
  */
 package jorgan.gui.construct;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -35,17 +35,11 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.gui.MessageTypeListCellRenderer;
-import jorgan.swing.layout.DefinitionBuilder;
-import jorgan.swing.layout.DefinitionBuilder.Column;
-import bias.Configuration;
 
 /**
  * A panel for a message.
  */
 public class MessageCreationPanel extends JPanel {
-
-	private Configuration config = Configuration.getRoot().get(
-			MessageCreationPanel.class);
 
 	private JList typeList = new JList();
 
@@ -55,11 +49,7 @@ public class MessageCreationPanel extends JPanel {
 	 * Constructor.
 	 */
 	public MessageCreationPanel() {
-		DefinitionBuilder builder = new DefinitionBuilder(this);
-
-		Column column = builder.column();
-
-		column.term(config.get("type").read(new JLabel()));
+		super(new BorderLayout());
 
 		typeList.setCellRenderer(new MessageTypeListCellRenderer());
 		typeList
@@ -69,7 +59,7 @@ public class MessageCreationPanel extends JPanel {
 				firePropertyChange("message", null, null);
 			}
 		});
-		column.definition(new JScrollPane(typeList)).growVertical().fillBoth();
+		add(new JScrollPane(typeList), BorderLayout.CENTER);
 	}
 
 	/**
