@@ -18,23 +18,17 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.Component;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 
-import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
-import javax.swing.border.EmptyBorder;
 
 /**
  * PropertyEditor for an integer property.
  */
-public class IntegerEditor extends CustomEditor {
+public class IntegerEditor extends SpinnerEditor {
 
 	private NumberFormat format = new DecimalFormat();
-
-	private JSpinner spinner;
 
 	public IntegerEditor() {
 		this(0, Integer.MIN_VALUE, 1, Integer.MAX_VALUE);
@@ -45,15 +39,7 @@ public class IntegerEditor extends CustomEditor {
 	}
 
 	public IntegerEditor(int value, int min, int delta, int max) {
-		spinner = new JSpinner(new SpinnerNumberModel(value, min, max, delta));
-
-		try {
-			spinner.setBorder(new EmptyBorder(0, 0, 0, 0));
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
-		} catch (Exception keepBorders) {
-		}
+		super(new SpinnerNumberModel(value, min, max, delta));
 	}
 
 	@Override
@@ -63,28 +49,5 @@ public class IntegerEditor extends CustomEditor {
 		} else {
 			return format.format(value);
 		}
-	}
-
-	@Override
-	public Component getCustomEditor(Object value) {
-
-		if (value != null) {
-			spinner.setValue(value);
-		}
-
-		return spinner;
-	}
-
-	@Override
-	public Object getEditedValue() {
-
-		try {
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.commitEdit();
-		} catch (ParseException invalidValueKeepPrevious) {
-		}
-
-		return spinner.getValue();
 	}
 }
