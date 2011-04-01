@@ -18,31 +18,21 @@
  */
 package jorgan.gui.construct.editor;
 
-import java.awt.Component;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.text.ParseException;
 
-import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 /**
  * PropertyEditor for a value property.
  */
-public class ValueEditor extends CustomEditor {
+public class ValueEditor extends SpinnerEditor {
 
 	private NumberFormat format = new DecimalFormat();
 
-	private JSpinner spinner;
-
 	public ValueEditor() {
-		spinner = new JSpinner(new SpinnerNumberModel(new Float(0.0f),
-				new Float(0.0f), new Float(1.0f), new Float(0.1f)));
-		spinner.setBorder(null);
-
-		JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-				.getEditor();
-		editor.getTextField().setBorder(null);
+		super(new SpinnerNumberModel(new Float(0.0f), new Float(0.0f),
+				new Float(1.0f), new Float(0.1f)));
 	}
 
 	@Override
@@ -52,29 +42,5 @@ public class ValueEditor extends CustomEditor {
 		} else {
 			return format.format(value);
 		}
-	}
-
-	@Override
-	public Component getCustomEditor(Object value) {
-
-		if (value != null) {
-			spinner.setValue(value);
-		}
-
-		return spinner;
-	}
-
-	@Override
-	public Object getEditedValue() {
-
-		try {
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.commitEdit();
-		} catch (ParseException ex) {
-			// invalid value so keep previous value
-		}
-
-		return spinner.getValue();
 	}
 }
