@@ -81,9 +81,7 @@ public class FluidsynthTest extends TestCase {
 		synth.send(channel, 192, 0, 0);
 		synth.send(channel, 144, note, 127);
 		w();
-		if (false) {
-			synth.send(channel, 128, note, 0);
-		}
+		synth.send(channel, 128, note, 0);
 	}
 
 	public synchronized void w() {
