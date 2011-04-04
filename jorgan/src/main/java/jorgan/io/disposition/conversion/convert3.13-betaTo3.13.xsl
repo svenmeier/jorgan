@@ -3,7 +3,7 @@
 
 	<xsl:template match="fluidsynth.fluidsynthSound">
 		<xsl:copy>
-			<xsl:apply-templates select="@*|*[not(name() = 'reverb' or name() = 'chorus')]"/>
+			<xsl:apply-templates select="@*|*[not(name() = 'reverb' or name() = 'chorus' or name() = 'gain')]"/>
 			<xsl:if test="not(interpolate)">
 				<interpolate>ORDER_4TH</interpolate>
 			</xsl:if>
@@ -13,6 +13,9 @@
 			<xsl:if test="not(polyphony)">
 				<polyphony>256</polyphony>
 			</xsl:if>
+			<gain>
+				<xsl:value-of select="gain div 5"/>
+			</gain>
 		</xsl:copy>
 	</xsl:template>
 
