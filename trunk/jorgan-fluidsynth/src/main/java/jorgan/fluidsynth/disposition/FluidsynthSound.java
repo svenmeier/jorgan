@@ -57,10 +57,10 @@ public class FluidsynthSound extends Sound {
 	// audio.period-size [64-8192]
 	private int audioBufferSize = 512;
 
-	private float gain = 0.5f;
-
 	// synth.cpu-cores
 	private int cores = 1;
+
+	private float gain = 0.02f;
 
 	private List<Tuning> tunings = new ArrayList<Tuning>();
 
