@@ -49,25 +49,41 @@ public class FluidsynthTest extends TestCase {
 		} catch (IOException expected) {
 		}
 
-		final Fluidsynth synth = new Fluidsynth();
+		final Fluidsynth synth = new Fluidsynth("with pulseaudio", 16,
+				"pulseaudio");
 
 		synth.soundFontLoad(new File(
 				"./src/main/dispositions/fluidsynth-example.SF2"));
 
-		int CONTROLLER = 11;
-
-		synth.send(0, 176, 121, 0);
-		synth.send(0, 192, 0, 0);
-		synth.send(0, 176, CONTROLLER, 60);
-		w();
-		synth.send(0, 144, 60, 127);
-		w();
-		synth.send(0, 176, CONTROLLER, 60);
-		w();
-		synth.send(0, 128, 60, 0);
-		w();
+		note(synth, 0, 60);
+		note(synth, 1, 62);
+		note(synth, 2, 64);
+		note(synth, 3, 65);
+		note(synth, 4, 67);
+		note(synth, 5, 69);
+		note(synth, 6, 71);
+		note(synth, 7, 72);
+		note(synth, 8, 74);
+		note(synth, 9, 76);
+		note(synth, 10, 77);
+		note(synth, 11, 79);
+		note(synth, 12, 81);
+		note(synth, 13, 82);
+		note(synth, 14, 84);
+		note(synth, 15, 86);
 
 		synth.destroy();
+	}
+
+	private void note(Fluidsynth synth, int channel, int note) {
+		System.out.println("channel " + channel);
+		synth.send(channel, 176, 0, 0);
+		synth.send(channel, 192, 0, 0);
+		synth.send(channel, 144, note, 127);
+		w();
+		if (false) {
+			synth.send(channel, 128, note, 0);
+		}
 	}
 
 	public synchronized void w() {
