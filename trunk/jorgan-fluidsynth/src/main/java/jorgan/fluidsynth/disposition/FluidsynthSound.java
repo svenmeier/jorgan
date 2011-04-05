@@ -37,7 +37,7 @@ public class FluidsynthSound extends Sound {
 
 	private String soundfont;
 
-	private int channels = 32;
+	private int channels = 64;
 
 	private int polyphony = 256;
 
