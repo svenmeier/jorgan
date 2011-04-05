@@ -105,8 +105,10 @@ public class TracksPanel extends JPanel implements Scrollable {
 		repaint();
 		revalidate();
 
-		int x = millisToX(performance.getTime());
-		scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
+		if (performance.getState() != Performance.STATE_STOP) {
+			int x = millisToX(performance.getTime());
+			scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
+		}
 	}
 
 	public JComponent getHeader() {
@@ -178,7 +180,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 			if (e.isPopupTrigger()) {
 				return;
 			}
-			
+
 			offset = null;
 		}
 
