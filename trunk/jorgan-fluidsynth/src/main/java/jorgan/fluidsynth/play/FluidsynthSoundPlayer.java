@@ -189,8 +189,6 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			if (on) {
 				synth.setReverbOn(true);
 				synth.setReverb(room, damping, width, level);
-				System.out.println(String.format("reverb %s,%s,%s,%s", room,
-						damping, width, level));
 			} else {
 				synth.setReverbOn(false);
 			}
@@ -229,8 +227,6 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			if (on) {
 				synth.setChorusOn(true);
 				synth.setChorus(nr, level, speed, depth, 0);
-				System.out.println(String.format("chorus %s,%s,%s,%s", nr,
-						level, speed, depth));
 			} else {
 				synth.setChorusOn(false);
 			}
