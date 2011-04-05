@@ -92,10 +92,6 @@ public class MidiMerger extends Loopback {
 
 	@Override
 	protected synchronized void openImpl() throws MidiUnavailableException {
-		if (inputs.isEmpty()) {
-			throw new MidiUnavailableException();
-		}
-
 		for (MergeInput input : inputs) {
 			mergers.add(new Merger(input.getDevice(), input.getChannel()));
 		}
