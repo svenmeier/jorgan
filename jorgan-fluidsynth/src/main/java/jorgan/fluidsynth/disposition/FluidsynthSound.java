@@ -60,7 +60,7 @@ public class FluidsynthSound extends Sound {
 	// synth.cpu-cores
 	private int cores = 1;
 
-	private float gain = 0.02f;
+	private float gain = 0.5f;
 
 	private List<Tuning> tunings = new ArrayList<Tuning>();
 

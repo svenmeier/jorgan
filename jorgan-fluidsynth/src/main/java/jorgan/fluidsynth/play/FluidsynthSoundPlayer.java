@@ -130,7 +130,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			}
 		}
 
-		synth.setGain(sound.getGain() * 10.0f);
+		synth.setGain(sound.getGain() * 2.0f);
 		synth.setInterpolate(sound.getInterpolate().number());
 	}
 
@@ -164,7 +164,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			boolean on = false;
 			double room = 0.2d; // 0.0 - 1.2
 			double damping = 0.0d; // 0.0 - 1.0
-			double width = 0.5d; // 0.0 - 100.0
+			double width = 1.0d; // 0.0 - 100.0
 			double level = 0.9d; // 0.0 - 1.0
 
 			for (Reverb reverb : sound.getReferenced(Reverb.class)) {
@@ -201,8 +201,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 			boolean on = false;
 			int nr = 3; // 0 - 99
-			double level = 2.0d; // 0.0 - 10.0
-			double speed = 0.30d; // 0.30 - 5.0
+			double level = 1.0d; // 0.0 - 1.0
+			double speed = 0.3d; // 0.3 - 5.0
 			double depth = 8.0d; // 0.0 - 21.0
 
 			for (Chorus chorus : sound.getReferenced(Chorus.class)) {
@@ -213,7 +213,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 					nr = Math.round(chorus.getValue() * 99);
 					break;
 				case LEVEL:
-					level = chorus.getValue() * 10.0d;
+					level = chorus.getValue() * 1.0d;
 					break;
 				case SPEED:
 					speed = 0.30d + (chorus.getValue() * (5.0d - 0.30d));
