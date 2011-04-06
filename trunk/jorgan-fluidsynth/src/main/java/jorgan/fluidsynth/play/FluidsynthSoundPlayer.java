@@ -201,7 +201,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 			boolean on = false;
 			int nr = 3; // 0 - 99
-			double level = 2.0d; // 0.0 - 1.0
+			double level = 2.0d; // 0.0 - 10.0
 			double speed = 0.30d; // 0.30 - 5.0
 			double depth = 8.0d; // 0.0 - 21.0
 
@@ -213,7 +213,7 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 					nr = Math.round(chorus.getValue() * 99);
 					break;
 				case LEVEL:
-					level = chorus.getValue() * 1.0d;
+					level = chorus.getValue() * 10.0d;
 					break;
 				case SPEED:
 					speed = 0.30d + (chorus.getValue() * (5.0d - 0.30d));
