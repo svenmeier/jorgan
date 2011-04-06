@@ -1,4 +1,4 @@
-jorgan (3.13-beta4) beta;
+jorgan (3.13-beta5) beta;
 
   * keep elements selected when switching to full screen
   * keep relative paths when starting the file property editor
