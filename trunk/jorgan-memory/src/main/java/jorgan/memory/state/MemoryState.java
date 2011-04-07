@@ -90,7 +90,21 @@ public class MemoryState {
 			state.swap(index1, index2);
 		}
 	}
-	
+
+	/**
+	 * Write the state into all combinations.
+	 */
+	public void write(Memory memory, int index) {
+		for (Combination combination : memory.getReferenced(Combination.class)) {
+			CombinationState state = getState(combination);
+
+			state.write(combination, index);
+		}
+	}
+
+	/**
+	 * Read the state from all combinations.
+	 */
 	public void read(Memory memory, int index) {
 		for (Combination combination : memory.getReferenced(Combination.class)) {
 			CombinationState state = getState(combination);
@@ -98,16 +112,11 @@ public class MemoryState {
 		}
 	}
 
+	/**
+	 * Read the state from the given combinations.
+	 */
 	public void read(Combination combination, Reference<?> reference, int index) {
 		CombinationState state = getState(combination);
 		state.read(reference, index);
-	}
-	
-	public void write(Memory memory, int index) {
-		for (Combination combination : memory.getReferenced(Combination.class)) {
-			CombinationState state = getState(combination);
-
-			state.write(combination, index);
-		}
 	}
 }
