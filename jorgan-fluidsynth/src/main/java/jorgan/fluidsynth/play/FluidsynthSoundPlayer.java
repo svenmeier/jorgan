@@ -162,23 +162,23 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			FluidsynthSound sound = getElement();
 
 			boolean on = false;
-			double room = 0.2d; // 0.0 - 1.2
-			double damping = 0.0d; // 0.0 - 1.0
-			double width = 1.0d; // 0.0 - 100.0
-			double level = 0.9d; // 0.0 - 1.0
+			double room = 0.2d;
+			double damping = 0.0d;
+			double width = 0.5d; // should be 1.0d
+			double level = 1.0d; // should be 0.9d
 
 			for (Reverb reverb : sound.getReferenced(Reverb.class)) {
 				on = true;
 
 				switch (reverb.getParameter()) {
 				case ROOM:
-					room = reverb.getValue() * 1.2d;
+					room = reverb.getValue() * 1.0d; // should be 1.2d :(
 					break;
 				case DAMPING:
 					damping = reverb.getValue() * 1.0d;
 					break;
 				case WIDTH:
-					width = reverb.getValue() * 100d;
+					width = reverb.getValue() * 1.0d; // should be 100.0d :(
 					break;
 				case LEVEL:
 					level = reverb.getValue() * 1.0d;
@@ -187,8 +187,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			}
 
 			if (on) {
-				synth.setReverbOn(true);
 				synth.setReverb(room, damping, width, level);
+				synth.setReverbOn(true);
 			} else {
 				synth.setReverbOn(false);
 			}
@@ -200,10 +200,10 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			FluidsynthSound sound = getElement();
 
 			boolean on = false;
-			int nr = 3; // 0 - 99
-			double level = 1.0d; // 0.0 - 1.0
-			double speed = 0.3d; // 0.3 - 5.0
-			double depth = 8.0d; // 0.0 - 21.0
+			int nr = 3;
+			double level = 0.02d; // should be 1.0
+			double speed = 0.3d;
+			double depth = 0.8d; // should be 8.0
 
 			for (Chorus chorus : sound.getReferenced(Chorus.class)) {
 				on = true;
@@ -213,20 +213,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 					nr = Math.round(chorus.getValue() * 99);
 					break;
 				case LEVEL:
-					level = chorus.getValue() * 1.0d;
+					level = chorus.getValue() * 10.0d; // should be 1.0d :(
 					break;
 				case SPEED:
 					speed = 0.30d + (chorus.getValue() * (5.0d - 0.30d));
 					break;
 				case DEPTH:
-					depth = chorus.getValue() * 21.0d;
+					depth = chorus.getValue() * 10.0d; // should be 21.0d :(
 					break;
 				}
 			}
 
 			if (on) {
-				synth.setChorusOn(true);
 				synth.setChorus(nr, level, speed, depth, 0);
+				synth.setChorusOn(true);
 			} else {
 				synth.setChorusOn(false);
 			}
