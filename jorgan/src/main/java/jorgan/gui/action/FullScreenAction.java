@@ -130,6 +130,7 @@ public class FullScreenAction extends BaseAction {
 	}
 
 	private void enterFullScreen() {
+		// alphabetically front to back
 		for (Console console : session.getOrgan().getElements(Console.class)) {
 			String screen = console.getScreen();
 			if (screen == null) {

@@ -61,6 +61,7 @@ import jorgan.session.SessionAware;
 import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
 import jorgan.util.IOUtils;
+import jorgan.util.ReverseIterable;
 import spin.Spin;
 import swingx.docking.Dockable;
 import swingx.docking.DockingPane;
@@ -233,8 +234,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 				}
 			}
 
-			for (Console console : this.session.getOrgan().getElements(
-					Console.class)) {
+			// alphabetically front to back
+			for (Console console : new ReverseIterable<Console>(session
+					.getOrgan().getElements(Console.class))) {
 				addConsoleDockable(console);
 			}
 		}
