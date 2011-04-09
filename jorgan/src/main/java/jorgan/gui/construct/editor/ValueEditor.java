@@ -32,7 +32,7 @@ public class ValueEditor extends SpinnerEditor {
 
 	public ValueEditor() {
 		super(new SpinnerNumberModel(new Float(0.0f), new Float(0.0f),
-				new Float(1.0f), new Float(0.1f)));
+				new Float(1.0f), new Float(0.01f)));
 	}
 
 	@Override
