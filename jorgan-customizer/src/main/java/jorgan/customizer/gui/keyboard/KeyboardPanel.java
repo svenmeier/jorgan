@@ -44,6 +44,7 @@ import jorgan.swing.ComboBoxUtils;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.spinner.SpinnerUtils;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
@@ -100,14 +101,17 @@ public class KeyboardPanel extends JPanel {
 
 		secondColumn.term(config.get("channel").read(new JLabel()));
 		channelSpinner = new JSpinner(new SpinnerNumberModel(1, 1, 16, 1));
+		SpinnerUtils.setColumns(channelSpinner, 3);
 		secondColumn.definition(channelSpinner);
 
 		secondColumn.term(config.get("from").read(new JLabel()));
 		fromSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 127, 1));
+		SpinnerUtils.setColumns(fromSpinner, 3);
 		secondColumn.definition(fromSpinner);
 
 		secondColumn.term(config.get("to").read(new JLabel()));
 		toSpinner = new JSpinner(new SpinnerNumberModel(127, 0, 127, 1));
+		SpinnerUtils.setColumns(toSpinner, 3);
 		secondColumn.definition(toSpinner);
 
 		init();

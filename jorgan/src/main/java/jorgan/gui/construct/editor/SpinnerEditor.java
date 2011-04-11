@@ -19,11 +19,11 @@
 package jorgan.gui.construct.editor;
 
 import java.awt.Component;
-import java.text.ParseException;
 
 import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
-import javax.swing.border.EmptyBorder;
+
+import jorgan.swing.spinner.SpinnerUtils;
 
 /**
  */
@@ -34,15 +34,7 @@ public abstract class SpinnerEditor extends CustomEditor {
 	protected SpinnerEditor(SpinnerModel model) {
 		spinner = new JSpinner(model);
 
-		try {
-			spinner.setBorder(new EmptyBorder(0, 0, 0, 0));
-
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.setBorder(new EmptyBorder(0, 0, 0, 0));
-			editor.getTextField().setBorder(new EmptyBorder(0, 0, 0, 0));
-		} catch (Exception keepBorders) {
-		}
+		SpinnerUtils.emptyBorder(spinner);
 	}
 
 	@Override
@@ -58,13 +50,7 @@ public abstract class SpinnerEditor extends CustomEditor {
 	@Override
 	public Object getEditedValue() {
 
-		try {
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.commitEdit();
-		} catch (ParseException ex) {
-			// invalid value so keep previous value
-		}
+		SpinnerUtils.commitEdit(spinner);
 
 		return spinner.getValue();
 	}

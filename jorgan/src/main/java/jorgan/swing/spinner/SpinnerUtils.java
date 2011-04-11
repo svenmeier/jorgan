@@ -18,16 +18,56 @@
  */
 package jorgan.swing.spinner;
 
+import javax.swing.JSpinner;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.JSpinner.DefaultEditor;
+import javax.swing.border.EmptyBorder;
 
 /**
  * Utility method for spinners.
  */
 public class SpinnerUtils {
 
+	private static EmptyBorder EMPTY = new EmptyBorder(0, 0, 0, 0);
+
 	public static SpinnerModel create(long value, long min, long max, long step) {
 		return new SpinnerNumberModel((Long) value, (Long) min, (Long) max,
 				(Long) step);
+	}
+
+	public static void setColumns(JSpinner spinner, int columns) {
+		DefaultEditor editor = getEditor(spinner);
+		if (editor != null) {
+			editor.getTextField().setColumns(columns);
+		}
+	}
+
+	public static void commitEdit(JSpinner spinner) {
+		DefaultEditor editor = getEditor(spinner);
+		if (editor != null) {
+			try {
+				editor.commitEdit();
+			} catch (Exception invalidValue) {
+			}
+		}
+	}
+
+	public static void emptyBorder(JSpinner spinner) {
+		spinner.setBorder(EMPTY);
+
+		DefaultEditor editor = getEditor(spinner);
+		if (editor != null) {
+			editor.setBorder(EMPTY);
+			editor.getTextField().setBorder(EMPTY);
+		}
+	}
+
+	private static DefaultEditor getEditor(JSpinner spinner) {
+		try {
+			return (DefaultEditor) spinner.getEditor();
+		} catch (ClassCastException ex) {
+			return null;
+		}
 	}
 }
