@@ -19,7 +19,6 @@
 package jorgan.swing.table;
 
 import java.awt.Component;
-import java.text.ParseException;
 
 import javax.swing.AbstractCellEditor;
 import javax.swing.JSpinner;
@@ -27,6 +26,8 @@ import javax.swing.JTable;
 import javax.swing.SpinnerNumberModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellEditor;
+
+import jorgan.swing.spinner.SpinnerUtils;
 
 /**
  * Cell editor for <code>Integer</code> values customizing a JSpinner.
@@ -72,12 +73,7 @@ public class SpinnerCellEditor extends AbstractCellEditor implements
 	}
 
 	public Object getCellEditorValue() {
-		try {
-			JSpinner.DefaultEditor editor = (JSpinner.DefaultEditor) spinner
-					.getEditor();
-			editor.commitEdit();
-		} catch (ParseException invalidValueKeepPrevious) {
-		}
+		SpinnerUtils.commitEdit(spinner);
 
 		return spinner.getValue();
 	}
