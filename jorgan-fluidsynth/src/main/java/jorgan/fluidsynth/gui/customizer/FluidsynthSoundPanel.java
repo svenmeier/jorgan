@@ -18,6 +18,8 @@
  */
 package jorgan.fluidsynth.gui.customizer;
 
+import java.awt.BorderLayout;
+
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSpinner;
@@ -26,13 +28,17 @@ import javax.swing.SpinnerNumberModel;
 import jorgan.disposition.Elements;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.spinner.SpinnerUtils;
 import bias.Configuration;
 
 public class FluidsynthSoundPanel extends JPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
 			FluidsynthSoundPanel.class);
+
+	private JSpinner gainSpinner;
 
 	private JSpinner audioBuffersSpinner;
 
@@ -45,30 +51,48 @@ public class FluidsynthSoundPanel extends JPanel {
 
 		this.sound = sound;
 
-		DefinitionBuilder builder = new DefinitionBuilder(this);
+		setLayout(new BorderLayout());
 
-		Column column = builder.column();
+		add(new Group(new JLabel(Elements.getDisplayName(sound))),
+				BorderLayout.NORTH);
 
-		column.group(new JLabel(Elements.getDisplayName(sound)));
+		JPanel definitions = new JPanel();
+		add(definitions, BorderLayout.CENTER);
 
-		column.term(config.get("audioBuffers").read(new JLabel()));
+		DefinitionBuilder builder = new DefinitionBuilder(definitions);
+
+		Column firstColumn = builder.column();
+
+		firstColumn.term(config.get("gain").read(new JLabel()));
+		gainSpinner = new JSpinner(new SpinnerNumberModel(new Float(0.2468f),
+				new Float(0.0f), new Float(1.0f), new Float(0.01f)));
+		SpinnerUtils.setColumns(gainSpinner, 5);
+		firstColumn.definition(gainSpinner);
+
+		Column secondColumn = builder.column();
+
+		secondColumn.term(config.get("audioBuffers").read(new JLabel()));
 		audioBuffersSpinner = new JSpinner(new SpinnerNumberModel(2, 2, 16, 1));
-		column.definition(audioBuffersSpinner);
+		SpinnerUtils.setColumns(audioBuffersSpinner, 4);
+		secondColumn.definition(audioBuffersSpinner);
 
-		column.term(config.get("audioBufferSize").read(new JLabel()));
+		secondColumn.term(config.get("audioBufferSize").read(new JLabel()));
 		audioBufferSizeSpinner = new JSpinner(new SpinnerNumberModel(64, 64,
 				8192, 16));
-		column.definition(audioBufferSizeSpinner);
+		SpinnerUtils.setColumns(audioBufferSizeSpinner, 4);
+		secondColumn.definition(audioBufferSizeSpinner);
 
 		init();
 	}
 
 	private void init() {
+		gainSpinner.setValue(sound.getGain());
 		audioBuffersSpinner.setValue(sound.getAudioBuffers());
 		audioBufferSizeSpinner.setValue(sound.getAudioBufferSize());
 	}
 
 	public void apply() {
+		sound.setGain((Float) gainSpinner.getValue());
 		sound.setAudioBuffers((Integer) audioBuffersSpinner.getValue());
 		sound.setAudioBufferSize((Integer) audioBufferSizeSpinner.getValue());
 	}
