@@ -128,6 +128,8 @@ public class FluidsynthSound extends Sound {
 
 	public void setAudioDriver(String audioDriver) {
 		if (!Null.safeEquals(this.audioDriver, audioDriver)) {
+			setAudioDevice(null);
+
 			String oldAudioDriver = this.audioDriver;
 
 			if ("".equals(audioDriver)) {
