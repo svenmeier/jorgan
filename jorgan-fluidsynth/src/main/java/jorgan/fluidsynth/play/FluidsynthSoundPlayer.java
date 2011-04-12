@@ -104,6 +104,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		FluidsynthSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "audioDriver");
+		removeProblem(Severity.ERROR, "soundfont");
+
 		try {
 			synth = new Fluidsynth(name(sound.getName()), sound.getCores(),
 					sound.getChannels(), sound.getPolyphony(), sound
@@ -115,12 +117,11 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		} catch (IOException e) {
 			addProblem(Severity.ERROR, "audioDriver", "create");
 			return;
-		} catch (Error fluidsynthFailure) {
+		} catch (NoClassDefFoundError failure) {
 			addProblem(Severity.ERROR, "audioDriver", "fluidsynthFailure");
 			return;
 		}
 
-		removeProblem(Severity.ERROR, "soundfont");
 		if (sound.getSoundfont() != null) {
 			try {
 				synth.soundFontLoad(resolve(sound.getSoundfont()));

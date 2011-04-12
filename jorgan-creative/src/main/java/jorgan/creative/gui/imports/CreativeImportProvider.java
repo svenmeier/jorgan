@@ -37,10 +37,10 @@ public class CreativeImportProvider implements ImportProvider {
 
 		try {
 			// trigger creative failure early
-			SoundFontManager.test();
+			SoundFontManager.class.getName();
 
 			imports.add(new CreativeImport());
-		} catch (Error creativeError) {
+		} catch (UnsatisfiedLinkError error) {
 		}
 
 		return imports;

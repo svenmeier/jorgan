@@ -122,26 +122,19 @@ public class SoundFontManager {
 	 * @see jorgan.util.ClassUtils
 	 */
 	static {
-		File file;
+		File directory;
 		String path = System.getProperty(JORGAN_CREATIVE_LIBRARY_PATH);
 		if (path == null) {
-			file = ClassUtils.getDirectory(SoundFontManager.class);
+			directory = ClassUtils.getDirectory(SoundFontManager.class);
 		} else {
-			file = new File(path);
+			directory = new File(path);
 		}
 
 		try {
-			System.load(NativeUtils.mapLibraryName(file, "creativeJNI"));
-		} catch (UnsatisfiedLinkError ex) {
-			logger.log(Level.INFO, "creative failure", ex);
-
-			throw ex;
+			NativeUtils.load(directory, "creativeJNI");
+		} catch (UnsatisfiedLinkError error) {
+			logger.log(Level.INFO, "creative error", error);
+			throw new NoClassDefFoundError();
 		}
-	}
-
-	/**
-	 * Test.
-	 */
-	public static void test() {
 	}
 }

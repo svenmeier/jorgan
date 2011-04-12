@@ -55,8 +55,8 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 		} else {
 			if (!Null.safeEquals(clone.getOutput(), sound.getOutput())
 					|| !Null.safeEquals(clone.getBank(), sound.getBank())
-					|| !Null.safeEquals(clone.getSoundfont(),
-							sound.getSoundfont())) {
+					|| !Null.safeEquals(clone.getSoundfont(), sound
+							.getSoundfont())) {
 				destroyManager();
 				createManager();
 			}
@@ -82,12 +82,12 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 				clone = (CreativeSound) sound.clone();
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "output", "outputInvalid",
-						sound.getOutput());
+				addProblem(Severity.ERROR, "output", "outputInvalid", sound
+						.getOutput());
 				return;
-			} catch (Error creativeFailure) {
-				addProblem(Severity.ERROR, "output", "creativeFailure",
-						sound.getOutput());
+			} catch (NoClassDefFoundError failure) {
+				addProblem(Severity.ERROR, "output", "creativeFailure", sound
+						.getOutput());
 				return;
 			}
 
@@ -98,7 +98,9 @@ public class CreativeSoundPlayer extends GenericSoundPlayer<CreativeSound> {
 
 			if (sound.getSoundfont() != null) {
 				try {
-					manager.load(sound.getBank(), resolve(sound.getSoundfont()));
+					manager
+							.load(sound.getBank(),
+									resolve(sound.getSoundfont()));
 				} catch (IOException ex) {
 					addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
 							sound.getSoundfont());
