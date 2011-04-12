@@ -190,6 +190,19 @@ public class Fluidsynth {
 		context = null;
 	}
 
+	public class Overflow {
+
+		public float age = 1005.0f;
+		public float percussion = 4005.0f;
+		public float released = -2005.0f;
+		public float sustained = -1005.0f;
+		public float volume = 505.0f;
+
+		public Overflow() {
+			config.get("overflow").read(this);
+		}
+	}
+
 	private static native ByteBuffer init(String name, int cores, int channels,
 			int polyphony, float sampleRate, String audioDriver,
 			String audioDevice, int buffers, int bufferSize, float overflowAge,
@@ -256,24 +269,20 @@ public class Fluidsynth {
 	 * @see jorgan.util.ClassUtils
 	 */
 	static {
-		File file;
+		File directory;
 		String path = System.getProperty(JORGAN_FLUIDSYNTH_LIBRARY_PATH);
 		if (path == null) {
-			file = ClassUtils.getDirectory(Fluidsynth.class);
+			directory = ClassUtils.getDirectory(Fluidsynth.class);
 		} else {
-			file = new File(path);
+			directory = new File(path);
 		}
 
 		if (NativeUtils.isWindows()) {
-			// for Windows we load dependencies explicitely from extension
 			try {
-				System.load(NativeUtils.getLibraryName(file, "libintl-8.dll"));
-				System.load(NativeUtils.getLibraryName(file,
-						"libglib-2.0-0.dll"));
-				System.load(NativeUtils.getLibraryName(file,
-						"libgthread-2.0-0.dll"));
-				System.load(NativeUtils.getLibraryName(file,
-						"libfluidsynth.dll"));
+				NativeUtils.load(new File(directory, "libintl-8.dll"));
+				NativeUtils.load(new File(directory, "libglib-2.0-0.dll"));
+				NativeUtils.load(new File(directory, "libgthread-2.0-0.dll"));
+				NativeUtils.load(new File(directory, "libfluidsynth.dll"));
 			} catch (UnsatisfiedLinkError error) {
 				logger.log(Level.INFO, "dependencies not provided", error);
 			}
@@ -281,31 +290,17 @@ public class Fluidsynth {
 
 		if (NativeUtils.isMac()) {
 			// libraries on mac include their install name (see "otool -L") thus
-			// we cannot load the dependecies explicitely.
+			// we cannot load the dependecies explicitly.
 			// However the bundled libraries are already tweaked to be resolved
 			// relatively to their loaders location "@loader_path/lib...dylib/"
 			// (see "install_name_tool [-id|-change]").
 		}
 
 		try {
-			System.load(NativeUtils.mapLibraryName(file, "fluidsynthJNI"));
-		} catch (UnsatisfiedLinkError ex) {
-			logger.log(Level.INFO, "fluidsynth failure", ex);
-
-			throw ex;
-		}
-	}
-
-	public class Overflow {
-
-		public float age = 1005.0f;
-		public float percussion = 4005.0f;
-		public float released = -2005.0f;
-		public float sustained = -1005.0f;
-		public float volume = 505.0f;
-
-		public Overflow() {
-			config.get("overflow").read(this);
+			NativeUtils.load(directory, "fluidsynthJNI");
+		} catch (UnsatisfiedLinkError error) {
+			logger.log(Level.INFO, "fluidsynth error", error);
+			throw new NoClassDefFoundError();
 		}
 	}
 }

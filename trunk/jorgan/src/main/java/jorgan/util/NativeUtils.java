@@ -27,36 +27,36 @@ import java.io.IOException;
 public class NativeUtils {
 
 	/**
-	 * Get the name of a library.<br>
+	 * Load a named library from a directory.<br>
 	 * Note: Loading of a JNI library should always be done in the corresponding
 	 * Java class or otherwise native methods may result in
 	 * {@link UnsatisfiedLinkError}s if different {@link ClassLoader}s are
 	 * involved.
 	 * 
-	 * @param path
-	 *            path of library
+	 * @param directory
+	 *            directory the library is located in
 	 * @param name
 	 *            name of library
 	 */
-	public static String mapLibraryName(File path, String name) {
-		String library;
-		try {
-			library = new File(path, System.mapLibraryName(name))
-					.getCanonicalPath();
-		} catch (IOException e) {
-			throw new Error(e.getMessage());
-		}
-		return library;
+	public static void load(File directory, String name)
+			throws UnsatisfiedLinkError {
+		load(new File(directory, System.mapLibraryName(name)));
 	}
 
-	public static String getLibraryName(File path, String name) {
-		String library;
+	/**
+	 * Load a library from a file.
+	 * 
+	 * @param file
+	 *            the library file
+	 */
+	public static void load(File file) throws UnsatisfiedLinkError {
 		try {
-			library = new File(path, name).getCanonicalPath();
-		} catch (IOException e) {
-			throw new Error(e.getMessage());
+			System.load(file.getCanonicalPath());
+		} catch (IOException ex) {
+			UnsatisfiedLinkError error = new UnsatisfiedLinkError();
+			error.initCause(ex);
+			throw error;
 		}
-		return library;
 	}
 
 	public static boolean isWindows() {
