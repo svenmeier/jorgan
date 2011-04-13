@@ -24,7 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
-import jorgan.gui.dock.MonitorDockable;
+import jorgan.gui.dock.MonitorView;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -40,7 +40,7 @@ public class MonitorCategory extends JOrganCategory {
 			MonitorCategory.class);
 
 	private Model<Integer> monitorMax = getModel(new Property(
-			MonitorDockable.class, "max"));
+			MonitorView.class, "max"));
 
 	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
 			1, 100000, 50));
