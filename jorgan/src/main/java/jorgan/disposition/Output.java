@@ -18,12 +18,17 @@
  */
 package jorgan.disposition;
 
+import javax.sound.midi.MidiDevice;
+
+/**
+ * An element transmitting output to a {@link MidiDevice}.
+ */
 public interface Output {
 
 	public String getOutput();
 
 	public void setOutput(String output);
-	
+
 	public static abstract class OutputMessage extends Message {
 	}
 }

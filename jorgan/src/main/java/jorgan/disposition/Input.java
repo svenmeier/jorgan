@@ -18,8 +18,10 @@
  */
 package jorgan.disposition;
 
+import javax.sound.midi.MidiDevice;
+
 /**
- * An input.
+ * An element receiving input from a {@link MidiDevice}.
  */
 public interface Input {
 

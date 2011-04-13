@@ -13,7 +13,7 @@ import javax.swing.ImageIcon;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.gui.dock.ElementsDockable;
+import jorgan.gui.dock.ElementsView;
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.swing.CompoundIcon;
@@ -30,13 +30,13 @@ public class ElementTreeCellRenderer extends SimpleCellRenderer<Element> {
 	 * Icon used for indication of a warning.
 	 */
 	private static final Icon warningIcon = new ImageIcon(
-			ElementsDockable.class
+			ElementsView.class
 					.getResource("/jorgan/gui/img/elementWarning.gif"));
 
 	/**
 	 * Icon used for indication of an error.
 	 */
-	private static final Icon errorIcon = new ImageIcon(ElementsDockable.class
+	private static final Icon errorIcon = new ImageIcon(ElementsView.class
 			.getResource("/jorgan/gui/img/elementError.gif"));
 
 	/**
