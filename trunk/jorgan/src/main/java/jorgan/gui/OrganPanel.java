@@ -235,9 +235,9 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			}
 
 			// alphabetically front to back
-			for (Console console : new ReverseIterable<Console>(session
-					.getOrgan().getElements(Console.class))) {
-				addEditor(console);
+			for (Element element : new ReverseIterable<Element>(session
+					.getOrgan().getElements(Element.class))) {
+				addEditor(element);
 			}
 		}
 	}
