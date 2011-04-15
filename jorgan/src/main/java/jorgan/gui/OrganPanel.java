@@ -444,6 +444,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 			setName(view.getTitle());
 			setSmallIcon(view.getIcon());
+
+			update();
 		}
 
 		public AbstractView getView() {
