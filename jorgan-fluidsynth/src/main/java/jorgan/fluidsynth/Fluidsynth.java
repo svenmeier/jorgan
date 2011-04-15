@@ -29,6 +29,7 @@ import javax.sound.midi.ShortMessage;
 
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
+import jorgan.util.RegexFilenameFilter;
 import bias.Configuration;
 
 public class Fluidsynth {
@@ -282,6 +283,11 @@ public class Fluidsynth {
 				NativeUtils.load(new File(directory, "libintl-8.dll"));
 				NativeUtils.load(new File(directory, "libglib-2.0-0.dll"));
 				NativeUtils.load(new File(directory, "libgthread-2.0-0.dll"));
+				File portaudio = RegexFilenameFilter.getMatch(directory,
+						"portaudio.*\\.dll");
+				if (portaudio != null) {
+					NativeUtils.load(portaudio);
+				}
 				NativeUtils.load(new File(directory, "libfluidsynth.dll"));
 			} catch (UnsatisfiedLinkError error) {
 				logger.log(Level.INFO, "dependencies not provided", error);
