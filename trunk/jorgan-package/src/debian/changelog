@@ -1,13 +1,14 @@
-jorgan (3.13-beta6) beta;
+jorgan (3.13-beta7) beta;
 
   * keep elements selected when switching to full screen
   * keep relative paths when starting the file property editor
   * warn about version mismatch
   * split new element "connector" from console
   * new fluidsynth elements Reverb and Chorus
+  * customize fluidsynth gain
   * no auto-scrolling of tracks if performance is stopped
 
- -- Sven Meier <sven@meiers.net>  Tue, 31 Mar 2011 21:31:00 +0200
+ -- Sven Meier <sven@meiers.net>  Tue, 15 Apr 2011 21:31:00 +0200
 
 jorgan (3.12.2) stable;
 
