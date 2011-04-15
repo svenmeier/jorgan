@@ -11,16 +11,20 @@ import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
 
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import bias.Configuration;
+
 /**
  * A panel showing debug information based on logger output.
  */
 public class DebugPanel extends JPanel {
+
+	private static Configuration config = Configuration.getRoot().get(
+			DebugPanel.class);
 
 	private JTextArea textArea = new JTextArea();
 
@@ -83,7 +87,7 @@ public class DebugPanel extends JPanel {
 
 	private class ClearAction extends BaseAction {
 		private ClearAction() {
-			putValue(AbstractAction.NAME, "Clear");
+			config.get("clear").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
@@ -93,7 +97,7 @@ public class DebugPanel extends JPanel {
 
 	private class CopyAction extends BaseAction {
 		private CopyAction() {
-			putValue(AbstractAction.NAME, "Copy to Clipboard");
+			config.get("copy").read(this);
 		}
 
 		public void actionPerformed(ActionEvent e) {
