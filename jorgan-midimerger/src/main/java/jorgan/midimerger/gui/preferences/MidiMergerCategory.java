@@ -86,7 +86,7 @@ public class MidiMergerCategory extends JOrganCategory {
 	protected JComponent createComponent() {
 		JPanel panel = new JPanel(new BorderLayout());
 
-		panel.add(config.get("description").read(new MultiLineLabel()),
+		panel.add(config.get("description").read(new MultiLineLabel(2)),
 				BorderLayout.NORTH);
 
 		table.setModel(tableModel);
