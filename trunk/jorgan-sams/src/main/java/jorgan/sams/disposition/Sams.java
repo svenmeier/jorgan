@@ -31,7 +31,7 @@ import jorgan.midi.mpl.Set;
  */
 public class Sams extends Connector {
 
-	private long duration;
+	private long duration = 250;
 
 	public Sams() {
 		addMessage(new TabTurningOn().change(new Equal(144), new Get(
