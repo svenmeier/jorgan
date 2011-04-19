@@ -55,14 +55,6 @@ public class KeyboardPanel extends JComponent {
 
 	private static final int B = 11;
 
-	private static final int whiteWidth = 12;
-
-	private static final int whiteHeight = 54;
-
-	private static final int blackWidth = 8;
-
-	private static final int blackHeight = 31;
-
 	private JPopupMenu popupMenu;
 
 	private JMenuItem[] channelMenuItems = new JCheckBoxMenuItem[16];
@@ -103,53 +95,46 @@ public class KeyboardPanel extends JComponent {
 		for (int pitch = 0; pitch < 128; pitch++) {
 			switch (mod(pitch, 12)) {
 			case C:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case CIS:
-				keys.add(new BlackKey(pitch, x - blackWidth * 5 / 8));
+				new BlackKey(pitch, x, 5f / 8);
 				break;
 			case D:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case DIS:
-				keys.add(new BlackKey(pitch, x - blackWidth * 3 / 8));
+				new BlackKey(pitch, x, 3f / 8);
 				break;
 			case E:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case F:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case FIS:
-				keys.add(new BlackKey(pitch, x - blackWidth * 6 / 8));
+				new BlackKey(pitch, x, 6f / 8);
 				break;
 			case G:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case GIS:
-				keys.add(new BlackKey(pitch, x - blackWidth * 4 / 8));
+				new BlackKey(pitch, x, 4f / 8);
 				break;
 			case A:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			case AIS:
-				keys.add(new BlackKey(pitch, x - blackWidth * 2 / 8));
+				new BlackKey(pitch, x, 2f / 8);
 				break;
 			case B:
-				keys.add(0, new WhiteKey(pitch, x));
-				x += whiteWidth;
+				x += new WhiteKey(pitch, x).width;
 				break;
 			}
 		}
 
-		setMinimumSize(new Dimension(0, whiteHeight));
-		setPreferredSize(new Dimension(x, whiteHeight));
+		setMinimumSize(new Dimension(0, WhiteKey.HEIGHT));
+		setPreferredSize(new Dimension(x, WhiteKey.HEIGHT));
 	}
 
 	/**
@@ -540,6 +525,10 @@ public class KeyboardPanel extends JComponent {
 
 	private class BlackKey extends Key {
 
+		private static final int WIDTH = 8;
+
+		private static final int HEIGHT = 32;
+
 		/**
 		 * Create a black key for the given pitch at the given x position.
 		 * 
@@ -548,29 +537,32 @@ public class KeyboardPanel extends JComponent {
 		 * @param x
 		 *            x position
 		 */
-		public BlackKey(int pitch, int x) {
-			super(pitch, x, blackWidth, blackHeight);
+		public BlackKey(int pitch, int x, float offset) {
+			super(pitch, x - Math.round(WIDTH * offset), WIDTH, HEIGHT);
+
+			keys.add(this);
 		}
 
 		@Override
 		public void paint(Graphics g) {
 			g.setColor(Color.BLACK);
-			g.fillRect(x, 0, blackWidth, blackHeight);
+			g.fillRect(x, 0, WIDTH, HEIGHT);
 
 			if (pressed) {
-				g.setColor(Color.GRAY);
-				g.fillRect(x + 1, 1, blackWidth - 2, blackHeight - 2);
+				g.setColor(Color.LIGHT_GRAY);
+				g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 2);
 			} else {
 				g.setColor(Color.DARK_GRAY);
-				g.drawLine(x + 1, 3, x + 1, blackHeight - 3);
-
-				g.setColor(Color.GRAY);
-				g.fillRect(x + 1, blackHeight - 3, blackWidth - 2, 2);
+				g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 5);
 			}
 		}
 	}
 
 	private class WhiteKey extends Key {
+
+		private static final int WIDTH = 12;
+
+		private static final int HEIGHT = 54;
 
 		/**
 		 * Create a white key for the given pitch at the given x position.
@@ -581,30 +573,29 @@ public class KeyboardPanel extends JComponent {
 		 *            x position
 		 */
 		public WhiteKey(int pitch, int x) {
-			super(pitch, x, whiteWidth, whiteHeight);
+			super(pitch, x, WIDTH, HEIGHT);
+
+			keys.add(0, this);
 		}
 
 		@Override
 		public void paint(Graphics g) {
 			if (pressed) {
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(x, 0, whiteWidth, whiteHeight);
+				g.fillRect(x, 0, WIDTH, HEIGHT);
 			} else {
 				g.setColor(Color.WHITE);
-				g.fillRect(x, 0, whiteWidth, whiteHeight);
+				g.fillRect(x, 0, WIDTH, HEIGHT);
 
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(x, whiteHeight - 3, whiteWidth, 3);
+				g.fillRect(x, 0, WIDTH, 3);
 			}
-			g.setColor(Color.BLACK);
-			g.drawRect(x, 0, whiteWidth - 1, whiteHeight - 1);
-
 			g.setColor(Color.GRAY);
-			g.drawLine(x, 1, x, whiteHeight - 2);
+			g.drawRect(x, 0, WIDTH, HEIGHT - 1);
 
 			if (pitch == 60) {
 				g.setColor(Color.BLACK);
-				g.fillOval(x + whiteWidth / 2 - 2, whiteHeight - 8, 4, 4);
+				g.fillRect(x + WIDTH / 2 - 2, HEIGHT - 8, 4, 4);
 			}
 		}
 	}
