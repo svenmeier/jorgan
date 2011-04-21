@@ -24,7 +24,7 @@ import jorgan.gui.construct.info.IndexedContinuousBeanInfo;
 import jorgan.memory.disposition.Memory;
 
 /**
- * BeanInfo for {@link jorgan.disposition.MemoryState}.
+ * BeanInfo for {@link jorgan.memory.disposition.Memory}.
  */
 public class MemoryBeanInfo extends IndexedContinuousBeanInfo {
 
