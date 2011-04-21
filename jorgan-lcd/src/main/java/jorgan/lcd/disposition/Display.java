@@ -41,9 +41,4 @@ public class Display extends Element {
 			fireChange(new PropertyChange(oldPort, this.port));
 		}
 	}
-
-	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Screen.class == clazz;
-	}
 }
