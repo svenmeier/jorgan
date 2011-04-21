@@ -16,25 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd;
+package jorgan.lcd.gui.construct.info;
 
-import jorgan.disposition.Organ;
-import jorgan.disposition.event.OrganAdapter;
+import java.beans.BeanInfo;
 
-public class LCD {
+import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
-	private Organ organ;
+/**
+ * The default provider of {@link BeanInfo}s.
+ */
+public class LCDBeanInfoProvider implements BeanInfoProvider {
 
-	public LCD(Organ organ) {
-		this.organ = organ;
-		organ.addOrganListener(new OrganAdapter() {
+	private static final String BEAN_INFO_SEARCH_PATH = LCDBeanInfoProvider.class
+			.getPackage().getName();
 
-		});
-	}
-
-	public void startup() {
-	}
-
-	public void shutdown() {
+	public String getBeanInfoSearchPath() {
+		return BEAN_INFO_SEARCH_PATH;
 	}
 }

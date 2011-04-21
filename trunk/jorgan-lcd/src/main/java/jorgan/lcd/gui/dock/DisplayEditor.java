@@ -5,20 +5,20 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.AbstractEditor;
-import jorgan.lcd.disposition.Screen;
+import jorgan.lcd.disposition.Display;
 import jorgan.session.OrganSession;
 import spin.Spin;
 
-public class ScreenEditor extends AbstractEditor {
+public class DisplayEditor extends AbstractEditor {
 
 	private EventHandler eventHandler = new EventHandler();
 
 	private OrganSession session;
 
-	private Screen screen;
+	private Display display;
 
-	public ScreenEditor(Screen screen) {
-		this.screen = screen;
+	public DisplayEditor(Display screen) {
+		this.display = screen;
 	}
 
 	public void setSession(OrganSession session) {
@@ -40,13 +40,13 @@ public class ScreenEditor extends AbstractEditor {
 	}
 
 	private void updateTitle() {
-		setTitle(Elements.getDisplayName(screen));
+		setTitle(Elements.getDisplayName(display));
 	}
 
 	private class EventHandler extends OrganAdapter {
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (element == screen) {
+			if (element == display) {
 				updateTitle();
 			}
 		}

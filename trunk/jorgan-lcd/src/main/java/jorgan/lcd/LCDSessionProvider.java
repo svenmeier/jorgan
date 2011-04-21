@@ -18,7 +18,11 @@
  */
 package jorgan.lcd;
 
+import java.io.File;
+import java.io.IOException;
+
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
 
 public class LCDSessionProvider implements SessionProvider {
@@ -29,7 +33,36 @@ public class LCDSessionProvider implements SessionProvider {
 
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == LCD.class) {
-			return new LCD();
+			final LCD lcd = new LCD(session.getOrgan());
+
+			session.addListener(new SessionListener() {
+				@Override
+				public void saved(File file) throws IOException {
+				}
+
+				@Override
+				public void modified() {
+				}
+
+				@Override
+				public void destroyed() {
+				}
+
+				@Override
+				public void constructingChanged(boolean constructing) {
+					if (constructing) {
+						lcd.startup();
+					} else {
+						lcd.shutdown();
+					}
+				}
+			});
+
+			if (!session.isConstructing()) {
+				lcd.startup();
+			}
+
+			return lcd;
 		}
 		return null;
 	}

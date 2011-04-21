@@ -16,25 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd;
+package jorgan.lcd.gui.construct.info;
 
-import jorgan.disposition.Organ;
-import jorgan.disposition.event.OrganAdapter;
+import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.editor.StringEditor;
+import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.lcd.disposition.Display;
 
-public class LCD {
+/**
+ * BeanInfo for {@link Display}.
+ */
+public class DisplayBeanInfo extends ElementBeanInfo {
 
-	private Organ organ;
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public LCD(Organ organ) {
-		this.organ = organ;
-		organ.addOrganListener(new OrganAdapter() {
-
-		});
-	}
-
-	public void startup() {
-	}
-
-	public void shutdown() {
+		add("host", Display.class, StringEditor.class);
+		add("port", Display.class, IntegerEditor.class);
 	}
 }
