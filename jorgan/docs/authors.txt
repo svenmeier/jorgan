@@ -6,6 +6,8 @@ The team behind jOrgan (sorted by last name) :
     Contributors :
       . Sörfõzõ Bence <sfbence@egon.gyaloglo.hu> (theatre skin)
       . Bernd Casper <bca@free-artists.net> (concepts, element icons)
+      . Graham Goode <ggoode.sa@gmail.com> (Fluidsynth)
+      . Dan Dietzer <ddietzer@bex.net> (Windows 64bit build) 
 
     Translators :
       . Crew Glazjev <thorgeir@tut.by> (Russian translation)
@@ -15,7 +17,6 @@ The team behind jOrgan (sorted by last name) :
 
     User Feedback and Food for Thought :
       . Marco Francesco <ogiogiogella@gmail.com>
-      . Graham Goode <ggoode.sa@gmail.com>
       . Graham Harrison <fg.harrison@virgin.net>
       . Michael Kainberger <exlibris@aon.at>
       . Don M. McDonald <don@fnords.org>
@@ -23,4 +24,5 @@ The team behind jOrgan (sorted by last name) :
       . Roy Radford <roy.radford42@yahoo.co.uk>
       . Paul Stratman <pcstratman@gmail.com>
       . Lynn Walls <lwalls@comcast.net>
+      . John W. Couvillon <jwcouvillon@cox.net> (SAMs)
       . and many others!!!
