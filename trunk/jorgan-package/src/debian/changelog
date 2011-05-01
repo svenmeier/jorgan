@@ -1,4 +1,4 @@
-jorgan (3.13-beta7) beta;
+jorgan (3.13) stable;
 
   * keep elements selected when switching to full screen
   * keep relative paths when starting the file property editor
@@ -8,7 +8,7 @@ jorgan (3.13-beta7) beta;
   * customize fluidsynth gain
   * no auto-scrolling of tracks if performance is stopped
 
- -- Sven Meier <sven@meiers.net>  Tue, 15 Apr 2011 21:31:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 1 May 2011 17:00:00 +0200
 
 jorgan (3.12.2) stable;
 
