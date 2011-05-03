@@ -82,6 +82,9 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 	 */
 	@Override
 	public void send(byte[] datas) throws InvalidMidiDataException {
+
+		boolean turned = false;
+
 		for (OutputMessage message : getElement().getMessages(
 				OutputMessage.class)) {
 			if (message instanceof InterceptMessage) {
@@ -90,20 +93,24 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 						Tab tab = getTab(message, (int) interceptContext
 								.get(TabTurningOn.TAB));
 						if (tab != null) {
-							tab.turnOn();
+							turned = tab.turnOn();
+							break;
 						}
 					} else if (message instanceof TabTurningOff) {
 						Tab tab = getTab(message, (int) interceptContext
 								.get(TabTurningOff.TAB));
 						if (tab != null) {
-							tab.turnOff();
+							turned = tab.turnOff();
+							break;
 						}
 					}
 				}
 			}
 		}
 
-		super.send(datas);
+		if (turned) {
+			super.send(datas);
+		}
 	}
 
 	/**
@@ -111,9 +118,11 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 	 */
 	@Override
 	protected void receive(MidiMessage midiMessage) {
-		super.receive(midiMessage);
-
+		// first update tabs
 		onReceived(MessageUtils.getDatas(midiMessage));
+
+		// ... then let elements receive
+		super.receive(midiMessage);
 	}
 
 	@Override
@@ -149,6 +158,8 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 
 		private int index;
 
+		private Boolean state;
+
 		private Magnet onMagnet = new Magnet();
 
 		private Magnet offMagnet = new Magnet();
@@ -158,44 +169,57 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 		}
 
 		public void reset() {
-			offMagnet.off();
-			onMagnet.off();
+			offMagnet.cancel();
+			onMagnet.cancel();
+
+			state = null;
 		}
 
-		public void turnOn() {
-			offMagnet.off();
-			onMagnet.on();
+		private boolean turn(boolean state, Magnet cancel, Magnet energize) {
+			if (this.state == null || this.state != state) {
+				cancel.cancel();
+				energize.energize();
+
+				return true;
+			}
+			return false;
 		}
 
-		public void turnOff() {
-			onMagnet.off();
-			offMagnet.on();
+		public boolean turnOn() {
+			return turn(true, offMagnet, onMagnet);
+		}
+
+		public boolean turnOff() {
+			return turn(false, onMagnet, offMagnet);
 		}
 
 		public void onTurnedOn() {
-			onMagnet.off();
+			state = Boolean.TRUE;
+
+			onMagnet.cancel();
 		}
 
 		public void onTurnedOff() {
-			offMagnet.off();
+			state = Boolean.FALSE;
+
+			offMagnet.cancel();
 		}
 
 		private class Magnet {
-			private boolean on = false;
+			private boolean energized = false;
 
-			public void on() {
-				if (!this.on) {
-					this.on = true;
+			public void energize() {
+				if (!this.energized) {
+					this.energized = true;
 
 					long duration = getElement().getDuration();
-
 					getOrganPlay().alarm(new CancelWakeUp(this), duration);
 				}
 			}
 
-			public void off() {
-				if (this.on) {
-					this.on = false;
+			public void cancel() {
+				if (this.energized) {
+					this.energized = false;
 
 					if (onMagnet == this) {
 						output(CancelTabOn.class, index);
@@ -224,7 +248,7 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 
 			@Override
 			public void trigger() {
-				magnet.off();
+				magnet.cancel();
 			}
 		}
 	}
