@@ -66,6 +66,8 @@ public class MonitorView extends AbstractView {
 
 	private PlayListener listener = new InternalListener();
 
+	private boolean skip;
+
 	private int max;
 
 	private List<Message> messages = new ArrayList<Message>();
@@ -146,28 +148,33 @@ public class MonitorView extends AbstractView {
 		tableModel.fireTableDataChanged();
 	}
 
-	public int getMax() {
-		return max;
-	}
-
 	public void setMax(int max) {
 		this.max = max;
+	}
+
+	public void setSkip(boolean skip) {
+		this.skip = skip;
 	}
 
 	private class InternalListener implements PlayListener {
 
 		@Override
 		public void received(Element element, MidiMessage message) {
-			if (inputButton.isSelected()) {
+			if (!skip(message) && inputButton.isSelected()) {
 				add(true, message);
 			}
 		}
 
 		@Override
 		public void sent(Element element, MidiMessage message) {
-			if (outputButton.isSelected()) {
+			if (!skip(message) && outputButton.isSelected()) {
 				add(false, message);
 			}
+		}
+
+		private boolean skip(MidiMessage message) {
+			// skip everything greater System exclusive
+			return skip && message.getStatus() > 0xf0;
 		}
 
 		private void add(boolean input, MidiMessage message) {
