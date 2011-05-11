@@ -20,12 +20,12 @@ package jorgan.fluidsynth.play;
 
 import jorgan.fluidsynth.disposition.Chorus;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
-import jorgan.play.Player;
+import jorgan.play.ContinuousPlayer;
 
 /**
  * A player for a {@link FluidsynthSound}.
  */
-public class ChorusPlayer extends Player<Chorus> {
+public class ChorusPlayer extends ContinuousPlayer<Chorus> {
 
 	public ChorusPlayer(Chorus element) {
 		super(element);

@@ -20,12 +20,12 @@ package jorgan.fluidsynth.play;
 
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.fluidsynth.disposition.Reverb;
-import jorgan.play.Player;
+import jorgan.play.ContinuousPlayer;
 
 /**
  * A player for a {@link Reverb}.
  */
-public class ReverbPlayer extends Player<Reverb> {
+public class ReverbPlayer extends ContinuousPlayer<Reverb> {
 
 	public ReverbPlayer(Reverb element) {
 		super(element);
