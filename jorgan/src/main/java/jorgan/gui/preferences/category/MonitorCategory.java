@@ -18,6 +18,7 @@
  */
 package jorgan.gui.preferences.category;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,11 +40,15 @@ public class MonitorCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot().get(
 			MonitorCategory.class);
 
-	private Model<Integer> monitorMax = getModel(new Property(
-			MonitorView.class, "max"));
+	private Model<Integer> max = getModel(new Property(MonitorView.class, "max"));
 
-	private JSpinner monitorMaxSpinner = new JSpinner(new SpinnerNumberModel(1,
-			1, 100000, 50));
+	private Model<Boolean> skip = getModel(new Property(MonitorView.class,
+			"skip"));
+
+	private JSpinner maxSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
+			100000, 50));
+
+	private JCheckBox skipCheckBox = new JCheckBox();
 
 	public MonitorCategory() {
 		config.read(this);
@@ -56,8 +61,10 @@ public class MonitorCategory extends JOrganCategory {
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 		Column column = builder.column();
 
-		column.term(config.get("monitorMax").read(new JLabel()));
-		column.definition(monitorMaxSpinner);
+		column.term(config.get("max").read(new JLabel()));
+		column.definition(maxSpinner);
+
+		column.definition(config.get("skip").read(skipCheckBox));
 
 		return panel;
 	}
@@ -69,11 +76,13 @@ public class MonitorCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		monitorMaxSpinner.setValue(monitorMax.getValue());
+		maxSpinner.setValue(max.getValue());
+		skipCheckBox.setSelected(skip.getValue());
 	}
 
 	@Override
 	protected void write() {
-		monitorMax.setValue((Integer) monitorMaxSpinner.getValue());
+		max.setValue((Integer) maxSpinner.getValue());
+		skip.setValue(skipCheckBox.isSelected());
 	}
 }
