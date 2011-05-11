@@ -173,8 +173,10 @@ public class MonitorView extends AbstractView {
 		}
 
 		private boolean skip(MidiMessage message) {
+			int status = message.getStatus() & 0xff;
+
 			// skip everything greater System exclusive
-			return skip && message.getStatus() > 0xf0;
+			return skip && status > 0xf0;
 		}
 
 		private void add(boolean input, MidiMessage message) {
