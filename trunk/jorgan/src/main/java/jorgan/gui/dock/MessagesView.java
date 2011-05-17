@@ -47,6 +47,7 @@ import javax.swing.event.ListSelectionListener;
 import jorgan.disposition.Connector;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
@@ -503,13 +504,20 @@ public class MessagesView extends AbstractView {
 			table.getSelectionModel().setSelectionInterval(row, row);
 
 			if (connector != null) {
-				record(connector.getInput());
+				record(connector);
 			}
 		}
 
-		private void record(String deviceName) {
+		private void record(Connector connector) {
+			if (connector.getInput() == null) {
+				showBoxMessage("record/deviceNone", MessageBox.OPTIONS_OK,
+						Elements.getDisplayName(connector));
+				return;
+			}
+
 			try {
-				MessageRecorder recorder = new MessageRecorder(deviceName) {
+				MessageRecorder recorder = new MessageRecorder(connector
+						.getInput()) {
 					@Override
 					public boolean messageRecorded(final MidiMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
@@ -526,7 +534,12 @@ public class MessagesView extends AbstractView {
 				messageBox.show(table);
 
 				recorder.close();
-			} catch (MidiUnavailableException cannotRecord) {
+			} catch (MidiUnavailableException unavailable) {
+				showBoxMessage("record/deviceUnavailable",
+						MessageBox.OPTIONS_OK, Elements
+								.getDisplayName(connector), connector
+								.getInput());
+
 				session.lookup(UndoManager.class).compound();
 			}
 		}
@@ -585,5 +598,10 @@ public class MessagesView extends AbstractView {
 
 			return ((Tuple) value).toString();
 		}
+	}
+
+	protected int showBoxMessage(String key, int options, Object... args) {
+		return config.get(key).read(new MessageBox(options)).show(this.table,
+				args);
 	}
 }
