@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="">
+<organ version="@jorgan.version@">
   <elements>
     <switch id="1202">
       <name></name>
@@ -8,6 +8,8 @@
       <messages>
         <switch-activated>set 144, set 60, set 127</switch-activated>
         <switch-deactivated>set 128, set 60, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 60, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 60, equal 127</switch-deactivate>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
@@ -81,6 +83,8 @@
       <messages>
         <switch-activated>set 144, set 61, set 127</switch-activated>
         <switch-deactivated>set 128, set 61, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 61, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 61, equal 127</switch-deactivate>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
@@ -93,6 +97,8 @@
       <messages>
         <switch-activated>set 144, set 62, set 127</switch-activated>
         <switch-deactivated>set 128, set 62, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 62, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 62, equal 127</switch-deactivate>
       </messages>
       <zoom>1.0</zoom>
       <active>false</active>
