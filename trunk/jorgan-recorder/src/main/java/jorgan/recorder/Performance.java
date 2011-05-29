@@ -235,6 +235,7 @@ public abstract class Performance {
 				Tracker tracker = readTracker(track);
 				if (tracker == null) {
 					tracker = new EmptyTracker(track);
+					tracker.attach(this);
 				}
 				trackers.add(tracker);
 			}
