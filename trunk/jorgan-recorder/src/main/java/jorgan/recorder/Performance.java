@@ -235,8 +235,8 @@ public abstract class Performance {
 				Tracker tracker = readTracker(track);
 				if (tracker == null) {
 					tracker = new EmptyTracker(track);
-					tracker.attach(this);
 				}
+				tracker.attach(this);
 				trackers.add(tracker);
 			}
 		}
@@ -601,7 +601,6 @@ public abstract class Performance {
 
 		Tracker tracker = TrackerRegistry.createTracker(track, element);
 		if (tracker != null) {
-			tracker.attach(this);
 			tracker.setPlayEnabled(playEnabled);
 			tracker.setRecordEnabled(recordEnabled);
 			return tracker;
