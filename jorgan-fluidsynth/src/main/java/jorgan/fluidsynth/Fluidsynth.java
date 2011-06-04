@@ -295,11 +295,9 @@ public class Fluidsynth {
 		}
 
 		if (NativeUtils.isMac()) {
-			// libraries on mac include their install name (see "otool -L") thus
-			// we cannot load the dependecies explicitly.
-			// However the bundled libraries are already tweaked to be resolved
-			// relatively to their loaders location "@loader_path/lib...dylib/"
-			// (see "install_name_tool [-id|-change]").
+			// libraries on mac include their install name, thus we cannot load
+			// the dependecies explicitly. Instead we depend on tweaked loader
+			// locations, see ./lib/mac/install_name_tool.sh
 		}
 
 		try {
