@@ -1,10 +1,5 @@
 package jorgan.lcd.lcdproc;
 
-import jorgan.lcd.lcdproc.Client.Screen;
-import jorgan.lcd.lcdproc.Client.Screen.HBarWidget;
-import jorgan.lcd.lcdproc.Client.Screen.NumWidget;
-import jorgan.lcd.lcdproc.Client.Screen.StringWidget;
-import jorgan.lcd.lcdproc.Client.Screen.VBarWidget;
 import junit.framework.TestCase;
 
 /**
@@ -16,20 +11,20 @@ public class ClientTest extends TestCase {
 		Client client = new Client();
 
 		Screen screen1 = client.addScreen();
-		StringWidget string = screen1.addString(4, 2);
+		StringWidget string = new StringWidget(screen1, 4, 2);
 		string.value("jOrgan");
 
 		Screen screen2 = client.addScreen();
-		NumWidget num = screen2.addNum(1);
+		NumWidget num = new NumWidget(screen2, 1);
 
 		Screen screen3 = client.addScreen();
-		HBarWidget hbar = screen3.addHBar(4, 3, 8);
+		HBarWidget hbar = new HBarWidget(screen3, 4, 3, 8);
 
 		Screen screen4 = client.addScreen();
-		VBarWidget vbar1 = screen4.addVBar(4, 4, 4);
-		VBarWidget vbar2 = screen4.addVBar(6, 4, 4);
-		VBarWidget vbar3 = screen4.addVBar(8, 4, 4);
-		VBarWidget vbar4 = screen4.addVBar(10, 4, 4);
+		VBarWidget vbar1 = new VBarWidget(screen4, 4, 4, 4);
+		VBarWidget vbar2 = new VBarWidget(screen4, 6, 4, 4);
+		VBarWidget vbar3 = new VBarWidget(screen4, 8, 4, 4);
+		VBarWidget vbar4 = new VBarWidget(screen4, 10, 4, 4);
 
 		while (true) {
 			num.value((int) (Math.random() * 10));
