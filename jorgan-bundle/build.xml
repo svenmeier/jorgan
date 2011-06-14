@@ -34,6 +34,7 @@
             <fileset dir="${jorgan.fluidsynth.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.keyboard.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.importer.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.exporter.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.lan.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.linuxsampler.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.memory.path}/target/marshal" includes="lib/**" />

@@ -15,6 +15,7 @@ debian/input/copyright /usr/share/doc/jorgan
 ../../jorgan-fluidsynth/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-keyboard/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-importer/target/marshal/lib/* /usr/lib/jorgan/lib
+../../jorgan-exporter/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-lan/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-lan/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-linuxsampler/target/marshal/lib/* /usr/lib/jorgan/lib
