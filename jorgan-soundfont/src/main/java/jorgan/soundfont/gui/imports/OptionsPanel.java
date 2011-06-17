@@ -23,7 +23,8 @@ public class OptionsPanel extends JPanel {
 	static Configuration config = Configuration.getRoot().get(
 			OptionsPanel.class);
 
-	private FileSelector fileSelector = new FileSelector();
+	private FileSelector fileSelector = new FileSelector(
+			FileSelector.FILES_ONLY);
 
 	private JCheckBox stopsCheckBox = new JCheckBox();
 

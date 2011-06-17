@@ -21,11 +21,12 @@ package jorgan.exporter.gui.spi;
 import java.util.List;
 
 import jorgan.exporter.gui.Export;
+import jorgan.session.OrganSession;
 
 /**
  * A provider of {@link Export}s.
  */
 public interface ExportProvider {
 
-	public List<Export> getImports();
+	public List<Export> getExports(OrganSession session);
 }

@@ -18,13 +18,103 @@
  */
 package jorgan.exporter.gui;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.io.File;
+
+import javax.swing.AbstractButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+
+import jorgan.exporter.target.ClipboardTarget;
+import jorgan.exporter.target.FileTarget;
+import jorgan.exporter.target.Target;
+import jorgan.swing.FileSelector;
+import jorgan.swing.button.ButtonGroup;
+import jorgan.swing.layout.DefinitionBuilder;
+import jorgan.swing.layout.DefinitionBuilder.Column;
+import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
- * A target for an {@link Export}.
+ * A {@link Target} configuration for an {@link Export}.
  */
 public class TargetPanel extends JPanel {
 
+	private static Configuration config = Configuration.getRoot().get(
+			TargetPanel.class);
+
+	private JRadioButton clipboardRadioButton;
+
+	private JRadioButton fileRadioButton;
+
+	private FileSelector fileSelector;
+
 	public TargetPanel() {
+		DefinitionBuilder builder = new DefinitionBuilder(this);
+
+		Column column = builder.column();
+
+		column.term(config.get("target").read(new JLabel()));
+
+		ButtonGroup group = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				firePropertyChange("target", null, null);
+			}
+		};
+
+		clipboardRadioButton = new JRadioButton();
+		group.add(clipboardRadioButton);
+		column.definition(config.get("clipboard").read(clipboardRadioButton));
+
+		fileRadioButton = new JRadioButton();
+		group.add(fileRadioButton);
+		column.definition(config.get("file").read(fileRadioButton));
+
+		fileSelector = new FileSelector(FileSelector.FILES_ONLY);
+		fileSelector.addChangeListener(new ChangeListener() {
+			@Override
+			public void stateChanged(ChangeEvent arg0) {
+				firePropertyChange("file", null, null);
+			}
+		});
+		fileSelector.setEnabled(false);
+		fileRadioButton.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				fileSelector.setEnabled(fileRadioButton.isSelected());
+			}
+		});
+		column.definition(fileSelector).fillHorizontal();
+	}
+
+	public boolean hasTarget() {
+		return clipboardRadioButton.isSelected()
+				|| fileSelector.getSelectedFile() != null;
+	}
+
+	public Target getTarget() {
+		if (clipboardRadioButton.isSelected()) {
+			return new ClipboardTarget();
+		} else {
+			File file = fileSelector.getSelectedFile();
+			if (file != null) {
+				if (!file.exists() || confirmFileExists(file)) {
+					return new FileTarget(file);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	private boolean confirmFileExists(File file) {
+		return config.get("fileExists").read(
+				new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(this,
+				file.getName()) == MessageBox.OPTION_OK;
 	}
 }

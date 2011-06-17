@@ -31,8 +31,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.exporter.gui.spi.ExportRegistry;
-
 /**
  * A selection of an {@link Export}.
  */
@@ -61,8 +59,6 @@ public class ExportSelectionPanel extends JPanel {
 					}
 				});
 		scrollPane.setViewportView(list);
-
-		setExports(ExportRegistry.getImports());
 	}
 
 	/**
@@ -81,7 +77,7 @@ public class ExportSelectionPanel extends JPanel {
 	 * 
 	 * @return the selected export
 	 */
-	public Export getSelectedImport() {
+	public Export getSelectedExport() {
 		int index = list.getSelectedIndex();
 		if (index == -1) {
 			return null;

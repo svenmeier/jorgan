@@ -21,7 +21,6 @@ package jorgan.disposition;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -126,8 +125,8 @@ public class Organ {
 		return new HashSet<Element>(elements);
 	}
 
-	public Iterator<Element> elements() {
-		return elements.iterator();
+	public Iterable<Element> elements() {
+		return elements;
 	}
 
 	public boolean containsElement(Element element) {

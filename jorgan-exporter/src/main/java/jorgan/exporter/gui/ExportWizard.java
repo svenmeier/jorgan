@@ -19,23 +19,30 @@
 package jorgan.exporter.gui;
 
 import java.awt.Component;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.swing.JComponent;
 
-import jorgan.gui.undo.Compound;
-import jorgan.gui.undo.UndoManager;
-import jorgan.play.Closed;
-import jorgan.play.OrganPlay;
+import jorgan.exporter.gui.spi.ExportRegistry;
+import jorgan.exporter.target.Target;
 import jorgan.session.OrganSession;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
+import jorgan.swing.wizard.Page;
 import jorgan.swing.wizard.WizardDialog;
 import bias.Configuration;
+import bias.swing.MessageBox;
 
 /**
  * A wizard for importing of elements.
  */
 public class ExportWizard extends BasicWizard {
+
+	private static Logger log = Logger.getLogger(ExportWizard.class.getName());
 
 	private static Configuration config = Configuration.getRoot().get(
 			ExportWizard.class);
@@ -44,31 +51,31 @@ public class ExportWizard extends BasicWizard {
 
 	private Export aExport;
 
+	private List<Page> exportPages = new ArrayList<Page>();
+
+	private TargetPanel targetPanel = new TargetPanel();
+
+	private boolean hasTarget = false;
+
 	/**
 	 * Create a new wizard.
 	 * 
-	 * @param organ
+	 * @param session
 	 *            organ to import to
 	 */
-	public ExportWizard(OrganSession organ) {
-		this.
+	public ExportWizard(OrganSession session) {
+		this.session = session;
 
-		session = organ;
-
-		addPage(new ProviderSelectionPage());
-		addPage(new ImportOptionsPage());
+		addPage(new ExportSelectionPage());
 		addPage(new TargetPage());
 	}
 
 	/**
-	 * Allows finish only if ranks are selected.
-	 * 
-	 * @return <code>true</code> if ranks are selected
+	 * Allows finish only if target is selected.
 	 */
 	@Override
 	public boolean allowsFinish() {
-		// TODO
-		return false;
+		return hasTarget;
 	}
 
 	/**
@@ -76,29 +83,37 @@ public class ExportWizard extends BasicWizard {
 	 */
 	@Override
 	protected boolean finishImpl() {
+		Target target = targetPanel.getTarget();
+		if (target == null) {
+			return false;
+		}
 
-		session.lookup(UndoManager.class).compound(new Compound() {
-			public void run() {
-				session.lookup(OrganPlay.class).closed(new Closed() {
-					public void run() {
-						// TODO
-					}
-				});
-			}
-		});
+		try {
+			target.export(aExport);
+		} catch (IOException e) {
+			log.log(Level.INFO, e.getMessage(), e);
+
+			MessageBox box = config.get("exportException").read(
+					new MessageBox(MessageBox.OPTIONS_OK));
+			box.show(targetPanel);
+
+			return false;
+		}
 
 		return true;
 	}
 
 	/**
-	 * Page for selection of an import provider.
+	 * Page for selection of an export.
 	 */
-	private class ProviderSelectionPage extends AbstractPage {
+	private class ExportSelectionPage extends AbstractPage {
 
 		private ExportSelectionPanel selectionPanel = new ExportSelectionPanel();
 
-		public ProviderSelectionPage() {
-			config.get("providerSelection").read(this);
+		public ExportSelectionPage() {
+			config.get("exportSelection").read(this);
+
+			selectionPanel.setExports(ExportRegistry.getExports(session));
 		}
 
 		@Override
@@ -108,40 +123,13 @@ public class ExportWizard extends BasicWizard {
 
 		@Override
 		public boolean allowsNext() {
-			return selectionPanel.getSelectedImport() != null;
+			return selectionPanel.getSelectedExport() != null;
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			aExport = selectionPanel.getSelectedImport();
+			setExport(selectionPanel.getSelectedExport());
 
-			return true;
-		}
-	}
-
-	/**
-	 * Page for altering of options of the selected exportMethod.
-	 */
-	private class ImportOptionsPage extends AbstractPage {
-
-		@Override
-		public String getDescription() {
-			return aExport.getDescription();
-		}
-
-		@Override
-		protected JComponent getComponentImpl() {
-			return aExport.getOptionsPanel();
-		}
-
-		@Override
-		public boolean allowsNext() {
-			return aExport.hasElements();
-		}
-
-		@Override
-		public boolean leavingToNext() {
-			// TODO
 			return true;
 		}
 	}
@@ -151,14 +139,15 @@ public class ExportWizard extends BasicWizard {
 	 */
 	private class TargetPage extends AbstractPage {
 
-		private TargetPanel targetPanel = new TargetPanel();
-
 		public TargetPage() {
 			config.get("target").read(this);
 		}
 
 		@Override
-		public void enteringFromPrevious() {
+		public boolean leavingToPrevious() {
+			hasTarget = false;
+
+			return true;
 		}
 
 		@Override
@@ -167,12 +156,9 @@ public class ExportWizard extends BasicWizard {
 		}
 
 		@Override
-		public boolean leavingToPrevious() {
-			return true;
-		}
-
-		@Override
 		protected void changing() {
+			hasTarget = targetPanel.hasTarget();
+
 			super.changing();
 		}
 	}
@@ -197,5 +183,19 @@ public class ExportWizard extends BasicWizard {
 		dialog.dispose();
 
 		dialog.setWizard(null);
+	}
+
+	public void setExport(Export aExport) {
+		for (Page page : exportPages) {
+			removePage(page);
+		}
+		exportPages.clear();
+
+		this.aExport = aExport;
+
+		exportPages.addAll(aExport.getPages());
+		for (Page page : exportPages) {
+			addPage(1, page);
+		}
 	}
 }

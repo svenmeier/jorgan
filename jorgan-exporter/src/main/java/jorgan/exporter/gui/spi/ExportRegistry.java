@@ -22,17 +22,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.exporter.gui.Export;
+import jorgan.session.OrganSession;
 import jorgan.util.PluginUtils;
 
 public class ExportRegistry {
 
-	public static List<Export> getImports() {
-		ArrayList<Export> imports = new ArrayList<Export>();
+	public static List<Export> getExports(OrganSession session) {
+		ArrayList<Export> exports = new ArrayList<Export>();
 
 		for (ExportProvider provider : PluginUtils.lookup(ExportProvider.class)) {
-			imports.addAll(provider.getImports());
+			exports.addAll(provider.getExports(session));
 		}
 
-		return imports;
+		return exports;
 	}
 }

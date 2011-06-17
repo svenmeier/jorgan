@@ -31,8 +31,6 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.importer.gui.spi.ImportRegistry;
-
 /**
  * A selection of an {@link Import}.
  */
@@ -57,12 +55,10 @@ public class ImportSelectionPanel extends JPanel {
 		list.getSelectionModel().addListSelectionListener(
 				new ListSelectionListener() {
 					public void valueChanged(ListSelectionEvent e) {
-						firePropertyChange("selectedImportProvider", null, null);
+						firePropertyChange("selectedImport", null, null);
 					}
 				});
 		scrollPane.setViewportView(list);
-
-		setImports(ImportRegistry.getImports());
 	}
 
 	/**
