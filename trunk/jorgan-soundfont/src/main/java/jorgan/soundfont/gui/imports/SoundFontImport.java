@@ -28,7 +28,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.JPanel;
+import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
@@ -38,6 +38,8 @@ import jorgan.riff.RiffChunk;
 import jorgan.riff.RiffFormatException;
 import jorgan.soundfont.Preset;
 import jorgan.soundfont.SoundfontReader;
+import jorgan.swing.wizard.AbstractPage;
+import jorgan.swing.wizard.Page;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
@@ -55,18 +57,23 @@ public class SoundFontImport implements Import {
 
 	private String description;
 
+	private List<Element> elements;
+
 	public SoundFontImport() {
 		config.read(this);
 	}
 
-	public JPanel getOptionsPanel() {
-		return panel;
+	@Override
+	public List<Page> getPages() {
+		return Collections.<Page> singletonList(new OptionsPage());
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -79,38 +86,7 @@ public class SoundFontImport implements Import {
 		this.name = name;
 	}
 
-	public boolean hasElements() {
-		File file = panel.getSelectedFile();
-
-		return file != null && file.exists() && file.isFile();
-	}
-
 	public List<Element> getElements() {
-		List<Element> elements = new ArrayList<Element>();
-
-		File file = panel.getSelectedFile();
-		int bank = panel.getBank();
-		if (file != null) {
-			try {
-				Set<Rank> ranks = readRanks(file, bank);
-
-				elements.addAll(ranks);
-
-				if (panel.getCreateStops()) {
-					for (Rank rank : ranks) {
-						Stop stop = new Stop();
-						stop.setName(rank.getName());
-						stop.reference(rank);
-						elements.add(stop);
-					}
-				}
-			} catch (RiffFormatException ex) {
-				showMessage("exception/invalid", file.getPath());
-			} catch (IOException ex) {
-				showMessage("exception/general", file.getPath());
-			}
-		}
-
 		return elements;
 	}
 
@@ -161,5 +137,63 @@ public class SoundFontImport implements Import {
 		}
 
 		return ranks;
+	}
+
+	private class OptionsPage extends AbstractPage {
+
+		@Override
+		public String getDescription() {
+			return SoundFontImport.this.getDescription();
+		}
+
+		@Override
+		protected JComponent getComponentImpl() {
+			return panel;
+		}
+
+		@Override
+		public boolean allowsNext() {
+			File file = panel.getSelectedFile();
+
+			return file != null && file.exists() && file.isFile();
+		}
+
+		@Override
+		public boolean leavingToPrevious() {
+			elements = null;
+
+			return true;
+		}
+
+		@Override
+		public boolean leavingToNext() {
+
+			File file = panel.getSelectedFile();
+			try {
+				List<Element> elements = new ArrayList<Element>();
+
+				Set<Rank> ranks = readRanks(file, panel.getBank());
+				elements.addAll(ranks);
+
+				if (panel.getCreateStops()) {
+					for (Rank rank : ranks) {
+						Stop stop = new Stop();
+						stop.setName(rank.getName());
+						stop.reference(rank);
+						elements.add(stop);
+					}
+				}
+
+				SoundFontImport.this.elements = elements;
+			} catch (RiffFormatException ex) {
+				showMessage("exception/invalid", file.getPath());
+				return false;
+			} catch (IOException ex) {
+				showMessage("exception/general", file.getPath());
+				return false;
+			}
+
+			return true;
+		}
 	}
 }

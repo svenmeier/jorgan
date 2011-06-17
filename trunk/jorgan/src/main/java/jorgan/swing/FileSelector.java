@@ -44,6 +44,14 @@ import javax.swing.filechooser.FileFilter;
  */
 public class FileSelector extends JPanel {
 
+	public static final int FILES_AND_DIRECTORIES = JFileChooser.FILES_AND_DIRECTORIES;
+
+	public static final int FILES_ONLY = JFileChooser.FILES_ONLY;
+
+	public static final int DIRECTORIES_ONLY = JFileChooser.DIRECTORIES_ONLY;
+
+	private int mode;
+
 	private JTextField textField;
 
 	private JButton button;
@@ -57,8 +65,10 @@ public class FileSelector extends JPanel {
 	/**
 	 * Create a new selector.
 	 */
-	public FileSelector() {
+	public FileSelector(int mode) {
 		super(new BorderLayout());
+
+		this.mode = mode;
 
 		button = new JButton("...");
 		MacAdapter.typeToolbar(button);
@@ -131,7 +141,7 @@ public class FileSelector extends JPanel {
 		if (chooser == null) {
 			chooser = new JFileChooser();
 			chooser.setDialogType(JFileChooser.OPEN_DIALOG);
-			chooser.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+			chooser.setFileSelectionMode(mode);
 			chooser.setMultiSelectionEnabled(false);
 		}
 		File file = getSelectedFile();

@@ -19,6 +19,8 @@
 package jorgan.swing.wizard;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * A wizard implementation.
@@ -32,6 +34,10 @@ public class BasicWizard implements Wizard {
 	protected Page current = null;
 
 	private boolean ignoreChangesWhileNotifyingListeners;
+
+	public List<Page> getPages() {
+		return Collections.unmodifiableList(pages);
+	}
 
 	/**
 	 * Add a page.
@@ -70,7 +76,7 @@ public class BasicWizard implements Wizard {
 	 */
 	public void removePage(Page page) {
 		if (current == page) {
-			setCurrentPage(pages.get(0));
+			throw new IllegalStateException("cannot remove current page");
 		}
 
 		pages.remove(page);

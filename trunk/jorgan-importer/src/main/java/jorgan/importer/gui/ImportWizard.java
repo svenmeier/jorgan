@@ -28,11 +28,13 @@ import jorgan.disposition.Element;
 import jorgan.gui.construct.ElementsSelectionPanel;
 import jorgan.gui.undo.Compound;
 import jorgan.gui.undo.UndoManager;
+import jorgan.importer.gui.spi.ImportRegistry;
 import jorgan.play.Closed;
 import jorgan.play.OrganPlay;
 import jorgan.session.OrganSession;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.BasicWizard;
+import jorgan.swing.wizard.Page;
 import jorgan.swing.wizard.WizardDialog;
 import bias.Configuration;
 
@@ -48,7 +50,7 @@ public class ImportWizard extends BasicWizard {
 
 	private Import aImport;
 
-	private List<Element> elements;
+	private List<Page> importPages = new ArrayList<Page>();
 
 	private List<Element> selectedElements;
 
@@ -63,8 +65,7 @@ public class ImportWizard extends BasicWizard {
 
 		session = organ;
 
-		addPage(new ProviderSelectionPage());
-		addPage(new ImportOptionsPage());
+		addPage(new ImportSelectionPage());
 		addPage(new ElementSelectionPage());
 	}
 
@@ -100,57 +101,31 @@ public class ImportWizard extends BasicWizard {
 	/**
 	 * Page for selection of an import provider.
 	 */
-	private class ProviderSelectionPage extends AbstractPage {
+	private class ImportSelectionPage extends AbstractPage {
 
-		private ImportSelectionPanel importSelectionPanel = new ImportSelectionPanel();
+		private ImportSelectionPanel selectionPanel = new ImportSelectionPanel();
 
-		public ProviderSelectionPage() {
-			config.get("providerSelection").read(this);
+		public ImportSelectionPage() {
+			config.get("importSelection").read(this);
+
+			selectionPanel.setImports(ImportRegistry.getImports());
 		}
 
 		@Override
 		protected JComponent getComponentImpl() {
-			return importSelectionPanel;
+			return selectionPanel;
 		}
 
 		@Override
 		public boolean allowsNext() {
-			return importSelectionPanel.getSelectedImport() != null;
+			return selectionPanel.getSelectedImport() != null;
 		}
 
 		@Override
 		public boolean leavingToNext() {
-			aImport = importSelectionPanel.getSelectedImport();
+			setImport(selectionPanel.getSelectedImport());
 
 			return true;
-		}
-	}
-
-	/**
-	 * Page for altering of options of the selected importMethod.
-	 */
-	private class ImportOptionsPage extends AbstractPage {
-
-		@Override
-		public String getDescription() {
-			return aImport.getDescription();
-		}
-
-		@Override
-		protected JComponent getComponentImpl() {
-			return aImport.getOptionsPanel();
-		}
-
-		@Override
-		public boolean allowsNext() {
-			return aImport.hasElements();
-		}
-
-		@Override
-		public boolean leavingToNext() {
-			elements = aImport.getElements();
-
-			return elements.size() > 0;
 		}
 	}
 
@@ -167,7 +142,9 @@ public class ImportWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			selectionPanel.setElements(new ArrayList<Element>(elements));
+			List<Element> elements = aImport.getElements();
+
+			selectionPanel.setElements(elements);
 		}
 
 		@Override
@@ -210,5 +187,19 @@ public class ImportWizard extends BasicWizard {
 		dialog.dispose();
 
 		dialog.setWizard(null);
+	}
+
+	public void setImport(Import aImport) {
+		for (Page page : importPages) {
+			removePage(page);
+		}
+		importPages.clear();
+
+		this.aImport = aImport;
+
+		importPages.addAll(aImport.getPages());
+		for (Page page : importPages) {
+			addPage(1, page);
+		}
 	}
 }

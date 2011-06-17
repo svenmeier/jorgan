@@ -18,24 +18,24 @@
  */
 package jorgan.exporter.gui;
 
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.List;
 
-import javax.swing.JPanel;
-
-import jorgan.disposition.Element;
+import jorgan.swing.wizard.Page;
 
 /**
  * An import.
  */
 public interface Export {
 
-	public JPanel getOptionsPanel();
+	public List<Page> getPages();
 
 	public String getName();
 
 	public String getDescription();
 
-	public abstract boolean hasElements();
+	public abstract String getMimeType();
 
-	public abstract List<Element> getElements();
+	public abstract void stream(OutputStream output) throws IOException;
 }

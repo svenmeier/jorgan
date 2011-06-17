@@ -21,18 +21,19 @@ package jorgan.exporter.gui;
 import java.util.ArrayList;
 import java.util.List;
 
-import jorgan.exporter.gui.defaults.ListExport;
+import jorgan.exporter.gui.exports.ElementListExport;
 import jorgan.exporter.gui.spi.ExportProvider;
+import jorgan.session.OrganSession;
 
 /**
  * Default provider of {@link Export}s.
  */
 public class DefaultExportProvider implements ExportProvider {
 
-	public List<Export> getImports() {
+	public List<Export> getExports(OrganSession session) {
 		List<Export> exports = new ArrayList<Export>();
 
-		exports.add(new ListExport());
+		exports.add(new ElementListExport(session));
 
 		return exports;
 	}

@@ -19,12 +19,12 @@
 package jorgan.importer.gui.defaults;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import javax.swing.JPanel;
 
 import jorgan.disposition.Element;
 import jorgan.importer.gui.Import;
+import jorgan.swing.wizard.Page;
 import bias.Configuration;
 
 /**
@@ -34,8 +34,6 @@ public class PatchListImport implements Import {
 
 	private static Configuration config = Configuration.getRoot().get(
 			PatchListImport.class);
-
-	private PatchListPanel panel = new PatchListPanel();
 
 	private List<Element> elements = new ArrayList<Element>();
 
@@ -47,14 +45,17 @@ public class PatchListImport implements Import {
 		config.read(this);
 	}
 
-	public JPanel getOptionsPanel() {
-		return panel;
+	@Override
+	public List<Page> getPages() {
+		return Collections.emptyList();
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public String getDescription() {
 		return description;
 	}
@@ -67,17 +68,8 @@ public class PatchListImport implements Import {
 		this.name = name;
 	}
 
-	public boolean hasElements() {
-		return false;
-	}
-
+	@Override
 	public List<Element> getElements() {
 		return elements;
-	}
-
-	/**
-	 * A panel for options of a patchList.
-	 */
-	public class PatchListPanel extends JPanel {
 	}
 }

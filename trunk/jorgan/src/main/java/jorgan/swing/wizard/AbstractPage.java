@@ -32,9 +32,9 @@ public abstract class AbstractPage implements Page {
 	 * The containing wizard.
 	 */
 	private Wizard wizard;
-	
+
 	private JComponent component;
-	
+
 	private String description;
 
 	/**
@@ -55,7 +55,8 @@ public abstract class AbstractPage implements Page {
 			if (!ignorePropertyChangeEventsWhileNotifyingWizard) {
 				ignorePropertyChangeEventsWhileNotifyingWizard = true;
 
-				if (wizard != null) {
+				if (wizard != null
+						&& wizard.getCurrentPage() == AbstractPage.this) {
 					changing();
 				}
 
@@ -63,27 +64,27 @@ public abstract class AbstractPage implements Page {
 			}
 		}
 	};
- 
+
 	public final JComponent getComponent() {
 		JComponent component = getComponentImpl();
-		
+
 		if (component != this.component) {
 			if (this.component != null) {
 				this.component.removePropertyChangeListener(changeListener);
 			}
-			
+
 			this.component = component;
-			
+
 			if (this.component != null) {
 				this.component.addPropertyChangeListener(changeListener);
 			}
 		}
-		
+
 		return this.component;
 	}
-	
+
 	protected abstract JComponent getComponentImpl();
-	
+
 	/**
 	 * Default implementation does nothing.
 	 */
@@ -108,7 +109,7 @@ public abstract class AbstractPage implements Page {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * Default implementation allows leaving to next page.
 	 */

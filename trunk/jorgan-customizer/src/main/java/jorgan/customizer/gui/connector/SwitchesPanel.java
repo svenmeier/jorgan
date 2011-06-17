@@ -321,14 +321,14 @@ public abstract class SwitchesPanel extends JPanel {
 
 		public void apply() {
 			if (changed) {
-				aSwitch.removeMessages(Activate.class);
-				if (activate != null) {
-					aSwitch.addMessage(activate);
-				}
-
 				aSwitch.removeMessages(Deactivate.class);
 				if (deactivate != null) {
 					aSwitch.addMessage(deactivate);
+				}
+
+				aSwitch.removeMessages(Activate.class);
+				if (activate != null) {
+					aSwitch.addMessage(activate);
 				}
 
 				aSwitch.removeMessages(Toggle.class);

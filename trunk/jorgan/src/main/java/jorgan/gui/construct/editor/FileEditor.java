@@ -31,9 +31,10 @@ import jorgan.swing.FileSelector;
  */
 public class FileEditor extends CustomEditor {
 
-	private FileSelector field = new FileSelector() {
+	private FileSelector field = new FileSelector(
+			FileSelector.FILES_AND_DIRECTORIES) {
 		protected JTextField createTextField() {
-			JTextField textField = new JTextField();
+			JTextField textField = super.createTextField();
 			textField.setBorder(new EmptyBorder(0, 0, 0, 0));
 			return textField;
 		}

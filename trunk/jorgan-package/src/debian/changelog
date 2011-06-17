@@ -1,7 +1,10 @@
 jorgan (3.13.1) beta;
 
   * monitor may now skip control messages
-  * fixed bug in recorder: missing attach for empty tracker
+  * customizer: set deactivate before activate to allow customizing of infinite switches  
+  * recorder: fixed bug for empty tracker not attached
+  * export: new extension
+  * memory: export levels
 
  -- Sven Meier <sven@meiers.net>  Sun, 1 May 2011 17:00:00 +0200
 

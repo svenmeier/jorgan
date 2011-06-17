@@ -204,6 +204,10 @@ public abstract class Storage {
 		}
 	}
 
+	public MemoryState getState() {
+		return state;
+	}
+
 	public void read() {
 		if (state != null) {
 			state.read(memory, getIndex());

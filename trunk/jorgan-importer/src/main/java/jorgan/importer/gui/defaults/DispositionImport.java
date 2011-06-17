@@ -18,24 +18,20 @@
  */
 package jorgan.importer.gui.defaults;
 
-import java.awt.Insets;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
+import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.importer.gui.Import;
 import jorgan.io.DispositionStream;
-import jorgan.swing.FileSelector;
-import jorgan.swing.layout.DefinitionBuilder;
-import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.swing.wizard.AbstractPage;
+import jorgan.swing.wizard.Page;
 import bias.Configuration;
 import bias.swing.MessageBox;
 
@@ -47,18 +43,21 @@ public class DispositionImport implements Import {
 	private static Configuration config = Configuration.getRoot().get(
 			DispositionImport.class);
 
-	private OptionsPanel panel = new OptionsPanel();
+	private DispositionOptionsPanel panel = new DispositionOptionsPanel();
 
 	private String name;
 
 	private String description;
 
+	private List<Element> elements;
+
 	public DispositionImport() {
 		config.read(this);
 	}
 
-	public JPanel getOptionsPanel() {
-		return panel;
+	@Override
+	public List<Page> getPages() {
+		return Collections.<Page> singletonList(new OptionsPage());
 	}
 
 	public String getName() {
@@ -77,27 +76,14 @@ public class DispositionImport implements Import {
 		this.name = name;
 	}
 
-	public boolean hasElements() {
-		File file = panel.fileSelector.getSelectedFile();
-
-		return file != null && file.exists() && file.isFile();
+	public List<Element> getElements() {
+		return elements;
 	}
 
-	public List<Element> getElements() {
-		List<Element> elements = new ArrayList<Element>();
-
-		File file = panel.fileSelector.getSelectedFile();
-		if (file != null) {
-			try {
-				elements = readElements(file);
-			} catch (IOException ex) {
-				panel.showMessage("exception/general", file.getPath());
-			} catch (Exception ex) {
-				panel.showMessage("exception/invalid", file.getPath());
-			}
-		}
-
-		return elements;
+	public void showMessage(String key, Object... args) {
+		MessageBox box = config.get(key).read(
+				new MessageBox(MessageBox.OPTIONS_OK));
+		box.show(panel, args);
 	}
 
 	/**
@@ -121,40 +107,45 @@ public class DispositionImport implements Import {
 		return elements;
 	}
 
-	/**
-	 * A panel for options.
-	 */
-	public class OptionsPanel extends JPanel {
+	private class OptionsPage extends AbstractPage {
 
-		/**
-		 * Insets to use by subclasse for a standard spacing around components.
-		 */
-		protected Insets insets = new Insets(2, 2, 2, 2);
-
-		private FileSelector fileSelector = new FileSelector();
-
-		/**
-		 * Constructor.
-		 */
-		public OptionsPanel() {
-			DefinitionBuilder builder = new DefinitionBuilder(this);
-
-			Column column = builder.column();
-
-			column.term(config.get("options/file").read(new JLabel()));
-
-			fileSelector.addChangeListener(new ChangeListener() {
-				public void stateChanged(ChangeEvent e) {
-					firePropertyChange("ranks", null, null);
-				}
-			});
-			column.definition(fileSelector).fillHorizontal();
+		@Override
+		public String getDescription() {
+			return DispositionImport.this.getDescription();
 		}
 
-		public void showMessage(String key, Object... args) {
-			MessageBox box = config.get(key).read(
-					new MessageBox(MessageBox.OPTIONS_OK));
-			box.show(panel, args);
+		@Override
+		protected JComponent getComponentImpl() {
+			return panel;
+		}
+
+		@Override
+		public boolean leavingToPrevious() {
+			elements = null;
+
+			return true;
+		}
+
+		@Override
+		public boolean allowsNext() {
+			File file = panel.getDisposition();
+
+			return file != null && file.exists() && file.isFile();
+		}
+
+		@Override
+		public boolean leavingToNext() {
+			File file = panel.getDisposition();
+			try {
+				elements = readElements(file);
+			} catch (IOException ex) {
+				showMessage("exception/general", file.getPath());
+				return false;
+			} catch (Exception ex) {
+				showMessage("exception/invalid", file.getPath());
+				return false;
+			}
+			return true;
 		}
 	}
 }

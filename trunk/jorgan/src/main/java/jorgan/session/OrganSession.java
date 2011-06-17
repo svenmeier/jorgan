@@ -201,6 +201,10 @@ public class OrganSession {
 		return organ;
 	}
 
+	/**
+	 * @throws IllegalArgumentException
+	 *             if clazz can not be looked up
+	 */
 	@SuppressWarnings("unchecked")
 	public <T> T lookup(Class<T> clazz) {
 		T t = (T) ts.get(clazz);
