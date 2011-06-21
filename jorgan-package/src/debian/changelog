@@ -1,4 +1,4 @@
-jorgan (3.13.1-beta1) beta;
+jorgan (3.14-beta1) beta;
 
   * monitor may now skip control messages
   * activate/deactivate switches on shortcut press (was released)
