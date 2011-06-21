@@ -46,10 +46,10 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 	@Override
 	public void clear(int index) {
 		ensureIndex(index);
-		
+
 		actives[index] = false;
 	}
-	
+
 	@Override
 	public void swap(int index1, int index2) {
 		ensureIndex(Math.max(index1, index2));
@@ -58,11 +58,11 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 		actives[index1] = actives[index2];
 		actives[index2] = active1;
 	}
-	
+
 	@Override
 	public void read(Reference<?> reference, int index) {
 		ensureIndex(index);
-		
+
 		SwitchReference temp = (SwitchReference) reference;
 
 		actives[index] = temp.isActive();
@@ -75,5 +75,12 @@ public class SwitchReferenceState extends ReferenceState<Switch> {
 		SwitchReference temp = (SwitchReference) reference;
 
 		temp.setActive(actives[index]);
+	}
+
+	@Override
+	public Object get(int index) {
+		ensureIndex(index);
+
+		return actives[index];
 	}
 }

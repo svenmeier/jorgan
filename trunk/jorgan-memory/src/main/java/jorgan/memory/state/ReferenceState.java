@@ -35,6 +35,8 @@ public abstract class ReferenceState<T extends Element> {
 
 	public abstract void write(Reference<?> reference, int index);
 
+	public abstract Object get(int index);
+
 	public boolean isFor(Element element) {
 		return this.id == element.getId();
 	}

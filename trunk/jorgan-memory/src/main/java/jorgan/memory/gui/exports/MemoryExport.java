@@ -8,14 +8,13 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.List;
 
-import jorgan.disposition.Combination;
-import jorgan.disposition.Continuous;
-import jorgan.disposition.Elements;
-import jorgan.disposition.Switch;
+import javax.swing.JComponent;
+
 import jorgan.exporter.gui.Export;
 import jorgan.memory.Storage;
-import jorgan.memory.disposition.Memory;
+import jorgan.memory.exports.MemoryWriter;
 import jorgan.session.OrganSession;
+import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.Page;
 import bias.Configuration;
 
@@ -28,17 +27,23 @@ public class MemoryExport implements Export {
 
 	private String description;
 
-	private OrganSession session;
+	private OptionsPanel panel;
+
+	private Storage storage;
 
 	public MemoryExport(OrganSession session) {
 		config.read(this);
 
-		this.session = session;
+		storage = session.lookup(Storage.class);
+
+		if (!storage.isLoaded()) {
+			throw new IllegalArgumentException("no memory");
+		}
 	}
 
 	@Override
 	public List<Page> getPages() {
-		return Collections.<Page> emptyList();
+		return Collections.<Page> singletonList(new OptionsPage());
 	}
 
 	public String getName() {
@@ -66,46 +71,24 @@ public class MemoryExport implements Export {
 	public void stream(OutputStream output) throws IOException {
 		Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 
-		write(writer);
+		new MemoryWriter(storage, panel.getRange()).write(writer);
 
 		writer.flush();
 	}
 
-	private void write(Writer writer) throws IOException {
-		Memory memory = session.getOrgan().getElement(Memory.class);
-		if (memory == null) {
-			throw new IOException("no memory");
+	private class OptionsPage extends AbstractPage {
+
+		@Override
+		public String getDescription() {
+			return MemoryExport.this.getDescription();
 		}
 
-		Storage storage;
-		try {
-			storage = session.lookup(Storage.class);
-		} catch (IllegalArgumentException ex) {
-			throw new IOException(ex);
-		}
-
-		for (int l = 0; l < memory.getSize(); l++) {
-			writer.write(String.format("%s : %s\n", l, storage.getTitle(l)));
-
-			for (Combination combination : memory
-					.getReferenced(Combination.class)) {
-
-				writer.write(String.format("  %s\n", Elements
-						.getDisplayName(combination)));
-
-				for (Switch aSwitch : combination.getReferenced(Switch.class)) {
-
-					writer.write(String.format("    %s\n", Elements
-							.getDisplayName(aSwitch)));
-				}
-
-				for (Continuous continuous : combination
-						.getReferenced(Continuous.class)) {
-
-					writer.write(String.format("    %s\n", Elements
-							.getDisplayName(continuous)));
-				}
+		@Override
+		protected JComponent getComponentImpl() {
+			if (panel == null) {
+				panel = new OptionsPanel(storage.getSize());
 			}
+			return panel;
 		}
 	}
 }

@@ -5,7 +5,6 @@ import java.util.List;
 
 import jorgan.exporter.gui.Export;
 import jorgan.exporter.gui.spi.ExportProvider;
-import jorgan.memory.disposition.Memory;
 import jorgan.memory.gui.exports.MemoryExport;
 import jorgan.session.OrganSession;
 
@@ -14,9 +13,9 @@ public class MemoryExportProvider implements ExportProvider {
 	public List<Export> getExports(OrganSession session) {
 		List<Export> exports = new ArrayList<Export>();
 
-		Memory memory = session.getOrgan().getElement(Memory.class);
-		if (memory != null) {
+		try {
 			exports.add(new MemoryExport(session));
+		} catch (IllegalArgumentException noLoadedMemory) {
 		}
 
 		return exports;
