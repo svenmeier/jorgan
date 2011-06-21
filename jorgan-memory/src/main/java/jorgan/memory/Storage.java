@@ -134,6 +134,10 @@ public abstract class Storage {
 		this.listeners.add(listener);
 	}
 
+	public Memory getMemory() {
+		return memory;
+	}
+
 	public File getFile() {
 		if (memory != null) {
 			String storage = memory.getStorage();

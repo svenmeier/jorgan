@@ -119,4 +119,10 @@ public class MemoryState {
 		CombinationState state = getState(combination);
 		state.read(reference, index);
 	}
+
+	public Object get(Combination combination, Reference<?> reference, int index) {
+		CombinationState state = getState(combination);
+
+		return state.get(reference, index);
+	}
 }

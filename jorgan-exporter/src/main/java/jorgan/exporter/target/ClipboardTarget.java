@@ -14,8 +14,8 @@ public class ClipboardTarget implements Target {
 	}
 
 	public void export(Export aExport) throws IOException {
-		if (!"text".equals(aExport.getMimeType())) {
-			throw new IOException("unsupported mime type '"
+		if (!aExport.getMimeType().startsWith("text")) {
+			throw new IOException("text mime types supported only, not '"
 					+ aExport.getMimeType() + "'");
 		}
 

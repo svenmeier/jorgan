@@ -49,13 +49,12 @@ public class CombinationState {
 		}
 	}
 
-
 	public void swap(int index1, int index2) {
 		for (ReferenceState<?> state : references) {
 			state.swap(index1, index2);
 		}
 	}
-	
+
 	private ReferenceState<?> getState(Reference<?> reference) {
 		for (ReferenceState<?> state : references) {
 			if (state.isFor(reference.getElement())) {
@@ -94,5 +93,11 @@ public class CombinationState {
 			ReferenceState<?> state = getState(reference);
 			state.write(reference, index);
 		}
+	}
+
+	public Object get(Reference<?> reference, int index) {
+		ReferenceState<?> state = getState(reference);
+
+		return state.get(index);
 	}
 }

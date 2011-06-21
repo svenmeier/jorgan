@@ -12,6 +12,7 @@
 
   	<javac debug="true" source="1.6" target="1.6" srcdir="./src/main/java" destdir="./target/classes">
     	<classpath path="${jorgan.core.path}/target/classes" />
+    	<classpath path="${jorgan.exporter.path}/target/classes" />
     	<classpath>
             <fileset dir="${jorgan.core.path}/lib">
 	            <include name="*" />

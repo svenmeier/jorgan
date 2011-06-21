@@ -46,23 +46,23 @@ public class ContinuousReferenceState extends ReferenceState<Continuous> {
 	@Override
 	public void clear(int index) {
 		ensureIndex(index);
-		
+
 		values[index] = 0.0f;
 	}
-	
+
 	@Override
 	public void swap(int index1, int index2) {
 		ensureIndex(Math.max(index1, index2));
-		
+
 		float value1 = values[index1];
 		values[index1] = values[index2];
 		values[index2] = value1;
 	}
-	
+
 	@Override
 	public void read(Reference<?> reference, int index) {
 		ensureIndex(index);
-		
+
 		ContinuousReference temp = (ContinuousReference) reference;
 
 		values[index] = temp.getValue();
@@ -75,5 +75,12 @@ public class ContinuousReferenceState extends ReferenceState<Continuous> {
 		ContinuousReference temp = (ContinuousReference) reference;
 
 		temp.setValue(values[index]);
+	}
+
+	@Override
+	public Object get(int index) {
+		ensureIndex(index);
+
+		return values[index];
 	}
 }
