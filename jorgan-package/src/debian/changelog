@@ -1,6 +1,7 @@
-jorgan (3.13.1) beta;
+jorgan (3.13.1-beta1) beta;
 
   * monitor may now skip control messages
+  * activate/deactivate switches on shortcut press (was released)
   * customizer: set deactivate before activate to allow customizing of infinite switches  
   * recorder: fixed bug for empty tracker not attached
   * export: new extension

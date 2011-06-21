@@ -134,8 +134,17 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			// note: umlauts do not trigger KeyEvent.KEY_PRESSED :(
 
 			if (element.getDuration() == Switch.DURATION_NONE) {
-				// keep activate until #keyReleased()
+				// keep active until #keyReleased()
 				element.setActive(true);
+			} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
+				// always activate
+				getElement().activate();
+			} else {
+				if (getElement().isActive()) {
+					getElement().deactivate();
+				} else {
+					getElement().activate();
+				}
 			}
 		}
 	}
@@ -148,17 +157,8 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 		Shortcut shortcut = element.getShortcut();
 		if (shortcut != null && shortcut.match(ev)) {
 			if (element.getDuration() == Switch.DURATION_NONE) {
-				// was kept activate in #keyPressed()
+				// was kept active in #keyPressed()
 				element.setActive(false);
-			} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
-				// always activate
-				getElement().activate();
-			} else {
-				if (getElement().isActive()) {
-					getElement().deactivate();
-				} else {
-					getElement().activate();
-				}
 			}
 		}
 	}
