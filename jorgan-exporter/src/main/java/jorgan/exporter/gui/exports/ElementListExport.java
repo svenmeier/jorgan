@@ -30,7 +30,7 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
+import jorgan.exporter.exports.ElementListWriter;
 import jorgan.exporter.gui.Export;
 import jorgan.gui.construct.ElementsSelectionPanel;
 import jorgan.session.OrganSession;
@@ -89,16 +89,9 @@ public class ElementListExport implements Export {
 	public void stream(OutputStream output) throws IOException {
 		Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 
-		write(writer);
+		new ElementListWriter(panel.getSelectedElements()).write(writer);
 
 		writer.flush();
-	}
-
-	private void write(Writer writer) throws IOException {
-		for (Element element : panel.getSelectedElements()) {
-			writer.write(Elements.getDisplayName(element));
-			writer.write("\n");
-		}
 	}
 
 	private class OptionsPage extends AbstractPage {
