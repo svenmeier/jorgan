@@ -50,7 +50,7 @@ public class MemoryWriter {
 			throws IOException {
 
 		Object state = storage.getState().get(combination, reference, level);
-		String name = Elements.getDisplayName(reference.getElement());
+		String name = getName(reference.getElement());
 
 		writer.write(String.format("       %4s %s\n", format.format(state),
 				name));
@@ -58,11 +58,18 @@ public class MemoryWriter {
 
 	private void writeCombination(Writer writer, Combination combination)
 			throws IOException {
-		writer.write(String.format("      %s\n", Elements
-				.getDisplayName(combination)));
+		writer.write(String.format("      %s\n", getName(combination)));
 	}
 
 	private void writeLevel(Writer writer, int l) throws IOException {
 		writer.write(String.format("%s: %s\n", l + 1, storage.getTitle(l)));
+	}
+
+	private String getName(Element element) {
+		String name = element.getTexts().get("name");
+		if (name == null) {
+			name = Elements.getDisplayName(element);
+		}
+		return name;
 	}
 }
