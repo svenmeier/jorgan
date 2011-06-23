@@ -19,11 +19,14 @@ public class MemoryWriter {
 
 	private Range range;
 
-	public MemoryWriter(Storage storage, Range range) {
+	private boolean useDescriptionName;
+
+	public MemoryWriter(Storage storage, boolean useDescriptionName, Range range) {
 		if (!storage.isLoaded()) {
 			throw new IllegalArgumentException("no memory");
 		}
 		this.storage = storage;
+		this.useDescriptionName = useDescriptionName;
 		this.range = range;
 	}
 
@@ -66,10 +69,16 @@ public class MemoryWriter {
 	}
 
 	private String getName(Element element) {
-		String name = element.getTexts().get("name");
+		String name = null;
+
+		if (useDescriptionName) {
+			name = element.getTexts().get("name");
+		}
+
 		if (name == null) {
 			name = Elements.getDisplayName(element);
 		}
+
 		return name;
 	}
 }

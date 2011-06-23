@@ -1,6 +1,7 @@
 package jorgan.memory.gui.exports;
 
 import javax.swing.AbstractButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -29,12 +30,21 @@ public class OptionsPanel extends JPanel {
 
 	private JSpinner toSpinner;
 
+	private JCheckBox useDescriptionNameCheckBox;
+
 	/**
 	 * Constructor.
 	 */
 	public OptionsPanel(int levels) {
 		DefinitionBuilder builder = new DefinitionBuilder(this);
 		Column column = builder.column();
+
+		column.term(config.get("name").read(new JLabel()));
+
+		useDescriptionNameCheckBox = new JCheckBox();
+		useDescriptionNameCheckBox.setSelected(true);
+		column.definition(config.get("useDescription").read(
+				useDescriptionNameCheckBox));
 
 		ButtonGroup group = new ButtonGroup() {
 			@Override
@@ -66,5 +76,9 @@ public class OptionsPanel extends JPanel {
 	public Range getRange() {
 		return new Range(((Number) fromSpinner.getValue()).intValue() - 1,
 				((Number) toSpinner.getValue()).intValue() - 1);
+	}
+
+	public boolean getUseDescriptionName() {
+		return useDescriptionNameCheckBox.isSelected();
 	}
 }
