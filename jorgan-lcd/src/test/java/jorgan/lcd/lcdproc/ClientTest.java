@@ -1,5 +1,6 @@
 package jorgan.lcd.lcdproc;
 
+import jorgan.lcd.lcdproc.IconWidget.Icon;
 import junit.framework.TestCase;
 
 /**
@@ -12,7 +13,7 @@ public class ClientTest extends TestCase {
 
 		Screen screen1 = client.addScreen();
 		StringWidget string = new StringWidget(screen1, 4, 2);
-		string.value("jOrgan");
+		string.value("Hi jOrgan");
 
 		Screen screen2 = client.addScreen();
 		NumWidget num = new NumWidget(screen2, 1);
@@ -26,6 +27,9 @@ public class ClientTest extends TestCase {
 		VBarWidget vbar3 = new VBarWidget(screen4, 8, 4, 4);
 		VBarWidget vbar4 = new VBarWidget(screen4, 10, 4, 4);
 
+		Screen screen5 = client.addScreen();
+		IconWidget icon = new IconWidget(screen5, 2, 2);
+
 		while (true) {
 			num.value((int) (Math.random() * 10));
 
@@ -35,6 +39,9 @@ public class ClientTest extends TestCase {
 			vbar2.value(Math.random());
 			vbar3.value(Math.random());
 			vbar4.value(Math.random());
+
+			icon.value(Math.random() > 0.5d ? Icon.CHECKBOX_OFF
+					: Icon.CHECKBOX_ON);
 
 			Thread.sleep(1000);
 		}

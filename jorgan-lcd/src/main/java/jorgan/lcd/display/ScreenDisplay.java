@@ -16,25 +16,36 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd;
+package jorgan.lcd.display;
 
-import jorgan.disposition.Organ;
-import jorgan.disposition.event.OrganAdapter;
+import java.io.IOException;
 
-public class LCD {
+import jorgan.lcd.disposition.Screen;
+import jorgan.lcd.lcdproc.Client;
+import jorgan.lcd.lcdproc.StringWidget;
 
-	private Organ organ;
+/**
+ * A display of a {@link Screen}.
+ */
+public class ScreenDisplay {
 
-	public LCD(Organ organ) {
-		this.organ = organ;
-		organ.addOrganListener(new OrganAdapter() {
+	private Screen screen;
 
-		});
+	private Client client;
+
+	private jorgan.lcd.lcdproc.Screen lcdprocScreen;
+
+	public ScreenDisplay(Screen screen) throws IOException {
+		this.screen = screen;
+
+		client = new Client(screen.getHost(), screen.getPort());
+
+		lcdprocScreen = client.addScreen();
+
+		new StringWidget(lcdprocScreen, 1, 1).value("Hello jOrgan");
 	}
 
-	public void startup() {
-	}
-
-	public void shutdown() {
+	public void destroy() throws IOException {
+		client.close();
 	}
 }

@@ -16,7 +16,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd;
+package jorgan.lcd.display;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,12 +28,12 @@ import jorgan.session.spi.SessionProvider;
 public class LCDSessionProvider implements SessionProvider {
 
 	public void init(OrganSession session) {
-		session.lookup(LCD.class);
+		session.lookup(Display.class);
 	}
 
 	public Object create(final OrganSession session, Class<?> clazz) {
-		if (clazz == LCD.class) {
-			final LCD lcd = new LCD(session.getOrgan());
+		if (clazz == Display.class) {
+			final Display display = new Display(session.getOrgan());
 
 			session.addListener(new SessionListener() {
 				@Override
@@ -46,23 +46,15 @@ public class LCDSessionProvider implements SessionProvider {
 
 				@Override
 				public void destroyed() {
+					display.destroy();
 				}
 
 				@Override
 				public void constructingChanged(boolean constructing) {
-					if (constructing) {
-						lcd.startup();
-					} else {
-						lcd.shutdown();
-					}
 				}
 			});
 
-			if (!session.isConstructing()) {
-				lcd.startup();
-			}
-
-			return lcd;
+			return display;
 		}
 		return null;
 	}
