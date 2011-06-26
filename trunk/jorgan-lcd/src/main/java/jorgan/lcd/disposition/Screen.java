@@ -1,15 +1,14 @@
 package jorgan.lcd.disposition;
 
+import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.util.Null;
 
-public class Display extends Element {
+public class Screen extends Element {
 
-	public static final int DEFAULT_PORT = 13666;
+	private String host = "localhost";
 
-	private String host;
-
-	private int port = DEFAULT_PORT;
+	private int port = 13666;
 
 	public String getHost() {
 		return host;
@@ -40,5 +39,10 @@ public class Display extends Element {
 
 			fireChange(new PropertyChange(oldPort, this.port));
 		}
+	}
+
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Displayable.class.isAssignableFrom(clazz);
 	}
 }

@@ -4,6 +4,10 @@ import java.io.IOException;
 
 public class StringWidget extends Widget {
 
+	private static final String QUOTE = "\"";
+
+	private static final String ESCAPED_QUOTE = "\\\"";
+
 	private int x;
 
 	private int y;
@@ -16,6 +20,6 @@ public class StringWidget extends Widget {
 	}
 
 	public void value(String string) throws IOException {
-		set(x, y, string);
+		set(x, y, QUOTE + string.replace(QUOTE, ESCAPED_QUOTE) + QUOTE);
 	}
 }

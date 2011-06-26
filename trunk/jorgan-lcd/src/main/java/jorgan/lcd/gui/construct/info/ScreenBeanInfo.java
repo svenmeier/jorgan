@@ -21,18 +21,18 @@ package jorgan.lcd.gui.construct.info;
 import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
-import jorgan.lcd.disposition.Display;
+import jorgan.lcd.disposition.Screen;
 
 /**
- * BeanInfo for {@link Display}.
+ * BeanInfo for {@link Screen}.
  */
-public class DisplayBeanInfo extends ElementBeanInfo {
+public class ScreenBeanInfo extends ElementBeanInfo {
 
 	@Override
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("host", Display.class, StringEditor.class);
-		add("port", Display.class, IntegerEditor.class);
+		add("host", Screen.class, StringEditor.class);
+		add("port", Screen.class, IntegerEditor.class);
 	}
 }

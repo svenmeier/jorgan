@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="@jorgan.version@">
+  <elements>
+    <lcd.screen id="1">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="3"/>
+        <reference id="2"/>
+      </references>
+      <messages/>
+      <host>localhost</host>
+      <port>13666</port>
+    </lcd.screen>
+    <switch id="2">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+    <continuous id="3">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <duration>-1</duration>
+      <threshold>0.05</threshold>
+      <value>0.0</value>
+    </continuous>
+  </elements>
+</organ>
