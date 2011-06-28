@@ -275,7 +275,6 @@
         <keyboard-releaseKey>equal 144, get pitch, equal 0</keyboard-releaseKey>
         <keyboard-releaseKey>equal 128, get pitch, </keyboard-releaseKey>
       </messages>
-      <input>jOrgan Keyboard</input>
     </keyboard>
     <genericSound id="8">
       <name>Sound</name>
