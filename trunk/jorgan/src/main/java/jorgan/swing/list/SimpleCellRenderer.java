@@ -16,7 +16,12 @@ public abstract class SimpleCellRenderer<T> extends DefaultListCellRenderer {
 		super.getListCellRendererComponent(list, null, index, isSelected,
 				cellHasFocus);
 
-		init((T) value, isSelected, cellHasFocus, index);
+		if (value == null) {
+			setIcon(null);
+			setText(null);
+		} else {
+			init((T) value, isSelected, cellHasFocus, index);
+		}
 
 		return this;
 	}

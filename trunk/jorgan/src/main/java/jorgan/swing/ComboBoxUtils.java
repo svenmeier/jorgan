@@ -2,7 +2,7 @@ package jorgan.swing;
 
 import java.awt.Component;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 import java.util.Vector;
 
 import javax.swing.ComboBoxModel;
@@ -16,13 +16,13 @@ public class ComboBoxUtils {
 
 	private static Border EMPTY_BORDER = new EmptyBorder(0, 0, 0, 0);
 
-	public static <T> ComboBoxModel createModel(List<T> items) {
+	public static <T> ComboBoxModel createModel(Collection<T> items) {
 		Vector<Object> vector = new Vector<Object>();
 		vector.addAll(items);
 		return new DefaultComboBoxModel(vector);
 	}
 
-	public static <T> ComboBoxModel createModelWithNull(List<T> items) {
+	public static <T> ComboBoxModel createModelWithNull(Collection<T> items) {
 		Vector<Object> vector = new Vector<Object>();
 		vector.add(null);
 		vector.addAll(items);

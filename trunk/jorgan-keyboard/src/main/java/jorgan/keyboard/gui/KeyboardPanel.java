@@ -4,32 +4,17 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.sound.midi.InvalidMidiDataException;
-import javax.sound.midi.Receiver;
-import javax.sound.midi.ShortMessage;
-import javax.swing.AbstractButton;
-import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JComponent;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
 import javax.swing.event.MouseInputAdapter;
-
-import jorgan.swing.button.ButtonGroup;
-import bias.Configuration;
 
 /**
  * A keyboard.
  */
 public class KeyboardPanel extends JComponent {
-
-	private static Configuration config = Configuration.getRoot().get(
-			KeyboardPanel.class);
 
 	private static final int C = 0;
 
@@ -55,31 +40,11 @@ public class KeyboardPanel extends JComponent {
 
 	private static final int B = 11;
 
-	private JPopupMenu popupMenu;
-
-	private JMenuItem[] channelMenuItems = new JCheckBoxMenuItem[16];
-
-	private JMenuItem velocityMenuItem;
-
-	private JMenuItem polyPressureMenuItem;
-
-	private JMenuItem channelPressureMenuItem;
-
-	private JMenuItem useNoteOffMenuItem;
-
-	private int channel = 0;
-
-	private boolean sendVelocity = true;
-
-	private boolean sendPolyPressure = true;
-
-	private boolean sendChannelPressure = false;
-
-	private boolean useNoteOff = true;
-
 	private List<Key> keys = new ArrayList<Key>();
 
-	private Receiver receiver;
+	private int from = 0;
+
+	private int to = 127;
 
 	/**
 	 * Constructor.
@@ -88,8 +53,6 @@ public class KeyboardPanel extends JComponent {
 		MouseHandler handler = new MouseHandler();
 		addMouseListener(handler);
 		addMouseMotionListener(handler);
-
-		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
 		int x = 0;
 		for (int pitch = 0; pitch < 128; pitch++) {
@@ -137,106 +100,16 @@ public class KeyboardPanel extends JComponent {
 		setPreferredSize(new Dimension(x, WhiteKey.HEIGHT));
 	}
 
-	/**
-	 * Set a receiver.
-	 * 
-	 * @param receiver
-	 *            receiver.
-	 */
-	public void setReceiver(Receiver receiver) {
-		releaseKeys();
+	public void reset(int from, int to) {
+		this.from = from;
+		this.to = to;
 
-		this.receiver = receiver;
-	}
-
-	/**
-	 * Clear all keys.
-	 */
-	public void releaseKeys() {
 		for (int k = 0; k < 128; k++) {
 			Key key = keys.get(k);
 			key.release();
 		}
 
 		repaint();
-	}
-
-	/**
-	 * Set the MIDI channel.
-	 * 
-	 * @param channel
-	 *            channel to use
-	 */
-	public void setChannel(int channel) {
-		releaseKeys();
-
-		this.channel = channel;
-	}
-
-	/**
-	 * Get the channel.
-	 * 
-	 * @return used channel
-	 */
-	public int getChannel() {
-		return channel;
-	}
-
-	/**
-	 * Should velocity be sent.
-	 * 
-	 * @param sendVelocity
-	 *            <code>true</code> if velocity should be sent
-	 */
-	public void setSendVelocity(boolean sendVelocity) {
-		this.sendVelocity = sendVelocity;
-	}
-
-	/**
-	 * Is the velocity sent.
-	 * 
-	 * @return <code>true</code> if velocity is sent
-	 */
-	public boolean getSendVelocity() {
-		return sendVelocity;
-	}
-
-	/**
-	 * Should poly pressure be sent.
-	 * 
-	 * @param sendPolyPressure
-	 *            <code>true</code> if poly pressure should be sent
-	 */
-	public void setSendPolyPressure(boolean sendPolyPressure) {
-		this.sendPolyPressure = sendPolyPressure;
-	}
-
-	/**
-	 * Is the poly pressure sent.
-	 * 
-	 * @return <code>true</code> if poly pressure is sent
-	 */
-	public boolean getSendPolyPressure() {
-		return sendPolyPressure;
-	}
-
-	/**
-	 * Should channel pressure be sent.
-	 * 
-	 * @param sendChannelPressure
-	 *            <code>true</code> if aftertouch should be sent
-	 */
-	public void setSendAftertouch(boolean sendChannelPressure) {
-		this.sendChannelPressure = sendChannelPressure;
-	}
-
-	/**
-	 * Is the aftertouch sent.
-	 * 
-	 * @return <code>true</code> if aftertouch is sent
-	 */
-	public boolean getSendAftertouch() {
-		return sendChannelPressure;
 	}
 
 	/**
@@ -270,19 +143,21 @@ public class KeyboardPanel extends JComponent {
 			int y = e.getY() - (getHeight() - preferredSize.height) / 2;
 
 			setKey(getKey(x, y), y);
-
-			showPopup(e);
 		}
 
 		@Override
-		public void mouseDragged(MouseEvent e) {
-
+		public void mouseMoved(MouseEvent e) {
 			Dimension preferredSize = getPreferredSize();
 
 			int x = e.getX() - (getWidth() - preferredSize.width) / 2;
 			int y = e.getY() - (getHeight() - preferredSize.height) / 2;
 
-			setKey(getKey(x, y), y);
+			getKey(x, y);
+		}
+
+		@Override
+		public void mouseDragged(MouseEvent e) {
+			mousePressed(e);
 		}
 
 		@Override
@@ -291,14 +166,6 @@ public class KeyboardPanel extends JComponent {
 				key = null;
 			} else {
 				setKey(null, 0);
-			}
-
-			showPopup(e);
-		}
-
-		private void showPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
-				KeyboardPanel.this.showPopup(e.getX(), e.getY());
 			}
 		}
 
@@ -314,109 +181,29 @@ public class KeyboardPanel extends JComponent {
 					wasPressed = this.key.pressed;
 					this.key.press(y);
 				}
-			} else {
-				if (this.key != null) {
-					this.key.drag(y);
-				}
 			}
 		}
 	}
 
 	private Key getKey(int x, int y) {
 
+		Key key = null;
+
 		for (int k = 128 - 1; k >= 0; k--) {
-			Key key = keys.get(k);
-			if (key.hits(x, y)) {
-				return key;
+			Key candidate = keys.get(k);
+			if (candidate.hits(x, y)) {
+				key = candidate;
+				break;
 			}
 		}
-		return null;
-	}
 
-	private void send(int command, int data1, int data2) {
-		try {
-			ShortMessage message = new ShortMessage();
-			message.setMessage(command, channel, data1, data2);
-
-			if (receiver != null) {
-				receiver.send(message, -1);
-			}
-		} catch (InvalidMidiDataException ex) {
-			throw new Error(ex);
-		}
-	}
-
-	protected void showPopup(int x, int y) {
-		if (popupMenu == null) {
-			popupMenu = createPopup();
+		if (key == null) {
+			setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		} else {
+			setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 		}
 
-		channelMenuItems[channel].setSelected(true);
-		velocityMenuItem.setSelected(sendVelocity);
-		polyPressureMenuItem.setSelected(sendPolyPressure);
-		useNoteOffMenuItem.setSelected(useNoteOff);
-
-		popupMenu.show(this, x, y);
-	}
-
-	protected JPopupMenu createPopup() {
-		JPopupMenu popupMenu = new JPopupMenu();
-
-		ButtonGroup channelGroup = new ButtonGroup() {
-			@Override
-			protected void onSelected(AbstractButton button) {
-				setChannel((Integer) button.getClientProperty(this));
-			}
-		};
-		for (int c = 0; c < 16; c++) {
-			channelMenuItems[c] = new JCheckBoxMenuItem();
-			config.get("channel").read(channelMenuItems[c]);
-			channelMenuItems[c].setText(channelMenuItems[c].getText() + " "
-					+ (c + 1));
-			channelMenuItems[c].putClientProperty(channelGroup, c);
-			channelGroup.add(channelMenuItems[c]);
-			popupMenu.add(channelMenuItems[c]);
-		}
-
-		popupMenu.addSeparator();
-
-		velocityMenuItem = new JCheckBoxMenuItem();
-		config.get("velocity").read(velocityMenuItem);
-		velocityMenuItem.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				sendVelocity = velocityMenuItem.isSelected();
-			}
-		});
-		popupMenu.add(velocityMenuItem);
-
-		polyPressureMenuItem = new JCheckBoxMenuItem();
-		config.get("polyPressure").read(polyPressureMenuItem);
-		polyPressureMenuItem.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				sendPolyPressure = polyPressureMenuItem.isSelected();
-			}
-		});
-		popupMenu.add(polyPressureMenuItem);
-
-		channelPressureMenuItem = new JCheckBoxMenuItem();
-		config.get("channelPressure").read(channelPressureMenuItem);
-		channelPressureMenuItem.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				sendChannelPressure = channelPressureMenuItem.isSelected();
-			}
-		});
-		popupMenu.add(channelPressureMenuItem);
-
-		useNoteOffMenuItem = new JCheckBoxMenuItem();
-		config.get("useNoteOff").read(useNoteOffMenuItem);
-		useNoteOffMenuItem.addItemListener(new ItemListener() {
-			public void itemStateChanged(ItemEvent e) {
-				useNoteOff = useNoteOffMenuItem.isSelected();
-			}
-		});
-		popupMenu.add(useNoteOffMenuItem);
-
-		return popupMenu;
+		return key;
 	}
 
 	private abstract class Key {
@@ -457,31 +244,10 @@ public class KeyboardPanel extends JComponent {
 		 */
 		public void press(int y) {
 			if (!pressed) {
-				int velocity = 100;
-				if (sendVelocity) {
-					velocity = 127 * y / height;
-				}
-				send(ShortMessage.NOTE_ON, pitch, velocity);
+				int velocity = 127 * y / height;
+				onKeyPress(pitch, velocity);
 				pressed = true;
 				repaint();
-			}
-		}
-
-		/**
-		 * This key was dragged to the given y position.
-		 * 
-		 * @param y
-		 *            y position of drag
-		 */
-		public void drag(int y) {
-			if (pressed) {
-				int pressure = 127 * y / height;
-				if (sendPolyPressure) {
-					send(ShortMessage.POLY_PRESSURE, pitch, pressure);
-				}
-				if (sendChannelPressure) {
-					send(ShortMessage.CHANNEL_PRESSURE, pressure, 0);
-				}
 			}
 		}
 
@@ -490,11 +256,8 @@ public class KeyboardPanel extends JComponent {
 		 */
 		public void release() {
 			if (pressed) {
-				if (useNoteOff) {
-					send(ShortMessage.NOTE_OFF, pitch, 0);
-				} else {
-					send(ShortMessage.NOTE_ON, pitch, 0);
-				}
+				onKeyReleased(pitch);
+
 				pressed = false;
 				repaint();
 			}
@@ -510,6 +273,10 @@ public class KeyboardPanel extends JComponent {
 		 * @return <code>true</code> if this key contains the given position
 		 */
 		public boolean hits(int x, int y) {
+			if (pitch < from || pitch > to) {
+				return false;
+			}
+
 			return x >= this.x && x < this.x + this.width && y >= 0
 					&& y < this.height;
 		}
@@ -545,15 +312,20 @@ public class KeyboardPanel extends JComponent {
 
 		@Override
 		public void paint(Graphics g) {
-			g.setColor(Color.BLACK);
-			g.fillRect(x, 0, WIDTH, HEIGHT);
-
-			if (pressed) {
-				g.setColor(Color.GRAY);
-				g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 2);
+			if (pitch < from || pitch > to) {
+				g.setColor(Color.LIGHT_GRAY);
+				g.fillRect(x, 0, WIDTH, HEIGHT);
 			} else {
-				g.setColor(Color.DARK_GRAY);
-				g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 5);
+				g.setColor(Color.BLACK);
+				g.fillRect(x, 0, WIDTH, HEIGHT);
+
+				if (pressed) {
+					g.setColor(Color.GRAY);
+					g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 2);
+				} else {
+					g.setColor(Color.DARK_GRAY);
+					g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 5);
+				}
 			}
 		}
 	}
@@ -590,7 +362,12 @@ public class KeyboardPanel extends JComponent {
 				g.setColor(Color.LIGHT_GRAY);
 				g.fillRect(x, 0, WIDTH, 3);
 			}
-			g.setColor(Color.GRAY);
+
+			if (pitch < from || pitch > to) {
+				g.setColor(Color.LIGHT_GRAY);
+			} else {
+				g.setColor(Color.GRAY);
+			}
 			g.drawRect(x, 0, WIDTH, HEIGHT - 1);
 
 			if (pitch == 60) {
@@ -602,5 +379,11 @@ public class KeyboardPanel extends JComponent {
 
 	private static int mod(int x, int y) {
 		return x - ((x / y) * y);
+	}
+
+	protected void onKeyReleased(int pitch) {
+	}
+
+	protected void onKeyPress(int pitch, int velocity) {
 	}
 }

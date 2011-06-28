@@ -90,7 +90,6 @@
         <keyboard-releaseKey>equal 128, greaterEqual 40 | get pitch, </keyboard-releaseKey>
         <keyboard-releaseKey>equal 144, greaterEqual 40 | get pitch, equal 0 | get velocity</keyboard-releaseKey>
       </messages>
-      <input>jOrgan Keyboard</input>
     </keyboard>
     <continuous id="3">
       <name>Continuous</name>
