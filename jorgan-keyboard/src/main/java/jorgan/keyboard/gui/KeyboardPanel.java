@@ -294,7 +294,7 @@ public class KeyboardPanel extends JComponent {
 
 		private static final int WIDTH = 8;
 
-		private static final int HEIGHT = 32;
+		private static final int HEIGHT = 28;
 
 		/**
 		 * Create a black key for the given pitch at the given x position.
@@ -334,7 +334,7 @@ public class KeyboardPanel extends JComponent {
 
 		private static final int WIDTH = 12;
 
-		private static final int HEIGHT = 54;
+		private static final int HEIGHT = 48;
 
 		/**
 		 * Create a white key for the given pitch at the given x position.
@@ -361,6 +361,7 @@ public class KeyboardPanel extends JComponent {
 
 				g.setColor(Color.LIGHT_GRAY);
 				g.fillRect(x, 0, WIDTH, 3);
+				g.fillRect(x, HEIGHT - 2, WIDTH, 2);
 			}
 
 			if (pitch < from || pitch > to) {
@@ -369,11 +370,6 @@ public class KeyboardPanel extends JComponent {
 				g.setColor(Color.GRAY);
 			}
 			g.drawRect(x, 0, WIDTH, HEIGHT - 1);
-
-			if (pitch == 60) {
-				g.setColor(Color.BLACK);
-				g.fillRect(x + WIDTH / 2 - 2, HEIGHT - 8, 4, 4);
-			}
 		}
 	}
 
