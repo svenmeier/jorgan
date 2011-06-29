@@ -1,17 +1,12 @@
 package jorgan.keyboard.gui.dock;
 
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
-import java.util.Collection;
-import java.util.Collections;
-
-import javax.swing.JComboBox;
+import javax.swing.JPanel;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Keyboard;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
-import jorgan.gui.ElementListCellRenderer;
 import jorgan.gui.dock.AbstractView;
 import jorgan.keyboard.gui.KeyboardPanel;
 import jorgan.midi.mpl.ProcessingException;
@@ -20,9 +15,7 @@ import jorgan.play.OrganPlay;
 import jorgan.play.Player;
 import jorgan.play.OrganPlay.Playing;
 import jorgan.session.OrganSession;
-import jorgan.swing.ComboBoxUtils;
 import spin.Spin;
-import swingx.docking.Docked;
 import bias.Configuration;
 
 /**
@@ -35,11 +28,7 @@ public class KeyboardView extends AbstractView {
 
 	private OrganPlay play;
 
-	private KeyboardPanel keyboardPanel;
-
-	private Keyboard keyboard;
-
-	private JComboBox comboBox;
+	private JPanel content;
 
 	private Listener listener = new Listener();
 
@@ -49,53 +38,13 @@ public class KeyboardView extends AbstractView {
 	public KeyboardView() {
 		config.read(this);
 
-		keyboardPanel = new KeyboardPanel() {
-			@Override
-			protected void onKeyPress(final int pitch, final int velocity) {
-				play(new Playing() {
-					@Override
-					public void play(Player<?> player) {
-						((KeyboardPlayer) player).press(pitch, velocity);
-					}
-				});
-			}
-
-			@Override
-			protected void onKeyReleased(final int pitch) {
-				play(new Playing() {
-					@Override
-					public void play(Player<?> player) {
-						((KeyboardPlayer) player).release(pitch);
-					}
-				});
-			}
-		};
-		setContent(keyboardPanel);
-
-		comboBox = new JComboBox();
-		comboBox.setRenderer(new ElementListCellRenderer());
-		comboBox.addItemListener(new ItemListener() {
-			@Override
-			public void itemStateChanged(ItemEvent ev) {
-				keyboard = (Keyboard) comboBox.getSelectedItem();
-				updateKeyboard();
-			}
-		});
-		ComboBoxUtils.beautify(comboBox);
+		content = new JPanel(new StackLayout(4));
+		setContent(content);
 	}
 
-	@Override
-	public void docked(Docked docked) {
-		super.docked(docked);
-
-		docked.addTool(comboBox);
-	}
-
-	protected void play(Playing playing) {
+	protected void play(Keyboard keyboard, Playing playing) {
 		if (play != null) {
-			if (keyboard != null) {
-				play.play(keyboard, playing);
-			}
+			play.play(keyboard, playing);
 		}
 	}
 
@@ -113,87 +62,93 @@ public class KeyboardView extends AbstractView {
 					(OrganListener) Spin.over(listener));
 		}
 
-		initKeyboard();
+		initKeyboards();
 	}
 
-	private void initKeyboard() {
-		Collection<Keyboard> keyboards;
+	private void initKeyboards() {
+		content.removeAll();
 
-		if (play == null) {
-			keyboards = Collections.emptyList();
-			keyboard = null;
-		} else {
-			keyboards = play.getOrgan().getElements(Keyboard.class);
-
-			if (keyboards.isEmpty()) {
-				keyboard = null;
-			} else {
-				keyboard = keyboards.iterator().next();
+		if (play != null) {
+			for (Keyboard keyboard : play.getOrgan()
+					.getElements(Keyboard.class)) {
+				content.add(createKeyboardPanel(keyboard));
 			}
 		}
-		comboBox.setModel(ComboBoxUtils.createModel(keyboards));
 
-		updateKeyboard();
+		content.revalidate();
+		content.repaint();
 	}
 
-	private void updateKeyboard() {
-		if (keyboard == null) {
-			keyboardPanel.reset(0, 127);
-		} else {
-			int from = 0;
-			int to = 127;
-			try {
-				from = keyboard.getFrom();
-				to = keyboard.getTo();
-			} catch (ProcessingException noRange) {
+	private KeyboardPanel createKeyboardPanel(final Keyboard keyboard) {
+		KeyboardPanel panel = new KeyboardPanel() {
+			@Override
+			protected void onKeyPress(final int pitch, final int velocity) {
+				play(keyboard, new Playing() {
+					@Override
+					public void play(Player<?> player) {
+						((KeyboardPlayer) player).press(pitch, velocity);
+					}
+				});
 			}
-			keyboardPanel.reset(from, to);
+
+			@Override
+			protected void onKeyReleased(final int pitch) {
+				play(keyboard, new Playing() {
+					@Override
+					public void play(Player<?> player) {
+						((KeyboardPlayer) player).release(pitch);
+					}
+				});
+			}
+		};
+
+		panel.setToolTipText(Elements.getDisplayName(keyboard));
+
+		try {
+			panel.reset(keyboard.getFrom(), keyboard.getTo());
+		} catch (ProcessingException noRange) {
 		}
+
+		return panel;
 	}
 
 	private class Listener extends OrganAdapter {
 		@Override
 		public void elementAdded(Element element) {
-			if (keyboard == null && element instanceof Keyboard) {
-				initKeyboard();
-			}
+			checkKeyboard(element);
 		}
 
 		@Override
 		public void elementRemoved(Element element) {
-			if (keyboard == element) {
-				initKeyboard();
-			}
+			checkKeyboard(element);
 		}
 
 		@Override
 		public void propertyChanged(Element element, String name) {
-			if (keyboard == element) {
-				updateKeyboard();
-			}
+			checkKeyboard(element);
 		}
 
 		@Override
 		public void indexedPropertyAdded(Element element, String name,
 				Object value) {
-			checkMessageChange(element, name);
+			checkKeyboard(element);
 		}
 
 		@Override
 		public void indexedPropertyChanged(Element element, String name,
 				Object value) {
-			checkMessageChange(element, name);
+			checkKeyboard(element);
 		}
 
 		@Override
 		public void indexedPropertyRemoved(Element element, String name,
 				Object value) {
-			checkMessageChange(element, name);
+			checkKeyboard(element);
 		}
 
-		private void checkMessageChange(Element element, String name) {
-			if (keyboard == element && Element.MESSAGE.equals(name)) {
-				updateKeyboard();
+		private void checkKeyboard(Element element) {
+			if (element instanceof Keyboard) {
+				initKeyboards();
 			}
 		}
 	}
