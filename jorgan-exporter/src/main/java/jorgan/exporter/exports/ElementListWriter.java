@@ -23,10 +23,13 @@ public class ElementListWriter {
 	}
 
 	private String getName(Element element) {
-		String name = element.getTexts().get("name");
-		if (name == null) {
-			name = Elements.getDisplayName(element);
+		String name = Elements.getDisplayName(element);
+
+		String descriptionName = element.getTexts().get("name");
+		if (descriptionName != null && descriptionName.trim().isEmpty()) {
+			name = descriptionName;
 		}
+
 		return name;
 	}
 }
