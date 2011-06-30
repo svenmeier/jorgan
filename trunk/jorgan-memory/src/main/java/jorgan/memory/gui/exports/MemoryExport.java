@@ -71,8 +71,9 @@ public class MemoryExport implements Export {
 	public void stream(OutputStream output) throws IOException {
 		Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 
-		new MemoryWriter(storage, panel.getUseDescriptionName(), panel
-				.getRange()).write(writer);
+		MemoryWriter memoryWriter = new MemoryWriter(storage);
+		panel.configure(memoryWriter);
+		memoryWriter.write(writer);
 
 		writer.flush();
 	}

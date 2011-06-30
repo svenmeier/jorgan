@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="">
+<organ version="@jorgan.version@">
   <elements>
     <combination id="2">
       <name></name>
       <description></description>
       <references>
         <combination-continuousReference id="3">
-          <value>0.25</value>
+          <value>1.0</value>
         </combination-continuousReference>
         <combination-switchReference id="1">
           <active>true</active>
@@ -73,7 +73,7 @@
       <zoom>1.0</zoom>
       <duration>-1</duration>
       <threshold>0.0</threshold>
-      <value>0.125</value>
+      <value>0.875</value>
       <size>4</size>
       <storage>memory-example.memory</storage>
     </memory.memory>

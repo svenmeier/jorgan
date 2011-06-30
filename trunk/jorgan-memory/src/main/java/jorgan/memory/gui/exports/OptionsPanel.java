@@ -8,6 +8,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
+import jorgan.memory.exports.MemoryWriter;
 import jorgan.memory.exports.Range;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -32,6 +33,8 @@ public class OptionsPanel extends JPanel {
 
 	private JCheckBox useDescriptionNameCheckBox;
 
+	private JCheckBox activeSwitchesOnlyCheckBox;
+
 	/**
 	 * Constructor.
 	 */
@@ -39,12 +42,17 @@ public class OptionsPanel extends JPanel {
 		DefinitionBuilder builder = new DefinitionBuilder(this);
 		Column column = builder.column();
 
-		column.term(config.get("name").read(new JLabel()));
+		column.term(config.get("content").read(new JLabel()));
 
 		useDescriptionNameCheckBox = new JCheckBox();
 		useDescriptionNameCheckBox.setSelected(true);
-		column.definition(config.get("useDescription").read(
+		column.definition(config.get("useDescriptionName").read(
 				useDescriptionNameCheckBox));
+
+		activeSwitchesOnlyCheckBox = new JCheckBox();
+		activeSwitchesOnlyCheckBox.setSelected(true);
+		column.definition(config.get("activeSwitchesOnly").read(
+				activeSwitchesOnlyCheckBox));
 
 		ButtonGroup group = new ButtonGroup() {
 			@Override
@@ -73,12 +81,14 @@ public class OptionsPanel extends JPanel {
 		column.definition(toSpinner);
 	}
 
-	public Range getRange() {
-		return new Range(((Number) fromSpinner.getValue()).intValue() - 1,
-				((Number) toSpinner.getValue()).intValue() - 1);
-	}
-
-	public boolean getUseDescriptionName() {
-		return useDescriptionNameCheckBox.isSelected();
+	public void configure(MemoryWriter memoryWriter) {
+		memoryWriter
+				.setRange(new Range(((Number) fromSpinner.getValue())
+						.intValue() - 1, ((Number) toSpinner.getValue())
+						.intValue() - 1));
+		memoryWriter.setUseDescriptionName(useDescriptionNameCheckBox
+				.isSelected());
+		memoryWriter.setActiveSwitchesOnly(activeSwitchesOnlyCheckBox
+				.isSelected());
 	}
 }
