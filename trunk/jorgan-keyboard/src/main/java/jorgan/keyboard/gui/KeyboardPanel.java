@@ -16,6 +16,10 @@ import javax.swing.event.MouseInputAdapter;
  */
 public class KeyboardPanel extends JComponent {
 
+	public static int WHITE_HEIGHT = 48;
+
+	public static int WHITE_WIDTH = 12;
+
 	private static final int C = 0;
 
 	private static final int CIS = 1;
@@ -40,7 +44,9 @@ public class KeyboardPanel extends JComponent {
 
 	private static final int B = 11;
 
-	private List<Key> keys = new ArrayList<Key>();
+	private List<Key> pitches = new ArrayList<Key>();
+
+	private List<Key> paints = new ArrayList<Key>();
 
 	private int from = 0;
 
@@ -96,8 +102,8 @@ public class KeyboardPanel extends JComponent {
 			}
 		}
 
-		setMinimumSize(new Dimension(0, WhiteKey.HEIGHT));
-		setPreferredSize(new Dimension(x, WhiteKey.HEIGHT));
+		setMinimumSize(new Dimension(0, WHITE_HEIGHT));
+		setPreferredSize(new Dimension(x + 1, WHITE_HEIGHT));
 	}
 
 	public void reset(int from, int to) {
@@ -105,8 +111,7 @@ public class KeyboardPanel extends JComponent {
 		this.to = to;
 
 		for (int k = 0; k < 128; k++) {
-			Key key = keys.get(k);
-			key.release();
+			pitches.get(k).reset();
 		}
 
 		repaint();
@@ -118,12 +123,8 @@ public class KeyboardPanel extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 
-		Dimension preferredSize = getPreferredSize();
-
-		g.translate((getWidth() - preferredSize.width) / 2,
-				(getHeight() - preferredSize.height) / 2);
 		for (int k = 0; k < 128; k++) {
-			Key key = keys.get(k);
+			Key key = paints.get(k);
 			key.paint(g);
 		}
 	}
@@ -190,7 +191,7 @@ public class KeyboardPanel extends JComponent {
 		Key key = null;
 
 		for (int k = 128 - 1; k >= 0; k--) {
-			Key candidate = keys.get(k);
+			Key candidate = paints.get(k);
 			if (candidate.hits(x, y)) {
 				key = candidate;
 				break;
@@ -217,6 +218,8 @@ public class KeyboardPanel extends JComponent {
 
 		protected boolean pressed;
 
+		protected boolean confirmed;
+
 		/**
 		 * Create a key for the given pitch.
 		 * 
@@ -234,6 +237,15 @@ public class KeyboardPanel extends JComponent {
 			this.x = x;
 			this.width = width;
 			this.height = height;
+
+			pitches.add(this);
+		}
+
+		public void reset() {
+			pressed = false;
+			confirmed = false;
+
+			repaint();
 		}
 
 		/**
@@ -244,10 +256,9 @@ public class KeyboardPanel extends JComponent {
 		 */
 		public void press(int y) {
 			if (!pressed) {
-				int velocity = 127 * y / height;
-				onKeyPress(pitch, velocity);
+				onKeyPress(pitch, 127 * y / height);
+
 				pressed = true;
-				repaint();
 			}
 		}
 
@@ -259,7 +270,6 @@ public class KeyboardPanel extends JComponent {
 				onKeyReleased(pitch);
 
 				pressed = false;
-				repaint();
 			}
 		}
 
@@ -288,6 +298,12 @@ public class KeyboardPanel extends JComponent {
 		 *            graphics to paint on
 		 */
 		public abstract void paint(Graphics g);
+
+		public void confirm(boolean confirm) {
+			this.confirmed = confirm;
+
+			repaint(x, 0, width, height);
+		}
 	}
 
 	private class BlackKey extends Key {
@@ -307,7 +323,7 @@ public class KeyboardPanel extends JComponent {
 		public BlackKey(int pitch, int x, float offset) {
 			super(pitch, x - Math.round(WIDTH * offset), WIDTH, HEIGHT);
 
-			keys.add(this);
+			paints.add(this);
 		}
 
 		@Override
@@ -319,7 +335,7 @@ public class KeyboardPanel extends JComponent {
 				g.setColor(Color.BLACK);
 				g.fillRect(x, 0, WIDTH, HEIGHT);
 
-				if (pressed) {
+				if (confirmed) {
 					g.setColor(Color.GRAY);
 					g.fillRect(x + 1, 1, WIDTH - 2, HEIGHT - 2);
 				} else {
@@ -332,10 +348,6 @@ public class KeyboardPanel extends JComponent {
 
 	private class WhiteKey extends Key {
 
-		private static final int WIDTH = 12;
-
-		private static final int HEIGHT = 48;
-
 		/**
 		 * Create a white key for the given pitch at the given x position.
 		 * 
@@ -345,23 +357,23 @@ public class KeyboardPanel extends JComponent {
 		 *            x position
 		 */
 		public WhiteKey(int pitch, int x) {
-			super(pitch, x, WIDTH, HEIGHT);
+			super(pitch, x, WHITE_WIDTH, WHITE_HEIGHT);
 
-			keys.add(0, this);
+			paints.add(0, this);
 		}
 
 		@Override
 		public void paint(Graphics g) {
-			if (pressed) {
+			if (confirmed) {
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(x, 0, WIDTH, HEIGHT);
+				g.fillRect(x, 0, WHITE_WIDTH, WHITE_HEIGHT);
 			} else {
 				g.setColor(Color.WHITE);
-				g.fillRect(x, 0, WIDTH, HEIGHT);
+				g.fillRect(x, 0, WHITE_WIDTH, WHITE_HEIGHT);
 
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(x, 0, WIDTH, 3);
-				g.fillRect(x, HEIGHT - 2, WIDTH, 2);
+				g.fillRect(x, 0, WHITE_WIDTH, 3);
+				g.fillRect(x, WHITE_HEIGHT - 2, WHITE_WIDTH, 2);
 			}
 
 			if (pitch < from || pitch > to) {
@@ -369,7 +381,11 @@ public class KeyboardPanel extends JComponent {
 			} else {
 				g.setColor(Color.GRAY);
 			}
-			g.drawRect(x, 0, WIDTH, HEIGHT - 1);
+			g.drawRect(x, 0, WHITE_WIDTH, WHITE_HEIGHT - 1);
+
+			if (pitch == 60) {
+				g.fillRect(x + WHITE_WIDTH / 2 - 2, WHITE_HEIGHT - 8, 4, 4);
+			}
 		}
 	}
 
@@ -381,5 +397,13 @@ public class KeyboardPanel extends JComponent {
 	}
 
 	protected void onKeyPress(int pitch, int velocity) {
+	}
+
+	public void confirmKeyPressed(int pitch) {
+		pitches.get(pitch).confirm(true);
+	}
+
+	public void confirmKeyReleased(int pitch) {
+		pitches.get(pitch).confirm(false);
 	}
 }
