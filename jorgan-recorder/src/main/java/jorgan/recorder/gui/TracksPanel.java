@@ -18,7 +18,6 @@
  */
 package jorgan.recorder.gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -28,18 +27,18 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 
-import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import jorgan.recorder.Performance;
+import jorgan.swing.RowHeader;
 
 public class TracksPanel extends JPanel implements Scrollable {
 
 	private Performance performance;
 
-	private HeaderPanel headerPanel = new HeaderPanel();
+	private RowHeader header = new RowHeader(this);
 
 	private EventListener listener = new EventListener();
 
@@ -55,8 +54,14 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 		for (int track = 0; track < performance.getTrackerCount(); track++) {
 			add(new TrackGraph(performance, track));
-			headerPanel.add(new TrackHeader(performance, track));
+			header.add(new TrackHeader(performance, track));
 		}
+	}
+
+	public void addNotify() {
+		super.addNotify();
+
+		header.configureEnclosingScrollPane();
 	}
 
 	public Dimension getPreferredScrollableViewportSize() {
@@ -86,8 +91,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 		if (orientation == SwingConstants.HORIZONTAL) {
 			increment = 10 * TrackGraph.SECOND_WIDTH;
 		} else {
-			increment = getPreferredSize().height
-					/ performance.getTrackerCount();
+			increment = getPreferredSize().height / getComponentCount();
 		}
 
 		return increment;
@@ -108,30 +112,6 @@ public class TracksPanel extends JPanel implements Scrollable {
 		if (performance.getState() != Performance.STATE_STOP) {
 			int x = millisToX(performance.getTime());
 			scrollRectToVisible(new Rectangle(x, 0, 2, getHeight()));
-		}
-	}
-
-	public JComponent getHeader() {
-		JPanel wrapper = new JPanel(new BorderLayout());
-		wrapper.add(headerPanel, BorderLayout.NORTH);
-
-		return wrapper;
-	}
-
-	private class HeaderPanel extends JPanel {
-
-		public HeaderPanel() {
-			super(new GridLayout(-1, 1));
-
-			setBackground(Color.white);
-		}
-
-		@Override
-		public Dimension getPreferredSize() {
-			int width = super.getPreferredSize().width;
-			int height = TracksPanel.this.getPreferredSize().height;
-
-			return new Dimension(width, height);
 		}
 	}
 

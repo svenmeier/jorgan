@@ -146,7 +146,6 @@ public class RecorderView extends AbstractView {
 		if (performance != null && performance.isLoaded()) {
 			tracksPanel = new TracksPanel(performance);
 			JScrollPane scrollPane = new JScrollPane(tracksPanel);
-			scrollPane.setRowHeaderView(tracksPanel.getHeader());
 			scrollPane.getViewport().setBackground(tracksPanel.getBackground());
 			setContent(scrollPane);
 		}
