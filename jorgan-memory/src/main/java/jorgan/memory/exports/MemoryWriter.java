@@ -17,17 +17,29 @@ public class MemoryWriter {
 
 	private Storage storage;
 
-	private Range range;
+	private Range range = new Range(0, 0);
 
 	private boolean useDescriptionName;
 
-	public MemoryWriter(Storage storage, boolean useDescriptionName, Range range) {
+	private boolean activeSwitchesOnly;
+
+	public MemoryWriter(Storage storage) {
 		if (!storage.isLoaded()) {
 			throw new IllegalArgumentException("no memory");
 		}
 		this.storage = storage;
-		this.useDescriptionName = useDescriptionName;
+	}
+
+	public void setRange(Range range) {
 		this.range = range;
+	}
+
+	public void setUseDescriptionName(boolean useDescriptionName) {
+		this.useDescriptionName = useDescriptionName;
+	}
+
+	public void setActiveSwitchesOnly(boolean activeSwitchesOnly) {
+		this.activeSwitchesOnly = activeSwitchesOnly;
 	}
 
 	public void write(Writer writer) throws IOException {
@@ -54,6 +66,10 @@ public class MemoryWriter {
 
 		Object state = storage.getState().get(combination, reference, level);
 		String name = getName(reference.getElement());
+
+		if (Boolean.FALSE.equals(state) && activeSwitchesOnly) {
+			return;
+		}
 
 		writer.write(String.format("       %4s %s\n", format.format(state),
 				name));
