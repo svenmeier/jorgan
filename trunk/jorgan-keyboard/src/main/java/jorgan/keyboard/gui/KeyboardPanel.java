@@ -44,9 +44,11 @@ public class KeyboardPanel extends JComponent {
 
 	private static final int B = 11;
 
-	private List<Key> pitches = new ArrayList<Key>();
+	private List<BlackKey> blackKeys = new ArrayList<BlackKey>(128);
 
-	private List<Key> paints = new ArrayList<Key>();
+	private List<WhiteKey> whiteKeys = new ArrayList<WhiteKey>(128);
+
+	private List<Key> keys = new ArrayList<Key>(128);
 
 	private int from = 0;
 
@@ -110,8 +112,8 @@ public class KeyboardPanel extends JComponent {
 		this.from = from;
 		this.to = to;
 
-		for (int k = 0; k < 128; k++) {
-			pitches.get(k).reset();
+		for (Key key : keys) {
+			key.reset();
 		}
 
 		repaint();
@@ -123,8 +125,11 @@ public class KeyboardPanel extends JComponent {
 	@Override
 	protected void paintComponent(Graphics g) {
 
-		for (int k = 0; k < 128; k++) {
-			Key key = paints.get(k);
+		for (Key key : whiteKeys) {
+			key.paint(g);
+		}
+
+		for (Key key : blackKeys) {
 			key.paint(g);
 		}
 	}
@@ -190,12 +195,21 @@ public class KeyboardPanel extends JComponent {
 
 		Key key = null;
 
-		for (int k = 128 - 1; k >= 0; k--) {
-			Key candidate = paints.get(k);
+		for (Key candidate : blackKeys) {
 			if (candidate.hits(x, y)) {
 				key = candidate;
 				break;
 			}
+		}
+
+		if (key == null) {
+			for (Key candidate : whiteKeys) {
+				if (candidate.hits(x, y)) {
+					key = candidate;
+					break;
+				}
+			}
+
 		}
 
 		if (key == null) {
@@ -238,7 +252,7 @@ public class KeyboardPanel extends JComponent {
 			this.width = width;
 			this.height = height;
 
-			pitches.add(this);
+			keys.add(this);
 		}
 
 		public void reset() {
@@ -323,7 +337,7 @@ public class KeyboardPanel extends JComponent {
 		public BlackKey(int pitch, int x, float offset) {
 			super(pitch, x - Math.round(WIDTH * offset), WIDTH, HEIGHT);
 
-			paints.add(this);
+			blackKeys.add(this);
 		}
 
 		@Override
@@ -359,7 +373,7 @@ public class KeyboardPanel extends JComponent {
 		public WhiteKey(int pitch, int x) {
 			super(pitch, x, WHITE_WIDTH, WHITE_HEIGHT);
 
-			paints.add(0, this);
+			whiteKeys.add(this);
 		}
 
 		@Override
@@ -400,10 +414,10 @@ public class KeyboardPanel extends JComponent {
 	}
 
 	public void confirmKeyPressed(int pitch) {
-		pitches.get(pitch).confirm(true);
+		keys.get(pitch).confirm(true);
 	}
 
 	public void confirmKeyReleased(int pitch) {
-		pitches.get(pitch).confirm(false);
+		keys.get(pitch).confirm(false);
 	}
 }
