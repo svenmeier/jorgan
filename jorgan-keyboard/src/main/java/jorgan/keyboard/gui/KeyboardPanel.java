@@ -386,7 +386,7 @@ public class KeyboardPanel extends JComponent {
 				g.fillRect(x, 0, WHITE_WIDTH, WHITE_HEIGHT);
 
 				g.setColor(Color.LIGHT_GRAY);
-				g.fillRect(x, 0, WHITE_WIDTH, 3);
+				g.fillRect(x, 0, WHITE_WIDTH, 4);
 				g.fillRect(x, WHITE_HEIGHT - 2, WHITE_WIDTH, 2);
 			}
 
