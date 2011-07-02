@@ -86,9 +86,9 @@
       <description></description>
       <references/>
       <messages>
-        <keyboard-pressKey>equal 144, greaterEqual 40 | get pitch, greater 0 | get velocity</keyboard-pressKey>
-        <keyboard-releaseKey>equal 128, greaterEqual 40 | get pitch, </keyboard-releaseKey>
-        <keyboard-releaseKey>equal 144, greaterEqual 40 | get pitch, equal 0 | get velocity</keyboard-releaseKey>
+        <keyboard-pressKey>equal 144, lessEqual 107 | greaterEqual 12 | get pitch, greater 0 | get velocity</keyboard-pressKey>
+        <keyboard-releaseKey>equal 128, lessEqual 107 | greaterEqual 12 | get pitch, </keyboard-releaseKey>
+        <keyboard-releaseKey>equal 144, lessEqual 107 | greaterEqual 12 | get pitch, equal 0 | get velocity</keyboard-releaseKey>
       </messages>
     </keyboard>
     <continuous id="3">
@@ -99,7 +99,7 @@
       <zoom>1.0</zoom>
       <duration>-1</duration>
       <threshold>0.0</threshold>
-      <value>0.2857143</value>
+      <value>0.0</value>
     </continuous>
     <label id="9">
       <name></name>
