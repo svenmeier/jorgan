@@ -30,6 +30,8 @@ public class RowHeader extends JPanel {
 				if (viewport == null || viewport.getView() != view) {
 					return;
 				}
+				viewport.setBackground(view.getBackground());
+
 				scrollPane.setRowHeaderView(this);
 			}
 		}
