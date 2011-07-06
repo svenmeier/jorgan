@@ -21,7 +21,11 @@ package jorgan.disposition;
 public abstract class IndexedContinuous extends Continuous {
 
 	protected int getIndex(float value) {
-		return Math.min(getSize() - 1, Math.round(-0.5f + getSize() * value));
+		if (getSize() == 0) {
+			return 0;
+		}
+
+		return (int) (-0.5f + getSize() * value);
 	}
 
 	public int getIndex() {
