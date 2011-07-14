@@ -5,6 +5,8 @@ jorgan (3.14-beta1) beta;
   * customizer: set deactivate before activate to allow customizing of infinite switches  
   * recorder: fixed bug for empty tracker not attached
   * export: new extension
+  * keyboard: play into disposition without setup, multiple keyboards
+  * lcd: first integration of lcdproc
   * memory: export levels
 
  -- Sven Meier <sven@meiers.net>  Sun, 1 May 2011 17:00:00 +0200
