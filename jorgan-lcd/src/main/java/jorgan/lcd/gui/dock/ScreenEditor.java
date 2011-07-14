@@ -5,7 +5,7 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.dock.AbstractEditor;
-import jorgan.lcd.disposition.Screen;
+import jorgan.lcd.disposition.Display;
 import jorgan.session.OrganSession;
 import spin.Spin;
 
@@ -15,9 +15,9 @@ public class ScreenEditor extends AbstractEditor {
 
 	private OrganSession session;
 
-	private Screen screen;
+	private Display screen;
 
-	public ScreenEditor(Screen screen) {
+	public ScreenEditor(Display screen) {
 		this.screen = screen;
 	}
 
