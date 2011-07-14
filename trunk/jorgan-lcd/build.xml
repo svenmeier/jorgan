@@ -38,6 +38,11 @@
       <fileset dir="./target/classes" />
   	</jar>
 
+  	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions">
+      <fileset dir="./src/main/dispositions" />
+    </copy> 		
+
 	<zip destfile="./target/jOrgan-lcd-${lcd.version}.zip">
       <fileset dir="./target/marshal" />
 	</zip>  	
