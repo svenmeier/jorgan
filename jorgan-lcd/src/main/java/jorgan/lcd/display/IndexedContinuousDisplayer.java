@@ -16,23 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd.gui.construct.info;
+package jorgan.lcd.display;
 
-import jorgan.gui.construct.editor.IntegerEditor;
-import jorgan.gui.construct.editor.StringEditor;
-import jorgan.gui.construct.info.ElementBeanInfo;
-import jorgan.lcd.disposition.Display;
+import java.io.IOException;
+
+import jorgan.disposition.IndexedContinuous;
+import jorgan.lcd.lcdproc.Screen;
+import jorgan.lcd.lcdproc.StringWidget;
 
 /**
- * BeanInfo for {@link Display}.
+ * A displayer of a {@link IndexedContinuous}.
  */
-public class ScreenBeanInfo extends ElementBeanInfo {
+public abstract class IndexedContinuousDisplayer<T extends IndexedContinuous>
+		extends ElementDisplayer<T> {
+
+	private StringWidget string;
+
+	public IndexedContinuousDisplayer(Screen screen, int row, T element)
+			throws IOException {
+		super(element);
+
+		string = new StringWidget(screen, 1, row);
+
+		update();
+	}
 
 	@Override
-	protected void registerProperties() {
-		super.registerProperties();
-
-		add("host", Display.class, StringEditor.class);
-		add("port", Display.class, IntegerEditor.class);
+	public void update() throws IOException {
+		string.value(getTitle(getElement().getIndex()));
 	}
+
+	protected abstract String getTitle(int index);
 }

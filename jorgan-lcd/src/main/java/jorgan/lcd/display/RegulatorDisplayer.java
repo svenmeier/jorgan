@@ -20,21 +20,21 @@ package jorgan.lcd.display;
 
 import java.io.IOException;
 
-import jorgan.disposition.Element;
+import jorgan.disposition.Regulator;
+import jorgan.lcd.lcdproc.Screen;
 
 /**
- * A displayer of an {@link Element}.
+ * A displayer of a {@link Regulator}.
  */
-public abstract class ElementDisplayer<T extends Element> {
-	private T element;
+public class RegulatorDisplayer extends IndexedContinuousDisplayer<Regulator> {
 
-	public ElementDisplayer(T element) {
-		this.element = element;
+	public RegulatorDisplayer(Screen screen, int row, Regulator element)
+			throws IOException {
+		super(screen, row, element);
 	}
 
-	public T getElement() {
-		return element;
+	protected String getTitle(int index) {
+		return OrganDisplay.getName(getElement().getReference(index)
+				.getElement());
 	}
-
-	public abstract void update() throws IOException;
 }

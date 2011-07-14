@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.lcd.display.spi.DisplayerRegistry;
@@ -35,7 +36,7 @@ public class OrganDisplay {
 
 	private Map<Display, ScreenWrapper> wrappers = new HashMap<Display, ScreenWrapper>();
 
-	public OrganDisplay(Organ organ) {
+	public OrganDisplay(final Organ organ) {
 		organ.addOrganListener(new OrganAdapter() {
 			@Override
 			public void elementAdded(Element element) {
@@ -52,7 +53,31 @@ public class OrganDisplay {
 			}
 
 			public void propertyChanged(Element element, String name) {
+				for (Display display : organ
+						.getReferrer(element, Display.class)) {
+					ScreenWrapper wrapper = wrappers.get(display);
+					if (wrapper != null) {
+						wrapper.update(element);
+					}
+				}
+			}
 
+			@Override
+			public void indexedPropertyAdded(Element element, String name,
+					Object value) {
+				if (element instanceof Display) {
+					remove((Display) element);
+					add((Display) element);
+				}
+			}
+
+			@Override
+			public void indexedPropertyRemoved(Element element, String name,
+					Object value) {
+				if (element instanceof Display) {
+					remove((Display) element);
+					add((Display) element);
+				}
 			}
 		});
 
@@ -67,8 +92,9 @@ public class OrganDisplay {
 
 	protected void remove(Display display) {
 		ScreenWrapper wrapper = wrappers.remove(display);
-
-		wrapper.close();
+		if (wrapper != null) {
+			wrapper.close();
+		}
 	}
 
 	public void destroy() {
@@ -88,8 +114,10 @@ public class OrganDisplay {
 		public ScreenWrapper(Display display) {
 			try {
 				this.client = new Client(display.getHost(), display.getPort());
+				this.client.setName("jOrgan");
 
 				this.screen = client.addScreen();
+				this.screen.setName(getName(display));
 
 				int row = 1;
 				for (Element element : display.getReferenced(Element.class)) {
@@ -105,6 +133,18 @@ public class OrganDisplay {
 			}
 		}
 
+		public void update(Element element) {
+			ElementDisplayer<?> displayer = displayers.get(element);
+			if (displayer != null) {
+				try {
+					displayer.update();
+				} catch (IOException e) {
+					// TODO
+					e.printStackTrace();
+				}
+			}
+		}
+
 		public void close() {
 			if (this.client != null) {
 				try {
@@ -113,6 +153,19 @@ public class OrganDisplay {
 				}
 				client = null;
 			}
+
+			displayers.clear();
 		}
+	}
+
+	public static String getName(Element element) {
+		String name = Elements.getDisplayName(element);
+
+		String descriptionName = element.getTexts().get("name");
+		if (descriptionName != null && descriptionName.trim().isEmpty()) {
+			name = descriptionName;
+		}
+
+		return name;
 	}
 }

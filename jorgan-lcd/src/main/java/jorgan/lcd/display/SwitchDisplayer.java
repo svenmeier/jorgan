@@ -48,7 +48,7 @@ public class SwitchDisplayer extends ElementDisplayer<Switch> {
 
 	@Override
 	public void update() throws IOException {
-		string.value(getName());
+		string.value(OrganDisplay.getName(getElement()));
 
 		Icon checkbox;
 		if (getElement().isActive()) {

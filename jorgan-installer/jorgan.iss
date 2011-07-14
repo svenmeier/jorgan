@@ -46,6 +46,7 @@ Name: "importer"; Description: "Importer"; Types: standard
 Name: "exporter"; Description: "Exporter"; Types: standard
 Name: "keyboard"; Description: "Keyboard"; Types: standard
 Name: "lan"; Description: "LAN"; Types: standard
+Name: "lcd"; Description: "LCD"; Types: standard
 Name: "linuxsampler"; Description: "Linuxsampler"; Types: standard
 Name: "memory"; Description: "Memory"; Types: standard
 Name: "midimerger"; Description: "Midi merger"; Types: standard
@@ -68,6 +69,7 @@ Source: "..\jorgan-importer\target\marshal\*"; DestDir: "{app}"; Components: imp
 Source: "..\jorgan-exporter\target\marshal\*"; DestDir: "{app}"; Components: exporter; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-keyboard\target\marshal\*"; DestDir: "{app}"; Components: keyboard; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-lan\target\marshal\*"; DestDir: "{app}"; Components: lan; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-lcd\target\marshal\*"; DestDir: "{app}"; Components: lcd; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-linuxsampler\target\marshal\*"; DestDir: "{app}"; Components: linuxsampler; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-memory\target\marshal\*"; DestDir: "{app}"; Components: memory; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-midimerger\target\marshal\*"; DestDir: "{app}"; Components: midimerger; Flags: recursesubdirs createallsubdirs
