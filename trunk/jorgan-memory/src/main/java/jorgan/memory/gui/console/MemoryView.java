@@ -28,7 +28,7 @@ import jorgan.session.OrganSession;
  */
 public class MemoryView extends IndexedContinuousView<Memory> {
 
-	private Storage manager;
+	private Storage storage;
 
 	/**
 	 * Constructor.
@@ -41,7 +41,7 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	public MemoryView(OrganSession session, Memory element) {
 		super(element);
 
-		manager = session.lookup(Storage.class);
+		storage = session.lookup(Storage.class);
 	}
 
 	@Override
@@ -54,6 +54,6 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	}
 
 	protected String getTitle(int index) {
-		return manager.getTitle(index);
+		return storage.getTitle(index);
 	}
 }
