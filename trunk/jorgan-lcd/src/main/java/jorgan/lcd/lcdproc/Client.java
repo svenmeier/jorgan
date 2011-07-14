@@ -26,11 +26,9 @@ public class Client {
 
 	private BufferedReader reader;
 
-	private int width;
+	private Dimension size;
 
-	private int height;
-
-	private Resolution resolution;
+	private Dimension resolution;
 
 	public Client() throws SocketTimeoutException, UnknownHostException,
 			IOException {
@@ -58,23 +56,14 @@ public class Client {
 			// response = "connect LCDproc 0.5dev protocol 0.3 lcd wid 20 hgt 4
 			// cellwid 5 cellhgt 8"
 			String response = sendImpl(new Parameters("hello"));
-			width = parse(response, "wid");
-			height = parse(response, "hgt");
-			resolution = new Resolution(parse(response, "cellwid"), parse(
+			size = new Dimension(parse(response, "wid"), parse(response, "hgt"));
+			resolution = new Dimension(parse(response, "cellwid"), parse(
 					response, "cellhgt"));
 		} catch (IOException e) {
 			socket.close();
 
 			throw e;
 		}
-	}
-
-	public int getWidth() {
-		return width;
-	}
-
-	public int getHeight() {
-		return height;
 	}
 
 	public void close() throws IOException {
@@ -125,7 +114,7 @@ public class Client {
 	}
 
 	public Screen addScreen() throws IOException {
-		return new Screen(resolution, new ConnectionImpl());
+		return new Screen(size, resolution, new ConnectionImpl());
 	}
 
 	private class ConnectionImpl implements Connection {

@@ -21,10 +21,10 @@ package jorgan.lcd.gui.construct.info;
 import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.StringEditor;
 import jorgan.gui.construct.info.ElementBeanInfo;
-import jorgan.lcd.disposition.Screen;
+import jorgan.lcd.disposition.Display;
 
 /**
- * BeanInfo for {@link Screen}.
+ * BeanInfo for {@link Display}.
  */
 public class ScreenBeanInfo extends ElementBeanInfo {
 
@@ -32,7 +32,7 @@ public class ScreenBeanInfo extends ElementBeanInfo {
 	protected void registerProperties() {
 		super.registerProperties();
 
-		add("host", Screen.class, StringEditor.class);
-		add("port", Screen.class, IntegerEditor.class);
+		add("host", Display.class, StringEditor.class);
+		add("port", Display.class, IntegerEditor.class);
 	}
 }

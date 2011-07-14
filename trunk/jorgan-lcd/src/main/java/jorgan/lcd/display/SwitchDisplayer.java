@@ -18,44 +18,44 @@
  */
 package jorgan.lcd.display;
 
-import java.io.File;
 import java.io.IOException;
 
-import jorgan.session.OrganSession;
-import jorgan.session.SessionListener;
-import jorgan.session.spi.SessionProvider;
+import jorgan.disposition.Switch;
+import jorgan.lcd.lcdproc.IconWidget;
+import jorgan.lcd.lcdproc.Screen;
+import jorgan.lcd.lcdproc.StringWidget;
+import jorgan.lcd.lcdproc.IconWidget.Icon;
 
-public class LCDSessionProvider implements SessionProvider {
+/**
+ * A display of a {@link Screen}.
+ */
+public class SwitchDisplayer extends ElementDisplayer<Switch> {
 
-	public void init(OrganSession session) {
-		session.lookup(OrganDisplay.class);
+	private StringWidget string;
+
+	private IconWidget icon;
+
+	public SwitchDisplayer(Screen screen, int row, Switch element)
+			throws IOException {
+		super(element);
+
+		string = new StringWidget(screen, 1, row);
+
+		icon = new IconWidget(screen, screen.size.width, row);
+
+		update();
 	}
 
-	public Object create(final OrganSession session, Class<?> clazz) {
-		if (clazz == OrganDisplay.class) {
-			final OrganDisplay display = new OrganDisplay(session.getOrgan());
+	@Override
+	public void update() throws IOException {
+		string.value(getName());
 
-			session.addListener(new SessionListener() {
-				@Override
-				public void saved(File file) throws IOException {
-				}
-
-				@Override
-				public void modified() {
-				}
-
-				@Override
-				public void destroyed() {
-					display.destroy();
-				}
-
-				@Override
-				public void constructingChanged(boolean constructing) {
-				}
-			});
-
-			return display;
+		Icon checkbox;
+		if (getElement().isActive()) {
+			checkbox = Icon.CHECKBOX_ON;
+		} else {
+			checkbox = Icon.CHECKBOX_OFF;
 		}
-		return null;
+		icon.value(checkbox);
 	}
 }

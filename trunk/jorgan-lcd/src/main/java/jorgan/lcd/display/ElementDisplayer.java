@@ -18,44 +18,35 @@
  */
 package jorgan.lcd.display;
 
-import java.io.File;
 import java.io.IOException;
 
-import jorgan.session.OrganSession;
-import jorgan.session.SessionListener;
-import jorgan.session.spi.SessionProvider;
+import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 
-public class LCDSessionProvider implements SessionProvider {
+/**
+ * A displayer of an {@link Element}.
+ */
+public abstract class ElementDisplayer<T extends Element> {
+	private T element;
 
-	public void init(OrganSession session) {
-		session.lookup(OrganDisplay.class);
+	public ElementDisplayer(T element) {
+		this.element = element;
 	}
 
-	public Object create(final OrganSession session, Class<?> clazz) {
-		if (clazz == OrganDisplay.class) {
-			final OrganDisplay display = new OrganDisplay(session.getOrgan());
+	public T getElement() {
+		return element;
+	}
 
-			session.addListener(new SessionListener() {
-				@Override
-				public void saved(File file) throws IOException {
-				}
+	public abstract void update() throws IOException;
 
-				@Override
-				public void modified() {
-				}
+	protected String getName() {
+		String name = Elements.getDisplayName(element);
 
-				@Override
-				public void destroyed() {
-					display.destroy();
-				}
-
-				@Override
-				public void constructingChanged(boolean constructing) {
-				}
-			});
-
-			return display;
+		String descriptionName = element.getTexts().get("name");
+		if (descriptionName != null && descriptionName.trim().isEmpty()) {
+			name = descriptionName;
 		}
-		return null;
+
+		return name;
 	}
 }

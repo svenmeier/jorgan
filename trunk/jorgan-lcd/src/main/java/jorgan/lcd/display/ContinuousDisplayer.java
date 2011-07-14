@@ -20,32 +20,36 @@ package jorgan.lcd.display;
 
 import java.io.IOException;
 
-import jorgan.lcd.disposition.Screen;
-import jorgan.lcd.lcdproc.Client;
+import jorgan.disposition.Continuous;
+import jorgan.lcd.lcdproc.HBarWidget;
+import jorgan.lcd.lcdproc.Screen;
 import jorgan.lcd.lcdproc.StringWidget;
 
 /**
- * A display of a {@link Screen}.
+ * A displayer of a {@link Continuous}.
  */
-public class ScreenDisplay {
+public class ContinuousDisplayer extends ElementDisplayer<Continuous> {
 
-	private Screen screen;
+	private StringWidget string;
 
-	private Client client;
+	private HBarWidget bar;
 
-	private jorgan.lcd.lcdproc.Screen lcdprocScreen;
+	public ContinuousDisplayer(Screen screen, int row, Continuous element)
+			throws IOException {
+		super(element);
 
-	public ScreenDisplay(Screen screen) throws IOException {
-		this.screen = screen;
+		string = new StringWidget(screen, 1, row);
 
-		client = new Client(screen.getHost(), screen.getPort());
+		bar = new HBarWidget(screen, screen.size.width / 2, row,
+				screen.size.width / 2);
 
-		lcdprocScreen = client.addScreen();
-
-		new StringWidget(lcdprocScreen, 1, 1).value("Hello jOrgan");
+		update();
 	}
 
-	public void destroy() throws IOException {
-		client.close();
+	@Override
+	public void update() throws IOException {
+		string.value(getName());
+
+		bar.value(getElement().getValue());
 	}
 }

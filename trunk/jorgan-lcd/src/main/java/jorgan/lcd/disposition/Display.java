@@ -4,7 +4,7 @@ import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.util.Null;
 
-public class Screen extends Element {
+public class Display extends Element {
 
 	private String host = "localhost";
 

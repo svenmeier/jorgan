@@ -17,7 +17,7 @@ public class LCDElementProvider implements ElementProvider {
 	public List<Class<? extends Element>> getElementClasses(Organ organ) {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
-		classes.add(Screen.class);
+		classes.add(Display.class);
 
 		return classes;
 	}
