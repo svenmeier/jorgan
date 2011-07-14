@@ -11,6 +11,7 @@
     <ant dir="jorgan-fluidsynth"/>
     <ant dir="jorgan-keyboard"/>
     <ant dir="jorgan-lan"/>
+    <ant dir="jorgan-lcd"/>
     <ant dir="jorgan-linuxsampler"/>
     <ant dir="jorgan-memory"/>
     <ant dir="jorgan-midimerger"/>
