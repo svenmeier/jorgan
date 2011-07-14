@@ -48,7 +48,7 @@ public class ContinuousDisplayer extends ElementDisplayer<Continuous> {
 
 	@Override
 	public void update() throws IOException {
-		string.value(getName());
+		string.value(OrganDisplay.getName(getElement()));
 
 		bar.value(getElement().getValue());
 	}

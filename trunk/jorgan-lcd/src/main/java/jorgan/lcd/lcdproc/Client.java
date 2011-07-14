@@ -113,6 +113,10 @@ public class Client {
 		return result;
 	}
 
+	public void setName(String name) throws IOException {
+		sendImpl(new Parameters("client_set", "-name", name));
+	}
+
 	public Screen addScreen() throws IOException {
 		return new Screen(size, resolution, new ConnectionImpl());
 	}

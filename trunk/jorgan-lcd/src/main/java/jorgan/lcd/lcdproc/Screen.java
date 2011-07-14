@@ -16,4 +16,12 @@ public class Screen extends Component {
 
 		connection.send(new Parameters("screen_add", this.id));
 	}
+
+	protected void set(Object... values) throws IOException {
+		connection.send(new Parameters("screen_set", this.id).append(values));
+	}
+
+	public void setName(String name) throws IOException {
+		set("-name", name);
+	}
 }

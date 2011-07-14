@@ -18,6 +18,8 @@ debian/input/copyright /usr/share/doc/jorgan
 ../../jorgan-exporter/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-lan/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-lan/target/marshal/dispositions/* /usr/share/jorgan/dispositions
+../../jorgan-lcd/target/marshal/lib/* /usr/lib/jorgan/lib
+../../jorgan-lcd/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-linuxsampler/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-memory/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-memory/target/marshal/dispositions/* /usr/share/jorgan/dispositions

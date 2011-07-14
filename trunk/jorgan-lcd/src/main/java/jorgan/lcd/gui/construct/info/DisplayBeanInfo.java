@@ -16,25 +16,23 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd.display;
+package jorgan.lcd.gui.construct.info;
 
-import java.io.IOException;
-
-import jorgan.disposition.Element;
+import jorgan.gui.construct.editor.IntegerEditor;
+import jorgan.gui.construct.editor.StringEditor;
+import jorgan.gui.construct.info.ElementBeanInfo;
+import jorgan.lcd.disposition.Display;
 
 /**
- * A displayer of an {@link Element}.
+ * BeanInfo for {@link Display}.
  */
-public abstract class ElementDisplayer<T extends Element> {
-	private T element;
+public class DisplayBeanInfo extends ElementBeanInfo {
 
-	public ElementDisplayer(T element) {
-		this.element = element;
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
+
+		add("host", Display.class, StringEditor.class);
+		add("port", Display.class, IntegerEditor.class);
 	}
-
-	public T getElement() {
-		return element;
-	}
-
-	public abstract void update() throws IOException;
 }
