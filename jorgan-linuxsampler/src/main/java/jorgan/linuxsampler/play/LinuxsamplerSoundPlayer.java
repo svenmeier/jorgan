@@ -84,26 +84,22 @@ public class LinuxsamplerSoundPlayer extends
 		LinuxsamplerSound sound = getElement();
 
 		removeProblem(Severity.ERROR, "host");
-		if (sound.getHost() != null) {
-			try {
-				linuxsampler = new Linuxsampler(sound.getHost(), sound
-						.getPort());
+		try {
+			linuxsampler = new Linuxsampler(sound.getHost(), sound.getPort());
 
-				clone = (LinuxsamplerSound) sound.clone();
-			} catch (UnknownHostException e) {
-				addProblem(Severity.ERROR, "host", "unkownHost", sound
-						.getHost());
-				return;
-			} catch (SocketTimeoutException e) {
-				addProblem(Severity.ERROR, "host", "hostTimeout");
-				return;
-			} catch (IOException e) {
-				addProblem(Severity.ERROR, "host", "hostUnavailable");
-				return;
-			}
-
-			loadLscp();
+			clone = (LinuxsamplerSound) sound.clone();
+		} catch (UnknownHostException e) {
+			addProblem(Severity.ERROR, "host", "unkownHost", sound.getHost());
+			return;
+		} catch (SocketTimeoutException e) {
+			addProblem(Severity.ERROR, "host", "hostTimeout");
+			return;
+		} catch (IOException e) {
+			addProblem(Severity.ERROR, "host", "hostUnavailable");
+			return;
 		}
+
+		loadLscp();
 	}
 
 	private synchronized void loadLscp() {

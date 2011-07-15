@@ -2,30 +2,32 @@ package jorgan.lcd.display.spi;
 
 import java.io.IOException;
 
-import jorgan.disposition.Continuous;
 import jorgan.disposition.Element;
-import jorgan.disposition.Regulator;
-import jorgan.disposition.Switch;
-import jorgan.lcd.display.ContinuousDisplayer;
 import jorgan.lcd.display.ElementDisplayer;
-import jorgan.lcd.display.RegulatorDisplayer;
-import jorgan.lcd.display.SwitchDisplayer;
 import jorgan.lcd.lcdproc.Screen;
+import jorgan.session.OrganSession;
+import jorgan.util.PluginUtils;
 
 public class DisplayerRegistry {
 
-	public ElementDisplayer<?> getDisplayer(Screen screen, int row,
-			Element element) throws IOException {
-		ElementDisplayer<?> display = null;
+	public static ElementDisplayer<?> getDisplayer(OrganSession session,
+			Element element, Screen screen, int row) throws IOException {
+		ElementDisplayer<?> displayer = null;
 
-		if (element instanceof Switch) {
-			display = new SwitchDisplayer(screen, row, (Switch) element);
-		} else if (element instanceof Regulator) {
-			display = new RegulatorDisplayer(screen, row, (Regulator) element);
-		} else if (element instanceof Continuous) {
-			display = new ContinuousDisplayer(screen, row, (Continuous) element);
+		for (DisplayerProvider provider : PluginUtils
+				.lookup(DisplayerProvider.class)) {
+			ElementDisplayer<?> candidate = provider.createDisplayer(session,
+					element, screen, row);
+			if (candidate != null) {
+				// prefer more specific displayer
+				if (displayer == null
+						|| displayer.getClass().isAssignableFrom(
+								candidate.getClass())) {
+					displayer = candidate;
+				}
+			}
 		}
 
-		return display;
+		return displayer;
 	}
 }

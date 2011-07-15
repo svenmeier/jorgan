@@ -5,5 +5,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jorgan"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-exporter"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-lcd"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

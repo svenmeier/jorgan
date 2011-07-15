@@ -16,32 +16,35 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.lcd.display;
+package jorgan.memory.display;
 
 import java.io.IOException;
 
-import jorgan.disposition.Elements;
 import jorgan.disposition.Regulator;
+import jorgan.lcd.display.IndexedContinuousDisplayer;
 import jorgan.lcd.lcdproc.Screen;
+import jorgan.memory.Storage;
+import jorgan.memory.disposition.Memory;
 import jorgan.text.PadFormat;
 
 /**
  * A displayer of a {@link Regulator}.
  */
-public class RegulatorDisplayer extends IndexedContinuousDisplayer<Regulator> {
+public class MemoryDisplayer extends IndexedContinuousDisplayer<Memory> {
 
-	public RegulatorDisplayer(Screen screen, int row, Regulator element)
-			throws IOException {
+	private Storage storage;
+
+	public MemoryDisplayer(Storage storage, Screen screen, int row,
+			Memory element) throws IOException {
 		super(screen, row, element);
+
+		this.storage = storage;
 	}
 
 	protected String getTitle(int index) {
 		PadFormat format = new PadFormat(Integer.toString(
 				getElement().getSize()).length(), '0');
 
-		return format.format(index + 1)
-				+ " - "
-				+ Elements.getDescriptionName(getElement().getReference(index)
-						.getElement());
+		return format.format(index + 1) + " - " + storage.getTitle(index);
 	}
 }

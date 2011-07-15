@@ -85,13 +85,12 @@ public class MemoryWriter {
 	}
 
 	private String getName(Element element) {
-		String name = Elements.getDisplayName(element);
+		String name;
 
 		if (useDescriptionName) {
-			String descriptionName = element.getTexts().get("name");
-			if (descriptionName != null && descriptionName.trim().isEmpty()) {
-				name = descriptionName;
-			}
+			name = Elements.getDescriptionName(element);
+		} else {
+			name = Elements.getDisplayName(element);
 		}
 
 		return name;

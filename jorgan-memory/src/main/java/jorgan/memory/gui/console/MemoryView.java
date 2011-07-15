@@ -21,7 +21,6 @@ package jorgan.memory.gui.console;
 import jorgan.gui.console.IndexedContinuousView;
 import jorgan.memory.Storage;
 import jorgan.memory.disposition.Memory;
-import jorgan.session.OrganSession;
 
 /**
  * A view that shows a {@link Memory}.
@@ -38,10 +37,10 @@ public class MemoryView extends IndexedContinuousView<Memory> {
 	 * @param memory
 	 *            memory to view
 	 */
-	public MemoryView(OrganSession session, Memory element) {
+	public MemoryView(Storage storage, Memory element) {
 		super(element);
 
-		storage = session.lookup(Storage.class);
+		this.storage = storage;
 	}
 
 	@Override
