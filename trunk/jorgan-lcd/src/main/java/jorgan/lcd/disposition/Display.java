@@ -19,6 +19,10 @@ public class Display extends Element {
 	}
 
 	public void setHost(String host) {
+		if (host == null) {
+			throw new IllegalArgumentException("host must not be null");
+		}
+
 		if (!Null.safeEquals(this.host, host)) {
 			String oldHost = this.host;
 

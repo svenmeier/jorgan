@@ -21,6 +21,10 @@ package jorgan.lcd.display;
 import java.io.File;
 import java.io.IOException;
 
+import jorgan.disposition.Element;
+import jorgan.lcd.display.spi.DisplayerRegistry;
+import jorgan.lcd.lcdproc.Screen;
+import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
@@ -33,7 +37,15 @@ public class LCDSessionProvider implements SessionProvider {
 
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == OrganDisplay.class) {
-			final OrganDisplay display = new OrganDisplay(session.getOrgan());
+			final OrganDisplay display = new OrganDisplay(session.getOrgan(),
+					session.lookup(ElementProblems.class)) {
+				@Override
+				protected ElementDisplayer<?> createDisplayer(Screen screen,
+						int row, Element element) throws IOException {
+					return DisplayerRegistry.getDisplayer(session, element,
+							screen, row);
+				}
+			};
 
 			session.addListener(new SessionListener() {
 				@Override

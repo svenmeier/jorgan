@@ -27,16 +27,20 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import jorgan.disposition.event.OrganAdapter;
-import jorgan.lcd.display.spi.DisplayerRegistry;
 import jorgan.lcd.disposition.Display;
 import jorgan.lcd.lcdproc.Client;
 import jorgan.lcd.lcdproc.Screen;
+import jorgan.problem.ElementProblems;
+import jorgan.problem.Problem;
+import jorgan.problem.Severity;
 
 public class OrganDisplay {
 
 	private Map<Display, ScreenWrapper> wrappers = new HashMap<Display, ScreenWrapper>();
 
-	public OrganDisplay(final Organ organ) {
+	private ElementProblems problems;
+
+	public OrganDisplay(final Organ organ, ElementProblems problems) {
 		organ.addOrganListener(new OrganAdapter() {
 			@Override
 			public void elementAdded(Element element) {
@@ -53,11 +57,16 @@ public class OrganDisplay {
 			}
 
 			public void propertyChanged(Element element, String name) {
-				for (Display display : organ
-						.getReferrer(element, Display.class)) {
-					ScreenWrapper wrapper = wrappers.get(display);
-					if (wrapper != null) {
-						wrapper.update(element);
+				if (element instanceof Display) {
+					remove((Display) element);
+					add((Display) element);
+				} else {
+					for (Display display : organ.getReferrer(element,
+							Display.class)) {
+						ScreenWrapper wrapper = wrappers.get(display);
+						if (wrapper != null) {
+							wrapper.update(element);
+						}
 					}
 				}
 			}
@@ -81,6 +90,8 @@ public class OrganDisplay {
 			}
 		});
 
+		this.problems = problems;
+
 		for (Display display : organ.getElements(Display.class)) {
 			add(display);
 		}
@@ -97,6 +108,14 @@ public class OrganDisplay {
 		}
 	}
 
+	protected void addProblem(Problem problem) {
+		problems.addProblem(problem);
+	}
+
+	protected void removeProblem(Problem problem) {
+		problems.removeProblem(problem);
+	}
+
 	public void destroy() {
 		for (Display display : new ArrayList<Display>(wrappers.keySet())) {
 			remove(display);
@@ -105,6 +124,8 @@ public class OrganDisplay {
 
 	private class ScreenWrapper {
 
+		private Display display;
+
 		private Client client;
 
 		private Screen screen;
@@ -112,23 +133,31 @@ public class OrganDisplay {
 		private Map<Element, ElementDisplayer<?>> displayers = new HashMap<Element, ElementDisplayer<?>>();
 
 		public ScreenWrapper(Display display) {
+			this.display = display;
+
+			removeProblem(new Problem(Severity.ERROR, display, "host",
+					"LCDProc failure"));
+
 			try {
 				this.client = new Client(display.getHost(), display.getPort());
 				this.client.setName("jOrgan");
 
 				this.screen = client.addScreen();
-				this.screen.setName(getName(display));
+				this.screen.setName(Elements.getDescriptionName(display));
 
 				int row = 1;
 				for (Element element : display.getReferenced(Element.class)) {
-					ElementDisplayer<?> displayer = new DisplayerRegistry()
-							.getDisplayer(screen, row, element);
+					ElementDisplayer<?> displayer = createDisplayer(screen,
+							row, element);
 					if (displayer != null) {
 						displayers.put(element, displayer);
 						row++;
 					}
 				}
 			} catch (Exception ex) {
+				addProblem(new Problem(Severity.ERROR, display, "host",
+						"LCDProc failure"));
+
 				close();
 			}
 		}
@@ -139,8 +168,8 @@ public class OrganDisplay {
 				try {
 					displayer.update();
 				} catch (IOException e) {
-					// TODO
-					e.printStackTrace();
+					addProblem(new Problem(Severity.ERROR, display, "host",
+							"LCDProc failure"));
 				}
 			}
 		}
@@ -158,14 +187,9 @@ public class OrganDisplay {
 		}
 	}
 
-	public static String getName(Element element) {
-		String name = Elements.getDisplayName(element);
-
-		String descriptionName = element.getTexts().get("name");
-		if (descriptionName != null && descriptionName.trim().isEmpty()) {
-			name = descriptionName;
-		}
-
-		return name;
+	protected ElementDisplayer<?> createDisplayer(Screen screen, int row,
+			Element element) throws IOException {
+		return null;
 	}
+
 }

@@ -20,6 +20,7 @@ package jorgan.lcd.display;
 
 import java.io.IOException;
 
+import jorgan.disposition.Elements;
 import jorgan.disposition.Switch;
 import jorgan.lcd.lcdproc.IconWidget;
 import jorgan.lcd.lcdproc.Screen;
@@ -48,7 +49,7 @@ public class SwitchDisplayer extends ElementDisplayer<Switch> {
 
 	@Override
 	public void update() throws IOException {
-		string.value(OrganDisplay.getName(getElement()));
+		string.value(Elements.getDescriptionName(getElement()));
 
 		Icon checkbox;
 		if (getElement().isActive()) {

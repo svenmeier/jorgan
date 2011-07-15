@@ -21,27 +21,28 @@ package jorgan.lcd.display;
 import java.io.IOException;
 
 import jorgan.disposition.Elements;
-import jorgan.disposition.Regulator;
+import jorgan.disposition.Label;
 import jorgan.lcd.lcdproc.Screen;
-import jorgan.text.PadFormat;
+import jorgan.lcd.lcdproc.StringWidget;
 
 /**
- * A displayer of a {@link Regulator}.
+ * A display of a {@link Label}.
  */
-public class RegulatorDisplayer extends IndexedContinuousDisplayer<Regulator> {
+public class LabelDisplayer extends ElementDisplayer<Label> {
 
-	public RegulatorDisplayer(Screen screen, int row, Regulator element)
+	private StringWidget string;
+
+	public LabelDisplayer(Screen screen, int row, Label element)
 			throws IOException {
-		super(screen, row, element);
+		super(element);
+
+		string = new StringWidget(screen, 1, row);
+
+		update();
 	}
 
-	protected String getTitle(int index) {
-		PadFormat format = new PadFormat(Integer.toString(
-				getElement().getSize()).length(), '0');
-
-		return format.format(index + 1)
-				+ " - "
-				+ Elements.getDescriptionName(getElement().getReference(index)
-						.getElement());
+	@Override
+	public void update() throws IOException {
+		string.value(Elements.getDescriptionName(getElement()));
 	}
 }

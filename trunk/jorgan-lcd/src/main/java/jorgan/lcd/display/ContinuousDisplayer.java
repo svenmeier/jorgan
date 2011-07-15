@@ -21,6 +21,7 @@ package jorgan.lcd.display;
 import java.io.IOException;
 
 import jorgan.disposition.Continuous;
+import jorgan.disposition.Elements;
 import jorgan.lcd.lcdproc.HBarWidget;
 import jorgan.lcd.lcdproc.Screen;
 import jorgan.lcd.lcdproc.StringWidget;
@@ -41,14 +42,14 @@ public class ContinuousDisplayer extends ElementDisplayer<Continuous> {
 		string = new StringWidget(screen, 1, row);
 
 		bar = new HBarWidget(screen, screen.size.width / 2, row,
-				screen.size.width / 2);
+				screen.size.width - (screen.size.width / 2) + 1);
 
 		update();
 	}
 
 	@Override
 	public void update() throws IOException {
-		string.value(OrganDisplay.getName(getElement()));
+		string.value(Elements.getDescriptionName(getElement()));
 
 		bar.value(getElement().getValue());
 	}
