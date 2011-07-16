@@ -92,24 +92,27 @@ public abstract class SkinManager {
 	}
 
 	private Skin loadSkin(File file) throws IOException {
-		Skin skin = null;
+		Skin skin;
 
 		Resolver resolver = createSkinDirectory(file);
 		if (resolver == null) {
 			resolver = createSkinZip(file);
 			if (resolver == null) {
-				throw new IOException();
+				throw new IOException("no skin");
 			}
 		}
 
-		if (resolver != null) {
-			InputStream input = resolver.resolve(SKIN_FILE).openStream();
-			try {
-				skin = new SkinStream().read(input);
-				skin.setResolver(resolver);
-			} finally {
-				IOUtils.closeQuietly(input);
-			}
+		URL skinFile = resolver.resolve(SKIN_FILE);
+		if (skinFile == null) {
+			throw new IOException("missing skin file");
+		}
+
+		InputStream input = skinFile.openStream();
+		try {
+			skin = new SkinStream().read(input);
+			skin.setResolver(resolver);
+		} finally {
+			IOUtils.closeQuietly(input);
 		}
 
 		return skin;
