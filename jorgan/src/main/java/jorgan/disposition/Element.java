@@ -331,12 +331,13 @@ public abstract class Element implements Cloneable {
 	 *            name to set
 	 */
 	public void setName(String name) {
+		if (name == null) {
+			throw new IllegalArgumentException("name must not be null");
+		}
+
 		if (!Null.safeEquals(this.name, name)) {
 			String oldName = this.name;
 
-			if (name == null) {
-				name = "";
-			}
 			this.name = name.trim();
 
 			fireChange(new PropertyChange(oldName, this.name));
@@ -359,12 +360,13 @@ public abstract class Element implements Cloneable {
 	 *            description to set
 	 */
 	public void setDescription(String description) {
+		if (description == null) {
+			throw new IllegalArgumentException("description must not be null");
+		}
+
 		if (!Null.safeEquals(this.description, description)) {
 			String oldDescription = this.description;
 
-			if (description == null) {
-				description = "";
-			}
 			this.description = description;
 
 			fireChange(new PropertyChange(oldDescription, this.description));
