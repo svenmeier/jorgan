@@ -80,7 +80,7 @@ public abstract class OrganPlay {
 
 	private Organ organ;
 
-	private ElementProblems problems = new ElementProblems();
+	private ElementProblems problems;
 
 	private Clock clock;
 
