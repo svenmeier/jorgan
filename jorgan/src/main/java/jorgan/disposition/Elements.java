@@ -22,6 +22,22 @@ public class Elements {
 	private static HashMap<Class<?>, Icon> icons = new HashMap<Class<?>, Icon>();
 
 	/**
+	 * Get the description name of the given element.
+	 * 
+	 * @param element
+	 *            element to get description name for
+	 * @return the description name
+	 */
+	public static String getDescriptionName(Element element) {
+		String descriptionName = element.getTexts().get("name");
+		if (descriptionName != null && !descriptionName.trim().isEmpty()) {
+			return descriptionName;
+		}
+
+		return getDisplayName(element);
+	}
+
+	/**
 	 * Get the display name of the given element.
 	 * 
 	 * @param element
@@ -31,7 +47,7 @@ public class Elements {
 	public static String getDisplayName(Element element) {
 
 		String name = element.getName();
-		if ("".equals(name)) {
+		if (name.trim().isEmpty()) {
 			name = getDisplayName(element.getClass());
 		}
 
