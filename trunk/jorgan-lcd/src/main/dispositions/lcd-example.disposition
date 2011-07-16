@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<organ version="@jorgan.version@">
+<organ version="">
   <elements>
     <lcd.display id="1">
       <name></name>
       <description></description>
       <references>
         <reference id="4"/>
-        <reference id="2"/>
-        <reference id="5"/>
         <reference id="9"/>
+        <reference id="5"/>
+        <reference id="2"/>
       </references>
       <messages/>
       <host>localhost</host>
@@ -45,11 +45,11 @@
       <description></description>
       <references>
         <console-locationReference id="9">
-          <x>110</x>
+          <x>115</x>
           <y>160</y>
         </console-locationReference>
         <console-locationReference id="2">
-          <x>130</x>
+          <x>117</x>
           <y>90</y>
         </console-locationReference>
         <console-locationReference id="5">
