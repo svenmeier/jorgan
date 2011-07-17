@@ -47,7 +47,7 @@ public class KeyboardsPanel extends JPanel implements Scrollable {
 		for (Keyboard keyboard : play.getOrgan().getElements(Keyboard.class)) {
 			add(createKeyboardPanel(keyboard));
 
-			JLabel label = new JLabel(Elements.getDisplayName(keyboard));
+			JLabel label = new JLabel(Elements.getDescriptionName(keyboard));
 			label.setHorizontalAlignment(JLabel.CENTER);
 			label.setBorder(new EmptyBorder(2, 2, 2, 2));
 			header.add(label);
