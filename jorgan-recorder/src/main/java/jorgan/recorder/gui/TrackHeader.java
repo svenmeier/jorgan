@@ -64,7 +64,7 @@ public class TrackHeader extends JPanel {
 		if (element == null) {
 			config.get("none").read(label);
 		} else {
-			label.setText(Elements.getDisplayName(element));
+			label.setText(Elements.getDescriptionName(element));
 		}
 		label.setToolTipText(label.getText());
 		add(label, BorderLayout.NORTH);

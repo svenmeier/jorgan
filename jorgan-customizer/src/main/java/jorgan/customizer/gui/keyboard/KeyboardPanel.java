@@ -75,7 +75,7 @@ public class KeyboardPanel extends JPanel {
 
 		setLayout(new BorderLayout());
 
-		add(new Group(new JLabel(Elements.getDisplayName(keyboard))),
+		add(new Group(new JLabel(Elements.getDescriptionName(keyboard))),
 				BorderLayout.NORTH);
 
 		JPanel definitions = new JPanel();
