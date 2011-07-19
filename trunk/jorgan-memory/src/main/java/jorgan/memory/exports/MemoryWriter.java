@@ -9,7 +9,6 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Reference;
 import jorgan.memory.Storage;
-import jorgan.memory.gui.exports.StateFormat;
 
 public class MemoryWriter {
 
@@ -71,13 +70,12 @@ public class MemoryWriter {
 			return;
 		}
 
-		writer.write(String.format("       %4s %s\n", format.format(state),
-				name));
+		writer.write(String.format("\t\t%s\t%s\n", format.format(state), name));
 	}
 
 	private void writeCombination(Writer writer, Combination combination)
 			throws IOException {
-		writer.write(String.format("      %s\n", getName(combination)));
+		writer.write(String.format("\t%s\n", getName(combination)));
 	}
 
 	private void writeLevel(Writer writer, int l) throws IOException {
