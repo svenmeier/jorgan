@@ -25,7 +25,7 @@ public abstract class IndexedContinuous extends Continuous {
 			return 0;
 		}
 
-		return (int) (-0.5f + getSize() * value);
+		return (int) ((getSize() - 1) * value);
 	}
 
 	public int getIndex() {
@@ -36,7 +36,12 @@ public abstract class IndexedContinuous extends Continuous {
 		if (index < 0 || index > getSize() - 1) {
 			throw new IllegalArgumentException("invalid index " + index);
 		}
-		setValue((index + 0.5f) / getSize());
+
+		if (getSize() == 0) {
+			setValue(0.0f);
+		} else {
+			setValue(((float) index) / (getSize() - 1));
+		}
 	}
 
 	@Override
