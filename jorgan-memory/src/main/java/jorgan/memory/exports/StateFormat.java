@@ -1,4 +1,4 @@
-package jorgan.memory.gui.exports;
+package jorgan.memory.exports;
 
 import java.text.FieldPosition;
 import java.text.Format;
