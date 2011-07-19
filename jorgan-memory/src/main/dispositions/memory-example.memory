@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <memory>
   <titles>
-    <string>Continuos: 25%  Switch: on</string>
-    <string>Continuos: 50%  Switch: on</string>
-    <string>Continuos: 75%  Switch: off</string>
-    <string>Continuos: 100%  Switch: on</string>
+    <string>Continuous: 25%  Switch: on</string>
+    <string>Continuous: 50%  Switch: on</string>
+    <string>Continuous: 75%  Switch: off</string>
+    <string>Continuous: 100%  Switch: on</string>
   </titles>
   <combinations>
     <combination id="2">
