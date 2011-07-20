@@ -25,7 +25,14 @@ public abstract class IndexedContinuous extends Continuous {
 			return 0;
 		}
 
-		return (int) ((getSize() - 1) * value);
+		int index = Math.round(value * getSize() - 0.5f);
+		if (index < 0) {
+			index = 0;
+		}
+		if (index > getSize() - 1) {
+			index = getSize() - 1;
+		}
+		return index;
 	}
 
 	public int getIndex() {
@@ -40,7 +47,7 @@ public abstract class IndexedContinuous extends Continuous {
 		if (getSize() == 0) {
 			setValue(0.0f);
 		} else {
-			setValue(((float) index) / (getSize() - 1));
+			setValue((index + 0.5f) / getSize());
 		}
 	}
 
