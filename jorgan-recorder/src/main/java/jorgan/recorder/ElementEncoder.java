@@ -19,6 +19,7 @@
 package jorgan.recorder;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.Elements;
 import jorgan.disposition.Organ;
 import bias.Configuration;
 
@@ -36,7 +37,7 @@ public class ElementEncoder {
 
 	public ElementEncoder(Organ organ) {
 		this.organ = organ;
-		
+
 		config.read(this);
 	}
 
@@ -44,7 +45,7 @@ public class ElementEncoder {
 		StringBuilder text = new StringBuilder();
 
 		if (name) {
-			text.append(element.getName());
+			text.append(Elements.getDescriptionName(element));
 			text.append(" ");
 		}
 		text.append("[");
