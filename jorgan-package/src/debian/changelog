@@ -5,6 +5,7 @@ jorgan (3.14) stable;
   * use description name for elements where applicable
   * customizer: set deactivate before activate to allow customizing of infinite switches  
   * recorder: fixed bug for empty tracker not attached
+  * recorder: use description names for elements
   * export: new extension
   * keyboard: play into disposition without setup, multiple keyboards
   * lcd: first integration of lcdproc
