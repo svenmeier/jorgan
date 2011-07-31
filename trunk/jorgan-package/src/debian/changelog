@@ -1,4 +1,4 @@
-jorgan (3.14-beta3) beta;
+jorgan (3.14) stable;
 
   * monitor may now skip control messages
   * activate/deactivate switches on shortcut press (was released)
@@ -10,7 +10,7 @@ jorgan (3.14-beta3) beta;
   * lcd: first integration of lcdproc
   * memory: export levels
 
- -- Sven Meier <sven@meiers.net>  Sun, 1 May 2011 17:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 31 Jul 2011 23:00:00 +0200
 
 jorgan (3.13) stable;
 
