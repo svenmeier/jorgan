@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jorgan" default="dist" basedir=".">
+
+    <property file="./build.properties"/>
+	
+    <target name="clean" description="Cleanup target directory">
+        <delete dir="./target"/>
+    </target>
+
+	<target name="init">
+		<filter token="jorgan.version" value="${jorgan.version}"/>
+	</target>
+	
+    <target name="build" depends="init" description="Build the source" >
+        <mkdir dir="./target/classes"/>
+
+    	<javac debug="true" source="1.6" target="1.6" destdir="./target/classes" srcdir="./src/main/java">
+        	<compilerarg value="-Xlint:all,-serial"/>
+        	<classpath>
+	            <fileset dir="./lib">
+    	            <include name="*" />
+	            </fileset>
+        	</classpath>
+        </javac>
+
+    	<native2ascii encoding="UTF8" src="src/main/java" dest="./target/classes" includes="**/i18n*.properties" />
+    		
+    	<copy todir="./target/classes" filtering="true">
+            <fileset dir="./src/main/java" >
+                <include name="**/*.properties" />
+            </fileset>
+        </copy>        	
+    	
+    	<copy todir="./target/classes">
+            <fileset dir="./src/main/java">
+                <exclude name="**/*.java" />
+            	<exclude name="**/i18n*.properties" />
+            	<exclude name="**/*.properties" />
+            </fileset>
+        </copy>
+    </target>
+
+	<target name="newLanguage" depends="clean">
+        <mkdir dir="./target/classes"/>
+
+		<input message="Enter language code (e.g. 'de' without quotes)" addproperty="language"/>
+
+		<copy todir="./target/classes" filtering="true">
+            <fileset dir="./src/main/java" >
+                <include name="**/i18n.properties" />
+            </fileset>
+			<globmapper from="*.properties" to="*_${language}.properties"/>
+        </copy>        	
+	</target>
+	
+    <target name="dist" description="Set up the distribution" depends="clean, init, build" >
+        <mkdir dir="./target/marshal" />
+
+        <mkdir dir="./target/marshal/lib" />
+    	<jar destfile="./target/marshal/lib/core.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Built-Version" value="${jorgan.version}"/>
+			</manifest>
+            <fileset dir="./target/classes">
+                <include name="**/*"/>
+            </fileset>
+        </jar>
+        <copy todir="./target/marshal/lib">
+        	<fileset dir="./lib">
+        		<include name="*.jar"/>
+	            <exclude name="AppleJavaExtensions.jar" />
+        	</fileset>
+        </copy>
+
+        <mkdir dir="./target/marshal/docs" />
+        <copy todir="./target/marshal/docs">
+            <fileset dir="./docs">
+                <include name="*"/>
+            </fileset>
+		</copy>
+
+        <mkdir dir="./target/marshal/dispositions" />
+      	<copy todir="./target/marshal/dispositions">
+          <fileset dir="./src/main/dispositions" />
+        </copy> 		
+
+        <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
+    </target>
+</project>
