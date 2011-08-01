@@ -1,0 +1,137 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>bias</groupId>
+  <artifactId>bias</artifactId>
+  <packaging>jar</packaging>
+  <version>0.5</version>
+  <name>Bias</name>
+  <url>http://bias.sourceforge.net</url>
+  <description>Java Object Preferences</description>
+
+  <licenses>
+    <license>
+      <name>GNU Lesser General Public License</name>
+      <url>http://www.gnu.org/copyleft/lesser.html</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <issueManagement>
+    <system>Sourceforge</system>
+    <url>http://sourceforge.net/tracker?group_id=124803</url>
+  </issueManagement>
+  
+  <developers>
+    <developer>
+      <id>svenmeier</id>
+      <name>Sven Meier</name>
+      <email>svenmeier@users.sourceforge.net</email>
+      <roles>
+        <role>Project Manager</role>
+        <role>Architect</role>
+        <role>Developer</role>
+      </roles>
+    </developer>         
+  </developers>
+   
+  <mailingLists>
+    <mailingList>
+      <name>bias-user</name>
+      <subscribe>bias-user-request@lists.sourceforge.net?subject=subscribe</subscribe>
+      <unsubscribe>mailto:bias-user-request@lists.sourceforge.net?subject=unsubscribe</unsubscribe>
+      <post>bias-user@lists.sourceforge.net</post>
+      <archive>http://sourceforge.net/mailarchive/forum.php?forum=bias-user</archive>
+    </mailingList>
+  </mailingLists>
+   
+  <scm>
+    <connection>scm:pserver:anonymous@bias.cvs.sourceforge.net:/cvsroot/bias</connection>
+    <developerConnection>scm:extssh:bias.cvs.sourceforge.net:/cvsroot/bias</developerConnection>
+    <url>http://bias.cvs.sourceforge.net/bias/</url>
+  </scm> 
+   
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+ 
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-project-info-reports-plugin</artifactId>
+        <reportSets>
+          <reportSet>
+            <reports>
+              <report>dependencies</report>
+              <report>project-team</report>
+              <report>mailing-list</report>
+              <!--<report>cim</report>-->
+              <report>issue-tracking</report>
+              <report>license</report>
+              <report>scm</report>
+            </reports>
+          </reportSet>
+        </reportSets>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+      </plugin>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
+  
+  <build>
+    <resources>
+      <resource>
+        <filtering>false</filtering>
+        <directory>src/main/java</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </resource>
+    </resources>
+
+    <testResources>
+      <testResource>
+        <filtering>false</filtering>
+        <directory>src/test/java</directory>
+        <includes>
+          <include>**/*</include>
+        </includes>
+        <excludes>
+          <exclude>**/*.java</exclude>
+        </excludes>
+      </testResource>
+    </testResources>
+  
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+          <debug>true</debug>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <configuration>
+          <descriptors>
+            <descriptor>src/assembly/all.xml</descriptor>
+          </descriptors>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>   
+</project>
