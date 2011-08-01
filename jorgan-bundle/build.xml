@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jorgan-bundle" default="dist" basedir=".">
+
+    <property file="./build.properties"/>
+    <property file="${jorgan.core.path}/build.properties"/>
+	
+    <target name="clean" description="Cleanup target directory">
+        <delete dir="./target"/>
+    </target>
+
+    <target name="init">
+        <filter token="jorgan.version" value="${jorgan.version}"/>
+    </target>
+	
+    <target name="dist" description="Set up the distribution" depends="clean, init" >
+        <property name="image" value="./target/jOrgan-${jorgan.version}"/>
+		
+        <copy todir="${image}/jOrgan.app">
+            <fileset dir="./src" excludes="**/Info.plist" />
+        </copy>
+        <copy todir="${image}/jOrgan.app">
+            <fileset dir="./src" includes="**/Info.plist" />
+            <filterset>
+	      		<filter token="version" value="${bundle.version}"/>
+            </filterset>
+        </copy>
+    
+        <mkdir dir="${image}/jOrgan.app/Contents/Resources/Java"/>
+        <copy todir="${image}/jOrgan.app/Contents/Resources/Java">
+            <fileset dir="${jorgan.bootstrap.path}/target/marshal" includes="jorgan.jar" />
+            <fileset dir="${jorgan.core.path}/target/marshal" includes="lib/**" /> 
+            <fileset dir="${jorgan.customizer.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.executor.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.fluidsynth.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.keyboard.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.importer.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.exporter.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.lan.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.lcd.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.linuxsampler.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.memory.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.midimerger.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.recorder.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.sams.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.soundfont.path}/target/marshal" includes="lib/**" />
+            <fileset dir="${jorgan.tools.path}/target/marshal" includes="lib/**" />
+        </copy>
+          
+        <mkdir dir="${image}/dispositions" />
+        <copy todir="${image}">
+            <fileset dir="${jorgan.core.path}/target/marshal" includes="dispositions/**" />          
+            <fileset dir="${jorgan.executor.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.fluidsynth.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.lan.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.lcd.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.memory.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.recorder.path}/target/marshal" includes="dispositions/**" />
+            <fileset dir="${jorgan.sams.path}/target/marshal" includes="dispositions/**" />
+        </copy>
+
+        <mkdir dir="${image}/skins" />
+        <copy todir="${image}">
+          <fileset dir="${jorgan.skins.path}/target/marshal" includes="skins/**" />          
+        </copy>
+    </target>
+</project>
