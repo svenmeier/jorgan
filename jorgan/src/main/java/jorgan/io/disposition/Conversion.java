@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.xmlpull.mxp1.MXParser;
+import org.kxml2.io.KXmlParser;
 import org.xmlpull.v1.XmlPullParserException;
 
 import com.thoughtworks.xstream.converters.ConversionException;
@@ -92,7 +92,7 @@ public class Conversion {
 
 		String version;
 		try {
-			MXParser parser = new MXParser();
+			KXmlParser parser = new KXmlParser();
 
 			parser.setInput(new ByteArrayInputStream(header), "ASCII");
 

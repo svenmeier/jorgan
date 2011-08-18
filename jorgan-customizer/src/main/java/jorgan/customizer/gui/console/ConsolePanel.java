@@ -29,7 +29,7 @@ import javax.swing.SpinnerNumberModel;
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
 import jorgan.gui.FullScreen;
-import jorgan.swing.ComboBoxUtils;
+import jorgan.swing.combobox.BaseComboBoxModel;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -78,8 +78,8 @@ public class ConsolePanel extends JPanel {
 	}
 
 	private void read() {
-		this.screenComboBox.setModel(ComboBoxUtils
-				.createModelWithNull(FullScreen.getIDs()));
+		this.screenComboBox.setModel(new BaseComboBoxModel<String>(true,
+				FullScreen.getIDs()));
 		this.screenComboBox.setSelectedItem(console.getScreen());
 
 		this.zoomSpinner.setValue(new Double(console.getZoom()));

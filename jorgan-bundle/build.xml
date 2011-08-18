@@ -29,6 +29,7 @@
         <copy todir="${image}/jOrgan.app/Contents/Resources/Java">
             <fileset dir="${jorgan.bootstrap.path}/target/marshal" includes="jorgan.jar" />
             <fileset dir="${jorgan.core.path}/target/marshal" includes="lib/**" /> 
+            <fileset dir="${jorgan.gui.path}/target/marshal" includes="lib/**" /> 
             <fileset dir="${jorgan.customizer.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.executor.path}/target/marshal" includes="lib/**" />
             <fileset dir="${jorgan.fluidsynth.path}/target/marshal" includes="lib/**" />

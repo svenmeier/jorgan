@@ -25,7 +25,7 @@ import jorgan.memory.state.SwitchReferenceState;
 import jorgan.util.IOUtils;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
 
 /**
  * A {@link MemoryState} streamer.
@@ -34,7 +34,7 @@ public class MemoryStateStream {
 
 	private static final String ENCODING = "UTF-8";
 
-	private XStream xstream = new XStream(new XppDriver());
+	private XStream xstream = new XStream(new KXml2Driver());
 
 	public MemoryStateStream() {
 		xstream.alias("memory", MemoryState.class);

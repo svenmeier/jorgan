@@ -12,9 +12,13 @@
 
   	<javac debug="true" source="1.6" target="1.6" srcdir="./src/main/java" destdir="./target/classes">
     	<classpath path="${jorgan.core.path}/target/classes" />
+    	<classpath path="${jorgan.gui.path}/target/classes" />
     	<classpath>
             <fileset dir="${jorgan.core.path}/lib">
 	            <include name="*" />
+            </fileset>
+            <fileset dir="${jorgan.gui.path}/lib">
+                <include name="*" />
             </fileset>
    		</classpath>
   	</javac>

@@ -18,18 +18,37 @@
  */
 package jorgan.cli.spi;
 
+import java.util.Collection;
+
 import jorgan.util.PluginUtils;
+import bias.Store;
 import bias.store.CLIStore;
+import bias.util.cli.Option;
 
 public class OptionRegistry {
 
-	public static CLIStore getOptions() {
-		CLIStore store = new CLIStore();
+	private static CLIStore store;
 
-		for (OptionProvider provider : PluginUtils.lookup(OptionProvider.class)) {
-			provider.addOptions(store);
-		}
+	public static Store getStore() {
+		initStore();
 
 		return store;
+	}
+
+	public static Collection<Option> getOptions() {
+		initStore();
+
+		return store.getOptions();
+	}
+
+	private static void initStore() {
+		if (store == null) {
+			store = new CLIStore();
+
+			for (OptionProvider provider : PluginUtils
+					.lookup(OptionProvider.class)) {
+				provider.addOptions(store);
+			}
+		}
 	}
 }

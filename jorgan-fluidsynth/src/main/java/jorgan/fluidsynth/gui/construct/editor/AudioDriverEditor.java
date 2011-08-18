@@ -18,42 +18,22 @@
  */
 package jorgan.fluidsynth.gui.construct.editor;
 
-import java.beans.PropertyEditorSupport;
 import java.util.List;
 
 import jorgan.fluidsynth.Fluidsynth;
+import jorgan.gui.construct.editor.TagEditor;
 
-public class AudioDriverEditor extends PropertyEditorSupport {
+public class AudioDriverEditor extends TagEditor {
 
-	private static String[] tags = new String[1];
-
-	static {
+	@Override
+	protected String[] createTags() {
 		try {
 			List<String> drivers = Fluidsynth.getAudioDrivers();
-			tags = new String[drivers.size() + 1];
-			int i = 1;
-			for (String driver : drivers) {
-				tags[i] = driver;
-				i++;
-			}
+
+			return drivers.toArray(new String[drivers.size()]);
 		} catch (Error fluidsynthFailure) {
 		}
-	}
 
-	@Override
-	public String[] getTags() {
-		return tags;
-	}
-
-	@Override
-	public String getAsText() {
-
-		return (String) getValue();
-	}
-
-	@Override
-	public void setAsText(String string) {
-
-		setValue(string);
+		return new String[0];
 	}
 }

@@ -270,7 +270,15 @@ public class KeyboardPanel extends JComponent {
 		 */
 		public void press(int y) {
 			if (!pressed) {
-				onKeyPress(pitch, 127 * y / height);
+				int velocity = 127 * y / height;
+				if (velocity < 0) {
+					velocity = 0;
+				}
+				if (velocity > 127) {
+					velocity = 127;
+				}
+
+				onKeyPress(pitch, velocity);
 
 				pressed = true;
 			}
@@ -301,8 +309,15 @@ public class KeyboardPanel extends JComponent {
 				return false;
 			}
 
-			return x >= this.x && x < this.x + this.width && y >= 0
-					&& y < this.height;
+			if (x < this.x || x >= this.x + this.width) {
+				return false;
+			}
+
+			if (this.height < KeyboardPanel.this.getHeight()) {
+				return y < this.height;
+			}
+
+			return true;
 		}
 
 		/**

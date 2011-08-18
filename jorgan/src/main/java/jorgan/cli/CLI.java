@@ -58,8 +58,6 @@ public class CLI implements UI, SessionAware {
 
 	private Listener listener = new Listener();
 
-	private boolean useDefaultEncoding;
-
 	private String encoding;
 
 	/**
@@ -79,8 +77,6 @@ public class CLI implements UI, SessionAware {
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
 		config.get("interpreter").read(interpreter);
-
-		Thread.setDefaultUncaughtExceptionHandler(new Abort());
 	}
 
 	/**
@@ -90,9 +86,11 @@ public class CLI implements UI, SessionAware {
 	 *            optional file that contains an organ
 	 */
 	public void display(File file) {
+		Thread.setDefaultUncaughtExceptionHandler(new Abort());
+
 		writeMessage("splash", new Info().getVersion());
 
-		if (!useDefaultEncoding) {
+		if (encoding != null) {
 			try {
 				interpreter.setEncoding(encoding);
 
@@ -132,6 +130,11 @@ public class CLI implements UI, SessionAware {
 		} catch (IOException ex) {
 			writeMessage("openIOException", file.getName());
 			return;
+		}
+
+		String version = session.getOrgan().getVersion();
+		if (!"".equals(version) && !version.equals(new Info().getVersion())) {
+			writeMessage("openConversion", version);
 		}
 	}
 
@@ -182,7 +185,7 @@ public class CLI implements UI, SessionAware {
 	}
 
 	private void writeEncoding() {
-		if (useDefaultEncoding) {
+		if (encoding == null) {
 			String defaultEncoding = System.getProperty("file.encoding");
 			writeMessage("encodingDefault", defaultEncoding);
 		} else {
@@ -299,12 +302,10 @@ public class CLI implements UI, SessionAware {
 				try {
 					interpreter.setEncoding(param);
 
-					String defaultEncoding = System
-							.getProperty("file.encoding");
+					String defaultEncoding = getDefaultEncoding();
 					if (defaultEncoding.equalsIgnoreCase(param)) {
-						useDefaultEncoding = true;
+						encoding = null;
 					} else {
-						useDefaultEncoding = false;
 						encoding = param;
 					}
 				} catch (UnsupportedEncodingException ex) {
@@ -495,14 +496,6 @@ public class CLI implements UI, SessionAware {
 		this.encoding = encoding;
 	}
 
-	public boolean isUseDefaultEncoding() {
-		return useDefaultEncoding;
-	}
-
-	public void setUseDefaultEncoding(boolean useDefaultEncoding) {
-		this.useDefaultEncoding = useDefaultEncoding;
-	}
-
 	private class Abort implements UncaughtExceptionHandler {
 		@Override
 		public void uncaughtException(Thread thread, Throwable throwable) {
@@ -512,5 +505,9 @@ public class CLI implements UI, SessionAware {
 
 			System.exit(1);
 		}
+	}
+
+	public static String getDefaultEncoding() {
+		return System.getProperty("file.encoding");
 	}
 }

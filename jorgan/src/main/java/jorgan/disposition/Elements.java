@@ -22,7 +22,8 @@ public class Elements {
 	private static HashMap<Class<?>, Icon> icons = new HashMap<Class<?>, Icon>();
 
 	/**
-	 * Get the description name of the given element.
+	 * Get the description name of the given element. Falls back to
+	 * {@link #getDisplayName(Element)} if no name is given in the description.
 	 * 
 	 * @param element
 	 *            element to get description name for
@@ -38,7 +39,8 @@ public class Elements {
 	}
 
 	/**
-	 * Get the display name of the given element.
+	 * Get the display name of the given element. Falls back to
+	 * {@link #getDisplayName(Class))} if {@link Element#getName()} is empty.
 	 * 
 	 * @param element
 	 *            element to get display name for

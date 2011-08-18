@@ -18,19 +18,16 @@
 package jorgan;
 
 import java.io.File;
-import java.util.Collection;
+import java.util.Locale;
 
-import jorgan.cli.CLI;
 import jorgan.cli.spi.OptionRegistry;
-import jorgan.gui.GUI;
 import jorgan.session.History;
 import jorgan.spi.ConfigurationRegistry;
+import jorgan.spi.UIRegistry;
+import jorgan.util.LocaleUtils;
 import bias.Configuration;
-import bias.Store;
-import bias.store.CLIStore;
 import bias.util.cli.ArgsParser;
 import bias.util.cli.CLIException;
-import bias.util.cli.Option;
 
 /**
  * The jOrgan application.
@@ -40,12 +37,12 @@ public class App {
 	private static Configuration configuration = Configuration.getRoot().get(
 			App.class);
 
+	private Locale locale;
+
 	private boolean openRecentOnStartup = false;
 
-	private boolean headless = false;
-
-	public void setHeadless(boolean headless) {
-		this.headless = headless;
+	public void setLocale(Locale locale) {
+		this.locale = locale;
 	}
 
 	public void setOpenRecentOnStartup(boolean openRecentOnStartup) {
@@ -53,35 +50,20 @@ public class App {
 	}
 
 	public void start(File file) {
+		if (locale != null) {
+			LocaleUtils.setLocale(locale);
+		}
+
 		if (file == null && openRecentOnStartup) {
 			file = new History().getRecentFile();
 		}
 
-		UI ui;
-		if (headless) {
-			ui = new CLI();
-		} else {
-			ui = new GUI();
+		UI ui = UIRegistry.getUI();
+		if (ui == null) {
+			System.out.println("no user interface available");
+			System.exit(1);
 		}
 		ui.display(file);
-	}
-
-	/**
-	 * Initialize the configuration.
-	 * 
-	 * @return the command line options of the configuration
-	 */
-	private static Collection<Option> initConfiguration() {
-		Configuration configuration = Configuration.getRoot();
-
-		for (Store store : ConfigurationRegistry.getStores()) {
-			configuration.addStore(store);
-		}
-
-		CLIStore options = OptionRegistry.getOptions();
-		configuration.addStore(options);
-
-		return options.getOptions();
 	}
 
 	/**
@@ -91,10 +73,10 @@ public class App {
 	 *            command line arguments
 	 */
 	public static void main(String[] args) {
-		Collection<Option> options = initConfiguration();
+		ConfigurationRegistry.init();
 
 		ArgsParser parser = new ArgsParser("java -jar jOrgan.jar",
-				"[disposition]", options);
+				"[disposition]", OptionRegistry.getOptions());
 		parser.addOption(parser.new HelpOption());
 
 		String[] operands = null;
