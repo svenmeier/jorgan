@@ -52,6 +52,6 @@
         	</fileset>
         </copy>
 
-        <zip basedir="./target/marshal" destfile="./target/jOrgan-gui-${jorgan.version}.zip" />
+        <zip basedir="./target/marshal" destfile="./target/jOrgan-gui-${jorgan.gui.version}.zip" />
     </target>
 </project>
