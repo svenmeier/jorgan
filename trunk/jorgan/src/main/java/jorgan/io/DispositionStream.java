@@ -50,9 +50,10 @@ import bias.Configuration;
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.ConversionException;
 import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
-import com.thoughtworks.xstream.io.xml.AbstractXmlDriver;
-import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.io.AbstractDriver;
+import com.thoughtworks.xstream.io.naming.NameCoder;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
 import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
@@ -178,12 +179,12 @@ public class DispositionStream {
 		xstream.toXML(organ, writer);
 	}
 
-	private AbstractXmlDriver createDriver() {
-		return new XppDriver(createReplacer());
+	private AbstractDriver createDriver() {
+		return new KXml2Driver(createNameCoder());
 	}
 
-	private XmlFriendlyReplacer createReplacer() {
+	private NameCoder createNameCoder() {
 		// replaced "$" and "_"
-		return new XmlFriendlyReplacer("-", "_");
+		return new XmlFriendlyNameCoder("-", "_");
 	}
 }

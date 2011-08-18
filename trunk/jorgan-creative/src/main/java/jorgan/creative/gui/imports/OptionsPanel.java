@@ -34,7 +34,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-import jorgan.swing.ComboBoxUtils;
+import jorgan.swing.combobox.BaseComboBoxModel;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.table.BaseTableModel;
@@ -64,7 +64,7 @@ public class OptionsPanel extends JPanel {
 
 		column.term(config.get("device").read(new JLabel()));
 
-		comboBox.setModel(ComboBoxUtils.createModel(devices));
+		comboBox.setModel(new BaseComboBoxModel<Device>(devices));
 		comboBox.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
 				((BanksModel) table.getModel()).fireTableDataChanged();

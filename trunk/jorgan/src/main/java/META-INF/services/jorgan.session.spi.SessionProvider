@@ -1,5 +1,3 @@
 jorgan.problem.ElementProblemsSessionProvider
 jorgan.play.OrganPlaySessionProvider
 jorgan.time.TimeSessionProvider
-jorgan.gui.GUISessionProvider
-jorgan.skin.SkinSessionProvider

@@ -42,7 +42,7 @@ import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.MessageUtils;
 import jorgan.swing.BaseAction;
-import jorgan.swing.ComboBoxUtils;
+import jorgan.swing.combobox.BaseComboBoxModel;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -95,9 +95,8 @@ public class ElementConnectorPanel extends AbstractConnectorPanel {
 	}
 
 	private void read() {
-		this.deviceComboBox.setModel(ComboBoxUtils
-				.createModelWithNull(DevicePool.instance().getMidiDeviceNames(
-						Direction.IN)));
+		this.deviceComboBox.setModel(new BaseComboBoxModel<String>(true,
+				DevicePool.instance().getMidiDeviceNames(Direction.IN)));
 		this.deviceComboBox.setSelectedItem(connector.getInput());
 	}
 

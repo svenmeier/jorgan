@@ -18,22 +18,20 @@
  */
 package jorgan.spi;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jorgan.util.PluginUtils;
+import bias.Configuration;
 import bias.Store;
 
 public class ConfigurationRegistry {
 
-	public static List<Store> getStores() {
-		List<Store> stores = new ArrayList<Store>();
+	public static void init() {
+		Configuration configuration = Configuration.getRoot();
 
 		for (ConfigurationProvider provider : PluginUtils
 				.lookup(ConfigurationProvider.class)) {
-			stores.addAll(provider.getStores());
+			for (Store store : provider.getStores()) {
+				configuration.addStore(store);
+			}
 		}
-
-		return stores;
 	}
 }

@@ -40,7 +40,7 @@ import jorgan.midi.Direction;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.swing.BaseAction;
-import jorgan.swing.ComboBoxUtils;
+import jorgan.swing.combobox.BaseComboBoxModel;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.Group;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -118,7 +118,7 @@ public class KeyboardPanel extends JPanel {
 	}
 
 	private void init() {
-		deviceComboBox.setModel(ComboBoxUtils.createModelWithNull(DevicePool
+		deviceComboBox.setModel(new BaseComboBoxModel<String>(true, DevicePool
 				.instance().getMidiDeviceNames(Direction.IN)));
 		deviceComboBox.setSelectedItem(keyboard.getInput());
 

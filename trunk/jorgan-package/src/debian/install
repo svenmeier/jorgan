@@ -6,6 +6,7 @@ debian/input/copyright /usr/share/doc/jorgan
 ../../jorgan/docs/* /usr/share/doc/jorgan
 ../../jorgan/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan/target/marshal/dispositions/* /usr/share/jorgan/dispositions
+../../jorgan-gui/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-creative/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-creative/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-customizer/target/marshal/lib/* /usr/lib/jorgan/lib

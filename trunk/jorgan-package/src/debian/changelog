@@ -1,3 +1,9 @@
+jorgan (3.15-beta1) stable;
+
+  * GUI now in separate module
+
+ -- Sven Meier <sven@meiers.net>  Sun, 31 Jul 2011 23:00:00 +0200
+
 jorgan (3.14) stable;
 
   * monitor may now skip control messages

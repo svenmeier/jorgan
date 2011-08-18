@@ -29,7 +29,6 @@ import jorgan.disposition.event.AbstractChange;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganListener;
 import jorgan.disposition.event.OrganObserver;
-import jorgan.gui.construct.ElementNameComparator;
 import jorgan.util.ComparatorChain;
 import jorgan.util.IdentityComparator;
 

@@ -21,6 +21,7 @@ package jorgan;
 import java.util.ArrayList;
 import java.util.List;
 
+import jorgan.cli.spi.OptionRegistry;
 import jorgan.spi.ConfigurationProvider;
 import bias.Store;
 import bias.store.DefaultingStore;
@@ -48,6 +49,8 @@ public class DefaultConfigurationProvider implements ConfigurationProvider {
 		stores.add(new DefaultingStore(PreferencesStore.user(version),
 				new PropertiesStore(DefaultConfigurationProvider.class,
 						"/jorgan/version-preferences.properties")));
+
+		stores.add(OptionRegistry.getStore());
 
 		return stores;
 	}

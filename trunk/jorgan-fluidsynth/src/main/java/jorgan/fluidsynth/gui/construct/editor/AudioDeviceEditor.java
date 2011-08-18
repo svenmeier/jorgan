@@ -18,18 +18,15 @@
  */
 package jorgan.fluidsynth.gui.construct.editor;
 
-import java.beans.PropertyEditorSupport;
 import java.util.List;
 
 import jorgan.disposition.Element;
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.gui.construct.editor.ElementAwareEditor;
+import jorgan.gui.construct.editor.TagEditor;
 
-public class AudioDeviceEditor extends PropertyEditorSupport implements
-		ElementAwareEditor {
-
-	private String[] tags;
+public class AudioDeviceEditor extends TagEditor implements ElementAwareEditor {
 
 	private FluidsynthSound sound;
 
@@ -43,39 +40,16 @@ public class AudioDeviceEditor extends PropertyEditorSupport implements
 	}
 
 	@Override
-	public String[] getTags() {
-		if (tags == null) {
-			tags = new String[1];
+	protected String[] createTags() {
+		String audioDriver = sound.getAudioDriver();
+		if (audioDriver != null) {
+			try {
+				List<String> devices = Fluidsynth.getAudioDevices(audioDriver);
 
-			String audioDriver = sound.getAudioDriver();
-			if (audioDriver != null) {
-				try {
-					List<String> devices = Fluidsynth
-							.getAudioDevices(audioDriver);
-
-					tags = new String[devices.size() + 1];
-					int i = 1;
-					for (String device : devices) {
-						tags[i] = device;
-						i++;
-					}
-				} catch (Error fluidsynthFailure) {
-				}
+				return devices.toArray(new String[devices.size()]);
+			} catch (Error fluidsynthFailure) {
 			}
 		}
-
-		return tags;
-	}
-
-	@Override
-	public String getAsText() {
-
-		return (String) getValue();
-	}
-
-	@Override
-	public void setAsText(String string) {
-
-		setValue(string);
+		return new String[0];
 	}
 }
