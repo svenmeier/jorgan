@@ -81,6 +81,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 	private static Logger logger = Logger.getLogger(OrganPanel.class.getName());
 
+	private ResetAction resetAction = new ResetAction();
+
 	private boolean constructing = false;
 
 	/**
@@ -177,7 +179,10 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 * @return widgets
 	 */
 	public List<Object> getMenuWidgets() {
-		return new ArrayList<Object>(viewActions);
+		List<Object> menu = new ArrayList<Object>(viewActions);
+		menu.add(null);
+		menu.add(resetAction);
+		return menu;
 	}
 
 	public void setSession(OrganSession session) {
@@ -307,6 +312,10 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			}
 		}
 
+		loadDefaultDocking();
+	}
+
+	private void loadDefaultDocking() {
 		String dockingXml;
 		if (constructing) {
 			dockingXml = "construct.xml";
@@ -464,6 +473,17 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 			view.setSession(session);
 
 			views.putDockable(view.getKey(), view);
+		}
+	}
+
+	private class ResetAction extends BaseAction {
+
+		private ResetAction() {
+			config.get("reset").read(this);
+		}
+
+		public void actionPerformed(ActionEvent ev) {
+			loadDefaultDocking();
 		}
 	}
 }

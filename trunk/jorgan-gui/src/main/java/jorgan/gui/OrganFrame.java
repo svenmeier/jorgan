@@ -41,7 +41,6 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
-import javax.swing.UIManager;
 
 import jorgan.Info;
 import jorgan.gui.action.spi.ActionRegistry;
@@ -93,9 +92,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 	 */
 	private OrganSession session;
 
-	/*
-	 * The actions.
-	 */
 	private DebugAction debugAction = new DebugAction();
 
 	private NewAction newAction = new NewAction();
@@ -126,10 +122,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 	public OrganFrame() {
 		config.read(this);
 
-		// not neccessary for XP but for older Windows LookAndFeel
-		if (UIManager.getLookAndFeel().getName().indexOf("Windows") != -1) {
-			toolBar.setRollover(true);
-		}
 		toolBar.setFloatable(false);
 		getContentPane().add(toolBar, BorderLayout.NORTH);
 		buildToolBar();
