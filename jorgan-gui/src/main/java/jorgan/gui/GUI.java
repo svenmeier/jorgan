@@ -10,7 +10,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
 
 import jorgan.UI;
 import spin.over.SpinOverEvaluator;
@@ -87,15 +86,7 @@ public class GUI implements UI {
 		}
 
 		public void run() {
-			String plaf = lookAndFeel.getClassName();
-			try {
-				if (plaf != null) {
-					log.log(Level.INFO, "setting plaf '" + plaf + "'");
-					UIManager.setLookAndFeel(plaf);
-				}
-			} catch (Exception ex) {
-				log.log(Level.WARNING, "unable to set plaf '" + plaf + "'", ex);
-			}
+			lookAndFeel.install();
 
 			Toolkit.getDefaultToolkit().setDynamicLayout(true);
 
