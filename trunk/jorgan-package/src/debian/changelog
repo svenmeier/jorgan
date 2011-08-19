@@ -1,6 +1,8 @@
 jorgan (3.15-beta1) stable;
 
   * GUI now in separate module
+  * gui: fixed skin bug for narrow labels
+  * keyboard: improved mouse handling
 
  -- Sven Meier <sven@meiers.net>  Sun, 31 Jul 2011 23:00:00 +0200
 
