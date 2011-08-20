@@ -34,6 +34,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.sound.midi.MidiMessage;
+import javax.swing.Action;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
@@ -178,9 +179,8 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 * 
 	 * @return widgets
 	 */
-	public List<Object> getMenuWidgets() {
-		List<Object> menu = new ArrayList<Object>(viewActions);
-		menu.add(null);
+	public List<Action> getViewActions() {
+		List<Action> menu = new ArrayList<Action>(viewActions);
 		menu.add(resetAction);
 		return menu;
 	}

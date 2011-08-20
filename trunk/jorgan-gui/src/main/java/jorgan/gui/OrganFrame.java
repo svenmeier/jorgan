@@ -253,12 +253,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		menuBar.add(viewMenu);
 		viewMenu.add(debugAction);
 		viewMenu.addSeparator();
-		for (Object widget : organPanel.getMenuWidgets()) {
-			if (widget == null) {
-				viewMenu.addSeparator();
-			} else {
-				viewMenu.add((Action) widget);
-			}
+		for (Action action : organPanel.getViewActions()) {
+			viewMenu.add(action);
 		}
 		if (!MacAdapter.getInstance().isInstalled()) {
 			viewMenu.addSeparator();
