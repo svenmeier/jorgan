@@ -25,8 +25,6 @@ import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.KeyEventPostProcessor;
-import java.awt.KeyboardFocusManager;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Toolkit;
@@ -38,7 +36,6 @@ import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.util.ArrayList;
@@ -54,18 +51,15 @@ import javax.swing.JPopupMenu;
 import javax.swing.JViewport;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
-import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.border.LineBorder;
 import javax.swing.event.MouseInputAdapter;
-import javax.swing.text.JTextComponent;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Reference;
-import jorgan.disposition.Shortcut;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.console.ConsoleStack;
@@ -161,11 +155,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	 * The listener to drop events.
 	 */
 	private DropTargetListener dropTargetListener = new DisplayableDropTargetListener();
-
-	/**
-	 * The key handler for shortcuts.
-	 */
-	private ShortcutHandler shortcutHandler = new ShortcutHandler();
 
 	/*
 	 * The menus.
@@ -275,22 +264,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			this.popup.dispose();
 			this.popup = null;
 		}
-	}
-
-	@Override
-	public void addNotify() {
-		super.addNotify();
-
-		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.addKeyEventPostProcessor(shortcutHandler);
-	}
-
-	@Override
-	public void removeNotify() {
-		KeyboardFocusManager.getCurrentKeyboardFocusManager()
-				.removeKeyEventPostProcessor(shortcutHandler);
-
-		super.removeNotify();
 	}
 
 	public int getGrid() {
@@ -1149,37 +1122,6 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			} catch (Exception ex) {
 				dtde.dropComplete(false);
 			}
-		}
-	}
-
-	private class ShortcutHandler implements KeyEventPostProcessor {
-
-		public boolean postProcessKeyEvent(KeyEvent e) {
-			// don't steal characters from text components
-			if (constructing || e.getSource() instanceof JTextComponent) {
-				return false;
-			}
-
-			if (!Shortcut.maybeShortcut(e)) {
-				return false;
-			}
-
-			if (KeyboardFocusManager.getCurrentKeyboardFocusManager()
-					.getFocusedWindow() == SwingUtilities
-					.getWindowAncestor(ConsolePanel.this)) {
-
-				boolean pressed = (e.getID() == KeyEvent.KEY_PRESSED);
-				for (View<? extends Displayable> view : viewsByDisplayable
-						.values()) {
-					if (pressed) {
-						view.keyPressed(e);
-					} else {
-						view.keyReleased(e);
-					}
-				}
-			}
-
-			return false;
 		}
 	}
 

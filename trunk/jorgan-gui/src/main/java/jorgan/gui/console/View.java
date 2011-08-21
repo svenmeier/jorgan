@@ -24,7 +24,6 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,9 +35,9 @@ import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
 import jorgan.skin.ButtonLayer;
 import jorgan.skin.Layer;
-import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
+import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.TextLayer.Binding;
 import bias.Configuration;
 
@@ -345,12 +344,6 @@ public class View<E extends Displayable> {
 
 	public final void mouseReleased(Layer layer, int x, int y) {
 		layer.mouseReleased(x - location.x, y - location.y, size);
-	}
-
-	public void keyPressed(KeyEvent ev) {
-	}
-
-	public void keyReleased(KeyEvent ev) {
 	}
 
 	protected Style createDefaultStyle() {

@@ -2,6 +2,7 @@ jorgan (3.15-beta1) stable;
 
   * GUI now in separate module
   * gui: fixed skin bug for narrow labels
+  * gui: shortcut processed only once even if element is positioned on multiple consoles
   * gui: new menu item "reset views"
   * keyboard: improved mouse handling
 

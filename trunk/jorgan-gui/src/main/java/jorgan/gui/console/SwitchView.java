@@ -20,7 +20,6 @@ package jorgan.gui.console;
 
 import java.awt.Graphics2D;
 import java.awt.Insets;
-import java.awt.event.KeyEvent;
 
 import jorgan.disposition.Shortcut;
 import jorgan.disposition.Switch;
@@ -122,45 +121,6 @@ public class SwitchView<E extends Switch> extends EngageableView<E> {
 			public void released() {
 			};
 		});
-	}
-
-	@Override
-	public void keyPressed(KeyEvent ev) {
-
-		Switch element = getElement();
-
-		Shortcut shortcut = element.getShortcut();
-		if (shortcut != null && shortcut.match(ev)) {
-			// note: umlauts do not trigger KeyEvent.KEY_PRESSED :(
-
-			if (element.getDuration() == Switch.DURATION_NONE) {
-				// keep active until #keyReleased()
-				element.setActive(true);
-			} else if (getElement().getDuration() == Switch.DURATION_INFINITE) {
-				// always activate
-				getElement().activate();
-			} else {
-				if (getElement().isActive()) {
-					getElement().deactivate();
-				} else {
-					getElement().activate();
-				}
-			}
-		}
-	}
-
-	@Override
-	public void keyReleased(KeyEvent ev) {
-
-		Switch element = getElement();
-
-		Shortcut shortcut = element.getShortcut();
-		if (shortcut != null && shortcut.match(ev)) {
-			if (element.getDuration() == Switch.DURATION_NONE) {
-				// was kept active in #keyPressed()
-				element.setActive(false);
-			}
-		}
 	}
 
 	@Override
