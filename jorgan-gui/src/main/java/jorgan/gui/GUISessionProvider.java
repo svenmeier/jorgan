@@ -18,12 +18,16 @@
  */
 package jorgan.gui;
 
+import java.io.File;
+
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.gui.selection.ElementSelection;
 import jorgan.gui.selection.SelectionListener;
+import jorgan.gui.shortcut.ShortcutHandler;
 import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
 
 public class GUISessionProvider implements SessionProvider {
@@ -32,6 +36,7 @@ public class GUISessionProvider implements SessionProvider {
 	 * {@link UndoManager} and {@link ElementSelection} are optional.
 	 */
 	public void init(OrganSession session) {
+		session.lookup(ShortcutHandler.class);
 	}
 
 	public Object create(final OrganSession session, Class<?> clazz) {
@@ -88,6 +93,28 @@ public class GUISessionProvider implements SessionProvider {
 			});
 
 			return selection;
+		} else if (clazz == ShortcutHandler.class) {
+			final ShortcutHandler handler = new ShortcutHandler(session
+					.getOrgan());
+
+			session.addListener(new SessionListener() {
+				public void constructingChanged(boolean constructing) {
+					handler.arm(!constructing);
+				}
+
+				public void modified() {
+				}
+
+				public void saved(File file) {
+				}
+
+				public void destroyed() {
+					handler.destroy();
+				}
+			});
+			handler.arm(!session.isConstructing());
+
+			return handler;
 		}
 		return null;
 	}
