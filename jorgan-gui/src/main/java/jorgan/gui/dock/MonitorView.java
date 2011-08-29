@@ -19,17 +19,22 @@
 package jorgan.gui.dock;
 
 import java.awt.Color;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
+import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
+import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.ToolTipManager;
+import javax.swing.TransferHandler;
 import javax.swing.table.TableColumn;
 
 import jorgan.disposition.Element;
@@ -100,6 +105,21 @@ public class MonitorView extends AbstractView {
 		ToolTipManager.sharedInstance().registerComponent(table);
 		table.setModel(tableModel);
 		TableUtils.pleasantLookAndFeel(table);
+		table.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
+		table.setTransferHandler(new TransferHandler() {
+			@Override
+			public void exportToClipboard(JComponent comp, Clipboard clip,
+					int action) throws IllegalStateException {
+
+				StringBuilder builder = new StringBuilder();
+
+				for (int row : table.getSelectedRows()) {
+					builder.append(messages.get(row));
+					builder.append("\n");
+				}
+				clip.setContents(new StringSelection(builder.toString()), null);
+			}
+		});
 		setContent(new JScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
@@ -288,6 +308,11 @@ public class MonitorView extends AbstractView {
 			} else {
 				return Color.white;
 			}
+		}
+
+		public String toString() {
+			return String.format("%s\t%s\t%s", this.status, this.data1,
+					this.data2);
 		}
 	}
 
