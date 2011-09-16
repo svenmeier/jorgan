@@ -31,6 +31,7 @@ import jorgan.gui.LAF;
 import jorgan.gui.OrganFrame;
 import jorgan.gui.OrganFrame.Changes;
 import jorgan.gui.action.FullScreenAction;
+import jorgan.skin.SkinManager;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
@@ -52,12 +53,15 @@ public class GuiCategory extends JOrganCategory {
 	private Model<Boolean> showAboutOnStartup = getModel(new Property(
 			GUI.class, "showAboutOnStartup"));
 
+	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
+			FullScreenAction.class, "onLoad"));
+
+	private Model<Boolean> flushImagesOnClose = getModel(new Property(
+			SkinManager.class, "flushImagesOnClose"));
+
 	private JComboBox lookAndFeelComboBox = new JComboBox();
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
-
-	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
-			FullScreenAction.class, "onLoad"));
 
 	private Model<OrganFrame.Changes> changes = getModel(new Property(
 			OrganFrame.class, "changes"));
@@ -72,6 +76,8 @@ public class GuiCategory extends JOrganCategory {
 
 	private JRadioButton changesSaveRadioButton = new JRadioButton();
 
+	private JCheckBox flushImagesOnCloseCheckBox = new JCheckBox();
+
 	public GuiCategory() {
 		config.read(this);
 	}
@@ -85,8 +91,7 @@ public class GuiCategory extends JOrganCategory {
 		Column column = builder.column();
 
 		column.term(config.get("lookAndFeel").read(new JLabel()));
-		lookAndFeelComboBox
-				.setModel(new DefaultComboBoxModel(LAF.values()));
+		lookAndFeelComboBox.setModel(new DefaultComboBoxModel(LAF.values()));
 		column.definition(lookAndFeelComboBox);
 
 		column.definition(config.get("showAboutOnStartup").read(
@@ -94,6 +99,9 @@ public class GuiCategory extends JOrganCategory {
 
 		column.definition(config.get("fullScreenOnLoad").read(
 				fullScreenOnLoadCheckBox));
+
+		column.definition(config.get("flushImagesOnClose").read(
+				flushImagesOnCloseCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
 		column.term(config.get("changes").read(new JLabel()));
@@ -129,6 +137,8 @@ public class GuiCategory extends JOrganCategory {
 		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
 		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
 
+		flushImagesOnCloseCheckBox.setSelected(flushImagesOnClose.getValue());
+
 		switch (changes.getValue()) {
 		case DISCARD:
 			changesDiscardRadioButton.setSelected(true);
@@ -150,6 +160,8 @@ public class GuiCategory extends JOrganCategory {
 		lookAndFeel.setValue((LAF) lookAndFeelComboBox.getSelectedItem());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
+
+		flushImagesOnClose.setValue(flushImagesOnCloseCheckBox.isSelected());
 
 		Changes value = null;
 		if (changesDiscardRadioButton.isSelected()) {
