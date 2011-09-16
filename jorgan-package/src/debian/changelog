@@ -1,9 +1,10 @@
-jorgan (3.15-beta1) stable;
+jorgan (3.15-beta2) stable;
 
   * GUI now in separate module
   * gui: fixed skin bug for narrow labels
   * gui: shortcut processed only once even if element is positioned on multiple consoles
   * gui: new menu item "reset views"
+  * gui: new configuration "flush images on close of disposition"
   * keyboard: improved mouse handling
 
  -- Sven Meier <sven@meiers.net>  Sun, 31 Jul 2011 23:00:00 +0200

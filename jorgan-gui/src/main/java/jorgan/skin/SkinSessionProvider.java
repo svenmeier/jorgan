@@ -23,6 +23,7 @@ import java.io.IOException;
 
 import jorgan.problem.ElementProblems;
 import jorgan.session.OrganSession;
+import jorgan.session.SessionListener;
 import jorgan.session.spi.SessionProvider;
 
 public class SkinSessionProvider implements SessionProvider {
@@ -32,15 +33,35 @@ public class SkinSessionProvider implements SessionProvider {
 	 */
 	public void init(OrganSession session) {
 	}
-	
+
 	public Object create(final OrganSession session, Class<?> clazz) {
 		if (clazz == SkinManager.class) {
-			return new SkinManager(session.lookup(ElementProblems.class)) {
+			final SkinManager manager = new SkinManager(session
+					.lookup(ElementProblems.class)) {
 				@Override
 				protected File resolve(String name) throws IOException {
 					return session.resolve(name);
 				}
 			};
+			session.addListener(new SessionListener() {
+				@Override
+				public void saved(File file) throws IOException {
+				}
+
+				@Override
+				public void modified() {
+				}
+
+				@Override
+				public void destroyed() {
+					manager.destroy();
+				}
+
+				@Override
+				public void constructingChanged(boolean constructing) {
+				}
+			});
+			return manager;
 		}
 		return null;
 	}

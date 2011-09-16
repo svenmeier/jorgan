@@ -33,6 +33,7 @@ import jorgan.io.SkinStream;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
+import jorgan.swing.ImageCache;
 import jorgan.util.IOUtils;
 import bias.Configuration;
 import bias.util.MessageBuilder;
@@ -51,8 +52,16 @@ public abstract class SkinManager {
 
 	private ElementProblems problems;
 
+	private boolean flushImagesOnClose;
+
 	public SkinManager(ElementProblems problems) {
 		this.problems = problems;
+
+		config.read(this);
+	}
+
+	public void setFlushImagesOnClose(boolean flushImages) {
+		this.flushImagesOnClose = flushImages;
 	}
 
 	public Skin getSkin(Console console) {
@@ -183,6 +192,12 @@ public abstract class SkinManager {
 				}
 			}
 			return null;
+		}
+	}
+
+	public void destroy() {
+		if (flushImagesOnClose) {
+			ImageCache.flush();
 		}
 	}
 }
