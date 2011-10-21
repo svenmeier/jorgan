@@ -55,14 +55,21 @@ public class Convert {
 		return xsl;
 	}
 
+	public void exists() {
+		if (getSource() == null) {
+			throw new IllegalStateException(xsl);
+		}
+	}
+
 	public InputStream convert(InputStream in) throws IOException {
 		TransformerFactory factory = TransformerFactory.newInstance();
 		factory.setAttribute("indent-number", new Integer(4));
 
 		Transformer transform;
 		try {
-			transform = factory.newTransformer(new StreamSource(Convert.class
-					.getResourceAsStream("conversion/" + xsl)));
+			InputStream stream = getSource();
+
+			transform = factory.newTransformer(new StreamSource(stream));
 
 			transform.setOutputProperty(OutputKeys.INDENT, "yes");
 
@@ -78,5 +85,9 @@ public class Convert {
 			ex.initCause(e);
 			throw ex;
 		}
+	}
+
+	private InputStream getSource() {
+		return Convert.class.getResourceAsStream("conversion/" + xsl);
 	}
 }

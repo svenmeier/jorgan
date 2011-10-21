@@ -30,41 +30,17 @@ import javax.sound.midi.ShortMessage;
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
 import jorgan.util.RegexFilenameFilter;
-import bias.Configuration;
 
 public class Fluidsynth {
 
 	private static final Logger logger = Logger.getLogger(Fluidsynth.class
 			.getName());
 
-	private static final Configuration config = Configuration.getRoot().get(
-			Fluidsynth.class);
-
 	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	private static final int NAME_MAX_LENGTH = 32;
 
-	private Overflow overflow = new Overflow();
-
 	private ByteBuffer context;
-
-	private String name;
-
-	private int channels;
-
-	private int polyphony;
-
-	private String audioDriver;
-
-	private String audioDevice;
-
-	private int buffers;
-
-	private int bufferSize;
-
-	private File soundfont;
-
-	private int cores;
 
 	public Fluidsynth() throws IllegalStateException, IOException {
 		this("", 16, null);
@@ -72,63 +48,25 @@ public class Fluidsynth {
 
 	public Fluidsynth(String name, int channels, String audioDriver)
 			throws IllegalStateException, IOException {
-		this(name, 1, channels, 256, 44100.0f, audioDriver, null, 8, 512);
+		this(name, 1, channels, 256, 44100.0f, audioDriver, null, 8, 512, 0.5f,
+				0.5f, 0.5f, 0.5f, 0.5f);
 	}
 
 	public Fluidsynth(String name, int cores, int channels, int polyphony,
 			float sampleRate, String audioDriver, String audioDevice,
-			int buffers, int bufferSize) throws IOException {
+			int buffers, int bufferSize, float overflowAge,
+			float overflowPercussion, float overflowReleased,
+			float overflowSustained, float overflowVolume) throws IOException {
 
-		this.name = name.substring(0, Math.min(name.length(), NAME_MAX_LENGTH));
-		this.cores = cores;
-		this.channels = channels;
-		this.polyphony = polyphony;
-		this.audioDriver = audioDriver;
-		this.audioDevice = audioDevice;
-		this.buffers = buffers;
-		this.bufferSize = bufferSize;
+		name = name.substring(0, Math.min(name.length(), NAME_MAX_LENGTH));
 
-		context = init(this.name, this.cores, this.channels, this.polyphony,
-				sampleRate, this.audioDriver, this.audioDevice, this.buffers,
-				this.bufferSize, overflow.age, overflow.percussion,
-				overflow.released, overflow.sustained, overflow.volume);
-	}
-
-	public String getAudioDevice() {
-		return audioDevice;
-	}
-
-	public String getAudioDriver() {
-		return audioDriver;
-	}
-
-	public int getBuffers() {
-		return buffers;
-	}
-
-	public int getBufferSize() {
-		return bufferSize;
-	}
-
-	public int getChannels() {
-		return channels;
-	}
-
-	public int getPolyphony() {
-		return polyphony;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public File getSoundfont() {
-		return soundfont;
+		context = init(name, cores, channels, polyphony, sampleRate,
+				audioDriver, audioDevice, buffers, bufferSize, overflowAge,
+				overflowPercussion, overflowReleased, overflowSustained,
+				overflowVolume);
 	}
 
 	public void soundFontLoad(File soundfont) throws IOException {
-		this.soundfont = soundfont;
-
 		soundFontLoad(context, soundfont.getAbsolutePath());
 	}
 
@@ -189,19 +127,6 @@ public class Fluidsynth {
 	public void destroy() {
 		destroy(context);
 		context = null;
-	}
-
-	public class Overflow {
-
-		public float age = 1005.0f;
-		public float percussion = 4005.0f;
-		public float released = -2005.0f;
-		public float sustained = -1005.0f;
-		public float volume = 505.0f;
-
-		public Overflow() {
-			config.get("overflow").read(this);
-		}
 	}
 
 	private static native ByteBuffer init(String name, int cores, int channels,

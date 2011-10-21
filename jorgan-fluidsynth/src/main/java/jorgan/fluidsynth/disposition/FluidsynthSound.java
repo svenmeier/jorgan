@@ -62,6 +62,16 @@ public class FluidsynthSound extends Sound {
 
 	private float gain = 0.5f;
 
+	private float overflowPercussion = 0.10f;
+
+	private float overflowSustained = 0.10f;
+
+	private float overflowReleased = 0.50f;
+
+	private float overflowAge = 0.55f;
+
+	private float overflowVolume = 0.50f;
+
 	private List<Tuning> tunings = new ArrayList<Tuning>();
 
 	@Override
@@ -110,6 +120,111 @@ public class FluidsynthSound extends Sound {
 
 	public float getGain() {
 		return gain;
+	}
+
+	public void setOverflowPercussion(float overflow) {
+		if (overflow > 1.0f) {
+			overflow = 1.0f;
+		}
+		if (overflow < 0.0f) {
+			overflow = 0.0f;
+		}
+
+		if (this.overflowPercussion != overflow) {
+			float oldOverflow = this.overflowPercussion;
+
+			this.overflowPercussion = overflow;
+
+			fireChange(new PropertyChange(oldOverflow, overflow));
+		}
+	}
+
+	public float getOverflowPercussion() {
+		return overflowPercussion;
+	}
+
+	public void setOverflowSustained(float overflow) {
+		if (overflow > 1.0f) {
+			overflow = 1.0f;
+		}
+		if (overflow < 0.0f) {
+			overflow = 0.0f;
+		}
+
+		if (this.overflowSustained != overflow) {
+			float oldOverflow = this.overflowSustained;
+
+			this.overflowSustained = overflow;
+
+			fireChange(new PropertyChange(oldOverflow, overflow));
+		}
+	}
+
+	public float getOverflowSustained() {
+		return overflowSustained;
+	}
+
+	public void setOverflowReleased(float overflow) {
+		if (overflow > 1.0f) {
+			overflow = 1.0f;
+		}
+		if (overflow < 0.0f) {
+			overflow = 0.0f;
+		}
+
+		if (this.overflowReleased != overflow) {
+			float oldOverflow = this.overflowReleased;
+
+			this.overflowReleased = overflow;
+
+			fireChange(new PropertyChange(oldOverflow, overflow));
+		}
+	}
+
+	public float getOverflowReleased() {
+		return overflowReleased;
+	}
+
+	public void setOverflowVolume(float overflow) {
+		if (overflow > 1.0f) {
+			overflow = 1.0f;
+		}
+		if (overflow < 0.0f) {
+			overflow = 0.0f;
+		}
+
+		if (this.overflowVolume != overflow) {
+			float oldOverflow = this.overflowVolume;
+
+			this.overflowVolume = overflow;
+
+			fireChange(new PropertyChange(oldOverflow, overflow));
+		}
+	}
+
+	public float getOverflowVolume() {
+		return overflowVolume;
+	}
+
+	public void setOverflowAge(float overflow) {
+		if (overflow > 1.0f) {
+			overflow = 1.0f;
+		}
+		if (overflow < 0.0f) {
+			overflow = 0.0f;
+		}
+
+		if (this.overflowAge != overflow) {
+			float oldOverflow = this.overflowAge;
+
+			this.overflowAge = overflow;
+
+			fireChange(new PropertyChange(oldOverflow, overflow));
+		}
+	}
+
+	public float getOverflowAge() {
+		return overflowAge;
 	}
 
 	public void setInterpolate(Interpolate interpolate) {
@@ -384,7 +499,9 @@ public class FluidsynthSound extends Sound {
 				&& getPolyphony() == sound.getPolyphony()
 				&& getChannels() == sound.getChannels()
 				&& Null.safeEquals(getSoundfont(), sound.getSoundfont())
-				&& getGain() == sound.getGain()
+				&& getGain() == sound.getGain() && getGain() == sound.getGain()
+				&& getGain() == sound.getGain() && getGain() == sound.getGain()
+				&& getGain() == sound.getGain() && getGain() == sound.getGain()
 				&& getInterpolate() == sound.getInterpolate();
 	}
 
