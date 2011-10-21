@@ -111,7 +111,9 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 					sound.getChannels(), sound.getPolyphony(), sound
 							.getSampleRate(), sound.getAudioDriver(), sound
 							.getAudioDevice(), sound.getAudioBuffers(), sound
-							.getAudioBufferSize());
+							.getAudioBufferSize(), sound.getOverflowAge(),
+					sound.getOverflowPercussion(), sound.getOverflowReleased(),
+					sound.getOverflowSustained(), sound.getOverflowVolume());
 
 			clone = (FluidsynthSound) sound.clone();
 		} catch (IOException e) {

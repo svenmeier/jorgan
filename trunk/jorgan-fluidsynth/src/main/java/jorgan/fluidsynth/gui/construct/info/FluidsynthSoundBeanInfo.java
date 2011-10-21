@@ -49,5 +49,11 @@ public class FluidsynthSoundBeanInfo extends ElementBeanInfo {
 		add("audioBufferSize", FluidsynthSound.class, IntegerEditor.class);
 		add("soundfont", FluidsynthSound.class, FileEditor.class);
 		add("gain", FluidsynthSound.class, ValueEditor.class);
+
+		add("overflowPercussion", FluidsynthSound.class, ValueEditor.class);
+		add("overflowSustained", FluidsynthSound.class, ValueEditor.class);
+		add("overflowReleased", FluidsynthSound.class, ValueEditor.class);
+		add("overflowAge", FluidsynthSound.class, ValueEditor.class);
+		add("overflowVolume", FluidsynthSound.class, ValueEditor.class);
 	}
 }
