@@ -107,10 +107,10 @@
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
-      <arg value="-Wl,-lfluidsynth" />
       <arg line="${jorgan.jni.path}/src/main/native/exception.c" />
       <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
       <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg value="-Wl,-lfluidsynth" />
       <arg line="-o ./target/native/libfluidsynthJNI.so" />
     </exec>
   	
