@@ -122,7 +122,6 @@
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
-      <arg value="-Wl,-lasound" />
       <arg line="${unix.awesfx}/awelib/awe_parm.c" />
       <arg line="${unix.awesfx}/awelib/bool.c" />
       <arg line="${unix.awesfx}/awelib/cmpopen.c" />
@@ -147,6 +146,7 @@
       <arg line="${jorgan.jni.path}/src/main/native/logging.c" />
       <arg line="./src/main/native/linux/emux.c" />
       <arg line="./src/main/native/linux/creativeJNI.c" />
+      <arg value="-Wl,-lasound" />
       <arg line="-o ./target/native/libcreativeJNI.so" />
     </exec>
 
