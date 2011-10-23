@@ -491,18 +491,21 @@ public class FluidsynthSound extends Sound {
 
 	public boolean equals(FluidsynthSound sound) {
 
-		return Null.safeEquals(getAudioDriver(), sound.getAudioDriver())
-				&& Null.safeEquals(getAudioDevice(), sound.getAudioDevice())
-				&& getAudioBuffers() == sound.getAudioBuffers()
-				&& getAudioBufferSize() == sound.getAudioBufferSize()
-				&& getSampleRate() == sound.getSampleRate()
-				&& getPolyphony() == sound.getPolyphony()
-				&& getChannels() == sound.getChannels()
-				&& Null.safeEquals(getSoundfont(), sound.getSoundfont())
-				&& getGain() == sound.getGain() && getGain() == sound.getGain()
-				&& getGain() == sound.getGain() && getGain() == sound.getGain()
-				&& getGain() == sound.getGain() && getGain() == sound.getGain()
-				&& getInterpolate() == sound.getInterpolate();
+		return Null.safeEquals(this.audioDriver, sound.audioDriver)
+				&& Null.safeEquals(this.audioDevice, sound.audioDevice)
+				&& this.audioBuffers == sound.getAudioBuffers()
+				&& this.audioBufferSize == sound.getAudioBufferSize()
+				&& this.sampleRate == sound.getSampleRate()
+				&& this.polyphony == sound.getPolyphony()
+				&& this.channels == sound.getChannels()
+				&& Null.safeEquals(this.soundfont, sound.getSoundfont())
+				&& this.gain == sound.gain
+				&& this.overflowAge == sound.overflowAge
+				&& this.overflowPercussion == sound.overflowPercussion
+				&& this.overflowReleased == sound.overflowReleased
+				&& this.overflowSustained == sound.overflowSustained
+				&& this.overflowVolume == sound.overflowVolume
+				&& this.interpolate == sound.interpolate;
 	}
 
 	public static enum Interpolate {
