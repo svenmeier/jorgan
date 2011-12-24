@@ -24,7 +24,7 @@
     	<copy todir="./target/classes">
             <fileset dir="./src/main/java">
                 <exclude name="**/*.java" />
-            	<exclude name="**/*.properties" />
+    	       	<exclude name="**/i18n*.properties" />
             </fileset>
         </copy>
     </target>
