@@ -18,20 +18,39 @@
  */
 package jorgan.spi;
 
+import java.io.File;
+
+import jorgan.Info;
 import jorgan.util.PluginUtils;
 import bias.Configuration;
 import bias.Store;
+import bias.store.PropertiesStore;
 
 public class ConfigurationRegistry {
+
+	private static final Store preferences;
+
+	static {
+		File home = new File(System.getProperty("user.home"), ".jorgan");
+		if (!home.exists()) {
+			home.mkdirs();
+		}
+
+		String name = String.format("jorgan-%s.properties",
+				new Info().getVersion());
+
+		preferences = new PropertiesStore(new File(home, name));
+	}
 
 	public static void init() {
 		Configuration configuration = Configuration.getRoot();
 
 		for (ConfigurationProvider provider : PluginUtils
 				.lookup(ConfigurationProvider.class)) {
-			for (Store store : provider.getStores()) {
+			for (Store store : provider.getStores(preferences)) {
 				configuration.addStore(store);
 			}
 		}
 	}
+
 }

@@ -71,6 +71,7 @@ public class Configuration {
 		this.path = "";
 
 		this.configurations = new HashMap<String, Configuration>();
+		configurations.put(this.path, this);
 	}
 
 	private Configuration(String path, Configuration parent) {
@@ -78,7 +79,7 @@ public class Configuration {
 		this.parent = parent;
 
 		this.configurations = parent.configurations;
-		configurations.put(path, this);
+		configurations.put(this.path, this);
 	}
 
 	/**
@@ -307,6 +308,20 @@ public class Configuration {
 		return property;
 	}
 
+	public void flush() {
+		for (String path : configurations.keySet()) {
+			if (path.startsWith(this.path)) {
+				Configuration configuration = configurations.get(path);
+				
+				if (configuration.stores != null) {
+					for (Store store : configuration.stores) {
+						store.flush();
+					}
+				}
+			}
+		}
+	}
+	
 	private static final Configuration root = new Configuration();
 
 	/**

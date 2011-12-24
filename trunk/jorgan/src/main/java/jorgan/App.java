@@ -99,6 +99,8 @@ public class App {
 
 		configuration.read(new App()).start(file);
 
+		Configuration.getRoot().flush();
+
 		System.exit(0);
 	}
 }
