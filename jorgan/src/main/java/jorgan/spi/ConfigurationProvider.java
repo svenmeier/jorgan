@@ -24,6 +24,6 @@ import bias.Store;
 
 public interface ConfigurationProvider {
 
-	public List<Store> getStores();
+	public List<Store> getStores(Store preferencesStore);
 
 }

@@ -81,4 +81,6 @@ public interface Store {
 	public void removeListener(StoreListener listener);
 
 	public boolean isReadOnly();
+	
+	public void flush();
 }

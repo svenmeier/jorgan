@@ -18,11 +18,16 @@
  */
 package bias.store;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
+
+import bias.ConfigurationException;
 
 /**
  * A store using {@link java.util.Properties}.
@@ -30,12 +35,37 @@ import java.util.Set;
 public class PropertiesStore extends ConvertingStore {
 
 	private Properties properties;
+	
+	private File file;
 
 	/**
 	 * Create a store on fresh {@link Properties}.
 	 */
 	public PropertiesStore() {
 		this(new Properties());
+	}
+
+	public PropertiesStore(File file) {
+		this();
+		
+		this.file = file.getAbsoluteFile();
+		
+		if (this.file.isDirectory()) {
+			throw new ConfigurationException("file must not be a directory");
+		}
+		
+		if (this.file.exists()) {
+			try {
+				FileInputStream input = new FileInputStream(file);
+				try {
+					properties.load(input);
+				} finally {
+					input.close();
+				}
+			} catch (IOException ex) {
+				throw new ConfigurationException(ex);
+			}
+		}
 	}
 
 	/**
@@ -51,20 +81,40 @@ public class PropertiesStore extends ConvertingStore {
 	public PropertiesStore(Class<?> clazz, String name) {
 		this.properties = new Properties();
 
-		InputStream input = clazz.getResourceAsStream(name);
-		if (input == null) {
-			throw new IllegalArgumentException("properties '" + name
-					+ "' not found");
-		}
-
 		try {
-			properties.load(input);
-		} catch (IOException ex) {
-			throw new Error(ex);
-		} finally {
+			InputStream input = clazz.getResourceAsStream(name);
+			if (input == null) {
+				throw new ConfigurationException("properties '" + name
+						+ "' not found");
+			}
 			try {
+				properties.load(input);
+			} finally {
 				input.close();
-			} catch (IOException ignore) {
+			}
+		} catch (IOException ex) {
+			throw new ConfigurationException(ex);
+		}
+	}
+
+	public void flush() {
+		if (this.file != null) {
+			File directory = this.file.getParentFile();
+			if (!directory.exists()) {
+				if (!directory.mkdirs()) {
+					throw new ConfigurationException("cannot create directory '" + directory +"'");
+				}
+			}
+			
+			try {
+				FileOutputStream output  = new FileOutputStream(file);
+				try {
+					properties.store(output, "bias");
+				} finally {
+					output.close();
+				}
+			} catch (IOException ex) {
+				throw new ConfigurationException(ex);
 			}
 		}
 	}

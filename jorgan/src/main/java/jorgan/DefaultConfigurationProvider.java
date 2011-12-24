@@ -25,13 +25,12 @@ import jorgan.cli.spi.OptionRegistry;
 import jorgan.spi.ConfigurationProvider;
 import bias.Store;
 import bias.store.DefaultingStore;
-import bias.store.PreferencesStore;
 import bias.store.PropertiesStore;
 import bias.store.ResourceBundlesStore;
 
 public class DefaultConfigurationProvider implements ConfigurationProvider {
 
-	public List<Store> getStores() {
+	public List<Store> getStores(Store preferencesStore) {
 		ArrayList<Store> stores = new ArrayList<Store>();
 
 		PropertiesStore properties = new PropertiesStore(App.class,
@@ -40,19 +39,12 @@ public class DefaultConfigurationProvider implements ConfigurationProvider {
 
 		stores.add(new ResourceBundlesStore("i18n"));
 
-		stores.add(new DefaultingStore(PreferencesStore.user(),
-				new PropertiesStore(DefaultConfigurationProvider.class,
-						"/jorgan/preferences.properties")));
-
-		String version = (String) properties.getValue("jorgan/Info/version",
-				String.class);
-		stores.add(new DefaultingStore(PreferencesStore.user(version),
-				new PropertiesStore(DefaultConfigurationProvider.class,
-						"/jorgan/version-preferences.properties")));
+		stores.add(new DefaultingStore(preferencesStore, new PropertiesStore(
+				DefaultConfigurationProvider.class,
+				"/jorgan/preferences.properties")));
 
 		stores.add(OptionRegistry.getStore());
 
 		return stores;
 	}
-
 }

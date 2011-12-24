@@ -20,22 +20,25 @@ package jorgan;
 
 import java.util.logging.Logger;
 
-import bias.Configuration;
-
 public class Info {
-
-	private static Configuration config = Configuration.getRoot().get(
-			Info.class);
 
 	private static Logger logger = Logger.getLogger(Info.class.getName());
 
-	private String version = "";
-
-	public Info() {
-		config.read(this);
-	}
+	private String version;
 
 	public String getVersion() {
+		if (version == null) {
+			version = getClass().getPackage().getImplementationVersion();
+
+			if (version == null) {
+				version = "development";
+			}
+
+			int hyphen = version.lastIndexOf('-');
+			if (hyphen != -1) {
+				version = version.substring(0, hyphen);
+			}
+		}
 		return version;
 	}
 

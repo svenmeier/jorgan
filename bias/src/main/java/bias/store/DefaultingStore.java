@@ -68,4 +68,9 @@ public class DefaultingStore extends AbstractStore {
 	protected void setValueImpl(String key, Type type, Object value) {
 		store.setValue(key, type, value);
 	}
+	
+	@Override
+	public void flush() {
+		store.flush();
+	}
 }

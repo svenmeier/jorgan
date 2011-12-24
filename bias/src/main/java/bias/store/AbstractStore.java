@@ -110,4 +110,10 @@ public abstract class AbstractStore implements Store {
 			return key.substring(0, index);
 		}
 	}
+
+	/**
+	 * Default implementation does nothing.
+	 */
+	public void flush() {
+	}
 }

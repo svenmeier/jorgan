@@ -117,5 +117,8 @@ public class ConfigurationTest extends TestCase {
 		public boolean isReadOnly() {
 			return false;
 		}
+		
+		public void flush() {
+		}
 	};
 }
