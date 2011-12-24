@@ -31,7 +31,7 @@
 
 		<jar destfile="./target/marshal/jorgan.jar">
 			<manifest>
-				<attribute name="Main-class" value="jorgan.Bootstrap" />
+				<attribute name="Main-class" value="jorgan.bootstrap.Bootstrap" />
 				<attribute name="Built-By" value="${user.name}"/>
 				<attribute name="Built-Version" value="${bootstrap.version}"/>
 			</manifest>

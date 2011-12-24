@@ -1,4 +1,4 @@
-package jorgan;
+package jorgan.bootstrap;
 
 /*
  * jOrgan - Java Virtual Organ
@@ -22,10 +22,7 @@ package jorgan;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.bootstrap.Classpath;
-import jorgan.bootstrap.Exceptions;
-import jorgan.bootstrap.Logging;
-import jorgan.bootstrap.Main;
+import jorgan.App;
 
 /**
  * Bootstrapping for {@link App}.
