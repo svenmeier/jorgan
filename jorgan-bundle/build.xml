@@ -13,7 +13,7 @@
     </target>
 	
     <target name="dist" description="Set up the distribution" depends="clean, init" >
-        <property name="image" value="./target/jOrgan-${jorgan.version}"/>
+        <property name="image" value="./target/jOrgan-${bundle.version}"/>
 		
         <copy todir="${image}/jOrgan.app">
             <fileset dir="./src" excludes="**/Info.plist" />
