@@ -42,7 +42,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
-import jorgan.Info;
+import jorgan.Version;
 import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
 import jorgan.gui.preferences.PreferencesDialog;
@@ -275,11 +275,12 @@ public class OrganFrame extends JFrame implements SessionAware {
 		String title;
 		if (session == null) {
 			title = config.get("titleNoSession").read(new MessageBuilder())
-					.build(new Info().getVersion());
+					.build(new Version().get());
 		} else {
-			title = config.get("titleSession").read(new MessageBuilder())
-					.build(
-							new Info().getVersion(),
+			title = config
+					.get("titleSession")
+					.read(new MessageBuilder())
+					.build(new Version().get(),
 							DispositionFileFilter.removeSuffix(session
 									.getFile()));
 		}
@@ -354,17 +355,17 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (FormatException ex) {
 			logger.log(Level.INFO, ex.getClass().getSimpleName(), ex);
 
-			showBoxMessage("openFormatException", MessageBox.OPTIONS_OK, file
-					.getName());
+			showBoxMessage("openFormatException", MessageBox.OPTIONS_OK,
+					file.getName());
 			return;
 		} catch (IOException ex) {
-			showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file
-					.getName());
+			showBoxMessage("openIOException", MessageBox.OPTIONS_OK,
+					file.getName());
 			return;
 		}
 
 		String version = session.getOrgan().getVersion();
-		if (!"".equals(version) && !version.equals(new Info().getVersion())) {
+		if (!version.isEmpty() && !new Version().isCompatible(version)) {
 			int option = showBoxMessage("openConversion",
 					MessageBox.OPTIONS_OK_CANCEL, version);
 			if (option != MessageBox.OPTION_OK) {
@@ -456,8 +457,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 			File file = new File((String) getValue(Action.SHORT_DESCRIPTION));
 			if (!file.exists()) {
-				showBoxMessage("openIOException", MessageBox.OPTIONS_OK, file
-						.getName());
+				showBoxMessage("openIOException", MessageBox.OPTIONS_OK,
+						file.getName());
 
 				return;
 			}
@@ -492,14 +493,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 				return;
 			}
 
-			JFileChooser chooser = new JFileChooser(new History()
-					.getRecentDirectory());
+			JFileChooser chooser = new JFileChooser(
+					new History().getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
 				if (!file.exists()) {
-					showBoxMessage("openNotExists", MessageBox.OPTIONS_OK, file
-							.getName());
+					showBoxMessage("openNotExists", MessageBox.OPTIONS_OK,
+							file.getName());
 					return;
 				}
 				openOrgan(file);
@@ -520,16 +521,16 @@ public class OrganFrame extends JFrame implements SessionAware {
 				return;
 			}
 
-			JFileChooser chooser = new JFileChooser(new History()
-					.getRecentDirectory());
+			JFileChooser chooser = new JFileChooser(
+					new History().getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			config.get("new/chooser").read(chooser);
 			if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				File file = DispositionFileFilter.addSuffix(chooser
 						.getSelectedFile());
 				if (file.exists()) {
-					showBoxMessage("newExists", MessageBox.OPTIONS_OK, file
-							.getName());
+					showBoxMessage("newExists", MessageBox.OPTIONS_OK,
+							file.getName());
 					return;
 				}
 				openOrgan(file);

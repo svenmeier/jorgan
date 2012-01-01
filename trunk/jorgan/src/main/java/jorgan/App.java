@@ -95,7 +95,7 @@ public class App {
 			System.exit(1);
 		}
 
-		new Info().log();
+		new Version().log();
 
 		configuration.read(new App()).start(file);
 
