@@ -20,18 +20,18 @@ package jorgan;
 
 import java.util.logging.Logger;
 
-public class Info {
+public class Version {
 
-	private static Logger logger = Logger.getLogger(Info.class.getName());
+	private static Logger logger = Logger.getLogger(Version.class.getName());
 
 	private String version;
 
-	public String getVersion() {
+	public String get() {
 		if (version == null) {
 			version = getClass().getPackage().getImplementationVersion();
 
 			if (version == null) {
-				version = "development";
+				version = "1.1.1";// "development";
 			}
 
 			int hyphen = version.lastIndexOf('-');
@@ -40,6 +40,30 @@ public class Info {
 			}
 		}
 		return version;
+	}
+
+	public String getCompatible() {
+		return getCompatible(get());
+	}
+
+	public boolean isCompatible(String version) {
+		return getCompatible().equals(getCompatible(version));
+	}
+
+	/**
+	 * Get the compatible part of a version, i.e. everything before the second
+	 * dot.
+	 */
+	private String getCompatible(String string) {
+		int dot = string.indexOf('.');
+		if (dot != -1) {
+			dot = string.indexOf('.', dot + 1);
+			if (dot != -1) {
+				string = string.substring(0, dot);
+			}
+		}
+
+		return string;
 	}
 
 	public void log() {

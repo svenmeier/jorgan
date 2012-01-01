@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.Info;
+import jorgan.Version;
 import jorgan.UI;
 import jorgan.disposition.Elements;
 import jorgan.io.disposition.ExtensionException;
@@ -88,7 +88,7 @@ public class CLI implements UI, SessionAware {
 	public void display(File file) {
 		Thread.setDefaultUncaughtExceptionHandler(new Abort());
 
-		writeMessage("splash", new Info().getVersion());
+		writeMessage("splash", new Version().get());
 
 		if (encoding != null) {
 			try {
@@ -133,7 +133,7 @@ public class CLI implements UI, SessionAware {
 		}
 
 		String version = session.getOrgan().getVersion();
-		if (!"".equals(version) && !version.equals(new Info().getVersion())) {
+		if (!"".equals(version) && !version.equals(new Version().get())) {
 			writeMessage("openConversion", version);
 		}
 	}

@@ -20,7 +20,7 @@ package jorgan.spi;
 
 import java.io.File;
 
-import jorgan.Info;
+import jorgan.Version;
 import jorgan.util.PluginUtils;
 import bias.Configuration;
 import bias.Store;
@@ -37,7 +37,7 @@ public class ConfigurationRegistry {
 		}
 
 		String name = String.format("jorgan-%s.properties",
-				new Info().getVersion());
+				new Version().getCompatible());
 
 		preferences = new PropertiesStore(new File(home, name));
 	}
