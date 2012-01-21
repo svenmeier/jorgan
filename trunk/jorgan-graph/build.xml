@@ -1,6 +1,6 @@
 <project name="jorgan-graph" default="dist" basedir=".">
 
-  <property file="./build.properties" />
+  <property file="../build.properties" />
 
   <target name="clean">
     <delete dir="./target"/>
@@ -10,13 +10,13 @@
     <mkdir dir="./target/classes" />
 
   	<javac debug="true" source="1.6" target="1.6" srcdir="./src/main/java" destdir="./target/classes">
-    	<classpath path="${jorgan.core.path}/target/classes" />
-    	<classpath path="${jorgan.gui.path}/target/classes" />
+    	<classpath path="../jorgan/target/classes" />
+    	<classpath path="../jorgan-gui/target/classes" />
     	<classpath>
-            <fileset dir="${jorgan.core.path}/lib">
+            <fileset dir="../jorgan/lib">
 	            <include name="*" />
             </fileset>
-            <fileset dir="${jorgan.gui.path}/lib">
+            <fileset dir="../jorgan-gui/lib">
 	            <include name="*" />
             </fileset>
             <fileset dir="./lib">
@@ -40,8 +40,9 @@
 
   	<jar file="./target/marshal/lib/graph.jar">
       <manifest>
-        <attribute name="Built-By" value="${user.name}"/>
-        <attribute name="Built-Version" value="${graph.version}"/>
+        <attribute name="Implementation-Title" value="jOrgan" />
+        <attribute name="Implementation-Vendor" value="Sven Meier" />
+        <attribute name="Implementation-Version" value="${jorgan.version}" />
       </manifest>
       <fileset dir="./target/classes" />
   	</jar>
@@ -50,10 +51,5 @@
     		<include name="*.jar"/>
     	</fileset>
     </copy>
-
-	<zip destfile="./target/jOrgan-graph-${graph.version}.zip">
-      <fileset dir="./target/marshal" />
-	</zip>  	
-  	<delete dir="./target/marshal" />
   </target>
 </project>

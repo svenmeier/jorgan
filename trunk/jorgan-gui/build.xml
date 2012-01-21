@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jorgan-gui" default="dist" basedir=".">
 
-    <property file="./build.properties"/>
+    <property file="../build.properties"/>
 	
     <target name="clean" description="Cleanup target directory">
         <delete dir="./target"/>
@@ -12,9 +12,9 @@
 
     	<javac debug="true" source="1.6" target="1.6" destdir="./target/classes" srcdir="./src/main/java">
         	<compilerarg value="-Xlint:all,-serial"/>
-			<classpath path="${jorgan.core.path}/target/classes" />
+			<classpath path="../jorgan/target/classes" />
         	<classpath>
-                <fileset dir="${jorgan.core.path}/lib">
+                <fileset dir="../jorgan/lib">
     	            <include name="*" />
                 </fileset>
 			    <fileset dir="./lib">
@@ -38,8 +38,9 @@
         <mkdir dir="./target/marshal/lib" />
     	<jar destfile="./target/marshal/lib/gui.jar">
 			<manifest>
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Version" value="${jorgan.gui.version}"/>
+		        <attribute name="Implementation-Title" value="jOrgan" />
+		        <attribute name="Implementation-Vendor" value="Sven Meier" />
+		        <attribute name="Implementation-Version" value="${jorgan.version}" />
 			</manifest>
             <fileset dir="./target/classes">
                 <include name="**/*"/>
@@ -51,7 +52,5 @@
 	            <exclude name="AppleJavaExtensions.jar" />
         	</fileset>
         </copy>
-
-        <zip basedir="./target/marshal" destfile="./target/jOrgan-gui-${jorgan.gui.version}.zip" />
     </target>
 </project>

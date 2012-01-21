@@ -1,4 +1,4 @@
-jorgan (3.15-beta3) beta;
+jorgan (3.15) stable;
 
   * preferences now stored in user home directory
   * GUI now in separate module
@@ -9,7 +9,7 @@ jorgan (3.15-beta3) beta;
   * fluidsynth: moved overflow settings into disposition
   * keyboard: improved mouse handling
 
- -- Sven Meier <sven@meiers.net>  Sun, 29 Dec 2011 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 22 Dec 2012 23:00:00 +0200
 
 jorgan (3.14) stable;
 
