@@ -23,10 +23,5 @@
                 <include name="*"/>
             </fileset>
         </zip>
-        <zip destfile="../target/skin-${skin.name}-${skin.version}.zip">
-            <fileset dir="../target/marshal">
-                <include name="**/${skin.name}.zip"/>
-            </fileset>
-        </zip>
     </target>
 </project>

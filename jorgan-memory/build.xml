@@ -1,7 +1,6 @@
 <project name="jorgan-memory" default="dist" basedir=".">
 
-  <property file="./build.properties" />
-  <property file="${jorgan.core.path}/build.properties" />
+  <property file="../build.properties" />
 
   <target name="clean">
     <delete dir="./target"/>
@@ -11,15 +10,15 @@
     <mkdir dir="./target/classes" />
 
   	<javac debug="true" source="1.6" target="1.6" srcdir="./src/main/java" destdir="./target/classes">
-    	<classpath path="${jorgan.core.path}/target/classes" />
-    	<classpath path="${jorgan.gui.path}/target/classes" />
-    	<classpath path="${jorgan.exporter.path}/target/classes" />
-  		<classpath path="${jorgan.lcd.path}/target/classes" />
+    	<classpath path="../jorgan/target/classes" />
+    	<classpath path="../jorgan-gui/target/classes" />
+    	<classpath path="../jorgan-exporter/target/classes" />
+  		<classpath path="../jorgan-lcd/target/classes" />
     	<classpath>
-            <fileset dir="${jorgan.core.path}/lib">
+            <fileset dir="../jorgan/lib">
 	            <include name="*" />
             </fileset>
-            <fileset dir="${jorgan.gui.path}/lib">
+            <fileset dir="../jorgan-gui/lib">
 	            <include name="*" />
             </fileset>
    		</classpath>
@@ -40,8 +39,9 @@
 
   	<jar file="./target/marshal/lib/memory.jar">
       <manifest>
-        <attribute name="Built-By" value="${user.name}"/>
-        <attribute name="Built-Version" value="${memory.version}"/>
+        <attribute name="Implementation-Title" value="jOrgan" />
+        <attribute name="Implementation-Vendor" value="Sven Meier" />
+        <attribute name="Implementation-Version" value="${jorgan.version}" />
       </manifest>
       <fileset dir="./target/classes" />
   	</jar>
@@ -50,9 +50,5 @@
   	<copy todir="./target/marshal/dispositions">
       <fileset dir="./src/main/dispositions" />
     </copy> 		
-  	
-	<zip destfile="./target/jOrgan-memory-${memory.version}.zip">
-      <fileset dir="./target/marshal" />
-	</zip>  	
   </target>
 </project>

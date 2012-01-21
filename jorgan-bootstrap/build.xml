@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jorgan-bootstrap" default="dist" basedir=".">
 
-	<property file="./build.properties" />
-	<property file="${jorgan.core.path}/build.properties" />
+	<property file="../build.properties" />
 
 	<target name="clean" description="Cleanup target directory">
 		<delete dir="./target"/>
@@ -16,7 +15,7 @@
 
 		<javac debug="true" source="1.6" target="1.6" destdir="./target/classes" srcdir="./src/main/java">
 			<compilerarg value="-Xlint:all,-serial"/>
-			<classpath path="${jorgan.core.path}/target/classes" />
+			<classpath path="../jorgan/target/classes" />
 		</javac>
 		
     	<copy todir="./target/classes">
@@ -32,16 +31,15 @@
 		<jar destfile="./target/marshal/jorgan.jar">
 			<manifest>
 				<attribute name="Main-class" value="jorgan.bootstrap.Bootstrap" />
-				<attribute name="Built-By" value="${user.name}"/>
-				<attribute name="Built-Version" value="${bootstrap.version}"/>
+		        <attribute name="Implementation-Title" value="jOrgan" />
+		        <attribute name="Implementation-Vendor" value="Sven Meier" />
+		        <attribute name="Implementation-Version" value="${jorgan.version}" />
 			</manifest>
 			<fileset dir="./target/classes" />
-			<fileset dir="${jorgan.core.path}/target/classes">
+			<fileset dir="../jorgan/target/classes">
 				<include name="jorgan/util/ClassUtils.class" />
 				<include name="jorgan/util/IOUtils.class" />
 			</fileset>
 		</jar>
-
-		<zip basedir="./target/marshal" destfile="./target/jOrgan-bootstrap-${bootstrap.version}.zip" />
 	</target>
 </project>

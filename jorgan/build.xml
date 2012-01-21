@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="jorgan" default="dist" basedir=".">
 
-    <property file="./build.properties"/>
+    <property file="../build.properties"/>
 	
     <target name="clean" description="Cleanup target directory">
         <delete dir="./target"/>
@@ -73,7 +73,5 @@
       	<copy todir="./target/marshal/dispositions">
           <fileset dir="./src/main/dispositions" />
         </copy> 		
-
-        <zip basedir="./target/marshal" destfile="./target/jOrgan-${jorgan.version}.zip" />
     </target>
 </project>
