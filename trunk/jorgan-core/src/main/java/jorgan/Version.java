@@ -31,7 +31,7 @@ public class Version {
 			version = getClass().getPackage().getImplementationVersion();
 
 			if (version == null) {
-				version = "1.1.1";// "development";
+				version = "development";
 			}
 
 			int hyphen = version.lastIndexOf('-');
