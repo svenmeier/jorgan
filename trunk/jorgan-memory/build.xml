@@ -10,12 +10,12 @@
     <mkdir dir="./target/classes" />
 
   	<javac debug="true" source="1.6" target="1.6" srcdir="./src/main/java" destdir="./target/classes">
-    	<classpath path="../jorgan/target/classes" />
+    	<classpath path="../jorgan-core/target/classes" />
     	<classpath path="../jorgan-gui/target/classes" />
     	<classpath path="../jorgan-exporter/target/classes" />
   		<classpath path="../jorgan-lcd/target/classes" />
     	<classpath>
-            <fileset dir="../jorgan/lib">
+            <fileset dir="../jorgan-core/lib">
 	            <include name="*" />
             </fileset>
             <fileset dir="../jorgan-gui/lib">

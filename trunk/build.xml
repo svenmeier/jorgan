@@ -1,7 +1,7 @@
 <project name="jorgan-all" default="all" basedir=".">
 
   <target name="all">
-    <ant dir="jorgan"/>
+    <ant dir="jorgan-core"/>
     <ant dir="jorgan-bootstrap"/>
     <ant dir="jorgan-gui"/>
     <ant dir="jorgan-exporter"/>
