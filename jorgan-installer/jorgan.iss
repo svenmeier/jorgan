@@ -18,7 +18,7 @@ OutputDir=.\target
 DefaultDirName={pf}\jOrgan
 DefaultGroupName=jOrgan
 DisableProgramGroupPage=no
-LicenseFile=..\jorgan\docs\license.txt
+LicenseFile=..\jorgan-core\docs\license.txt
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
 SolidCompression=yes
@@ -64,7 +64,7 @@ Name: "skins"; Description: "Skins"; Types: standard
 Source: ".\target\jOrgan.exe"; DestDir: "{app}"; Components: core
 Source: ".\src\jOrgan.l4j.ini"; DestDir: "{app}"; Components: core
 Source: "..\jorgan-bootstrap\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
-Source: "..\jorgan\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
+Source: "..\jorgan-core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-gui\target\marshal\*"; DestDir: "{app}"; Components: gui; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs

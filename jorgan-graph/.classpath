@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry combineaccessrules="false" kind="src" path="/jorgan"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-core"/>
 	<classpathentry exported="true" kind="lib" path="lib/gj-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gj-layouts.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gj-ui.jar"/>

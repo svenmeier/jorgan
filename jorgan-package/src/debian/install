@@ -3,9 +3,9 @@ debian/input/jorgan.desktop /usr/share/applications
 debian/input/icons/* /usr/share/icons
 debian/input/copyright /usr/share/doc/jorgan
 ../../jorgan-bootstrap/target/marshal/jorgan.jar /usr/lib/jorgan
-../../jorgan/docs/* /usr/share/doc/jorgan
-../../jorgan/target/marshal/lib/* /usr/lib/jorgan/lib
-../../jorgan/target/marshal/dispositions/* /usr/share/jorgan/dispositions
+../../jorgan-core/docs/* /usr/share/doc/jorgan
+../../jorgan-core/target/marshal/lib/* /usr/lib/jorgan/lib
+../../jorgan-core/target/marshal/dispositions/* /usr/share/jorgan/dispositions
 ../../jorgan-gui/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-creative/target/marshal/lib/* /usr/lib/jorgan/lib
 ../../jorgan-creative/target/marshal/dispositions/* /usr/share/jorgan/dispositions

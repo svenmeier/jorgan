@@ -15,7 +15,7 @@
 
 		<javac debug="true" source="1.6" target="1.6" destdir="./target/classes" srcdir="./src/main/java">
 			<compilerarg value="-Xlint:all,-serial"/>
-			<classpath path="../jorgan/target/classes" />
+			<classpath path="../jorgan-core/target/classes" />
 		</javac>
 		
     	<copy todir="./target/classes">
@@ -36,7 +36,7 @@
 		        <attribute name="Implementation-Version" value="${jorgan.version}" />
 			</manifest>
 			<fileset dir="./target/classes" />
-			<fileset dir="../jorgan/target/classes">
+			<fileset dir="../jorgan-core/target/classes">
 				<include name="jorgan/util/ClassUtils.class" />
 				<include name="jorgan/util/IOUtils.class" />
 			</fileset>
