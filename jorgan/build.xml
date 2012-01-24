@@ -8,47 +8,27 @@
     </target>
 
     <target name="dist" description="Set up the distribution" depends="clean" >
-        <mkdir dir="./target/marshal"/>
-        <copy todir="./target/marshal">
-            <fileset dir="../jorgan-bootstrap/target/marshal" includes="jorgan.jar" />
-            <fileset dir="../jorgan-core/target/marshal" includes="lib/**" /> 
-            <fileset dir="../jorgan-gui/target/marshal" includes="lib/**" /> 
-            <fileset dir="../jorgan-customizer/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-executor/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-keyboard/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-importer/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-exporter/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-lan/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-lcd/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-linuxsampler/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-memory/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-midimerger/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-recorder/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-sams/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-soundfont/target/marshal" includes="lib/**" />
-            <fileset dir="../jorgan-tools/target/marshal" includes="lib/**" />
-        </copy>
-          
-        <mkdir dir="./target/marshal/dispositions" />
-        <copy todir="./target/marshal">
-            <fileset dir="../jorgan-core/target/marshal" includes="dispositions/**" />          
-            <fileset dir="../jorgan-executor/target/marshal" includes="dispositions/**" />
-            <fileset dir="../jorgan-lan/target/marshal" includes="dispositions/**" />
-            <fileset dir="../jorgan-lcd/target/marshal" includes="dispositions/**" />
-            <fileset dir="../jorgan-memory/target/marshal" includes="dispositions/**" />
-            <fileset dir="../jorgan-recorder/target/marshal" includes="dispositions/**" />
-            <fileset dir="../jorgan-sams/target/marshal" includes="dispositions/**" />
-        </copy>
-
-        <mkdir dir="./target/marshal/skins" />
-        <copy todir="./target/marshal">
-          <fileset dir="../jorgan-skins/target/marshal" includes="skins/**" />          
-        </copy>
+        <mkdir dir="./target"/>
 
         <zip destfile="./target/jorgan-${jorgan.version}.zip">
-            <fileset dir="./target/marshal">
-                <include name="*"/>
-            </fileset>
+            <fileset dir="../jorgan-bootstrap/target/marshal" />
+            <fileset dir="../jorgan-core/target/marshal" /> 
+            <fileset dir="../jorgan-gui/target/marshal" /> 
+            <fileset dir="../jorgan-customizer/target/marshal" />
+            <fileset dir="../jorgan-executor/target/marshal" />
+            <fileset dir="../jorgan-keyboard/target/marshal" />
+            <fileset dir="../jorgan-importer/target/marshal" />
+            <fileset dir="../jorgan-exporter/target/marshal" />
+            <fileset dir="../jorgan-lan/target/marshal" />
+            <fileset dir="../jorgan-lcd/target/marshal" />
+            <fileset dir="../jorgan-linuxsampler/target/marshal" />
+            <fileset dir="../jorgan-memory/target/marshal" />
+            <fileset dir="../jorgan-midimerger/target/marshal" />
+            <fileset dir="../jorgan-recorder/target/marshal" />
+            <fileset dir="../jorgan-sams/target/marshal" />
+            <fileset dir="../jorgan-soundfont/target/marshal" />
+            <fileset dir="../jorgan-tools/target/marshal" />
+            <fileset dir="../jorgan-skins/target/marshal" />
         </zip>
     </target>
 </project>
