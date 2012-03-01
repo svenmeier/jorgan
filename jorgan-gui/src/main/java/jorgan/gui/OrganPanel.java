@@ -420,8 +420,11 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 				Element element = session.lookup(ElementSelection.class)
 						.getSelectedElement();
 
-				if (editors.getDockable(element) == null) {
+				Dockable editor = editors.getDockable(element);
+				if (editor == null) {
 					addEditor(element);
+				} else {
+					editors.putDockable(element, editor);
 				}
 			}
 		}
