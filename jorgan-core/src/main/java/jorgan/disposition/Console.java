@@ -32,7 +32,8 @@ public class Console extends Displayable {
 	private String screen;
 
 	protected boolean canReference(Class<? extends Element> clazz) {
-		return Displayable.class.isAssignableFrom(clazz);
+		return Displayable.class.isAssignableFrom(clazz)
+				&& !Console.class.isAssignableFrom(clazz);
 	}
 
 	@Override
