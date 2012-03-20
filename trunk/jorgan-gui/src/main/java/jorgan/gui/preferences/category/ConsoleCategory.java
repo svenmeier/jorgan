@@ -51,6 +51,9 @@ public class ConsoleCategory extends JOrganCategory {
 	private Model<Integer> grid = getModel(new Property(ConsolePanel.class,
 			"grid"));
 
+	private Model<Integer> threshold = getModel(new Property(
+			ConsolePanel.class, "threshold"));
+
 	private Model<Color> background = getModel(new Property(ConsolePanel.class,
 			"background"));
 
@@ -77,6 +80,9 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			256, 1));
+
+	private JSpinner thresholdSpinner = new JSpinner(new SpinnerNumberModel(1,
+			1, 16, 1));
 
 	private ColorSelector backgroundSelector = new ColorSelector();
 
@@ -106,14 +112,19 @@ public class ConsoleCategory extends JOrganCategory {
 
 		Column column = builder.column();
 
-		column.term(config.get("grid").read(new JLabel()));
-		column.definition(gridSpinner);
-
 		column.term(config.get("background").read(new JLabel()));
 		column.definition(backgroundSelector);
 
 		column.term(config.get("foreground").read(new JLabel()));
 		column.definition(foregroundSelector);
+
+		column.group(config.get("position").read(new JLabel()));
+
+		column.term(config.get("grid").read(new JLabel()));
+		column.definition(gridSpinner);
+
+		column.term(config.get("threshold").read(new JLabel()));
+		column.definition(thresholdSpinner);
 
 		column.group(config.get("popup").read(new JLabel()));
 
@@ -154,6 +165,7 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void read() {
 
 		gridSpinner.setValue(grid.getValue());
+		thresholdSpinner.setValue(threshold.getValue());
 		backgroundSelector.setSelectedColor(background.getValue());
 		foregroundSelector.setSelectedColor(foreground.getValue());
 
@@ -172,6 +184,7 @@ public class ConsoleCategory extends JOrganCategory {
 	protected void write() {
 
 		grid.setValue((Integer) gridSpinner.getValue());
+		threshold.setValue((Integer) thresholdSpinner.getValue());
 		background.setValue(backgroundSelector.getSelectedColor());
 		foreground.setValue(foregroundSelector.getSelectedColor());
 
