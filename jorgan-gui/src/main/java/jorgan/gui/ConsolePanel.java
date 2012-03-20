@@ -129,6 +129,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	private int grid = 1;
 
+	private int threshold = 0;
+
 	private Color popupBackgound = new Color(255, 255, 225);
 
 	/**
@@ -272,6 +274,10 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 	public void setGrid(int grid) {
 		this.grid = grid;
+	}
+
+	public void setThreshold(int threshold) {
+		this.threshold = threshold;
 	}
 
 	public void setPopupBackground(Color color) {
@@ -500,8 +506,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			for (final Console other : session.getOrgan().getElements(
 					Console.class)) {
 				if (other != console) {
-					JMenuItem consoleItem = new JMenuItem(Elements
-							.getDisplayName(other));
+					JMenuItem consoleItem = new JMenuItem(
+							Elements.getDisplayName(other));
 					consoleItem.addActionListener(new ActionListener() {
 						@Override
 						public void actionPerformed(ActionEvent e) {
@@ -797,6 +803,8 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		private boolean pressedWasSelected;
 
+		private boolean thresholdExceeded;
+
 		private Point mouseFrom;
 
 		private Point mouseTo;
@@ -833,11 +841,13 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 			pressedView = getView(e.getX(), e.getY());
 			if (pressedView != null) {
-				pressedOrigin = new Point(pressedView.getX(), pressedView
-						.getY());
+				pressedOrigin = new Point(pressedView.getX(),
+						pressedView.getY());
 				pressedWasSelected = selection.isSelected(pressedView
 						.getElement());
 			}
+
+			thresholdExceeded = false;
 
 			if (isMultiSelect(e)) {
 				if (pressedView != null) {
@@ -896,27 +906,40 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				List<Displayable> elements = new ArrayList<Displayable>();
 				for (View<? extends Displayable> view : viewsByDisplayable
 						.values()) {
-					if (dragMarker.contains(view.getX(), view.getY(), view
-							.getWidth(), view.getHeight())) {
+					if (dragMarker.contains(view.getX(), view.getY(),
+							view.getWidth(), view.getHeight())) {
 						elements.add(view.getElement());
 					}
 				}
 				selection.setSelectedElements(elements);
 			} else {
-				int deltaX = grid(screenToDisposition(pressedOrigin.x
-						+ mouseTo.x - mouseFrom.x))
-						- screenToDisposition(pressedView.getX());
-				int deltaY = grid(screenToDisposition(pressedOrigin.y
-						+ mouseTo.y - mouseFrom.y))
-						- screenToDisposition(pressedView.getY());
+				if (isThresholdExceeded(mouseTo)) {
+					int deltaX = grid(screenToDisposition(pressedOrigin.x
+							+ mouseTo.x - mouseFrom.x))
+							- screenToDisposition(pressedView.getX());
+					int deltaY = grid(screenToDisposition(pressedOrigin.y
+							+ mouseTo.y - mouseFrom.y))
+							- screenToDisposition(pressedView.getY());
 
-				for (Element element : selection.getSelectedElements()) {
-					if (console.references(element)) {
-						console.setLocation(element, console.getX(element)
-								+ deltaX, console.getY(element) + deltaY);
+					for (Element element : selection.getSelectedElements()) {
+						if (console.references(element)) {
+							console.setLocation(element, console.getX(element)
+									+ deltaX, console.getY(element) + deltaY);
+						}
 					}
 				}
 			}
+		}
+
+		private boolean isThresholdExceeded(Point mouseTo) {
+			if (!thresholdExceeded) {
+				if (mouseTo.distance(mouseFrom) > threshold) {
+					mouseFrom = mouseTo;
+
+					thresholdExceeded = true;
+				}
+			}
+			return thresholdExceeded;
 		}
 
 		private int grid(int pos) {
@@ -946,8 +969,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 			if (pressedView != null) {
 				if (isMultiSelect(e)) {
 					if (pressedWasSelected) {
-						session
-								.lookup(ElementSelection.class)
+						session.lookup(ElementSelection.class)
 								.removeSelectedElement(pressedView.getElement());
 					}
 				} else {
@@ -985,10 +1007,9 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				if (element instanceof Displayable) {
 					View<? extends Displayable> view = getView((Displayable) element);
 					if (view != null) {
-						selectionMarkers.add(createMarker(view.getX(), view
-								.getY(), view.getX() + view.getWidth(), view
-								.getY()
-								+ view.getHeight()));
+						selectionMarkers.add(createMarker(view.getX(),
+								view.getY(), view.getX() + view.getWidth(),
+								view.getY() + view.getHeight()));
 					}
 				}
 			}
@@ -1296,32 +1317,32 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	private class MoveUp extends MoveAction {
 		@Override
 		protected void move(Element element) {
-			console.setLocation(element, console.getX(element), console
-					.getY(element) - 1);
+			console.setLocation(element, console.getX(element),
+					console.getY(element) - 1);
 		}
 	}
 
 	private class MoveDown extends MoveAction {
 		@Override
 		protected void move(Element element) {
-			console.setLocation(element, console.getX(element), console
-					.getY(element) + 1);
+			console.setLocation(element, console.getX(element),
+					console.getY(element) + 1);
 		}
 	}
 
 	private class MoveLeft extends MoveAction {
 		@Override
 		protected void move(Element element) {
-			console.setLocation(element, console.getX(element) - 1, console
-					.getY(element));
+			console.setLocation(element, console.getX(element) - 1,
+					console.getY(element));
 		}
 	}
 
 	private class MoveRight extends MoveAction {
 		@Override
 		protected void move(Element element) {
-			console.setLocation(element, console.getX(element) + 1, console
-					.getY(element));
+			console.setLocation(element, console.getX(element) + 1,
+					console.getY(element));
 		}
 	}
 }
