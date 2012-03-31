@@ -474,6 +474,12 @@ public abstract class Performance {
 		}
 	}
 
+	private void fireSpeedChanged(float speed) {
+		for (PerformanceListener listener : listeners) {
+			listener.speedChanged(speed);
+		}
+	}
+
 	private void fireChanged() {
 		// work on copy since change might remove listeners
 		for (PerformanceListener listener : new ArrayList<PerformanceListener>(
@@ -636,8 +642,8 @@ public abstract class Performance {
 			sequencer.setTime(0);
 
 			sequencer.record(tracker.getTrack(), MessageUtils
-					.createMetaMessage(MessageUtils.META_TRACK_NAME, encoder
-							.encode(tracker.getElement())));
+					.createMetaMessage(MessageUtils.META_TRACK_NAME,
+							encoder.encode(tracker.getElement())));
 
 			if (tracker.isPlayEnabled()) {
 				sequencer
@@ -656,5 +662,15 @@ public abstract class Performance {
 
 	public ElementEncoder getEncoder() {
 		return encoder;
+	}
+
+	public void setSpeed(float speed) {
+		sequencer.setSpeed(speed);
+
+		fireSpeedChanged(getSpeed());
+	}
+
+	public float getSpeed() {
+		return sequencer.getSpeed();
 	}
 }

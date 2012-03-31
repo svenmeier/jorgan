@@ -22,6 +22,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.TimeZone;
@@ -29,6 +30,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFormattedTextField;
 import javax.swing.JScrollPane;
 import javax.swing.Timer;
 
@@ -69,6 +71,12 @@ public class RecorderView extends AbstractView {
 
 	private RecordAction recordAction = new RecordAction();
 
+	private JFormattedTextField speedTextField;
+
+	private SpeedDownAction speedDownAction = new SpeedDownAction();
+
+	private SpeedUpAction speedUpAction = new SpeedUpAction();
+
 	private Timer timer = new Timer(250, new ActionListener() {
 		public void actionPerformed(ActionEvent e) {
 			updateTime();
@@ -87,6 +95,9 @@ public class RecorderView extends AbstractView {
 		config.get("status").read(statusBuilder);
 
 		format.setTimeZone(TimeZone.getTimeZone("UTC"));
+
+		speedTextField = new JFormattedTextField(new DecimalFormat("0.00"));
+		speedTextField.addActionListener(eventListener);
 	}
 
 	@Override
@@ -97,6 +108,12 @@ public class RecorderView extends AbstractView {
 	@Override
 	protected void addTools(Docked docked) {
 
+		docked.addTool(speedDownAction);
+		docked.addTool(speedTextField);
+		speedTextField.setFocusable(true);
+		speedTextField.setRequestFocusEnabled(true);
+		docked.addTool(speedUpAction);
+		docked.addToolSeparator();
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
 		docked.addTool(lastAction);
@@ -144,10 +161,16 @@ public class RecorderView extends AbstractView {
 		}
 
 		if (performance != null && performance.isLoaded()) {
+			speedTextField.setValue(performance.getSpeed());
+
 			tracksPanel = new TracksPanel(performance);
 			setContent(new JScrollPane(tracksPanel));
+		} else {
+			speedTextField.setValue(1.0f);
 		}
 
+		speedDownAction.update();
+		speedUpAction.update();
 		ejectAction.update();
 		playAction.update();
 		firstAction.update();
@@ -173,8 +196,8 @@ public class RecorderView extends AbstractView {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options)).show(
-				getContent().getTopLevelAncestor(), args);
+		return config.get(key).read(new MessageBox(options))
+				.show(getContent().getTopLevelAncestor(), args);
 	}
 
 	private boolean canEject() {
@@ -320,9 +343,14 @@ public class RecorderView extends AbstractView {
 		}
 	}
 
-	private class EventListener implements PerformanceListener {
+	private class EventListener implements PerformanceListener, ActionListener {
 		public void timeChanged(long millis) {
 			updateTime();
+		}
+
+		@Override
+		public void speedChanged(float speed) {
+			speedTextField.setValue(speed);
 		}
 
 		public void changed() {
@@ -332,6 +360,36 @@ public class RecorderView extends AbstractView {
 		public void stateChanged(int state) {
 			playAction.update();
 			recordAction.update();
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			performance.setSpeed(((Number) speedTextField.getValue())
+					.floatValue());
+		}
+	}
+
+	private class SpeedDownAction extends AbstractControlAction {
+
+		public SpeedDownAction() {
+			config.get("speedDown").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			performance.setSpeed(performance.getSpeed() - 0.1f);
+		}
+	}
+
+	private class SpeedUpAction extends AbstractControlAction {
+
+		public SpeedUpAction() {
+			config.get("speedUp").read(this);
+		}
+
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			performance.setSpeed(performance.getSpeed() + 0.1f);
 		}
 	}
 }

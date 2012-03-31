@@ -81,7 +81,7 @@ public class SkinView extends AbstractView {
 
 	private Skin skin;
 
-	private JFormattedTextField textField;
+	private JFormattedTextField zoomTextField;
 
 	private ZoomInAction zoomInAction = new ZoomInAction();
 
@@ -96,8 +96,8 @@ public class SkinView extends AbstractView {
 	public SkinView() {
 		config.read(this);
 
-		textField = new JFormattedTextField(new DecimalFormat("0.00"));
-		textField.addActionListener(eventHandler);
+		zoomTextField = new JFormattedTextField(new DecimalFormat("0.00"));
+		zoomTextField.addActionListener(eventHandler);
 
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
@@ -136,9 +136,9 @@ public class SkinView extends AbstractView {
 	@Override
 	protected void addTools(Docked docked) {
 		docked.addTool(zoomInAction);
-		docked.addTool(textField);
-		textField.setFocusable(true);
-		textField.setRequestFocusEnabled(true);
+		docked.addTool(zoomTextField);
+		zoomTextField.setFocusable(true);
+		zoomTextField.setRequestFocusEnabled(true);
 		docked.addTool(zoomOutAction);
 	}
 
@@ -158,14 +158,14 @@ public class SkinView extends AbstractView {
 		if (console == null) {
 			// make sure model and renderer are re-created, otherwise both might
 			// hold reference to an already closed disposition
-			textField.setValue(1.0f);
-			textField.setEnabled(false);
+			zoomTextField.setValue(1.0f);
+			zoomTextField.setEnabled(false);
 			list.setModel(new StylesModel());
 			list.setCellRenderer(new StyleRenderer());
 			setContent(null);
 		} else {
-			textField.setValue(displayable.getZoom());
-			textField.setEnabled(true);
+			zoomTextField.setValue(displayable.getZoom());
+			zoomTextField.setEnabled(true);
 			list.setModel(new StylesModel());
 			list.setCellRenderer(new StyleRenderer());
 			setContent(new JScrollPane(list));
@@ -240,7 +240,7 @@ public class SkinView extends AbstractView {
 			if (element == console) {
 				update();
 			} else if (element == displayable) {
-				textField.setValue(displayable.getZoom());
+				zoomTextField.setValue(displayable.getZoom());
 
 				for (View<?> view : views) {
 					view.update();
@@ -252,7 +252,7 @@ public class SkinView extends AbstractView {
 		public void actionPerformed(ActionEvent e) {
 			if (!updating) {
 				if (displayable != null) {
-					displayable.setZoom(((Number) textField.getValue())
+					displayable.setZoom(((Number) zoomTextField.getValue())
 							.floatValue());
 				}
 			}

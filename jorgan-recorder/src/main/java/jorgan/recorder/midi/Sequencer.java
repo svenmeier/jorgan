@@ -42,6 +42,8 @@ public class Sequencer {
 
 	private long currentTick;
 
+	private float speed = 1.0f;
+
 	private State state;
 
 	public Sequencer(Sequence sequence) {
@@ -189,8 +191,7 @@ public class Sequencer {
 			division = 2.0f;
 		}
 
-		return Math.round(((double) millis) * division
-				* sequence.getResolution() / 1000);
+		return Math.round(millis * division * sequence.getResolution() / 1000);
 	}
 
 	public long tickToMillis(long tick) {
@@ -200,8 +201,7 @@ public class Sequencer {
 			division = 2.0f;
 		}
 
-		return Math.round(((double) tick) * 1000 / division
-				/ sequence.getResolution());
+		return Math.round(tick * 1000.0f / division / sequence.getResolution());
 	}
 
 	public Iterable<MidiEvent> eventsAtTick(final int track, final long tick) {
@@ -321,7 +321,9 @@ public class Sequencer {
 
 		public long currentTick() {
 			return initialTick
-					+ millisToTick(System.currentTimeMillis() - startMillis);
+					+ millisToTick(Math
+							.round((System.currentTimeMillis() - startMillis)
+									* speed));
 		}
 
 		@Override
@@ -345,8 +347,9 @@ public class Sequencer {
 					} else {
 						try {
 							long sleepMillis = startMillis
-									+ tickToMillis(event.getTick()
+									+ Math.round(tickToMillis(event.getTick()
 											- initialTick)
+											/ speed)
 									- System.currentTimeMillis();
 							if (sleepMillis > 0) {
 								sequence.wait(sleepMillis);
@@ -438,5 +441,19 @@ public class Sequencer {
 		for (MidiEvent event : events) {
 			listener.onEvent(track, event.getMessage());
 		}
+	}
+
+	public void setSpeed(float speed) {
+		if (speed < 0.5f) {
+			speed = 0.5f;
+		}
+		if (speed > 2.0f) {
+			speed = 2.0f;
+		}
+		this.speed = speed;
+	}
+
+	public float getSpeed() {
+		return speed;
 	}
 }
