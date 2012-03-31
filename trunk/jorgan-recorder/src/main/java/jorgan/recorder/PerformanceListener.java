@@ -24,16 +24,21 @@ package jorgan.recorder;
 public interface PerformanceListener {
 
 	/**
+	 * @see Performance#setSpeed(float speed)
+	 */
+	public void speedChanged(float speed);
+
+	/**
 	 * @see Performance#setTime(long time)
 	 */
 	public void timeChanged(long millis);
-	
+
 	/**
 	 * @see Performance#play()
 	 * @see Performance#record()
 	 * @see Performance#stop()
 	 */
 	public void stateChanged(int state);
-	
-	public void changed();	
+
+	public void changed();
 }

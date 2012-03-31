@@ -1,3 +1,11 @@
+jorgan (3.16-beta1) beta;
+
+  * switch currently displayed console when console element is selected 
+  * threshold prevents accidental moving of elements
+  * allow control of speed for the recorder
+
+ -- Sven Meier <sven@meiers.net>  Sat, 31 Mar 2012 23:00:00 +0200
+
 jorgan (3.15) stable;
 
   * preferences now stored in user home directory
@@ -9,7 +17,7 @@ jorgan (3.15) stable;
   * fluidsynth: moved overflow settings into disposition
   * keyboard: improved mouse handling
 
- -- Sven Meier <sven@meiers.net>  Sun, 22 Dec 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 22 Jan 2012 23:00:00 +0200
 
 jorgan (3.14) stable;
 
