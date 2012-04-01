@@ -20,6 +20,8 @@ package jorgan.recorder.gui.dock;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.IOException;
 import java.text.DecimalFormat;
@@ -32,6 +34,7 @@ import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JFormattedTextField;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.Timer;
 
 import jorgan.gui.dock.AbstractView;
@@ -60,6 +63,8 @@ public class RecorderView extends AbstractView {
 	private OrganSession session;
 
 	private Performance performance;
+
+	private JToggleButton loopButton;
 
 	private EjectAction ejectAction = new EjectAction();
 
@@ -98,6 +103,10 @@ public class RecorderView extends AbstractView {
 
 		speedTextField = new JFormattedTextField(new DecimalFormat("0.00"));
 		speedTextField.addActionListener(eventListener);
+
+		loopButton = new JToggleButton();
+		config.get("loop").read(loopButton);
+		loopButton.addItemListener(eventListener);
 	}
 
 	@Override
@@ -113,6 +122,8 @@ public class RecorderView extends AbstractView {
 		speedTextField.setFocusable(true);
 		speedTextField.setRequestFocusEnabled(true);
 		docked.addTool(speedUpAction);
+		docked.addToolSeparator();
+		docked.addTool(loopButton);
 		docked.addToolSeparator();
 		docked.addTool(firstAction);
 		docked.addTool(playAction);
@@ -168,6 +179,10 @@ public class RecorderView extends AbstractView {
 		} else {
 			speedTextField.setValue(1.0f);
 		}
+
+		loopButton.setEnabled(performance != null && performance.isLoaded());
+		speedTextField
+				.setEnabled(performance != null && performance.isLoaded());
 
 		speedDownAction.update();
 		speedUpAction.update();
@@ -343,7 +358,8 @@ public class RecorderView extends AbstractView {
 		}
 	}
 
-	private class EventListener implements PerformanceListener, ActionListener {
+	private class EventListener implements PerformanceListener, ActionListener,
+			ItemListener {
 		public void timeChanged(long millis) {
 			updateTime();
 		}
@@ -360,6 +376,11 @@ public class RecorderView extends AbstractView {
 		public void stateChanged(int state) {
 			playAction.update();
 			recordAction.update();
+		}
+
+		@Override
+		public void itemStateChanged(ItemEvent e) {
+			performance.setLoop(loopButton.isSelected());
 		}
 
 		@Override

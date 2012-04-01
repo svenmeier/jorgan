@@ -83,6 +83,8 @@ public abstract class Performance {
 
 	private boolean modified = false;
 
+	private boolean loop = false;
+
 	private ElementEncoder encoder;
 
 	/**
@@ -403,6 +405,24 @@ public abstract class Performance {
 		}
 	}
 
+	public void setSpeed(float speed) {
+		sequencer.setSpeed(speed);
+	
+		fireSpeedChanged(getSpeed());
+	}
+
+	public float getSpeed() {
+		return sequencer.getSpeed();
+	}
+
+	public void setLoop(boolean loop) {
+		this.loop = loop;
+	}
+
+	public boolean getLoop() {
+		return loop;
+	}
+
 	public void setElement(int track, Element element) {
 		stop();
 
@@ -561,6 +581,10 @@ public abstract class Performance {
 		public void onLast() {
 			if (getState() == STATE_PLAY) {
 				Performance.this.stop();
+
+				if (loop) {
+					Performance.this.play();
+				}
 			}
 		}
 
@@ -662,15 +686,5 @@ public abstract class Performance {
 
 	public ElementEncoder getEncoder() {
 		return encoder;
-	}
-
-	public void setSpeed(float speed) {
-		sequencer.setSpeed(speed);
-
-		fireSpeedChanged(getSpeed());
-	}
-
-	public float getSpeed() {
-		return sequencer.getSpeed();
 	}
 }
