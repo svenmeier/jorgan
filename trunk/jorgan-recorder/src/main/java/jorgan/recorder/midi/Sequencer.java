@@ -295,6 +295,11 @@ public class Sequencer {
 
 	private class Running extends State implements Runnable {
 
+		/*
+		 * speed must not change while running
+		 */
+		private float speed;
+
 		private long initialTick;
 
 		private long startMillis;
@@ -304,6 +309,8 @@ public class Sequencer {
 		private Thread thread;
 
 		public Running() {
+			this.speed = Sequencer.this.speed;
+
 			initialTick = currentTick;
 
 			indices = new int[tracks.length];

@@ -172,11 +172,13 @@ public class RecorderView extends AbstractView {
 		}
 
 		if (performance != null && performance.isLoaded()) {
+			loopButton.setSelected(performance.getLoop());
 			speedTextField.setValue(performance.getSpeed());
 
 			tracksPanel = new TracksPanel(performance);
 			setContent(new JScrollPane(tracksPanel));
 		} else {
+			loopButton.setSelected(false);
 			speedTextField.setValue(1.0f);
 		}
 
@@ -380,13 +382,17 @@ public class RecorderView extends AbstractView {
 
 		@Override
 		public void itemStateChanged(ItemEvent e) {
-			performance.setLoop(loopButton.isSelected());
+			if (performance != null) {
+				performance.setLoop(loopButton.isSelected());
+			}
 		}
 
 		@Override
 		public void actionPerformed(ActionEvent e) {
-			performance.setSpeed(((Number) speedTextField.getValue())
-					.floatValue());
+			if (performance != null) {
+				performance.setSpeed(((Number) speedTextField.getValue())
+						.floatValue());
+			}
 		}
 	}
 

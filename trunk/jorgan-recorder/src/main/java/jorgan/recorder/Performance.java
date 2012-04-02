@@ -406,9 +406,11 @@ public abstract class Performance {
 	}
 
 	public void setSpeed(float speed) {
-		sequencer.setSpeed(speed);
-	
-		fireSpeedChanged(getSpeed());
+		if (getSpeed() != speed) {
+			sequencer.setSpeed(speed);
+
+			fireSpeedChanged(getSpeed());
+		}
 	}
 
 	public float getSpeed() {
