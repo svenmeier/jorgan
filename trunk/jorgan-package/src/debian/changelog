@@ -1,11 +1,11 @@
 jorgan (3.16-beta1) beta;
 
-  * switch currently displayed console when console element is selected 
+  * switch currently displayed console when element is selected 
   * threshold prevents accidental moving of elements
   * recorder: speed control
   * recorder: loop
 
- -- Sven Meier <sven@meiers.net>  Sat, 31 Mar 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Sun, 15 May 2012 23:00:00 +0200
 
 jorgan (3.15) stable;
 
