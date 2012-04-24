@@ -55,6 +55,7 @@ import spin.Spin;
 import swingx.dnd.ObjectTransferable;
 import swingx.docking.Docked;
 import bias.Configuration;
+import bias.util.MessageBuilder;
 
 /**
  * Panel shows the {@link Tuning}s of a {@link FluidsynthSound}.
@@ -179,19 +180,21 @@ public class TuningsView extends AbstractView {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		table.getColumnModel().getColumn(0).setCellRenderer(
-				new SimpleCellRenderer<Tuning>() {
+		table.getColumnModel().getColumn(0)
+				.setCellRenderer(new SimpleCellRenderer<Tuning>() {
 					@Override
 					protected void init(Tuning value) {
 						setIcon(TuningsView.this.getIcon());
 					}
 				});
 		TableUtils.fixColumnWidth(table, 0, null);
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new StringCellEditor());
+		table.getColumnModel().getColumn(1)
+				.setCellEditor(new StringCellEditor());
 		for (int p = 0; p < Tuning.COUNT; p++) {
-			table.getColumnModel().getColumn(p + 2).setCellEditor(
-					new SpinnerCellEditor(-100.0d, +100.0d, 1.0d));
+			table.getColumnModel()
+					.getColumn(p + 2)
+					.setCellEditor(
+							new SpinnerCellEditor(-100.0d, +100.0d, 1.0d));
 		}
 		TableUtils.pleasantLookAndFeel(table);
 
@@ -256,6 +259,7 @@ public class TuningsView extends AbstractView {
 			tunings.clear();
 			tableModel.update();
 			table.setVisible(false);
+			setStatus(config.get("select").read(new MessageBuilder()).build());
 
 			if (session != null
 					&& session.lookup(ElementSelection.class)
@@ -272,6 +276,8 @@ public class TuningsView extends AbstractView {
 
 					tableModel.update();
 					table.setVisible(true);
+
+					setStatus(null);
 				}
 
 				Object location = session.lookup(ElementSelection.class)
