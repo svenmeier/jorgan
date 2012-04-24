@@ -302,10 +302,12 @@ public class ElementsView extends AbstractView {
 
 				List<Element> selection = TreeUtils.getSelection(tree);
 
-				if (selection.size() == 1) {
+				if (selection.isEmpty()) {
+					session.lookup(ElementSelection.class).clear();
+				} else if (selection.size() == 1) {
 					session.lookup(ElementSelection.class).setSelectedElement(
 							selection.get(0));
-				} else if (!selection.isEmpty()) {
+				} else {
 					session.lookup(ElementSelection.class).setSelectedElements(
 							selection);
 				}

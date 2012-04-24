@@ -36,7 +36,7 @@ import jorgan.io.xstream.IntArrayConverter;
 import jorgan.util.IOUtils;
 
 import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.XppDriver;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
 
 /**
  * A {@link Tuning}s streamer.
@@ -45,7 +45,7 @@ public class TuningsStream {
 
 	private static final String ENCODING = "UTF-8";
 
-	private XStream xstream = new XStream(new XppDriver());
+	private XStream xstream = new XStream(new KXml2Driver());
 
 	public TuningsStream() {
 		xstream.alias("tunings", ArrayList.class);
