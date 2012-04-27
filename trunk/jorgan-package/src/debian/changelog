@@ -4,6 +4,7 @@ jorgan (3.16-beta1) beta;
   * threshold prevents accidental moving of elements
   * recorder: speed control
   * recorder: loop
+  * fluidsynth: fixed bug when selecting a tuning  
 
  -- Sven Meier <sven@meiers.net>  Sun, 15 May 2012 23:00:00 +0200
 
