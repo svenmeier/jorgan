@@ -98,6 +98,7 @@ public class SkinView extends AbstractView {
 
 		zoomTextField = new JFormattedTextField(new DecimalFormat("0.00"));
 		zoomTextField.addActionListener(eventHandler);
+		zoomTextField.setColumns(3);
 
 		list = new JList();
 		list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
