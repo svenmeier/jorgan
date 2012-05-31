@@ -103,6 +103,7 @@ public class RecorderView extends AbstractView {
 
 		speedTextField = new JFormattedTextField(new DecimalFormat("0.00"));
 		speedTextField.addActionListener(eventListener);
+		speedTextField.setColumns(3);
 
 		loopButton = new JToggleButton();
 		config.get("loop").read(loopButton);
