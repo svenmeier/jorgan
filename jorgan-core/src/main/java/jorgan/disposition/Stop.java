@@ -28,11 +28,6 @@ public class Stop extends Keyable implements Engaging {
 		return Rank.class.isAssignableFrom(clazz);
 	}
 
-	@Override
-	protected boolean isValidAction(int action) {
-		return action >= ACTION_STRAIGHT && action <= ACTION_PITCH_LOWEST;
-	}
-	
 	/**
 	 * Notify referenced {@link Rank}s of change.
 	 */
