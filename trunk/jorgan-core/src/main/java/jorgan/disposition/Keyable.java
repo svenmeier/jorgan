@@ -75,7 +75,7 @@ public abstract class Keyable extends Switch {
 		if (this.action != action) {
 			int oldAction = this.action;
 
-			if (!isValidAction(action)) {
+			if (action < ACTION_STRAIGHT || action > ACTION_INVERSE) {
 				throw new IllegalArgumentException("action '" + action + "'");
 			}
 			this.action = action;
@@ -83,8 +83,6 @@ public abstract class Keyable extends Switch {
 			fireChange(new PropertyChange(oldAction, this.action));
 		}
 	}
-
-	protected abstract boolean isValidAction(int action);
 
 	public void setVelocity(int velocity) {
 		if (velocity < VELOCITY_UNMODIFIED || velocity > 127) {
