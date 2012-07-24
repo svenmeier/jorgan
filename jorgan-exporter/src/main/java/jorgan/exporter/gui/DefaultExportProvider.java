@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.exporter.gui.exports.ElementListExport;
+import jorgan.exporter.gui.exports.MessageListExport;
 import jorgan.exporter.gui.spi.ExportProvider;
 import jorgan.session.OrganSession;
 
@@ -34,6 +35,7 @@ public class DefaultExportProvider implements ExportProvider {
 		List<Export> exports = new ArrayList<Export>();
 
 		exports.add(new ElementListExport(session));
+		exports.add(new MessageListExport(session));
 
 		return exports;
 	}
