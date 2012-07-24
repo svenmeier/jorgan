@@ -30,7 +30,8 @@ import java.util.List;
 import javax.swing.JComponent;
 
 import jorgan.disposition.Element;
-import jorgan.exporter.exports.ElementListWriter;
+import jorgan.disposition.Message;
+import jorgan.exporter.exports.MessageListWriter;
 import jorgan.exporter.gui.Export;
 import jorgan.gui.construct.ElementsSelectionPanel;
 import jorgan.session.OrganSession;
@@ -39,12 +40,12 @@ import jorgan.swing.wizard.Page;
 import bias.Configuration;
 
 /**
- * An {@link Export} of {@link Element}s to a list.
+ * An {@link Export} of {@link Message}s to a list.
  */
-public class ElementListExport implements Export {
+public class MessageListExport implements Export {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ElementListExport.class);
+			MessageListExport.class);
 
 	private ElementsSelectionPanel panel = new ElementsSelectionPanel();
 
@@ -52,7 +53,7 @@ public class ElementListExport implements Export {
 
 	private String description;
 
-	public ElementListExport(OrganSession session) {
+	public MessageListExport(OrganSession session) {
 		config.read(this);
 
 		panel.setElements(new ArrayList<Element>(session.getOrgan()
@@ -89,7 +90,7 @@ public class ElementListExport implements Export {
 	public void stream(OutputStream output) throws IOException {
 		Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 
-		new ElementListWriter(panel.getSelectedElements()).write(writer);
+		new MessageListWriter(panel.getSelectedElements()).write(writer);
 
 		writer.flush();
 	}
@@ -98,7 +99,7 @@ public class ElementListExport implements Export {
 
 		@Override
 		public String getDescription() {
-			return ElementListExport.this.getDescription();
+			return MessageListExport.this.getDescription();
 		}
 
 		@Override
