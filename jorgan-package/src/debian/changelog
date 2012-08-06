@@ -1,3 +1,9 @@
+jorgan (3.17-beta1) beta;
+
+  * export: new export for message list
+
+ -- Sven Meier <sven@meiers.net>  Sat, 01 Okt 2012 23:00:00 +0200
+
 jorgan (3.16) stable;
 
   * switch currently displayed console when element is selected 
