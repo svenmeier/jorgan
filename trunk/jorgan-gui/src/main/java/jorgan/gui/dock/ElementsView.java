@@ -77,10 +77,12 @@ public class ElementsView extends AbstractView {
 
 	private ObjectTransferable transferable;
 
+	private boolean updating = false;
+
 	/**
-	 * The handler of selection changes.
+	 * The handler of events.
 	 */
-	private SelectionHandler selectionHandler = new SelectionHandler();
+	private EventsHandler eventsHandler = new EventsHandler();
 
 	private JTree tree = new JTree();
 
@@ -111,7 +113,7 @@ public class ElementsView extends AbstractView {
 			}
 		});
 		tree.setExpandsSelectedPaths(true);
-		tree.addTreeSelectionListener(selectionHandler);
+		tree.addTreeSelectionListener(eventsHandler);
 		tree.setDragEnabled(true);
 		tree.setTransferHandler(new TransferHandler() {
 
@@ -229,11 +231,11 @@ public class ElementsView extends AbstractView {
 
 		if (this.session != null) {
 			this.session.getOrgan().removeOrganListener(
-					(OrganListener) Spin.over(selectionHandler));
+					(OrganListener) Spin.over(eventsHandler));
 			this.session.lookup(ElementProblems.class).removeListener(
-					(ProblemListener) Spin.over(selectionHandler));
+					(ProblemListener) Spin.over(eventsHandler));
 			this.session.lookup(ElementSelection.class).removeListener(
-					selectionHandler);
+					eventsHandler);
 
 			initTree();
 		}
@@ -244,11 +246,11 @@ public class ElementsView extends AbstractView {
 
 		if (this.session != null) {
 			this.session.getOrgan().addOrganListener(
-					(OrganListener) Spin.over(selectionHandler));
+					(OrganListener) Spin.over(eventsHandler));
 			this.session.lookup(ElementProblems.class).addListener(
-					(ProblemListener) Spin.over(selectionHandler));
+					(ProblemListener) Spin.over(eventsHandler));
 			this.session.lookup(ElementSelection.class).addListener(
-					selectionHandler);
+					eventsHandler);
 
 			initTree();
 		}
@@ -264,30 +266,16 @@ public class ElementsView extends AbstractView {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler extends OrganAdapter implements
+	private class EventsHandler extends OrganAdapter implements
 			SelectionListener, TreeSelectionListener, ProblemListener {
 
-		private boolean updatingSelection = false;
-
 		public void selectionChanged() {
-			if (!updatingSelection) {
-				updatingSelection = true;
+			if (!updating) {
+				updating = true;
 
-				tree.clearSelection();
+				updateSelection();
 
-				boolean scrolled = false;
-				for (Element selected : session.lookup(ElementSelection.class)
-						.getSelectedElements()) {
-
-					TreeUtils.addSelection(tree, selected);
-
-					if (!scrolled) {
-						scrolled = true;
-						TreeUtils.scrollPathToVisible(tree, selected);
-					}
-				}
-
-				updatingSelection = false;
+				updating = false;
 			}
 		}
 
@@ -297,8 +285,8 @@ public class ElementsView extends AbstractView {
 				return;
 			}
 
-			if (!updatingSelection) {
-				updatingSelection = true;
+			if (!updating) {
+				updating = true;
 
 				List<Element> selection = TreeUtils.getSelection(tree);
 
@@ -312,7 +300,7 @@ public class ElementsView extends AbstractView {
 							selection);
 				}
 
-				updatingSelection = false;
+				updating = false;
 			}
 		}
 
@@ -352,8 +340,6 @@ public class ElementsView extends AbstractView {
 
 		public void elementAdded(Element element) {
 			initTree();
-
-			selectionChanged();
 		}
 
 		public void elementRemoved(Element element) {
@@ -365,6 +351,8 @@ public class ElementsView extends AbstractView {
 		if (this.session == null) {
 			model.clearElements();
 		} else {
+			updating = true;
+
 			Capture<Element> capture = TreeUtils.expansion(tree);
 
 			Comparator<Element> comparator;
@@ -379,9 +367,27 @@ public class ElementsView extends AbstractView {
 			model.setElements(session.getOrgan(), session.getOrgan()
 					.getElements(), comparator);
 
-			selectionHandler.selectionChanged();
-
 			capture.restore();
+
+			updateSelection();
+
+			updating = false;
+		}
+	}
+
+	private void updateSelection() {
+		tree.clearSelection();
+
+		boolean scrolled = false;
+		for (Element selected : session.lookup(ElementSelection.class)
+				.getSelectedElements()) {
+
+			TreeUtils.addSelection(tree, selected);
+
+			if (!scrolled) {
+				scrolled = true;
+				TreeUtils.scrollPathToVisible(tree, selected);
+			}
 		}
 	}
 
