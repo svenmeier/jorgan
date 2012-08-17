@@ -499,7 +499,7 @@ public class FluidsynthSound extends Sound {
 				&& this.polyphony == sound.getPolyphony()
 				&& this.channels == sound.getChannels()
 				&& Null.safeEquals(this.soundfont, sound.getSoundfont())
-				&& this.gain == sound.gain
+				&& this.gain == sound.gain && this.cores == sound.cores
 				&& this.overflowAge == sound.overflowAge
 				&& this.overflowPercussion == sound.overflowPercussion
 				&& this.overflowReleased == sound.overflowReleased

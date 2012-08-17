@@ -3,6 +3,7 @@ jorgan (3.17-beta1) beta;
   * gui: keep selection when changing element's name
   * export: new export for message list
   * fluidsynth: updated Fluidsynth dll
+  * fluidsynth: restart Fluidsynth on change of cores
 
  -- Sven Meier <sven@meiers.net>  Sat, 01 Okt 2012 23:00:00 +0200
 
