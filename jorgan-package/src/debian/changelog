@@ -1,11 +1,11 @@
-jorgan (3.17-beta1) beta;
+jorgan (3.17) stable;
 
   * gui: keep selection when changing element's name
   * export: new export for message list
-  * fluidsynth: updated Fluidsynth dll
+  * fluidsynth: updated Fluidsynth 1.1.6 for Windows
   * fluidsynth: restart Fluidsynth on change of cores
 
- -- Sven Meier <sven@meiers.net>  Sat, 01 Okt 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Mon, 27 Aug 2012 23:00:00 +0200
 
 jorgan (3.16) stable;
 
