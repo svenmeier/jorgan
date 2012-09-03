@@ -1,0 +1,161 @@
+<project name="jorgan-fluidsynth" default="dist" basedir=".">
+
+  <property file="../build.properties" />
+	
+  <target name="clean">
+    <delete dir="./target"/>
+  </target>
+
+  <target name="compile">
+    <mkdir dir="./target/classes" />
+
+  	<javac includeantruntime="false" debug="true" source="${javac.target}" target="${javac.target}" srcdir="./src/main/java" destdir="./target/classes">
+    	<classpath path="../jorgan-core/target/classes" />
+    	<classpath path="../jorgan-gui/target/classes" />
+    	<classpath path="../jorgan-customizer/target/classes" />
+    	<classpath>
+            <fileset dir="../jorgan-core/lib">
+	            <include name="*" />
+            </fileset>
+            <fileset dir="../jorgan-gui/lib">
+                <include name="*" />
+            </fileset>
+   		</classpath>
+  	</javac>
+  	
+	<native2ascii encoding="UTF8" src="src/main/java" dest="target/classes" includes="**/i18n*.properties" />
+		
+	<copy todir="./target/classes">
+		<fileset dir="./src/main/java">
+			<exclude name="**/*.java" />
+	       	<exclude name="**/i18n*.properties" />
+        </fileset>
+    </copy>
+  	
+	<copy todir="./target/classes">
+		<fileset dir="./src/main/resources" />
+    </copy>
+  </target>
+
+  <target name="native" depends="native-unix, native-windows, native-mac">
+  </target>
+
+  <target name="native-common" depends="compile">
+    <mkdir dir="./target/native" />
+
+  	<javah verbose="false" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
+      <classpath path="./target/classes" />
+    </javah>
+  	
+   	<condition property="isWindows">
+      <os family="windows"/>
+  	</condition>
+    
+  	<condition property="isUnix">
+  	  <and>
+        <os family="unix"/>
+  	    <not>
+  	      <os family="mac"/>
+  	    </not>
+  	  </and>
+  	</condition>
+    
+  	<condition property="isMac">
+      <os family="mac"/>
+  	</condition>
+  </target>
+	
+  <target name="native-windows" depends="native-common" if="isWindows">
+    <mkdir dir="./target/native" />
+
+    <exec failonerror="true" executable="${win.cc}">
+      <arg value="-I${win.jdk}/include" />
+      <arg value="-I${win.jdk}/include/win32" />
+      <arg value="-I../jorgan-jni/src/main/native" />
+      <arg value="-I./lib/include" />
+      <arg value="-I./target/native" />
+      <arg value="-Wall" />
+      <arg value="-Wl,--kill-at" />
+      <arg value="-Wl,-L./lib/win/${os.arch}" />
+      <arg value="-Wl,-llibfluidsynth" />
+      <arg value="-shared" />
+      <arg line="../jorgan-jni/src/main/native/exception.c" />
+      <arg line="../jorgan-jni/src/main/native/logging.c" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg line="-o ./target/native/fluidsynthJNI.dll" />
+    </exec>
+  	
+  	<copy todir="./target/native">
+  		<fileset dir="./lib/win/${os.arch}" includes="*.dll"/>
+  	</copy>
+  </target>
+	
+  <target name="native-unix" depends="native-common" if="isUnix">
+    <mkdir dir="./target/native" />
+
+  	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
+    <exec failonerror="true" executable="${unix.cc}">
+      <arg value="-std=c99" />
+      <arg value="-I${unix.jdk}/include" />
+      <arg value="-I${unix.jdk}/include/linux" />
+      <arg value="-I../jorgan-jni/src/main/native" />
+      <arg value="-I./target/native" />
+      <arg value="-Wall" />
+      <arg value="-fPIC" />
+      <arg value="-shared" />
+      <arg line="../jorgan-jni/src/main/native/exception.c" />
+      <arg line="../jorgan-jni/src/main/native/logging.c" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg value="-Wl,-lfluidsynth" />
+      <arg line="-o ./target/native/libfluidsynthJNI.so" />
+    </exec>
+  </target>
+
+  <target name="native-mac" depends="native-common" if="isMac">
+    <mkdir dir="./target/native" />
+
+    <exec failonerror="true" executable="${mac.cc}">
+      <arg value="-dynamiclib" />
+      <arg value="-std=c99" />
+      <arg value="-I${mac.jdk}/Headers" />
+      <arg value="-I../jorgan-jni/src/main/native" />
+      <arg value="-I./lib/include" />
+      <arg value="-I./target/native" />
+      <arg value="-Wl,-L./lib/mac" />
+      <arg value="-Wl,-lfluidsynth" />
+      <arg line="../jorgan-jni/src/main/native/exception.c" />
+      <arg line="../jorgan-jni/src/main/native/logging.c" />
+      <arg line="./src/main/native/fluidsynthJNI.c" />
+      <arg line="-o ./target/native/libfluidsynthJNI.jnilib" />
+    </exec>
+  	
+  	<copy todir="./target/native">
+  		<fileset dir="./lib/mac" includes="*.dylib"/>
+  	</copy>
+  </target>
+
+  <target name="dist" depends="clean, compile, native">
+  	<mkdir dir="./target/marshal/lib" />
+  	<copy todir="./target/marshal/lib">
+      <fileset dir="./target/native">
+  		<include name="*.dll"/>
+        <include name="*.so"/>
+        <include name="*.jnilib"/>
+        <include name="*.dylib"/>
+      </fileset>
+    </copy> 		
+  	<jar file="./target/marshal/lib/fluidsynth.jar">
+      <manifest>
+        <attribute name="Implementation-Title" value="jOrgan" />
+        <attribute name="Implementation-Vendor" value="Sven Meier" />
+        <attribute name="Implementation-Version" value="${jorgan.version}" />
+      </manifest>
+      <fileset dir="./target/classes" />
+  	</jar>
+
+  	<mkdir dir="./target/marshal/dispositions" />
+  	<copy todir="./target/marshal/dispositions">
+      <fileset dir="./src/main/dispositions" />
+    </copy> 		
+  </target>
+</project>

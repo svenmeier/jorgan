@@ -1,0 +1,128 @@
+jorgan (3.17) stable;
+
+  * gui: keep selection when changing element's name
+  * export: new export for message list
+  * fluidsynth: updated Fluidsynth 1.1.6 for Windows
+  * fluidsynth: restart Fluidsynth on change of cores
+
+ -- Sven Meier <sven@meiers.net>  Mon, 27 Aug 2012 23:00:00 +0200
+
+jorgan (3.16) stable;
+
+  * switch currently displayed console when element is selected 
+  * gui: threshold prevents accidental moving of elements in construct mode
+  * recorder: speed control
+  * recorder: loop
+  * fluidsynth: fixed bug when selecting a tuning  
+
+ -- Sven Meier <sven@meiers.net>  Sat, 30 Jun 2012 23:00:00 +0200
+
+jorgan (3.15) stable;
+
+  * preferences now stored in user home directory
+  * GUI now in separate module
+  * gui: fixed skin bug for narrow labels
+  * gui: shortcut processed only once even if element is positioned on multiple consoles
+  * gui: new menu item "reset views"
+  * gui: new configuration "flush images on close of disposition"
+  * fluidsynth: moved overflow settings into disposition
+  * keyboard: improved mouse handling
+
+ -- Sven Meier <sven@meiers.net>  Sun, 22 Jan 2012 23:00:00 +0200
+
+jorgan (3.14) stable;
+
+  * monitor may now skip control messages
+  * activate/deactivate switches on shortcut press (was released)
+  * use description name for elements where applicable
+  * customizer: set deactivate before activate to allow customizing of infinite switches  
+  * recorder: fixed bug for empty tracker not attached
+  * recorder: use description names for elements
+  * export: new extension
+  * keyboard: play into disposition without setup, multiple keyboards
+  * lcd: first integration of lcdproc
+  * memory: export levels
+
+ -- Sven Meier <sven@meiers.net>  Sun, 31 Jul 2011 23:00:00 +0200
+
+jorgan (3.13) stable;
+
+  * keep elements selected when switching to full screen
+  * keep relative paths when starting the file property editor
+  * warn about version mismatch
+  * split new element "connector" from console
+  * new fluidsynth elements Reverb and Chorus
+  * customize fluidsynth gain
+  * no auto-scrolling of tracks if performance is stopped
+
+ -- Sven Meier <sven@meiers.net>  Sun, 1 May 2011 17:00:00 +0200
+
+jorgan (3.12.2) stable;
+
+  * corrected console stacking in full screen
+
+ -- Sven Meier <sven@meiers.net>  Sun, 19 Feb 2011 13:16:00 +0200
+
+jorgan (3.12.1) stable;
+
+  * activate Midi message no longer deactivates switch (reverted to old behavior)
+  * corrected LAN input for non-3 bytes Midi messages
+  * prevent access to AWT in configuration if not needed in headless mode
+
+ -- Sven Meier <sven@meiers.net>  Sun, 13 Feb 2011 19:48:00 +0200
+
+jorgan (3.12) stable;
+
+  * new velocity property for coupler and stop
+  * corrected Mac shortcut keys
+  * Mac file association
+  * corrected undo/redo actions
+  * use name from description for regulator's title 
+  * edit fluidsynth effects separately for each sound element 
+  * fixed recorder deadlock
+  * move elements on console via cursor keys
+
+ -- Sven Meier <sven@meiers.net>  Fri, 17 Dec 2010 20:01:00 +0200
+
+jorgan (3.11.1) stable;
+
+  * Changed switch duration NONE, UNTIL_DEACTIVATED, UNFINITE
+  * keep element groups expanded on change
+  * better performance for Midi devices on OpenJDK 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 24 Oct 2010 21:53:00 +0200
+
+jorgan (3.11.0) stable;
+
+  * New properties 'from' and 'to' for Keyables
+  * Arbitrary messages length
+  * new Group element
+  * Fluidsynth 1.1.2
+  * jorgan-sams now configurable with messages
+
+ -- Sven Meier <sven@meiers.net>  Sat, 09 Oct 2010 21:01:20 +0200
+
+jorgan (3.10.0-1) stable;
+
+  * Improved graphics performance.
+  * Rewrote delayed Ranks to use playing clock.
+  * New Skin bindings for activate and deactivate.
+  * Sweep gesture added.
+  * Fluidsynth interpolate support.
+  * New element search. 
+
+ -- Sven Meier <sven@meiers.net>  Sun, 11 Jul 2010 12:12:25 +0200
+
+jorgan (3.9.4-1) stable;
+
+  * New extension jorgan-tools.
+  * Accessibility improvements.
+
+ -- Sven Meier <sven@meiers.net>  Sat, 5 Jun 2010 14:34:12 +0200
+
+jorgan (3.9.3-1) stable;
+
+  * First packaging as Debian package.
+
+ -- Sven Meier <sven@meiers.net>  Mon, 10 May 2010 16:56:47 +0200
+
