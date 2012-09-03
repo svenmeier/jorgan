@@ -26,6 +26,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 
+import jorgan.gui.FullScreen;
 import jorgan.gui.GUI;
 import jorgan.gui.LAF;
 import jorgan.gui.OrganFrame;
@@ -56,6 +57,9 @@ public class GuiCategory extends JOrganCategory {
 	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
 			FullScreenAction.class, "onLoad"));
 
+	private Model<Boolean> fullScreenAutoScroll = getModel(new Property(
+			FullScreen.class, "autoScroll"));
+
 	private Model<Boolean> flushImagesOnClose = getModel(new Property(
 			SkinManager.class, "flushImagesOnClose"));
 
@@ -67,6 +71,8 @@ public class GuiCategory extends JOrganCategory {
 			OrganFrame.class, "changes"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
+
+	private JCheckBox fullScreenAutoScrollCheckBox = new JCheckBox();
 
 	private JRadioButton changesDiscardRadioButton = new JRadioButton();
 
@@ -97,11 +103,16 @@ public class GuiCategory extends JOrganCategory {
 		column.definition(config.get("showAboutOnStartup").read(
 				showAboutOnStartupCheckBox));
 
+		column.definition(config.get("flushImagesOnClose").read(
+				flushImagesOnCloseCheckBox));
+
+		column.term(config.get("fullScreen").read(new JLabel()));
+
 		column.definition(config.get("fullScreenOnLoad").read(
 				fullScreenOnLoadCheckBox));
 
-		column.definition(config.get("flushImagesOnClose").read(
-				flushImagesOnCloseCheckBox));
+		column.definition(config.get("fullScreenAutoScroll").read(
+				fullScreenAutoScrollCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
 		column.term(config.get("changes").read(new JLabel()));
@@ -136,6 +147,8 @@ public class GuiCategory extends JOrganCategory {
 		lookAndFeelComboBox.setSelectedItem(lookAndFeel.getValue());
 		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
 		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
+		fullScreenAutoScrollCheckBox.setSelected(fullScreenAutoScroll
+				.getValue());
 
 		flushImagesOnCloseCheckBox.setSelected(flushImagesOnClose.getValue());
 
@@ -160,6 +173,8 @@ public class GuiCategory extends JOrganCategory {
 		lookAndFeel.setValue((LAF) lookAndFeelComboBox.getSelectedItem());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
+		fullScreenAutoScroll
+				.setValue(fullScreenAutoScrollCheckBox.isSelected());
 
 		flushImagesOnClose.setValue(flushImagesOnCloseCheckBox.isSelected());
 

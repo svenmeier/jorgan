@@ -90,6 +90,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 	private ButtonGroup group = new ButtonGroup();
 
+	private boolean autoScroll = false;
+
 	private OrganSession session;
 
 	/**
@@ -117,11 +119,17 @@ public class FullScreen extends JDialog implements ConsoleStack {
 				.addKeyEventDispatcher(processor);
 	}
 
+	public void setAutoScroll(boolean autoScroll) {
+		this.autoScroll = autoScroll;
+	}
+
 	@Override
 	public synchronized void dispose() {
 		super.dispose();
 
 		session = null;
+
+		eventHandler.stop();
 
 		menuItems.clear();
 
@@ -144,13 +152,15 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		ConsolePanel consolePanel = new ConsolePanel(session, console);
 
-		consolePanel.addMouseListener(eventHandler);
-		consolePanel.addMouseMotionListener(eventHandler);
+		if (autoScroll) {
+			consolePanel.addMouseListener(eventHandler);
+			consolePanel.addMouseMotionListener(eventHandler);
+		}
 
 		cardPanel.addCard(consolePanel, console);
 
-		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(Elements
-				.getDisplayName(console));
+		final JCheckBoxMenuItem check = new JCheckBoxMenuItem(
+				Elements.getDisplayName(console));
 		menuItems.put(console, check);
 		check.addItemListener(new ItemListener() {
 			@Override
@@ -242,12 +252,18 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			Rectangle rect = scrollPane.getViewport().getViewRect();
 			Dimension size = scrollPane.getViewport().getView().getSize();
 
-			int x = Math.min(size.width - rect.width, Math.max(rect.x + deltaX,
-					0));
-			int y = Math.min(size.height - rect.height, Math.max(rect.y
-					+ deltaY, 0));
+			int x = Math.min(size.width - rect.width,
+					Math.max(rect.x + deltaX, 0));
+			int y = Math.min(size.height - rect.height,
+					Math.max(rect.y + deltaY, 0));
 
 			scrollPane.getViewport().setViewPosition(new Point(x, y));
+		}
+
+		public void stop() {
+			if (timer.isRunning()) {
+				timer.stop();
+			}
 		}
 	}
 
