@@ -24,7 +24,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
@@ -49,6 +49,8 @@ public class MessageListExport implements Export {
 
 	private ElementsSelectionPanel panel = new ElementsSelectionPanel();
 
+	private OptionsPanel optionsPanel = new OptionsPanel();
+
 	private String name;
 
 	private String description;
@@ -62,7 +64,7 @@ public class MessageListExport implements Export {
 
 	@Override
 	public List<Page> getPages() {
-		return Collections.<Page> singletonList(new OptionsPage());
+		return Arrays.<Page> asList(new OptionsPage(), new MessageListPage());
 	}
 
 	public String getName() {
@@ -90,12 +92,28 @@ public class MessageListExport implements Export {
 	public void stream(OutputStream output) throws IOException {
 		Writer writer = new OutputStreamWriter(output, Charset.forName("UTF-8"));
 
-		new MessageListWriter(panel.getSelectedElements()).write(writer);
+		MessageListWriter messageListWriter = new MessageListWriter(
+				panel.getSelectedElements());
+		optionsPanel.configure(messageListWriter);
+		messageListWriter.write(writer);
 
 		writer.flush();
 	}
 
 	private class OptionsPage extends AbstractPage {
+
+		@Override
+		public String getDescription() {
+			return MessageListExport.this.getDescription();
+		}
+
+		@Override
+		protected JComponent getComponentImpl() {
+			return optionsPanel;
+		}
+	}
+
+	private class MessageListPage extends AbstractPage {
 
 		@Override
 		public String getDescription() {
