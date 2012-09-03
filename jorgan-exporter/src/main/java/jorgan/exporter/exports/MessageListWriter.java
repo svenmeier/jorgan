@@ -9,7 +9,7 @@ import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
 import jorgan.midi.mpl.Tuple;
 
-public class MessageListWriter {
+public class MessageListWriter extends NamingWriter {
 
 	private List<Element> elements;
 
@@ -35,9 +35,5 @@ public class MessageListWriter {
 				writer.write("\n");
 			}
 		}
-	}
-
-	private String getName(Element element) {
-		return Elements.getDescriptionName(element);
 	}
 }

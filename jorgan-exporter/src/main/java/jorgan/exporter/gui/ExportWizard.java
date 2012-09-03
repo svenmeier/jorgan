@@ -21,6 +21,7 @@ package jorgan.exporter.gui;
 import java.awt.Component;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -194,6 +195,7 @@ public class ExportWizard extends BasicWizard {
 		this.aExport = aExport;
 
 		exportPages.addAll(aExport.getPages());
+		Collections.reverse(exportPages);
 		for (Page page : exportPages) {
 			addPage(1, page);
 		}

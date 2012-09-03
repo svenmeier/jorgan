@@ -5,9 +5,8 @@ import java.io.Writer;
 import java.util.List;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
 
-public class ElementListWriter {
+public class ElementListWriter extends NamingWriter {
 
 	private List<Element> elements;
 
@@ -20,9 +19,5 @@ public class ElementListWriter {
 			writer.write(getName(element));
 			writer.write("\n");
 		}
-	}
-
-	private String getName(Element element) {
-		return Elements.getDescriptionName(element);
 	}
 }
