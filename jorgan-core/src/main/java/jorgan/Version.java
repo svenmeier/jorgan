@@ -33,11 +33,6 @@ public class Version {
 			if (version == null) {
 				version = "development";
 			}
-
-			int hyphen = version.lastIndexOf('-');
-			if (hyphen != -1) {
-				version = version.substring(0, hyphen);
-			}
 		}
 		return version;
 	}
