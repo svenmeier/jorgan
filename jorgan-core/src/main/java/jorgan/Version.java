@@ -19,12 +19,23 @@
 package jorgan;
 
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Version {
 
 	private static Logger logger = Logger.getLogger(Version.class.getName());
 
+	private static Pattern compatible = Pattern.compile("^\\d+(\\.\\d+)?");
+
 	private String version;
+
+	public Version() {
+	}
+
+	Version(String version) {
+		this.version = version;
+	}
 
 	public String get() {
 		if (version == null) {
@@ -49,16 +60,14 @@ public class Version {
 	 * Get the compatible part of a version, i.e. everything before the second
 	 * dot.
 	 */
-	private String getCompatible(String string) {
-		int dot = string.indexOf('.');
-		if (dot != -1) {
-			dot = string.indexOf('.', dot + 1);
-			if (dot != -1) {
-				string = string.substring(0, dot);
-			}
-		}
+	private String getCompatible(final String string) {
 
-		return string;
+		Matcher matcher = compatible.matcher(string);
+		if (matcher.find()) {
+			return matcher.group();
+		} else {
+			return string;
+		}
 	}
 
 	public void log() {
