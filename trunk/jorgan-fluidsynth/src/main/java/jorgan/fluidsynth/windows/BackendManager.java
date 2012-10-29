@@ -32,7 +32,28 @@ public class BackendManager {
 		this.backend = backend;
 	}
 
-	private File directory() {
+	public String getBackend() {
+		return backend;
+	}
+
+	public List<String> getBackends() {
+		ArrayList<String> backends = new ArrayList<String>();
+
+		backends.add(null);
+
+		File baseDirectory = baseDirectory();
+		if (baseDirectory.exists()) {
+			for (File file : baseDirectory.listFiles()) {
+				if (file.isDirectory()) {
+					backends.add(file.getName());
+				}
+			}
+		}
+
+		return backends;
+	}
+
+	private File baseDirectory() {
 		File directory;
 		String path = System.getProperty(BACKEND_PATH);
 		if (path == null) {
@@ -42,24 +63,29 @@ public class BackendManager {
 			directory = new File(path);
 		}
 
-		return new File(directory, backend);
+		return directory;
+	}
+
+	private File directory(String backend) {
+		return new File(baseDirectory(), backend);
+	}
+
+	private Backend read(String backend) throws IOException {
+		return new BackendStream().read(new File(directory(backend),
+				"backend.xml"));
 	}
 
 	public Backend getCurrentBackend() {
 		if (backend != null) {
 			try {
-				return new BackendStream().read(new File(directory(),
-						"backend.xml"));
+				return read(backend);
 			} catch (IOException ex) {
-				logger.log(Level.INFO, "fluidsynth can not read backend", ex);
+				logger.log(Level.INFO,
+						String.format("backend failure '%s'" + backend), ex);
 			}
 		}
 
 		return null;
-	}
-
-	public List<Backend> getAudios() {
-		return new ArrayList<Backend>();
 	}
 
 	public static void loadLibraries() throws UnsatisfiedLinkError {
@@ -67,7 +93,7 @@ public class BackendManager {
 
 		Backend current = manager.getCurrentBackend();
 		if (current != null) {
-			current.load(manager.directory());
+			current.load(manager.baseDirectory());
 		}
 	}
 }
