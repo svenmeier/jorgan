@@ -27,16 +27,16 @@ import java.util.logging.Logger;
 
 import javax.sound.midi.ShortMessage;
 
+import jorgan.fluidsynth.windows.BackendManager;
 import jorgan.util.ClassUtils;
 import jorgan.util.NativeUtils;
-import jorgan.util.RegexFilenameFilter;
 
 public class Fluidsynth {
 
 	private static final Logger logger = Logger.getLogger(Fluidsynth.class
 			.getName());
 
-	public static final String JORGAN_FLUIDSYNTH_LIBRARY_PATH = "jorgan.fluidsynth.library.path";
+	public static final String LIBRARY_PATH = "jorgan.fluidsynth.library.path";
 
 	private static final int NAME_MAX_LENGTH = 32;
 
@@ -196,39 +196,21 @@ public class Fluidsynth {
 	 */
 	static {
 		File directory;
-		String path = System.getProperty(JORGAN_FLUIDSYNTH_LIBRARY_PATH);
+		String path = System.getProperty(LIBRARY_PATH);
 		if (path == null) {
 			directory = ClassUtils.getDirectory(Fluidsynth.class);
 		} else {
 			directory = new File(path);
 		}
 
-		if (NativeUtils.isWindows()) {
-			try {
-				NativeUtils.load(new File(directory, "libintl-8.dll"));
-				NativeUtils.load(new File(directory, "libglib-2.0-0.dll"));
-				NativeUtils.load(new File(directory, "libgthread-2.0-0.dll"));
-				File portaudio = RegexFilenameFilter.getMatch(directory,
-						"portaudio.*\\.dll");
-				if (portaudio != null) {
-					NativeUtils.load(portaudio);
-				}
-				NativeUtils.load(new File(directory, "libfluidsynth.dll"));
-			} catch (UnsatisfiedLinkError error) {
-				logger.log(Level.INFO, "dependencies not provided", error);
-			}
-		}
-
-		if (NativeUtils.isMac()) {
-			// libraries on mac include their install name, thus we cannot load
-			// the dependecies explicitly. Instead we depend on tweaked loader
-			// locations, see ./lib/mac/install_name_tool.sh
-		}
-
 		try {
+			if (NativeUtils.isWindows()) {
+				BackendManager.loadLibraries();
+			}
+
 			NativeUtils.load(directory, "fluidsynthJNI");
 		} catch (UnsatisfiedLinkError error) {
-			logger.log(Level.INFO, "fluidsynth error", error);
+			logger.log(Level.INFO, "native failure", error);
 			throw new NoClassDefFoundError();
 		}
 	}
