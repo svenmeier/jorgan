@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public class FluidsynthTest extends TestCase {
 
 	static {
-		System.setProperty(Fluidsynth.JORGAN_FLUIDSYNTH_LIBRARY_PATH,
+		System.setProperty(Fluidsynth.LIBRARY_PATH,
 				"./target/native");
 	}
 

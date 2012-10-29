@@ -84,10 +84,6 @@
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
-  	
-  	<copy todir="./target/native">
-  		<fileset dir="./lib/win/${os.arch}" includes="*.dll"/>
-  	</copy>
   </target>
 	
   <target name="native-unix" depends="native-common" if="isUnix">
