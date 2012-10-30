@@ -75,24 +75,26 @@ public class BackendManager {
 				"backend.xml"));
 	}
 
-	public Backend getCurrentBackend() {
-		if (backend != null) {
-			try {
-				return read(backend);
-			} catch (IOException ex) {
-				logger.log(Level.INFO,
-						String.format("backend failure '%s'" + backend), ex);
-			}
-		}
+	public Backend getInstance(String backend) {
+		try {
+			return read(backend);
+		} catch (IOException ex) {
+			logger.log(Level.INFO,
+					String.format("backend failure '%s'", backend), ex);
 
-		return null;
+			return null;
+		}
 	}
 
 	public static void loadLibraries() throws UnsatisfiedLinkError {
 		BackendManager manager = new BackendManager();
 
-		Backend current = manager.getCurrentBackend();
-		if (current != null) {
+		if (manager.getBackend() != null) {
+			Backend current = manager.getInstance(manager.getBackend());
+			if (current == null) {
+				throw new UnsatisfiedLinkError(String.format(
+						"unknown backend '%s'", manager.getBackend()));
+			}
 			current.load(manager.baseDirectory());
 		}
 	}
