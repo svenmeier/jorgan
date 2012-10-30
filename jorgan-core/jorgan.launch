@@ -41,5 +41,5 @@
 <booleanAttribute key="org.eclipse.jdt.launching.DEFAULT_CLASSPATH" value="false"/>
 <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
 <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jorgan-core"/>
-<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../jorgan-skins&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#10;-Djorgan.fluidsynth.backend.path=../../fluidsynth/lib/fluidsynth&#10;-Duser.language=en&#10;-Xms256m&#10;-Xmx256m"/>
+<stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="-Djorgan.skins.path=../jorgan-skins&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#10;-Djorgan.fluidsynth.backend.path=../fluidsynth&#10;-Duser.language=en&#10;-Xms256m&#10;-Xmx256m"/>
 </launchConfiguration>

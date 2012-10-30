@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.gui.preferences.spi.CategoryProvider;
+import jorgan.util.NativeUtils;
 import bias.swing.Category;
 
 public class FluidsynthCategoryProvider implements CategoryProvider {
@@ -30,7 +31,9 @@ public class FluidsynthCategoryProvider implements CategoryProvider {
 	public List<Category> getCategories() {
 		List<Category> categories = new ArrayList<Category>();
 
-		categories.add(new FluidsynthCategory());
+		if (NativeUtils.isWindows()) {
+			categories.add(new FluidsynthCategory());
+		}
 
 		return categories;
 	}
