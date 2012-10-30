@@ -6,6 +6,7 @@ java \
 -Djorgan.skins.path=jorgan-skins \
 -Djorgan.creative.library.path=jorgan-creative/target/native \
 -Djorgan.fluidsynth.library.path=jorgan-fluidsynth/target/native \
+-Djorgan.fluidsynth.backend.path=fluidsynth \
 -Duser.language=en \
 -Xms256m \
 -Xmx256m \
