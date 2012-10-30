@@ -14,6 +14,8 @@ public class Backend {
 
 	private String version = "";
 
+	private String maintainer = "";
+
 	private List<String> libraries = Collections.emptyList();
 
 	public String getName() {
@@ -26,6 +28,10 @@ public class Backend {
 
 	public String getVersion() {
 		return version;
+	}
+
+	public String getMaintainer() {
+		return maintainer;
 	}
 
 	public List<String> getLibraries() {

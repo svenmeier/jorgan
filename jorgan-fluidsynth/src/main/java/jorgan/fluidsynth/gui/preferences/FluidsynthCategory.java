@@ -18,12 +18,19 @@
  */
 package jorgan.fluidsynth.gui.preferences;
 
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
 
 import jorgan.fluidsynth.Fluidsynth;
+import jorgan.fluidsynth.windows.Backend;
 import jorgan.fluidsynth.windows.BackendManager;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
@@ -47,8 +54,20 @@ public class FluidsynthCategory extends JOrganCategory {
 
 	private JComboBox<String> backendComboBox;
 
+	private JTextField nameTextField;
+
+	private JTextField versionTextField;
+
+	private JTextField maintainerTextField;
+
+	private JTextArea descriptionTextArea;
+
+	private BackendManager manager;
+
 	public FluidsynthCategory() {
 		config.read(this);
+
+		manager = new BackendManager();
 	}
 
 	@Override
@@ -67,15 +86,63 @@ public class FluidsynthCategory extends JOrganCategory {
 		column.term(config.get("backend").read(new JLabel()));
 
 		backendComboBox = new JComboBox<String>();
+		backendComboBox.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent arg0) {
+				updateInstance();
+			}
+		});
 		column.definition(backendComboBox).fillHorizontal();
+
+		column.group(config.get("details").read(new JLabel()));
+
+		column.term(config.get("backend/name").read(new JLabel()));
+		nameTextField = new JTextField();
+		nameTextField.setEditable(false);
+		column.definition(nameTextField).fillHorizontal();
+
+		column.term(config.get("backend/version").read(new JLabel()));
+		versionTextField = new JTextField();
+		versionTextField.setEditable(false);
+		column.definition(versionTextField).fillHorizontal();
+
+		column.term(config.get("backend/maintainer").read(new JLabel()));
+		maintainerTextField = new JTextField();
+		maintainerTextField.setEditable(false);
+		column.definition(maintainerTextField).fillHorizontal();
+
+		column.term(config.get("backend/description").read(new JLabel()));
+		descriptionTextArea = new JTextArea();
+		descriptionTextArea.setEditable(false);
+		column.definition(new JScrollPane(descriptionTextArea)).fillBoth()
+				.growVertical();
 
 		return panel;
 	}
 
+	protected void updateInstance() {
+		String backend = (String) backendComboBox.getSelectedItem();
+
+		if (backend != null) {
+			Backend instance = manager.getInstance(backend);
+			if (instance != null) {
+				nameTextField.setText(instance.getName());
+				versionTextField.setText(instance.getVersion());
+				maintainerTextField.setText(instance.getMaintainer());
+				descriptionTextArea.setText(instance.getDescription());
+
+				return;
+			}
+		}
+
+		nameTextField.setText("");
+		versionTextField.setText("");
+		maintainerTextField.setText("");
+		descriptionTextArea.setText("");
+	}
+
 	@Override
 	protected void read() {
-		BackendManager manager = new BackendManager();
-
 		backendComboBox.setModel(new BaseComboBoxModel<String>(manager
 				.getBackends()));
 
