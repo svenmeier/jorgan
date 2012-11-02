@@ -1,0 +1,12 @@
+<backend>
+  <name>Direct Sound (64bit)</name>
+  <description>Audio ouput with Direct Sound
+- Fluidsynth 1.1.6
+- Glib 2.0</description>
+  <version>1</version>
+  <maintainer>Sven Meier (sven@meiers.net)</maintainer>
+  <library>libintl-8.dll</library>
+  <library>libglib-2.0-0.dll</library>
+  <library>libgthread-2.0-0.dll</library>
+  <library>libfluidsynth.dll</library>
+</backend>
