@@ -85,9 +85,9 @@
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
   	
-    <mkdir dir="./target/native/fluidsynth/dsound" />
+    <mkdir dir="./target/native/fluidsynth/default" />
 	
-  	<copy todir="./target/native/fluidsynth/dsound">
+  	<copy todir="./target/native/fluidsynth/default">
   		<fileset dir="./lib/win/${os.arch}" includes="*"/>
   	</copy>
   </target>
