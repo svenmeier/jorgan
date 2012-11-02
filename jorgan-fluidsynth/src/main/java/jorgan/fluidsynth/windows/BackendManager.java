@@ -95,7 +95,7 @@ public class BackendManager {
 				throw new UnsatisfiedLinkError(String.format(
 						"unknown backend '%s'", manager.getBackend()));
 			}
-			current.load(manager.baseDirectory());
+			current.load(manager.directory(manager.getBackend()));
 		}
 	}
 }

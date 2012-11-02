@@ -84,6 +84,12 @@
       <arg line="./src/main/native/fluidsynthJNI.c" />
       <arg line="-o ./target/native/fluidsynthJNI.dll" />
     </exec>
+  	
+    <mkdir dir="./target/native/fluidsynth/dsound" />
+	
+  	<copy todir="./target/native/fluidsynth/dsound">
+  		<fileset dir="./lib/win/${os.arch}" includes="*"/>
+  	</copy>
   </target>
 	
   <target name="native-unix" depends="native-common" if="isUnix">
@@ -134,10 +140,7 @@
   	<mkdir dir="./target/marshal/lib" />
   	<copy todir="./target/marshal/lib">
       <fileset dir="./target/native">
-  		<include name="*.dll"/>
-        <include name="*.so"/>
-        <include name="*.jnilib"/>
-        <include name="*.dylib"/>
+  		<include name="**"/>
       </fileset>
     </copy> 		
   	<jar file="./target/marshal/lib/fluidsynth.jar">
