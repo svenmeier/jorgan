@@ -18,6 +18,7 @@
  */
 package jorgan.fluidsynth.gui.preferences;
 
+import java.awt.Dimension;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
@@ -114,8 +115,9 @@ public class FluidsynthCategory extends JOrganCategory {
 		column.term(config.get("backend/description").read(new JLabel()));
 		descriptionTextArea = new JTextArea();
 		descriptionTextArea.setEditable(false);
-		column.definition(new JScrollPane(descriptionTextArea)).fillBoth()
-				.growVertical();
+		JScrollPane scrollPane = new JScrollPane(descriptionTextArea);
+		scrollPane.setPreferredSize(new Dimension(0, 0));
+		column.definition(scrollPane).fillBoth().growVertical();
 
 		return panel;
 	}
