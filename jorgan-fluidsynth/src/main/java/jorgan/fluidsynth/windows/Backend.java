@@ -1,10 +1,7 @@
 package jorgan.fluidsynth.windows;
 
-import java.io.File;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
-
-import jorgan.util.NativeUtils;
 
 public class Backend {
 
@@ -16,7 +13,9 @@ public class Backend {
 
 	private String maintainer = "";
 
-	private List<String> libraries = Collections.emptyList();
+	private List<Link> links = new ArrayList<Link>();
+
+	private List<String> libraries = new ArrayList<String>();
 
 	public String getName() {
 		return name;
@@ -38,10 +37,7 @@ public class Backend {
 		return libraries;
 	}
 
-	public void load(File directory) throws UnsatisfiedLinkError {
-
-		for (String library : libraries) {
-			NativeUtils.load(new File(directory, library));
-		}
+	public List<Link> getLinks() {
+		return links;
 	}
 }

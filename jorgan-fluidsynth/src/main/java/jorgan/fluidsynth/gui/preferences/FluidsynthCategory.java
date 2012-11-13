@@ -18,10 +18,20 @@
  */
 package jorgan.fluidsynth.gui.preferences;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.net.URI;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -33,6 +43,7 @@ import javax.swing.JTextField;
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.windows.Backend;
 import jorgan.fluidsynth.windows.BackendManager;
+import jorgan.fluidsynth.windows.Link;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.swing.combobox.BaseComboBoxModel;
@@ -46,6 +57,9 @@ import bias.util.Property;
  * {@link Fluidsynth} category.
  */
 public class FluidsynthCategory extends JOrganCategory {
+
+	private static final Logger logger = Logger
+			.getLogger(FluidsynthCategory.class.getName());
 
 	private static Configuration config = Configuration.getRoot().get(
 			FluidsynthCategory.class);
@@ -62,6 +76,8 @@ public class FluidsynthCategory extends JOrganCategory {
 	private JTextField maintainerTextField;
 
 	private JTextArea descriptionTextArea;
+
+	private Box linksBox;
 
 	private BackendManager manager;
 
@@ -119,6 +135,9 @@ public class FluidsynthCategory extends JOrganCategory {
 		scrollPane.setPreferredSize(new Dimension(0, 0));
 		column.definition(scrollPane).fillBoth().growVertical();
 
+		linksBox = new Box(BoxLayout.X_AXIS);
+		column.definition(linksBox);
+
 		return panel;
 	}
 
@@ -133,6 +152,12 @@ public class FluidsynthCategory extends JOrganCategory {
 				maintainerTextField.setText(instance.getMaintainer());
 				descriptionTextArea.setText(instance.getDescription());
 
+				linksBox.removeAll();
+				for (final Link link : instance.getLinks()) {
+					createButton(backend, link);
+				}
+				linksBox.revalidate();
+
 				return;
 			}
 		}
@@ -141,6 +166,39 @@ public class FluidsynthCategory extends JOrganCategory {
 		versionTextField.setText("");
 		maintainerTextField.setText("");
 		descriptionTextArea.setText("");
+
+		linksBox.removeAll();
+		linksBox.revalidate();
+	}
+
+	private void createButton(String backend, final Link link) {
+		try {
+			JButton button = new JButton();
+
+			String icon = link.getIcon();
+			if (icon != null) {
+				button.setIcon(new ImageIcon(manager.getFile(backend, icon)
+						.getAbsolutePath()));
+
+				button.setToolTipText(link.getText());
+			} else {
+				button.setText(link.getText());
+			}
+
+			button.addActionListener(new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					try {
+						Desktop.getDesktop().browse(URI.create(link.getUrl()));
+					} catch (Exception e) {
+						logger.log(Level.WARNING, e.getMessage(), e);
+					}
+				}
+			});
+			linksBox.add(button);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, e.getMessage(), e);
+		}
 	}
 
 	@Override

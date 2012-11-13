@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 
 import jorgan.fluidsynth.windows.Backend;
+import jorgan.fluidsynth.windows.Link;
 import jorgan.util.IOUtils;
 
 import com.thoughtworks.xstream.XStream;
@@ -45,6 +46,8 @@ public class BackendStream {
 		xstream.alias("backend", Backend.class);
 		xstream.addImplicitCollection(Backend.class, "libraries", "library",
 				String.class);
+		xstream.addImplicitCollection(Backend.class, "links", "link",
+				Link.class);
 	}
 
 	public Backend read(File file) throws IOException {

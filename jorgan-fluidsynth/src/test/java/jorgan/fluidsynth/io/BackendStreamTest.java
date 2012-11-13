@@ -13,6 +13,8 @@ public class BackendStreamTest extends TestCase {
 		assertEquals("Audio ouput with Direct Sound", backend.getDescription());
 		assertEquals("1.1.7", backend.getVersion());
 
+		assertEquals(1, backend.getLinks().size());
+
 		assertEquals(4, backend.getLibraries().size());
 		assertEquals("libintl-8.dll", backend.getLibraries().get(0));
 		assertEquals("libglib-2.0-0.dll", backend.getLibraries().get(1));
