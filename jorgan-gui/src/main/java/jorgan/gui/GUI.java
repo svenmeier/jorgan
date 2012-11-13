@@ -183,7 +183,11 @@ public class GUI implements UI {
 
 	private static void invokeOnSwing(Runnable runnable) {
 		try {
-			SwingUtilities.invokeAndWait(runnable);
+			if (SwingUtilities.isEventDispatchThread()) {
+				runnable.run();
+			} else {
+				SwingUtilities.invokeAndWait(runnable);
+			}
 		} catch (InterruptedException e) {
 			throw new Error(e);
 		} catch (InvocationTargetException e) {
