@@ -6,4 +6,9 @@
   <library>libglib-2.0-0.dll</library>
   <library>libgthread-2.0-0.dll</library>
   <library>libfluidsynth.dll</library>
+  <link>
+	<text>Fluidsynth</text>
+	<url>http://fluidsynth.sf.net</url>
+	<icon>fluidsynth.png</icon>
+  </link>
 </backend>

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.io.BackendStream;
 import jorgan.util.ClassUtils;
+import jorgan.util.NativeUtils;
 import bias.Configuration;
 
 public class BackendManager {
@@ -86,16 +87,21 @@ public class BackendManager {
 		}
 	}
 
-	public static void loadLibraries() throws UnsatisfiedLinkError {
-		BackendManager manager = new BackendManager();
-
-		if (manager.getBackend() != null) {
-			Backend current = manager.getInstance(manager.getBackend());
-			if (current == null) {
+	public void loadLibraries() throws UnsatisfiedLinkError {
+		if (backend != null) {
+			Backend instance = getInstance(backend);
+			if (instance == null) {
 				throw new UnsatisfiedLinkError(String.format(
-						"unknown backend '%s'", manager.getBackend()));
+						"unknown backend '%s'", backend));
 			}
-			current.load(manager.directory(manager.getBackend()));
+
+			for (String library : instance.getLibraries()) {
+				NativeUtils.load(getFile(backend, library));
+			}
 		}
+	}
+
+	public File getFile(String backend, String file) {
+		return new File(directory(backend), file);
 	}
 }

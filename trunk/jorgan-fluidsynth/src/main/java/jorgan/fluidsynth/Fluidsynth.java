@@ -205,7 +205,7 @@ public class Fluidsynth {
 
 		try {
 			if (NativeUtils.isWindows()) {
-				BackendManager.loadLibraries();
+				new BackendManager().loadLibraries();
 			}
 
 			NativeUtils.load(directory, "fluidsynthJNI");
