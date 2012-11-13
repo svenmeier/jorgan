@@ -20,6 +20,7 @@ package jorgan.fluidsynth.gui.preferences;
 
 import java.awt.Desktop;
 import java.awt.Dimension;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -174,6 +175,7 @@ public class FluidsynthCategory extends JOrganCategory {
 	private void createButton(String backend, final Link link) {
 		try {
 			JButton button = new JButton();
+			button.setMargin(new Insets(0,0,0,0));
 
 			String icon = link.getIcon();
 			if (icon != null) {
