@@ -13,9 +13,9 @@ public class Backend {
 
 	private String maintainer = "";
 
-	private List<Link> links = new ArrayList<Link>();
+	private List<Link> links;
 
-	private List<String> libraries = new ArrayList<String>();
+	private List<String> libraries;
 
 	public String getName() {
 		return name;
@@ -34,10 +34,16 @@ public class Backend {
 	}
 
 	public List<String> getLibraries() {
+		if (libraries == null) {
+			libraries = new ArrayList<String>();
+		}
 		return libraries;
 	}
 
 	public List<Link> getLinks() {
+		if (links == null) {
+			links = new ArrayList<Link>();
+		}
 		return links;
 	}
 }
