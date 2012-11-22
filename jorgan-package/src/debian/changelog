@@ -1,8 +1,8 @@
-jorgan (3.18-beta2) beta;
+jorgan (3.18) stable;
 
   * fluidsynth: allow different backends
 
- -- Sven Meier <sven@meiers.net>  Fri, 02 Nov 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Fri, 22 Nov 2012 23:00:00 +0200
 
 jorgan (3.17) stable;
 
