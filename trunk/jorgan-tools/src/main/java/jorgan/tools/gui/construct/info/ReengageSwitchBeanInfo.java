@@ -16,27 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.tools.disposition;
+package jorgan.tools.gui.construct.info;
 
-import java.util.ArrayList;
-import java.util.List;
+import jorgan.gui.construct.editor.VelocityEditor;
+import jorgan.gui.construct.info.SwitchBeanInfo;
+import jorgan.tools.disposition.ReengageSwitch;
 
-import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
-import jorgan.disposition.spi.ElementProvider;
+/**
+ * BeanInfo for {@link ReengageSwitch}.
+ */
+public class ReengageSwitchBeanInfo extends SwitchBeanInfo {
 
-public class ToolsElementProvider implements ElementProvider {
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public void init(Organ organ) {
-	}
-
-	public List<Class<? extends Element>> getElementClasses(Organ organ) {
-		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
-
-		classes.add(PanicSwitch.class);
-		classes.add(ReengageSwitch.class);
-		classes.add(ConnectionSwitch.class);
-
-		return classes;
+		add("velocity", ReengageSwitch.class, VelocityEditor.class);
 	}
 }

@@ -18,25 +18,38 @@
  */
 package jorgan.tools.disposition;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
-import jorgan.disposition.spi.ElementProvider;
+import jorgan.disposition.Rank;
+import jorgan.disposition.Switch;
 
-public class ToolsElementProvider implements ElementProvider {
+public class ReengageSwitch extends Switch {
 
-	public void init(Organ organ) {
+	private int velocity = 100;
+
+	public ReengageSwitch() {
+		setDuration(DURATION_NONE);
 	}
 
-	public List<Class<? extends Element>> getElementClasses(Organ organ) {
-		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
+	public int getVelocity() {
+		return velocity;
+	}
 
-		classes.add(PanicSwitch.class);
-		classes.add(ReengageSwitch.class);
-		classes.add(ConnectionSwitch.class);
+	public void setVelocity(int velocity) {
+		if (velocity < 0 || velocity > 127) {
+			throw new IllegalArgumentException();
+		}
 
-		return classes;
+		if (this.velocity != velocity) {
+			int oldVelocity = this.velocity;
+
+			this.velocity = velocity;
+
+			fireChange(new PropertyChange(oldVelocity, this.velocity));
+		}
+	}
+
+	@Override
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Rank.class.isAssignableFrom(clazz);
 	}
 }

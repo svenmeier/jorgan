@@ -11,7 +11,8 @@
 
   	<javac includeantruntime="false" debug="true" source="${javac.target}" target="${javac.target}" srcdir="./src/main/java" destdir="./target/classes">
     	<classpath path="../jorgan-core/target/classes" />
-    	<classpath>
+    	<classpath path="../jorgan-gui/target/classes" />
+    		<classpath>
             <fileset dir="../jorgan-core/lib">
 	            <include name="*" />
             </fileset>
