@@ -24,12 +24,12 @@ import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
-import jorgan.disposition.Sound;
-import jorgan.disposition.SoundFilter;
 import jorgan.disposition.Rank.Disengaged;
 import jorgan.disposition.Rank.Engaged;
 import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
+import jorgan.disposition.Sound;
+import jorgan.disposition.SoundFilter;
 import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ProcessingException;
@@ -86,8 +86,8 @@ public class RankPlayer extends Player<Rank> {
 		} catch (ProcessingException ex) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.ERROR, "channel", "channelIllegal", rank
-					.getChannel());
+			addProblem(Severity.ERROR, "channel", "channelIllegal",
+					rank.getChannel());
 			return;
 		}
 
@@ -98,8 +98,8 @@ public class RankPlayer extends Player<Rank> {
 		if (channel == null) {
 			channel = new DeadChannel();
 
-			addProblem(Severity.WARNING, "channel", "channelUnavailable", rank
-					.getChannel());
+			addProblem(Severity.WARNING, "channel", "channelUnavailable",
+					rank.getChannel());
 		}
 
 		for (Element element : rank.getReferenced(Element.class)) {
@@ -115,11 +115,13 @@ public class RankPlayer extends Player<Rank> {
 	}
 
 	private void disengaged() {
-		this.channel.disengaged();
-		this.channel.release();
-		this.channel = null;
+		if (this.channel != null) {
+			removeProblem(Severity.WARNING, "channel");
 
-		removeProblem(Severity.WARNING, "channel");
+			this.channel.disengaged();
+			this.channel.release();
+			this.channel = null;
+		}
 	}
 
 	@Override
@@ -165,6 +167,25 @@ public class RankPlayer extends Player<Rank> {
 			played[pitch]--;
 			if (played[pitch] == 0) {
 				channel.muted(pitch);
+			}
+		}
+	}
+
+	public void reengage(int velocity) {
+		if (this.channel != null) {
+			for (int p = 0; p < played.length; p++) {
+				if (played[p] > 0) {
+					this.channel.muted(p);
+				}
+			}
+
+			this.channel.disengaged();
+			this.channel.engaged();
+
+			for (int p = 0; p < played.length; p++) {
+				if (played[p] > 0) {
+					this.channel.played(p, velocity);
+				}
 			}
 		}
 	}

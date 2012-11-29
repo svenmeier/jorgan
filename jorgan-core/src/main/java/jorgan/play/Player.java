@@ -26,8 +26,8 @@ import javax.sound.midi.MidiMessage;
 
 import jorgan.disposition.Connector;
 import jorgan.disposition.Element;
-import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Message;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ContextImpl;
@@ -182,7 +182,7 @@ public abstract class Player<E extends Element> {
 	public void update() {
 	}
 
-	protected final void onReceived(byte[] datas) {
+	public void onReceived(byte[] datas) {
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
 			try {
 				if (inputContext.process(message, datas, false)) {
@@ -238,8 +238,8 @@ public abstract class Player<E extends Element> {
 			builder.append(data & 0xff);
 		}
 
-		addProblem(Severity.ERROR, message, "messageInvalid", builder
-				.toString());
+		addProblem(Severity.ERROR, message, "messageInvalid",
+				builder.toString());
 	}
 
 	/**

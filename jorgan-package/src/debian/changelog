@@ -1,8 +1,15 @@
+jorgan (3.19-beta1) beta;
+
+  * tools: new element ReengageSwitch
+  * tools: new element ConnectionSwitch
+
+ -- Sven Meier <sven@meiers.net>  Fri, 23 Nov 2012 23:00:00 +0200
+
 jorgan (3.18) stable;
 
   * fluidsynth: allow different backends
 
- -- Sven Meier <sven@meiers.net>  Fri, 22 Nov 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Thu, 22 Nov 2012 23:00:00 +0200
 
 jorgan (3.17) stable;
 

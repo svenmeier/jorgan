@@ -16,27 +16,21 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.tools.disposition;
+package jorgan.tools.gui.construct.info;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.beans.BeanInfo;
 
-import jorgan.disposition.Element;
-import jorgan.disposition.Organ;
-import jorgan.disposition.spi.ElementProvider;
+import jorgan.gui.construct.info.spi.BeanInfoProvider;
 
-public class ToolsElementProvider implements ElementProvider {
+/**
+ * The default provider of {@link BeanInfo}s.
+ */
+public class ToolsBeanInfoProvider implements BeanInfoProvider {
 
-	public void init(Organ organ) {
-	}
+	private static final String BEAN_INFO_SEARCH_PATH = ReengageSwitchBeanInfo.class
+			.getPackage().getName();
 
-	public List<Class<? extends Element>> getElementClasses(Organ organ) {
-		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
-
-		classes.add(PanicSwitch.class);
-		classes.add(ReengageSwitch.class);
-		classes.add(ConnectionSwitch.class);
-
-		return classes;
+	public String getBeanInfoSearchPath() {
+		return BEAN_INFO_SEARCH_PATH;
 	}
 }
