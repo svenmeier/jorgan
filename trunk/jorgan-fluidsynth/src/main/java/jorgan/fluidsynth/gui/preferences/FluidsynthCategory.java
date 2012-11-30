@@ -68,7 +68,7 @@ public class FluidsynthCategory extends JOrganCategory {
 	private Model<String> backend = getModel(new Property(BackendManager.class,
 			"backend"));
 
-	private JComboBox<String> backendComboBox;
+	private JComboBox backendComboBox;
 
 	private JTextField nameTextField;
 
@@ -103,7 +103,7 @@ public class FluidsynthCategory extends JOrganCategory {
 
 		column.term(config.get("backend").read(new JLabel()));
 
-		backendComboBox = new JComboBox<String>();
+		backendComboBox = new JComboBox();
 		backendComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent arg0) {
