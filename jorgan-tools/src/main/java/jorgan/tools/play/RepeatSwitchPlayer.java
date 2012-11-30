@@ -16,40 +16,47 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.tools.disposition;
+package jorgan.tools.play;
 
-import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
-import jorgan.disposition.Switch;
+import jorgan.play.RankPlayer;
+import jorgan.play.SwitchPlayer;
+import jorgan.tools.disposition.RepeatSwitch;
+import jorgan.util.Null;
 
-public class ReengageSwitch extends Switch {
+/**
+ * A player for a {@link RepeatSwitch}.
+ */
+public class RepeatSwitchPlayer extends SwitchPlayer<RepeatSwitch> {
 
-	private int velocity = 100;
+	private boolean engaged = false;
 
-	public ReengageSwitch() {
-		setDuration(DURATION_NONE);
-	}
-
-	public int getVelocity() {
-		return velocity;
-	}
-
-	public void setVelocity(int velocity) {
-		if (velocity < 0 || velocity > 127) {
-			throw new IllegalArgumentException();
-		}
-
-		if (this.velocity != velocity) {
-			int oldVelocity = this.velocity;
-
-			this.velocity = velocity;
-
-			fireChange(new PropertyChange(oldVelocity, this.velocity));
-		}
+	public RepeatSwitchPlayer(RepeatSwitch panic) {
+		super(panic);
 	}
 
 	@Override
-	protected boolean canReference(Class<? extends Element> clazz) {
-		return Rank.class.isAssignableFrom(clazz);
+	protected void openImpl() {
+		engaged = false;
+
+		super.openImpl();
+	}
+
+	@Override
+	public void update() {
+		super.update();
+
+		if (isOpen()) {
+			boolean engaged = getElement().isEngaged();
+			if (!Null.safeEquals(this.engaged, engaged)) {
+				if (!engaged) {
+					for (Rank rank : getElement().getReferenced(Rank.class)) {
+						((RankPlayer) getPlayer(rank)).repeat(getElement()
+								.getVelocity());
+					}
+				}
+				this.engaged = engaged;
+			}
+		}
 	}
 }

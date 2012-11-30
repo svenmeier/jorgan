@@ -16,21 +16,40 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
-package jorgan.tools.gui.construct.info;
+package jorgan.tools.disposition;
 
-import jorgan.gui.construct.editor.VelocityEditor;
-import jorgan.gui.construct.info.SwitchBeanInfo;
-import jorgan.tools.disposition.ReengageSwitch;
+import jorgan.disposition.Element;
+import jorgan.disposition.Rank;
+import jorgan.disposition.Switch;
 
-/**
- * BeanInfo for {@link ReengageSwitch}.
- */
-public class ReengageSwitchBeanInfo extends SwitchBeanInfo {
+public class RepeatSwitch extends Switch {
+
+	private int velocity = 100;
+
+	public RepeatSwitch() {
+		setDuration(DURATION_NONE);
+	}
+
+	public int getVelocity() {
+		return velocity;
+	}
+
+	public void setVelocity(int velocity) {
+		if (velocity < 0 || velocity > 127) {
+			throw new IllegalArgumentException();
+		}
+
+		if (this.velocity != velocity) {
+			int oldVelocity = this.velocity;
+
+			this.velocity = velocity;
+
+			fireChange(new PropertyChange(oldVelocity, this.velocity));
+		}
+	}
 
 	@Override
-	protected void registerProperties() {
-		super.registerProperties();
-
-		add("velocity", ReengageSwitch.class, VelocityEditor.class);
+	protected boolean canReference(Class<? extends Element> clazz) {
+		return Rank.class.isAssignableFrom(clazz);
 	}
 }

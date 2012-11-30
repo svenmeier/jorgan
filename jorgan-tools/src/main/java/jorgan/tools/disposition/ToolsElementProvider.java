@@ -34,7 +34,7 @@ public class ToolsElementProvider implements ElementProvider {
 		List<Class<? extends Element>> classes = new ArrayList<Class<? extends Element>>();
 
 		classes.add(PanicSwitch.class);
-		classes.add(ReengageSwitch.class);
+		classes.add(RepeatSwitch.class);
 		classes.add(ConnectionSwitch.class);
 
 		return classes;

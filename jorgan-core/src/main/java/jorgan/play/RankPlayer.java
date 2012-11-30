@@ -171,16 +171,13 @@ public class RankPlayer extends Player<Rank> {
 		}
 	}
 
-	public void reengage(int velocity) {
+	public void repeat(int velocity) {
 		if (this.channel != null) {
 			for (int p = 0; p < played.length; p++) {
 				if (played[p] > 0) {
 					this.channel.muted(p);
 				}
 			}
-
-			this.channel.disengaged();
-			this.channel.engaged();
 
 			for (int p = 0; p < played.length; p++) {
 				if (played[p] > 0) {
