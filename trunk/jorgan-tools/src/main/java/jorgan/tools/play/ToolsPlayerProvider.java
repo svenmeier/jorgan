@@ -5,7 +5,7 @@ import jorgan.play.Player;
 import jorgan.play.spi.PlayerProvider;
 import jorgan.tools.disposition.ConnectionSwitch;
 import jorgan.tools.disposition.PanicSwitch;
-import jorgan.tools.disposition.ReengageSwitch;
+import jorgan.tools.disposition.RepeatSwitch;
 
 public class ToolsPlayerProvider implements PlayerProvider {
 
@@ -16,8 +16,8 @@ public class ToolsPlayerProvider implements PlayerProvider {
 			player = new ConnectionSwitchPlayer((ConnectionSwitch) element);
 		} else if (element instanceof PanicSwitch) {
 			player = new PanicSwitchPlayer((PanicSwitch) element);
-		} else if (element instanceof ReengageSwitch) {
-			player = new ReengageSwitchPlayer((ReengageSwitch) element);
+		} else if (element instanceof RepeatSwitch) {
+			player = new RepeatSwitchPlayer((RepeatSwitch) element);
 		}
 
 		return player;

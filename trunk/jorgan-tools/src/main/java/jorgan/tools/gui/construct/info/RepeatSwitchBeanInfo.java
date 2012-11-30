@@ -18,19 +18,19 @@
  */
 package jorgan.tools.gui.construct.info;
 
-import java.beans.BeanInfo;
-
-import jorgan.gui.construct.info.spi.BeanInfoProvider;
+import jorgan.gui.construct.editor.VelocityEditor;
+import jorgan.gui.construct.info.SwitchBeanInfo;
+import jorgan.tools.disposition.RepeatSwitch;
 
 /**
- * The default provider of {@link BeanInfo}s.
+ * BeanInfo for {@link RepeatSwitch}.
  */
-public class ToolsBeanInfoProvider implements BeanInfoProvider {
+public class RepeatSwitchBeanInfo extends SwitchBeanInfo {
 
-	private static final String BEAN_INFO_SEARCH_PATH = RepeatSwitchBeanInfo.class
-			.getPackage().getName();
+	@Override
+	protected void registerProperties() {
+		super.registerProperties();
 
-	public String getBeanInfoSearchPath() {
-		return BEAN_INFO_SEARCH_PATH;
+		add("velocity", RepeatSwitch.class, VelocityEditor.class);
 	}
 }

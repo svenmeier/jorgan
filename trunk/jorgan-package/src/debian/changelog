@@ -1,6 +1,6 @@
-jorgan (3.19-beta1) beta;
+jorgan (3.19-beta2) beta;
 
-  * tools: new element ReengageSwitch
+  * tools: new element RepeatSwitch
   * tools: new element ConnectionSwitch
 
  -- Sven Meier <sven@meiers.net>  Fri, 23 Nov 2012 23:00:00 +0200
