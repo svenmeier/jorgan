@@ -48,6 +48,11 @@ public class RegulatorView extends IndexedContinuousView<Regulator> {
 	}
 
 	protected String getTitle(int index) {
+		// we might not have any reference
+		if (getElement().getReferenceCount() == 0) {
+			return "";
+		}
+
 		Element referenced = getElement().getReference(index).getElement();
 
 		return Elements.getDescriptionName(referenced);
