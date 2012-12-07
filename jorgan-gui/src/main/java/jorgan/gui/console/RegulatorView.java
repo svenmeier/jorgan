@@ -20,11 +20,10 @@ package jorgan.gui.console;
 
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.IndexedContinuous;
 import jorgan.disposition.Regulator;
 
 /**
- * A view that shows an {@link IndexedContinuous}.
+ * A view that shows an {@link Regulator}.
  */
 public class RegulatorView extends IndexedContinuousView<Regulator> {
 
