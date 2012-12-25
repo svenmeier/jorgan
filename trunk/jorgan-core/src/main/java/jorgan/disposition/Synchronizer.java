@@ -18,10 +18,13 @@
  */
 package jorgan.disposition;
 
+
 /**
  * A synchronizer of {@link jorgan.disposition.Switch}es.
  */
 public class Synchronizer extends Switch implements Observer {
+
+	private transient boolean synchronizing;
 
 	private Action whenActivated = Action.ACTIVATE;
 
@@ -63,6 +66,10 @@ public class Synchronizer extends Switch implements Observer {
 
 	@Override
 	public void changed(Element element) {
+		if (synchronizing) {
+			return;
+		}
+
 		if (!references(element)) {
 			throw new IllegalArgumentException("does not reference '" + element
 					+ "'");
@@ -72,11 +79,15 @@ public class Synchronizer extends Switch implements Observer {
 			Switch changed = (Switch) element;
 			Switch first = (Switch) getReference(0).getElement();
 			if (changed != first) {
+				synchronizing = true;
+
 				if (changed.isActive()) {
 					whenActivated.perform(first);
 				} else if (!changed.isActive()) {
 					whenDeactivated.perform(first);
 				}
+
+				synchronizing = false;
 			}
 		}
 	}
