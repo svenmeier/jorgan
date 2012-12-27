@@ -152,8 +152,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 		ConsolePanel consolePanel = new ConsolePanel(session, console);
 
+		consolePanel.addMouseListener(eventHandler);
 		if (autoScroll) {
-			consolePanel.addMouseListener(eventHandler);
 			consolePanel.addMouseMotionListener(eventHandler);
 		}
 
@@ -210,7 +210,11 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		}
 
 		protected void checkPopup(MouseEvent e) {
-			if (e.isPopupTrigger()) {
+			// event has been reported to be notified
+			// while full screen was not longer showing.
+			// resulting in IllegalComponentStateException
+			// when showing the popup :(
+			if (isDisplayable() && e.isPopupTrigger()) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
