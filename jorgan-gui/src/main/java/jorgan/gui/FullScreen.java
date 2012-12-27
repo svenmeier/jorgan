@@ -214,7 +214,7 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			// while full screen was not longer showing.
 			// resulting in IllegalComponentStateException
 			// when showing the popup :(
-			if (isDisplayable() && e.isPopupTrigger()) {
+			if (e.getComponent().isShowing() && e.isPopupTrigger()) {
 				popup.show(e.getComponent(), e.getX(), e.getY());
 			}
 		}
