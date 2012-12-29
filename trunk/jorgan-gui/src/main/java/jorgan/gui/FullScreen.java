@@ -210,8 +210,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		}
 
 		protected void checkPopup(MouseEvent e) {
-			// event has been reported to be notified
-			// while full screen was not longer showing.
+			// event might be notified while full screen is
+			// no longer showing,
 			// resulting in IllegalComponentStateException
 			// when showing the popup :(
 			if (e.getComponent().isShowing() && e.isPopupTrigger()) {
