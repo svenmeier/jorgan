@@ -34,22 +34,21 @@ import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.swing.DropMode;
 import javax.swing.JComponent;
+import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.TransferHandler;
-import javax.swing.JFormattedTextField.AbstractFormatter;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Connector;
-import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
-import jorgan.disposition.Message;
 import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Message;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.disposition.event.OrganListener;
 import jorgan.gui.MessageTableCellRenderer;
@@ -211,10 +210,11 @@ public class MessagesView extends AbstractView {
 			}
 		});
 		table.getSelectionModel().addListSelectionListener(selectionHandler);
-		table.getColumnModel().getColumn(0).setCellRenderer(
-				new MessageTableCellRenderer());
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new FormatterCellEditor(new CommandsFormatter()));
+		table.getColumnModel().getColumn(0)
+				.setCellRenderer(new MessageTableCellRenderer());
+		table.getColumnModel()
+				.getColumn(1)
+				.setCellEditor(new FormatterCellEditor(new CommandsFormatter()));
 		TableUtils.pleasantLookAndFeel(table);
 
 		setContent(new JScrollPane(table));
@@ -489,9 +489,10 @@ public class MessagesView extends AbstractView {
 		public void actionPerformed(ActionEvent ev) {
 			Connector connector = null;
 
+			// TODO check ConnectionSwitches
 			if (element instanceof Connector) {
 				connector = (Connector) element;
-			} else if (element instanceof Displayable) {
+			} else {
 				for (Connector referrer : session.getOrgan().getReferrer(
 						element, Connector.class)) {
 					connector = referrer;
@@ -516,8 +517,8 @@ public class MessagesView extends AbstractView {
 			}
 
 			try {
-				MessageRecorder recorder = new MessageRecorder(connector
-						.getInput()) {
+				MessageRecorder recorder = new MessageRecorder(
+						connector.getInput()) {
 					@Override
 					public boolean messageRecorded(final MidiMessage message) {
 						SwingUtilities.invokeLater(new Runnable() {
@@ -536,9 +537,9 @@ public class MessagesView extends AbstractView {
 				recorder.close();
 			} catch (MidiUnavailableException unavailable) {
 				showBoxMessage("record/deviceUnavailable",
-						MessageBox.OPTIONS_OK, Elements
-								.getDisplayName(connector), connector
-								.getInput());
+						MessageBox.OPTIONS_OK,
+						Elements.getDisplayName(connector),
+						connector.getInput());
 
 				session.lookup(UndoManager.class).compound();
 			}
@@ -558,8 +559,8 @@ public class MessagesView extends AbstractView {
 
 	private class MessageComparator implements Comparator<Message> {
 		public int compare(Message m1, Message m2) {
-			int order = m1.getClass().getName().compareTo(
-					m2.getClass().getName());
+			int order = m1.getClass().getName()
+					.compareTo(m2.getClass().getName());
 
 			if (m1 instanceof InputMessage) {
 				order -= 100;
@@ -601,7 +602,7 @@ public class MessagesView extends AbstractView {
 	}
 
 	protected int showBoxMessage(String key, int options, Object... args) {
-		return config.get(key).read(new MessageBox(options)).show(this.table,
-				args);
+		return config.get(key).read(new MessageBox(options))
+				.show(this.table, args);
 	}
 }
