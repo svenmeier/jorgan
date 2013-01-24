@@ -124,6 +124,14 @@ public abstract class SkinManager {
 			IOUtils.closeQuietly(input);
 		}
 
+		// OutputStream output = new FileOutputStream(file.getName() +
+		// ".skin.xml");
+		// try {
+		// new SkinStream().write(skin, output);
+		// } finally {
+		// IOUtils.closeQuietly(output);
+		// }
+
 		return skin;
 	}
 
