@@ -1,29 +1,8 @@
-<skin>
+<skin xmlns="http://jorgan.sourceforge.net/skin" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://jorgan.sourceforge.net/skin ../../jorgan-gui/src/main/xml/skin.xsd">
   <name>theatre</name>
   <styles>
     <style>
-      <name>console</name>
-      <layers>
-        <image>
-          <file>console.png</file>
-          <border>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </border>
-          <anchor>CENTER</anchor>
-          <fill>NONE</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
-        </image>
-      </layers>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -34,18 +13,42 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>label</name>
       <layers>
         <image>
-          <file>label.png</file>
+          <anchor>CENTER</anchor>
+          <fill>NONE</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
+          <file>console.png</file>
           <border>
-            <top>16</top>
-            <left>16</left>
-            <bottom>16</bottom>
-            <right>16</right>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
           </border>
+        </image>
+      </layers>
+      <name>console</name>
+    </style>
+    <style>
+      <anchor>CENTER</anchor>
+      <fill>NONE</fill>
+      <width>0</width>
+      <height>0</height>
+      <padding>
+        <top>0</top>
+        <left>0</left>
+        <bottom>0</bottom>
+        <right>0</right>
+      </padding>
+      <layers>
+        <image>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -56,10 +59,27 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <file>label.png</file>
+          <border>
+            <top>16</top>
+            <left>16</left>
+            <bottom>16</bottom>
+            <right>16</right>
+          </border>
         </image>
         <text>
-          <alignment>CENTER</alignment>
+          <anchor>CENTER</anchor>
+          <fill>NONE</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>4</top>
+            <left>8</left>
+            <bottom>4</bottom>
+            <right>8</right>
+          </padding>
           <binding>name</binding>
+          <alignment>CENTER</alignment>
           <font>
             <name>Arial</name>
             <style>0</style>
@@ -71,18 +91,11 @@
             <blue>0</blue>
           </color>
           <antialiased>true</antialiased>
-          <anchor>CENTER</anchor>
-          <fill>NONE</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>4</top>
-            <left>8</left>
-            <bottom>4</bottom>
-            <right>8</right>
-          </padding>
         </text>
       </layers>
+      <name>label</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -93,16 +106,43 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>white</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>white0.png</file>
                   <border>
                     <top>0</top>
@@ -110,20 +150,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>8</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -135,18 +175,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -157,10 +189,18 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>white1.png</file>
                   <border>
                     <top>0</top>
@@ -168,20 +208,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>25</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -193,42 +233,15 @@
                     <blue>50</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>white</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -239,16 +252,43 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>red</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>red0.png</file>
                   <border>
                     <top>0</top>
@@ -256,20 +296,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>8</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -281,18 +321,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -303,10 +335,18 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>red1.png</file>
                   <border>
                     <top>0</top>
@@ -314,20 +354,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>25</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -339,42 +379,15 @@
                     <blue>50</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>red</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -385,16 +398,43 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>yellow</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>yellow0.png</file>
                   <border>
                     <top>0</top>
@@ -402,20 +442,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>8</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -427,18 +467,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -449,10 +481,18 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>yellow1.png</file>
                   <border>
                     <top>0</top>
@@ -460,20 +500,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>25</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -485,42 +525,15 @@
                     <blue>50</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>yellow</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -531,16 +544,43 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>black</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>black0.png</file>
                   <border>
                     <top>0</top>
@@ -548,20 +588,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>8</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -573,18 +613,10 @@
                     <blue>222</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -595,10 +627,18 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
                   <file>black1.png</file>
                   <border>
                     <top>0</top>
@@ -606,20 +646,20 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
+                  <width>66</width>
+                  <height>48</height>
                   <padding>
-                    <top>0</top>
-                    <left>0</left>
+                    <top>25</top>
+                    <left>4</left>
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -631,42 +671,15 @@
                     <blue>255</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>black</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -677,23 +690,33 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>blue</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
-                  <file>blue0.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -704,10 +727,27 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>blue0.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>66</width>
+                  <height>48</height>
+                  <padding>
+                    <top>8</top>
+                    <left>4</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -719,18 +759,10 @@
                     <blue>222</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -741,17 +773,8 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
-                  <file>blue1.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -762,10 +785,27 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>blue1.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>66</width>
+                  <height>48</height>
+                  <padding>
+                    <top>25</top>
+                    <left>4</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -777,42 +817,15 @@
                     <blue>255</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>blue</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -823,23 +836,33 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>wood</name>
       <layers>
         <button>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>8</top>
+            <left>8</left>
+            <bottom>8</bottom>
+            <right>8</right>
+          </padding>
           <binding>active</binding>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
-                  <file>wood0.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -850,10 +873,27 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>wood0.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>66</width>
+                  <height>48</height>
+                  <padding>
+                    <top>8</top>
+                    <left>4</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -865,18 +905,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>8</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -887,17 +919,8 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
-            </composite>
-            <composite>
               <layers>
                 <image>
-                  <file>wood1.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -908,10 +931,27 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>wood1.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>66</width>
+                  <height>48</height>
+                  <padding>
+                    <top>25</top>
+                    <left>4</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>1</style>
@@ -923,42 +963,15 @@
                     <blue>50</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>66</width>
-                  <height>48</height>
-                  <padding>
-                    <top>25</top>
-                    <left>4</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>8</top>
-            <left>8</left>
-            <bottom>8</bottom>
-            <right>8</right>
-          </padding>
         </button>
       </layers>
+      <name>wood</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -969,52 +982,8 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>piston</name>
       <layers>
         <button>
-          <binding>active</binding>
-          <layers>
-            <image>
-              <file>piston0.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-            <image>
-              <file>piston1.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-          </layers>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -1025,10 +994,61 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <binding>active</binding>
+          <layers>
+            <image>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>piston0.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+            <image>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>piston1.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+          </layers>
         </button>
         <text>
-          <alignment>CENTER</alignment>
+          <anchor>CENTER</anchor>
+          <fill>NONE</fill>
+          <width>32</width>
+          <height>32</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
           <binding>name</binding>
+          <alignment>CENTER</alignment>
           <font>
             <name>Arial</name>
             <style>0</style>
@@ -1040,18 +1060,11 @@
             <blue>0</blue>
           </color>
           <antialiased>true</antialiased>
-          <anchor>CENTER</anchor>
-          <fill>NONE</fill>
-          <width>32</width>
-          <height>32</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
         </text>
       </layers>
+      <name>piston</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -1062,24 +1075,33 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>swell</name>
       <layers>
         <slider>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
           <binding>value</binding>
-          <direction>4</direction>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
-                  <file>swell0.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -1090,21 +1112,15 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>swell0.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
-                  <alignment>CENTER</alignment>
-		          <binding>name</binding>
-                  <font>
-                    <name>Arial</name>
-                    <style>0</style>
-                    <size>16</size>
-                  </font>
-                  <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                  </color>
-                  <antialiased>true</antialiased>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1115,43 +1131,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell1.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1163,6 +1144,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell1.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1173,43 +1189,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell2.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1221,6 +1202,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell2.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1231,43 +1247,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell3.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1279,6 +1260,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell3.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1289,43 +1305,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell4.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1337,6 +1318,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell4.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1347,43 +1363,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell5.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1395,6 +1376,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell5.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1405,43 +1421,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell6.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1453,6 +1434,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell6.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1463,43 +1479,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell7.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1511,6 +1492,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell7.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1521,43 +1537,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell8.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1569,6 +1550,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell8.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -1579,43 +1595,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>swell9.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -1627,18 +1608,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>64</width>
-                  <height>40</height>
-                  <padding>
-                    <top>12</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -1649,20 +1622,60 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>swell9.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>64</width>
+                  <height>40</height>
+                  <padding>
+                    <top>12</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
+                  <alignment>CENTER</alignment>
+                  <font>
+                    <name>Arial</name>
+                    <style>0</style>
+                    <size>16</size>
+                  </font>
+                  <color>
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                  </color>
+                  <antialiased>true</antialiased>
+                </text>
+              </layers>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
+          <direction>4</direction>
         </slider>
       </layers>
+      <name>swell</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -1673,18 +1686,8 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>warning</name>
       <layers>
         <image>
-          <file>label.png</file>
-          <border>
-            <top>4</top>
-            <left>16</left>
-            <bottom>4</bottom>
-            <right>16</right>
-          </border>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -1695,10 +1698,27 @@
             <bottom>26</bottom>
             <right>0</right>
           </padding>
+          <file>label.png</file>
+          <border>
+            <top>4</top>
+            <left>16</left>
+            <bottom>4</bottom>
+            <right>16</right>
+          </border>
         </image>
         <text>
-          <alignment>CENTER</alignment>
+          <anchor>CENTER</anchor>
+          <fill>NONE</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>4</top>
+            <left>16</left>
+            <bottom>30</bottom>
+            <right>16</right>
+          </padding>
           <binding>name</binding>
+          <alignment>CENTER</alignment>
           <font>
             <name>Arial</name>
             <style>0</style>
@@ -1710,59 +1730,8 @@
             <blue>0</blue>
           </color>
           <antialiased>true</antialiased>
-          <anchor>CENTER</anchor>
-          <fill>NONE</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>4</top>
-            <left>16</left>
-            <bottom>30</bottom>
-            <right>16</right>
-          </padding>
         </text>
         <button>
-          <binding>engaged</binding>
-          <layers>
-            <image>
-              <file>warning0.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>BOTTOM</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-            <image>
-              <file>warning1.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>BOTTOM</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-          </layers>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>1</width>
@@ -1773,8 +1742,52 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <binding>engaged</binding>
+          <layers>
+            <image>
+              <anchor>BOTTOM</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>warning0.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+            <image>
+              <anchor>BOTTOM</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>warning1.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+          </layers>
         </button>
       </layers>
+      <name>warning</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -1785,52 +1798,8 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>warningNameless</name>
       <layers>
         <button>
-          <binding>engaged</binding>
-          <layers>
-            <image>
-              <file>warning0.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-            <image>
-              <file>warning1.png</file>
-              <border>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </border>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </image>
-          </layers>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>1</width>
@@ -1841,8 +1810,52 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <binding>engaged</binding>
+          <layers>
+            <image>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>warning0.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+            <image>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <file>warning1.png</file>
+              <border>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </border>
+            </image>
+          </layers>
         </button>
       </layers>
+      <name>warningNameless</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -1853,14 +1866,8 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>counter</name>
       <layers>
         <slider>
-          <binding>value</binding>
-          <direction>1</direction>
-          <layers/>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -1871,8 +1878,21 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <binding>value</binding>
+          <layers/>
+          <direction>1</direction>
         </slider>
         <image>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
           <file>display.png</file>
           <border>
             <top>5</top>
@@ -1880,20 +1900,20 @@
             <bottom>5</bottom>
             <right>5</right>
           </border>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
         </image>
         <text>
-          <alignment>CENTER</alignment>
+          <anchor>TOP</anchor>
+          <fill>NONE</fill>
+          <width>0</width>
+          <height>22</height>
+          <padding>
+            <top>4</top>
+            <left>4</left>
+            <bottom>4</bottom>
+            <right>4</right>
+          </padding>
           <binding>name</binding>
+          <alignment>CENTER</alignment>
           <font>
             <name>Arial</name>
             <style>0</style>
@@ -1905,20 +1925,20 @@
             <blue>220</blue>
           </color>
           <antialiased>true</antialiased>
+        </text>
+        <text>
           <anchor>TOP</anchor>
           <fill>NONE</fill>
           <width>0</width>
-          <height>22</height>
+          <height>0</height>
           <padding>
-            <top>4</top>
+            <top>16</top>
             <left>4</left>
             <bottom>4</bottom>
             <right>4</right>
           </padding>
-        </text>
-        <text>
-          <alignment>CENTER</alignment>
           <binding>index</binding>
+          <alignment>CENTER</alignment>
           <font>
             <name>Arial</name>
             <style>1</style>
@@ -1930,25 +1950,8 @@
             <blue>220</blue>
           </color>
           <antialiased>true</antialiased>
-          <anchor>TOP</anchor>
-          <fill>NONE</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>16</top>
-            <left>4</left>
-            <bottom>4</bottom>
-            <right>4</right>
-          </padding>
         </text>
         <image>
-          <file>displayReflection.png</file>
-          <border>
-            <top>5</top>
-            <left>5</left>
-            <bottom>5</bottom>
-            <right>5</right>
-          </border>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -1959,8 +1962,18 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <file>displayReflection.png</file>
+          <border>
+            <top>5</top>
+            <left>5</left>
+            <bottom>5</bottom>
+            <right>5</right>
+          </border>
         </image>
       </layers>
+      <name>counter</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -1971,13 +1984,8 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>
-      <name>memory</name>
       <layers>
         <button>
-          <binding>popup</binding>
-          <layers/>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -1988,8 +1996,20 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <binding>popup</binding>
+          <layers/>
         </button>
         <image>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
           <file>display.png</file>
           <border>
             <top>5</top>
@@ -1997,20 +2017,20 @@
             <bottom>5</bottom>
             <right>5</right>
           </border>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
         </image>
         <text>
+          <anchor>LEFT</anchor>
+          <fill>NONE</fill>
+          <width>180</width>
+          <height>44</height>
+          <padding>
+            <top>4</top>
+            <left>4</left>
+            <bottom>4</bottom>
+            <right>4</right>
+          </padding>
+          <binding>title</binding>
           <alignment>TOP_LEFT</alignment>
-		  <binding>title</binding>
           <font>
             <name>Arial</name>
             <style>1</style>
@@ -2022,25 +2042,8 @@
             <blue>220</blue>
           </color>
           <antialiased>true</antialiased>
-          <anchor>LEFT</anchor>
-          <fill>NONE</fill>
-          <width>180</width>
-          <height>44</height>
-          <padding>
-            <top>4</top>
-            <left>4</left>
-            <bottom>4</bottom>
-            <right>4</right>
-          </padding>
         </text>
         <image>
-          <file>displayReflection.png</file>
-          <border>
-            <top>5</top>
-            <left>5</left>
-            <bottom>5</bottom>
-            <right>5</right>
-          </border>
           <anchor>CENTER</anchor>
           <fill>BOTH</fill>
           <width>0</width>
@@ -2051,8 +2054,18 @@
             <bottom>0</bottom>
             <right>0</right>
           </padding>
+          <file>displayReflection.png</file>
+          <border>
+            <top>5</top>
+            <left>5</left>
+            <bottom>5</bottom>
+            <right>5</right>
+          </border>
         </image>
       </layers>
+      <name>memory</name>
+    </style>
+    <style>
       <anchor>CENTER</anchor>
       <fill>NONE</fill>
       <width>0</width>
@@ -2063,24 +2076,33 @@
         <bottom>0</bottom>
         <right>0</right>
       </padding>
-    </style>
-    <style>  
-      <name>sforzando</name>
       <layers>
         <slider>
+          <anchor>CENTER</anchor>
+          <fill>BOTH</fill>
+          <width>0</width>
+          <height>0</height>
+          <padding>
+            <top>0</top>
+            <left>0</left>
+            <bottom>0</bottom>
+            <right>0</right>
+          </padding>
           <binding>value</binding>
-          <direction>3</direction>
           <layers>
             <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
               <layers>
                 <image>
-                  <file>sforzando0.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>0</width>
@@ -2091,21 +2113,15 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
+                  <file>sforzando0.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
                 </image>
                 <text>
-                  <alignment>CENTER</alignment>
-		          <binding>name</binding>
-                  <font>
-                    <name>Arial</name>
-                    <style>0</style>
-                    <size>14</size>
-                  </font>
-                  <color>
-                    <red>0</red>
-                    <green>0</green>
-                    <blue>0</blue>
-                  </color>
-                  <antialiased>true</antialiased>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2116,43 +2132,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando1.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2164,6 +2145,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando1.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2174,43 +2190,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando2.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2222,6 +2203,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando2.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2232,43 +2248,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando3.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2280,6 +2261,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando3.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2290,43 +2306,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando4.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2338,6 +2319,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando4.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2348,43 +2364,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando5.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2396,6 +2377,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando5.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2406,43 +2422,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando6.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2454,6 +2435,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando6.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2464,43 +2480,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando7.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2512,6 +2493,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando7.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2522,43 +2538,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando8.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2570,6 +2551,41 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
+                </text>
+              </layers>
+            </composite>
+            <composite>
+              <anchor>CENTER</anchor>
+              <fill>NONE</fill>
+              <width>0</width>
+              <height>0</height>
+              <padding>
+                <top>0</top>
+                <left>0</left>
+                <bottom>0</bottom>
+                <right>0</right>
+              </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando8.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
                   <anchor>TOP</anchor>
                   <fill>NONE</fill>
                   <width>64</width>
@@ -2580,43 +2596,8 @@
                     <bottom>0</bottom>
                     <right>0</right>
                   </padding>
-                </text>
-              </layers>
-              <anchor>CENTER</anchor>
-              <fill>NONE</fill>
-              <width>0</width>
-              <height>0</height>
-              <padding>
-                <top>0</top>
-                <left>0</left>
-                <bottom>0</bottom>
-                <right>0</right>
-              </padding>
-            </composite>
-            <composite>
-              <layers>
-                <image>
-                  <file>sforzando9.png</file>
-                  <border>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </border>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>0</width>
-                  <height>0</height>
-                  <padding>
-                    <top>0</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
-                </image>
-                <text>
+                  <binding>name</binding>
                   <alignment>CENTER</alignment>
-		          <binding>name</binding>
                   <font>
                     <name>Arial</name>
                     <style>0</style>
@@ -2628,18 +2609,10 @@
                     <blue>0</blue>
                   </color>
                   <antialiased>true</antialiased>
-                  <anchor>TOP</anchor>
-                  <fill>NONE</fill>
-                  <width>64</width>
-                  <height>40</height>
-                  <padding>
-                    <top>52</top>
-                    <left>0</left>
-                    <bottom>0</bottom>
-                    <right>0</right>
-                  </padding>
                 </text>
               </layers>
+            </composite>
+            <composite>
               <anchor>CENTER</anchor>
               <fill>NONE</fill>
               <width>0</width>
@@ -2650,30 +2623,58 @@
                 <bottom>0</bottom>
                 <right>0</right>
               </padding>
+              <layers>
+                <image>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>0</width>
+                  <height>0</height>
+                  <padding>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <file>sforzando9.png</file>
+                  <border>
+                    <top>0</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </border>
+                </image>
+                <text>
+                  <anchor>TOP</anchor>
+                  <fill>NONE</fill>
+                  <width>64</width>
+                  <height>40</height>
+                  <padding>
+                    <top>52</top>
+                    <left>0</left>
+                    <bottom>0</bottom>
+                    <right>0</right>
+                  </padding>
+                  <binding>name</binding>
+                  <alignment>CENTER</alignment>
+                  <font>
+                    <name>Arial</name>
+                    <style>0</style>
+                    <size>14</size>
+                  </font>
+                  <color>
+                    <red>0</red>
+                    <green>0</green>
+                    <blue>0</blue>
+                  </color>
+                  <antialiased>true</antialiased>
+                </text>
+              </layers>
             </composite>
           </layers>
-          <anchor>CENTER</anchor>
-          <fill>BOTH</fill>
-          <width>0</width>
-          <height>0</height>
-          <padding>
-            <top>0</top>
-            <left>0</left>
-            <bottom>0</bottom>
-            <right>0</right>
-          </padding>
+          <direction>3</direction>
         </slider>
       </layers>
-      <anchor>CENTER</anchor>
-      <fill>NONE</fill>
-      <width>0</width>
-      <height>0</height>
-      <padding>
-        <top>0</top>
-        <left>0</left>
-        <bottom>0</bottom>
-        <right>0</right>
-      </padding>
+      <name>sforzando</name>
     </style>
   </styles>
 </skin>
