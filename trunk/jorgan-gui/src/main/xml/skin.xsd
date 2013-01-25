@@ -33,6 +33,11 @@
 	<xs:complexType name="layer">
 		<xs:sequence>
 			<xs:element name="anchor">
+				<xs:annotation>
+					<xs:documentation>
+						 Where is this layer positioned when is is smaller than the overall size.
+					</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:enumeration value="CENTER" />
@@ -48,6 +53,11 @@
 				</xs:simpleType>
 			</xs:element>
 			<xs:element name="fill">
+				<xs:annotation>
+					<xs:documentation>
+						In which direction should this layer fill a greater overall size.
+					</xs:documentation>
+				</xs:annotation>
 				<xs:simpleType>
 					<xs:restriction base="xs:string">
 						<xs:enumeration value="NONE" />
@@ -57,9 +67,26 @@
 					</xs:restriction>
 				</xs:simpleType>
 			</xs:element>
-			<xs:element type="xs:int" name="width" />
-			<xs:element type="xs:int" name="height" />
+			<xs:element type="xs:int" name="width">
+				<xs:annotation>
+					<xs:documentation>
+						An optional explicit width, if not specified the width will be determined by this layer's content and padding.  
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element type="xs:int" name="height">
+				<xs:annotation>
+					<xs:documentation>
+						An optional explicit height, if not specified the height will be determined by this layer's content and padding.  
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
 			<xs:element name="padding">
+				<xs:annotation>
+					<xs:documentation>
+						What padding should be applied to the size of this content.  
+					</xs:documentation>
+				</xs:annotation>
 				<xs:complexType>
 					<xs:sequence>
 						<xs:element type="xs:int" name="top" />
@@ -82,12 +109,28 @@
 							<xs:choice maxOccurs="unbounded" minOccurs="0">
 								<xs:element name="composite" type="compositeLayer" />
 								<xs:element name="image">
+									<xs:annotation>
+										<xs:documentation>
+											A layer with image content.  
+										</xs:documentation>
+									</xs:annotation>
 									<xs:complexType>
 										<xs:complexContent>
 											<xs:extension base="layer">
 												<xs:sequence>
-													<xs:element type="xs:string" name="file" />
+													<xs:element type="xs:string" name="file">
+														<xs:annotation>
+															<xs:documentation>
+																File containing the image content.  
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
 													<xs:element name="border">
+														<xs:annotation>
+															<xs:documentation>
+																What border should be honored to the image when stretching.  
+															</xs:documentation>
+														</xs:annotation>
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element type="xs:int" name="top" />
@@ -104,11 +147,21 @@
 								</xs:element>
 								
 								<xs:element name="text">
+									<xs:annotation>
+										<xs:documentation>
+											A layer with text content.  
+										</xs:documentation>
+									</xs:annotation>
 									<xs:complexType>
 										<xs:complexContent>
 											<xs:extension base="layer">
 												<xs:sequence>
 													<xs:element name="alignment">
+														<xs:annotation>
+															<xs:documentation>
+																 Where is the text positioned in a layer with a greater size.
+															</xs:documentation>
+														</xs:annotation>
 														<xs:simpleType>
 															<xs:restriction base="xs:string">
 																<xs:enumeration value="CENTER" />
@@ -124,6 +177,11 @@
 														</xs:simpleType>
 													</xs:element>
 													<xs:element name="font" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>
+																 Name, style and size for the font of the text or a file containing a font.
+															</xs:documentation>
+														</xs:annotation>
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element type="xs:string" name="name" />
@@ -133,6 +191,11 @@
 														</xs:complexType>
 													</xs:element>
 													<xs:element name="color" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>
+																 Color for the text.
+															</xs:documentation>
+														</xs:annotation>
 														<xs:complexType>
 															<xs:sequence>
 																<xs:element type="xs:short" name="red" />
@@ -141,7 +204,13 @@
 															</xs:sequence>
 														</xs:complexType>
 													</xs:element>
-													<xs:element type="xs:boolean" name="antialiased" minOccurs="0" />
+													<xs:element type="xs:boolean" name="antialiased" minOccurs="0">
+														<xs:annotation>
+															<xs:documentation>
+																 Should text be rendered antialiased.
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
 												</xs:sequence>
 											</xs:extension>
 										</xs:complexContent>
@@ -149,6 +218,12 @@
 								</xs:element>
 								
 								<xs:element name="button">
+									<xs:annotation>
+										<xs:documentation>
+											 A composite layer rendering the first contained layer in the pressed state and
+											 the second contained layer in the released state. 
+										</xs:documentation>
+									</xs:annotation>
 									<xs:complexType>
 										<xs:complexContent>
 											<xs:extension base="compositeLayer">
@@ -158,11 +233,23 @@
 								</xs:element>
 								
 								<xs:element name="slider">
+									<xs:annotation>
+										<xs:documentation>
+											 A composite layer rendering one of the contained layers according to the current position. 
+										</xs:documentation>
+									</xs:annotation>
 									<xs:complexType>
 										<xs:complexContent>
 											<xs:extension base="compositeLayer">
 												<xs:sequence>
-													<xs:element type="xs:int" name="direction" />
+													<xs:element type="xs:int" name="direction">
+														<xs:annotation>
+															<xs:documentation>
+																 The drag direction:
+																 1=left-to-right, 2=right-to-left, 3=top-to-bottom, 4=bottom-to-top 
+															</xs:documentation>
+														</xs:annotation>
+													</xs:element>
 												</xs:sequence>
 											</xs:extension>
 										</xs:complexContent>
