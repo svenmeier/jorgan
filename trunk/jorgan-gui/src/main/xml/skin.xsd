@@ -35,7 +35,7 @@
 			<xs:element name="anchor">
 				<xs:annotation>
 					<xs:documentation>
-						 Where is this layer positioned when is is smaller than the overall size.
+						 Where is this layer positioned when it is smaller than the overall size.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -55,7 +55,7 @@
 			<xs:element name="fill">
 				<xs:annotation>
 					<xs:documentation>
-						In which direction should this layer fill a greater overall size.
+						In which direction to fill this layer when it is smaller than the overall size.
 					</xs:documentation>
 				</xs:annotation>
 				<xs:simpleType>
@@ -70,21 +70,21 @@
 			<xs:element type="xs:int" name="width">
 				<xs:annotation>
 					<xs:documentation>
-						An optional explicit width, if not specified the width will be determined by this layer's content and padding.  
+						Explicit width, if not specified the width will be determined by this layer's content and padding.  
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element type="xs:int" name="height">
 				<xs:annotation>
 					<xs:documentation>
-						An optional explicit height, if not specified the height will be determined by this layer's content and padding.  
+						Explicit height, if not specified the height will be determined by this layer's content and padding.  
 					</xs:documentation>
 				</xs:annotation>
 			</xs:element>
 			<xs:element name="padding">
 				<xs:annotation>
 					<xs:documentation>
-						What padding should be applied to the size of this content.  
+						What padding should be applied to the size of this layer's content.  
 					</xs:documentation>
 				</xs:annotation>
 				<xs:complexType>
