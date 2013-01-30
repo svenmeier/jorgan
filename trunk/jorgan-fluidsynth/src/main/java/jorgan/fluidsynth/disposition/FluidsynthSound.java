@@ -72,6 +72,8 @@ public class FluidsynthSound extends Sound {
 
 	private float overflowVolume = 0.50f;
 
+	private int bank;
+
 	private List<Tuning> tunings = new ArrayList<Tuning>();
 
 	@Override
@@ -340,6 +342,20 @@ public class FluidsynthSound extends Sound {
 		}
 	}
 
+	public int getBank() {
+		return bank;
+	}
+
+	public void setBank(int bank) {
+		if (bank != this.bank) {
+			int oldBank = this.bank;
+
+			this.bank = bank;
+
+			fireChange(new PropertyChange(oldBank, this.bank));
+		}
+	}
+
 	public int getTuningCount() {
 		return tunings.size();
 	}
@@ -499,13 +515,14 @@ public class FluidsynthSound extends Sound {
 				&& this.polyphony == sound.getPolyphony()
 				&& this.channels == sound.getChannels()
 				&& Null.safeEquals(this.soundfont, sound.getSoundfont())
-				&& this.gain == sound.gain && this.cores == sound.cores
+				&& this.bank == sound.getBank() && this.gain == sound.gain
+				&& this.cores == sound.cores
+				&& this.interpolate == sound.interpolate
 				&& this.overflowAge == sound.overflowAge
 				&& this.overflowPercussion == sound.overflowPercussion
 				&& this.overflowReleased == sound.overflowReleased
 				&& this.overflowSustained == sound.overflowSustained
-				&& this.overflowVolume == sound.overflowVolume
-				&& this.interpolate == sound.interpolate;
+				&& this.overflowVolume == sound.overflowVolume;
 	}
 
 	public static enum Interpolate {

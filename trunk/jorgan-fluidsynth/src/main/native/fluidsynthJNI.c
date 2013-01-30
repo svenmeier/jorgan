@@ -112,7 +112,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_destroy(JNIEnv* env, jclass jclas
 }
 
 JNIEXPORT
-void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass jclass, jobject jcontext, jstring jfilename) {
+void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass jclass, jobject jcontext, jstring jfilename, jint bank) {
 	Context* context = (Context*) (*env)->GetDirectBufferAddress(env, jcontext);
 
 	const char* filename = (*env)->GetStringUTFChars(env, jfilename, NULL);
@@ -123,6 +123,8 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_soundFontLoad(JNIEnv* env, jclass
 		jorgan_throw(env, IO_EXCEPTION, "Couldn't load soundfont, rc %d", rc);
 		return;
 	}
+
+	fluid_synth_set_bank_offset(context->synth, rc, bank);
 }
 
 JNIEXPORT

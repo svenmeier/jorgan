@@ -30,8 +30,7 @@ import junit.framework.TestCase;
 public class FluidsynthTest extends TestCase {
 
 	static {
-		System.setProperty(Fluidsynth.LIBRARY_PATH,
-				"./target/native");
+		System.setProperty(Fluidsynth.LIBRARY_PATH, "./target/native");
 	}
 
 	public void testLive() throws Exception {
@@ -53,7 +52,7 @@ public class FluidsynthTest extends TestCase {
 				"pulseaudio");
 
 		synth.soundFontLoad(new File(
-				"./src/main/dispositions/fluidsynth-example.SF2"));
+				"./src/main/dispositions/fluidsynth-example.SF2"), 0);
 
 		note(synth, 0, 60);
 		note(synth, 1, 62);

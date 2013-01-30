@@ -48,8 +48,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		FluidsynthSound sound = getElement();
 
 		if (sound.getSoundfont() == null) {
-			addProblem(Severity.WARNING, "soundfont", "noSoundfont", sound
-					.getSoundfont());
+			addProblem(Severity.WARNING, "soundfont", "noSoundfont",
+					sound.getSoundfont());
 		} else {
 			removeProblem(Severity.WARNING, "soundfont");
 		}
@@ -108,10 +108,10 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		try {
 			synth = new Fluidsynth(name(sound.getName()), sound.getCores(),
-					sound.getChannels(), sound.getPolyphony(), sound
-							.getSampleRate(), sound.getAudioDriver(), sound
-							.getAudioDevice(), sound.getAudioBuffers(), sound
-							.getAudioBufferSize(), sound.getOverflowAge(),
+					sound.getChannels(), sound.getPolyphony(),
+					sound.getSampleRate(), sound.getAudioDriver(),
+					sound.getAudioDevice(), sound.getAudioBuffers(),
+					sound.getAudioBufferSize(), sound.getOverflowAge(),
 					sound.getOverflowPercussion(), sound.getOverflowReleased(),
 					sound.getOverflowSustained(), sound.getOverflowVolume());
 
@@ -126,10 +126,11 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 
 		if (sound.getSoundfont() != null) {
 			try {
-				synth.soundFontLoad(resolve(sound.getSoundfont()));
+				synth.soundFontLoad(resolve(sound.getSoundfont()),
+						sound.getBank());
 			} catch (IOException ex) {
-				addProblem(Severity.ERROR, "soundfont", "soundfontLoad", sound
-						.getSoundfont());
+				addProblem(Severity.ERROR, "soundfont", "soundfontLoad",
+						sound.getSoundfont());
 			}
 		}
 
@@ -153,8 +154,8 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 			FluidsynthSound sound = getElement();
 			int tuningProgram = 0;
 			for (Tuning tuning : sound.getTunings()) {
-				synth.setTuning(0, tuningProgram, tuning.getName(), tuning
-						.getDerivations());
+				synth.setTuning(0, tuningProgram, tuning.getName(),
+						tuning.getDerivations());
 				tuningProgram++;
 			}
 		}
