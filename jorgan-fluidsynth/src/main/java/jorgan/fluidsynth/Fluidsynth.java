@@ -66,8 +66,8 @@ public class Fluidsynth {
 				overflowVolume);
 	}
 
-	public void soundFontLoad(File soundfont) throws IOException {
-		soundFontLoad(context, soundfont.getAbsolutePath());
+	public void soundFontLoad(File soundfont, int bank) throws IOException {
+		soundFontLoad(context, soundfont.getAbsolutePath(), bank);
 	}
 
 	public void setGain(float gain) {
@@ -137,8 +137,8 @@ public class Fluidsynth {
 
 	private static native void destroy(ByteBuffer context);
 
-	private native void soundFontLoad(ByteBuffer context, String filename)
-			throws IOException;
+	private native void soundFontLoad(ByteBuffer context, String filename,
+			int bank) throws IOException;
 
 	private static native void noteOn(ByteBuffer context, int channel, int key,
 			int velocity);
