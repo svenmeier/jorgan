@@ -1,7 +1,8 @@
-jorgan (3.19-beta3) beta;
+jorgan (3.19-beta4) beta;
 
   * core: fixed bug when Regulator has no reference
   * core: Synchronizer honors the duration of referenced switches
+  * fluidsynth: new bank offset
   * tools: new element RepeatSwitch
   * tools: new element ConnectionSwitch
 
