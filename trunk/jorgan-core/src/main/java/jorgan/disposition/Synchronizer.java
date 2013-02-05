@@ -18,7 +18,6 @@
  */
 package jorgan.disposition;
 
-
 /**
  * A synchronizer of {@link jorgan.disposition.Switch}es.
  */
@@ -104,10 +103,22 @@ public class Synchronizer extends Switch implements Observer {
 				element.activate();
 			}
 		},
+		SET_ACTIVE {
+			@Override
+			public void perform(Switch element) {
+				element.setActive(true);
+			}
+		},
 		DEACTIVATE {
 			@Override
 			public void perform(Switch element) {
 				element.deactivate();
+			}
+		},
+		SET_DEACTIVE {
+			@Override
+			public void perform(Switch element) {
+				element.setActive(false);
 			}
 		};
 
