@@ -1,7 +1,8 @@
 jorgan (3.19-beta4) beta;
 
   * core: fixed bug when Regulator has no reference
-  * core: Synchronizer honors the duration of referenced switches
+  * core: Synchronizer action ACTIVATE now activates instead of set activate, action DEACTIVATE now deactivates instead of set deactive
+  * core: Synchronizer new actions SET_ACTIVE and SET_DEACTIVE
   * fluidsynth: new bank offset
   * tools: new element RepeatSwitch
   * tools: new element ConnectionSwitch
