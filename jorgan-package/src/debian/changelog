@@ -1,4 +1,4 @@
-jorgan (3.19-beta4) beta;
+jorgan (3.19) stable;
 
   * core: fixed bug when Regulator has no reference
   * core: Synchronizer action ACTIVATE now activates instead of set activate, action DEACTIVATE now deactivates instead of set deactive
@@ -7,7 +7,7 @@ jorgan (3.19-beta4) beta;
   * tools: new element RepeatSwitch
   * tools: new element ConnectionSwitch
 
- -- Sven Meier <sven@meiers.net>  Fri, 23 Nov 2012 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Thu, 28 Feb 2013 23:00:00 +0200
 
 jorgan (3.18) stable;
 
