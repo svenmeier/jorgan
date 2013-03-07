@@ -21,6 +21,7 @@ package jorgan.spi;
 import java.io.File;
 
 import jorgan.Version;
+import jorgan.util.NativeUtils;
 import jorgan.util.PluginUtils;
 import bias.Configuration;
 import bias.Store;
@@ -36,7 +37,8 @@ public class ConfigurationRegistry {
 			home.mkdirs();
 		}
 
-		String name = String.format("jorgan-%s.properties",
+		String name = String.format("jorgan-%s-%s.properties",
+				NativeUtils.getRuntimeArchitecture(),
 				new Version().getCompatible());
 
 		preferences = new PropertiesStore(new File(home, name));
