@@ -66,4 +66,16 @@ public class NativeUtils {
 	public static boolean isMac() {
 		return System.getProperty("os.name").toLowerCase().contains("mac");
 	}
+
+	/**
+	 * Get the architecture of the JVM.
+	 * <p>
+	 * Note: A 32bit JVM on a 64bit OS will still report an identifier for
+	 * 32bit.
+	 * 
+	 * @return architecture
+	 */
+	public static Object getRuntimeArchitecture() {
+		return System.getProperty("os.arch");
+	}
 }
