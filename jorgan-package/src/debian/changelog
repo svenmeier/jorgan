@@ -1,3 +1,9 @@
+jorgan (3.20) beta;
+
+  * core: store preferences specific to runtime-architecture
+
+ -- Sven Meier <sven@meiers.net>  Thu, 28 Feb 2013 23:00:00 +0200
+
 jorgan (3.19) stable;
 
   * core: fixed bug when Regulator has no reference
