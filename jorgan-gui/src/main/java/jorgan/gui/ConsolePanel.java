@@ -1065,7 +1065,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseDragged(MouseEvent e) {
-			if (layer != null) {
+			if (view != null && layer != null) {
 				int x = e.getX();
 				int y = e.getY();
 
@@ -1080,7 +1080,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 
 		@Override
 		public void mouseReleased(MouseEvent e) {
-			if (layer != null) {
+			if (view != null && layer != null) {
 				int x = e.getX();
 				int y = e.getY();
 
