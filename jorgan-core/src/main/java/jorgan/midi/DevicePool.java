@@ -23,11 +23,13 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import javax.sound.midi.MidiDevice;
+import javax.sound.midi.MidiDevice.Info;
 import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
-import javax.sound.midi.MidiDevice.Info;
+
+import bias.Configuration;
 
 /**
  * Helper for lookup of devices.
@@ -37,9 +39,20 @@ public class DevicePool {
 	private static final Logger log = Logger.getLogger(DevicePool.class
 			.getName());
 
+	private static Configuration configuration = Configuration.getRoot().get(
+			DevicePool.class);
+
 	private static final DevicePool instance = new DevicePool();
 
 	private DeviceMap devices = new DeviceMap();
+
+	private boolean cache = true;
+
+	private boolean enumerate = false;
+
+	private DevicePool() {
+		configuration.read(this);
+	}
 
 	/**
 	 * Get a device by name.
@@ -88,16 +101,23 @@ public class DevicePool {
 	 */
 	private void refreshDevices() {
 
+		if (cache && !this.devices.isEmpty()) {
+			return;
+		}
+
 		DeviceMap oldDevices = this.devices;
 
 		this.devices = new DeviceMap();
 
+		int index = 0;
 		for (MidiDevice.Info info : MidiSystem.getMidiDeviceInfo()) {
 			try {
-				DeviceAnalyser analyser = new DeviceAnalyser(info);
+				DeviceAnalyser analyser = new DeviceAnalyser(info, index);
 
 				analyser.extract(this.devices, oldDevices, Direction.IN);
 				analyser.extract(this.devices, oldDevices, Direction.OUT);
+
+				index++;
 			} catch (MidiUnavailableException ex) {
 				log.info("failed device '" + info.getName() + "'");
 			}
@@ -167,8 +187,8 @@ public class DevicePool {
 		public Transmitter getTransmitter() throws MidiUnavailableException {
 			assertOpen();
 
-			TransmitterWrapper transmitter = new TransmitterWrapper(super
-					.getTransmitter()) {
+			TransmitterWrapper transmitter = new TransmitterWrapper(
+					super.getTransmitter()) {
 				@Override
 				public void close() {
 					super.close();
@@ -254,6 +274,10 @@ public class DevicePool {
 			this.devices.add(device);
 		}
 
+		public boolean isEmpty() {
+			return devices.isEmpty();
+		}
+
 		public PooledDevice get(String name, Direction direction) {
 			for (PooledDevice device : devices) {
 				if (device.name.equals(name) && device.supports(direction)) {
@@ -278,18 +302,23 @@ public class DevicePool {
 
 		private Info info;
 
+		private int index;
+
 		private MidiDevice device;
 
 		private PooledDevice pooledDevice;
 
-		public DeviceAnalyser(Info info) {
+		public DeviceAnalyser(Info info, int index) {
 			this.info = info;
+			this.index = index;
 		}
 
 		public void extract(DeviceMap newDevices, DeviceMap oldDevices,
 				Direction direction) throws MidiUnavailableException {
-			if (newDevices.get(info.getName(), direction) == null) {
-				PooledDevice old = oldDevices.get(info.getName(), direction);
+			String name = createName();
+
+			if (newDevices.get(name, direction) == null) {
+				PooledDevice old = oldDevices.get(name, direction);
 				if (old != null) {
 					newDevices.add(old);
 				} else {
@@ -319,11 +348,19 @@ public class DevicePool {
 
 		private PooledDevice pooledDevice() throws MidiUnavailableException {
 			if (this.pooledDevice == null) {
-				this.pooledDevice = new PooledDevice(this.info.getName(),
+				this.pooledDevice = new PooledDevice(createName(),
 						supports(Direction.IN), supports(Direction.OUT),
 						device());
 			}
 			return this.pooledDevice;
+		}
+
+		private String createName() {
+			String name = this.info.getName();
+			if (enumerate) {
+				name += " #" + index;
+			}
+			return name;
 		}
 	}
 }
