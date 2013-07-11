@@ -34,6 +34,7 @@ import jorgan.disposition.Message;
 import jorgan.exporter.exports.MessageListWriter;
 import jorgan.exporter.gui.Export;
 import jorgan.gui.construct.ElementsSelectionPanel;
+import jorgan.gui.selection.ElementSelection;
 import jorgan.session.OrganSession;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.Page;
@@ -60,6 +61,9 @@ public class MessageListExport implements Export {
 
 		panel.setElements(new ArrayList<Element>(session.getOrgan()
 				.getElements()));
+
+		panel.setSelectedElements(session.lookup(ElementSelection.class)
+				.getSelectedElements());
 	}
 
 	@Override
