@@ -1,4 +1,4 @@
-jorgan (3.20) beta;
+jorgan (3.20-beta1) beta;
 
   * core: store preferences specific to runtime-architecture
   * core: new element Synchronizing to synchronize continuous elements
