@@ -34,20 +34,20 @@ import jorgan.session.OrganSession;
 import bias.Configuration;
 
 /**
- * Customizer of a {@link Connector}.
+ * Customizer of {@link Connector}s referencing a single {@link Continuous}.
  */
-public class ConnectorsCustomizer implements Customizer {
+public class ContinuousConnectorsCustomizer implements Customizer {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ConnectorsCustomizer.class);
+			ContinuousConnectorsCustomizer.class);
 
 	private String description;
 
 	private JScrollPane scrollPane;
 
-	private List<ElementConnectorPanel> panels = new ArrayList<ElementConnectorPanel>();
+	private List<ContinuousConnectorPanel> panels = new ArrayList<ContinuousConnectorPanel>();
 
-	public ConnectorsCustomizer(OrganSession session) {
+	public ContinuousConnectorsCustomizer(OrganSession session) {
 		config.read(this);
 
 		scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
@@ -63,7 +63,7 @@ public class ConnectorsCustomizer implements Customizer {
 
 			Continuous continuous = continuous(connector);
 			if (continuous != null) {
-				ElementConnectorPanel panel = new ElementConnectorPanel(
+				ContinuousConnectorPanel panel = new ContinuousConnectorPanel(
 						connector, continuous);
 				panels.add(panel);
 				grid.add(panel);
@@ -84,7 +84,7 @@ public class ConnectorsCustomizer implements Customizer {
 	}
 
 	public void apply() {
-		for (ElementConnectorPanel panel : panels) {
+		for (ContinuousConnectorPanel panel : panels) {
 			panel.apply();
 		}
 	}
@@ -101,7 +101,7 @@ public class ConnectorsCustomizer implements Customizer {
 		return false;
 	}
 
-	private static Continuous continuous(Connector connector) {
+	static Continuous continuous(Connector connector) {
 		if (connector.getReferenceCount() == 1) {
 			List<Continuous> continuous = connector
 					.getReferenced(Continuous.class);

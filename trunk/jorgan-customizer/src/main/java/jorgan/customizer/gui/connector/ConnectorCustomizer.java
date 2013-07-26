@@ -22,13 +22,16 @@ import javax.swing.JComponent;
 
 import jorgan.customizer.gui.Customizer;
 import jorgan.disposition.Connector;
+import jorgan.disposition.Continuous;
 import jorgan.disposition.Elements;
+import jorgan.disposition.Switch;
 import jorgan.session.OrganSession;
 import bias.Configuration;
 import bias.util.MessageBuilder;
 
 /**
- * Customizer of a {@link Connector}.
+ * Customizer of a {@link Connector} and all its referenced {@link Switch}es and
+ * {@link Continuous}.
  */
 public class ConnectorCustomizer implements Customizer {
 
@@ -63,6 +66,7 @@ public class ConnectorCustomizer implements Customizer {
 	}
 
 	public static boolean customizes(OrganSession session, Connector connector) {
-		return connector.getReferenceCount() > 1;
+		return connector.getReferenceCount() > 0
+				&& ContinuousConnectorsCustomizer.continuous(connector) == null;
 	}
 }

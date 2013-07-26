@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jorgan.customizer.gui.connector.ConnectorCustomizer;
-import jorgan.customizer.gui.connector.ConnectorsCustomizer;
+import jorgan.customizer.gui.connector.ContinuousConnectorsCustomizer;
 import jorgan.customizer.gui.console.ConsolesCustomizer;
 import jorgan.customizer.gui.keyboard.KeyboardsCustomizer;
 import jorgan.customizer.gui.sound.GenericSoundsCustomizer;
@@ -51,8 +51,8 @@ public class DefaultCustomizerProvider implements CustomizerProvider {
 		if (ConsolesCustomizer.customizes(session)) {
 			customizers.add(new ConsolesCustomizer(session));
 		}
-		if (ConnectorsCustomizer.customizes(session)) {
-			customizers.add(new ConnectorsCustomizer(session));
+		if (ContinuousConnectorsCustomizer.customizes(session)) {
+			customizers.add(new ContinuousConnectorsCustomizer(session));
 		}
 		for (Connector connector : session.getOrgan().getElements(
 				Connector.class)) {
