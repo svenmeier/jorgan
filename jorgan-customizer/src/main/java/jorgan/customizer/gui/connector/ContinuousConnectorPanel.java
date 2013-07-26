@@ -52,10 +52,10 @@ import bias.swing.MessageBox;
 /**
  * A panel for a single {@link Continuous} element on a {@link Connector}.
  */
-public class ElementConnectorPanel extends AbstractConnectorPanel {
+public class ContinuousConnectorPanel extends AbstractConnectorPanel {
 
 	private static Configuration config = Configuration.getRoot().get(
-			ElementConnectorPanel.class);
+			ContinuousConnectorPanel.class);
 
 	private JComboBox deviceComboBox;
 
@@ -67,7 +67,7 @@ public class ElementConnectorPanel extends AbstractConnectorPanel {
 
 	private Message message;
 
-	public ElementConnectorPanel(Connector connector, Continuous continuous) {
+	public ContinuousConnectorPanel(Connector connector, Continuous continuous) {
 		this.connector = connector;
 		this.continuous = continuous;
 
@@ -141,7 +141,7 @@ public class ElementConnectorPanel extends AbstractConnectorPanel {
 					}
 				};
 
-				int result = messageBox.show(ElementConnectorPanel.this);
+				int result = messageBox.show(ContinuousConnectorPanel.this);
 
 				recorder.close();
 
