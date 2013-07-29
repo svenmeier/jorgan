@@ -89,14 +89,20 @@ public class FluidsynthSoundPlayer extends SoundPlayer<FluidsynthSound> {
 		}
 
 		if (synth != null) {
-			int command = datas[0] & 0xf0;
+			int status = datas[0] & 0xff;
 			int data1 = datas[1] & 0xff;
 			int data2 = datas[2] & 0xff;
 
-			fireSent(MessageUtils.createMessage(command | (channel & 0x0f),
+			if (channel == -1) {
+				// no channel given, so extract from status
+				channel = status & 0x0f;
+				status = status & 0xf0;
+			}
+
+			fireSent(MessageUtils.createMessage(status | (channel & 0x0f),
 					data1, data2));
 
-			synth.send(channel, command, data1, data2);
+			synth.send(channel, status, data1, data2);
 		}
 	}
 

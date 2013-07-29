@@ -52,7 +52,7 @@
         <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
-      <channel></channel>
+      <channel>greaterEqual 0</channel>
       <delay>0</delay>
     </rank>
     <stop id="11">
@@ -103,7 +103,7 @@
         <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
-      <channel></channel>
+      <channel>greaterEqual 0</channel>
       <delay>0</delay>
     </rank>
     <combination id="2">
@@ -258,7 +258,7 @@
         <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
-      <channel></channel>
+      <channel>greaterEqual 0</channel>
       <delay>0</delay>
     </rank>
     <keyboard id="13">

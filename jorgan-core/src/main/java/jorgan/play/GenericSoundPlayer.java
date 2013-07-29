@@ -45,8 +45,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 		GenericSound sound = getElement();
 
 		if (sound.getOutput() == null) {
-			addProblem(Severity.WARNING, "output", "noDevice", sound
-					.getOutput());
+			addProblem(Severity.WARNING, "output", "noDevice",
+					sound.getOutput());
 		} else {
 			removeProblem(Severity.WARNING, "output");
 		}
@@ -61,8 +61,8 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 			try {
 				receiver = getOrganPlay().createReceiver(sound.getOutput());
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "output", "deviceUnavailable", sound
-						.getOutput());
+				addProblem(Severity.ERROR, "output", "deviceUnavailable",
+						sound.getOutput());
 			}
 		}
 	}
@@ -91,16 +91,19 @@ public class GenericSoundPlayer<S extends GenericSound> extends SoundPlayer<S> {
 
 		MidiMessage message;
 		if (datas.length == 3 && MessageUtils.isChannelStatus(datas[0])) {
-			if (channel < 0 || channel > 15) {
-				throw new InvalidMidiDataException("16 channels supported only");
-			}
-
-			int command = datas[0] & 0xf0;
+			int status = datas[0] & 0xff;
 			int data1 = datas[1] & 0xff;
 			int data2 = datas[2] & 0xff;
 
-			message = MessageUtils.createMessage(command | channel, data1,
-					data2);
+			if (channel != -1) {
+				if (channel < 0 || channel > 15) {
+					throw new InvalidMidiDataException(
+							"16 channels supported only");
+				}
+
+				status = (status & 0xf0) | channel;
+			}
+			message = MessageUtils.createMessage(status, data1, data2);
 		} else {
 			message = MessageUtils.createMessage(datas);
 		}
