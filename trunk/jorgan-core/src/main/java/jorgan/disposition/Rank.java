@@ -22,6 +22,7 @@ import java.util.List;
 
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.GreaterEqual;
 import jorgan.midi.mpl.NoOp;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.midi.mpl.Set;
@@ -32,7 +33,7 @@ import jorgan.util.Null;
  */
 public class Rank extends Engageable {
 
-	private Command channel = new NoOp();
+	private Command channel = new GreaterEqual(0f);
 
 	private int delay = 0;
 

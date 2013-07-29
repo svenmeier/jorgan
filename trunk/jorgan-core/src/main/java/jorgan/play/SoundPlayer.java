@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import javax.sound.midi.InvalidMidiDataException;
 
 import jorgan.disposition.Sound;
+import jorgan.midi.mpl.Command;
+import jorgan.midi.mpl.Context;
+import jorgan.midi.mpl.NoOp;
 import jorgan.play.sound.Channel;
-import jorgan.play.sound.ChannelFilter;
 
 /**
  * A player of {@link jorgan.disposition.Sound} subclasses.
@@ -49,20 +51,33 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 	 * 
 	 * @return created channel or <code>null</code> if no channel is available
 	 */
-	public Channel createChannel(ChannelFilter filter) {
-		for (int c = 0; c < getChannelCount(); c++) {
-			if (filter.accept(c)) {
-				while (channels.size() <= c) {
-					channels.add(null);
+	public Channel createChannel(Command command) {
+		if (command instanceof NoOp) {
+			return new ChannelImpl(-1);
+		} else {
+			Context context = new Context() {
+				public float get(String name) {
+					return Float.NaN;
 				}
 
-				if (channels.get(c) == null) {
-					return new ChannelImpl(c);
+				public void set(String name, float value) {
+				}
+			};
+
+			for (int c = 0; c < getChannelCount(); c++) {
+				if (!Float.isNaN(command.process(c, context))) {
+					while (channels.size() <= c) {
+						channels.add(null);
+					}
+
+					if (channels.get(c) == null) {
+						return new ChannelImpl(c);
+					}
 				}
 			}
-		}
 
-		return null;
+			return null;
+		}
 	}
 
 	protected abstract void send(int channel, byte[] datas)
@@ -87,7 +102,9 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		public ChannelImpl(int channel) {
 			this.channel = channel;
 
-			channels.set(channel, this);
+			if (channel != -1) {
+				channels.set(channel, this);
+			}
 		}
 
 		public void init() {
@@ -97,7 +114,9 @@ public abstract class SoundPlayer<E extends Sound> extends Player<E> {
 		 * Release.
 		 */
 		public void release() {
-			channels.set(channel, null);
+			if (channel != -1) {
+				channels.set(channel, null);
+			}
 		}
 
 		/**

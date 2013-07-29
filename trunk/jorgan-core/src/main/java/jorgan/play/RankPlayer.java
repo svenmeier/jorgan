@@ -30,11 +30,8 @@ import jorgan.disposition.Rank.NoteMuted;
 import jorgan.disposition.Rank.NotePlayed;
 import jorgan.disposition.Sound;
 import jorgan.disposition.SoundFilter;
-import jorgan.midi.mpl.Command;
 import jorgan.midi.mpl.Context;
-import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.sound.Channel;
-import jorgan.play.sound.ChannelFilter;
 import jorgan.problem.Severity;
 import jorgan.time.WakeUp;
 
@@ -72,23 +69,14 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		Channel channel = null;
-		try {
-			for (Sound sound : rank.getReferenced(Sound.class)) {
-				SoundPlayer<?> player = (SoundPlayer<?>) getPlayer(sound);
+		for (Sound sound : rank.getReferenced(Sound.class)) {
+			SoundPlayer<?> player = (SoundPlayer<?>) getPlayer(sound);
 
-				// sound might not have player
-				if (player != null) {
-					channel = player.createChannel(new RankChannelFilter(rank
-							.getChannel()));
-					break;
-				}
+			// sound might not have player
+			if (player != null) {
+				channel = player.createChannel(rank.getChannel());
+				break;
 			}
-		} catch (ProcessingException ex) {
-			channel = new DeadChannel();
-
-			addProblem(Severity.ERROR, "channel", "channelIllegal",
-					rank.getChannel());
-			return;
 		}
 
 		if (rank.getDelay() > 0) {
@@ -247,27 +235,6 @@ public class RankPlayer extends Player<Rank> {
 		}
 
 		public void release() {
-		}
-	}
-
-	private class RankChannelFilter implements ChannelFilter, Context {
-
-		private Command command;
-
-		public RankChannelFilter(Command command) throws ProcessingException {
-			this.command = command;
-		}
-
-		public boolean accept(int channel) {
-			return !Float.isNaN(command.process(channel, this));
-		}
-
-		public float get(String name) {
-			throw new UnsupportedOperationException();
-		}
-
-		public void set(String name, float value) {
-			throw new UnsupportedOperationException();
 		}
 	}
 

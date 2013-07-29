@@ -1,8 +1,9 @@
-jorgan (3.20-beta1) beta;
+jorgan (3.20-beta2) beta;
 
   * core: store preferences specific to runtime-architecture
   * core: new element Synchronizing to synchronize continuous elements
   * core: optionally enumerate and cache Midi devices
+  * core: if Rank#channel is empty, no message's channel is altered 
   * exporter: preselect elements based on current selection
   * installer: use 32bit program folder for 32bit jOrgan on 64bit system
   * package: keep virmidi from being loaded as first soundcard
