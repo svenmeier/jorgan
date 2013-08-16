@@ -5,6 +5,7 @@ jorgan (3.20-beta2) beta;
   * core: optionally enumerate and cache Midi devices
   * core: if Rank#channel is empty, no message's channel is altered 
   * exporter: preselect elements based on current selection
+  * fluidsynth: tunings table with right-aligned headers and index on each row
   * installer: use 32bit program folder for 32bit jOrgan on 64bit system
   * package: keep virmidi from being loaded as first soundcard
 
