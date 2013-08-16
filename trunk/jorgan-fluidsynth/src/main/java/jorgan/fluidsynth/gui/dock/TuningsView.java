@@ -183,7 +183,10 @@ public class TuningsView extends AbstractView {
 		table.getColumnModel().getColumn(0)
 				.setCellRenderer(new SimpleCellRenderer<Tuning>() {
 					@Override
-					protected void init(Tuning value) {
+					protected void init(Tuning value, boolean isSelected,
+							boolean hasFocus, int row, int column) {
+						setHorizontalTextPosition(RIGHT);
+						setText("" + row);
 						setIcon(TuningsView.this.getIcon());
 					}
 				});
@@ -197,6 +200,7 @@ public class TuningsView extends AbstractView {
 							new SpinnerCellEditor(-100.0d, +100.0d, 1.0d));
 		}
 		TableUtils.pleasantLookAndFeel(table);
+		TableUtils.rightAlignedHeader(table);
 
 		setContent(new JScrollPane(table));
 	}
