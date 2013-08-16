@@ -29,7 +29,9 @@ import javax.swing.CellEditor;
 import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.SwingConstants;
 import javax.swing.TransferHandler.TransferSupport;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
@@ -187,5 +189,15 @@ public class TableUtils {
 		}
 
 		return index;
+	}
+
+	public static void rightAlignedHeader(JTable table) {
+		try {
+			((DefaultTableCellRenderer) table.getTableHeader()
+					.getDefaultRenderer())
+					.setHorizontalAlignment(SwingConstants.RIGHT);
+		} catch (Exception ex) {
+			boolean test = false;
+		}
 	}
 }
