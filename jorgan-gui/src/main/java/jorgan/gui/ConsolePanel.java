@@ -368,16 +368,16 @@ public class ConsolePanel extends JComponent implements Scrollable,
 	@Override
 	public float getScale(View<? extends Displayable> view) {
 		float scale = view.getElement().getZoom();
-		if (scale < 0.5f) {
+		if (scale < Displayable.MIN_ZOOM) {
 			// don't trust element's zoom
-			scale = 0.5f;
+			scale = Displayable.MIN_ZOOM;
 		}
 
 		if (view != consoleView) {
 			float consoleScale = console.getZoom();
-			if (consoleScale < 0.5f) {
+			if (consoleScale < Displayable.MIN_ZOOM) {
 				// don't trust element's zoom
-				consoleScale = 0.5f;
+				consoleScale = Displayable.MIN_ZOOM;
 			}
 			scale = scale * consoleScale;
 		}
