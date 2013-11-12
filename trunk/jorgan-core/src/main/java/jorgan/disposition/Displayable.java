@@ -41,7 +41,7 @@ public abstract class Displayable extends Element {
 	/**
 	 * The minimum supported zoom.
 	 */
-	public static final float MIN_ZOOM = 0.5f;
+	public static final float MIN_ZOOM = 0.25f;
 
 	private String style;
 
@@ -71,9 +71,9 @@ public abstract class Displayable extends Element {
 	}
 
 	public float getZoom() {
-		if (zoom < 0.5f) {
+		if (zoom < MIN_ZOOM) {
 			// maybe old zoom
-			zoom = 0.5f;
+			zoom = MIN_ZOOM;
 		}
 
 		return zoom;
