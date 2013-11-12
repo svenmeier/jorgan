@@ -65,6 +65,7 @@ import jorgan.swing.BaseAction;
 import jorgan.util.IOUtils;
 import jorgan.util.ReverseIterable;
 import spin.Spin;
+import swingx.docking.Dock;
 import swingx.docking.Dockable;
 import swingx.docking.DockingPane;
 import swingx.docking.persistence.XMLPersister;
@@ -131,10 +132,17 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 	 * The inner dockingPane holding all editors.
 	 */
 	private DockingPane editors = new BordererDockingPane() {
+		/**
+		 * Noop - no initiator for editors.
+		 */
+		@Override
+		protected void initInitiator(Dock dock) {
+		}
+
 		@Override
 		protected void dismissDockable(Dockable dockable) {
 			((AbstractEditor) dockable).setSession(null);
-		};
+		}
 	};
 
 	private MessagesMonitor messagesMonitor = new MessagesMonitor();
