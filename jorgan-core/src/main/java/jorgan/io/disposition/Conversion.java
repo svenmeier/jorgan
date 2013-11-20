@@ -61,7 +61,7 @@ public class Conversion {
 			new Convert("3\\.(11|12)(\\..*)?", "convert-3.13-beta.xsl"),
 			new Convert("3\\.13-beta(1|2|3).*", "convert-3.13.xsl"),
 			new Convert("3\\.(14|15-beta).*", "convert-3.15.xsl"),
-			new Convert("3\\.(19|20-beta1).*", "convert-3.20.xsl") };
+			new Convert("3\\.(15|16|17|18|19|20-beta1).*", "convert-3.20.xsl") };
 
 	public BufferedInputStream convert(InputStream in)
 			throws ConversionException, IOException {
