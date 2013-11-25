@@ -27,11 +27,18 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import jorgan.Version;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.ShortMessage;
+
 import jorgan.UI;
+import jorgan.Version;
+import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
+import jorgan.midi.MessageUtils;
+import jorgan.play.OrganPlay;
+import jorgan.play.event.PlayListener;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.ProblemListener;
@@ -73,6 +80,7 @@ public class CLI implements UI, SessionAware {
 		commands.add(new CloseCommand());
 		commands.add(new RecentCommand());
 		commands.add(new SaveCommand());
+		commands.add(new MonitorCommand());
 		commands.add(new ExitCommand());
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
@@ -119,8 +127,8 @@ public class CLI implements UI, SessionAware {
 
 			writeMessage("openConfirm", file);
 		} catch (ExtensionException ex) {
-			writeMessage("openExtensionException", file.getName(), ex
-					.getExtension());
+			writeMessage("openExtensionException", file.getName(),
+					ex.getExtension());
 			return;
 		} catch (FormatException ex) {
 			log.log(Level.INFO, ex.getClass().getSimpleName(), ex);
@@ -315,6 +323,74 @@ public class CLI implements UI, SessionAware {
 			}
 
 			writeEncoding();
+		}
+	}
+
+	/**
+	 * The command to show a Midi monitor.
+	 */
+	private class MonitorCommand extends AbstractCommand {
+		@Override
+		public String getKey() {
+			return "monitor";
+		}
+
+		public void execute(String param) throws IOException {
+			if (param != null) {
+				writeMessage("noParameter");
+				return;
+			}
+
+			if (session == null) {
+				writeMessage("monitorNone");
+				return;
+			}
+
+			PlayListener listener = new PlayListener() {
+				@Override
+				public void sent(Element element, MidiMessage message) {
+					message("monitorSent", message);
+				}
+
+				@Override
+				public void received(Element element, MidiMessage message) {
+					message("monitorReceived", message);
+				}
+
+				private void message(String key, MidiMessage message) {
+					String status;
+					String channel;
+					String data1;
+					String data2;
+
+					if (message instanceof ShortMessage) {
+						ShortMessage shortMessage = (ShortMessage) message;
+
+						if (MessageUtils.isChannelStatus(message.getStatus())) {
+							status = String.valueOf(message.getStatus() & 0xf0);
+							channel = String.valueOf(shortMessage.getChannel());
+						} else {
+							status = String.valueOf(message.getStatus());
+							channel = "-";
+						}
+
+						data1 = String.valueOf(shortMessage.getData1());
+						data2 = String.valueOf(shortMessage.getData2());
+					} else {
+						status = String.valueOf(message.getStatus());
+						data1 = "-";
+						data2 = "-";
+						channel = "-";
+					}
+
+					writeMessage(key, status, channel, data1, data2);
+				}
+			};
+			session.lookup(OrganPlay.class).addPlayerListener(listener);
+			writeMessage("monitorStart");
+			interpreter.readLine();
+			writeMessage("monitorFinish");
+			session.lookup(OrganPlay.class).removePlayerListener(listener);
 		}
 	}
 

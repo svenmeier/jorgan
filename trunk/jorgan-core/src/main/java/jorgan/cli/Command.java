@@ -18,6 +18,8 @@
  */
 package jorgan.cli;
 
+import java.io.IOException;
+
 /**
  * A command.
  * 
@@ -25,31 +27,32 @@ package jorgan.cli;
  */
 public interface Command {
 
-  /**
-   * Get the name of the command.
-   *
-   * @return  the name
-   */
-  public String getName();
+	/**
+	 * Get the name of the command.
+	 * 
+	 * @return the name
+	 */
+	public String getName();
 
-  /**
-   * Get the description of the command.
-   *
-   * @return  the description
-   */
-  public String getDescription();
+	/**
+	 * Get the description of the command.
+	 * 
+	 * @return the description
+	 */
+	public String getDescription();
 
-  /**
-   * Get the long description of the command.
-   *
-   * @return  the long description
-   */
-  public String getLongDescription();
+	/**
+	 * Get the long description of the command.
+	 * 
+	 * @return the long description
+	 */
+	public String getLongDescription();
 
-  /**
-   * Execute the command.
-   *
-   * @param param the parameter for the execution
-   */
-  public void execute(String param);
+	/**
+	 * Execute the command.
+	 * 
+	 * @param param
+	 *            the parameter for the execution
+	 */
+	public void execute(String param) throws IOException;
 }
