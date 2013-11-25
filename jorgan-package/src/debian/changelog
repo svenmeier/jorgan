@@ -1,16 +1,18 @@
-jorgan (3.20-beta2) beta;
+jorgan (3.20) stable;
 
   * core: store preferences specific to runtime-architecture
   * core: new element Synchronizing to synchronize continuous elements
   * core: optionally enumerate and cache Midi devices
   * core: if Rank#channel is empty, no message's channel is altered
+  * cli: new command to monitor Midi input/output
   * gui: allow zoom less than 0.5, now 0.25 minimum 
+  * gui: console tabs can no longer be rearranged/hidden   
   * exporter: preselect elements based on current selection
   * fluidsynth: tunings table with right-aligned headers and index on each row
   * installer: use 32bit program folder for 32bit jOrgan on 64bit system
   * package: keep virmidi from being loaded as first soundcard
 
- -- Sven Meier <sven@meiers.net>  Thu, 17 Jul 2013 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Thu, 25 Nov 2013 23:00:00 +0200
 
 jorgan (3.19) stable;
 
