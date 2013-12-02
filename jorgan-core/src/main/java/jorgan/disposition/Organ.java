@@ -281,8 +281,7 @@ public class Organ {
 	 */
 	public Set<Element> getReferenceToCandidates(Element element) {
 
-		Set<Element> candidates = new TreeSet<Element>(ComparatorChain.of(
-				new ElementNameComparator(), new IdentityComparator<Element>()));
+		Set<Element> candidates = new HashSet<Element>();
 
 		for (Element candidate : elements) {
 			if (element.canReference(candidate)) {

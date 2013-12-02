@@ -23,7 +23,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -58,8 +57,7 @@ public class ElementListExport implements Export {
 	public ElementListExport(OrganSession session) {
 		config.read(this);
 
-		panel.setElements(new ArrayList<Element>(session.getOrgan()
-				.getElements()));
+		panel.setElements(session.getOrgan().getElements());
 
 		panel.setSelectedElements(session.lookup(ElementSelection.class)
 				.getSelectedElements());

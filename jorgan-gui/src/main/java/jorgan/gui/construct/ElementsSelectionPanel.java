@@ -21,23 +21,31 @@ package jorgan.gui.construct;
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.AbstractButton;
 import javax.swing.AbstractListModel;
 import javax.swing.Action;
 import javax.swing.JButton;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import jorgan.disposition.Element;
+import jorgan.disposition.ElementNameComparator;
 import jorgan.gui.ElementListCellRenderer;
 import jorgan.swing.BaseAction;
+import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.FlowBuilder;
 import jorgan.swing.layout.FlowBuilder.Flow;
+import jorgan.util.ComparatorChain;
 import jorgan.util.Generics;
 import bias.Configuration;
 
@@ -52,6 +60,10 @@ public class ElementsSelectionPanel extends JPanel {
 	private Action allAction = new AllAction();
 
 	private Action noneAction = new NoneAction();
+
+	private JToggleButton sortByNameButton = new JToggleButton();
+
+	private JToggleButton sortByTypeButton = new JToggleButton();
 
 	private JList elementsList = new JList();
 
@@ -72,14 +84,30 @@ public class ElementsSelectionPanel extends JPanel {
 		});
 		add(new JScrollPane(elementsList), BorderLayout.CENTER);
 
-		JPanel panel = new JPanel();
-		add(panel, BorderLayout.SOUTH);
+		JPanel north = new JPanel();
+		add(north, BorderLayout.NORTH);
 
-		FlowBuilder builder = new FlowBuilder(panel, FlowBuilder.RIGHT);
+		ButtonGroup sortGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				init();
+			}
+		};
+		config.get("sortByType").read(sortByTypeButton);
+		sortGroup.add(sortByTypeButton);
+		config.get("sortByName").read(sortByNameButton);
+		sortGroup.add(sortByNameButton);
 
-		Flow flow = builder.flow();
-		flow.add(new JButton(allAction));
-		flow.add(new JButton(noneAction));
+		Flow northFlow = new FlowBuilder(north, FlowBuilder.RIGHT).flow();
+		northFlow.add(sortByTypeButton);
+		northFlow.add(sortByNameButton);
+
+		JPanel south = new JPanel();
+		add(south, BorderLayout.SOUTH);
+
+		Flow southFlow = new FlowBuilder(south, FlowBuilder.RIGHT).flow();
+		southFlow.add(new JButton(allAction));
+		southFlow.add(new JButton(noneAction));
 	}
 
 	/**
@@ -88,8 +116,30 @@ public class ElementsSelectionPanel extends JPanel {
 	 * @param elements
 	 *            the elements
 	 */
-	public void setElements(List<Element> elements) {
-		this.elements = elements;
+	public void setElements(Collection<Element> elements) {
+		this.elements = new ArrayList<Element>(elements);
+
+		init();
+	}
+
+	/**
+	 * Set the elements to select from.
+	 * 
+	 * @param elements
+	 *            the elements
+	 */
+	private void init() {
+
+		Comparator<Element> comparator;
+		if (sortByNameButton.isSelected()) {
+			comparator = ComparatorChain.of(new ElementNameComparator(),
+					new ElementTypeComparator());
+		} else {
+			comparator = ComparatorChain.of(new ElementTypeComparator(),
+					new ElementNameComparator());
+		}
+
+		Collections.sort(elements, comparator);
 
 		elementsList.setModel(new ElementsModel());
 
