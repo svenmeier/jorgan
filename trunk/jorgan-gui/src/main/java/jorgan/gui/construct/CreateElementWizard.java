@@ -165,8 +165,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(new ArrayList<Element>(session
-					.getOrgan().getReferenceToCandidates(element)));
+			elementsSelectionPanel.setElements(session.getOrgan()
+					.getReferenceToCandidates(element));
 
 			referencesTo = new ArrayList<Element>();
 		}
@@ -197,8 +197,8 @@ public class CreateElementWizard extends BasicWizard {
 
 		@Override
 		public void enteringFromPrevious() {
-			elementsSelectionPanel.setElements(new ArrayList<Element>(session
-					.getOrgan().getReferencedFromCandidates(element)));
+			elementsSelectionPanel.setElements(session.getOrgan()
+					.getReferencedFromCandidates(element));
 
 			referencedFrom = new ArrayList<Element>();
 		}

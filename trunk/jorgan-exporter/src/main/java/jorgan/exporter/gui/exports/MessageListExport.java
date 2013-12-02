@@ -23,13 +23,11 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import javax.swing.JComponent;
 
-import jorgan.disposition.Element;
 import jorgan.disposition.Message;
 import jorgan.exporter.exports.MessageListWriter;
 import jorgan.exporter.gui.Export;
@@ -59,8 +57,7 @@ public class MessageListExport implements Export {
 	public MessageListExport(OrganSession session) {
 		config.read(this);
 
-		panel.setElements(new ArrayList<Element>(session.getOrgan()
-				.getElements()));
+		panel.setElements(session.getOrgan().getElements());
 
 		panel.setSelectedElements(session.lookup(ElementSelection.class)
 				.getSelectedElements());
