@@ -855,7 +855,7 @@ public class ConsolePanel extends JComponent implements Scrollable,
 				}
 			} else {
 				if (pressedView == null) {
-					selection.clear();
+					selection.setSelectedElement(console);
 				} else {
 					if (!selection.isSelected(pressedView.getElement())) {
 						selection.setSelectedElement(pressedView.getElement());
