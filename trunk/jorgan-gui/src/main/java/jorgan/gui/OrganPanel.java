@@ -128,15 +128,21 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 
 	private Set<ViewAction> viewActions = new HashSet<ViewAction>();
 
+	private boolean consolesDraggable;
+
 	/*
 	 * The inner dockingPane holding all editors.
 	 */
 	private DockingPane editors = new BordererDockingPane() {
+
 		/**
 		 * Noop - no initiator for editors.
 		 */
 		@Override
 		protected void initInitiator(Dock dock) {
+			if (consolesDraggable) {
+				super.initInitiator(dock);
+			}
 		}
 
 		@Override
@@ -167,6 +173,10 @@ public class OrganPanel extends JPanel implements SessionAware, ConsoleStack {
 		}
 
 		loadDocking();
+	}
+
+	public void setConsolesDraggable(boolean draggable) {
+		this.consolesDraggable = draggable;
 	}
 
 	/**
