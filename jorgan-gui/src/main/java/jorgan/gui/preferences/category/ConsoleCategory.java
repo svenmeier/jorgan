@@ -31,6 +31,7 @@ import javax.swing.JSpinner;
 import javax.swing.SpinnerNumberModel;
 
 import jorgan.gui.ConsolePanel;
+import jorgan.gui.OrganPanel;
 import jorgan.gui.console.View;
 import jorgan.swing.color.ColorSelector;
 import jorgan.swing.font.FontSelector;
@@ -47,6 +48,9 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
 			ConsoleCategory.class);
+
+	private Model<Boolean> draggable = getModel(new Property(OrganPanel.class,
+			"consolesDraggable"));
 
 	private Model<Integer> grid = getModel(new Property(ConsolePanel.class,
 			"grid"));
@@ -77,6 +81,8 @@ public class ConsoleCategory extends JOrganCategory {
 
 	private Model<Font> shortcutFont = getModel(new Property(View.class,
 			"shortcutFont"));
+
+	private JCheckBox draggableCheckBox = new JCheckBox();
 
 	private JSpinner gridSpinner = new JSpinner(new SpinnerNumberModel(1, 1,
 			256, 1));
@@ -111,6 +117,9 @@ public class ConsoleCategory extends JOrganCategory {
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
 		Column column = builder.column();
+
+		column.term(config.get("draggable").read(new JLabel()));
+		column.definition(draggableCheckBox);
 
 		column.term(config.get("background").read(new JLabel()));
 		column.definition(backgroundSelector);
@@ -164,6 +173,7 @@ public class ConsoleCategory extends JOrganCategory {
 	@Override
 	protected void read() {
 
+		draggableCheckBox.setSelected(draggable.getValue());
 		gridSpinner.setValue(grid.getValue());
 		thresholdSpinner.setValue(threshold.getValue());
 		backgroundSelector.setSelectedColor(background.getValue());
@@ -183,6 +193,7 @@ public class ConsoleCategory extends JOrganCategory {
 	@Override
 	protected void write() {
 
+		draggable.setValue(draggableCheckBox.isSelected());
 		grid.setValue((Integer) gridSpinner.getValue());
 		threshold.setValue((Integer) thresholdSpinner.getValue());
 		background.setValue(backgroundSelector.getSelectedColor());
