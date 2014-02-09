@@ -58,7 +58,7 @@
         <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
-      <channel></channel>
+      <channel>greaterEqual 0</channel>
       <delay>0</delay>
     </rank>
     <rank id="4">
@@ -76,7 +76,7 @@
         <rank-noteMuted>set 128, set pitch, </rank-noteMuted>
       </messages>
       <zoom>1.0</zoom>
-      <channel></channel>
+      <channel>greaterEqual 0</channel>
       <delay>0</delay>
     </rank>
     <label id="7">
