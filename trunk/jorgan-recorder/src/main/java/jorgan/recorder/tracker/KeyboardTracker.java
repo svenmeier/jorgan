@@ -88,17 +88,24 @@ public class KeyboardTracker extends AbstractTracker {
 		if (message instanceof ShortMessage) {
 			ShortMessage shortMessage = (ShortMessage) message;
 
-			if (message.getStatus() == ShortMessage.NOTE_ON) {
-				if (shortMessage.getData2() == 0) {
-					releaseKey(keyboard, shortMessage.getData1());
-				} else {
-					pressKey(keyboard, shortMessage.getData1(),
-							shortMessage.getData2());
-				}
-			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
+			if (isKeyRelease(shortMessage)) {
 				releaseKey(keyboard, shortMessage.getData1());
+			} else if (isKeyPress(shortMessage)) {
+				pressKey(keyboard, shortMessage.getData1(),
+						shortMessage.getData2());
 			}
 		}
+	}
+
+	private boolean isKeyRelease(ShortMessage message) {
+		return message.getStatus() == ShortMessage.NOTE_OFF
+				|| (message.getStatus() == ShortMessage.NOTE_ON && message
+						.getData2() == 0);
+	}
+
+	private boolean isKeyPress(ShortMessage message) {
+		return message.getStatus() == ShortMessage.NOTE_ON
+				&& message.getData2() > 0;
 	}
 
 	/**
@@ -121,7 +128,7 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onRecordStarting();
 
 		for (ShortMessage message : getKeyPresses()) {
-			record(createMessage(message.getData1()));
+			record(createKeyRelease(message.getData1()));
 		}
 	}
 
@@ -133,11 +140,11 @@ public class KeyboardTracker extends AbstractTracker {
 		super.onRecordStopping();
 
 		for (ShortMessage message : getKeyPresses()) {
-			record(createMessage(message.getData1()));
+			record(createKeyRelease(message.getData1()));
 		}
 	}
 
-	private ShortMessage createMessage(int pitch) {
+	private ShortMessage createKeyRelease(int pitch) {
 		try {
 			return MessageUtils.createMessage(ShortMessage.NOTE_OFF, pitch, 0);
 		} catch (InvalidMidiDataException ex) {
@@ -145,7 +152,7 @@ public class KeyboardTracker extends AbstractTracker {
 		}
 	}
 
-	private ShortMessage createMessage(int pitch, int velocity) {
+	private ShortMessage createKeyPress(int pitch, int velocity) {
 		try {
 			return MessageUtils.createMessage(ShortMessage.NOTE_ON, pitch,
 					velocity);
@@ -172,10 +179,10 @@ public class KeyboardTracker extends AbstractTracker {
 		for (MidiEvent event : messages()) {
 			if (event.getMessage() instanceof ShortMessage) {
 				ShortMessage message = (ShortMessage) event.getMessage();
-				if (message.getStatus() == ShortMessage.NOTE_ON) {
-					messages.put(message.getData1(), message);
-				} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
+				if (isKeyRelease(message)) {
 					messages.remove(message.getData1());
+				} else if (isKeyPress(message)) {
+					messages.put(message.getData1(), message);
 				}
 			}
 		}
@@ -186,13 +193,13 @@ public class KeyboardTracker extends AbstractTracker {
 	private final class EventHandler implements KeyListener {
 		public void keyPressed(Keyboard keyboard, int pitch, int velocity) {
 			if (keyboard == KeyboardTracker.this.keyboard) {
-				record(createMessage(pitch, velocity));
+				record(createKeyPress(pitch, velocity));
 			}
 		}
 
 		public void keyReleased(Keyboard keyboard, int pitch) {
 			if (keyboard == KeyboardTracker.this.keyboard) {
-				record(createMessage(pitch));
+				record(createKeyRelease(pitch));
 			}
 		}
 	}
