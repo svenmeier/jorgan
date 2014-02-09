@@ -32,8 +32,8 @@ import jorgan.disposition.Keyboard;
 import jorgan.midi.MessageUtils;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.OrganPlay;
-import jorgan.play.Player;
 import jorgan.play.OrganPlay.Playing;
+import jorgan.play.Player;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.Performance;
 import jorgan.recorder.midi.Sequencer;
@@ -89,8 +89,12 @@ public class KeyboardTracker extends AbstractTracker {
 			ShortMessage shortMessage = (ShortMessage) message;
 
 			if (message.getStatus() == ShortMessage.NOTE_ON) {
-				pressKey(keyboard, shortMessage.getData1(), shortMessage
-						.getData2());
+				if (shortMessage.getData2() == 0) {
+					releaseKey(keyboard, shortMessage.getData1());
+				} else {
+					pressKey(keyboard, shortMessage.getData1(),
+							shortMessage.getData2());
+				}
 			} else if (message.getStatus() == ShortMessage.NOTE_OFF) {
 				releaseKey(keyboard, shortMessage.getData1());
 			}
