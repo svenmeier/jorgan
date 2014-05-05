@@ -19,6 +19,7 @@
 package jorgan.tools.play;
 
 import jorgan.disposition.Rank;
+import jorgan.disposition.Switch;
 import jorgan.play.RankPlayer;
 import jorgan.play.SwitchPlayer;
 import jorgan.tools.disposition.RepeatSwitch;
@@ -31,8 +32,8 @@ public class RepeatSwitchPlayer extends SwitchPlayer<RepeatSwitch> {
 
 	private boolean engaged = false;
 
-	public RepeatSwitchPlayer(RepeatSwitch panic) {
-		super(panic);
+	public RepeatSwitchPlayer(RepeatSwitch repeatSwitch) {
+		super(repeatSwitch);
 	}
 
 	@Override
@@ -49,12 +50,32 @@ public class RepeatSwitchPlayer extends SwitchPlayer<RepeatSwitch> {
 		if (isOpen()) {
 			boolean engaged = getElement().isEngaged();
 			if (!Null.safeEquals(this.engaged, engaged)) {
-				if (!engaged) {
+				// Note: for DURATION_NONE the muted keys are re-played
+				// immediately
+
+				if (engaged) {
 					for (Rank rank : getElement().getReferenced(Rank.class)) {
-						((RankPlayer) getPlayer(rank)).repeat(getElement()
+						((RankPlayer) getPlayer(rank)).repeatMute(getElement()
 								.getVelocity());
 					}
+
+					int duration = getElement().getDuration();
+					if (duration == Switch.DURATION_NONE) {
+						for (Rank rank : getElement().getReferenced(Rank.class)) {
+							((RankPlayer) getPlayer(rank))
+									.repeatPlay(getElement().getVelocity());
+						}
+					}
+				} else {
+					int duration = getElement().getDuration();
+					if (duration != Switch.DURATION_NONE) {
+						for (Rank rank : getElement().getReferenced(Rank.class)) {
+							((RankPlayer) getPlayer(rank))
+									.repeatPlay(getElement().getVelocity());
+						}
+					}
 				}
+
 				this.engaged = engaged;
 			}
 		}
