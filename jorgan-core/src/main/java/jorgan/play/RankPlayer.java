@@ -159,14 +159,18 @@ public class RankPlayer extends Player<Rank> {
 		}
 	}
 
-	public void repeat(int velocity) {
+	public void repeatMute(int velocity) {
 		if (this.channel != null) {
 			for (int p = 0; p < played.length; p++) {
 				if (played[p] > 0) {
 					this.channel.muted(p);
 				}
 			}
+		}
+	}
 
+	public void repeatPlay(int velocity) {
+		if (this.channel != null) {
 			for (int p = 0; p < played.length; p++) {
 				if (played[p] > 0) {
 					this.channel.played(p, velocity);
