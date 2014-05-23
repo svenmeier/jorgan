@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,7 @@ import javax.swing.TransferHandler;
 import javax.swing.table.TableColumn;
 
 import jorgan.disposition.Element;
+import jorgan.gui.selection.ElementSelection;
 import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
@@ -120,6 +122,24 @@ public class MonitorView extends AbstractView {
 				clip.setContents(new StringSelection(builder.toString()), null);
 			}
 		});
+		TableUtils.addActionListener(table, new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				Message message = messages.get(table.getSelectedRow());
+
+				Element element;
+				try {
+					element = session.getOrgan().getElement(message.id);
+				} catch (IllegalArgumentException noLongerPresent) {
+					return;
+				}
+
+				session.lookup(ElementSelection.class).setSelectedElement(
+						element);
+
+				session.setConstructing(true);
+			}
+		});
 		setContent(new JScrollPane(table,
 				JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 				JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED));
@@ -129,7 +149,7 @@ public class MonitorView extends AbstractView {
 
 			column.setCellRenderer(new MessageCellRenderer());
 		}
-		TableUtils.fixColumnWidth(table, 0, new Message(false,
+		TableUtils.fixColumnWidth(table, 0, new Message(0, false,
 				new ShortMessage()));
 	}
 
@@ -181,14 +201,14 @@ public class MonitorView extends AbstractView {
 		@Override
 		public void received(Element element, MidiMessage message) {
 			if (!skip(message) && inputButton.isSelected()) {
-				add(true, message);
+				add(element, true, message);
 			}
 		}
 
 		@Override
 		public void sent(Element element, MidiMessage message) {
 			if (!skip(message) && outputButton.isSelected()) {
-				add(false, message);
+				add(element, false, message);
 			}
 		}
 
@@ -199,8 +219,8 @@ public class MonitorView extends AbstractView {
 			return skip && status > 0xf0;
 		}
 
-		private void add(boolean input, MidiMessage message) {
-			messages.add(new Message(input, message));
+		private void add(Element element, boolean input, MidiMessage message) {
+			messages.add(new Message(element.getId(), input, message));
 			int row = messages.size() - 1;
 
 			tableModel.fireTableRowsInserted(row, row);
@@ -243,6 +263,8 @@ public class MonitorView extends AbstractView {
 
 	private class Message {
 
+		private long id;
+
 		public final boolean input;
 
 		public final String channel;
@@ -259,7 +281,9 @@ public class MonitorView extends AbstractView {
 
 		private Color color;
 
-		public Message(boolean input, MidiMessage message) {
+		public Message(long id, boolean input, MidiMessage message) {
+			this.id = id;
+
 			this.input = input;
 
 			int status = message.getStatus();
