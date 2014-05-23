@@ -1,6 +1,9 @@
 jorgan (3.21) beta;
 
-  * gui: allow sorting by type or name when selecting elements  
+  * gui: allow sorting by type or name when selecting elements
+  * gui: rearranging of console tabs is optional now
+  * gui: double click on message in the Midi monitor to select the originating element
+  * tools: RepeatSwitch supports duration   
 
  -- Sven Meier <sven@meiers.net>  Mon, 02 Dez 2013 23:00:00 +0200
 
