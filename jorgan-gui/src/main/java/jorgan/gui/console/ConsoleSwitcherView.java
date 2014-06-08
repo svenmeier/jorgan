@@ -20,6 +20,7 @@ package jorgan.gui.console;
 
 import jorgan.disposition.Console;
 import jorgan.disposition.ConsoleSwitcher;
+import jorgan.disposition.Switch;
 
 /**
  * A view for a {@link ConsoleSwitcher}.
@@ -43,14 +44,26 @@ public class ConsoleSwitcherView extends SwitchView<ConsoleSwitcher> {
 		if ("engaged".equals(name)) {
 			ViewContainer container = getContainer();
 			if (container != null) {
-				if (!getElement().isEngaged()) {
-					for (Console console : getElement().getReferenced(
-							Console.class)) {
+				ConsoleSwitcher switcher = getElement();
+				if (shouldSwitch(switcher)) {
+					for (Console console : switcher
+							.getReferenced(Console.class)) {
 						container.toFront(console);
 						break;
 					}
 				}
 			}
+		}
+	}
+
+	private boolean shouldSwitch(ConsoleSwitcher switcher) {
+		if (switcher.getDuration() == Switch.DURATION_NONE) {
+			// switch when disengaged only, so user can see the pressed
+			// animation
+			return !switcher.isEngaged();
+		} else {
+			// switch immediately, since disengaged might come much later
+			return switcher.isEngaged();
 		}
 	}
 }
