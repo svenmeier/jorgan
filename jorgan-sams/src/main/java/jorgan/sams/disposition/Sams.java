@@ -53,10 +53,19 @@ public class Sams extends Connector {
 	}
 
 	public void setMaximum(int maximum) {
+		if (maximum < 1) {
+			maximum = 1;
+		}
+
 		this.maximum = maximum;
 	}
 
 	public int getMaximum() {
+		if (maximum == 0) {
+			// backwards compatibility
+			maximum = 64;
+		}
+
 		return maximum;
 	}
 
