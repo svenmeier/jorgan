@@ -278,7 +278,8 @@ public class RankPlayer extends Player<Rank> {
 				public void trigger() {
 					try {
 						channel.sendMessage(copy);
-					} catch (InvalidMidiDataException nothingWeCanDoAboutIt) {
+					} catch (InvalidMidiDataException invalid) {
+						onInvalidMidiData(null, copy);
 					}
 				}
 			}, delay);
