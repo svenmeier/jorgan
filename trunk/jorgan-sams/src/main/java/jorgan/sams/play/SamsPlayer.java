@@ -18,12 +18,16 @@
  */
 package jorgan.sams.play;
 
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 
+import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.InterceptMessage;
 import jorgan.disposition.Message;
-import jorgan.disposition.Input.InputMessage;
 import jorgan.disposition.Output.OutputMessage;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
@@ -50,6 +54,10 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 
 	private Tab[] tabs = new Tab[TAB_COUNT];
 
+	private int energized = 0;
+
+	private List<Tab.Magnet> waitingForEnergize = new LinkedList<Tab.Magnet>();
+
 	public SamsPlayer(Sams sams) {
 		super(sams);
 
@@ -60,6 +68,8 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 
 	@Override
 	protected void closeImpl() {
+		waitingForEnergize.clear();
+
 		for (Tab tab : tabs) {
 			tab.reset();
 		}
@@ -83,33 +93,27 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 	@Override
 	public void send(byte[] datas) throws InvalidMidiDataException {
 
-		boolean turned = false;
-
 		for (OutputMessage message : getElement().getMessages(
 				OutputMessage.class)) {
 			if (message instanceof InterceptMessage) {
 				if (interceptContext.process(message, datas, false)) {
 					if (message instanceof TabTurningOn) {
-						Tab tab = getTab(message, (int) interceptContext
-								.get(TabTurningOn.TAB));
+						Tab tab = getTab(message,
+								(int) interceptContext.get(TabTurningOn.TAB));
 						if (tab != null) {
-							turned = tab.turnOn();
+							tab.turnOn(datas);
 							break;
 						}
 					} else if (message instanceof TabTurningOff) {
-						Tab tab = getTab(message, (int) interceptContext
-								.get(TabTurningOff.TAB));
+						Tab tab = getTab(message,
+								(int) interceptContext.get(TabTurningOff.TAB));
 						if (tab != null) {
-							turned = tab.turnOff();
+							tab.turnOff(datas);
 							break;
 						}
 					}
 				}
 			}
-		}
-
-		if (turned) {
-			super.send(datas);
 		}
 	}
 
@@ -154,6 +158,28 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 		super.send(datas);
 	}
 
+	protected void energizeOrWait(Tab.Magnet magnet) {
+		if (energized < getElement().getMaximum()) {
+			energized++;
+
+			magnet.energize();
+		} else {
+			waitingForEnergize.add(magnet);
+		}
+	}
+
+	protected void noLongerEnergized(Tab.Magnet magnet) {
+		energized--;
+
+		while (energized < getElement().getMaximum()
+				&& !waitingForEnergize.isEmpty()) {
+
+			Tab.Magnet waiting = waitingForEnergize.remove(0);
+			energized++;
+			waiting.energize();
+		}
+	}
+
 	public class Tab {
 
 		private int index;
@@ -163,6 +189,8 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 		private Magnet onMagnet = new Magnet();
 
 		private Magnet offMagnet = new Magnet();
+
+		private byte[] intercepted;
 
 		public Tab(int index) {
 			this.index = index;
@@ -175,22 +203,25 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 			state = null;
 		}
 
-		private boolean turn(boolean state, Magnet cancel, Magnet energize) {
+		private boolean turn(byte[] intercepted, boolean state,
+				Magnet toCancel, Magnet toEnergize) {
+			this.intercepted = Arrays.copyOf(intercepted, intercepted.length);
+
 			if (this.state == null || this.state != state) {
-				cancel.cancel();
-				energize.energize();
+				toCancel.cancel();
+				SamsPlayer.this.energizeOrWait(toEnergize);
 
 				return true;
 			}
 			return false;
 		}
 
-		public boolean turnOn() {
-			return turn(true, offMagnet, onMagnet);
+		public boolean turnOn(byte[] intercepted) {
+			return turn(intercepted, true, offMagnet, onMagnet);
 		}
 
-		public boolean turnOff() {
-			return turn(false, onMagnet, offMagnet);
+		public boolean turnOff(byte[] intercepted) {
+			return turn(intercepted, false, onMagnet, offMagnet);
 		}
 
 		public void onTurnedOn() {
@@ -205,15 +236,21 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 			offMagnet.cancel();
 		}
 
-		private class Magnet {
+		private class Magnet implements WakeUp {
 			private boolean energized = false;
 
 			public void energize() {
 				if (!this.energized) {
 					this.energized = true;
 
+					try {
+						SamsPlayer.super.send(intercepted);
+					} catch (InvalidMidiDataException invalid) {
+						onInvalidMidiData(null, intercepted);
+					}
+
 					long duration = getElement().getDuration();
-					getOrganPlay().alarm(new CancelWakeUp(this), duration);
+					getOrganPlay().alarm(this, duration);
 				}
 			}
 
@@ -226,29 +263,21 @@ public class SamsPlayer extends ConnectorPlayer<Sams> {
 					} else {
 						output(CancelTabOff.class, index);
 					}
+
+					noLongerEnergized(this);
+				} else {
+					waitingForEnergize.remove(this);
 				}
-			}
-		}
-
-		private class CancelWakeUp implements WakeUp {
-
-			private Magnet magnet;
-
-			public CancelWakeUp(Magnet magnet) {
-				this.magnet = magnet;
 			}
 
 			@Override
 			public boolean replaces(WakeUp wakeUp) {
-				if (wakeUp instanceof CancelWakeUp) {
-					return ((CancelWakeUp) wakeUp).magnet == this.magnet;
-				}
-				return false;
+				return wakeUp == this;
 			}
 
 			@Override
 			public void trigger() {
-				magnet.cancel();
+				cancel();
 			}
 		}
 	}

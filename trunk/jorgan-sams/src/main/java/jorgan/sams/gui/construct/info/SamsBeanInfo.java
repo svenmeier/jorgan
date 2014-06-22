@@ -18,6 +18,7 @@
  */
 package jorgan.sams.gui.construct.info;
 
+import jorgan.gui.construct.editor.IntegerEditor;
 import jorgan.gui.construct.editor.LongEditor;
 import jorgan.gui.construct.info.ConnectorBeanInfo;
 import jorgan.sams.disposition.Sams;
@@ -32,5 +33,6 @@ public class SamsBeanInfo extends ConnectorBeanInfo {
 		super.registerProperties();
 
 		add("duration", Sams.class, LongEditor.class);
+		add("maximum", Sams.class, IntegerEditor.class);
 	}
 }

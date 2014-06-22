@@ -229,7 +229,7 @@ public abstract class Player<E extends Element> {
 		}
 	}
 
-	private void onInvalidMidiData(Message message, byte[] datas) {
+	protected void onInvalidMidiData(Message message, byte[] datas) {
 		StringBuilder builder = new StringBuilder();
 		for (byte data : datas) {
 			if (builder.length() > 0) {

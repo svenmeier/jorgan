@@ -28,8 +28,11 @@ import jorgan.midi.mpl.Get;
 import jorgan.midi.mpl.Set;
 
 /**
+ * Stop action magnets.
  */
 public class Sams extends Connector {
+
+	private int maximum = 64;
 
 	private long duration = 250;
 
@@ -47,6 +50,14 @@ public class Sams extends Connector {
 				TabTurnedOn.TAB), new Equal(127)));
 		addMessage(new TabTurnedOff().change(new Equal(128), new Get(
 				TabTurnedOff.TAB), new Equal(127)));
+	}
+
+	public void setMaximum(int maximum) {
+		this.maximum = maximum;
+	}
+
+	public int getMaximum() {
+		return maximum;
 	}
 
 	public void setDuration(long duration) {
