@@ -34,16 +34,18 @@ public abstract class Command {
 		}
 
 		try {
-			int space = string.indexOf(' ');
+			int end = string.indexOf(' ');
+			if (end == -1) {
+				end = string.length();
+			}
 
 			String simpleName = Character.toUpperCase(string.charAt(0))
-					+ string.substring(1, space);
+					+ string.substring(1, end);
 
 			Class<?> type = Class.forName(AbstractCommand.class.getPackage()
-					.getName()
-					+ "." + simpleName);
+					.getName() + "." + simpleName);
 
-			String arguments = string.substring(space + 1).trim();
+			String arguments = string.substring(end).trim();
 
 			return (AbstractCommand) type.getDeclaredConstructor(
 					new Class<?>[] { String.class }).newInstance(arguments);

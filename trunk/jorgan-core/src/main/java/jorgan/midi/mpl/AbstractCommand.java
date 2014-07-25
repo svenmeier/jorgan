@@ -53,8 +53,11 @@ public abstract class AbstractCommand extends Command {
 		buffer.append(Character.toLowerCase(simpleName.charAt(0))
 				+ simpleName.substring(1));
 
-		buffer.append(" ");
-		buffer.append(getArguments());
+		String arguments = getArguments();
+		if (!arguments.isEmpty()) {
+			buffer.append(" ");
+			buffer.append(arguments);
+		}
 		return buffer.toString();
 	}
 }
