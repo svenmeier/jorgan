@@ -1,5 +1,6 @@
 jorgan (3.21) beta;
 
+  * core: new MLP command 'round'
   * gui: allow sorting by type or name when selecting elements
   * gui: rearranging of console tabs is optional now
   * gui: double click on message in the Midi monitor to select the originating element
