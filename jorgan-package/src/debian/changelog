@@ -7,7 +7,7 @@ jorgan (3.21) beta;
   * tools: RepeatSwitch supports duration   
   * sams: new property 'maximum' for SAMs element   
 
- -- Sven Meier <sven@meiers.net>  Mon, 02 Dez 2013 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Mon, 02 Dec 2013 23:00:00 +0200
 
 jorgan (3.20) stable;
 
