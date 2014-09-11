@@ -1,5 +1,5 @@
 ; Enter version
-#define VERSION "3.20"
+#define VERSION "3.21-beta1"
 ; Choose target architecture "x86" or "amd64" 
 #define ARCHITECTURE "x86"
 
