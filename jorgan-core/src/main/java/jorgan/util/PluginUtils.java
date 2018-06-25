@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,10 +56,8 @@ public class PluginUtils {
 	private static <P> List<P> lookupImpl(Class<P> clazz) {
 		List<P> providers = new ArrayList<P>();
 
-		Iterator<P> iterator = ServiceRegistry.lookupProviders(clazz);
-		while (iterator.hasNext()) {
+		for (P provider : ServiceLoader.load(clazz)) {
 			try {
-				P provider = iterator.next();
 				if (clazz.isInstance(provider)) {
 					providers.add(0, provider);
 				} else {
