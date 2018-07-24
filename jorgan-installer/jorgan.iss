@@ -1,5 +1,5 @@
 ; Enter version
-#define VERSION "3.21-beta1"
+#define VERSION "3.21-beta3"
 ; Choose target architecture "x86" or "amd64" 
 #define ARCHITECTURE "x86"
 
@@ -23,6 +23,8 @@ DefaultDirName={pf}\jOrgan
 #endif
 DefaultGroupName=jOrgan
 DisableProgramGroupPage=no
+DisableDirPage=no
+AlwaysShowDirOnReadyPage=yes
 LicenseFile=..\jorgan-core\docs\license.txt
 SetupIconFile=.\src\jorgan.ico
 Compression=lzma
@@ -47,7 +49,9 @@ Name: "custom"; Description: "Custom installation"; Flags: iscustom
 [Components]
 Name: "core"; Description: "Program Files"; Types: standard custom; Flags: fixed
 Name: "gui"; Description: "Graphical User Interface"; Types: standard custom
+#if ARCHITECTURE == "x86"
 Name: "creative"; Description: "Creative Soundblaster"; Types: standard
+#endif
 Name: "customizer"; Description: "Customizer"; Types: standard
 Name: "executor"; Description: "Executor"; Types: standard
 Name: "fluidsynth"; Description: "Fluidsynth Sampler"; Types: standard
@@ -71,7 +75,9 @@ Source: ".\src\jOrgan.l4j.ini"; DestDir: "{app}"; Components: core
 Source: "..\jorgan-bootstrap\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-core\target\marshal\*"; DestDir: "{app}"; Components: core; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-gui\target\marshal\*"; DestDir: "{app}"; Components: gui; Flags: recursesubdirs createallsubdirs
+#if ARCHITECTURE == "x86"
 Source: "..\jorgan-creative\target\marshal\*"; DestDir: "{app}"; Components: creative; Flags: recursesubdirs createallsubdirs
+#endif
 Source: "..\jorgan-customizer\target\marshal\*"; DestDir: "{app}"; Components: customizer; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-executor\target\marshal\*"; DestDir: "{app}"; Components: executor; Flags: recursesubdirs createallsubdirs
 Source: "..\jorgan-fluidsynth\target\marshal\*"; DestDir: "{app}"; Components: fluidsynth; Flags: recursesubdirs createallsubdirs
