@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="jorgan-bootstrap" default="dist" basedir=".">
+
+	<property file="../build.properties" />
+
+	<target name="clean" description="Cleanup target directory">
+		<delete dir="./target"/>
+	</target>
+
+	<target name="init">
+	</target>
+
+	<target name="build" depends="init" description="Build the source" >
+		<mkdir dir="./target/classes"/>
+
+		<javac includeantruntime="false" debug="true" source="${javac.target}" target="${javac.target}" destdir="./target/classes" srcdir="./src/main/java">
+			<compilerarg value="-Xlint:all,-serial"/>
+			<classpath path="../jorgan-core/target/classes" />
+		</javac>
+		
+    	<copy todir="./target/classes">
+            <fileset dir="./src/main/java">
+            	<include name="**/*.properties" />
+            </fileset>
+        </copy>
+	</target>
+
+	<target name="dist" description="Set up the distribution" depends="clean, init, build" >
+		<mkdir dir="./target/marshal" />
+
+		<jar destfile="./target/marshal/jorgan.jar">
+			<manifest>
+				<attribute name="Main-class" value="jorgan.bootstrap.Bootstrap" />
+		        <attribute name="Implementation-Title" value="jOrgan" />
+		        <attribute name="Implementation-Vendor" value="Sven Meier" />
+		        <attribute name="Implementation-Version" value="${jorgan.version}" />
+			</manifest>
+			<fileset dir="./target/classes" />
+			<fileset dir="../jorgan-core/target/classes">
+				<include name="jorgan/util/ClassUtils.class" />
+				<include name="jorgan/util/IOUtils.class" />
+			</fileset>
+		</jar>
+	</target>
+</project>

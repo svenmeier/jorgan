@@ -1,0 +1,25 @@
+<assembly>
+  <id>all</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <dependencySets>
+    <dependencySet>
+      <outputDirectory>lib</outputDirectory>
+      <scope>runtime</scope>
+    </dependencySet>
+  </dependencySets>
+  
+  <fileSets>
+    <fileSet>
+      <directory>.</directory>
+      <outputDirectory></outputDirectory>
+      <includes>
+        <include>license.txt</include>
+        <include>pom.xml</include>
+        <include>src/</include>
+        <include>target/*.jar</include>
+      </includes>
+    </fileSet>
+  </fileSets>
+</assembly>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="">
+  <elements>
+    <switch id="1202">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages>
+        <switch-activated>set 144, set 60, set 127</switch-activated>
+        <switch-deactivated>set 128, set 60, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 60, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 60, equal 127</switch-deactivate>
+      </messages>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+    <label id="1203">
+      <name></name>
+      <description>name=Each of the switches sends one Midi message on activation and deactivation:</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <label id="1204">
+      <name></name>
+      <description>name=Open the monitor view showing input and output messages.  Now you can see additional delayed Midi messages to cancel tab operations.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <console id="1205">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="1204">
+          <x>90</x>
+          <y>100</y>
+        </console-locationReference>
+        <console-locationReference id="1203">
+          <x>50</x>
+          <y>20</y>
+        </console-locationReference>
+        <console-locationReference id="1202">
+          <x>140</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="1207">
+          <x>230</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="1208">
+          <x>320</x>
+          <y>60</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <sams.sams id="1206">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="1202"/>
+        <reference id="1207"/>
+        <reference id="1208"/>
+      </references>
+      <messages>
+        <sams.sams-tabTurningOn>equal 144, get tab, equal 127</sams.sams-tabTurningOn>
+        <sams.sams-cancelTabOn>set 144, set tab, set 0</sams.sams-cancelTabOn>
+        <sams.sams-tabTurningOff>equal 128, get tab, equal 127</sams.sams-tabTurningOff>
+        <sams.sams-cancelTabOff>set 128, set tab, set 0</sams.sams-cancelTabOff>
+        <sams.sams-tabTurnedOn>equal 144, get tab, equal 127</sams.sams-tabTurnedOn>
+        <sams.sams-tabTurnedOff>equal 128, get tab, equal 127</sams.sams-tabTurnedOff>
+      </messages>
+      <output>jOrgan Midi Logger</output>
+      <duration>500</duration>
+    </sams.sams>
+    <switch id="1207">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages>
+        <switch-activated>set 144, set 61, set 127</switch-activated>
+        <switch-deactivated>set 128, set 61, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 61, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 61, equal 127</switch-deactivate>
+      </messages>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+    <switch id="1208">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages>
+        <switch-activated>set 144, set 62, set 127</switch-activated>
+        <switch-deactivated>set 128, set 62, set 127</switch-deactivated>
+        <switch-activate>equal 144, equal 62, equal 127</switch-activate>
+        <switch-deactivate>equal 128, equal 62, equal 127</switch-deactivate>
+      </messages>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+  </elements>
+</organ>

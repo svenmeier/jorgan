@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="">
+  <elements>
+    <lcd.display id="1">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="4"/>
+        <reference id="9"/>
+        <reference id="5"/>
+        <reference id="2"/>
+      </references>
+      <messages/>
+      <host>localhost</host>
+      <port>13666</port>
+    </lcd.display>
+    <switch id="2">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>true</active>
+      <duration>-1</duration>
+    </switch>
+    <label id="4">
+      <name></name>
+      <description>name=Hello jOrgan</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <continuous id="5">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <duration>-1</duration>
+      <threshold>0.05</threshold>
+      <value>1.0</value>
+    </continuous>
+    <console id="6">
+      <name></name>
+      <description></description>
+      <references>
+        <console-locationReference id="9">
+          <x>115</x>
+          <y>160</y>
+        </console-locationReference>
+        <console-locationReference id="2">
+          <x>117</x>
+          <y>90</y>
+        </console-locationReference>
+        <console-locationReference id="5">
+          <x>110</x>
+          <y>120</y>
+        </console-locationReference>
+        <console-locationReference id="4">
+          <x>110</x>
+          <y>60</y>
+        </console-locationReference>
+        <console-locationReference id="10">
+          <x>30</x>
+          <y>0</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <switch id="7">
+      <name>regulator one</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>true</active>
+      <duration>-1</duration>
+    </switch>
+    <switch id="8">
+      <name>regulator two</name>
+      <description></description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+    <regulator id="9">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="7"/>
+        <reference id="8"/>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+      <duration>-1</duration>
+      <threshold>0.05</threshold>
+      <value>0.25</value>
+    </regulator>
+    <label id="10">
+      <name>Information</name>
+      <description>name=If LCDProc is running on your machine,  you should see the following elements  be displayed on your LCD</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+  </elements>
+</organ>

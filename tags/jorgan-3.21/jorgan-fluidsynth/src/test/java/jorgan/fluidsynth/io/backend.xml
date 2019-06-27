@@ -1,0 +1,14 @@
+<backend>
+  <name>Direct Sound (32bit)</name>
+  <description>Audio ouput with Direct Sound</description>
+  <version>1.1.7</version>
+  <library>libintl-8.dll</library>
+  <library>libglib-2.0-0.dll</library>
+  <library>libgthread-2.0-0.dll</library>
+  <library>libfluidsynth.dll</library>
+  <link>
+	<text>Fluidsynth</text>
+	<url>http://fluidsynth.sf.net</url>
+	<icon>fluidsynth.png</icon>
+  </link>
+</backend>
