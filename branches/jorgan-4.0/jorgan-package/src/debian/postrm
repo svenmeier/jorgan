@@ -1,0 +1,3 @@
+#!/bin/bash
+rm -rf /home/*/.jorgan/
+rm -rf /home/*/.java/.userPrefs/jorgan/

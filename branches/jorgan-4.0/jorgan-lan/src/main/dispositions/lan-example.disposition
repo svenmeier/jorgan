@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<organ version="">
+  <elements>
+    <label id="7">
+      <name></name>
+      <description>name=On every change the Switch and Continous element send MIDI messages over LAN.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+    <console id="8">
+      <name>My Console</name>
+      <description></description>
+      <references>
+        <console-locationReference id="7">
+          <x>40</x>
+          <y>40</y>
+        </console-locationReference>
+        <console-locationReference id="9">
+          <x>150</x>
+          <y>76</y>
+        </console-locationReference>
+        <console-locationReference id="10">
+          <x>280</x>
+          <y>70</y>
+        </console-locationReference>
+        <console-locationReference id="11">
+          <x>110</x>
+          <y>120</y>
+        </console-locationReference>
+      </references>
+      <messages/>
+      <zoom>1.0</zoom>
+    </console>
+    <connector id="12">
+      <name></name>
+      <description></description>
+      <references>
+        <reference id="9" />
+        <reference id="10" />
+      </references>
+      <messages/>
+      <input>jOrgan LAN 1</input>
+      <output>jOrgan LAN 1</output>
+    </connector>
+    <switch id="9">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages>
+        <switch-activate>equal 144, equal 60, </switch-activate>
+        <switch-activated>set 144, set 60, set 100</switch-activated>
+        <switch-deactivate>equal 128, equal 60, </switch-deactivate>
+        <switch-deactivated>set 128, set 60, set 0</switch-deactivated>
+      </messages>
+      <zoom>1.0</zoom>
+      <active>false</active>
+      <duration>-1</duration>
+    </switch>
+    <continuous id="10">
+      <name></name>
+      <description></description>
+      <references/>
+      <messages>
+        <continuous-change>equal 176, equal 7, div 127 | get value</continuous-change>
+        <continuous-changed>set 176, set 7, set value | mult 127</continuous-changed>
+      </messages>
+      <zoom>1.0</zoom>
+      <duration>-1</duration>
+      <threshold>0.0</threshold>
+      <value>1.0</value>
+    </continuous>
+    <label id="11">
+      <name></name>
+      <description>name=Start ipMidi or multimidicast to see sent messages.</description>
+      <references/>
+      <messages/>
+      <zoom>1.0</zoom>
+    </label>
+  </elements>
+</organ>
