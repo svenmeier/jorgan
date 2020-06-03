@@ -5,7 +5,7 @@
 #include "exception.h"
 #include "logging.h"
 #include "fluidsynth.h"
-#include "jorgan.fluidsynth.Fluidsynth.h"
+#include "jorgan_fluidsynth_Fluidsynth.h"
 
 typedef struct _Context {
 	fluid_settings_t* settings;

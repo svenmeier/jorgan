@@ -9,7 +9,8 @@
   <target name="compile">
     <mkdir dir="./target/classes" />
 
-  	<javac includeantruntime="false" debug="true" source="${javac.target}" target="${javac.target}" srcdir="./src/main/java" destdir="./target/classes">
+  	<javac includeantruntime="false" debug="true" source="${javac.target}" target="${javac.target}" srcdir="./src/main/java" destdir="./target/classes"
+  		nativeheaderdir="./target/native">
     	<classpath path="../jorgan-core/target/classes" />
     	<classpath path="../jorgan-gui/target/classes" />
     	<classpath path="../jorgan-customizer/target/classes" />
@@ -43,10 +44,6 @@
   <target name="native-common" depends="compile">
     <mkdir dir="./target/native" />
 
-  	<javah verbose="false" class="jorgan.fluidsynth.Fluidsynth" outputfile="./target/native/jorgan.fluidsynth.Fluidsynth.h">
-      <classpath path="./target/classes" />
-    </javah>
-  	
    	<condition property="isWindows">
       <os family="windows"/>
   	</condition>
