@@ -213,7 +213,8 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setTuning(JNIEnv* env, jclass jcl
 
 	const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
 
-	fluid_synth_create_octave_tuning(context->synth, jtuningBank, jtuningProgram, (char*)name, derivations);
+	//OLD API fluid_synth_create_octave_tuning(context->synth, jtuningBank, jtuningProgram, (char*)name, derivations);	
+	fluid_synth_activate_octave_tuning(context->synth, jtuningBank, jtuningProgram, name, derivations, 0);
 
 	(*env)->ReleaseStringUTFChars(env, jname, name);
 }
