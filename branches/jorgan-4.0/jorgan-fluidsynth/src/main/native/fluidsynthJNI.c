@@ -236,7 +236,7 @@ static void initData(JNIEnv* env, ForEachData* data) {
 	data->jadd = (*env)->GetMethodID(env, class, "add", "(Ljava/lang/Object;)Z");
 }
 
-static void onOption(void* vdata, char* name, char* value) {
+static void onOption(void* vdata, const char* name, const char* value) {
 	ForEachData* data = (ForEachData*)vdata;
 
 	JNIEnv* env = data->env;
