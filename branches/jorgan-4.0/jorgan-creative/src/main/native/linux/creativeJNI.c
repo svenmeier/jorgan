@@ -5,7 +5,7 @@
 #include "exception.h"
 #include "logging.h"
 #include "emux.h"
-#include "jorgan.creative.SoundFontManager.h"
+#include "jorgan_creative_SoundFontManager.h"
 
 typedef struct _Context {
 	char* deviceName;

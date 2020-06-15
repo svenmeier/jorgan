@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include "exception.h"
-#include "jorgan.creative.SoundFontManager.h"
+#include "jorgan_creative_SoundFontManager.h"
 #include "SFMAN.H"
 
 /** One global reference to the Sound Font Manager API */
