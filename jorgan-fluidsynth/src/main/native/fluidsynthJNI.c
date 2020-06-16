@@ -213,7 +213,7 @@ void JNICALL Java_jorgan_fluidsynth_Fluidsynth_setTuning(JNIEnv* env, jclass jcl
 
 	const char* name = (*env)->GetStringUTFChars(env, jname, NULL);
 
-	fluid_synth_create_octave_tuning(context->synth, jtuningBank, jtuningProgram, (char*)name, derivations);
+	fluid_synth_activate_octave_tuning(context->synth, jtuningBank, jtuningProgram, name, derivations, 0);
 
 	(*env)->ReleaseStringUTFChars(env, jname, name);
 }
@@ -235,7 +235,7 @@ static void initData(JNIEnv* env, ForEachData* data) {
 	data->jadd = (*env)->GetMethodID(env, class, "add", "(Ljava/lang/Object;)Z");
 }
 
-static void onOption(void* vdata, char* name, char* value) {
+static void onOption(void* vdata, const char* name, const char* value) {
 	ForEachData* data = (ForEachData*)vdata;
 
 	JNIEnv* env = data->env;

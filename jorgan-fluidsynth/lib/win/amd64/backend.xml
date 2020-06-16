@@ -1,14 +1,14 @@
 <backend>
   <name>Direct Sound (64bit)</name>
-  <description>Audio ouput with Direct Sound
-- Fluidsynth 1.1.11
+  <description>Audio output with Direct Sound
+- Fluidsynth 2.0.5
 - Glib 2.0</description>
   <version>1</version>
   <maintainer>Graham Goode (ggoode.sa@gmail.com)</maintainer>
   <library>libintl-8.dll</library>
   <library>libglib-2.0-0.dll</library>
   <library>libgthread-2.0-0.dll</library>
-  <library>libfluidsynth.dll</library>
+  <library>libfluidsynth-2.dll</library>
   <link>
 	<text>Fluidsynth</text>
 	<url>http://fluidsynth.sf.net</url>
