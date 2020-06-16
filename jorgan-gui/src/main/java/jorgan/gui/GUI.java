@@ -11,10 +11,10 @@ import java.util.logging.Logger;
 
 import javax.swing.SwingUtilities;
 
-import jorgan.UI;
-import spin.over.SpinOverEvaluator;
 import bias.Configuration;
 import bias.swing.MessageBox;
+import jorgan.UI;
+import spin.over.SpinOverEvaluator;
 
 /**
  * Graphical user interface implementation.
@@ -29,6 +29,8 @@ public class GUI implements UI {
 	private OrganFrame frame;
 
 	private boolean showAboutOnStartup = true;
+
+	private Integer scale = 1;
 
 	private LAF lookAndFeel = LAF.DEFAULT;
 
@@ -82,6 +84,11 @@ public class GUI implements UI {
 	private class SwingInit implements Runnable {
 
 		public SwingInit() {
+			if (scale > 1) {
+				System.setProperty("sun.java2d.uiScale",
+						Integer.toString(scale));
+			}
+
 			invokeOnSwing(this);
 		}
 
@@ -103,13 +110,13 @@ public class GUI implements UI {
 			Thread.setDefaultUncaughtExceptionHandler(this);
 
 			// see #handle(Throwable)
-			System.setProperty("sun.awt.exception.handler", getClass()
-					.getName());
+			System.setProperty("sun.awt.exception.handler",
+					getClass().getName());
 		}
 
 		public void run() {
-			MessageBox box = config.get("exception").read(
-					new MessageBox(MessageBox.OPTIONS_OK_CANCEL));
+			MessageBox box = config.get("exception")
+					.read(new MessageBox(MessageBox.OPTIONS_OK_CANCEL));
 			if (box.show(frame) == MessageBox.OPTION_OK) {
 				System.exit(1);
 			}

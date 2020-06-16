@@ -25,7 +25,11 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import javax.swing.JSlider;
 
+import bias.Configuration;
+import bias.swing.Category;
+import bias.util.Property;
 import jorgan.gui.FullScreen;
 import jorgan.gui.GUI;
 import jorgan.gui.LAF;
@@ -36,39 +40,40 @@ import jorgan.skin.SkinManager;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
-import bias.Configuration;
-import bias.swing.Category;
-import bias.util.Property;
 
 /**
  * {@link GUI} category.
  */
 public class GuiCategory extends JOrganCategory {
 
-	private static Configuration config = Configuration.getRoot().get(
-			GuiCategory.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(GuiCategory.class);
 
-	private Model<LAF> lookAndFeel = getModel(new Property(GUI.class,
-			"lookAndFeel"));
+	private Model<LAF> lookAndFeel = getModel(
+			new Property(GUI.class, "lookAndFeel"));
 
-	private Model<Boolean> showAboutOnStartup = getModel(new Property(
-			GUI.class, "showAboutOnStartup"));
+	private Model<Integer> scale = getModel(new Property(GUI.class, "scale"));
 
-	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
-			FullScreenAction.class, "onLoad"));
+	private Model<Boolean> showAboutOnStartup = getModel(
+			new Property(GUI.class, "showAboutOnStartup"));
 
-	private Model<Boolean> fullScreenAutoScroll = getModel(new Property(
-			FullScreen.class, "autoScroll"));
+	private Model<Boolean> fullScreenOnLoad = getModel(
+			new Property(FullScreenAction.class, "onLoad"));
 
-	private Model<Boolean> flushImagesOnClose = getModel(new Property(
-			SkinManager.class, "flushImagesOnClose"));
+	private Model<Boolean> fullScreenAutoScroll = getModel(
+			new Property(FullScreen.class, "autoScroll"));
 
-	private JComboBox lookAndFeelComboBox = new JComboBox();
+	private Model<Boolean> flushImagesOnClose = getModel(
+			new Property(SkinManager.class, "flushImagesOnClose"));
+
+	private JComboBox<LAF> lookAndFeelComboBox = new JComboBox<LAF>();
+
+	private JSlider scaleSlider = new JSlider(1, 4, 1);
 
 	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	private Model<OrganFrame.Changes> changes = getModel(new Property(
-			OrganFrame.class, "changes"));
+	private Model<OrganFrame.Changes> changes = getModel(
+			new Property(OrganFrame.class, "changes"));
 
 	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
 
@@ -100,19 +105,25 @@ public class GuiCategory extends JOrganCategory {
 		lookAndFeelComboBox.setModel(new DefaultComboBoxModel(LAF.values()));
 		column.definition(lookAndFeelComboBox);
 
-		column.definition(config.get("showAboutOnStartup").read(
-				showAboutOnStartupCheckBox));
+		column.term(config.get("scale").read(new JLabel()));
+		scaleSlider.setMajorTickSpacing(1);
+		scaleSlider.setPaintTicks(true);
+		scaleSlider.setPaintLabels(true);
+		column.definition(scaleSlider);
 
-		column.definition(config.get("flushImagesOnClose").read(
-				flushImagesOnCloseCheckBox));
+		column.definition(config.get("showAboutOnStartup")
+				.read(showAboutOnStartupCheckBox));
+
+		column.definition(config.get("flushImagesOnClose")
+				.read(flushImagesOnCloseCheckBox));
 
 		column.term(config.get("fullScreen").read(new JLabel()));
 
-		column.definition(config.get("fullScreenOnLoad").read(
-				fullScreenOnLoadCheckBox));
+		column.definition(
+				config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox));
 
-		column.definition(config.get("fullScreenAutoScroll").read(
-				fullScreenAutoScrollCheckBox));
+		column.definition(config.get("fullScreenAutoScroll")
+				.read(fullScreenAutoScrollCheckBox));
 
 		ButtonGroup changesGroup = new ButtonGroup();
 		column.term(config.get("changes").read(new JLabel()));
@@ -121,8 +132,8 @@ public class GuiCategory extends JOrganCategory {
 		changesGroup.add(changesDiscardRadioButton);
 		column.definition(changesDiscardRadioButton);
 
-		config.get("changesSaveRegistrations").read(
-				changesSaveRegistrationsRadioButton);
+		config.get("changesSaveRegistrations")
+				.read(changesSaveRegistrationsRadioButton);
 		changesGroup.add(changesSaveRegistrationsRadioButton);
 		column.definition(changesSaveRegistrationsRadioButton);
 
@@ -145,10 +156,11 @@ public class GuiCategory extends JOrganCategory {
 	@Override
 	protected void read() {
 		lookAndFeelComboBox.setSelectedItem(lookAndFeel.getValue());
+		scaleSlider.setValue(scale.getValue());
 		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
 		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
-		fullScreenAutoScrollCheckBox.setSelected(fullScreenAutoScroll
-				.getValue());
+		fullScreenAutoScrollCheckBox
+				.setSelected(fullScreenAutoScroll.getValue());
 
 		flushImagesOnCloseCheckBox.setSelected(flushImagesOnClose.getValue());
 
@@ -171,6 +183,7 @@ public class GuiCategory extends JOrganCategory {
 	@Override
 	protected void write() {
 		lookAndFeel.setValue((LAF) lookAndFeelComboBox.getSelectedItem());
+		scale.setValue(scaleSlider.getValue());
 		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
 		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 		fullScreenAutoScroll
