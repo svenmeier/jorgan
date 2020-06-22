@@ -24,6 +24,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+
 import jorgan.io.skin.ColorConverter;
 import jorgan.io.skin.FontConverter;
 import jorgan.skin.ButtonLayer;
@@ -34,9 +37,6 @@ import jorgan.skin.SliderLayer;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
-
 /**
  * A {@link jorgan.skin.Skin} streamer.
  */
@@ -45,16 +45,24 @@ public class SkinStream {
 	private XStream xstream = new XStream(new KXml2Driver());
 
 	public SkinStream() {
-		xstream.alias("skin", Skin.class);
-		xstream.alias("style", Style.class);
-		xstream.alias("image", ImageLayer.class);
-		xstream.alias("text", TextLayer.class);
-		xstream.alias("composite", CompositeLayer.class);
-		xstream.alias("button", ButtonLayer.class);
-		xstream.alias("slider", SliderLayer.class);
+		// security
+		XStream.setupDefaultSecurity(xstream);
+
+		alias("skin", Skin.class);
+		alias("style", Style.class);
+		alias("image", ImageLayer.class);
+		alias("text", TextLayer.class);
+		alias("composite", CompositeLayer.class);
+		alias("button", ButtonLayer.class);
+		alias("slider", SliderLayer.class);
 
 		xstream.registerConverter(new ColorConverter());
 		xstream.registerConverter(new FontConverter());
+	}
+
+	private void alias(String string, Class<?> clazz) {
+		xstream.alias(string, clazz);
+		xstream.allowTypes(new Class[] { clazz });
 	}
 
 	/**

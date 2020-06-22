@@ -28,15 +28,15 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+
 import jorgan.fluidsynth.disposition.Tuning;
 import jorgan.io.xstream.BooleanArrayConverter;
 import jorgan.io.xstream.DoubleArrayConverter;
 import jorgan.io.xstream.FloatArrayConverter;
 import jorgan.io.xstream.IntArrayConverter;
 import jorgan.util.IOUtils;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
 
 /**
  * A {@link Tuning}s streamer.
@@ -48,14 +48,22 @@ public class TuningsStream {
 	private XStream xstream = new XStream(new KXml2Driver());
 
 	public TuningsStream() {
-		xstream.alias("tunings", ArrayList.class);
-		xstream.alias("tuning", Tuning.class);
+		// security
+		XStream.setupDefaultSecurity(xstream);
+
+		alias("tunings", ArrayList.class);
+		alias("tuning", Tuning.class);
 
 		// primitives
 		xstream.registerConverter(new BooleanArrayConverter());
 		xstream.registerConverter(new IntArrayConverter());
 		xstream.registerConverter(new FloatArrayConverter());
 		xstream.registerConverter(new DoubleArrayConverter());
+	}
+
+	private void alias(String string, Class<?> clazz) {
+		xstream.alias(string, clazz);
+		xstream.allowTypes(new Class[] { clazz });
 	}
 
 	public List<Tuning> read(File file) throws IOException {
