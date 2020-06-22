@@ -13,6 +13,9 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+
 import jorgan.io.xstream.BooleanArrayConverter;
 import jorgan.io.xstream.DoubleArrayConverter;
 import jorgan.io.xstream.FloatArrayConverter;
@@ -24,9 +27,6 @@ import jorgan.memory.state.ReferenceState;
 import jorgan.memory.state.SwitchReferenceState;
 import jorgan.util.IOUtils;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
-
 /**
  * A {@link MemoryState} streamer.
  */
@@ -37,10 +37,13 @@ public class MemoryStateStream {
 	private XStream xstream = new XStream(new KXml2Driver());
 
 	public MemoryStateStream() {
-		xstream.alias("memory", MemoryState.class);
-		xstream.alias("combination", CombinationState.class);
-		xstream.alias("switch", SwitchReferenceState.class);
-		xstream.alias("continuous", ContinuousReferenceState.class);
+		// security
+		XStream.setupDefaultSecurity(xstream);
+
+		alias("memory", MemoryState.class);
+		alias("combination", CombinationState.class);
+		alias("switch", SwitchReferenceState.class);
+		alias("continuous", ContinuousReferenceState.class);
 
 		xstream.useAttributeFor(CombinationState.class, "id");
 		xstream.useAttributeFor(ReferenceState.class, "id");
@@ -50,6 +53,11 @@ public class MemoryStateStream {
 		xstream.registerConverter(new IntArrayConverter());
 		xstream.registerConverter(new FloatArrayConverter());
 		xstream.registerConverter(new DoubleArrayConverter());
+	}
+
+	private void alias(String string, Class<?> clazz) {
+		xstream.alias(string, clazz);
+		xstream.allowTypes(new Class[] { clazz });
 	}
 
 	public MemoryState read(File file) throws IOException {
@@ -90,9 +98,8 @@ public class MemoryStateStream {
 			throws IOException {
 		Writer writer = new OutputStreamWriter(new BufferedOutputStream(out),
 				ENCODING);
-		writer
-				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
-						+ "\" ?>\n");
+		writer.write(
+				"<?xml version=\"1.0\" encoding=\"" + ENCODING + "\" ?>\n");
 		xstream.toXML(memoryState, writer);
 	}
 }

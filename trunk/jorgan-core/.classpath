@@ -10,6 +10,6 @@
 	</classpathentry>
 	<classpathentry exported="true" kind="lib" path="lib/bias-0.5.jar" sourcepath="/bias/src/main/java"/>
 	<classpathentry exported="true" kind="lib" path="lib/kxml2-min-2.3.0.jar"/>
-	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.11.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="lib/xstream-1.4.12.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

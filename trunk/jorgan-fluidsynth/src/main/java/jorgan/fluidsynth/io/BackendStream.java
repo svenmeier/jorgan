@@ -26,12 +26,12 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+
 import jorgan.fluidsynth.windows.Backend;
 import jorgan.fluidsynth.windows.Link;
 import jorgan.util.IOUtils;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
 
 /**
  * A {@link Backend}s streamer.
@@ -43,11 +43,21 @@ public class BackendStream {
 	private XStream xstream = new XStream(new KXml2Driver());
 
 	public BackendStream() {
-		xstream.alias("backend", Backend.class);
+		// security
+		XStream.setupDefaultSecurity(xstream);
+
+		alias("backend", Backend.class);
+		alias("link", Link.class);
+
 		xstream.addImplicitCollection(Backend.class, "libraries", "library",
 				String.class);
 		xstream.addImplicitCollection(Backend.class, "links", "link",
 				Link.class);
+	}
+
+	private void alias(String string, Class<?> clazz) {
+		xstream.alias(string, clazz);
+		xstream.allowTypes(new Class[] { clazz });
 	}
 
 	public Backend read(File file) throws IOException {

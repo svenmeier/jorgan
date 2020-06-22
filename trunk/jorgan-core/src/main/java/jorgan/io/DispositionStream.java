@@ -31,6 +31,16 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.converters.ConversionException;
+import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
+import com.thoughtworks.xstream.io.AbstractDriver;
+import com.thoughtworks.xstream.io.naming.NameCoder;
+import com.thoughtworks.xstream.io.xml.KXml2Driver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
+import com.thoughtworks.xstream.mapper.MapperWrapper;
+
+import bias.Configuration;
 import jorgan.disposition.Element;
 import jorgan.disposition.Organ;
 import jorgan.io.disposition.ClassMapper;
@@ -45,16 +55,6 @@ import jorgan.io.xstream.DoubleArrayConverter;
 import jorgan.io.xstream.FloatArrayConverter;
 import jorgan.io.xstream.IntArrayConverter;
 import jorgan.util.IOUtils;
-import bias.Configuration;
-
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.converters.ConversionException;
-import com.thoughtworks.xstream.core.TreeMarshallingStrategy;
-import com.thoughtworks.xstream.io.AbstractDriver;
-import com.thoughtworks.xstream.io.naming.NameCoder;
-import com.thoughtworks.xstream.io.xml.KXml2Driver;
-import com.thoughtworks.xstream.io.xml.XmlFriendlyNameCoder;
-import com.thoughtworks.xstream.mapper.MapperWrapper;
 
 /**
  * A {@link jorgan.disposition.Organ} streamer.
@@ -63,8 +63,7 @@ public class DispositionStream {
 
 	private static final String ENCODING = "UTF-8";
 
-	private static Configuration config = Configuration.getRoot().get(
-			DispositionStream.class);
+	private static Configuration config = Configuration.getRoot().get(DispositionStream.class);
 
 	private XStream xstream = new XStream(createDriver()) {
 		@Override
@@ -76,6 +75,9 @@ public class DispositionStream {
 	public DispositionStream() {
 		TreeMarshallingStrategy strategy = new TreeMarshallingStrategy();
 		xstream.setMarshallingStrategy(strategy);
+
+		// security
+		XStream.setupDefaultSecurity(xstream);
 
 		// never write class attribute
 		xstream.aliasSystemAttribute(null, "class");
@@ -104,8 +106,7 @@ public class DispositionStream {
 
 	/**
 	 * 
-	 * @param file
-	 *            the file to read from
+	 * @param file the file to read from
 	 * @return the read organ
 	 * @throws IOException
 	 * @throws Exception
@@ -121,8 +122,7 @@ public class DispositionStream {
 	}
 
 	public Organ read(InputStream in) throws IOException, FormatException {
-		Reader reader = new InputStreamReader(new BufferedInputStream(in),
-				ENCODING);
+		Reader reader = new InputStreamReader(new BufferedInputStream(in), ENCODING);
 
 		try {
 			return (Organ) xstream.fromXML(reader);
@@ -131,8 +131,7 @@ public class DispositionStream {
 		}
 	}
 
-	private FormatException findFormatException(Throwable ex)
-			throws FormatException {
+	private FormatException findFormatException(Throwable ex) throws FormatException {
 		if (ex instanceof ConversionException) {
 			// skip conversion wrapper exception
 			Throwable cause = ex.getCause();
@@ -150,8 +149,7 @@ public class DispositionStream {
 
 	public void write(Organ organ, File file) throws IOException {
 
-		File temp = new File(file.getAbsoluteFile().getParentFile(), "."
-				+ file.getName());
+		File temp = new File(file.getAbsoluteFile().getParentFile(), "." + file.getName());
 
 		FileOutputStream output = new FileOutputStream(temp);
 		try {
@@ -171,11 +169,8 @@ public class DispositionStream {
 
 	public void write(Organ organ, OutputStream out) throws IOException {
 
-		Writer writer = new OutputStreamWriter(new BufferedOutputStream(out),
-				ENCODING);
-		writer
-				.write("<?xml version=\"1.0\" encoding=\"" + ENCODING
-						+ "\" ?>\n");
+		Writer writer = new OutputStreamWriter(new BufferedOutputStream(out), ENCODING);
+		writer.write("<?xml version=\"1.0\" encoding=\"" + ENCODING + "\" ?>\n");
 		xstream.toXML(organ, writer);
 	}
 
