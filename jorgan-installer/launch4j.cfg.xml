@@ -14,9 +14,9 @@
   <manifest></manifest>
   <icon>.\src\jorgan.ico</icon>
   <jre>
-    <path></path>
-    <minVersion>1.7.0</minVersion>
-    <maxVersion></maxVersion>
+    <path>%JAVA_HOME%</path>
+    <bundledJreAsFallback>true</bundledJreAsFallback>
+    <minVersion>11</minVersion>
     <jdkPreference>preferJre</jdkPreference>
   </jre>
 </launch4jConfig>
