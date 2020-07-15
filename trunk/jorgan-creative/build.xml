@@ -104,7 +104,14 @@
       </condition>
     </fail>
 
-  	<echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev' (configured!)" />  	
+    <echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev'" />  	
+    <echo message="      sudo apt-get install libasound2-dev" /> 
+    <echo message="Note: requires package 'awesfx-dev'" /> 
+    <echo message="      wget ftp://ftp.suse.com/pub/people/tiwai/awesfx/awesfx-0.5.1c.tar.bz2" /> 
+    <echo message="      tar -xvjf awesfx-0.5.1c.tar.bz2" /> 
+    <echo message="      cd awesfx-0.5.1c" /> 
+    <echo message="      ./configure" /> 
+  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
