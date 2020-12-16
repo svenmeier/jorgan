@@ -39,12 +39,5 @@
       </manifest>
       <fileset dir="./target/classes" />
   	</jar>
-
-  	<mkdir dir="./target/marshal/dispositions" />
-  	<copy todir="./target/marshal/dispositions">
-      <fileset dir="./src/main/dispositions">
-  		<include name="*"/>
-      </fileset>
-    </copy> 		
   </target>
 </project>
