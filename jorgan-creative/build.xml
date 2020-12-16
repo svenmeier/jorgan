@@ -93,7 +93,7 @@
     </exec>
   </target>
 
-  <target name="native-unix" depends="native-common" if="isUnix">
+  <target name="native-unix" depends="native-common, awesfx" if="isUnix">
     <mkdir dir="./target/native" />
 
     <fail message="unix.jdk not found">
@@ -104,44 +104,36 @@
       </condition>
     </fail>
 
-    <echo message="Note: requires package 'libasound2-dev' and 'awesfx-dev'" />  	
-    <echo message="      sudo apt-get install libasound2-dev" /> 
-    <echo message="Note: requires package 'awesfx-dev'" /> 
-    <echo message="      wget ftp://ftp.suse.com/pub/people/tiwai/awesfx/awesfx-0.5.1c.tar.bz2" /> 
-    <echo message="      tar -xvjf awesfx-0.5.1c.tar.bz2" /> 
-    <echo message="      cd awesfx-0.5.1c" /> 
-    <echo message="      ./configure" /> 
-  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-I${unix.jdk}/include" />
       <arg value="-I${unix.jdk}/include/linux" />
-      <arg value="-I${unix.awesfx}/include" />
+      <arg value="-I./target/awesfx/include" />
       <arg value="-I../jorgan-jni/src/main/native" />
       <arg value="-I./src/main/native/linux" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
       <arg value="-fPIC" />
       <arg value="-shared" />
-      <arg line="${unix.awesfx}/awelib/awe_parm.c" />
-      <arg line="${unix.awesfx}/awelib/bool.c" />
-      <arg line="${unix.awesfx}/awelib/cmpopen.c" />
-      <arg line="${unix.awesfx}/awelib/dummy.c" />
-      <arg line="${unix.awesfx}/awelib/dynload.c" />
-      <arg line="${unix.awesfx}/awelib/fskip.c" />
-      <arg line="${unix.awesfx}/awelib/gentxt.c" />
-      <arg line="${unix.awesfx}/awelib/loadbank.c" />
-      <arg line="${unix.awesfx}/awelib/loadtext.c" />
-      <arg line="${unix.awesfx}/awelib/malloc.c" />
-      <arg line="${unix.awesfx}/awelib/optfile.c" />
-      <arg line="${unix.awesfx}/awelib/parsesf.c" />
-      <arg line="${unix.awesfx}/awelib/path.c" />
-      <arg line="${unix.awesfx}/awelib/sample.c" />
-      <arg line="${unix.awesfx}/awelib/sbkconv.c" />
-      <arg line="${unix.awesfx}/awelib/sffile.c" />
-      <arg line="${unix.awesfx}/awelib/sfitem.c" />
-      <arg line="${unix.awesfx}/awelib/sfopts.c" />
-      <arg line="${unix.awesfx}/awelib/sfout.c" />
-      <arg line="${unix.awesfx}/awelib/slist.c" />
+      <arg line="./target/awesfx/awelib/awe_parm.c" />
+      <arg line="./target/awesfx/awelib/bool.c" />
+      <arg line="./target/awesfx/awelib/cmpopen.c" />
+      <arg line="./target/awesfx/awelib/dummy.c" />
+      <arg line="./target/awesfx/awelib/dynload.c" />
+      <arg line="./target/awesfx/awelib/fskip.c" />
+      <arg line="./target/awesfx/awelib/gentxt.c" />
+      <arg line="./target/awesfx/awelib/loadbank.c" />
+      <arg line="./target/awesfx/awelib/loadtext.c" />
+      <arg line="./target/awesfx/awelib/malloc.c" />
+      <arg line="./target/awesfx/awelib/optfile.c" />
+      <arg line="./target/awesfx/awelib/parsesf.c" />
+      <arg line="./target/awesfx/awelib/path.c" />
+      <arg line="./target/awesfx/awelib/sample.c" />
+      <arg line="./target/awesfx/awelib/sbkconv.c" />
+      <arg line="./target/awesfx/awelib/sffile.c" />
+      <arg line="./target/awesfx/awelib/sfitem.c" />
+      <arg line="./target/awesfx/awelib/sfopts.c" />
+      <arg line="./target/awesfx/awelib/sfout.c" />
+      <arg line="./target/awesfx/awelib/slist.c" />
       <arg line="../jorgan-jni/src/main/native/exception.c" />
       <arg line="../jorgan-jni/src/main/native/logging.c" />
       <arg line="./src/main/native/linux/emux.c" />
@@ -149,6 +141,15 @@
       <arg value="-Wl,-lasound" />
       <arg line="-o ./target/native/libcreativeJNI.so" />
     </exec>
+  </target>
+
+  <target name="awesfx">
+    <echo message="Note: requires package 'libasound2-dev'" />  	
+
+    <mkdir dir="./target/awesfx"/> 
+    <exec dir="./target" command="wget ftp://ftp.suse.com/pub/people/tiwai/awesfx/awesfx-0.5.1c.tar.bz2"/>
+    <exec dir="./target" command="tar -xvjf awesfx-0.5.1c.tar.bz2 -C awesfx --strip-components 1"/>
+    <exec dir="./target/awesfx" command="./configure"/>
   </target>
 
   <target name="native-mac" depends="native-common" if="isMac">
