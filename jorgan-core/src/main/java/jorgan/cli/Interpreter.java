@@ -28,7 +28,6 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.StringTokenizer;
 
 /**
  * An command line interpreter.
@@ -82,10 +81,8 @@ public class Interpreter {
 	/**
 	 * Create a new interpreter for commands.
 	 * 
-	 * @param commands
-	 *            the command to use
-	 * @param unknown
-	 *            the command to use in case of an unknown command
+	 * @param commands the command to use
+	 * @param unknown  the command to use in case of an unknown command
 	 */
 	public Interpreter(List<Command> commands, Command unknown) {
 
@@ -96,8 +93,7 @@ public class Interpreter {
 	/**
 	 * Set the prompt to use.
 	 * 
-	 * @param prompt
-	 *            the prompt to use
+	 * @param prompt the prompt to use
 	 */
 	public void setPrompt(String prompt) {
 		this.prompt = prompt;
@@ -106,12 +102,10 @@ public class Interpreter {
 	/**
 	 * Set the encoding to use.
 	 * 
-	 * @param encoding
-	 *            the encoding to use
+	 * @param encoding the encoding to use
 	 * @throws UnsupportedEncodingException
 	 */
-	public void setEncoding(String encoding)
-			throws UnsupportedEncodingException {
+	public void setEncoding(String encoding) throws UnsupportedEncodingException {
 		reader = new BufferedReader(new InputStreamReader(System.in, encoding));
 		writer = new PrintWriter(new OutputStreamWriter(System.out, encoding));
 
@@ -128,9 +122,9 @@ public class Interpreter {
 			Set<String> keys = Charset.availableCharsets().keySet();
 
 			String[] encodings = keys.toArray(new String[keys.size()]);
-			
+
 			Arrays.sort(encodings);
-			
+
 			Interpreter.encodings = encodings;
 		}
 		return encodings;
@@ -152,15 +146,20 @@ public class Interpreter {
 		try {
 			while (!stop) {
 				write(prompt);
+				String command;
+				String param = null;
+
 				String line = readLine();
-				StringTokenizer tokens = new StringTokenizer(line, " ");
-				if (tokens.hasMoreTokens()) {
-					Command command = getCommand(tokens.nextToken());
-					String param = null;
-					if (tokens.hasMoreTokens()) {
-						param = tokens.nextToken();
-					}
-					command.execute(param);
+				int space = line.indexOf(' ');
+				if (space == -1) {
+					command = line;
+				} else {
+					command = line.substring(0, space);
+					param = line.substring(space + 1);
+				}
+
+				if (!command.isBlank()) {
+					getCommand(command).execute(param);
 				}
 			}
 		} catch (IOException ex) {
@@ -191,8 +190,7 @@ public class Interpreter {
 	/**
 	 * Write text with new line.
 	 * 
-	 * @param text
-	 *            text to print
+	 * @param text text to print
 	 */
 	public void writeln(String text) {
 		write(text);
@@ -202,8 +200,7 @@ public class Interpreter {
 	/**
 	 * Write text.
 	 * 
-	 * @param text
-	 *            text to print
+	 * @param text text to print
 	 */
 	public void write(String text) {
 		if (writer == null) {
@@ -214,11 +211,10 @@ public class Interpreter {
 	}
 
 	/**
-	 * Get the command for the given name. If no command for the name can be
-	 * looked up, the 'unkown' command will be returned.
+	 * Get the command for the given name. If no command for the name can be looked
+	 * up, the 'unkown' command will be returned.
 	 * 
-	 * @param name
-	 *            name to get command for
+	 * @param name name to get command for
 	 * @return the command
 	 */
 	public Command getCommand(String name) {
@@ -242,8 +238,7 @@ public class Interpreter {
 	/**
 	 * Get the command for the given index.
 	 * 
-	 * @param index
-	 *            the index to get the command for
+	 * @param index the index to get the command for
 	 * @return the command
 	 */
 	public Command getCommand(int index) {
