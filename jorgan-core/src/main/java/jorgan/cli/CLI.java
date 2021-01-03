@@ -30,6 +30,8 @@ import java.util.logging.Logger;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.ShortMessage;
 
+import bias.Configuration;
+import bias.util.MessageBuilder;
 import jorgan.UI;
 import jorgan.Version;
 import jorgan.disposition.Element;
@@ -46,8 +48,6 @@ import jorgan.problem.Severity;
 import jorgan.session.History;
 import jorgan.session.OrganSession;
 import jorgan.session.SessionAware;
-import bias.Configuration;
-import bias.util.MessageBuilder;
 
 /**
  * Command line interface implementation.
@@ -56,8 +56,7 @@ public class CLI implements UI, SessionAware {
 
 	private static final Logger log = Logger.getLogger(CLI.class.getName());
 
-	private static Configuration config = Configuration.getRoot()
-			.get(CLI.class);
+	private static Configuration config = Configuration.getRoot().get(CLI.class);
 
 	private OrganSession session;
 
@@ -90,8 +89,7 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * Start the user interaction.
 	 * 
-	 * @param file
-	 *            optional file that contains an organ
+	 * @param file optional file that contains an organ
 	 */
 	public void display(File file) {
 		Thread.setDefaultUncaughtExceptionHandler(new Abort());
@@ -118,8 +116,7 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * Open an organ.
 	 * 
-	 * @param file
-	 *            file that contains the organ
+	 * @param file file that contains the organ
 	 */
 	public void openOrgan(File file) {
 		try {
@@ -127,8 +124,7 @@ public class CLI implements UI, SessionAware {
 
 			writeMessage("openConfirm", file);
 		} catch (ExtensionException ex) {
-			writeMessage("openExtensionException", file.getName(),
-					ex.getExtension());
+			writeMessage("openExtensionException", file.getName(), ex.getExtension());
 			return;
 		} catch (FormatException ex) {
 			log.log(Level.INFO, ex.getClass().getSimpleName(), ex);
@@ -157,8 +153,7 @@ public class CLI implements UI, SessionAware {
 		if (session != null) {
 			this.session.lookup(ElementProblems.class).addListener(listener);
 
-			for (Problem problem : session.lookup(ElementProblems.class)
-					.getProblems()) {
+			for (Problem problem : session.lookup(ElementProblems.class).getProblems()) {
 				listener.problemAdded(problem);
 			}
 		}
@@ -180,10 +175,8 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * Show a message.
 	 * 
-	 * @param key
-	 *            key of message to show
-	 * @param args
-	 *            arguments to message
+	 * @param key  key of message to show
+	 * @param args arguments to message
 	 */
 	protected void writeMessage(String key, Object... args) {
 
@@ -329,15 +322,23 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * The command to show a Midi monitor.
 	 */
-	private class MonitorCommand extends AbstractCommand {
+	private class MonitorCommand extends AbstractCommand implements PlayListener {
+
+		private boolean in = true;
+		private boolean out = true;
+
 		@Override
 		public String getKey() {
 			return "monitor";
 		}
 
 		public void execute(String param) throws IOException {
-			if (param != null) {
-				writeMessage("noParameter");
+			if ("in".equalsIgnoreCase(param)) {
+				out = false;
+			} else if ("out".equalsIgnoreCase(param)) {
+				in = false;
+			} else if (param != null) {
+				writeMessage("monitorParameter");
 				return;
 			}
 
@@ -346,51 +347,54 @@ public class CLI implements UI, SessionAware {
 				return;
 			}
 
-			PlayListener listener = new PlayListener() {
-				@Override
-				public void sent(Element element, MidiMessage message) {
-					message("monitorSent", message);
-				}
-
-				@Override
-				public void received(Element element, MidiMessage message) {
-					message("monitorReceived", message);
-				}
-
-				private void message(String key, MidiMessage message) {
-					String status;
-					String channel;
-					String data1;
-					String data2;
-
-					if (message instanceof ShortMessage) {
-						ShortMessage shortMessage = (ShortMessage) message;
-
-						if (MessageUtils.isChannelStatus(message.getStatus())) {
-							status = String.valueOf(message.getStatus() & 0xf0);
-							channel = String.valueOf(shortMessage.getChannel());
-						} else {
-							status = String.valueOf(message.getStatus());
-							channel = "-";
-						}
-
-						data1 = String.valueOf(shortMessage.getData1());
-						data2 = String.valueOf(shortMessage.getData2());
-					} else {
-						status = String.valueOf(message.getStatus());
-						data1 = "-";
-						data2 = "-";
-						channel = "-";
-					}
-
-					writeMessage(key, status, channel, data1, data2);
-				}
-			};
-			session.lookup(OrganPlay.class).addPlayerListener(listener);
+			session.lookup(OrganPlay.class).addPlayerListener(this);
 			writeMessage("monitorStart");
 			interpreter.readLine();
 			writeMessage("monitorFinish");
-			session.lookup(OrganPlay.class).removePlayerListener(listener);
+			session.lookup(OrganPlay.class).removePlayerListener(this);
+		}
+
+		@Override
+		public void sent(Element element, MidiMessage message) {
+			if (out) {
+				message("monitorSent", message);
+			}
+		}
+
+		@Override
+		public void received(Element element, MidiMessage message) {
+			if (in) {
+				message("monitorReceived", message);
+			}
+		}
+
+		private void message(String key, MidiMessage message) {
+			String status;
+			String channel;
+			String data1;
+			String data2;
+
+			if (message instanceof ShortMessage) {
+				ShortMessage shortMessage = (ShortMessage) message;
+
+				if (MessageUtils.isChannelStatus(message.getStatus())) {
+					status = String.valueOf(message.getStatus() & 0xf0);
+					channel = String.valueOf(shortMessage.getChannel());
+				} else {
+					status = String.valueOf(message.getStatus());
+					channel = "-";
+				}
+
+				data1 = String.valueOf(shortMessage.getData1());
+				data2 = String.valueOf(shortMessage.getData2());
+			} else {
+				status = String.valueOf(message.getStatus());
+				data1 = "-";
+				data2 = "-";
+				channel = "-";
+			}
+
+			writeMessage(key, status, channel, data1, data2);
 		}
 	}
 
@@ -415,8 +419,7 @@ public class CLI implements UI, SessionAware {
 
 				for (int r = 0; r < recents.size(); r++) {
 					File recent = recents.get(r);
-					writeMessage("recentElement", new Object[] {
-							new Integer(r + 1), recent });
+					writeMessage("recentElement", new Object[] { new Integer(r + 1), recent });
 				}
 			} else {
 				File file;
@@ -536,8 +539,7 @@ public class CLI implements UI, SessionAware {
 			} else {
 				key = "warning";
 			}
-			writeMessage(key, Elements.getDisplayName(problem.getElement()),
-					problem.getMessage());
+			writeMessage(key, Elements.getDisplayName(problem.getElement()), problem.getMessage());
 		}
 
 		public void problemRemoved(Problem problem) {
@@ -547,10 +549,8 @@ public class CLI implements UI, SessionAware {
 	/**
 	 * Utility method to pad a string with whitespace to the given length.
 	 * 
-	 * @param text
-	 *            text to pad with whitespace
-	 * @param length
-	 *            length to pad to
+	 * @param text   text to pad with whitespace
+	 * @param length length to pad to
 	 * @return padded string
 	 */
 	private static String pad(String text, int length) {
