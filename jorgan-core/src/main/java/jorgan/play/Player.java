@@ -24,6 +24,8 @@ import java.io.IOException;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiMessage;
 
+import bias.Configuration;
+import bias.util.MessageBuilder;
 import jorgan.disposition.Connector;
 import jorgan.disposition.Element;
 import jorgan.disposition.Input.InputMessage;
@@ -33,8 +35,6 @@ import jorgan.midi.mpl.Context;
 import jorgan.midi.mpl.ContextImpl;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
-import bias.Configuration;
-import bias.util.MessageBuilder;
 
 /**
  * Abstract base class for all players.
@@ -146,18 +146,15 @@ public abstract class Player<E extends Element> {
 	protected void closeImpl() {
 	}
 
-	protected void addProblem(Severity severity, Object location, String key,
-			Object... args) {
+	protected void addProblem(Severity severity, Object location, String key, Object... args) {
 
 		String message = createMessage(key, args);
 
-		getOrganPlay().addProblem(
-				new Problem(severity, element, location, message));
+		getOrganPlay().addProblem(new Problem(severity, element, location, message));
 	}
 
 	protected void removeProblem(Severity severity, Object location) {
-		getOrganPlay().removeProblem(
-				new Problem(severity, element, location, null));
+		getOrganPlay().removeProblem(new Problem(severity, element, location, null));
 	}
 
 	protected String createMessage(String key, Object[] args) {
@@ -182,25 +179,29 @@ public abstract class Player<E extends Element> {
 	public void update() {
 	}
 
-	public void onReceived(byte[] datas) {
+	public boolean onReceived(byte[] datas) {
+		boolean processed = false;
+
 		for (InputMessage message : element.getMessages(InputMessage.class)) {
 			try {
 				if (inputContext.process(message, datas, false)) {
+					processed = true;
+
 					onInput(message, inputContext);
 				}
 			} catch (InvalidMidiDataException e) {
 				onInvalidMidiData(message, datas);
 			}
 		}
+
+		return processed;
 	}
 
 	/**
 	 * Read input from the given message - default implementation does nothing.
 	 * 
-	 * @param message
-	 *            message
-	 * @param context
-	 *            the message context
+	 * @param message message
+	 * @param context the message context
 	 */
 	protected void onInput(InputMessage message, Context context) {
 
@@ -238,8 +239,7 @@ public abstract class Player<E extends Element> {
 			builder.append(data & 0xff);
 		}
 
-		addProblem(Severity.ERROR, message, "messageInvalid",
-				builder.toString());
+		addProblem(Severity.ERROR, message, "messageInvalid", builder.toString());
 	}
 
 	/**
@@ -250,11 +250,9 @@ public abstract class Player<E extends Element> {
 	 * 
 	 * @see {@link ConnectorPlayer#send(byte[])}
 	 */
-	protected void onOutput(byte[] datas, Context context)
-			throws InvalidMidiDataException {
+	protected void onOutput(byte[] datas, Context context) throws InvalidMidiDataException {
 
-		for (Connector connector : organPlay.getOrgan().getReferrer(element,
-				Connector.class)) {
+		for (Connector connector : organPlay.getOrgan().getReferrer(element, Connector.class)) {
 			ConnectorPlayer<?> player = (ConnectorPlayer<?>) getPlayer(connector);
 			if (player != null) {
 				player.send(datas);
@@ -276,8 +274,7 @@ public abstract class Player<E extends Element> {
 
 	public class PlayerContext extends ContextImpl {
 
-		public boolean process(Message message, byte[] datas, boolean write)
-				throws InvalidMidiDataException {
+		public boolean process(Message message, byte[] datas, boolean write) throws InvalidMidiDataException {
 			if (message.getLength() != datas.length) {
 				return false;
 			}

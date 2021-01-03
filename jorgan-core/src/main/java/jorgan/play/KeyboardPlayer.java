@@ -24,8 +24,8 @@ import javax.sound.midi.Receiver;
 import javax.sound.midi.Transmitter;
 
 import jorgan.disposition.Element;
-import jorgan.disposition.Keyboard;
 import jorgan.disposition.Input.InputMessage;
+import jorgan.disposition.Keyboard;
 import jorgan.disposition.Keyboard.PressKey;
 import jorgan.disposition.Keyboard.ReleaseKey;
 import jorgan.midi.MessageUtils;
@@ -47,8 +47,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	/**
 	 * Create player for the given keyboard.
 	 * 
-	 * @param keyboard
-	 *            keyboard to play
+	 * @param keyboard keyboard to play
 	 */
 	public KeyboardPlayer(Keyboard keyboard) {
 		super(keyboard);
@@ -61,8 +60,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		Keyboard keyboard = getElement();
 
 		if (keyboard.getInput() == null) {
-			addProblem(Severity.WARNING, "input", "noDevice", keyboard
-					.getInput());
+			addProblem(Severity.WARNING, "input", "noDevice", keyboard.getInput());
 		} else {
 			removeProblem(Severity.WARNING, "input");
 		}
@@ -75,8 +73,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		removeProblem(Severity.ERROR, "input");
 		if (keyboard.getInput() != null) {
 			try {
-				transmitter = getOrganPlay().createTransmitter(
-						keyboard.getInput());
+				transmitter = getOrganPlay().createTransmitter(keyboard.getInput());
 				transmitter.setReceiver(new Receiver() {
 					public void close() {
 					}
@@ -86,8 +83,7 @@ public class KeyboardPlayer extends Player<Keyboard> {
 					}
 				});
 			} catch (MidiUnavailableException ex) {
-				addProblem(Severity.ERROR, "input", "deviceUnavailable",
-						keyboard.getInput());
+				addProblem(Severity.ERROR, "input", "deviceUnavailable", keyboard.getInput());
 			}
 		}
 	}
@@ -170,11 +166,12 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	protected void receive(MidiMessage midiMessage) {
-		if (getOrganPlay() != null) {
-			getOrganPlay().fireReceived(this.getElement(), midiMessage);
+		if (onReceived(MessageUtils.getDatas(midiMessage))) {
+			// fir only when actually processed
+			if (getOrganPlay() != null) {
+				getOrganPlay().fireReceived(this.getElement(), midiMessage);
+			}
 		}
-
-		onReceived(MessageUtils.getDatas(midiMessage));
 	}
 
 	public void panic() {

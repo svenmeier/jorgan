@@ -37,10 +37,10 @@ public class ConnectionSwitchPlayer extends SwitchPlayer<ConnectionSwitch> {
 	}
 
 	@Override
-	public void onReceived(byte[] datas) {
+	public boolean onReceived(byte[] datas) {
 		onInput = false;
 
-		super.onReceived(datas);
+		boolean processed = super.onReceived(datas);
 
 		if (onInput == false && getElement().isEngaged()) {
 			for (Element element : getElement().getReferenced(Element.class)) {
@@ -51,6 +51,8 @@ public class ConnectionSwitchPlayer extends SwitchPlayer<ConnectionSwitch> {
 				}
 			}
 		}
+
+		return processed;
 	}
 
 	@Override
