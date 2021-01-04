@@ -3,6 +3,7 @@ package jorgan.disposition;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -25,8 +26,7 @@ public class Elements {
 	 * Get the description name of the given element. Falls back to
 	 * {@link #getDisplayName(Element)} if no name is given in the description.
 	 * 
-	 * @param element
-	 *            element to get description name for
+	 * @param element element to get description name for
 	 * @return the description name
 	 */
 	public static String getDescriptionName(Element element) {
@@ -38,18 +38,22 @@ public class Elements {
 		return getDisplayName(element);
 	}
 
+	private static Pattern repeatedWhitespace = Pattern.compile(" +");
+
 	/**
 	 * Get the display name of the given element. Falls back to
 	 * {@link #getDisplayName(Class))} if {@link Element#getName()} is empty.
 	 * 
-	 * @param element
-	 *            element to get display name for
+	 * @param element element to get display name for
 	 * @return the display name
 	 */
 	public static String getDisplayName(Element element) {
 
-		String name = element.getName();
-		if (name.trim().isEmpty()) {
+		String name = element.getName().trim();
+
+		name = repeatedWhitespace.matcher(name).replaceAll(" ");
+
+		if (name.isEmpty()) {
 			name = getDisplayName(element.getClass());
 		}
 
@@ -59,8 +63,7 @@ public class Elements {
 	/**
 	 * Get the display name of the given class.
 	 * 
-	 * @param clazz
-	 *            class to get display name for
+	 * @param clazz class to get display name for
 	 * @return the display name
 	 */
 	public static String getDisplayName(Class<?> clazz) {
@@ -70,10 +73,8 @@ public class Elements {
 	/**
 	 * Get the display name of the given property of a class.
 	 * 
-	 * @param clazz
-	 *            class to get display name for
-	 * @param property
-	 *            property
+	 * @param clazz    class to get display name for
+	 * @param property property
 	 * @return the display name
 	 */
 	public static String getDisplayName(Class<?> clazz, String property) {
@@ -84,8 +85,7 @@ public class Elements {
 		String completeKey = clazz.getName() + "#" + key;
 		String message = messages.get(completeKey);
 		if (message == null) {
-			message = config.get(clazz).get(key).read(new MessageBuilder())
-					.build();
+			message = config.get(clazz).get(key).read(new MessageBuilder()).build();
 			messages.put(completeKey, message);
 		}
 		return message;
@@ -110,8 +110,7 @@ public class Elements {
 
 	private static Icon createIcon(Class<?> clazz) {
 		while (clazz != null) {
-			URL url = clazz
-					.getResource("img/" + clazz.getSimpleName() + ".gif");
+			URL url = clazz.getResource("img/" + clazz.getSimpleName() + ".gif");
 			if (url != null) {
 				return new ImageIcon(url);
 			}

@@ -29,25 +29,24 @@ import java.util.Map;
 
 import javax.swing.JComponent;
 
+import bias.Configuration;
 import jorgan.disposition.Displayable;
 import jorgan.disposition.Element;
-import jorgan.disposition.Elements;
 import jorgan.gui.ConsolePanel;
 import jorgan.skin.ButtonLayer;
 import jorgan.skin.Layer;
+import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.Style;
 import jorgan.skin.TextLayer;
-import jorgan.skin.Layer.ViewBinding;
 import jorgan.skin.TextLayer.Binding;
-import bias.Configuration;
 
 /**
  * Base class of all views representing a view on one element of an organ.
  */
 public class View<E extends Displayable> {
 
-	private static Configuration config = Configuration.getRoot().get(
-			View.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(View.class);
 
 	/**
 	 * The key of the {@link Element#getName()} text for {@link TextLayer}s.
@@ -206,7 +205,7 @@ public class View<E extends Displayable> {
 			}
 
 			public String getText() {
-				return Elements.getDisplayName(getElement());
+				return getElement().getName();
 			}
 		});
 
