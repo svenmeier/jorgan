@@ -184,7 +184,19 @@ public class Interpreter {
 		if (reader == null) {
 			reader = new BufferedReader(new InputStreamReader(System.in));
 		}
-		return reader.readLine();
+
+		while (true) {
+			String line = reader.readLine();
+			if (line != null) {
+				return line;
+			}
+
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			}
+		}
 	}
 
 	/**
