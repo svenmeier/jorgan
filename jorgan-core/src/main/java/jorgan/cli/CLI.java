@@ -38,6 +38,8 @@ import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
+import jorgan.midi.DevicePool;
+import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
 import jorgan.play.OrganPlay;
 import jorgan.play.event.PlayListener;
@@ -80,6 +82,7 @@ public class CLI implements UI, SessionAware {
 		commands.add(new RecentCommand());
 		commands.add(new SaveCommand());
 		commands.add(new MonitorCommand());
+		commands.add(new DevicesCommand());
 		commands.add(new ExitCommand());
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
@@ -320,12 +323,39 @@ public class CLI implements UI, SessionAware {
 	}
 
 	/**
+	 * The command to show midi devices.
+	 */
+	private class DevicesCommand extends AbstractCommand {
+
+		private Direction direction;
+
+		@Override
+		public String getKey() {
+			return "devices";
+		}
+
+		public void execute(String param) {
+			if ("in".equalsIgnoreCase(param)) {
+				direction = Direction.IN;
+			} else if ("out".equalsIgnoreCase(param)) {
+				direction = Direction.OUT;
+			} else if (param != null) {
+				writeMessage("devicesParameter");
+				return;
+			}
+
+			for (String name : DevicePool.instance().getMidiDeviceNames(direction)) {
+				writeMessage("devicesDevice", name);
+			}
+		}
+	}
+
+	/**
 	 * The command to show a Midi monitor.
 	 */
 	private class MonitorCommand extends AbstractCommand implements PlayListener {
 
-		private boolean in = true;
-		private boolean out = true;
+		private Direction direction;
 
 		@Override
 		public String getKey() {
@@ -334,9 +364,9 @@ public class CLI implements UI, SessionAware {
 
 		public void execute(String param) throws IOException {
 			if ("in".equalsIgnoreCase(param)) {
-				out = false;
+				direction = Direction.IN;
 			} else if ("out".equalsIgnoreCase(param)) {
-				in = false;
+				direction = Direction.OUT;
 			} else if (param != null) {
 				writeMessage("monitorParameter");
 				return;
@@ -356,14 +386,14 @@ public class CLI implements UI, SessionAware {
 
 		@Override
 		public void sent(Element element, MidiMessage message) {
-			if (out) {
+			if (direction == null || direction == Direction.OUT) {
 				message("monitorSent", message);
 			}
 		}
 
 		@Override
 		public void received(Element element, MidiMessage message) {
-			if (in) {
+			if (direction == null || direction == Direction.IN) {
 				message("monitorReceived", message);
 			}
 		}
