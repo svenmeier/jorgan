@@ -18,9 +18,13 @@
  */
 package jorgan.executor;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.logging.Logger;
 
+import bias.Configuration;
 import jorgan.disposition.Element;
 import jorgan.disposition.event.OrganAdapter;
 import jorgan.executor.disposition.Executor;
@@ -28,18 +32,22 @@ import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
 import jorgan.problem.Severity;
 import jorgan.session.OrganSession;
-import bias.Configuration;
 
 public class Executions extends OrganAdapter {
 
-	private static final Configuration config = Configuration.getRoot().get(
-			Executions.class);
+	private static final Configuration config = Configuration.getRoot()
+			.get(Executions.class);
+
+	private static final Logger log = Logger
+			.getLogger(Executions.class.getName());
 
 	private OrganSession session;
 
 	private ElementProblems problems;
 
 	private boolean allowed = false;
+
+	private boolean poll = true;
 
 	public Executions(OrganSession session) {
 		config.read(this);
@@ -82,8 +90,14 @@ public class Executions extends OrganAdapter {
 			String command = executor.getCommand();
 			if (command != null) {
 				File file = session.resolve(command);
-				Runtime.getRuntime().exec(file.getCanonicalPath(), null,
+
+				Process process = Runtime.getRuntime().exec(
+						file.getCanonicalPath(), null,
 						session.getFile().getParentFile().getCanonicalFile());
+
+				if (poll) {
+					new Poller(process);
+				}
 			}
 		} catch (IOException e) {
 			addProblem(executor, e);
@@ -96,8 +110,8 @@ public class Executions extends OrganAdapter {
 	}
 
 	private void removeProblem(Executor executor) {
-		problems.removeProblem(new Problem(Severity.ERROR, executor, "command",
-				null));
+		problems.removeProblem(
+				new Problem(Severity.ERROR, executor, "command", null));
 	}
 
 	private String getMessage(IOException e) {
@@ -109,5 +123,49 @@ public class Executions extends OrganAdapter {
 		String message = e.getMessage();
 		message = message.replaceFirst(".*Exception:?\\s*", "");
 		return message;
+	}
+
+	public static class Poller implements Runnable {
+
+		private Process process;
+
+		private BufferedReader reader;
+
+		public Poller(Process process) {
+			this.process = process;
+
+			this.reader = new BufferedReader(
+					new InputStreamReader(process.getInputStream()));
+
+			new Thread(this).start();
+		}
+
+		@Override
+		public void run() {
+			try {
+				while (process.isAlive()) {
+					read();
+					Thread.sleep(500);
+				}
+
+				read();
+
+				log("finished");
+			} catch (Exception ex) {
+				log(ex.getMessage());
+			}
+		}
+
+		private void read() throws IOException {
+			String line = reader.readLine();
+			if (line == null) {
+				return;
+			}
+			log(line);
+		}
+
+		private void log(String text) {
+			log.info(String.format("execution %s: %s", process.pid(), text));
+		}
 	}
 }

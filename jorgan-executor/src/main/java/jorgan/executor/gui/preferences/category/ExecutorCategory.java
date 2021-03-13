@@ -22,28 +22,33 @@ import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
 
+import bias.Configuration;
+import bias.swing.Category;
+import bias.util.Property;
 import jorgan.executor.Executions;
 import jorgan.gui.preferences.category.AppCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import jorgan.swing.text.MultiLineLabel;
-import bias.Configuration;
-import bias.swing.Category;
-import bias.util.Property;
 
 /**
  * {@link jorgan.App} category.
  */
 public class ExecutorCategory extends JOrganCategory {
 
-	private static Configuration config = Configuration.getRoot().get(
-			ExecutorCategory.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(ExecutorCategory.class);
 
-	private Model<Boolean> executionsAllowed = getModel(new Property(
-			Executions.class, "allowed"));
+	private Model<Boolean> allowed = getModel(
+			new Property(Executions.class, "allowed"));
+
+	private Model<Boolean> poll = getModel(
+			new Property(Executions.class, "poll"));
 
 	private JCheckBox executionsAllowedCheckBox = new JCheckBox();
+
+	private JCheckBox pollOutputCheckBox = new JCheckBox();
 
 	public ExecutorCategory() {
 		config.read(this);
@@ -64,19 +69,23 @@ public class ExecutorCategory extends JOrganCategory {
 
 		column.box(config.get("description").read(new MultiLineLabel()));
 
-		column.definition(config.get("allowExecute").read(
-				executionsAllowedCheckBox));
+		column.definition(
+				config.get("allowExecute").read(executionsAllowedCheckBox));
+
+		column.definition(config.get("pollOutput").read(pollOutputCheckBox));
 
 		return panel;
 	}
 
 	@Override
 	protected void read() {
-		executionsAllowedCheckBox.setSelected(executionsAllowed.getValue());
+		executionsAllowedCheckBox.setSelected(allowed.getValue());
+		pollOutputCheckBox.setSelected(poll.getValue());
 	}
 
 	@Override
 	protected void write() {
-		executionsAllowed.setValue(executionsAllowedCheckBox.isSelected());
+		allowed.setValue(executionsAllowedCheckBox.isSelected());
+		poll.setValue(pollOutputCheckBox.isSelected());
 	}
 }
