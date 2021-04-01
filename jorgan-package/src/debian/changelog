@@ -1,10 +1,11 @@
-jorgan (4.0.Beta1) beta;
+jorgan (4.0.Beta2) beta;
 
   * fluidsnyht: update to fluidsynth 2
+  * executor: log process output
 
- -- Sven Meier <sven@meiers.net>  Wed, 15 Jul 2020 23:00:00 +0200
+ -- Sven Meier <sven@meiers.net>  Wed, 31 Apr 2021 23:00:00 +0200
 
-jorgan (3.21) beta;
+jorgan (3.21) stable;
 
   * core: new MLP command 'round'
   * gui: allow sorting by type or name when selecting elements
