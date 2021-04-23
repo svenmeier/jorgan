@@ -65,9 +65,17 @@
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
+    <fail message="win.include not found - please check your build.properties">
+      <condition>
+        <not>
+          <available file="${win.include}" />
+        </not>
+      </condition>
+    </fail>
+
     <exec failonerror="true" executable="${win.cc}">
-      <arg value="-I${win.jdk}/include" />
-      <arg value="-I${win.jdk}/include/win32" />
+      <arg value="-I${win.include}" />
+      <arg value="-I${win.include}/win32" />
       <arg value="-I../jorgan-jni/src/main/native" />
       <arg value="-I./lib/include" />
       <arg value="-I./target/native" />
@@ -92,11 +100,19 @@
   <target name="native-unix" depends="native-common" if="isUnix">
     <mkdir dir="./target/native" />
 
-  	<echo message="Note: requires package 'libfluidsynth-dev'" />  	
+    <fail message="unix.include not found - please check your build.properties">
+      <condition>
+        <not>
+          <available file="${unix.include}" />
+        </not>
+      </condition>
+    </fail>
+
+    <echo message="Note: requires package 'libfluidsynth-dev'" />  	
     <exec failonerror="true" executable="${unix.cc}">
       <arg value="-std=c99" />
-      <arg value="-I${unix.jdk}/include" />
-      <arg value="-I${unix.jdk}/include/linux" />
+      <arg value="-I${unix.include}" />
+      <arg value="-I${unix.include}/linux" />
       <arg value="-I../jorgan-jni/src/main/native" />
       <arg value="-I./target/native" />
       <arg value="-Wall" />
@@ -113,10 +129,18 @@
   <target name="native-mac" depends="native-common" if="isMac">
     <mkdir dir="./target/native" />
 
+    <fail message="mac.include not found - please check your build.properties">
+      <condition>
+        <not>
+          <available file="${mac.include}" />
+        </not>
+      </condition>
+    </fail>
+
     <exec failonerror="true" executable="${mac.cc}">
       <arg value="-dynamiclib" />
       <arg value="-std=c99" />
-      <arg value="-I${mac.jdk}/Headers" />
+      <arg value="-I${mac.include}" />
       <arg value="-I../jorgan-jni/src/main/native" />
       <arg value="-I./lib/include" />
       <arg value="-I./target/native" />
@@ -128,29 +152,28 @@
       <arg line="-o ./target/native/libfluidsynthJNI.jnilib" />
     </exec>
   	
-  	<copy todir="./target/native">
-  		<fileset dir="./lib/mac" includes="*.dylib"/>
-  	</copy>
+    <copy todir="./target/native">
+      <fileset dir="./lib/mac" includes="*.dylib"/>
+    </copy>
   </target>
 
   <target name="dist" depends="clean, compile, native">
-  	<mkdir dir="./target/marshal/lib" />
-  	<copy todir="./target/marshal/lib">
+    <mkdir dir="./target/marshal/lib" />
+    <copy todir="./target/marshal/lib">
       <fileset dir="./target/native">
-  		<include name="**"/>
+        <include name="**"/>
       </fileset>
     </copy> 		
-  	<jar file="./target/marshal/lib/fluidsynth.jar">
+    <jar file="./target/marshal/lib/fluidsynth.jar">
       <manifest>
         <attribute name="Implementation-Title" value="jOrgan" />
         <attribute name="Implementation-Vendor" value="Sven Meier" />
         <attribute name="Implementation-Version" value="${jorgan.version}" />
       </manifest>
       <fileset dir="./target/classes" />
-  	</jar>
-
-  	<mkdir dir="./target/marshal/dispositions" />
-  	<copy todir="./target/marshal/dispositions">
+    </jar>
+    <mkdir dir="./target/marshal/dispositions" />
+    <copy todir="./target/marshal/dispositions">
       <fileset dir="./src/main/dispositions" />
     </copy> 		
   </target>
