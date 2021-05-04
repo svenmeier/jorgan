@@ -26,8 +26,12 @@ extern "C" {
 #endif
 
 /**
- * @file gen.h
- * @brief Functions and defines for SoundFont generator effects.
+ * @defgroup generators SoundFont Generators
+ * @ingroup soundfonts
+ *
+ * Functions and defines for SoundFont generator effects.
+ *
+ * @{
  */
 
 /**
@@ -95,22 +99,33 @@ enum fluid_gen_type
     GEN_EXCLUSIVECLASS,		/**< Exclusive class number */
     GEN_OVERRIDEROOTKEY,		/**< Sample root note override */
 
-    /* the initial pitch is not a "standard" generator. It is not
-     * mentioned in the list of generator in the SF2 specifications. It
-     * is used, however, as the destination for the default pitch wheel
-     * modulator. */
-    GEN_PITCH,			/**< Pitch @note Not a real SoundFont generator */
+    /**
+     * Initial Pitch
+     *
+     * @note This is not "standard" SoundFont generator, because it is not
+     * mentioned in the list of generators in the SF2 specifications.
+     * It is used by FluidSynth internally to compute the nominal pitch of
+     * a note on note-on event. By nature it shouldn't be allowed to be modulated,
+     * however the specification defines a default modulator having "Initial Pitch"
+     * as destination (cf. SF2.01 page 57 section 8.4.10 MIDI Pitch Wheel to Initial Pitch).
+     * Thus it is impossible to cancel this default modulator, which would be required
+     * to let the MIDI Pitch Wheel controller modulate a different generator.
+     * In order to provide this flexibility, FluidSynth >= 2.1.0 uses a default modulator
+     * "Pitch Wheel to Fine Tune", rather than Initial Pitch. The same "compromise" can
+     * be found on the Audigy 2 ZS for instance.
+     */
+    GEN_PITCH,
 
     GEN_CUSTOM_BALANCE,          /**< Balance @note Not a real SoundFont generator */
     /* non-standard generator for an additional custom high- or low-pass filter */
     GEN_CUSTOM_FILTERFC,		/**< Custom filter cutoff frequency */
     GEN_CUSTOM_FILTERQ,		/**< Custom filter Q */
 
-#ifndef __DOXYGEN__
-    GEN_LAST			/**< @internal Value defines the count of generators (#fluid_gen_type) @warning This symbol is not part of the public API and ABI stability guarantee and may change at any time! */
-#endif
+    GEN_LAST			/**< @internal Value defines the count of generators (#fluid_gen_type)
+                          @warning This symbol is not part of the public API and ABI
+                          stability guarantee and may change at any time! */
 };
-
+/* @} */
 
 #ifdef __cplusplus
 }
