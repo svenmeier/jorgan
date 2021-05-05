@@ -1,7 +1,7 @@
 <backend>
   <name>Direct Sound (64bit)</name>
   <description>Audio output with Direct Sound
-- Fluidsynth 2.0.5
+- Fluidsynth 2.2.0
 - Glib 2.0</description>
   <version>1</version>
   <maintainer>Graham Goode (ggoode.sa@gmail.com)</maintainer>
