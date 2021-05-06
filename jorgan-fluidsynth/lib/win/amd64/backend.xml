@@ -5,10 +5,16 @@
 - Glib 2.0</description>
   <version>1</version>
   <maintainer>Graham Goode (ggoode.sa@gmail.com)</maintainer>
+  <library>libiconv-2.dll</library>
   <library>libintl-8.dll</library>
+  <library>libwinpthread-1.dll</library>
+  <library>libgcc_s_seh-1.dll</library>
+  <library>libgomp-1.dll</library>
+  <library>libpcre-1.dll</library>
+  <library>libstdc++-6.dll</library>
   <library>libglib-2.0-0.dll</library>
   <library>libgthread-2.0-0.dll</library>
-  <library>libfluidsynth.dll</library>
+  <library>libfluidsynth-3.dll</library>
   <link>
 	<text>Fluidsynth</text>
 	<url>http://fluidsynth.sf.net</url>

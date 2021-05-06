@@ -82,7 +82,7 @@
       <arg value="-Wall" />
       <arg value="-Wl,--kill-at" />
       <arg value="-Wl,-L./lib/win/${os.arch}" />
-      <arg value="-Wl,-llibfluidsynth" />
+      <arg value="-Wl,-llibfluidsynth-3" />
       <arg value="-shared" />
       <arg line="../jorgan-jni/src/main/native/exception.c" />
       <arg line="../jorgan-jni/src/main/native/logging.c" />
