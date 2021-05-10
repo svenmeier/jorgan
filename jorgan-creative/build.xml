@@ -135,7 +135,7 @@
     </exec>
   </target>
 
-  <target name="awesfx">
+  <target name="awesfx" if="isUnix">
     <echo message="Note: requires package 'libasound2-dev'" />  	
 
     <mkdir dir="./target/awesfx"/> 
