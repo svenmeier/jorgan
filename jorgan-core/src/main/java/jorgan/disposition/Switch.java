@@ -53,8 +53,7 @@ public class Switch extends Engageable {
 		if (displayable instanceof Switch) {
 			Switch other = (Switch) displayable;
 
-			if (other.getDuration() == DURATION_UNTIL_DEACTIVATED
-					&& this.getDuration() == DURATION_UNTIL_DEACTIVATED) {
+			if (other.getDuration() == DURATION_UNTIL_DEACTIVATED && this.getDuration() == DURATION_UNTIL_DEACTIVATED) {
 				setActive(other.isActive());
 			}
 		}
@@ -102,8 +101,7 @@ public class Switch extends Engageable {
 
 			engagingChanged(active);
 
-			for (Observer observer : getOrgan().getReferrer(this,
-					Observer.class)) {
+			for (Observer observer : getOrgan().getReferrer(this, Observer.class)) {
 				observer.changed(this);
 			}
 		}
@@ -146,6 +144,7 @@ public class Switch extends Engageable {
 	public List<Class<? extends Message>> getMessageClasses() {
 		List<Class<? extends Message>> classes = super.getMessageClasses();
 
+		classes.add(InputMessage.class);
 		classes.add(Activate.class);
 		classes.add(Deactivate.class);
 		classes.add(Toggle.class);

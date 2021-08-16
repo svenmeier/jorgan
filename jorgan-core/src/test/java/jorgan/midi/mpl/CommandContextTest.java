@@ -100,14 +100,14 @@ public class CommandContextTest extends TestCase {
 
 		assertEquals(50.0f, node.process(10.0f, context));
 	}
-	
+
 	public void testMultName() throws Exception {
 		Command node = new Mult("test", Float.NaN);
 
 		context.set("test", 5.0f);
 		assertEquals(50.0f, node.process(10.0f, context));
 	}
-	
+
 	public void testGet() throws Exception {
 		Command node = new Get("test");
 
@@ -119,5 +119,12 @@ public class CommandContextTest extends TestCase {
 		Command node = new Equal(10);
 
 		assertEquals(10.0f, node.process(10.0f, context));
+	}
+
+	public void testChain() throws Exception {
+		Command node = Command.fromString("get test | equal NaN");
+
+		assertEquals(Float.NaN, node.process(8, context));
+		assertEquals(Float.valueOf("8"), context.get("test"));
 	}
 }

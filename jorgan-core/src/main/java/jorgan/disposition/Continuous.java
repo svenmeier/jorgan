@@ -70,8 +70,7 @@ public class Continuous extends Displayable {
 
 			onValueChanged(oldValue, this.value);
 
-			for (Observer observer : getOrgan().getReferrer(this,
-					Observer.class)) {
+			for (Observer observer : getOrgan().getReferrer(this, Observer.class)) {
 				observer.changed(this);
 			}
 		}
@@ -110,6 +109,7 @@ public class Continuous extends Displayable {
 	public List<Class<? extends Message>> getMessageClasses() {
 		List<Class<? extends Message>> classes = super.getMessageClasses();
 
+		classes.add(InputMessage.class);
 		classes.add(Change.class);
 		classes.add(Changed.class);
 

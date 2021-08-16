@@ -29,6 +29,6 @@ public interface Input {
 
 	public String getInput();
 
-	public static abstract class InputMessage extends Message {
+	public static class InputMessage extends Message {
 	}
 }
