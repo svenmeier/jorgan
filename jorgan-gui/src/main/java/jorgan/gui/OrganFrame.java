@@ -20,8 +20,16 @@ package jorgan.gui;
 
 import java.awt.BorderLayout;
 import java.awt.Desktop;
+import java.awt.desktop.AboutEvent;
+import java.awt.desktop.AboutHandler;
+import java.awt.desktop.OpenFilesEvent;
+import java.awt.desktop.OpenFilesHandler;
+import java.awt.desktop.PreferencesEvent;
+import java.awt.desktop.PreferencesHandler;
+import java.awt.desktop.QuitEvent;
+import java.awt.desktop.QuitHandler;
+import java.awt.desktop.QuitResponse;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -42,6 +50,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 
+import bias.Configuration;
+import bias.swing.MessageBox;
+import bias.util.MessageBuilder;
 import jorgan.Version;
 import jorgan.gui.action.spi.ActionRegistry;
 import jorgan.gui.file.DispositionFileFilter;
@@ -55,12 +66,8 @@ import jorgan.session.SessionAware;
 import jorgan.session.SessionListener;
 import jorgan.swing.BaseAction;
 import jorgan.swing.DebugPanel;
-import jorgan.swing.MacAdapter;
 import jorgan.swing.StatusBar;
 import spin.Spin;
-import bias.Configuration;
-import bias.swing.MessageBox;
-import bias.util.MessageBuilder;
 
 /**
  * The jOrgan frame.
@@ -69,8 +76,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 
 	private static Logger logger = Logger.getLogger(OrganFrame.class.getName());
 
-	private static Configuration config = Configuration.getRoot().get(
-			OrganFrame.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(OrganFrame.class);
 
 	/**
 	 * The toolBar of this frame.
@@ -138,23 +145,6 @@ public class OrganFrame extends JFrame implements SessionAware {
 				exit();
 			}
 		});
-
-		if (MacAdapter.getInstance().isInstalled()) {
-			MacAdapter.getInstance().setQuitListener(exitAction);
-			MacAdapter.getInstance()
-					.setPreferencesListener(configurationAction);
-			MacAdapter.getInstance().setAboutListener(aboutAction);
-			MacAdapter.getInstance().setFileListener(new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent ev) {
-					if (!closeOrgan()) {
-						return;
-					}
-
-					openOrgan(new File(ev.getActionCommand()));
-				}
-			});
-		}
 
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
@@ -228,10 +218,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 			}
 		}
 
-		if (!MacAdapter.getInstance().isInstalled()) {
-			fileMenu.addSeparator();
-			fileMenu.add(exitAction);
-		}
+		fileMenu.addSeparator();
+		fileMenu.add(exitAction);
 
 		if (session != null) {
 			JMenu editMenu = new JMenu();
@@ -256,18 +244,14 @@ public class OrganFrame extends JFrame implements SessionAware {
 		for (Action action : organPanel.getViewActions()) {
 			viewMenu.add(action);
 		}
-		if (!MacAdapter.getInstance().isInstalled()) {
-			viewMenu.addSeparator();
-			viewMenu.add(configurationAction);
-		}
+		viewMenu.addSeparator();
+		viewMenu.add(configurationAction);
 
 		JMenu helpMenu = new JMenu();
 		config.get("helpMenu").read(helpMenu);
 		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
-		if (!MacAdapter.getInstance().isInstalled()) {
-			helpMenu.add(aboutAction);
-		}
+		helpMenu.add(aboutAction);
 
 		menuBar.revalidate();
 		menuBar.repaint();
@@ -277,12 +261,9 @@ public class OrganFrame extends JFrame implements SessionAware {
 			title = config.get("titleNoSession").read(new MessageBuilder())
 					.build(new Version().get());
 		} else {
-			title = config
-					.get("titleSession")
-					.read(new MessageBuilder())
-					.build(new Version().get(),
-							DispositionFileFilter.removeSuffix(session
-									.getFile()));
+			title = config.get("titleSession").read(new MessageBuilder()).build(
+					new Version().get(),
+					DispositionFileFilter.removeSuffix(session.getFile()));
 		}
 		setTitle(title);
 	}
@@ -324,8 +305,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 			this.session.addListener((SessionListener) Spin.over(handler));
 		}
 
-		constructAction.setSelected(this.session != null
-				&& this.session.isConstructing());
+		constructAction.setSelected(
+				this.session != null && this.session.isConstructing());
 
 		saveAction.onSession();
 		closeAction.onSession();
@@ -390,8 +371,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		} catch (IOException ex) {
 			logger.log(Level.INFO, "saving organ failed", ex);
 
-			showBoxMessage("saveIOException", MessageBox.OPTIONS_OK, session
-					.getFile().getName());
+			showBoxMessage("saveIOException", MessageBox.OPTIONS_OK,
+					session.getFile().getName());
 
 			return false;
 		}
@@ -421,8 +402,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 		if (key == null) {
 			statusBar.setStatus(null);
 		} else {
-			statusBar.setStatus(config.get(key).read(new MessageBuilder())
-					.build(args));
+			statusBar.setStatus(
+					config.get(key).read(new MessageBuilder()).build(args));
 		}
 	}
 
@@ -483,9 +464,11 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * The action that opens an organ.
 	 */
-	private class OpenAction extends BaseAction {
+	private class OpenAction extends BaseAction implements OpenFilesHandler {
 		private OpenAction() {
 			config.get("open").read(this);
+
+			withDesktop(desktop -> desktop.setOpenFileHandler(this));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
@@ -496,7 +479,8 @@ public class OrganFrame extends JFrame implements SessionAware {
 			JFileChooser chooser = new JFileChooser(
 					new History().getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
-			if (chooser.showOpenDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+			if (chooser.showOpenDialog(
+					OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
 				File file = chooser.getSelectedFile();
 				if (!file.exists()) {
 					showBoxMessage("openNotExists", MessageBox.OPTIONS_OK,
@@ -504,6 +488,18 @@ public class OrganFrame extends JFrame implements SessionAware {
 					return;
 				}
 				openOrgan(file);
+			}
+		}
+
+		@Override
+		public void openFiles(OpenFilesEvent e) {
+			if (!closeOrgan()) {
+				return;
+			}
+
+			List<File> files = e.getFiles();
+			if (files != null && files.size() == 1) {
+				openOrgan(files.get(0));
 			}
 		}
 	}
@@ -525,9 +521,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 					new History().getRecentDirectory());
 			chooser.setFileFilter(new jorgan.gui.file.DispositionFileFilter());
 			config.get("new/chooser").read(chooser);
-			if (chooser.showSaveDialog(OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
-				File file = DispositionFileFilter.addSuffix(chooser
-						.getSelectedFile());
+			if (chooser.showSaveDialog(
+					OrganFrame.this) == JFileChooser.APPROVE_OPTION) {
+				File file = DispositionFileFilter
+						.addSuffix(chooser.getSelectedFile());
 				if (file.exists()) {
 					showBoxMessage("newExists", MessageBox.OPTIONS_OK,
 							file.getName());
@@ -569,7 +566,10 @@ public class OrganFrame extends JFrame implements SessionAware {
 		public void onSession() {
 			boolean modified = session != null && session.isModified();
 			setEnabled(modified);
-			MacAdapter.modified(OrganFrame.this, modified);
+
+			// for OS X
+			getRootPane().putClientProperty("Window.documentModified",
+					Boolean.valueOf(modified));
 
 			statusBar.setStatus(null);
 		}
@@ -578,12 +578,19 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * The action that shows information about jOrgan.
 	 */
-	private class AboutAction extends BaseAction {
+	private class AboutAction extends BaseAction implements AboutHandler {
 		private AboutAction() {
 			config.get("about").read(this);
+
+			withDesktop(desktop -> desktop.setAboutHandler(this));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			AboutPanel.showInDialog(OrganFrame.this);
+		}
+
+		@Override
+		public void handleAbout(AboutEvent e) {
 			AboutPanel.showInDialog(OrganFrame.this);
 		}
 	}
@@ -597,24 +604,28 @@ public class OrganFrame extends JFrame implements SessionAware {
 		}
 
 		public void actionPerformed(ActionEvent ev) {
-			try {
-				Desktop.getDesktop().browse(
-						URI.create("http://jorgan.sourceforge.net"));
-			} catch (Exception e) {
-				logger.log(Level.WARNING, e.getMessage(), e);
-			}
+			withDesktop(desktop -> desktop
+					.browse(URI.create("http://jorgan.sourceforge.net")));
 		}
 	}
 
 	/**
 	 * The action that shows the preferences.
 	 */
-	private class PreferencesAction extends BaseAction {
+	private class PreferencesAction extends BaseAction
+			implements PreferencesHandler {
 		private PreferencesAction() {
 			config.get("preferences").read(this);
+
+			withDesktop(desktop -> desktop.setPreferencesHandler(this));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			PreferencesDialog.show(OrganFrame.this);
+		}
+
+		@Override
+		public void handlePreferences(PreferencesEvent e) {
 			PreferencesDialog.show(OrganFrame.this);
 		}
 	}
@@ -622,12 +633,21 @@ public class OrganFrame extends JFrame implements SessionAware {
 	/**
 	 * The action that exits jOrgan.
 	 */
-	private class ExitAction extends BaseAction {
+	private class ExitAction extends BaseAction implements QuitHandler {
 		private ExitAction() {
 			config.get("exit").read(this);
+
+			withDesktop(desktop -> desktop.setQuitHandler(this));
 		}
 
 		public void actionPerformed(ActionEvent ev) {
+			exit();
+		}
+
+		@Override
+		public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+			response.cancelQuit();
+
 			exit();
 		}
 	}
@@ -700,5 +720,21 @@ public class OrganFrame extends JFrame implements SessionAware {
 		};
 
 		public abstract boolean onClose(OrganFrame frame, OrganSession session);
+	}
+
+	private static boolean withDesktop(DesktopConsumer consumer) {
+		try {
+			consumer.accept(Desktop.getDesktop());
+
+			return true;
+		} catch (Exception e) {
+			logger.log(Level.WARNING, e.getMessage());
+		}
+
+		return false;
+	}
+
+	interface DesktopConsumer {
+		void accept(Desktop desktop) throws Exception;
 	}
 }

@@ -27,12 +27,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 import jorgan.disposition.Shortcut;
-import jorgan.swing.MacAdapter;
+import jorgan.swing.button.ToolbarButton;
 
 /**
  * PropertyEditor for a shortcut property.
@@ -41,14 +40,13 @@ public class ShortcutEditor extends CustomEditor implements ActionListener {
 
 	private JPanel panel = new JPanel();
 
-	private JButton button = new JButton("\u2190");
+	private ToolbarButton button = new ToolbarButton("\u2190");
 
 	private ShortcutField shortcutField = new ShortcutField();
 
 	public ShortcutEditor() {
 		panel.setLayout(new BorderLayout());
 
-		MacAdapter.typeToolbar(button);
 		button.setFocusable(false);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.addActionListener(this);

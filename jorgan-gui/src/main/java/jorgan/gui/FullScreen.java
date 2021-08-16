@@ -45,15 +45,15 @@ import javax.swing.Timer;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MouseInputAdapter;
 
+import bias.Configuration;
 import jorgan.disposition.Console;
 import jorgan.disposition.Elements;
 import jorgan.gui.console.ConsoleStack;
 import jorgan.session.OrganSession;
 import jorgan.swing.BaseAction;
 import jorgan.swing.CardPanel;
-import jorgan.swing.MacAdapter;
 import jorgan.swing.button.ButtonGroup;
-import bias.Configuration;
+import jorgan.util.NativeUtils;
 
 /**
  * A window shown <em>full screen</em>.
@@ -62,7 +62,7 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 	public static final KeyStroke KEY_STROKE;
 	static {
-		if (MacAdapter.isMac()) {
+		if (NativeUtils.isMac()) {
 			KEY_STROKE = KeyStroke.getKeyStroke(KeyEvent.VK_F,
 					KeyEvent.META_MASK | KeyEvent.SHIFT_MASK);
 		} else {
@@ -70,8 +70,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 		}
 	}
 
-	private static Configuration config = Configuration.getRoot().get(
-			FullScreen.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(FullScreen.class);
 
 	/**
 	 * The handler of events.
@@ -96,7 +96,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 
 	/**
 	 */
-	public FullScreen(OrganSession session, GraphicsConfiguration configuration) {
+	public FullScreen(OrganSession session,
+			GraphicsConfiguration configuration) {
 		super((JDialog) null, configuration.getDevice().getIDstring(), false,
 				configuration);
 
@@ -186,8 +187,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 	/**
 	 * The handler for mouse events.
 	 */
-	private class EventHandler extends MouseInputAdapter implements
-			ActionListener {
+	private class EventHandler extends MouseInputAdapter
+			implements ActionListener {
 
 		private Timer timer;
 
@@ -238,8 +239,10 @@ public class FullScreen extends JDialog implements ConsoleStack {
 			int x = e.getX() - (rect.x + rect.width / 2);
 			int y = e.getY() - (rect.y + rect.height / 2);
 
-			deltaX = (int) (Math.pow((double) x / (rect.width / 2), 5) * (rect.width / 5));
-			deltaY = (int) (Math.pow((double) y / (rect.height / 2), 5) * (rect.height / 5));
+			deltaX = (int) (Math.pow((double) x / (rect.width / 2), 5)
+					* (rect.width / 5));
+			deltaY = (int) (Math.pow((double) y / (rect.height / 2), 5)
+					* (rect.height / 5));
 
 			if (deltaX != 0 || deltaY != 0) {
 				if (!timer.isRunning()) {
@@ -289,8 +292,8 @@ public class FullScreen extends JDialog implements ConsoleStack {
 	private KeyEventDispatcher processor = new KeyEventDispatcher() {
 		public boolean dispatchKeyEvent(KeyEvent e) {
 			if (e.getID() == KeyEvent.KEY_PRESSED) {
-				if (e.getKeyCode() == KEY_STROKE.getKeyCode()
-						&& e.getModifiers() == (KEY_STROKE.getModifiers() & 0xf)) {
+				if (e.getKeyCode() == KEY_STROKE.getKeyCode() && e
+						.getModifiers() == (KEY_STROKE.getModifiers() & 0xf)) {
 					leave();
 					return true;
 				}

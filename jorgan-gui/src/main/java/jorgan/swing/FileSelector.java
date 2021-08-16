@@ -39,6 +39,8 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 
+import jorgan.swing.button.ToolbarButton;
+
 /**
  * Selector of a file.
  */
@@ -70,8 +72,7 @@ public class FileSelector extends JPanel {
 
 		this.mode = mode;
 
-		button = new JButton("...");
-		MacAdapter.typeToolbar(button);
+		button = new ToolbarButton("...");
 		button.setFocusable(false);
 		button.setMargin(new Insets(0, 0, 0, 0));
 		button.addActionListener(new ActionListener() {
