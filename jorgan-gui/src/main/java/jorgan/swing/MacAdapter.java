@@ -2,17 +2,26 @@ package jorgan.swing;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import jorgan.util.NativeUtils;
-
+import com.apple.eawt.AboutHandler;
+import com.apple.eawt.AppEvent.AboutEvent;
+import com.apple.eawt.AppEvent.OpenFilesEvent;
+import com.apple.eawt.AppEvent.PreferencesEvent;
+import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.Application;
-import com.apple.eawt.ApplicationEvent;
-import com.apple.eawt.ApplicationListener;
+import com.apple.eawt.OpenFilesHandler;
+import com.apple.eawt.PreferencesHandler;
+import com.apple.eawt.QuitHandler;
+import com.apple.eawt.QuitResponse;
+
+import jorgan.util.NativeUtils;
 
 /**
  * Adapt the application on Mac OS X.
@@ -36,7 +45,8 @@ public abstract class MacAdapter {
 	 * @param listener
 	 *            the listener
 	 */
-	public abstract void setPreferencesListener(ActionListener listener);
+	public void setPreferencesListener(ActionListener listener) {
+	}
 
 	/**
 	 * Set the listener for about.
@@ -44,7 +54,8 @@ public abstract class MacAdapter {
 	 * @param listener
 	 *            the listener
 	 */
-	public abstract void setAboutListener(ActionListener listener);
+	public void setAboutListener(ActionListener listener) {
+	}
 
 	/**
 	 * Set the listener for quit.
@@ -52,7 +63,8 @@ public abstract class MacAdapter {
 	 * @param listener
 	 *            the listener
 	 */
-	public abstract void setQuitListener(ActionListener listener);
+	public void setQuitListener(ActionListener listener) {
+	}
 
 	/**
 	 * Set the listener for files.
@@ -60,7 +72,8 @@ public abstract class MacAdapter {
 	 * @param listener
 	 *            the listener
 	 */
-	public abstract void setFileListener(ActionListener listener);
+	public void setFileListener(ActionListener listener) {
+	}
 
 	private static class Dummy extends MacAdapter {
 
@@ -68,71 +81,14 @@ public abstract class MacAdapter {
 		public boolean isInstalled() {
 			return false;
 		}
-
-		@Override
-		public void setPreferencesListener(ActionListener listener) {
-		}
-
-		@Override
-		public void setAboutListener(ActionListener listener) {
-		}
-
-		@Override
-		public void setQuitListener(ActionListener listener) {
-		}
-
-		@Override
-		public void setFileListener(ActionListener listener) {
-		}
 	}
 
 	private static class Real extends MacAdapter {
 
-		private ActionListener preferencesAction;
-
-		private ActionListener aboutAction;
-
-		private ActionListener quitAction;
-
-		private ActionListener fileAction;
-
 		private Application application;
 
 		public Real() {
-			application = new Application();
-			application.addApplicationListener(new ApplicationListener() {
-				public void handlePreferences(ApplicationEvent ev) {
-					perform(preferencesAction, "preferences");
-					ev.setHandled(true);
-				}
-
-				public void handleAbout(ApplicationEvent ev) {
-					perform(aboutAction, "about");
-					ev.setHandled(true);
-				}
-
-				public void handleQuit(ApplicationEvent ev) {
-					perform(quitAction, "quit");
-					ev.setHandled(false);
-				}
-
-				public void handleOpenApplication(ApplicationEvent ev) {
-				}
-
-				public void handleOpenFile(ApplicationEvent ev) {
-					String filename = ev.getFilename();
-					if (filename != null) {
-						perform(fileAction, filename);
-						ev.setHandled(true);
-					}
-				}
-
-				public void handlePrintFile(ApplicationEvent ev) {
-				}
-
-				public void handleReOpenApplication(ApplicationEvent ev) {
-				};
-			});
+			application = Application.getApplication();
 		}
 
 		@Override
@@ -142,40 +98,53 @@ public abstract class MacAdapter {
 
 		@Override
 		public void setPreferencesListener(ActionListener action) {
-			this.preferencesAction = action;
-
-			try {
-				application.setEnabledPreferencesMenu(true);
-			} catch (Throwable throwable) {
-				unexpected(throwable);
-			}
+			application.setPreferencesHandler(new PreferencesHandler() {
+				@Override
+				public void handlePreferences(PreferencesEvent ev) {
+					perform(action, "preferences");
+				}
+			});
 		}
 
 		@Override
 		public void setAboutListener(ActionListener action) {
-			this.aboutAction = action;
-
-			try {
-				application.setEnabledAboutMenu(true);
-			} catch (Throwable throwable) {
-				unexpected(throwable);
-			}
+			application.setAboutHandler(new AboutHandler() {
+				@Override
+				public void handleAbout(AboutEvent ev) {
+					perform(action, "about");
+				}
+			});
 		}
 
 		@Override
 		public void setQuitListener(ActionListener action) {
-			this.quitAction = action;
+			application.setQuitHandler(new QuitHandler() {
+				@Override
+				public void handleQuitRequestWith(QuitEvent arg0,
+						QuitResponse arg1) {
+					perform(action, "quit");
+				}
+			});
 		}
 
 		@Override
 		public void setFileListener(ActionListener action) {
-			this.fileAction = action;
+			application.setOpenFileHandler(new OpenFilesHandler() {
+				@Override
+				public void openFiles(OpenFilesEvent ev) {
+					List<File> files = ev.getFiles();
+					if (files != null && files.size() == 1) {
+						perform(action, files.get(0).toString());
+					}
+				}
+			});
 		}
 
 		private void perform(ActionListener action, String command) {
 			action.actionPerformed(new ActionEvent(this,
 					ActionEvent.ACTION_PERFORMED, command));
 		}
+
 	}
 
 	private static void unexpected(Throwable throwable) {
