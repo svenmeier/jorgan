@@ -18,5 +18,6 @@
     <bundledJreAsFallback>true</bundledJreAsFallback>
     <minVersion>11</minVersion>
     <jdkPreference>preferJre</jdkPreference>
+    <opt>--illegal-access=permit</opt>
   </jre>
 </launch4jConfig>

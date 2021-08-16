@@ -30,6 +30,7 @@
 		<string>$JAVAROOT/jorgan.jar</string>
 		<key>VMOptions</key>
 		<array>
+			<string>--illegal-access=permit</string>
 			<string>-Xms32M</string>
 			<string>-Xmx512M</string>
 		</array>

@@ -5,7 +5,11 @@
 	<classpathentry exported="true" kind="lib" path="lib/gj-core.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gj-layouts.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/gj-ui.jar"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-11">
+		<attributes>
+			<attribute name="module" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry combineaccessrules="false" kind="src" path="/jorgan-gui"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
