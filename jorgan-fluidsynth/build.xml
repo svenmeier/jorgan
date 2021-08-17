@@ -141,6 +141,7 @@
       <arg value="-dynamiclib" />
       <arg value="-std=c99" />
       <arg value="-I${mac.include}" />
+      <arg value="-I${mac.include}/darwin" />	    
       <arg value="-I../jorgan-jni/src/main/native" />
       <arg value="-I./lib/include" />
       <arg value="-I./target/native" />
