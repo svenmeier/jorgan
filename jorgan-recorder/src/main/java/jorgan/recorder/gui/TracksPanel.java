@@ -32,6 +32,7 @@ import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
 
 import jorgan.recorder.Performance;
+import jorgan.swing.MouseUtils;
 import jorgan.swing.RowHeader;
 
 public class TracksPanel extends JPanel implements Scrollable {
@@ -115,8 +116,8 @@ public class TracksPanel extends JPanel implements Scrollable {
 		}
 	}
 
-	private class EventListener extends MouseAdapter implements
-			MouseMotionListener {
+	private class EventListener extends MouseAdapter
+			implements MouseMotionListener {
 
 		private Integer offset;
 
@@ -141,7 +142,7 @@ public class TracksPanel extends JPanel implements Scrollable {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (e.isPopupTrigger()) {
+			if (MouseUtils.isHorizontalScroll(e) || e.isPopupTrigger()) {
 				return;
 			}
 

@@ -11,6 +11,8 @@ import java.util.List;
 import javax.swing.JComponent;
 import javax.swing.event.MouseInputAdapter;
 
+import jorgan.swing.MouseUtils;
+
 /**
  * A keyboard.
  */
@@ -142,6 +144,9 @@ public class KeyboardPanel extends JComponent {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
+			if (MouseUtils.isHorizontalScroll(e)) {
+				return;
+			}
 
 			Dimension preferredSize = getPreferredSize();
 
