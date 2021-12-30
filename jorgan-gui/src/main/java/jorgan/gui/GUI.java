@@ -5,6 +5,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
 import java.lang.Thread.UncaughtExceptionHandler;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -95,7 +96,17 @@ public class GUI implements UI {
 		public void run() {
 			lookAndFeel.install();
 
-			Toolkit.getDefaultToolkit().setDynamicLayout(true);
+			Toolkit toolkit = Toolkit.getDefaultToolkit();
+			toolkit.setDynamicLayout(true);
+
+			try {
+				Field field = toolkit.getClass()
+						.getDeclaredField("awtAppClassName");
+				field.setAccessible(true);
+				field.set(toolkit, "jOrgan");
+			} catch (Exception ex) {
+				log.warning("cannot change awtAppClassName");
+			}
 
 			// IMPORTANT:
 			// Never wait for the result of a spin-over or we'll
