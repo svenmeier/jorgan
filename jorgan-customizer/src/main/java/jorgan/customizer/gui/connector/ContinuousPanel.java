@@ -35,13 +35,15 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import bias.Configuration;
+import bias.swing.MessageBox;
 import jorgan.customizer.builder.ContinuousBuilder;
 import jorgan.customizer.builder.TupleBuilder;
 import jorgan.disposition.Connector;
 import jorgan.disposition.Continuous;
+import jorgan.disposition.Continuous.Change;
 import jorgan.disposition.Elements;
 import jorgan.disposition.Message;
-import jorgan.disposition.Continuous.Change;
 import jorgan.midi.MessageRecorder;
 import jorgan.midi.MessageUtils;
 import jorgan.midi.mpl.Context;
@@ -50,16 +52,14 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.table.ActionCellEditor;
 import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.TableUtils;
-import bias.Configuration;
-import bias.swing.MessageBox;
 
 /**
  * A panel for a {@link Connector}.
  */
 public abstract class ContinuousPanel extends AbstractConnectorPanel {
 
-	private static Configuration config = Configuration.getRoot().get(
-			ContinuousPanel.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(ContinuousPanel.class);
 
 	private ContinuousModel model = new ContinuousModel();
 
@@ -93,8 +93,8 @@ public abstract class ContinuousPanel extends AbstractConnectorPanel {
 			}
 		};
 		table.getColumnModel().getColumn(1).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new ActionCellEditor(recordAction));
+		table.getColumnModel().getColumn(1)
+				.setCellEditor(new ActionCellEditor(recordAction));
 		TableUtils.pleasantLookAndFeel(table);
 		scrollPane.setViewportView(table);
 
@@ -170,7 +170,8 @@ public abstract class ContinuousPanel extends AbstractConnectorPanel {
 			try {
 				final TupleBuilder builder = new ContinuousBuilder();
 
-				MessageRecorder recorder = new MessageRecorder(getDeviceName()) {
+				MessageRecorder recorder = new MessageRecorder(
+						getDeviceName()) {
 					@Override
 					public boolean messageRecorded(MidiMessage message) {
 						if (builder.analyse(MessageUtils.getDatas(message))) {
@@ -179,6 +180,8 @@ public abstract class ContinuousPanel extends AbstractConnectorPanel {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									messageBox.hide();
+
+									table.requestFocus();
 								}
 							});
 							return false;

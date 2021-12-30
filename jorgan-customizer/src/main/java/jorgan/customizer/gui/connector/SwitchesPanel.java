@@ -36,6 +36,8 @@ import javax.swing.JTable;
 import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 
+import bias.Configuration;
+import bias.swing.MessageBox;
 import jorgan.customizer.builder.MomentaryBuilder;
 import jorgan.customizer.builder.TupleBuilder;
 import jorgan.disposition.Elements;
@@ -52,13 +54,11 @@ import jorgan.swing.BaseAction;
 import jorgan.swing.table.ActionCellEditor;
 import jorgan.swing.table.BaseTableModel;
 import jorgan.swing.table.TableUtils;
-import bias.Configuration;
-import bias.swing.MessageBox;
 
 public abstract class SwitchesPanel extends JPanel {
 
-	private static Configuration config = Configuration.getRoot().get(
-			SwitchesPanel.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(SwitchesPanel.class);
 
 	private SwitchesModel model = new SwitchesModel();
 
@@ -93,14 +93,14 @@ public abstract class SwitchesPanel extends JPanel {
 			}
 		};
 		table.getColumnModel().getColumn(1).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(1).setCellEditor(
-				new ActionCellEditor(recordAction));
+		table.getColumnModel().getColumn(1)
+				.setCellEditor(new ActionCellEditor(recordAction));
 		table.getColumnModel().getColumn(2).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(2).setCellEditor(
-				new ActionCellEditor(recordAction));
+		table.getColumnModel().getColumn(2)
+				.setCellEditor(new ActionCellEditor(recordAction));
 		table.getColumnModel().getColumn(3).setCellRenderer(renderer);
-		table.getColumnModel().getColumn(3).setCellEditor(
-				new ActionCellEditor(recordAction));
+		table.getColumnModel().getColumn(3)
+				.setCellEditor(new ActionCellEditor(recordAction));
 		scrollPane.setViewportView(table);
 
 		for (Switch aSwitch : switches) {
@@ -181,7 +181,8 @@ public abstract class SwitchesPanel extends JPanel {
 			try {
 				final TupleBuilder builder = new MomentaryBuilder();
 
-				MessageRecorder recorder = new MessageRecorder(getDeviceName()) {
+				MessageRecorder recorder = new MessageRecorder(
+						getDeviceName()) {
 					@Override
 					public boolean messageRecorded(MidiMessage message) {
 						if (builder.analyse(MessageUtils.getDatas(message))) {
@@ -190,6 +191,8 @@ public abstract class SwitchesPanel extends JPanel {
 							SwingUtilities.invokeLater(new Runnable() {
 								public void run() {
 									messageBox.hide();
+
+									table.requestFocus();
 								}
 							});
 							return false;
