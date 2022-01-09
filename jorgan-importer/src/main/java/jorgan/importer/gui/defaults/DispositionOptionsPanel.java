@@ -10,18 +10,26 @@ import javax.swing.JPanel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import bias.Configuration;
+import jorgan.session.History;
 import jorgan.swing.FileSelector;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
-import bias.Configuration;
 
 public class DispositionOptionsPanel extends JPanel {
 
-	private static Configuration config = Configuration.getRoot().get(
-			DispositionOptionsPanel.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(DispositionOptionsPanel.class);
 
 	private FileSelector fileSelector = new FileSelector(
-			FileSelector.FILES_ONLY);
+			FileSelector.FILES_ONLY) {
+		protected File toChooser(File file) {
+			if (file == null) {
+				file = new History().getRecentDirectory();
+			}
+			return file;
+		}
+	};
 
 	public DispositionOptionsPanel() {
 		DefinitionBuilder builder = new DefinitionBuilder(this);

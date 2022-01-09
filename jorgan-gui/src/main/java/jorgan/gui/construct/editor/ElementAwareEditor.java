@@ -19,11 +19,20 @@
 package jorgan.gui.construct.editor;
 
 import jorgan.disposition.Element;
+import jorgan.session.OrganSession;
 
 /**
  * Editor that is aware of the element of the edited property.
  */
 public interface ElementAwareEditor {
 
-  public void setElement(Element element); 
+	/**
+	 * @deprecated override {@link #setElement(OrganSession, Element) instead
+	 */
+	public default void setElement(Element element) {
+	}
+
+	public default void setElement(OrganSession session, Element element) {
+		setElement(element);
+	}
 }

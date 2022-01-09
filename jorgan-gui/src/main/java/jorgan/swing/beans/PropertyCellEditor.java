@@ -14,8 +14,8 @@ import javax.swing.table.TableCellEditor;
 
 import jorgan.swing.combobox.ComboBoxUtils;
 
-public abstract class PropertyCellEditor extends AbstractCellEditor implements
-		TableCellEditor {
+public abstract class PropertyCellEditor extends AbstractCellEditor
+		implements TableCellEditor {
 
 	private PropertyEditor editor;
 

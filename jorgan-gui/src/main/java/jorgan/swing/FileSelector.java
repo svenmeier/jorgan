@@ -146,14 +146,20 @@ public class FileSelector extends JPanel {
 			chooser.setMultiSelectionEnabled(false);
 		}
 		File file = getSelectedFile();
-		if (file != null) {
-			file = file.getAbsoluteFile();
-		}
+		file = toChooser(file);
 		chooser.setSelectedFile(file);
 		chooser.setFileFilter(filter);
 		if (chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
-			textField.setText(chooser.getSelectedFile().getAbsolutePath());
+			setSelectedFile(fromChooser(chooser.getSelectedFile()));
 		}
+	}
+
+	protected File toChooser(File file) {
+		return file;
+	}
+
+	protected File fromChooser(File file) {
+		return file;
 	}
 
 	private void fireStateChanged() {
