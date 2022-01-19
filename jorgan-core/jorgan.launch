@@ -45,6 +45,7 @@
     <stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="jorgan.App"/>
     <listAttribute key="org.eclipse.jdt.launching.MODULEPATH"/>
     <stringAttribute key="org.eclipse.jdt.launching.MODULE_NAME" value="jorgan-core"/>
+    <stringAttribute key="org.eclipse.jdt.launching.PROGRAM_ARGUMENTS" value="-l"/>
     <stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="jorgan-core"/>
     <stringAttribute key="org.eclipse.jdt.launching.VM_ARGUMENTS" value="--illegal-access=permit&#10;-Djorgan.skins.path=../jorgan-skins&#10;-Djorgan.creative.library.path=../jorgan-creative/target/native&#10;-Djorgan.fluidsynth.library.path=../jorgan-fluidsynth/target/native&#10;-Djorgan.fluidsynth.backend.path=../jorgan-fluidsynth/lib/win&#10;-Duser.language=en&#10;-Xms256m&#10;-Xmx256m"/>
 </launchConfiguration>

@@ -36,12 +36,15 @@ import jorgan.UI;
 import jorgan.Version;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
+import jorgan.disposition.Keyboard;
 import jorgan.io.disposition.ExtensionException;
 import jorgan.io.disposition.FormatException;
 import jorgan.midi.DevicePool;
 import jorgan.midi.Direction;
 import jorgan.midi.MessageUtils;
+import jorgan.play.KeyboardPlayer;
 import jorgan.play.OrganPlay;
+import jorgan.play.OrganPlay.Playing;
 import jorgan.play.event.PlayListener;
 import jorgan.problem.ElementProblems;
 import jorgan.problem.Problem;
@@ -83,6 +86,7 @@ public class CLI implements UI, SessionAware {
 		commands.add(new SaveCommand());
 		commands.add(new MonitorCommand());
 		commands.add(new DevicesCommand());
+		commands.add(new PanicCommand());
 		commands.add(new ExitCommand());
 
 		interpreter = new Interpreter(commands, new UnknownCommand());
@@ -319,6 +323,35 @@ public class CLI implements UI, SessionAware {
 			}
 
 			writeEncoding();
+		}
+	}
+
+	/**
+	 * The command to clear all key pressed.
+	 */
+	private class PanicCommand extends AbstractCommand implements Playing<KeyboardPlayer> {
+
+		@Override
+		public String getKey() {
+			return "panic";
+		}
+
+		@Override
+		public void execute(String param) throws IOException {
+			if (session == null) {
+				writeMessage("panicNone");
+			} else {
+				for (Element element : session.getOrgan().getElements()) {
+					if (element instanceof Keyboard) {
+						session.lookup(OrganPlay.class).play(element, this);
+					}
+				}
+			}
+		}
+
+		@Override
+		public void play(KeyboardPlayer player) {
+			player.panic();
 		}
 	}
 

@@ -33,7 +33,6 @@ import jorgan.midi.MessageUtils;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.OrganPlay;
 import jorgan.play.OrganPlay.Playing;
-import jorgan.play.Player;
 import jorgan.play.event.KeyListener;
 import jorgan.recorder.Performance;
 import jorgan.recorder.midi.Sequencer;
@@ -99,8 +98,8 @@ public class KeyboardTracker extends AbstractTracker {
 
 	private boolean isKeyRelease(ShortMessage message) {
 		return message.getStatus() == ShortMessage.NOTE_OFF
-				|| (message.getStatus() == ShortMessage.NOTE_ON && message
-						.getData2() == 0);
+				|| (message.getStatus() == ShortMessage.NOTE_ON
+						&& message.getData2() == 0);
 	}
 
 	private boolean isKeyPress(ShortMessage message) {
@@ -204,20 +203,21 @@ public class KeyboardTracker extends AbstractTracker {
 		}
 	}
 
-	private void pressKey(Keyboard keyboard, final int pitch, final int velocity) {
-		play.play(keyboard, new Playing() {
+	private void pressKey(Keyboard keyboard, final int pitch,
+			final int velocity) {
+		play.play(keyboard, new Playing<KeyboardPlayer>() {
 			@Override
-			public void play(Player<?> player) {
-				((KeyboardPlayer) player).press(pitch, velocity);
+			public void play(KeyboardPlayer player) {
+				player.press(pitch, velocity);
 			}
 		});
 	}
 
 	private void releaseKey(Keyboard keyboard, final int pitch) {
-		play.play(keyboard, new Playing() {
+		play.play(keyboard, new Playing<KeyboardPlayer>() {
 			@Override
-			public void play(Player<?> player) {
-				((KeyboardPlayer) player).release(pitch);
+			public void play(KeyboardPlayer player) {
+				player.release(pitch);
 			}
 		});
 	}

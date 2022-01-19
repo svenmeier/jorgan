@@ -18,7 +18,6 @@ import jorgan.disposition.Keyboard;
 import jorgan.midi.mpl.ProcessingException;
 import jorgan.play.KeyboardPlayer;
 import jorgan.play.OrganPlay;
-import jorgan.play.Player;
 import jorgan.play.OrganPlay.Playing;
 import jorgan.play.event.KeyListener;
 import jorgan.swing.RowHeader;
@@ -111,20 +110,20 @@ public class KeyboardsPanel extends JPanel implements Scrollable {
 		KeyboardPanel panel = new KeyboardPanel() {
 			@Override
 			protected void onKeyPress(final int pitch, final int velocity) {
-				play(keyboard, new Playing() {
+				play(keyboard, new Playing<KeyboardPlayer>() {
 					@Override
-					public void play(Player<?> player) {
-						((KeyboardPlayer) player).press(pitch, velocity);
+					public void play(KeyboardPlayer player) {
+						player.press(pitch, velocity);
 					}
 				});
 			}
 
 			@Override
 			protected void onKeyReleased(final int pitch) {
-				play(keyboard, new Playing() {
+				play(keyboard, new Playing<KeyboardPlayer>() {
 					@Override
-					public void play(Player<?> player) {
-						((KeyboardPlayer) player).release(pitch);
+					public void play(KeyboardPlayer player) {
+						player.release(pitch);
 					}
 				});
 			}

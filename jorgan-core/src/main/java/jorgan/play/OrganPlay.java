@@ -87,8 +87,7 @@ public abstract class OrganPlay {
 	/**
 	 * Creates a new organ player.
 	 * 
-	 * @param organ
-	 *            the organ to play
+	 * @param organ the organ to play
 	 */
 	public OrganPlay(Organ organ, ElementProblems problems, Clock clock) {
 		this.organ = organ;
@@ -207,15 +206,13 @@ public abstract class OrganPlay {
 		}
 		open = true;
 
-		Iterator<Player<? extends Element>> toOpen = players.values()
-				.iterator();
+		Iterator<Player<? extends Element>> toOpen = players.values().iterator();
 		while (toOpen.hasNext()) {
 			Player<? extends Element> player = toOpen.next();
 			player.open();
 		}
 
-		Iterator<Player<? extends Element>> toUpdate = players.values()
-				.iterator();
+		Iterator<Player<? extends Element>> toUpdate = players.values().iterator();
 		while (toUpdate.hasNext()) {
 			Player<? extends Element> player = toUpdate.next();
 			player.update();
@@ -237,8 +234,7 @@ public abstract class OrganPlay {
 			throw new IllegalStateException("not open");
 		}
 
-		Iterator<Player<? extends Element>> iterator = players.values()
-				.iterator();
+		Iterator<Player<? extends Element>> iterator = players.values().iterator();
 		while (iterator.hasNext()) {
 			Player<? extends Element> player = iterator.next();
 			player.close();
@@ -247,6 +243,7 @@ public abstract class OrganPlay {
 		open = false;
 	}
 
+	@SuppressWarnings("unchecked")
 	public synchronized void play(Element element, Playing playing) {
 		if (!open) {
 			return;
@@ -318,15 +315,12 @@ public abstract class OrganPlay {
 	 * transmitter will automatically close the device when
 	 * {@link Transmitter#close()} is called on it.
 	 * 
-	 * @param deviceName
-	 *            the name of the device
+	 * @param deviceName the name of the device
 	 * @return transmitter
 	 * @throws MidiUnavailableException
 	 */
-	public Transmitter createTransmitter(String deviceName)
-			throws MidiUnavailableException {
-		final MidiDevice device = DevicePool.instance().getMidiDevice(
-				deviceName, Direction.IN);
+	public Transmitter createTransmitter(String deviceName) throws MidiUnavailableException {
+		final MidiDevice device = DevicePool.instance().getMidiDevice(deviceName, Direction.IN);
 		device.open();
 
 		final Transmitter transmitter = device.getTransmitter();
@@ -351,19 +345,16 @@ public abstract class OrganPlay {
 	}
 
 	/**
-	 * Create a receiver for the device with the given name. The returned
-	 * receiver will automatically close the device when
-	 * {@link Receiver#close()} is called on it.
+	 * Create a receiver for the device with the given name. The returned receiver
+	 * will automatically close the device when {@link Receiver#close()} is called
+	 * on it.
 	 * 
-	 * @param deviceName
-	 *            the name of the device
+	 * @param deviceName the name of the device
 	 * @return transmitter
 	 * @throws MidiUnavailableException
 	 */
-	public Receiver createReceiver(String deviceName)
-			throws MidiUnavailableException {
-		final MidiDevice device = DevicePool.instance().getMidiDevice(
-				deviceName, Direction.OUT);
+	public Receiver createReceiver(String deviceName) throws MidiUnavailableException {
+		final MidiDevice device = DevicePool.instance().getMidiDevice(deviceName, Direction.OUT);
 		device.open();
 
 		return new ReceiverWrapper(device.getReceiver()) {
@@ -376,8 +367,8 @@ public abstract class OrganPlay {
 		};
 	}
 
-	public interface Playing {
-		public void play(Player<?> player);
+	public interface Playing<T extends Player<?>> {
+		public void play(T player);
 	}
 
 	public void alarm(final WakeUp wakeUp, long delta) {

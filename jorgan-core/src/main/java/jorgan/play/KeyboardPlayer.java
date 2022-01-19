@@ -70,6 +70,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
 
+		removeProblem(Severity.WARNING, null);
+
 		removeProblem(Severity.ERROR, "input");
 		if (keyboard.getInput() != null) {
 			try {
@@ -145,11 +147,12 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	public void release(int pitch) {
+	public boolean release(int pitch) {
 
 		Keyboard keyboard = getElement();
 
-		if (pressed[pitch]) {
+		boolean wasPressed = pressed[pitch];
+		if (wasPressed) {
 			pressed[pitch] = false;
 
 			getOrganPlay().fireKeyReleased(keyboard, pitch);
@@ -163,11 +166,13 @@ public class KeyboardPlayer extends Player<Keyboard> {
 				}
 			}
 		}
+
+		return wasPressed;
 	}
 
 	protected void receive(MidiMessage midiMessage) {
 		if (onReceived(MessageUtils.getDatas(midiMessage))) {
-			// fir only when actually processed
+			// fire only when actually processed
 			if (getOrganPlay() != null) {
 				getOrganPlay().fireReceived(this.getElement(), midiMessage);
 			}
@@ -176,7 +181,9 @@ public class KeyboardPlayer extends Player<Keyboard> {
 
 	public void panic() {
 		for (int pitch = 0; pitch < pressed.length; pitch++) {
-			release(pitch);
+			if (release(pitch)) {
+				addProblem(Severity.WARNING, null, "panic", pitch);
+			}
 		}
 	}
 }
