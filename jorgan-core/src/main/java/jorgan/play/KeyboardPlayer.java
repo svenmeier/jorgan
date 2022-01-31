@@ -18,6 +18,9 @@
  */
 package jorgan.play;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -180,10 +183,16 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	public void panic() {
+		removeProblem(Severity.WARNING, null);
+
+		List<Integer> pitches = new ArrayList<Integer>();
 		for (int pitch = 0; pitch < pressed.length; pitch++) {
 			if (release(pitch)) {
-				addProblem(Severity.WARNING, null, "panic", pitch);
+				pitches.add(pitch);
 			}
+		}
+		if (pitches.size() > 0) {
+			addProblem(Severity.WARNING, null, "panic", pitches);
 		}
 	}
 }
