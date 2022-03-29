@@ -35,6 +35,6 @@ public class Max extends ValueCommand {
 	@Override
 	public float process(float value, Context context) {
 		float newValue = getValue(context);
-		return value > newValue ? value : newValue;
+		return value < newValue ? value : newValue;
 	}
 }
