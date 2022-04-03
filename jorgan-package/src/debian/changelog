@@ -1,6 +1,16 @@
+jorgan (4.0.Beta3) beta;
+
+  * core: resolve file relative to disposition
+  * core: MPL min and max
+  * core: warn list of stuck keys
+  * cli: allow panic from cli
+  * gui: focus improvements for recording of message
+
+ -- Sven Meier <sven@meiers.net>  Mo, 4 Apr 2022 00:07:00 +0200
+
 jorgan (4.0.Beta2) beta;
 
-  * fluidsnyht: update to fluidsynth 2
+  * fluidsynth: update for fluidsynth 2 compatibility
   * executor: log process output
 
  -- Sven Meier <sven@meiers.net>  Wed, 31 Apr 2021 23:00:00 +0200
