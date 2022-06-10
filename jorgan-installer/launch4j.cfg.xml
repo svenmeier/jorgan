@@ -18,6 +18,6 @@
     <bundledJreAsFallback>true</bundledJreAsFallback>
     <minVersion>11</minVersion>
     <jdkPreference>preferJre</jdkPreference>
-    <opt>--illegal-access=permit</opt>
+    <opt>--add-opens=java.desktop/java.awt=ALL-UNNAMED</opt>
   </jre>
 </launch4jConfig>
