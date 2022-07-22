@@ -147,6 +147,7 @@ public class Switch extends Engageable {
 		classes.add(InputMessage.class);
 		classes.add(Activate.class);
 		classes.add(Deactivate.class);
+		classes.add(Initiate.class);
 		classes.add(Toggle.class);
 		classes.add(Activated.class);
 		classes.add(Deactivated.class);
@@ -163,9 +164,6 @@ public class Switch extends Engageable {
 	public static class Toggle extends InputMessage {
 	}
 
-	/**
-	 * @deprecated
-	 */
 	public static class Initiate extends InputMessage {
 	}
 
