@@ -1,12 +1,13 @@
-jorgan (4.0.Beta3) beta;
+jorgan (4.1) stable;
 
   * core: resolve file relative to disposition
   * core: MPL min and max
   * core: warn list of stuck keys
+  * core: adjust build for Raspberry Bullseye
   * cli: allow panic from cli
   * gui: focus improvements for recording of message
 
- -- Sven Meier <sven@meiers.net>  Mo, 4 Apr 2022 00:07:00 +0200
+ -- Sven Meier <sven@meiers.net>  Su, 18 Dec 2022 20:00:00 +0200
 
 jorgan (4.0.Beta2) beta;
 
