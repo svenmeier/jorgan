@@ -24,8 +24,7 @@ public class OptionsPanel extends JPanel {
 	static Configuration config = Configuration.getRoot()
 			.get(OptionsPanel.class);
 
-	private FileSelector fileSelector = new FileSelector(
-			FileSelector.FILES_ONLY) {
+	private FileSelector fileSelector = new FileSelector(FileSelector.FILES_ONLY) {
 		protected File toChooser(File file) {
 			if (file == null) {
 				file = new History().getRecentDirectory();
@@ -39,6 +38,8 @@ public class OptionsPanel extends JPanel {
 	private JCheckBox touchSensitiveCheckBox = new JCheckBox();
 
 	private JSpinner bankSpinner;
+
+	private JCheckBox bankPresetsCheckBox = new JCheckBox();
 
 	/**
 	 * Constructor.
@@ -60,6 +61,8 @@ public class OptionsPanel extends JPanel {
 		bankSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 128, 1));
 		column.definition(bankSpinner);
 
+		column.definition(config.get("bankPreset").read(bankPresetsCheckBox));
+
 		column.definition(config.get("stops").read(stopsCheckBox));
 
 		column.definition(
@@ -72,6 +75,10 @@ public class OptionsPanel extends JPanel {
 
 	public boolean getCreateStops() {
 		return stopsCheckBox.isSelected();
+	}
+
+	public boolean getBankPresets() {
+		return bankPresetsCheckBox.isSelected();
 	}
 
 	public boolean getTouchSensitive() {
