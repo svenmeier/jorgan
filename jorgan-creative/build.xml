@@ -64,6 +64,7 @@
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
+	<echo message="${win.include}" />
     <fail message="win.include not found - please check your build.properties">
       <condition>
         <not>
