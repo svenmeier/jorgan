@@ -188,12 +188,29 @@ public class OrganFrame extends JFrame implements SessionAware {
 		JMenuBar menuBar = getJMenuBar();
 		menuBar.removeAll();
 
+		// Prepare menus
 		JMenu fileMenu = new JMenu();
 		config.get("fileMenu").read(fileMenu);
 		menuBar.add(fileMenu);
+
+		JMenu editMenu = new JMenu();
+		config.get("editMenu").read(editMenu);
+		menuBar.add(editMenu);
+
+		JMenu viewMenu = new JMenu();
+		config.get("viewMenu").read(viewMenu);
+		menuBar.add(viewMenu);
+
+		JMenu helpMenu = new JMenu();
+		config.get("helpMenu").read(helpMenu);
+		menuBar.add(helpMenu);
+
+		menuBar.revalidate();
+		menuBar.repaint();
+
+		// Add first elements in menus
 		fileMenu.add(newAction);
 		fileMenu.add(openAction);
-
 		JMenu recentsMenu = new JMenu();
 		config.get("recentsMenu").read(recentsMenu);
 		List<File> recents = new History().getRecentFiles();
@@ -201,60 +218,79 @@ public class OrganFrame extends JFrame implements SessionAware {
 			recentsMenu.add(new RecentAction(r + 1, recents.get(r)));
 		}
 		fileMenu.add(recentsMenu);
-
 		fileMenu.addSeparator();
 		fileMenu.add(saveAction);
 		fileMenu.add(closeAction);
 
-		if (session != null) {
-			List<Action> actions = ActionRegistry.createMenuActions(session,
-					this);
-			if (actions.size() > 0) {
-				fileMenu.addSeparator();
-
-				for (Action action : actions) {
-					fileMenu.add(action);
-				}
-			}
-		}
-
-		fileMenu.addSeparator();
-		fileMenu.add(exitAction);
-
-		if (session != null) {
-			JMenu editMenu = new JMenu();
-			config.get("editMenu").read(editMenu);
-			menuBar.add(editMenu);
-
-			editMenu.add(new JCheckBoxMenuItem(constructAction));
-
-			editMenu.addSeparator();
-
-			for (Action action : ActionRegistry.createToolbarActions(session,
-					this)) {
-				editMenu.add(action);
-			}
-		}
-
-		JMenu viewMenu = new JMenu();
-		config.get("viewMenu").read(viewMenu);
-		menuBar.add(viewMenu);
 		viewMenu.add(debugAction);
 		viewMenu.addSeparator();
 		for (Action action : organPanel.getViewActions()) {
 			viewMenu.add(action);
 		}
-		viewMenu.addSeparator();
-		viewMenu.add(configurationAction);
 
-		JMenu helpMenu = new JMenu();
-		config.get("helpMenu").read(helpMenu);
-		menuBar.add(helpMenu);
 		helpMenu.add(websiteAction);
 		helpMenu.add(aboutAction);
 
-		menuBar.revalidate();
-		menuBar.repaint();
+		// Add elements if a session if open
+		if (session != null) {
+			List<Action> actions = ActionRegistry.createMenuActions(session, this);
+			if (actions.size() > 0) {
+				fileMenu.addSeparator();
+				// Rules:
+				// * in file menu :
+				//   * first import,
+				//   * then export,
+				//   * then everything but customize or full screen,
+				//   * finally customize
+				// * in view menu : full screen
+				for (Action action : actions) {
+					if (action.getClass().getSimpleName().equals("FullScreenAction")) {
+						viewMenu.addSeparator();
+						viewMenu.add(action);
+						actions.remove(action);
+						break;
+					}
+				}
+				for (Action action : actions) {
+					if (action.getClass().getSimpleName().equals("ImportAction")) {
+						fileMenu.add(action);
+						actions.remove(action);
+						break;
+					}
+				}
+				for (Action action : actions) {
+					if (action.getClass().getSimpleName().equals("ExportAction")) {
+						fileMenu.add(action);
+						actions.remove(action);
+						break;
+					}
+				}
+				for (Action action : actions) {
+					if (!action.getClass().getSimpleName().equals("CustomizeAction")) {
+						fileMenu.add(action);
+					}
+				}
+				for (Action action : actions) {
+					if (action.getClass().getSimpleName().equals("CustomizeAction")) {
+						fileMenu.add(action);
+					}
+				}
+			}
+
+			editMenu.add(new JCheckBoxMenuItem(constructAction));
+			editMenu.addSeparator();
+			for (Action action : ActionRegistry.createToolbarActions(session,
+					this)) {
+				editMenu.add(action);
+			}
+			editMenu.addSeparator();
+		}
+
+		// Add last elements
+		fileMenu.addSeparator();
+		fileMenu.add(exitAction);
+
+		editMenu.add(configurationAction);
 
 		String title;
 		if (session == null) {
