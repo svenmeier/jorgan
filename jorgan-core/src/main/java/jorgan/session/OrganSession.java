@@ -27,9 +27,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import bias.Configuration;
 import jorgan.Version;
-import jorgan.disposition.Organ;
 import jorgan.disposition.Element.FastPropertyChange;
+import jorgan.disposition.Organ;
 import jorgan.disposition.event.Change;
 import jorgan.disposition.event.OrganObserver;
 import jorgan.disposition.spi.ElementRegistry;
@@ -37,18 +38,15 @@ import jorgan.io.DispositionStream;
 import jorgan.io.disposition.Backup;
 import jorgan.session.spi.SessionRegistry;
 import jorgan.util.ShutdownHook;
-import bias.Configuration;
 
 /**
  * A session of interaction with an {@link Organ}.
  */
 public class OrganSession {
 
-	private static Logger logger = Logger.getLogger(OrganSession.class
-			.getName());
+	private static Logger logger = Logger.getLogger(OrganSession.class.getName());
 
-	private static Configuration config = Configuration.getRoot().get(
-			OrganSession.class);
+	private static Configuration config = Configuration.getRoot().get(OrganSession.class);
 
 	/**
 	 * The file the current organ is associated with.
@@ -123,8 +121,7 @@ public class OrganSession {
 							try {
 								save();
 							} catch (IOException ex) {
-								logger.log(Level.WARNING,
-										"unable to save on shutdown", ex);
+								logger.log(Level.WARNING, "unable to save on shutdown", ex);
 							}
 						}
 					}
@@ -202,8 +199,7 @@ public class OrganSession {
 	}
 
 	/**
-	 * @throws IllegalArgumentException
-	 *             if clazz can not be looked up
+	 * @throws IllegalArgumentException if clazz can not be looked up
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T lookup(Class<T> clazz) {
@@ -221,15 +217,14 @@ public class OrganSession {
 
 	public String deresolve(File file) {
 		if (file.isAbsolute()) {
-			String directory = this.file.getParentFile().getAbsolutePath()
-					.replace('\\', '/');
+			String directory = this.file.getParentFile().getAbsolutePath().replace('\\', '/');
 			if (!directory.endsWith("/")) {
 				directory += "/";
 			}
 
 			String path = file.getPath().replace('\\', '/');
 			if (path.startsWith(directory)) {
-				return path.substring(directory.length());
+				return "./" + path.substring(directory.length());
 			}
 		}
 

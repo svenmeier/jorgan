@@ -10,3 +10,4 @@ StartupNotify=true
 Icon=jorgan
 Categories=GNOME;AudioVideo;
 MimeType=application/jorgan.disposition;
+StartupWMClass=jorgan

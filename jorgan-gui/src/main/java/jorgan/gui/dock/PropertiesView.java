@@ -29,6 +29,7 @@ import javax.swing.JScrollPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import bias.Configuration;
 import jorgan.disposition.Element;
 import jorgan.disposition.Elements;
 import jorgan.disposition.event.OrganAdapter;
@@ -42,15 +43,14 @@ import jorgan.gui.undo.UndoManager;
 import jorgan.session.OrganSession;
 import jorgan.swing.beans.PropertiesPanel;
 import spin.Spin;
-import bias.Configuration;
 
 /**
  * Dockable shows the properties of elements.
  */
 public class PropertiesView extends AbstractView {
 
-	private static Configuration config = Configuration.getRoot().get(
-			PropertiesView.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(PropertiesView.class);
 
 	/**
 	 * The handler of selection changes.
@@ -63,8 +63,8 @@ public class PropertiesView extends AbstractView {
 		@Override
 		public BeanInfo getBeanInfo(Class<?> beanClass)
 				throws IntrospectionException {
-			Introspector.setBeanInfoSearchPath(BeanInfoSearchPathRegistry
-					.getBeanInfoSearchPath());
+			Introspector.setBeanInfoSearchPath(
+					BeanInfoSearchPathRegistry.getBeanInfoSearchPath());
 
 			return super.getBeanInfo(beanClass);
 		}
@@ -75,15 +75,16 @@ public class PropertiesView extends AbstractView {
 			PropertyEditor editor = super.getPropertyEditor(descriptor);
 
 			if (editor != null && editor instanceof ElementAwareEditor) {
-				((ElementAwareEditor) editor).setElement((Element) panel
-						.getBeans().get(0));
+				((ElementAwareEditor) editor).setElement(session,
+						(Element) panel.getBeans().get(0));
 			}
 
 			return editor;
 		}
 
 		@Override
-		protected void onWriteProperty(final Method method, final Object value) {
+		protected void onWriteProperty(final Method method,
+				final Object value) {
 
 			session.lookup(UndoManager.class).compound(new Compound() {
 				public void run() {
@@ -108,8 +109,8 @@ public class PropertiesView extends AbstractView {
 
 	public void setSession(OrganSession session) {
 		if (this.session != null) {
-			this.session.lookup(ElementSelection.class).removeListener(
-					selectionHandler);
+			this.session.lookup(ElementSelection.class)
+					.removeListener(selectionHandler);
 			this.session.getOrgan().removeOrganListener(
 					(OrganListener) Spin.over(selectionHandler));
 
@@ -119,8 +120,8 @@ public class PropertiesView extends AbstractView {
 		this.session = session;
 
 		if (this.session != null) {
-			this.session.lookup(ElementSelection.class).addListener(
-					selectionHandler);
+			this.session.lookup(ElementSelection.class)
+					.addListener(selectionHandler);
 			this.session.getOrgan().addOrganListener(
 					(OrganListener) Spin.over(selectionHandler));
 
@@ -131,8 +132,8 @@ public class PropertiesView extends AbstractView {
 	/**
 	 * The handler of selections.
 	 */
-	private class SelectionHandler extends OrganAdapter implements
-			SelectionListener, ChangeListener {
+	private class SelectionHandler extends OrganAdapter
+			implements SelectionListener, ChangeListener {
 
 		private boolean changing = false;
 

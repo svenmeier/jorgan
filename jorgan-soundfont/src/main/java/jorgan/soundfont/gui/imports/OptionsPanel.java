@@ -10,27 +10,36 @@ import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import bias.Configuration;
+import jorgan.session.History;
 import jorgan.swing.FileSelector;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
-import bias.Configuration;
 
 /**
  * A panel for options.
  */
 public class OptionsPanel extends JPanel {
 
-	static Configuration config = Configuration.getRoot().get(
-			OptionsPanel.class);
+	static Configuration config = Configuration.getRoot()
+			.get(OptionsPanel.class);
 
-	private FileSelector fileSelector = new FileSelector(
-			FileSelector.FILES_ONLY);
+	private FileSelector fileSelector = new FileSelector(FileSelector.FILES_ONLY) {
+		protected File toChooser(File file) {
+			if (file == null) {
+				file = new History().getRecentDirectory();
+			}
+			return file;
+		}
+	};
 
 	private JCheckBox stopsCheckBox = new JCheckBox();
 
 	private JCheckBox touchSensitiveCheckBox = new JCheckBox();
 
 	private JSpinner bankSpinner;
+
+	private JCheckBox bankPresetsCheckBox = new JCheckBox();
 
 	/**
 	 * Constructor.
@@ -52,10 +61,12 @@ public class OptionsPanel extends JPanel {
 		bankSpinner = new JSpinner(new SpinnerNumberModel(0, 0, 128, 1));
 		column.definition(bankSpinner);
 
+		column.definition(config.get("bankPreset").read(bankPresetsCheckBox));
+
 		column.definition(config.get("stops").read(stopsCheckBox));
 
-		column.definition(config.get("touchSensitive").read(
-				touchSensitiveCheckBox));
+		column.definition(
+				config.get("touchSensitive").read(touchSensitiveCheckBox));
 	}
 
 	public File getSelectedFile() {
@@ -64,6 +75,10 @@ public class OptionsPanel extends JPanel {
 
 	public boolean getCreateStops() {
 		return stopsCheckBox.isSelected();
+	}
+
+	public boolean getBankPresets() {
+		return bankPresetsCheckBox.isSelected();
 	}
 
 	public boolean getTouchSensitive() {

@@ -29,23 +29,24 @@ import javax.swing.JRadioButton;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import bias.Configuration;
+import bias.swing.MessageBox;
 import jorgan.exporter.target.ClipboardTarget;
 import jorgan.exporter.target.FileTarget;
 import jorgan.exporter.target.Target;
+import jorgan.session.History;
 import jorgan.swing.FileSelector;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
-import bias.Configuration;
-import bias.swing.MessageBox;
 
 /**
  * A {@link Target} configuration for an {@link Export}.
  */
 public class TargetPanel extends JPanel {
 
-	private static Configuration config = Configuration.getRoot().get(
-			TargetPanel.class);
+	private static Configuration config = Configuration.getRoot()
+			.get(TargetPanel.class);
 
 	private JRadioButton clipboardRadioButton;
 
@@ -75,7 +76,14 @@ public class TargetPanel extends JPanel {
 		group.add(fileRadioButton);
 		column.definition(config.get("file").read(fileRadioButton));
 
-		fileSelector = new FileSelector(FileSelector.FILES_ONLY);
+		fileSelector = new FileSelector(FileSelector.FILES_ONLY) {
+			protected File toChooser(File file) {
+				if (file == null) {
+					file = new History().getRecentDirectory();
+				}
+				return file;
+			}
+		};
 		fileSelector.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(ChangeEvent arg0) {
@@ -113,8 +121,8 @@ public class TargetPanel extends JPanel {
 	}
 
 	private boolean confirmFileExists(File file) {
-		return config.get("fileExists").read(
-				new MessageBox(MessageBox.OPTIONS_OK_CANCEL)).show(this,
-				file.getName()) == MessageBox.OPTION_OK;
+		return config.get("fileExists")
+				.read(new MessageBox(MessageBox.OPTIONS_OK_CANCEL))
+				.show(this, file.getName()) == MessageBox.OPTION_OK;
 	}
 }

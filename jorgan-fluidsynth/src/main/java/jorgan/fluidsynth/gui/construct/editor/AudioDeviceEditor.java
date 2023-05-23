@@ -25,13 +25,14 @@ import jorgan.fluidsynth.Fluidsynth;
 import jorgan.fluidsynth.disposition.FluidsynthSound;
 import jorgan.gui.construct.editor.ElementAwareEditor;
 import jorgan.gui.construct.editor.TagEditor;
+import jorgan.session.OrganSession;
 
 public class AudioDeviceEditor extends TagEditor implements ElementAwareEditor {
 
 	private FluidsynthSound sound;
 
-	public void setElement(Element element) {
-
+	@Override
+	public void setElement(OrganSession session, Element element) {
 		if (element instanceof FluidsynthSound) {
 			this.sound = (FluidsynthSound) element;
 		} else {

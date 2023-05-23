@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-#define BUILD_SHARED_LIBS 1
+#define BUILD_SHARED_LIBS 0
 
 #if (BUILD_SHARED_LIBS == 0)
     #define FLUIDSYNTH_API // building static lib? no visibility control then
@@ -42,6 +42,9 @@ extern "C" {
 
 #elif defined(MACOS9)
 #define FLUIDSYNTH_API __declspec(export)
+
+#elif defined(__OS2__)
+#define FLUIDSYNTH_API __declspec(dllexport)
 
 #elif defined(__GNUC__)
 #define FLUIDSYNTH_API __attribute__ ((visibility ("default")))

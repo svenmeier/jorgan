@@ -18,6 +18,9 @@
  */
 package jorgan.play;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Receiver;
@@ -69,6 +72,8 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	@Override
 	protected void openImpl() {
 		Keyboard keyboard = getElement();
+
+		removeProblem(Severity.WARNING, null);
 
 		removeProblem(Severity.ERROR, "input");
 		if (keyboard.getInput() != null) {
@@ -145,11 +150,12 @@ public class KeyboardPlayer extends Player<Keyboard> {
 		}
 	}
 
-	public void release(int pitch) {
+	public boolean release(int pitch) {
 
 		Keyboard keyboard = getElement();
 
-		if (pressed[pitch]) {
+		boolean wasPressed = pressed[pitch];
+		if (wasPressed) {
 			pressed[pitch] = false;
 
 			getOrganPlay().fireKeyReleased(keyboard, pitch);
@@ -163,11 +169,13 @@ public class KeyboardPlayer extends Player<Keyboard> {
 				}
 			}
 		}
+
+		return wasPressed;
 	}
 
 	protected void receive(MidiMessage midiMessage) {
 		if (onReceived(MessageUtils.getDatas(midiMessage))) {
-			// fir only when actually processed
+			// fire only when actually processed
 			if (getOrganPlay() != null) {
 				getOrganPlay().fireReceived(this.getElement(), midiMessage);
 			}
@@ -175,8 +183,16 @@ public class KeyboardPlayer extends Player<Keyboard> {
 	}
 
 	public void panic() {
+		removeProblem(Severity.WARNING, null);
+
+		List<Integer> pitches = new ArrayList<Integer>();
 		for (int pitch = 0; pitch < pressed.length; pitch++) {
-			release(pitch);
+			if (release(pitch)) {
+				pitches.add(pitch);
+			}
+		}
+		if (pitches.size() > 0) {
+			addProblem(Severity.WARNING, null, "panic", pitches);
 		}
 	}
 }

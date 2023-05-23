@@ -1,3 +1,3 @@
 #!/bin/sh
 
-java --illegal-access=permit -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"
+java --add-opens=java.desktop/java.awt=ALL-UNNAMED -Xmx128M -jar /usr/lib/jorgan/jorgan.jar "$@"

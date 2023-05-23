@@ -65,6 +65,7 @@
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
+	<echo message="${win.include}" />
     <fail message="win.include not found - please check your build.properties">
       <condition>
         <not>
@@ -82,7 +83,7 @@
       <arg value="-Wall" />
       <arg value="-Wl,--kill-at" />
       <arg value="-Wl,-L./lib/win/${os.arch}" />
-      <arg value="-Wl,-llibfluidsynth" />
+      <arg value="-Wl,-llibfluidsynth-3" />
       <arg value="-shared" />
       <arg line="../jorgan-jni/src/main/native/exception.c" />
       <arg line="../jorgan-jni/src/main/native/logging.c" />

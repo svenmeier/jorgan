@@ -24,12 +24,27 @@ import java.io.File;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import jorgan.disposition.Element;
+import jorgan.session.OrganSession;
 import jorgan.swing.FileSelector;
 
 /**
  * PropertyEditor for a file property.
  */
-public class FileEditor extends CustomEditor {
+public class FileEditor extends CustomEditor implements ElementAwareEditor {
+
+	private OrganSession session;
+
+	private Element element;
+
+	public FileEditor() {
+	}
+
+	@Override
+	public void setElement(OrganSession session, Element element) {
+		this.session = session;
+		this.element = element;
+	}
 
 	private FileSelector field = new FileSelector(
 			FileSelector.FILES_AND_DIRECTORIES) {
@@ -37,6 +52,22 @@ public class FileEditor extends CustomEditor {
 			JTextField textField = super.createTextField();
 			textField.setBorder(new EmptyBorder(0, 0, 0, 0));
 			return textField;
+		}
+
+		@Override
+		protected File toChooser(File file) {
+			if (session == null || file == null) {
+				return file;
+			}
+			return session.resolve(file.getPath());
+		}
+
+		@Override
+		protected File fromChooser(File file) {
+			if (session == null) {
+				return file;
+			}
+			return new File(session.deresolve(file));
 		}
 	};
 

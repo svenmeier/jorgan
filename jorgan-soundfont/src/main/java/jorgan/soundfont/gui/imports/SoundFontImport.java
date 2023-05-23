@@ -30,6 +30,8 @@ import java.util.Set;
 
 import javax.swing.JComponent;
 
+import bias.Configuration;
+import bias.swing.MessageBox;
 import jorgan.disposition.Element;
 import jorgan.disposition.Rank;
 import jorgan.disposition.Stop;
@@ -40,16 +42,14 @@ import jorgan.soundfont.Preset;
 import jorgan.soundfont.SoundfontReader;
 import jorgan.swing.wizard.AbstractPage;
 import jorgan.swing.wizard.Page;
-import bias.Configuration;
-import bias.swing.MessageBox;
 
 /**
  * An {@link Import} from a SoundFont.
  */
 public class SoundFontImport implements Import {
 
-	static Configuration config = Configuration.getRoot().get(
-			SoundFontImport.class);
+	static Configuration config = Configuration.getRoot()
+			.get(SoundFontImport.class);
 
 	private OptionsPanel panel = new OptionsPanel();
 
@@ -91,8 +91,8 @@ public class SoundFontImport implements Import {
 	}
 
 	private void showMessage(String key, Object... args) {
-		MessageBox box = SoundFontImport.config.get(key).read(
-				new MessageBox(MessageBox.OPTIONS_OK));
+		MessageBox box = SoundFontImport.config.get(key)
+				.read(new MessageBox(MessageBox.OPTIONS_OK));
 		box.show(panel, args);
 	}
 
@@ -101,12 +101,16 @@ public class SoundFontImport implements Import {
 	 * 
 	 * @param file
 	 *            file to read from
+	 * @param bank
+	 *            bank for ranks
+	 * @param bankPresets
+	 *            should bank presets be applied
 	 * @return list of ranks
 	 * @throws IOException
 	 * @throws RiffFormatException
 	 */
-	private Set<Rank> readRanks(File file, int bank) throws IOException,
-			RiffFormatException {
+	private Set<Rank> readRanks(File file, int bank, boolean bankPresets)
+			throws IOException, RiffFormatException {
 
 		Set<Rank> ranks = new HashSet<Rank>();
 
@@ -124,7 +128,7 @@ public class SoundFontImport implements Import {
 				Rank rank = new Rank();
 				rank.setName(preset.getName());
 				rank.setProgram(preset.getProgram());
-				rank.setBank(bank);
+				rank.setBank(bank + (bankPresets ? preset.getBank() : 0));
 				if (!this.panel.getTouchSensitive()) {
 					rank.setVelocity(100);
 				}
@@ -172,7 +176,8 @@ public class SoundFontImport implements Import {
 			try {
 				List<Element> elements = new ArrayList<Element>();
 
-				Set<Rank> ranks = readRanks(file, panel.getBank());
+				Set<Rank> ranks = readRanks(file, panel.getBank(),
+						panel.getBankPresets());
 				elements.addAll(ranks);
 
 				if (panel.getCreateStops()) {

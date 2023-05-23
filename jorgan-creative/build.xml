@@ -40,27 +40,31 @@
   <target name="native-common" depends="compile">
     <mkdir dir="./target/native" />
 
-   	<condition property="isWindows">
+    <condition property="isWindows">
       <os family="windows"/>
-  	</condition>
+    </condition>
     
-  	<condition property="isUnix">
-  	  <and>
+    <condition property="isUnix">
+      <and>
         <os family="unix"/>
-  	    <not>
-  	      <os family="mac"/>
-  	    </not>
-  	  </and>
-  	</condition>
+        <not>
+          <os arch="aarch64"/>
+        </not>
+  	<not>
+  	  <os family="mac"/>
+        </not>
+      </and>
+    </condition>
     
-  	<condition property="isMac">
+    <condition property="isMac">
       <os family="mac"/>
-  	</condition>
+    </condition>
   </target>
 
   <target name="native-windows" depends="native-common" if="isWindows">
     <mkdir dir="./target/native" />
 
+	<echo message="${win.include}" />
     <fail message="win.include not found - please check your build.properties">
       <condition>
         <not>
@@ -135,11 +139,11 @@
     </exec>
   </target>
 
-  <target name="awesfx">
+  <target name="awesfx" if="isUnix">
     <echo message="Note: requires package 'libasound2-dev'" />  	
 
     <mkdir dir="./target/awesfx"/> 
-    <exec dir="./target" command="wget ftp://ftp.suse.com/pub/people/tiwai/awesfx/awesfx-0.5.1c.tar.bz2"/>
+    <get src="ftp://ftp.suse.com/pub/people/tiwai/awesfx/awesfx-0.5.1c.tar.bz2" dest="./target"/>
     <exec dir="./target" command="tar -xvjf awesfx-0.5.1c.tar.bz2 -C awesfx --strip-components 1"/>
     <exec dir="./target/awesfx" command="./configure"/>
   </target>

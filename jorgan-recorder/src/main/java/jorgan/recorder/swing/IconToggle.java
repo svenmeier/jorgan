@@ -13,6 +13,8 @@ import java.awt.event.MouseEvent;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 
+import jorgan.swing.MouseUtils;
+
 public abstract class IconToggle extends JComponent {
 
 	private Icon onIcon = new EmptyIcon();
@@ -21,10 +23,13 @@ public abstract class IconToggle extends JComponent {
 
 	public IconToggle() {
 		setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-		
+
 		addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
+				if (MouseUtils.isHorizontalScroll(e)) {
+					return;
+				}
 				toggle();
 			}
 		});
@@ -50,9 +55,9 @@ public abstract class IconToggle extends JComponent {
 
 	@Override
 	public Dimension getPreferredSize() {
-		return new Dimension(Math.max(onIcon.getIconWidth(), offIcon
-				.getIconWidth()), Math.max(onIcon.getIconHeight(), offIcon
-				.getIconHeight()));
+		return new Dimension(
+				Math.max(onIcon.getIconWidth(), offIcon.getIconWidth()),
+				Math.max(onIcon.getIconHeight(), offIcon.getIconHeight()));
 	}
 
 	protected abstract boolean isOn();
@@ -107,8 +112,8 @@ public abstract class IconToggle extends JComponent {
 			Graphics2D g2d = ((Graphics2D) g);
 
 			Composite composite = g2d.getComposite();
-			g2d.setComposite(AlphaComposite.getInstance(
-					AlphaComposite.SRC_OVER, 0.25f));
+			g2d.setComposite(
+					AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.25f));
 
 			icon.paintIcon(c, g, x, y);
 
