@@ -18,28 +18,34 @@
  */
 package jorgan.gui.preferences.category;
 
+import java.util.Locale;
+
+import javax.swing.AbstractButton;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JRadioButton;
 import javax.swing.JSlider;
+import javax.swing.SpinnerNumberModel;
 
 import bias.Configuration;
 import bias.swing.Category;
+import bias.util.MessageBuilder;
 import bias.util.Property;
+import jorgan.App;
 import jorgan.gui.FullScreen;
 import jorgan.gui.GUI;
 import jorgan.gui.LAF;
-import jorgan.gui.OrganFrame;
-import jorgan.gui.OrganFrame.Changes;
-import jorgan.gui.action.FullScreenAction;
-import jorgan.skin.SkinManager;
+import jorgan.session.History;
 import jorgan.swing.button.ButtonGroup;
+import jorgan.swing.combobox.BaseComboBoxModel;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
+import jorgan.util.LocaleUtils;
 
 /**
  * {@link GUI} category.
@@ -49,45 +55,33 @@ public class GuiCategory extends JOrganCategory {
 	private static Configuration config = Configuration.getRoot()
 			.get(GuiCategory.class);
 
+	private Model<Locale> locale = getModel(new Property(App.class, "locale"));
+
 	private Model<LAF> lookAndFeel = getModel(
 			new Property(GUI.class, "lookAndFeel"));
 
 	private Model<Integer> scale = getModel(new Property(GUI.class, "scale"));
 
-	private Model<Boolean> showAboutOnStartup = getModel(
-			new Property(GUI.class, "showAboutOnStartup"));
-
-	private Model<Boolean> fullScreenOnLoad = getModel(
-			new Property(FullScreenAction.class, "onLoad"));
-
 	private Model<Boolean> fullScreenAutoScroll = getModel(
 			new Property(FullScreen.class, "autoScroll"));
 
-	private Model<Boolean> flushImagesOnClose = getModel(
-			new Property(SkinManager.class, "flushImagesOnClose"));
+	private Model<Integer> historyMax = getModel(
+		    new Property(History.class,	"max"));
+
+	private JRadioButton localeDefaultRadioButton = new JRadioButton();
+
+	private JRadioButton localeOtherRadioButton = new JRadioButton();
+
+	private JComboBox<Locale> localeComboBox = new JComboBox<Locale>();
 
 	private JComboBox<LAF> lookAndFeelComboBox = new JComboBox<LAF>();
 
 	private JSlider scaleSlider = new JSlider(1, 4, 1);
 
-	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
-
-	private Model<OrganFrame.Changes> changes = getModel(
-			new Property(OrganFrame.class, "changes"));
-
-	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
-
 	private JCheckBox fullScreenAutoScrollCheckBox = new JCheckBox();
 
-	private JRadioButton changesDiscardRadioButton = new JRadioButton();
-
-	private JRadioButton changesSaveRegistrationsRadioButton = new JRadioButton();
-
-	private JRadioButton changesConfirmRadioButton = new JRadioButton();
-
-	private JRadioButton changesSaveRadioButton = new JRadioButton();
-
-	private JCheckBox flushImagesOnCloseCheckBox = new JCheckBox();
+	private JSpinner historyMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
+			0, 100, 1));
 
 	public GuiCategory() {
 		config.read(this);
@@ -100,6 +94,34 @@ public class GuiCategory extends JOrganCategory {
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 
 		Column column = builder.column();
+		
+		ButtonGroup localeGroup = new ButtonGroup() {
+			@Override
+			protected void onSelected(AbstractButton button) {
+				localeComboBox.setEnabled(button == localeOtherRadioButton);
+			}
+		};
+		column.term(config.get("locale").read(new JLabel()));
+
+		String message = config.get("localeDefault").read(new MessageBuilder())
+				.build(LocaleUtils.getDefault());
+		localeDefaultRadioButton.setText(message);
+		localeGroup.add(localeDefaultRadioButton);
+		column.definition(localeDefaultRadioButton);
+
+		config.get("localeOther").read(localeOtherRadioButton);
+		localeGroup.add(localeOtherRadioButton);
+		column.definition(localeOtherRadioButton);
+
+		localeComboBox.setEditable(true);
+		localeComboBox.setModel(new BaseComboBoxModel<Locale>(LocaleUtils
+				.getLocales()) {
+			@Override
+			protected Locale convert(String element) {
+				return new Locale(element);
+			}
+		});
+		column.definition(localeComboBox);
 
 		column.term(config.get("lookAndFeel").read(new JLabel()));
 		lookAndFeelComboBox.setModel(new DefaultComboBoxModel(LAF.values()));
@@ -111,39 +133,12 @@ public class GuiCategory extends JOrganCategory {
 		scaleSlider.setPaintLabels(true);
 		column.definition(scaleSlider);
 
-		column.definition(config.get("showAboutOnStartup")
-				.read(showAboutOnStartupCheckBox));
-
-		column.definition(config.get("flushImagesOnClose")
-				.read(flushImagesOnCloseCheckBox));
-
 		column.term(config.get("fullScreen").read(new JLabel()));
-
-		column.definition(
-				config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox));
-
 		column.definition(config.get("fullScreenAutoScroll")
 				.read(fullScreenAutoScrollCheckBox));
 
-		ButtonGroup changesGroup = new ButtonGroup();
-		column.term(config.get("changes").read(new JLabel()));
-
-		config.get("changesDiscard").read(changesDiscardRadioButton);
-		changesGroup.add(changesDiscardRadioButton);
-		column.definition(changesDiscardRadioButton);
-
-		config.get("changesSaveRegistrations")
-				.read(changesSaveRegistrationsRadioButton);
-		changesGroup.add(changesSaveRegistrationsRadioButton);
-		column.definition(changesSaveRegistrationsRadioButton);
-
-		config.get("changesConfirm").read(changesConfirmRadioButton);
-		changesGroup.add(changesConfirmRadioButton);
-		column.definition(changesConfirmRadioButton);
-
-		config.get("changesSave").read(changesSaveRadioButton);
-		changesGroup.add(changesSaveRadioButton);
-		column.definition(changesSaveRadioButton);
+		column.term(config.get("historyMax").read(new JLabel()));
+		column.definition(historyMaxSpinner);
 
 		return panel;
 	}
@@ -155,52 +150,38 @@ public class GuiCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
+		Locale locale = this.locale.getValue();
+		if (locale == null) {
+			localeDefaultRadioButton.setSelected(true);
+			localeComboBox.setEnabled(false);
+			localeComboBox.setSelectedItem(LocaleUtils.getDefault());
+		} else {
+			localeOtherRadioButton.setSelected(true);
+			localeComboBox.setEnabled(true);
+			localeComboBox.setSelectedItem(locale);
+		}
+
 		lookAndFeelComboBox.setSelectedItem(lookAndFeel.getValue());
 		scaleSlider.setValue(scale.getValue());
-		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
-		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
 		fullScreenAutoScrollCheckBox
 				.setSelected(fullScreenAutoScroll.getValue());
 
-		flushImagesOnCloseCheckBox.setSelected(flushImagesOnClose.getValue());
-
-		switch (changes.getValue()) {
-		case DISCARD:
-			changesDiscardRadioButton.setSelected(true);
-			break;
-		case SAVE_REGISTRATIONS:
-			changesSaveRegistrationsRadioButton.setSelected(true);
-			break;
-		case CONFIRM:
-			changesConfirmRadioButton.setSelected(true);
-			break;
-		case SAVE:
-			changesSaveRadioButton.setSelected(true);
-			break;
-		}
+		historyMaxSpinner.setValue(historyMax.getValue());
 	}
 
 	@Override
 	protected void write() {
+		if (localeDefaultRadioButton.isSelected()) {
+			locale.setValue(null);
+		} else {
+			locale.setValue((Locale) localeComboBox.getSelectedItem());
+		}
+
 		lookAndFeel.setValue((LAF) lookAndFeelComboBox.getSelectedItem());
 		scale.setValue(scaleSlider.getValue());
-		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
-		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 		fullScreenAutoScroll
 				.setValue(fullScreenAutoScrollCheckBox.isSelected());
 
-		flushImagesOnClose.setValue(flushImagesOnCloseCheckBox.isSelected());
-
-		Changes value = null;
-		if (changesDiscardRadioButton.isSelected()) {
-			value = Changes.DISCARD;
-		} else if (changesSaveRegistrationsRadioButton.isSelected()) {
-			value = Changes.SAVE_REGISTRATIONS;
-		} else if (changesConfirmRadioButton.isSelected()) {
-			value = Changes.CONFIRM;
-		} else if (changesSaveRadioButton.isSelected()) {
-			value = Changes.SAVE;
-		}
-		changes.setValue(value);
+		historyMax.setValue((Integer) historyMaxSpinner.getValue());
 	}
 }

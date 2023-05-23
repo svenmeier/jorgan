@@ -25,7 +25,7 @@ import javax.swing.JRadioButton;
 
 import jorgan.customizer.gui.action.CustomizeAction;
 import jorgan.gui.GUI;
-import jorgan.gui.preferences.category.AppCategory;
+import jorgan.gui.preferences.category.OpenLoadCategory;
 import jorgan.gui.preferences.category.JOrganCategory;
 import jorgan.swing.button.ButtonGroup;
 import jorgan.swing.layout.DefinitionBuilder;
@@ -83,7 +83,7 @@ public class CustomizerCategory extends JOrganCategory {
 
 	@Override
 	public Class<? extends Category> getParentCategory() {
-		return AppCategory.class;
+		return OpenLoadCategory.class;
 	}
 
 	@Override

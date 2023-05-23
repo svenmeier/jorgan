@@ -71,7 +71,7 @@ public class MonitorCategory extends JOrganCategory {
 
 	@Override
 	public Class<? extends Category> getParentCategory() {
-		return AppCategory.class;
+		return GuiCategory.class;
 	}
 
 	@Override

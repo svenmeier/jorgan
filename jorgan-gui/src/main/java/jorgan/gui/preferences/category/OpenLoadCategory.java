@@ -20,14 +20,15 @@ package jorgan.gui.preferences.category;
 
 import java.awt.GridBagLayout;
 
+import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerNumberModel;
 
-import jorgan.session.History;
-import jorgan.session.OrganSession;
+import jorgan.App;
+import jorgan.gui.action.FullScreenAction;
+import jorgan.gui.FullScreen;
+import jorgan.gui.GUI;
 import jorgan.swing.layout.DefinitionBuilder;
 import jorgan.swing.layout.DefinitionBuilder.Column;
 import bias.Configuration;
@@ -36,24 +37,27 @@ import bias.util.Property;
 
 /**
  */
-public class IOCategory extends JOrganCategory {
+public class OpenLoadCategory extends JOrganCategory {
 
 	private static Configuration config = Configuration.getRoot().get(
-			IOCategory.class);
+		OpenLoadCategory.class);
 
-	private Model<Integer> backupCount = getModel(new Property(
-			OrganSession.class, "backupCount"));
+	private Model<Boolean> showAboutOnStartup = getModel(new Property(
+		GUI.class, "showAboutOnStartup"));
 
-	private Model<Integer> historyMax = getModel(new Property(History.class,
-			"max"));
+	private Model<Boolean> openRecentOnStartup = getModel(new Property(
+		App.class, "openRecentOnStartup"));
 
-	private JSpinner backupCountSpinner = new JSpinner(new SpinnerNumberModel(
-			0, 0, 255, 1));
+	private Model<Boolean> fullScreenOnLoad = getModel(new Property(
+		FullScreenAction.class, "onLoad"));
 
-	private JSpinner historyMaxSpinner = new JSpinner(new SpinnerNumberModel(0,
-			0, 100, 1));
+	private JCheckBox showAboutOnStartupCheckBox = new JCheckBox();
 
-	public IOCategory() {
+	private JCheckBox openRecentOnStartupCheckBox = new JCheckBox();
+
+	private JCheckBox fullScreenOnLoadCheckBox = new JCheckBox();
+
+	public OpenLoadCategory() {
 		config.read(this);
 	}
 
@@ -64,11 +68,14 @@ public class IOCategory extends JOrganCategory {
 		DefinitionBuilder builder = new DefinitionBuilder(panel);
 		Column column = builder.column();
 
-		column.term(config.get("historyMax").read(new JLabel()));
-		column.definition(historyMaxSpinner);
+		column.group(config.get("startupGroup").read(new JLabel()));
+		column.definition(config.get("showAboutOnStartup")
+				.read(showAboutOnStartupCheckBox));
+		column.definition(config.get("openRecentOnStartup").read(
+				openRecentOnStartupCheckBox));
 
-		column.term(config.get("backupCount").read(new JLabel()));
-		column.definition(backupCountSpinner);
+		column.group(config.get("loadGroup").read(new JLabel()));
+		column.definition(config.get("fullScreenOnLoad").read(fullScreenOnLoadCheckBox));
 
 		return panel;
 	}
@@ -80,13 +87,15 @@ public class IOCategory extends JOrganCategory {
 
 	@Override
 	protected void read() {
-		historyMaxSpinner.setValue(historyMax.getValue());
-		backupCountSpinner.setValue(backupCount.getValue());
+		showAboutOnStartupCheckBox.setSelected(showAboutOnStartup.getValue());
+		openRecentOnStartupCheckBox.setSelected(openRecentOnStartup.getValue());
+		fullScreenOnLoadCheckBox.setSelected(fullScreenOnLoad.getValue());
 	}
 
 	@Override
 	protected void write() {
-		historyMax.setValue((Integer) historyMaxSpinner.getValue());
-		backupCount.setValue((Integer) backupCountSpinner.getValue());
+		showAboutOnStartup.setValue(showAboutOnStartupCheckBox.isSelected());
+		openRecentOnStartup.setValue(openRecentOnStartupCheckBox.isSelected());
+		fullScreenOnLoad.setValue(fullScreenOnLoadCheckBox.isSelected());
 	}
 }
